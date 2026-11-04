@@ -1258,26 +1258,85 @@ const pushIn = { cap: 1.6, margin: 1.25, ease: 0.8, hold: 0.5 };
  * @param {string}                                                                                                                name    The followed clip's file name.
  * @return {string} The followed clip, or the clip when nothing is to follow.
  */
-const follow = ( file, { start, end, focus = [] }, name ) => {
-	if ( vertical ) {
-		return file;
-	}
-	const windows = focus
-		.map( ( { at, box }, n ) => ( {
-			from: at - start,
-			to: ( focus[ n + 1 ]?.at ?? end ) - start,
-			zoom: Math.min(
-				pushIn.cap,
-				size.width / ( box.width * pushIn.margin ),
-				size.height / ( box.height * pushIn.margin )
-			),
-			cx: Math.min( size.width, Math.max( 0, box.x + box.width / 2 ) ),
-			cy: Math.min( size.height, Math.max( 0, box.y + box.height / 2 ) ),
-		} ) )
-		.filter(
-			( w ) =>
-				w.zoom >= 1.1 && w.to - w.from >= 2 * pushIn.ease + pushIn.hold
+/**
+ * A chapter's push-ins (D292): one window per focused element it holds long enough, with its
+ * zoom and centre, in seconds from the chapter's start. Read by the MP4's zoompan and by the
+ * Resolve project's transform keyframes alike.
+ *
+ * @param {{start: number, end: number, focus?: Array<{at: number, box: Object}>}} chapter Its timings.
+ * @return {Array<{from: number, to: number, zoom: number, cx: number, cy: number}>} The windows.
+ */
+const pushWindows = ( { start, end, focus = [] } ) =>
+	vertical
+		? []
+		: focus
+				.map( ( { at, box }, n ) => ( {
+					from: at - start,
+					to: ( focus[ n + 1 ]?.at ?? end ) - start,
+					zoom: Math.min(
+						pushIn.cap,
+						size.width / ( box.width * pushIn.margin ),
+						size.height / ( box.height * pushIn.margin )
+					),
+					cx: Math.min(
+						size.width,
+						Math.max( 0, box.x + box.width / 2 )
+					),
+					cy: Math.min(
+						size.height,
+						Math.max( 0, box.y + box.height / 2 )
+					),
+				} ) )
+				.filter(
+					( w ) =>
+						w.zoom >= 1.1 &&
+						w.to - w.from >= 2 * pushIn.ease + pushIn.hold
+				);
+
+/**
+ * The push-in at a moment, as zoompan draws it: the zoom, and the point of the page at the
+ * frame's centre, clamped so the frame never leaves the page.
+ *
+ * @param {Array<{from: number, to: number, zoom: number, cx: number, cy: number}>} windows The chapter's windows.
+ * @param {number}                                                                  t       Seconds from its start.
+ * @return {{zoom: number, x: number, y: number}} The zoom and the centre shown.
+ */
+const pushAt = ( windows, t ) => {
+	const weights = windows.map( ( { from, to } ) => {
+		const ramp = Math.min(
+			1,
+			Math.max(
+				0,
+				Math.min( ( t - from ) / pushIn.ease, ( to - t ) / pushIn.ease )
+			)
 		);
+		return ramp * ramp * ( 3 - 2 * ramp );
+	} );
+	const zoom =
+		1 +
+		windows.reduce( ( s, w, n ) => s + ( w.zoom - 1 ) * weights[ n ], 0 );
+	const centre = ( axis, half ) =>
+		half +
+		windows.reduce(
+			( s, w, n ) => s + ( w[ axis ] - half ) * weights[ n ],
+			0
+		);
+	const shown = ( axis, extent ) => {
+		const half = extent / zoom / 2;
+		return Math.min(
+			extent - half,
+			Math.max( half, centre( axis, extent / 2 ) )
+		);
+	};
+	return {
+		zoom,
+		x: shown( 'cx', size.width ),
+		y: shown( 'cy', size.height ),
+	};
+};
+
+const follow = ( file, chapter, name ) => {
+	const windows = pushWindows( chapter );
 	if ( ! windows.length ) {
 		return file;
 	}
@@ -1480,7 +1539,13 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 			'-i',
 			clip,
 		] );
-		place( before, { track: 'V1', source: webm, at: inRecording } );
+		place( before, {
+			track: 'V1',
+			source: webm,
+			at: inRecording,
+			chapter: i,
+			inChapter: 0,
+		} );
 		clock += seconds( before );
 		const length = needs( result );
 		const held = freeze( clip, at, length, `chapter-${ i + 1 }-result` );
@@ -1502,10 +1567,18 @@ for ( const [ i, { start, end } ] of chapters.entries() ) {
 			track: 'V1',
 			source: webm,
 			at: inRecording + Number( at.toFixed( 3 ) ),
+			chapter: i,
+			inChapter: Number( at.toFixed( 3 ) ),
 		} );
 		clock += seconds( after );
 	} else {
-		place( clip, { track: 'V1', source: webm, at: inRecording } );
+		place( clip, {
+			track: 'V1',
+			source: webm,
+			at: inRecording,
+			chapter: i,
+			inChapter: 0,
+		} );
 		clock += seconds( clip );
 	}
 	cues.push( { from, to: clock, chapter: i } );
@@ -1733,13 +1806,17 @@ const writeProject = ( total ) => {
 		return entry;
 	};
 
-	// The spine: V1 pieces directly, V2 and V3 pieces over a gap on their own lane.
+	// The spine: V1 pieces directly, the shots and the cards over a gap on their own lanes. A
+	// gap's own time starts at gapStart, not 0, so a card can begin before its gap does: a
+	// connected clip's offset cannot be negative, and a card fades in over what plays before it
+	// (D300).
+	const gapStart = 10;
 	let offset = 0;
 	const spine = videoPieces.map( ( piece ) => {
 		const item = {
 			offset,
 			length: piece.length,
-			start: 'V1' === piece.track ? piece.at : 0,
+			start: 'V1' === piece.track ? piece.at : gapStart,
 			asset: asset( piece.source, piece.still ? 'image' : 'video' ),
 			piece,
 			anchored: [],
@@ -1842,32 +1919,147 @@ const writeProject = ( total ) => {
 		);
 	}
 
-	const clip = ( item, lane ) => {
+	/**
+	 * A keyframed parameter, `<param>` with its keyframes in the clip's own time.
+	 *
+	 * @param {string}                  name The parameter.
+	 * @param {Array<[number, string]>} keys Each key's time in the clip and its value.
+	 */
+	const keyframed = ( name, keys ) =>
+		`<param name="${ name }"><keyframeAnimation>${ keys
+			// One key per frame: the last one written for a frame is the one kept.
+			.filter(
+				( [ t ], n ) =>
+					n === keys.length - 1 ||
+					Math.round( t * fps ) !==
+						Math.round( keys[ n + 1 ][ 0 ] * fps )
+			)
+			.map(
+				( [ t, value ] ) =>
+					`<keyframe time="${ time( t ) }" value="${ value }"/>`
+			)
+			.join( '' ) }</keyframeAnimation></param>`;
+
+	// The push-ins (D292) as transform keyframes on a recording clip: the same curve the MP4's
+	// zoompan draws, sampled where each move starts and ends. Position is in FCPXML's units, a
+	// hundredth of the frame's height, with y up.
+	const pushKeys = ( item ) => {
+		const { chapter, inChapter } = item.piece;
+		if ( undefined === chapter ) {
+			return '';
+		}
+		const windows = pushWindows( chapters[ chapter ] );
+		if ( ! windows.length ) {
+			return '';
+		}
+		const until = inChapter + item.length;
+		const moments = [
+			inChapter,
+			...windows.flatMap( ( w ) => [
+				w.from,
+				w.from + pushIn.ease / 2,
+				w.from + pushIn.ease,
+				w.to - pushIn.ease,
+				w.to - pushIn.ease / 2,
+				w.to,
+			] ),
+			until,
+		]
+			.filter( ( t ) => t >= inChapter && t <= until )
+			.sort( ( a, b ) => a - b )
+			// One key per frame: two windows that meet would key the same frame twice.
+			.filter(
+				( t, n, all ) =>
+					0 === n ||
+					Math.round( t * fps ) !== Math.round( all[ n - 1 ] * fps )
+			);
+		const scale = [];
+		const position = [];
+		for ( const t of moments ) {
+			const { zoom, x, y } = pushAt( windows, t );
+			const at = item.start + ( t - inChapter );
+			const unit = 100 / size.height;
+			scale.push( [
+				at,
+				`${ zoom.toFixed( 4 ) } ${ zoom.toFixed( 4 ) }`,
+			] );
+			position.push( [
+				at,
+				`${ ( -zoom * ( x - size.width / 2 ) * unit ).toFixed( 3 ) } ${ (
+					zoom *
+					( y - size.height / 2 ) *
+					unit
+				).toFixed( 3 ) }`,
+			] );
+		}
+		return `<adjust-transform>${ keyframed(
+			'position',
+			position
+		) }${ keyframed( 'scale', scale ) }</adjust-transform>`;
+	};
+
+	const clip = ( item ) => {
 		const tag = 'image' === item.asset.kind ? 'video' : 'asset-clip';
-		const at = lane ? ` lane="${ lane }" offset="0s"` : '';
-		const inner = lane
-			? ''
-			: [ ...item.anchored, ...item.markers ].join( '' );
+		const inner =
+			pushKeys( item ) + [ ...item.anchored, ...item.markers ].join( '' );
 		return `<${ tag } ref="${ item.asset.id }" name="${ xml(
 			item.asset.name
-		) }"${ at }${
-			lane ? '' : ` offset="${ time( item.offset ) }"`
-		} start="${ time( item.start ) }" duration="${ time(
-			item.length
-		) }"${ inner ? `>${ inner }</${ tag }>` : '/>' }`;
+		) }" offset="${ time( item.offset ) }" start="${ time(
+			item.start
+		) }" duration="${ time( item.length ) }"${
+			inner ? `>${ inner }</${ tag }>` : '/>'
+		}`;
+	};
+
+	/**
+	 * A card or a shot on its lane over its gap. A card reaches half a second into a neighbour
+	 * that is not a still and fades over it, in or out, as the MP4 blends it (D300): a card
+	 * fades in over what plays before it, and out over what plays after.
+	 *
+	 * @param {Object} item The gap's item.
+	 * @param {number} n    Its place in the spine.
+	 */
+	const laneClip = ( item, n ) => {
+		const isCard = 'V2' === item.piece.track;
+		const tag = 'image' === item.asset.kind ? 'video' : 'asset-clip';
+		const lane = isCard ? 2 : 1;
+		const before = spine[ n - 1 ];
+		const after = spine[ n + 1 ];
+		const into =
+			isCard && before && ! before.piece.still ? dissolveSeconds : 0;
+		const outOf =
+			isCard && after && ! after.piece.still ? dissolveSeconds : 0;
+		const length = item.length + into + outOf;
+		const fade =
+			into || outOf
+				? `<adjust-blend>${ keyframed( 'amount', [
+						[ 0, into ? '0' : '1' ],
+						[ into, '1' ],
+						[ length - outOf, '1' ],
+						[ length, outOf ? '0' : '1' ],
+					] ) }</adjust-blend>`
+				: '';
+		return `<${ tag } ref="${ item.asset.id }" name="${ xml(
+			item.asset.name
+		) }" lane="${ lane }" offset="${ time(
+			gapStart - into
+		) }" start="0s" duration="${ time( length ) }"${
+			fade ? `>${ fade }</${ tag }>` : '/>'
+		}`;
 	};
 	const spineXml = spine
-		.map( ( item ) => {
+		.map( ( item, n ) => {
 			if ( 'V1' === item.piece.track ) {
 				return clip( item );
 			}
-			const lane = 'V2' === item.piece.track ? 1 : 2;
 			return `<gap name="Gap" offset="${ time(
 				item.offset
-			) }" start="0s" duration="${ time( item.length ) }">${ clip(
-				item,
-				lane
-			) }${ [ ...item.anchored, ...item.markers ].join( '' ) }</gap>`;
+			) }" start="${ time( gapStart ) }" duration="${ time(
+				item.length
+			) }">${ laneClip( item, n ) }${ [
+				...item.anchored,
+				...item.markers,
+			].join( '' ) }</gap>`;
 		} )
 		.join( '\n' );
 	// A gap's own time starts at 0 and a V1 clip's at its in point, so `local()` already
