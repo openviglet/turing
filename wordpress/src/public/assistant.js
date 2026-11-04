@@ -14,7 +14,7 @@ import {
 	createClient,
 	recordAnswerSignal,
 	renderMarkdown,
-	siteFilter,
+	siteFilters,
 	siteUrl,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -213,9 +213,7 @@ const { state } = store( 'viglet-dumont/assistant', {
 					locale: config.locale,
 					// This site's documents only, where several sites share one SN site
 					// (D287): the search block's own filter, sent as each turn's filters.
-					filters: {
-						[ siteFilter.split( ':' )[ 0 ] ]: [ config.siteKey ],
-					},
+					filters: siteFilters,
 					persist: 'viglet-dumont-assistant',
 					clientTools: { navigate },
 				} );

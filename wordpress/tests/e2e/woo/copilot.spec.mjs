@@ -91,6 +91,9 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 		cited.getByRole( 'button', { name: /^Add to cart/ } )
 	).toBeHidden();
 	expect( priced[ 0 ] ).toBe( String( rain ) );
+	// This site's documents only, on an SN site several sites may share (D287).
+	expect( Object.keys( asked[ 0 ].filters ) ).toEqual( [ 'site_key' ] );
+	expect( asked[ 0 ].filters.site_key ).toHaveLength( 1 );
 	expect( asked[ 0 ].messages ).toEqual( [
 		{ role: 'user', content: 'a waterproof jacket' },
 	] );

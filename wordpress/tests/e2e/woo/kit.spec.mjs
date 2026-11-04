@@ -122,6 +122,9 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 		guideTypes: [ 'post' ],
 		productTypes: [ 'product' ],
 	} );
+	// This site's products only, on an SN site several sites may share (D287).
+	expect( Object.keys( asked[ 0 ].filters ) ).toEqual( [ 'site_key' ] );
+	expect( asked[ 0 ].filters.site_key ).toHaveLength( 1 );
 	await expect(
 		kit.locator( '.viglet-dumont-copilot__stage h3' )
 	).toHaveText( [ 'Waterproof shell' ] );

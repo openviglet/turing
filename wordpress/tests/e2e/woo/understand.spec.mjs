@@ -60,8 +60,10 @@ test( 'a price a sentence names filters with no language model, and Undo puts it
 test( "Turing's reading and the price read in code apply together", async ( {
 	page,
 } ) => {
-	await page.route( '**/nl-filters', ( route ) =>
-		route.fulfill( {
+	const read = [];
+	await page.route( '**/nl-filters', ( route ) => {
+		read.push( route.request().postDataJSON() );
+		return route.fulfill( {
 			json: {
 				available: true,
 				text: 'red jacket under $200',
@@ -78,8 +80,8 @@ test( "Turing's reading and the price read in code apply together", async ( {
 				fq: [ 'pa_color:Red' ],
 				dropped: [],
 			},
-		} )
-	);
+		} );
+	} );
 	await page.goto(
 		`/?pagename=find-gear&q=${ encodeURIComponent(
 			'red jacket under $200'
@@ -89,6 +91,8 @@ test( "Turing's reading and the price read in code apply together", async ( {
 	await expect( understood( page ) ).toContainText(
 		'Understood: Color: Red, Price: ≤ 200'
 	);
+	// Its values are checked against this site's documents only (D287).
+	expect( Object.keys( read[ 0 ].filters ) ).toEqual( [ 'site_key' ] );
 	await expect( summary( page ) ).toHaveText( '2 results' );
 	await expect( titles( page ) ).toHaveText( [
 		/Rain jacket|Linen jacket/,

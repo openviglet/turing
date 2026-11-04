@@ -21,6 +21,7 @@ import {
 	postIdOf,
 	renderMarkdown,
 	shopProducts,
+	siteFilters,
 	siteUrl,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
@@ -161,6 +162,8 @@ const { state } = store( 'viglet-dumont/copilot', {
 					{
 						messages,
 						locale: config.locale,
+						// This site's documents only (D287, Turing T1213).
+						filters: siteFilters,
 						// The product on the page, answered about first (D242, Turing T1178).
 						...( state.documentId
 							? { documentId: state.documentId }
@@ -313,6 +316,8 @@ async function buildKit() {
 				availability: 'MARK',
 				guideTypes,
 				productTypes,
+				// This site's products only, on an SN site shared by several (D287, T1213).
+				filters: siteFilters,
 			},
 			{ csrf: false }
 		);

@@ -17,6 +17,7 @@ import {
 	postIdOf,
 	renderMarkdown,
 	siteFilter,
+	siteFilters,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -699,7 +700,8 @@ async function readFilters( text ) {
 			// The SDK's postNlFilters is not published yet; this is its request (T1085).
 			answer = await client.post(
 				`/sn/${ encodeURIComponent( config.site ) }/nl-filters`,
-				{ text, locale: config.locale },
+				// Values checked against this site's documents only (D287, T1213).
+				{ text, locale: config.locale, filters: siteFilters },
 				{ csrf: false }
 			);
 		} catch {

@@ -32,6 +32,15 @@ export const config = getConfig( 'viglet-dumont' );
 export const siteFilter = `site_key:${ config.siteKey }`;
 
 /**
+ * The same filter as a field-to-values map, for Turing's generative calls (the assistant's
+ * turns, the copilot, the kit and nl-filters: Turing T1086, T1213), so on an SN site several
+ * WordPress sites share, each reads only its own documents (D287).
+ */
+export const siteFilters = {
+	[ siteFilter.split( ':' )[ 0 ] ]: [ config.siteKey ],
+};
+
+/**
  * An SDK client for this site's Turing.
  *
  * @param {Object} options Extra TuringClientConfig fields, e.g. headers.
