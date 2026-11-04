@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { useTuringAnswer } from "@viglet/turing-react-sdk";
 import {
   TuringAnswerProvenance,
-  TuringMarkdown,
   citationMarkdownComponents,
   rehypeCitationAnchors,
 } from "@viglet/turing-react-ui";
+import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 import {
   IconAlertTriangle,
   IconBraces,

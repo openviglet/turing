@@ -24,13 +24,19 @@
  * `sizeBudget.contents` in package.json, all optional:
  *   {
  *     "forbid":  ["dist/test/"],   // extra posix substrings to reject
- *     "allow":   ["dist/src/testing/"]  // exempt paths a forbid pattern catches
+ *     "allow":   ["dist/src/testing/"],  // exempt paths a forbid pattern catches
+ *     "rootOptionalPeers": { "react-markdown": "T1216: why" }  // optional peers the
+ *                                      // root may still load, each with its task
  *   }
+ *
+ * T1214 / T1215 add two load checks on the built output: every JS entry point
+ * imports in plain Node, and the root entry imports with the optional peers
+ * (`peerDependenciesMeta`) made unresolvable.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -168,6 +174,74 @@ for (const rel of entries) {
   }
 }
 
+// ── 4. The root entry loads without the optional peers (T1215) ──
+// `peerDependenciesMeta.<name>.optional` promises a consumer who never uses the
+// feature can leave the peer out. The root barrel broke that promise when it
+// re-exported a component importing the peer statically: every import of the
+// package root then needed it. A child Node imports the root with every optional
+// peer made unresolvable, so a static import of one fails here, while a dynamic
+// import (loaded only on use, as the D2 renderer does) passes. Subpath entries are
+// not checked: a subpath for the feature may need its peer.
+//
+// `sizeBudget.contents.rootOptionalPeers` names the peers a package's root is
+// still allowed to load, each an acknowledged debt with its task id.
+const optionalPeers = Object.entries(pkg.peerDependenciesMeta ?? {})
+  .filter(([, meta]) => meta?.optional)
+  .map(([name]) => name);
+const rootAllowed = new Set(Object.keys(cfg.rootOptionalPeers ?? {}));
+const hidden = optionalPeers.filter((name) => !rootAllowed.has(name));
+const rootExport = pkg.exports?.["."];
+const rootEntry = [
+  typeof rootExport === "string" ? rootExport : (rootExport?.import ?? rootExport?.default),
+  pkg.module,
+  pkg.main,
+].find((target) => typeof target === "string" && /\.(m?js|cjs)$/.test(target));
+let peerFree = "—";
+if (hidden.length > 0 && rootEntry) {
+  const probe = `
+    import { registerHooks } from "node:module";
+    const hidden = new Set(JSON.parse(process.env.HIDDEN_PEERS));
+    registerHooks({
+      resolve(specifier, context, nextResolve) {
+        const parts = specifier.split("/");
+        const name = specifier.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
+        if (hidden.has(name)) {
+          const error = new Error("Cannot find package '" + specifier + "' (optional peer, left out)");
+          error.code = "ERR_MODULE_NOT_FOUND";
+          throw error;
+        }
+        return nextResolve(specifier, context);
+      },
+    });
+    await import(process.env.ROOT_ENTRY);
+  `;
+  try {
+    execFileSync(process.execPath, ["--input-type=module", "-e", probe], {
+      cwd: pkgDir,
+      env: {
+        ...process.env,
+        HIDDEN_PEERS: JSON.stringify(hidden),
+        ROOT_ENTRY: pathToFileURL(join(pkgDir, rootEntry.replace(/^\.\//, ""))).href,
+      },
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    peerFree = `yes, without ${hidden.join(", ")}`;
+  } catch (error) {
+    const reason =
+      // `[^'"]` skips Node's echo of the probe's own source line, which spells the
+      // same words around a `" + specifier + "` concatenation.
+      /Cannot find package '[^'"]+' \(optional peer, left out\)/.exec(error.stderr ?? "")?.[0] ??
+      (error.stderr || error.message).split("\n").find((line) => line.trim()) ??
+      "unknown";
+    violations.push(
+      `the root entry ${rootEntry} needs an optional peer (${reason.trim()})` +
+        " — import it lazily, or export the component from its subpath only",
+    );
+    peerFree = "no";
+  }
+}
+
 // ── Report ──
 const kb = (n) => `${(n / 1024).toFixed(2)} kB`;
 console.log(
@@ -175,7 +249,8 @@ console.log(
     `    entries        ${files.length}\n` +
     `    unpacked       ${kb(listing.unpackedSize ?? 0)}\n` +
     `    entry points   ${declared.map(([f]) => f).join(", ") || "—"}\n` +
-    `    node loads     ${loaded.length} of ${entries.size}\n`,
+    `    node loads     ${loaded.length} of ${entries.size}\n` +
+    `    root w/o opt.  ${peerFree}\n`,
 );
 
 if (violations.length > 0) {

@@ -406,13 +406,13 @@ export type {
 // chat / rich-content components from this SDK alongside the API hooks above.
 // react-ui itself stays axios-free so viglet.com keeps consuming it directly
 // (core SDK + react-ui + its own Next transport) without ever seeing axios.
-// react-markdown / @terrastruct/d2 are optional peers here, mirroring react-ui:
-// the components that need them lazy-load them, so re-exporting adds no hard dep.
+// react-markdown / @terrastruct/d2 are optional peers here, mirroring react-ui.
+// D2 is lazy-loaded; react-markdown is not yet (T1216): TuringMarkdown and
+// TuringAnswer below import it statically, so this root still needs it.
 export {
   TuringHtmlSandbox,
   TuringRichContent,
   splitRichContent,
-  TuringMarkdown,
   resolveSandboxUrl,
   TuringD2Diagram,
   TuringCopyButton,
@@ -435,6 +435,9 @@ export {
   TURING_UI_THEME_CLASS,
   TURING_UI_TOKENS,
 } from "@viglet/turing-react-ui";
+// T1215 — react-ui's root no longer carries TuringMarkdown (it loads the optional
+// react-markdown peer); this SDK keeps re-exporting it, from its subpath.
+export { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 export type {
   TuringHtmlSandboxProps,
   TuringHtmlSandboxClassNames,

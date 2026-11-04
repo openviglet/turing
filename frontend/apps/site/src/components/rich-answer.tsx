@@ -1,8 +1,8 @@
 import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 import {
   TuringRichContent,
-  TuringMarkdown,
   TuringD2Diagram,
   type TuringMarkdownSegmentProps,
   type TuringD2Props,

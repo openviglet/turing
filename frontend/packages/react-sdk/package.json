@@ -103,6 +103,11 @@
         "hooks/": 69696,
         "ui/": 7043
       }
+    },
+    "contents": {
+      "rootOptionalPeers": {
+        "react-markdown": "T1216: TuringMarkdown and TuringAnswer are exported from the root and import it statically"
+      }
     }
   },
   "exportsSurface": {

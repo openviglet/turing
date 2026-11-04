@@ -10,7 +10,7 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1215** (deps: —) **Importing the @viglet/turing-react-ui root without its optional peer react-markdown fails** — The root entry re-exports TuringMarkdown, which imports react-markdown statically, so the optional peer is required. → §CLIII.4
+- 📋 **T1216** (deps: —) **Importing the @viglet/turing-react-sdk root without its optional peer react-markdown fails** — Its root exports TuringMarkdown and TuringAnswer, which import react-markdown statically, so a hooks-only consumer must install it. → §CLIII.5
 
 ## Block CJ — Releases ship from the repository the README names
 

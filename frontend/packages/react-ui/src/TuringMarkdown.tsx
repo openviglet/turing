@@ -1,10 +1,7 @@
 import ReactMarkdown, { type Options } from "react-markdown";
+import { resolveSandboxUrl } from "./sandboxUrl.js";
 
-/**
- * One-or-more leading `sandbox:` prefixes plus any following slashes.
- * Local copy of the SDK's resolver (see {@link resolveSandboxUrl}).
- */
-const SANDBOX_PREFIX = /^(?:\s*sandbox:\/*)+/i;
+export { resolveSandboxUrl } from "./sandboxUrl.js";
 
 /**
  * XSS-safe URL sanitizer — a local re-implementation of `react-markdown`'s
@@ -32,42 +29,6 @@ function sanitizeUrl(value: string): string {
     return value;
   }
   return "";
-}
-
-function originOf(baseUrl: string): string {
-  try {
-    return new URL(baseUrl).origin;
-  } catch {
-    return baseUrl.replace(/\/+$/, "");
-  }
-}
-
-/**
- * Resolves a (possibly `sandbox:`-prefixed) artifact URL to one a browser can
- * load. Mirrors `resolveSandboxUrl` from `@viglet/turing-sdk` — re-declared here
- * so `@viglet/turing-react-ui` keeps ZERO runtime dependencies (it cannot import
- * the SDK until that package is npm-published; see the package README / roadmap
- * T303). Pass {@link TuringMarkdownProps.urlTransform} to reuse the SDK's
- * canonical implementation instead.
- *
- * - `sandbox:/api/...` → `/api/...` (scheme stripped; collapses doubled/no-slash
- *   improvisation by the model);
- * - with a {@code baseUrl}, an absolute `/api/...` path becomes an absolute URL
- *   against that host (cross-origin embed);
- * - non-sandbox absolute URLs / `data:` / `mailto:` are left untouched.
- */
-export function resolveSandboxUrl(url: string, baseUrl = ""): string {
-  if (!url) return url;
-  let path = url.trim();
-  if (SANDBOX_PREFIX.test(path)) {
-    path = path.replace(SANDBOX_PREFIX, "/");
-  } else if (!path.startsWith("/")) {
-    return path;
-  }
-  if (baseUrl && path.startsWith("/")) {
-    return originOf(baseUrl) + path;
-  }
-  return path;
 }
 
 /**
@@ -123,8 +84,9 @@ export interface TuringMarkdownProps {
  * spaces, and injectable remark/rehype plugins + component overrides.
  *
  * <p>`react-markdown` is an OPTIONAL peer dependency (the host provides it —
- * both Turing apps already ship `react-markdown@^10`); pulling in
- * {@link TuringHtmlSandbox} alone never loads this module. The component is
+ * both Turing apps already ship `react-markdown@^10`). T1215 — so this
+ * component is imported from its subpath, `@viglet/turing-react-ui/TuringMarkdown`,
+ * never from the package root, which must load without the peer. The component is
  * design-agnostic: it renders `react-markdown`'s output and optionally wraps it
  * in a `className`'d div — the host owns prose styling (Tailwind `prose`, etc.).</p>
  *

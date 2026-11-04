@@ -2183,29 +2183,28 @@ the Search Console a month after.
 
 ## CLIII The quality gate stops at the package boundary
 
-### CLIII.4 The react-ui root loads an optional peer (T1215)
+### CLIII.5 The react-sdk root loads an optional peer (T1216)
 
-**Where it showed.** The smoke test after the first `publish-npm.yml` run (T1142,
-2026-11-04). `@viglet/turing-react-ui` declares `react-markdown` and `@terrastruct/d2`
-as optional peers (`peerDependenciesMeta`), and ships `./TuringMarkdown` and
-`./TuringD2Diagram` as subpaths so that only a consumer who renders markdown or D2 needs
-them. But `src/index.ts` re-exports `TuringMarkdown`, whose module imports
-`react-markdown` statically. So importing the root entry without `react-markdown`
-installed fails: a bundler cannot resolve it, and Node throws `ERR_MODULE_NOT_FOUND`.
-The D2 import is dynamic and does not have this problem.
+**Where it showed.** T1215 added a publish check to `scripts/check-package-contents.mjs`
+that imports a package's root entry with its optional peers unresolvable. react-ui
+passes it. `@viglet/turing-react-sdk` fails: its root re-exports `TuringMarkdown` (now
+from `@viglet/turing-react-ui/TuringMarkdown`) and exports `TuringAnswer`, which renders
+it, and both import `react-markdown` statically. The package declares `react-markdown`
+an optional peer, and the comment above the re-export block in `src/index.ts` says the
+components lazy-load it, which is not true.
 
-**Why it matters.** The optional peer is optional only for a consumer who never imports
-the root entry. A consumer who follows the README and imports `TuringSearchBar` from the
-package root gets a build error about a markdown library they never use.
+**Why it matters.** A consumer who only uses the hooks (`useTuringSearch`,
+`useTuringChat`) must still install `react-markdown`, or the import fails in a bundler
+and in Node alike.
 
-**What it should do.**
-- The root entry must not load an optional peer. The open choice: drop `TuringMarkdown`
-  (and what re-exports it, such as `TuringRichContent` if it does) from the root and keep the
-  subpaths, which breaks a root import of `TuringMarkdown`; or keep the root export and load
-  `react-markdown` lazily, like the D2 renderer already does.
-- A publish gate that bundles the root entry with the optional peers absent, so the case
-  cannot come back.
-- Done when a project with only `react` and `react-dom` installed can import the package root.
+**What to build.** Pick one per export: move `TuringMarkdown` and `TuringAnswer` to
+react-sdk subpaths (`exports` entries, as react-ui has), or have `TuringAnswer` load the
+renderer lazily. The subpath route is the one react-ui took. Then drop `react-markdown`
+from `sizeBudget.contents.rootOptionalPeers` in react-sdk's `package.json`, which
+records this debt today, update the workspace importers (`apps/turing-app`,
+`apps/showcase`) and correct the comment.
+
+**Done when** the contents check passes for react-sdk with no `rootOptionalPeers` entry.
 
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 

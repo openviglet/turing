@@ -31,7 +31,11 @@ export type {
   TuringHtmlSegmentProps,
 } from "./TuringRichContent.js";
 
-export { TuringMarkdown, resolveSandboxUrl } from "./TuringMarkdown.js";
+// T1215 — `TuringMarkdown` itself is NOT exported from the root: it imports the
+// optional `react-markdown` peer statically, and the root must load without it.
+// Import it from `@viglet/turing-react-ui/TuringMarkdown`. Its props type and the
+// pure URL resolver stay here, neither of which loads the peer at runtime.
+export { resolveSandboxUrl } from "./sandboxUrl.js";
 export type { TuringMarkdownProps } from "./TuringMarkdown.js";
 
 export { TuringD2Diagram } from "./TuringD2Diagram.js";

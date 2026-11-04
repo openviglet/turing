@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 import {
   TuringAnswerProvenance,
-  TuringMarkdown,
   citationMarkdownComponents,
   rehypeCitationAnchors,
   type TuringAnswerProvenanceClassNames,

@@ -26,6 +26,12 @@ and Next bundle it, and a Node script, a test runner in plain Node mode or serve
 rendering that keeps `node_modules` external can `import` it directly. The same holds
 for `@viglet/turing-react-ui`.
 
+`react-markdown` is needed only to render markdown. The `@viglet/turing-react-ui` root
+loads with just `react` and `react-dom`, so its markdown renderer is imported from its
+own subpath: `import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown"`.
+This package still exports `TuringMarkdown` and `TuringAnswer` from its root, so install
+`react-markdown` alongside it for now.
+
 ---
 
 ## Quick Start

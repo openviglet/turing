@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { useAnswerShare } from "@/api/queries/answer-share.queries";
-import { TuringMarkdown } from "@viglet/turing-react-ui";
+import { TuringMarkdown } from "@viglet/turing-react-ui/TuringMarkdown";
 import { IconExternalLink, IconLoader2, IconSparkles } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
