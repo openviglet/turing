@@ -93,8 +93,12 @@ if ( $viglet_dumont_shop ) {
 				class="viglet-dumont-related__item"
 				data-wp-context="<?php echo esc_attr( (string) wp_json_encode( $viglet_dumont_context ) ); ?>"
 			>
-				<?php if ( '' !== $viglet_dumont_image ) : ?>
-					<a class="viglet-dumont-related__image" href="<?php echo esc_url( $viglet_dumont_url ); ?>" tabindex="-1" aria-hidden="true" data-wp-on--click="actions.open" data-wp-on--auxclick="actions.open">
+				<?php
+				if ( '' !== $viglet_dumont_image ) :
+					// The same picture, blurred behind it where its shape leaves the frame empty.
+					$viglet_dumont_backdrop = (string) get_the_post_thumbnail_url( $viglet_dumont_related, 'medium' );
+					?>
+					<a class="viglet-dumont-related__image" href="<?php echo esc_url( $viglet_dumont_url ); ?>" tabindex="-1" aria-hidden="true" data-wp-on--click="actions.open" data-wp-on--auxclick="actions.open" style="<?php echo esc_attr( "background-image: url('" . esc_url( $viglet_dumont_backdrop ) . "')" ); ?>">
 						<?php echo wp_kses( $viglet_dumont_image, Viglet_Dumont_Related::IMAGE_HTML ); ?>
 					</a>
 				<?php endif; ?>

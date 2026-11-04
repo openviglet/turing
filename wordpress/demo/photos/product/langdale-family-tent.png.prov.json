@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6194101,
+    "path": "demo/photos/product/langdale-family-tent.png",
+    "sha256": "59d3128ca08773a7f24b654f7449def18b3cc477aef956ffd9537262292ff088"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a Langdale four-person tunnel tent pitched on a flat patch of green fell grass in the Lake District, anchored slightly right of center with rolling green ridges receding into misty distance on the left under soft overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Soft overcast daylight across the Lake District fells, neutral cool-toned with no harsh shadows. Rolling green hills layered in receding ridges fade into pale misty distance toward the left of the frame. The ground beneath the campsite is a flat level patch of short green grass with no rocks or boulders, scattered wildflowers and tufts of moss dotting the turf around the tent pegs. Low heather and bracken frame the mid-ground around the campsite.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Langdale four-person tunnel tent fully pitched, occupying roughly the right half of the frame as the focal subject. Sand beige polyester body with moss-green accents along the lower skirt and vestibule trim. Two arched tunnel poles form a long horizontal spine. Standing-height living area in the middle flanked by two separate bedroom compartments at each end. Mesh windows zipped open on both sides. Front fly partially rolled back revealing a dark interior.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Taut guy lines radiating outward from the tent corners and ridge pole, each line extending diagonally down to the grass and anchored with small black metal pegs driven flush into the turf.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Soft-focus blade of grass slicing in from the bottom-left edge of the frame, blurred close to the camera lens, a thin vertical green streak.\"\n      }\n    ]\n  }\n}",
+    "seed": 2085345425,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6194101,
+    "sha256": "59d3128ca08773a7f24b654f7449def18b3cc477aef956ffd9537262292ff088"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:23:16Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the shelter fully pitched on a flat, level patch of short grass at a wild camp in the green fells, guy lines taut and pegged into the turf, no rocks or boulders under it, the whole shelter in frame, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Langdale family tent, in sand beige. A four-person tunnel tent with two bedrooms and room to stand in the living area. Weight 9,800 g. Hydrostatic head 4,000 mm. Colour: Sand, Moss. Materials: Polyester. Care: Pitch to dry before storing, loosely packed and out of sunlight. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:PNxb-v7DQUaPiKgWddbfZw"
+}

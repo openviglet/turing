@@ -133,7 +133,7 @@ wp_enqueue_style(
 						?>
 						<article class="vd-result">
 							<?php if ( $viglet_dumont_image ) : ?>
-								<div class="vd-result__image">
+								<div class="vd-result__image" style="<?php echo esc_attr( "background-image: url('" . esc_url( $viglet_dumont_image ) . "')" ); ?>">
 									<img src="<?php echo esc_url( $viglet_dumont_image ); ?>"
 										alt="<?php echo esc_attr( $viglet_dumont_title ); ?>"
 										loading="lazy" />

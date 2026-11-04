@@ -108,6 +108,9 @@ $journal = array(
 
 $ids = array();
 foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
+	// A guide's photo is named for its English title's slug, the page's address on the English
+	// store (bin/demo-photos.mjs), which is not always its key.
+	$photo_slug = sanitize_title( $title );
 	// In Portuguese on a pt_BR site (D217): catalog.php reads pt_BR.php into $pt.
 	list( $title, $category, $paragraphs ) = $pt['journal'][ $slug ] ?? array( $title, $category, $paragraphs );
 	$category_id = (int) ( term_exists( $category, 'category' ) ?: wp_insert_term( $category, 'category' ) )['term_id'];
@@ -140,7 +143,7 @@ foreach ( $journal as $n => list( $slug, $title, $category, $paragraphs ) ) {
 	update_post_meta( $ids[ $slug ], '_tarnfell_key', $slug );
 	$backdate( $ids[ $slug ], $slug );
 	// A fell landscape of its own (D218, images.php).
-	$image = tarnfell_guide_image( $n, $slug, $title );
+	$image = tarnfell_guide_image( $n, $photo_slug, $title );
 	if ( $image ) {
 		set_post_thumbnail( $ids[ $slug ], $image );
 	}

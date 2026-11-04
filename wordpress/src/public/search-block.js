@@ -98,6 +98,12 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				''
 			);
 		},
+		// The result's picture again, blurred behind it where its shape leaves the frame
+		// empty (style.css), so a portrait photo in a landscape frame is shown whole.
+		get resultBackdrop() {
+			const { image } = getContext().result;
+			return image ? `url(${ JSON.stringify( String( image ) ) })` : '';
+		},
 		// What the list offers: suggestions for what is typed, or recent searches for an
 		// empty box. The part already typed is split off so it can be shown in bold.
 		get options() {

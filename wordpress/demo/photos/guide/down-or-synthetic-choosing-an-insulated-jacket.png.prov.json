@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6632373,
+    "path": "demo/photos/guide/down-or-synthetic-choosing-an-insulated-jacket.png",
+    "sha256": "cf9d857812fee2b87ce3f1ab822daaa57d960d079a77a2b9a6c01aa22fd25fc2"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"A photograph of two hikers pausing on a wet peat path across the green fells of northern England, the lead hiker in a charcoal jacket looking out over a valley of layered blue-green ridges under overcast drizzle, shot on Kodak Portra with shallow depth of field.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Late-morning northern English fell landscape under an overcast sky with cool-neutral daylight and soft diffused shadows. Distant rounded fell ridges layer in receding blue-green tones toward the horizon, with a thin band of low cloud threading between them. Faint suspended drizzle specks catch the open sky behind the far ridge. The palette is muted \u2014 mossy green, peat brown, slate blue, weathered charcoal. A fine Kodak Portra grain runs evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small tarn glinting in the middle distance on the left side of the frame, catching pale sky as a narrow silver-grey sliver nestled among the lower slopes.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"A pair of red grouse picking their way along a grassy slope on the far hillside at mid-distance right, small reddish-brown specks against the mossy green, heads lowered to peck.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Wet peat path winding diagonally from the lower-right corner up toward the mid-ground center-left. Dark sodden brown earth with small puddles reflecting the pale sky along its length.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Companion hiker a few paces behind the lead hiker, in three-quarter view facing forward-left, head turned right toward her companion. Slate-blue insulated jacket zipped partway, grey technical trousers, leaning on a wooden walking pole planted in the path. Medium build, short dark hair damp from drizzle, gaze directed at the lead hiker.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mid-thirties female hiker anchored slightly right of center in the mid-ground, body filling roughly 55% of the frame height as the focal subject. In three-quarter rear view facing away from camera toward the valley, weight settled on her back foot as she pauses. Charcoal insulated jacket zipped to mid-chest, sleeves pushed slightly back at the wrists, dark technical trousers, scuffed brown leather hiking boots laced high. Worn olive rucksack with a rolled sleeping mat strapped on top; her right hand rests on the strap. Shoulder-length brown hair tucked behind one ear, fair skin tone, head turned slightly to look out across the valley.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of wet bracken slicing into the lower-left foreground, soft green fronds with water droplets clinging along the edges, blurred into a loose mass.\"\n      }\n    ]\n  }\n}",
+    "seed": 221162185,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6632373,
+    "sha256": "cf9d857812fee2b87ce3f1ab822daaa57d960d079a77a2b9a6c01aa22fd25fc2"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:35:15Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Down or synthetic: choosing an insulated jacket\". Down is the warmest for its weight and packs smallest, but it loses its loft when wet. Synthetic fill is heavier for the same warmth and keeps working in drizzle. For cold, dry days and winter camps the Blencathra down jacket is the warmest we make for its weight. For the wet cold of a... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:sW4M2xrZQ_6loisCsqdI5g"
+}

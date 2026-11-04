@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5120033,
+    "path": "demo/photos/product/wasdale-head-torch.png",
+    "sha256": "75d5a18e66f2e6cbf4408755999794d6b2447e5234ae1a099b815565c607c589"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A 4:5 vertical product photograph of a sky-blue Wasdale head torch resting on its side on a mossy granite boulder along a quiet mountain trail, with rolling green fell slopes and a misty distant ridge receding into shallow-depth-of-field blur under soft overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on a soft overcast afternoon after a recent shower. Rolling green fell slopes heather-strewn and softly blurred recede into the midground, fading to a distant craggy ridge line dissolving into pale mist along the horizon. The sky is a uniform soft cool grey with no visible sun, casting even diffused natural daylight across the scene with a neutral cool white balance and no warm cast. Damp air, slight moisture sheen on surfaces.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder occupying the lower-center of the frame as the primary surface. Grey weathered stone with thick emerald moss cushions covering most of the top and sides, damp patches catching faint highlights, a few tiny fern fronds curling up from cracks in the rock.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel footpath winding diagonally behind the boulder from lower-left toward upper-right into the blurred midground. Pale brown-grey surface scattered with small loose stones, softened by shallow depth of field.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Wasdale head torch in sky blue, the focal subject, anchored just left of center on top of the mossy boulder in sharp focus. Polycarbonate body lying on its side, single round LED lens at the front catching a subtle reflection of the grey sky across the glass, fine specular highlight along the top curve of the housing. Slim adjustable elastic strap coiled loosely beside it on the moss. Soft contact shadow grounding it on the cushion.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of wet grass slicing diagonally into the lower-left foreground corner, blades rendered as soft green streaks by heavy defocus, faint moisture sheen visible along the tips.\"\n      }\n    ]\n  }\n}",
+    "seed": 796613344,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5120033,
+    "sha256": "75d5a18e66f2e6cbf4408755999794d6b2447e5234ae1a099b815565c607c589"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:17:49Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, shallow depth of field with the item in sharp focus and the landscape softly blurred behind. Nobody in the frame. The item is Wasdale head torch, in sky blue. A rechargeable head torch, 400 lumens, for winter afternoons that end in the dark. Weight 85 g. Up to 40 hours on its low setting. Charges by USB-C. Waterproof to IPX4. Colour: Black, Ember, Sky. Materials: Polycarbonate. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:os3gUqhnTq2ij0m4KNu_9g"
+}

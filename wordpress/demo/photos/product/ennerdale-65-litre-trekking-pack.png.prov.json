@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5881898,
+    "path": "demo/photos/product/ennerdale-65-litre-trekking-pack.png",
+    "sha256": "c26d809b4a4f05ee4ff726f50abc26915bd88b08c366f715d67353a21c70f669"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A casual iPhone snapshot of a deep navy 65-litre trekking pack standing upright on a mossy granite rock along a quiet mountain trail, with rolling green fells receding into atmospheric haze under soft overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells under soft overcast daylight filtering through high moorland air. Rolling green fells recede into atmospheric haze across the upper portion of the frame, layered ridgelines softening into pale blue-green distance. Cool neutral white balance throughout. A narrow dirt-and-gravel trail winds away behind the central rock, partially obscured by heather and bracken. Fine Kodak Portra grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant flock of small dark birds drifting low across one of the far ridges in the upper background, rendered as tiny silhouettes against the pale blue-green haze.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite rock occupying the lower-middle third of the frame, weathered grey stone covered with thick cushions of bright vibrant green moss and a few small pale lichen patches. Slightly damp surface catching soft ambient light.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"65-litre trekking pack in deep navy nylon, upright on the mossy rock at centre-foreground, filling roughly the lower-middle third of the frame as the focal subject. Structured back panel shows the load-lifting frame silhouette. Padded hipbelt hangs loose at the base with gentle shadow beneath. Sleeping bag compartment zip runs along the lower third. Side compression straps cinched tight. Top lid buckled down. Two external mesh pockets on the sides. Subtle highlights along the nylon weave. Completely clean surfaces \u2014 no branding, labels, logos, or tags anywhere.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of wet grass and a single fallen pine needle resting on the ground at the immediate foreground bottom edge of the frame, blurred into soft shapes by shallow depth of field.\"\n      }\n    ]\n  }\n}",
+    "seed": 540644412,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5881898,
+    "sha256": "c26d809b4a4f05ee4ff726f50abc26915bd88b08c366f715d67353a21c70f669"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:21:28Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Ennerdale 65 litre trekking pack, in navy blue. A 65 litre trekking pack for multi-day routes carrying a tent and food. Weight 2,100 g. A load-lifting frame, a sleeping bag compartment and a hipbelt that carries most of the weight. Colour: Slate, Navy, Moss. Materials: Nylon. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:QMcS-3EcR5yRGdoFmVkYtQ"
+}

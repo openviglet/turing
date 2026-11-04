@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6052009,
+    "path": "demo/photos/product/catbells-merino-beanie.png",
+    "sha256": "0a16ba250d4374a4582caa94b8d16fe000baba4187175f55b240993815cba16a"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a top-down flat-lay product photo of a navy merino wool beanie laid flat on a pale oak tabletop, with a small sprig of dried eucalyptus placed just outside the upper-right corner as a styling prop.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural oak tabletop filling the frame, subtle wood grain running diagonally beneath the scene. Soft diffused north-facing daylight with neutral cool-toned white balance, no warm cast. A faint soft shadow pools beneath the beanie, grounding it to the wood. Clean minimalist composition with breathing room around the subject.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue merino wool beanie, neatly folded and laid flat, anchored slightly off-center. Ribbed cuff visible at one end, fine knit texture catching the light across the body, soft natural drape with gentle creases where the fabric settles. Deep true navy color, sharp throughout.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small sprig of dried eucalyptus resting just outside the upper-right corner of the beanie as a styling prop. Slender stem with muted sage-green oval leaves, oriented diagonally across the wood.\"\n      }\n    ]\n  }\n}",
+    "seed": 965772620,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6052009,
+    "sha256": "0a16ba250d4374a4582caa94b8d16fe000baba4187175f55b240993815cba16a"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:31:32Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Catbells merino beanie, in navy blue. A merino beanie, warm and thin enough to wear under a hood. Weight 45 g. Colour: Ember, Moss, Navy, Sand, Slate. Materials: Merino wool. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:TcGrxyP0Qbe5RkHjU-mIsQ"
+}

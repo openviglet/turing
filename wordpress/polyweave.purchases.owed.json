@@ -8,5 +8,35 @@
     "outputs": 1,
     "service": "ideogram",
     "task_id": "ideogram:sent:d0ce47bbe9cf"
+  },
+  {
+    "artefact": "demo/photos/product/borrowdale-gaiters.png",
+    "at": "2026-11-04T10:17:50Z",
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "service": "ideogram",
+    "task_id": "ideogram:sent:618396458847"
+  },
+  {
+    "artefact": "demo/photos/product/coniston-bivvy-bag.png",
+    "at": "2026-11-04T10:23:16Z",
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "service": "ideogram",
+    "task_id": "ideogram:sent:665df2a3de57"
+  },
+  {
+    "artefact": "demo/photos/product/wansfell-running-top.png",
+    "at": "2026-11-04T10:27:35Z",
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "service": "ideogram",
+    "task_id": "ideogram:sent:4ecfd3101ceb"
   }
 ]

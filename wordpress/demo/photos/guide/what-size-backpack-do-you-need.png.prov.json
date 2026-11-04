@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5850464,
+    "path": "demo/photos/guide/what-size-backpack-do-you-need.png",
+    "sha256": "d0521b136e9e0bb440aa55fe2c11c49881b024bbf69fb730c733f3ce7897cd26"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor lifestyle photograph of a young hiker mid-stride on a grassy fell path above a northern English lake, viewed from behind and to the right with the terrain opening to the left, shot on 35mm equivalent with Kodak Portra grain under soft overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Late-morning overcast daylight over the green fells of a northern English lakeland, neutral cool-toned white balance with soft even illumination from a diffused sky. Rolling green fell slopes recede into layered blue-grey mountain ridges in the middle distance, with mild atmospheric haze separating the depth bands. A low drifting cloud bank threads along the far ridge line. The sky is a flat pale grey-white overhead. Wet grassy turf extends across the path and surrounding slope.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Thin silver lake glinting between two blue-grey ridges in the middle distance on the left side of the frame, small and narrow, catching the overcast light as a pale reflective sliver.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant lone walker as a tiny silhouette far up the opposite slope in the middle distance, dark speck against the green-grey hillside, suggesting the scale of the landscape.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young hiker mid-stride on the grassy fell path, occupying the right third of the frame from head to boots, body taking up roughly half the frame height as the focal subject. Three-quarter back view facing toward the distant ridge at left, weight settled on the front foot. Olive-green waterproof shell jacket with hood down, hem caught by a slight breeze; charcoal merino base layer visible at the collar; dark grey hiking trousers cuffed above sturdy brown leather boots laced to the ankle. Right hand lightly resting on the top strap of the pack, left hand holding a slim aluminum walking pole angled into the turf ahead. Loose strands of hair at the nape lifted by the breeze.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Compact daypack worn on the hiker's back, muted slate-grey fabric, single sternum strap across the chest, padded shoulder straps visible at the sides. Side mesh pocket on the right holds a stainless steel water bottle catching cool daylight. Small red whistle clipped to the chest strap. Folded map tucked into the top lid pocket, edges protruding slightly. No logos or brand marks anywhere on the pack.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Foreground tuft of wet bracken slicing in from the lower-left edge of the frame, fronds dark green and damp, slightly out of focus. Beside it a small stone cairn of stacked grey rocks, also softly defocused, anchoring the bottom-left corner.\"\n      }\n    ]\n  }\n}",
+    "seed": 1191747290,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5850464,
+    "sha256": "d0521b136e9e0bb440aa55fe2c11c49881b024bbf69fb730c733f3ce7897cd26"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:35:58Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"What size backpack do you need?\". A day on the fells needs room for a waterproof, a warm layer, lunch, water and a first-aid kit: about 25 to 30 litres. A night in a hut, 40 to 45. Carrying a tent and a week of food, 60 or more. The Helvellyn 28 litre daypack has a rain cover in its base.... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:YbXPcO8KQP-84oXM-aZ9tQ"
+}

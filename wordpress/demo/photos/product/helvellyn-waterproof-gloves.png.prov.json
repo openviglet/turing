@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 7006583,
+    "path": "demo/photos/product/helvellyn-waterproof-gloves.png",
+    "sha256": "eb6b8d174d7bedae7ab247db579aa449cb2b924628b5e9ee56ac8093c70e4e38"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a flat-lay product photo of a pair of burnt-orange Helvellyn waterproof insulated gloves laid palms-up and symmetrical on a pale natural wooden table, centered in the square frame under soft even daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A pale natural wooden table surface fills the frame, pale honey-cream in tone with soft straight grain running horizontally across the wood. Soft even daylight from a north-facing window falls across the surface with neutral cool-toned white balance, no harsh highlights, no warm cast. Faint soft shadows pool just beneath each glove, grounding them to the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Left Helvellyn waterproof glove laid flat palm-up, mirrored to its pair on the right. Burnt-orange Gore-Tex shell with a subtle sheen indicating the waterproof membrane finish. Cuffs rolled once at the wrist opening, visible seam stitching along the finger joints and around the cuff. Fingers slightly splayed.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Right Helvellyn waterproof glove laid flat palm-up, mirroring the left glove symmetrically. Burnt-orange Gore-Tex shell with subtle membrane sheen, cuffs rolled once at the wrist opening, visible seam stitching along finger joints and around the cuff. Fingers slightly splayed.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Grippy textured palm panel on the left glove, a darker tone than the burnt-orange back shell. Fine pebbled rubberized grip pattern covers the entire palm and extends across all five fingertips.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Grippy textured palm panel on the right glove, matching the left. Darker tone than the burnt-orange back shell, fine pebbled rubberized grip pattern across the full palm and fingertips.\"\n      }\n    ]\n  }\n}",
+    "seed": 1311177350,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 7006583,
+    "sha256": "eb6b8d174d7bedae7ab247db579aa449cb2b924628b5e9ee56ac8093c70e4e38"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:31:16Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Helvellyn waterproof gloves, in burnt orange. Waterproof insulated gloves for wet, cold days on the tops. Weight 120 g a pair (size M). A waterproof insert and a grippy palm. Colour: Black, Slate, Ember. Materials: Gore-Tex, Polyester. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:TarfG2XtQ2mFsqvcB0Eu-g"
+}

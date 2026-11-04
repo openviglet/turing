@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5740969,
+    "path": "demo/photos/product/haystacks-dry-bag-set.png",
+    "sha256": "b404b233a2a682822b68a9dbab6651e958b0291be3acaec6b7b5033607f9217e"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a quiet morning on a green fellside mountain trail where three sky-blue dry bags rest on a mossy granite rock beside the path, with rolling fells receding into haze behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Soft overcast daylight over a green fellside landscape. Rolling hills recede into atmospheric haze across the upper two-thirds of the frame, with soft heather patches and low bracken scattered across the slopes. A narrow dirt-and-gravel trail winds diagonally from the midground back into the distance. Neutral cool-toned white balance, diffused light with no harsh shadows.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant stone cairn barely visible on a far ridge in the upper-right background, small and hazy, a low stack of pale grey stones softened by atmospheric haze.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Moss-covered granite rock anchoring the center-foreground of the frame, large and weathered. Damp dark-green moss patches across the surface, pale grey lichen tufts, and a few small ferns sprouting from cracks along the edges. Faint moisture beads on the moss.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Three roll-top nylon dry bags in sky blue, stacked and slightly fanned on top of the rock at center-foreground. Largest bag rolled closed with its top folded down three times, medium bag beside it, smallest bag nested in front. Visible taped seams run along each body, reinforced webbing loops at the roll closures. Subtle sheen catches the diffused light along the roll folds.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of grass cropping in at the lower-left foreground edge with a single small white wildflower among the blades, soft and blurred.\"\n      }\n    ]\n  }\n}",
+    "seed": 1189624433,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5740969,
+    "sha256": "b404b233a2a682822b68a9dbab6651e958b0291be3acaec6b7b5033607f9217e"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:32:40Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Haystacks dry bag set, in sky blue. Three roll-top dry bags that keep a sleeping bag and spare clothes dry inside a pack. Weight 110 g together. Taped seams. Colour: Ember, Sky, Moss. Materials: Nylon. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:8uaFP-efSdC93DgLBBdSNg"
+}

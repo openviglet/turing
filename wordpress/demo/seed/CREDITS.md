@@ -38,11 +38,13 @@ the line it says; `music.mp3.prov.json` records where the music bed came from.
 
 The product and guide photos in [`../photos/`](../photos/) are photorealistic images generated
 with Ideogram 4.0 (`npm run demo:photos`, D265), bought through polyweave inside the budget in
-`polyweave.toml`. They show the invented products, laid flat or out on the hill, and invented
-scenes: no real person, place name, brand or logo was asked for. The repository keeps an 800 px
-WebP of each, the size a shop shows, with its `.prov.json` recording the prompt and the service;
-the full-size PNG Ideogram returns is not committed. A product or guide without a photo is drawn
-by the seed, as above.
+`polyweave.toml`. They show the invented products, laid flat on a table, pitched on level grass
+or out on the hill, and invented scenes: no real person, place name, brand or logo was asked
+for. Every product and guide has one. The repository keeps an 800 px WebP of each, the size a
+shop shows, with its `.prov.json` recording the prompt and the service; the full-size PNG
+Ideogram returns is not committed. The seed shows each photo whole, over a blurred copy of
+itself where its shape differs from the frame, since Ideogram does not always return the aspect
+ratio asked. A product or guide without a photo would be drawn by the seed, as above.
 
 ## Footage
 

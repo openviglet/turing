@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6532602,
+    "path": "demo/photos/guide/how-to-pitch-a-tent-in-the-rain.png",
+    "sha256": "2bf48e43c8e225bb64300cd24798add80bd4888b7e9a8cf4a4838b4c86f56e09"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a young woman pitching a solo backpacking tent on a damp lawn in the green fells of northern England, with misty hills and a slate-grey lake receding behind her, shot on a 35mm lens with fine Kodak Portra grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A damp late-morning garden in the green fells of northern England under overcast diffused daylight from a soft north-facing sky, neutral cool-toned white balance with accurate greens. Rolling green fells rise in the distance softened by low mist and mild atmospheric haze separating the midground from the far hills, with a thin slate-grey lake visible between two hills. A distant stone wall runs along the far meadow line. Light drizzle falls as fine streaks across the deeper background. The ground is a flat patch of rain-darkened lawn, grass wet and slightly matted. Fine Kodak Portra grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant stone wall running along the far meadow line in the background, low and weathered grey limestone, partially hazed by atmospheric mist.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single sheep grazing beside the distant stone wall in the far background, small in scale, cream-white wool, head lowered to the grass, facing left toward the wall.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Modern one-person backpacking tent at full standing height, anchored centre-right on a flat patch of rain-darkened lawn. Outer fly up and taut in muted olive-green, inner tent clipped inside, poles forming a clean dome silhouette. Guy-lines slack but ready, anchored at the corners. Small water beads visible on the fly fabric from light drizzle.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Wet peat-stained brown leather hiking boots left upside-down near the tent door in the midground, mud-darkened soles facing up, inner mesh flap of the tent pushed aside behind them.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young woman kneeling beside the windward end of the tent in three-quarter front view facing right toward the tent corner, body filling roughly 40% of the frame height as the focal subject. Weight settled onto her right knee, left foot planted flat on the turf. Both hands working a stainless steel peg into the ground at the front corner of the tent. Head tilted down toward her hands with a small focused half-smile, gaze directed at the peg. Light skin tone, hair pulled back under a charcoal beanie. Faded olive shell jacket zipped halfway, dark grey hiking trousers rolled once at the ankle, scuffed brown leather hiking boots. Her skin has a natural, detailed texture.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Open canvas stuff sack tipped on its side in the foreground grass just in front of the tent, natural beige canvas, holding a coil of multicolour paracord and a second stainless steel peg spilling out onto the wet turf.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small enamel mug of tea resting on a folded wool blanket just behind the tent's rear pole in the midground-right. Cream enamel mug with a dark rim, faint steam curling upward from the surface. Blanket folded in deep charcoal wool beneath it.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus holly bush slicing into the lower-left foreground edge, glossy dark green leaves with sharp spines, water droplets clinging to the leaf surfaces catching the soft overcast light, softly blurred by shallow depth of field.\"\n      }\n    ]\n  }\n}",
+    "seed": 1639749759,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6532602,
+    "sha256": "2bf48e43c8e225bb64300cd24798add80bd4888b7e9a8cf4a4838b4c86f56e09"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:43:28Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to pitch a tent in the rain\". The tent is a proper modern backpacking tent at its normal height, tall enough to sit up inside, every pole in place, on flat ground. The trick is to keep the inner dry, and that starts at home: practise once in the garden. A tent that pitches outer first, like the Haystacks one-person tent or the Glaramara two-person tent, goes up with the inner clipped inside it. Peg the windward end first, then the poles, then the rest. Leave wet... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:JTZ4OnFYTy6u7Bd1ayX6ew"
+}

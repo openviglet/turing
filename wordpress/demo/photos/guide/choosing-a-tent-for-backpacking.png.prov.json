@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6568873,
+    "path": "demo/photos/guide/choosing-a-tent-for-backpacking.png",
+    "sha256": "b35da87ebff4f7b6aaabd89e59e94d7f60b45c1669fbe83626f76a9fad547e45"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of two backpacking tents pitched side by side on a wet fell plateau in the northern English Lake District, with rolling green fells and a small tarn receding into atmospheric haze behind them, shot on Kodak Portra with fine grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A flat fell plateau in the northern English Lake District under soft overcast daylight diffused by high cloud, neutral cool-to-neutral white balance. Short wet grass covers the plateau, transitioning from fresh spring green near the foreground to deeper mossy tones further out. Rolling green fells recede into atmospheric haze across the mid-distance, patches of bracken and dark peat visible across the slopes. Gentle atmospheric perspective softens the background ridges. Fine Kodak Portra grain consistent across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small tarn catching the pale sky on the far slope behind the tents, mid-distance center-right of frame, its surface broken by a thin line of mist hugging the water.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant flock of sheep scattered across the far ridge, tiny white specks against the green slopes, very small in scale at the upper-mid distance.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Compact one-person backpacking tent pitched on the left of the midground, three-quarter angle showing its front vestibule door slightly open. Dark charcoal outer fly stretched taut over all poles giving full standing height, subtle reflective guy-line loops along the seams, inner tent suspended inside visible through the open vestibule.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Two-person backpacking tent pitched on the right of the midground, larger footprint than its neighbor, three-quarter angle. Pale grey-blue fly stretched taut over crossed poles fully extended at normal sitting height. Two separate doors opening outward to either side; mesh inner visible through the open right-hand door.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Pair of worn leather hiking boots set down neatly beside the two-person tent's left door, laces loose, scuffed brown leather. A small daypack rests beside them, olive canvas with dark straps.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Flat grey boulder in the foreground left, weathered lichen-spotted surface. A stainless steel kettle sits on top with a faint wisp of steam rising from the spout, beside an enamel mug in cream with a chipped blue rim.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of bog cotton and heather cropping into the lower-right foreground edge, soft white cottony seed heads and muted purple heather blooms blurred by shallow focus.\"\n      }\n    ]\n  }\n}",
+    "seed": 1731423428,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6568873,
+    "sha256": "b35da87ebff4f7b6aaabd89e59e94d7f60b45c1669fbe83626f76a9fad547e45"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:43:08Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Choosing a tent for backpacking\". The tent is a proper modern backpacking tent at its normal height, tall enough to sit up inside, every pole in place, on flat ground. Weight, space and how it stands up to wind are the three things to trade. A tent that pitches outer first keeps the inner dry when you pitch in rain. Alone, the Haystacks one-person tent weighs 1.1 kg and pitches outer first. For two, the Glaramara two-person tent gives each of you a door and... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:vQ2ahUHHTN2t7Yp4Z6nOyQ"
+}

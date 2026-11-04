@@ -45,7 +45,9 @@ $viglet_dumont_recent = array_map(
 		<template data-wp-each--result="state.results">
 			<li class="viglet-dumont-search__result">
 				<?php if ( $viglet_dumont_show( 'showImage' ) ) : ?>
-					<img class="viglet-dumont-search__image" alt="" loading="lazy" hidden data-wp-bind--hidden="!context.result.image" data-wp-bind--src="context.result.image" />
+					<span class="viglet-dumont-search__frame" hidden data-wp-bind--hidden="!context.result.image" data-wp-style--background-image="state.resultBackdrop">
+						<img class="viglet-dumont-search__image" alt="" loading="lazy" data-wp-bind--src="context.result.image" />
+					</span>
 				<?php endif; ?>
 				<div class="viglet-dumont-search__body">
 					<?php if ( $viglet_dumont_show( 'showType' ) || $viglet_dumont_show( 'showDate' ) ) : ?>

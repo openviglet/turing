@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6501875,
+    "path": "demo/photos/product/ennerdale-trail-shoe.png",
+    "sha256": "12ba4ad8657f5e00569e2160cea34f805fdfde6fd404100151d7c7cabf15836a"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a single sky-blue trail running shoe resting on its side atop a mossy granite rock on a quiet Lake District mountain trail, with the dirt path curving away into rolling green fells under overcast morning light.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells of the English Lake District on an overcast morning. Rolling green fells recede into soft atmospheric haze, layered ridgelines fading from deep green to pale blue-grey in the distance. A thin wisp of low cloud drifts across the middle distance between the trail and the far ridges. Overcast diffused daylight, neutral cool white balance, damp moss and wet grass throughout. The ground is a mix of trampled grass and packed earth with patches of wet moss.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel trail curving away behind the rock toward the right background, scattered with small stones and patches of trampled grass. The path leads the eye into the distance.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite rock sitting just left of center in the midground, medium-sized. Vivid emerald moss creeps over its edges and across the top surface, with tiny water droplets clinging to the tufts as if from fresh rain.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single sky-blue trail running shoe resting on its side atop the mossy rock, anchored just left of center. Synthetic upper in sky-blue with subtle paneling, slim lace loops, deep chunky lugs visible along the outsole facing the camera. No logos or branding anywhere on the shoe. Tiny water droplets cling to the lugs.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Tufts of bent grass and a few low heather sprigs in the immediate foreground at the base of the rock, slightly out of focus. Dark green blades bent by moisture, small purple-grey heather blooms scattered among them.\"\n      }\n    ]\n  }\n}",
+    "seed": 1029081525,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6501875,
+    "sha256": "12ba4ad8657f5e00569e2160cea34f805fdfde6fd404100151d7c7cabf15836a"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:20:04Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Ennerdale trail shoe, in sky blue. A trail running shoe with deep lugs for mud and wet grass. Weight 620 g a pair (size 42). 5 mm lugs, a rock plate and a 6 mm drop. Not waterproof: it drains and dries. Colour: Ember, Sky, Black, Slate. Materials: Synthetic. Care: Brush off mud, dry away from direct heat and reproof with... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:0VB1oto-R5GNyGusRdWb4Q"
+}

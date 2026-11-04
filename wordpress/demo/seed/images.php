@@ -445,7 +445,9 @@ function tarnfell_photo( string $kind, string $slug ): string {
 }
 
 /**
- * Import a photo, cut to a frame from its centre and scaled to it, as WebP.
+ * Import a photo, whole, centred in a frame, as WebP. Ideogram does not always answer the aspect
+ * ratio asked (a 16x9 guide came back 4:5), and a crop from the centre then kept a band of it:
+ * every part of a photo is shown, over the same photo filling the frame, blurred and dimmed.
  *
  * @param string $photo  The photo.
  * @param string $key    The key it is imported under.
@@ -463,11 +465,29 @@ function tarnfell_import_photo( string $photo, string $key, string $name, string
 			$in    = imagecreatefromwebp( $photo );
 			$w     = imagesx( $in );
 			$h     = imagesy( $in );
-			$scale = max( $width / $w, $height / $h );
-			$cw    = (int) round( $width / $scale );
-			$ch    = (int) round( $height / $scale );
+			$scale = min( $width / $w, $height / $h );
+			$dw    = (int) round( $w * $scale );
+			$dh    = (int) round( $h * $scale );
 			$out   = imagecreatetruecolor( $width, $height );
-			imagecopyresampled( $out, $in, 0, 0, (int) ( ( $w - $cw ) / 2 ), (int) ( ( $h - $ch ) / 2 ), $width, $height, $cw, $ch );
+			// The backdrop: the photo covering the frame, shrunk to a few dozen pixels and grown
+			// back, which blurs it smoothly, then softened again and dimmed under the photo.
+			$cover = max( $width / $w, $height / $h );
+			$cw    = (int) round( $width / $cover );
+			$ch    = (int) round( $height / $cover );
+			$tiny  = imagecreatetruecolor( (int) max( 1, $width / 10 ), (int) max( 1, $height / 10 ) );
+			imagecopyresampled( $tiny, $in, 0, 0, (int) ( ( $w - $cw ) / 2 ), (int) ( ( $h - $ch ) / 2 ), imagesx( $tiny ), imagesy( $tiny ), $cw, $ch );
+			for ( $pass = 0; $pass < 8; $pass++ ) {
+				imagefilter( $tiny, IMG_FILTER_GAUSSIAN_BLUR );
+			}
+			// Grown back bicubically: a resampled copy grows a small image in blocks.
+			imagesetinterpolation( $tiny, IMG_BICUBIC );
+			$grown = imagescale( $tiny, $width, $height, IMG_BICUBIC );
+			imagecopy( $out, $grown, 0, 0, 0, 0, $width, $height );
+			for ( $pass = 0; $pass < 4; $pass++ ) {
+				imagefilter( $out, IMG_FILTER_GAUSSIAN_BLUR );
+			}
+			imagefilter( $out, IMG_FILTER_BRIGHTNESS, -35 );
+			imagecopyresampled( $out, $in, (int) ( ( $width - $dw ) / 2 ), (int) ( ( $height - $dh ) / 2 ), 0, 0, $dw, $dh, $w, $h );
 			imagewebp( $out, $path, 82 );
 		}
 	);
@@ -491,7 +511,7 @@ function tarnfell_product_image( int $model_index, string $model, string $catego
 	$photo    = tarnfell_photo( 'product', sanitize_title( $model ) );
 	if ( $photo ) {
 		$slug = sanitize_title( $model );
-		return tarnfell_import_photo( $photo, 'photo:' . md5_file( $photo ) . ":product:{$slug}", $slug, $alt, 800, 800 );
+		return tarnfell_import_photo( $photo, 'photo:blurred:' . md5_file( $photo ) . ":product:{$slug}", $slug, $alt, 800, 800 );
 	}
 
 	return tarnfell_import_image(
@@ -516,7 +536,7 @@ function tarnfell_product_image( int $model_index, string $model, string $catego
 function tarnfell_guide_image( int $index, string $slug, string $alt ): int {
 	$photo = tarnfell_photo( 'guide', $slug );
 	if ( $photo ) {
-		return tarnfell_import_photo( $photo, 'photo:' . md5_file( $photo ) . ":guide:{$slug}", $slug, $alt, 800, 450 );
+		return tarnfell_import_photo( $photo, 'photo:blurred:' . md5_file( $photo ) . ":guide:{$slug}", $slug, $alt, 800, 450 );
 	}
 
 	return tarnfell_import_image(

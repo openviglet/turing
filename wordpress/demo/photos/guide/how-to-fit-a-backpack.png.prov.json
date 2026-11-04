@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6510145,
+    "path": "demo/photos/guide/how-to-fit-a-backpack.png",
+    "sha256": "7fdf615fe6b9adbfd1b5f362f42d04e5161b223a9bb119b53ab504b4d19bab68"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor lifestyle photograph of a young woman hiker adjusting the hipbelt of her loaded sage-green trekking pack on a grassy Lake District fellside, with a second hiker pausing further up the path and rolling green fells receding into atmospheric haze.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-morning Lake District fellside under overcast-to-breakthrough daylight with neutral cool-toned white balance. Rolling green fells recede into soft atmospheric haze across the upper two-thirds of the frame, with a small tarn glinting between two distant ridges and scattered cumulus clouds drifting above the far peaks. A faint shaft of sun catches one ridge in the deep background. The grassy slope carries a worn footpath winding diagonally up behind the main subject. Fine editorial film grain sits evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Second hiker further up the path in the mid-background, smaller in scale, standing in three-quarter rear view also pausing to adjust their pack. Dark jacket and muted trousers, head tilted down toward their hands at the hipbelt. Legs slightly apart on the slope. Facing up the path away from camera.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young woman hiker, the focal subject, body filling roughly 60% of the frame height just right of center on the rule-of-thirds line. In three-quarter rear view turned away from camera, weight settled on her right leg with left foot slightly forward on the slope. Both hands reaching down to cinch the hipbelt at her waist \u2014 right hand pulling the buckle webbing, left hand steadying the belt pad over her iliac crest. Head tilted slightly down watching her own hands, gaze directed at her hands. Charcoal merino base layer with sleeves pushed to mid-forearm, slim olive technical trousers, low-cut hiking boots laced tight. Small brass compass clipped to the chest strap. Light skin tone, hair pulled back.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Loaded 65-litre trekking pack on her shoulders in muted sage-green nylon, sitting squarely on her back. Padded shoulder straps visible over both shoulders, sternum strap crossing her chest, load lifter straps angled forward from the top of the pack to the shoulder straps at roughly forty-five degrees. Hipbelt wrapped around her waist with a central buckle, side compression straps and a small water-bottle pocket visible.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of heather and wet grass slicing in from the lower-left edge of the frame as foreground framing. Deep purple heather flowers and damp green blades, fully blurred into soft color shapes.\"\n      }\n    ]\n  }\n}",
+    "seed": 1906439082,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6510145,
+    "sha256": "7fdf615fe6b9adbfd1b5f362f42d04e5161b223a9bb119b53ab504b4d19bab68"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:40:21Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to fit a backpack\". A pack carried on the shoulders hurts within the hour. The hipbelt should carry most of the weight. Loosen every strap, put the hipbelt on the top of your hip bones and tighten it, then the shoulder straps, then the load lifters to about 45 degrees. The Ennerdale 65 litre trekking pack and the Scafell... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:XRRSP-LDQseE69wGPSI79A"
+}

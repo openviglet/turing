@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5856025,
+    "path": "demo/photos/product/scafell-45-litre-pack.png",
+    "sha256": "9e55b799d92c3f90f5371241cf1774a3fa783ec6c48b89a001604252edd39422"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a moss-green hiking pack set down on a mossy granite outcrop beside a footpath on a Cumbrian fellside, with rolling green hills receding into hazy distance under soft overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A Cumbrian fellside under soft overcast daylight with neutral cool-toned white balance. Rolling green fells recede in soft layers behind the scene, heather patches dotting the slopes in muted purple-grey, a low ridge line fading into atmospheric haze toward the horizon. The sky is a flat pale grey-white, diffused and even. Fine Kodak Portra grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Rolling green fells receding in soft layers across the midground and background, softly blurred. Muted greens with patches of heather in dusty purple-grey dotting the slopes, a low ridge line fading into atmospheric haze near the horizon.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel footpath curving away from the lower-right into the mid-ground at center-left, scattered with loose gritstone chips in pale grey and tan tones. Softly blurred as it recedes.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single distant hiker barely readable as a small dark silhouette far up the path in the deep background, facing away from the camera walking up the trail. Heavily blurred by atmospheric distance.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Flat-topped granite outcrop blanketed in thick emerald cushion moss, occupying the centre-right of the frame as the resting surface. Tufts of haircap sedge poke through the moss in fine vertical strands. Rock edge visible at the base where bare grey stone meets the surrounding ground.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Moss-green 45-litre hiking pack resting upright on the flat-topped rock, anchored centre-right of the frame, body filling roughly half the frame height as the focal subject. Tack-sharp. Adjustable back-length yoke visible at the top, side compression straps cinched tight along the sides, nylon weave catching ambient light with subtle sheen. Faint scuffs and a small grass-stain near the base. Removable lid detached and set beside it on the moss to the left, same moss-green fabric.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus clump of bracken fronds slicing in from the lower-left foreground edge, deeply blurred. Feathery green fronds angled diagonally upward into the frame, soft green mass providing foreground framing.\"\n      }\n    ]\n  }\n}",
+    "seed": 2053155506,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5856025,
+    "sha256": "9e55b799d92c3f90f5371241cf1774a3fa783ec6c48b89a001604252edd39422"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:21:10Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Scafell 45 litre pack, in moss green. A 45 litre pack for hut trips and a night out with light kit. Weight 1,450 g. An adjustable back length and a lid that comes off. Colour: Slate, Moss, Ember. Materials: Nylon. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:6G2XQ_97S2O-cvjlfnky6A"
+}

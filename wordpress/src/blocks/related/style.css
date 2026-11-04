@@ -35,13 +35,32 @@
 	border-block-end: 1px solid color-mix(in srgb, currentcolor 15%, transparent);
 }
 
+/* The whole picture over itself blurred, as the search block shows it. */
+.viglet-dumont-related__image {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	border-radius: 4px;
+	background-size: cover;
+	background-position: center;
+}
+
+.viglet-dumont-related__image::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: inherit;
+	filter: blur(14px) brightness(0.7);
+	transform: scale(1.2);
+}
+
 .viglet-dumont-related__image img {
 	display: block;
+	position: relative;
 	width: 100%;
 	height: auto;
 	aspect-ratio: 16 / 9;
-	object-fit: cover;
-	border-radius: 4px;
+	object-fit: contain;
 }
 
 .viglet-dumont-related__title {

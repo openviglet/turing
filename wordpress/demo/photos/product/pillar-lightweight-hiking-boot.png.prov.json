@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5970283,
+    "path": "demo/photos/product/pillar-lightweight-hiking-boot.png",
+    "sha256": "5936e9d349efef2e7c4ca9d21a68e2600b2f240625cf3bead1b785031291abf5"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A casual iPhone snapshot of a single brown hiking boot resting upright on a mossy rock along a quiet mountain trail in the green fells, with misted ridges receding into the background on an overcast morning.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on a soft overcast morning, the air cool and damp after light rain. Rolling green fells recede into the distance as layered ridges softened by atmospheric haze, with a thin veil of low mist drifting between them. Overcast daylight with neutral cool-toned white balance, accurate greens and browns. A narrow dirt-and-stone trail of packed earth with scattered loose pebbles winds past into the mid-ground. The ground around the rock is damp earth with tufts of wet grass and a few small wildflowers near the base.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lichen-spotted grey rock anchored just left of center on the rule-of-thirds line, occupying roughly 40% of the frame height as the focal subject's base. Thick emerald moss creeps up its sides and into the cracks, with pale yellow-green lichen patches across the upper surface.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single brown lightweight hiking boot resting upright on top of the mossy rock, three-quarter angle showing the toe, side profile, and laced collar. Full-grain brown synthetic upper with subtle tonal stitching, padded collar, sturdy rubber outsole with deep lugged tread visible at the base, waxed laces loosely tied. Faint damp sheen across the upper from recent rain.\"\n      }\n    ]\n  }\n}",
+    "seed": 1830037056,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5970283,
+    "sha256": "5936e9d349efef2e7c4ca9d21a68e2600b2f240625cf3bead1b785031291abf5"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:19:46Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Pillar lightweight hiking boot, in brown. A light waterproof boot for well-made paths, comfortable from the first walk. Weight 980 g a pair (size 42). A waterproof membrane and a cushioned midsole. Colour: Slate, Moss, Brown. Materials: Synthetic, Gore-Tex. Care: Brush off mud, dry away from direct heat and reproof with a leather or fabric treatment. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:sYCZOAbpSvWbGWEHkjh-Vw"
+}

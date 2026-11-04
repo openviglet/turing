@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5754092,
+    "path": "demo/photos/guide/how-to-wash-and-reproof-a-waterproof-jacket.png",
+    "sha256": "9716b1c72a8601d433c53c2590c6dc42cb97ec7b87cfe52fd356d0f5fe8fea96"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor lifestyle photograph of a woman in her early thirties standing on a wet stone outcrop on a northern Lake District fell ridge after a passing shower, inspecting the damp hem of her olive-green shell jacket, with layered fells fading into haze behind her.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-morning fell ridge in the northern English Lake District under overcast daylight with neutral cool-toned white balance and soft diffused light. Distant fell ridges layer into atmospheric haze across the upper two-thirds of the frame, their silhouettes stepping back from slate grey to pale blue-grey. A thin veil of low cloud drifts horizontally across the highest ridge. A small tarn glints between two of the distant ridges as a bright silver speck. Wet granite boulders are scattered across the midground slope, slick and darkened from recent rain. The palette is muted moss greens, wet slate grey, charcoal, and faded olive.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lone sheep grazing on the far slope between the woman and the distant ridges, tiny against the scale of the hills, white wool reading as a small bright spot on the muted green-grey slope.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Woman in her early thirties standing on a wet stone outcrop slightly right of center, body angled three-quarters toward the camera, weight settled on her back foot with hips slightly canted. Head tilted down with a small focused half-smile, gaze directed at the damp hem of her jacket. Medium skin tone, hair pulled back. Wearing a faded olive-green technical shell jacket with sleeves pushed to mid-forearm, drawcord hood loose around the neck, lower hem darkened where rain has soaked in. Charcoal merino base layer visible at the collar and cuffs, dark hiking trousers, scuffed brown leather boots laced high. Right hand pulling the jacket hem away from her thigh to inspect the fabric; left hand brushing a bead of water off the chest panel.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Worn rucksack slung over her right shoulder, faded canvas and nylon panels scuffed from use. A coiled length of pale climbing rope is clipped to a side loop at hip height. A battered enamel mug with chipped blue rim is tucked into a side pocket.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus wet heather crowding the lower-left foreground at the edge of the frame, soft purple-brown tufts blurred by shallow depth of field. A small pop of yellow gorse flowers sits among the heather, the only saturated color note in the foreground.\"\n      }\n    ]\n  }\n}",
+    "seed": 321772628,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5754092,
+    "sha256": "9716b1c72a8601d433c53c2590c6dc42cb97ec7b87cfe52fd356d0f5fe8fea96"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:38:57Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to wash and reproof a waterproof jacket\". When rain soaks into the outer fabric instead of beading, the shell is wetting out: the jacket still keeps water off, but you will feel damp from your own sweat. Wash it at 30 \u00b0C with a technical cleaner, never fabric softener. Tumble dry on low for twenty minutes: heat reactivates the finish. If water... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:_1i52btaQoO4HL8QwWlDag"
+}

@@ -29,8 +29,10 @@ base    = "https://api.ideogram.ai"
 key_env = "IDEOGRAM_API_KEY"
 prices  = { "4.0" = 0.06, "4.0:TURBO" = 0.03 }
 
-# The owner asked for them (2026-10-31): 68 pictures at 0.06 is about USD 4.
+# The owner asked for them (2026-10-31): 68 pictures at 0.06 is about USD 4. Raised to 8.0
+# by the owner (2026-11-04) after retakes for the scenes (tents on flat ground, clothing as
+# a flat lay) spent the margin.
 [budget.ideogram]
-amount  = 6.0
+amount  = 8.0
 unit    = "USD"
 expires = "2026-12-31"

@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 7031163,
+    "path": "demo/photos/product/catbells-20-litre-kids-pack.png",
+    "sha256": "79b856f05d35a4704d91d7093dfdb2555f14b74f8cdcb9116a0f8c1bc352094b"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A casual iPhone snapshot of a sky-blue child's hiking pack resting on a moss-covered granite boulder beside a narrow footpath on a Cumbrian fellside, with rolling green slopes receding into pale mist under overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet Cumbrian fellside under overcast diffused daylight with a neutral cool white balance. Rolling green fell slopes recede into atmospheric haze, fading toward a soft-focus distant ridge line in pale grey-blue mist along the upper portion of the frame. Fine ambient grain sits evenly across the scene.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel footpath winding away diagonally from the midground toward the upper-right third of the frame, leading back into the fells. Pale tan and grey gravel mixed with dark earth, edges softened by grass and low vegetation.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Tufts of purple heather and yellow gorse scattered along the path edge in the midground, small clusters of violet blooms and spiky yellow flowers against surrounding green grass.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lichen-spotted granite boulder covered in thick emerald moss, anchored at frame center and filling the lower-middle region. Weathered cracks run across its surface, patches of pale grey-green lichen visible between moss tufts. Sharp focus on the immediate moss texture at the top of the boulder where the pack rests.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue 20-litre kids' hiking pack anchored center on the mossy boulder, dominating the middle of the frame as the focal subject. Polyester shell with subtle woven texture, padded shoulder straps, chest strap with a small silver whistle clipped to it. Reflective silver piping along strap edges and side seams catches a faint cool highlight. Zippered main compartment slightly open at the top, side mesh pocket visible.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"A few loose pebbles and a single fallen pine needle scattered near the base of the pack on the mossy rock surface, small grey stones and a thin brown needle catching the diffused light.\"\n      }\n    ]\n  }\n}",
+    "seed": 194786463,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 7031163,
+    "sha256": "79b856f05d35a4704d91d7093dfdb2555f14b74f8cdcb9116a0f8c1bc352094b"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:22:26Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Catbells 20 litre kids pack, in sky blue. A 20 litre pack sized for children from about seven, with a whistle on the chest strap. Weight 520 g. Reflective details and a name label inside. Colour: Sky, Ember, Moss. Materials: Polyester. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:4mKybWm4SwWywmFda4orow"
+}

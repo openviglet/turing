@@ -306,14 +306,14 @@
 	flex-direction: column;
 }
 
-.viglet-dumont-search--grid .viglet-dumont-search__image {
+.viglet-dumont-search--grid .viglet-dumont-search__frame {
 	aspect-ratio: 16 / 9;
 	flex-basis: auto;
 	width: 100%;
 }
 
 /* Block style "Minimal": the text alone. */
-.is-style-minimal .viglet-dumont-search__image,
+.is-style-minimal .viglet-dumont-search__frame,
 .is-style-minimal .viglet-dumont-search__crumb {
 	display: none;
 }
@@ -441,13 +441,39 @@
 	gap: 1rem;
 }
 
-.viglet-dumont-search__image {
+/* The whole picture, whatever its shape, over itself blurred where it
+   does not fill the frame: a crop cut the subject out of a portrait. */
+.viglet-dumont-search__frame {
 	aspect-ratio: 4 / 3;
+	background-position: center;
+	background-size: cover;
 	border-radius: 4px;
+	display: block;
 	flex: 0 0 7rem;
-	height: auto;
-	object-fit: cover;
+	overflow: hidden;
+	position: relative;
 	width: 7rem;
+}
+
+.viglet-dumont-search__frame::before {
+	background: inherit;
+	content: "";
+	filter: blur(14px) brightness(0.7);
+	inset: 0;
+	position: absolute;
+	transform: scale(1.2);
+}
+
+.viglet-dumont-search__frame[hidden] {
+	display: none;
+}
+
+.viglet-dumont-search__image {
+	display: block;
+	height: 100%;
+	object-fit: contain;
+	position: relative;
+	width: 100%;
 }
 
 .viglet-dumont-search__body {

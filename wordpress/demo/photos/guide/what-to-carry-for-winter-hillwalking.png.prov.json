@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 7154758,
+    "path": "demo/photos/guide/what-to-carry-for-winter-hillwalking.png",
+    "sha256": "b077792080508919e6bf71c83d602716b1a7d4b295f58f8b2941e4654b30d975"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a hillwalker mid-stride on a rocky ridge in the northern English fells, climbing up a snow-dusted slope with a distant lake valley opening out below, shot on a 35mm lens with shallow depth of field and fine cinematic grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A wind-swept winter ridge in the northern English fells under overcast late-afternoon daylight, cool-neutral white balance with no warm grading. The sky is a pale slate grey, low sun behind cloud casting soft directional light that catches snow patches on the upper slopes. Far fell tops layer into the distance in pale blue atmospheric haze. Below the ridge, a glassy lake valley opens out, its water catching the muted sky. Ochre rock and mossy green turf make up the path surface, dusted with cream snow patches on the higher ground. Fine cinematic grain sits evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant lake valley opening out below the ridge in the lower-left background, glassy water catching the pale sky, far fell tops layered behind it in pale blue haze, softened by atmospheric depth.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Second hillwalker further up the slope in the mid-distance, small in frame on the upper-left diagonal of the ridge, ascending away from camera. Dark jacket, gaiters, trekking poles visible at reduced scale, body softened by shallow depth of field.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Bare hawthorn scrub clinging to rocks beside the path on the right side of the frame, thin leafless branches in dark brown against ochre rock and patches of snow.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lead hillwalker mid-stride on a rocky path, occupying the right third of the frame as the focal subject, body filling roughly 70% of the frame height from head to boots. In three-quarter rear view angled away from camera, looking up the slope ahead. Dark technical shell jacket with hood pulled up over the head, charcoal trousers tucked into tall beige waxed-canvas gaiters strapped high above the ankle, sturdy brown leather winter boots fitted with metal crampons biting into the scree. Weight settled on the front foot, gloved hands gripping two trekking poles planted ahead. Loaded rucksack on the back with a bulky insulated down jacket in muted olive slung over one shoulder and cinched at the waist, deep navy waterproof gloves stuffed into the side pocket. Small unlit head torch clipped to the top strap of the rucksack. Skin not visible \u2014 face hidden by hood.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of snow-dusted bracken slicing into the lower-left foreground edge, rust-brown fronds tipped with cream snow, heavily blurred by shallow depth of field.\"\n      }\n    ]\n  }\n}",
+    "seed": 827462581,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 7154758,
+    "sha256": "b077792080508919e6bf71c83d602716b1a7d4b295f58f8b2941e4654b30d975"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:37:37Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"What to carry for winter hillwalking\". Winter on the British hills means short days, snow on the tops and wind that strips warmth. Carry more than you think you need. Wear the Kirkstone winter boot with crampons and the Borrowdale gaiters. Carry the Blencathra down jacket, the Helvellyn waterproof gloves and a spare pair, and the Wasdale head torch: the light... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:X4d2g678TeKfocCKWwIo0w"
+}

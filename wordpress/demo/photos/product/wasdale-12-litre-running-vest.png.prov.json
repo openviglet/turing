@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 7238379,
+    "path": "demo/photos/product/wasdale-12-litre-running-vest.png",
+    "sha256": "1e4055255c1a1558cb18f0c6ca578937d126d1a5ba40f941ce14573ef7ed7f10"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"An overhead iPhone flat lay photograph of a sky-blue 12-litre running vest arranged centered on a pale natural oak tabletop in soft even daylight, with shoulder straps spread symmetrically and hydration flasks tucked into the side pockets.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural oak tabletop filling the entire frame, fine horizontal wood grain with faint knots and subtle tonal variation across the surface. Soft diffused daylight from a north-facing window casts gentle even illumination across the whole frame with no harsh highlights. Neutral cool-toned white balance. A soft natural shadow pools gently under the edges of the vest where it lifts slightly off the surface.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue 12-litre running vest laid perfectly flat and centered on the table, front panel facing up, occupying roughly 75% of the frame as the unambiguous focal subject. Lightweight polyester mesh fabric with subtle weave texture and visible stitching along seams. Two shoulder straps spread symmetrically outward to the upper left and upper right. Sternum strap with a small plastic buckle crosses the upper chest horizontally. Two chest pockets with soft cylindrical flasks neatly tucked into the side pockets, flasks reading as rounded pale shapes against the blue mesh. Small phone slot pocket at the lower front. Rear hydration compartment slightly raised behind the main body with its zippered opening and teeth visible. Completely blank surfaces \u2014 no labels, tags, printed graphics, or logos.\"\n      }\n    ]\n  }\n}",
+    "seed": 1407139699,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 7238379,
+    "sha256": "1e4055255c1a1558cb18f0c6ca578937d126d1a5ba40f941ce14573ef7ed7f10"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:23:56Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Wasdale 12 litre running vest, in sky blue. A 12 litre running vest that holds a waterproof and two soft flasks without bouncing. Weight 310 g. Front pockets for flasks and a phone. Colour: Ember, Sky, Black. Materials: Polyester. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:oncwHaH9RvSXPWIUa8kyoQ"
+}

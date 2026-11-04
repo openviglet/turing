@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6627416,
+    "path": "demo/photos/guide/travelling-light-with-outdoor-kit.png",
+    "sha256": "4ff6575a5193473c6d1f919711202b976bb4fe78da6b86908104240f6f6eec4c"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a young woman seated on a moss-covered rock on a northern English fell ridge, holding a small enamel mug while looking down at it, with a slate-grey travel pack open beside her and a deep blue-green lake falling away into distant misty fells.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-morning scene on a grassy fell ridge above a northern English lake after an overnight rain. Steep green fell slopes fall away behind the figure to a deep blue-green lake in the middle distance, with distant fells layered in receding atmospheric blues along the horizon and faint mist clinging to the far ridges. Natural overcast daylight with neutral cool-toned white balance, soft diffused light wrapping the scene evenly. Palette of mossy greens, slate grey, heather wool tones, and deep lake blue. Fine Kodak Portra grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lone sheep grazing on the green slope to the right of the frame, small in scale, anchoring the depth of the scene. White fleece, head lowered toward the grass.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Two tiny figures of hikers winding along a distant path on the opposite shore of the lake, barely visible as small dark specks against the far slope, providing scale to the distance.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young woman seated on a flat moss-covered rock in the midground, body angled three-quarters away from camera toward the view, occupying the right third of the composition. Weight settled on her right hip, left leg bent up, right leg extended down toward the lake below. One hand resting on her knee, the other holding a small enamel mug at chest height. Head tilted slightly down looking into the mug with a small private half-smile. Medium skin tone, shoulder-length brown hair tucked behind one ear, wearing a heather-grey wool jumper and dark trousers. Her skin has a natural, detailed texture.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Compact slate-grey travel pack beside the woman on the rock, just left of her, unzipped and folded open like a suitcase. Neatly rolled clothing visible inside \u2014 a charcoal merino base layer on top, a heather-grey wool jumper beneath, a folded silk liner tucked along one edge.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Soft-focus foreground tuft of wet bracken slicing in from the lower-left frame edge, deep green fronds glistening from overnight rain, gently out of focus.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single yellow buttercup nestled among the wet bracken at the lower-left frame edge, small saturated yellow bloom providing the only bright accent in the palette, slightly out of focus.\"\n      }\n    ]\n  }\n}",
+    "seed": 754685441,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6627416,
+    "sha256": "4ff6575a5193473c6d1f919711202b976bb4fe78da6b86908104240f6f6eec4c"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:38:38Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Travelling light with outdoor kit\". Outdoor kit makes good travel kit: it is light, dries fast and does not crease. The Borrowdale travel pack fits cabin luggage limits and opens like a suitcase. The Coniston merino base layer and the Grisedale wool jumper stay fresh for days. A Kirkstone silk liner keeps hostel bedding at a distance. Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:_Bmd5ViUS8qRzaEuZXVf-g"
+}
