@@ -78,4 +78,14 @@ describe("check-unreleased", () => {
     match(out.stdout, /@x\/sdk\s+0\s/);
     match(out.stdout, /Nothing waits for a release/);
   });
+
+  it("prints one package's count alone with --count, for the publish workflow", () => {
+    const out = spawnSync(process.execPath,
+      [SCRIPT, "--count", "sdk", "--published", "@x/sdk=2026-02-01T00:00:00Z"], { cwd: root, encoding: "utf8" });
+    strictEqual(out.status, 0, out.stderr);
+    strictEqual(out.stdout.trim(), "2");
+
+    const missing = spawnSync(process.execPath, [SCRIPT, "--count", "nowhere"], { cwd: root, encoding: "utf8" });
+    strictEqual(missing.status, 2);
+  });
 });

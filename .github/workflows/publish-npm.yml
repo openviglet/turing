@@ -1,0 +1,129 @@
+name: Publish npm packages
+
+# T1142 — the one workflow that publishes the @viglet npm packages. Each package's
+# npm trusted publisher names this file, so there is no workflow per package to
+# keep in sync with npm, and the packages that depend on each other ship in one
+# run, in dependency order: the vanilla SDK and the UI library before the React SDK
+# that pins them.
+#
+# Per package: bump to the next patch npm has not seen (scripts/bump-patch.mjs),
+# move its pending changesets into its CHANGELOG.md (scripts/consume-changesets.mjs),
+# build, then the publish gates (bundle-size budget, tests, tarball contents), then
+# publish. `all` publishes only the packages whose source changed since the version
+# npm serves (scripts/check-unreleased.mjs). Every package that reached npm has its
+# bump, changelog and consumed changesets committed back, even when a later one
+# fails. CI is manual-dispatch on purpose.
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Package to publish; all = every package with unreleased source"
+        type: choice
+        default: all
+        options:
+          - all
+          - sdk
+          - react-ui
+          - react-sdk
+          - cli
+          - flow-dsl
+
+permissions:
+  contents: write
+  # npm trusted publishing (OIDC): without this GitHub mints no ID token, pnpm
+  # skips OIDC and the PUT falls back to an unauthenticated 404.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # check-unreleased.mjs counts commits since the last publish.
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 10.33.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26.3.1
+          registry-url: "https://registry.npmjs.org"
+          scope: "@viglet"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install workspace deps
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Choose the packages
+        id: plan
+        working-directory: frontend
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          # Dependency order: react-sdk pins sdk and react-ui.
+          ORDER="sdk react-ui react-sdk cli flow-dsl"
+          SELECTED=""
+          if [ "$PACKAGE" = "all" ]; then
+            for p in $ORDER; do
+              count=$(node scripts/check-unreleased.mjs --count "$p")
+              echo "$p: $count unreleased commit(s)"
+              if [ "$count" != "0" ]; then SELECTED="$SELECTED $p"; fi
+            done
+          else
+            SELECTED="$PACKAGE"
+          fi
+          echo "packages=$SELECTED" >> "$GITHUB_OUTPUT"
+          echo "### Publishing:${SELECTED:- nothing}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Bump, gate and publish
+        if: steps.plan.outputs.packages != ''
+        working-directory: frontend
+        env:
+          PACKAGES: ${{ steps.plan.outputs.packages }}
+        run: |
+          set -euo pipefail
+          for p in $PACKAGES; do
+            dir="packages/$p"
+            name=$(node -p "require('./$dir/package.json').name")
+            echo "::group::$name"
+            node scripts/bump-patch.mjs "$dir"
+            node scripts/consume-changesets.mjs "$dir" | tee -a "$GITHUB_STEP_SUMMARY"
+            pnpm --filter "$name..." run build
+            # The publish gates: bundle-size budget, tests, and (T923) the tarball
+            # holds every declared entry point and no test, story or map file.
+            pnpm --filter "$name" run size
+            pnpm --filter "$name" run --if-present test
+            pnpm --filter "$name" run contents
+            # T914 — `pnpm publish`, never `npm publish`: npm does not rewrite pnpm's
+            # `workspace:` protocol. `--no-git-checks`: actions/checkout leaves a
+            # detached HEAD and the bump leaves the tree dirty. Authenticates through
+            # the npm trusted publisher (OIDC), not a token.
+            (cd "$dir" && pnpm publish --access public --no-git-checks)
+            # Staged only once npm holds it, so a package that failed never commits.
+            git add "$dir/package.json" .changeset
+            if [ -f "$dir/CHANGELOG.md" ]; then git add "$dir/CHANGELOG.md"; fi
+            echo "- $name $(node -p "require('./$dir/package.json').version")" >> "$GITHUB_STEP_SUMMARY"
+            echo "::endgroup::"
+          done
+
+      - name: Commit what was published
+        if: always() && steps.plan.outputs.packages != ''
+        run: |
+          if git diff --cached --quiet; then
+            echo "Nothing was published; nothing to commit"
+          else
+            git commit -m "chore: publish npm packages [skip ci]"
+            git push
+          fi

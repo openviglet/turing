@@ -19,20 +19,15 @@ published).
    and write a one-line summary. This writes a markdown file into `.changeset/`
    — commit it with your PR.
 
-2. **Publish the SDKs.** `@viglet/turing-sdk` and `@viglet/turing-react-sdk`
-   are released by dispatching `publish-sdk.yml` and `publish-js-sdk.yml`
-   (T1142). Each sets the next patch npm has not seen
+2. **Publish.** Dispatch `.github/workflows/publish-npm.yml` (T1142), with one
+   package or `all`, which publishes every package whose source changed since the
+   version npm serves, in dependency order (`sdk` and `react-ui` before
+   `react-sdk`). For each package it sets the next patch npm has not seen
    (`scripts/bump-patch.mjs`), then `scripts/consume-changesets.mjs` moves that
    package's pending changesets into its `CHANGELOG.md` under the new version and
    removes them, and the bump, the changelog and the consumed changesets are
-   committed back together. A changeset that names both SDKs keeps the other
-   package's line until that package is published. The bump level in the
-   changeset is not read: these packages follow the platform's
-   `year.release.patch` version.
+   committed back together. A changeset that names several packages keeps the
+   others' lines until they are published. The bump level in the changeset is not
+   read: these packages follow the platform's `year.release.patch` version.
 
-3. **Publish react-ui.** `pnpm version-packages` consumes the pending changesets,
-   bumps each package's `version` by its bump level and appends to its
-   `CHANGELOG.md`; `pnpm release` publishes. In CI this is the **Publish
-   react-ui** workflow (`.github/workflows/publish-react-ui.yml`). Run
-   `version-packages` only for react-ui's changesets: it consumes the SDKs'
-   changesets too, which their own workflows would otherwise write.
+   Every package's npm trusted publisher names `publish-npm.yml`.

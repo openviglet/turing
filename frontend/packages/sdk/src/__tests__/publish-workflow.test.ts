@@ -69,13 +69,8 @@ describe("npm publish workflows", () => {
     const publishing = files.filter((name) =>
       runCommands(read(`.github/workflows/${name}`)).some((line) => /\bpnpm\s+publish\b/.test(line)),
     );
-    // One per publishable package: react-sdk, react-ui, sdk, cli, flow-dsl.
-    expect(publishing).toEqual([
-      "publish-cli.yml",
-      "publish-flow-dsl.yml",
-      "publish-js-sdk.yml",
-      "publish-react-ui.yml",
-      "publish-sdk.yml",
-    ]);
+    // T1142 — one workflow publishes every package (sdk, react-ui, react-sdk, cli,
+    // flow-dsl), so each package's npm trusted publisher names the same file.
+    expect(publishing).toEqual(["publish-npm.yml"]);
   });
 });

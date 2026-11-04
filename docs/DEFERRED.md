@@ -7,7 +7,7 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (react-sdk's npm trusted publisher must name openviglet/turing.): Dispatch publish-js-sdk.yml by gh. → §CLIII.2
+- ⏸ **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — set aside (Each npm trusted publisher must name publish-npm.yml.): Dispatch publish-npm.yml with react-sdk by gh. → §CLIII.2
 
 ## Block CJ — Releases ship from the repository the README names
 

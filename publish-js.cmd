@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 REM ============================================================================
 REM publish-js.cmd — Build and publish the Viglet Turing ES JavaScript packages
 REM to npm DIRECTLY from your machine, without the GitHub Actions workflows
-REM (.github/workflows/publish-js-sdk.yml + publish-react-ui.yml).
+REM (.github/workflows/publish-npm.yml, which CI dispatches).
 REM
 REM Packages (all under frontend/packages/, scope @viglet):
 REM   js-sdk     -> @viglet/turing-sdk        (vanilla JS, zero-dep)

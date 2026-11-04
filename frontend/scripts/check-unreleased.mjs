@@ -92,6 +92,23 @@ function commitsSince(dir, since) {
 }
 
 const given = overrides(process.argv.slice(2));
+
+// T1142 — `--count <dir>` prints that package's count alone, for publish-npm.yml
+// to decide whether it has anything to release: a number, or `unpublished`.
+const countAt = process.argv.indexOf("--count");
+if (countAt >= 0) {
+  const dir = process.argv[countAt + 1];
+  const p = publishable().find((candidate) => candidate.dir === dir);
+  if (!p) {
+    console.error(`check-unreleased: no publishable package in ${PACKAGES}/${dir ?? ""}`);
+    process.exit(2);
+  }
+  const at = given.get(p.name);
+  const latest = at ? { at } : npmLatest(p.name);
+  console.log(latest?.at ? String(commitsSince(p.dir, latest.at)) : "unpublished");
+  process.exit(0);
+}
+
 const rows = publishable().map((p) => {
   const at = given.get(p.name);
   const latest = at ? { version: "(given)", at } : npmLatest(p.name);

@@ -37,9 +37,7 @@
     "lint": "turbo run lint",
     "clean": "rimraf \"**/node_modules\" \"**/dist\" \"**/build\"",
     "size:react-ui": "pnpm --filter @viglet/turing-react-ui run build && pnpm --filter @viglet/turing-react-ui run size",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo run build --filter=@viglet/turing-react-ui --filter=@viglet/turing-react-sdk --filter=@viglet/turing-sdk --filter=@viglet/turing-cli && changeset publish"
+    "changeset": "changeset"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
