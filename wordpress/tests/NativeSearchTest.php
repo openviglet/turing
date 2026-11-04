@@ -125,6 +125,53 @@ final class NativeSearchTest extends PluginTestCase {
 		);
 	}
 
+	/**
+	 * An index-only site sends its searches to the results page another site shows (D304):
+	 * the first branch of search_page(), so the overlay, the box-only block and the forms move
+	 * together, and a theme's `?s=` page on the other site keeps its own parameter.
+	 */
+	public function test_a_results_page_on_another_site_is_where_every_search_goes(): void {
+		Functions\when( 'esc_url_raw' )->returnArg();
+		Functions\expect( 'get_posts' )->never();
+
+		$remote = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) );
+		$this->assertSame(
+			array(
+				'searchPage' => 'https://www.example.org/busca/',
+				'queryParam' => 'q',
+			),
+			$remote->search_page()
+		);
+
+		$theme = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/?s=' ) ) );
+		$this->assertSame( 's', $theme->search_page()['queryParam'] );
+	}
+
+	/** Only an absolute https page on another site is kept (D304). */
+	public function test_a_results_page_url_must_be_https_and_not_this_site(): void {
+		Functions\when( 'esc_url_raw' )->returnArg();
+
+		$this->assertSame( 'https://www.example.org/busca/', Viglet_Dumont_Native_Search::sanitize_search_url( ' https://www.example.org/busca/ ' ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( 'http://www.example.org/busca/' ), 'not https' );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( '/busca/' ), 'not absolute' );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( 'https://site.example.org/?s=' ), 'this site' );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( '' ) );
+
+		// A local stack served over http may point at another http site of the same stack.
+		Functions\when( 'home_url' )->justReturn( 'http://localhost:8081/second/' );
+		$this->assertSame( 'http://localhost:8081/busca/', Viglet_Dumont_Native_Search::sanitize_search_url( 'http://localhost:8081/busca/' ) );
+	}
+
+	public function test_the_public_config_names_the_results_page_on_another_site(): void {
+		Functions\when( 'esc_url_raw' )->returnArg();
+		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $fallback );
+
+		$config = ( new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) ) )->public_config();
+		$this->assertSame( 'https://www.example.org/busca/', $config['searchUrl'] );
+
+		$this->assertArrayNotHasKey( 'searchUrl', ( new Viglet_Dumont_Native_Search( $this->settings() ) )->public_config() );
+	}
+
 	public function test_the_public_config_carries_no_key_and_lists_the_facets(): void {
 		$options = array(
 			'viglet_dumont_mapping' => array(

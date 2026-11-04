@@ -393,6 +393,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 							?>
 							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme\'s search page answers.', 'viglet-turing-search' ); ?></p>
 						</div>
+
+						<div class="viglet-dumont-field">
+							<label for="search_url"><?php esc_html_e( 'Results page on another site', 'viglet-turing-search' ); ?></label>
+							<input type="url" id="search_url"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[search_url]"
+									value="<?php echo esc_attr( $settings['search_url'] ); ?>"
+									class="regular-text" <?php echo esc_attr( $viglet_dumont_locked( 'search_url' ) ); ?>
+									placeholder="https://www.example.org/search/" />
+							<p class="description"><?php esc_html_e( 'For a site that indexes into a search another site shows: the instant search, a search block without results and the theme\'s search box all send the query there. This site\'s own search results are then no longer replaced. Empty keeps searches here.', 'viglet-turing-search' ); ?></p>
+							<?php $viglet_dumont_env_note( 'search_url' ); ?>
+						</div>
 					</div>
 				</div>
 

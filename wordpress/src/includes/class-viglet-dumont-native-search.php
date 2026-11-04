@@ -252,12 +252,25 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
-	 * Where the overlay sends a query: the chosen page, else the first published page holding
-	 * the Turing search block (it reads `q`), else the theme's search page (`s`).
+	 * Where a query typed on this site goes: the results page on another site when one is set
+	 * (D304), else the chosen page, else the first published page holding the Turing search
+	 * block (it reads `q`), else the theme's search page (`s`). The overlay's Enter, the
+	 * box-only search block and the theme's search forms all read it.
 	 *
 	 * @return array{searchPage: string, queryParam: string}
 	 */
 	public function search_page(): array {
+		$remote = $this->remote_search_url();
+		if ( '' !== $remote ) {
+			parse_str( (string) ( wp_parse_url( $remote )['query'] ?? '' ), $query );
+
+			return array(
+				'searchPage' => $remote,
+				// A theme's own search page (`?s=`) keeps its parameter; anything else is the block's.
+				'queryParam' => array_key_exists( 's', $query ) ? 's' : 'q',
+			);
+		}
+
 		$page_id = (int) ( $this->settings['search_page'] ?? 0 );
 		if ( $page_id <= 0 || 'publish' !== get_post_status( $page_id ) ) {
 			$found   = get_posts(
@@ -285,6 +298,70 @@ class Viglet_Dumont_Native_Search {
 				'searchPage' => home_url( '/' ),
 				'queryParam' => 's',
 			);
+	}
+
+	/**
+	 * The results page on another site this site sends its searches to (D304), or '' when
+	 * they stay here: an index-only site's box lands on the shared search it indexes into.
+	 */
+	public function remote_search_url(): string {
+		return self::sanitize_search_url( (string) ( $this->settings['search_url'] ?? '' ) );
+	}
+
+	/**
+	 * A results page on another site, as the setting keeps it: an absolute https URL (http
+	 * only while this site itself is served over http, a local stack), and never this site's
+	 * own home, whose search the other settings already reach. Anything else is ''.
+	 *
+	 * @param string $url The URL as typed, or as a constant set it.
+	 */
+	public static function sanitize_search_url( string $url ): string {
+		$url = trim( $url );
+		if ( '' === $url ) {
+			return '';
+		}
+
+		$parts   = wp_parse_url( $url );
+		$scheme  = strtolower( (string) ( $parts['scheme'] ?? '' ) );
+		$local   = strtolower( (string) ( wp_parse_url( home_url( '/' ) )['scheme'] ?? '' ) );
+		$allowed = 'http' === $local ? array( 'https', 'http' ) : array( 'https' );
+		if ( empty( $parts['host'] ) || ! in_array( $scheme, $allowed, true ) ) {
+			return '';
+		}
+		$base = untrailingslashit( (string) strtok( $url, '?#' ) );
+		if ( untrailingslashit( home_url( '/' ) ) === $base ) {
+			return '';
+		}
+
+		return esc_url_raw( $url, $allowed );
+	}
+
+	/**
+	 * Point a theme's search form at the results page on another site (D304): its action
+	 * becomes that page and its field the parameter the page reads, so Enter lands there with
+	 * or without the overlay. Read by `render_block_core/search` and `get_search_form`.
+	 *
+	 * @param string $html The form's markup.
+	 * @return string The markup, sent to the other site when one is set.
+	 */
+	public function point_search_form( string $html ): string {
+		if ( '' === $this->remote_search_url() ) {
+			return $html;
+		}
+		$target = $this->search_page();
+		$tags   = new WP_HTML_Tag_Processor( $html );
+		if ( ! $tags->next_tag( array( 'tag_name' => 'form' ) ) ) {
+			return $html;
+		}
+		$tags->set_attribute( 'action', $target['searchPage'] );
+		$tags->set_attribute( 'method', 'get' );
+		while ( $tags->next_tag( array( 'tag_name' => 'input' ) ) ) {
+			if ( 's' === $tags->get_attribute( 'name' ) ) {
+				$tags->set_attribute( 'name', $target['queryParam'] );
+			}
+		}
+
+		return $tags->get_updated_html();
 	}
 
 	/**
@@ -740,7 +817,7 @@ class Viglet_Dumont_Native_Search {
 			}//end foreach
 		}//end foreach
 
-		$config    = array(
+		$config = array(
 			'url'     => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),
 			'site'    => (string) $this->settings['site_name'],
 			'locale'  => (string) $this->settings['locale'],
@@ -749,6 +826,11 @@ class Viglet_Dumont_Native_Search {
 			'home'    => home_url( '/' ),
 			'facets'  => array_values( $facets ),
 		);
+		// The results page on another site (D304), so a theme's own field sends its query there.
+		$remote = $this->remote_search_url();
+		if ( '' !== $remote ) {
+			$config['searchUrl'] = $remote;
+		}
 		$analytics = $this->analytics();
 		if ( null !== $analytics ) {
 			$config['analytics'] = $analytics;

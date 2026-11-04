@@ -30,6 +30,7 @@ class Viglet_Dumont_Settings {
 		'locale'     => 'VIGLET_DUMONT_TURING_LOCALE',
 		'site_key'   => 'VIGLET_DUMONT_SITE_KEY',
 		'public_url' => 'VIGLET_DUMONT_PUBLIC_URL',
+		'search_url' => 'VIGLET_DUMONT_SEARCH_URL',
 	);
 
 	/** The settings a fresh install starts from. */
@@ -63,6 +64,8 @@ class Viglet_Dumont_Settings {
 		'instant_overlay'     => 1,
 		// The full search page the overlay sends Enter to; 0 finds the page holding the block.
 		'search_page'         => 0,
+		// A results page on another site every search here goes to (D304); empty keeps them here.
+		'search_url'          => '',
 		// Opt-in: which result a visitor opened, reported to Turing's click-through rates.
 		'track_clicks'        => 0,
 		// Opt-in: the search events, sent to the site's own Google Analytics (gtag or GTM).

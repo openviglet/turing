@@ -184,11 +184,22 @@ function viglet_dumont_init(): void {
 	// The Site assistant in a corner of every page, when the site asks for it (D175).
 	( new Viglet_Dumont_Assistant( $settings ) )->register();
 
+	// Searches sent to a results page on another site (D304): the theme's search forms go
+	// there, and this site's own `?s=` page, no longer the results page, is left alone.
+	$viglet_dumont_remote = new Viglet_Dumont_Native_Search( $settings );
+	if ( '' !== $viglet_dumont_remote->remote_search_url() ) {
+		add_filter( 'render_block_core/search', array( $viglet_dumont_remote, 'point_search_form' ), 20 );
+		add_filter( 'get_search_form', array( $viglet_dumont_remote, 'point_search_form' ), 20 );
+	}
+
 	if ( $settings['search_enabled'] ) {
-		if ( 'template' === $settings['search_mode'] ) {
-			add_action( 'template_redirect', 'viglet_dumont_search_redirect', 1 );
-		} else {
-			( new Viglet_Dumont_Native_Search( $settings ) )->register();
+		// With a results page on another site there is no local search to replace.
+		if ( '' === $viglet_dumont_remote->remote_search_url() ) {
+			if ( 'template' === $settings['search_mode'] ) {
+				add_action( 'template_redirect', 'viglet_dumont_search_redirect', 1 );
+			} else {
+				( new Viglet_Dumont_Native_Search( $settings ) )->register();
+			}
 		}
 		if ( $settings['instant_overlay'] ) {
 			( new Viglet_Dumont_Native_Search( $settings ) )->register_overlay();
