@@ -2337,19 +2337,6 @@ with the LLM calls capped as the playground's already are. If a live console is 
 costly to keep safe, a short recorded walk-through on the site is the fallback; the
 choice is the owner's.
 
-### CLXI.10 The owner grants the renamed repository write access to the image (T1204)
-
-**Where it showed.** The old openviglet/turing held seven repository-level Actions
-secrets; turing-ce held none. Six of them also exist as openviglet organization secrets
-with visibility ALL, so the renamed repository receives them, and the owner refreshed
-the org GH_PKG_TOKEN on 2026-11-02. The seventh, SONAR_TOKEN, left with Sonar itself
-(CLXI.11). What remains is the ghcr.io/openviglet/turing package, which grants Actions
-write access per repository, and that grant names the old repository object.
-
-**Design.** The owner adds openviglet/turing under Manage Actions access with the Write
-role in the package settings of ghcr.io/openviglet/turing. A green `publish.yml`
-dispatch on 2026.3 closes it.
-
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ### CLXII.4 Accented multi-word queries match like their folded spelling (T1194)
@@ -2440,9 +2427,13 @@ text, removing the words of the filters it applies and the whole phrase its own 
 reader matched, instead of trusting `q`. It works only for the readings the client can
 repeat in code.
 
-**What Turing should do.** Range filters report every word they consumed in
-`sourceWords`, and `q` drops them, covered by a test per bound form and per language the
-lexicon ships.
+**What Turing should do.** One span step shared by `rangeFilter` and `dateRangeFilter`
+widens the matched bound to its adjacent currency and preceding bound phrase
+(per-language list), matches the amount as the text formats it (`2.200`, `1,200`), and
+reports that span in `sourceWords`. Year-dated ranges share the gap ("posts from 2024"
+leaves "posts from"). `leftover` removes each span at its own position, not every
+occurrence. Tests: each bound form in en and pt, currency before and after, a formatted
+amount, a year-dated range, an unspelled amount, a repeated amount.
 
 ### CLXII.10 Copilot citations carry the document type (T1212)
 
@@ -2465,8 +2456,13 @@ without asking another system.
 and treats whatever the shop does not return as a non-product. That works only where the
 client has a shop to ask; any other client of the copilot has no way to tell.
 
-**What Turing should do.** Add `type` to `TurCatalogCitation` (and to the JS and Java
-SDK types), filled from the document's indexed type, covered by the copilot API test.
+**What Turing should do.** Add a nullable `type` to `TurCatalogCitation`, filled from
+the source's `TurSNFieldName.TYPE` in `projectWith`, and carried by the three sites that
+rebuild a citation (renumbering, the pinned document, `withPinned`) and by
+`TurAnswerCitation.fromCatalogCitation`, so gateway and streaming answers carry it too.
+Add it to the vanilla SDK and the React SDK core types; the Java SDK has no copilot
+type. The field is additive. Tests: the type is filled; a renumbered or pinned citation
+keeps it; a document with no type gives null.
 
 ## CLXIII Release pipeline reliability
 
