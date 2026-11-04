@@ -46,6 +46,8 @@ import com.viglet.turing.genai.rag.TurRagSource;
  *                           per-sentence span was attached)
  * @param answerEnd          T154 enrichment: char offset where the cited claim ends
  * @param citedText          T154 enrichment: the exact grounded passage, when known
+ * @param type               T1212: the cited document's indexed {@code type} on the
+ *                           catalog path ({@code null} when unknown)
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -61,7 +63,16 @@ public record TurAnswerCitation(
         Map<String, Object> rankingExplanation,
         Integer answerStart,
         Integer answerEnd,
-        String citedText) {
+        String citedText,
+        String type) {
+
+    /** A citation whose document type is not known. */
+    public TurAnswerCitation(int rank, String sourceId, String title, String url, Double score,
+            Integer chunkIndex, boolean keywordOnly, Map<String, Object> rankingExplanation,
+            Integer answerStart, Integer answerEnd, String citedText) {
+        this(rank, sourceId, title, url, score, chunkIndex, keywordOnly, rankingExplanation, answerStart,
+                answerEnd, citedText, null);
+    }
 
     /**
      * Normalizes an SN/RAG {@link TurRagSource} onto the projection. A source
@@ -81,7 +92,7 @@ public record TurAnswerCitation(
     public TurAnswerCitation withRank(int footnote) {
         return rank == footnote ? this
                 : new TurAnswerCitation(footnote, sourceId, title, url, score, chunkIndex,
-                        keywordOnly, rankingExplanation, answerStart, answerEnd, citedText);
+                        keywordOnly, rankingExplanation, answerStart, answerEnd, citedText, type);
     }
 
     /** Normalizes a catalog {@link TurCatalogCitation} onto the projection. */
@@ -89,7 +100,7 @@ public record TurAnswerCitation(
         return new TurAnswerCitation(
                 citation.rank(), citation.id(), citation.title(), citation.url(),
                 citation.score(), null, false, citation.rankingExplanation(),
-                null, null, null);
+                null, null, null, citation.type());
     }
 
     /**
@@ -103,6 +114,6 @@ public record TurAnswerCitation(
         }
         return new TurAnswerCitation(rank, sourceId, title, url, score, chunkIndex,
                 keywordOnly, rankingExplanation,
-                span.answerStart(), span.answerEnd(), span.citedText());
+                span.answerStart(), span.answerEnd(), span.citedText(), type);
     }
 }

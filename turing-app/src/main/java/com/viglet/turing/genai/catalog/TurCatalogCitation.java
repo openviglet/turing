@@ -29,6 +29,10 @@ import java.util.Map;
  * ranking mode, so the ranking stays auditable; it is {@code null} on the legacy
  * lexical path.
  *
+ * <p>T1212 — {@code type} is the cited document's indexed {@code type} field, so a
+ * client can render a product as a product and a guide as a link without asking
+ * another system; {@code null} when the document has none.
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
@@ -38,5 +42,18 @@ public record TurCatalogCitation(
         String title,
         String url,
         Double score,
-        Map<String, Object> rankingExplanation) {
+        Map<String, Object> rankingExplanation,
+        String type) {
+
+    /** A citation whose document type is not known. */
+    public TurCatalogCitation(int rank, String id, String title, String url, Double score,
+            Map<String, Object> rankingExplanation) {
+        this(rank, id, title, url, score, rankingExplanation, null);
+    }
+
+    /** @return a copy carrying {@code footnote} as its rank (identity when equal). */
+    public TurCatalogCitation withRank(int footnote) {
+        return rank == footnote ? this
+                : new TurCatalogCitation(footnote, id, title, url, score, rankingExplanation, type);
+    }
 }

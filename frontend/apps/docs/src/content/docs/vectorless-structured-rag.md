@@ -162,6 +162,9 @@ Locale-specific labels configured on the site always win over both of the above.
 
 The response is a grounded answer plus a `citations[]` array: each citation is a
 matched row (id, title, optional link, score) the answer is allowed to reference.
+Each citation also carries the row's indexed `type` (`null` when the document has
+none), so a client can render a cited product with its price and cart and a cited
+guide as a link, without asking another system which is which.
 Multi-turn is supported: pass the running conversation and the latest user turn
 drives retrieval.
 

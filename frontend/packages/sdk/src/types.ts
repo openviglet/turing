@@ -773,6 +773,8 @@ export interface TurAnswerCitation {
   answerEnd?: number | null;
   /** T154 enrichment — the exact grounded passage, when known. */
   citedText?: string | null;
+  /** T1212 — the cited document's indexed `type` on the catalog path, when known. */
+  type?: string | null;
 }
 
 /**

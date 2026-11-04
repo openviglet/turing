@@ -2078,6 +2078,8 @@ export interface TurCatalogCitation {
   readonly url?: string | null;
   readonly score?: number | null;
   readonly rankingExplanation?: Record<string, unknown> | null;
+  /** T1212 — the document's indexed `type` (a product, a guide), `null` when it has none. */
+  readonly type?: string | null;
 }
 
 /** T1178 — the request of {@link postCopilot}; only `messages` is required. */

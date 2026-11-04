@@ -169,6 +169,7 @@ class TurCatalogCopilotServiceTest {
         Map<String, Object> pinnedDoc = new LinkedHashMap<>();
         pinnedDoc.put("title", "Pinned Jacket");
         pinnedDoc.put("url", "https://example.com/jacket");
+        pinnedDoc.put("type", "product");
         TurDslSearchResponse pinnedResponse = new TurDslSearchResponse(1L, false,
                 new TurDslSearchResponse.Hits(new TurDslSearchResponse.Total(1, "eq"), 1.0,
                         List.of(new TurDslSearchResponse.Hit("p9", 1.0, pinnedDoc, null))), null);
@@ -183,6 +184,10 @@ class TurCatalogCopilotServiceTest {
                 List.of(new ChatTurn("user", "will this keep me dry?")), "p9");
 
         assertThat(result.citations()).extracting(TurCatalogCitation::id).contains("p9", "d2");
+        // T1212 — a renumbered citation and the pinned one both keep their document type
+        assertThat(result.citations()).extracting(TurCatalogCitation::id, TurCatalogCitation::type)
+                .contains(org.assertj.core.groups.Tuple.tuple("p9", "product"),
+                        org.assertj.core.groups.Tuple.tuple("d2", "guide"));
         ArgumentCaptor<Prompt> prompt = ArgumentCaptor.forClass(Prompt.class);
         verify(chatModel).call(prompt.capture());
         String system = prompt.getValue().getInstructions().getFirst().getText();
@@ -216,6 +221,17 @@ class TurCatalogCopilotServiceTest {
 
         assertThat(result.error()).isNull();
         assertThat(result.citations()).extracting(TurCatalogCitation::id).containsExactly("d1");
+        // T1212 — a document with no type cites a null type
+        assertThat(result.citations().getFirst().type()).isNull();
+    }
+
+    @Test
+    void documentTypeIsTheFirstValueOrNull() {
+        assertThat(TurCatalogCopilotService.documentType("product")).isEqualTo("product");
+        assertThat(TurCatalogCopilotService.documentType(List.of("guide", "post"))).isEqualTo("guide");
+        assertThat(TurCatalogCopilotService.documentType(null)).isNull();
+        assertThat(TurCatalogCopilotService.documentType(" ")).isNull();
+        assertThat(TurCatalogCopilotService.documentType(List.of())).isNull();
     }
 
     @Test
@@ -612,6 +628,7 @@ class TurCatalogCopilotServiceTest {
         Map<String, Object> doc2 = new LinkedHashMap<>();
         doc2.put("title", "Analytics Specialization");
         doc2.put("url", "https://example.edu/analytics");
+        doc2.put("type", List.of("guide"));
         doc2.put("modality", "online");
         doc2.put("price", "15000");
 

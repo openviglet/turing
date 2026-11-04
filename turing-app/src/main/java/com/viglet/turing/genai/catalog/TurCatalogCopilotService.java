@@ -269,9 +269,7 @@ public class TurCatalogCopilotService {
         // it verbatim; the catalog path supplies only how to read/rewrite a rank.
         return TurAnswerCitationNumberer.renumberByMarkers(answer, all,
                 TurCatalogCitation::rank,
-                (c, footnote) -> c.rank() == footnote ? c
-                        : new TurCatalogCitation(footnote, c.id(), c.title(), c.url(),
-                                c.score(), c.rankingExplanation()),
+                TurCatalogCitation::withRank,
                 MAX_RETURNED_CITATIONS, MAX_RESULTS);
     }
 
@@ -357,8 +355,7 @@ public class TurCatalogCopilotService {
                 continue;
             }
             int rank = citations.size() + 1;
-            citations.add(new TurCatalogCitation(rank, other.id(), other.title(), other.url(), other.score(),
-                    other.rankingExplanation()));
+            citations.add(other.withRank(rank));
             String block = i < retrieval.contextBlocks().size() ? retrieval.contextBlocks().get(i) : "";
             blocks.add(block.replaceFirst("^\\[\\d+]", "[" + rank + "]"));
             attributes.add(retrieval.attributesAt(i));
@@ -376,8 +373,7 @@ public class TurCatalogCopilotService {
             return citations;
         }
         List<TurCatalogCitation> all = new ArrayList<>(citations);
-        all.add(new TurCatalogCitation(citations.size() + 1, pinned.id(), pinned.title(), pinned.url(),
-                pinned.score(), pinned.rankingExplanation()));
+        all.add(pinned.withRank(citations.size() + 1));
         return List.copyOf(all);
     }
 
@@ -674,7 +670,7 @@ public class TurCatalogCopilotService {
             String url = str(source.get(TurSNFieldName.URL));
             citations.add(new TurCatalogCitation(rank, hit.id(), title,
                     StringUtils.hasText(url) ? url : null, hit.score(),
-                    hit.explanation()));
+                    hit.explanation(), documentType(source.get(TurSNFieldName.TYPE))));
             contextBlocks.add(builder.build(rank, title, url, source));
             attributes.add(shortAttributes(source));
         }
@@ -1060,6 +1056,18 @@ public class TurCatalogCopilotService {
 
     private static String str(Object value) {
         return value == null ? "" : value.toString();
+    }
+
+    /**
+     * T1212 — a document's type as one string: the first value of a multi-valued
+     * field, {@code null} when the document has none.
+     */
+    static String documentType(Object value) {
+        Object first = value instanceof java.util.Collection<?> many
+                ? many.stream().filter(java.util.Objects::nonNull).findFirst().orElse(null)
+                : value;
+        String type = first == null ? null : first.toString().trim();
+        return StringUtils.hasText(type) ? type : null;
     }
 
     /** Serializes a DSL request for logging; never throws (returns a marker on failure). */

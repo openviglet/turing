@@ -68,6 +68,18 @@ class TurAnswerCitationTest {
         assertThat(citation.rankingExplanation()).isEqualTo(explanation);
         assertThat(citation.chunkIndex()).isNull();
         assertThat(citation.answerStart()).isNull();
+        assertThat(citation.type()).isNull();
+    }
+
+    @Test
+    void fromCatalogCitationCarriesTheDocumentTypeThroughRenumbering() {
+        TurCatalogCitation source = new TurCatalogCitation(5, "p1", "Tent", "https://ex/p1", 1.0, null, "product");
+
+        TurAnswerCitation citation = TurAnswerCitation.fromCatalogCitation(source.withRank(1));
+
+        assertThat(citation.rank()).isEqualTo(1);
+        assertThat(citation.type()).isEqualTo("product");
+        assertThat(citation.withRank(3).type()).isEqualTo("product");
     }
 
     @Test

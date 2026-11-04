@@ -986,6 +986,7 @@
 - **T1197** — A kit's gap prompt now names the request's locale (or the plan's language), so a pt_BR kit writes its summary, stages, reasons and searches in Portuguese.
 - **T1199** — Spell-check on Lucene and Solr never replaces a number or symbol token and keeps the typed case; a price-only change yields no correction or auto-correction (design §CLXII.8 recorded in `turing-app/src/main/java/com/viglet/turing/plugins/se/TurSpellCheckGuard.java`).
 - **T1211** — nl-filters reads a range bound with its phrase, currency and formatted amount (under $400, ate R$ 2.200, from 2024) as one span, and q drops each span at its own position (design §CLXII.9 recorded in `turing-app/src/main/java/com/viglet/turing/sn/nl/TurSNNLRangeSpan.java`).
+- **T1212** — Each copilot citation carries the document's indexed type (null when none), kept through renumbering and pinning, in the answer projection and both SDKs (design §CLXII.10 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogCitation.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 
