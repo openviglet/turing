@@ -18,6 +18,9 @@ package com.viglet.turing.lucene;
 
 import java.io.Reader;
 import java.text.Normalizer;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.lucene.analysis.charfilter.MappingCharFilter;
 import org.apache.lucene.analysis.charfilter.NormalizeCharMap;
@@ -54,6 +57,13 @@ public final class TurLuceneNfcCharFilter {
             { 0x1F00, 0x1FFF }, // Greek Extended
     };
 
+    /**
+     * T1217 — every decomposed spelling and the letter it recomposes to, in code
+     * point order: the one table this filter and Elasticsearch's {@code mapping}
+     * char filter are both built from.
+     */
+    public static final Map<String, String> PAIRS = pairs();
+
     static final NormalizeCharMap MAP = build();
 
     private TurLuceneNfcCharFilter() {
@@ -64,8 +74,8 @@ public final class TurLuceneNfcCharFilter {
         return new MappingCharFilter(MAP, reader);
     }
 
-    private static NormalizeCharMap build() {
-        NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
+    private static Map<String, String> pairs() {
+        Map<String, String> pairs = new LinkedHashMap<>();
         for (int[] range : RANGES) {
             for (int cp = range[0]; cp <= range[1]; cp++) {
                 if (!Character.isLetter(cp)) {
@@ -75,10 +85,16 @@ public final class TurLuceneNfcCharFilter {
                 String decomposed = Normalizer.normalize(composed, Normalizer.Form.NFD);
                 if (!decomposed.equals(composed)
                         && Normalizer.normalize(decomposed, Normalizer.Form.NFC).equals(composed)) {
-                    builder.add(decomposed, composed);
+                    pairs.put(decomposed, composed);
                 }
             }
         }
+        return Collections.unmodifiableMap(pairs);
+    }
+
+    private static NormalizeCharMap build() {
+        NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
+        PAIRS.forEach(builder::add);
         return builder.build();
     }
 }

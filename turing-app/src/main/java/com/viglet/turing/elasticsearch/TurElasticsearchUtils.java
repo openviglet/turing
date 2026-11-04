@@ -26,6 +26,7 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
+import com.viglet.turing.lucene.TurLuceneNfcCharFilter;
 import com.viglet.turing.solr.bean.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
@@ -150,15 +151,40 @@ public class TurElasticsearchUtils {
         // T1196 — Portuguese plurals in -ões/-ães/-ãos reach their singular through
         // the light stemmer first, as on Lucene.
         boolean portuguese = "Portuguese".equals(stemmer);
+        // T1217 — decomposed (NFD) accents are recomposed before the tokenizer, as
+        // Lucene does since T1194: asciifolding maps precomposed letters only.
         return """
                 {"analysis":{\
+                "char_filter":{"turing_nfc":{"type":"mapping","mappings":%s}},\
                 "filter":{"turing_stem":{"type":"snowball","language":"%s"},\
                 "turing_light":{"type":"stemmer","language":"light_portuguese"},\
                 "turing_fold":{"type":"asciifolding","preserve_original":true}},\
-                "analyzer":{"%s":{"type":"custom","tokenizer":"standard",\
+                "analyzer":{"%s":{"type":"custom","char_filter":["turing_nfc"],"tokenizer":"standard",\
                 "filter":["lowercase",%s"keyword_repeat","turing_stem","remove_duplicates","turing_fold"]}}}}"""
-                .formatted(stemmer, TEXT_ANALYZER,
+                .formatted(nfcMappings(), stemmer, TEXT_ANALYZER,
                         portuguese ? "\"keyword_repeat\",\"turing_light\",\"remove_duplicates\"," : "");
+    }
+
+    /**
+     * T1217 — {@link TurLuceneNfcCharFilter#PAIRS} as the {@code mappings} array of
+     * an Elasticsearch {@code mapping} char filter ({@code "decomposed=>composed"}),
+     * every character JSON-escaped so a combining mark survives any transport.
+     */
+    static String nfcMappings() {
+        StringBuilder json = new StringBuilder("[");
+        TurLuceneNfcCharFilter.PAIRS.forEach((decomposed, composed) -> {
+            if (json.length() > 1) {
+                json.append(',');
+            }
+            json.append('"').append(jsonEscaped(decomposed)).append("=>").append(jsonEscaped(composed)).append('"');
+        });
+        return json.append(']').toString();
+    }
+
+    private static String jsonEscaped(String text) {
+        StringBuilder out = new StringBuilder();
+        text.chars().forEach(c -> out.append(String.format("\\u%04x", c)));
+        return out.toString();
     }
 
     /** {@code textAnalyzer} names the TEXT fields' analyzer, or {@code null} for ES's standard one. */

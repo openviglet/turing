@@ -88,6 +88,8 @@ class TurElasticsearchStemmingIT {
         }
         add("stem_pt", "jaqueta", "Jaqueta impermeável", "Jaquetas");
         add("stem_pt", "bastoes", "Bastões de caminhada Scafell", "Bastões");
+        // T1217 — the á stored decomposed: an a plus a combining acute (NFD).
+        add("stem_pt", "borrowdale", "Capa impermeável Borrowdale", "Capas");
         for (String index : List.of("stem_en", "stem_pt", "stem_none")) {
             client.indices().refresh(r -> r.index(index));
         }
@@ -121,7 +123,15 @@ class TurElasticsearchStemmingIT {
     @DisplayName("A pt_BR core stems in Portuguese and folds accents")
     void portugueseStemsAndFolds() throws Exception {
         assertThat(match("stem_pt", "title", "jaquetas")).containsExactly("jaqueta");
-        assertThat(match("stem_pt", "title", "impermeavel")).containsExactly("jaqueta");
+        assertThat(match("stem_pt", "title", "impermeavel")).containsExactly("borrowdale", "jaqueta");
+    }
+
+    @Test
+    @DisplayName("T1217 — a title stored with a decomposed accent is found by every spelling")
+    void decomposedAccentsAreRecomposed() throws Exception {
+        assertThat(match("stem_pt", "title", "impermeável")).containsExactly("borrowdale", "jaqueta");
+        assertThat(match("stem_pt", "title", "impermeavel")).contains("borrowdale");
+        assertThat(match("stem_pt", "title", "capa impermeável")).contains("borrowdale");
     }
 
     @Test

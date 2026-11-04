@@ -989,6 +989,7 @@
 - **T1212** — Each copilot citation carries the document's indexed type (null when none), kept through renumbering and pinning, in the answer projection and both SDKs (design §CLXII.10 recorded in `turing-app/src/main/java/com/viglet/turing/genai/catalog/TurCatalogCitation.java`).
 - **T1213** — Copilot, kit and nl-filters take a filters map that confines every DSL read and the hybrid vector pass; a vectorless chat's filters now reach the copilot too (design §CLXII.11 recorded in `turing-app/src/main/java/com/viglet/turing/sn/dsl/TurDslCallerFilters.java`).
 - **T1194** — Lucene recomposes NFD accents before tokenizing, so a decomposed title is found by accented, unaccented and two-word queries; the demo itself was not re-checked (design §CLXII.4 superseded: the cause is reproducible without the demo: an NFD title indexes one unfolded, unstemmed term) (design §CLXII.4 recorded in `turing-app/src/main/java/com/viglet/turing/lucene/TurLuceneNfcCharFilter.java`).
+- **T1217** — An Elasticsearch core created now recomposes NFD accents through a mapping char filter built from the Lucene table, so an NFD title is found by every spelling (design §CLXII.12 recorded in `turing-app/src/main/java/com/viglet/turing/elasticsearch/TurElasticsearchUtils.java`).
 
 ## Block AS — Scalable & pluggable audio transcription (chunking + local backends, §XLII)
 

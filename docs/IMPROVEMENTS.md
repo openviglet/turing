@@ -2232,27 +2232,30 @@ owner chose the live guest console (2026-11-04). T1184b built it
 
 ## CLXII Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-### CLXII.12 Elasticsearch recomposes NFD accents (T1217)
+### CLXII.13 Solr folds accents like Lucene and Elasticsearch (T1218)
 
-**Where it showed.** T1194 traced the pt_BR miss on Lucene to text stored in Unicode NFD
-(an `a` plus a combining acute, as text pasted from macOS or exported by some CMSs
-arrives). `ASCIIFoldingFilter` maps precomposed letters only, so the token kept the
-mark, and the index held one term with no folded form and no stem. Lucene now recomposes
-it first (`TurLuceneNfcCharFilter`, a `MappingCharFilter` built from
-`java.text.Normalizer`).
+**Where it showed.** T1217 checked the Solr configsets for the NFD gap T1194 closed on
+Lucene and T1217 on Elasticsearch. The gap on Solr is wider: in
+`containers/solr/config/solr/configsets/{ca,en,es,pt}/conf/schema.xml` only
+`text_phrase` (the T1185 exact-phrase boost field) runs `ASCIIFoldingFilterFactory`. The
+text fields search reads do not fold accents at all, so on a Solr site `saude` does not
+find `Saúde`, which Lucene has done since T1080 and Elasticsearch since T1173, and an
+NFD title is not recomposed either.
 
-**What is left.** `TurElasticsearchUtils.textAnalysisSettings` builds the same pipeline
-for ES (`standard` tokenizer, `lowercase`, stem, `asciifolding`) with no char filter, so
-an Elasticsearch core indexes NFD titles the way Lucene did before T1194.
+**Why it matters.** The search-engine page says the three engines read a search the same
+way; for accents they do not, and a site moved from Lucene to Solr loses
+accent-insensitive matching.
 
-**What to build.** Add a `mapping` char filter to that analyzer, its `mappings` the
-decomposed-to-composed pairs `TurLuceneNfcCharFilter` already computes (one source of
-truth, exposed as a list), or the `icu_normalizer` char filter where the ICU plugin is
-installed, which a stock ES does not have. A core picks it up when it is created or
-recreated, as T1173 notes for the analyzer itself. Check the Solr configsets for the
-same gap.
+**What to build.** In each configset's text field types, add before the tokenizer a
+`MappingCharFilterFactory` whose mapping file holds the decomposed-to-composed pairs of
+`TurLuceneNfcCharFilter.PAIRS` (generated, not hand-written), and after lowercasing an
+`ASCIIFoldingFilterFactory` with `preserveOriginal="true"`, on index and query side
+alike. The schemas say "managed schema, do not edit", so first settle how Turing ships
+schema changes to an existing Solr core (configset upload plus core reload, then
+reindex). Cover it with a Solr Testcontainers check as `TurElasticsearchStemmingIT` does
+for ES.
 
-**Done when** an ES core created after the change finds an NFD title by its accented and
+**Done when** a Solr core finds `Saúde` by `saude` and an NFD title by its accented and
 unaccented spellings.
 
 ## CLXIII Release pipeline reliability

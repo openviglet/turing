@@ -36,6 +36,21 @@ class TurElasticsearchUtilsTest {
         assertTrue(!TurElasticsearchUtils.textAnalysisSettings("English").contains("\"turing_light\",\""));
     }
 
+    /** T1217 — the analyzer recomposes decomposed accents before the tokenizer. */
+    @Test
+    void textAnalysisSettingsRecomposeDecomposedAccents() throws Exception {
+        String pt = TurElasticsearchUtils.textAnalysisSettings("Portuguese");
+        assertTrue(pt.contains("\"char_filter\":[\"turing_nfc\"]"));
+        var settings = new tools.jackson.databind.ObjectMapper().readTree(pt);
+        var mappings = settings.at("/analysis/char_filter/turing_nfc/mappings");
+        assertEquals(com.viglet.turing.lucene.TurLuceneNfcCharFilter.PAIRS.size(), mappings.size());
+        boolean hasAcuteA = false;
+        for (var rule : mappings) {
+            hasAcuteA |= rule.asString().equals("á=>á");
+        }
+        assertTrue(hasAcuteA, "a + combining acute must map to á");
+    }
+
     @Test
     void createIndexShouldNotThrowForUnreachableEndpoint() {
         assertDoesNotThrow(() ->
