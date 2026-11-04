@@ -17,8 +17,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-- 📋 **T1213** (deps: —) **The catalog copilot, its kit and nl-filters take no filter, so an anonymous call reads every site's documents** — A WordPress kit on a shared SN site sells another site's stock: T1133 confines only keyed calls, and a browser holds no key. → §CLXII.11
-
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
 ## Done when — T1184

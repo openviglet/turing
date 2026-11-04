@@ -40,6 +40,7 @@ describe("postCopilotKit", () => {
       availabilityField: "in_stock",
       availability: "DROP",
       productTypes: ["product"],
+      filters: { site_key: ["a"] },
     });
 
     expect(result.stages[0].products[0].id).toBe("t1");
@@ -54,6 +55,7 @@ describe("postCopilotKit", () => {
       availabilityField: "in_stock",
       availability: "DROP",
       productTypes: ["product"],
+      filters: { site_key: ["a"] },
     });
   });
 
@@ -67,6 +69,7 @@ describe("postCopilotKit", () => {
       messages: [{ role: "user", content: "Will this keep me dry?" }],
       locale: "en",
       documentId: "jacket-42",
+      filters: { site_key: ["a"] },
     });
 
     expect(result.citations[0].id).toBe("jacket-42");
@@ -76,6 +79,7 @@ describe("postCopilotKit", () => {
       messages: [{ role: "user", content: "Will this keep me dry?" }],
       locale: "en",
       documentId: "jacket-42",
+      filters: { site_key: ["a"] },
     });
   });
 

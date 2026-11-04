@@ -24,6 +24,7 @@ import com.viglet.turing.genai.catalog.TurCatalogCopilotResult;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
 import com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn;
 import com.viglet.turing.genai.catalog.TurCatalogKitService;
+import com.viglet.turing.sn.dsl.TurDslCallerFilters;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -73,7 +74,8 @@ public class TurSNCatalogCopilotAPI {
                         .map(m -> new ChatTurn(m.role(), m.content()))
                         .toList();
         log.info("[CatalogCopilot] chat on site '{}' with {} turns", siteName, turns.size());
-        return copilotService.answer(siteName, request.locale(), turns, request.documentId());
+        return TurDslCallerFilters.with(request.filters(),
+                () -> copilotService.answer(siteName, request.locale(), turns, request.documentId()));
     }
 
     /**
@@ -85,10 +87,11 @@ public class TurSNCatalogCopilotAPI {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public TurCatalogKitService.Result kit(@PathVariable String siteName, @RequestBody KitRequest request) {
         log.info("[CatalogKit] kit on site '{}'", siteName);
-        return kitService.plan(siteName, request.locale(), request.plan(),
-                new TurCatalogKitService.Options(request.maxGaps(), request.perGap(),
-                        request.availabilityField(), request.availability(), request.guideTypes(),
-                        request.productTypes()));
+        return TurDslCallerFilters.with(request.filters(),
+                () -> kitService.plan(siteName, request.locale(), request.plan(),
+                        new TurCatalogKitService.Options(request.maxGaps(), request.perGap(),
+                                request.availabilityField(), request.availability(), request.guideTypes(),
+                                request.productTypes())));
     }
 
     /**
@@ -98,22 +101,39 @@ public class TurSNCatalogCopilotAPI {
      * {@code available: false}) or {@code DROP}. T1167 — {@code guideTypes} names the
      * document types that count as a guide, cited beside the stages. T1175 —
      * {@code productTypes} names the document types that may be staged as products.
+     * T1213 — {@code filters} (field to accepted values) confines every read the kit
+     * makes, e.g. {@code {site_key: [a]}} on an SN site shared by several sites.
      */
     public record KitRequest(String plan, String locale, Integer maxGaps, Integer perGap,
             String availabilityField, TurCatalogKitService.Availability availability, List<String> guideTypes,
-            List<String> productTypes) {
+            List<String> productTypes, Map<String, List<String>> filters) {
+
+        /** The body before T1213: no filters. */
+        public KitRequest(String plan, String locale, Integer maxGaps, Integer perGap,
+                String availabilityField, TurCatalogKitService.Availability availability, List<String> guideTypes,
+                List<String> productTypes) {
+            this(plan, locale, maxGaps, perGap, availabilityField, availability, guideTypes, productTypes, null);
+        }
     }
 
     /**
      * Request body: the conversation so far plus an optional locale. T1178 —
      * {@code documentId}, optional, is the indexed document the question is about
      * (the product on the page): pinned first in the answer's context, never a filter.
+     * T1213 — {@code filters} (field to accepted values) confines every read the
+     * answer makes, the pinned document included.
      */
-    public record CopilotRequest(List<Message> messages, String locale, String documentId) {
+    public record CopilotRequest(List<Message> messages, String locale, String documentId,
+            Map<String, List<String>> filters) {
 
         /** The body before T1178: no pinned document. */
         public CopilotRequest(List<Message> messages, String locale) {
-            this(messages, locale, null);
+            this(messages, locale, null, null);
+        }
+
+        /** The body before T1213: no filters. */
+        public CopilotRequest(List<Message> messages, String locale, String documentId) {
+            this(messages, locale, documentId, null);
         }
     }
 

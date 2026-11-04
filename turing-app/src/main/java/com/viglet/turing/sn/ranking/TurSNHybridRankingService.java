@@ -374,10 +374,15 @@ public class TurSNHybridRankingService {
                     .similarityThreshold(0.0);
             // T1133 — a partitioned key's vector pass ranks only its partition's points,
             // so neither a recalled document nor the top-K depth comes from another one.
+            // T1213 — and a caller's own filters (TurDslCallerFilters) the same way, so a
+            // shared site's copilot neither recalls nor ranks another site's documents.
+            Map<String, List<String>> vectorFilters = new LinkedHashMap<>(
+                    com.viglet.turing.sn.dsl.TurDslCallerFilters.current());
             com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
-                    .ifPresent(partition -> request.filterExpression(
-                            com.viglet.turing.genai.TurRagFilters.buildFilterExpression(
-                                    Map.of(partition.field(), List.of(partition.value())))));
+                    .ifPresent(partition -> vectorFilters.put(partition.field(), List.of(partition.value())));
+            if (!vectorFilters.isEmpty()) {
+                request.filterExpression(com.viglet.turing.genai.TurRagFilters.buildFilterExpression(vectorFilters));
+            }
             List<Document> vectorAll = infra.vectorStore().similaritySearch(request.build());
             // Stage 1.5 (recall, opt-in): bring in the vector hits the lexical page missed.
             Set<String> recalled = recallOn

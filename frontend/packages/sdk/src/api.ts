@@ -1968,12 +1968,22 @@ export function postNlFilters(
   site: string,
   text: string,
   locale?: string,
-  options: TuringCallOptions = {},
+  options: TurNLFiltersOptions = {},
 ): Promise<TurNLFilters> {
-  return client.post<TurNLFilters>(`/sn/${site}/nl-filters`, { text, locale }, {
+  const body = options.filters ? { text, locale, filters: options.filters } : { text, locale };
+  return client.post<TurNLFilters>(`/sn/${site}/nl-filters`, body, {
     csrf: false,
     signal: options.signal,
   });
+}
+
+/** T1213 — the options of {@link postNlFilters}. */
+export interface TurNLFiltersOptions extends TuringCallOptions {
+  /**
+   * T1213 — field → accepted values: each filter is checked only against the
+   * values these documents hold (e.g. `{ site_key: ["a"] }` on a shared SN site).
+   */
+  readonly filters?: Readonly<Record<string, readonly string[]>>;
 }
 
 // ── T1159: Plan-to-kit copilot ──────────────────────────────────────────────
@@ -2001,6 +2011,11 @@ export interface TurCatalogKitRequest {
    * only a document of one of them is staged. None, any document not a guide is.
    */
   readonly productTypes?: readonly string[];
+  /**
+   * T1213 — field → accepted values every read of the kit stays inside, e.g.
+   * `{ site_key: ["a"] }` on an SN site several sites share.
+   */
+  readonly filters?: Readonly<Record<string, readonly string[]>>;
 }
 
 /** T1167 — a guide the plan retrieved: the site's own advice, cited beside the stages. */
@@ -2093,6 +2108,11 @@ export interface TurCatalogCopilotRequest {
    * does not hold is ignored.
    */
   readonly documentId?: string;
+  /**
+   * T1213 — field → accepted values every read of the answer stays inside (the
+   * pinned document included), e.g. `{ site_key: ["a"] }` on a shared SN site.
+   */
+  readonly filters?: Readonly<Record<string, readonly string[]>>;
 }
 
 /**

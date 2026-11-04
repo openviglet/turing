@@ -21,6 +21,9 @@
 
 package com.viglet.turing.api.sn.genai;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viglet.turing.sn.dsl.TurDslCallerFilters;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.sn.nl.TurSNNLFilters;
 
@@ -58,13 +62,21 @@ public class TurSNNLFiltersAPI {
     @Operation(summary = "Parse a natural-language request into the q and fq a search takes")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public TurSNNLFilters parse(@PathVariable String siteName, @RequestBody NLFiltersRequest request) {
-        return nlFilterService.parse(siteName, request.locale(), request.text());
+        return TurDslCallerFilters.with(request.filters(),
+                () -> nlFilterService.parse(siteName, request.locale(), request.text()));
     }
 
     /**
-     * @param text   the visitor's request
-     * @param locale the search locale; omitted, the site's first locale
+     * @param text    the visitor's request
+     * @param locale  the search locale; omitted, the site's first locale
+     * @param filters T1213 — field to accepted values: the values each filter is
+     *                checked against are read from these documents only
      */
-    public record NLFiltersRequest(String text, String locale) {
+    public record NLFiltersRequest(String text, String locale, Map<String, List<String>> filters) {
+
+        /** The body before T1213: no filters. */
+        public NLFiltersRequest(String text, String locale) {
+            this(text, locale, null);
+        }
     }
 }

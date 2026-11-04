@@ -211,4 +211,36 @@ class TurDslSearchServiceDispatchTest {
                 .isEqualTo(new TurDslQuery.Bool(List.of(), List.of(), List.of(),
                         List.of(new TurDslQuery.Term("site_key", "blog-a")), null));
     }
+
+    @Test
+    @DisplayName("T1213 - a caller's filters confine every DSL read made inside them")
+    void callerFiltersConfineTheQuery() {
+        var service = service("solr");
+        when(solrExecutor.execute(eq(SITE), any(Locale.class), any())).thenReturn(Optional.empty());
+
+        TurDslCallerFilters.with(java.util.Map.of("site_key", List.of("a")),
+                () -> service.search(SITE, LOCALE, anyRequest().withQuery(new TurDslQuery.MatchAll())));
+        service.search(SITE, LOCALE, anyRequest().withQuery(new TurDslQuery.MatchAll()));
+
+        var sent = org.mockito.ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        verify(solrExecutor, org.mockito.Mockito.times(2)).execute(eq(SITE), any(Locale.class), sent.capture());
+        assertThat(sent.getAllValues().get(0).query()).isEqualTo(new TurDslQuery.Bool(
+                List.of(new TurDslQuery.MatchAll()), List.of(), List.of(),
+                List.of(new TurDslQuery.Term("site_key", "a")), null));
+        // Outside the scope the next read is the whole site again.
+        assertThat(sent.getAllValues().get(1).query()).isEqualTo(new TurDslQuery.MatchAll());
+    }
+
+    @Test
+    @DisplayName("T1213 - a partition and the caller's filters both apply")
+    void partitionAndCallerFiltersCombine() {
+        var confined = TurDslSearchService.confined(anyRequest().withQuery(new TurDslQuery.MatchAll()),
+                new com.viglet.turing.commons.se.TurSEPartition("tenant", "t1"),
+                java.util.Map.of("site_key", List.of("a", "b")));
+
+        assertThat(confined.query()).isEqualTo(new TurDslQuery.Bool(List.of(new TurDslQuery.MatchAll()),
+                List.of(), List.of(), List.of(new TurDslQuery.Term("tenant", "t1"),
+                        new TurDslQuery.Terms("site_key", List.of("a", "b"))),
+                null));
+    }
 }

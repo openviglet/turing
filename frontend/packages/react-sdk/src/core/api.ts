@@ -1117,11 +1117,18 @@ export async function postCopilot(
    * alternatives. An id the site does not hold is ignored.
    */
   documentId?: string,
+  /**
+   * T1213 — field → accepted values every read of the answer stays inside, e.g.
+   * `{ site_key: ["a"] }` on an SN site several sites share.
+   */
+  filters?: Readonly<Record<string, readonly string[]>>,
 ): Promise<TurCatalogCopilotResult> {
-  const { data } = await axios.post<TurCatalogCopilotResult>(
-    `/sn/${site}/copilot`,
-    documentId ? { messages, locale, documentId } : { messages, locale },
-  );
+  const { data } = await axios.post<TurCatalogCopilotResult>(`/sn/${site}/copilot`, {
+    messages,
+    locale,
+    ...(documentId ? { documentId } : {}),
+    ...(filters ? { filters } : {}),
+  });
   return data;
 }
 
@@ -1674,9 +1681,14 @@ export async function postNlFilters(
   site: string,
   text: string,
   locale?: string,
+  /** T1213 — field → accepted values the parsed values are checked against. */
+  filters?: Readonly<Record<string, readonly string[]>>,
 ): Promise<TurNLFilters> {
   const path = `/sn/${site}/nl-filters`;
-  const { data } = await axios.post<TurNLFilters>(path, { text, locale });
+  const { data } = await axios.post<TurNLFilters>(
+    path,
+    filters ? { text, locale, filters } : { text, locale },
+  );
   if (!data) {
     throw emptyBody(`${axios.defaults.baseURL ?? ""}${path}`, "NL filters response");
   }

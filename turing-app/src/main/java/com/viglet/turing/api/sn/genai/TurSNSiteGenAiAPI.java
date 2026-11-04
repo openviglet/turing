@@ -227,13 +227,16 @@ public class TurSNSiteGenAiAPI {
 	/**
 	 * T1087 — answers a vectorless site's turn through the catalog copilot, which
 	 * {@code /chat/enabled} reported it ready for. The copilot answers whole, so
-	 * the answer is one token event, sent once the copilot returns.
+	 * the answer is one token event, sent once the copilot returns. T1213 — the
+	 * turn's {@code filters} confine the copilot's reads, set on the worker thread
+	 * the answer runs on.
 	 */
 	private Flux<TurAgentChatExecutor.ChatResponse> copilotConversation(String siteName,
-			List<ConversationMessage> messages, Locale locale) {
+			List<ConversationMessage> messages, Locale locale, java.util.Map<String, List<String>> filters) {
 		return reactor.core.publisher.Mono.fromCallable(() -> {
-			var result = catalogCopilotService.answer(siteName, locale == null ? null : locale.toString(),
-					copilotTurns(messages));
+			var result = com.viglet.turing.sn.dsl.TurDslCallerFilters.with(filters,
+					() -> catalogCopilotService.answer(siteName, locale == null ? null : locale.toString(),
+							copilotTurns(messages)));
 			String text = result.answer() != null && !result.answer().isBlank() ? result.answer()
 					: NOT_ENABLED_MESSAGE;
 			return new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE, text, "token");
@@ -391,7 +394,7 @@ public class TurSNSiteGenAiAPI {
 			if (route.route() == TurSNChatRouteResolver.Route.COPILOT) {
 				return partition != null
 						? Flux.just(new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE, PARTITION_COPILOT_MESSAGE))
-						: copilotConversation(siteName, request.messages(), locale);
+						: copilotConversation(siteName, request.messages(), locale, request.filters());
 			}
 			TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(turSNSiteGenAI);
 			TurLLMInstance llmInstance = agent.getLlmInstances().stream()

@@ -47,4 +47,21 @@ describe("postNlFilters", () => {
       locale: "pt_BR",
     });
   });
+
+  it("T1213 — sends the caller's filters so values are checked against those documents only", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ available: true, text: "x", q: "x", filters: [], fq: [], dropped: [] }),
+          { status: 200 },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const client = createTuringClient({ baseURL: BASE });
+
+    await postNlFilters(client, "vagas", "x", undefined, { filters: { site_key: ["a"] } });
+
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(JSON.parse(init.body as string)).toEqual({ text: "x", filters: { site_key: ["a"] } });
+  });
 });

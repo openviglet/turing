@@ -177,6 +177,13 @@ answer may name them, as alternatives. An id the site does not hold is ignored. 
 pinned question never uses stuff-all mode. In the React SDK, pass `documentId` to
 `useTuringCopilot` or as the fourth argument of `postCopilot`.
 
+**One site of a shared SN site.** When several sites index into one SN site, send
+`filters` (field to accepted values, for example `"filters": {"site_key": ["a"]}`) and
+every read the copilot makes stays inside it, the pinned document and the hybrid
+reorder included. `POST /api/sn/{siteName}/copilot/kit` takes the same field, so a
+kit stages only that site's products. Without `filters` the whole site is read. In the
+React SDK, pass it as the fifth argument of `postCopilot`.
+
 `GET /api/sn/{siteName}/copilot/available` reports whether a default LLM is
 configured (i.e. whether the copilot can answer).
 

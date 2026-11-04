@@ -129,6 +129,7 @@ export type {
   TurNLFilter,
   TurNLDroppedFilter,
   TurNLFilters,
+  TurNLFiltersOptions,
   TurCatalogKitAvailability,
   TurCatalogKitRequest,
   TurCatalogKitProduct,

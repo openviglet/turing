@@ -2307,35 +2307,6 @@ are the suspects), and the image version the demo runs.
 **Done when.** The demo's two-word queries return the same documents, and the IT above
 stays green.
 
-### CLXII.11 Copilot, kit and nl-filters scoped by a filter (T1213)
-
-**Where.** Dumont's WordPress plugin (D287). Several WordPress sites can share one SN
-site (Dumont D148): every document carries `site_key`, and the browser scopes a search
-with `fq[]=site_key:<key>`. Ask the catalog (`wordpress/src/public/copilot.js`) posts
-`POST /api/sn/{site}/copilot` and `POST /api/sn/{site}/copilot/kit` from the visitor's
-browser, through `@viglet/turing-sdk`, with no API key: a key is a server secret and
-never reaches a browser.
-
-**What happens.** `CopilotRequest(messages, locale, documentId)` and `KitRequest(plan,
-locale, maxGaps, perGap, availabilityField, availability, guideTypes, productTypes)` in
-`TurSNCatalogCopilotAPI` take no filter, so an anonymous call reads the whole SN site:
-on 2026-11-03 a kit staged every product twice, once per site. T1133 confines these
-routes for a partitioned key, which a browser never holds. `nl-filters` likewise checks
-values against the whole site's.
-
-**What already works.** `GET /answer` takes `fq` and `POST /chat/conversation` takes
-`filters` (field to values, T1086); the plugin now sends `filters: {site_key: [key]}` on
-the Site assistant's turns.
-
-**What Turing should do.** `CopilotRequest`, `KitRequest` and the nl-filters body take
-the same `filters` map (or `fq`), applied to every read the copilot and the kit make
-(the DSL searches and the hybrid reorder) and to the values nl-filters checks against,
-and the SDK methods pass it through. No filter keeps today's behaviour.
-
-**Done when.** A kit, a copilot answer and an nl-filters reading asked with `filters:
-{site_key: [a]}` cite and stage only documents whose `site_key` is `a`, on an SN site
-holding two partitions; Dumont D287 then sends it from the browser.
-
 ## CLXIII Release pipeline reliability
 
 What keeps a release from failing on its own tests for reasons the code under release

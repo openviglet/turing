@@ -581,6 +581,7 @@ POST http://localhost:2700/api/sn/{siteName}/nl-filters
 |---|---|---|
 | `text` | ✅ | The visitor's request |
 | `locale` | | Search locale; when left out, the site's first locale |
+| `filters` | | Field to accepted values, for example `{"site_key": ["a"]}`: each value is checked only against the values these documents hold |
 
 **Example:**
 
@@ -623,6 +624,8 @@ The call spends one LLM completion, so it is gated like the site chat: a site in
 The site chat and the catalog copilot read list-style questions ("quais vagas em São Paulo?") through the same extraction, so their answers are narrowed by the same checked values. To receive those filters in the chat stream, send `"includeFilters": true` in the body of `POST /api/sn/{siteName}/chat/conversation`: a list-style question then streams one `filters` event, carrying the same JSON as above, before the answer. It is off by default, because a client that predates the event would show it as answer text.
 
 **Asking about one document.** `POST /api/sn/{site}/chat/conversation` and `POST /api/sn/{site}/copilot` both take an optional `documentId`, the indexed id of the document the question is about (the product on the page). That document leads the answer's context and is always among its sources; whatever the question retrieves stays in the context, as alternatives the answer names as such. It is never a filter, and an id the site does not hold is ignored. From the SDKs, pass `documentId` in the chat options, or in the request of `postCopilot`.
+
+**One site of a shared SN site.** When several sites index into one SN site, each document carries a field that names its site (for example `site_key`). `POST /api/sn/{site}/copilot`, `POST /api/sn/{site}/copilot/kit` and `POST /api/sn/{site}/nl-filters` take an optional `filters` body field, field to accepted values (`{"site_key": ["a"]}`, the same shape the chat's `filters` takes). Every read the call makes stays inside it: the documents the copilot cites and the kit stages, a pinned `documentId`, the hybrid reorder, and the values nl-filters checks against. Values of one field are alternatives, and all named fields must match. A call with no `filters` reads the whole site, as before. This narrows what an anonymous browser sees; it is not access control, which is what a [partitioned API key](#partitioned-keys-for-a-shared-site) gives a server. From the SDKs, pass `filters` in the request of `postCopilot` and `postCopilotKit`, or in the options of `postNlFilters`.
 
 ---
 

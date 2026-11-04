@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -87,8 +88,33 @@ public class TurDslSearchService {
                                 new java.util.TreeSet<>(executorMap.keySet()));
                     }
                     return executor.execute(siteName, parsedLocale,
-                            confined(request, TurApiKeyPartitionContext.current().orElse(null)));
+                            confined(request, TurApiKeyPartitionContext.current().orElse(null),
+                                    TurDslCallerFilters.current()));
                 });
+    }
+
+    /**
+     * T1213 — {@link #confined(TurDslQueryRequest, TurSEPartition)} plus the
+     * caller's own filters ({@link TurDslCallerFilters}), each a filter clause
+     * beside the partition's term.
+     */
+    static TurDslQueryRequest confined(TurDslQueryRequest request, TurSEPartition partition,
+            Map<String, List<String>> callerFilters) {
+        if (request == null) {
+            return null;
+        }
+        List<TurDslQuery> filter = new ArrayList<>();
+        if (partition != null) {
+            filter.add(new TurDslQuery.Term(partition.field(), partition.value()));
+        }
+        if (callerFilters != null) {
+            filter.addAll(TurDslCallerFilters.clauses(callerFilters));
+        }
+        if (filter.isEmpty()) {
+            return request;
+        }
+        List<TurDslQuery> must = request.query() == null ? List.of() : List.of(request.query());
+        return request.withQuery(new TurDslQuery.Bool(must, List.of(), List.of(), filter, null));
     }
 
     /**
@@ -98,12 +124,7 @@ public class TurDslSearchService {
      * query is the whole site, so the term alone stands for it.
      */
     static TurDslQueryRequest confined(TurDslQueryRequest request, TurSEPartition partition) {
-        if (partition == null || request == null) {
-            return request;
-        }
-        TurDslQuery term = new TurDslQuery.Term(partition.field(), partition.value());
-        List<TurDslQuery> must = request.query() == null ? List.of() : List.of(request.query());
-        return request.withQuery(new TurDslQuery.Bool(must, List.of(), List.of(), List.of(term), null));
+        return confined(request, partition, Map.of());
     }
 
 }

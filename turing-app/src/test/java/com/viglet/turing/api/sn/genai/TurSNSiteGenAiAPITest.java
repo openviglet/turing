@@ -243,6 +243,29 @@ class TurSNSiteGenAiAPITest {
         verify(turGenAiContextFactory, never()).build(any(), any());
     }
 
+    /** T1213 — the turn's filters confine the copilot's reads on the thread it answers on. */
+    @Test
+    void conversationFiltersConfineTheCopilotOnAVectorlessSite() {
+        when(turSNSearchProcess.existsByTurSNSiteAndLanguage(eq("site1"), any())).thenReturn(true);
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(vectorlessSite()));
+        when(catalogCopilotService.isAvailable()).thenReturn(true);
+        var seen = new java.util.concurrent.atomic.AtomicReference<java.util.Map<String, java.util.List<String>>>();
+        when(catalogCopilotService.answer(eq("site1"), any(), any())).thenAnswer(invocation -> {
+            seen.set(com.viglet.turing.sn.dsl.TurDslCallerFilters.current());
+            return new com.viglet.turing.genai.catalog.TurCatalogCopilotResult(true, "One model.",
+                    java.util.List.of(), "", 1, null);
+        });
+
+        api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
+                java.util.List.of(new com.viglet.turing.genai.TurSNGenAi.ConversationMessage("user",
+                        "which models?")),
+                "en_US", java.util.Map.of("site_key", java.util.List.of("a")), null, null, null, null))
+                .collectList().block();
+
+        org.assertj.core.api.Assertions.assertThat(seen.get())
+                .isEqualTo(java.util.Map.of("site_key", java.util.List.of("a")));
+    }
+
     /** T1133 — the copilot reads the index without the partition, so a partitioned key never reaches it. */
     @Test
     void aPartitionedKeyOnAVectorlessSiteIsRefusedNotAnsweredByTheCopilot() {
