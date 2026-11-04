@@ -119,6 +119,7 @@ export type {
   TurResearchStep,
   TurResearchSection,
   TurResearchSource,
+  TurResearchTimelineEntry,
   TurChatSessionSlots,
   TurChatSessionSlotsDelta,
   TurWorkspaceArtifact,

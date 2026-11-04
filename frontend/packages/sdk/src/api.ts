@@ -2782,6 +2782,18 @@ export interface TurResearchStep {
   hits?: number;
   /** The overview-wide source numbers this step brought. */
   sources?: number[];
+  /** The facet value (`field=value`) a thin step searched again inside. */
+  widenedBy?: string;
+}
+
+/** T1220 — one dated, cited source on the overview's timeline. */
+export interface TurResearchTimelineEntry {
+  /** `yyyy-MM-dd`. */
+  date: string;
+  title: string;
+  url: string;
+  /** The `[n]` the sections cite. */
+  source: number;
 }
 
 /** T1220 — one composed section: every number in `citations` is a listed source. */
@@ -2807,6 +2819,7 @@ export interface ResearchStreamHandlers {
   onStep?: (step: TurResearchStep) => void;
   onSection?: (section: TurResearchSection) => void;
   onUncovered?: (items: string[]) => void;
+  onTimeline?: (entries: TurResearchTimelineEntry[]) => void;
   onSources?: (groups: Record<string, TurResearchSource[]>) => void;
   onError?: (message: string) => void;
 }
@@ -2817,6 +2830,8 @@ export interface ResearchResult {
   steps: TurResearchStep[];
   sections: TurResearchSection[];
   uncovered: string[];
+  /** The cited sources that carry a date, oldest first; empty under two. */
+  timeline: TurResearchTimelineEntry[];
   /** The sources by document type (`other` when a document has none). */
   sourceGroups: Record<string, TurResearchSource[]>;
   error?: string;
@@ -2854,7 +2869,14 @@ export async function postResearch(
   if (!response.body) {
     throw emptyBody(response.url, "Research response");
   }
-  const result: ResearchResult = { summary: "", steps: [], sections: [], uncovered: [], sourceGroups: {} };
+  const result: ResearchResult = {
+    summary: "",
+    steps: [],
+    sections: [],
+    uncovered: [],
+    timeline: [],
+    sourceGroups: {},
+  };
   const handlers = options ?? {};
 
   function dispatch(eventName: string, data: string): void {
@@ -2884,6 +2906,11 @@ export async function postResearch(
       case "uncovered": {
         result.uncovered = Array.isArray(parsed.items) ? (parsed.items as string[]) : [];
         handlers.onUncovered?.(result.uncovered);
+        return;
+      }
+      case "timeline": {
+        result.timeline = Array.isArray(parsed.entries) ? (parsed.entries as TurResearchTimelineEntry[]) : [];
+        handlers.onTimeline?.(result.timeline);
         return;
       }
       case "sources": {

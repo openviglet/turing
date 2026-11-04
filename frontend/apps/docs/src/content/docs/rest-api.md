@@ -689,9 +689,10 @@ The response is a stream of named Server-Sent Events, in this order:
 | Event | Data |
 |---|---|
 | `plan` | `summary` (the question restated) and `steps` (`index`, `question`, `query`) |
-| `step` | One per sub-question once searched: `hits` (`0` when the site has nothing on it) and the source numbers it brought |
+| `step` | One per sub-question once searched: `hits` (`0` when the site has nothing on it), the source numbers it brought, and `widenedBy` (`field=value`) when a thin search was retried inside the facet value its words name |
 | `section` | `title`, `text` with `[n]` citations, and `citations` (the numbers the text cites) |
 | `uncovered` | `items`: the sub-questions and topics the documents do not answer. They are reported, never filled from general knowledge |
+| `timeline` | `entries` (`date`, `title`, `url`, `source`), oldest first: the cited documents that carry a date, read from a field named like one (`eventEnd`, `publicationDate`, `dataInicio`). Sent only when at least two cited documents are dated |
 | `sources` | `groups`: the cited documents by their `type` (`other` when a document has none), each with the `rank` the sections cite |
 | `done` | The number of sections and sources |
 | `error` | `message`, when the research is refused or fails; it ends the stream |
@@ -706,7 +707,7 @@ curl -N -X POST "http://localhost:2700/api/sn/Sample/research" \
   -d '{ "question": "What has the school done on public health?", "locale": "pt_BR" }'
 ```
 
-From JavaScript, `createResearchController(client, { site })` in `@viglet/turing-sdk` keeps the plan, steps, sections, `uncovered` and the grouped sources in an observable store:
+From JavaScript, `createResearchController(client, { site })` in `@viglet/turing-sdk` keeps the plan, steps, sections, `uncovered`, the timeline and the grouped sources in an observable store:
 
 ```js
 const research = createResearchController(client, { site: "Sample", locale: "pt_BR" });

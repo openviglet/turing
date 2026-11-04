@@ -38,6 +38,8 @@ import com.viglet.turing.service.llm.budget.TurChatCostBudgetGate;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.dsl.TurDslCallerFilters;
+import com.viglet.turing.sn.dsl.TurDslQuery;
+import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
 import tools.jackson.databind.json.JsonMapper;
@@ -65,6 +67,8 @@ class TurSNDeepDiveServiceTest {
     private TurLLMTokenUsageService tokenUsageService;
     @Mock
     private TurChatCostBudgetGate budgetGate;
+    @Mock
+    private TurSNNLFilterService nlFilterService;
 
     private final ChatModel chatModel = mock(ChatModel.class);
     private final TurLLMInstance instance = new TurLLMInstance();
@@ -72,7 +76,7 @@ class TurSNDeepDiveServiceTest {
 
     private TurSNDeepDiveService service() {
         return new TurSNDeepDiveService(searchProcess, routeResolver, agentResolver, chatModelResolver,
-                copilotService, tokenUsageService, budgetGate);
+                copilotService, tokenUsageService, budgetGate, nlFilterService);
     }
 
     private void site() {
@@ -176,6 +180,61 @@ class TurSNDeepDiveServiceTest {
         // Both calls are metered as the research stage of this site.
         verify(tokenUsageService, times(2)).recordUsage(eq(instance), any(), eq("system"), any(),
                 eq(TurSNDeepDiveService.STAGE_RESEARCH), isNull(), eq("fespsp"));
+    }
+
+    @Test
+    void aThinStepWidensInsideTheFacetValueItNames() {
+        ready();
+        replies("""
+                STEP: Quais eventos de saúde? | seminário saúde
+                STEP: Quais pesquisas? | pesquisas
+                STEP: Quais cursos? | cursos
+                """, """
+                SECTION: Eventos
+                Um seminário sobre vacinas [1].
+                """);
+        retrieves("seminário saúde");
+        retrieves("pesquisas", doc("r1", null), doc("r2", null), doc("r3", null), doc("r4", null));
+        retrieves("cursos", doc("c1", null), doc("c2", null), doc("c3", null), doc("c4", null));
+        when(nlFilterService.facetVocabulary(eq("fespsp"), eq("pt_BR"), any(Integer.class)))
+                .thenReturn(Map.of("tema", List.of("Saúde Pública", "Educação"), "site", List.of("fespsp")));
+        when(copilotService.retrieve(eq("fespsp"), eq("pt_BR"), eq("seminário saúde"),
+                eq(new TurDslQuery.Term("tema", "Saúde Pública"))))
+                .thenReturn(new TurCatalogCopilotService.Retrieval(List.of(doc("e1", "evento")),
+                        List.of("Seminário de vacinas"), 1, null, true));
+
+        List<ServerSentEvent<String>> events = run();
+
+        Map<String, Object> first = payload(named(events, "step").getFirst());
+        assertThat(first).containsEntry("widenedBy", "tema=Saúde Pública").containsEntry("sources", List.of(1));
+        assertThat(named(events, "section")).hasSize(1);
+    }
+
+    @Test
+    void citedDatedSourcesBecomeATimelineInDateOrder() {
+        List<TurSNDeepDiveService.Source> sources = List.of(
+                new TurSNDeepDiveService.Source(1, doc("a", null), "A", 1, "2024-05-01"),
+                new TurSNDeepDiveService.Source(2, doc("b", null), "B", 1, "2019-03-10"),
+                new TurSNDeepDiveService.Source(3, doc("c", null), "C", 1, null),
+                new TurSNDeepDiveService.Source(4, doc("d", null), "D", 2, "2021-01-01"));
+        List<TurSNDeepDiveService.Section> sections = List.of(
+                new TurSNDeepDiveService.Section("S", "x [1][2][3]", List.of(1, 2, 3)));
+
+        List<Map<String, Object>> timeline = TurSNDeepDiveService.timeline(sources, sections);
+
+        // Oldest first; the undated source and the uncited one (4) are left out.
+        assertThat(timeline).extracting(e -> e.get("source")).containsExactly(2, 1);
+        assertThat(timeline.getFirst()).containsEntry("date", "2019-03-10");
+    }
+
+    @Test
+    void aDocumentDateIsReadFromADateNamedAttribute() {
+        assertThat(TurSNDeepDiveService.date(Map.of("type", "evento", "eventEnd", "2026-11-20T00:00:00Z")))
+                .isEqualTo("2026-11-20");
+        assertThat(TurSNDeepDiveService.date(new java.util.LinkedHashMap<>(Map.of(
+                "modificationDate", "2025-01-01T10:00:00Z")))).isEqualTo("2025-01-01");
+        assertThat(TurSNDeepDiveService.date(Map.of("code", "2026-11-20"))).isNull();
+        assertThat(TurSNDeepDiveService.date(Map.of("publicationDate", "yesterday"))).isNull();
     }
 
     @Test

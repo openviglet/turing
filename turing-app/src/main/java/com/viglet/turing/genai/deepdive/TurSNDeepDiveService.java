@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,8 @@ import com.viglet.turing.service.llm.budget.TurChatCostBudgetGate;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.dsl.TurDslCallerFilters;
+import com.viglet.turing.sn.dsl.TurDslQuery;
+import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +99,13 @@ public class TurSNDeepDiveService {
 
     private static final ObjectMapper JSON = JsonMapper.builder().build();
     private static final Pattern CITATION = Pattern.compile("\\[(\\d{1,3})]");
+    private static final Pattern ISO_DATE = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+    private static final Pattern DATE_KEY = Pattern.compile("date|data|start|end|inicio|fim");
+    static final String EVENT_TIMELINE = "timeline";
+    /** A timeline of one entry says nothing a section does not; it needs two. */
+    static final int MIN_TIMELINE = 2;
+    /** At most this many values per facet field are read to widen a thin step. */
+    static final int VOCABULARY_VALUES = 30;
 
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurSNChatRouteResolver chatRouteResolver;
@@ -104,11 +114,13 @@ public class TurSNDeepDiveService {
     private final TurCatalogCopilotService copilotService;
     private final TurLLMTokenUsageService tokenUsageService;
     private final TurChatCostBudgetGate budgetGate;
+    private final TurSNNLFilterService nlFilterService;
 
     public TurSNDeepDiveService(TurSNSearchProcess turSNSearchProcess, TurSNChatRouteResolver chatRouteResolver,
             TurDefaultAgentResolver defaultAgentResolver, TurDefaultChatModelResolver chatModelResolver,
             TurCatalogCopilotService copilotService, TurLLMTokenUsageService tokenUsageService,
-            TurChatCostBudgetGate budgetGate) {
+            TurChatCostBudgetGate budgetGate, TurSNNLFilterService nlFilterService) {
+        this.nlFilterService = nlFilterService;
         this.turSNSearchProcess = turSNSearchProcess;
         this.chatRouteResolver = chatRouteResolver;
         this.defaultAgentResolver = defaultAgentResolver;
@@ -126,8 +138,15 @@ public class TurSNDeepDiveService {
     record Plan(String summary, List<Step> steps) {
     }
 
-    /** One numbered source of the overview: the citation and its excerpt. */
-    record Source(int number, TurCatalogCitation citation, String excerpt, int step) {
+    /**
+     * One numbered source of the overview: the citation, its excerpt and, when the
+     * document carries one, its date as {@code yyyy-MM-dd}.
+     */
+    record Source(int number, TurCatalogCitation citation, String excerpt, int step, String date) {
+
+        Source(int number, TurCatalogCitation citation, String excerpt, int step) {
+            this(number, citation, excerpt, step, null);
+        }
     }
 
     /** A composed section: its heading, its text and the source numbers it cites. */
@@ -210,19 +229,18 @@ public class TurSNDeepDiveService {
         List<Source> sources = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         List<String> emptySteps = new ArrayList<>();
+        // Read once, and only when a step turns out thin.
+        Supplier<Map<String, List<String>>> vocabulary = memoize(() -> vocabulary(siteName, localeName));
         for (Step step : plan.steps()) {
-            TurCatalogCopilotService.Retrieval retrieval = copilotService.retrieve(siteName, localeName,
-                    step.query());
-            if (!retrieval.siteFound()) {
+            Map<String, Object> stepEvent = retrieveStep(siteName, localeName, step, sources, seen, vocabulary);
+            if (stepEvent == null) {
                 emit.accept(error("Site not found: " + siteName));
                 return;
             }
-            List<Integer> numbers = collect(retrieval, step, sources, seen);
-            if (retrieval.citations().isEmpty()) {
+            if (((List<?>) stepEvent.get("sources")).isEmpty()) {
                 emptySteps.add(step.question());
             }
-            emit.accept(event(EVENT_STEP, Map.of("index", step.index(), "question", step.question(),
-                    "hits", retrieval.citations().size(), "sources", numbers)));
+            emit.accept(event(EVENT_STEP, stepEvent));
         }
         if (sources.isEmpty()) {
             emit.accept(event(EVENT_UNCOVERED, Map.of("items", emptySteps)));
@@ -239,9 +257,47 @@ public class TurSNDeepDiveService {
         List<String> uncovered = new ArrayList<>(emptySteps);
         composition.uncovered().stream().filter(item -> !uncovered.contains(item)).forEach(uncovered::add);
         emit.accept(event(EVENT_UNCOVERED, Map.of("items", uncovered)));
+        List<Map<String, Object>> timeline = timeline(sources, composition.sections());
+        if (timeline.size() >= MIN_TIMELINE) {
+            emit.accept(event(EVENT_TIMELINE, Map.of("entries", timeline)));
+        }
         emit.accept(event(EVENT_SOURCES, Map.of("groups", groupByType(sources))));
         emit.accept(event(EVENT_DONE, Map.of("sections", composition.sections().size(),
                 "sources", sources.size())));
+    }
+
+    /**
+     * Runs one step's retrieval and returns its {@code step} event, or {@code null}
+     * when the site is gone. A thin step (fewer hits than {@link #SOURCES_PER_STEP})
+     * searches again inside the facet value its words name, before it is reported
+     * empty, and the event says which value in {@code widenedBy}.
+     */
+    private Map<String, Object> retrieveStep(String siteName, String locale, Step step, List<Source> sources,
+            Set<String> seen, Supplier<Map<String, List<String>>> vocabulary) {
+        TurCatalogCopilotService.Retrieval retrieval = copilotService.retrieve(siteName, locale, step.query());
+        if (!retrieval.siteFound()) {
+            return null;
+        }
+        List<Integer> numbers = new ArrayList<>(collect(retrieval, step, sources, seen, SOURCES_PER_STEP));
+        int hits = retrieval.citations().size();
+        String[] facet = hits < SOURCES_PER_STEP ? matchingFacet(vocabulary.get(), step) : null;
+        if (facet != null) {
+            TurCatalogCopilotService.Retrieval widened = copilotService.retrieve(siteName, locale, step.query(),
+                    new TurDslQuery.Term(facet[0], facet[1]));
+            collect(widened, step, sources, seen, SOURCES_PER_STEP - numbers.size()).stream()
+                    .filter(number -> !numbers.contains(number))
+                    .forEach(numbers::add);
+            hits = Math.max(hits, widened.citations().size());
+        }
+        Map<String, Object> stepEvent = new LinkedHashMap<>();
+        stepEvent.put("index", step.index());
+        stepEvent.put("question", step.question());
+        stepEvent.put("hits", numbers.isEmpty() ? 0 : hits);
+        stepEvent.put("sources", numbers);
+        if (facet != null) {
+            stepEvent.put("widenedBy", facet[0] + "=" + facet[1]);
+        }
+        return stepEvent;
     }
 
     /**
@@ -251,11 +307,17 @@ public class TurSNDeepDiveService {
      */
     static List<Integer> collect(TurCatalogCopilotService.Retrieval retrieval, Step step, List<Source> sources,
             Set<String> seen) {
+        return collect(retrieval, step, sources, seen, SOURCES_PER_STEP);
+    }
+
+    /** {@link #collect(TurCatalogCopilotService.Retrieval, Step, List, Set)} adding at most {@code limit}. */
+    static List<Integer> collect(TurCatalogCopilotService.Retrieval retrieval, Step step, List<Source> sources,
+            Set<String> seen, int limit) {
         List<Integer> numbers = new ArrayList<>();
         List<TurCatalogCitation> citations = retrieval.citations();
         List<String> blocks = retrieval.contextBlocks();
         int added = 0;
-        for (int i = 0; i < citations.size() && added < SOURCES_PER_STEP; i++) {
+        for (int i = 0; i < citations.size() && added < limit; i++) {
             TurCatalogCitation citation = citations.get(i);
             String key = citation.id() != null ? citation.id() : citation.url();
             if (key == null) {
@@ -274,11 +336,124 @@ public class TurSNDeepDiveService {
                 excerpt = excerpt.substring(0, EXCERPT_CHARS);
             }
             int number = sources.size() + 1;
-            sources.add(new Source(number, citation.withRank(number), excerpt, step.index()));
+            sources.add(new Source(number, citation.withRank(number), excerpt, step.index(),
+                    date(retrieval.attributesAt(i))));
             numbers.add(number);
             added++;
         }
         return numbers;
+    }
+
+    /**
+     * The document's date, {@code yyyy-MM-dd}: the first attribute named like a
+     * date ({@code date}, {@code data}, {@code start}, {@code end}) whose value
+     * starts with an ISO date, the modification date last; {@code null} when none.
+     */
+    static String date(Map<String, String> attributes) {
+        if (attributes == null || attributes.isEmpty()) {
+            return null;
+        }
+        String fallback = null;
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String key = entry.getKey().toLowerCase(Locale.ROOT);
+            Matcher iso = ISO_DATE.matcher(entry.getValue() == null ? "" : entry.getValue().strip());
+            if (!DATE_KEY.matcher(key).find() || !iso.lookingAt()) {
+                continue;
+            }
+            if (key.contains("modification")) {
+                fallback = fallback == null ? iso.group() : fallback;
+            } else {
+                return iso.group();
+            }
+        }
+        return fallback;
+    }
+
+    /**
+     * The dated sources the sections cite, in date order (oldest first), each as
+     * {@code date}, {@code title}, {@code url} and the {@code source} number the
+     * sections cite. A source no section cites is not on the timeline.
+     */
+    static List<Map<String, Object>> timeline(List<Source> sources, List<Section> sections) {
+        Set<Integer> cited = new HashSet<>();
+        sections.forEach(section -> cited.addAll(section.citations()));
+        return sources.stream()
+                .filter(source -> source.date() != null && cited.contains(source.number()))
+                .sorted(java.util.Comparator.comparing(Source::date).thenComparing(Source::number))
+                .map(source -> {
+                    Map<String, Object> entry = new LinkedHashMap<>();
+                    entry.put("date", source.date());
+                    entry.put("title", nullToEmpty(source.citation().title()));
+                    entry.put("url", nullToEmpty(source.citation().url()));
+                    entry.put("source", source.number());
+                    return entry;
+                })
+                .toList();
+    }
+
+    /**
+     * The facet value a thin step names, as {@code [field, value]}: the value of a
+     * field with more than one value whose words most overlap the step's question
+     * and search words; {@code null} when no value shares a word.
+     */
+    static String[] matchingFacet(Map<String, List<String>> vocabulary, Step step) {
+        if (vocabulary == null || vocabulary.isEmpty()) {
+            return null;
+        }
+        Set<String> stepWords = words(step.question() + " " + step.query());
+        String[] best = null;
+        int bestOverlap = 0;
+        for (Map.Entry<String, List<String>> entry : vocabulary.entrySet()) {
+            if (entry.getValue() == null || entry.getValue().size() < 2) {
+                continue; // a single-valued field tells no document apart
+            }
+            for (String value : entry.getValue()) {
+                Set<String> valueWords = words(value);
+                valueWords.retainAll(stepWords);
+                if (valueWords.size() > bestOverlap) {
+                    bestOverlap = valueWords.size();
+                    best = new String[] { entry.getKey(), value };
+                }
+            }
+        }
+        return best;
+    }
+
+    /** Lower-cased words over two letters, accents folded, so "saúde" meets "saude". */
+    private static Set<String> words(String text) {
+        Set<String> words = new HashSet<>();
+        String folded = java.text.Normalizer.normalize(nullToEmpty(text), java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
+        for (String word : folded.split("[^\\p{L}\\p{N}]+")) {
+            if (word.length() > 2) {
+                words.add(word);
+            }
+        }
+        return words;
+    }
+
+    private Map<String, List<String>> vocabulary(String siteName, String locale) {
+        try {
+            Map<String, List<String>> read = nlFilterService.facetVocabulary(siteName, locale, VOCABULARY_VALUES);
+            return read == null ? Map.of() : read;
+        } catch (RuntimeException e) {
+            log.warn("[SNResearch] could not read the facet values of site '{}': {}", siteName, e.getMessage());
+            return Map.of();
+        }
+    }
+
+    private static <T> Supplier<T> memoize(Supplier<T> supplier) {
+        Object[] value = new Object[1];
+        boolean[] read = new boolean[1];
+        return () -> {
+            if (!read[0]) {
+                value[0] = supplier.get();
+                read[0] = true;
+            }
+            @SuppressWarnings("unchecked")
+            T cached = (T) value[0];
+            return cached;
+        };
     }
 
     /** The sources by document type, in first-seen order; a document without one is {@code other}. */

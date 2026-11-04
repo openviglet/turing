@@ -5,6 +5,7 @@ import {
   type TurResearchSection,
   type TurResearchSource,
   type TurResearchStep,
+  type TurResearchTimelineEntry,
 } from "../api.js";
 import { createStore, type Store } from "../store.js";
 import type { TuringConfig } from "../types.js";
@@ -33,6 +34,8 @@ export interface ResearchControllerState {
   sections: TurResearchSection[];
   /** Sub-questions and topics the index does not cover. */
   uncovered: string[];
+  /** The cited sources that carry a date, oldest first (empty under two). */
+  timeline: TurResearchTimelineEntry[];
   /** The cited documents by type; each `rank` is the `[n]` the sections cite. */
   sourceGroups: Record<string, TurResearchSource[]>;
   error: string | null;
@@ -64,6 +67,7 @@ const INITIAL: ResearchControllerState = {
   steps: [],
   sections: [],
   uncovered: [],
+  timeline: [],
   sourceGroups: {},
   error: null,
   isStreaming: false,
@@ -108,6 +112,9 @@ export function createResearchController(client: TuringClient, config: TuringCon
         },
         onUncovered: (uncovered) => {
           if (!isStale(requestId)) store.setState({ uncovered });
+        },
+        onTimeline: (timeline) => {
+          if (!isStale(requestId)) store.setState({ timeline });
         },
         onSources: (sourceGroups) => {
           if (!isStale(requestId)) store.setState({ sourceGroups });

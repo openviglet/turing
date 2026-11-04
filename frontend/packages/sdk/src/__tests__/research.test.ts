@@ -25,6 +25,12 @@ describe("createResearchController (T1220)", () => {
       frame("step", { index: 2, question: "Courses?", hits: 0, sources: [] }),
       frame("section", { title: "Research", text: "It studied the SUS [1][2].", citations: [1, 2] }),
       frame("uncovered", { items: ["Courses?"] }),
+      frame("timeline", {
+        entries: [
+          { date: "2019-03-10", title: "B", url: "ub", source: 2 },
+          { date: "2024-05-01", title: "A", url: "ua", source: 1 },
+        ],
+      }),
       frame("sources", { groups: { research: [{ rank: 1, id: "a" }, { rank: 2, id: "b" }] } }),
       frame("done", { sections: 1, sources: 2 }),
     ]);
@@ -42,6 +48,7 @@ describe("createResearchController (T1220)", () => {
     expect(state.steps.map((s) => s.hits)).toEqual([2, 0]);
     expect(state.sections[0].citations).toEqual([1, 2]);
     expect(state.uncovered).toEqual(["Courses?"]);
+    expect(state.timeline.map((e) => e.source)).toEqual([2, 1]);
     expect(Object.keys(state.sourceGroups)).toEqual(["research"]);
 
     const [path, init] = fetchRaw.mock.calls[0];
