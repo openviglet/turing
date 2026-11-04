@@ -10,20 +10,16 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
+- 📋 **T1214** (deps: —) **Node's ESM loader cannot import @viglet/turing-react-ui or react-sdk: their dist imports carry no .js** — Only a bundler resolves the extensionless specifiers, so a Node script, a plain test runner or unbundled SSR fails. → §CLIII.3
+- 📋 **T1215** (deps: —) **Importing the @viglet/turing-react-ui root without its optional peer react-markdown fails** — The root entry re-exports TuringMarkdown, which imports react-markdown statically, so the optional peer is required. → §CLIII.4
+
 ## Block CJ — Releases ship from the repository the README names
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
+- 📋 **T1213** (deps: —) **The catalog copilot, its kit and nl-filters take no filter, so an anonymous call reads every site's documents** — A WordPress kit on a shared SN site sells another site's stock: T1133 confines only keyed calls, and a browser holds no key. → §CLXII.11
+
 ## Block AN — Security hardening (post-audit, §XXXVII)
-
-## Done when — T1142
-
-- **npm serves postNlFilters and TurNLFilters from @viglet/turing-sdk** After the sdk
-  bump and a publish-sdk.yml dispatch, `pnpm check:unreleased` reads 0 for turing-sdk
-  and turing-react-sdk.
-- **One release record: changesets consumed by the publish or retired**
-  frontend/.changeset either feeds the publish workflows' version and notes, or is
-  deleted along with its README and scripts.
 
 ## Done when — T1184
 

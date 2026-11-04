@@ -2183,35 +2183,52 @@ the Search Console a month after.
 
 ## CLIII The quality gate stops at the package boundary
 
-### CLIII.2 The published JS SDK lags its source (T1142)
+### CLIII.3 The React packages load only through a bundler (T1214)
 
-**Where it happened.** Dumont D170 (the WordPress search block suggesting the filters a
-sentence names) needed `postNlFilters`, which `frontend/packages/sdk/src/api.ts` has
-carried since T1085 (2026-10-13) together with its `TurNLFilters` types. The newest
-`@viglet/turing-sdk` on npm is 2026.3.9, published 2026-08-24, and its `dist` has
-neither.
+**Where it showed.** The smoke test after the first `publish-npm.yml` run (T1142,
+2026-11-04) installed the five published packages into an empty project.
+`import("@viglet/turing-react-ui")` and `import("@viglet/turing-react-sdk")` fail under
+Node's own ESM loader: `dist/index.js` reads `from "./TuringHtmlSandbox"` and `from
+"./core/provider"`, with no `.js`. Both packages are `"type": "module"`, and Node
+resolves no extensionless relative specifier. The 2026.3.7 and 2026.3.8 tarballs are the
+same, so this is not new.
 
-**Why (review, 2026-10-26).** Nothing is broken in the pipeline; nobody ran it. Since
-that release 16 commits touched `packages/sdk/src` (T1085 to T1140) and 5 touched
-`packages/react-sdk/src`, whose npm 2026.3.8 is from the same day. The vanilla SDK ships
-by a hand bump of `package.json` plus a dispatch of `publish-sdk.yml`; the React SDK by
-a dispatch of `publish-js-sdk.yml`, which bumps itself. The changesets in
-`frontend/.changeset` (t1005, t1077, t1079, ...) are consumed by neither, so they pile
-up and are no signal. CI is manual-dispatch on purpose, so the fix is not a push
-trigger.
-
-**Blocked.** The vanilla SDK shipped (T1142c). T1142d made `publish-npm.yml` the one
-publish workflow, so every package's npm trusted publisher must name that file.
+**Why it matters.** A bundler (Vite, webpack, Next) resolves the specifiers, and a
+bundled smoke test loads both packages (35 and 153 exports). Anything that loads them
+without one does not: a Node script, a test runner in plain Node mode, or server
+rendering that keeps `node_modules` external.
 
 **What it should do.**
-- Publish both SDKs now.
-- One visible "unreleased" count per published package: commits under its `src` since
-  the published version's commit (`npm view <pkg> gitHead`, or a release tag), reported
-  by a script the frontend suite or the release checklist runs.
-- The publish workflows consume the changesets into the release notes (owner,
-  2026-11-04), and the agent dispatches both by `gh`.
-- Done when the published SDK exports `postNlFilters` and `TurNLFilters`, and the count
-  reads 0 right after a publish.
+- Emit relative specifiers with `.js`: TypeScript `moduleResolution: "nodenext"` (or
+  `"node16"`) in the two packages' build configs, which makes `tsc` require the extension
+  in the source, or an emit step that rewrites them.
+- Add the Node load to the publish gate: `scripts/check-package-contents.mjs`, or a new
+  gate, imports each packed entry point with plain `node` and fails on a resolution error.
+- Done when `node -e "import('@viglet/turing-react-sdk')"` loads the packed tarball.
+
+### CLIII.4 The react-ui root loads an optional peer (T1215)
+
+**Where it showed.** The smoke test after the first `publish-npm.yml` run (T1142,
+2026-11-04). `@viglet/turing-react-ui` declares `react-markdown` and `@terrastruct/d2`
+as optional peers (`peerDependenciesMeta`), and ships `./TuringMarkdown` and
+`./TuringD2Diagram` as subpaths so that only a consumer who renders markdown or D2 needs
+them. But `src/index.ts` re-exports `TuringMarkdown`, whose module imports
+`react-markdown` statically. So importing the root entry without `react-markdown`
+installed fails: a bundler cannot resolve it, and Node throws `ERR_MODULE_NOT_FOUND`.
+The D2 import is dynamic and does not have this problem.
+
+**Why it matters.** The optional peer is optional only for a consumer who never imports
+the root entry. A consumer who follows the README and imports `TuringSearchBar` from the
+package root gets a build error about a markdown library they never use.
+
+**What it should do.**
+- The root entry must not load an optional peer. The open choice: drop `TuringMarkdown`
+  (and what re-exports it, such as `TuringRichContent` if it does) from the root and keep the
+  subpaths, which breaks a root import of `TuringMarkdown`; or keep the root export and load
+  `react-markdown` lazily, like the D2 renderer already does.
+- A publish gate that bundles the root entry with the optional peers absent, so the case
+  cannot come back.
+- Done when a project with only `react` and `react-dom` installed can import the package root.
 
 ## CLIV Persona as a first-class actionable surface (§XXXII)
 
@@ -2289,6 +2306,35 @@ are the suspects), and the image version the demo runs.
 
 **Done when.** The demo's two-word queries return the same documents, and the IT above
 stays green.
+
+### CLXII.11 Copilot, kit and nl-filters scoped by a filter (T1213)
+
+**Where.** Dumont's WordPress plugin (D287). Several WordPress sites can share one SN
+site (Dumont D148): every document carries `site_key`, and the browser scopes a search
+with `fq[]=site_key:<key>`. Ask the catalog (`wordpress/src/public/copilot.js`) posts
+`POST /api/sn/{site}/copilot` and `POST /api/sn/{site}/copilot/kit` from the visitor's
+browser, through `@viglet/turing-sdk`, with no API key: a key is a server secret and
+never reaches a browser.
+
+**What happens.** `CopilotRequest(messages, locale, documentId)` and `KitRequest(plan,
+locale, maxGaps, perGap, availabilityField, availability, guideTypes, productTypes)` in
+`TurSNCatalogCopilotAPI` take no filter, so an anonymous call reads the whole SN site:
+on 2026-11-03 a kit staged every product twice, once per site. T1133 confines these
+routes for a partitioned key, which a browser never holds. `nl-filters` likewise checks
+values against the whole site's.
+
+**What already works.** `GET /answer` takes `fq` and `POST /chat/conversation` takes
+`filters` (field to values, T1086); the plugin now sends `filters: {site_key: [key]}` on
+the Site assistant's turns.
+
+**What Turing should do.** `CopilotRequest`, `KitRequest` and the nl-filters body take
+the same `filters` map (or `fq`), applied to every read the copilot and the kit make
+(the DSL searches and the hybrid reorder) and to the values nl-filters checks against,
+and the SDK methods pass it through. No filter keeps today's behaviour.
+
+**Done when.** A kit, a copilot answer and an nl-filters reading asked with `filters:
+{site_key: [a]}` cite and stage only documents whose `site_key` is `a`, on an SN site
+holding two partitions; Dumont D287 then sends it from the browser.
 
 ## CLXIII Release pipeline reliability
 
