@@ -23,8 +23,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
 ## Block BV — The quality gate stops at the package boundary
@@ -2213,34 +2211,6 @@ site can still leave it short after filtering.
 T1133's key-bound partition applies here without the caller's `fq`; this line's `fq`
 stays for type and visibility. Left: `fq` on `/search/duplicates`, on the vector-point
 fields T1133 adds.
-
-## CXLV A shared SN site is partitioned by the server, not by its clients (T1133)
-
-**Where it happened.** Dumont's WordPress plugin writes several WordPress sites into one
-SN site, told apart by a `site_key` field, and isolation lived in the client's `fq`.
-
-**Decision (review, 2026-10-25).** The server owns the partition. Patching `fq` into
-each endpoint is ruled out: one endpoint that forgot it would leak.
-
-**What landed.** Part 1: `dev_token.partitionField`/`partitionValue` bind a key.
-`TurApiKeyPartitionContext` carries the partition, and `TurApiKeyPartitionGuardFilter`
-refuses the key with 403 outside its `ENFORCED` routes. MCP refuses partitioned keys.
-Search applies `TurSEParameters.partition` in Solr, Lucene and Elasticsearch, and
-imports stamp the value. T1133b checks writes by id; T1133c similar and
-`/search/document`; T1133d autocomplete and spell-check; T1112 confines a delete by
-field; T1133e records a `partitionKey` on each search and click and reads failed
-searches, content gaps and clicks per partition. T1133f confines chat and `/answer` to
-the partition's RAG chunks, without tools; T1133g every DSL read, so nl-filters.
-`TurSdkContractIT` tests two partitions.
-
-**What is left.** Both need the partition in the per-site vector collection: written as
-point metadata at index time (an existing site re-embeds when its admin reindexes, and its vector routes refuse the key until then; owner, 2026-11-04; PgVector, Milvus and Chroma tested by Testcontainers ITs), and a filter on it in
-the neighbour and retrieval searches. Then:
-- duplicates (clusters come from vector neighbours);
-- copilot (its DSL reads are confined; its hybrid ranking on `sn_<siteId>`, whose
-  points carry only locale and type, is not).
-
-Add each to `ENFORCED` and extend the contract test.
 
 ## CLIII The quality gate stops at the package boundary
 

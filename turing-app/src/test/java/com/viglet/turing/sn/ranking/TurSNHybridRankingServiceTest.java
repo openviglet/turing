@@ -185,6 +185,29 @@ class TurSNHybridRankingServiceTest {
         verify(ragContextBuilder).build(eq("voyage-law"), anyString(), anyString());
     }
 
+    /** T1133 — a partitioned key's vector pass ranks only its partition's points. */
+    @Test
+    void aPartitionedRequestsFusionSearchesOnlyItsPartition() {
+        when(ragContextBuilder.build(anyString(), anyString(), anyString())).thenReturn(Optional.of(infra()));
+        when(vectorStore.similaritySearch(any(SearchRequest.class)))
+                .thenReturn(List.of(Document.builder().id("B").text("").build()));
+        var request = new org.springframework.mock.web.MockHttpServletRequest();
+        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+                new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+        try {
+            service.fuse(siteWithMode(TurSNRankingMode.HYBRID_RRF), Locale.ENGLISH, "query",
+                    List.of(result("A"), result("B")));
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+
+        ArgumentCaptor<SearchRequest> searched = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(vectorStore).similaritySearch(searched.capture());
+        assertThat(searched.getValue().getFilterExpression().toString()).contains("site_key").contains("blog-a");
+    }
+
     // ---- fuse reordering --------------------------------------------------
 
     @Test

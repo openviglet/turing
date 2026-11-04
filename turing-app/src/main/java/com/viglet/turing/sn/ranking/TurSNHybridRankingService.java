@@ -368,12 +368,17 @@ public class TurSNHybridRankingService {
             // Stage 2 (fuse): vector pass over the per-site collection, restricted to
             // documents already on the page; fusion can only reorder what BM25 returned
             // (facets/pagination stay BM25-derived). Capture 1-based semantic rank.
-            SearchRequest request = SearchRequest.builder()
+            SearchRequest.Builder request = SearchRequest.builder()
                     .query(query)
                     .topK(VECTOR_TOP_K)
-                    .similarityThreshold(0.0)
-                    .build();
-            List<Document> vectorAll = infra.vectorStore().similaritySearch(request);
+                    .similarityThreshold(0.0);
+            // T1133 — a partitioned key's vector pass ranks only its partition's points,
+            // so neither a recalled document nor the top-K depth comes from another one.
+            com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                    .ifPresent(partition -> request.filterExpression(
+                            com.viglet.turing.genai.TurRagFilters.buildFilterExpression(
+                                    Map.of(partition.field(), List.of(partition.value())))));
+            List<Document> vectorAll = infra.vectorStore().similaritySearch(request.build());
             // Stage 1.5 (recall, opt-in): bring in the vector hits the lexical page missed.
             Set<String> recalled = recallOn
                     ? recallMissing(vectorAll, byId, recall, recallFloor(turSNSite))

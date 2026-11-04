@@ -8,13 +8,9 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-## Block BZ — Indexing API trust for connectors: key auth, scripted login, request validation
-
-- 🛠 **T1133** (deps: —) **An API key reads and deletes every document of a shared SN site, as nothing binds a key to its own partition** — The copilot still refuses the key: its hybrid ranking reads sn_ unfiltered. → §CXLV
-
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 
-- 📋 **T1132** (deps: T1133 🛠) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
+- 📋 **T1132** (deps: T1133 ✅) **The similar-documents search takes no filter, so a shared SN site answers with every site's documents** — The duplicates search takes no filter: vector points carry no field to filter on. → §CXLIV
 
 ## Block BV — The quality gate stops at the package boundary
 
@@ -23,12 +19,6 @@
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
-
-## Done when — T1133
-
-- **Every SN endpoint takes a partitioned key and keeps it in its partition**
-  TurSdkContractIT's two-partition test covers every endpoint, and the guard's ENFORCED
-  list matches every SN route.
 
 ## Done when — T1132
 

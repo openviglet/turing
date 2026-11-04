@@ -97,7 +97,8 @@ class TurApiKeyPartitionGuardFilterTest {
             "POST, /api/sn/shared/chat/conversation/stream, false",
             "POST, /api/sn/shared/nl-filters, true",
             "POST, /api/sn/shared/_search, false",
-            "POST, /api/sn/shared/copilot, false",
+            "POST, /api/sn/shared/copilot, true",
+            "POST, /api/sn/shared/copilot/kit, true",
             "GET, /api/sn/shared/chat, false"
     })
     void allowsOnlyTheEndpointsThatEnforceThePartition(String method, String uri, boolean allowed) {

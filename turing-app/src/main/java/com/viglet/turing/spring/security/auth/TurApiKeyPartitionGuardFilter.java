@@ -96,8 +96,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             new Route("POST", Pattern.compile("^/api/v2/summary$")),
             // T1209 — the AI probes: each answers from configuration, and the
             // capabilities' vector probe says only whether the store holds a chunk,
-            // so none returns a document. The copilot and the raw DSL _search stay
-            // refused: the DSL suggesters read the whole index's vocabulary.
+            // so none returns a document. The raw DSL _search stays refused: its
+            // suggesters read the whole index's vocabulary.
             new Route("GET", Pattern.compile(
                     "^/api/sn/[^/]+/(?:ai/capabilities|chat/enabled|copilot/available|summary/available)$")),
             // T1133 — the RAG chat and the answer: retrieval reads only the chunks
@@ -108,6 +108,9 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
             // T1133 — natural-language filters: the values each filter is checked
             // against are read by a DSL aggregation confined to the partition.
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/nl-filters$")),
+            // T1133 — the catalog copilot and its kit: every read is a DSL search,
+            // confined to the partition, and the hybrid reorder ranks only its points.
+            new Route("POST", Pattern.compile("^/api/sn/[^/]+/copilot(?:/kit)?$")),
             // T1209 — spotlights: the API confines a partitioned key to its
             // partition's own, and a search shows them only to that partition.
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/spotlight(?:/[^/]+)?$")),
