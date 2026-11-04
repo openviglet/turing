@@ -1368,6 +1368,7 @@
 - **T1142 (unreleased count)** — `pnpm check:unreleased` counts each published package's src commits since npm's latest (today sdk 16, react-sdk 6), tested offline.
 - **T1207** — pnpm audit exits 0 again: browserslist, adm-zip, source-map-js, zod and follow-redirects take floors capped at their major, and check:overrides shows each one in force.
 - **T1208** — The parity composition renders a caller-toned chip through bentoChipClass inside the entity-tile surface, so the tone assertion measures a real chip and the parity project passes 5 of 5.
+- **T1142b** — publish-sdk.yml and publish-js-sdk.yml move each package's pending changesets into its CHANGELOG.md under the published version and commit them with the bump.
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

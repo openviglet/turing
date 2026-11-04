@@ -19,20 +19,20 @@ published).
    and write a one-line summary. This writes a markdown file into `.changeset/`
    — commit it with your PR.
 
-2. **Version.** When ready to cut a release, run:
+2. **Publish the SDKs.** `@viglet/turing-sdk` and `@viglet/turing-react-sdk`
+   are released by dispatching `publish-sdk.yml` and `publish-js-sdk.yml`
+   (T1142). Each sets the next patch npm has not seen
+   (`scripts/bump-patch.mjs`), then `scripts/consume-changesets.mjs` moves that
+   package's pending changesets into its `CHANGELOG.md` under the new version and
+   removes them, and the bump, the changelog and the consumed changesets are
+   committed back together. A changeset that names both SDKs keeps the other
+   package's line until that package is published. The bump level in the
+   changeset is not read: these packages follow the platform's
+   `year.release.patch` version.
 
-   ```bash
-   pnpm version-packages
-   ```
-
-   This consumes the pending changeset files, bumps each package's `version`,
-   and appends to its `CHANGELOG.md`. Commit the result.
-
-3. **Publish.** `pnpm release` builds and publishes everything that changed to
-   npm. In CI this is done by the **Publish react-ui** workflow
-   (`.github/workflows/publish-react-ui.yml`).
-
-> Note: the monorepo also has a legacy "bump every workspace by a patch"
-> publish flow (`publish-js-sdk.yml`). Changesets is the going-forward,
-> per-package semver path introduced with T303 packaging hardening — prefer it
-> for the publishable packages.
+3. **Publish react-ui.** `pnpm version-packages` consumes the pending changesets,
+   bumps each package's `version` by its bump level and appends to its
+   `CHANGELOG.md`; `pnpm release` publishes. In CI this is the **Publish
+   react-ui** workflow (`.github/workflows/publish-react-ui.yml`). Run
+   `version-packages` only for react-ui's changesets: it consumes the SDKs'
+   changesets too, which their own workflows would otherwise write.

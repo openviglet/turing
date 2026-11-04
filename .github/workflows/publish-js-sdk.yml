@@ -55,6 +55,12 @@ jobs:
         working-directory: frontend
         run: node scripts/bump-patch.mjs packages/react-sdk
 
+      # T1142 — the release notes: this package's pending changesets move into its
+      # CHANGELOG.md under the version just set, and are removed from .changeset.
+      - name: Release notes from the changesets
+        working-directory: frontend
+        run: node scripts/consume-changesets.mjs packages/react-sdk | tee -a "$GITHUB_STEP_SUMMARY"
+
       # ── Build & publish the SDK (which now carries the bumped version) ──
       # T875: this step used to run `build:sdk`, which filters the *vanilla*
       # `@viglet/turing-sdk`. react-sdk depends on sdk and not the reverse, so
@@ -100,6 +106,7 @@ jobs:
       # ── Commit the one package.json the bump touched ──
       - name: Commit version bump
         run: |
-          git add frontend/packages/react-sdk/package.json
+          git add frontend/packages/react-sdk/package.json frontend/.changeset
+          if [ -f frontend/packages/react-sdk/CHANGELOG.md ]; then git add frontend/packages/react-sdk/CHANGELOG.md; fi
           git commit -m "chore: bump @viglet/turing-react-sdk [skip ci]" || echo "No changes to commit"
           git push

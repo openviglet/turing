@@ -18,7 +18,7 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 📋 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Wire the changesets into the publish workflows, bump the SDK, then dispatch publish-sdk.yml and publish-js-sdk.yml by gh. → §CLIII.2
+- 🛠 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Dispatch publish-sdk.yml and publish-js-sdk.yml by gh once origin carries the changeset step (T1142b), so npm serves postNlFilters. → §CLIII.2
 
 ## Block CJ — Releases ship from the repository the README names
 

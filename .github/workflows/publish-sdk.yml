@@ -49,6 +49,12 @@ jobs:
         working-directory: frontend
         run: node scripts/bump-patch.mjs packages/sdk
 
+      # T1142 — the release notes: this package's pending changesets move into its
+      # CHANGELOG.md under the version just set, and are removed from .changeset.
+      - name: Release notes from the changesets
+        working-directory: frontend
+        run: node scripts/consume-changesets.mjs packages/sdk | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Build @viglet/turing-sdk
         working-directory: frontend
         run: pnpm --filter "@viglet/turing-sdk..." run build
@@ -81,6 +87,7 @@ jobs:
 
       - name: Commit version bump
         run: |
-          git add frontend/packages/sdk/package.json
+          git add frontend/packages/sdk/package.json frontend/.changeset
+          if [ -f frontend/packages/sdk/CHANGELOG.md ]; then git add frontend/packages/sdk/CHANGELOG.md; fi
           git commit -m "chore: bump @viglet/turing-sdk [skip ci]" || echo "No changes to commit"
           git push
