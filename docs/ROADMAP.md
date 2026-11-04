@@ -18,8 +18,6 @@
 
 ## Block BV — The quality gate stops at the package boundary
 
-- 🛠 **T1142** (deps: —) **The npm @viglet/turing-sdk lags its source: 2026.3.9 has no postNlFilters, so consumers hand-write the request** — Dispatch publish-sdk.yml and publish-js-sdk.yml by gh once origin carries the changeset step (T1142b), so npm serves postNlFilters. → §CLIII.2
-
 ## Block CJ — Releases ship from the repository the README names
 
 - 📋 **T1180** (deps: —) **The 2026.3 line is released only on turing-ce, so openviglet/turing shows the older v2026.2.9 as its Latest release** — No 2026.3 release exists there yet: publish run 41103220225 failed. → §CLXI.1
