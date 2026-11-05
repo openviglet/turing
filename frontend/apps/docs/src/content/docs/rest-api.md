@@ -120,6 +120,9 @@ POST http://localhost:2700/api/sn/{siteName}/search
 | `rows` | | Results per page (overrides site default) |
 | `sort` | | Sort field and direction (e.g., `date desc`) |
 | `fq[]` | | Filter query: apply a facet filter (e.g., `fq[]=type:news`) |
+| `fq.and[]` / `fq.or[]` | | Filter queries every result must match / of which a result must match one |
+| `fq.op` | | How filters on different fields combine: `AND`, `OR` or `NONE` (the site's setting) |
+| `fqi.op` | | How the values of one field combine: `AND`, `OR` or `NONE`. `fqi.op=OR` with `fq[]=site_key:a&fq[]=site_key:b` returns both sites' documents, and applies to every field in the request |
 | `group` | | Group results by a field value |
 
 **Example (GET):**

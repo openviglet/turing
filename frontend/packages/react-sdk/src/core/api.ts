@@ -153,6 +153,11 @@ function buildQueryString(params: SearchParams): string {
   if (params.sort) qs.append("sort", params.sort);
 
   for (const v of params.fq ?? []) qs.append("fq[]", v);
+  // T1223 — the operators SearchParams types, spelled as the GET endpoint reads them.
+  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
+  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
+  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
+  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
   for (const v of params.tr ?? []) qs.append("tr[]", v);
 
   if (params.nfpr) qs.append("nfpr", params.nfpr);

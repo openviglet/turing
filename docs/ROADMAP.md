@@ -20,7 +20,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — A site searching its own and sibling site keys gets zero results, and the only switches flip every facet to OR. → §CLXIX.1
 - 📋 **T1224** (deps: —) **A custom facet buckets one date field: an event spanning a start and an end date cannot fall in the periods it overlaps** — An exhibition running all month sits under Past once it has started, so an agenda's Next 7 days misses what is on. → §CLXIX.2
 
 ## Block CN — Autocomplete and suggestions

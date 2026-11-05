@@ -2300,7 +2300,7 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
    viglet-core-manifest (its own repo): the field lands there first, then in the Java
    SDK's `TurSNJobAttributeSpec` with the old constructor kept, as T1082 did `searchWeight`,
    then `TurSNManifestMapper#toJobSpec` and the field ext.
-2. The JS SDK's GET search sends `fqOperator`, `fqItemOperator`, `fqAnd[]`, `fqOr[]` when set.
+2. Landed (SDK half): `fetchSearch` in both SDKs sends them as `fq.and[]`, `fq.or[]`, `fq.op`, `fqi.op`.
 
 **Workaround in Dumont.** None: D303 waits on this line.
 

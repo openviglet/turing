@@ -85,6 +85,14 @@ export interface SearchParams {
   group?: string;
   /** Number of results per page */
   rows?: string;
+  /** T1223 — filter queries every result must match (`fq.and[]`). */
+  fqAnd?: string[];
+  /** T1223 — filter queries of which a result must match one (`fq.or[]`). */
+  fqOr?: string[];
+  /** T1223 — how filters on different fields combine (`fq.op`). */
+  fqOperator?: "AND" | "OR" | "NONE";
+  /** T1223 — how the values of one field combine (`fqi.op`). */
+  fqItemOperator?: "AND" | "OR" | "NONE";
 }
 
 function buildQueryString(params: SearchParams): string {
@@ -96,6 +104,10 @@ function buildQueryString(params: SearchParams): string {
   if (params.sort) qs.append("sort", params.sort);
 
   for (const v of params.fq ?? []) qs.append("fq[]", v);
+  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
+  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
+  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
+  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
   for (const v of params.tr ?? []) qs.append("tr[]", v);
 
   if (params.nfpr) qs.append("nfpr", params.nfpr);
