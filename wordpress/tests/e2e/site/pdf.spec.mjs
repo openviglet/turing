@@ -2,7 +2,7 @@
 // its text from the zip the plugin sends, and deleting the attachment takes it out again.
 // Desktop only: it uploads, indexes and deletes.
 import { expect, test } from '../fixtures.mjs';
-import { wp } from '../global-setup.mjs';
+import { setSetting, wp } from '../global-setup.mjs';
 
 const sentence = 'Quokka enrolment clause';
 
@@ -59,14 +59,7 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	if ( 'site' !== testInfo.project.name ) {
 		return;
 	}
-	wp( [
-		'option',
-		'patch',
-		'insert',
-		'viglet_dumont_settings',
-		'index_pdfs',
-		'1',
-	] );
+	setSetting( 'index_pdfs', '1' );
 	attachment = ask( [
 		'eval',
 		uploadPdf( sentence, seed.postId, 'Enrolment rules' ),
@@ -82,13 +75,7 @@ test.afterAll( ( {}, testInfo ) => {
 			wp( [ 'post', 'delete', attachment, '--force' ] );
 		} catch {}
 	}
-	wp( [
-		'option',
-		'patch',
-		'delete',
-		'viglet_dumont_settings',
-		'index_pdfs',
-	] );
+	setSetting( 'index_pdfs', null );
 } );
 
 test.beforeEach( ( {}, testInfo ) => {

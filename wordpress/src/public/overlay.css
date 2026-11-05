@@ -167,6 +167,57 @@
 	color: var(--wp--preset--color--base, #fff);
 }
 
+/* The answer strip and the preview pane of the immersive layout (D311). */
+.viglet-dumont-overlay__answer {
+	border-left: 3px solid currentColor;
+	margin: 0.5rem 0;
+	padding: 0.5rem 0.75rem;
+	white-space: pre-line;
+}
+
+.viglet-dumont-overlay__body {
+	display: flex;
+	gap: 1rem;
+}
+
+.viglet-dumont-overlay__body > .viglet-dumont-overlay__results {
+	flex: 1;
+	min-width: 0;
+}
+
+.viglet-dumont-overlay__preview {
+	border-left: 1px solid currentColor;
+	flex: 0 0 18rem;
+	padding-left: 1rem;
+}
+
+.viglet-dumont-overlay__preview[hidden],
+.viglet-dumont-overlay__answer[hidden] {
+	display: none;
+}
+
+/* A phone has no room beside the results: the preview is the desktop's. */
+@media (max-width: 899px) {
+
+	.viglet-dumont-overlay__preview {
+		display: none;
+	}
+}
+
+.viglet-dumont-overlay__preview-image {
+	border-radius: 4px;
+	max-width: 100%;
+}
+
+.viglet-dumont-overlay__preview-title {
+	font-weight: 600;
+}
+
+.viglet-dumont-overlay__preview-snippet,
+.viglet-dumont-overlay__preview-line {
+	font-size: 0.875rem;
+}
+
 .viglet-dumont-overlay__hint {
 	font-size: 0.8rem;
 	margin: 0.75rem 0 0;

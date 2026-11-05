@@ -231,15 +231,23 @@ class Viglet_Dumont_Native_Search {
 			}
 		}
 		$types[ Viglet_Dumont_Pdf::TYPE ] = __( 'PDF files', 'viglet-turing-search' );
+		$immersive                        = 'immersive' === ( $this->settings['overlay_layout'] ?? '' );
 
 		wp_interactivity_config(
 			'viglet-dumont/overlay',
 			array_merge(
 				$this->search_page(),
 				array(
-					'layout'     => 'immersive' === ( $this->settings['overlay_layout'] ?? '' ) ? 'immersive' : 'list',
+					'layout'     => $immersive ? 'immersive' : 'list',
 					'typeLabels' => $types,
+					// The immersive zero state's popular searches (D202), and whether a question
+					// gets Turing's answer on top: opt-in, as each answer is an LLM call.
+					'popular'    => $immersive ? ( new Viglet_Dumont_Trending() )->chips() : array(),
+					'answers'    => $immersive && ! empty( $this->settings['overlay_answers'] ),
 					'labels'     => array(
+						'popular'  => __( 'Popular searches', 'viglet-turing-search' ),
+						'answer'   => __( 'Answer', 'viglet-turing-search' ),
+						'preview'  => __( 'Preview', 'viglet-turing-search' ),
 						/* translators: %s: a type's name, e.g. "Events". */
 						'seeAll'   => __( 'See all %s', 'viglet-turing-search' ),
 						'recent'   => __( 'Recent searches', 'viglet-turing-search' ),

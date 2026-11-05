@@ -18,12 +18,16 @@ export const budget = {
 };
 
 /**
- * A plugin setting, read through WP-CLI.
+ * A plugin setting as the plugin reads it, through WP-CLI: a value the stack sets from its
+ * environment (the SN site, the API key) is in no stored option, so the option is not asked.
  *
  * @param {string} key The setting.
  */
 export function setting( key ) {
-	return wp( [ 'option', 'pluck', 'viglet_dumont_settings', key ] )
+	return wp( [
+		'eval',
+		`echo viglet_dumont_get_settings()[ ${ JSON.stringify( key ) } ] ?? '';`,
+	] )
 		.trim()
 		.split( '\n' )
 		.pop()

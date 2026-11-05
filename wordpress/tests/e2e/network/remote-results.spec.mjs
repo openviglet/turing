@@ -4,7 +4,7 @@
 // E2E_MULTISITE=1.
 import { readFileSync } from 'node:fs';
 import { expect, test } from '../fixtures.mjs';
-import { networkSeedFile, wp } from '../global-setup.mjs';
+import { networkSeedFile, setSetting } from '../global-setup.mjs';
 
 const [ main, second ] = JSON.parse( readFileSync( networkSeedFile, 'utf8' ) );
 const results = `${ main.url }?page_id=${ main.searchPageId }`;
@@ -15,17 +15,10 @@ const results = `${ main.url }?page_id=${ main.searchPageId }`;
  * @param {string} [url] The results page.
  */
 const sendTo = ( url ) =>
-	wp(
-		[
-			`--url=${ second.url }`,
-			'option',
-			'patch',
-			// `insert` sets a key the stored settings may not have yet.
-			url ? 'insert' : 'delete',
-			'viglet_dumont_settings',
-			'search_url',
-			...( url ? [ url ] : [] ),
-		],
+	setSetting(
+		'search_url',
+		url ?? null,
+		[ `--url=${ second.url }` ],
 		'cli-ms'
 	);
 

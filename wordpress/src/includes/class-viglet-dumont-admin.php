@@ -208,6 +208,7 @@ class Viglet_Dumont_Admin {
 		$sanitized['results_per_page']    = max( 1, min( 100, (int) ( $input['results_per_page'] ?? 10 ) ) );
 		$sanitized['instant_overlay']     = ! empty( $input['instant_overlay'] ) ? 1 : 0;
 		$sanitized['overlay_layout']      = 'immersive' === ( $input['overlay_layout'] ?? '' ) ? 'immersive' : 'list';
+		$sanitized['overlay_answers']     = ! empty( $input['overlay_answers'] ) ? 1 : 0;
 		$sanitized['search_page']         = max( 0, (int) ( $input['search_page'] ?? 0 ) );
 		$sanitized['search_url']          = Viglet_Dumont_Native_Search::sanitize_search_url( (string) ( $input['search_url'] ?? '' ) );
 		$sanitized['track_clicks']        = ! empty( $input['track_clicks'] ) ? 1 : 0;

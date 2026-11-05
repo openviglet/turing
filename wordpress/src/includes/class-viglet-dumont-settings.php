@@ -66,6 +66,8 @@ class Viglet_Dumont_Settings {
 		'instant_overlay'     => 1,
 		// `list` (six titles) or `immersive` (D311): grouped by type, with images, full screen on a phone.
 		'overlay_layout'      => 'list',
+		// Opt-in (D311): an immersive instant search answers questions on top; each is an LLM call.
+		'overlay_answers'     => 0,
 		// The full search page the overlay sends Enter to; 0 finds the page holding the block.
 		'search_page'         => 0,
 		// A results page on another site every search here goes to (D304); empty keeps them here.

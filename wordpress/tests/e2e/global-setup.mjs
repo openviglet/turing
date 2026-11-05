@@ -38,6 +38,32 @@ export function wp( args, service = 'cli' ) {
 }
 
 /**
+ * Set one plugin setting in the stored option, or with `null` remove it so the default
+ * applies. A key the Settings form saved is there already, so `wp option patch insert` would
+ * fail on it and `patch update` on a key it never saved: this does either.
+ *
+ * @param {string}             key     The setting.
+ * @param {string|number|null} value   Its value; null to remove it.
+ * @param {string[]}           extra   More wp arguments, e.g. `--url=` on the network.
+ * @param {string}             service The compose service.
+ */
+export function setSetting( key, value, extra = [], service = 'cli' ) {
+	const name = JSON.stringify( key );
+	const change =
+		null === value
+			? `unset( $s[ ${ name } ] );`
+			: `$s[ ${ name } ] = ${ JSON.stringify( value ) };`;
+	return wp(
+		[
+			...extra,
+			'eval',
+			`$s = (array) get_option( 'viglet_dumont_settings', array() ); ${ change } update_option( 'viglet_dumont_settings', $s );`,
+		],
+		service
+	);
+}
+
+/**
  * Stop unless the browser's URL is the WordPress WP-CLI seeds (D221). WP-CLI always reaches
  * this compose project's site, while the browser goes wherever the URL says: another site on
  * that port would be browsed instead, and every spec would fail as if the plugin were broken.

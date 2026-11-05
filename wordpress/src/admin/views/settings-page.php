@@ -396,6 +396,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<option value="immersive" <?php selected( $settings['overlay_layout'], 'immersive' ); ?>><?php esc_html_e( 'Immersive: results by type, with images', 'viglet-turing-search' ); ?></option>
 							</select>
 							<p class="description"><?php esc_html_e( 'Immersive groups the results by type, each with its image, date and a link to all of that type, shows recent searches before anything is typed, and fills a phone\'s screen.', 'viglet-turing-search' ); ?></p>
+							<label>
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[overlay_answers]"
+										value="1" <?php checked( $settings['overlay_answers'], 1 ); ?> />
+								<?php esc_html_e( 'Answer questions on top of the immersive layout (each answer is an LLM call)', 'viglet-turing-search' ); ?>
+							</label>
 						</div>
 
 						<div class="viglet-dumont-field">

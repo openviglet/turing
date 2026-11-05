@@ -18,6 +18,7 @@ import {
 	cardOverride,
 	cardWhen,
 	formatCardDate,
+	isQuestion,
 	isScopeFilter,
 	postIdOf,
 	renderMarkdown,
@@ -640,25 +641,6 @@ function counted( labels, n ) {
 function close() {
 	state.open = false;
 	state.active = -1;
-}
-
-// The words a question starts with, in the languages the plugin ships (en, pt_BR).
-const questionWords =
-	/^(how|what|why|when|where|who|which|can|does|do|is|are|should|como|o que|qual|quais|quando|onde|por que|porque|quem|posso|existe)\b/i;
-
-/**
- * Whether a query reads as a question worth an answer rather than a lookup: it ends with a
- * question mark, starts with a question word, or runs to five words or more.
- *
- * @param {string} query What the visitor searched for.
- */
-function isQuestion( query ) {
-	const typed = query.trim();
-	return (
-		/\?$/.test( typed ) ||
-		questionWords.test( typed ) ||
-		typed.split( /\s+/ ).length >= 5
-	);
 }
 
 /**

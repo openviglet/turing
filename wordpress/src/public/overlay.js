@@ -14,16 +14,25 @@ import {
 	cardLines,
 	cardWhen,
 	config,
+	createAnswerController,
+	createClient,
 	createSiteSearch,
 	formatCardDate,
+	isQuestion,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
-const { labels, searchPage, queryParam, layout, typeLabels } = getConfig(
-	'viglet-dumont/overlay'
-);
+const {
+	labels,
+	searchPage,
+	queryParam,
+	layout,
+	typeLabels,
+	popular = [],
+	answers = false,
+} = getConfig( 'viglet-dumont/overlay' );
 
 // D311: results grouped by type, with images and a "See all" per type, recent searches before
 // anything is typed, and the whole screen on a phone.
@@ -101,6 +110,13 @@ let opener = null;
 let timer = null;
 let results = [];
 let active = -1;
+// The immersive layout's answer strip, preview pane and answer controller (D311).
+let answerBox = null;
+let preview = null;
+let answerer = null;
+let answerTimer = null;
+// How long a question must rest before it is answered: each answer is an LLM call.
+const answerMs = 1200;
 
 /**
  * An element with a class and, optionally, attributes and text.
@@ -181,7 +197,33 @@ function build() {
 	status = make( 'p', 'status', { 'aria-live': 'polite' } );
 	all = make( 'a', 'all', { href: fullSearchUrl( '' ) }, labels.all );
 	const hint = make( 'p', 'hint', {}, labels.hint );
-	dialog.append( form, status, list, all, hint );
+	if ( immersive ) {
+		// D311: Turing's answer above the results, and the highlighted result beside them.
+		answerBox = make( 'section', 'answer', {
+			'aria-label': labels.answer,
+			'aria-live': 'polite',
+			hidden: '',
+		} );
+		preview = make( 'aside', 'preview', {
+			'aria-label': labels.preview,
+			hidden: '',
+		} );
+		const body = make( 'div', 'body' );
+		body.append( list, preview );
+		dialog.append( form, status, answerBox, body, all, hint );
+		if ( answers ) {
+			answerer = createAnswerController( createClient(), {
+				site: config.site,
+				locale: config.locale,
+			} );
+			answerer.subscribe( ( s ) => {
+				answerBox.textContent = s.answer || '';
+				answerBox.hidden = ! s.answer;
+			} );
+		}
+	} else {
+		dialog.append( form, status, list, all, hint );
+	}
 	document.body.append( dialog );
 
 	input.addEventListener( 'input', () => {
@@ -217,17 +259,37 @@ function update() {
 	if ( typed.length < 2 ) {
 		// The immersive overlay starts from this browser's recent searches (D311).
 		results = immersive
-			? loadRecent().map( ( query ) => ( {
-					kind: 'recent',
-					group: labels.recent,
-					title: query,
-					query,
-				} ) )
+			? [
+					...loadRecent().map( ( query ) => ( {
+						kind: 'recent',
+						group: labels.recent,
+						title: query,
+						query,
+					} ) ),
+					...popular.map( ( query ) => ( {
+						kind: 'recent',
+						group: labels.popular,
+						title: query,
+						query,
+					} ) ),
+				]
 			: [];
+		window.clearTimeout( answerTimer );
+		answerer?.reset();
 		active = -1;
 		draw();
 		status.textContent = '';
 		return;
+	}
+	// A question that rests gets Turing's answer; anything else clears the strip.
+	window.clearTimeout( answerTimer );
+	if ( answerer && isQuestion( typed ) ) {
+		answerTimer = window.setTimeout(
+			() => answerer.ask( typed, { locale: config.locale } ),
+			answerMs
+		);
+	} else {
+		answerer?.reset();
 	}
 	search.searchRequest( {
 		locale: config.locale,
@@ -271,6 +333,8 @@ function render( s ) {
 				title: plainText( d.title ) || d.url,
 				meta: meta( d.raw?.fields || {} ),
 				image: d.image || '',
+				snippet: plainText( d.description ),
+				lines: cardLines( d.raw?.fields || {} ),
 				type,
 				group: typeLabels?.[ type ] || type,
 			};
@@ -400,14 +464,55 @@ function draw() {
 	} else {
 		input.removeAttribute( 'aria-activedescendant' );
 	}
+	showPreview();
 }
 
 /**
- * Up and Down move through the results; Enter is handled by the form's submit.
+ * The immersive layout's preview pane (D311): the highlighted result's image, snippet and
+ * card lines, so the arrows browse without leaving. Hidden when no result is highlighted.
+ */
+function showPreview() {
+	if ( ! preview ) {
+		return;
+	}
+	const result = results[ active ];
+	if ( ! result || 'result' !== result.kind ) {
+		preview.hidden = true;
+		preview.replaceChildren();
+		return;
+	}
+	const parts = [];
+	if ( result.image ) {
+		const image = make( 'img', 'preview-image', { alt: '' } );
+		image.src = result.image;
+		parts.push( image );
+	}
+	parts.push( make( 'p', 'preview-title', {}, result.title ) );
+	if ( result.snippet ) {
+		parts.push( make( 'p', 'preview-snippet', {}, result.snippet ) );
+	}
+	for ( const line of result.lines || [] ) {
+		parts.push(
+			make( 'p', 'preview-line', {}, `${ line.label }: ${ line.value }` )
+		);
+	}
+	preview.replaceChildren( ...parts );
+	preview.hidden = false;
+}
+
+/**
+ * Up and Down move through the results; Enter is handled by the form's submit, and
+ * Ctrl+Enter (⌘+Enter) opens the full results page whatever is highlighted (D311).
  *
  * @param {KeyboardEvent} event The key.
  */
 function keydown( event ) {
+	if ( 'Enter' === event.key && ( event.ctrlKey || event.metaKey ) ) {
+		event.preventDefault();
+		saveRecent( input.value.trim() );
+		window.location.assign( fullSearchUrl( input.value.trim() ) );
+		return;
+	}
 	if (
 		! results.length ||
 		! [ 'ArrowDown', 'ArrowUp' ].includes( event.key )

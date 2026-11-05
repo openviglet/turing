@@ -150,6 +150,26 @@ export function cardLines( fields ) {
 		.filter( ( line ) => line.value );
 }
 
+// The words a question starts with, in the languages the plugin ships (en, pt_BR).
+const questionWords =
+	/^(how|what|why|when|where|who|which|can|does|do|is|are|should|como|o que|qual|quais|quando|onde|por que|porque|quem|posso|existe)\b/i;
+
+/**
+ * Whether a query reads as a question worth an answer rather than a lookup: it ends with a
+ * question mark, starts with a question word, or runs to five words or more. The search
+ * block and the immersive instant search ask Turing only for these (D166, D311).
+ *
+ * @param {string} query What the visitor searched for.
+ */
+export function isQuestion( query ) {
+	const typed = query.trim();
+	return (
+		/\?$/.test( typed ) ||
+		questionWords.test( typed ) ||
+		typed.split( /\s+/ ).length >= 5
+	);
+}
+
 /**
  * An SDK client for this site's Turing.
  *

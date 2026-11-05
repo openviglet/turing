@@ -2,7 +2,7 @@
 // grouped by type, axe-clean on a desktop and on a phone, and a type's "See all" opening the
 // results page filtered to that type. The layout setting is put back afterwards.
 import { expect, test } from '../fixtures.mjs';
-import { wp } from '../global-setup.mjs';
+import { setSetting } from '../global-setup.mjs';
 
 const overlay = ( page ) => page.locator( 'dialog.viglet-dumont-overlay' );
 
@@ -10,27 +10,14 @@ test.beforeAll( ( {}, testInfo ) => {
 	if ( 'site' !== testInfo.project.name ) {
 		return;
 	}
-	wp( [
-		'option',
-		'patch',
-		'insert',
-		'viglet_dumont_settings',
-		'overlay_layout',
-		'immersive',
-	] );
+	setSetting( 'overlay_layout', 'immersive' );
 } );
 
 test.afterAll( ( {}, testInfo ) => {
 	if ( 'site' !== testInfo.project.name ) {
 		return;
 	}
-	wp( [
-		'option',
-		'patch',
-		'delete',
-		'viglet_dumont_settings',
-		'overlay_layout',
-	] );
+	setSetting( 'overlay_layout', null );
 } );
 
 test.beforeEach( ( {}, testInfo ) => {
@@ -60,12 +47,18 @@ test( 'it starts from recent searches, groups results by type and opens a type i
 	).toBeVisible();
 
 	await overlay( page )
+		.getByRole( 'group', { name: 'Recent searches' } )
 		.getByRole( 'option', { name: 'workshop', exact: true } )
 		.click();
 	const posts = overlay( page ).getByRole( 'group', { name: 'Posts' } );
 	await expect( posts.getByRole( 'option' ).first() ).toContainText(
 		'Workshop on'
 	);
+	// The highlighted result in the preview pane, and Ctrl+Enter later opens the full page.
+	await page.keyboard.press( 'ArrowDown' );
+	await expect(
+		overlay( page ).locator( '.viglet-dumont-overlay__preview' )
+	).toContainText( 'Workshop on' );
 	await look( 'overlay-immersive' );
 	await axe( 'the immersive instant search', {
 		include: 'dialog.viglet-dumont-overlay',
