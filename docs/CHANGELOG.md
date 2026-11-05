@@ -1651,3 +1651,5 @@
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
+## Block CQ — The model catalog at models.viglet.org
+

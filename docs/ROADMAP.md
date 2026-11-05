@@ -27,6 +27,10 @@
 - 📋 **T1235** (deps: —) **Similar documents ignore the filter operators: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
 - 📋 **T1236** (deps: —) **The copilot and the kit cite and stage another site's documents despite filters naming one site_key** — A site on a shared SN site shows its visitors a sibling's content, and partition-bound keys read across too. → §CLXXVII.2
 
+## Block CQ — The model catalog at models.viglet.org
+
+- 📋 **T1237** (deps: —) **Released builds read the model catalog from a URL that now answers 301, which the client does not follow** — Client 1.0.5 uses HttpClient.newHttpClient(), which never follows redirects; the fetch fails at debug level and the catalog stays empty. → §CLXXVIII.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
