@@ -40,8 +40,8 @@ import lombok.Setter;
  *       sources:
  *         - id: model-catalog
  *           site-name: model-catalog
- *           feed-url: https://openviglet.github.io/model-catalog/catalog.ndjson
- *           manifest-url: https://openviglet.github.io/model-catalog/query-manifest.json
+ *           feed-url: https://models.viglet.org/catalog.ndjson
+ *           manifest-url: https://models.viglet.org/query-manifest.json
  *           id-field: id
  *           locale: en_US
  * </pre>

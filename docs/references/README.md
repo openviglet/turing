@@ -27,6 +27,6 @@ regeneration pipeline (Block BD) now live in the dedicated
 [`openviglet/model-catalog`](https://github.com/openviglet/model-catalog) repo.
 These two files are now short pointer stubs. Turing consumes the published endpoint
 remotely (`turing.model-catalog.url`, default
-`https://openviglet.github.io/model-catalog/catalog.json`; remote-only, no bundled
+`https://models.viglet.org/catalog.json`; remote-only, no bundled
 copy). The full contract + maintainer workflow live in that repo's
 `docs/references/{api,pipeline}.md`.

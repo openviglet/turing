@@ -80,7 +80,7 @@ public class TurLlmModelCatalog {
     /** Lazily built from the configured base URL; overridable for tests. */
     private volatile ModelCatalogClient client;
 
-    @Value("${turing.model-catalog.url:https://openviglet.github.io/model-catalog/catalog.json}")
+    @Value("${turing.model-catalog.url:https://models.viglet.org/catalog.json}")
     private String remoteUrl;
 
     @Value("${turing.model-catalog.remote-enabled:true}")

@@ -35,7 +35,7 @@ turing:
   # on a TTL, and never blocks startup. Until the first successful fetch (or with
   # remote-enabled=false) the picker falls back to live vendor listing only.
   model-catalog:
-    url: ${TURING_MODEL_CATALOG_URL:https://openviglet.github.io/model-catalog/catalog.json}
+    url: ${TURING_MODEL_CATALOG_URL:https://models.viglet.org/catalog.json}
     remote-enabled: ${TURING_MODEL_CATALOG_REMOTE_ENABLED:true}
     refresh-initial-delay-ms: ${TURING_MODEL_CATALOG_REFRESH_INITIAL_DELAY_MS:8000}
     refresh-interval-ms: ${TURING_MODEL_CATALOG_REFRESH_INTERVAL_MS:21600000}
@@ -467,8 +467,8 @@ turing:
       # sources:
       #   - id: model-catalog
       #     site-name: model-catalog
-      #     feed-url: https://openviglet.github.io/model-catalog/catalog.ndjson
-      #     manifest-url: https://openviglet.github.io/model-catalog/query-manifest.json
+      #     feed-url: https://models.viglet.org/catalog.ndjson
+      #     manifest-url: https://models.viglet.org/query-manifest.json
       #     id-field: id
       #     locale: en_US
       #     # records-field: vendors   # only for a JSON-object envelope feed

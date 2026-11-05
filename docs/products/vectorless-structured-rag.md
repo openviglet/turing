@@ -132,7 +132,7 @@ turing:
 
 ## Live example
 
-The public [`openviglet/model-catalog`](https://openviglet.github.io/model-catalog/)
+The public [`openviglet/model-catalog`](https://models.viglet.org/)
 is dogfooded as the first vectorless knowledge base on `turing-demo.viglet.org`:
 ask it *"cheapest embedding model with ≥ 1M context?"* and it answers with linked,
 cited model rows. See Block BF · T794.

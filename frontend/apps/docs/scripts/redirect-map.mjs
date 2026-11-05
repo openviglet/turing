@@ -60,7 +60,7 @@ function newHref(slug) {
  * vigletdocs DUMONT_MOVED list), and release notes are viglet.org's.
  */
 const LANDINGS = {
-  connectors: "https://openviglet.github.io/dumont/docs/connectors/overview/",
+  connectors: "https://dumont.viglet.org/docs/connectors/overview/",
   "release-notes": "https://www.viglet.org/turing/release-notes/",
 };
 

@@ -122,7 +122,7 @@ turing:
   code-interpreter:
     python-executable: ""
   model-catalog:                               # public LLM catalog powering the model picker
-    url: ${TURING_MODEL_CATALOG_URL:https://openviglet.github.io/model-catalog/catalog.json}
+    url: ${TURING_MODEL_CATALOG_URL:https://models.viglet.org/catalog.json}
     remote-enabled: true                       # remote-only; false = live vendor listing only
     price-sync:
       enabled: true                            # seed tur_llm_price from indicative pricing
@@ -317,11 +317,11 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 ### Model Catalog (`turing.model-catalog`)
 
-Turing enriches its LLM-instance model picker from a public, vendor-neutral [**model catalog**](https://openviglet.github.io/model-catalog/) ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), pricing, context windows, capabilities, tiers and deprecations. The fetch is **remote-only** (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See [LLM Instances § Catalog-driven intelligence](/docs/llm-instances/#catalog-driven-intelligence).
+Turing enriches its LLM-instance model picker from a public, vendor-neutral [**model catalog**](https://models.viglet.org/) ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), pricing, context windows, capabilities, tiers and deprecations. The fetch is **remote-only** (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See [LLM Instances § Catalog-driven intelligence](/docs/llm-instances/#catalog-driven-intelligence).
 
 | Property | Default | Description |
 |---|---|---|
-| `turing.model-catalog.url` | `https://openviglet.github.io/model-catalog/catalog.json` | Catalog endpoint the model picker reads. Override with `TURING_MODEL_CATALOG_URL` to pin a self-hosted or air-gapped copy. |
+| `turing.model-catalog.url` | `https://models.viglet.org/catalog.json` | Catalog endpoint the model picker reads. Override with `TURING_MODEL_CATALOG_URL` to pin a self-hosted or air-gapped copy. |
 | `turing.model-catalog.remote-enabled` | `true` | Set `false` to disable the remote fetch entirely, the picker then uses only models listed live by each vendor's API. |
 | `turing.model-catalog.refresh-interval-ms` | `21600000` | Refresh cadence for the catalog (6h). A short initial delay (`refresh-initial-delay-ms`, default `8000`) keeps the fetch off the boot path. |
 | `turing.model-catalog.price-sync.enabled` | `true` | Auto-seed/refresh the per-model price table (`tur_llm_price`) from the catalog's indicative pricing on a TTL. Only CATALOG-sourced rows are written, an operator's MANUAL rate is never overwritten. `false` keeps the price table manual-only. See [Cost Governance](/docs/cost-governance/). |

@@ -164,7 +164,7 @@ Fine-tune how the model generates responses. Defaults are appropriate for most u
 
 ## Catalog-driven intelligence
 
-Turing consumes a public [**model catalog**](https://openviglet.github.io/model-catalog/), an open, vendor-neutral project ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), that describes each well-known model, pricing, context window, max output, capabilities, modalities, benchmarks, performance, knowledge cutoff, tier and deprecation status. The instance form and pickers use that data so you configure models with the facts in front of you instead of from memory. The catalog URL is configurable via `turing.model-catalog.url`: see [Configuration Reference § Model Catalog](/docs/configuration-reference/#model-catalog).
+Turing consumes a public [**model catalog**](https://models.viglet.org/), an open, vendor-neutral project ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), that describes each well-known model, pricing, context window, max output, capabilities, modalities, benchmarks, performance, knowledge cutoff, tier and deprecation status. The instance form and pickers use that data so you configure models with the facts in front of you instead of from memory. The catalog URL is configurable via `turing.model-catalog.url`: see [Configuration Reference § Model Catalog](/docs/configuration-reference/#model-catalog).
 
 ### Enriched model picker
 

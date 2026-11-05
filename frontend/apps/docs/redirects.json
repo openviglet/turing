@@ -13,7 +13,7 @@
   },
   {
     "from": "/turing/0.3.5/connectors",
-    "to": "https://openviglet.github.io/dumont/docs/connectors/overview/"
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
   },
   {
     "from": "/turing/0.3.5/developer-guide",
@@ -37,7 +37,7 @@
   },
   {
     "from": "/turing/0.3.6/connectors",
-    "to": "https://openviglet.github.io/dumont/docs/connectors/overview/"
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
   },
   {
     "from": "/turing/0.3.6/developer-guide",
@@ -61,7 +61,7 @@
   },
   {
     "from": "/turing/0.3.7/connectors",
-    "to": "https://openviglet.github.io/dumont/docs/connectors/overview/"
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
   },
   {
     "from": "/turing/0.3.7/developer-guide",
@@ -85,7 +85,7 @@
   },
   {
     "from": "/turing/0.3.8/connectors",
-    "to": "https://openviglet.github.io/dumont/docs/connectors/overview/"
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
   },
   {
     "from": "/turing/0.3.8/developer-guide",
@@ -109,7 +109,7 @@
   },
   {
     "from": "/turing/0.3.9/connectors",
-    "to": "https://openviglet.github.io/dumont/docs/connectors/overview/"
+    "to": "https://dumont.viglet.org/docs/connectors/overview/"
   },
   {
     "from": "/turing/0.3.9/developer-guide",
