@@ -131,11 +131,66 @@ class Viglet_Dumont_Reindex {
 			'pdfs'        => 0,
 			'swept'       => 0,
 			'sweep_error' => '',
+			// What a loopback step must show (D335): only this site's own requests carry it.
+			'token'       => wp_generate_password( 32, false ),
 		);
 		update_option( self::OPTION, $run, false );
 		$this->schedule( time() );
+		$this->kick( $run );
 
 		return $this->view( $run );
+	}
+
+	/**
+	 * Whether a step request may advance the running reindex (D335): it carries the run's own
+	 * token, which only this site's loopback knows.
+	 *
+	 * @param string $token The token the request carries.
+	 */
+	public function accepts( string $token ): bool {
+		$run = $this->current();
+
+		return null !== $run && '' !== $token && hash_equals( (string) ( $run['token'] ?? '' ), $token );
+	}
+
+	/**
+	 * Keep a due run moving without traffic (D335): WP-Cron only runs on a page view and never
+	 * from inside a cron run, so the reindex asks this site for its own next step, without
+	 * waiting for the answer. A host that blocks loopbacks still has WP-Cron and the Health
+	 * page, which steps a run it sees idle.
+	 *
+	 * @param array $run The running reindex.
+	 */
+	private function kick( array $run ): void {
+		if ( 'running' !== $run['state'] || (int) $run['next_at'] > time() || '' === (string) ( $run['token'] ?? '' ) ) {
+			return;
+		}
+		/**
+		 * Filters whether the background reindex asks this site for its next step (D335).
+		 *
+		 * @param bool $kick True by default.
+		 */
+		if ( ! apply_filters( 'viglet_dumont_reindex_loopback', true ) ) {
+			return;
+		}
+		/**
+		 * Filters the URL the reindex asks for its next step, as `cron_request` does for
+		 * WP-Cron: a site whose own address does not reach it from the server (a container
+		 * behind a mapped port) points it at one that does.
+		 *
+		 * @param string $url The REST route on the site's own address.
+		 */
+		$url = (string) apply_filters( 'viglet_dumont_reindex_step_url', rest_url( 'viglet-dumont/v1/reindex/step' ) );
+		wp_remote_post(
+			$url,
+			array(
+				'blocking'  => false,
+				'timeout'   => 0.01,
+				'body'      => array( 'token' => (string) $run['token'] ),
+				/** This filter is documented in wp-includes/class-wp-http-streams.php */
+				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+			)
+		);
 	}
 
 	/**
@@ -210,6 +265,8 @@ class Viglet_Dumont_Reindex {
 			return null;
 		}
 		$this->schedule( max( time(), (int) $run['next_at'] ) );
+		// The next steps are due now: ask for them rather than wait for a visitor (D335).
+		$this->kick( $run );
 
 		return $this->view( $run );
 	}
@@ -400,12 +457,16 @@ class Viglet_Dumont_Reindex {
 	 */
 	private function view( array $run ): array {
 		$moving = max( (int) $run['started_at'], (int) $run['ticked_at'], (int) $run['next_at'] );
+		// The loopback's token never leaves the server.
+		unset( $run['token'] );
 
 		return array(
 			'started'  => Viglet_Dumont_Events::when( (int) $run['started_at'] ),
 			'finished' => Viglet_Dumont_Events::when( (int) $run['finished_at'] ),
 			'retry_at' => (int) $run['next_at'] > time() ? Viglet_Dumont_Events::when( (int) $run['next_at'] ) : '',
 			'stalled'  => 'running' === $run['state'] && time() - $moving > self::STALL_AFTER,
+			// Seconds a due run has gone without a step, for Health to step it (D335).
+			'idle'     => 'running' === $run['state'] && (int) $run['next_at'] <= time() ? max( 0, time() - $moving ) : 0,
 		) + $run;
 	}
 

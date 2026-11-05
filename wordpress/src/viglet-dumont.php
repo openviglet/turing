@@ -449,6 +449,25 @@ function viglet_dumont_register_rest_routes(): void {
 		)
 	);
 
+	// One step of the running reindex, without WP-Cron (D335): from the site's own loopback,
+	// which carries the run's token, or from Health while an administrator watches it.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/reindex/step',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static function () {
+				$reindex = new Viglet_Dumont_Reindex();
+				$reindex->tick();
+				return new WP_REST_Response( $reindex->report(), 200 );
+			},
+			'permission_callback' => static function ( WP_REST_Request $request ) {
+				return current_user_can( 'manage_options' )
+					|| ( new Viglet_Dumont_Reindex() )->accepts( (string) $request->get_param( 'token' ) );
+			},
+		)
+	);
+
 	register_rest_route(
 		'viglet-dumont/v1',
 		'/delete-all',

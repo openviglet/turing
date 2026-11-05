@@ -320,7 +320,14 @@ function Health() {
 			return undefined;
 		}
 		const timer = setTimeout( () => {
-			apiFetch( { path: '/viglet-dumont/v1/reindex' } )
+			// A due run nothing has stepped for a while (no traffic, no loopback, WP-Cron off) is
+			// stepped from here while an administrator watches it (D335).
+			const idle = running.idle > 15;
+			apiFetch(
+				idle
+					? { path: '/viglet-dumont/v1/reindex/step', method: 'POST' }
+					: { path: '/viglet-dumont/v1/reindex' }
+			)
 				.then( ( reindex ) =>
 					reindex.running
 						? setStatus( ( now ) => ( { ...now, reindex } ) )

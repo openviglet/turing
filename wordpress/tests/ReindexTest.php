@@ -150,6 +150,13 @@ final class ReindexTest extends PluginTestCase {
 				return 0;
 			}
 		);
+		// The loopback that keeps a run moving (D335) is the subject of its own tests.
+		Functions\stubs(
+			array(
+				'wp_generate_password' => 'run-token',
+				'wp_remote_post'       => array(),
+			)
+		);
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) {
 				$this->requests[] = array( $url, $args );
@@ -171,6 +178,58 @@ final class ReindexTest extends PluginTestCase {
 				);
 			}
 		);
+	}
+
+	/** The loopback step requests the reindex made, each as [url, args] (D335). */
+	private array $kicks = array();
+
+	/** Fake the run's token and record the loopbacks instead of sending them (D335). */
+	private function fake_loopback(): void {
+		Functions\when( 'wp_generate_password' )->justReturn( 'run-token' );
+		Functions\when( 'wp_remote_post' )->alias(
+			function ( string $url, array $args ) {
+				$this->kicks[] = array( $url, $args );
+				return array();
+			}
+		);
+	}
+
+	public function test_a_started_run_asks_this_site_for_its_first_step_without_waiting(): void {
+		// D335: no visit is needed for a reindex to move.
+		$this->fake_loopback();
+
+		$run = $this->reindex()->start();
+
+		$this->assertCount( 1, $this->kicks );
+		$this->assertStringContainsString( 'viglet-dumont/v1/reindex/step', $this->kicks[0][0] );
+		$this->assertFalse( $this->kicks[0][1]['blocking'] );
+		$this->assertSame( 'run-token', $this->kicks[0][1]['body']['token'] );
+		$this->assertArrayNotHasKey( 'token', $run, 'the token never leaves the server' );
+	}
+
+	public function test_each_run_asks_for_the_next_while_steps_are_due_and_not_while_one_waits(): void {
+		$this->fake_loopback();
+		$reindex = $this->reindex();
+		$reindex->start();
+		$this->kicks = array();
+
+		$reindex->tick();
+		$this->assertCount( 1, $this->kicks, 'more batches are due at once' );
+
+		$this->kicks  = array();
+		$this->status = 503;
+		$reindex->tick();
+		$this->assertSame( array(), $this->kicks, 'a batch waiting out its backoff is left to WP-Cron and Health' );
+	}
+
+	public function test_only_the_runs_own_token_may_step_it(): void {
+		$this->fake_loopback();
+		$reindex = $this->reindex();
+		$reindex->start();
+
+		$this->assertTrue( $reindex->accepts( 'run-token' ) );
+		$this->assertFalse( $reindex->accepts( 'guess' ) );
+		$this->assertFalse( $reindex->accepts( '' ) );
 	}
 
 	protected function tearDown(): void {
