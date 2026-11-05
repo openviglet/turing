@@ -2325,33 +2325,6 @@ A request means the same on every engine an SN site can run on: the filters it a
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
 
-### CLXXV.1 Custom facet counts on Elasticsearch (T1232)
-
-**Where it came from.** Found while building T1224 (a custom facet over a date span):
-the span filter landed on Solr, Lucene and Elasticsearch, but only Solr and Lucene count
-the items.
-
-**What happens.** `TurElasticsearch` builds one `terms` aggregation per facet field
-(`FACET_AGG_PREFIX + fieldName`) and `buildFacetResults` reads only those. Custom facets
-are applied as filters (T1106, through `TurLuceneCustomFacets.resolveFilter`), so a
-click on a bucket works, but no request ever asks for their counts: an Elasticsearch SN
-site shows none of its custom facets (posting-date buckets, salary bands, an agenda) in
-the facet list, while the same site on Solr or Lucene does. The drill-down
-(`retrieveFacetElasticsearchFromSN`) falls back to a `terms` aggregation on the facet's
-name, which is no field, so it answers empty.
-
-**What Turing should do.** For each custom facet of the site, add a `filters`
-aggregation with one named filter per item, built by the same code the filter path uses
-(`TurElasticsearchFilterQueries.valueQuery` for a range item, `spanQuery` for a facet
-with an `endField`), and turn its buckets into a `TurSEFacetResult` named after the
-facet, with the item labels and their per-locale display labels in item order, as
-`TurLuceneCustomFacets.count` does. The facet drill-down (`onlyFacet`) counts one facet.
-
-**Done when:** an Elasticsearch site with a custom facet answers it in the facet list
-and in its drill-down with the same counts the Lucene engine gives for the same
-documents, checked on request shape in a unit test and on a live index by the
-Elasticsearch IT T1107 introduced.
-
 ### CLXXV.2 Negative filter queries (T1233)
 
 **Where it came from.** Dumont D327 (the WordPress plugin): its Fields screen lists the

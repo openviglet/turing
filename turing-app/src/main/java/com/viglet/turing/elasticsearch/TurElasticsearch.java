@@ -129,13 +129,25 @@ public class TurElasticsearch {
                                 .size(rows);
 
                         addFacetAggregations(searchBuilder, facetFields);
+                        // T1232 - the site's custom facets, counted in the same request.
+                        List<TurLuceneCustomFacets.Facet> siteCustomFacets = customFacetsOf(turSNSite,
+                                context.getLocale(), null);
+                        addCustomFacetAggregations(searchBuilder, siteCustomFacets, Instant.now());
                         addOptionalSorting(searchBuilder, turSNSite, turSEParameters);
 
                         SearchRequest searchRequest = searchBuilder.build();
                         SearchResponse<Map<String, Object>> response = elasticsearchInstance.getClient()
                                 .search(searchRequest, (Type) Map.class);
 
-                        return Optional.of(buildTurSEResults(response, turSEParameters, facetFields));
+                        TurSEResults results = buildTurSEResults(response, turSEParameters, facetFields);
+                        List<TurSEFacetResult> custom = customFacetResults(response.aggregations(),
+                                siteCustomFacets);
+                        if (!custom.isEmpty()) {
+                            List<TurSEFacetResult> facets = new ArrayList<>(results.getFacetResults());
+                            facets.addAll(custom);
+                            results.setFacetResults(facets);
+                        }
+                        return Optional.of(results);
                     } catch (co.elastic.clients.elasticsearch._types.ElasticsearchException e) {
                         handleElasticsearchException(e, elasticsearchInstance.getIndex());
                         return Optional.empty();
@@ -155,6 +167,13 @@ public class TurElasticsearch {
                     try {
                         TurSEParameters turSEParameters = context.getTurSEParameters();
                         Query query = buildQuery(turSNSite, turSEParameters);
+                        // T1232 - a custom facet's drill-down counts its items.
+                        List<TurLuceneCustomFacets.Facet> customFacet = customFacetsOf(turSNSite,
+                                context.getLocale(), facetName);
+                        if (!customFacet.isEmpty()) {
+                            return Optional.of(customFacetDrillDown(elasticsearchInstance, query,
+                                    turSEParameters, customFacet));
+                        }
                         String aggName = FACET_AGG_PREFIX + facetName;
 
                         // Resolve the correct ES field name (text fields need ".keyword" sub-field)
@@ -473,6 +492,102 @@ public class TurElasticsearch {
         int currentPage = turSEParameters.getCurrentPage() > 0 ? turSEParameters.getCurrentPage() : 1;
         int rows = turSEParameters.getRows() > 0 ? turSEParameters.getRows() : 10;
         return (currentPage - 1) * rows;
+    }
+
+    /** T1232 - the name a custom facet's {@code filters} aggregation is requested under. */
+    static final String CUSTOM_FACET_AGG_PREFIX = "custom_facet_";
+
+    /** The site's custom facets ({@code onlyFacet} alone when set), when the site has facets on. */
+    private List<TurLuceneCustomFacets.Facet> customFacetsOf(TurSNSite turSNSite, java.util.Locale locale,
+            String onlyFacet) {
+        if (customFacets == null || !com.viglet.turing.sn.TurSNUtils.isTrue(turSNSite.getFacet())) {
+            return List.of();
+        }
+        return customFacets.facets(turSNSite, locale).stream()
+                .filter(facet -> onlyFacet == null || onlyFacet.equals(facet.name()))
+                .toList();
+    }
+
+    /**
+     * T1232 - one {@code filters} aggregation per custom facet, a bucket per
+     * item, each built by the query its selection filters with, so a count and a
+     * click always agree. An item whose bounds cannot be read is left out.
+     */
+    static void addCustomFacetAggregations(SearchRequest.Builder searchBuilder,
+            List<TurLuceneCustomFacets.Facet> facets, Instant now) {
+        for (TurLuceneCustomFacets.Facet facet : facets) {
+            Map<String, Query> keyed = new java.util.LinkedHashMap<>();
+            for (TurLuceneCustomFacets.Item item : facet.items()) {
+                try {
+                    keyed.put(item.label(), TurElasticsearchFilterQueries.itemQuery(item.filter(), now));
+                } catch (IllegalArgumentException e) {
+                    log.warn("[Elasticsearch] custom facet item '{}' of '{}' not counted: {}", item.label(),
+                            facet.name(), e.getMessage());
+                }
+            }
+            if (!keyed.isEmpty()) {
+                searchBuilder.aggregations(CUSTOM_FACET_AGG_PREFIX + facet.name(),
+                        a -> a.filters(f -> f.filters(b -> b.keyed(keyed))));
+            }
+        }
+    }
+
+    /** T1232 - each custom facet's buckets, in item order, with the items' display labels. */
+    static List<TurSEFacetResult> customFacetResults(
+            Map<String, co.elastic.clients.elasticsearch._types.aggregations.Aggregate> aggregations,
+            List<TurLuceneCustomFacets.Facet> facets) {
+        List<TurSEFacetResult> results = new ArrayList<>();
+        if (aggregations == null) {
+            return results;
+        }
+        for (TurLuceneCustomFacets.Facet facet : facets) {
+            var agg = aggregations.get(CUSTOM_FACET_AGG_PREFIX + facet.name());
+            if (agg == null || !agg.isFilters() || !agg.filters().buckets().isKeyed()) {
+                continue;
+            }
+            var buckets = agg.filters().buckets().keyed();
+            TurSEFacetResult result = new TurSEFacetResult();
+            result.setFacet(facet.name());
+            result.setFacetPosition(facet.position() != null ? facet.position() : 1);
+            for (TurLuceneCustomFacets.Item item : facet.items()) {
+                var bucket = buckets.get(item.label());
+                if (bucket != null) {
+                    result.add(item.label(), new TurSEFacetResultAttr(item.label(), (int) bucket.docCount(),
+                            item.displayLabel()));
+                }
+            }
+            if (!result.getTurSEFacetResultAttr().isEmpty()) {
+                results.add(result);
+            }
+        }
+        return results;
+    }
+
+    private TurSEResults customFacetDrillDown(TurElasticsearchInstance elasticsearchInstance, Query query,
+            TurSEParameters turSEParameters, List<TurLuceneCustomFacets.Facet> facet) throws IOException {
+        SearchRequest.Builder searchBuilder = new SearchRequest.Builder()
+                .index(elasticsearchInstance.getIndex())
+                .query(query)
+                .size(0);
+        addCustomFacetAggregations(searchBuilder, facet, Instant.now());
+        SearchResponse<Map<String, Object>> response = elasticsearchInstance.getClient()
+                .search(searchBuilder.build(), (Type) Map.class);
+        return TurSEResults.builder()
+                .numFound(0)
+                .start(0)
+                .limit(0)
+                .pageCount(0)
+                .currentPage(1)
+                .results(Collections.emptyList())
+                .qTime((int) response.took())
+                .elapsedTime(response.took())
+                .queryString(turSEParameters.getQuery())
+                .sort(turSEParameters.getSort())
+                .spellCheck(null)
+                .similarResults(Collections.emptyList())
+                .facetResults(customFacetResults(response.aggregations(), facet))
+                .groups(Collections.emptyList())
+                .build();
     }
 
     private void addFacetAggregations(SearchRequest.Builder searchBuilder,

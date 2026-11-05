@@ -24,7 +24,6 @@
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
-- 📋 **T1232** (deps: —) **An Elasticsearch SN site never counts its custom facets: only terms aggregations are requested** — The same site lists posting-date or agenda buckets on Solr and Lucene and none on Elasticsearch, though clicking one filters. → §CLXXV.1
 - 📋 **T1233** (deps: —) **A negative filter query (fq[]=-field:value) excludes nothing on Lucene and Elasticsearch, and misgroups on Solr** — A client cannot say all but its own documents, so it pages the whole index to find another source's records. → §CLXXV.2
 
 ## Block CO — SDK errors that carry Turing's own answer

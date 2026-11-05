@@ -162,6 +162,7 @@ class TurSNEngineConformanceIT {
     private TurSNSiteCustomSortRepository catalogSortRepository;
     private IndexSearcher luceneSearcher;
     private DirectoryReader luceneReader;
+    private TurLuceneCustomFacets catalogCustomFacets;
 
     private static ElasticsearchClient client(String url) {
         URI uri = URI.create(url);
@@ -229,6 +230,7 @@ class TurSNEngineConformanceIT {
                 .thenReturn(Optional.of(customSort("openEndedFirst", TurSNSiteCustomSortMissingEnum.FIRST)));
         // A custom facet "posted" whose item "Recent" stands for publishedAt since Oct 15.
         TurLuceneCustomFacets customFacets = mock(TurLuceneCustomFacets.class);
+        catalogCustomFacets = customFacets;
         when(customFacets.resolveFilter(any(), anyString(), anyString())).thenReturn(Optional.empty());
         when(customFacets.resolveFilter(any(), eq("posted"), eq("Recent"))).thenReturn(Optional.of(
                 new TurLuceneCustomFacets.ItemFilter("publishedAt", TurSEFieldType.DATE,
@@ -412,6 +414,40 @@ class TurSNEngineConformanceIT {
                 .getResults().stream()
                 .map(result -> result.getFields().get(TurSNFieldName.ID).toString())
                 .toList();
+    }
+
+    /**
+     * T1232 — Elasticsearch counts a custom facet, in the facet list and in its
+     * drill-down, as many documents as a click on each item returns on Lucene.
+     */
+    @org.junit.jupiter.api.Test
+    void elasticsearchCountsACustomFacetAsItsItemsFilter() throws Exception {
+        when(catalogCustomFacets.facets(any(), any())).thenReturn(List.of(new TurLuceneCustomFacets.Facet("posted",
+                1, List.of(new TurLuceneCustomFacets.Item("Recent", "Recent", new TurLuceneCustomFacets.ItemFilter(
+                        "publishedAt", TurSEFieldType.DATE, "[2026-10-15T00:00:00Z TO *]")),
+                        new TurLuceneCustomFacets.Item("Earlier", "Earlier", new TurLuceneCustomFacets.ItemFilter(
+                                "publishedAt", TurSEFieldType.DATE, "[* TO 2026-10-15T00:00:00Z}"))))));
+        when(catalogCustomFacets.resolveFilter(any(), eq("posted"), eq("Earlier"))).thenReturn(Optional.of(
+                new TurLuceneCustomFacets.ItemFilter("publishedAt", TurSEFieldType.DATE,
+                        "[* TO 2026-10-15T00:00:00Z}")));
+        Integer facet = site.getFacet();
+        site.setFacet(1);
+        try {
+            TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
+                    seParameters(request(p -> { }), false), java.util.Locale.US, URI.create("http://localhost/search"));
+            var listed = elasticsearch.retrieveElasticsearchFromSN(esInstance, context).orElseThrow()
+                    .getFacetResults().stream().filter(result -> "posted".equals(result.getFacet()))
+                    .findFirst().orElseThrow(() -> new AssertionError("no posted facet"));
+            var drilled = elasticsearch.retrieveFacetElasticsearchFromSN(esInstance, context, "posted")
+                    .orElseThrow().getFacetResults().getFirst();
+            for (String label : List.of("Recent", "Earlier")) {
+                int expected = lucene(request(p -> p.setFq(List.of("posted:" + label)))).size();
+                assertThat(listed.getTurSEFacetResultAttr().get(label).getCount()).as(label).isEqualTo(expected);
+                assertThat(drilled.getTurSEFacetResultAttr().get(label).getCount()).as(label).isEqualTo(expected);
+            }
+        } finally {
+            site.setFacet(facet);
+        }
     }
 
     static Stream<Arguments> filters() {

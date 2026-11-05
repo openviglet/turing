@@ -1598,6 +1598,7 @@
 - **T1111** — A Solr fq range that opens with an exclusive bound is sent as a range, so Solr returns the same documents for it as Lucene and Elasticsearch.
 - **T1108** — Container ITs reach Docker 29 with no environment variable, through a pinned docker-java API version, and a run where Docker is unreachable says so and can be made to fail.
 - **T1222** — Elasticsearch applies a site's ranking expressions by the Lucene and Solr rules, upcoming included; a conformance row ranks one fixture identically on Lucene and a live Elasticsearch (design §CLXVIII.1 recorded in `turing-app/src/main/java/com/viglet/turing/elasticsearch/TurElasticsearchRankingExpressions.java`).
+- **T1232** — An Elasticsearch SN site counts its custom facets with one filters aggregation per facet, built from the same queries a click filters with, in the facet list and the drill-down, matching Lucene on a live index (design §CLXXV.1 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
 
 ## Block CH — Published container images track the shipped source
 

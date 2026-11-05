@@ -172,11 +172,20 @@ final class TurElasticsearchFilterQueries {
         if (ext == null) {
             Optional<TurLuceneCustomFacets.ItemFilter> item = customFacet.apply(field, value);
             if (item.isPresent()) {
-                return item.get().span() != null ? spanQuery(item.get(), now)
-                        : valueQuery(item.get().field(), item.get().type(), item.get().value(), now);
+                return itemQuery(item.get(), now);
             }
         }
         return valueQuery(field, ext == null ? null : ext.getType(), value, now);
+    }
+
+    /**
+     * The query a custom facet item stands for, as a filter and (T1232) as one
+     * bucket of the facet's count: its range, or its span when the facet has an
+     * end field.
+     */
+    static Query itemQuery(TurLuceneCustomFacets.ItemFilter item, Instant now) {
+        return item.span() != null ? spanQuery(item, now)
+                : valueQuery(item.field(), item.type(), item.value(), now);
     }
 
     /**

@@ -113,6 +113,32 @@ public class TurLuceneCustomFacets {
         }
     }
 
+    /** T1232 — one item of a custom facet, ready for an engine to count. */
+    public record Item(String label, String displayLabel, ItemFilter filter) {
+    }
+
+    /** T1232 — one custom facet of a site, its items in display order. */
+    public record Facet(String name, Integer position, List<Item> items) {
+    }
+
+    /**
+     * T1232 — the site's custom facets in display order, each item with the
+     * filter it stands for and its label for {@code locale}, for an engine that
+     * counts them in its own request (Elasticsearch) rather than here.
+     */
+    public List<Facet> facets(TurSNSite turSNSite, Locale locale) {
+        List<Facet> facets = new ArrayList<>();
+        for (Definition definition : definitions(turSNSite).values()) {
+            List<Item> items = definition.items().stream()
+                    .map(item -> new Item(item.getLabel(), displayLabel(item, locale), itemFilter(definition, item)))
+                    .toList();
+            if (!items.isEmpty()) {
+                facets.add(new Facet(definition.facet().getName(), definition.facet().getFacetPosition(), items));
+            }
+        }
+        return facets;
+    }
+
     /** One custom facet: its field, and its items in display order. */
     private record Definition(TurSNSiteCustomFacet facet, TurSNSiteFieldExt field,
             List<TurSNSiteCustomFacetItem> items) {
