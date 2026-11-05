@@ -247,6 +247,13 @@ Beyond behaviour, the suite also checks:
   and the tour on a demo store of its own (`run-docker.cmd demo`: `localhost:38082` in English, `localhost:38083` with `DEMO_LOCALE=pt_BR`), after
   `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it
   beside the rest and `npm run test:e2e:demo` runs it alone.
+- **Demo school** (D325): the `demo-edu` project walks the school's agenda periods, a month read
+  from a sentence, its cards' dates and posters, an opening leaving search after its closing day
+  and a book found by a sentence in its PDF, on the school's own WordPress (`run-docker.cmd demo
+  edu`: `localhost:38085` in English, `localhost:38086` with `DEMO_LOCALE=pt_BR` after `demo
+  edu-pt`). Its setup seeds the school again from today before every run. It is not part of
+  `npm run test:e2e`, so a laptop that never started the school runs everything else;
+  `npm run test:e2e:edu` runs it.
 
 **The live-LLM suite** (`npm run test:e2e:ai`, `playwright.ai.config.mjs`) asks Turing's
 generative features real questions, on a stack started with `OPENAI_API_KEY`. It is never
@@ -347,6 +354,8 @@ run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site
 run-docker.cmd demo                    :: also the demo stores: Tarnfell http://localhost:38082, Recanto da Serra http://localhost:38083
 run-docker.cmd demo en                 :: only one of them (en or pt)
 run-docker.cmd demo reset pt           :: drop one store's WordPress and database only (en or pt)
+run-docker.cmd demo edu                :: also the demo school: Lumen School http://localhost:38085
+run-docker.cmd demo edu-pt             :: the school in Portuguese: Escola Lumen http://localhost:38086
 run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
 run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
 run-docker.cmd stop                    :: keep the data
@@ -354,7 +363,7 @@ run-docker.cmd reset                   :: drop WordPress, its database and Turin
 ```
 
 On Linux and macOS, `sh bin/run-docker.sh` starts the same stack, and `sh bin/run-docker.sh
-demo` (or `demo en|pt`, `demo reset en|pt`) the demo storefronts; both provision Turing through PowerShell (`pwsh`).
+demo` (or `demo en|pt|edu|edu-pt`, `demo reset en|pt|edu|edu-pt`) the demo sites; both provision Turing through PowerShell (`pwsh`).
 
 WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
 and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
@@ -367,7 +376,8 @@ Turing runs as trabalharei runs it for development: embedded H2, Lucene and Arte
 local login, on the published `ghcr.io/openviglet/turing:latest`. To run a Turing built from a
 checkout instead, build it after `mvnw package` with `docker build -f Dockerfile.local -t
 turing:local .` and set `TURING_IMAGE=turing:local`. Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
-`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `WP_DEMO_PT_PORT`, `SN_DEMO_SITE` or `SN_DEMO_PT_SITE` before the first run
+`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `WP_DEMO_PT_PORT`, `SN_DEMO_SITE`, `SN_DEMO_PT_SITE`,
+`WP_DEMO_EDU_PORT`, `WP_DEMO_EDU_PT_PORT`, `SN_DEMO_EDU_SITE` or `SN_DEMO_EDU_PT_SITE` before the first run
 to change the defaults.
 To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
 run `run-docker.cmd`, then
@@ -403,6 +413,29 @@ one). The `demo` Playwright project runs against Tarnfell (`WP_DEMO_URL`, defaul
 catalog only when it is missing; `npm run test:e2e:demo` runs those specs alone, without touching the test
 site. A test site that ran the demo before this split keeps its `TF-` products and journal:
 `run-docker.cmd reset` clears them.
+
+Each demo site is described by one file in `demo/sites/` (D325): `en.json` and `pt.json` are the
+stores, `edu.json` and `edu-pt.json` the school. A descriptor names the site's title, theme,
+seed (and search history, for a store), whether it runs WooCommerce, its port and SN site with
+the environment variable that overrides each, its language, and its specs' folder.
+`run-docker.cmd demo <key>`, `bin/run-docker.sh demo <key>` and the Playwright configs read it
+through `bin/demo-site.mjs`, so a new demo site is a descriptor, its compose services
+(`wordpress-demo<suffix>`, `db-demo<suffix>`, `cron-demo<suffix>`, `cli-demo<suffix>`, mounting
+its theme) and its origin in Turing's `TURING_ALLOWEDORIGINS`.
+
+The demo school (`demo/school`, theme `demo/theme/lumen`) is Lumen School, or Escola Lumen in
+Portuguese: no WooCommerce, and the plugin's non-commerce features together on one site. Its
+theme registers three types: events, whose day is a DATE field with the agenda's periods and
+the card's date, and whose poster is the card's image; openings, whose closing day is the card's
+date and the day they leave search; and books, whose sample chapter is a PDF attached to the
+book and mapped as its text, with **Index PDF files** on. The **Agenda**, **Openings** and
+**Library** pages are search blocks each fixed to one type, and `/search/` searches them all.
+An opening's full call is a PDF its page only links. The seed counts every date from the day it
+runs and re-dates what it finds, so the agenda's periods hold whenever it runs;
+`demo/school/story.md` walks the site in six chapters, and `?tour=1` numbers the agenda's
+features by them. WP-CLI on the school is `docker compose run --rm --no-deps cli-demo-edu wp
+<command>` (`cli-demo-edu-pt` for the Portuguese one). The archive half of a school (a Dumont
+OAI-PMH source over a repository) is not in the demo yet.
 
 `phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
 data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.

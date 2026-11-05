@@ -1,0 +1,17 @@
+{
+	"name": "Recanto da Serra",
+	"kind": "store",
+	"locale": "pt_BR",
+	"services": "-pt",
+	"port": 38083,
+	"portEnv": "WP_DEMO_PT_PORT",
+	"snSite": "recanto-da-serra",
+	"snSiteEnv": "SN_DEMO_PT_SITE",
+	"title": "Recanto da Serra",
+	"theme": "tarnfell",
+	"woocommerce": true,
+	"seed": "/demo/seed/catalog.php",
+	"history": "/demo/seed/searches.php",
+	"seeded": "function_exists( 'wc_get_product_id_by_sku' ) && wc_get_product_id_by_sku( 'TF-01-SLA' )",
+	"specs": "demo"
+}

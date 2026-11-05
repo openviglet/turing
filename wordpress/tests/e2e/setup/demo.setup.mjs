@@ -6,7 +6,7 @@ import { dirname } from 'node:path';
 import { test } from '@playwright/test';
 import { assertSameSite, wp } from '../global-setup.mjs';
 import { demoFile } from '../demo/curated.mjs';
-import { demoCli, demoURL } from '../../../playwright.config.mjs';
+import { demoCli, demoStore, demoURL } from '../../../playwright.config.mjs';
 
 const demo = ( args ) => wp( args, demoCli );
 
@@ -27,15 +27,16 @@ test( 'the demo storefront is up, with its catalog', async () => {
 		.pop();
 	mkdirSync( dirname( demoFile ), { recursive: true } );
 	writeFileSync( demoFile, JSON.stringify( { locale } ) );
+	// What says the store is seeded, and the seed, are its descriptor's (demo/sites, D325).
 	const seeded = demo( [
 		'eval',
-		'echo function_exists( "wc_get_product_id_by_sku" ) && wc_get_product_id_by_sku( "TF-01-SLA" ) ? "yes" : "no";',
+		`echo ( ${ demoStore.seeded } ) ? "yes" : "no";`,
 	] ).trim();
 	if ( seeded.endsWith( 'yes' ) ) {
 		return;
 	}
 	demo( [ 'plugin', 'activate', 'woocommerce' ] );
-	demo( [ 'eval-file', '/demo/seed/catalog.php' ] );
+	demo( [ 'eval-file', demoStore.seed ] );
 	// The shop's addresses in the demo's language (D266), set after WooCommerce registered them.
 	demo( [ 'rewrite', 'flush', '--hard' ] );
 	demo( [ 'dumont', 'reindex' ] );

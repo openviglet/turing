@@ -1,0 +1,136 @@
+/*
+Theme Name: Lumen
+Description: The demo school for the Viglet Turing Search plugin (D325): an agenda, openings and a library built on Turing search. A fictional school, for showing the plugin; not for a real one.
+Version: 0.1.0
+Requires at least: 6.6
+Requires PHP: 8.1
+Author: Viglet
+License: MIT
+Text Domain: lumen
+*/
+
+/* What theme.json cannot say: the brand mark, the hero's box, the tiles and the tour. */
+
+.lumen-brand {
+	align-items: center;
+	color: var(--wp--preset--color--slate);
+	display: flex;
+	gap: 0.6rem;
+	text-decoration: none;
+}
+
+.lumen-brand svg {
+	flex: none;
+}
+
+.lumen-brand .wp-block-site-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1;
+}
+
+.lumen-brand .wp-block-site-title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.lumen-header-row > .wp-block-navigation {
+	margin-inline-start: auto;
+}
+
+/* The bands meet, and a short page keeps its footer at the bottom of the window. */
+.wp-site-blocks > * + * {
+	margin-block-start: 0;
+}
+
+.wp-site-blocks {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.wp-site-blocks > main {
+	flex: 1;
+}
+
+input,
+select,
+textarea,
+button {
+	font-family: inherit;
+}
+
+.lumen-hero .viglet-dumont-search input[type="search"] {
+	font-size: var(--wp--preset--font-size--medium);
+	padding: 0.75rem 1rem;
+}
+
+.lumen-tile {
+	position: relative;
+	transition: transform 0.15s ease-out;
+}
+
+.lumen-tile:hover,
+.lumen-tile:focus-within {
+	transform: translateY(-3px);
+}
+
+.lumen-tile a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.lumen-tile a::after {
+	content: "";
+	inset: 0;
+	position: absolute;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lumen-tile {
+		transition: none;
+	}
+}
+
+/* An event's or an opening's facts, under its title. */
+.lumen-facts {
+	border-left: 4px solid var(--wp--preset--color--ochre);
+	padding-left: 0.75rem;
+}
+
+/* "How it works" (?tour=1): a numbered marker before each feature, its note in the flow. */
+.lumen-tour {
+	margin: 0.5rem 0;
+}
+
+.lumen-tour__marker {
+	align-items: center;
+	background: var(--wp--preset--color--rust, #9a3b12);
+	border: 0;
+	border-radius: 50%;
+	color: #fff;
+	cursor: pointer;
+	display: inline-flex;
+	font: 700 0.9rem/1 sans-serif;
+	height: 1.75rem;
+	justify-content: center;
+	width: 1.75rem;
+}
+
+.lumen-tour__marker:focus-visible {
+	outline: 3px solid currentColor;
+	outline-offset: 2px;
+}
+
+.lumen-tour__note {
+	background: var(--wp--preset--color--paper, #fff);
+	border-left: 4px solid var(--wp--preset--color--rust, #9a3b12);
+	margin-top: 0.5rem;
+	max-width: 36rem;
+	padding: 0.75rem 1rem;
+}
+
+.lumen-tour__note p {
+	margin: 0.25rem 0 0.5rem;
+}

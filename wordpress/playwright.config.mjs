@@ -10,6 +10,7 @@
 // Drives the installed Microsoft Edge (`channel: msedge`), so no browser download is needed;
 // set E2E_CHANNEL=chromium after `npx playwright install chromium` to use that instead.
 import { defineConfig } from '@playwright/test';
+import { demoSite } from './bin/demo-site.mjs';
 
 export const baseURL = process.env.WP_URL || 'http://localhost:8080';
 export const authFile = 'tests/e2e/.auth/admin.json';
@@ -54,19 +55,34 @@ const variantSteps = [
 // The demo storefront (D194) on its own WordPress (run-docker.cmd demo, D219): its specs need no
 // switch and leave the site above alone (D220). `npm run test:e2e:demo` runs them alone.
 // Two demo stores run side by side (D283): Tarnfell in English, and with DEMO_LOCALE=pt_BR
-// Recanto da Serra, each with the WP-CLI container that reaches its WordPress.
+// Recanto da Serra, each with the WP-CLI container that reaches its WordPress. Each is read from
+// its descriptor, demo/sites/en.json or pt.json (D325).
 const demoPortuguese = 'pt_BR' === process.env.DEMO_LOCALE;
-export const demoURL =
-	process.env.WP_DEMO_URL ||
-	( demoPortuguese ? 'http://localhost:38083' : 'http://localhost:38082' );
-export const demoCli = demoPortuguese ? 'cli-demo-pt' : 'cli-demo';
+export const demoStore = demoSite( demoPortuguese ? 'pt' : 'en' );
+export const demoURL = process.env.WP_DEMO_URL || demoStore.url;
+export const demoCli = demoStore.cli;
 export const demoProjects = [
 	{ name: 'demo-setup', testMatch: 'setup/demo.setup.mjs' },
 	{
 		name: 'demo',
-		testMatch: 'demo/**/*.spec.mjs',
+		testMatch: `${ demoStore.specs }/**/*.spec.mjs`,
 		dependencies: [ 'demo-setup' ],
 		use: { baseURL: demoURL },
+	},
+];
+// The school beside the stores (D325, run-docker.cmd demo edu): Lumen School in English, and with
+// DEMO_LOCALE=pt_BR Escola Lumen (demo/sites/edu.json, edu-pt.json). Its specs run in their own
+// config (npm run test:e2e:edu), never in the full run: a laptop that never started the school
+// still runs everything else.
+export const demoSchool = demoSite( demoPortuguese ? 'edu-pt' : 'edu' );
+export const schoolURL = process.env.WP_DEMO_EDU_URL || demoSchool.url;
+export const schoolProjects = [
+	{ name: 'demo-edu-setup', testMatch: 'setup/demo-edu.setup.mjs' },
+	{
+		name: 'demo-edu',
+		testMatch: `${ demoSchool.specs }/**/*.spec.mjs`,
+		dependencies: [ 'demo-edu-setup' ],
+		use: { baseURL: schoolURL },
 	},
 ];
 const variants = variantSteps.flatMap( ( step, i ) => [

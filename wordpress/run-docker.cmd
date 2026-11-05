@@ -12,7 +12,13 @@ rem                             SN site SN_DEMO_SITE (tarnfell), and Recanto da 
 rem                             on WP_DEMO_PT_PORT (38083), SN site SN_DEMO_PT_SITE
 rem                             (recanto-da-serra)
 rem   run-docker.cmd demo en|pt start one of them
-rem   run-docker.cmd demo reset en|pt  stop one store and delete its WordPress and database only
+rem   run-docker.cmd demo edu   also start the school (D325): Lumen School in English on
+rem                             WP_DEMO_EDU_PORT (38085), SN site SN_DEMO_EDU_SITE (lumen-school),
+rem                             the Lumen theme with an agenda, openings and a library, no
+rem                             WooCommerce; `demo edu-pt` is Escola Lumen in Portuguese on
+rem                             WP_DEMO_EDU_PT_PORT (38086), SN site SN_DEMO_EDU_PT_SITE (escola-lumen)
+rem   run-docker.cmd demo reset en|pt|edu|edu-pt  stop one demo site and delete its WordPress and
+rem                             database only (each is described by demo/sites/<key>.json)
 rem   run-docker.cmd fresh      also start a WordPress the plugin was never installed on (D281), on
 rem                             WP_FRESH_PORT (38084): Tarnfell's theme, WooCommerce and catalog,
 rem                             for the developer video to install the release zip on
@@ -105,14 +111,12 @@ echo The plugin has an API key for the local Turing.
 exit /b 0
 
 :demo
-rem Two demo stores side by side (D283), each a WordPress and an SN site of its own beside the
-rem browser tests' site (D219), sharing its Turing: Tarnfell in English and Recanto da Serra in
-rem Portuguese. `demo` sets up both, `demo en` or `demo pt` one, and `demo reset en|pt` deletes
-rem only the one named, so recording one store never costs the other its orders and searches.
-if "%WP_DEMO_PORT%"=="" set "WP_DEMO_PORT=38082"
-if "%WP_DEMO_PT_PORT%"=="" set "WP_DEMO_PT_PORT=38083"
-if "%SN_DEMO_SITE%"=="" set "SN_DEMO_SITE=tarnfell"
-if "%SN_DEMO_PT_SITE%"=="" set "SN_DEMO_PT_SITE=recanto-da-serra"
+rem The demo sites side by side (D283, D325), each a WordPress and an SN site of its own beside the
+rem browser tests' site (D219), sharing its Turing. Each is described by demo/sites/<key>.json
+rem (theme, seed, title, WooCommerce, port, SN site, language), read by bin\demo-site.mjs: en
+rem (Tarnfell) and pt (Recanto da Serra) are the stores, edu (Lumen School) and edu-pt (Escola
+rem Lumen) the school. `demo` sets up both stores, `demo <key>` one site, and `demo reset <key>`
+rem deletes only the one named, so recording one never costs another its orders and searches.
 set "RESET="
 set "WHICH=%~2"
 if /i "%WHICH%"=="reset" (
@@ -120,25 +124,18 @@ if /i "%WHICH%"=="reset" (
     set "WHICH=%~3"
 )
 if "%WHICH%"=="" (
-    if defined RESET ( echo Name the store to reset: run-docker.cmd demo reset en or pt & exit /b 1 )
+    if defined RESET ( echo Name the site to reset: run-docker.cmd demo reset en, pt, edu or edu-pt & exit /b 1 )
     call "%~f0" demo en || exit /b 1
     call "%~f0" demo pt || exit /b 1
     exit /b 0
 )
-set "LOCALE="
-if /i "%WHICH%"=="en" (
-    set "SFX="
-    set "PORT=%WP_DEMO_PORT%"
-    set "SITE=%SN_DEMO_SITE%"
-    set "LOCALE=en_US"
-)
-if /i "%WHICH%"=="pt" (
-    set "SFX=-pt"
-    set "PORT=%WP_DEMO_PT_PORT%"
-    set "SITE=%SN_DEMO_PT_SITE%"
-    set "LOCALE=pt_BR"
-)
-if not defined LOCALE ( echo Unknown demo store: %WHICH%. Use en or pt. & exit /b 1 )
+set "D_NAME="
+for /f "usebackq tokens=1,* delims==" %%a in (`node bin\demo-site.mjs "%WHICH%"`) do set "D_%%a=%%b"
+if not defined D_NAME exit /b 1
+set "SFX=%D_SFX%"
+set "PORT=%D_PORT%"
+set "SITE=%D_SITE%"
+set "LOCALE=%D_LOCALE%"
 if defined RESET (
     %DC% --profile demo rm -s -f wordpress-demo%SFX% cron-demo%SFX% db-demo%SFX%
     docker volume rm viglet-dumont-wp_wp-demo%SFX% viglet-dumont-wp_db-demo%SFX%
@@ -150,7 +147,7 @@ set "WPD=%DC% run --rm --no-deps cli-demo%SFX% wp"
 set "DEMOURL=http://localhost:%PORT%"
 %DC% --profile demo up -d wordpress-demo%SFX% cron-demo%SFX% || exit /b 1
 
-echo Waiting for the demo WordPress (%LOCALE%)...
+echo Waiting for the demo WordPress (%D_NAME%, %LOCALE%)...
 set /a TRIES=0
 :waitdemo
 set /a TRIES+=1
@@ -163,7 +160,7 @@ goto :waitdemo
 %WPD% core is-installed >nul 2>&1
 if errorlevel 1 (
     echo Installing the demo WordPress...
-    %WPD% core install --url=%DEMOURL% --title="Tarnfell" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+    %WPD% core install --url=%DEMOURL% --title="%D_TITLE%" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
 )
 %WPD% plugin activate viglet-dumont >nul 2>&1
 
@@ -179,25 +176,29 @@ rem The key, the SN site and the language it indexes and searches in (D272, D274
 rem own settings.
 %WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; $s['site_name'] = '%SITE%'; $s['locale'] = '%LOCALE%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
 
-%WPD% theme activate tarnfell || exit /b 1
-rem The store speaks its language, and the seed writes the catalog in it (D217).
+%WPD% theme activate %D_THEME% || exit /b 1
+rem The site speaks its language, and the seed writes its content in it (D217).
 if /i not "%LOCALE%"=="en_US" %WPD% language core install %LOCALE% >nul 2>&1
 %WPD% site switch-language %LOCALE% || exit /b 1
 %WPD% rewrite structure "/%%postname%%/" --hard || exit /b 1
-rem A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo/setup.php first.
-%WPD% plugin is-installed woocommerce >nul 2>&1 || %WPD% plugin install woocommerce || exit /b 1
-%WPD% plugin activate woocommerce || exit /b 1
-if /i not "%LOCALE%"=="en_US" %WPD% language plugin install woocommerce %LOCALE% >nul 2>&1
-%WPD% eval-file /demo/seed/catalog.php || exit /b 1
+rem A shop: WooCommerce on, before the catalog seed (which runs demo/setup.php first).
+if defined D_WOO (
+    %WPD% plugin is-installed woocommerce >nul 2>&1 || %WPD% plugin install woocommerce || exit /b 1
+    %WPD% plugin activate woocommerce || exit /b 1
+    if /i not "%LOCALE%"=="en_US" %WPD% language plugin install woocommerce %LOCALE% >nul 2>&1
+)
+%WPD% eval-file %D_SEED% || exit /b 1
 rem The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
 %WPD% rewrite flush --hard || exit /b 1
-rem The seed makes products indexable after saving them, so nothing queued them: send them now.
+rem The seed makes its posts indexable after saving them, so nothing queued them: send them now.
 %WPD% dumont reindex || exit /b 1
-rem The store's search history, once the catalog it finds is indexed (D269).
-%WPD% eval-file /demo/seed/searches.php || exit /b 1
+rem The site's search history, once the content it finds is indexed (D269).
+if defined D_HISTORY (
+    %WPD% eval-file %D_HISTORY% || exit /b 1
+)
 
 echo.
-echo Demo storefront (%LOCALE%): %DEMOURL%/   (admin / admin), SN site %SITE%
+echo Demo site %D_NAME% (%LOCALE%): %DEMOURL%/   (admin / admin), SN site %SITE%
 echo Demo WP-CLI:     docker compose run --rm --no-deps cli-demo%SFX% wp ...
 exit /b 0
 

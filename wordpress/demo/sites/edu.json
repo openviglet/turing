@@ -1,0 +1,17 @@
+{
+	"name": "Lumen School",
+	"kind": "school",
+	"locale": "en_US",
+	"services": "-edu",
+	"port": 38085,
+	"portEnv": "WP_DEMO_EDU_PORT",
+	"snSite": "lumen-school",
+	"snSiteEnv": "SN_DEMO_EDU_SITE",
+	"title": "Lumen School",
+	"theme": "lumen",
+	"woocommerce": false,
+	"seed": "/demo/school/seed.php",
+	"history": "",
+	"seeded": "get_page_by_path( 'agenda' ) && post_type_exists( 'event' )",
+	"specs": "demo-edu"
+}

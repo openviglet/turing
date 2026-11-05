@@ -25,7 +25,7 @@ services:
       TURING_TENANCY_AUTOPROVISION: "false"
       TURING_OPEN_BROWSER: "false"
       TURING_URL: http://localhost:${TURING_PORT:-2700}
-      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${WP_DEMO_PORT:-38082},http://localhost:${WP_DEMO_PT_PORT:-38083},http://localhost:${WP_FRESH_PORT:-38084},http://localhost:${TURING_PORT:-2700}
+      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${WP_DEMO_PORT:-38082},http://localhost:${WP_DEMO_PT_PORT:-38083},http://localhost:${WP_FRESH_PORT:-38084},http://localhost:${WP_DEMO_EDU_PORT:-38085},http://localhost:${WP_DEMO_EDU_PT_PORT:-38086},http://localhost:${TURING_PORT:-2700}
       # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
       SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
       # Generative AI (answers, chat, summaries): with a key in the shell, a boot that finds no
@@ -332,6 +332,133 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # The school (D325): Lumen School in English on WP_DEMO_EDU_PORT and Escola Lumen in Portuguese
+  # on WP_DEMO_EDU_PT_PORT, each a WordPress and database of its own like the stores above, the
+  # same Turing, its own SN site, no WooCommerce. Its theme (demo/theme/lumen) registers the
+  # events, openings and books, so every container that loads WordPress mounts it. Described by
+  # demo/sites/edu.json and edu-pt.json; `run-docker.cmd demo edu` (or `demo edu-pt`) sets it up.
+  db-demo-edu:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-edu:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-edu:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-edu:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_EDU_PORT:-38085}:80"
+    environment: &wp-demo-edu-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-edu
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-edu:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-edu
+    user: "33:33"
+    environment: *wp-demo-edu-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-edu:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-edu-env
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  db-demo-edu-pt:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-edu-pt:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-edu-pt:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-edu-pt:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_EDU_PT_PORT:-38086}:80"
+    environment: &wp-demo-edu-pt-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-edu-pt
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-edu-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-edu-pt
+    user: "33:33"
+    environment: *wp-demo-edu-pt-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-edu-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-edu-pt-env
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   # A WordPress the plugin has never been installed on (D281), for the developer video: the
   # Tarnfell theme, WooCommerce and its catalog, and no plugin in its files, so the recording
   # installs the release zip through wp-admin and connects it on the Setup page. Only its WP-CLI
@@ -412,5 +539,9 @@ volumes:
   wp-demo:
   db-demo-pt:
   wp-demo-pt:
+  db-demo-edu:
+  wp-demo-edu:
+  db-demo-edu-pt:
+  wp-demo-edu-pt:
   db-fresh:
   wp-fresh:

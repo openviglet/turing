@@ -8,7 +8,11 @@
 #                                     Tarnfell in English on WP_DEMO_PORT (38082) and Recanto
 #                                     da Serra in Portuguese on WP_DEMO_PT_PORT (38083)
 #   sh bin/run-docker.sh demo en|pt   one of them
-#   sh bin/run-docker.sh demo reset en|pt  stop one store and delete its WordPress and database
+#   sh bin/run-docker.sh demo edu     the school (D325): Lumen School in English on
+#                                     WP_DEMO_EDU_PORT (38085); `demo edu-pt` is Escola Lumen in
+#                                     Portuguese on WP_DEMO_EDU_PT_PORT (38086)
+#   sh bin/run-docker.sh demo reset en|pt|edu|edu-pt  stop one demo site and delete its
+#                                     WordPress and database
 #   sh bin/run-docker.sh fresh        also a WordPress the plugin was never installed on (D281),
 #                                     on WP_FRESH_PORT (38084), for the developer video
 #   sh bin/run-docker.sh fresh reset  delete it, to record that video again
@@ -16,33 +20,25 @@
 # The same environment as run-docker.cmd: WP_PORT (8080), TURING_PORT (2700), SN_SITE
 # (Sample), TURING_LOCALE (en_US), TURING_ADMIN_PASSWORD (dumont-dev), TURING_IMAGE, and for
 # the demos WP_DEMO_PORT (38082), WP_DEMO_PT_PORT (38083), SN_DEMO_SITE (tarnfell) and
-# SN_DEMO_PT_SITE (recanto-da-serra). OPENAI_API_KEY
+# SN_DEMO_PT_SITE (recanto-da-serra), and for the school WP_DEMO_EDU_PORT, WP_DEMO_EDU_PT_PORT,
+# SN_DEMO_EDU_SITE (lumen-school) and SN_DEMO_EDU_PT_SITE (escola-lumen). Each demo site is
+# described by demo/sites/<key>.json, read through bin/demo-site.mjs (Node). OPENAI_API_KEY
 # turns on Turing's generative AI. Provisioning runs bin/turing-setup.ps1, so it needs
 # PowerShell (`pwsh`).
 set -eu
 cd "$(dirname "$0")/.."
 
-: "${WP_DEMO_PORT:=38082}"
-: "${WP_DEMO_PT_PORT:=38083}"
-: "${SN_DEMO_SITE:=tarnfell}"
-: "${SN_DEMO_PT_SITE:=recanto-da-serra}"
-export WP_DEMO_PORT WP_DEMO_PT_PORT
-
-# Which demo store (D283): its services' suffix, port, SN site and language.
+# Which demo site (D283, D325), from its descriptor demo/sites/<key>.json: its services' suffix,
+# port, SN site, language, title, theme, WooCommerce, seed and search history.
 demo_store() {
-	case "$1" in
-	en) sfx='' port=$WP_DEMO_PORT site=$SN_DEMO_SITE locale=en_US ;;
-	pt) sfx='-pt' port=$WP_DEMO_PT_PORT site=$SN_DEMO_PT_SITE locale=pt_BR ;;
-	*)
-		echo "Unknown demo store: $1. Use en or pt." >&2
-		exit 1
-		;;
-	esac
+	assignments=$(node bin/demo-site.mjs "$1" --sh) || exit 1
+	eval "$assignments"
+	sfx=$demo_sfx port=$demo_port site=$demo_site locale=$demo_locale
 }
 
 if [ "${1:-}" = demo ] && [ "${2:-}" = reset ]; then
 	if [ -z "${3:-}" ]; then
-		echo 'Name the store to reset: sh bin/run-docker.sh demo reset en or pt' >&2
+		echo 'Name the site to reset: sh bin/run-docker.sh demo reset en, pt, edu or edu-pt' >&2
 		exit 1
 	fi
 	demo_store "$3"
@@ -160,9 +156,9 @@ if [ "${1:-}" != demo ]; then
 	exit 0
 fi
 
-# The demo storefronts (D248, D283), step for step as run-docker.cmd's :demo: each a WordPress
+# The demo sites (D248, D283, D325), step for step as run-docker.cmd's :demo: each a WordPress
 # and an SN site of its own beside the browser tests' site, sharing its Turing. `demo` sets up
-# both, `demo en` or `demo pt` one.
+# both stores, `demo <key>` one site (en, pt, edu or edu-pt).
 wpd() {
 	docker compose run --rm --no-deps "cli-demo$sfx" wp "$@"
 }
@@ -172,7 +168,7 @@ setup_demo() {
 	demo_url="http://localhost:$port"
 	docker compose --profile demo up -d "wordpress-demo$sfx" "cron-demo$sfx"
 
-	echo "Waiting for the demo WordPress ($locale)..."
+	echo "Waiting for the demo WordPress ($demo_name, $locale)..."
 	tries=0
 	until wpd db check >/dev/null 2>&1; do
 		tries=$((tries + 1))
@@ -185,7 +181,7 @@ setup_demo() {
 
 	if ! wpd core is-installed >/dev/null 2>&1; then
 		echo 'Installing the demo WordPress...'
-		wpd core install --url="$demo_url" --title='Tarnfell' \
+		wpd core install --url="$demo_url" --title="$demo_title" \
 			--admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email
 	fi
 	wpd plugin activate viglet-dumont >/dev/null 2>&1 || true
@@ -206,28 +202,32 @@ setup_demo() {
 	# site's own settings.
 	wpd eval "\$s = get_option( 'viglet_dumont_settings', array() ); \$s['api_key'] = '$demo_key'; \$s['site_name'] = '$site'; \$s['locale'] = '$locale'; update_option( 'viglet_dumont_settings', \$s );"
 
-	wpd theme activate tarnfell
-	# The store speaks its language, and the seed writes the catalog in it (D217).
+	wpd theme activate "$demo_theme"
+	# The site speaks its language, and the seed writes its content in it (D217).
 	if [ "$locale" != en_US ]; then
 		wpd language core install "$locale" >/dev/null 2>&1 || true
 	fi
 	wpd site switch-language "$locale"
 	wpd rewrite structure '/%postname%/' --hard
-	# A shop: WooCommerce on, with the demo's catalog (demo/seed), which runs demo/setup.php first.
-	wpd plugin is-installed woocommerce >/dev/null 2>&1 || wpd plugin install woocommerce
-	wpd plugin activate woocommerce
-	if [ "$locale" != en_US ]; then
-		wpd language plugin install woocommerce "$locale" >/dev/null 2>&1 || true
+	# A shop: WooCommerce on, before the catalog seed (which runs demo/setup.php first).
+	if [ -n "$demo_woo" ]; then
+		wpd plugin is-installed woocommerce >/dev/null 2>&1 || wpd plugin install woocommerce
+		wpd plugin activate woocommerce
+		if [ "$locale" != en_US ]; then
+			wpd language plugin install woocommerce "$locale" >/dev/null 2>&1 || true
+		fi
 	fi
-	wpd eval-file /demo/seed/catalog.php
+	wpd eval-file "$demo_seed"
 	# The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
 	wpd rewrite flush --hard
-	# The seed makes products indexable after saving them, so nothing queued them: send them now.
+	# The seed makes its posts indexable after saving them, so nothing queued them: send them now.
 	wpd dumont reindex
-	# The store's search history, once the catalog it finds is indexed (D269).
-	wpd eval-file /demo/seed/searches.php
+	# The site's search history, once the content it finds is indexed (D269).
+	if [ -n "$demo_history" ]; then
+		wpd eval-file "$demo_history"
+	fi
 
-	echo "Demo storefront ($locale): $demo_url/   (admin / admin), SN site $site"
+	echo "Demo site $demo_name ($locale): $demo_url/   (admin / admin), SN site $site"
 }
 
 for store in ${2:-en pt}; do
