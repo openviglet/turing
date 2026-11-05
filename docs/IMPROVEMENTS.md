@@ -2247,27 +2247,27 @@ did not cause.
 
 ## CLXVII Deep-dive research over an SN site
 
-### CLXVII.2 FESPSP as a reference case: an end-to-end analysis (T1221)
+### CLXVII.2 A school as a reference case: an end-to-end analysis (T1221)
 
-**Analysis task: it delivers T lines, not code.** FESPSP (a São Paulo school of sociology and politics, nearly a century old) is about to use almost every visitor-facing Turing feature at once, through the Dumont WordPress plugin and Dumont's DSpace source (D314):
+**Analysis task: it delivers T lines, not code.** A client (a school of social sciences, nearly a century old) is about to use almost every visitor-facing Turing feature at once, through the Dumont WordPress plugin and Dumont's DSpace source (D314):
 - one SN site shared by three WordPress sites and a DSpace repository;
 - pt_BR search with synonyms;
 - answer, chat, chat flows, deep dive (T1220);
 - OCR of scanned historical documents (T515), multimodal image search (T511), seminar transcription;
 - metrics and insights.
 
-The plan is fespsp-institucional FI140–FI171: a reference case for education and memory
-sites. T1219 and T1220 are its first finds.
+The plan is a reference case for education and memory sites, kept in the client's
+project. T1219 and T1220 are its first finds.
 
-**What to analyse**, against a Turing built from this checkout with the FESPSP lab (FI140) or a copy of its content:
-1. **pt_BR quality:** from T1217/T1218 (accent folding, NFD recomposed), test stemming on texts from before the 1943 and 1971 spelling reforms, proper names, multi-word synonyms for the school's historical names.
+**What to analyse**, against a Turing built from this checkout with the client's lab or a copy of its content:
+1. **pt_BR quality:** from T1217/T1218 (accent folding, NFD recomposed), test stemming on texts from before the 1943 and 1971 spelling reforms, proper names, multi-word synonyms for an institution's historical names.
 2. **OCR** on 1930s–1960s typewritten Portuguese, and how it is chunked for citations with page numbers.
 3. **Multimodal** on uncaptioned black-and-white archive photos, and its cost per image.
 4. **Transcription** of pt_BR seminar audio: speaker turns, timestamps in citations.
 5. **Flows** for a guided history tour: can `ChatFlowAuthoringSkill` draft one from a curated outline?
 6. **Tenant setup** on turing.viglet.cloud: four site keys, partitioned keys, CORS for three origins, cost budget per feature.
 
-**Delivers:** one T line per gap, naming the FESPSP line that waits on it, and a note
+**Delivers:** one T line per gap, naming the client's line that waits on it, and a note
 here of what already works.
 
 ## CLXVIII Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -2336,10 +2336,10 @@ outside it.
 
 ### CLXX.1 Entities at import, with aliases (D310) (T1225)
 
-**Where it came from.** Dumont D310 (the WordPress plugin, for FESPSP): visitors should
-explore a site by person and theme, across its WordPress sites and its DSpace repository
-in one SN site. People and themes sit in the text, not in fields, and the repository's
-author facet mixes "Bosso, Bruno" with "Antonio Prado".
+**Where it came from.** Dumont D310 (the WordPress plugin, for a client): visitors
+should explore a site by person and theme, across its WordPress sites and its DSpace
+repository in one SN site. People and themes sit in the text, not in fields, and the
+repository's author facet mixes "Bosso, Bruno" with "Antonio Prado".
 
 **What exists.** `TurSNFieldType.NER` is declared and `TurSolrQueryBuilder` facets
 `turing_entity_*` at query time, but nothing fills those fields: no import path extracts

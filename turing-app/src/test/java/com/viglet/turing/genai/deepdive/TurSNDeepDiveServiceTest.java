@@ -52,7 +52,7 @@ import tools.jackson.databind.json.JsonMapper;
 @ExtendWith(MockitoExtension.class)
 class TurSNDeepDiveServiceTest {
 
-    private static final Map<String, List<String>> FILTERS = Map.of("site_key", List.of("fespsp"));
+    private static final Map<String, List<String>> FILTERS = Map.of("site_key", List.of("acervo"));
 
     @Mock
     private TurSNSearchProcess searchProcess;
@@ -82,7 +82,7 @@ class TurSNDeepDiveServiceTest {
     }
 
     private void site() {
-        when(searchProcess.getSNSite("fespsp")).thenReturn(Optional.of(new TurSNSite()));
+        when(searchProcess.getSNSite("acervo")).thenReturn(Optional.of(new TurSNSite()));
     }
 
     private void ready() {
@@ -107,11 +107,11 @@ class TurSNDeepDiveServiceTest {
     }
 
     private static TurCatalogCitation doc(String id, String type) {
-        return new TurCatalogCitation(1, id, "Title " + id, "https://fespsp.org/" + id, 1.0, null, type);
+        return new TurCatalogCitation(1, id, "Title " + id, "https://example.org/" + id, 1.0, null, type);
     }
 
     private void retrieves(String query, TurCatalogCitation... docs) {
-        when(copilotService.retrieve(eq("fespsp"), eq("pt_BR"), eq(query))).thenAnswer(inv -> {
+        when(copilotService.retrieve(eq("acervo"), eq("pt_BR"), eq(query))).thenAnswer(inv -> {
             filtersSeen.add(TurDslCallerFilters.current());
             List<String> blocks = new ArrayList<>();
             for (TurCatalogCitation doc : docs) {
@@ -122,7 +122,7 @@ class TurSNDeepDiveServiceTest {
     }
 
     private List<ServerSentEvent<String>> run() {
-        return service().research("fespsp", "O que a FESPSP fez em saúde pública?", Locale.of("pt", "BR"),
+        return service().research("acervo", "O que a instituição fez em saúde pública?", Locale.of("pt", "BR"),
                 FILTERS, null).collectList().block();
     }
 
@@ -139,13 +139,13 @@ class TurSNDeepDiveServiceTest {
     void composesCitedSectionsInsideTheFiltersAndReportsTheEmptyStep() {
         ready();
         replies("""
-                SUMMARY: o que a FESPSP produziu sobre saúde pública
+                SUMMARY: o que a instituição produziu sobre saúde pública
                 STEP: Quais pesquisas? | pesquisas saúde pública
                 STEP: Quais eventos? | eventos saúde
                 STEP: Quais cursos? | cursos saúde
                 """, """
                 SECTION: Pesquisas
-                A FESPSP estudou o SUS [1] e a atenção básica [2][9].
+                A Acervo estudou o SUS [1] e a atenção básica [2][9].
                 SECTION: Eventos
                 Um seminário discutiu vacinas [3].
                 SECTION: Opinião
@@ -181,7 +181,7 @@ class TurSNDeepDiveServiceTest {
         assertThat(events.getLast().event()).isEqualTo("done");
         // Both calls are metered as the research stage of this site.
         verify(tokenUsageService, times(2)).recordUsage(eq(instance), any(), eq("system"), any(),
-                eq(TurSNDeepDiveService.STAGE_RESEARCH), isNull(), eq("fespsp"));
+                eq(TurSNDeepDiveService.STAGE_RESEARCH), isNull(), eq("acervo"));
     }
 
     @Test
@@ -198,9 +198,9 @@ class TurSNDeepDiveServiceTest {
         retrieves("seminário saúde");
         retrieves("pesquisas", doc("r1", null), doc("r2", null), doc("r3", null), doc("r4", null));
         retrieves("cursos", doc("c1", null), doc("c2", null), doc("c3", null), doc("c4", null));
-        when(nlFilterService.facetVocabulary(eq("fespsp"), eq("pt_BR"), any(Integer.class)))
-                .thenReturn(Map.of("tema", List.of("Saúde Pública", "Educação"), "site", List.of("fespsp")));
-        when(copilotService.retrieve(eq("fespsp"), eq("pt_BR"), eq("seminário saúde"),
+        when(nlFilterService.facetVocabulary(eq("acervo"), eq("pt_BR"), any(Integer.class)))
+                .thenReturn(Map.of("tema", List.of("Saúde Pública", "Educação"), "site", List.of("acervo")));
+        when(copilotService.retrieve(eq("acervo"), eq("pt_BR"), eq("seminário saúde"),
                 eq(new TurDslQuery.Term("tema", "Saúde Pública"))))
                 .thenReturn(new TurCatalogCopilotService.Retrieval(List.of(doc("e1", "evento")),
                         List.of("Seminário de vacinas"), 1, null, true));

@@ -38,7 +38,7 @@ describe("createResearchController (T1220)", () => {
   it("streams the plan, steps, sections, uncovered and grouped sources into state", async () => {
     const fetchRaw = vi.fn().mockResolvedValueOnce(stream());
     const client = { fetchRaw } as unknown as TuringClient;
-    const controller = createResearchController(client, { site: "fespsp", locale: "pt_BR" });
+    const controller = createResearchController(client, { site: "acervo", locale: "pt_BR" });
 
     await controller.ask("What on public health?", { filters: { site_key: ["main"] }, maxSteps: 4 });
     const state = controller.getState();
@@ -52,7 +52,7 @@ describe("createResearchController (T1220)", () => {
     expect(Object.keys(state.sourceGroups)).toEqual(["research"]);
 
     const [path, init] = fetchRaw.mock.calls[0];
-    expect(path).toBe("/sn/fespsp/research");
+    expect(path).toBe("/sn/acervo/research");
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body)).toEqual({
       question: "What on public health?",
@@ -65,7 +65,7 @@ describe("createResearchController (T1220)", () => {
   it("lands a refusal in error without throwing", async () => {
     const fetchRaw = vi.fn().mockResolvedValueOnce(sse([frame("error", { message: "AI is not enabled" })]));
     const client = { fetchRaw } as unknown as TuringClient;
-    const controller = createResearchController(client, { site: "fespsp" });
+    const controller = createResearchController(client, { site: "acervo" });
 
     await controller.ask("x");
 
