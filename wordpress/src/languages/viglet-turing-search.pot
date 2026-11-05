@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T13:56:57+00:00\n"
+"POT-Creation-Date: 2026-11-05T15:42:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -1464,101 +1464,105 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:367
+#: src/includes/class-viglet-dumont-mapping.php:233
+msgid "Author"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:388
 msgid "Today"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:372
+#: src/includes/class-viglet-dumont-mapping.php:393
 msgid "Next 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:377
+#: src/includes/class-viglet-dumont-mapping.php:398
 msgid "This month"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:382
-#: src/includes/class-viglet-dumont-mapping.php:396
+#: src/includes/class-viglet-dumont-mapping.php:403
+#: src/includes/class-viglet-dumont-mapping.php:417
 msgid "Upcoming"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:387
+#: src/includes/class-viglet-dumont-mapping.php:408
 msgid "Past"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:401
+#: src/includes/class-viglet-dumont-mapping.php:422
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:406
+#: src/includes/class-viglet-dumont-mapping.php:427
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:411
+#: src/includes/class-viglet-dumont-mapping.php:432
 msgid "This year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:416
+#: src/includes/class-viglet-dumont-mapping.php:437
 msgid "Before this year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:441
+#: src/includes/class-viglet-dumont-mapping.php:462
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:451
+#: src/includes/class-viglet-dumont-mapping.php:472
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:519
+#: src/includes/class-viglet-dumont-mapping.php:540
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:548
+#: src/includes/class-viglet-dumont-mapping.php:569
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:564
+#: src/includes/class-viglet-dumont-mapping.php:585
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:572
+#: src/includes/class-viglet-dumont-mapping.php:593
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:580
+#: src/includes/class-viglet-dumont-mapping.php:601
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:585
+#: src/includes/class-viglet-dumont-mapping.php:606
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:894
+#: src/includes/class-viglet-dumont-mapping.php:915
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:898
+#: src/includes/class-viglet-dumont-mapping.php:919
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:902
+#: src/includes/class-viglet-dumont-mapping.php:923
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""

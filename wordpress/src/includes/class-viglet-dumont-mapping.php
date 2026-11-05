@@ -220,6 +220,18 @@ class Viglet_Dumont_Mapping {
 				'facet'       => true,
 				'facetName'   => array( $locale => __( 'Site', 'viglet-turing-search' ) ),
 			),
+			// The field contract a post shares with an archive record on one SN site (D326):
+			// Turing's own `author`, declared as Dumont's OAI-PMH and DSpace sources declare it,
+			// several values and a facet, so a thesis's co-authors and a post's author are one
+			// facet. A post still sends one. The search block shows only the mapping's facets.
+			'author'   => array(
+				'name'        => 'author',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => true,
+				'facet'       => true,
+				'facetName'   => array( $locale => __( 'Author', 'viglet-turing-search' ) ),
+			),
 			// Whether a post is sticky, for Search tuning's "sticky posts first" boost.
 			'sticky'   => array(
 				'name'        => 'sticky',
@@ -261,9 +273,18 @@ class Viglet_Dumont_Mapping {
 		}//end foreach
 
 		$manifest = array(
-			'name'    => $this->settings['site_name'],
-			'locales' => array( $locale ),
-			'fields'  => array_values( $fields ),
+			'name'       => $this->settings['site_name'],
+			'locales'    => array( $locale ),
+			'fields'     => array_values( $fields ),
+			// A site whose `author` an older plugin left single-valued takes it to several
+			// values once (D326); Turing recreates the field only while it differs, so on every
+			// later provisioning this changes nothing.
+			'migrations' => array(
+				array(
+					'field'  => 'author',
+					'action' => 'RECREATE',
+				),
+			),
 		);
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;

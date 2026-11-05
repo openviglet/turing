@@ -653,39 +653,39 @@ msgstr "%1$d de %2$d documentos indexados..."
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-dumont-mapping.php:441
+#: src/includes/class-viglet-dumont-mapping.php:462
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-dumont-mapping.php:451
+#: src/includes/class-viglet-dumont-mapping.php:472
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:519
+#: src/includes/class-viglet-dumont-mapping.php:540
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr "%1$s é %2$s no Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:548
+#: src/includes/class-viglet-dumont-mapping.php:569
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:564
+#: src/includes/class-viglet-dumont-mapping.php:585
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:580
+#: src/includes/class-viglet-dumont-mapping.php:601
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-dumont-mapping.php:585
+#: src/includes/class-viglet-dumont-mapping.php:606
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -1879,43 +1879,43 @@ msgctxt "block description"
 msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-dumont-mapping.php:382
-#: src/includes/class-viglet-dumont-mapping.php:396
+#: src/includes/class-viglet-dumont-mapping.php:403
+#: src/includes/class-viglet-dumont-mapping.php:417
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-dumont-mapping.php:401
+#: src/includes/class-viglet-dumont-mapping.php:422
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:406
+#: src/includes/class-viglet-dumont-mapping.php:427
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:411
+#: src/includes/class-viglet-dumont-mapping.php:432
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-dumont-mapping.php:416
+#: src/includes/class-viglet-dumont-mapping.php:437
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:894
+#: src/includes/class-viglet-dumont-mapping.php:915
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:898
+#: src/includes/class-viglet-dumont-mapping.php:919
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:902
+#: src/includes/class-viglet-dumont-mapping.php:923
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -2899,19 +2899,19 @@ msgstr "Em %s"
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
 
-#: src/includes/class-viglet-dumont-mapping.php:367
+#: src/includes/class-viglet-dumont-mapping.php:388
 msgid "Today"
 msgstr "Hoje"
 
-#: src/includes/class-viglet-dumont-mapping.php:372
+#: src/includes/class-viglet-dumont-mapping.php:393
 msgid "Next 7 days"
 msgstr "Próximos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:377
+#: src/includes/class-viglet-dumont-mapping.php:398
 msgid "This month"
 msgstr "Este mês"
 
-#: src/includes/class-viglet-dumont-mapping.php:387
+#: src/includes/class-viglet-dumont-mapping.php:408
 msgid "Past"
 msgstr "Passados"
 
@@ -2970,7 +2970,7 @@ msgid "The files could not be packed for Turing."
 msgstr "Não foi possível empacotar os arquivos para o Turing."
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:572
+#: src/includes/class-viglet-dumont-mapping.php:593
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr "Texto do PDF no meta: %s"
@@ -3135,3 +3135,7 @@ msgstr "Uma conversa com o copiloto do Turing: um pedido em linguagem comum resp
 msgctxt "block keyword"
 msgid "ask"
 msgstr "perguntar"
+
+#: src/includes/class-viglet-dumont-mapping.php:233
+msgid "Author"
+msgstr "Autor"

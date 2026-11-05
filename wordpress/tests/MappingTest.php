@@ -338,9 +338,9 @@ final class MappingTest extends PluginTestCase {
 
 		$this->assertSame(
 			array(
-				'name'    => 'Sample Site',
-				'locales' => array( 'pt_BR' ),
-				'fields'  => array(
+				'name'       => 'Sample Site',
+				'locales'    => array( 'pt_BR' ),
+				'fields'     => array(
 					array(
 						'name'        => 'site_key',
 						'type'        => 'STRING',
@@ -348,6 +348,14 @@ final class MappingTest extends PluginTestCase {
 						'multiValued' => false,
 						'facet'       => true,
 						'facetName'   => array( 'pt_BR' => 'Site' ),
+					),
+					array(
+						'name'        => 'author',
+						'type'        => 'STRING',
+						'mandatory'   => false,
+						'multiValued' => true,
+						'facet'       => true,
+						'facetName'   => array( 'pt_BR' => 'Author' ),
 					),
 					array(
 						'name'        => 'sticky',
@@ -364,6 +372,12 @@ final class MappingTest extends PluginTestCase {
 						'facet'        => true,
 						'facetName'    => array( 'pt_BR' => 'Área' ),
 						'searchWeight' => 5.0,
+					),
+				),
+				'migrations' => array(
+					array(
+						'field'  => 'author',
+						'action' => 'RECREATE',
 					),
 				),
 			),
@@ -573,7 +587,7 @@ final class MappingTest extends PluginTestCase {
 		$this->assertFalse( $second['sent'] );
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'https://turing.example.org/api/sn/manifest', $this->requests[0][0] );
-		$this->assertSame( array( 'site_key', 'sticky', 'seats' ), array_column( $this->body()['fields'], 'name' ) );
+		$this->assertSame( array( 'site_key', 'author', 'sticky', 'seats' ), array_column( $this->body()['fields'], 'name' ) );
 
 		$this->mapping()->provision( $client, true );
 		$this->assertCount( 2, $this->requests );
@@ -606,7 +620,19 @@ final class MappingTest extends PluginTestCase {
 		$result = $this->mapping()->provision( new Viglet_Dumont_API_Client( $this->settings() ) );
 
 		$this->assertTrue( $result['sent'] );
-		$this->assertSame( array( 'site_key', 'sticky' ), array_column( $this->body()['fields'], 'name' ) );
+		$this->assertSame( array( 'site_key', 'author', 'sticky' ), array_column( $this->body()['fields'], 'name' ) );
+	}
+
+	public function test_author_is_declared_as_the_archive_sources_declare_it(): void {
+		// D326: a post and an OAI-PMH or DSpace record share one author facet on one SN site, so
+		// the plugin declares Turing's `author` with several values, and takes a site an older
+		// plugin left single-valued there through a declared migration.
+		$manifest = $this->mapping()->manifest();
+		$author   = array_values( array_filter( $manifest['fields'], static fn ( $f ) => 'author' === $f['name'] ) );
+
+		$this->assertTrue( $author[0]['multiValued'] );
+		$this->assertTrue( $author[0]['facet'] );
+		$this->assertSame( array( 'author' ), array_column( $manifest['migrations'], 'field' ) );
 	}
 
 	public function test_the_plan_says_where_each_field_stands(): void {
