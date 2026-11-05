@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 ## Block CO — SDK errors that carry Turing's own answer
@@ -2320,32 +2318,6 @@ with `fqItemOperator` sends it.
 ## CLXXIII Knowledge Base: microthesauri & index-time term expansion (§XL)
 
 ## CLXXIV Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
-
-### CLXXIV.1 On-demand structured-feed ingest (T1229)
-
-Seen from `openviglet/model-catalog`, the reference consumer of the T791 pull ingester
-(`TurStructuredFeedIngestService`). Moved here from T1227: this block owns the ingester.
-On 2026-11-05 its GitHub Actions workflow deployed a new `catalog.ndjson` to GitHub
-Pages at 14:59 UTC (1,238 rows). Minutes later the `model-catalog` SN site on
-turing-demo.viglet.org still served the previous feed (`lastVerified: 2026-10-30`, the
-new benchmark fields absent), so the copilot answers from stale rows.
-
-The ingester has two entry points: the `@Scheduled` fixed-delay sweep
-(`turing.genai.structured-feed.interval-ms`, default one hour, counted from node start)
-and the one-off ingest in startup provisioning. No REST endpoint, webhook or console
-action runs `ingestSource` for one source on demand, so a publisher cannot say "the feed
-changed, pull it now", nor an operator re-sync after fixing a feed. Lowering the
-interval only trades staleness for load.
-
-What Turing should do: an authenticated endpoint, e.g. `POST
-/api/genai/structured-feed/{sourceId}/ingest`, that runs `ingestSource` for that
-configured source under the same ShedLock (a request during a sweep answers 409),
-returns the `IngestResult`, and accepts an API key a CI job can hold. The console can
-expose the same action with the last run's result. The sweep stays as the fallback.
-
-Edge case to test: `lastSeenIds` is in memory per node, so a trigger served by a node
-that never ran the source de-indexes nothing; the result must say so rather than report
-zero removals as a clean sync.
 
 ## CLXXV Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 

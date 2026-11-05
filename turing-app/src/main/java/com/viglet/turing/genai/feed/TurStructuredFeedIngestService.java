@@ -90,6 +90,9 @@ public class TurStructuredFeedIngestService {
 
     private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder().build();
 
+    /** T1229 — the ShedLock name the sweep and an on-demand ingest share. */
+    public static final String LOCK_NAME = "structuredFeedIngest";
+
     @Value("${turing.genai.structured-feed.enabled:false}")
     private boolean scheduleEnabled;
 
@@ -122,7 +125,7 @@ public class TurStructuredFeedIngestService {
     @Scheduled(
             initialDelayString = "${turing.genai.structured-feed.initial-delay-ms:30000}",
             fixedDelayString = "${turing.genai.structured-feed.interval-ms:3600000}")
-    @SchedulerLock(name = "structuredFeedIngest", lockAtMostFor = "PT30M", lockAtLeastFor = "PT1S")
+    @SchedulerLock(name = LOCK_NAME, lockAtMostFor = "PT30M", lockAtLeastFor = "PT1S")
     public void ingestAll() {
         if (!scheduleEnabled) {
             return;
@@ -204,6 +207,9 @@ public class TurStructuredFeedIngestService {
 
         // 4. De-index ids that vanished since the previous run (diff over the full
         //    run — chunking below never changes which ids are reconciled).
+        // T1229 — whether this node had a previous run to compare with: without one,
+        //    no vanished id can be found, and zero removals is not a clean sync.
+        boolean deIndexBaseline = lastSeenIds.containsKey(sourceId);
         List<TurSNJobItem> deletions = buildDeletions(sourceId, source.getSiteName(), locale, currentIds);
         items.addAll(deletions);
 
@@ -212,7 +218,7 @@ public class TurStructuredFeedIngestService {
         //    fail-open (one bad chunk never aborts the rest).
         dispatchInChunks(source.getSiteName(), locale, items, sourceId);
         lastSeenIds.put(sourceId, currentIds);
-        return new IngestResult(true, mapped, deletions.size(), skipped, fieldsDeclared, null);
+        return new IngestResult(true, mapped, deletions.size(), skipped, fieldsDeclared, null, deIndexBaseline);
     }
 
     /**
@@ -575,10 +581,19 @@ public class TurStructuredFeedIngestService {
      * from the manifest. {@code error} is null on success.
      */
     public record IngestResult(boolean success, int imported, int deIndexed, int skipped,
-            int fieldsDeclared, String error) {
+            int fieldsDeclared, String error, boolean deIndexBaseline) {
+
+        /**
+         * The result as it was before {@link #deIndexBaseline}: a run that compared
+         * against a previous one.
+         */
+        public IngestResult(boolean success, int imported, int deIndexed, int skipped, int fieldsDeclared,
+                String error) {
+            this(success, imported, deIndexed, skipped, fieldsDeclared, error, true);
+        }
 
         static IngestResult failed(String error) {
-            return new IngestResult(false, 0, 0, 0, 0, error);
+            return new IngestResult(false, 0, 0, 0, 0, error, false);
         }
     }
 }

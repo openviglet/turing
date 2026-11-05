@@ -247,9 +247,12 @@ class TurStructuredFeedIngestServiceTest {
                 .thenReturn("[{\"id\":\"a\"},{\"id\":\"b\"}]")   // run 1: a,b
                 .thenReturn("[{\"id\":\"a\"}]");                  // run 2: b vanished
 
-        service.ingestSource(source()); // primes last-seen {a,b}
+        var first = service.ingestSource(source()); // primes last-seen {a,b}
         var second = service.ingestSource(source());
 
+        // T1229 — the first run on this node had nothing to compare with
+        assertThat(first.deIndexBaseline()).isFalse();
+        assertThat(second.deIndexBaseline()).isTrue();
         assertThat(second.imported()).isEqualTo(1);
         assertThat(second.deIndexed()).isEqualTo(1);
         // second send carries 1 CREATE (a) + 1 DELETE (b)

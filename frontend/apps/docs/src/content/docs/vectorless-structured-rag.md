@@ -533,6 +533,32 @@ turing:
 De-index of rows that vanished from the feed is still computed over the whole run,
 so chunking never changes which stale rows are reconciled.
 
+### Pulling a feed now
+
+The scheduled ingester runs every hour (`interval-ms`). To pull one source right after
+publishing a new feed, for example as the last step of the CI job that deploys it, call:
+
+```bash
+curl -X POST "https://turing.example.com/api/genai/structured-feed/model-catalog/ingest" \
+  -H "Key: $TURING_API_KEY"
+```
+
+The path names the source's `id` (or its `site-name` when it has no `id`). The answer
+is the run's outcome:
+
+```json
+{ "success": true, "imported": 1238, "deIndexed": 0, "skipped": 0,
+  "fieldsDeclared": 0, "error": null, "deIndexBaseline": true }
+```
+
+- `404` when no configured source has that id; `409` while the hourly run (or another
+  pull) is ingesting, on any node, so retry once it ends.
+- `deIndexBaseline: false` means the node that answered had not run this source
+  before, so rows removed from the feed were not looked for: `deIndexed: 0` is then not
+  proof of a clean sync. The next run on that node reconciles them.
+- It runs whether or not the scheduled ingester is enabled, and leaves the schedule as
+  it was.
+
 ### Direct bulk-index fast path (advanced, opt-in)
 
 For a **very large reindex of a Vectorless site**, the asynchronous indexing queue
