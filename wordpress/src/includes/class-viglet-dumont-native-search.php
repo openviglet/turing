@@ -571,7 +571,7 @@ class Viglet_Dumont_Native_Search {
 		$query = '' !== trim( $state['query'] ) ? trim( $state['query'] ) : '*';
 		$rows  = (int) $state['perPage'];
 
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->search_unrecorded(
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->search_unrecorded(
 			array(
 				'q'    => $query,
 				'p'    => $page,
@@ -802,7 +802,7 @@ class Viglet_Dumont_Native_Search {
 	 * @return array State to merge over the block's own.
 	 */
 	public function preview_state( int $rows, array $labels ): array {
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->search(
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->search(
 			'*',
 			1,
 			$rows,
@@ -957,7 +957,8 @@ class Viglet_Dumont_Native_Search {
 	 */
 	public function search( string $query, int $page, int $per_page ): ?array {
 		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
-		$client   = new Viglet_Dumont_API_Client( $this->settings );
+		// A page read (D328): while Turing is down WordPress searches its own database at once.
+		$client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, array( 'fq[]' => $indexer->own_filter() ) );
 		if ( is_wp_error( $response ) ) {
 			return null;

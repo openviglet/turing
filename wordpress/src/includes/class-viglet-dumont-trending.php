@@ -195,7 +195,7 @@ class Viglet_Dumont_Trending {
 	 * @return string[]
 	 */
 	private function answered( array $queries ): array {
-		$client  = new Viglet_Dumont_API_Client( $this->settings );
+		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 		$blocked = array_map( 'mb_strtolower', (array) ( $this->settings['trending_block'] ?? array() ) );
 		$groups  = $this->groups();

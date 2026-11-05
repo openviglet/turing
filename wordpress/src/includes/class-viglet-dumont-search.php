@@ -37,7 +37,8 @@ class Viglet_Dumont_Search {
 	 */
 	public function __construct( ?array $settings = null ) {
 		$this->settings = $settings ?? viglet_dumont_get_settings();
-		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
+		// The results page a visitor waits on (D328).
+		$this->client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 	}
 
 	/**

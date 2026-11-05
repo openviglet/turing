@@ -47,6 +47,48 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertFalse( ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array( array() ) )['timed_out'] );
 	}
 
+	public function test_a_page_read_waits_seconds_and_a_failed_one_marks_turing_down_for_a_minute(): void {
+		// D328: a hung Turing costs one page a few seconds, and the next pages nothing.
+		$marks = array();
+		Functions\when( 'get_transient' )->justReturn( false );
+		Functions\when( 'set_transient' )->alias(
+			static function ( $name, $value, $ttl ) use ( &$marks ) {
+				$marks[] = array( $name, $ttl );
+				return true;
+			}
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return new WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 3001 milliseconds' );
+			}
+		);
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->for_render()->search( 'books' );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 3, $this->requests[0][1]['timeout'] );
+		$this->assertSame( array( array( Viglet_Dumont_API_Client::DOWN_TRANSIENT, 60 ) ), $marks );
+	}
+
+	public function test_while_turing_is_marked_down_a_page_read_does_not_call_it(): void {
+		Functions\when( 'get_transient' )->justReturn( time() );
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->for_render()->search( 'books' );
+
+		$this->assertSame( 'turing_down', $result->get_error_code() );
+		$this->assertSame( array(), $this->requests );
+	}
+
+	public function test_an_admin_or_indexing_read_ignores_the_mark_and_waits_as_before(): void {
+		Functions\when( 'get_transient' )->justReturn( time() );
+
+		( new Viglet_Dumont_API_Client( $this->settings() ) )->search( 'books' );
+
+		$this->assertCount( 1, $this->requests );
+		$this->assertSame( 30, $this->requests[0][1]['timeout'] );
+	}
+
 	/**
 	 * Answer every request with an HTTP 400 and this body, from inside WordPress Playground
 	 * or not (D237).

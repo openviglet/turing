@@ -20,6 +20,13 @@ final class NativeSearchTest extends PluginTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		// Page reads check and set the "Turing is down" mark (D328); none is set here.
+		Functions\stubs(
+			array(
+				'get_transient' => false,
+				'set_transient' => true,
+			)
+		);
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) {
 				$this->requests[] = array( $url, $args );

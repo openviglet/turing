@@ -205,14 +205,16 @@ class Viglet_Dumont_Related {
 		}
 
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
-		$similar = ( new Viglet_Dumont_API_Client( $this->settings ) )->similar(
+		// A page read (D328): a hung Turing costs this view a few seconds, the next ones nothing.
+		$similar = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->similar(
 			$indexer->build_doc_id( $post_id ),
 			$rows,
 			$mode,
 			array( $indexer->own_filter() )
 		);
-		// A site without embeddings may refuse a semantic question: ask by shared words.
-		if ( is_wp_error( $similar ) && 'VECTOR' === $mode ) {
+		// A site without embeddings may refuse a semantic question: ask by shared words. A
+		// Turing that did not answer at all is not asked again.
+		if ( is_wp_error( $similar ) && 'VECTOR' === $mode && ! get_transient( Viglet_Dumont_API_Client::DOWN_TRANSIENT ) ) {
 			return $this->neighbours( $post_id, 'MLT', $rows );
 		}
 		if ( is_wp_error( $similar ) ) {

@@ -77,6 +77,49 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The transient that marks Turing as down for the pages that read it (D328).
+	 */
+	public const DOWN_TRANSIENT = 'viglet_dumont_turing_down';
+
+	/**
+	 * How long a failed page read keeps the others from trying, in seconds (D328).
+	 */
+	public const DOWN_SECONDS = 60;
+
+	/**
+	 * Whether this client reads for a page a visitor is waiting on (D328).
+	 *
+	 * @var bool
+	 */
+	private bool $render = false;
+
+	/**
+	 * This client for a page a visitor is waiting on (D328): it gives up after a few seconds,
+	 * and once one read could not reach Turing every page skips it for a minute, so an outage
+	 * slows the search and nothing else. Admin screens and indexing keep the plain client,
+	 * which waits as long as it always did.
+	 */
+	public function for_render(): self {
+		$client         = clone $this;
+		$client->render = true;
+
+		return $client;
+	}
+
+	/**
+	 * The seconds a page read waits for Turing (D328), three unless the
+	 * `viglet_dumont_render_timeout` filter says otherwise.
+	 */
+	private static function render_timeout(): int {
+		/**
+		 * Filters how long a page waits for Turing before it renders without it.
+		 *
+		 * @param int $seconds Three by default.
+		 */
+		return max( 1, (int) apply_filters( 'viglet_dumont_render_timeout', 3 ) );
+	}
+
+	/**
 	 * The `source_apps` value this plugin's documents carry.
 	 */
 	public function source_app(): string {
@@ -536,6 +579,14 @@ class Viglet_Dumont_API_Client {
 	 * @return array|WP_Error Response or error.
 	 */
 	private function request( string $method, string $path, ?array $query = null, ?array $body = null, array $extra = array() ) {
+		// A page read while Turing is marked down does not wait for it again (D328).
+		if ( $this->render && get_transient( self::DOWN_TRANSIENT ) ) {
+			return new WP_Error( 'turing_down', __( 'Turing did not answer a moment ago; this page renders without it.', 'viglet-turing-search' ) );
+		}
+		if ( $this->render ) {
+			$extra['timeout'] = self::render_timeout();
+		}
+
 		$url = $this->server_url . $path;
 
 		// Turing reads filters as a repeated `fq[]`, which add_query_arg cannot spell: it
@@ -568,6 +619,12 @@ class Viglet_Dumont_API_Client {
 		}
 
 		$response = wp_remote_request( $url, array_replace_recursive( $args, $extra ) );
+
+		// No answer at all (a timeout or a refused connection, not an HTTP error) marks Turing
+		// down for the pages that come next (D328).
+		if ( $this->render && is_wp_error( $response ) ) {
+			set_transient( self::DOWN_TRANSIENT, time(), self::DOWN_SECONDS );
+		}
 
 		return self::playground_refusal( $response, $this->server_url ) ?? $response;
 	}
