@@ -268,6 +268,31 @@ export function isQuestion( query ) {
 	);
 }
 
+// Words a sentence carries that name nothing wanted, in the languages the plugin ships: searched
+// as any-of, each would match half the catalog (D258).
+const fillerWords = new Set(
+	(
+		'a an and at by for from in into of on or the to with ' +
+		'a as com da das de do dos e em na nas no nos o os ou para pra por um uma'
+	).split( ' ' )
+);
+
+/**
+ * A sentence as a search for any of its words (D258), best match first: Turing requires every
+ * word of a query, so a question as typed ("When do applications close?") finds nothing. Filler
+ * words are left out, and a question's closing mark with them. Empty for fewer than two words.
+ *
+ * @param {string} query What the visitor typed.
+ * @return {string} The any-of query, or empty.
+ */
+export function anyOfWords( query ) {
+	const words = String( query || '' )
+		.split( /\s+/ )
+		.map( ( word ) => word.replace( /[?!.,;:]+$/, '' ) )
+		.filter( ( word ) => word && ! fillerWords.has( word.toLowerCase() ) );
+	return words.length < 2 ? '' : words.join( ' OR ' );
+}
+
 /**
  * Whether Turing refused an AI call because the site's AI budget is spent (D332): HTTP 429.
  * The SDK's TuringHttpError carries the status but never the body, so the reset date is the

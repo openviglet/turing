@@ -216,6 +216,93 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertSame( 'http://localhost:8081/busca/', Viglet_Dumont_Native_Search::sanitize_search_url( 'http://localhost:8081/busca/' ) );
 	}
 
+	/** The Explore row keeps labelled http(s) or site-relative links only, at most 8 (D311). */
+	public function test_explore_links_keep_a_label_and_a_safe_url_and_at_most_eight(): void {
+		Functions\when( 'esc_url_raw' )->returnArg();
+		Functions\when( 'sanitize_text_field' )->alias( static fn ( $text ) => trim( strip_tags( (string) $text ) ) );
+
+		$typed = implode(
+			"\n",
+			array(
+				'Events | /events/',
+				'  Library hours  |  https://www.example.org/library  ',
+				'A | B | /a-b/',
+				'No url here',
+				'Script | javascript:alert(1)',
+				'Protocol relative | //elsewhere.example.org/',
+				'Backslash | /\\elsewhere.example.org/',
+				'Bare | events',
+				'Data | data:text/html,hi',
+				' | /no-label/',
+				'<b>Bold</b> | http://example.org/bold',
+			)
+		);
+		$this->assertSame(
+			array(
+				array(
+					'label' => 'Events',
+					'url'   => '/events/',
+				),
+				array(
+					'label' => 'Library hours',
+					'url'   => 'https://www.example.org/library',
+				),
+				array(
+					'label' => 'A | B',
+					'url'   => '/a-b/',
+				),
+				array(
+					'label' => 'Bold',
+					'url'   => 'http://example.org/bold',
+				),
+			),
+			Viglet_Dumont_Native_Search::sanitize_explore( $typed )
+		);
+
+		$many = implode( "\n", array_map( static fn ( $i ) => "Link $i | /l$i/", range( 1, 12 ) ) );
+		$kept = Viglet_Dumont_Native_Search::sanitize_explore( $many );
+		$this->assertCount( Viglet_Dumont_Native_Search::EXPLORE_MAX, $kept );
+		$this->assertSame( '/l8/', $kept[7]['url'] );
+
+		// The stored list saves again unchanged, and a broken entry in it is dropped.
+		$stored = Viglet_Dumont_Native_Search::sanitize_explore( "Events | /events/\nA | B | /a-b/" );
+		$this->assertSame( $stored, Viglet_Dumont_Native_Search::sanitize_explore( array_merge( $stored, array( 'junk', array( 'url' => '/x/' ) ) ) ) );
+		$this->assertSame( array(), Viglet_Dumont_Native_Search::sanitize_explore( '' ) );
+	}
+
+	/** Only the immersive overlay shows the Explore row, from the stored list (D311). */
+	public function test_the_overlay_config_carries_the_explore_row_only_when_immersive(): void {
+		Functions\when( 'esc_url_raw' )->returnArg();
+		Functions\when( 'sanitize_text_field' )->alias( static fn ( $text ) => trim( (string) $text ) );
+		$links = array(
+			array(
+				'label' => 'Events',
+				'url'   => '/events/',
+			),
+		);
+
+		$immersive = new Viglet_Dumont_Native_Search(
+			$this->settings(
+				array(
+					'overlay_layout'  => 'immersive',
+					'overlay_explore' => array_merge(
+						$links,
+						array(
+							array(
+								'label' => 'Bad',
+								'url'   => 'javascript:void(0)',
+							),
+						)
+					),
+				)
+			)
+		);
+		$this->assertSame( $links, $immersive->overlay_explore() );
+
+		$list = new Viglet_Dumont_Native_Search( $this->settings( array( 'overlay_explore' => $links ) ) );
+		$this->assertSame( array(), $list->overlay_explore() );
+	}
+
 	public function test_the_public_config_names_the_results_page_on_another_site(): void {
 		Functions\when( 'esc_url_raw' )->returnArg();
 		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $fallback );

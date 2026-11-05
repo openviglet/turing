@@ -415,6 +415,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 
 						<div class="viglet-dumont-field">
+							<label for="overlay_explore"><?php esc_html_e( 'Explore links', 'viglet-turing-search' ); ?></label>
+							<textarea id="overlay_explore" rows="4" class="large-text code"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[overlay_explore]"
+									aria-describedby="overlay_explore_help"
+									placeholder="<?php echo esc_attr( "Events | /events/\nContact | /contact/" ); ?>"><?php echo esc_textarea( implode( "\n", array_map( static fn ( $viglet_dumont_link ) => $viglet_dumont_link['label'] . ' | ' . $viglet_dumont_link['url'], Viglet_Dumont_Native_Search::sanitize_explore( (array) $settings['overlay_explore'] ) ) ) ); ?></textarea>
+							<p class="description" id="overlay_explore_help"><?php esc_html_e( 'Shown in the immersive layout before anything is typed, beside the recent and popular searches. One "Label | URL" per line, at most 8; the URL is a full http(s) address or a path on this site, such as /events/.', 'viglet-turing-search' ); ?></p>
+						</div>
+
+						<div class="viglet-dumont-field">
 							<label for="search_page"><?php esc_html_e( 'Full search page', 'viglet-turing-search' ); ?></label>
 							<?php
 							wp_dropdown_pages(

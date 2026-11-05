@@ -252,8 +252,11 @@ class Viglet_Dumont_Native_Search {
 					// gets Turing's answer on top: opt-in, as each answer is an LLM call.
 					'popular'    => $immersive ? ( new Viglet_Dumont_Trending() )->chips() : array(),
 					'answers'    => $immersive && ! empty( $this->settings['overlay_answers'] ),
+					// The zero state's Explore row: links the site chose (D311).
+					'explore'    => $this->overlay_explore(),
 					'labels'     => array(
 						'popular'  => __( 'Popular searches', 'viglet-turing-search' ),
+						'explore'  => __( 'Explore', 'viglet-turing-search' ),
 						'answer'   => __( 'Answer', 'viglet-turing-search' ),
 						// A spent AI budget, with its reset when the site knows it (D336).
 						'paused'   => Viglet_Dumont_AI_Quota::visitor_line(),
@@ -1250,6 +1253,80 @@ class Viglet_Dumont_Native_Search {
 			'measurementId'  => $ga ? (string) $this->settings['ga_measurement_id'] : '',
 			'requireConsent' => function_exists( 'wp_has_consent' ) || ! $consent,
 		);
+	}
+
+	/** How many links the immersive overlay's Explore row holds (D311). */
+	public const EXPLORE_MAX = 8;
+
+	/**
+	 * The immersive overlay's Explore row (D311), as the setting keeps it: one `Label | URL` per
+	 * line, each URL absolute http(s) or relative to this site's root (`/events/`). A line with no
+	 * label, or with any other URL (`javascript:`, `//host`, a bare word), is dropped; the first
+	 * EXPLORE_MAX are kept. Also takes the stored list back, so saving it again changes nothing.
+	 *
+	 * @param string|array $input The lines as typed, or the stored list.
+	 * @return array<int, array{label: string, url: string}>
+	 */
+	public static function sanitize_explore( $input ): array {
+		$lines = is_array( $input )
+			? array_map(
+				static fn ( $link ): string => is_array( $link ) ? (string) ( $link['label'] ?? '' ) . ' | ' . (string) ( $link['url'] ?? '' ) : '',
+				$input
+			)
+			: preg_split( '/\R/', (string) $input );
+		$links = array();
+		foreach ( (array) $lines as $line ) {
+			$at = strrpos( (string) $line, '|' );
+			if ( false === $at ) {
+				continue;
+			}
+			$label = sanitize_text_field( substr( (string) $line, 0, $at ) );
+			$url   = self::explore_url( trim( substr( (string) $line, $at + 1 ) ) );
+			if ( '' === $label || '' === $url ) {
+				continue;
+			}
+			$links[] = array(
+				'label' => $label,
+				'url'   => $url,
+			);
+			if ( count( $links ) >= self::EXPLORE_MAX ) {
+				break;
+			}
+		}
+
+		return $links;
+	}
+
+	/**
+	 * An Explore link's URL: absolute http(s) with a host, or a path from this site's root.
+	 * Anything else is ''.
+	 *
+	 * @param string $url The URL as typed.
+	 */
+	private static function explore_url( string $url ): string {
+		if ( 1 === preg_match( '#^/(?![/\\\\])#', $url ) ) {
+			return esc_url_raw( $url, array( 'http', 'https' ) );
+		}
+		$parts  = wp_parse_url( $url );
+		$scheme = strtolower( (string) ( is_array( $parts ) ? ( $parts['scheme'] ?? '' ) : '' ) );
+		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || empty( $parts['host'] ) ) {
+			return '';
+		}
+
+		return esc_url_raw( $url, array( 'http', 'https' ) );
+	}
+
+	/**
+	 * The Explore row the immersive overlay's zero state shows (D311); none in the list layout.
+	 *
+	 * @return array<int, array{label: string, url: string}>
+	 */
+	public function overlay_explore(): array {
+		if ( 'immersive' !== ( $this->settings['overlay_layout'] ?? '' ) ) {
+			return array();
+		}
+
+		return self::sanitize_explore( (array) ( $this->settings['overlay_explore'] ?? array() ) );
 	}
 
 	/**

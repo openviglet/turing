@@ -7,6 +7,7 @@ import { getContext, getElement, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
 	addToCart,
+	anyOfWords,
 	compare,
 	config,
 	createAnswerController,
@@ -690,12 +691,17 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			client = createClient();
 			search.subscribe( sync );
 			autocomplete.subscribe( ( s ) => {
-				// A Turing older than T1226 answers a scoped autocomplete with document titles
-				// marked up for highlighting: never a term to suggest. Ask unscoped from then on,
-				// for this page, and again for what was typed (D318).
+				// A Turing older than T1226 answers a scoped autocomplete with document titles,
+				// marked up or not, never a term: a word typed alone comes back as several words.
+				// Ask unscoped from then on, for this page, and again for what was typed (D318).
+				const oneWord = ! /\s/.test( state.query.trim() );
 				if (
 					scopedSuggestions &&
-					s.suggestions.some( ( t ) => /<\/?[a-z]/i.test( t ) )
+					s.suggestions.some(
+						( t ) =>
+							/<\/?[a-z]/i.test( t ) ||
+							( oneWord && /\s/.test( t.trim() ) )
+					)
 				) {
 					scopedSuggestions = false;
 					state.suggestions = [];
@@ -2082,15 +2088,6 @@ function sync( s ) {
 	relaxSentence();
 }
 
-// Words a sentence carries that name nothing wanted, in the languages the plugin ships: searched
-// as any-of, each would match half the catalog (D258).
-const fillerWords = new Set(
-	(
-		'a an and at by for from in into of on or the to with ' +
-		'a as com da das de do dos e em na nas no nos o os ou para pra por um uma'
-	).split( ' ' )
-);
-
 /**
  * A sentence whose words, every one required, find nothing is searched again for any of them,
  * best match first, with the filters read from it kept (D258). "waterproof hiking boots for wet
@@ -2101,9 +2098,7 @@ const fillerWords = new Set(
  */
 function relaxSentence() {
 	const request = search.getState().request || {};
-	const words = String( request.q || '' )
-		.split( /\s+/ )
-		.filter( ( word ) => word && ! fillerWords.has( word.toLowerCase() ) );
+	const anyOf = anyOfWords( request.q );
 	if (
 		state.closeMatches ||
 		'success' !== state.status ||
@@ -2112,12 +2107,12 @@ function relaxSentence() {
 		// is not the one to relax.
 		state.readingSentence ||
 		'instant' === request.mode ||
-		words.length < 2 ||
+		! anyOf ||
 		! readsAsSentence( lastQuery )
 	) {
 		return;
 	}
 	state.closeMatches = true;
 	// Uncounted (D267): the log would read "waterproof OR hiking OR boots", a query nobody typed.
-	send( { q: words.join( ' OR ' ), page: 1, populateMetrics: false } );
+	send( { q: anyOf, page: 1, populateMetrics: false } );
 }

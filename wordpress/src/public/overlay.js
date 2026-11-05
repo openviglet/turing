@@ -11,6 +11,7 @@
 import { getConfig } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
+	anyOfWords,
 	cardLines,
 	cardWhen,
 	config,
@@ -36,6 +37,7 @@ const {
 	typeLabels,
 	popular = [],
 	answers = false,
+	explore = [],
 } = getConfig( 'viglet-dumont/overlay' );
 
 // D311: results grouped by type, with images and a "See all" per type, recent searches before
@@ -122,6 +124,8 @@ let answerBox = null;
 let preview = null;
 let answerer = null;
 let answerTimer = null;
+// The immersive zero state's Explore row: links the site chose, shown before anything is typed.
+let exploreRow = null;
 // How long a question must rest before it is answered: each answer is an LLM call.
 const answerMs = 1200;
 
@@ -217,7 +221,33 @@ function build() {
 		} );
 		const body = make( 'div', 'body' );
 		body.append( list, preview );
-		dialog.append( form, status, answerBox, body, all, hint );
+		dialog.append( form, status, answerBox, body );
+		if ( explore.length ) {
+			// Real links, so Tab reaches them; the arrows stay with the results above.
+			exploreRow = make( 'nav', 'explore', {
+				'aria-label': labels.explore,
+				hidden: '',
+			} );
+			const links = make( 'ul', 'explore-links' );
+			for ( const link of explore ) {
+				const item = make( 'li' );
+				item.append(
+					make( 'a', 'explore-link', { href: link.url }, link.label )
+				);
+				links.append( item );
+			}
+			exploreRow.append(
+				make(
+					'p',
+					'group-title',
+					{ 'aria-hidden': 'true' },
+					labels.explore
+				),
+				links
+			);
+			dialog.append( exploreRow );
+		}
+		dialog.append( all, hint );
 		if ( answers ) {
 			answerer = createAnswerController( createClient(), {
 				site: config.site,
@@ -269,6 +299,9 @@ function build() {
  */
 function update() {
 	const typed = input.value.trim();
+	if ( exploreRow ) {
+		exploreRow.hidden = typed.length >= 2;
+	}
 	if ( typed.length < 2 ) {
 		// The immersive overlay starts from this browser's recent searches (D311).
 		results = immersive
@@ -329,6 +362,20 @@ function render( s ) {
 		results = [];
 	} else if ( 'success' === s.status ) {
 		const total = s.structured?.queryContext?.count ?? s.documents.length;
+		// Turing requires every word, so a sentence as typed ("When do applications close?")
+		// finds nothing, while the answer above it is right there. It is searched again once for
+		// any of its words, best match first, as the search block does (D258).
+		const typed = input.value.trim();
+		const anyOf = anyOfWords( typed );
+		if (
+			! total &&
+			anyOf &&
+			s.request?.q === typed &&
+			( isQuestion( typed ) || typed.split( /\s+/ ).length >= 3 )
+		) {
+			search.searchRequest( { ...s.request, q: anyOf, page: 1 } );
+			return;
+		}
 		// The form for one or for more, as the page's language counts (D184).
 		const form =
 			'one' === plurals.select( total )
