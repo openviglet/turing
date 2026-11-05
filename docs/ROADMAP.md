@@ -26,6 +26,10 @@
 
 - 📋 **T1239** (deps: —) **Similar documents and duplicates take filters only as a GET query string, never as the JSON body search takes** — A scoped similar call is a long hand-escaped URL that a client spells unlike the search beside it. → §CLXXVII.3
 
+## Block CR — SDK errors that carry Turing's own answer
+
+- 📋 **T1240** (deps: —) **The SDK's answer and chat controllers keep a failed call's error as text, so a 429's resetsAt never reaches a subscriber** — Streaming surfaces cannot say when AI answers come back, though a direct call now can. → §CLXXVI.2
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

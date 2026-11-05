@@ -1658,3 +1658,6 @@
 ## Block CQ — The model catalog at models.viglet.org
 
 - **T1237** — The model catalog fetch follows a 301 through Turing's own fetcher, structured feeds follow redirects with each hop re-guarded, and an empty catalog's failed refresh logs at WARN (design §CLXXVIII.1 recorded in `turing-app/src/main/java/com/viglet/turing/genai/provider/llm/TurLlmModelCatalog.java`).
+
+## Block CR — SDK errors that carry Turing's own answer
+

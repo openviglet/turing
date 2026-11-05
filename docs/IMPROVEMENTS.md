@@ -39,6 +39,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
+## Block CR — SDK errors that carry Turing's own answer
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2324,6 +2326,32 @@ the facets it counts and the order it answers in. A line here names a difference
 engine shows and the shared seam that closes it for all of them.
 
 ## CLXXVI SDK errors that carry Turing's own answer
+
+### CLXXVI.2 Problem details in controller state (T1240)
+
+**Where it came from.** Dumont D336 (the WordPress plugin): with the site's AI budget
+spent, the overlay's instant answer (`createAnswerController`) and the Site assistant
+(`createChatController`) should say when answers come back. T1234 put the
+problem-details body on `TuringHttpError.problem`, which a direct call (`client.post`)
+now reads.
+
+**What happens.** The controllers catch that error and keep only text:
+`AnswerState.error`, `ChatControllerState.error` (and the search, research, similar and
+slots controllers) are `string | null` (`dist/controllers/*.d.ts` in 2026.3.17). A 429
+`quota-exhausted` reaches the subscriber as `"HTTP 429"`, so `resetsAt`, `detail` and
+`upgradeUrl` are lost again on exactly the surfaces that stream.
+
+**Workaround in Dumont.** The page renders the line with the reset date the WordPress
+server recorded from its own 429 (`Viglet_Dumont_AI_Quota::visitor_line()`); a visitor
+whose 429 is the first one the site sees reads "paused for now" until the next page.
+
+**What Turing should do.** Each controller's state carries the error's problem details
+beside the text, e.g. `errorProblem?: TuringProblem` (or `error` as the
+`TuringHttpError` itself with its `status` and `problem`), in both the vanilla and the
+React SDK, without breaking a consumer that reads `error` as a string.
+
+**Done when:** an answer or chat controller whose call answers 429 `quota-exhausted`
+exposes `resetsAt` in its state.
 
 ## CLXXVII Every endpoint honours a request's filters and partition
 
