@@ -2355,3 +2355,5 @@ and keyless for up to 50 rows and keeps the ids whose prefix is a key in scope.
 Lucene and Elasticsearch, and an SDK test checks the query string carries `fqi.op`.
 
 ## CLXXVIII The model catalog at models.viglet.org
+
+## CLXXIX The quality gate stops at the package boundary

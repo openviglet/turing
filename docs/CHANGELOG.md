@@ -1380,6 +1380,7 @@
 - **T1214** — react-ui, react-sdk and the vanilla SDK build with NodeNext, so JS and .d.ts carry .js specifiers; the contents gate imports every entry point in plain Node (design §CLIII.3 superseded: react-sdk was not type module as stated, and the vanilla SDK's .d.ts had the same extensionless specifiers) (design §CLIII.3 recorded in `frontend/scripts/check-package-contents.mjs`).
 - **T1215** — The react-ui root imports with only react and react-dom; TuringMarkdown lives on its subpath, and the contents gate loads each root with optional peers hidden (design §CLIII.4 recorded in `frontend/scripts/check-package-contents.mjs`).
 - **T1216** — The react-sdk root loads without react-markdown: TuringMarkdown and TuringAnswer moved to subpaths in a new exports map, and the gate needs no exception.
+- **T1238** — Each partition probe carries a term only it holds, so the contract IT checks a partitioned autocomplete by its terms and runs the partition checks after it again.
 
 ## Block BW — What the link-free response and its consumers still lack (§LXX)
 

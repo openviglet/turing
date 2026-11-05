@@ -842,12 +842,14 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertTrue(unpartitioned.containsAll(List.of(partitionProbeId("a"), partitionProbeId("b"))),
                     "a request without a partitioned key sees the whole site");
 
-            // Autocomplete suggests from the partition's own documents.
-            HttpResponse<String> autocomplete = getWithKey("/sn/" + SITE + "/ac?q=partition&_setlocale=" + LOCALE,
+            // Autocomplete suggests from the partition's own documents. Since T1226 a
+            // partitioned autocomplete answers terms, never titles, so each probe
+            // carries a term the other lacks.
+            HttpResponse<String> autocomplete = getWithKey("/sn/" + SITE + "/ac?q=zephyr&_setlocale=" + LOCALE,
                     keyA);
             assertEquals(200, autocomplete.statusCode(), autocomplete.body());
-            assertTrue(autocomplete.body().contains("probe a") && !autocomplete.body().contains("probe b"),
-                    "key A's suggestions must be its own titles only: " + autocomplete.body());
+            assertTrue(autocomplete.body().contains("zephyra") && !autocomplete.body().contains("zephyrb"),
+                    "key A's suggestions must be its own terms only: " + autocomplete.body());
 
             // T1133i — duplicate clusters are confined to the key's partition.
             HttpResponse<String> duplicates = getWithKey("/sn/" + SITE + "/search/duplicates?id="
@@ -1066,7 +1068,8 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("id", partitionProbeId(partition));
         if (action == TurSNJobAction.CREATE) {
-            attributes.put("title", "T1133 partition probe " + partition);
+            // A term only this partition holds, for the autocomplete assertion.
+            attributes.put("title", "T1133 partition probe " + partition + " zephyr" + partition);
             attributes.put(RESERVED_FACET_FIELD, "t1133-" + partition);
         }
         processQueue.processIndexingQueue(new TurSNJobItems(
