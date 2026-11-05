@@ -98,6 +98,17 @@ final class AiQuotaTest extends PluginTestCase {
 		);
 	}
 
+	public function test_a_visitor_reads_when_answers_come_back_once_the_site_knows_it(): void {
+		// D336: every AI surface takes this line, so a controller with no error body still says the date.
+		$this->assertSame( 'Answers are paused for now; search still works.', Viglet_Dumont_AI_Quota::visitor_line() );
+
+		$this->exhausted();
+		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot', array( 'messages' => array() ) );
+
+		$this->assertSame( 'Answers are paused until 2099-12-01 00:00; search still works.', Viglet_Dumont_AI_Quota::visitor_line() );
+		$this->assertStringContainsString( '%s', Viglet_Dumont_AI_Quota::visitor_until() );
+	}
+
 	public function test_the_same_answer_again_writes_nothing(): void {
 		$this->exhausted();
 

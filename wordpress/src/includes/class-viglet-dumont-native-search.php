@@ -255,6 +255,8 @@ class Viglet_Dumont_Native_Search {
 					'labels'     => array(
 						'popular'  => __( 'Popular searches', 'viglet-turing-search' ),
 						'answer'   => __( 'Answer', 'viglet-turing-search' ),
+						// A spent AI budget, with its reset when the site knows it (D336).
+						'paused'   => Viglet_Dumont_AI_Quota::visitor_line(),
 						'preview'  => __( 'Preview', 'viglet-turing-search' ),
 						/* translators: %s: a type's name, e.g. "Events". */
 						'seeAll'   => __( 'See all %s', 'viglet-turing-search' ),

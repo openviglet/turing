@@ -12,8 +12,10 @@ import {
 	config,
 	createChatController,
 	createClient,
+	isAiPaused,
 	recordAnswerSignal,
 	renderMarkdown,
+	reportAiPaused,
 	siblingSites,
 	siteFilters,
 	siteUrl,
@@ -118,7 +120,13 @@ function sync( s ) {
 	state.streaming = s.isStreaming;
 	state.status = s.isStreaming ? state.thinking : '';
 	if ( 'error' === s.status ) {
-		state.status = state.failed;
+		// A spent AI budget says so, with its reset when the site knows it, and tells the
+		// server (D336); anything else is the assistant failing.
+		const paused = isAiPaused( s.error );
+		if ( paused ) {
+			reportAiPaused();
+		}
+		state.status = paused ? state.paused : state.failed;
 	}
 	state.messages = s.messages.map( ( message, i ) => {
 		const last = i === s.messages.length - 1;

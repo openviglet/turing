@@ -31,7 +31,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:263
+#: src/includes/class-viglet-dumont-native-search.php:265
 #: src/includes/class-viglet-dumont-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
@@ -304,14 +304,14 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:134
-#: src/includes/class-viglet-dumont-native-search.php:274
+#: src/blocks/search/render.php:136
+#: src/includes/class-viglet-dumont-native-search.php:276
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:139
-#: src/includes/class-viglet-dumont-native-search.php:275
+#: src/blocks/search/render.php:141
+#: src/includes/class-viglet-dumont-native-search.php:277
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -652,9 +652,9 @@ msgstr "Indexação concluída. %d documentos indexados."
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
 
-#: src/blocks/search/render.php:115
+#: src/blocks/search/render.php:117
 #: src/includes/class-viglet-dumont-mapping.php:417
-#: src/includes/class-viglet-dumont-native-search.php:773
+#: src/includes/class-viglet-dumont-native-search.php:775
 msgid "Site"
 msgstr "Site"
 
@@ -712,7 +712,7 @@ msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
 #: src/includes/class-viglet-dumont-operations.php:319
-#: src/includes/class-viglet-dumont-reindex.php:334
+#: src/includes/class-viglet-dumont-reindex.php:340
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -931,7 +931,7 @@ msgstr "Origem"
 msgid "Turing field"
 msgstr "Campo no Turing"
 
-#: src/blocks/search/render.php:112
+#: src/blocks/search/render.php:114
 #: assets/admin/mapping.js:289
 #: assets/admin/mapping.js:542
 #: assets/admin/mapping.js:873
@@ -1256,32 +1256,32 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:262
+#: src/includes/class-viglet-dumont-native-search.php:264
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/blocks/assistant/render.php:62
-#: src/includes/class-viglet-dumont-native-search.php:264
+#: src/blocks/assistant/render.php:64
+#: src/includes/class-viglet-dumont-native-search.php:266
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:265
+#: src/includes/class-viglet-dumont-native-search.php:267
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:266
+#: src/includes/class-viglet-dumont-native-search.php:268
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:276
+#: src/includes/class-viglet-dumont-native-search.php:278
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:277
+#: src/includes/class-viglet-dumont-native-search.php:279
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:278
+#: src/includes/class-viglet-dumont-native-search.php:280
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1348,17 +1348,17 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:1042
+#: src/includes/class-viglet-dumont-api-client.php:1044
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:1020
-#: src/includes/class-viglet-dumont-api-client.php:1102
+#: src/includes/class-viglet-dumont-api-client.php:1022
+#: src/includes/class-viglet-dumont-api-client.php:1104
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:1019
-#: src/includes/class-viglet-dumont-api-client.php:1107
+#: src/includes/class-viglet-dumont-api-client.php:1021
+#: src/includes/class-viglet-dumont-api-client.php:1109
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1435,22 +1435,22 @@ msgstr "Resposta gerada a partir deste site"
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/assistant/render.php:75
+#: src/blocks/assistant/render.php:77
 #: src/blocks/search/parts/answer.php:31
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/assistant/render.php:76
+#: src/blocks/assistant/render.php:78
 #: src/blocks/search/parts/answer.php:32
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/assistant/render.php:77
+#: src/blocks/assistant/render.php:79
 #: src/blocks/search/parts/answer.php:33
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/assistant/render.php:79
+#: src/blocks/assistant/render.php:81
 #: src/blocks/search/parts/answer.php:35
 msgid "Thank you."
 msgstr "Obrigado."
@@ -1464,7 +1464,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:911
+#: src/includes/class-viglet-dumont-api-client.php:913
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1818,12 +1818,12 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:130
 #: src/blocks/search/render.php:132
-#: src/includes/class-viglet-dumont-native-search.php:270
+#: src/blocks/search/render.php:134
 #: src/includes/class-viglet-dumont-native-search.php:272
-#: src/includes/class-viglet-dumont-native-search.php:677
-#: src/includes/class-viglet-dumont-native-search.php:916
+#: src/includes/class-viglet-dumont-native-search.php:274
+#: src/includes/class-viglet-dumont-native-search.php:679
+#: src/includes/class-viglet-dumont-native-search.php:918
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -1975,7 +1975,7 @@ msgstr "Filtrar pelo que você pediu:"
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:113
+#: src/blocks/search/render.php:115
 msgid "Published"
 msgstr "Publicado"
 
@@ -2056,30 +2056,30 @@ msgstr "Produto: %s"
 msgid "Stock"
 msgstr "Estoque"
 
-#: src/blocks/copilot/render.php:171
+#: src/blocks/copilot/render.php:173
 #: src/blocks/search/parts/main.php:89
 msgid "Was"
 msgstr "De"
 
-#: src/blocks/copilot/render.php:173
+#: src/blocks/copilot/render.php:175
 #: src/blocks/search/parts/main.php:92
 msgid "Add to cart"
 msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:101
-#: src/blocks/search/render.php:103
+#: src/blocks/search/render.php:105
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
 #: src/blocks/copilot/render.php:107
-#: src/blocks/search/render.php:108
+#: src/blocks/search/render.php:110
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
 #: src/blocks/copilot/render.php:108
-#: src/blocks/search/render.php:109
+#: src/blocks/search/render.php:111
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
@@ -2213,8 +2213,8 @@ msgstr "Nada no catálogo corresponde a isso."
 msgid "What are you looking for?"
 msgstr "O que você procura?"
 
-#: src/blocks/copilot/render.php:128
-#: src/blocks/copilot/render.php:238
+#: src/blocks/copilot/render.php:130
+#: src/blocks/copilot/render.php:240
 msgid "Ask"
 msgstr "Perguntar"
 
@@ -2359,7 +2359,7 @@ msgstr "(diferente)"
 msgid "Where they differ"
 msgstr "Onde diferem"
 
-#: src/blocks/copilot/render.php:177
+#: src/blocks/copilot/render.php:179
 #: src/blocks/related/render.php:147
 #: src/blocks/search/parts/main.php:96
 msgid "Compare"
@@ -2368,7 +2368,7 @@ msgstr "Comparar"
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:106
 #: src/blocks/related/render.php:55
-#: src/blocks/search/render.php:105
+#: src/blocks/search/render.php:107
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
@@ -2376,7 +2376,7 @@ msgstr "Comparar %d produtos"
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:104
 #: src/blocks/related/render.php:146
-#: src/blocks/search/render.php:107
+#: src/blocks/search/render.php:109
 #, php-format
 msgid "Compare %s"
 msgstr "Comparar %s"
@@ -2577,31 +2577,31 @@ msgstr "Lendo os posts deste site…"
 msgid "The assistant could not answer right now. Try again in a moment."
 msgstr "O assistente não conseguiu responder agora. Tente de novo em instantes."
 
-#: src/blocks/assistant/render.php:61
+#: src/blocks/assistant/render.php:63
 msgid "New conversation"
 msgstr "Nova conversa"
 
-#: src/blocks/assistant/render.php:64
+#: src/blocks/assistant/render.php:66
 msgid "Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite."
 msgstr "As respostas são geradas por IA a partir dos posts deste site e podem estar erradas. Confira os posts que elas citam."
 
-#: src/blocks/assistant/render.php:65
+#: src/blocks/assistant/render.php:67
 msgid "Conversation"
 msgstr "Conversa"
 
-#: src/blocks/assistant/render.php:69
+#: src/blocks/assistant/render.php:71
 msgid "Posts it used"
 msgstr "Posts usados"
 
-#: src/blocks/assistant/render.php:84
+#: src/blocks/assistant/render.php:86
 msgid "Try asking"
 msgstr "Experimente perguntar"
 
-#: src/blocks/assistant/render.php:92
+#: src/blocks/assistant/render.php:94
 msgid "Your question"
 msgstr "Sua pergunta"
 
-#: src/blocks/assistant/render.php:100
+#: src/blocks/assistant/render.php:102
 msgid "Send"
 msgstr "Enviar"
 
@@ -2661,7 +2661,7 @@ msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" 
 msgid "Shown by"
 msgstr "Aparece em"
 
-#: src/blocks/copilot/render.php:129
+#: src/blocks/copilot/render.php:131
 msgid "Describe your plan"
 msgstr "Descreva seu plano"
 
@@ -2690,32 +2690,32 @@ msgid "Keep %s in the kit"
 msgstr "Manter %s no kit"
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:136
+#: src/blocks/copilot/render.php:138
 #, php-format
 msgid "Add %d products to the cart"
 msgstr "Adicionar %d produtos ao carrinho"
 
-#: src/blocks/copilot/render.php:137
+#: src/blocks/copilot/render.php:139
 msgid "Add 1 product to the cart"
 msgstr "Adicionar 1 produto ao carrinho"
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:139
+#: src/blocks/copilot/render.php:141
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr "%1$d adicionados ao carrinho. Total do carrinho: %2$s."
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:141
+#: src/blocks/copilot/render.php:143
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr "%1$d de %2$d adicionados ao carrinho; os demais não puderam ser adicionados."
 
-#: src/blocks/copilot/render.php:155
+#: src/blocks/copilot/render.php:157
 msgid "Mode"
 msgstr "Modo"
 
-#: src/blocks/copilot/render.php:156
+#: src/blocks/copilot/render.php:158
 msgid "Ask a question"
 msgstr "Fazer uma pergunta"
 
@@ -2727,7 +2727,7 @@ msgstr "Planejar um kit"
 msgid "Out of stock"
 msgstr "Fora de estoque"
 
-#: src/blocks/copilot/render.php:215
+#: src/blocks/copilot/render.php:217
 msgid "Guides for this plan"
 msgstr "Guias para este plano"
 
@@ -2744,7 +2744,7 @@ msgid "Undo"
 msgstr "Desfazer"
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:100
+#: src/blocks/search/render.php:102
 #, php-format
 msgid "Understood: %s"
 msgstr "Entendido: %s"
@@ -2797,7 +2797,7 @@ msgstr "O site SN %s responde a buscas sem chave."
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
 
-#: src/blocks/search/render.php:136
+#: src/blocks/search/render.php:138
 msgid "Reading your search…"
 msgstr "Lendo sua busca…"
 
@@ -2840,36 +2840,36 @@ msgid "For a site that indexes into a search another site shows: the instant sea
 msgstr "Para um site que indexa numa busca exibida por outro site: a busca instantânea, um bloco de busca sem resultados e a caixa de busca do tema enviam a consulta para lá. Os resultados de busca deste site deixam de ser substituídos. Vazio mantém as buscas aqui."
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:907
+#: src/includes/class-viglet-dumont-api-client.php:909
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr "O Turing recusou aqui a chave de API deste site: %s"
 
-#: src/includes/class-viglet-dumont-api-client.php:1009
+#: src/includes/class-viglet-dumont-api-client.php:1011
 msgid "Generative AI is off for this SN site in Turing."
 msgstr "A IA generativa está desligada para este site SN no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:1010
+#: src/includes/class-viglet-dumont-api-client.php:1012
 msgid "The SN site has no AI agent in Turing."
 msgstr "O site SN não tem agente de IA no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:1011
+#: src/includes/class-viglet-dumont-api-client.php:1013
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr "O agente de IA do site SN está desligado no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:1012
+#: src/includes/class-viglet-dumont-api-client.php:1014
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr "O agente de IA do site SN não responde a partir do conteúdo do site."
 
-#: src/includes/class-viglet-dumont-api-client.php:1013
+#: src/includes/class-viglet-dumont-api-client.php:1015
 msgid "The SN site’s AI agent has no language model."
 msgstr "O agente de IA do site SN não tem modelo de linguagem."
 
-#: src/includes/class-viglet-dumont-api-client.php:1014
+#: src/includes/class-viglet-dumont-api-client.php:1016
 msgid "The SN site’s AI agent has no embedding model."
 msgstr "O agente de IA do site SN não tem modelo de embedding."
 
-#: src/includes/class-viglet-dumont-api-client.php:1015
+#: src/includes/class-viglet-dumont-api-client.php:1017
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
@@ -3011,12 +3011,12 @@ msgid "PDF files"
 msgstr "Arquivos PDF"
 
 #. translators: %s: a type's name, e.g. "Events".
-#: src/includes/class-viglet-dumont-native-search.php:260
+#: src/includes/class-viglet-dumont-native-search.php:262
 #, php-format
 msgid "See all %s"
 msgstr "Ver todos: %s"
 
-#: src/includes/class-viglet-dumont-native-search.php:261
+#: src/includes/class-viglet-dumont-native-search.php:263
 msgid "Recent searches"
 msgstr "Buscas recentes"
 
@@ -3028,7 +3028,7 @@ msgstr "Responder perguntas no topo do layout imersivo (cada resposta é uma cha
 msgid "Answer"
 msgstr "Resposta"
 
-#: src/includes/class-viglet-dumont-native-search.php:258
+#: src/includes/class-viglet-dumont-native-search.php:260
 msgid "Preview"
 msgstr "Pré-visualização"
 
@@ -3346,8 +3346,7 @@ msgstr "A primeira indexação terminou com falhas: %1$d enviados, %2$d com falh
 msgid "Reindex progress"
 msgstr "Progresso da reindexação"
 
-#: src/blocks/copilot/render.php:113
-#: src/blocks/search/render.php:89
+#: src/includes/class-viglet-dumont-ai-quota.php:179
 msgid "Answers are paused for now; search still works."
 msgstr "As respostas estão pausadas por enquanto; a busca continua funcionando."
 
@@ -3489,3 +3488,9 @@ msgstr "O Turing não encontrou pessoa, organização ou lugar neste post."
 #: src/admin/js/editor-panel.js:267
 msgid "Found by Turing’s language model when the post was indexed. To change them, change the text and reindex."
 msgstr "Encontrados pelo modelo de linguagem do Turing quando o post foi indexado. Para mudá-los, mude o texto e reindexe."
+
+#. translators: %s: when the site's AI answers come back, as a date and time.
+#: src/includes/class-viglet-dumont-ai-quota.php:188
+#, php-format
+msgid "Answers are paused until %s; search still works."
+msgstr "As respostas estão pausadas até %s; a busca continua funcionando."

@@ -284,6 +284,29 @@ export function isAiPaused( error ) {
 	return 429 === error?.status;
 }
 
+/**
+ * What a visitor reads for a spent AI budget (D336): the line with the reset date the 429
+ * carried (the SDK's `error.problem.resetsAt`, Turing T1234), else the page's own line, which
+ * already names the date when this site knew it at render.
+ *
+ * @param {unknown} error The error the call threw; a controller's text has no problem body.
+ * @param {string}  line  The page's line, e.g. state.paused.
+ * @param {string}  until The line with `%s` for the date, e.g. state.pausedUntil.
+ * @return {string} What to show.
+ */
+export function pausedText( error, line, until ) {
+	const resets = error?.problem?.resetsAt;
+	const at = resets ? new Date( resets ) : null;
+	if ( ! until || ! at || isNaN( at ) ) {
+		return line;
+	}
+	const when = new Intl.DateTimeFormat(
+		document.documentElement.lang || undefined,
+		{ dateStyle: 'medium', timeStyle: 'short' }
+	).format( at );
+	return until.replace( '%s', when );
+}
+
 // Once per page is enough: the server asks Turing itself, at most every ten minutes.
 let pausedReported = false;
 

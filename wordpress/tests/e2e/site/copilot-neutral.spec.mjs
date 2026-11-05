@@ -160,9 +160,10 @@ test( 'a spent AI budget reads as paused, and the browser reports it', async ( {
 	await block.getByRole( 'textbox' ).fill( 'When does the library open?' );
 	await block.getByRole( 'button', { name: 'Ask' } ).click();
 
+	// The 429's own reset date, which the SDK carries on the error (Turing T1234, D336).
 	await expect(
 		block.locator( '.viglet-dumont-copilot__status' )
-	).toHaveText( 'Answers are paused for now; search still works.' );
+	).toHaveText( /^Answers are paused until .*2099.*; search still works\.$/ );
 	const report = await reported;
 	expect( report.request().method() ).toBe( 'POST' );
 	expect( report.status() ).toBe( 202 );

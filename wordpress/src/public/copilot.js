@@ -19,6 +19,7 @@ import {
 	config,
 	createClient,
 	isAiPaused,
+	pausedText,
 	postIdOf,
 	renderMarkdown,
 	reportAiPaused,
@@ -189,13 +190,15 @@ const { state } = store( 'viglet-dumont/copilot', {
 				);
 			} catch ( error ) {
 				answer = null;
-				paused = isAiPaused( error );
+				paused = isAiPaused( error )
+					? pausedText( error, state.paused, state.pausedUntil )
+					: '';
 			}
 			state.busy = false;
 			if ( ! answer?.available ) {
 				messages.pop();
-				// A spent AI budget is said as such, and the server told (D332).
-				state.status = paused ? state.paused : state.failed;
+				// A spent AI budget is said as such, with its reset (D332, D336), and the server told.
+				state.status = paused || state.failed;
 				if ( paused ) {
 					reportAiPaused();
 				}
@@ -342,11 +345,13 @@ async function buildKit() {
 		);
 	} catch ( error ) {
 		kit = null;
-		paused = isAiPaused( error );
+		paused = isAiPaused( error )
+			? pausedText( error, state.paused, state.pausedUntil )
+			: '';
 	}
 	state.busy = false;
 	if ( ! kit || kit.error ) {
-		state.status = paused ? state.paused : state.failed;
+		state.status = paused || state.failed;
 		if ( paused ) {
 			reportAiPaused();
 		}

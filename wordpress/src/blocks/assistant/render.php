@@ -31,6 +31,8 @@ wp_interactivity_state(
 		'status'     => '',
 		'thinking'   => __( 'Reading this site’s posts…', 'viglet-turing-search' ),
 		'failed'     => __( 'The assistant could not answer right now. Try again in a moment.', 'viglet-turing-search' ),
+		// A spent AI budget, with its reset when the site knows it (D336).
+		'paused'     => Viglet_Dumont_AI_Quota::visitor_line(),
 		'documentId' => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
 	)
 );

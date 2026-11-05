@@ -166,6 +166,29 @@ class Viglet_Dumont_AI_Quota {
 	}
 
 	/**
+	 * What a visitor reads where an AI answer would be while the budget is spent (D336): with
+	 * the reset date when this site already knows it (the record a 429 left), so every surface
+	 * says when answers come back, even one whose SDK controller keeps no error body.
+	 */
+	public static function visitor_line(): string {
+		$live  = self::current();
+		$until = null !== $live ? self::until( $live['resetsAt'] ) : '';
+
+		return '' !== $until
+			? sprintf( self::visitor_until(), $until )
+			: __( 'Answers are paused for now; search still works.', 'viglet-turing-search' );
+	}
+
+	/**
+	 * The visitor's line with a reset date in it, for the browser to fill from the 429 it
+	 * received (the SDK's `error.problem.resetsAt`, Turing T1234).
+	 */
+	public static function visitor_until(): string {
+		/* translators: %s: when the site's AI answers come back, as a date and time. */
+		return __( 'Answers are paused until %s; search still works.', 'viglet-turing-search' );
+	}
+
+	/**
 	 * Ask Turing once, through an AI call, whether the budget is spent: a short nl-filters
 	 * reading, as the search block sends one. observe() records what it answers.
 	 *

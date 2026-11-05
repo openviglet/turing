@@ -19,8 +19,10 @@ import {
 	createSiteSearch,
 	documentType,
 	formatCardDate,
+	isAiPaused,
 	isQuestion,
 	originOf,
+	reportAiPaused,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -222,8 +224,14 @@ function build() {
 				locale: config.locale,
 			} );
 			answerer.subscribe( ( s ) => {
-				answerBox.textContent = s.answer || '';
-				answerBox.hidden = ! s.answer;
+				// A spent AI budget says so where the answer would be, and tells the
+				// server (D336); the results below go on as ever.
+				const paused = 'error' === s.status && isAiPaused( s.error );
+				if ( paused ) {
+					reportAiPaused();
+				}
+				answerBox.textContent = paused ? labels.paused : s.answer || '';
+				answerBox.hidden = ! paused && ! s.answer;
 			} );
 		}
 	} else {
