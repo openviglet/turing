@@ -17,11 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 $viglet_dumont_post_id = (int) ( $block->context['postId'] ?? get_the_ID() );
 $viglet_dumont_preview = Viglet_Dumont_Native_Search::is_editor_preview();
 $viglet_dumont_posts   = $viglet_dumont_post_id > 0
-	? ( new Viglet_Dumont_Related() )->posts(
+	? ( new Viglet_Dumont_Related() )->related(
 		$viglet_dumont_post_id,
 		max( 1, min( 12, (int) ( $attributes['count'] ?? 3 ) ) ),
 		! empty( $attributes['sameType'] ),
-		(string) ( $attributes['mode'] ?? '' )
+		(string) ( $attributes['mode'] ?? '' ),
+		// The sites this one also searches (D303), when the block asks for them.
+		'all' === ( $attributes['sites'] ?? 'own' )
 	)
 	: array();
 
@@ -44,7 +46,7 @@ $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-related-' );
 $viglet_dumont_doc_ids = new Viglet_Dumont_Indexer();
 // A product among them offers Compare, ticked into the list the search cards use (D212).
 $viglet_dumont_shop = Viglet_Dumont_WooCommerce::active()
-	&& array_filter( $viglet_dumont_posts, static fn ( WP_Post $post ) => 'product' === $post->post_type );
+	&& array_filter( $viglet_dumont_posts, static fn ( $post ) => $post instanceof WP_Post && 'product' === $post->post_type );
 if ( $viglet_dumont_shop ) {
 	wp_interactivity_state(
 		'viglet-dumont/related',
@@ -72,6 +74,33 @@ if ( $viglet_dumont_shop ) {
 	<ul class="viglet-dumont-related__list">
 		<?php foreach ( $viglet_dumont_posts as $viglet_dumont_index => $viglet_dumont_related ) : ?>
 			<?php
+			// A sibling site's document (D303): its title, linked to its own site, and where it is from.
+			if ( is_array( $viglet_dumont_related ) ) :
+				?>
+				<li
+					class="viglet-dumont-related__item viglet-dumont-related__item--remote"
+					data-wp-context="
+					<?php
+					echo esc_attr(
+						(string) wp_json_encode(
+							array(
+								'id'        => $viglet_dumont_related['id'],
+								'position'  => $viglet_dumont_index + 1,
+								'productId' => 0,
+							)
+						)
+					);
+					?>
+										"
+				>
+					<p class="viglet-dumont-related__origin"><?php echo esc_html( $viglet_dumont_related['origin'] ); ?></p>
+					<h3 class="viglet-dumont-related__title">
+						<a href="<?php echo esc_url( $viglet_dumont_related['url'] ); ?>" data-wp-on--click="actions.open" data-wp-on--auxclick="actions.open"><?php echo esc_html( '' !== $viglet_dumont_related['title'] ? $viglet_dumont_related['title'] : $viglet_dumont_related['url'] ); ?></a>
+					</h3>
+				</li>
+				<?php
+				continue;
+			endif;
 			$viglet_dumont_url     = get_permalink( $viglet_dumont_related );
 			$viglet_dumont_image   = ! empty( $attributes['showImage'] ) && has_post_thumbnail( $viglet_dumont_related )
 				? get_the_post_thumbnail(

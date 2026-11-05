@@ -14,6 +14,7 @@ import {
 	createClient,
 	recordAnswerSignal,
 	renderMarkdown,
+	siblingSites,
 	siteFilters,
 	siteUrl,
 } from 'viglet-dumont/search';
@@ -36,15 +37,33 @@ function turn() {
 }
 
 /**
- * A page of this site, or nothing: the assistant may take the visitor to a post, never away.
+ * The origins the assistant may open a page on: this site's, and those of the sibling sites
+ * it also searches whose address the settings give (D303), since it cites their documents.
+ */
+const origins = new Set( [
+	window.location.origin,
+	...siblingSites
+		.map( ( site ) => {
+			try {
+				return site.url ? new URL( site.url ).origin : '';
+			} catch {
+				return '';
+			}
+		} )
+		.filter( Boolean ),
+] );
+
+/**
+ * A page of this site or of a sibling site it searches, or nothing: the assistant may take
+ * the visitor to a post it can cite, never anywhere else.
  *
  * @param {string} url Where the agent asked to go.
- * @return {string} The absolute URL, or '' for another site.
+ * @return {string} The absolute URL, or '' for any other site.
  */
 function onThisSite( url ) {
 	try {
 		const target = new URL( String( url || '' ), window.location.href );
-		return target.origin === window.location.origin ? target.href : '';
+		return origins.has( target.origin ) ? target.href : '';
 	} catch {
 		return '';
 	}
@@ -62,7 +81,7 @@ function navigate( args ) {
 	if ( ! url ) {
 		return {
 			success: false,
-			error: 'only pages of this site can be opened',
+			error: 'only pages of this site, or of the sites it searches, can be opened',
 		};
 	}
 	window.location.assign( url );

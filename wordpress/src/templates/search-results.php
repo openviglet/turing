@@ -143,6 +143,9 @@ wp_enqueue_style(
 								<?php if ( $viglet_dumont_type ) : ?>
 									<span class="vd-result__type"><?php echo esc_html( ucfirst( $viglet_dumont_type ) ); ?></span>
 								<?php endif; ?>
+								<?php if ( ! empty( $viglet_dumont_item['origin'] ) ) : ?>
+									<span class="vd-result__type vd-result__origin"><?php echo esc_html( $viglet_dumont_item['origin'] ); ?></span>
+								<?php endif; ?>
 								<h2 class="vd-result__title">
 									<a href="<?php echo esc_url( $viglet_dumont_url ); ?>"><?php echo esc_html( $viglet_dumont_title ); ?></a>
 								</h2>

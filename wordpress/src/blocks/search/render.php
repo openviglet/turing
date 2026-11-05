@@ -111,6 +111,8 @@ $viglet_dumont_state = array(
 		array(
 			'type'             => __( 'Type', 'viglet-turing-search' ),
 			'publication_date' => __( 'Published', 'viglet-turing-search' ),
+			// The site facet, when this site also searches others (D303).
+			'site_key'         => __( 'Site', 'viglet-turing-search' ),
 		),
 		$viglet_dumont_price ? array( $viglet_dumont_price['field'] => $viglet_dumont_price['label'] ) : array()
 	),

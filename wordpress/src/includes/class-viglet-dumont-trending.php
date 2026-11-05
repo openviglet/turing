@@ -195,8 +195,8 @@ class Viglet_Dumont_Trending {
 	 * @return string[]
 	 */
 	private function answered( array $queries ): array {
-		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
 		$blocked = array_map( 'mb_strtolower', (array) ( $this->settings['trending_block'] ?? array() ) );
 		$groups  = $this->groups();
 		$chips   = array();
@@ -209,7 +209,7 @@ class Viglet_Dumont_Trending {
 			if ( ! self::presentable( $query ) || in_array( $want, $shown, true ) || self::holds_any( $query, $blocked ) ) {
 				continue;
 			}
-			$found = $client->search( $query, 1, 1, array( 'fq[]' => $indexer->scope_filters() ) );
+			$found = $client->search( $query, 1, 1, $indexer->scope_query() );
 			if ( ! is_wp_error( $found ) && (int) ( $found['queryContext']['count'] ?? 0 ) > 0 ) {
 				$chips[] = $query;
 				$shown[] = $want;

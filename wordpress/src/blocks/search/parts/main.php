@@ -60,6 +60,10 @@ $viglet_dumont_recent = array_map(
 							<?php endif; ?>
 						</p>
 					<?php endif; ?>
+					<?php
+					// The sibling site a result comes from (D303).
+					?>
+					<p class="viglet-dumont-search__origin" hidden data-wp-bind--hidden="!context.result.origin" data-wp-text="context.result.origin"></p>
 					<h2 class="viglet-dumont-search__title"><a data-wp-bind--href="context.result.url" data-wp-text="context.result.title" data-wp-on--click="actions.resultClicked" data-wp-on--auxclick="actions.resultClicked"></a></h2>
 					<p class="viglet-dumont-search__crumb" data-wp-text="context.result.crumb"></p>
 					<?php if ( $viglet_dumont_show( 'showSnippet' ) ) : ?>

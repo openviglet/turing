@@ -27,6 +27,11 @@
 			"type": "boolean",
 			"default": false
 		},
+		"sites": {
+			"type": "string",
+			"enum": [ "own", "all" ],
+			"default": "own"
+		},
 		"layout": {
 			"type": "string",
 			"enum": [ "grid", "list" ],

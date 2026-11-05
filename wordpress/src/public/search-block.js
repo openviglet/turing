@@ -22,11 +22,16 @@ import {
 	isAiPaused,
 	isQuestion,
 	isScopeFilter,
+	originOf,
 	postIdOf,
 	renderMarkdown,
 	reportAiPaused,
-	scopeFilters,
-	siteFilter,
+	scoped,
+	scopeKeys,
+	siblingSites,
+	siteField,
+	siteLabel,
+	siteSelection,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -61,11 +66,14 @@ let beforeReading = null;
 const readings = new Map();
 
 /**
- * Every filter this block's searches stay inside: the site's scope (scopeFilters) and the
- * block's own fixed filters (D306), which a visitor never sees as a filter to remove.
+ * Every filter this block's searches stay inside: the site's scope (scopeFilters, or the
+ * sites the visitor picked among them, D303) and the block's own fixed filters (D306), which
+ * a visitor never sees as a filter to remove.
+ *
+ * @param {string[]} extra Filters to search with too, a site among them narrowing the scope.
  */
-function blockScope() {
-	return [ ...scopeFilters, ...( state.fixedFilters || [] ) ];
+function blockScope( extra = [] ) {
+	return scoped( [ ...( state.fixedFilters || [] ), ...extra ] );
 }
 
 /**
@@ -75,6 +83,63 @@ function blockScope() {
  */
 function inScope( fq ) {
 	return isScopeFilter( fq ) || ( state.fixedFilters || [] ).includes( fq );
+}
+
+/**
+ * The filters of a request the visitor chose: neither the block's fixed ones nor the site's
+ * scope, except the sites picked in the site facet when they narrow it (D303).
+ *
+ * @param {string[]} fq A request's filter queries.
+ * @return {string[]} The visitor's filters.
+ */
+function visitorFilters( fq ) {
+	const picked = siteSelection( fq );
+	return ( fq || [] ).filter( ( f ) =>
+		f.startsWith( `${ siteField }:` )
+			? picked.includes( f.slice( siteField.length + 1 ) )
+			: ! inScope( f )
+	);
+}
+
+/**
+ * Pick or drop a site in the site facet (D303). The SDK's own toggle cannot: the site's
+ * scope already holds every site's filter, so adding one changes nothing and removing one
+ * would drop it from the scope too. Dropping the last site picked reads every site again.
+ *
+ * @param {string} filterQuery The site's filter, `site_key:<key>`.
+ */
+function toggleSite( filterQuery ) {
+	const fq = search.getState().request?.fq || blockScope();
+	const key = filterQuery.slice( siteField.length + 1 );
+	const picked = siteSelection( fq );
+	const next = picked.includes( key )
+		? picked.filter( ( k ) => k !== key )
+		: [ ...picked, key ];
+	const rest = fq.filter( ( f ) => ! f.startsWith( `${ siteField }:` ) );
+	send( {
+		fq: scoped( [
+			...next.map( ( k ) => `${ siteField }:${ k }` ),
+			...rest,
+		] ),
+		page: 1,
+	} );
+}
+
+/**
+ * Apply a facet value or remove a filter: a site through toggleSite(), anything else through
+ * the SDK.
+ *
+ * @param {Object} target The value's target: action, field and filterQuery.
+ */
+function toggle( target ) {
+	if (
+		siblingSites.length &&
+		target.filterQuery?.startsWith( `${ siteField }:` )
+	) {
+		toggleSite( target.filterQuery );
+	} else {
+		search.toggleFacet( target );
+	}
 }
 
 /**
@@ -422,7 +487,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// than one, so the focus stays there.
 		toggleFacet() {
 			const { item } = getContext();
-			search.toggleFacet( item.target );
+			toggle( item.target );
 			writeUrl( true );
 			if ( ! state.drawerOpen ) {
 				focusInput();
@@ -459,7 +524,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		removeFilter() {
 			const { filter } = getContext();
-			search.toggleFacet( filter.target );
+			toggle( filter.target );
 			writeUrl( true );
 			focusInput();
 		},
@@ -1276,6 +1341,9 @@ function readable( field, value ) {
 	if ( 'type' === field ) {
 		return state.typeLabels[ value ] || value;
 	}
+	if ( siteField === field ) {
+		return siteLabel( value ) || value;
+	}
 	const range = value.match( /^[[{](\S+) TO (\S+)[\]}]$/ );
 	if ( ! range ) {
 		return value;
@@ -1531,9 +1599,9 @@ function writeUrl( push ) {
 		url.searchParams.delete( key )
 	);
 	url.searchParams.set( 'q', state.query );
-	( request.fq || [] )
-		.filter( ( fq ) => ! inScope( fq ) )
-		.forEach( ( fq ) => url.searchParams.append( 'fq[]', fq ) );
+	visitorFilters( request.fq ).forEach( ( fq ) =>
+		url.searchParams.append( 'fq[]', fq )
+	);
 	if ( Number( request.page ) > 1 ) {
 		url.searchParams.set( 'pg', String( request.page ) );
 	}
@@ -1557,7 +1625,7 @@ function readUrl() {
 	clearCorrection();
 	send( {
 		q: lastQuery,
-		fq: [ ...blockScope(), ...params.getAll( 'fq[]' ) ],
+		fq: [ ...blockScope( params.getAll( 'fq[]' ) ) ],
 		page: Math.max( 1, Number( params.get( 'pg' ) ) || 1 ),
 		...provisional( lastQuery ),
 	} );
@@ -1704,6 +1772,8 @@ function card( d, position ) {
 		snippetText: plain( d.description ),
 		fields: lines,
 		hasFields: lines.length > 0,
+		// The sibling site a result comes from (D303), shown as its origin badge.
+		origin: originOf( fields.id ),
 		...product( fields, title ),
 	};
 }
@@ -1748,8 +1818,12 @@ const money = new Intl.NumberFormat(
 function facets( everything, applied ) {
 	// The site's own filter is not the visitor's: Turing describes it as a facet once it
 	// answers filtered facets (T1115), and a one-value group checked by nobody would show.
-	const siteField = siteFilter.split( ':' )[ 0 ];
-	const answered = everything.filter( ( facet ) => facet.name !== siteField );
+	// With sibling sites it is the site facet (D303).
+	const answered = everything
+		.filter( ( facet ) => facet.name !== siteField || siblingSites.length )
+		.map( ( facet ) =>
+			facet.name === siteField ? siteFacet( facet ) : facet
+		);
 	const filtered = new Set( applied.map( ( fq ) => fq.split( ':' )[ 0 ] ) );
 	for ( const facet of answered ) {
 		if ( facet.items?.length && ! filtered.has( facet.name ) ) {
@@ -1814,6 +1888,28 @@ function facets( everything, applied ) {
 			};
 		} )
 		.filter( ( facet ) => facet.items.length );
+}
+
+/**
+ * Turing's `site_key` facet as the site facet (D303): each site by its label, a key out of
+ * scope left out. Turing marks every value of a field the search filters on as selected, and
+ * the scope filters on every site, so a site is selected only when the visitor picked it.
+ *
+ * @param {Object} facet The facet as the SDK resolved it.
+ * @return {Object} The site facet.
+ */
+function siteFacet( facet ) {
+	return {
+		...facet,
+		label: facetLabel( siteField ),
+		items: ( facet.items || [] )
+			.filter( ( i ) => scopeKeys.includes( String( i.label ) ) )
+			.map( ( i ) => ( {
+				...i,
+				label: siteLabel( String( i.label ) ) || i.label,
+				selected: false,
+			} ) ),
+	};
 }
 
 /**
@@ -1909,20 +2005,18 @@ function sync( s ) {
 		} ) );
 	state.facets = facets(
 		response?.facets || [],
-		( s.request?.fq || [] ).filter( ( fq ) => ! inScope( fq ) )
+		visitorFilters( s.request?.fq )
 	);
 	// Turing's response stops describing a facet once it filters on it (T1115), so the
 	// applied filters come from the request: every filter but the site's own.
-	state.applied = ( s.request?.fq || [] )
-		.filter( ( fq ) => ! inScope( fq ) )
-		.map( ( fq ) => ( {
-			label: filterLabel( fq ),
-			target: {
-				action: 'REMOVE',
-				field: fq.split( ':' )[ 0 ],
-				filterQuery: fq,
-			},
-		} ) );
+	state.applied = visitorFilters( s.request?.fq ).map( ( fq ) => ( {
+		label: filterLabel( fq ),
+		target: {
+			action: 'REMOVE',
+			field: fq.split( ':' )[ 0 ],
+			filterQuery: fq,
+		},
+	} ) );
 	state.pages = ( response?.pagination || [] )
 		.filter( ( p ) => 'PAGE' === p.type || 'CURRENT' === p.type )
 		.map( ( p ) => ( {

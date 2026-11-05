@@ -36,7 +36,15 @@ final class NativeSearchTest extends PluginTestCase {
 						array(
 							'queryContext' => array( 'count' => 42 ),
 							'results'      => array(
-								'document' => array_map( static fn ( $id ) => array( 'fields' => array( 'id' => $id ) ), $this->held ),
+								'document' => array_map(
+									static fn ( $id ) => array(
+										'fields' => array(
+											'id'  => $id,
+											'url' => 'https://example.org/' . $id,
+										),
+									),
+									$this->held
+								),
 							),
 						)
 					),
@@ -56,13 +64,52 @@ final class NativeSearchTest extends PluginTestCase {
 
 		$this->assertSame(
 			array(
-				'ids'   => array( 7, 3 ),
-				'total' => 42,
+				'ids'    => array( 7, 3 ),
+				'remote' => array(),
+				'order'  => array( 7, 3 ),
+				'total'  => 42,
 			),
 			$found
 		);
 		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[0][0] );
 		$this->assertStringContainsString( 'p=2', $this->requests[0][0] );
+		// One site: one value, no operator, and the key goes with it as before.
+		$this->assertStringNotContainsString( 'fqi.op', $this->requests[0][0] );
+		$this->assertSame( 'secret', $this->requests[0][1]['headers']['Key'] );
+	}
+
+	/**
+	 * A site that also searches a sibling (D303) asks Turing for both keys as alternatives,
+	 * without the key a partition (D190) would confine to its own documents, and answers the
+	 * theme with the sibling's documents in Turing's order, never another site's.
+	 */
+	public function test_the_theme_search_reads_the_siblings_as_alternatives_without_the_key(): void {
+		$this->held = array( 'site-b:post:4', 'site-a:post:7', 'site-c:post:1' );
+
+		$found = ( new Viglet_Dumont_Native_Search(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => array(
+						array(
+							'key'   => 'site-b',
+							'label' => 'Site B',
+							'url'   => 'https://b.example.org',
+						),
+					),
+				)
+			)
+		) )->search( 'workshop', 1, 10 );
+
+		$url = $this->requests[0][0];
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $url );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-b', $url );
+		$this->assertStringContainsString( 'fqi.op=OR', $url );
+		$this->assertArrayNotHasKey( 'Key', $this->requests[0][1]['headers'] );
+		$this->assertSame( array( 7 ), $found['ids'] );
+		$this->assertSame( array( 'r0', 7 ), $found['order'] );
+		$this->assertSame( 'Site B', $found['remote']['r0']['site'] );
+		$this->assertCount( 1, $found['remote'], 'site-c is out of scope' );
 	}
 
 	public function test_an_unreachable_turing_answers_null_so_wordpress_searches_instead(): void {
@@ -470,11 +517,15 @@ final class NativeSearchTest extends PluginTestCase {
 
 		[ $url, $args ] = $this->requests[0];
 		$this->assertSame( 'POST', $args['method'] );
-		$this->assertSame( array( 'populateMetrics' => false ), json_decode( $args['body'], true ), 'the script\'s search is the one counted' );
-		$this->assertStringContainsString( 'q=search', $url );
-		$this->assertStringContainsString( 'sort=newest', $url );
-		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $url );
-		$this->assertStringNotContainsString( 'type%3Apage', $url, 'no fixed filter, none sent' );
+		// The JSON search, which Turing answers in the same shape, with or without a key (D303).
+		$this->assertStringEndsWith( '/search/query', $url );
+		$body = json_decode( $args['body'], true );
+		$this->assertFalse( $body['populateMetrics'], 'the script\'s search is the one counted' );
+		$this->assertSame( 'search', $body['q'] );
+		$this->assertSame( 'newest', $body['sort'] );
+		$this->assertSame( 'pt_BR', $body['locale'] );
+		$this->assertSame( array( 'site_key:site-a' ), $body['fq'], 'no fixed filter, none sent' );
+		$this->assertArrayNotHasKey( 'fqItemOperator', $body, 'one site needs no operator' );
 
 		$result = $page['results'][0];
 		$this->assertSame( 'Workshop on search', $result['title'] );
@@ -596,7 +647,7 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertSame( 'Starts', $result['fields'][0]['label'] );
 		$this->assertSame( 'Filtered', $result['title'] );
 		// The block's fixed filter (D306) right after the site's scope.
-		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a&fq%5B%5D=type%3Apost', $this->requests[0][0] );
+		$this->assertSame( array( 'site_key:site-a', 'type:post' ), json_decode( $this->requests[0][1]['body'], true )['fq'] );
 	}
 
 	/**

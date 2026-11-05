@@ -107,6 +107,25 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * This client for a visitor's search across the scope (D303). With sibling sites listed,
+	 * it asks without the key, as a visitor's browser does: a key bound to this site's
+	 * partition (D190) is confined to this site's documents and would never return a
+	 * sibling's. Search is public on Turing, so nothing the key alone could read is lost.
+	 * Without siblings it is this client as it was.
+	 *
+	 * @param Viglet_Dumont_Indexer $indexer The indexer that names the scope.
+	 */
+	public function for_scope( Viglet_Dumont_Indexer $indexer ): self {
+		if ( array() === $indexer->sibling_sites() ) {
+			return $this;
+		}
+		$client          = clone $this;
+		$client->api_key = '';
+
+		return $client;
+	}
+
+	/**
 	 * The seconds a page read waits for Turing (D328), three unless the
 	 * `viglet_dumont_render_timeout` filter says otherwise.
 	 */
@@ -690,7 +709,7 @@ class Viglet_Dumont_API_Client {
 	 * @param int    $rows   How many.
 	 * @param string $mode   `MLT` (lexical) or `VECTOR` (semantic); empty lets Turing choose.
 	 * @param array  $fq     Filter queries, as the search takes them (Turing T1132).
-	 * @return array<int, array{id: string, title: string, url: string}>|WP_Error An empty list when the id is not indexed.
+	 * @return array<int, array{id: string, title: string, url: string, type?: string}>|WP_Error An empty list when the id is not indexed.
 	 */
 	public function similar( string $doc_id, int $rows = 5, string $mode = '', array $fq = array() ) {
 		$params = array(
@@ -764,17 +783,34 @@ class Viglet_Dumont_API_Client {
 	 * false`): for a page drawn on the server whose script then asks again (D209), so one
 	 * visitor's search counts once.
 	 *
-	 * @param array $params The query string, as search() builds it: q, p, rows, sort, fq[].
+	 * Sent as the JSON search (`POST /search/query`), which answers in the same shape and,
+	 * unlike the form-style `POST /search`, without a key: a read across sibling sites goes
+	 * keyless (D303, for_scope()).
+	 *
+	 * @param array $params The query string, as search() builds it: q, p, rows, sort, fq[],
+	 *                      fqi.op.
 	 * @return array|WP_Error The decoded answer.
 	 */
 	public function search_unrecorded( array $params ) {
+		$body = array(
+			'q'               => (string) ( $params['q'] ?? '*' ),
+			'page'            => (int) ( $params['p'] ?? 1 ),
+			'locale'          => $this->locale,
+			'fq'              => array_values( array_map( 'strval', (array) ( $params['fq[]'] ?? array() ) ) ),
+			'populateMetrics' => false,
+		);
+		if ( isset( $params['rows'] ) ) {
+			$body['rows'] = (int) $params['rows'];
+		}
+		if ( '' !== (string) ( $params['sort'] ?? '' ) ) {
+			$body['sort'] = (string) $params['sort'];
+		}
+		if ( isset( $params['fqi.op'] ) ) {
+			$body['fqItemOperator'] = (string) $params['fqi.op'];
+		}
+
 		return $this->decoded(
-			$this->request(
-				'POST',
-				'/api/sn/' . rawurlencode( $this->site_name ) . '/search',
-				array_merge( array( '_setlocale' => $this->locale ), $params ),
-				array( 'populateMetrics' => false )
-			)
+			$this->request( 'POST', '/api/sn/' . rawurlencode( $this->site_name ) . '/search/query', null, $body )
 		);
 	}
 

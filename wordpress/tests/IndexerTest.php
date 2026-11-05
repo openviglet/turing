@@ -148,6 +148,113 @@ final class IndexerTest extends PluginTestCase {
 
 		$this->assertSame( 'site_key:site-a', $indexer->own_filter() );
 		$this->assertSame( array( 'site_key:site-a' ), $indexer->scope_filters() );
+		// One key needs no operator: the request is what it always was.
+		$this->assertSame( array( 'fq[]' => array( 'site_key:site-a', 'type:post' ) ), $indexer->scope_query( array( 'type:post' ) ) );
+	}
+
+	/**
+	 * A site that also searches its siblings (D303) reads its own key and theirs as
+	 * alternatives, while the filter every write and own-only read takes stays its own.
+	 */
+	public function test_the_scope_holds_the_siblings_as_alternatives_and_the_own_filter_does_not(): void {
+		$indexer = new Viglet_Dumont_Indexer(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => 'site-b | Site B, site-c',
+				)
+			)
+		);
+
+		$this->assertSame( array( 'site-a', 'site-b', 'site-c' ), $indexer->scope_keys() );
+		$this->assertSame( array( 'site_key:site-a', 'site_key:site-b', 'site_key:site-c' ), $indexer->scope_filters() );
+		$this->assertSame(
+			array(
+				'fq[]'   => array( 'site_key:site-a', 'site_key:site-b', 'site_key:site-c', 'type:post' ),
+				'fqi.op' => 'OR',
+			),
+			$indexer->scope_query( array( 'type:post' ) )
+		);
+		$this->assertSame( 'site_key:site-a', $indexer->own_filter() );
+		$this->assertSame( 'Site B', $indexer->sibling_of( 'site-b:post:4' )['label'] );
+		$this->assertSame( 'site-c', $indexer->sibling_of( 'site-c:post:1' )['label'], 'the label defaults to the key' );
+		$this->assertNull( $indexer->sibling_of( 'site-a:post:4' ) );
+		$this->assertNull( $indexer->sibling_of( 'site-bb:post:4' ) );
+	}
+
+	/**
+	 * The site facet narrows the scope to the sites picked; a site_key filter naming a key out
+	 * of scope is dropped, so a filter in the URL never widens a search past it.
+	 */
+	public function test_a_picked_site_narrows_the_scope_and_a_key_out_of_scope_is_dropped(): void {
+		$indexer = new Viglet_Dumont_Indexer(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => 'site-b, site-c',
+				)
+			)
+		);
+
+		$this->assertSame( array( 'fq[]' => array( 'site_key:site-b', 'type:post' ) ), $indexer->scope_query( array( 'site_key:site-b', 'type:post' ) ) );
+		$this->assertSame(
+			array(
+				'fq[]'   => array( 'site_key:site-a', 'site_key:site-c' ),
+				'fqi.op' => 'OR',
+			),
+			$indexer->scope_query( array( 'site_key:site-a', 'site_key:site-c' ) )
+		);
+		$this->assertSame(
+			array(
+				'fq[]'   => array( 'site_key:site-a', 'site_key:site-b', 'site_key:site-c' ),
+				'fqi.op' => 'OR',
+			),
+			$indexer->scope_query( array( 'site_key:elsewhere' ) )
+		);
+	}
+
+	/**
+	 * An empty sibling key is nothing, and a sibling listing this site's own key, or one
+	 * listed twice, adds nothing: the scope is the own key alone and has no operator.
+	 */
+	public function test_an_empty_or_own_or_repeated_sibling_adds_nothing(): void {
+		$indexer = new Viglet_Dumont_Indexer(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => array( array( 'key' => '' ), array( 'key' => '  ' ), array( 'key' => 'Site-A' ), 'site-a' ),
+				)
+			)
+		);
+
+		$this->assertSame( array(), $indexer->sibling_sites() );
+		$this->assertSame( array( 'site_key:site-a' ), $indexer->scope_filters() );
+		$this->assertArrayNotHasKey( 'fqi.op', $indexer->scope_query() );
+	}
+
+	/** Writes stay on the own key (D303): delete-all and the sweep's listing never name a sibling. */
+	public function test_delete_all_and_the_listing_touch_only_the_own_key_with_siblings_listed(): void {
+		Functions\when( 'get_transient' )->justReturn( false );
+		$indexer = new Viglet_Dumont_Indexer(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => 'site-b',
+				)
+			)
+		);
+
+		$indexer->delete_all();
+		$indexer->list_site_ids();
+
+		$this->assertNotEmpty( $this->requests );
+		foreach ( $this->requests as $request ) {
+			$this->assertStringNotContainsString( 'site-b', $request[0] . ( $request[1]['body'] ?? '' ) );
+			$this->assertStringNotContainsString( 'fqi.op', $request[0] );
+			$this->assertSame( 'secret', $request[1]['headers']['Key'], 'writes keep the key' );
+		}
+		$imports = array_keys( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/api/sn/import' ) ) );
+		$this->assertSame( 'site-a', $this->body( $imports[0] )['snJobItems'][0]['attributes']['site_key'] );
 	}
 
 	/**

@@ -54,7 +54,17 @@ final class RelatedTest extends PluginTestCase {
 				$this->requests[] = array( $url, $args );
 				return array(
 					'response' => array( 'code' => $this->status ),
-					'body'     => json_encode( array_map( static fn ( $id ) => array( 'id' => $id ), $this->similar ) ),
+					'body'     => json_encode(
+						array_map(
+							static fn ( $id ) => array(
+								'id'    => $id,
+								'title' => 'Title of ' . $id,
+								'type'  => 'post',
+								'url'   => 'https://b.example/' . $id,
+							),
+							$this->similar
+						)
+					),
 				);
 			}
 		);
@@ -78,6 +88,41 @@ final class RelatedTest extends PluginTestCase {
 		$this->assertStringNotContainsString( 'mode=', $this->requests[0][0], 'Turing chooses unless told' );
 		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[0][0], 'Turing keeps to this site' );
 		$this->assertStringContainsString( 'rows=15', $this->requests[0][0], 'three asked for each one shown' );
+	}
+
+	/**
+	 * With `sites: all` (D303) the block asks for the neighbours unfiltered and without the
+	 * key, since the similar search cannot take two site keys as alternatives and a
+	 * partitioned key reads its own site only, then keeps this site's posts and its listed
+	 * siblings' documents, each sibling's with its label and its own address.
+	 */
+	public function test_all_sites_adds_the_siblings_documents_and_nothing_else(): void {
+		Functions\when( 'wp_strip_all_tags' )->alias( static fn ( $text ) => strip_tags( $text ) );
+		$this->similar = array( 'site-b:post:4', 'site-a:post:1', 'site-c:post:9', 'site-a:post:6' );
+		$related       = new Viglet_Dumont_Related(
+			$this->settings(
+				array(
+					'site_key'         => 'site-a',
+					'search_site_keys' => 'site-b | Site B',
+				)
+			)
+		);
+
+		$items = $related->related( 2, 5, false, '', true );
+
+		$this->assertCount( 3, $items );
+		$this->assertSame( 'site-b:post:4', $items[0]['id'] );
+		$this->assertSame( 'Site B', $items[0]['origin'] );
+		$this->assertSame( 'https://b.example/site-b:post:4', $items[0]['url'] );
+		$this->assertSame( array( 1, 6 ), $this->ids( array_slice( $items, 1 ) ) );
+		$this->assertStringNotContainsString( 'fq%5B%5D', $this->requests[0][0] );
+		$this->assertStringContainsString( 'rows=50', $this->requests[0][0] );
+		$this->assertArrayNotHasKey( 'Key', $this->requests[0][1]['headers'] );
+
+		// The default, `own`, stays on this site with its key, siblings listed or not.
+		$this->assertSame( array( 1, 6 ), $this->ids( $related->related( 2, 5 ) ) );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[1][0] );
+		$this->assertSame( 'secret', $this->requests[1][1]['headers']['Key'] );
 	}
 
 	public function test_same_type_and_count_are_kept(): void {

@@ -407,7 +407,8 @@ class Viglet_Dumont_Post_State {
 			)
 		);
 
-		$similar = $client->similar( $doc_id, 6 );
+		// This site's own posts only, as the title search below, siblings listed or not (D303).
+		$similar = $client->similar( $doc_id, 6, '', array( $indexer->own_filter() ) );
 		if ( is_array( $similar ) && $similar ) {
 			$cluster = $client->duplicates( $doc_id );
 			$members = is_array( $cluster ) && ! empty( $cluster['duplicate'] ) ? (array) ( $cluster['members'] ?? array() ) : array();

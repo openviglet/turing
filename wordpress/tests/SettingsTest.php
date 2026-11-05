@@ -84,6 +84,85 @@ final class SettingsTest extends PluginTestCase {
 		$this->assertFalse( Viglet_Dumont_Settings::demo() );
 	}
 
+	/**
+	 * The sibling sites (D303) are read the same from the option, the form's text and the
+	 * environment: keys sanitized as site keys are, an empty or repeated one dropped, the
+	 * label defaulting to the key, and an address other than http or https left out.
+	 */
+	public function test_the_sibling_sites_are_sanitized_from_text_a_list_or_json(): void {
+		$this->assertSame(
+			array(
+				array(
+					'key'   => 'other-site',
+					'label' => 'Other site',
+					'url'   => 'https://other.example.org',
+				),
+				array(
+					'key'   => 'third.example',
+					'label' => 'third.example',
+					'url'   => '',
+				),
+			),
+			Viglet_Dumont_Settings::search_sites( " Other Site | Other site | https://other.example.org \n\n third.example | | javascript:alert(1)\n other-site | Again\n ! " )
+		);
+		$this->assertSame(
+			array(
+				array(
+					'key'   => 'b',
+					'label' => 'B',
+					'url'   => 'http://b.example.org/',
+				),
+			),
+			Viglet_Dumont_Settings::search_sites( '[{"key":"b","label":"<b>B</b>","url":"http://b.example.org/"},{"key":""}]' )
+		);
+		$this->assertSame( array(), Viglet_Dumont_Settings::search_sites( '' ) );
+		$this->assertSame( array(), Viglet_Dumont_Settings::search_sites( null ) );
+		$this->assertSame( "other-site | Other site | https://other.example.org\nthird.example | third.example", Viglet_Dumont_Settings::search_sites_text( "other-site | Other site | https://other.example.org\nthird.example" ) );
+	}
+
+	/** The stored list is in effect, and its empty default is an empty list. */
+	public function test_the_stored_sibling_sites_are_in_effect(): void {
+		$this->assertSame( array(), Viglet_Dumont_Settings::get()['search_site_keys'] );
+
+		$this->options[ VIGLET_DUMONT_OPTION ]['search_site_keys'] = array(
+			array(
+				'key'   => 'b',
+				'label' => 'B',
+			),
+		);
+		$this->assertSame( 'b', Viglet_Dumont_Settings::get()['search_site_keys'][0]['key'] );
+		$this->assertSame( '', Viglet_Dumont_Settings::get()['search_site_keys'][0]['url'] );
+	}
+
+	public function test_the_sibling_sites_set_by_the_environment_win_and_are_never_stored(): void {
+		$this->options[ VIGLET_DUMONT_OPTION ]['search_site_keys'] = array( array( 'key' => 'stored' ) );
+		putenv( 'VIGLET_DUMONT_SEARCH_SITE_KEYS=site-b|Site B|https://b.example.org,site-c' );
+
+		$this->assertSame( array( 'site-b', 'site-c' ), array_column( Viglet_Dumont_Settings::get()['search_site_keys'], 'key' ) );
+		$this->assertTrue( Viglet_Dumont_Settings::is_overridden( 'search_site_keys' ) );
+		Viglet_Dumont_Settings::update( array( 'search_site_keys' => array( array( 'key' => 'typed' ) ) ) );
+		$this->assertSame( array( array( 'key' => 'stored' ) ), $this->options[ VIGLET_DUMONT_OPTION ]['search_site_keys'] );
+		putenv( 'VIGLET_DUMONT_SEARCH_SITE_KEYS' );
+	}
+
+	#[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+	#[\PHPUnit\Framework\Attributes\PreserveGlobalState( false )]
+	public function test_the_sibling_sites_constant_wins_and_is_reported(): void {
+		define( 'VIGLET_DUMONT_SEARCH_SITE_KEYS', '[{"key":"site-b","label":"Site B","url":"https://b.example.org"}]' );
+
+		$this->assertSame(
+			array(
+				array(
+					'key'   => 'site-b',
+					'label' => 'Site B',
+					'url'   => 'https://b.example.org',
+				),
+			),
+			Viglet_Dumont_Settings::get()['search_site_keys']
+		);
+		$this->assertSame( 'constant', Viglet_Dumont_Settings::sources()['search_site_keys']['source'] );
+	}
+
 	public function test_a_constant_wins_over_the_environment(): void {
 		putenv( 'VIGLET_DUMONT_TURING_LOCALE=en_US' );
 		define( 'VIGLET_DUMONT_TURING_LOCALE', 'pt_BR' );

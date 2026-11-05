@@ -20,6 +20,7 @@ import {
 	documentType,
 	formatCardDate,
 	isQuestion,
+	originOf,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -84,8 +85,9 @@ const plurals = new Intl.PluralRules(
 	document.documentElement.lang || undefined
 );
 /**
- * A result's date and first card field (D305), as one line: the same date the search
- * block's card shows (the type's card date field, else the publication date).
+ * A result's site when it is a sibling's (D303), date and first card field (D305), as one
+ * line: the same date the search block's card shows (the type's card date field, else the
+ * publication date).
  *
  * @param {Object} fields The document's fields.
  */
@@ -94,6 +96,8 @@ function meta( fields ) {
 	const at = when ? new Date( when ) : null;
 	const first = cardLines( fields )[ 0 ];
 	return [
+		// The sibling site a result comes from (D303).
+		originOf( fields.id ),
 		at && ! isNaN( at ) ? formatCardDate( at ) : '',
 		first ? `${ first.label }: ${ first.value }` : '',
 	]

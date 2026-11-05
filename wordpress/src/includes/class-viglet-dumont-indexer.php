@@ -369,17 +369,113 @@ class Viglet_Dumont_Indexer {
 	}
 
 	/**
+	 * The other sites of a shared SN site that a search here also reads (D303, "Also search
+	 * these sites"): each one's key, label and address, never this site's own key.
+	 *
+	 * @return array<int, array{key: string, label: string, url: string}>
+	 */
+	public function sibling_sites(): array {
+		$own = $this->site_key();
+
+		return array_values(
+			array_filter(
+				Viglet_Dumont_Settings::search_sites( $this->settings['search_site_keys'] ?? array() ),
+				static fn ( array $site ): bool => $site['key'] !== $own
+			)
+		);
+	}
+
+	/**
+	 * The site keys a visitor's search reads: this site's own first, then its siblings'.
+	 *
+	 * @return array<int, string>
+	 */
+	public function scope_keys(): array {
+		return array_merge( array( $this->site_key() ), array_column( $this->sibling_sites(), 'key' ) );
+	}
+
+	/**
 	 * Every filter query that keeps a visitor's search to the documents this site searches
 	 * (D303): the one seam the search page, its first paint, the editor's preview and the
-	 * template results share with the browser's `scopeFilters` (`public/search.js`).
-	 *
-	 * Today the own key alone: the sibling site keys of a shared SN site join it once Turing
-	 * lets one field's values be alternatives (T1223), as two `site_key` values intersect.
+	 * template results share with the browser's `scopeFilters` (`public/search.js`). Its
+	 * values are alternatives, which only scope_query() says to Turing.
 	 *
 	 * @return array<int, string>
 	 */
 	public function scope_filters(): array {
-		return array( $this->own_filter() );
+		return array_map( static fn ( string $key ): string => 'site_key:' . $key, $this->scope_keys() );
+	}
+
+	/**
+	 * The filter parameters of a visitor's search (D303): the scope, then the filters given.
+	 *
+	 * A given `site_key` filter naming a key in scope narrows the search to the keys named
+	 * that way (the site facet); one naming any other key is dropped, so a filter in the URL
+	 * cannot widen the search past the scope. With more than one key left, `fqi.op=OR` makes
+	 * them alternatives: Turing intersects one field's values otherwise. It is request-wide
+	 * (Turing T1223), so two values a visitor picks in another facet are alternatives too.
+	 *
+	 * @param array<int, string> $fq The block's fixed filters and the visitor's.
+	 * @return array{'fq[]': array<int, string>, 'fqi.op'?: string}
+	 */
+	public function scope_query( array $fq = array() ): array {
+		$keys   = $this->scope_keys();
+		$picked = array();
+		$rest   = array();
+		foreach ( $fq as $filter ) {
+			$filter = (string) $filter;
+			if ( ! str_starts_with( $filter, 'site_key:' ) ) {
+				$rest[] = $filter;
+				continue;
+			}
+			$key = substr( $filter, strlen( 'site_key:' ) );
+			if ( in_array( $key, $keys, true ) && ! in_array( $key, $picked, true ) ) {
+				$picked[] = $key;
+			}
+		}
+		$sites  = array() !== $picked ? $picked : $keys;
+		$params = array( 'fq[]' => array_merge( array_map( static fn ( string $key ): string => 'site_key:' . $key, $sites ), $rest ) );
+		if ( count( $sites ) > 1 ) {
+			$params['fqi.op'] = 'OR';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * The label a document's site goes by on a card and in the site facet (D303): a sibling's
+	 * configured label, this site's name for its own key, and empty for any other key.
+	 *
+	 * @param string $key The document's site key.
+	 */
+	public function site_label( string $key ): string {
+		if ( $key === $this->site_key() ) {
+			return (string) get_bloginfo( 'name' );
+		}
+		foreach ( $this->sibling_sites() as $site ) {
+			if ( $site['key'] === $key ) {
+				return $site['label'];
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * The sibling a Turing document id belongs to (`<site key>:…`), or null for this site's own
+	 * or a document of a site out of scope.
+	 *
+	 * @param string $doc_id The document's id.
+	 * @return array{key: string, label: string, url: string}|null
+	 */
+	public function sibling_of( string $doc_id ): ?array {
+		foreach ( $this->sibling_sites() as $site ) {
+			if ( str_starts_with( $doc_id, $site['key'] . ':' ) ) {
+				return $site;
+			}
+		}
+
+		return null;
 	}
 
 	/**

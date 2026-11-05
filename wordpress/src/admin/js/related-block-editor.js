@@ -96,6 +96,16 @@
 						checked: attributes.sameType,
 						onChange: ( sameType ) => setAttributes( { sameType } ),
 					} ),
+					// The sites listed in "Also search these sites" (D303).
+					el( ToggleControl, {
+						label: __(
+							'Include the sites this one also searches',
+							'viglet-turing-search'
+						),
+						checked: 'all' === attributes.sites,
+						onChange: ( all ) =>
+							setAttributes( { sites: all ? 'all' : 'own' } ),
+					} ),
 					el( SelectControl, {
 						label: __( 'Show as', 'viglet-turing-search' ),
 						value: attributes.layout,

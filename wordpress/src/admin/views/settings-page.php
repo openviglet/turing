@@ -119,6 +119,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 
 						<div class="viglet-dumont-field">
+							<label for="search_site_keys"><?php esc_html_e( 'Also search these sites', 'viglet-turing-search' ); ?></label>
+							<textarea id="search_site_keys" rows="3"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[search_site_keys]"
+									class="large-text code" <?php echo esc_attr( $viglet_dumont_locked( 'search_site_keys' ) ); ?>
+									placeholder="<?php echo esc_attr( 'other-site | Other site | https://other.example.org' ); ?>"><?php echo esc_textarea( Viglet_Dumont_Settings::search_sites_text( $settings['search_site_keys'] ?? array() ) ); ?></textarea>
+							<p class="description"><?php esc_html_e( 'Other sites that publish into this SN site, one per line: its site key, then optionally a label and its address, separated by |. Searches here find their documents too, linked to their own site and marked with the label; indexing and deleting never touch them. Empty searches this site alone.', 'viglet-turing-search' ); ?></p>
+							<?php $viglet_dumont_env_note( 'search_site_keys' ); ?>
+						</div>
+
+						<div class="viglet-dumont-field">
 							<label for="api_key"><?php esc_html_e( 'API Key', 'viglet-turing-search' ); ?></label>
 							<?php
 							// The key is never printed back: the field stays empty and keeps the stored key unless one is typed.

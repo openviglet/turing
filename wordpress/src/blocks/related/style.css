@@ -100,3 +100,13 @@
 .viglet-dumont-related__compare-bar.viglet-dumont-compare-bar--repeat {
 	display: none;
 }
+
+/* Where a sibling site's document comes from (D303), as the search block's origin badge. */
+.viglet-dumont-related__origin {
+	align-self: flex-start;
+	margin: 0;
+	padding: 0 0.5rem;
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+}

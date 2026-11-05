@@ -123,6 +123,7 @@ final class PostStateTest extends PluginTestCase {
 		);
 		$this->assertSame( 'The same, again', $assist['covered'][0]['title'] );
 		$this->assertStringContainsString( 'id=site.example.org%3Apost%3A42', $this->requests[0][0] );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite.example.org', $this->requests[0][0], 'its own site only' );
 	}
 
 	public function test_assist_compares_a_draft_not_yet_indexed_by_its_title(): void {

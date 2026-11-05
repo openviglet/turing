@@ -188,7 +188,7 @@ class Viglet_Dumont_Reindex {
 				'timeout'   => 0.01,
 				'body'      => array( 'token' => (string) $run['token'] ),
 				/** This filter is documented in wp-includes/class-wp-http-streams.php */
-				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+				'sslverify' => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress's own loopback filter, as spawn_cron() applies it.
 			)
 		);
 	}

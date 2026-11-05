@@ -56,7 +56,8 @@ class Viglet_Dumont_Search {
 		$fq   = isset( $_GET['fq'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_GET['fq'] ) ) : array();
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		$results = $this->client->search( $query, $page, $per_page, $this->request_params( $fq, $sort ) );
+		$results = $this->client->for_scope( new Viglet_Dumont_Indexer( $this->settings ) )
+			->search( $query, $page, $per_page, $this->request_params( $fq, $sort ) );
 
 		$data = array(
 			'query'        => $query,
@@ -82,13 +83,13 @@ class Viglet_Dumont_Search {
 	/**
 	 * The filters and sort the results page asks Turing for. Scoped like every other read
 	 * path (D303): on an SN site several WordPress sites share, an unscoped search listed the
-	 * other sites' documents here.
+	 * other sites' documents here. A site the visitor picked in the site facet narrows it.
 	 *
 	 * @param array<int, string> $fq   The filters the visitor picked.
 	 * @param string             $sort The sort the visitor picked; empty for relevance.
 	 */
 	public function request_params( array $fq, string $sort ): array {
-		$params = array( 'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $fq ) );
+		$params = ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_query( $fq );
 		if ( '' !== $sort ) {
 			$params['sort'] = $sort;
 		}
@@ -106,7 +107,15 @@ class Viglet_Dumont_Search {
 	public function parse_results( array $response, array $data ): array {
 		// Only the documents sit under `results`; `queryContext` and `widget` are top-level.
 		if ( isset( $response['results']['document'] ) ) {
-			$data['results'] = $response['results']['document'];
+			$indexer = new Viglet_Dumont_Indexer( $this->settings );
+			// A sibling's document carries its site's label, for the card's origin badge (D303).
+			$data['results'] = array_map(
+				static function ( $document ) use ( $indexer ) {
+					$sibling = $indexer->sibling_of( (string) ( $document['fields']['id'] ?? '' ) );
+					return null !== $sibling ? array_merge( (array) $document, array( 'origin' => $sibling['label'] ) ) : $document;
+				},
+				(array) $response['results']['document']
+			);
 		}
 
 		if ( isset( $response['queryContext']['count'] ) ) {
@@ -119,10 +128,17 @@ class Viglet_Dumont_Search {
 
 		// The template reads `label` and `facetValues[]` of {label, count, link}, where `link`
 		// is the filter query a click adds; Turing names those `label.text` and `facets[]`.
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$sites   = array() !== $indexer->sibling_sites();
 		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
-			// The site's scope is not the visitor's to pick, as on the search block.
-			if ( 'site_key' === ( $facet['name'] ?? '' ) ) {
+			$site = 'site_key' === ( $facet['name'] ?? '' );
+			// The site's own scope is not the visitor's to pick, as on the search block; the
+			// sites it also searches are (D303), each by its label.
+			if ( $site && ! $sites ) {
 				continue;
+			}
+			if ( $site ) {
+				$facet = Viglet_Dumont_Native_Search::site_facet( (array) $facet, $indexer );
 			}
 			$data['facets'][] = array(
 				'name'        => $facet['name'] ?? '',
@@ -136,7 +152,7 @@ class Viglet_Dumont_Search {
 					(array) ( $facet['facets'] ?? array() )
 				),
 			);
-		}
+		}//end foreach
 
 		// `correctedText` is a flag; the suggestion is `corrected.text`.
 		if ( ! empty( $response['widget']['spellCheck']['correctedText'] ) ) {

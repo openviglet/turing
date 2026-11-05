@@ -162,76 +162,116 @@ class Viglet_Dumont_Related {
 	 * @return WP_Post[]
 	 */
 	public function posts( int $post_id, int $count, bool $same_type = false, string $mode = '' ): array {
+		return array_values( array_filter( $this->related( $post_id, $count, $same_type, $mode ), static fn ( $item ) => $item instanceof WP_Post ) );
+	}
+
+	/**
+	 * What the Related content block lists, best first: this site's published posts, and with
+	 * `$all_sites` the documents of the sites it also searches (D303, `sites: all`), each as
+	 * its id, title, address, type and the label of its site. Never the post itself.
+	 *
+	 * @param int    $post_id   The post being read.
+	 * @param int    $count     How many to return.
+	 * @param bool   $same_type Only posts of the same post type.
+	 * @param string $mode      As for posts().
+	 * @param bool   $all_sites The sibling sites' documents too.
+	 * @return array<int, WP_Post|array{id: string, title: string, url: string, type: string, origin: string}>
+	 */
+	public function related( int $post_id, int $count, bool $same_type = false, string $mode = '', bool $all_sites = false ): array {
 		$post = get_post( $post_id );
 		if ( ! $post instanceof WP_Post || $count < 1 ) {
 			return array();
 		}
 
-		$ids   = $this->neighbours( $post_id, $mode, min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN ) );
-		$posts = array();
-		foreach ( $ids as $id ) {
-			$candidate = get_post( $id );
-			if (
-				$candidate instanceof WP_Post
-				&& $candidate->ID !== $post_id
-				&& 'publish' === $candidate->post_status
-				&& '' === $candidate->post_password
-				&& ( ! $same_type || $candidate->post_type === $post->post_type )
-			) {
-				$posts[] = $candidate;
+		$all_sites = $all_sites && array() !== ( new Viglet_Dumont_Indexer( $this->settings ) )->sibling_sites();
+		$rows      = $all_sites ? self::MAX_ROWS : min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN );
+		$items     = array();
+		foreach ( $this->neighbours( $post_id, $mode, $rows, $all_sites ) as $neighbour ) {
+			if ( is_array( $neighbour ) ) {
+				if ( ! $same_type || $neighbour['type'] === $post->post_type ) {
+					$items[] = $neighbour;
+				}
+			} else {
+				$candidate = get_post( $neighbour );
+				if (
+					$candidate instanceof WP_Post
+					&& $candidate->ID !== $post_id
+					&& 'publish' === $candidate->post_status
+					&& '' === $candidate->post_password
+					&& ( ! $same_type || $candidate->post_type === $post->post_type )
+				) {
+					$items[] = $candidate;
+				}
 			}
-			if ( count( $posts ) >= $count ) {
+			if ( count( $items ) >= $count ) {
 				break;
 			}
-		}
+		}//end foreach
 
-		return $posts;
+		return $items;
 	}
 
 	/**
-	 * This site's post ids among the post's neighbours in Turing, in Turing's order, cached.
-	 * Turing filters by this site's key (T1132), so only posts and terms are left to tell apart.
+	 * The post's neighbours in Turing, in Turing's order, cached: this site's as post ids, and
+	 * with `$all_sites` a sibling's as the document Turing described.
 	 *
-	 * @param int    $post_id The post.
-	 * @param string $mode    The similarity, as for posts().
-	 * @param int    $rows    How many to ask Turing for.
-	 * @return int[]
+	 * Turing filters by this site's key (T1132), so only posts and terms are left to tell
+	 * apart. The similar-documents search cannot take one field's values as alternatives
+	 * (it has no `fqi.op`), so across sites it is asked unfiltered and without the key (a
+	 * key bound to this site's partition, D190, sees only its own), and what comes back is
+	 * kept to the keys in scope by each id's `<site key>:` prefix.
+	 *
+	 * @param int    $post_id   The post.
+	 * @param string $mode      The similarity, as for posts().
+	 * @param int    $rows      How many to ask Turing for.
+	 * @param bool   $all_sites The sibling sites' documents too.
+	 * @return array<int, int|array{id: string, title: string, url: string, type: string, origin: string}>
 	 */
-	private function neighbours( int $post_id, string $mode, int $rows ): array {
-		$key    = 'viglet_dumont_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] );
-		$cached = get_transient( $key );
+	private function neighbours( int $post_id, string $mode, int $rows, bool $all_sites = false ): array {
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$scope   = $all_sites ? implode( ',', $indexer->scope_keys() ) : '';
+		$key     = 'viglet_dumont_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] . '|' . $scope );
+		$cached  = get_transient( $key );
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
 
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 		// A page read (D328): a hung Turing costs this view a few seconds, the next ones nothing.
-		$similar = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->similar(
-			$indexer->build_doc_id( $post_id ),
-			$rows,
-			$mode,
-			array( $indexer->own_filter() )
-		);
+		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
+		$similar = $all_sites
+			? $client->for_scope( $indexer )->similar( $indexer->build_doc_id( $post_id ), $rows, $mode )
+			: $client->similar( $indexer->build_doc_id( $post_id ), $rows, $mode, array( $indexer->own_filter() ) );
 		// A site without embeddings may refuse a semantic question: ask by shared words. A
 		// Turing that did not answer at all is not asked again.
 		if ( is_wp_error( $similar ) && 'VECTOR' === $mode && ! get_transient( Viglet_Dumont_API_Client::DOWN_TRANSIENT ) ) {
-			return $this->neighbours( $post_id, 'MLT', $rows );
+			return $this->neighbours( $post_id, 'MLT', $rows, $all_sites );
 		}
 		if ( is_wp_error( $similar ) ) {
 			return array();
 		}
 
 		$prefix = $indexer->site_key() . ':post:';
-		$ids    = array();
+		$found  = array();
 		foreach ( $similar as $document ) {
 			$doc_id = (string) $document['id'];
 			$rest   = substr( $doc_id, strlen( $prefix ) );
 			if ( str_starts_with( $doc_id, $prefix ) && ctype_digit( $rest ) ) {
-				$ids[] = (int) $rest;
+				$found[] = (int) $rest;
+				continue;
+			}
+			$sibling = $all_sites ? $indexer->sibling_of( $doc_id ) : null;
+			if ( null !== $sibling && '' !== (string) $document['url'] ) {
+				$found[] = array(
+					'id'     => $doc_id,
+					'title'  => html_entity_decode( wp_strip_all_tags( (string) $document['title'] ) ),
+					'url'    => (string) $document['url'],
+					'type'   => (string) ( $document['type'] ?? '' ),
+					'origin' => $sibling['label'],
+				);
 			}
 		}
-		set_transient( $key, $ids, self::CACHE_TTL );
+		set_transient( $key, $found, self::CACHE_TTL );
 
-		return $ids;
+		return $found;
 	}
 }

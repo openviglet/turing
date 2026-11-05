@@ -24,13 +24,15 @@ class Viglet_Dumont_Settings {
 
 	/** Each overridable setting and the constant or environment variable that sets it. */
 	public const OVERRIDES = array(
-		'server_url' => 'VIGLET_DUMONT_TURING_URL',
-		'site_name'  => 'VIGLET_DUMONT_TURING_SITE',
-		'api_key'    => 'VIGLET_DUMONT_TURING_API_KEY',
-		'locale'     => 'VIGLET_DUMONT_TURING_LOCALE',
-		'site_key'   => 'VIGLET_DUMONT_SITE_KEY',
-		'public_url' => 'VIGLET_DUMONT_PUBLIC_URL',
-		'search_url' => 'VIGLET_DUMONT_SEARCH_URL',
+		'server_url'       => 'VIGLET_DUMONT_TURING_URL',
+		'site_name'        => 'VIGLET_DUMONT_TURING_SITE',
+		'api_key'          => 'VIGLET_DUMONT_TURING_API_KEY',
+		'locale'           => 'VIGLET_DUMONT_TURING_LOCALE',
+		'site_key'         => 'VIGLET_DUMONT_SITE_KEY',
+		'public_url'       => 'VIGLET_DUMONT_PUBLIC_URL',
+		'search_url'       => 'VIGLET_DUMONT_SEARCH_URL',
+		// The sibling sites this one also searches (D303), as search_sites() reads them.
+		'search_site_keys' => 'VIGLET_DUMONT_SEARCH_SITE_KEYS',
 	);
 
 	/** The settings a fresh install starts from. */
@@ -38,6 +40,8 @@ class Viglet_Dumont_Settings {
 		'server_url'          => 'http://localhost:2700',
 		'site_name'           => 'default',
 		'site_key'            => '',
+		// Other sites' keys on the same SN site that this one also searches (D303): {key, label, url}.
+		'search_site_keys'    => array(),
 		'api_key'             => '',
 		'locale'              => 'en_US',
 		// The URL the browser reaches Turing at, when it differs from server_url (the search blocks).
@@ -100,8 +104,88 @@ class Viglet_Dumont_Settings {
 				$settings[ $key ] = $value;
 			}
 		}
+		// A constant spells the sibling sites as text; the option holds them as a list.
+		$settings['search_site_keys'] = self::search_sites( $settings['search_site_keys'] );
 
 		return $settings;
+	}
+
+	/**
+	 * The sibling sites a search here also reads (D303), however they were written: the list
+	 * the option holds, or text from the Settings form or VIGLET_DUMONT_SEARCH_SITE_KEYS. Text
+	 * is a JSON list of {key, label, url}, or one site per line (or per comma), each written
+	 * `key | label | url` with the label and the URL optional.
+	 *
+	 * Each key is sanitized as a site key is; an empty one, or one already listed, is dropped.
+	 * The label defaults to the key. The URL, http or https only, says where that site lives:
+	 * the assistant may open a page there, and nothing else reads it.
+	 *
+	 * @param mixed $value The list, or its text.
+	 * @return array<int, array{key: string, label: string, url: string}>
+	 */
+	public static function search_sites( $value ): array {
+		if ( is_string( $value ) ) {
+			$text  = trim( $value );
+			$json  = str_starts_with( $text, '[' ) ? json_decode( $text, true ) : null;
+			$value = is_array( $json ) ? $json : preg_split( '/[\r\n,]+/', $text );
+		}
+
+		$sites = array();
+		foreach ( is_array( $value ) ? $value : array() as $entry ) {
+			if ( is_string( $entry ) ) {
+				$parts = array_map( 'trim', explode( '|', $entry ) );
+				$entry = array(
+					'key'   => $parts[0],
+					'label' => $parts[1] ?? '',
+					'url'   => $parts[2] ?? '',
+				);
+			}
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+			$key = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $entry['key'] ?? '' ) );
+			if ( '' === $key || isset( $sites[ $key ] ) ) {
+				continue;
+			}
+			$label         = sanitize_text_field( (string) ( $entry['label'] ?? '' ) );
+			$sites[ $key ] = array(
+				'key'   => $key,
+				'label' => '' !== $label ? $label : $key,
+				'url'   => self::site_url( (string) ( $entry['url'] ?? '' ) ),
+			);
+		}//end foreach
+
+		return array_values( $sites );
+	}
+
+	/**
+	 * The sibling sites as the Settings form writes them: one `key | label | url` per line.
+	 *
+	 * @param mixed $sites The list, as search_sites() returns it.
+	 */
+	public static function search_sites_text( $sites ): string {
+		$lines = array();
+		foreach ( self::search_sites( $sites ) as $site ) {
+			$lines[] = rtrim( implode( ' | ', array( $site['key'], $site['label'], $site['url'] ) ), ' |' );
+		}
+
+		return implode( "\n", $lines );
+	}
+
+	/**
+	 * A sibling site's address, http or https only; empty for anything else.
+	 *
+	 * @param string $url The address as written.
+	 */
+	private static function site_url( string $url ): string {
+		$url    = trim( $url );
+		$parts  = wp_parse_url( $url );
+		$scheme = is_array( $parts ) ? strtolower( (string) ( $parts['scheme'] ?? '' ) ) : '';
+		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || false === filter_var( $url, FILTER_VALIDATE_URL ) ) {
+			return '';
+		}
+
+		return $url;
 	}
 
 	/**

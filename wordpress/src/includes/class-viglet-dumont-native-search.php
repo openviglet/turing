@@ -571,14 +571,17 @@ class Viglet_Dumont_Native_Search {
 		$query = '' !== trim( $state['query'] ) ? trim( $state['query'] ) : '*';
 		$rows  = (int) $state['perPage'];
 
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->search_unrecorded(
-			array(
-				'q'    => $query,
-				'p'    => $page,
-				'rows' => $rows,
-				'sort' => $state['sort'],
-				// The site's scope, the block's own (D306), then what the visitor picked.
-				'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $state['fixedFilters'] ?? array(), $filters ),
+		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search_unrecorded(
+			array_merge(
+				array(
+					'q'    => $query,
+					'p'    => $page,
+					'rows' => $rows,
+					'sort' => $state['sort'],
+				),
+				// The site's scope (D303), the block's own (D306), then what the visitor picked.
+				$indexer->scope_query( array_merge( $state['fixedFilters'] ?? array(), $filters ) )
 			)
 		);
 		// Unanswered here, the script asks as it always did.
@@ -623,6 +626,8 @@ class Viglet_Dumont_Native_Search {
 				'fields'      => self::card_values( $cards, $fields ),
 				'hasFields'   => false,
 				'price'       => '',
+				// The site a sibling's result comes from (D303), as search-block.js's card() names it.
+				'origin'      => (string) ( $indexer->sibling_of( (string) ( $fields['id'] ?? '' ) )['label'] ?? '' ),
 			);
 			// A product's price row, as search-block.js's product() draws it (D173).
 			if ( $shop && is_numeric( $fields['price'] ?? null ) ) {
@@ -659,7 +664,7 @@ class Viglet_Dumont_Native_Search {
 		);
 		// A filtered page's facets are rebuilt by the script from an unfiltered answer, and its
 		// applied filters are labelled from them: both are left to it there.
-		$facets = $filters ? array() : self::facets( (array) ( $response['widget']['facet'] ?? array() ), $config );
+		$facets = $filters ? array() : self::facets( (array) ( $response['widget']['facet'] ?? array() ), $config, $indexer );
 
 		return array(
 			'status'        => 'success',
@@ -697,16 +702,24 @@ class Viglet_Dumont_Native_Search {
 	 * site's own left out, values with no results dropped, a value facet's ties by label, and
 	 * only the first values the block shows (the script adds the rest, hidden).
 	 *
-	 * @param array $answered The response's `widget.facet`.
-	 * @param array $config   The script's config, for which facets are ranges.
+	 * The site's own scope is left out too, unless it lists sibling sites (D303): then it is the
+	 * site facet, each value by its site's label.
+	 *
+	 * @param array                 $answered The response's `widget.facet`.
+	 * @param array                 $config   The script's config, for which facets are ranges.
+	 * @param Viglet_Dumont_Indexer $indexer  The indexer that names the scope.
 	 */
-	private static function facets( array $answered, array $config ): array {
+	private static function facets( array $answered, array $config, Viglet_Dumont_Indexer $indexer ): array {
 		$ranges = array_column( array_filter( (array) ( $config['facets'] ?? array() ), static fn ( $f ) => ! empty( $f['range'] ) ), 'field' );
+		$sites  = array() !== $indexer->sibling_sites();
 		$facets = array();
 		foreach ( $answered as $facet ) {
 			$name = (string) ( $facet['name'] ?? '' );
-			if ( 'site_key' === $name || empty( $facet['facets'] ) ) {
+			if ( ( 'site_key' === $name && ! $sites ) || empty( $facet['facets'] ) ) {
 				continue;
+			}
+			if ( 'site_key' === $name ) {
+				$facet = self::site_facet( $facet, $indexer );
 			}
 			$items = array_values( array_filter( (array) $facet['facets'], static fn ( $i ) => (int) ( $i['count'] ?? 0 ) > 0 ) );
 			if ( ! in_array( $name, $ranges, true ) ) {
@@ -746,6 +759,26 @@ class Viglet_Dumont_Native_Search {
 		}//end foreach
 
 		return $facets;
+	}
+
+	/**
+	 * Turing's `site_key` facet as the site facet (D303): named "Site", each value by its
+	 * site's label, a key out of scope left out.
+	 *
+	 * @param array                 $facet   The facet as Turing answered it.
+	 * @param Viglet_Dumont_Indexer $indexer The indexer that names the scope.
+	 */
+	public static function site_facet( array $facet, Viglet_Dumont_Indexer $indexer ): array {
+		$keys            = $indexer->scope_keys();
+		$facet['label']  = array( 'text' => __( 'Site', 'viglet-turing-search' ) );
+		$facet['facets'] = array_values(
+			array_map(
+				static fn ( array $item ) => array_merge( $item, array( 'label' => $indexer->site_label( (string) $item['label'] ) ) ),
+				array_filter( (array) ( $facet['facets'] ?? array() ), static fn ( $item ) => in_array( (string) ( $item['label'] ?? '' ), $keys, true ) )
+			)
+		);
+
+		return $facet;
 	}
 
 	/**
@@ -802,11 +835,12 @@ class Viglet_Dumont_Native_Search {
 	 * @return array State to merge over the block's own.
 	 */
 	public function preview_state( int $rows, array $labels ): array {
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->search(
+		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search(
 			'*',
 			1,
 			$rows,
-			array( 'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $labels['fixedFilters'] ?? array() ) )
+			$indexer->scope_query( $labels['fixedFilters'] ?? array() )
 		);
 		if ( ! is_array( $response ) ) {
 			return array(
@@ -841,14 +875,19 @@ class Viglet_Dumont_Native_Search {
 				'image'     => (string) ( self::card_override( $fields, $looks['image'] ) ?? $fields['image'] ?? '' ),
 				'fields'    => $values,
 				'hasFields' => array() !== $values,
+				'origin'    => (string) ( $indexer->sibling_of( (string) ( $fields['id'] ?? '' ) )['label'] ?? '' ),
 			);
 			$results[] = self::filter_card( $card, $fields );
 		}//end foreach
 
 		$facets = array();
 		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
-			if ( 'site_key' === ( $facet['name'] ?? '' ) || empty( $facet['facets'] ) ) {
+			$site = 'site_key' === ( $facet['name'] ?? '' );
+			if ( ( $site && array() === $indexer->sibling_sites() ) || empty( $facet['facets'] ) ) {
 				continue;
+			}
+			if ( $site ) {
+				$facet = self::site_facet( $facet, $indexer );
 			}
 			$facets[] = array(
 				'name'  => (string) $facet['name'],
@@ -863,7 +902,7 @@ class Viglet_Dumont_Native_Search {
 					array_slice( (array) $facet['facets'], 0, 5 )
 				),
 			);
-		}
+		}//end foreach
 
 		$total = (int) ( $response['queryContext']['count'] ?? count( $results ) );
 
@@ -933,7 +972,7 @@ class Viglet_Dumont_Native_Search {
 			return $found['ids'];
 		}
 
-		return empty( $found['ids'] ) ? array() : get_posts(
+		$own = empty( $found['ids'] ) ? array() : get_posts(
 			array(
 				'post__in'       => $found['ids'],
 				'orderby'        => 'post__in',
@@ -941,41 +980,151 @@ class Viglet_Dumont_Native_Search {
 				'posts_per_page' => count( $found['ids'] ),
 			)
 		);
+		if ( array() === $found['remote'] ) {
+			return $own;
+		}
+
+		// A sibling's results among this site's posts, in Turing's order (D303).
+		$by_id = array();
+		foreach ( $own as $post ) {
+			$by_id[ $post->ID ] = $post;
+		}
+		$posts = array();
+		foreach ( $found['order'] as $hit ) {
+			if ( is_int( $hit ) ) {
+				if ( isset( $by_id[ $hit ] ) ) {
+					$posts[] = $by_id[ $hit ];
+				}
+				continue;
+			}
+			$posts[] = self::remote_post( $found['remote'][ $hit ], count( $posts ) );
+		}
+
+		return $posts;
 	}
 
 	/**
-	 * One page of Turing's answer for this site's documents, as post ids in Turing's order,
-	 * with the total; null when Turing could not answer.
+	 * The first id a sibling's result takes as a post (D303), far above any a database hands
+	 * out, so it never names a real post. WordPress refuses an id of zero or below.
+	 */
+	private const REMOTE_POST_ID = PHP_INT_MAX - 1000;
+
+	/**
+	 * The addresses of the sibling results this request drew as posts, by their post id.
 	 *
-	 * A shared SN site holds other sites' documents too, so the search is filtered to this
-	 * site key, and an id that is not `<site key>:post:<ID>` is skipped.
+	 * @var array<int, string>
+	 */
+	private static array $remote_urls = array();
+
+	/**
+	 * A sibling's result as a post the theme's search template draws like any other (D303):
+	 * its title, an excerpt, its date and a link to its own site. It is kept in the object
+	 * cache for this request only, so a block theme's post blocks, which read a post by its
+	 * id, find it; it is never written to the database.
+	 *
+	 * @param array $hit      The document's url, title, description and date, and its site.
+	 * @param int   $position Its place among this page's results.
+	 */
+	public static function remote_post( array $hit, int $position ): WP_Post {
+		$id    = self::REMOTE_POST_ID + $position;
+		$title = html_entity_decode( wp_strip_all_tags( (string) $hit['title'] ) );
+		$text  = html_entity_decode( wp_strip_all_tags( (string) $hit['description'] ) );
+		$at    = is_numeric( $hit['date'] ) ? (int) ( $hit['date'] / 1000 ) : (int) strtotime( (string) $hit['date'] );
+		$date  = $at > 0 ? $at : time();
+		$post  = new WP_Post(
+			(object) array(
+				'ID'                => $id,
+				'post_author'       => 0,
+				'post_date'         => gmdate( 'Y-m-d H:i:s', $date ),
+				'post_date_gmt'     => gmdate( 'Y-m-d H:i:s', $date ),
+				'post_modified'     => gmdate( 'Y-m-d H:i:s', $date ),
+				'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', $date ),
+				'post_title'        => '' !== $title ? $title : (string) $hit['url'],
+				'post_excerpt'      => $text,
+				'post_content'      => $text,
+				'post_status'       => 'publish',
+				'post_name'         => sanitize_title( $title ),
+				'post_type'         => 'post',
+				'comment_status'    => 'closed',
+				'ping_status'       => 'closed',
+				'guid'              => (string) $hit['url'],
+				'filter'            => 'raw',
+			)
+		);
+		wp_cache_set( $id, $post, 'posts', MINUTE_IN_SECONDS );
+		if ( array() === self::$remote_urls ) {
+			add_filter( 'post_link', array( self::class, 'remote_link' ), 99, 2 );
+		}
+		self::$remote_urls[ $id ] = (string) $hit['url'];
+
+		return $post;
+	}
+
+	/**
+	 * A sibling's result links to its own site, never to a post of this one (`post_link`).
+	 *
+	 * @param string  $link The permalink WordPress built.
+	 * @param WP_Post $post The post.
+	 */
+	public static function remote_link( $link, $post ) {
+		return self::$remote_urls[ $post->ID ] ?? $link;
+	}
+
+	/**
+	 * One page of Turing's answer for the documents this site searches, with the total; null
+	 * when Turing could not answer.
+	 *
+	 * A shared SN site holds other sites' documents too, so the search is scoped to this site
+	 * key and the sibling keys it also searches (D303). This site's posts come back as post
+	 * ids (`ids`); a sibling's documents as what a post is drawn from (`remote`); `order`
+	 * lists both in Turing's order, a post by its id and a sibling's result by its index in
+	 * `remote`. Any other id (one of this site's terms, say) is skipped.
 	 *
 	 * @param string $query    What the visitor typed.
 	 * @param int    $page     The page, from 1.
 	 * @param int    $per_page Results per page.
-	 * @return array{ids: int[], total: int}|null
+	 * @return array{ids: int[], remote: array<string, array{url: string, title: string, description: string, date: mixed, site: string}>, order: array<int, int|string>, total: int}|null
 	 */
 	public function search( string $query, int $page, int $per_page ): ?array {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 		// A page read (D328): while Turing is down WordPress searches its own database at once.
-		$client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
-		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, array( 'fq[]' => $indexer->own_filter() ) );
+		$client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
+		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, $indexer->scope_query() );
 		if ( is_wp_error( $response ) ) {
 			return null;
 		}
 
 		$prefix = $indexer->site_key() . ':post:';
 		$ids    = array();
+		$remote = array();
+		$order  = array();
 		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
-			$doc_id = (string) ( $document['fields']['id'] ?? '' );
+			$fields = (array) ( $document['fields'] ?? array() );
+			$doc_id = (string) ( $fields['id'] ?? '' );
 			if ( str_starts_with( $doc_id, $prefix ) && ctype_digit( substr( $doc_id, strlen( $prefix ) ) ) ) {
-				$ids[] = (int) substr( $doc_id, strlen( $prefix ) );
+				$ids[]   = (int) substr( $doc_id, strlen( $prefix ) );
+				$order[] = (int) substr( $doc_id, strlen( $prefix ) );
+				continue;
 			}
-		}
+			$sibling = $indexer->sibling_of( $doc_id );
+			if ( null !== $sibling && '' !== (string) ( $fields['url'] ?? '' ) ) {
+				$key            = 'r' . count( $remote );
+				$order[]        = $key;
+				$remote[ $key ] = array(
+					'url'         => (string) $fields['url'],
+					'title'       => (string) ( $fields['title'] ?? '' ),
+					'description' => (string) ( $fields['abstract'] ?? $fields['description'] ?? '' ),
+					'date'        => $fields['publication_date'] ?? '',
+					'site'        => $sibling['label'],
+				);
+			}
+		}//end foreach
 
 		return array(
-			'ids'   => $ids,
-			'total' => (int) ( $response['queryContext']['count'] ?? count( $ids ) ),
+			'ids'    => $ids,
+			'remote' => $remote,
+			'order'  => $order,
+			'total'  => (int) ( $response['queryContext']['count'] ?? count( $ids ) ),
 		);
 	}
 
@@ -1034,6 +1183,14 @@ class Viglet_Dumont_Native_Search {
 			// The mapped fields a result card shows as labelled lines (D305).
 			'cards'    => $this->card_fields(),
 		);
+		// The sites a search here also reads (D303): their keys for the scope, their labels for
+		// the site facet and a card's origin, their addresses for the assistant's navigate.
+		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$siblings = $indexer->sibling_sites();
+		if ( array() !== $siblings ) {
+			$config['sites']     = $siblings;
+			$config['siteLabel'] = $indexer->site_label( $indexer->site_key() );
+		}
 		// Each type's card date and image fields, where a type changed them (D305).
 		$card_types = $this->card_types();
 		if ( array() !== $card_types ) {

@@ -220,6 +220,8 @@ class Viglet_Dumont_Admin {
 		$sanitized['server_url'] = esc_url_raw( $input['server_url'] ?? 'http://localhost:2700' );
 		$sanitized['site_name']  = sanitize_text_field( $input['site_name'] ?? 'default' );
 		$sanitized['site_key']   = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $input['site_key'] ?? '' ) );
+		// The sibling sites a search here also reads (D303), typed one per line.
+		$sanitized['search_site_keys'] = Viglet_Dumont_Settings::search_sites( $input['search_site_keys'] ?? '' );
 		// The key is never printed back into the form, so an empty field means "keep the stored one".
 		$stored                  = get_option( VIGLET_DUMONT_OPTION, array() );
 		$typed_key               = sanitize_text_field( $input['api_key'] ?? '' );

@@ -31,13 +31,29 @@ export const config = getConfig( 'viglet-dumont' );
 /** The filter that keeps a search to this site's documents. */
 export const siteFilter = `site_key:${ config.siteKey }`;
 
+/** The field every document's site key is in. */
+export const siteField = siteFilter.split( ':' )[ 0 ];
+
+/**
+ * The other sites of a shared SN site this one also searches (D303, "Also search these
+ * sites"): each one's key, label and address. Empty for a site that searches itself alone.
+ */
+export const siblingSites = Object.freeze( config.sites || [] );
+
+/** The site keys a search reads: this site's own first, then its siblings'. */
+export const scopeKeys = Object.freeze( [
+	config.siteKey,
+	...siblingSites.map( ( site ) => site.key ),
+] );
+
 /**
  * Every filter that keeps a search to the documents this site searches (D303). The one seam
- * every read path takes, so the sibling site keys an SN site shared with other WordPress
- * sites can add arrive in one place: today the own key alone, since two `site_key` values
- * in `fq[]` intersect until Turing lets a field's values be alternatives (T1223).
+ * every read path takes: this site's key and the sibling keys it also searches. Their values
+ * are alternatives, which the client says to Turing (`fqi.op=OR`, see createClient).
  */
-export const scopeFilters = Object.freeze( [ siteFilter ] );
+export const scopeFilters = Object.freeze(
+	scopeKeys.map( ( key ) => `${ siteField }:${ key }` )
+);
 
 /**
  * Whether a filter query is the site's scope rather than a filter the visitor chose.
@@ -47,12 +63,80 @@ export const scopeFilters = Object.freeze( [ siteFilter ] );
 export const isScopeFilter = ( fq ) => scopeFilters.includes( fq );
 
 /**
+ * The sites a request's filters narrow it to (D303): the scope's keys its `site_key` filters
+ * name, when they are fewer than the whole scope; empty when the search reads every site.
+ *
+ * @param {string[]} fq A request's filter queries.
+ * @return {string[]} The site keys picked, in scope order.
+ */
+export function siteSelection( fq ) {
+	const named = new Set(
+		( fq || [] )
+			.filter( ( f ) => f.startsWith( `${ siteField }:` ) )
+			.map( ( f ) => f.slice( siteField.length + 1 ) )
+	);
+	const picked = scopeKeys.filter( ( key ) => named.has( key ) );
+	return picked.length < scopeKeys.length ? picked : [];
+}
+
+/**
+ * A request's filters kept inside the scope (D303): its `site_key` filters that name keys in
+ * scope narrow it to those, any other `site_key` is dropped (a filter in the URL cannot widen
+ * the search), and with none left the whole scope applies. The rest is kept as it is.
+ *
+ * @param {string[]} fq A request's filter queries.
+ * @return {string[]} The filters to send.
+ */
+export function scoped( fq ) {
+	const rest = ( fq || [] ).filter(
+		( f ) => ! f.startsWith( `${ siteField }:` )
+	);
+	const picked = siteSelection( fq );
+	return [
+		...( picked.length
+			? picked.map( ( key ) => `${ siteField }:${ key }` )
+			: scopeFilters ),
+		...rest,
+	];
+}
+
+/**
+ * The label a site key goes by on a card and in the site facet (D303): a sibling's label,
+ * this site's name for its own key, and empty for any other key.
+ *
+ * @param {string} key A site key.
+ * @return {string} The label.
+ */
+export function siteLabel( key ) {
+	if ( key === config.siteKey ) {
+		return config.siteLabel || key;
+	}
+	return siblingSites.find( ( site ) => site.key === key )?.label || '';
+}
+
+/**
+ * The label of the sibling site a document comes from, by its id (`<site key>:…`): what a
+ * result card shows as its origin (D303). Empty for this site's own documents.
+ *
+ * @param {string} documentId Turing's id of the document.
+ * @return {string} The label, or empty.
+ */
+export function originOf( documentId ) {
+	const id = String( documentId || '' );
+	return (
+		siblingSites.find( ( site ) => id.startsWith( `${ site.key }:` ) )
+			?.label || ''
+	);
+}
+
+/**
  * The same filter as a field-to-values map, for Turing's generative calls (the assistant's
  * turns, the copilot, the kit and nl-filters: Turing T1086, T1213), so on an SN site several
- * WordPress sites share, each reads only its own documents (D287).
+ * WordPress sites share, each reads only its own documents (D287) and the sibling sites' it
+ * also searches (D303): values of one field are alternatives there.
  */
 export const siteFilters = {
-	[ siteFilter.split( ':' )[ 0 ] ]: [ config.siteKey ],
+	[ siteField ]: [ ...scopeKeys ],
 };
 
 // A card's dates, as the page's language writes them (D305).
@@ -228,7 +312,77 @@ export function reportAiPaused() {
  * @param {Object} options Extra TuringClientConfig fields, e.g. headers.
  */
 export function createClient( options = {} ) {
-	return createTuringClient( { baseURL: `${ config.url }/api`, ...options } );
+	const client = createTuringClient( {
+		baseURL: `${ config.url }/api`,
+		...options,
+	} );
+	if ( ! siblingSites.length ) {
+		return client;
+	}
+	return {
+		...client,
+		get: ( path, init ) => client.get( across( path ), init ),
+		post: ( path, body, init ) =>
+			client.post( path, acrossBody( path, body ), init ),
+	};
+}
+
+/**
+ * A structured search body (`POST …/search/query`, the search controller's) that reads
+ * across the sites in scope (D303), as across() does a GET path: its `site_key` filters
+ * scoped(), and with more than one of them `fqItemOperator: 'OR'`.
+ *
+ * @param {string} path The path the SDK posts to.
+ * @param {Object} body The request body.
+ * @return {Object} The body to send.
+ */
+export function acrossBody( path, body ) {
+	if (
+		! /\/search(\/list)?\/query$/.test( String( path ) ) ||
+		! Array.isArray( body?.fq ) ||
+		! body.fq.some( ( f ) => f.startsWith( `${ siteField }:` ) )
+	) {
+		return body;
+	}
+	const fq = scoped( body.fq );
+	const sites = fq.filter( ( f ) => f.startsWith( `${ siteField }:` ) );
+	return {
+		...body,
+		fq,
+		...( sites.length > 1 && ! body.fqItemOperator
+			? { fqItemOperator: 'OR' }
+			: {} ),
+	};
+}
+
+/**
+ * A GET search or autocomplete path that reads across the sites in scope (D303): its
+ * `site_key` filters kept inside the scope (scoped()), and with more than one of them
+ * `fqi.op=OR`, without which Turing intersects one field's values. The published SDK's
+ * search does not send `fqItemOperator` yet (Turing T1223), so it is added here; a path that
+ * carries it already, or names no site key, is left as it is.
+ *
+ * @param {string} path The path the SDK asks for.
+ * @return {string} The path to ask for.
+ */
+export function across( path ) {
+	const [ base, query ] = String( path ).split( '?' );
+	if ( ! query || ! /\/(search|ac)$/.test( base ) ) {
+		return path;
+	}
+	const params = new URLSearchParams( query );
+	const fq = params.getAll( 'fq[]' );
+	if ( ! fq.some( ( f ) => f.startsWith( `${ siteField }:` ) ) ) {
+		return path;
+	}
+	params.delete( 'fq[]' );
+	const kept = scoped( fq );
+	kept.forEach( ( f ) => params.append( 'fq[]', f ) );
+	const sites = kept.filter( ( f ) => f.startsWith( `${ siteField }:` ) );
+	if ( sites.length > 1 && ! params.has( 'fqi.op' ) ) {
+		params.set( 'fqi.op', 'OR' );
+	}
+	return `${ base }?${ params.toString().replaceAll( '%5B%5D', '[]' ) }`;
 }
 
 /**
