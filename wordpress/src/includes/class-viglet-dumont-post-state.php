@@ -491,10 +491,14 @@ class Viglet_Dumont_Post_State {
 			update_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, $state );
 		}
 
-		return new WP_REST_Response(
-			$post instanceof WP_Post ? $this->describe( $post ) : array(),
-			0 === $result['failed'] ? 200 : 502
-		);
+		$body = $post instanceof WP_Post ? $this->describe( $post ) : array();
+		if ( 0 !== $result['failed'] ) {
+			// Any client gets Turing's reason, not only the panel that reads `detail` (D330).
+			$reason          = Viglet_Dumont_Events::text( $result['errors'][ $post_id ] ?? '' );
+			$body['message'] = '' !== $reason ? $reason : __( 'Turing did not take the post.', 'viglet-turing-search' );
+		}
+
+		return new WP_REST_Response( $body, 0 === $result['failed'] ? 200 : 502 );
 	}
 
 	/**

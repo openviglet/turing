@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T16:17:07+00:00\n"
+"POT-Creation-Date: 2026-11-05T16:21:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -39,7 +39,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
-#: src/admin/js/editor-panel.js:293
+#: src/admin/js/editor-panel.js:299
 #: src/admin/js/search-block-editor.js:112
 msgid "Search"
 msgstr ""
@@ -1662,7 +1662,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
 #: assets/admin/health.js:429
-#: src/admin/js/editor-panel.js:284
+#: src/admin/js/editor-panel.js:288
 msgid "Failed"
 msgstr ""
 
@@ -1713,6 +1713,10 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-post-state.php:363
 msgid "Turing wrote no draft."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:498
+msgid "Turing did not take the post."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-search-block.php:145
@@ -2838,23 +2842,23 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:295
+#: src/admin/js/editor-panel.js:301
 msgid "Checking…"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:300
+#: src/admin/js/editor-panel.js:306
 msgid "Exclude from search"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:301
+#: src/admin/js/editor-panel.js:307
 msgid "Takes effect when the post is saved."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:314
+#: src/admin/js/editor-panel.js:320
 msgid "Reindex now"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:319
+#: src/admin/js/editor-panel.js:325
 msgid "Promote for a search…"
 msgstr ""
 

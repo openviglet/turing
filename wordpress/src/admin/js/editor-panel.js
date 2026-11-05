@@ -281,7 +281,13 @@
             wp.apiFetch({ path: '/viglet-dumont/v1/post/' + post.id + '/reindex', method: 'POST' })
                 .then(setState)
                 .catch(function (error) {
-                    setState({ state: 'failed', label: __('Failed', 'viglet-turing-search'), detail: error.message || '' });
+                    // A refused reindex answers 502 with the post's state, Turing's reason in its
+                    // detail (D330); only a request that never got that far falls back to its message.
+                    setState(error && error.state ? error : {
+                        state: 'failed',
+                        label: __('Failed', 'viglet-turing-search'),
+                        detail: (error && error.message) || ''
+                    });
                 })
                 .finally(function () {
                     setBusy(false);

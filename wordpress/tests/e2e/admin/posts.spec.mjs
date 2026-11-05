@@ -54,3 +54,55 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 		include: '.viglet-dumont-search-panel',
 	} );
 } );
+
+test( 'a reindex Turing refuses shows Turing’s reason in the panel', async ( {
+	page,
+	seed,
+	problems,
+} ) => {
+	// D330: the server answers 502 with the post's state and Turing's reason, as it does when
+	// Turing refuses the document; the panel used to print an empty message instead.
+	const reason = 'Import failed with HTTP 400: field seats is not a number';
+	// The refusal is the case under test, so its 502 is not a failure of the page.
+	problems.allow( /reindex|502/ );
+	await page.route(
+		( url ) =>
+			decodeURIComponent( url.href ).includes(
+				'/viglet-dumont/v1/post/'
+			) && decodeURIComponent( url.href ).includes( '/reindex' ),
+		( route ) =>
+			route.fulfill( {
+				status: 502,
+				json: {
+					state: 'failed',
+					label: 'Not indexed',
+					detail: reason,
+					message: reason,
+				},
+			} )
+	);
+	await page.goto( `/wp-admin/post.php?post=${ seed.postId }&action=edit` );
+	const guide = page
+		.getByRole( 'dialog' )
+		.getByRole( 'button', { name: 'Close' } );
+	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
+		await guide.click();
+	}
+	await openPostSettings( page );
+	const panel = page.locator( '.viglet-dumont-search-panel' );
+	if (
+		! ( await panel
+			.getByText( 'Exclude from search' )
+			.isVisible()
+			.catch( () => false ) )
+	) {
+		await page
+			.getByRole( 'button', { name: 'Search', exact: true } )
+			.click();
+	}
+
+	await panel.getByRole( 'button', { name: 'Reindex now' } ).click();
+
+	await expect( panel ).toContainText( 'Not indexed' );
+	await expect( panel ).toContainText( reason );
+} );
