@@ -36,6 +36,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-native-search.php
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search-block.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-reindex.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
@@ -323,6 +324,14 @@ function viglet_dumont_process_queue(): void {
 add_action( Viglet_Dumont_Queue::CRON_HOOK, 'viglet_dumont_process_queue' );
 
 /**
+ * The WP-Cron run of the background Index All (D331): its next few batches.
+ */
+function viglet_dumont_run_reindex(): void {
+	( new Viglet_Dumont_Reindex() )->tick();
+}
+add_action( Viglet_Dumont_Reindex::CRON_HOOK, 'viglet_dumont_run_reindex' );
+
+/**
  * The daily WP-Cron job that groups the popular searches' spellings (D213).
  */
 function viglet_dumont_group_trending(): void {
@@ -354,14 +363,18 @@ function viglet_dumont_search_redirect(): void {
  */
 function viglet_dumont_activate(): void {
 	viglet_dumont_update_settings( viglet_dumont_get_settings() );
+	// An Index All the deactivation left mid-way goes on (D331).
+	( new Viglet_Dumont_Reindex() )->resume();
 }
 register_activation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_activate' );
 
 /**
- * Plugin deactivation: stop the worker. Queued jobs stay and resume on reactivation's next save.
+ * Plugin deactivation: stop the worker. Queued jobs stay and resume on reactivation's next save;
+ * a running Index All resumes on reactivation.
  */
 function viglet_dumont_deactivate(): void {
 	wp_clear_scheduled_hook( Viglet_Dumont_Queue::CRON_HOOK );
+	wp_clear_scheduled_hook( Viglet_Dumont_Reindex::CRON_HOOK );
 	wp_clear_scheduled_hook( Viglet_Dumont_Trending::CRON_HOOK );
 }
 register_deactivation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_deactivate' );
@@ -376,6 +389,50 @@ function viglet_dumont_register_rest_routes(): void {
 		array(
 			'methods'             => 'POST',
 			'callback'            => 'viglet_dumont_rest_index_batch',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
+		)
+	);
+
+	// Index All in the background (D331): start it, read how it goes, cancel it.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/reindex',
+		array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Reindex() )->report(), 200 ),
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'viglet_dumont_rest_start_reindex',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+				'args'                => array(
+					'type' => array(
+						'type'    => 'string',
+						'default' => 'all',
+					),
+				),
+			),
+		)
+	);
+
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/reindex/cancel',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static function () {
+				$reindex   = new Viglet_Dumont_Reindex();
+				$cancelled = $reindex->cancel();
+				return new WP_REST_Response( array( 'cancelled' => $cancelled ) + $reindex->report(), 200 );
+			},
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -747,21 +804,45 @@ function viglet_dumont_register_rest_routes(): void {
 add_action( 'rest_api_init', 'viglet_dumont_register_rest_routes' );
 
 /**
- * REST: Index a batch of posts.
+ * REST: Index one batch of posts. The admin screens start a background reindex instead
+ * (`/reindex`, D331); this stays for scripts that page through a site themselves.
  *
- * @param WP_REST_Request $request Carries `offset` and `post_type`.
+ * @param WP_REST_Request $request Carries `offset` and `post_type`: `all` or one post type.
  */
 function viglet_dumont_rest_index_batch( WP_REST_Request $request ): WP_REST_Response {
 	$offset    = max( 0, (int) $request->get_param( 'offset' ) );
 	$post_type = sanitize_text_field( (string) $request->get_param( 'post_type' ) );
+	// Nothing named is not "posts": say so rather than index a type nobody asked for (D331).
 	if ( '' === $post_type ) {
-		$post_type = 'post';
+		return new WP_REST_Response( array( 'message' => __( 'Name the content to index: post_type is all, or one post type.', 'viglet-turing-search' ) ), 400 );
 	}
 
 	$indexer = new Viglet_Dumont_Indexer();
 	$result  = $indexer->index_batch( $post_type, $offset );
 
 	return new WP_REST_Response( $result, empty( $result['error'] ) ? 200 : 502 );
+}
+
+/**
+ * REST: Start Index All in the background (D331): 202 with the run, 409 while one runs.
+ *
+ * @param WP_REST_Request $request Carries `type`: `all` or one post type.
+ */
+function viglet_dumont_rest_start_reindex( WP_REST_Request $request ): WP_REST_Response {
+	$reindex = new Viglet_Dumont_Reindex();
+	$run     = $reindex->start( sanitize_key( (string) $request->get_param( 'type' ) ) );
+	if ( is_wp_error( $run ) ) {
+		$data = $run->get_error_data();
+		return new WP_REST_Response(
+			array(
+				'code'    => $run->get_error_code(),
+				'message' => $run->get_error_message(),
+			) + $reindex->report(),
+			is_array( $data ) && isset( $data['status'] ) ? (int) $data['status'] : 400
+		);
+	}
+
+	return new WP_REST_Response( $reindex->report(), 202 );
 }
 
 /**

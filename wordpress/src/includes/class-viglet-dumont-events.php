@@ -140,6 +140,14 @@ class Viglet_Dumont_Events {
 				/* translators: %d: documents removed from Turing. */
 				$format = __( '%d documents WordPress no longer publishes removed.', 'viglet-turing-search' );
 				break;
+			case 'reindexed':
+				/* translators: 1: posts sent, 2: posts that failed. */
+				$format = __( 'Reindex finished: %1$d sent, %2$d failed.', 'viglet-turing-search' );
+				break;
+			case 'reindex_cancelled':
+				/* translators: 1: posts done, 2: posts the reindex had to do. */
+				$format = __( 'Reindex cancelled after %1$d of %2$d posts.', 'viglet-turing-search' );
+				break;
 			case 'replayed':
 				/* translators: %d: queued edits that had stopped retrying and were sent again. */
 				$format = __( 'Turing answered again: %d stopped edits put back in the queue.', 'viglet-turing-search' );

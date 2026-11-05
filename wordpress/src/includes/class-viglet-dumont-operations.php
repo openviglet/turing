@@ -102,35 +102,12 @@ class Viglet_Dumont_Operations {
 		$errors      = array();
 
 		$this->indexer->provision();
-		$pdf = new Viglet_Dumont_Pdf( $this->settings );
 
 		foreach ( array_chunk( $post_ids, $batch_size ) as $chunk ) {
-			$items   = array();
-			$kept    = array();
-			$removed = array();
-			foreach ( $chunk as $post_id ) {
-				$post = get_post( $post_id );
-				if ( $post instanceof WP_Post && $this->indexer->should_index( $post ) ) {
-					$items[] = $this->indexer->build_create_item( $post );
-					$kept[]  = $post;
-				} else {
-					$items[]   = $this->indexer->build_delete_item( (int) $post_id );
-					$removed[] = (int) $post_id;
-				}
-			}
-
-			$result = $this->client->import( $items );
-			if ( $result['success'] ) {
-				$sent += count( $chunk );
-				// The PDFs the posts attach or link follow them in or out (D319).
-				$pdf->settle( $kept, $removed, $send_pdfs );
-			} elseif ( ! empty( $result['timed_out'] ) ) {
-				$unconfirmed += count( $chunk );
-			} else {
-				foreach ( $chunk as $post_id ) {
-					$errors[ (int) $post_id ] = $result['message'];
-				}
-			}
+			$result       = $this->send_batch( $chunk, $send_pdfs );
+			$sent        += $result['sent'];
+			$unconfirmed += $result['unconfirmed'];
+			$errors      += $result['errors'];
 
 			if ( null !== $progress ) {
 				$progress( count( $chunk ) );
@@ -149,6 +126,85 @@ class Viglet_Dumont_Operations {
 			'errors'      => $errors,
 			'unconfirmed' => $unconfirmed,
 		);
+	}
+
+	/**
+	 * Send one batch of posts in one import: a create for each one that is indexable, a delete
+	 * for the rest. Records no event; the caller says what the whole run did.
+	 *
+	 * Turing answers a malformed body with 400 (T1062), failing the batch for the sake of one
+	 * post, so a batch it refused is sent again one post at a time and the failure lands on the
+	 * post that caused it. A transport error or a 5xx is the server, not a post: the batch fails
+	 * as a whole and `outage` says so, for a caller that retries it later.
+	 *
+	 * @param int[] $post_ids  The posts, at most one batch.
+	 * @param bool  $send_pdfs Send the PDFs the posts newly hold (D319).
+	 * @param bool  $migrate   Also remove each post's copy under the id used before the site key
+	 *                         (D148), as Index All always has.
+	 * @return array{sent: int, errors: array<int, string>, unconfirmed: int, outage: bool, message: string|array} `message` is the client's note when the batch failed.
+	 */
+	public function send_batch( array $post_ids, bool $send_pdfs = true, bool $migrate = false ): array {
+		$items   = array();
+		$kept    = array();
+		$removed = array();
+		foreach ( $post_ids as $post_id ) {
+			$post = get_post( $post_id );
+			if ( $post instanceof WP_Post && $this->indexer->should_index( $post ) ) {
+				$items[] = $this->indexer->build_create_item( $post );
+				$kept[]  = $post;
+			} else {
+				$items[]   = $this->indexer->build_delete_item( (int) $post_id );
+				$removed[] = (int) $post_id;
+			}
+			if ( $migrate ) {
+				// Deleting an id that is not there is a no-op.
+				$items[] = $this->indexer->build_legacy_delete_item( (int) $post_id );
+			}
+		}
+
+		$outcome = array(
+			'sent'        => 0,
+			'errors'      => array(),
+			'unconfirmed' => 0,
+			'outage'      => false,
+			'message'     => '',
+		);
+		if ( empty( $items ) ) {
+			return $outcome;
+		}
+
+		$result = $this->client->import( $items );
+		if ( $result['success'] ) {
+			$outcome['sent'] = count( $post_ids );
+			// The PDFs the posts attach or link follow them in or out (D319).
+			( new Viglet_Dumont_Pdf( $this->settings ) )->settle( $kept, $removed, $send_pdfs );
+			return $outcome;
+		}
+		if ( ! empty( $result['timed_out'] ) ) {
+			// D256: Turing goes on importing a batch it did not answer in time.
+			$outcome['unconfirmed'] = count( $post_ids );
+			return $outcome;
+		}
+
+		$code    = (int) $result['code'];
+		$refused = $code >= 400 && $code < 500;
+		if ( $refused && count( $post_ids ) > 1 ) {
+			foreach ( $post_ids as $post_id ) {
+				$single                  = $this->send_batch( array( $post_id ), $send_pdfs, $migrate );
+				$outcome['sent']        += $single['sent'];
+				$outcome['unconfirmed'] += $single['unconfirmed'];
+				$outcome['errors']      += $single['errors'];
+			}
+			return $outcome;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$outcome['errors'][ (int) $post_id ] = (string) $result['message'];
+		}
+		$outcome['outage']  = ! $refused;
+		$outcome['message'] = $result['note'];
+
+		return $outcome;
 	}
 
 	/**
@@ -287,7 +343,7 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed, foreign: int|null} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed, foreign: int|null, reindex: array} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
@@ -309,6 +365,8 @@ class Viglet_Dumont_Operations {
 			'sources'     => Viglet_Dumont_Settings::sources(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
 			'foreign'     => $this->count_foreign(),
+			// The Index All running in the background and the last one that ended (D331).
+			'reindex'     => ( new Viglet_Dumont_Reindex( $this->settings ) )->report(),
 		);
 	}
 

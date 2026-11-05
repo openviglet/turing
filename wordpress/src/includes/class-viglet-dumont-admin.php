@@ -308,14 +308,25 @@ class Viglet_Dumont_Admin {
 				'restUrl' => rest_url( 'viglet-dumont/v1/' ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'strings' => array(
-					'indexing'    => __( 'Indexing...', 'viglet-turing-search' ),
-					'complete'    => __( 'Complete!', 'viglet-turing-search' ),
-					'error'       => __( 'Error', 'viglet-turing-search' ),
-					'confirm_del' => __( 'Are you sure you want to delete all indexed content? This cannot be undone.', 'viglet-turing-search' ),
-					'deleting'    => __( 'Deleting...', 'viglet-turing-search' ),
-					'deleted'     => __( 'All indexed content has been deleted.', 'viglet-turing-search' ),
-					'pinging'     => __( 'Testing connection...', 'viglet-turing-search' ),
-					'total'       => __( 'Total', 'viglet-turing-search' ),
+					'indexing'        => __( 'Indexing...', 'viglet-turing-search' ),
+					'complete'        => __( 'Complete!', 'viglet-turing-search' ),
+					'error'           => __( 'Error', 'viglet-turing-search' ),
+					'confirm_del'     => __( 'Are you sure you want to delete all indexed content? This cannot be undone.', 'viglet-turing-search' ),
+					'deleting'        => __( 'Deleting...', 'viglet-turing-search' ),
+					'deleted'         => __( 'All indexed content has been deleted.', 'viglet-turing-search' ),
+					'pinging'         => __( 'Testing connection...', 'viglet-turing-search' ),
+					'total'           => __( 'Total', 'viglet-turing-search' ),
+					// Index All runs in the background (D331).
+					/* translators: 1: posts done, 2: posts to do in all, 3: posts that failed. */
+					'running'         => __( 'Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed.', 'viglet-turing-search' ),
+					/* translators: 1: posts sent, 2: posts that failed. */
+					'ended_done'      => __( 'Indexing complete: %1$d posts sent.', 'viglet-turing-search' ),
+					/* translators: 1: posts sent, 2: posts that failed. */
+					'ended_failed'    => __( 'The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors.', 'viglet-turing-search' ),
+					/* translators: 1: posts sent, 2: posts that failed. */
+					'ended_cancelled' => __( 'The reindex was cancelled after %1$d posts sent.', 'viglet-turing-search' ),
+					'health'          => __( 'Search health', 'viglet-turing-search' ),
+					'health_url'      => admin_url( 'admin.php?page=viglet-dumont-health' ),
 				),
 			)
 		);

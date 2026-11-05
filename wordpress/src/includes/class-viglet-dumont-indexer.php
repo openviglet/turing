@@ -196,6 +196,15 @@ class Viglet_Dumont_Indexer {
 	}
 
 	/**
+	 * The job item that removes a post's copy under the id used before the site key (D148).
+	 *
+	 * @param int $post_id The post.
+	 */
+	public function build_legacy_delete_item( int $post_id ): array {
+		return $this->client->build_delete_item( $this->legacy_doc_id( $post_id ) );
+	}
+
+	/**
 	 * Index a batch of posts. Returns progress info.
 	 *
 	 * @param string $post_type Post type to index.

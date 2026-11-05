@@ -1,10 +1,10 @@
 /**
  * The Setup page: connect to Turing in three steps. Enter the connection, test it (each check
- * names what failed), create the SN site if it is missing, then run the first index with live
- * progress.
+ * names what failed), create the SN site if it is missing, then start the first index and follow
+ * its progress.
  *
  * Reads and writes `viglet-dumont/v1/connection`, tests with `/diagnose`, creates the site
- * with `/provision` and indexes through `/index-batch`.
+ * with `/provision` and starts the background reindex with `/reindex` (D331).
  */
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -90,22 +90,78 @@ function Setup() {
 			.finally( () => setBusy( '' ) );
 	};
 
+	// The first index runs in the background (D331): this page only follows it, and can close.
 	const indexAll = () => {
 		setBusy( 'index' );
 		setProgress( {
 			percent: 0,
 			message: __( 'Starting…', 'viglet-turing-search' ),
 		} );
-		const batch = ( offset ) =>
-			apiFetch( {
-				path: '/viglet-dumont/v1/index-batch',
-				method: 'POST',
-				data: { offset, post_type: 'all' },
-			} ).then( ( r ) => {
-				setProgress( { percent: r.percent, message: r.message } );
-				return r.done ? r : batch( r.offset );
-			} );
-		batch( 0 )
+		let started = '';
+		const follow = ( report ) => {
+			const run = report.running;
+			if ( run ) {
+				started = run.id;
+				setProgress( {
+					percent: run.total
+						? Math.round( ( run.offset / run.total ) * 100 )
+						: 100,
+					message: sprintf(
+						/* translators: 1: posts done, 2: posts to do in all. */
+						__(
+							'Indexing in the background, so you can leave this page: %1$d of %2$d posts done.',
+							'viglet-turing-search'
+						),
+						run.offset,
+						run.total
+					),
+				} );
+				return new Promise( ( resolve ) => setTimeout( resolve, 2000 ) )
+					.then( () =>
+						apiFetch( { path: '/viglet-dumont/v1/reindex' } )
+					)
+					.then( follow );
+			}
+			const last = report.last;
+			if ( last && last.id === started ) {
+				setProgress( {
+					percent: 100,
+					message:
+						'done' === last.state
+							? sprintf(
+									/* translators: %d: how many documents were indexed. */
+									__(
+										'Indexing complete. %d documents indexed.',
+										'viglet-turing-search'
+									),
+									last.sent
+								)
+							: sprintf(
+									/* translators: 1: posts sent, 2: posts that failed. */
+									__(
+										'The first index ended with failures: %1$d sent, %2$d failed. Search health shows the errors.',
+										'viglet-turing-search'
+									),
+									last.sent,
+									last.failed
+								),
+				} );
+			}
+			return report;
+		};
+		apiFetch( {
+			path: '/viglet-dumont/v1/reindex',
+			method: 'POST',
+			data: { type: 'all' },
+		} )
+			// One running already, started elsewhere: follow that one.
+			.catch( ( e ) => {
+				if ( e && e.running ) {
+					return e;
+				}
+				throw e;
+			} )
+			.then( follow )
 			.catch( fail )
 			.finally( () => setBusy( '' ) );
 	};

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T16:21:15+00:00\n"
+"POT-Creation-Date: 2026-11-05T16:45:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -23,7 +23,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr ""
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:196
+#: assets/admin/health.js:355
 msgid "Connection"
 msgstr ""
 
@@ -111,7 +111,7 @@ msgid "Where visitors' browsers reach Turing, when it differs from the Server UR
 msgstr ""
 
 #: src/admin/views/settings-page.php:148
-#: assets/admin/setup.js:203
+#: assets/admin/setup.js:259
 msgid "Locale"
 msgstr ""
 
@@ -952,6 +952,7 @@ msgstr[1] ""
 #: src/includes/class-viglet-dumont-admin.php:63
 #: src/includes/class-viglet-dumont-admin.php:136
 #: src/includes/class-viglet-dumont-admin.php:196
+#: src/includes/class-viglet-dumont-admin.php:328
 msgid "Search health"
 msgstr ""
 
@@ -1040,7 +1041,31 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:336
+#. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:321
+#, php-format
+msgid "Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:323
+#, php-format
+msgid "Indexing complete: %1$d posts sent."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:325
+#, php-format
+msgid "The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:327
+#, php-format
+msgid "The reindex was cancelled after %1$d posts sent."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:347
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
@@ -1432,24 +1457,38 @@ msgstr ""
 
 #. translators: %d: documents removed from Turing.
 #: src/includes/class-viglet-dumont-events.php:141
-#, php-format
+#: assets/admin/health.js:147
+#, php-format,js-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
 
-#. translators: %d: queued edits that had stopped retrying and were sent again.
+#. translators: 1: posts sent, 2: posts that failed.
 #: src/includes/class-viglet-dumont-events.php:145
+#, php-format
+msgid "Reindex finished: %1$d sent, %2$d failed."
+msgstr ""
+
+#. translators: 1: posts done, 2: posts the reindex had to do.
+#: src/includes/class-viglet-dumont-events.php:149
+#, php-format
+msgid "Reindex cancelled after %1$d of %2$d posts."
+msgstr ""
+
+#. translators: %d: queued edits that had stopped retrying and were sent again.
+#: src/includes/class-viglet-dumont-events.php:153
 #, php-format
 msgid "Turing answered again: %d stopped edits put back in the queue."
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:282
-#, php-format
+#: src/includes/class-viglet-dumont-indexer.php:291
+#: assets/admin/setup.js:133
+#, php-format,js-format
 msgid "Indexing complete. %d documents indexed."
 msgstr ""
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:284
+#: src/includes/class-viglet-dumont-indexer.php:293
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
@@ -1633,11 +1672,12 @@ msgstr ""
 msgid "Search (Ctrl+K)"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:208
+#: src/includes/class-viglet-dumont-operations.php:264
 msgid "Turing could not be searched for this site's documents."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:263
+#: src/includes/class-viglet-dumont-operations.php:319
+#: src/includes/class-viglet-dumont-reindex.php:277
 msgid "Skipped: the reindex had failures."
 msgstr ""
 
@@ -1661,7 +1701,7 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
-#: assets/admin/health.js:429
+#: assets/admin/health.js:598
 #: src/admin/js/editor-panel.js:288
 msgid "Failed"
 msgstr ""
@@ -1717,6 +1757,16 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-post-state.php:498
 msgid "Turing did not take the post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-reindex.php:101
+msgid "A reindex is already running."
+msgstr ""
+
+#. translators: %s: the post type asked for.
+#: src/includes/class-viglet-dumont-reindex.php:107
+#, php-format
+msgid "Posts of type %s are not indexed."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-search-block.php:145
@@ -1809,224 +1859,295 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:98
+#: src/viglet-dumont.php:99
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:99
+#: src/viglet-dumont.php:100
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:101
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:101
+#: src/viglet-dumont.php:102
 msgid "Copilot"
 msgstr ""
 
-#: src/viglet-dumont.php:105
+#: src/viglet-dumont.php:106
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:106
+#: src/viglet-dumont.php:107
 msgid "Site assistant block, or its launcher on every page"
 msgstr ""
 
-#: src/viglet-dumont.php:107
+#: src/viglet-dumont.php:108
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:108
+#: src/viglet-dumont.php:109
 msgid "Ask this site block"
 msgstr ""
 
-#: src/viglet-dumont.php:122
+#: src/viglet-dumont.php:123
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:888
+#: src/viglet-dumont.php:817
+msgid "Name the content to index: post_type is all, or one post type."
+msgstr ""
+
+#: src/viglet-dumont.php:969
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:913
+#: src/viglet-dumont.php:994
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
-#: assets/admin/health.js:26
+#: assets/admin/health.js:27
 msgid "Indexed"
 msgstr ""
 
-#: assets/admin/health.js:27
+#: assets/admin/health.js:28
 msgid "Removed"
 msgstr ""
 
-#: assets/admin/health.js:28
+#: assets/admin/health.js:29
 msgid "Fields sent"
 msgstr ""
 
-#: assets/admin/health.js:29
+#: assets/admin/health.js:30
 msgid "Sweep"
 msgstr ""
 
-#: assets/admin/health.js:30
+#: assets/admin/health.js:31
 msgid "Replayed"
 msgstr ""
 
-#: assets/admin/health.js:40
+#: assets/admin/health.js:32
+#: assets/admin/health.js:65
+msgid "Reindex"
+msgstr ""
+
+#: assets/admin/health.js:36
+msgid "Done"
+msgstr ""
+
+#: assets/admin/health.js:37
+msgid "Ended with failures"
+msgstr ""
+
+#: assets/admin/health.js:38
+msgid "Cancelled"
+msgstr ""
+
+#: assets/admin/health.js:42
+msgid "Sending the posts."
+msgstr ""
+
+#: assets/admin/health.js:43
+msgid "Sending the PDFs."
+msgstr ""
+
+#: assets/admin/health.js:44
+msgid "Removing what WordPress no longer publishes."
+msgstr ""
+
+#: assets/admin/health.js:77
+msgid "Reindex progress"
+msgstr ""
+
+#. translators: 1: when it started, 2: posts done, 3: posts to do in all, 4: posts that failed.
+#: assets/admin/health.js:86
+#, js-format
+msgid "Running since %1$s: %2$d of %3$d posts done, %4$d failed."
+msgstr ""
+
+#. translators: 1: why the batch failed, 2: when it is tried again.
+#: assets/admin/health.js:101
+#, js-format
+msgid "A batch failed (%1$s). It is tried again at %2$s."
+msgstr ""
+
+#: assets/admin/health.js:112
+msgid "Nothing has moved for a while: WP-Cron is not running. It runs when someone visits the site; with DISABLE_WP_CRON, the server’s own cron has to call it."
+msgstr ""
+
+#: assets/admin/health.js:125
+msgid "Cancel reindex"
+msgstr ""
+
+#. translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do.
+#: assets/admin/health.js:133
+#, js-format
+msgid "Last reindex: %1$s, %2$s. %3$d sent, %4$d failed, of %5$d posts."
+msgstr ""
+
+#: assets/admin/health.js:161
+msgid "No reindex has run from wp-admin yet. Index All under Settings › Actions starts one."
+msgstr ""
+
+#: assets/admin/health.js:180
 msgid "never"
 msgstr ""
 
-#: assets/admin/health.js:65
+#: assets/admin/health.js:205
 msgid "AI features"
 msgstr ""
 
-#: assets/admin/health.js:69
+#: assets/admin/health.js:209
 msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
 msgstr ""
 
-#: assets/admin/health.js:84
+#: assets/admin/health.js:224
 msgid "Feature"
 msgstr ""
 
-#: assets/admin/health.js:87
+#: assets/admin/health.js:227
 msgid "State"
 msgstr ""
 
-#: assets/admin/health.js:90
+#: assets/admin/health.js:230
 msgid "Shown by"
 msgstr ""
 
-#: assets/admin/health.js:93
+#: assets/admin/health.js:233
 msgid "Why"
 msgstr ""
 
-#: assets/admin/health.js:103
+#: assets/admin/health.js:243
 msgid "On"
 msgstr ""
 
-#: assets/admin/health.js:104
+#: assets/admin/health.js:244
 msgid "Off"
 msgstr ""
 
-#: assets/admin/health.js:128
+#: assets/admin/health.js:268
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr ""
 
-#: assets/admin/health.js:129
+#: assets/admin/health.js:269
 msgid "Check AI features"
 msgstr ""
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:208
+#: assets/admin/health.js:367
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr ""
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:220
+#: assets/admin/health.js:379
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr ""
 
 #. translators: %d: how many documents another source sent under this site key.
-#: assets/admin/health.js:232
+#: assets/admin/health.js:391
 #, js-format
 msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
 msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/admin/health.js:247
+#: assets/admin/health.js:406
 msgid "Documents"
 msgstr ""
 
-#: assets/admin/health.js:254
+#: assets/admin/health.js:413
 msgid "Post type"
 msgstr ""
 
-#: assets/admin/health.js:260
+#: assets/admin/health.js:419
 msgid "Published in WordPress"
 msgstr ""
 
-#: assets/admin/health.js:266
+#: assets/admin/health.js:425
 msgid "Indexed in Turing"
 msgstr ""
 
-#: assets/admin/health.js:281
+#: assets/admin/health.js:440
 msgid "unknown"
 msgstr ""
 
-#: assets/admin/health.js:291
+#: assets/admin/health.js:450
 msgid "(differs: run a reindex)"
 msgstr ""
 
-#: assets/admin/health.js:308
+#: assets/admin/health.js:470
+msgid "Reindex cancelled."
+msgstr ""
+
+#: assets/admin/health.js:477
 msgid "Queue"
 msgstr ""
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:314
+#: assets/admin/health.js:483
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr ""
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:326
+#: assets/admin/health.js:495
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr ""
 
-#: assets/admin/health.js:334
+#: assets/admin/health.js:503
 msgid "The queue has not sent anything yet."
 msgstr ""
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:348
+#: assets/admin/health.js:517
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr ""
 
-#: assets/admin/health.js:357
+#: assets/admin/health.js:526
 msgid "Retry failed"
 msgstr ""
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:370
+#: assets/admin/health.js:539
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr ""
 
-#: assets/admin/health.js:380
+#: assets/admin/health.js:549
 msgid "Send queue now"
 msgstr ""
 
-#: assets/admin/health.js:390
+#: assets/admin/health.js:559
 msgid "Last events"
 msgstr ""
 
-#: assets/admin/health.js:398
+#: assets/admin/health.js:567
 msgid "When"
 msgstr ""
 
-#: assets/admin/health.js:401
+#: assets/admin/health.js:570
 msgid "What"
 msgstr ""
 
-#: assets/admin/health.js:404
+#: assets/admin/health.js:573
 msgid "Post"
 msgstr ""
 
-#: assets/admin/health.js:407
+#: assets/admin/health.js:576
 msgid "Result"
 msgstr ""
 
-#: assets/admin/health.js:425
+#: assets/admin/health.js:594
 msgid "OK"
 msgstr ""
 
-#: assets/admin/health.js:443
+#: assets/admin/health.js:612
 msgid "Nothing has been sent yet."
 msgstr ""
 
@@ -2382,86 +2503,98 @@ msgid "Turing"
 msgstr ""
 
 #: assets/admin/setup.js:28
-#: assets/admin/setup.js:172
+#: assets/admin/setup.js:228
 msgid "API key"
 msgstr ""
 
 #: assets/admin/setup.js:29
-#: assets/admin/setup.js:192
+#: assets/admin/setup.js:248
 msgid "SN site"
 msgstr ""
 
-#: assets/admin/setup.js:97
+#: assets/admin/setup.js:98
 msgid "Starting…"
 msgstr ""
 
-#: assets/admin/setup.js:143
+#. translators: 1: posts done, 2: posts to do in all.
+#: assets/admin/setup.js:111
+#, js-format
+msgid "Indexing in the background, so you can leave this page: %1$d of %2$d posts done."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: assets/admin/setup.js:141
+#, js-format
+msgid "The first index ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr ""
+
+#: assets/admin/setup.js:199
 msgid "1. Connection"
 msgstr ""
 
 #. translators: %s: the constants or environment variables, comma-separated.
-#: assets/admin/setup.js:150
+#: assets/admin/setup.js:206
 #, js-format
 msgid "Set outside WordPress, read-only here: %s."
 msgstr ""
 
-#: assets/admin/setup.js:160
+#: assets/admin/setup.js:216
 msgid "Turing URL"
 msgstr ""
 
-#: assets/admin/setup.js:161
+#: assets/admin/setup.js:217
 msgid "The address of your Turing, e.g. https://search.example.org."
 msgstr ""
 
-#: assets/admin/setup.js:175
+#: assets/admin/setup.js:231
 msgid "A key is stored. Leave this empty to keep it."
 msgstr ""
 
-#: assets/admin/setup.js:179
+#: assets/admin/setup.js:235
 msgid "Create one in Turing under API Tokens."
 msgstr ""
 
-#: assets/admin/setup.js:193
+#: assets/admin/setup.js:249
 msgid "The Semantic Navigation site this WordPress publishes to and searches."
 msgstr ""
 
-#: assets/admin/setup.js:204
+#: assets/admin/setup.js:260
 msgid "The language the content is indexed in, e.g. pt_BR or en_US."
 msgstr ""
 
-#: assets/admin/setup.js:214
+#: assets/admin/setup.js:270
 msgid "Site key"
 msgstr ""
 
 #. translators: %s: the key derived from this site's address.
-#: assets/admin/setup.js:217
+#: assets/admin/setup.js:273
 #, js-format
 msgid "Keeps this site's documents apart when several sites share one SN site. Empty uses %s."
 msgstr ""
 
-#: assets/admin/setup.js:233
+#: assets/admin/setup.js:289
 msgid "Save and test the connection"
 msgstr ""
 
-#: assets/admin/setup.js:244
+#: assets/admin/setup.js:300
 msgid "2. Test"
 msgstr ""
 
 #. translators: %s: the SN site's name.
-#: assets/admin/setup.js:257
+#: assets/admin/setup.js:313
 #, js-format
 msgid "Create the SN site %s"
 msgstr ""
 
-#: assets/admin/setup.js:273
+#: assets/admin/setup.js:329
 msgid "3. First index"
 msgstr ""
 
-#: assets/admin/setup.js:278
+#: assets/admin/setup.js:334
 msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
 msgstr ""
 
-#: assets/admin/setup.js:289
+#: assets/admin/setup.js:345
 msgid "Index everything now"
 msgstr ""
 

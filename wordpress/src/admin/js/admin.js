@@ -87,52 +87,99 @@
         });
     }
 
-    // Batch indexing
+    // Index All (D331): the button only starts a reindex that WP-Cron runs, so this page can
+    // close at any moment. While it stays open it shows how the run goes, read every few seconds.
     function initIndexing() {
-        var isIndexing = false;
+        var $btn = $('#viglet-dumont-index-all');
+        var $progress = $('#viglet-dumont-index-progress');
+        var $fill = $progress.find('.viglet-dumont-progress__fill');
+        var $text = $progress.find('.viglet-dumont-progress__text');
+        var $msg = $progress.find('.viglet-dumont-progress__message');
+        var timer = null;
+        var started = '';
 
-        $('#viglet-dumont-index-all').on('click', function () {
-            if (isIndexing) return;
-            isIndexing = true;
+        function format(text, values) {
+            var i = 0;
+            return text.replace(/%(\d+\$)?d/g, function (match, position) {
+                var value = position ? values[parseInt(position, 10) - 1] : values[i++];
+                return String(value);
+            });
+        }
 
-            var $btn = $(this).prop('disabled', true);
-            var postType = $('#viglet-dumont-index-type').val();
-            var $progress = $('#viglet-dumont-index-progress').show().removeClass('complete');
-            var $fill = $progress.find('.viglet-dumont-progress__fill');
-            var $text = $progress.find('.viglet-dumont-progress__text');
-            var $msg = $progress.find('.viglet-dumont-progress__message');
+        function healthLink() {
+            return $('<a>').attr('href', api.strings.health_url).text(api.strings.health);
+        }
 
-            function indexBatch(offset) {
-                api.request('POST', 'index-batch', {
-                    offset: offset,
-                    post_type: postType
-                }).done(function (data) {
-                    $fill.css('width', data.percent + '%');
-                    $text.text(data.percent + '%');
-                    $msg.text(data.message);
-
-                    if (!data.done) {
-                        indexBatch(data.offset);
-                    } else {
-                        $progress.addClass('complete');
-                        $btn.prop('disabled', false);
-                        isIndexing = false;
-                        loadStats();
-                    }
-                }).fail(function (xhr) {
-                    var msg = xhr.responseJSON && xhr.responseJSON.message
-                        ? xhr.responseJSON.message
-                        : api.strings.error;
-                    $msg.text(msg);
-                    $fill.css({ width: '100%', background: 'var(--vd-error)' });
-                    $text.text(api.strings.error);
-                    $btn.prop('disabled', false);
-                    isIndexing = false;
-                });
+        function show(report) {
+            var run = report.running;
+            if (run) {
+                var percent = run.total > 0 ? Math.round((run.offset / run.total) * 100) : 100;
+                $progress.show().removeClass('complete');
+                $fill.css({ width: percent + '%', background: '' });
+                $text.text(percent + '%');
+                $msg.empty().append(
+                    document.createTextNode(format(api.strings.running, [run.offset, run.total, run.failed]) + ' '),
+                    healthLink()
+                );
+                $btn.prop('disabled', true);
+                return true;
             }
 
-            indexBatch(0);
+            $btn.prop('disabled', false);
+            var last = report.last;
+            // Only the run this page started or found running says how it ended.
+            if (last && started && last.id === started) {
+                $progress.show().addClass('complete');
+                $fill.css({ width: '100%', background: last.state === 'done' ? '' : 'var(--vd-error)' });
+                $text.text(last.state === 'done' ? api.strings.complete : api.strings.error);
+                $msg.text(format(api.strings['ended_' + last.state] || api.strings.ended_done, [last.sent, last.failed]));
+                loadStats();
+            }
+            return false;
+        }
+
+        function poll() {
+            api.request('GET', 'reindex').done(function (report) {
+                if (report.running) {
+                    started = report.running.id;
+                }
+                if (show(report)) {
+                    timer = window.setTimeout(poll, 3000);
+                } else {
+                    timer = null;
+                }
+            });
+        }
+
+        $btn.on('click', function () {
+            if (timer) return;
+            $btn.prop('disabled', true);
+
+            api.request('POST', 'reindex', {
+                type: $('#viglet-dumont-index-type').val()
+            }).done(function (report) {
+                started = report.running ? report.running.id : '';
+                show(report);
+                timer = window.setTimeout(poll, 3000);
+            }).fail(function (xhr) {
+                var report = xhr.responseJSON || {};
+                // One is running already: follow that one.
+                if (report.running) {
+                    started = report.running.id;
+                    show(report);
+                    timer = window.setTimeout(poll, 3000);
+                    return;
+                }
+                $progress.show();
+                $msg.text(report.message || api.strings.error);
+                $fill.css({ width: '100%', background: 'var(--vd-error)' });
+                $text.text(api.strings.error);
+                $btn.prop('disabled', false);
+            });
         });
+
+        // A reindex started earlier, from here or anywhere, shows as soon as the page opens.
+        poll();
     }
 
     // Delete all

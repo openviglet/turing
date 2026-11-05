@@ -2,7 +2,8 @@
  * The Health page: is Turing reachable, how many documents each post type has in WordPress
  * and in Turing, how the queue stands, and buttons to retry what failed or send the queue now.
  *
- * Reads `viglet-dumont/v1/status`; the buttons call `queue/retry` and `queue/run`.
+ * Reads `viglet-dumont/v1/status`; the buttons call `queue/retry`, `queue/run` and
+ * `reindex/cancel`. While a reindex runs, `reindex` is read again every few seconds.
  */
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -28,7 +29,146 @@ const EVENT_LABEL = {
 	provision: __( 'Fields sent', 'viglet-turing-search' ),
 	sweep: __( 'Sweep', 'viglet-turing-search' ),
 	replay: __( 'Replayed', 'viglet-turing-search' ),
+	reindex: __( 'Reindex', 'viglet-turing-search' ),
 };
+
+const ENDED = {
+	done: __( 'Done', 'viglet-turing-search' ),
+	failed: __( 'Ended with failures', 'viglet-turing-search' ),
+	cancelled: __( 'Cancelled', 'viglet-turing-search' ),
+};
+
+const PHASE = {
+	posts: __( 'Sending the posts.', 'viglet-turing-search' ),
+	pdfs: __( 'Sending the PDFs.', 'viglet-turing-search' ),
+	sweep: __(
+		'Removing what WordPress no longer publishes.',
+		'viglet-turing-search'
+	),
+};
+
+/**
+ * Index All, run by WP-Cron (D331): the run in progress with a Cancel button, and the last one
+ * that ended. Started from Settings › Actions or Setup.
+ *
+ * @param {Object}     props          The props.
+ * @param {Object}     props.report   `{running, last}` from `/reindex`.
+ * @param {boolean}    props.busy     Whether a cancel is on its way.
+ * @param {() => void} props.onCancel Cancel the running reindex.
+ */
+function Reindex( { report, busy, onCancel } ) {
+	const { running, last } = report || {};
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>{ __( 'Reindex', 'viglet-turing-search' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				{ running && (
+					<div aria-live="polite" className="viglet-dumont-reindex">
+						<progress
+							max={ 100 }
+							value={
+								running.total
+									? ( running.offset / running.total ) * 100
+									: 100
+							}
+							aria-label={ __(
+								'Reindex progress',
+								'viglet-turing-search'
+							) }
+							style={ { width: '100%' } }
+						/>
+						<p>
+							{ sprintf(
+								/* translators: 1: when it started, 2: posts done, 3: posts to do in all, 4: posts that failed. */
+								__(
+									'Running since %1$s: %2$d of %3$d posts done, %4$d failed.',
+									'viglet-turing-search'
+								),
+								running.started,
+								running.offset,
+								running.total,
+								running.failed
+							) }{ ' ' }
+							{ PHASE[ running.phase ] || '' }
+						</p>
+						{ running.retry_at && (
+							<Notice status="warning" isDismissible={ false }>
+								{ sprintf(
+									/* translators: 1: why the batch failed, 2: when it is tried again. */
+									__(
+										'A batch failed (%1$s). It is tried again at %2$s.',
+										'viglet-turing-search'
+									),
+									running.error,
+									running.retry_at
+								) }
+							</Notice>
+						) }
+						{ running.stalled && (
+							<Notice status="warning" isDismissible={ false }>
+								{ __(
+									'Nothing has moved for a while: WP-Cron is not running. It runs when someone visits the site; with DISABLE_WP_CRON, the server’s own cron has to call it.',
+									'viglet-turing-search'
+								) }
+							</Notice>
+						) }
+						<Button
+							variant="secondary"
+							isDestructive
+							isBusy={ busy }
+							disabled={ busy }
+							onClick={ onCancel }
+						>
+							{ __( 'Cancel reindex', 'viglet-turing-search' ) }
+						</Button>
+					</div>
+				) }
+				{ last ? (
+					<p className="viglet-dumont-reindex-last">
+						{ sprintf(
+							/* translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do. */
+							__(
+								'Last reindex: %1$s, %2$s. %3$d sent, %4$d failed, of %5$d posts.',
+								'viglet-turing-search'
+							),
+							ENDED[ last.state ] || last.state,
+							last.finished,
+							last.sent,
+							last.failed,
+							last.total
+						) }
+						{ last.swept > 0 &&
+							' ' +
+								sprintf(
+									/* translators: %d: documents removed from Turing. */
+									__(
+										'%d documents WordPress no longer publishes removed.',
+										'viglet-turing-search'
+									),
+									last.swept
+								) }
+						{ last.sweep_error && ' ' + last.sweep_error }
+						{ last.state === 'failed' &&
+							last.error &&
+							' ' + last.error }
+					</p>
+				) : (
+					! running && (
+						<p>
+							{ __(
+								'No reindex has run from wp-admin yet. Index All under Settings › Actions starts one.',
+								'viglet-turing-search'
+							) }
+						</p>
+					)
+				) }
+			</CardBody>
+		</Card>
+	);
+}
 
 /**
  * A moment as the site writes it: the server formats it in the site's date and time formats
@@ -151,6 +291,25 @@ function Health() {
 	}, [] );
 
 	useEffect( load, [ load ] );
+
+	// While a reindex runs, its progress is read again every few seconds; the rest of the page,
+	// which asks Turing for counts, waits for the run to end.
+	const running = status && status.reindex && status.reindex.running;
+	useEffect( () => {
+		if ( ! running ) {
+			return undefined;
+		}
+		const timer = setTimeout( () => {
+			apiFetch( { path: '/viglet-dumont/v1/reindex' } )
+				.then( ( reindex ) =>
+					reindex.running
+						? setStatus( ( now ) => ( { ...now, reindex } ) )
+						: load()
+				)
+				.catch( ( e ) => setError( e.message || String( e ) ) );
+		}, 3000 );
+		return () => clearTimeout( timer );
+	}, [ running, load ] );
 
 	const act = ( path, describe ) => {
 		setBusy( path );
@@ -302,6 +461,16 @@ function Health() {
 					</table>
 				</CardBody>
 			</Card>
+
+			<Reindex
+				report={ status.reindex }
+				busy={ busy === 'reindex/cancel' }
+				onCancel={ () =>
+					act( 'reindex/cancel', () =>
+						__( 'Reindex cancelled.', 'viglet-turing-search' )
+					)
+				}
+			/>
 
 			<Card>
 				<CardHeader>

@@ -19,7 +19,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:196
+#: assets/admin/health.js:355
 msgid "Connection"
 msgstr "Conexão"
 
@@ -107,7 +107,7 @@ msgid "Where visitors' browsers reach Turing, when it differs from the Server UR
 msgstr "Onde o navegador dos visitantes alcança o Turing, quando difere da URL do servidor que este servidor usa. Vazio usa a URL do servidor."
 
 #: src/admin/views/settings-page.php:148
-#: assets/admin/setup.js:203
+#: assets/admin/setup.js:259
 msgid "Locale"
 msgstr "Idioma"
 
@@ -372,6 +372,7 @@ msgstr "Campos"
 #: src/includes/class-viglet-dumont-admin.php:63
 #: src/includes/class-viglet-dumont-admin.php:136
 #: src/includes/class-viglet-dumont-admin.php:196
+#: src/includes/class-viglet-dumont-admin.php:328
 msgid "Search health"
 msgstr "Saúde da busca"
 
@@ -411,7 +412,7 @@ msgstr "Testando a conexão..."
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:336
+#: src/includes/class-viglet-dumont-admin.php:347
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -639,13 +640,14 @@ msgid "Nothing is listening at %s on that port: Turing is down, or the port is w
 msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:282
-#, php-format
+#: src/includes/class-viglet-dumont-indexer.php:291
+#: assets/admin/setup.js:133
+#, php-format,js-format
 msgid "Indexing complete. %d documents indexed."
 msgstr "Indexação concluída. %d documentos indexados."
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:284
+#: src/includes/class-viglet-dumont-indexer.php:293
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
@@ -696,17 +698,19 @@ msgstr "URL da imagem destacada"
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
-#: src/includes/class-viglet-dumont-operations.php:208
+#: src/includes/class-viglet-dumont-operations.php:264
 msgid "Turing could not be searched for this site's documents."
 msgstr "Não foi possível buscar no Turing os documentos deste site."
 
 #. translators: %d: documents removed from Turing.
 #: src/includes/class-viglet-dumont-events.php:141
-#, php-format
+#: assets/admin/health.js:147
+#, php-format,js-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
-#: src/includes/class-viglet-dumont-operations.php:263
+#: src/includes/class-viglet-dumont-operations.php:319
+#: src/includes/class-viglet-dumont-reindex.php:277
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -720,7 +724,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
-#: assets/admin/health.js:429
+#: assets/admin/health.js:598
 #: src/admin/js/editor-panel.js:288
 msgid "Failed"
 msgstr "Falhou"
@@ -768,135 +772,135 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:888
+#: src/viglet-dumont.php:969
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:913
+#: src/viglet-dumont.php:994
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
-#: assets/admin/health.js:26
+#: assets/admin/health.js:27
 msgid "Indexed"
 msgstr "Indexado"
 
-#: assets/admin/health.js:27
+#: assets/admin/health.js:28
 msgid "Removed"
 msgstr "Removido"
 
-#: assets/admin/health.js:28
+#: assets/admin/health.js:29
 msgid "Fields sent"
 msgstr "Campos enviados"
 
-#: assets/admin/health.js:29
+#: assets/admin/health.js:30
 msgid "Sweep"
 msgstr "Limpeza"
 
-#: assets/admin/health.js:40
+#: assets/admin/health.js:180
 msgid "never"
 msgstr "nunca"
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:208
+#: assets/admin/health.js:367
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr "Site SN %1$s, chave do site %2$s."
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:220
+#: assets/admin/health.js:379
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:247
+#: assets/admin/health.js:406
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:254
+#: assets/admin/health.js:413
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:260
+#: assets/admin/health.js:419
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:266
+#: assets/admin/health.js:425
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:281
+#: assets/admin/health.js:440
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:291
+#: assets/admin/health.js:450
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:308
+#: assets/admin/health.js:477
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:314
+#: assets/admin/health.js:483
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:326
+#: assets/admin/health.js:495
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:334
+#: assets/admin/health.js:503
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:348
+#: assets/admin/health.js:517
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:357
+#: assets/admin/health.js:526
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:370
+#: assets/admin/health.js:539
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:380
+#: assets/admin/health.js:549
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:390
+#: assets/admin/health.js:559
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:398
+#: assets/admin/health.js:567
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:401
+#: assets/admin/health.js:570
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:404
+#: assets/admin/health.js:573
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:407
+#: assets/admin/health.js:576
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:425
+#: assets/admin/health.js:594
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:443
+#: assets/admin/health.js:612
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
@@ -1011,86 +1015,86 @@ msgid "Turing"
 msgstr "Turing"
 
 #: assets/admin/setup.js:28
-#: assets/admin/setup.js:172
+#: assets/admin/setup.js:228
 msgid "API key"
 msgstr "Chave de API"
 
 #: assets/admin/setup.js:29
-#: assets/admin/setup.js:192
+#: assets/admin/setup.js:248
 msgid "SN site"
 msgstr "Site SN"
 
-#: assets/admin/setup.js:97
+#: assets/admin/setup.js:98
 msgid "Starting…"
 msgstr "Iniciando…"
 
-#: assets/admin/setup.js:143
+#: assets/admin/setup.js:199
 msgid "1. Connection"
 msgstr "1. Conexão"
 
 #. translators: %s: the constants or environment variables, comma-separated.
-#: assets/admin/setup.js:150
+#: assets/admin/setup.js:206
 #, js-format
 msgid "Set outside WordPress, read-only here: %s."
 msgstr "Definido fora do WordPress, somente leitura aqui: %s."
 
-#: assets/admin/setup.js:160
+#: assets/admin/setup.js:216
 msgid "Turing URL"
 msgstr "URL do Turing"
 
-#: assets/admin/setup.js:161
+#: assets/admin/setup.js:217
 msgid "The address of your Turing, e.g. https://search.example.org."
 msgstr "O endereço do seu Turing, ex.: https://busca.exemplo.org."
 
-#: assets/admin/setup.js:175
+#: assets/admin/setup.js:231
 msgid "A key is stored. Leave this empty to keep it."
 msgstr "Há uma chave salva. Deixe em branco para mantê-la."
 
-#: assets/admin/setup.js:179
+#: assets/admin/setup.js:235
 msgid "Create one in Turing under API Tokens."
 msgstr "Crie uma no Turing em API Tokens."
 
-#: assets/admin/setup.js:193
+#: assets/admin/setup.js:249
 msgid "The Semantic Navigation site this WordPress publishes to and searches."
 msgstr "O site de Semantic Navigation em que este WordPress publica e busca."
 
-#: assets/admin/setup.js:204
+#: assets/admin/setup.js:260
 msgid "The language the content is indexed in, e.g. pt_BR or en_US."
 msgstr "O idioma em que o conteúdo é indexado, ex.: pt_BR ou en_US."
 
-#: assets/admin/setup.js:214
+#: assets/admin/setup.js:270
 msgid "Site key"
 msgstr "Chave do site"
 
 #. translators: %s: the key derived from this site's address.
-#: assets/admin/setup.js:217
+#: assets/admin/setup.js:273
 #, js-format
 msgid "Keeps this site's documents apart when several sites share one SN site. Empty uses %s."
 msgstr "Separa os documentos deste site quando vários sites compartilham um site SN. Vazio usa %s."
 
-#: assets/admin/setup.js:233
+#: assets/admin/setup.js:289
 msgid "Save and test the connection"
 msgstr "Salvar e testar a conexão"
 
-#: assets/admin/setup.js:244
+#: assets/admin/setup.js:300
 msgid "2. Test"
 msgstr "2. Teste"
 
 #. translators: %s: the SN site's name.
-#: assets/admin/setup.js:257
+#: assets/admin/setup.js:313
 #, js-format
 msgid "Create the SN site %s"
 msgstr "Criar o site SN %s"
 
-#: assets/admin/setup.js:273
+#: assets/admin/setup.js:329
 msgid "3. First index"
 msgstr "3. Primeira indexação"
 
-#: assets/admin/setup.js:278
+#: assets/admin/setup.js:334
 msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
 msgstr "Envia agora todos os posts publicados dos tipos indexados. Depois disso, posts novos e editados são enviados sozinhos."
 
-#: assets/admin/setup.js:289
+#: assets/admin/setup.js:345
 msgid "Index everything now"
 msgstr "Indexar tudo agora"
 
@@ -1369,52 +1373,52 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:98
+#: src/viglet-dumont.php:99
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:99
+#: src/viglet-dumont.php:100
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:101
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: assets/admin/health.js:65
+#: assets/admin/health.js:205
 msgid "AI features"
 msgstr "Recursos de IA"
 
-#: assets/admin/health.js:69
+#: assets/admin/health.js:209
 msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
 msgstr "Quais recursos generativos do Turing este site pode usar. Os blocos que dependem de um ficam ocultos enquanto ele estiver desligado."
 
-#: assets/admin/health.js:84
+#: assets/admin/health.js:224
 msgid "Feature"
 msgstr "Recurso"
 
-#: assets/admin/health.js:87
+#: assets/admin/health.js:227
 msgid "State"
 msgstr "Estado"
 
-#: assets/admin/health.js:93
+#: assets/admin/health.js:233
 msgid "Why"
 msgstr "Por quê"
 
-#: assets/admin/health.js:103
+#: assets/admin/health.js:243
 msgid "On"
 msgstr "Ligado"
 
-#: assets/admin/health.js:104
+#: assets/admin/health.js:244
 msgid "Off"
 msgstr "Desligado"
 
-#: assets/admin/health.js:128
+#: assets/admin/health.js:268
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr "Verificar de novo"
 
-#: assets/admin/health.js:129
+#: assets/admin/health.js:269
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
@@ -2241,7 +2245,7 @@ msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/viglet-dumont.php:122
+#: src/viglet-dumont.php:123
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2636,19 +2640,19 @@ msgctxt "block keyword"
 msgid "question"
 msgstr "pergunta"
 
-#: src/viglet-dumont.php:105
+#: src/viglet-dumont.php:106
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr "Bloco de busca do Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
 
-#: src/viglet-dumont.php:106
+#: src/viglet-dumont.php:107
 msgid "Site assistant block, or its launcher on every page"
 msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 
-#: src/viglet-dumont.php:107
+#: src/viglet-dumont.php:108
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
-#: assets/admin/health.js:90
+#: assets/admin/health.js:230
 msgid "Shown by"
 msgstr "Aparece em"
 
@@ -3024,7 +3028,7 @@ msgid "Preview"
 msgstr "Pré-visualização"
 
 #. translators: %d: how many documents another source sent under this site key.
-#: assets/admin/health.js:232
+#: assets/admin/health.js:391
 #, js-format
 msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
 msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
@@ -3075,11 +3079,11 @@ msgstr "Manter %s no plano"
 msgid "Unavailable"
 msgstr "Indisponível"
 
-#: src/viglet-dumont.php:101
+#: src/viglet-dumont.php:102
 msgid "Copilot"
 msgstr "Copiloto"
 
-#: src/viglet-dumont.php:108
+#: src/viglet-dumont.php:109
 msgid "Ask this site block"
 msgstr "Bloco Pergunte a este site"
 
@@ -3195,15 +3199,144 @@ msgstr[0] "%d edição não chegou à busca: o Turing não respondeu e ela parou
 msgstr[1] "%d edições não chegaram à busca: o Turing não respondeu e elas pararam de tentar. Elas são reenviadas sozinhas assim que o Turing responder."
 
 #. translators: %d: queued edits that had stopped retrying and were sent again.
-#: src/includes/class-viglet-dumont-events.php:145
+#: src/includes/class-viglet-dumont-events.php:153
 #, php-format
 msgid "Turing answered again: %d stopped edits put back in the queue."
 msgstr "O Turing voltou a responder: %d edições paradas voltaram para a fila."
 
-#: assets/admin/health.js:30
+#: assets/admin/health.js:31
 msgid "Replayed"
 msgstr "Reenviado"
 
 #: src/includes/class-viglet-dumont-post-state.php:498
 msgid "Turing did not take the post."
 msgstr "O Turing não aceitou o post."
+
+#. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:321
+#, php-format
+msgid "Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed."
+msgstr "Rodando em segundo plano, então você pode sair desta página: %1$d de %2$d posts feitos, %3$d com falha."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:323
+#, php-format
+msgid "Indexing complete: %1$d posts sent."
+msgstr "Indexação concluída: %1$d posts enviados."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:325
+#, php-format
+msgid "The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr "A reindexação terminou com falhas: %1$d enviados, %2$d com falha. A Saúde da busca mostra os erros."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:327
+#, php-format
+msgid "The reindex was cancelled after %1$d posts sent."
+msgstr "A reindexação foi cancelada depois de %1$d posts enviados."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-events.php:145
+#, php-format
+msgid "Reindex finished: %1$d sent, %2$d failed."
+msgstr "Reindexação concluída: %1$d enviados, %2$d com falha."
+
+#. translators: 1: posts done, 2: posts the reindex had to do.
+#: src/includes/class-viglet-dumont-events.php:149
+#, php-format
+msgid "Reindex cancelled after %1$d of %2$d posts."
+msgstr "Reindexação cancelada depois de %1$d de %2$d posts."
+
+#: src/includes/class-viglet-dumont-reindex.php:101
+msgid "A reindex is already running."
+msgstr "Uma reindexação já está rodando."
+
+#. translators: %s: the post type asked for.
+#: src/includes/class-viglet-dumont-reindex.php:107
+#, php-format
+msgid "Posts of type %s are not indexed."
+msgstr "Posts do tipo %s não são indexados."
+
+#: src/viglet-dumont.php:817
+msgid "Name the content to index: post_type is all, or one post type."
+msgstr "Diga o que indexar: post_type é all, ou um tipo de post."
+
+#: assets/admin/health.js:32
+#: assets/admin/health.js:65
+msgid "Reindex"
+msgstr "Reindexação"
+
+#: assets/admin/health.js:36
+msgid "Done"
+msgstr "Concluída"
+
+#: assets/admin/health.js:37
+msgid "Ended with failures"
+msgstr "Terminou com falhas"
+
+#: assets/admin/health.js:38
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#: assets/admin/health.js:42
+msgid "Sending the posts."
+msgstr "Enviando os posts."
+
+#: assets/admin/health.js:43
+msgid "Sending the PDFs."
+msgstr "Enviando os PDFs."
+
+#: assets/admin/health.js:44
+msgid "Removing what WordPress no longer publishes."
+msgstr "Removendo o que o WordPress não publica mais."
+
+#. translators: 1: when it started, 2: posts done, 3: posts to do in all, 4: posts that failed.
+#: assets/admin/health.js:86
+#, js-format
+msgid "Running since %1$s: %2$d of %3$d posts done, %4$d failed."
+msgstr "Rodando desde %1$s: %2$d de %3$d posts feitos, %4$d com falha."
+
+#. translators: 1: why the batch failed, 2: when it is tried again.
+#: assets/admin/health.js:101
+#, js-format
+msgid "A batch failed (%1$s). It is tried again at %2$s."
+msgstr "Um lote falhou (%1$s). Ele é tentado de novo em %2$s."
+
+#: assets/admin/health.js:112
+msgid "Nothing has moved for a while: WP-Cron is not running. It runs when someone visits the site; with DISABLE_WP_CRON, the server’s own cron has to call it."
+msgstr "Nada avança há um tempo: o WP-Cron não está rodando. Ele roda quando alguém visita o site; com DISABLE_WP_CRON, o cron do próprio servidor precisa chamá-lo."
+
+#: assets/admin/health.js:125
+msgid "Cancel reindex"
+msgstr "Cancelar reindexação"
+
+#. translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do.
+#: assets/admin/health.js:133
+#, js-format
+msgid "Last reindex: %1$s, %2$s. %3$d sent, %4$d failed, of %5$d posts."
+msgstr "Última reindexação: %1$s, %2$s. %3$d enviados, %4$d com falha, de %5$d posts."
+
+#: assets/admin/health.js:161
+msgid "No reindex has run from wp-admin yet. Index All under Settings › Actions starts one."
+msgstr "Nenhuma reindexação rodou pelo wp-admin ainda. Indexar tudo, em Configurações › Ações, inicia uma."
+
+#: assets/admin/health.js:470
+msgid "Reindex cancelled."
+msgstr "Reindexação cancelada."
+
+#. translators: 1: posts done, 2: posts to do in all.
+#: assets/admin/setup.js:111
+#, js-format
+msgid "Indexing in the background, so you can leave this page: %1$d of %2$d posts done."
+msgstr "Indexando em segundo plano, então você pode sair desta página: %1$d de %2$d posts feitos."
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: assets/admin/setup.js:141
+#, js-format
+msgid "The first index ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr "A primeira indexação terminou com falhas: %1$d enviados, %2$d com falha. A Saúde da busca mostra os erros."
+
+#: assets/admin/health.js:77
+msgid "Reindex progress"
+msgstr "Progresso da reindexação"
