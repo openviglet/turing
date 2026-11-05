@@ -157,9 +157,14 @@ class Viglet_Dumont_Operations {
 		$published = array_flip( $this->find_post_ids() );
 		$prefix    = $this->indexer->site_key() . ':post:';
 		$orphans   = array();
+		$pdf       = new Viglet_Dumont_Pdf( $this->settings );
 
 		foreach ( $held as $doc_id ) {
 			$post_id = str_starts_with( $doc_id, $prefix ) ? substr( $doc_id, strlen( $prefix ) ) : '';
+			// A PDF in search (D309) is an attachment, never among the published posts.
+			if ( ctype_digit( $post_id ) && $pdf->indexable( get_post( (int) $post_id ) ) ) {
+				continue;
+			}
 			if ( ! ctype_digit( $post_id ) || ! isset( $published[ (int) $post_id ] ) ) {
 				$orphans[] = $doc_id;
 				continue;
@@ -227,6 +232,12 @@ class Viglet_Dumont_Operations {
 	public function reindex( ?callable $progress = null ): array {
 		$this->indexer->provision( true );
 		$result = $this->index( $this->find_post_ids(), $progress );
+		// The PDFs of the posts in search (D309), once their parents are there.
+		$pdfs = ( new Viglet_Dumont_Pdf( $this->settings ) )->index_all();
+		if ( ! $pdfs['success'] ) {
+			++$result['failed'];
+			$result['errors'][] = $pdfs['message'];
+		}
 
 		// A failed index would read as orphans every post it did not reach; sweep only after a clean run.
 		$sweep = $result['failed'] > 0

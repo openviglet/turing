@@ -47,6 +47,8 @@ class Viglet_Dumont_Settings {
 		'index_pages'         => 1,
 		'index_custom_types'  => array(),
 		'index_comments'      => 0,
+		// Opt-in (D309): PDF attachments of the posts in search, as documents of their own.
+		'index_pdfs'          => 0,
 		'index_custom_fields' => '',
 		'index_categories'    => 1,
 		'index_tags'          => 1,

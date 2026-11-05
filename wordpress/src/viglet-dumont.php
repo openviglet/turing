@@ -30,6 +30,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-pdf.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-native-search.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search-block.php';
@@ -167,6 +168,13 @@ function viglet_dumont_init(): void {
 	}
 	if ( $settings['auto_deindex'] ) {
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
+	}
+	// PDFs attached to the posts in search (D309): sent when uploaded or edited, gone when deleted.
+	if ( ! empty( $settings['index_pdfs'] ) ) {
+		$viglet_dumont_pdf = new Viglet_Dumont_Pdf( $settings );
+		add_action( 'add_attachment', array( $viglet_dumont_pdf, 'sync' ) );
+		add_action( 'edit_attachment', array( $viglet_dumont_pdf, 'sync' ) );
+		add_action( 'delete_attachment', array( $viglet_dumont_pdf, 'remove' ) );
 	}
 	// A product whose stock changed from an order, which saves no post (D173).
 	Viglet_Dumont_WooCommerce::register();

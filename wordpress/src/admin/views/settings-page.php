@@ -256,6 +256,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-dumont-toggle__slider"></span>
 								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'Comments', 'viglet-turing-search' ); ?></span>
 							</label>
+
+							<?php
+							// D309: the PDFs attached to the posts in search, their text read by Turing.
+							?>
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[index_pdfs]"
+										value="1" <?php checked( $settings['index_pdfs'], 1 ); ?> />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label"><?php esc_html_e( 'PDF files attached to them', 'viglet-turing-search' ); ?></span>
+							</label>
 						</div>
 
 						<hr class="viglet-dumont-separator" />

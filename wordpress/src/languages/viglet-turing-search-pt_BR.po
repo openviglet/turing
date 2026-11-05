@@ -116,7 +116,7 @@ msgid "Source App Identifier"
 msgstr "Identificador da aplicação de origem"
 
 #: src/admin/views/settings-page.php:187
-#: src/admin/views/settings-page.php:555
+#: src/admin/views/settings-page.php:566
 msgid "Test Connection"
 msgstr "Testar conexão"
 
@@ -156,161 +156,161 @@ msgstr "Tags"
 msgid "Comments"
 msgstr "Comentários"
 
-#: src/admin/views/settings-page.php:263
+#: src/admin/views/settings-page.php:274
 msgid "Advanced"
 msgstr "Avançado"
 
-#: src/admin/views/settings-page.php:266
+#: src/admin/views/settings-page.php:277
 msgid "Custom Fields"
 msgstr "Campos personalizados"
 
-#: src/admin/views/settings-page.php:272
+#: src/admin/views/settings-page.php:283
 msgid "Comma-separated list of custom field names to include in the index."
 msgstr "Lista, separada por vírgulas, dos campos personalizados a incluir no índice."
 
-#: src/admin/views/settings-page.php:276
+#: src/admin/views/settings-page.php:287
 msgid "Exclude Posts/Pages"
 msgstr "Excluir posts/páginas"
 
-#: src/admin/views/settings-page.php:282
+#: src/admin/views/settings-page.php:293
 msgid "Comma-separated list of post/page IDs to exclude from indexing."
 msgstr "Lista, separada por vírgulas, dos IDs de posts/páginas que ficam fora da indexação."
 
-#: src/admin/views/settings-page.php:287
+#: src/admin/views/settings-page.php:298
 msgid "Batch Size"
 msgstr "Tamanho do lote"
 
-#: src/admin/views/settings-page.php:292
+#: src/admin/views/settings-page.php:303
 msgid "Number of documents to send per batch (10-200)."
 msgstr "Quantidade de documentos enviados por lote (10 a 200)."
 
-#: src/admin/views/settings-page.php:298
+#: src/admin/views/settings-page.php:309
 msgid "Automation"
 msgstr "Automação"
 
-#: src/admin/views/settings-page.php:306
+#: src/admin/views/settings-page.php:317
 msgid "Auto-index on publish"
 msgstr "Indexar ao publicar"
 
-#: src/admin/views/settings-page.php:307
+#: src/admin/views/settings-page.php:318
 msgid "Automatically index content when published or updated."
 msgstr "Indexa o conteúdo automaticamente ao publicar ou atualizar."
 
-#: src/admin/views/settings-page.php:317
+#: src/admin/views/settings-page.php:328
 msgid "Auto-remove on delete/unpublish"
 msgstr "Remover ao excluir ou despublicar"
 
-#: src/admin/views/settings-page.php:318
+#: src/admin/views/settings-page.php:329
 msgid "Automatically remove content from the index when trashed or unpublished."
 msgstr "Remove o conteúdo do índice automaticamente ao ir para a lixeira ou ser despublicado."
 
-#: src/admin/views/settings-page.php:330
+#: src/admin/views/settings-page.php:341
 msgid "Search Settings"
 msgstr "Configurações de busca"
 
-#: src/admin/views/settings-page.php:331
+#: src/admin/views/settings-page.php:342
 msgid "Configure how Turing search replaces the default WordPress search."
 msgstr "Configure como a busca do Turing substitui a busca padrão do WordPress."
 
-#: src/admin/views/settings-page.php:341
+#: src/admin/views/settings-page.php:352
 msgid "Replace WordPress search with Turing"
 msgstr "Substituir a busca do WordPress pelo Turing"
 
-#: src/admin/views/settings-page.php:342
+#: src/admin/views/settings-page.php:353
 msgid "When enabled, all search queries will be handled by the Turing search engine."
 msgstr "Quando ativado, todas as buscas são atendidas pelo Turing."
 
-#: src/admin/views/settings-page.php:348
+#: src/admin/views/settings-page.php:359
 msgid "Results page"
 msgstr "Página de resultados"
 
-#: src/admin/views/settings-page.php:350
+#: src/admin/views/settings-page.php:361
 msgid "The theme's own search page (block and classic themes)"
 msgstr "A página de busca do próprio tema (temas de blocos e clássicos)"
 
-#: src/admin/views/settings-page.php:351
+#: src/admin/views/settings-page.php:362
 msgid "The plugin's results page, with facets (classic themes)"
 msgstr "A página de resultados do plugin, com facetas (temas clássicos)"
 
-#: src/admin/views/settings-page.php:353
+#: src/admin/views/settings-page.php:364
 msgid "With the theme's page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead."
 msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra com o seu próprio cabeçalho, rodapé e estilos. Se o Turing não responder, a busca do WordPress responde no lugar."
 
-#: src/admin/views/settings-page.php:359
+#: src/admin/views/settings-page.php:370
 msgid "Results Per Page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:533
+#: src/admin/views/settings-page.php:544
 msgid "Save Settings"
 msgstr "Salvar configurações"
 
-#: src/admin/views/settings-page.php:541
+#: src/admin/views/settings-page.php:552
 msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
-#: src/admin/views/settings-page.php:542
+#: src/admin/views/settings-page.php:553
 msgid "Manage your Turing search index."
 msgstr "Gerencie o seu índice de busca no Turing."
 
-#: src/admin/views/settings-page.php:550
+#: src/admin/views/settings-page.php:561
 msgid "Connection Status"
 msgstr "Status da conexão"
 
-#: src/admin/views/settings-page.php:551
+#: src/admin/views/settings-page.php:562
 msgid "Test the connection to your Turing server."
 msgstr "Teste a conexão com o seu servidor Turing."
 
-#: src/admin/views/settings-page.php:567
+#: src/admin/views/settings-page.php:578
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
-#: src/admin/views/settings-page.php:568
+#: src/admin/views/settings-page.php:579
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
 
-#: src/admin/views/settings-page.php:573
+#: src/admin/views/settings-page.php:584
 msgid "All Content"
 msgstr "Todo o conteúdo"
 
-#: src/admin/views/settings-page.php:574
+#: src/admin/views/settings-page.php:585
 msgid "Posts Only"
 msgstr "Só posts"
 
-#: src/admin/views/settings-page.php:575
+#: src/admin/views/settings-page.php:586
 msgid "Pages Only"
 msgstr "Só páginas"
 
-#: src/admin/views/settings-page.php:579
+#: src/admin/views/settings-page.php:590
 msgid "Start Indexing"
 msgstr "Iniciar indexação"
 
-#: src/admin/views/settings-page.php:598
+#: src/admin/views/settings-page.php:609
 msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
-#: src/admin/views/settings-page.php:599
+#: src/admin/views/settings-page.php:610
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
-#: src/admin/views/settings-page.php:603
+#: src/admin/views/settings-page.php:614
 msgid "Delete All"
 msgstr "Excluir tudo"
 
-#: src/admin/views/settings-page.php:614
+#: src/admin/views/settings-page.php:625
 msgid "Content Overview"
 msgstr "Visão geral do conteúdo"
 
-#: src/admin/views/settings-page.php:618
+#: src/admin/views/settings-page.php:629
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:122
+#: src/blocks/search/render.php:125
 #: src/includes/class-viglet-dumont-native-search.php:243
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:127
+#: src/blocks/search/render.php:130
 #: src/includes/class-viglet-dumont-native-search.php:244
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -338,7 +338,7 @@ msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:69
+#: src/blocks/search/render.php:72
 msgid "Filters"
 msgstr "Filtros"
 
@@ -378,39 +378,39 @@ msgstr "Saúde da busca"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:271
+#: src/includes/class-viglet-dumont-admin.php:272
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:272
+#: src/includes/class-viglet-dumont-admin.php:273
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:273
+#: src/includes/class-viglet-dumont-admin.php:274
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:274
+#: src/includes/class-viglet-dumont-admin.php:275
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:275
+#: src/includes/class-viglet-dumont-admin.php:276
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:276
+#: src/includes/class-viglet-dumont-admin.php:277
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:277
+#: src/includes/class-viglet-dumont-admin.php:278
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:278
+#: src/includes/class-viglet-dumont-admin.php:279
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:296
+#: src/includes/class-viglet-dumont-admin.php:297
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -451,7 +451,7 @@ msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:266
+#: src/includes/class-viglet-dumont-api-client.php:344
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
@@ -467,12 +467,12 @@ msgid "Deindex failed with HTTP %d"
 msgstr "A remoção falhou com HTTP %d"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:335
+#: src/includes/class-viglet-dumont-api-client.php:413
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr "A busca falhou com HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:343
+#: src/includes/class-viglet-dumont-api-client.php:421
 msgid "Invalid JSON response from server"
 msgstr "Resposta JSON inválida do servidor"
 
@@ -695,7 +695,7 @@ msgstr "URL da imagem destacada"
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
-#: src/includes/class-viglet-dumont-operations.php:188
+#: src/includes/class-viglet-dumont-operations.php:193
 msgid "Turing could not be searched for this site's documents."
 msgstr "Não foi possível buscar no Turing os documentos deste site."
 
@@ -705,7 +705,7 @@ msgstr "Não foi possível buscar no Turing os documentos deste site."
 msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
-#: src/includes/class-viglet-dumont-operations.php:236
+#: src/includes/class-viglet-dumont-operations.php:247
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -767,11 +767,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:873
+#: src/viglet-dumont.php:881
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:898
+#: src/viglet-dumont.php:906
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -922,7 +922,7 @@ msgstr "Origem"
 msgid "Turing field"
 msgstr "Campo no Turing"
 
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:105
 #: assets/admin/mapping.js:289
 #: assets/admin/mapping.js:538
 msgid "Type"
@@ -1157,7 +1157,7 @@ msgstr "facetas"
 msgid "Suggestions"
 msgstr "Sugestões"
 
-#: src/admin/views/settings-page.php:571
+#: src/admin/views/settings-page.php:582
 msgid "Content to index"
 msgstr "Conteúdo a indexar"
 
@@ -1182,18 +1182,18 @@ msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:71
+#: src/blocks/search/render.php:74
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:73
+#: src/blocks/search/render.php:76
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:74
+#: src/blocks/search/render.php:77
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
@@ -1225,23 +1225,23 @@ msgstr "Deixar o visitante ordenar (relevância, mais recentes, mais antigos)"
 msgid "Results per page"
 msgstr "Resultados por página"
 
-#: src/admin/views/settings-page.php:375
+#: src/admin/views/settings-page.php:386
 msgid "Instant search from anywhere"
 msgstr "Busca instantânea de qualquer página"
 
-#: src/admin/views/settings-page.php:376
+#: src/admin/views/settings-page.php:387
 msgid "Ctrl+K (⌘K on a Mac) and the theme's own search box open a search that answers as the visitor types."
 msgstr "Ctrl+K (⌘K no Mac) e a caixa de busca do próprio tema abrem uma busca que responde enquanto o visitante digita."
 
-#: src/admin/views/settings-page.php:382
+#: src/admin/views/settings-page.php:393
 msgid "Full search page"
 msgstr "Página de busca completa"
 
-#: src/admin/views/settings-page.php:389
+#: src/admin/views/settings-page.php:400
 msgid "Automatic: the page with the Turing search block"
 msgstr "Automática: a página com o bloco de busca do Turing"
 
-#: src/admin/views/settings-page.php:394
+#: src/admin/views/settings-page.php:405
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
@@ -1337,17 +1337,17 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:798
+#: src/includes/class-viglet-dumont-api-client.php:876
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:776
-#: src/includes/class-viglet-dumont-api-client.php:858
+#: src/includes/class-viglet-dumont-api-client.php:854
+#: src/includes/class-viglet-dumont-api-client.php:936
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:775
-#: src/includes/class-viglet-dumont-api-client.php:863
+#: src/includes/class-viglet-dumont-api-client.php:853
+#: src/includes/class-viglet-dumont-api-client.php:941
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1367,19 +1367,19 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-dumont.php:97
+#: src/viglet-dumont.php:98
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-dumont.php:98
+#: src/viglet-dumont.php:99
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-dumont.php:99
+#: src/viglet-dumont.php:100
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:101
 msgid "Catalog copilot"
 msgstr "Copiloto de catálogo"
 
@@ -1457,7 +1457,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:667
+#: src/includes/class-viglet-dumont-api-client.php:745
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -1685,43 +1685,43 @@ msgstr "Agora"
 msgid "Promote for a search…"
 msgstr "Destacar para uma busca…"
 
-#: src/admin/views/settings-page.php:412
+#: src/admin/views/settings-page.php:423
 msgid "Search Analytics"
 msgstr "Análise de buscas"
 
-#: src/admin/views/settings-page.php:413
+#: src/admin/views/settings-page.php:424
 msgid "What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics."
 msgstr "O que o bloco de busca e a busca instantânea informam sobre as buscas dos visitantes. Os eventos levam a consulta, o resultado e a posição dele, nunca quem é o visitante. Com um plugin de consentimento compatível com a WP Consent API, nada é enviado até o visitante permitir estatísticas."
 
-#: src/admin/views/settings-page.php:423
+#: src/admin/views/settings-page.php:434
 msgid "Report result clicks to Turing"
 msgstr "Informar ao Turing os cliques em resultados"
 
-#: src/admin/views/settings-page.php:424
+#: src/admin/views/settings-page.php:435
 msgid "Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on."
 msgstr "O Turing conta qual resultado foi aberto em cada busca, para as taxas de cliques. O Turing só os registra com as métricas de busca ligadas."
 
-#: src/admin/views/settings-page.php:433
+#: src/admin/views/settings-page.php:444
 msgid "Send search events to Google Analytics"
 msgstr "Enviar eventos de busca ao Google Analytics"
 
-#: src/admin/views/settings-page.php:434
+#: src/admin/views/settings-page.php:445
 msgid "Searches, searches with no results, refined searches and result clicks, through the Google tag or Tag Manager the site already loads."
 msgstr "Buscas, buscas sem resultados, buscas refinadas e cliques em resultados, pela tag do Google ou pelo Tag Manager que o site já carrega."
 
-#: src/admin/views/settings-page.php:440
+#: src/admin/views/settings-page.php:451
 msgid "Measurement ID"
 msgstr "ID de métricas"
 
-#: src/admin/views/settings-page.php:445
+#: src/admin/views/settings-page.php:456
 msgid "Optional. Leave it empty to send to whatever the Google tag is set up for."
 msgstr "Opcional. Deixe vazio para enviar ao destino configurado na tag do Google."
 
-#: src/admin/views/settings-page.php:452
+#: src/admin/views/settings-page.php:463
 msgid "Related Content"
 msgstr "Conteúdo relacionado"
 
-#: src/admin/views/settings-page.php:453
+#: src/admin/views/settings-page.php:464
 msgid "The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
 msgstr "Os posts que o Turing acha mais parecidos com o que está sendo lido. Adicione o bloco Conteúdo relacionado em qualquer lugar, ou faça-o seguir o conteúdo destes tipos de post:"
 
@@ -1802,8 +1802,8 @@ msgid "similar"
 msgstr "semelhante"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:63
-#: src/blocks/search/render.php:65
+#: src/blocks/search/render.php:66
+#: src/blocks/search/render.php:68
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -1811,8 +1811,8 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:118
-#: src/blocks/search/render.php:120
+#: src/blocks/search/render.php:121
+#: src/blocks/search/render.php:123
 #: src/includes/class-viglet-dumont-native-search.php:239
 #: src/includes/class-viglet-dumont-native-search.php:241
 #: src/includes/class-viglet-dumont-native-search.php:631
@@ -1967,7 +1967,7 @@ msgstr "Filtrar pelo que você pediu:"
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:103
+#: src/blocks/search/render.php:106
 msgid "Published"
 msgstr "Publicado"
 
@@ -2060,18 +2060,18 @@ msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:39
-#: src/blocks/search/render.php:93
+#: src/blocks/search/render.php:96
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
 #: src/blocks/copilot/render.php:45
-#: src/blocks/search/render.php:98
+#: src/blocks/search/render.php:101
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
 #: src/blocks/copilot/render.php:46
-#: src/blocks/search/render.php:99
+#: src/blocks/search/render.php:102
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
@@ -2242,19 +2242,19 @@ msgctxt "block keyword"
 msgid "shop"
 msgstr "loja"
 
-#: src/admin/views/settings-page.php:501
+#: src/admin/views/settings-page.php:512
 msgid "Generative AI"
 msgstr "IA generativa"
 
-#: src/admin/views/settings-page.php:502
+#: src/admin/views/settings-page.php:513
 msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
 msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de IA Padrão do Turing. Cada resposta é uma chamada a um LLM cobrada de quem opera o provedor de IA do Turing."
 
-#: src/admin/views/settings-page.php:512
+#: src/admin/views/settings-page.php:523
 msgid "Turn on generative AI for this site in Turing"
 msgstr "Ativar a IA generativa deste site no Turing"
 
-#: src/viglet-dumont.php:121
+#: src/viglet-dumont.php:122
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2372,7 +2372,7 @@ msgstr "Comparar"
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:44
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:95
+#: src/blocks/search/render.php:98
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
@@ -2380,7 +2380,7 @@ msgstr "Comparar %d produtos"
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:42
 #: src/blocks/related/render.php:117
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:100
 #, php-format
 msgid "Compare %s"
 msgstr "Comparar %s"
@@ -2454,27 +2454,27 @@ msgstr "Mostrar as buscas populares sob a caixa"
 msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
 msgstr "Até oito das palavras mais buscadas da semana, cada uma conferida para encontrar algo, antes que o visitante digite."
 
-#: src/admin/views/settings-page.php:478
+#: src/admin/views/settings-page.php:489
 msgid "Popular Searches"
 msgstr "Buscas populares"
 
-#: src/admin/views/settings-page.php:479
+#: src/admin/views/settings-page.php:490
 msgid "The chips a search block shows under its box when \"Show popular searches\" is on: this week's most searched words, each checked to find something."
 msgstr "Os chips que um bloco de busca mostra sob a caixa quando \"Mostrar as buscas populares\" está ativo: as palavras mais buscadas da semana, cada uma conferida para encontrar algo."
 
-#: src/admin/views/settings-page.php:483
+#: src/admin/views/settings-page.php:494
 msgid "Never show"
 msgstr "Nunca mostrar"
 
-#: src/admin/views/settings-page.php:487
+#: src/admin/views/settings-page.php:498
 msgid "One word or phrase per line. A search holding any of them never becomes a chip."
 msgstr "Uma palavra ou frase por linha. Uma busca que contenha alguma delas nunca vira chip."
 
-#: src/admin/views/settings-page.php:490
+#: src/admin/views/settings-page.php:501
 msgid "When there are none yet"
 msgstr "Enquanto não houver nenhuma"
 
-#: src/admin/views/settings-page.php:494
+#: src/admin/views/settings-page.php:505
 msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
 msgstr "Uma busca por linha, mostrada enquanto o site não tem buscas populares próprias. Cada uma ainda é conferida para encontrar algo."
 
@@ -2502,7 +2502,7 @@ msgstr "Caiu %s"
 msgid "Against the period before"
 msgstr "Em relação ao período anterior"
 
-#: src/admin/views/settings-page.php:513
+#: src/admin/views/settings-page.php:524
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Turing como está."
 
@@ -2556,11 +2556,11 @@ msgstr "Avaliar para o público"
 msgid "Judged by Turing against %s, from the saved post."
 msgstr "Avaliado pelo Turing para %s, a partir do post salvo."
 
-#: src/admin/views/settings-page.php:522
+#: src/admin/views/settings-page.php:533
 msgid "Site assistant on every page"
 msgstr "Assistente do site em todas as páginas"
 
-#: src/admin/views/settings-page.php:523
+#: src/admin/views/settings-page.php:534
 msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
 msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
 
@@ -2646,19 +2646,19 @@ msgctxt "block keyword"
 msgid "question"
 msgstr "pergunta"
 
-#: src/viglet-dumont.php:104
+#: src/viglet-dumont.php:105
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr "Bloco de busca do Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
 
-#: src/viglet-dumont.php:105
+#: src/viglet-dumont.php:106
 msgid "Site assistant block, or its launcher on every page"
 msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 
-#: src/viglet-dumont.php:106
+#: src/viglet-dumont.php:107
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
-#: src/viglet-dumont.php:107
+#: src/viglet-dumont.php:108
 msgid "Ask the catalog block"
 msgstr "Bloco Pergunte ao catálogo"
 
@@ -2754,7 +2754,7 @@ msgid "Undo"
 msgstr "Desfazer"
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:90
+#: src/blocks/search/render.php:93
 #, php-format
 msgid "Understood: %s"
 msgstr "Entendido: %s"
@@ -2768,7 +2768,7 @@ msgid "“Rain jacket under $400, blue” filters by colour and price at once, a
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:487
+#: src/includes/class-viglet-dumont-api-client.php:565
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
@@ -2778,7 +2778,7 @@ msgid "Search and the AI features work from the visitors' browsers; Search tunin
 msgstr "A busca e os recursos de IA funcionam pelos navegadores dos visitantes; Ajuste da busca e Insights de busca ficam ocultos."
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:452
+#: src/includes/class-viglet-dumont-api-client.php:530
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr "O modo demo (%s) está ligado: este site não guarda chave do Turing e nunca escreve nele, então nada é indexado, removido ou provisionado daqui."
@@ -2807,7 +2807,7 @@ msgstr "O site SN %s responde a buscas sem chave."
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
 
-#: src/blocks/search/render.php:124
+#: src/blocks/search/render.php:127
 msgid "Reading your search…"
 msgstr "Lendo sua busca…"
 
@@ -2841,45 +2841,45 @@ msgstr "Mostrando resultados próximos: nada correspondeu a todas as palavras bu
 msgid "Viglet Turing Search"
 msgstr "Viglet Turing Search"
 
-#: src/admin/views/settings-page.php:398
+#: src/admin/views/settings-page.php:409
 msgid "Results page on another site"
 msgstr "Página de resultados em outro site"
 
-#: src/admin/views/settings-page.php:404
+#: src/admin/views/settings-page.php:415
 msgid "For a site that indexes into a search another site shows: the instant search, a search block without results and the theme's search box all send the query there. This site's own search results are then no longer replaced. Empty keeps searches here."
 msgstr "Para um site que indexa numa busca exibida por outro site: a busca instantânea, um bloco de busca sem resultados e a caixa de busca do tema enviam a consulta para lá. Os resultados de busca deste site deixam de ser substituídos. Vazio mantém as buscas aqui."
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:663
+#: src/includes/class-viglet-dumont-api-client.php:741
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr "O Turing recusou aqui a chave de API deste site: %s"
 
-#: src/includes/class-viglet-dumont-api-client.php:765
+#: src/includes/class-viglet-dumont-api-client.php:843
 msgid "Generative AI is off for this SN site in Turing."
 msgstr "A IA generativa está desligada para este site SN no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:766
+#: src/includes/class-viglet-dumont-api-client.php:844
 msgid "The SN site has no AI agent in Turing."
 msgstr "O site SN não tem agente de IA no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:767
+#: src/includes/class-viglet-dumont-api-client.php:845
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr "O agente de IA do site SN está desligado no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:768
+#: src/includes/class-viglet-dumont-api-client.php:846
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr "O agente de IA do site SN não responde a partir do conteúdo do site."
 
-#: src/includes/class-viglet-dumont-api-client.php:769
+#: src/includes/class-viglet-dumont-api-client.php:847
 msgid "The SN site’s AI agent has no language model."
 msgstr "O agente de IA do site SN não tem modelo de linguagem."
 
-#: src/includes/class-viglet-dumont-api-client.php:770
+#: src/includes/class-viglet-dumont-api-client.php:848
 msgid "The SN site’s AI agent has no embedding model."
 msgstr "O agente de IA do site SN não tem modelo de embedding."
 
-#: src/includes/class-viglet-dumont-api-client.php:771
+#: src/includes/class-viglet-dumont-api-client.php:849
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
@@ -2978,3 +2978,15 @@ msgstr "Um post sai da busca quando esta data passa, e volta se ela for adiada."
 #: assets/admin/mapping.js:473
 msgid "Never"
 msgstr "Nunca"
+
+#: src/admin/views/settings-page.php:268
+msgid "PDF files attached to them"
+msgstr "Arquivos PDF anexados a eles"
+
+#: src/blocks/search/render.php:39
+msgid "PDF"
+msgstr "PDF"
+
+#: src/includes/class-viglet-dumont-api-client.php:169
+msgid "The files could not be packed for Turing."
+msgstr "Não foi possível empacotar os arquivos para o Turing."

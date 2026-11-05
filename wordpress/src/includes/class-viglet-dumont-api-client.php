@@ -152,6 +152,84 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * Import job items whose attributes name files (D309): a zip of `export.json` and the files,
+	 * to `/api/sn/import/zip`, where Turing reads each attribute valued `file://<name>` through
+	 * Tika and indexes the text in its place.
+	 *
+	 * @param array                 $job_items TurSNJobItem-compatible arrays.
+	 * @param array<string, string> $files     The name each attribute gives a file, to its local path.
+	 * @return array{success: bool, message: string, note: string|array, code: int, timed_out: bool}
+	 */
+	public function import_files( array $job_items, array $files ): array {
+		if ( Viglet_Dumont_Settings::demo() ) {
+			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
+		}
+		$zip = self::zip( array( 'snJobItems' => $job_items ), $files );
+		if ( null === $zip ) {
+			return $this->outcome( false, __( 'The files could not be packed for Turing.', 'viglet-turing-search' ), 0 );
+		}
+
+		$boundary = 'viglet-dumont-' . md5( $zip );
+		$body     = "--{$boundary}\r\n"
+			. "Content-Disposition: form-data; name=\"file\"; filename=\"import.zip\"\r\n"
+			. "Content-Type: application/zip\r\n\r\n"
+			. $zip . "\r\n--{$boundary}--\r\n";
+		$response = $this->request(
+			'POST',
+			'/api/sn/import/zip',
+			null,
+			null,
+			array(
+				'timeout' => max( 60, 10 * count( $job_items ) ),
+				'body'    => $body,
+				'headers' => array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary ),
+			)
+		);
+		if ( is_wp_error( $response ) ) {
+			$outcome              = $this->outcome( false, $response->get_error_message(), 0 );
+			$outcome['timed_out'] = self::timed_out( $response );
+			return $outcome;
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		// The zip endpoint answers whether it imported as its body: `false` is a refusal.
+		$ok = $code >= 200 && $code < 300 && 'false' !== trim( (string) wp_remote_retrieve_body( $response ) );
+
+		return $this->outcome(
+			$ok,
+			$ok ? Viglet_Dumont_Events::note( 'imported' ) : Viglet_Dumont_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
+			$code
+		);
+	}
+
+	/**
+	 * The bytes of a zip holding `export.json` and the files; null when none can be made.
+	 *
+	 * @param array                 $export The export, as JSON.
+	 * @param array<string, string> $files  Name in the zip to local path.
+	 */
+	public static function zip( array $export, array $files ): ?string {
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			return null;
+		}
+		$path    = wp_tempnam( 'viglet-dumont-import' );
+		$archive = new ZipArchive();
+		if ( true !== $archive->open( $path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+			return null;
+		}
+		$archive->addFromString( 'export.json', (string) wp_json_encode( $export ) );
+		foreach ( $files as $name => $file ) {
+			$archive->addFile( $file, $name );
+		}
+		$archive->close();
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- a local temp file.
+		$bytes = (string) file_get_contents( $path );
+		wp_delete_file( $path );
+
+		return '' !== $bytes ? $bytes : null;
+	}
+
+	/**
 	 * A write's result: whether it went through, its message now and as a note.
 	 *
 	 * @param bool         $ok   Whether it went through.

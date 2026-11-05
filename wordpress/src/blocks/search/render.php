@@ -35,6 +35,9 @@ foreach ( viglet_dumont_get_indexable_types() as $viglet_dumont_type ) {
 	}
 }
 
+// A PDF in search (D309) is no post type: its badge and facet value read "PDF".
+$viglet_dumont_types[ Viglet_Dumont_Pdf::TYPE ] = __( 'PDF', 'viglet-turing-search' );
+
 $viglet_dumont_price = Viglet_Dumont_Search_Block::price_field();
 
 $viglet_dumont_state = array(

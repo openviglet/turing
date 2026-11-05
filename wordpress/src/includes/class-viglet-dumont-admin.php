@@ -195,6 +195,7 @@ class Viglet_Dumont_Admin {
 		$sanitized['index_pages']         = ! empty( $input['index_pages'] ) ? 1 : 0;
 		$sanitized['index_custom_types']  = array_map( 'sanitize_text_field', $input['index_custom_types'] ?? array() );
 		$sanitized['index_comments']      = ! empty( $input['index_comments'] ) ? 1 : 0;
+		$sanitized['index_pdfs']          = ! empty( $input['index_pdfs'] ) ? 1 : 0;
 		$sanitized['index_custom_fields'] = sanitize_text_field( $input['index_custom_fields'] ?? '' );
 		$sanitized['index_categories']    = ! empty( $input['index_categories'] ) ? 1 : 0;
 		$sanitized['index_tags']          = ! empty( $input['index_tags'] ) ? 1 : 0;

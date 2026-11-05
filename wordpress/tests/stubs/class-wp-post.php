@@ -19,6 +19,7 @@ final class WP_Post {
 	public $post_name    = '';
 	public $menu_order   = 0;
 	public $post_parent  = 0;
+	public $post_mime_type = '';
 
 	public function __construct( array $fields = array() ) {
 		foreach ( $fields as $name => $value ) {
