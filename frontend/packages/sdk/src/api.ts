@@ -1883,6 +1883,17 @@ export interface FetchSimilarParams {
    * passes; a filtered request is answered by the lexical (MLT) query.
    */
   readonly fq?: readonly string[];
+  /** T1235 — filter queries every neighbour must match (`fq.and[]`). */
+  readonly fqAnd?: readonly string[];
+  /** T1235 — filter queries of which a neighbour must match one (`fq.or[]`). */
+  readonly fqOr?: readonly string[];
+  /** T1235 — how filters on different fields combine (`fq.op`). */
+  readonly fqOperator?: "AND" | "OR" | "NONE";
+  /**
+   * T1235 — how the values of one field combine (`fqi.op`): `"OR"` with
+   * `fq: ["site_key:a", "site_key:b"]` asks for neighbours from either site.
+   */
+  readonly fqItemOperator?: "AND" | "OR" | "NONE";
 }
 
 /**
@@ -1902,6 +1913,10 @@ export function fetchSimilar(
   if (params.locale) qs.append("_setlocale", params.locale);
   if (params.mode) qs.append("mode", params.mode);
   for (const fq of params.fq ?? []) qs.append("fq[]", fq);
+  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
+  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
+  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
+  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
   return client.get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`, {
     signal: options.signal,
   });

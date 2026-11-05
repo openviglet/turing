@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CP — Every endpoint honours a request's filters and partition
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2326,33 +2324,6 @@ engine shows and the shared seam that closes it for all of them.
 ## CLXXVI SDK errors that carry Turing's own answer
 
 ## CLXXVII Every endpoint honours a request's filters and partition
-
-### CLXXVII.1 The item operator on similar documents and duplicates (T1235)
-
-**Where it came from.** Dumont D303 (the WordPress plugin): a site that also searches
-its sibling sites on a shared SN site asks for Related posts across them, so `site_key`
-must match any of several values.
-
-**What happens.** `GET
-/api/sn/{site}/search/similar?id=...&fq[]=site_key:a&fq[]=site_key:b` returns 0. The
-endpoint binds `fq`, `fq.and`, `fq.or` and `fq.op` (T1132) but not `fqi.op`, so
-`TurSNFilterParams.itemOperator` stays null and the two values of one field are AND-ed.
-`fq.or[]` does not help: it joins facet groups, not the values inside one, which is the
-search's semantics too. `/search/duplicates` has the same omission. The engines already
-read `itemOperator` through the search's shared filter builders (Solr
-`prepareConstraints`, `TurLuceneQueryBuilder`, `TurElasticsearchFilterQueries`).
-
-**Workaround in Dumont.** With `sites: all` the Related block asks `similar` unfiltered
-and keyless for up to 50 rows and keeps the ids whose prefix is a key in scope.
-
-**What Turing should do.** Bind `fqi.op` into `itemOperator` on `/search/similar` and
-`/search/duplicates`. Add the optional `fqAnd`, `fqOr`, `fqOperator` and
-`fqItemOperator` to `FetchSimilarParams` in `@viglet/turing-sdk` (which sends only
-`fq[]`) and `@viglet/turing-react-sdk` (which sends no filter), additive only.
-
-**Done when:** `similar` and `duplicates` with
-`fq[]=site_key:a&fq[]=site_key:b&fqi.op=OR` return documents of both sites on Solr,
-Lucene and Elasticsearch, and an SDK test checks the query string carries `fqi.op`.
 
 ## CLXXVIII The model catalog at models.viglet.org
 

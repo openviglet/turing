@@ -891,6 +891,23 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertTrue(get("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("a") + "&_setlocale=" + LOCALE)
                     .body().contains(partitionProbeId("b")), "without a filter B is A's neighbour, or this "
                             + "test asserts nothing");
+            // T1235 — two values of one field: fqi.op=AND admits nothing (no document
+            // holds both), fqi.op=OR admits B. Without fqi.op the field's own facet
+            // setting decides, so both directions are pinned to prove it is read.
+            String bothValues = "&fq%5B%5D=" + RESERVED_FACET_FIELD + ":t1133-a"
+                    + "&fq%5B%5D=" + RESERVED_FACET_FIELD + ":t1133-b";
+            assertTrue(!get("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("a") + "&_setlocale="
+                    + LOCALE + bothValues + "&fqi.op=AND").body().contains(partitionProbeId("b")),
+                    "fqi.op=AND must AND the two values of one field");
+            HttpResponse<String> eitherValue = get("/sn/" + SITE + "/search/similar?id=" + partitionProbeId("a")
+                    + "&_setlocale=" + LOCALE + bothValues + "&fqi.op=OR");
+            assertEquals(200, eitherValue.statusCode(), eitherValue.body());
+            assertTrue(eitherValue.body().contains(partitionProbeId("b")),
+                    "fqi.op=OR must admit B, which holds one of the two values: " + eitherValue.body());
+            HttpResponse<String> duplicatesEither = get("/sn/" + SITE + "/search/duplicates?id="
+                    + partitionProbeId("a") + "&_setlocale=" + LOCALE + bothValues + "&fqi.op=OR");
+            assertEquals(200, duplicatesEither.statusCode(), "duplicates must bind fqi.op: "
+                    + duplicatesEither.body());
 
             assertEquals(404, getWithKey("/sn/" + SITE + "/search/document?id=" + partitionProbeId("b")
                     + "&_setlocale=" + LOCALE, keyA).statusCode(), "key A read B's document");

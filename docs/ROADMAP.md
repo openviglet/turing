@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CP — Every endpoint honours a request's filters and partition
-
-- 🛠 **T1235** (deps: —) **Similar documents and duplicates ignore fqi.op: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

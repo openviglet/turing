@@ -398,11 +398,15 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> fqAnd,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> fqOr,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
-                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator) {
-                // T1132 — the neighbours are narrowed with the search's filter semantics.
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqItemOperator) {
+                // T1132 — the neighbours are narrowed with the search's filter semantics;
+                // T1235 — fqi.op joins the values of one field, as on search.
                 com.viglet.turing.commons.sn.bean.TurSNFilterParams filters =
                                 com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
-                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator).build();
+                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator)
+                                                .itemOperator(fqItemOperator).build();
                 return ResponseEntity.ok(
                                 similarDocumentsService.findSimilar(siteName, id, rows, locale, mode, filters));
         }
@@ -456,12 +460,16 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_AND) List<String> fqAnd,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERIES_OR) List<String> fqOr,
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
-                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator) {
-                // T1132 — the cluster is narrowed with the search's filter semantics, and
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
+                                        defaultValue = "NONE") com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator fqItemOperator) {
+                // T1132 — the cluster is narrowed with the search's filter semantics
+                // (T1235: fqi.op included), and
                 // T1133 — a partitioned key clusters only its partition's documents.
                 com.viglet.turing.commons.sn.bean.TurSNFilterParams filters =
                                 com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
-                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator).build();
+                                                .defaultValues(fq).and(fqAnd).or(fqOr).operator(fqOperator)
+                                                .itemOperator(fqItemOperator).build();
                 return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
                                 locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
                                                 .orElse(null), filters));

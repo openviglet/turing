@@ -36,6 +36,26 @@ describe("similar documents with filters (T1132)", () => {
     }
   });
 
+  it("T1235 - sends the filter operators, fqi.op included", async () => {
+    const { get, client: c } = client();
+
+    await fetchSimilar(c, "shared", {
+      id: "post-7",
+      fq: ["site_key:a", "site_key:b"],
+      fqAnd: ["type:post"],
+      fqOr: ["lang:en"],
+      fqOperator: "AND",
+      fqItemOperator: "OR",
+    });
+
+    const url = new URL(get.mock.calls[0][0] as string, "https://turing.example");
+    expect(url.searchParams.getAll("fq[]")).toEqual(["site_key:a", "site_key:b"]);
+    expect(url.searchParams.getAll("fq.and[]")).toEqual(["type:post"]);
+    expect(url.searchParams.getAll("fq.or[]")).toEqual(["lang:en"]);
+    expect(url.searchParams.get("fq.op")).toBe("AND");
+    expect(url.searchParams.get("fqi.op")).toBe("OR");
+  });
+
   it("sends no filter when none is given", async () => {
     const { get, client: c } = client();
 

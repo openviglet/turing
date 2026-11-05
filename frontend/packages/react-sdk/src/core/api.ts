@@ -1649,6 +1649,12 @@ export function fetchSimilar(
   // T1140 — the server reads the locale as `_setlocale`, like search.
   if (params.locale) qs.append("_setlocale", params.locale);
   if (params.mode) qs.append("mode", params.mode);
+  // T1235 — the filters the vanilla SDK sends, spelled as the endpoint reads them.
+  for (const v of params.fq ?? []) qs.append("fq[]", v);
+  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
+  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
+  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
+  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
   return get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`);
 }
 
