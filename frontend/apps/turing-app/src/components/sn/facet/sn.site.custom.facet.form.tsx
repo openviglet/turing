@@ -81,6 +81,9 @@ import {
 
 const turSNSiteCustomFacetService = new TurSNSiteCustomFacetService();
 
+/** T1224 — the select's "no end field" choice; a Radix Select item cannot hold "". */
+const NO_END_FIELD = "__none__";
+
 interface Props {
   snSiteId: string;
   value: TurSNSiteCustomFacet;
@@ -173,6 +176,9 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew,
     const newFieldType = fieldOptions.find((field) => field.id === newFieldExtId)?.type;
     setValue("fieldExtId", newFieldExtId, { shouldDirty: true });
     setValue("items", normalizeItems(items, newFieldType), { shouldDirty: true });
+    if (!isDateFieldType(newFieldType)) {
+      setValue("endField", "", { shouldDirty: true });
+    }
   }
 
   function onFieldChange(newFieldExtId: string) {
@@ -438,6 +444,47 @@ export const SNSiteCustomFacetForm: React.FC<Props> = ({ snSiteId, value, isNew,
                   </FormItemTwoColumns>
                 )}
               />
+              {dateField && (
+                <FormField
+                  control={control}
+                  name="endField"
+                  render={({ field }) => (
+                    <FormItemTwoColumns>
+                      <FormItemTwoColumns.Left>
+                        <FormItemTwoColumns.Label>
+                          {t("forms.snCustomFacet.endField")}
+                        </FormItemTwoColumns.Label>
+                        <FormItemTwoColumns.Description>
+                          {t("forms.snCustomFacet.endFieldDesc")}
+                        </FormItemTwoColumns.Description>
+                      </FormItemTwoColumns.Left>
+                      <FormItemTwoColumns.Right>
+                        <FormControl>
+                          <Select
+                            onValueChange={(next) => field.onChange(next === NO_END_FIELD ? "" : next)}
+                            value={field.value || NO_END_FIELD}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={NO_END_FIELD}>{t("forms.snCustomFacet.endFieldNone")}</SelectItem>
+                              {fieldOptions
+                                .filter((option) => isDateFieldType(option.type) && option.name !== selectedFieldName)
+                                .map((option) => (
+                                  <SelectItem key={option.id} value={option.name}>
+                                    {option.name}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItemTwoColumns.Right>
+                    </FormItemTwoColumns>
+                  )}
+                />
+              )}
               <div className="space-y-6">
                 <FormField
                   control={control}

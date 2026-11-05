@@ -35,12 +35,28 @@ import java.util.Map;
  * @param position     the facet's place among the site's custom facets;
  *                     {@code null} appends a new facet and keeps an existing one
  * @param items        the buckets, in order
+ * @param endField     (T1224) the site field where a span ends, beside {@code field}
+ *                     where it starts: a bucket then holds the documents whose
+ *                     span overlaps it, and a bucket open at its start those that
+ *                     ended by its end; {@code null} buckets {@code field} alone
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestCustomFacet(String field, String name, String defaultLabel,
-        Map<String, String> label, Integer position, List<TurSNManifestCustomFacetItem> items) {
+        Map<String, String> label, Integer position, List<TurSNManifestCustomFacetItem> items,
+        String endField) {
+
+    /** The facet as it was before {@link #endField}, kept for existing callers. */
+    public TurSNManifestCustomFacet(String field, String name, String defaultLabel,
+            Map<String, String> label, Integer position, List<TurSNManifestCustomFacetItem> items) {
+        this(field, name, defaultLabel, label, position, items, null);
+    }
+
+    /** This facet bucketing the span from {@code field} to {@code endField} (T1224). */
+    public TurSNManifestCustomFacet withEndField(String endField) {
+        return new TurSNManifestCustomFacet(field, name, defaultLabel, label, position, items, endField);
+    }
 
     /** A facet with its buckets and no labels beyond the default one. */
     public static TurSNManifestCustomFacet of(String field, String name, String defaultLabel,

@@ -20,8 +20,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1224** (deps: —) **A custom facet buckets one date field: an event spanning a start and an end date cannot fall in the periods it overlaps** — An exhibition running all month sits under Past once it has started, so an agenda's Next 7 days misses what is on. → §CLXIX.2
-
 ## Block CN — Autocomplete and suggestions
 
 - 📋 **T1226** (deps: —) **Scoped autocomplete (fq or a partitioned key) answers document titles, not terms, and Lucene marks them up** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
@@ -33,6 +31,11 @@
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 - 📋 **T1229** (deps: —) **A structured feed is re-ingested only on its hourly timer: no endpoint lets a publisher trigger a pull after a deploy** — The vectorless copilot answers from the previous feed for up to an hour after every catalog release, and operators cannot re-sync on demand. → §CLXXIV.1
+
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+- 📋 **T1232** (deps: —) **An Elasticsearch SN site never counts its custom facets: only terms aggregations are requested** — The same site lists posting-date or agenda buckets on Solr and Lucene and none on Elasticsearch, though clicking one filters. → §CLXXV.1
+- 📋 **T1233** (deps: —) **A negative filter query (fq[]=-field:value) excludes nothing on Lucene and Elasticsearch, and misgroups on Solr** — A client cannot say all but its own documents, so it pages the whole index to find another source's records. → §CLXXV.2
 
 ## Done when — T1184
 

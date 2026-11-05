@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -167,6 +168,36 @@ class TurSNSiteCustomFacetAPITest {
             assertThat(savedItem.getRangeStartDate()).isEqualTo("2026-03-01T00:00:00Z");
             assertThat(savedItem.getRangeStart()).isNull();
         });
+    }
+
+    /** T1224 — an end field of the facet's type is stored; one of another type is refused. */
+    @Test
+    void shouldStoreAnEndFieldOfTheSameTypeAndRefuseAnother() {
+        TurSNSite site = site("site-1");
+        TurSNSiteFieldExt startsAt = fieldExt("field-1", "startsAt", TurSEFieldType.DATE, site, Set.of());
+        TurSNSiteFieldExt endsAt = fieldExt("field-2", "endsAt", TurSEFieldType.DATE, site, Set.of());
+        TurSNSiteFieldExt title = fieldExt("field-3", "title", TurSEFieldType.STRING, site, Set.of());
+        lenient().when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        lenient().when(turSNSiteFieldExtRepository.findByTurSNSite(any(Sort.class), eq(site)))
+                .thenReturn(List.of(startsAt, endsAt, title));
+        lenient().when(turSNSiteFieldExtRepository.findById("field-1")).thenReturn(Optional.of(startsAt));
+        lenient().when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, "endsAt")).thenReturn(List.of(endsAt));
+        lenient().when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, "title")).thenReturn(List.of(title));
+        lenient().when(turSNSiteFieldExtRepository.save(any(TurSNSiteFieldExt.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of());
+
+        TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetDto payload = new TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetDto();
+        payload.setFieldExtId("field-1");
+        payload.setName("agenda");
+        payload.setEndField(" endsAt ");
+        assertThat(api.create("site-1", payload).getEndField()).isEqualTo("endsAt");
+
+        payload.setEndField("title");
+        assertThatThrownBy(() -> api.create("site-1", payload))
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting("statusCode")
+                .isEqualTo(BAD_REQUEST);
     }
 
     @Test

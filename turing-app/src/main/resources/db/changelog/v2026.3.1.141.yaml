@@ -1,0 +1,26 @@
+databaseChangeLog:
+  # T1224 (Block CF) - a custom facet over a date span. A custom facet bucketed
+  # one field, so an event running from a start to an end date sat under "Past"
+  # once it had started and never under "Next 7 days" while it was on.
+  #
+  # end_field names the site field holding where the span ends. Nullable with no
+  # default: every existing facet keeps bucketing its own field alone.
+  #
+  # Idempotent (columnExists + MARK_RAN); portable lowercase `varchar`.
+
+  - changeSet:
+      id: v2026.3.1.141-add-end_field-to-sn_site_custom_facet
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: sn_site_custom_facet
+                columnName: end_field
+      changes:
+        - addColumn:
+            tableName: sn_site_custom_facet
+            columns:
+              - column:
+                  name: end_field
+                  type: varchar(255)

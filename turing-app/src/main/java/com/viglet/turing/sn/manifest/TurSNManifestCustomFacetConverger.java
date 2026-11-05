@@ -100,7 +100,34 @@ public class TurSNManifestCustomFacetConverger {
             }
             TurSEFieldType type = fieldType(site, manifest, facet);
             desiredItems(facet, type);
+            validateEndField(site, manifest, facet, type);
         }
+    }
+
+    /**
+     * T1224 — an end field must be a field of the facet's own type, declared in the
+     * manifest or already on the site, and not the facet's field itself.
+     */
+    private void validateEndField(TurSNSite site, VigletFieldManifest manifest,
+            TurSNManifestCustomFacet facet, TurSEFieldType type) {
+        String endField = endField(facet);
+        if (endField == null) {
+            return;
+        }
+        if (endField.equals(facet.field())) {
+            throw new IllegalArgumentException("Custom facet '" + facet.name()
+                    + "' names its own field as its end field");
+        }
+        TurSEFieldType endType = fieldType(site, manifest,
+                new TurSNManifestCustomFacet(endField, facet.name(), null, null, null, null));
+        if (!Objects.equals(type, endType)) {
+            throw new IllegalArgumentException("Custom facet '" + facet.name() + "': end field '" + endField
+                    + "' is " + endType + ", but field '" + facet.field() + "' is " + type);
+        }
+    }
+
+    private static String endField(TurSNManifestCustomFacet facet) {
+        return StringUtils.hasText(facet.endField()) ? facet.endField().trim() : null;
     }
 
     /** The custom facets {@link #converge} would create or change. Read-only. */
@@ -143,6 +170,7 @@ public class TurSNManifestCustomFacetConverger {
                     .facetPosition(nextFacetPosition(site))
                     .build();
             target.setDefaultLabel(facet.defaultLabel());
+            target.setEndField(endField(facet));
             target.setLabel(new HashMap<>(Optional.ofNullable(facet.label()).orElse(Map.of())));
             if (facet.position() != null) {
                 target.setFacetPosition(facet.position());
@@ -156,6 +184,7 @@ public class TurSNManifestCustomFacetConverger {
 
     private boolean matches(TurSNSiteCustomFacet live, TurSNManifestCustomFacet facet, TurSEFieldType type) {
         if (!Objects.equals(live.getDefaultLabel(), facet.defaultLabel())
+                || !Objects.equals(live.getEndField(), endField(facet))
                 || !Objects.equals(orEmpty(live.getLabel()), orEmpty(facet.label()))
                 || (facet.position() != null && !facet.position().equals(live.getFacetPosition()))) {
             return false;

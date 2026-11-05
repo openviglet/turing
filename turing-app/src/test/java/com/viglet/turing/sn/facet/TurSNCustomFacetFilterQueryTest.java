@@ -77,4 +77,45 @@ class TurSNCustomFacetFilterQueryTest {
         assertThat(TurSNCustomFacetFilterQuery.isDateMath("2026-10-01")).isFalse();
         assertThat(TurSNCustomFacetFilterQuery.isDateMath(null)).isFalse();
     }
+
+    /** T1224 — an item over a span overlaps it, and a point (no end value) keeps its range. */
+    @Test
+    void aBoundedItemOverASpanIsThePointOrTheOverlap() {
+        TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE);
+        item.setRangeStartExpression("NOW/DAY");
+        item.setRangeEndExpression("NOW/DAY+7DAYS");
+
+        assertThat(TurSNCustomFacetFilterQuery.of("startsAt", "endsAt", TurSEFieldType.DATE, item))
+                .isEqualTo("((+startsAt:[NOW/DAY TO NOW/DAY+7DAYS] -endsAt:[* TO *]) OR "
+                        + "(+startsAt:[* TO NOW/DAY+7DAYS] +endsAt:[NOW/DAY TO *]))");
+    }
+
+    /** T1224 — an item open at its start ("Past") holds what ended by its end. */
+    @Test
+    void anOpenStartItemOverASpanTestsTheEndAlone() {
+        TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.LESS_THAN);
+        item.setRangeEndExpression("NOW/DAY");
+
+        assertThat(TurSNCustomFacetFilterQuery.of("startsAt", "endsAt", TurSEFieldType.DATE, item))
+                .isEqualTo("((+startsAt:[* TO NOW/DAY} -endsAt:[* TO *]) OR (+endsAt:[* TO NOW/DAY}))");
+    }
+
+    /** T1224 — an item open at its end ("Upcoming") holds what has not ended by its start. */
+    @Test
+    void anOpenEndItemOverASpanTestsTheEndFromItsStart() {
+        TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL);
+        item.setRangeStartExpression("NOW/DAY");
+
+        assertThat(TurSNCustomFacetFilterQuery.of("startsAt", "endsAt", TurSEFieldType.DATE, item))
+                .isEqualTo("((+startsAt:[NOW/DAY TO *] -endsAt:[* TO *]) OR (+endsAt:[NOW/DAY TO *]))");
+    }
+
+    @Test
+    void withoutAnEndFieldTheItemIsItsRange() {
+        TurSNSiteCustomFacetItem item = item(TurSNSiteCustomFacetOperatorEnum.LESS_THAN);
+        item.setRangeEndExpression("NOW/DAY");
+
+        assertThat(TurSNCustomFacetFilterQuery.of("startsAt", " ", TurSEFieldType.DATE, item))
+                .isEqualTo("startsAt:[* TO NOW/DAY}");
+    }
 }

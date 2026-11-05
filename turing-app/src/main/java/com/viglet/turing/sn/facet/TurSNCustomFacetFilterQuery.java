@@ -18,7 +18,10 @@ package com.viglet.turing.sn.facet;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
@@ -53,6 +56,97 @@ public final class TurSNCustomFacetFilterQuery {
         return byOperator(fieldName, operator,
                 Optional.ofNullable(item.getRangeStart()).map(TurSNCustomFacetFilterQuery::plain).orElse(null),
                 Optional.ofNullable(item.getRangeEnd()).map(TurSNCustomFacetFilterQuery::plain).orElse(null));
+    }
+
+    /** T1224 — one condition of a span filter: {@code field} holds {@code value}, a range. */
+    public record Clause(String field, String value) {
+    }
+
+    /**
+     * T1224 — an item's filter over a span that starts at {@code field} and ends at
+     * {@code endField}: a document with no end value is the point at its start and
+     * matches {@code point} on {@code field}, as without an end field; a document
+     * with one matches when every {@code overlap} clause holds.
+     */
+    public record Span(String field, String endField, String point, List<Clause> overlap) {
+    }
+
+    /**
+     * The filter query for {@code item} over a span (T1224), in Solr syntax; with
+     * no {@code endField} it is {@link #of(String, TurSEFieldType, TurSNSiteCustomFacetItem)}.
+     */
+    public static String of(String fieldName, String endField, TurSEFieldType fieldType,
+            TurSNSiteCustomFacetItem item) {
+        if (endField == null || endField.isBlank()) {
+            return of(fieldName, fieldType, item);
+        }
+        Span span = span(fieldName, endField, fieldType, item);
+        String overlap = span.overlap().stream()
+                .map(clause -> "+" + clause.field() + ":" + clause.value())
+                .collect(Collectors.joining(" "));
+        return String.format("((+%s:%s -%s:[* TO *]) OR (%s))", span.field(), span.point(),
+                span.endField(), overlap);
+    }
+
+    /**
+     * T1224 — the parts of an item's span filter. A span overlaps an item when it
+     * starts by the item's end and ends from the item's start. An item open at its
+     * start ("Past") tests the end alone, so it holds what has ended by its end
+     * rather than everything that started before it.
+     */
+    public static Span span(String fieldName, String endField, TurSEFieldType fieldType,
+            TurSNSiteCustomFacetItem item) {
+        String fq = of(fieldName, fieldType, item);
+        String point = fq.substring(fq.indexOf(':') + 1);
+        Bounds bounds = bounds(fieldType, item);
+        List<Clause> overlap = new ArrayList<>();
+        if (bounds.low() == null) {
+            overlap.add(new Clause(endField, upTo(bounds)));
+            return new Span(fieldName, endField, point, overlap);
+        }
+        if (bounds.high() != null) {
+            overlap.add(new Clause(fieldName, upTo(bounds)));
+        }
+        overlap.add(new Clause(endField, (bounds.lowInclusive() ? "[" : "{") + bounds.low() + " TO *]"));
+        return new Span(fieldName, endField, point, overlap);
+    }
+
+    /** The range from anywhere up to the item's end, open when the item has none. */
+    private static String upTo(Bounds bounds) {
+        if (bounds.high() == null) {
+            return "[* TO *]";
+        }
+        return "[* TO " + bounds.high() + (bounds.highInclusive() ? "]" : "}");
+    }
+
+    /** An item's two bounds by operator; {@code null} is open. */
+    private record Bounds(String low, boolean lowInclusive, String high, boolean highInclusive) {
+    }
+
+    private static Bounds bounds(TurSEFieldType fieldType, TurSNSiteCustomFacetItem item) {
+        TurSNSiteCustomFacetOperatorEnum operator = Optional.ofNullable(item.getOperator())
+                .orElse(TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE);
+        String start;
+        String end;
+        if (TurSEFieldType.DATE.equals(fieldType)) {
+            start = dateBound(item.getRangeStartExpression(), item.getRangeStartDate());
+            end = dateBound(item.getRangeEndExpression(), item.getRangeEndDate());
+        } else {
+            start = Optional.ofNullable(item.getRangeStart()).map(TurSNCustomFacetFilterQuery::plain).orElse(null);
+            end = Optional.ofNullable(item.getRangeEnd()).map(TurSNCustomFacetFilterQuery::plain).orElse(null);
+        }
+        return switch (operator) {
+            case EQUAL -> {
+                String value = start != null ? start : end;
+                yield new Bounds(value, true, value, true);
+            }
+            case GREATER_THAN_OR_EQUAL -> new Bounds(start, true, null, true);
+            case GREATER_THAN -> new Bounds(start, false, null, true);
+            case LESS_THAN_OR_EQUAL -> new Bounds(null, true, end, true);
+            case LESS_THAN -> new Bounds(null, true, end, false);
+            case BETWEEN_INCLUSIVE -> new Bounds(start, true, end, true);
+            case BETWEEN_EXCLUSIVE -> new Bounds(start, false, end, false);
+        };
     }
 
     /**

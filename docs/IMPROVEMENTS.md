@@ -41,6 +41,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2309,33 +2311,6 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
 
-### CLXIX.2 A custom facet over a date span (D307) (T1224)
-
-**Where it came from.** Dumont D307 (the WordPress plugin) gave date range facets an
-agenda period set: Today, Next 7 days, This month, Upcoming, Past. An event that runs
-over a span (an exhibition from 1 to 30 November) has a start and an end field, and
-"Next 7 days" should list it whenever the span overlaps those days, not only when it
-starts inside them.
-
-**What happens.** A custom facet (`customFacets` in `POST /api/sn/manifest`, the items'
-`rangeStartDate`/`rangeEndDate`) buckets one field. An item filter is `field:[from TO
-to]`, so the plugin can only bucket the start date, and a running exhibition that
-started last month is under Past.
-
-**What Turing should do.** Let a custom facet name an end field beside its field
-(`endField`, optional). With one, an item matches a document when `field <= item end`
-and `endField >= item start` (an open bound matching everything on its side), and a
-document with no end value is read as a point at `field`. The same on Solr, Lucene and
-Elasticsearch, counts included.
-
-**Workaround in Dumont.** None: D307 buckets the start date only and says so in its
-docs.
-
-**Done when:** a facet over `start`/`end` puts a span from five days ago to five days
-ahead under an item `NOW/DAY` to `NOW/DAY+7DAYS`, and a span that ended yesterday
-outside it. Overlap alone keeps a running span under an open-start item (Past), the
-reported complaint: such an item tests `endField < item end`, so Past means "ended".
-
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope
@@ -2430,3 +2405,61 @@ expose the same action with the last run's result. The sweep stays as the fallba
 Edge case to test: `lastSeenIds` is in memory per node, so a trigger served by a node
 that never ran the source de-indexes nothing; the result must say so rather than report
 zero removals as a clean sync.
+
+## CLXXV Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+A request means the same on every engine an SN site can run on: the filters it applies,
+the facets it counts and the order it answers in. A line here names a difference one
+engine shows and the shared seam that closes it for all of them.
+
+### CLXXV.1 Custom facet counts on Elasticsearch (T1232)
+
+**Where it came from.** Found while building T1224 (a custom facet over a date span):
+the span filter landed on Solr, Lucene and Elasticsearch, but only Solr and Lucene count
+the items.
+
+**What happens.** `TurElasticsearch` builds one `terms` aggregation per facet field
+(`FACET_AGG_PREFIX + fieldName`) and `buildFacetResults` reads only those. Custom facets
+are applied as filters (T1106, through `TurLuceneCustomFacets.resolveFilter`), so a
+click on a bucket works, but no request ever asks for their counts: an Elasticsearch SN
+site shows none of its custom facets (posting-date buckets, salary bands, an agenda) in
+the facet list, while the same site on Solr or Lucene does. The drill-down
+(`retrieveFacetElasticsearchFromSN`) falls back to a `terms` aggregation on the facet's
+name, which is no field, so it answers empty.
+
+**What Turing should do.** For each custom facet of the site, add a `filters`
+aggregation with one named filter per item, built by the same code the filter path uses
+(`TurElasticsearchFilterQueries.valueQuery` for a range item, `spanQuery` for a facet
+with an `endField`), and turn its buckets into a `TurSEFacetResult` named after the
+facet, with the item labels and their per-locale display labels in item order, as
+`TurLuceneCustomFacets.count` does. The facet drill-down (`onlyFacet`) counts one facet.
+
+**Done when:** an Elasticsearch site with a custom facet answers it in the facet list
+and in its drill-down with the same counts the Lucene engine gives for the same
+documents, checked on request shape in a unit test and on a live index by the
+Elasticsearch IT T1107 introduced.
+
+### CLXXV.2 Negative filter queries (T1233)
+
+**Where it came from.** Dumont D327 (the WordPress plugin): its Fields screen lists the
+`type` values other sources sent under the site's key. The natural query is `GET
+/api/sn/{site}/search?q=*&fq[]=site_key:localhost&fq[]=-source_apps:wordpress`, and it
+answers 0 results. Dumont works around it by paging up to 2,000 documents (D334 waits).
+
+**What happens.** Lucene (`TurLuceneQueryBuilder.parseFieldValue`), Elasticsearch
+(`TurElasticsearchFilterQueries.collect`) and Content AI (`parseFieldValue`) each split
+on the colon and take `-source_apps` as the field name: a term on a field that does not
+exist. Solr already rewrites it to `*:* -field:"value"` (`wrapNegationWithMatchAll`),
+but the unknown name lands in the no-facet group, joined by the site's facet item type:
+on an OR site the exclusion is OR'd with `site_key`, which is wrong.
+
+**What Turing should do.** One shared parser for `fq`, `fqAnd` and `fqOr` items that
+reads a leading `-` as an exclusion of that field's value, with the quoting a positive
+`fq` has. An exclusion always narrows (MUST_NOT / `must_not` / `-`), whatever `fqOr` or
+`fqItemOperator` say, and is never grouped with the field's positive values or rendered
+as a selected facet item. Content AI answers 400 rather than matching nothing.
+
+**Done when:** `fq[]=site_key:x&fq[]=-source_apps:wordpress` answers exactly the
+documents under `x` whose `source_apps` is not `wordpress` on Solr (AND and OR sites),
+Lucene and Elasticsearch; an exclusion alone matches every other document; Content AI
+refuses it with 400.

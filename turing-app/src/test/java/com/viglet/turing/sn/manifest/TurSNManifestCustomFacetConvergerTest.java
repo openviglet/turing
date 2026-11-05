@@ -235,6 +235,44 @@ class TurSNManifestCustomFacetConvergerTest {
     }
 
     @Test
+    @DisplayName("T1224 - an end field is stored, compared, and changing it rewrites the facet")
+    void endFieldConverges() {
+        TurSNManifestCustomFacet withEnd = new TurSNManifestCustomFacet("publishedAt", "postedSince", "Posted",
+                Map.of("pt", "Publicada"), null, List.of(since("Week", "NOW-7DAYS")), " endsAt ");
+        TurSNSiteCustomFacet live = convergeOnce(withEnd);
+        assertThat(live.getEndField()).isEqualTo("endsAt");
+
+        when(turSNSiteCustomFacetRepository.findByFieldExtWithDetails(publishedAt)).thenReturn(List.of(live));
+        assertThat(converger.converge(site, List.of(withEnd))).isEmpty();
+
+        assertThat(converger.converge(site, List.of(postedSince(since("Week", "NOW-7DAYS")))))
+                .containsExactly("postedSince");
+        assertThat(live.getEndField()).isNull();
+    }
+
+    @Test
+    @DisplayName("T1224 - validation refuses an end field that is the facet's own, unknown or of another type")
+    void validationRefusesABadEndField() {
+        VigletFieldManifest manifest = new VigletFieldManifest("jobs", null, "se1", null, null, List.of(
+                VigletFieldSpec.builder().name("publishedAt").type(VigletFieldType.DATE).build(),
+                VigletFieldSpec.builder().name("endsAt").type(VigletFieldType.DATE).build(),
+                VigletFieldSpec.builder().name("title").type(VigletFieldType.STRING).build()), null);
+
+        assertThatThrownBy(() -> converger.validate(null, manifest, List.of(facetEndingAt("publishedAt"))))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("its own field");
+        assertThatThrownBy(() -> converger.validate(null, manifest, List.of(facetEndingAt("closesAt"))))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("closesAt");
+        assertThatThrownBy(() -> converger.validate(null, manifest, List.of(facetEndingAt("title"))))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("STRING");
+        converger.validate(null, manifest, List.of(facetEndingAt("endsAt")));
+    }
+
+    private static TurSNManifestCustomFacet facetEndingAt(String endField) {
+        return new TurSNManifestCustomFacet("publishedAt", "agenda", null, null, null,
+                List.of(since("Week", "NOW-7DAYS")), endField);
+    }
+
+    @Test
     @DisplayName("Planning a site that does not exist yet lists every declared facet, typed by the manifest")
     void planForANewSiteListsEveryFacet() {
         TurSNManifestCustomFacet facet = postedSince(since("Week", "NOW-7DAYS"));

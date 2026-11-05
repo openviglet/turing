@@ -76,8 +76,41 @@ public class TurLuceneCustomFacets {
         this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
     }
 
-    /** A custom facet item resolved to its field and the filter value of its range. */
-    public record ItemFilter(String field, TurSEFieldType type, String value) {
+    /**
+     * A custom facet item resolved to its field and the filter value of its range;
+     * {@code span} is set when the facet names an end field (T1224).
+     */
+    public record ItemFilter(String field, TurSEFieldType type, String value,
+            TurSNCustomFacetFilterQuery.Span span) {
+
+        public ItemFilter(String field, TurSEFieldType type, String value) {
+            this(field, type, value, null);
+        }
+
+        /**
+         * The Lucene query the item stands for: its range on {@code field}, or with
+         * a span, the point range for a document with no end value or every overlap
+         * clause for one with an end value.
+         */
+        public Query toLuceneQuery(Instant now) {
+            if (span == null) {
+                return TurLuceneFilterQueries.build(field, value, type, now);
+            }
+            Query point = new BooleanQuery.Builder()
+                    .add(TurLuceneFilterQueries.build(field, span.point(), type, now), BooleanClause.Occur.MUST)
+                    .add(TurLuceneFilterQueries.build(span.endField(), "[* TO *]", type, now),
+                            BooleanClause.Occur.MUST_NOT)
+                    .build();
+            BooleanQuery.Builder overlap = new BooleanQuery.Builder();
+            span.overlap().forEach(clause -> overlap.add(
+                    TurLuceneFilterQueries.build(clause.field(), clause.value(), type, now),
+                    BooleanClause.Occur.MUST));
+            return new BooleanQuery.Builder()
+                    .setMinimumNumberShouldMatch(1)
+                    .add(point, BooleanClause.Occur.SHOULD)
+                    .add(overlap.build(), BooleanClause.Occur.SHOULD)
+                    .build();
+        }
     }
 
     /** One custom facet: its field, and its items in display order. */
@@ -97,7 +130,7 @@ public class TurLuceneCustomFacets {
         return definition.items().stream()
                 .filter(item -> label.equals(item.getLabel()))
                 .findFirst()
-                .map(item -> itemFilter(definition.field(), item));
+                .map(item -> itemFilter(definition, item));
     }
 
     /**
@@ -124,11 +157,10 @@ public class TurLuceneCustomFacets {
         Instant now = Instant.now();
         for (TurSNSiteCustomFacetItem item : definition.items()) {
             try {
-                ItemFilter filter = itemFilter(definition.field(), item);
+                ItemFilter filter = itemFilter(definition, item);
                 Query itemQuery = new BooleanQuery.Builder()
                         .add(query, BooleanClause.Occur.MUST)
-                        .add(TurLuceneFilterQueries.build(filter.field(), filter.value(), filter.type(), now),
-                                BooleanClause.Occur.FILTER)
+                        .add(filter.toLuceneQuery(now), BooleanClause.Occur.FILTER)
                         .build();
                 result.add(item.getLabel(), new TurSEFacetResultAttr(item.getLabel(),
                         searcher.count(itemQuery), displayLabel(item, locale)));
@@ -140,9 +172,13 @@ public class TurLuceneCustomFacets {
         return result.getTurSEFacetResultAttr().isEmpty() ? Optional.empty() : Optional.of(result);
     }
 
-    private static ItemFilter itemFilter(TurSNSiteFieldExt field, TurSNSiteCustomFacetItem item) {
+    private static ItemFilter itemFilter(Definition definition, TurSNSiteCustomFacetItem item) {
+        TurSNSiteFieldExt field = definition.field();
         String fq = TurSNCustomFacetFilterQuery.of(field.getName(), field.getType(), item);
-        return new ItemFilter(field.getName(), field.getType(), fq.substring(fq.indexOf(':') + 1));
+        String endField = definition.facet().getEndField();
+        TurSNCustomFacetFilterQuery.Span span = endField == null || endField.isBlank() ? null
+                : TurSNCustomFacetFilterQuery.span(field.getName(), endField, field.getType(), item);
+        return new ItemFilter(field.getName(), field.getType(), fq.substring(fq.indexOf(':') + 1), span);
     }
 
     /** The site's custom facets by name, each with the enabled field it belongs to. */

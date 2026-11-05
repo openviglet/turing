@@ -33,6 +33,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -154,6 +155,29 @@ class TurElasticsearchFilterQueriesTest {
                 NOW).orElseThrow();
 
         assertThat(query.bool().filter().getFirst().range().untyped().field()).isEqualTo("publishedAt");
+    }
+
+    /** T1224 — over a span: the point range without an end value, or the overlap with one. */
+    @Test
+    void aCustomFacetSelectionOverASpanIsThePointOrTheOverlap() {
+        TurSNCustomFacetFilterQuery.Span span = new TurSNCustomFacetFilterQuery.Span("startsAt", "endsAt",
+                "[NOW/DAY TO NOW/DAY+7DAYS]", List.of(
+                        new TurSNCustomFacetFilterQuery.Clause("startsAt", "[* TO NOW/DAY+7DAYS]"),
+                        new TurSNCustomFacetFilterQuery.Clause("endsAt", "[NOW/DAY TO *]")));
+        Query query = TurElasticsearchFilterQueries.build(new TurSNSite(),
+                TurSNFilterParams.builder().defaultValues(List.of("agenda:Next 7 days")).build(), FIELDS,
+                (facet, label) -> Optional.of(new TurLuceneCustomFacets.ItemFilter("startsAt", TurSEFieldType.DATE,
+                        "[NOW/DAY TO NOW/DAY+7DAYS]", span)),
+                NOW).orElseThrow();
+
+        Query either = query.bool().filter().getFirst();
+        assertThat(either.bool().minimumShouldMatch()).isEqualTo("1");
+        Query point = either.bool().should().get(0);
+        assertThat(point.bool().filter().getFirst().range().untyped().field()).isEqualTo("startsAt");
+        assertThat(point.bool().mustNot().getFirst().exists().field()).isEqualTo("endsAt");
+        Query overlap = either.bool().should().get(1);
+        assertThat(overlap.bool().filter()).extracting(clause -> clause.range().untyped().field())
+                .containsExactly("startsAt", "endsAt");
     }
 
     @Test

@@ -11,6 +11,8 @@
 
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
 ## VIII. Strategic moves — repositioning beyond features
 
 > The Education customer engagement proved the product. This section is

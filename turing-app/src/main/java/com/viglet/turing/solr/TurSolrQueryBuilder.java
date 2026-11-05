@@ -482,6 +482,7 @@ public class TurSolrQueryBuilder {
                     getFacetItemType(context, customFacetDefinition.getFacetItemType()),
                     facetMapForFilterQuery,
                     setRangeFilterQuery(mapping.turSNSiteFieldExt().getName(),
+                            mapping.turSNSiteCustomFacet().getEndField(),
                             mapping.turSNSiteFieldExt().getType(),
                             mapping.customFacetItem()));
             return;
@@ -1022,10 +1023,10 @@ public class TurSolrQueryBuilder {
             TurSNSiteFieldExt turSNSiteFieldExt,
             List<TurSNSiteCustomFacet> customFacets) {
         customFacets.stream()
-                .map(customFacet -> new TurSNCustomFacetDefinition(turSNSiteFieldExt, customFacet,
-                        null))
-                .filter(customFacet -> StringUtils.hasText(customFacet.getName()))
-                .forEach(customFacet -> {
+                .filter(entity -> StringUtils.hasText(entity.getName()))
+                .forEach(entity -> {
+                    TurSNCustomFacetDefinition customFacet = new TurSNCustomFacetDefinition(
+                            turSNSiteFieldExt, entity, null);
                     TurSNSiteFieldExtDto customFacetFieldExtDto = customFacet.toFacetFieldExtDto();
                     TurSNFacetTypeContext customFacetContext = new TurSNFacetTypeContext(
                             customFacetFieldExtDto, context.getTurSNSite(),
@@ -1038,7 +1039,7 @@ public class TurSolrQueryBuilder {
                             .forEach(item -> query.addFacetQuery(getCustomFacetLocalParams(
                                     customFacet.getName(), item.getLabel(), excludeFacetValues)
                                     + setRangeFilterQuery(turSNSiteFieldExt.getName(),
-                                            turSNSiteFieldExt.getType(), item)));
+                                            entity.getEndField(), turSNSiteFieldExt.getType(), item)));
                 });
     }
 
@@ -1057,9 +1058,9 @@ public class TurSolrQueryBuilder {
     }
 
     /** T1083 — shared with the Lucene engine, so one item means one range on both. */
-    private static String setRangeFilterQuery(String fieldName, TurSEFieldType fieldType,
+    private static String setRangeFilterQuery(String fieldName, String endField, TurSEFieldType fieldType,
             TurSNSiteCustomFacetItem item) {
-        return TurSNCustomFacetFilterQuery.of(fieldName, fieldType, item);
+        return TurSNCustomFacetFilterQuery.of(fieldName, endField, fieldType, item);
     }
 
     private static String buildFilterQueryByOperator(String fieldName,

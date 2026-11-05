@@ -254,8 +254,7 @@ public class TurLuceneQueryBuilder {
         if (ext == null && customFacets != null) {
             Optional<TurLuceneCustomFacets.ItemFilter> item = customFacets.resolveFilter(turSNSite, field, value);
             if (item.isPresent()) {
-                return TurLuceneFilterQueries.build(item.get().field(), item.get().value(), item.get().type(),
-                        now);
+                return item.get().toLuceneQuery(now);
             }
         }
         return TurLuceneFilterQueries.build(field, value, type, now);

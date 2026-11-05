@@ -108,6 +108,25 @@ TurSNManifest manifest = TurSNManifest.builder()
         .build();
 ```
 
+#### Events with a start and an end date
+
+An event that runs over several days, such as an exhibition from 1 to 30 November, has a start field and an end field. Name the end field as the facet's `endField` and each bucket lists the events that are on during it, not only those that start inside it:
+
+```json
+{
+  "field": "startsAt",
+  "endField": "endsAt",
+  "name": "agenda",
+  "defaultLabel": "When",
+  "items": [
+    { "label": "Next 7 days", "rangeStartDate": "NOW/DAY", "rangeEndDate": "NOW/DAY+7DAYS" },
+    { "label": "Past", "operator": "LESS_THAN", "rangeEndDate": "NOW/DAY" }
+  ]
+}
+```
+
+With an end field, a bucket holds an event when the event starts by the bucket's end and ends on or after the bucket's start. A bucket with no start, such as *Past*, holds the events that have **ended** by its end, so an exhibition that is still running is not listed there. An event with no end date is read as the single day it starts. The end field must be another field of the same type as `field`. Leave `endField` out and the facet buckets `field` alone, as before. Selecting a bucket filters the same way on Solr, Lucene and Elasticsearch, and Solr and Lucene count the buckets with the same rule. In Java, call `withEndField("endsAt")` on a `TurSNManifestCustomFacet`; in the console, pick it under **End field** on a date facet.
+
 ### Custom sorts
 
 A manifest can declare **custom sorts** the same way: named, multi-level sort options a search selects by passing the name as `sort`. A job site that wants "closing soonest" sorts by the expiry date ascending and puts jobs with no expiry date last:

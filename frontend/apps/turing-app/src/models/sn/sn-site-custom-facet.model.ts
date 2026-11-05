@@ -29,6 +29,11 @@ export interface TurSNSiteCustomFacet {
   facetPosition?: number;
   facetType?: TurSNSiteFacetFieldTypes;
   facetItemType?: TurSNSiteFacetFieldTypes;
+  /**
+   * T1224 — the site field where a span ends (an event's end date). Set, a
+   * bucket lists the documents whose span overlaps it; "" clears it on save.
+   */
+  endField?: string | null;
   items: TurSNSiteCustomFacetItem[];
   fieldExtId: string;
   fieldExtName?: string;

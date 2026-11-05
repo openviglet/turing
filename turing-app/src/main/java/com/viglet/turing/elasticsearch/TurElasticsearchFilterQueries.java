@@ -36,6 +36,7 @@ import com.viglet.turing.lucene.TurLuceneFilterQueries;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -171,10 +172,27 @@ final class TurElasticsearchFilterQueries {
         if (ext == null) {
             Optional<TurLuceneCustomFacets.ItemFilter> item = customFacet.apply(field, value);
             if (item.isPresent()) {
-                return valueQuery(item.get().field(), item.get().type(), item.get().value(), now);
+                return item.get().span() != null ? spanQuery(item.get(), now)
+                        : valueQuery(item.get().field(), item.get().type(), item.get().value(), now);
             }
         }
         return valueQuery(field, ext == null ? null : ext.getType(), value, now);
+    }
+
+    /**
+     * T1224 — a custom facet item over a span: its point range for a document with
+     * no end value, or every overlap clause for one with an end value.
+     */
+    static Query spanQuery(TurLuceneCustomFacets.ItemFilter item, Instant now) {
+        TurSNCustomFacetFilterQuery.Span span = item.span();
+        Query point = Query.of(q -> q.bool(b -> b
+                .filter(valueQuery(span.field(), item.type(), span.point(), now))
+                .mustNot(Query.of(m -> m.exists(e -> e.field(span.endField()))))));
+        List<Query> clauses = span.overlap().stream()
+                .map(clause -> valueQuery(clause.field(), item.type(), clause.value(), now))
+                .toList();
+        Query overlap = Query.of(q -> q.bool(b -> b.filter(clauses)));
+        return Query.of(q -> q.bool(b -> b.should(point, overlap).minimumShouldMatch("1")));
     }
 
     static Query valueQuery(String field, TurSEFieldType type, String value, Instant now) {

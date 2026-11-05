@@ -92,6 +92,16 @@ public class TurSNSiteCustomFacet implements Serializable {
     @Column(name = "facet_item_type")
     private TurSNSiteFacetFieldEnum facetItemType = TurSNSiteFacetFieldEnum.DEFAULT;
 
+    /**
+     * T1224 — the site field holding where a span ends, beside the facet's own
+     * field holding where it starts (an event's start and end dates). Set, an item
+     * matches a document whose span overlaps it, and an item open at its start
+     * matches what has ended by its end; a document with no end value is the point
+     * at its start. {@code null} buckets the facet's field alone.
+     */
+    @Column(name = "end_field", length = 255)
+    private String endField;
+
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "sn_site_custom_facet_label", joinColumns = @JoinColumn(name = "custom_facet_id"))

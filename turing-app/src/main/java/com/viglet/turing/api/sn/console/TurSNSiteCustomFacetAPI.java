@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -221,6 +222,7 @@ public class TurSNSiteCustomFacetAPI {
                 .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
         target.setFacetItemType(Optional.ofNullable(payload.getFacetItemType())
                 .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
+        applyEndField(target, payload.getEndField(), turSNSite);
 
         Integer facetPosition = payload.getFacetPosition();
         if (facetPosition == null || facetPosition <= 0) {
@@ -240,6 +242,31 @@ public class TurSNSiteCustomFacetAPI {
                 .map(itemDto -> toEntity(itemDto, fieldType))
                 .collect(Collectors.toCollection(HashSet::new));
         target.setItems(items);
+    }
+
+    /**
+     * T1224 — a payload without {@code endField} keeps the facet's (a form that
+     * never sent it does not clear what a manifest set); a blank one clears it.
+     */
+    private void applyEndField(TurSNSiteCustomFacet target, String endField, TurSNSite turSNSite) {
+        if (endField == null) {
+            return;
+        }
+        if (endField.isBlank()) {
+            target.setEndField(null);
+            return;
+        }
+        String name = endField.trim();
+        TurSNSiteFieldExt end = turSNSiteFieldExtRepository.findByTurSNSiteAndName(turSNSite, name).stream()
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST,
+                        "End field '" + name + "' is not a field of the site."));
+        TurSNSiteFieldExt start = target.getTurSNSiteFieldExt();
+        if (start != null && (name.equals(start.getName()) || !Objects.equals(start.getType(), end.getType()))) {
+            throw new ResponseStatusException(BAD_REQUEST,
+                    "End field '" + name + "' must be another field of the same type as '" + start.getName() + "'.");
+        }
+        target.setEndField(name);
     }
 
     private TurSNSiteCustomFacetItem toEntity(TurSNSiteCustomFacetItemDto dto, TurSEFieldType fieldType) {
@@ -286,6 +313,7 @@ public class TurSNSiteCustomFacetAPI {
         dto.setFacetPosition(customFacet.getFacetPosition());
         dto.setFacetType(customFacet.getFacetType());
         dto.setFacetItemType(customFacet.getFacetItemType());
+        dto.setEndField(customFacet.getEndField());
         dto.setItems(items);
         dto.setFieldExtId(fieldExt != null ? fieldExt.getId() : null);
         dto.setFieldExtName(fieldExt != null ? fieldExt.getName() : null);
@@ -407,6 +435,8 @@ public class TurSNSiteCustomFacetAPI {
         private Integer facetPosition;
         private TurSNSiteFacetFieldEnum facetType;
         private TurSNSiteFacetFieldEnum facetItemType;
+        /** T1224 — the site field where a span ends; absent keeps it, blank clears it. */
+        private String endField;
         private List<TurSNSiteCustomFacetItemDto> items;
         private String fieldExtId;
         private String fieldExtName;

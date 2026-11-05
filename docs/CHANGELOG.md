@@ -1584,6 +1584,8 @@
 - **T1151** — The site GenAI page flags a RAG-ready site with no vectors beside Reindex all, now offered and accepted for Default-agent sites too; the probe no longer caches an empty answer.
 - **T1152** — Import tags each embedded chunk with the site it was written for, as reindex does; chunks written earlier for a second site keep the first's name until that site is reindexed.
 - **T1223 (SDK half)** — fetchSearch in both SDKs now sends fqAnd, fqOr, fqOperator and fqItemOperator as fq.and[], fq.or[], fq.op and fqi.op, so a GET search can ask for one field's values as alternatives.
+- **T1224** — A custom facet's endField buckets an event's start-to-end span by overlap, an open-start bucket holding only what ended, on Solr, Lucene and Elasticsearch, from the manifest, Java SDK and console (design §CLXIX.2 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
+- 🗑 **T1230** — superseded by T1232: Filed under the manifest block; it is engine parity, so it moved to Block CG unchanged except the drill-down case.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
@@ -1634,6 +1636,8 @@
 - 🗑 **T1225** — superseded by T1228: Moved to Block AQ and narrowed: the Thesaurus already resolves name variants and themes at index time, so only open-vocabulary entities remain.
 
 ## Block CN — Autocomplete and suggestions
+
+- 🗑 **T1231** — superseded by T1233: Filed under autocomplete; it is engine parity, so it moved to Block CG, widened to one shared fq parser and the Solr OR-grouping flaw.
 
 ## Block CO — Structured feeds refresh when the publisher says so
 
