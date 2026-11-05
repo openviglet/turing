@@ -187,8 +187,14 @@ class Viglet_Dumont_Reindex {
 				'blocking'  => false,
 				'timeout'   => 0.01,
 				'body'      => array( 'token' => (string) $run['token'] ),
-				/** This filter is documented in wp-includes/class-wp-http-streams.php */
-				'sslverify' => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress's own loopback filter, as spawn_cron() applies it.
+				/**
+				 * Filters whether the loopback verifies the site's certificate (D335). On by
+				 * default; a site on a self-signed certificate turns it off here, as core's
+				 * loopbacks read `https_local_ssl_verify`.
+				 *
+				 * @param bool $verify True by default.
+				 */
+				'sslverify' => (bool) apply_filters( 'viglet_dumont_reindex_step_sslverify', true ),
 			)
 		);
 	}
