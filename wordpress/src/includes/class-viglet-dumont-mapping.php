@@ -237,38 +237,38 @@ class Viglet_Dumont_Mapping {
 	/**
 	 * The types the SN site holds under this site key beyond this site's own (D327), each with
 	 * how many documents were seen and the fields they carry that a card could show: the ones
-	 * holding a date, and the ones holding text (an image's URL). Turing has no negative filter
-	 * (Turing T1233) nor a facet on `type`, so the documents are read, a page of 100 at a time,
-	 * until every foreign one was seen or after the first 2000; one `-source_apps:` query
-	 * replaces the paging once T1233 ships (D334).
+	 * holding a date, and the ones holding text (an image's URL). Turing has no facet on `type`,
+	 * so the other sources' documents are read, a page of 100 at a time, through one filter that
+	 * excludes this plugin's own (Turing T1233, D334): however many posts the site holds, only
+	 * the foreign documents are paged, up to the first 2000 of them.
 	 *
 	 * @param Viglet_Dumont_API_Client $client The client to search through.
 	 * @return array<int, array{type: string, count: int, dates: array<int, string>, texts: array<int, string>}>|WP_Error
 	 */
 	public function discover_foreign( Viglet_Dumont_API_Client $client ) {
-		$filter = ( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter();
-		$mine   = $client->search( '*', 1, 0, array( 'fq[]' => array( $filter, 'source_apps:' . $client->source_app() ) ) );
-		$all    = $client->search( '*', 1, 0, array( 'fq[]' => $filter ) );
-		if ( is_wp_error( $all ) ) {
-			return $all;
-		}
-		if ( is_wp_error( $mine ) ) {
-			return $mine;
-		}
-		$expected = (int) ( $all['queryContext']['count'] ?? 0 ) - (int) ( $mine['queryContext']['count'] ?? 0 );
-		$own      = self::own_types();
-		$found    = array();
-		$seen     = 0;
+		// This site key's documents another source sent, and only those (D334): Turing
+		// excludes a value with a negative filter (T1233), so the plugin's own posts are never
+		// read to be skipped.
+		$filters = array(
+			( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter(),
+			'-source_apps:' . $client->source_app(),
+		);
+		$own     = self::own_types();
+		$found   = array();
+		$seen    = 0;
+		$total   = null;
 
-		for ( $page = 1; $expected > 0 && $seen < $expected && $page <= self::FOREIGN_PAGES; $page++ ) {
-			$response = $client->search( '*', $page, 100, array( 'fq[]' => $filter ) );
+		for ( $page = 1; ( null === $total || $seen < $total ) && $page <= self::FOREIGN_PAGES; $page++ ) {
+			$response = $client->search( '*', $page, 100, array( 'fq[]' => $filters ) );
 			if ( is_wp_error( $response ) ) {
 				return $response;
 			}
+			$total     = (int) ( $response['queryContext']['count'] ?? 0 );
 			$documents = (array) ( $response['results']['document'] ?? array() );
 			foreach ( $documents as $document ) {
 				$fields = (array) ( $document['fields'] ?? array() );
 				$type   = self::document_type( $fields['type'] ?? '' );
+				// A Turing older than T1233 ignores the exclusion: the plugin's own still never count.
 				if ( $client->source_app() === self::document_type( $fields['source_apps'] ?? '' ) ) {
 					continue;
 				}

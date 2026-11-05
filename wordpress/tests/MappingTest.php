@@ -350,14 +350,13 @@ final class MappingTest extends PluginTestCase {
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) use ( $documents ) {
 				$this->requests[] = array( $url, $args );
-				$counts           = str_contains( $url, 'rows=0' );
-				$mine             = str_contains( $url, rawurlencode( 'source_apps:wordpress' ) );
+				// The plugin's own post still comes back, as from a Turing older than T1233.
 				return array(
 					'response' => array( 'code' => 200 ),
 					'body'     => json_encode(
 						array(
-							'queryContext' => array( 'count' => $counts ? ( $mine ? 1 : 4 ) : 4 ),
-							'results'      => array( 'document' => $counts ? array() : $documents ),
+							'queryContext' => array( 'count' => 3 ),
+							'results'      => array( 'document' => $documents ),
 						)
 					),
 				);
@@ -383,26 +382,28 @@ final class MappingTest extends PluginTestCase {
 			),
 			$found
 		);
-		$this->assertCount( 3, $this->requests, 'two counts, then one page holds every foreign document' );
-		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[2][0] );
+		// D334: one query, the plugin's own documents excluded by a negative filter (Turing T1233).
+		$this->assertCount( 1, $this->requests, 'one page holds every foreign document' );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[0][0] );
+		$this->assertStringContainsString( 'fq%5B%5D=' . rawurlencode( '-source_apps:wordpress' ), $this->requests[0][0] );
 	}
 
 	/**
-	 * D327: with nothing but the plugin's own documents under the key, nothing is read.
+	 * D334: with nothing but the plugin's own documents under the key, one empty page is read.
 	 */
-	public function test_with_no_foreign_document_no_page_is_read(): void {
+	public function test_with_no_foreign_document_one_empty_page_is_read(): void {
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) {
 				$this->requests[] = array( $url, $args );
 				return array(
 					'response' => array( 'code' => 200 ),
-					'body'     => json_encode( array( 'queryContext' => array( 'count' => 5 ) ) ),
+					'body'     => json_encode( array( 'queryContext' => array( 'count' => 0 ) ) ),
 				);
 			}
 		);
 
 		$this->assertSame( array(), $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) ) );
-		$this->assertCount( 2, $this->requests );
+		$this->assertCount( 1, $this->requests );
 	}
 
 	/**
