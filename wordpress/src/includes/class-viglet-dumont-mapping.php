@@ -249,26 +249,41 @@ class Viglet_Dumont_Mapping {
 		// This site key's documents another source sent, and only those (D334): Turing
 		// excludes a value with a negative filter (T1233), so the plugin's own posts are never
 		// read to be skipped.
-		$filters = array(
-			( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter(),
-			'-source_apps:' . $client->source_app(),
-		);
-		$own     = self::own_types();
-		$found   = array();
-		$seen    = 0;
-		$total   = null;
+		$own_filter = ( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter();
+		$filters    = array( $own_filter, '-source_apps:' . $client->source_app() );
+		$first      = $client->search( '*', 1, 0, array( 'fq[]' => $filters ) );
+		if ( is_wp_error( $first ) ) {
+			return $first;
+		}
+		$total = (int) ( $first['queryContext']['count'] ?? 0 );
+		if ( 0 === $total ) {
+			// A Turing older than T1233 answers a negative filter with nothing at all: there,
+			// count what the key holds less the plugin's own, and page the key's documents.
+			$all  = $client->search( '*', 1, 0, array( 'fq[]' => $own_filter ) );
+			$mine = $client->search( '*', 1, 0, array( 'fq[]' => array( $own_filter, 'source_apps:' . $client->source_app() ) ) );
+			if ( is_wp_error( $all ) ) {
+				return $all;
+			}
+			if ( is_wp_error( $mine ) ) {
+				return $mine;
+			}
+			$total   = (int) ( $all['queryContext']['count'] ?? 0 ) - (int) ( $mine['queryContext']['count'] ?? 0 );
+			$filters = array( $own_filter );
+		}
+		$own   = self::own_types();
+		$found = array();
+		$seen  = 0;
 
-		for ( $page = 1; ( null === $total || $seen < $total ) && $page <= self::FOREIGN_PAGES; $page++ ) {
+		for ( $page = 1; $total > 0 && $seen < $total && $page <= self::FOREIGN_PAGES; $page++ ) {
 			$response = $client->search( '*', $page, 100, array( 'fq[]' => $filters ) );
 			if ( is_wp_error( $response ) ) {
 				return $response;
 			}
-			$total     = (int) ( $response['queryContext']['count'] ?? 0 );
 			$documents = (array) ( $response['results']['document'] ?? array() );
 			foreach ( $documents as $document ) {
 				$fields = (array) ( $document['fields'] ?? array() );
 				$type   = self::document_type( $fields['type'] ?? '' );
-				// A Turing older than T1233 ignores the exclusion: the plugin's own still never count.
+				// Paging the whole key (an older Turing), the plugin's own never count.
 				if ( $client->source_app() === self::document_type( $fields['source_apps'] ?? '' ) ) {
 					continue;
 				}

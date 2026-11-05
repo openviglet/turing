@@ -382,16 +382,61 @@ final class MappingTest extends PluginTestCase {
 			),
 			$found
 		);
-		// D334: one query, the plugin's own documents excluded by a negative filter (Turing T1233).
-		$this->assertCount( 1, $this->requests, 'one page holds every foreign document' );
-		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[0][0] );
-		$this->assertStringContainsString( 'fq%5B%5D=' . rawurlencode( '-source_apps:wordpress' ), $this->requests[0][0] );
+		// D334: a count, then one page, the plugin's own excluded by a negative filter (Turing T1233).
+		$this->assertCount( 2, $this->requests, 'a count, then one page holds every foreign document' );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[1][0] );
+		$this->assertStringContainsString( 'fq%5B%5D=' . rawurlencode( '-source_apps:wordpress' ), $this->requests[1][0] );
 	}
 
 	/**
-	 * D334: with nothing but the plugin's own documents under the key, one empty page is read.
+	 * D334: a Turing older than T1233 answers the negative filter with nothing, so the screen
+	 * counts the key's documents less the plugin's own and pages the key, as before.
 	 */
-	public function test_with_no_foreign_document_one_empty_page_is_read(): void {
+	public function test_an_older_turing_without_negative_filters_is_paged_as_before(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				$negative         = str_contains( $url, rawurlencode( '-source_apps:wordpress' ) );
+				$mine             = ! $negative && str_contains( $url, rawurlencode( 'source_apps:wordpress' ) );
+				$count            = $negative ? 0 : ( $mine ? 1 : 2 );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'queryContext' => array( 'count' => $count ),
+							'results'      => array(
+								'document' => $negative || $mine || str_contains( $url, 'rows=0' ) ? array() : array(
+									array(
+										'fields' => array(
+											'type'        => 'post',
+											'source_apps' => 'wordpress',
+										),
+									),
+									array(
+										'fields' => array(
+											'type'        => 'Article',
+											'source_apps' => 'catalog',
+										),
+									),
+								),
+							),
+						)
+					),
+				);
+			}
+		);
+
+		$found = $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) );
+
+		$this->assertSame( array( 'Article' ), array_column( $found, 'type' ) );
+		$this->assertCount( 4, $this->requests, 'the negative count, the two legacy counts, one page' );
+		$this->assertStringNotContainsString( rawurlencode( '-source_apps' ), $this->requests[3][0] );
+	}
+
+	/**
+	 * D334: with nothing but the plugin's own documents under the key, only counts are read.
+	 */
+	public function test_with_no_foreign_document_only_counts_are_read(): void {
 		Functions\when( 'wp_remote_request' )->alias(
 			function ( string $url, array $args ) {
 				$this->requests[] = array( $url, $args );
@@ -403,7 +448,7 @@ final class MappingTest extends PluginTestCase {
 		);
 
 		$this->assertSame( array(), $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) ) );
-		$this->assertCount( 1, $this->requests );
+		$this->assertCount( 3, $this->requests, 'the negative count, then the two legacy counts, no page' );
 	}
 
 	/**

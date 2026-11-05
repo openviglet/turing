@@ -64,6 +64,9 @@ let uncounted = '';
 let beforeReading = null;
 // The readings this page already paid for, by sentence: each one is an LLM call.
 const readings = new Map();
+// Whether the box asks its suggestions inside its scope (D318); off, for this page, once the
+// Turing answering is older than T1226.
+let scopedSuggestions = true;
 
 /**
  * Every filter this block's searches stay inside: the site's scope (scopeFilters, or the
@@ -387,8 +390,12 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			if ( state.query.trim().length > 1 ) {
 				// Suggestions stay inside the block's scope (D318): the site keys it searches
 				// and its fixed filters, so a box scoped to events never offers a term only
-				// posts hold. Turing answers a scoped autocomplete with terms (T1226).
-				autocomplete.fetch( state.query, { fq: blockScope() } );
+				// posts hold. Turing answers a scoped autocomplete with terms (T1226); an older
+				// one answers it with highlighted titles, so there the box asks as before.
+				autocomplete.fetch(
+					state.query,
+					scopedSuggestions ? { fq: blockScope() } : {}
+				);
 				// Results follow the typing once it pauses; the SDK drops any answer a
 				// newer search has overtaken.
 				instant = window.setTimeout(
@@ -683,6 +690,20 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			client = createClient();
 			search.subscribe( sync );
 			autocomplete.subscribe( ( s ) => {
+				// A Turing older than T1226 answers a scoped autocomplete with document titles
+				// marked up for highlighting: never a term to suggest. Ask unscoped from then on,
+				// for this page, and again for what was typed (D318).
+				if (
+					scopedSuggestions &&
+					s.suggestions.some( ( t ) => /<\/?[a-z]/i.test( t ) )
+				) {
+					scopedSuggestions = false;
+					state.suggestions = [];
+					if ( state.query.trim().length > 1 ) {
+						autocomplete.fetch( state.query );
+					}
+					return;
+				}
 				state.suggestions = s.suggestions.slice( 0, 8 );
 			} );
 			baseTitle = document.title;
