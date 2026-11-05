@@ -37,6 +37,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CM — People, themes and places extracted at import, as facets
 
+## Block CN — Autocomplete inside a filtered scope
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2361,3 +2363,31 @@ producer.
 
 **Done when:** a document naming a person and a theme is found under both facets, and an
 alias resolves to the canonical name, on Solr, Lucene and Elasticsearch.
+
+## CLXXI Autocomplete inside a filtered scope
+
+### CLXXI.1 Filtered autocomplete answers terms (D318) (T1226)
+
+**Where it came from.** Dumont D318 (the WordPress plugin): a search block scoped by
+fixed filters (`type:page`) or by its site key on a shared SN site should only suggest
+terms its scope holds, so it passes the scope to autocomplete: `GET
+/api/sn/{site}/ac?q=works&fq[]=site_key:localhost` (the SDK's
+`createAutoComplete().fetch(query, { fq })`).
+
+**What happens.** Without `fq`, `TurSNSiteAutoCompleteAPI` answers term completions
+(`["workshop"]`). With any `fq` it switches to `autoCompleteWithRegularSearch`, which
+answers whole document titles with the highlight markup in them:
+`["<mark>Workshop</mark> on search", "<mark>Workshop</mark> on facets", ...]`. The same
+query gets a different kind of answer, the markup reaches a plain-text list, and a
+client cannot scope its suggestions without changing what a suggestion is.
+
+**What Turing should do.** A filtered autocomplete answers the same shape as an
+unfiltered one: term completions, drawn only from documents matching the filters (for
+example the suggester's terms intersected with a filtered search, or a terms facet on
+the text field over the filtered set), never highlighted text. If titles are a wanted
+mode, make it an explicit parameter rather than a side effect of `fq`.
+
+**Workaround in Dumont.** None: D318 waits on this line.
+
+**Done when:** `ac?q=works` and `ac?q=works&fq[]=type:post` both answer `["workshop"]`
+on a site whose posts hold it, and the filtered call omits terms only other types hold.

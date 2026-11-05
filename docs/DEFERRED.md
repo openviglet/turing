@@ -23,3 +23,5 @@
 
 ## Block CM — People, themes and places extracted at import, as facets
 
+## Block CN — Autocomplete inside a filtered scope
+

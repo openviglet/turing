@@ -27,6 +27,10 @@
 
 - 📋 **T1225** (deps: —) **Nothing fills the turing_entity facets: who and what a document names is no facet, and name variants stay split** — No source can offer browsing by person or theme, though Turing already facets the fields. → §CLXX.1
 
+## Block CN — Autocomplete inside a filtered scope
+
+- 📋 **T1226** (deps: —) **Autocomplete with fq answers highlighted document titles instead of term completions, markup included** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
