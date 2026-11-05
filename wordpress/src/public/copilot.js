@@ -1,5 +1,5 @@
 /**
- * The Ask the catalog block in the browser (D173): a conversation with Turing's catalog
+ * The Ask this site block in the browser (D173, D323): a conversation with Turing's
  * copilot (`POST /api/sn/{site}/copilot`), answered from this site's content with the items
  * it cites. On a WooCommerce shop each cited product shows its price from the Store API and
  * goes in the cart with a click; the copilot never puts anything there on its own.
@@ -30,15 +30,28 @@ const client = createClient();
 const site = encodeURIComponent( config.site );
 // The conversation so far, as the copilot reads it: follow-ups refer back to it.
 const messages = [];
-// The field a product's stock is indexed under (the WooCommerce mapping's `stock_status`).
-// Turing marks what reads as unavailable; the Store API is checked as well, because the
-// field holds the shop's own words and those are translated.
-const availabilityField = 'stock_status';
-// The document type a journal post is indexed with, cited beside the kit as a guide.
-const guideTypes = [ 'post' ];
-// Only products are staged (D255, Turing T1175); a page never is. A Turing older than T1175
-// ignores the field, and the shop's word drops what is not a product (D241).
-const productTypes = [ 'product' ];
+/**
+ * What the plan stages, cites and reads availability from (D323), as render.php resolved them:
+ * on a shop, products (D255, Turing T1175), posts as guides and `stock_status`, where Turing
+ * marks what reads as unavailable and the Store API is checked as well; anywhere else, the
+ * block's own types and field, and nothing sent for one left blank.
+ *
+ * @return {Object} The kit call's fields for them.
+ */
+function kitScope() {
+	return {
+		...( state.availabilityField
+			? {
+					availabilityField: state.availabilityField,
+					availability: 'MARK',
+				}
+			: {} ),
+		...( state.guideTypes.length ? { guideTypes: state.guideTypes } : {} ),
+		...( state.stageTypes.length
+			? { productTypes: state.stageTypes }
+			: {} ),
+	};
+}
 
 /**
  * One staged product as the block shows it.
@@ -312,10 +325,7 @@ async function buildKit() {
 			{
 				plan,
 				locale: config.locale,
-				availabilityField,
-				availability: 'MARK',
-				guideTypes,
-				productTypes,
+				...kitScope(),
 				// This site's products only, on an SN site shared by several (D287, T1213).
 				filters: siteFilters,
 			},

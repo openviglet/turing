@@ -2,11 +2,11 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "viglet-dumont/copilot",
-	"title": "Ask the catalog",
+	"title": "Ask this site",
 	"category": "widgets",
 	"icon": "format-chat",
-	"description": "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs.",
-	"keywords": [ "copilot", "assistant", "shop", "turing" ],
+	"description": "A conversation with Turing's copilot: a request in plain words answered from this site's content, with the items it cites. A described plan can be turned into the items it needs, grouped by need; on a WooCommerce shop those are products that go in the cart together.",
+	"keywords": [ "copilot", "assistant", "ask", "turing" ],
 	"textdomain": "viglet-turing-search",
 	"attributes": {
 		"heading": {
@@ -18,8 +18,19 @@
 			"default": ""
 		},
 		"kit": {
-			"type": "boolean",
-			"default": true
+			"type": "boolean"
+		},
+		"stageTypes": {
+			"type": "string",
+			"default": ""
+		},
+		"guideTypes": {
+			"type": "string",
+			"default": ""
+		},
+		"availabilityField": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

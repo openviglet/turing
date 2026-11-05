@@ -98,14 +98,14 @@ function viglet_dumont_ai_status(): array {
 		'answer'     => __( 'Answers with sources', 'viglet-turing-search' ),
 		'chat'       => __( 'Chat', 'viglet-turing-search' ),
 		'nl_filters' => __( 'Natural-language filters', 'viglet-turing-search' ),
-		'copilot'    => __( 'Catalog copilot', 'viglet-turing-search' ),
+		'copilot'    => __( 'Copilot', 'viglet-turing-search' ),
 	);
 	// Where a visitor meets each feature (D179): the block, and the setting on it when there is one.
 	$blocks = array(
 		'answer'     => __( 'Turing search block, with "Answer questions from this site’s content" on', 'viglet-turing-search' ),
 		'chat'       => __( 'Site assistant block, or its launcher on every page', 'viglet-turing-search' ),
 		'nl_filters' => __( 'Turing search block, with "Suggest the filters a sentence names" on', 'viglet-turing-search' ),
-		'copilot'    => __( 'Ask the catalog block', 'viglet-turing-search' ),
+		'copilot'    => __( 'Ask this site block', 'viglet-turing-search' ),
 	);
 
 	return array_map(

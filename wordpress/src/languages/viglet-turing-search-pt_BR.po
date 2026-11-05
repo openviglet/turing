@@ -31,7 +31,7 @@ msgstr "Indexação"
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:255
+#: src/includes/class-viglet-dumont-native-search.php:261
 #: src/includes/class-viglet-dumont-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
@@ -305,13 +305,13 @@ msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
 #: src/blocks/search/render.php:125
-#: src/includes/class-viglet-dumont-native-search.php:266
+#: src/includes/class-viglet-dumont-native-search.php:272
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
 #: src/blocks/search/render.php:130
-#: src/includes/class-viglet-dumont-native-search.php:267
+#: src/includes/class-viglet-dumont-native-search.php:273
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
 
@@ -1112,7 +1112,7 @@ msgstr "Vale quando o post for salvo."
 msgid "Reindex now"
 msgstr "Reindexar agora"
 
-#: src/admin/js/copilot-block-editor.js:47
+#: src/admin/js/copilot-block-editor.js:53
 #: src/admin/js/search-block-editor.js:114
 msgid "Placeholder"
 msgstr "Texto de exemplo"
@@ -1245,32 +1245,32 @@ msgstr "Automática: a página com o bloco de busca do Turing"
 msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
 msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
 
-#: src/includes/class-viglet-dumont-native-search.php:254
+#: src/includes/class-viglet-dumont-native-search.php:260
 msgid "Search this site"
 msgstr "Buscar neste site"
 
 #: src/blocks/assistant/render.php:62
-#: src/includes/class-viglet-dumont-native-search.php:256
+#: src/includes/class-viglet-dumont-native-search.php:262
 msgid "Close"
 msgstr "Fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:257
+#: src/includes/class-viglet-dumont-native-search.php:263
 msgid "Results"
 msgstr "Resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:258
+#: src/includes/class-viglet-dumont-native-search.php:264
 msgid "Searching…"
 msgstr "Buscando…"
 
-#: src/includes/class-viglet-dumont-native-search.php:268
+#: src/includes/class-viglet-dumont-native-search.php:274
 msgid "See all results"
 msgstr "Ver todos os resultados"
 
-#: src/includes/class-viglet-dumont-native-search.php:269
+#: src/includes/class-viglet-dumont-native-search.php:275
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr "Enter: todos os resultados · Setas: escolher um · Esc: fechar"
 
-#: src/includes/class-viglet-dumont-native-search.php:270
+#: src/includes/class-viglet-dumont-native-search.php:276
 msgid "Search (Ctrl+K)"
 msgstr "Buscar (Ctrl+K)"
 
@@ -1378,10 +1378,6 @@ msgstr "Chat"
 #: src/viglet-dumont.php:100
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
-
-#: src/viglet-dumont.php:101
-msgid "Catalog copilot"
-msgstr "Copiloto de catálogo"
 
 #: assets/admin/health.js:64
 msgid "AI features"
@@ -1740,7 +1736,7 @@ msgid "Related content"
 msgstr "Conteúdo relacionado"
 
 #: src/admin/js/compare-block-editor.js:36
-#: src/admin/js/copilot-block-editor.js:38
+#: src/admin/js/copilot-block-editor.js:47
 #: src/admin/js/related-block-editor.js:47
 msgid "Heading"
 msgstr "Título"
@@ -1813,10 +1809,10 @@ msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma.
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:121
 #: src/blocks/search/render.php:123
-#: src/includes/class-viglet-dumont-native-search.php:262
-#: src/includes/class-viglet-dumont-native-search.php:264
-#: src/includes/class-viglet-dumont-native-search.php:654
-#: src/includes/class-viglet-dumont-native-search.php:858
+#: src/includes/class-viglet-dumont-native-search.php:268
+#: src/includes/class-viglet-dumont-native-search.php:270
+#: src/includes/class-viglet-dumont-native-search.php:660
+#: src/includes/class-viglet-dumont-native-search.php:864
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -2048,29 +2044,29 @@ msgstr "Produto: %s"
 msgid "Stock"
 msgstr "Estoque"
 
-#: src/blocks/copilot/render.php:109
+#: src/blocks/copilot/render.php:169
 #: src/blocks/search/parts/main.php:85
 msgid "Was"
 msgstr "De"
 
-#: src/blocks/copilot/render.php:111
+#: src/blocks/copilot/render.php:171
 #: src/blocks/search/parts/main.php:88
 msgid "Add to cart"
 msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:39
+#: src/blocks/copilot/render.php:101
 #: src/blocks/search/render.php:96
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
-#: src/blocks/copilot/render.php:45
+#: src/blocks/copilot/render.php:107
 #: src/blocks/search/render.php:101
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
-#: src/blocks/copilot/render.php:46
+#: src/blocks/copilot/render.php:108
 #: src/blocks/search/render.php:102
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
@@ -2184,46 +2180,35 @@ msgstr "Adicionar um sinônimo: “%s”"
 msgid "Add a synonym"
 msgstr "Adicionar um sinônimo"
 
-#: src/blocks/copilot/render.php:18
-#: src/admin/js/copilot-block-editor.js:36
-#: src/admin/js/copilot-block-editor.js:39
-#: src/admin/js/copilot-block-editor.js:74
+#: src/blocks/copilot/render.php:26
+#: src/admin/js/copilot-block-editor.js:34
 msgid "Ask the catalog"
 msgstr "Pergunte ao catálogo"
 
-#: src/blocks/copilot/render.php:47
+#: src/blocks/copilot/render.php:60
 msgid "Looking through the catalog…"
 msgstr "Procurando no catálogo…"
 
-#: src/blocks/copilot/render.php:48
+#: src/blocks/copilot/render.php:61
 msgid "The catalog could not answer right now."
 msgstr "O catálogo não pôde responder agora."
 
-#: src/blocks/copilot/render.php:49
+#: src/blocks/copilot/render.php:62
 msgid "Nothing in the catalog matches that."
 msgstr "Nada no catálogo corresponde a isso."
 
-#: src/blocks/copilot/render.php:28
+#: src/blocks/copilot/render.php:55
 msgid "What are you looking for?"
 msgstr "O que você procura?"
 
-#: src/blocks/copilot/render.php:64
-#: src/blocks/copilot/render.php:176
+#: src/blocks/copilot/render.php:126
+#: src/blocks/copilot/render.php:236
 msgid "Ask"
 msgstr "Perguntar"
 
-#: src/admin/js/copilot-block-editor.js:48
+#: src/admin/js/copilot-block-editor.js:55
 msgid "A waterproof jacket under 200"
 msgstr "Uma jaqueta impermeável por menos de 200"
-
-#: src/admin/js/copilot-block-editor.js:75
-msgid "Visitors ask in plain words and Turing’s catalog copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
-msgstr "Os visitantes perguntam com palavras comuns e o copiloto de catálogo do Turing responde a partir deste site, citando os itens. Aparece só quando o Turing tem um modelo de linguagem para isso."
-
-#: src/blocks/copilot/block.json
-msgctxt "block title"
-msgid "Ask the catalog"
-msgstr "Pergunte ao catálogo"
 
 #: src/blocks/copilot/block.json
 msgctxt "block keyword"
@@ -2237,7 +2222,6 @@ msgid "assistant"
 msgstr "assistente"
 
 #: src/blocks/compare/block.json
-#: src/blocks/copilot/block.json
 msgctxt "block keyword"
 msgid "shop"
 msgstr "loja"
@@ -2363,14 +2347,14 @@ msgstr "(diferente)"
 msgid "Where they differ"
 msgstr "Onde diferem"
 
-#: src/blocks/copilot/render.php:115
+#: src/blocks/copilot/render.php:175
 #: src/blocks/related/render.php:118
 #: src/blocks/search/parts/main.php:92
 msgid "Compare"
 msgstr "Comparar"
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:44
+#: src/blocks/copilot/render.php:106
 #: src/blocks/related/render.php:53
 #: src/blocks/search/render.php:98
 #, php-format
@@ -2378,7 +2362,7 @@ msgid "Compare %d products"
 msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:42
+#: src/blocks/copilot/render.php:104
 #: src/blocks/related/render.php:117
 #: src/blocks/search/render.php:100
 #, php-format
@@ -2439,7 +2423,7 @@ msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr "O resumo citou um número que a tabela não tem, por isso não é mostrado."
 
 #: src/blocks/search/parts/trending.php:29
-#: src/includes/class-viglet-dumont-native-search.php:248
+#: src/includes/class-viglet-dumont-native-search.php:254
 msgid "Popular searches"
 msgstr "Buscas populares"
 
@@ -2566,8 +2550,10 @@ msgid "A button in the corner of every page opens a chat that answers from this 
 msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
 
 #: src/blocks/assistant/render.php:17
+#: src/blocks/copilot/render.php:26
 #: src/admin/js/assistant-block-editor.js:41
 #: src/admin/js/assistant-block-editor.js:67
+#: src/admin/js/copilot-block-editor.js:35
 msgid "Ask this site"
 msgstr "Pergunte a este site"
 
@@ -2659,96 +2645,87 @@ msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
-#: src/viglet-dumont.php:108
-msgid "Ask the catalog block"
-msgstr "Bloco Pergunte ao catálogo"
-
 #: assets/admin/health.js:89
 msgid "Shown by"
 msgstr "Aparece em"
 
-#: src/blocks/copilot/render.php:65
+#: src/blocks/copilot/render.php:127
 msgid "Describe your plan"
 msgstr "Descreva seu plano"
 
-#: src/blocks/copilot/render.php:66
+#: src/blocks/copilot/render.php:64
 msgid "Build my kit"
 msgstr "Montar meu kit"
 
-#: src/blocks/copilot/render.php:67
+#: src/blocks/copilot/render.php:65
 msgid "Putting your kit together…"
 msgstr "Montando seu kit…"
 
-#: src/blocks/copilot/render.php:68
+#: src/blocks/copilot/render.php:66
 msgid "The catalog has nothing for that plan."
 msgstr "O catálogo não tem nada para esse plano."
 
 #. translators: %s: the needs the catalog has no product for, comma-separated.
-#: src/blocks/copilot/render.php:70
+#: src/blocks/copilot/render.php:68
 #, php-format
 msgid "Nothing in the catalog yet for: %s."
 msgstr "Ainda não há nada no catálogo para: %s."
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:72
+#: src/blocks/copilot/render.php:70
 #, php-format
 msgid "Keep %s in the kit"
 msgstr "Manter %s no kit"
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:74
+#: src/blocks/copilot/render.php:134
 #, php-format
 msgid "Add %d products to the cart"
 msgstr "Adicionar %d produtos ao carrinho"
 
-#: src/blocks/copilot/render.php:75
+#: src/blocks/copilot/render.php:135
 msgid "Add 1 product to the cart"
 msgstr "Adicionar 1 produto ao carrinho"
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:77
+#: src/blocks/copilot/render.php:137
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr "%1$d adicionados ao carrinho. Total do carrinho: %2$s."
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:79
+#: src/blocks/copilot/render.php:139
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr "%1$d de %2$d adicionados ao carrinho; os demais não puderam ser adicionados."
 
-#: src/blocks/copilot/render.php:93
+#: src/blocks/copilot/render.php:153
 msgid "Mode"
 msgstr "Modo"
 
-#: src/blocks/copilot/render.php:94
+#: src/blocks/copilot/render.php:154
 msgid "Ask a question"
 msgstr "Fazer uma pergunta"
 
-#: src/blocks/copilot/render.php:95
+#: src/blocks/copilot/render.php:63
 msgid "Plan a kit"
 msgstr "Planejar um kit"
 
-#: src/blocks/copilot/render.php:144
+#: src/blocks/copilot/render.php:71
 msgid "Out of stock"
 msgstr "Fora de estoque"
 
-#: src/blocks/copilot/render.php:153
+#: src/blocks/copilot/render.php:213
 msgid "Guides for this plan"
 msgstr "Guias para este plano"
 
-#: src/admin/js/copilot-block-editor.js:57
+#: src/admin/js/copilot-block-editor.js:69
 msgid "Offer Build my kit"
 msgstr "Oferecer Montar meu kit"
 
-#: src/admin/js/copilot-block-editor.js:61
+#: src/admin/js/copilot-block-editor.js:72
 msgid "A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together."
 msgstr "O visitante descreve um plano e recebe os produtos de que ele precisa, agrupados por necessidade, para colocar no carrinho de uma vez."
-
-#: src/blocks/copilot/block.json
-msgctxt "block description"
-msgid "A conversation with Turing's catalog copilot: a request in plain words answered from this site's content, with the items it cites. On a WooCommerce shop each cited product shows its price and can go in the cart, and a described plan can be turned into a kit of products, grouped by what the plan needs."
-msgstr "Uma conversa com o copiloto de catálogo do Turing: um pedido em palavras simples respondido com o conteúdo deste site, citando os itens. Numa loja WooCommerce, cada produto citado mostra o preço e pode ir para o carrinho, e um plano descrito pode virar um kit de produtos, agrupados pelo que o plano precisa."
 
 #: src/blocks/search/parts/suggested.php:39
 msgid "Undo"
@@ -2803,7 +2780,7 @@ msgid "The SN site %s answers searches without a key."
 msgstr "O site SN %s responde a buscas sem chave."
 
 #. translators: %s: the name of the product or post the page shows.
-#: src/blocks/copilot/render.php:27
+#: src/blocks/copilot/render.php:54
 #, php-format
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
@@ -3014,17 +2991,17 @@ msgstr "Imersivo: resultados por tipo, com imagens"
 msgid "Immersive groups the results by type, each with its image, date and a link to all of that type, shows recent searches before anything is typed, and fills a phone's screen."
 msgstr "O imersivo agrupa os resultados por tipo, cada um com sua imagem, data e um link para todos daquele tipo, mostra as buscas recentes antes de digitar e ocupa a tela inteira no celular."
 
-#: src/includes/class-viglet-dumont-native-search.php:233
+#: src/includes/class-viglet-dumont-native-search.php:239
 msgid "PDF files"
 msgstr "Arquivos PDF"
 
 #. translators: %s: a type's name, e.g. "Events".
-#: src/includes/class-viglet-dumont-native-search.php:252
+#: src/includes/class-viglet-dumont-native-search.php:258
 #, php-format
 msgid "See all %s"
 msgstr "Ver todos: %s"
 
-#: src/includes/class-viglet-dumont-native-search.php:253
+#: src/includes/class-viglet-dumont-native-search.php:259
 msgid "Recent searches"
 msgstr "Buscas recentes"
 
@@ -3032,11 +3009,11 @@ msgstr "Buscas recentes"
 msgid "Answer questions on top of the immersive layout (each answer is an LLM call)"
 msgstr "Responder perguntas no topo do layout imersivo (cada resposta é uma chamada de LLM)"
 
-#: src/includes/class-viglet-dumont-native-search.php:249
+#: src/includes/class-viglet-dumont-native-search.php:255
 msgid "Answer"
 msgstr "Resposta"
 
-#: src/includes/class-viglet-dumont-native-search.php:250
+#: src/includes/class-viglet-dumont-native-search.php:256
 msgid "Preview"
 msgstr "Pré-visualização"
 
@@ -3047,3 +3024,114 @@ msgid "%d document under this site key came from another source. Index All, Dele
 msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
 msgstr[0] "%d documento com esta chave de site veio de outra fonte. Indexar todo o conteúdo, Excluir tudo e a limpeza não mexem nele."
 msgstr[1] "%d documentos com esta chave de site vieram de outra fonte. Indexar todo o conteúdo, Excluir tudo e a limpeza não mexem neles."
+
+#: src/blocks/copilot/render.php:74
+msgid "Looking through this site…"
+msgstr "Procurando neste site…"
+
+#: src/blocks/copilot/render.php:75
+msgid "This site could not answer right now."
+msgstr "Este site não conseguiu responder agora."
+
+#: src/blocks/copilot/render.php:76
+msgid "Nothing on this site matches that."
+msgstr "Nada neste site corresponde a isso."
+
+#: src/blocks/copilot/render.php:77
+msgid "Make a plan"
+msgstr "Montar um plano"
+
+#: src/blocks/copilot/render.php:78
+msgid "Build my plan"
+msgstr "Montar meu plano"
+
+#: src/blocks/copilot/render.php:79
+msgid "Putting your plan together…"
+msgstr "Montando seu plano…"
+
+#: src/blocks/copilot/render.php:80
+msgid "Nothing on this site fits that plan."
+msgstr "Nada neste site atende a esse plano."
+
+#. translators: %s: the needs nothing on the site covers, comma-separated.
+#: src/blocks/copilot/render.php:82
+#, php-format
+msgid "Nothing on this site yet for: %s."
+msgstr "Ainda nada neste site para: %s."
+
+#. translators: %s: the name of a page, event or other item.
+#: src/blocks/copilot/render.php:84
+#, php-format
+msgid "Keep %s in the plan"
+msgstr "Manter %s no plano"
+
+#: src/blocks/copilot/render.php:85
+msgid "Unavailable"
+msgstr "Indisponível"
+
+#: src/viglet-dumont.php:101
+msgid "Copilot"
+msgstr "Copiloto"
+
+#: src/viglet-dumont.php:108
+msgid "Ask this site block"
+msgstr "Bloco Pergunte a este site"
+
+#: src/admin/js/copilot-block-editor.js:59
+msgid "Which courses start next month?"
+msgstr "Quais cursos começam no mês que vem?"
+
+#: src/admin/js/copilot-block-editor.js:70
+msgid "Offer a plan"
+msgstr "Oferecer um plano"
+
+#: src/admin/js/copilot-block-editor.js:76
+msgid "A visitor describes a plan and gets the items it needs from this site, grouped by need."
+msgstr "O visitante descreve um plano e recebe os itens deste site de que ele precisa, agrupados por necessidade."
+
+#: src/admin/js/copilot-block-editor.js:88
+msgid "What the plan uses"
+msgstr "O que o plano usa"
+
+#: src/admin/js/copilot-block-editor.js:94
+msgid "Types it proposes"
+msgstr "Tipos que ele propõe"
+
+#: src/admin/js/copilot-block-editor.js:98
+msgid "Indexed types, comma-separated, e.g. course, event. Blank: products on a shop, any type elsewhere."
+msgstr "Tipos indexados, separados por vírgula, por exemplo course, event. Em branco: produtos numa loja, qualquer tipo nos demais sites."
+
+#: src/admin/js/copilot-block-editor.js:107
+msgid "Types it cites as guides"
+msgstr "Tipos que ele cita como guias"
+
+#: src/admin/js/copilot-block-editor.js:111
+msgid "Indexed types, comma-separated, e.g. page. Blank: posts on a shop, none elsewhere."
+msgstr "Tipos indexados, separados por vírgula, por exemplo page. Em branco: posts numa loja, nenhum nos demais sites."
+
+#: src/admin/js/copilot-block-editor.js:120
+msgid "Availability field"
+msgstr "Campo de disponibilidade"
+
+#: src/admin/js/copilot-block-editor.js:124
+msgid "The indexed field that says whether an item can be taken, e.g. seats_left. Blank: stock_status on a shop, none elsewhere."
+msgstr "O campo indexado que diz se um item está disponível, por exemplo seats_left. Em branco: stock_status numa loja, nenhum nos demais sites."
+
+#: src/admin/js/copilot-block-editor.js:137
+msgid "Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
+msgstr "Os visitantes perguntam com as próprias palavras e o copiloto do Turing responde com base neste site, citando seus itens. Ele só aparece quando o Turing tem um modelo de linguagem para isso."
+
+#: src/blocks/copilot/block.json
+msgctxt "block title"
+msgid "Ask this site"
+msgstr "Pergunte a este site"
+
+#: src/blocks/copilot/block.json
+msgctxt "block description"
+msgid "A conversation with Turing's copilot: a request in plain words answered from this site's content, with the items it cites. A described plan can be turned into the items it needs, grouped by need; on a WooCommerce shop those are products that go in the cart together."
+msgstr "Uma conversa com o copiloto do Turing: um pedido em linguagem comum respondido com o conteúdo deste site, com os itens que ele cita. Um plano descrito pode virar os itens de que precisa, agrupados por necessidade; numa loja WooCommerce, são produtos que vão juntos para o carrinho."
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "ask"
+msgstr "perguntar"

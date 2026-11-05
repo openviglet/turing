@@ -154,6 +154,12 @@ class Viglet_Dumont_Native_Search {
 			true
 		);
 		wp_set_script_translations( 'viglet-dumont-copilot-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
+		// The editor speaks as the site does (D323): a shop's catalog and kit, or this site and a plan.
+		wp_add_inline_script(
+			'viglet-dumont-copilot-block-editor',
+			'window.vigletDumontCopilot = ' . wp_json_encode( array( 'shop' => Viglet_Dumont_WooCommerce::active() ) ) . ';',
+			'before'
+		);
 		wp_register_style( 'viglet-dumont-copilot-block', VIGLET_DUMONT_URL . 'blocks/copilot/style.css', array(), VIGLET_DUMONT_VERSION );
 
 		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );

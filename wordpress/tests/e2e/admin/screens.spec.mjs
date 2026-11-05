@@ -83,14 +83,14 @@ test( 'Health checks the AI features on demand, and every one that is off says w
 		'Answers with sources',
 		'Chat',
 		'Natural-language filters',
-		'Catalog copilot',
+		'Copilot',
 	] );
 	// Where a visitor meets each one (D179).
 	await expect( rows.locator( 'td:nth-child(3)' ) ).toHaveText( [
 		/^Turing search block, with "Answer questions/,
 		'Site assistant block, or its launcher on every page',
 		/^Turing search block, with "Suggest the filters/,
-		'Ask the catalog block',
+		'Ask this site block',
 	] );
 	for ( const row of await rows.all() ) {
 		const [ state, , why ] = await row.locator( 'td' ).allTextContents();

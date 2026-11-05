@@ -1,9 +1,14 @@
 <?php
 /**
- * The Ask the catalog block (D173), server side: a conversation with Turing's catalog
- * copilot, driven by src/public/copilot.js. Hidden until Turing says the copilot can answer.
- * With `kit` on (D201) it also offers Build my kit: a described plan turned into the
- * products it needs, grouped by need, that go in the cart together.
+ * The Ask this site block (D173), server side: a conversation with Turing's copilot, driven by
+ * src/public/copilot.js. Hidden until Turing says the copilot can answer. With `kit` on (D201)
+ * it also offers a plan: a described plan turned into the documents it needs, grouped by need.
+ *
+ * It speaks as a shop only on a WooCommerce shop (D323): there the default copy names the
+ * catalog and the kit, the kit is on unless switched off, and it stages products, cites posts
+ * as guides and reads stock from `stock_status`. Anywhere else the copy names this site, the
+ * plan is off unless switched on, and what it stages, cites and reads availability from are
+ * the block's own `stageTypes`, `guideTypes` and `availabilityField`.
  *
  * @package Viglet_Dumont
  *
@@ -14,9 +19,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$viglet_dumont_shop    = Viglet_Dumont_WooCommerce::active();
 $viglet_dumont_id      = wp_unique_id( 'viglet-dumont-copilot-' );
-$viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask the catalog', 'viglet-turing-search' );
-$viglet_dumont_kit     = (bool) ( $attributes['kit'] ?? true );
+$viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' )
+	? (string) $attributes['heading']
+	: ( $viglet_dumont_shop ? __( 'Ask the catalog', 'viglet-turing-search' ) : __( 'Ask this site', 'viglet-turing-search' ) );
+$viglet_dumont_kit     = isset( $attributes['kit'] ) ? (bool) $attributes['kit'] : $viglet_dumont_shop;
+
+/**
+ * A comma-separated attribute as a list of names, or the shop's default when it is blank.
+ *
+ * @param mixed    $value    The attribute.
+ * @param string[] $fallback What a shop stages or cites when the block names nothing.
+ * @param bool     $shop     Whether WooCommerce is running.
+ * @return string[]
+ */
+$viglet_dumont_names        = static function ( $value, array $fallback, bool $shop ): array {
+	$names = array_values( array_filter( array_map( 'sanitize_key', explode( ',', (string) $value ) ) ) );
+	return $names ? $names : ( $shop ? $fallback : array() );
+};
+$viglet_dumont_stage_types  = $viglet_dumont_names( $attributes['stageTypes'] ?? '', array( 'product' ), $viglet_dumont_shop );
+$viglet_dumont_guide_types  = $viglet_dumont_names( $attributes['guideTypes'] ?? '', array( 'post' ), $viglet_dumont_shop );
+$viglet_dumont_availability = sanitize_key( (string) ( $attributes['availabilityField'] ?? '' ) );
+if ( '' === $viglet_dumont_availability && $viglet_dumont_shop ) {
+	$viglet_dumont_availability = 'stock_status';
+}
 
 // On a product's page (or any indexed post's), the question is about it (D242): Turing pins
 // its document first, and the box says what "this" is.
@@ -27,56 +54,89 @@ $viglet_dumont_ask     = $viglet_dumont_subject
 	? sprintf( __( 'Ask about %s', 'viglet-turing-search' ), get_the_title( $viglet_dumont_subject ) )
 	: __( 'What are you looking for?', 'viglet-turing-search' );
 
+// The words the block speaks in: a shop's catalog and kit, or this site and a plan.
+$viglet_dumont_copy = $viglet_dumont_shop
+	? array(
+		'thinking'    => __( 'Looking through the catalog…', 'viglet-turing-search' ),
+		'failed'      => __( 'The catalog could not answer right now.', 'viglet-turing-search' ),
+		'nothing'     => __( 'Nothing in the catalog matches that.', 'viglet-turing-search' ),
+		'planMode'    => __( 'Plan a kit', 'viglet-turing-search' ),
+		'planButton'  => __( 'Build my kit', 'viglet-turing-search' ),
+		'kitThinking' => __( 'Putting your kit together…', 'viglet-turing-search' ),
+		'kitNothing'  => __( 'The catalog has nothing for that plan.', 'viglet-turing-search' ),
+		/* translators: %s: the needs the catalog has no product for, comma-separated. */
+		'kitUnfilled' => __( 'Nothing in the catalog yet for: %s.', 'viglet-turing-search' ),
+		/* translators: %s: the product's name. */
+		'includeFor'  => __( 'Keep %s in the kit', 'viglet-turing-search' ),
+		'out'         => __( 'Out of stock', 'viglet-turing-search' ),
+	)
+	: array(
+		'thinking'    => __( 'Looking through this site…', 'viglet-turing-search' ),
+		'failed'      => __( 'This site could not answer right now.', 'viglet-turing-search' ),
+		'nothing'     => __( 'Nothing on this site matches that.', 'viglet-turing-search' ),
+		'planMode'    => __( 'Make a plan', 'viglet-turing-search' ),
+		'planButton'  => __( 'Build my plan', 'viglet-turing-search' ),
+		'kitThinking' => __( 'Putting your plan together…', 'viglet-turing-search' ),
+		'kitNothing'  => __( 'Nothing on this site fits that plan.', 'viglet-turing-search' ),
+		/* translators: %s: the needs nothing on the site covers, comma-separated. */
+		'kitUnfilled' => __( 'Nothing on this site yet for: %s.', 'viglet-turing-search' ),
+		/* translators: %s: the name of a page, event or other item. */
+		'includeFor'  => __( 'Keep %s in the plan', 'viglet-turing-search' ),
+		'out'         => __( 'Unavailable', 'viglet-turing-search' ),
+	);
+
 wp_interactivity_state(
 	'viglet-dumont/copilot',
 	array(
-		'available'    => false,
-		'question'     => '',
-		'turns'        => array(),
-		'busy'         => false,
-		'status'       => '',
+		// What the plan stages, cites and reads availability from (D323).
+		'stageTypes'        => $viglet_dumont_stage_types,
+		'guideTypes'        => $viglet_dumont_guide_types,
+		'availabilityField' => $viglet_dumont_availability,
+		'available'         => false,
+		'question'          => '',
+		'turns'             => array(),
+		'busy'              => false,
+		'status'            => '',
 		/* translators: %s: the product's name. */
-		'cartLabel'    => __( 'Add to cart: %s', 'viglet-turing-search' ),
+		'cartLabel'         => __( 'Add to cart: %s', 'viglet-turing-search' ),
 		// Compare on a cited product (D212), into the list the search cards use.
 		/* translators: %s: a product's name. */
-		'compareFor'   => __( 'Compare %s', 'viglet-turing-search' ),
+		'compareFor'        => __( 'Compare %s', 'viglet-turing-search' ),
 		/* translators: %d: how many products, two to four. */
-		'compareLabel' => __( 'Compare %d products', 'viglet-turing-search' ),
-		'cartAdded'    => __( 'Added to your cart.', 'viglet-turing-search' ),
-		'cartFailed'   => __( 'It could not be added to the cart.', 'viglet-turing-search' ),
-		'thinking'     => __( 'Looking through the catalog…', 'viglet-turing-search' ),
-		'failed'       => __( 'The catalog could not answer right now.', 'viglet-turing-search' ),
-		'nothing'      => __( 'Nothing in the catalog matches that.', 'viglet-turing-search' ),
+		'compareLabel'      => __( 'Compare %d products', 'viglet-turing-search' ),
+		'cartAdded'         => __( 'Added to your cart.', 'viglet-turing-search' ),
+		'cartFailed'        => __( 'It could not be added to the cart.', 'viglet-turing-search' ),
+		'thinking'          => $viglet_dumont_copy['thinking'],
+		'failed'            => $viglet_dumont_copy['failed'],
+		'nothing'           => $viglet_dumont_copy['nothing'],
 		// Build my kit (D201).
-		'kitOffered'   => $viglet_dumont_kit,
-		'mode'         => 'ask',
-		'kit'          => array(
+		'kitOffered'        => $viglet_dumont_kit,
+		'mode'              => 'ask',
+		'kit'               => array(
 			'shown'    => false,
 			'summary'  => '',
 			'stages'   => array(),
 			'unfilled' => '',
 			'guides'   => array(),
 		),
-		'kitBusy'      => false,
-		'kitStatus'    => '',
-		'askLabel'     => $viglet_dumont_ask,
-		'documentId'   => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
-		'askButton'    => __( 'Ask', 'viglet-turing-search' ),
-		'planLabel'    => __( 'Describe your plan', 'viglet-turing-search' ),
-		'planButton'   => __( 'Build my kit', 'viglet-turing-search' ),
-		'kitThinking'  => __( 'Putting your kit together…', 'viglet-turing-search' ),
-		'kitNothing'   => __( 'The catalog has nothing for that plan.', 'viglet-turing-search' ),
-		/* translators: %s: the needs the catalog has no product for, comma-separated. */
-		'kitUnfilled'  => __( 'Nothing in the catalog yet for: %s.', 'viglet-turing-search' ),
-		/* translators: %s: the product's name. */
-		'includeFor'   => __( 'Keep %s in the kit', 'viglet-turing-search' ),
+		'kitBusy'           => false,
+		'kitStatus'         => '',
+		'askLabel'          => $viglet_dumont_ask,
+		'documentId'        => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
+		'askButton'         => __( 'Ask', 'viglet-turing-search' ),
+		'planLabel'         => __( 'Describe your plan', 'viglet-turing-search' ),
+		'planButton'        => $viglet_dumont_copy['planButton'],
+		'kitThinking'       => $viglet_dumont_copy['kitThinking'],
+		'kitNothing'        => $viglet_dumont_copy['kitNothing'],
+		'kitUnfilled'       => $viglet_dumont_copy['kitUnfilled'],
+		'includeFor'        => $viglet_dumont_copy['includeFor'],
 		/* translators: %d: how many products. */
-		'kitAdd'       => __( 'Add %d products to the cart', 'viglet-turing-search' ),
-		'kitAddOne'    => __( 'Add 1 product to the cart', 'viglet-turing-search' ),
+		'kitAdd'            => __( 'Add %d products to the cart', 'viglet-turing-search' ),
+		'kitAddOne'         => __( 'Add 1 product to the cart', 'viglet-turing-search' ),
 		/* translators: 1: how many products were added, 2: the cart's total, as the shop formats it. */
-		'kitAdded'     => __( 'Added %1$d to your cart. Cart total: %2$s.', 'viglet-turing-search' ),
+		'kitAdded'          => __( 'Added %1$d to your cart. Cart total: %2$s.', 'viglet-turing-search' ),
 		/* translators: 1: how many were added, 2: how many were asked for. */
-		'kitPartial'   => __( 'Added %1$d of %2$d to your cart; the rest could not be added.', 'viglet-turing-search' ),
+		'kitPartial'        => __( 'Added %1$d of %2$d to your cart; the rest could not be added.', 'viglet-turing-search' ),
 	)
 );
 ?>
@@ -92,7 +152,7 @@ wp_interactivity_state(
 	<?php if ( $viglet_dumont_kit ) : ?>
 	<div class="viglet-dumont-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-turing-search' ); ?>">
 		<button type="button" data-mode="ask" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.asking"><?php esc_html_e( 'Ask a question', 'viglet-turing-search' ); ?></button>
-		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php esc_html_e( 'Plan a kit', 'viglet-turing-search' ); ?></button>
+		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php echo esc_html( $viglet_dumont_copy['planMode'] ); ?></button>
 	</div>
 	<?php endif; ?>
 	<ol class="viglet-dumont-copilot__turns" hidden data-wp-bind--hidden="state.planning">
@@ -141,7 +201,7 @@ wp_interactivity_state(
 									<span class="viglet-dumont-copilot__kit-reason" data-wp-text="context.product.reason"></span>
 								</span>
 								<strong hidden data-wp-bind--hidden="!context.product.price" data-wp-text="context.product.price"></strong>
-								<span class="viglet-dumont-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php esc_html_e( 'Out of stock', 'viglet-turing-search' ); ?></span>
+								<span class="viglet-dumont-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php echo esc_html( $viglet_dumont_copy['out'] ); ?></span>
 							</li>
 						</template>
 					</ul>
