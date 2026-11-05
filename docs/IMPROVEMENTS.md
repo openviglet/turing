@@ -2303,3 +2303,29 @@ nothing. The two ways out both fail the consumer:
 `fq[]=site_key:a&fq[]=site_key:b` return both sites' documents while two values of
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
+
+### CLXIX.2 A custom facet over a date span (D307) (T1224)
+
+**Where it came from.** Dumont D307 (the WordPress plugin) gave date range facets an
+agenda period set: Today, Next 7 days, This month, Upcoming, Past. An event that runs
+over a span (an exhibition from 1 to 30 November) has a start and an end field, and
+"Next 7 days" should list it whenever the span overlaps those days, not only when it
+starts inside them.
+
+**What happens.** A custom facet (`customFacets` in `POST /api/sn/manifest`, the items'
+`rangeStartDate`/`rangeEndDate`) buckets one field. An item filter is `field:[from TO
+to]`, so the plugin can only bucket the start date, and a running exhibition that
+started last month is under Past.
+
+**What Turing should do.** Let a custom facet name an end field beside its field
+(`endField`, optional). With one, an item matches a document when `field <= item end`
+and `endField >= item start` (an open bound matching everything on its side), and a
+document with no end value is read as a point at `field`. The same on Solr, Lucene and
+Elasticsearch, counts included.
+
+**Workaround in Dumont.** None: D307 buckets the start date only and says so in its
+docs.
+
+**Done when:** a facet over `start`/`end` puts a span from five days ago to five days
+ahead under an item `NOW/DAY` to `NOW/DAY+7DAYS`, and a span that ended yesterday
+outside it.
