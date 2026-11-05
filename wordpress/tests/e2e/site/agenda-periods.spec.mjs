@@ -22,6 +22,7 @@ const day = ( days ) =>
 let saved = null;
 let soon = '';
 let past = '';
+let today = '';
 
 test.beforeAll( ( { seed }, testInfo ) => {
 	if ( 'site' !== testInfo.project.name ) {
@@ -55,6 +56,21 @@ test.beforeAll( ( { seed }, testInfo ) => {
 		'event_day',
 		day( -35 ),
 	] );
+	// A day-only date is midnight UTC, the instant Past used to end on (D333).
+	wp( [
+		'post',
+		'meta',
+		'update',
+		String( seed.templatedPostId ),
+		'event_day',
+		day( 0 ),
+	] );
+	today = ask( [
+		'post',
+		'get',
+		String( seed.templatedPostId ),
+		'--field=post_title',
+	] );
 	soon = ask( [
 		'post',
 		'get',
@@ -81,7 +97,11 @@ test.afterAll( ( { seed }, testInfo ) => {
 		saved,
 		'--format=json',
 	] );
-	for ( const id of [ seed.postId, seed.relatedPostId ] ) {
+	for ( const id of [
+		seed.postId,
+		seed.relatedPostId,
+		seed.templatedPostId,
+	] ) {
 		wp( [ 'post', 'meta', 'delete', String( id ), 'event_day' ] );
 	}
 	wp( [ 'dumont', 'reindex' ] );
@@ -126,4 +146,10 @@ test( 'an agenda puts a day this week under Next 7 days and Upcoming, and last m
 	const before = await under( page, seed, 'Past' );
 	expect( before ).toContain( past );
 	expect( before ).not.toContain( soon );
+	// D333: today's event is Today, Next 7 days and Upcoming, never Past.
+	expect( before ).not.toContain( today );
+	for ( const period of [ 'Today', 'Next 7 days', 'Upcoming' ] ) {
+		expect( await under( page, seed, period ), period ).toContain( today );
+	}
+	expect( await under( page, seed, 'Today' ) ).not.toContain( soon );
 } );

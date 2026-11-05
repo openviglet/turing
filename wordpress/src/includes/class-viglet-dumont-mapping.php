@@ -579,21 +579,24 @@ class Viglet_Dumont_Mapping {
 		if ( 'agenda' === $set ) {
 			// For dates still to come (D307), each from the start of today. Turing's date math
 			// rounds to a day, a month or a year but not to a week, so the week is the next 7 days.
+			// Turing includes a range's end and a day-only date is indexed at midnight UTC, the
+			// very instant the next period starts, so each ends a second before it (D333):
+			// today's event is never Past, tomorrow's never Today.
 			return array(
 				array(
 					'label' => __( 'Today', 'viglet-turing-search' ),
 					'from'  => 'NOW/DAY',
-					'to'    => 'NOW/DAY+1DAY',
+					'to'    => 'NOW/DAY+1DAY-1SECOND',
 				),
 				array(
 					'label' => __( 'Next 7 days', 'viglet-turing-search' ),
 					'from'  => 'NOW/DAY',
-					'to'    => 'NOW/DAY+7DAYS',
+					'to'    => 'NOW/DAY+7DAYS-1SECOND',
 				),
 				array(
 					'label' => __( 'This month', 'viglet-turing-search' ),
 					'from'  => 'NOW/MONTH',
-					'to'    => 'NOW/MONTH+1MONTH',
+					'to'    => 'NOW/MONTH+1MONTH-1SECOND',
 				),
 				array(
 					'label' => __( 'Upcoming', 'viglet-turing-search' ),
@@ -603,7 +606,7 @@ class Viglet_Dumont_Mapping {
 				array(
 					'label' => __( 'Past', 'viglet-turing-search' ),
 					'from'  => null,
-					'to'    => 'NOW/DAY',
+					'to'    => 'NOW/DAY-1SECOND',
 				),
 			);
 		}//end if

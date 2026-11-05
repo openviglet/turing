@@ -692,7 +692,7 @@ final class MappingTest extends PluginTestCase {
 			array(
 				'label'          => 'Next 7 days',
 				'rangeStartDate' => 'NOW/DAY',
-				'rangeEndDate'   => 'NOW/DAY+7DAYS',
+				'rangeEndDate'   => 'NOW/DAY+7DAYS-1SECOND',
 			),
 			$facets[0]['items'][1]
 		);

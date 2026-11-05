@@ -62,11 +62,11 @@ test( 'each period lists the events whose day falls in it, counted from today', 
 	);
 	expect( upcoming ).not.toContain( sports );
 
-	// Past is `* TO NOW/DAY`, and Turing's range includes its end: a day-only event today, indexed
-	// at midnight UTC, is listed under Past as well as Today. That edge is the period set's, not
-	// the demo's, so only the days on either side of it are checked here.
+	// Past ends a second before today (D333): the open day, indexed at midnight UTC today, is
+	// Today and never Past.
 	const past = await titlesOn( page, '/agenda/', '*', [ period( 'past' ) ] );
 	expect( past ).toEqual( expect.arrayContaining( [ parents, sports ] ) );
+	expect( past ).not.toContain( openDay );
 	expect( past ).not.toContain( fair );
 	expect( past ).not.toContain( concert );
 } );
