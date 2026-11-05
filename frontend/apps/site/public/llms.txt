@@ -44,5 +44,5 @@
 - Generative AI integration (OpenAI, Anthropic Claude, Google Gemini, Ollama)
 - RAG (Retrieval-Augmented Generation) pipeline
 - MCP Server for AI model integration
-- Connectors: Adobe AEM, WordPress, databases, file systems
+- Connectors (via Viglet Dumont): Adobe Experience Manager (AEM 6.5 and AEM as a Cloud Service: pages, Content Fragments, DAM assets), WordPress, databases, file systems
 - Pluggable storage: MinIO, filesystem, or disabled

@@ -136,6 +136,22 @@ export function Playground() {
             aria-hidden
           />
         )}
+        {/* The panel fills in from the live demo instance after hydration, so the
+            prerendered HTML holds only an empty "Searching…" state. This states,
+            in plain text, what the widget does, for screen readers and for
+            crawlers that read the raw HTML without running JavaScript. */}
+        <div className="sr-only">
+          <p>
+            Example: ask the assistant “Does Turing support self-hosting?”. Viglet Turing searches
+            its own documentation, then answers with a
+            retrieval-augmented (RAG) response that cites the documentation pages it used.
+          </p>
+          <p>
+            The Search tab runs a faceted keyword search over the same documentation, and each
+            result offers “Ask about this” to continue in the cited chat. The Validate tab checks
+            whether a piece of copy fits a chosen reader persona.
+          </p>
+        </div>
         {panel}
       </Container>
     </section>

@@ -403,7 +403,7 @@ export const AUDIENCES: Audience[] = [
     body: "For regulated, content-heavy organizations that need control over their data.",
     points: [
       "Your content and users' queries never leave your network",
-      "Connect Adobe AEM, WordPress, databases and files",
+      "Index Adobe Experience Manager (AEM 6.5 and AEM as a Cloud Service) pages, Content Fragments and DAM assets on publish, plus WordPress, databases and files",
       "SSO, encrypted secrets, any LLM (including fully local)",
       "Cited, auditable answers you can trace to the source",
     ],
