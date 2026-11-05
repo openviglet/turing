@@ -128,9 +128,9 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	public function test_a_configured_site_key_starts_the_id(): void {
-		( new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'FESPSP Projetos' ) ) ) )->deindex_post( 42 );
+		( new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'Example Projetos' ) ) ) )->deindex_post( 42 );
 
-		$this->assertSame( 'fespsp-projetos:post:42', $this->body()['snJobItems'][0]['attributes']['id'] );
+		$this->assertSame( 'example-projetos:post:42', $this->body()['snJobItems'][0]['attributes']['id'] );
 	}
 
 	public function test_a_subdirectory_site_derives_its_key_from_host_and_path(): void {
