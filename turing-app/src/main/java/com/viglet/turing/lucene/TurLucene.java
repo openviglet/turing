@@ -82,7 +82,11 @@ public class TurLucene {
             TurSEParameters params = context.getTurSEParameters();
 
             Query query = turLuceneQueryBuilder.buildQuery(turSNSite, params, context.getLocale());
-            List<TurSNSiteFieldExt> hlFields = turLuceneQueryBuilder.getHLFields(turSNSite);
+            // T1226 — a caller that turns highlighting off (autocomplete) gets none,
+            // as on Solr, whatever the site's own setting says.
+            List<TurSNSiteFieldExt> hlFields = context.getTurSNConfig() != null
+                    && !context.getTurSNConfig().isHlEnabled() ? List.of()
+                            : turLuceneQueryBuilder.getHLFields(turSNSite);
             var sort = turLuceneQueryBuilder.buildSort(turSNSite, params);
 
             TurSEResults results = turLuceneResultProcessor.getResults(

@@ -23,7 +23,9 @@ package com.viglet.turing.sn.ac;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -43,6 +46,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
@@ -116,34 +120,75 @@ class TurSNAutoCompleteTest {
                 assertThat(result).containsExactly("hellothere", "helloworld");
         }
 
+        /**
+         * T1226 — a scoped autocomplete answers terms, as the unscoped one does: the
+         * suggester's candidates that occur in the documents the scope admits.
+         */
         @Test
-        void testAutoCompleteWithRegularSearchExtractsTitles() {
+        void scopedAutoCompleteAnswersTheSuggesterTermsFoundInScope() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
                                 turSolrInstanceProcess);
                 HttpServletRequest request = mock(HttpServletRequest.class);
                 when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost/api"));
-                when(request.getQueryString()).thenReturn("q=hel");
+                when(request.getQueryString()).thenReturn("q=works&fq[]=type:post");
+                suggesterAnswers("works", List.of("workshop", "workspace", "worksheet"));
 
-                TurSNSiteSearchDocumentBean document = TurSNSiteSearchDocumentBean.builder()
-                                .fields(Map.of(TurSNFieldName.TITLE, "Hello"))
+                TurSNSiteSearchDocumentBean post = TurSNSiteSearchDocumentBean.builder()
+                                .fields(Map.of(TurSNFieldName.TITLE, "<b>Workshop</b> on search",
+                                                TurSNFieldName.TEXT, List.of("A shared Workspace.", "notes")))
                                 .build();
                 TurSNSiteSearchResultsBean results = new TurSNSiteSearchResultsBean();
-                results.setDocument(List.of(document));
+                results.setDocument(List.of(post));
                 TurSNSiteSearchBean bean = new TurSNSiteSearchBean();
                 bean.setResults(results);
+                ArgumentCaptor<TurSNSiteSearchContext> context = ArgumentCaptor.forClass(TurSNSiteSearchContext.class);
+                when(turSNSiteSearchCachedAPI.searchCached(anyString(), context.capture())).thenReturn(bean);
 
-                when(turSNSiteSearchCachedAPI.searchCached(anyString(), any()))
-                                .thenReturn(bean);
+                List<String> output = autoComplete.autoCompleteWithRegularSearch("site", params("works", 10),
+                                request);
 
+                assertThat(output).containsExactly("workshop", "workspace");
+                assertThat(context.getValue().getTurSNConfig().isHlEnabled()).isFalse();
+                assertThat(context.getValue().getTurSEParameters().getQuery()).isEqualTo("works*");
+        }
+
+        @Test
+        void scopedAutoCompleteAnswersNothingWhenNoDocumentIsInScope() {
+                TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
+                                turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
+                                turSolrInstanceProcess);
+                suggesterAnswers("works", List.of("workshop"));
+                when(turSNSiteSearchCachedAPI.searchCached(anyString(), any())).thenReturn(null);
+
+                assertThat(autoComplete.autoCompleteWithRegularSearch("site", params("works", 10),
+                                java.net.URI.create("http://localhost/api"))).isEmpty();
+        }
+
+        @Test
+        void wordsMatchWholeAndFolded() {
+                String text = TurSNAutoComplete.fold(" Saúde pública e workshops");
+                assertThat(TurSNAutoComplete.containsWords(text, "saude publica")).isTrue();
+                assertThat(TurSNAutoComplete.containsWords(text, "workshop")).isFalse();
+                assertThat(TurSNAutoComplete.containsWords(text, "workshops")).isTrue();
+        }
+
+        private void suggesterAnswers(String q, List<String> suggestions) {
+                TurSNSite site = new TurSNSite();
+                when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
+                TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(plugin.autoComplete(eq("site"), eq(q), eq(Locale.US), anyLong())).thenReturn(suggestions);
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US)).thenReturn(Optional.empty());
+        }
+
+        private static TurSNSearchParams params(String q, int rows) {
                 TurSNSearchParams params = new TurSNSearchParams();
-                params.setQ("hel");
+                params.setQ(q);
                 params.setLocale(Locale.US);
                 params.setP(1);
-                params.setRows(10);
-
-                List<String> output = autoComplete.autoCompleteWithRegularSearch("site", params, request);
-
-                assertThat(output).containsExactly("Hello");
+                params.setRows(rows);
+                params.setFq(List.of("type:post"));
+                return params;
         }
 }

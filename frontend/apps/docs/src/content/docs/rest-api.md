@@ -42,7 +42,7 @@ The server then confines that key, whatever the request asks for:
 | `/search/locales`, `/search/sort-options`, `POST /click` | As for any key |
 | `GET /api/sn/{site}/search/similar` | Only the partition's documents are returned, for a seed document in the partition (another seed answers `[]`). The lexical (MLT) path answers, even on a site whose vector mode would otherwise answer. |
 | `GET /api/sn/{site}/search/document` | Only the partition's documents are returned, and `404` when none of the ids is in it |
-| `GET /api/sn/{site}/ac`, `POST /ac/query` | Suggestions are the titles of the partition's documents that match the prefix, instead of the engine's site-wide term suggester |
+| `GET /api/sn/{site}/ac`, `POST /ac/query` | Suggestions are the site's terms that occur in the partition's documents, never another partition's |
 | `GET /api/sn/{site}/{locale}/spell-check` | No correction: the dictionary is built from the whole site |
 | `GET /api/sn/{site}/{locale}/related-terms` | As for any key: the thesaurus is site configuration |
 | `GET /api/sn/{siteId}/metrics/failed-searches`, `/content-gaps`, `/clicks` | Read from the partition's searches and clicks only. The search and click logs record the partition from this release on, so earlier searches are not counted |
@@ -480,6 +480,9 @@ GET http://localhost:2700/api/sn/{siteName}/ac
 | `q` | ✅ | Prefix to complete |
 | `_setlocale` | ✅ | Locale |
 | `rows` | | Maximum number of suggestions |
+| `fq[]`, `fq.and[]`, `fq.or[]` | | Keep only suggestions found in the documents these filters admit |
+
+Suggestions are always terms, with no highlighting markup. With filters, or for an API key bound to a partition, they are still terms, but only those that occur in the documents inside the scope: `ac?q=works&fq[]=type:post` answers `workshop` when a post holds it, and leaves out terms that only other types hold.
 
 **Example:**
 

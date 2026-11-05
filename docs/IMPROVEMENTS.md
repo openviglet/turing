@@ -2315,37 +2315,6 @@ with `fqItemOperator` sends it.
 
 ## CLXXI Autocomplete inside a filtered scope
 
-### CLXXI.1 Filtered autocomplete answers terms (D318) (T1226)
-
-**Where it came from.** Dumont D318 (the WordPress plugin): a search block scoped by
-fixed filters (`type:page`) or its site key on a shared SN site passes the scope to
-autocomplete: `GET /api/sn/{site}/ac?q=works&fq[]=site_key:localhost` (the SDK's
-`createAutoComplete().fetch(query, { fq })`).
-
-**What happens.** Two causes, both wider than `fq`:
-
-1. **Shape.** Without filters `TurSNSiteAutoCompleteAPI` answers term completions
-   (`["workshop"]`). With any `fq`, and always for a key bound to a partition (T1133),
-   it takes `autoCompleteWithRegularSearch`, which answers whole document titles.
-2. **Markup.** That path sets `hlEnabled=false`, but only `TurSolrQueryBuilder` honours
-   it; `TurLuceneResultProcessor` highlights from the site's settings, so Lucene returns
-   `<mark>Workshop</mark> on search`. Every caller turning highlighting off meets this
-   (Elasticsearch has no highlighting).
-
-**What Turing should do.**
-1. Every engine honours `TurSNConfig.hlEnabled=false`, with a conformance test across Solr,
-   Lucene and Elasticsearch.
-2. A filtered or partitioned autocomplete answers the unfiltered shape: term completions
-   drawn only from documents matching the scope (the suggester's terms intersected with a
-   filtered search, or a terms facet on the text field over the filtered set). If titles
-   are a wanted mode, make it an explicit parameter.
-
-**Workaround in Dumont.** None: D318 waits on this line.
-
-**Done when:** `ac?q=works` and `ac?q=works&fq[]=type:post` both answer `["workshop"]`
-on a site whose posts hold it, the filtered call omits terms only other types hold, a
-partitioned key gets terms too, and no suggestion carries markup on any engine.
-
 ## CLXXII Structured feeds refresh when the publisher says so
 
 ## CLXXIII Knowledge Base: microthesauri & index-time term expansion (§XL)

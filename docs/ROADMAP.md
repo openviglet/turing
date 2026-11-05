@@ -22,8 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-- 📋 **T1226** (deps: —) **Scoped autocomplete (fq or a partitioned key) answers document titles, not terms, and Lucene marks them up** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
-
 ## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
 
 - 📋 **T1228** (deps: —) **Nothing fills the turing_entity facets: people and places a document names outside any thesaurus are no facet** — No source can offer browsing by person or place it has no vocabulary for, though Turing already facets the fields. → §CLXXIII.1
