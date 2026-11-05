@@ -25,6 +25,43 @@ class Viglet_Dumont_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
 		add_action( 'admin_notices', array( $this, 'demo_notice' ) );
+		add_action( 'admin_notices', array( $this, 'stopped_notice' ) );
+	}
+
+	/**
+	 * While queued edits have stopped retrying (D329), say so on every admin screen but Health
+	 * itself, for whoever can act on it: an edit that never reaches search is otherwise silent.
+	 * The queue replays them on its own once Turing answers again.
+	 */
+	public function stopped_notice(): void {
+		if ( ! current_user_can( 'manage_options' ) || Viglet_Dumont_Settings::demo() ) {
+			return;
+		}
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( $screen && str_contains( (string) $screen->id, 'viglet-dumont-health' ) ) {
+			return;
+		}
+		$failed = ( new Viglet_Dumont_Queue() )->counts()['failed'];
+		if ( $failed < 1 ) {
+			return;
+		}
+		printf(
+			'<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
+			esc_html(
+				sprintf(
+					/* translators: %d: queued edits that stopped retrying. */
+					_n(
+						'%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers.',
+						'%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers.',
+						$failed,
+						'viglet-turing-search'
+					),
+					$failed
+				)
+			),
+			esc_url( admin_url( 'admin.php?page=viglet-dumont-health' ) ),
+			esc_html__( 'Search health', 'viglet-turing-search' )
+		);
 	}
 
 	/**

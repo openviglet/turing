@@ -140,6 +140,10 @@ class Viglet_Dumont_Events {
 				/* translators: %d: documents removed from Turing. */
 				$format = __( '%d documents WordPress no longer publishes removed.', 'viglet-turing-search' );
 				break;
+			case 'replayed':
+				/* translators: %d: queued edits that had stopped retrying and were sent again. */
+				$format = __( 'Turing answered again: %d stopped edits put back in the queue.', 'viglet-turing-search' );
+				break;
 			default:
 				return $key;
 		}//end switch

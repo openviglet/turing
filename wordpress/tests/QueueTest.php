@@ -250,13 +250,75 @@ final class QueueTest extends PluginTestCase {
 			$this->queue()->counts()
 		);
 
+		// A stopped job is not sent again; the worker only asks whether Turing is back (D329).
 		$this->queue()->process( true );
-		$this->assertCount( Viglet_Dumont_Queue::MAX_ATTEMPTS, $this->requests );
+		$this->assertCount( Viglet_Dumont_Queue::MAX_ATTEMPTS, $this->imports() );
 
 		$this->assertSame( 1, $this->queue()->retry_failed() );
 		$this->status = 200;
 		$this->queue()->process();
 		$this->assertSame( array(), $this->queue()->jobs() );
+	}
+
+	/** The requests that were imports, leaving out the worker's pings (D329). */
+	private function imports(): array {
+		return array_values( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/api/sn/import' ) ) );
+	}
+
+	/** Run the worker until the job stops retrying, Turing answering 503 throughout. */
+	private function stop_job( int $post_id ): void {
+		$this->status = 503;
+		$this->queue()->enqueue( $post_id, 'index' );
+		for ( $i = 0; $i < Viglet_Dumont_Queue::MAX_ATTEMPTS; $i++ ) {
+			$this->queue()->process( true );
+		}
+		$this->assertTrue( $this->queue()->jobs()[ $post_id ]['failed'] );
+	}
+
+	public function test_once_turing_answers_again_the_stopped_edits_are_sent_with_no_click(): void {
+		// D329: an outage longer than the retries ends with the edit in search.
+		$this->stop_job( 1 );
+		// Only stopped jobs left: the worker comes back to ask.
+		$this->assertNotEmpty( $this->scheduled );
+
+		$this->status = 200;
+		$this->queue()->process();
+		$this->queue()->process();
+
+		$this->assertSame( array(), $this->queue()->jobs() );
+		$this->assertSame( 'CREATE', $this->body( count( $this->requests ) - 1 )['snJobItems'][0]['turSNJobAction'] );
+	}
+
+	public function test_a_send_that_goes_through_puts_the_stopped_edits_back_in_line(): void {
+		$this->stop_job( 1 );
+		$this->status = 200;
+		$this->queue()->enqueue( 2, 'index' );
+
+		$this->queue()->process();
+
+		$job = $this->queue()->jobs()[1];
+		$this->assertFalse( $job['failed'] );
+		$this->assertSame( 1, $job['replays'] );
+	}
+
+	public function test_a_document_turing_keeps_refusing_stops_for_good_after_its_replays(): void {
+		$this->stop_job( 1 );
+		for ( $replay = 0; $replay < Viglet_Dumont_Queue::MAX_REPLAYS; $replay++ ) {
+			$this->status = 200;
+			$this->queue()->enqueue( 2, 'index' );
+			$this->queue()->process( true );
+			$this->status = 503;
+			for ( $i = 0; $i < Viglet_Dumont_Queue::MAX_ATTEMPTS; $i++ ) {
+				$this->queue()->process( true );
+			}
+		}
+		$this->assertTrue( $this->queue()->jobs()[1]['failed'] );
+
+		$this->status = 200;
+		$this->queue()->enqueue( 3, 'index' );
+		$this->queue()->process( true );
+
+		$this->assertTrue( $this->queue()->jobs()[1]['failed'], 'no replay is left; Health\'s Retry still is' );
 	}
 
 	public function test_an_index_job_for_a_post_unpublished_since_is_sent_as_a_delete(): void {

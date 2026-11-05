@@ -27,6 +27,7 @@ const EVENT_LABEL = {
 	delete: __( 'Removed', 'viglet-turing-search' ),
 	provision: __( 'Fields sent', 'viglet-turing-search' ),
 	sweep: __( 'Sweep', 'viglet-turing-search' ),
+	replay: __( 'Replayed', 'viglet-turing-search' ),
 };
 
 /**

@@ -956,7 +956,7 @@ class Viglet_Dumont_Native_Search {
 	 * @return array{ids: int[], total: int}|null
 	 */
 	public function search( string $query, int $page, int $per_page ): ?array {
-		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
 		// A page read (D328): while Turing is down WordPress searches its own database at once.
 		$client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, array( 'fq[]' => $indexer->own_filter() ) );

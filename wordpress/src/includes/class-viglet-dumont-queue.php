@@ -40,6 +40,15 @@ class Viglet_Dumont_Queue {
 	/** After this many failed sends a job stops retrying on its own and waits for a replay. */
 	public const MAX_ATTEMPTS = 8;
 
+	/**
+	 * How many times a stopped job is put back on its own once Turing answers again (D329):
+	 * enough for outages, few enough that a document Turing keeps refusing stops for good.
+	 */
+	public const MAX_REPLAYS = 3;
+
+	/** While only stopped jobs are left, how often the worker asks whether Turing is back (D329). */
+	public const PROBE_INTERVAL = 15 * 60;
+
 	/** Backoff after the first failure, doubled on each one after. */
 	public const BASE_DELAY = 60;
 
@@ -143,6 +152,12 @@ class Viglet_Dumont_Queue {
 		set_transient( self::LOCK, 1, 5 * MINUTE_IN_SECONDS );
 
 		try {
+			// Only stopped jobs left (D329): ask whether Turing is back, and if so replay them.
+			if ( empty( $this->due( $ignore_backoff ) ) && $this->counts()['failed'] > 0
+				&& ! empty( ( new Viglet_Dumont_API_Client( $this->settings ) )->ping()['success'] ) ) {
+				$this->replay_stopped();
+			}
+
 			$batch = $this->due( $ignore_backoff );
 			$items = array();
 			foreach ( $batch as $post_id => $job ) {
@@ -166,6 +181,12 @@ class Viglet_Dumont_Queue {
 			$this->record( $batch, $outcomes );
 
 			$this->settle_pdfs( $items, $outcomes );
+
+			// A send that went through says Turing is back (D329): the edits stopped during the
+			// outage go back in line with no click.
+			if ( in_array( '', array_map( array( 'Viglet_Dumont_Events', 'text' ), $outcomes ), true ) ) {
+				$this->replay_stopped();
+			}
 		} finally {
 			delete_transient( self::LOCK );
 		}//end try
@@ -221,6 +242,41 @@ class Viglet_Dumont_Queue {
 		if ( $replayed > 0 ) {
 			$this->save( $jobs );
 			$this->schedule( time() );
+		}
+
+		return $replayed;
+	}
+
+	/**
+	 * Put back the stopped jobs that have replays left (D329), once Turing answers again. A job
+	 * that used its replays stays stopped for Health's Retry button: Turing refusing that one
+	 * document is not an outage.
+	 *
+	 * @return int How many were replayed.
+	 */
+	private function replay_stopped(): int {
+		$jobs     = $this->jobs();
+		$replayed = 0;
+		foreach ( $jobs as $post_id => $job ) {
+			$replays = (int) ( $job['replays'] ?? 0 );
+			if ( empty( $job['failed'] ) || $replays >= self::MAX_REPLAYS ) {
+				continue;
+			}
+			$jobs[ $post_id ] = array_merge(
+				$job,
+				array(
+					'attempts' => 0,
+					'next_at'  => 0,
+					'failed'   => false,
+					'replays'  => $replays + 1,
+				)
+			);
+			++$replayed;
+		}
+		if ( $replayed > 0 ) {
+			$this->save( $jobs );
+			$this->schedule( time() );
+			Viglet_Dumont_Events::record( 'replay', true, Viglet_Dumont_Events::note( 'replayed', array( $replayed ) ) );
 		}
 
 		return $replayed;
@@ -437,6 +493,11 @@ class Viglet_Dumont_Queue {
 	private function schedule_next( array $jobs ): void {
 		$waiting = array_filter( $jobs, static fn ( $job ) => empty( $job['failed'] ) );
 		if ( empty( $waiting ) ) {
+			// Only stopped jobs with replays left (D329): come back to ask whether Turing is up.
+			$replayable = array_filter( $jobs, static fn ( $job ) => (int) ( $job['replays'] ?? 0 ) < self::MAX_REPLAYS );
+			if ( ! empty( $replayable ) ) {
+				$this->schedule( time() + self::PROBE_INTERVAL );
+			}
 			return;
 		}
 		$this->schedule( max( time(), min( array_map( static fn ( $job ) => (int) $job['next_at'], $waiting ) ) ) );

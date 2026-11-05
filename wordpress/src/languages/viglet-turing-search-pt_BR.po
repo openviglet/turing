@@ -19,7 +19,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr "Integre o WordPress ao mecanismo de busca Viglet Turing para indexar e buscar o seu conteúdo."
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:195
+#: assets/admin/health.js:196
 msgid "Connection"
 msgstr "Conexão"
 
@@ -346,71 +346,72 @@ msgstr "Filtros"
 msgid "Result pages"
 msgstr "Páginas de resultados"
 
-#: src/includes/class-viglet-dumont-admin.php:75
-#: src/includes/class-viglet-dumont-admin.php:76
+#: src/includes/class-viglet-dumont-admin.php:112
+#: src/includes/class-viglet-dumont-admin.php:113
 msgid "Settings"
 msgstr "Configurações"
 
-#: src/includes/class-viglet-dumont-admin.php:83
-#: src/includes/class-viglet-dumont-admin.php:145
+#: src/includes/class-viglet-dumont-admin.php:120
+#: src/includes/class-viglet-dumont-admin.php:182
 msgid "Connect to Turing"
 msgstr "Conectar ao Turing"
 
-#: src/includes/class-viglet-dumont-admin.php:84
+#: src/includes/class-viglet-dumont-admin.php:121
 msgid "Setup"
 msgstr "Configuração inicial"
 
-#: src/includes/class-viglet-dumont-admin.php:91
-#: src/includes/class-viglet-dumont-admin.php:152
+#: src/includes/class-viglet-dumont-admin.php:128
+#: src/includes/class-viglet-dumont-admin.php:189
 msgid "Search fields"
 msgstr "Campos de busca"
 
-#: src/includes/class-viglet-dumont-admin.php:92
+#: src/includes/class-viglet-dumont-admin.php:129
 msgid "Fields"
 msgstr "Campos"
 
-#: src/includes/class-viglet-dumont-admin.php:99
-#: src/includes/class-viglet-dumont-admin.php:159
+#: src/includes/class-viglet-dumont-admin.php:63
+#: src/includes/class-viglet-dumont-admin.php:136
+#: src/includes/class-viglet-dumont-admin.php:196
 msgid "Search health"
 msgstr "Saúde da busca"
 
-#: src/includes/class-viglet-dumont-admin.php:100
+#: src/includes/class-viglet-dumont-admin.php:137
 msgid "Health"
 msgstr "Saúde"
 
-#: src/includes/class-viglet-dumont-admin.php:274
+#: src/includes/class-viglet-dumont-admin.php:311
 msgid "Indexing..."
 msgstr "Indexando..."
 
-#: src/includes/class-viglet-dumont-admin.php:275
+#: src/includes/class-viglet-dumont-admin.php:312
 msgid "Complete!"
 msgstr "Concluído!"
 
-#: src/includes/class-viglet-dumont-admin.php:276
+#: src/includes/class-viglet-dumont-admin.php:313
 msgid "Error"
 msgstr "Erro"
 
-#: src/includes/class-viglet-dumont-admin.php:277
+#: src/includes/class-viglet-dumont-admin.php:314
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr "Tem certeza de que quer excluir todo o conteúdo indexado? Não é possível desfazer."
 
-#: src/includes/class-viglet-dumont-admin.php:278
+#: src/includes/class-viglet-dumont-admin.php:315
 msgid "Deleting..."
 msgstr "Excluindo..."
 
-#: src/includes/class-viglet-dumont-admin.php:279
+#: src/includes/class-viglet-dumont-admin.php:316
 msgid "All indexed content has been deleted."
 msgstr "Todo o conteúdo indexado foi excluído."
 
-#: src/includes/class-viglet-dumont-admin.php:280
+#: src/includes/class-viglet-dumont-admin.php:317
 msgid "Testing connection..."
 msgstr "Testando a conexão..."
 
-#: src/includes/class-viglet-dumont-admin.php:281
+#: src/includes/class-viglet-dumont-admin.php:318
 msgid "Total"
 msgstr "Total"
 
-#: src/includes/class-viglet-dumont-admin.php:299
+#: src/includes/class-viglet-dumont-admin.php:336
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
@@ -719,7 +720,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
-#: assets/admin/health.js:428
+#: assets/admin/health.js:429
 #: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr "Falhou"
@@ -791,111 +792,111 @@ msgstr "Campos enviados"
 msgid "Sweep"
 msgstr "Limpeza"
 
-#: assets/admin/health.js:39
+#: assets/admin/health.js:40
 msgid "never"
 msgstr "nunca"
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:207
+#: assets/admin/health.js:208
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr "Site SN %1$s, chave do site %2$s."
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:219
+#: assets/admin/health.js:220
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:246
+#: assets/admin/health.js:247
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:253
+#: assets/admin/health.js:254
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:259
+#: assets/admin/health.js:260
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:265
+#: assets/admin/health.js:266
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:280
+#: assets/admin/health.js:281
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:290
+#: assets/admin/health.js:291
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:307
+#: assets/admin/health.js:308
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:313
+#: assets/admin/health.js:314
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:325
+#: assets/admin/health.js:326
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:333
+#: assets/admin/health.js:334
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:347
+#: assets/admin/health.js:348
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:356
+#: assets/admin/health.js:357
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:369
+#: assets/admin/health.js:370
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:379
+#: assets/admin/health.js:380
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:389
+#: assets/admin/health.js:390
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:397
+#: assets/admin/health.js:398
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:400
+#: assets/admin/health.js:401
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:403
+#: assets/admin/health.js:404
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:406
+#: assets/admin/health.js:407
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:424
+#: assets/admin/health.js:425
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:442
+#: assets/admin/health.js:443
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
@@ -1380,40 +1381,40 @@ msgstr "Chat"
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
-#: assets/admin/health.js:64
+#: assets/admin/health.js:65
 msgid "AI features"
 msgstr "Recursos de IA"
 
-#: assets/admin/health.js:68
+#: assets/admin/health.js:69
 msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
 msgstr "Quais recursos generativos do Turing este site pode usar. Os blocos que dependem de um ficam ocultos enquanto ele estiver desligado."
 
-#: assets/admin/health.js:83
+#: assets/admin/health.js:84
 msgid "Feature"
 msgstr "Recurso"
 
-#: assets/admin/health.js:86
+#: assets/admin/health.js:87
 msgid "State"
 msgstr "Estado"
 
-#: assets/admin/health.js:92
+#: assets/admin/health.js:93
 msgid "Why"
 msgstr "Por quê"
 
-#: assets/admin/health.js:102
+#: assets/admin/health.js:103
 msgid "On"
 msgstr "Ligado"
 
-#: assets/admin/health.js:103
+#: assets/admin/health.js:104
 msgid "Off"
 msgstr "Desligado"
 
-#: assets/admin/health.js:127
+#: assets/admin/health.js:128
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr "Verificar de novo"
 
-#: assets/admin/health.js:128
+#: assets/admin/health.js:129
 msgid "Check AI features"
 msgstr "Verificar recursos de IA"
 
@@ -1504,12 +1505,12 @@ msgstr "Encontrar posts relacionados"
 msgid "Featured"
 msgstr "Destaque"
 
-#: src/includes/class-viglet-dumont-admin.php:111
-#: src/includes/class-viglet-dumont-admin.php:138
+#: src/includes/class-viglet-dumont-admin.php:148
+#: src/includes/class-viglet-dumont-admin.php:175
 msgid "Search tuning"
 msgstr "Ajuste da busca"
 
-#: src/includes/class-viglet-dumont-admin.php:112
+#: src/includes/class-viglet-dumont-admin.php:149
 msgid "Tuning"
 msgstr "Ajuste"
 
@@ -2073,12 +2074,12 @@ msgstr "Adicionado ao seu carrinho."
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
-#: src/includes/class-viglet-dumont-admin.php:119
-#: src/includes/class-viglet-dumont-admin.php:131
+#: src/includes/class-viglet-dumont-admin.php:156
+#: src/includes/class-viglet-dumont-admin.php:168
 msgid "Search insights"
 msgstr "Insights de busca"
 
-#: src/includes/class-viglet-dumont-admin.php:120
+#: src/includes/class-viglet-dumont-admin.php:157
 msgid "Insights"
 msgstr "Insights"
 
@@ -2160,7 +2161,7 @@ msgstr "Encontradas, mas nunca abertas"
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
-#: src/includes/class-viglet-dumont-admin.php:55
+#: src/includes/class-viglet-dumont-admin.php:92
 msgid "Site search this week"
 msgstr "Busca do site nesta semana"
 
@@ -2647,7 +2648,7 @@ msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
-#: assets/admin/health.js:89
+#: assets/admin/health.js:90
 msgid "Shown by"
 msgstr "Aparece em"
 
@@ -2753,7 +2754,7 @@ msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma 
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
 
-#: src/includes/class-viglet-dumont-admin.php:41
+#: src/includes/class-viglet-dumont-admin.php:78
 msgid "Search and the AI features work from the visitors' browsers; Search tuning and Search insights are hidden."
 msgstr "A busca e os recursos de IA funcionam pelos navegadores dos visitantes; Ajuste da busca e Insights de busca ficam ocultos."
 
@@ -2816,8 +2817,8 @@ msgid "Showing close matches: nothing matched every word you searched for."
 msgstr "Mostrando resultados próximos: nada correspondeu a todas as palavras buscadas."
 
 #: src/admin/views/settings-page.php:26
-#: src/includes/class-viglet-dumont-admin.php:65
-#: src/includes/class-viglet-dumont-admin.php:66
+#: src/includes/class-viglet-dumont-admin.php:102
+#: src/includes/class-viglet-dumont-admin.php:103
 msgid "Viglet Turing Search"
 msgstr "Viglet Turing Search"
 
@@ -3023,7 +3024,7 @@ msgid "Preview"
 msgstr "Pré-visualização"
 
 #. translators: %d: how many documents another source sent under this site key.
-#: assets/admin/health.js:231
+#: assets/admin/health.js:232
 #, js-format
 msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
 msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
@@ -3184,3 +3185,21 @@ msgstr "Documentos lidos: %d"
 #: src/includes/class-viglet-dumont-api-client.php:584
 msgid "Turing did not answer a moment ago; this page renders without it."
 msgstr "O Turing não respondeu há pouco; esta página é exibida sem ele."
+
+#. translators: %d: queued edits that stopped retrying.
+#: src/includes/class-viglet-dumont-admin.php:53
+#, php-format
+msgid "%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers."
+msgid_plural "%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers."
+msgstr[0] "%d edição não chegou à busca: o Turing não respondeu e ela parou de tentar. Ela é reenviada sozinha assim que o Turing responder."
+msgstr[1] "%d edições não chegaram à busca: o Turing não respondeu e elas pararam de tentar. Elas são reenviadas sozinhas assim que o Turing responder."
+
+#. translators: %d: queued edits that had stopped retrying and were sent again.
+#: src/includes/class-viglet-dumont-events.php:145
+#, php-format
+msgid "Turing answered again: %d stopped edits put back in the queue."
+msgstr "O Turing voltou a responder: %d edições paradas voltaram para a fila."
+
+#: assets/admin/health.js:30
+msgid "Replayed"
+msgstr "Reenviado"
