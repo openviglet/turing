@@ -77,6 +77,13 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The `source_apps` value this plugin's documents carry.
+	 */
+	public function source_app(): string {
+		return $this->source_app;
+	}
+
+	/**
 	 * Test connectivity with the Turing server.
 	 */
 	public function ping(): array {

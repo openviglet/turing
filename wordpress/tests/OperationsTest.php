@@ -20,6 +20,9 @@ final class OperationsTest extends PluginTestCase {
 	/** The document ids Turing holds under the site key `site-a`. */
 	private array $held = array();
 
+	/** How many of the held documents another source sent (D322). */
+	private int $foreign = 0;
+
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -61,7 +64,8 @@ final class OperationsTest extends PluginTestCase {
 				if ( 'GET' === $args['method'] && str_contains( $url, '/search' ) ) {
 					$body = json_encode(
 						array(
-							'queryContext' => array( 'count' => count( $this->held ) ),
+							// A search narrowed to this plugin's source_apps leaves out what another source sent.
+							'queryContext' => array( 'count' => count( $this->held ) - ( str_contains( urldecode( $url ), 'source_apps:' ) ? $this->foreign : 0 ) ),
 							'results'      => array(
 								'document' => array_map( static fn ( $id ) => array( 'fields' => array( 'id' => $id ) ), $this->held ),
 							),
@@ -148,9 +152,26 @@ final class OperationsTest extends PluginTestCase {
 
 	public function test_the_orphans_are_the_held_ids_wordpress_does_not_publish(): void {
 		WP_Query::$ids = array( 1, 2 );
-		$this->held    = array( 'site-a:post:1', 'site-a:post:2', 'site-a:post:9', 'site-a:page:1' );
+		$this->held    = array( 'site-a:post:1', 'site-a:post:2', 'site-a:post:9', 'site-a:post:x' );
 
-		$this->assertSame( array( 'site-a:post:9', 'site-a:page:1' ), $this->operations()->orphans() );
+		$this->assertSame( array( 'site-a:post:9', 'site-a:post:x' ), $this->operations()->orphans() );
+	}
+
+	public function test_a_document_another_source_sent_under_the_site_key_is_never_swept(): void {
+		// D322: a catalog given this site key shares the search; the plugin did not send it.
+		WP_Query::$ids = array( 1 );
+		$this->held    = array( 'site-a:post:1', 'site-a:post:7', 'oai:repo.example:123/4', 'site-a:page:1' );
+
+		$this->assertTrue( $this->operations()->sweep()['success'] );
+		$this->assertSame( array( array( 'DELETE', 'site-a:post:7' ) ), $this->imported() );
+	}
+
+	public function test_status_counts_the_documents_another_source_sent_under_the_site_key(): void {
+		$this->held    = array( 'site-a:post:1', 'oai:repo.example:123/4', 'oai:repo.example:123/5' );
+		$this->foreign = 2;
+		Functions\stubs( array( 'wp_cache_delete' => true ) );
+
+		$this->assertSame( 2, $this->operations()->status()['foreign'] );
 	}
 
 	public function test_a_dry_run_sweep_lists_without_deleting(): void {

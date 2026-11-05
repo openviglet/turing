@@ -414,12 +414,12 @@ msgstr "Total"
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr "Os scripts de administração do plugin não foram gerados. Rode npm ci && npm run build na pasta de código-fonte do plugin, ou instale o zip de uma versão publicada."
 
-#: src/includes/class-viglet-dumont-api-client.php:104
+#: src/includes/class-viglet-dumont-api-client.php:111
 msgid "Connection successful"
 msgstr "Conexão bem-sucedida"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:106
+#: src/includes/class-viglet-dumont-api-client.php:113
 #, php-format
 msgid "Server returned HTTP %d"
 msgstr "O servidor respondeu HTTP %d"
@@ -451,7 +451,7 @@ msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:391
+#: src/includes/class-viglet-dumont-api-client.php:398
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
@@ -467,12 +467,12 @@ msgid "Deindex failed with HTTP %d"
 msgstr "A remoção falhou com HTTP %d"
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:460
+#: src/includes/class-viglet-dumont-api-client.php:467
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr "A busca falhou com HTTP %d"
 
-#: src/includes/class-viglet-dumont-api-client.php:468
+#: src/includes/class-viglet-dumont-api-client.php:475
 msgid "Invalid JSON response from server"
 msgstr "Resposta JSON inválida do servidor"
 
@@ -638,13 +638,13 @@ msgid "Nothing is listening at %s on that port: Turing is down, or the port is w
 msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:275
+#: src/includes/class-viglet-dumont-indexer.php:282
 #, php-format
 msgid "Indexing complete. %d documents indexed."
 msgstr "Indexação concluída. %d documentos indexados."
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:277
+#: src/includes/class-viglet-dumont-indexer.php:284
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
@@ -695,7 +695,7 @@ msgstr "URL da imagem destacada"
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
-#: src/includes/class-viglet-dumont-operations.php:193
+#: src/includes/class-viglet-dumont-operations.php:208
 msgid "Turing could not be searched for this site's documents."
 msgstr "Não foi possível buscar no Turing os documentos deste site."
 
@@ -705,7 +705,7 @@ msgstr "Não foi possível buscar no Turing os documentos deste site."
 msgid "%d documents WordPress no longer publishes removed."
 msgstr "%d documentos que o WordPress não publica mais foram removidos."
 
-#: src/includes/class-viglet-dumont-operations.php:247
+#: src/includes/class-viglet-dumont-operations.php:263
 msgid "Skipped: the reindex had failures."
 msgstr "Ignorada: a reindexação teve falhas."
 
@@ -719,7 +719,7 @@ msgstr "Excluído da busca"
 
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
-#: assets/admin/health.js:414
+#: assets/admin/health.js:428
 #: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr "Falhou"
@@ -767,11 +767,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-dumont.php:881
+#: src/viglet-dumont.php:884
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-dumont.php:906
+#: src/viglet-dumont.php:909
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -807,95 +807,95 @@ msgstr "Site SN %1$s, chave do site %2$s."
 msgid "The mapped fields are not provisioned: %s"
 msgstr "Os campos mapeados não estão no Turing: %s"
 
-#: assets/admin/health.js:232
+#: assets/admin/health.js:246
 msgid "Documents"
 msgstr "Documentos"
 
-#: assets/admin/health.js:239
+#: assets/admin/health.js:253
 msgid "Post type"
 msgstr "Tipo de post"
 
-#: assets/admin/health.js:245
+#: assets/admin/health.js:259
 msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
-#: assets/admin/health.js:251
+#: assets/admin/health.js:265
 msgid "Indexed in Turing"
 msgstr "Indexados no Turing"
 
-#: assets/admin/health.js:266
+#: assets/admin/health.js:280
 msgid "unknown"
 msgstr "desconhecido"
 
-#: assets/admin/health.js:276
+#: assets/admin/health.js:290
 msgid "(differs: run a reindex)"
 msgstr "(diferente: rode uma reindexação)"
 
-#: assets/admin/health.js:293
+#: assets/admin/health.js:307
 msgid "Queue"
 msgstr "Fila"
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:299
+#: assets/admin/health.js:313
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr "%1$d aguardando, %2$d desistiram de tentar."
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:311
+#: assets/admin/health.js:325
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr "Última execução %1$s: %2$d enviados, %3$d falharam."
 
-#: assets/admin/health.js:319
+#: assets/admin/health.js:333
 msgid "The queue has not sent anything yet."
 msgstr "A fila ainda não enviou nada."
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:333
+#: assets/admin/health.js:347
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr "%d tarefas com falha voltaram para a fila."
 
-#: assets/admin/health.js:342
+#: assets/admin/health.js:356
 msgid "Retry failed"
 msgstr "Tentar de novo as que falharam"
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:355
+#: assets/admin/health.js:369
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
-#: assets/admin/health.js:365
+#: assets/admin/health.js:379
 msgid "Send queue now"
 msgstr "Enviar a fila agora"
 
-#: assets/admin/health.js:375
+#: assets/admin/health.js:389
 msgid "Last events"
 msgstr "Últimos eventos"
 
-#: assets/admin/health.js:383
+#: assets/admin/health.js:397
 msgid "When"
 msgstr "Quando"
 
-#: assets/admin/health.js:386
+#: assets/admin/health.js:400
 msgid "What"
 msgstr "O quê"
 
-#: assets/admin/health.js:389
+#: assets/admin/health.js:403
 msgid "Post"
 msgstr "Post"
 
-#: assets/admin/health.js:392
+#: assets/admin/health.js:406
 msgid "Result"
 msgstr "Resultado"
 
-#: assets/admin/health.js:410
+#: assets/admin/health.js:424
 msgid "OK"
 msgstr "OK"
 
-#: assets/admin/health.js:428
+#: assets/admin/health.js:442
 msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
@@ -1337,17 +1337,17 @@ msgctxt "block style label"
 msgid "Cards"
 msgstr "Cartões"
 
-#: src/includes/class-viglet-dumont-api-client.php:923
+#: src/includes/class-viglet-dumont-api-client.php:930
 msgid "Turing did not answer."
 msgstr "O Turing não respondeu."
 
-#: src/includes/class-viglet-dumont-api-client.php:901
-#: src/includes/class-viglet-dumont-api-client.php:983
+#: src/includes/class-viglet-dumont-api-client.php:908
+#: src/includes/class-viglet-dumont-api-client.php:990
 msgid "No language model is set up for it in Turing."
 msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:900
-#: src/includes/class-viglet-dumont-api-client.php:988
+#: src/includes/class-viglet-dumont-api-client.php:907
+#: src/includes/class-viglet-dumont-api-client.php:995
 msgid "Turing has no catalog copilot set up."
 msgstr "O Turing não tem copiloto de catálogo configurado."
 
@@ -1457,7 +1457,7 @@ msgid "A search that reads as a question gets Turing’s answer, with its source
 msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:792
+#: src/includes/class-viglet-dumont-api-client.php:799
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr "O Turing respondeu HTTP %d."
@@ -2769,7 +2769,7 @@ msgid "“Rain jacket under $400, blue” filters by colour and price at once, a
 msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma vez, e uma linha diz o que foi entendido, com Desfazer. Um preço é lido mesmo sem um modelo de linguagem."
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:612
+#: src/includes/class-viglet-dumont-api-client.php:619
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
@@ -2779,7 +2779,7 @@ msgid "Search and the AI features work from the visitors' browsers; Search tunin
 msgstr "A busca e os recursos de IA funcionam pelos navegadores dos visitantes; Ajuste da busca e Insights de busca ficam ocultos."
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:577
+#: src/includes/class-viglet-dumont-api-client.php:584
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr "O modo demo (%s) está ligado: este site não guarda chave do Turing e nunca escreve nele, então nada é indexado, removido ou provisionado daqui."
@@ -2851,36 +2851,36 @@ msgid "For a site that indexes into a search another site shows: the instant sea
 msgstr "Para um site que indexa numa busca exibida por outro site: a busca instantânea, um bloco de busca sem resultados e a caixa de busca do tema enviam a consulta para lá. Os resultados de busca deste site deixam de ser substituídos. Vazio mantém as buscas aqui."
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:788
+#: src/includes/class-viglet-dumont-api-client.php:795
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr "O Turing recusou aqui a chave de API deste site: %s"
 
-#: src/includes/class-viglet-dumont-api-client.php:890
+#: src/includes/class-viglet-dumont-api-client.php:897
 msgid "Generative AI is off for this SN site in Turing."
 msgstr "A IA generativa está desligada para este site SN no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:891
+#: src/includes/class-viglet-dumont-api-client.php:898
 msgid "The SN site has no AI agent in Turing."
 msgstr "O site SN não tem agente de IA no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:892
+#: src/includes/class-viglet-dumont-api-client.php:899
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr "O agente de IA do site SN está desligado no Turing."
 
-#: src/includes/class-viglet-dumont-api-client.php:893
+#: src/includes/class-viglet-dumont-api-client.php:900
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr "O agente de IA do site SN não responde a partir do conteúdo do site."
 
-#: src/includes/class-viglet-dumont-api-client.php:894
+#: src/includes/class-viglet-dumont-api-client.php:901
 msgid "The SN site’s AI agent has no language model."
 msgstr "O agente de IA do site SN não tem modelo de linguagem."
 
-#: src/includes/class-viglet-dumont-api-client.php:895
+#: src/includes/class-viglet-dumont-api-client.php:902
 msgid "The SN site’s AI agent has no embedding model."
 msgstr "O agente de IA do site SN não tem modelo de embedding."
 
-#: src/includes/class-viglet-dumont-api-client.php:896
+#: src/includes/class-viglet-dumont-api-client.php:903
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
@@ -2988,7 +2988,7 @@ msgstr "Arquivos PDF anexados a eles"
 msgid "PDF"
 msgstr "PDF"
 
-#: src/includes/class-viglet-dumont-api-client.php:174
+#: src/includes/class-viglet-dumont-api-client.php:181
 msgid "The files could not be packed for Turing."
 msgstr "Não foi possível empacotar os arquivos para o Turing."
 
@@ -3039,3 +3039,11 @@ msgstr "Resposta"
 #: src/includes/class-viglet-dumont-native-search.php:250
 msgid "Preview"
 msgstr "Pré-visualização"
+
+#. translators: %d: how many documents another source sent under this site key.
+#: assets/admin/health.js:231
+#, js-format
+msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
+msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
+msgstr[0] "%d documento com esta chave de site veio de outra fonte. Indexar todo o conteúdo, Excluir tudo e a limpeza não mexem nele."
+msgstr[1] "%d documentos com esta chave de site vieram de outra fonte. Indexar todo o conteúdo, Excluir tudo e a limpeza não mexem neles."

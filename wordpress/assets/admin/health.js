@@ -20,7 +20,7 @@ import {
 	useEffect,
 	useState,
 } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 const EVENT_LABEL = {
 	index: __( 'Indexed', 'viglet-turing-search' ),
@@ -221,6 +221,20 @@ function Health() {
 									'viglet-turing-search'
 								),
 								provisionError
+							) }
+						</Notice>
+					) }
+					{ status.foreign > 0 && (
+						<Notice status="info" isDismissible={ false }>
+							{ sprintf(
+								/* translators: %d: how many documents another source sent under this site key. */
+								_n(
+									'%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone.',
+									'%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone.',
+									status.foreign,
+									'viglet-turing-search'
+								),
+								status.foreign
 							) }
 						</Notice>
 					) }

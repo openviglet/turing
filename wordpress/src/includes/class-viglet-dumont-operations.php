@@ -154,8 +154,9 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The ids Turing holds under this site key that WordPress does not publish as indexable.
 	 *
-	 * An id whose shape is not this key's `<key>:post:<ID>` cannot be a current document of this
-	 * site either, so it is an orphan too.
+	 * Only this plugin's ids, `<key>:post:<ID>`, are ever orphans (D322): an id of another shape
+	 * under the same key belongs to another source (a Dumont connector given this site key to
+	 * share the search), and the plugin never deletes what it did not send.
 	 *
 	 * @return string[]|null Null when Turing could not be listed.
 	 */
@@ -171,7 +172,10 @@ class Viglet_Dumont_Operations {
 		$pdf       = new Viglet_Dumont_Pdf( $this->settings );
 
 		foreach ( $held as $doc_id ) {
-			$post_id = str_starts_with( $doc_id, $prefix ) ? substr( $doc_id, strlen( $prefix ) ) : '';
+			if ( ! str_starts_with( $doc_id, $prefix ) ) {
+				continue;
+			}
+			$post_id = substr( $doc_id, strlen( $prefix ) );
 			// A PDF in search (D309) is an attachment, never among the published posts.
 			if ( ctype_digit( $post_id ) && $pdf->indexable( get_post( (int) $post_id ) ) ) {
 				continue;
@@ -283,7 +287,7 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed, foreign: int|null} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
@@ -304,7 +308,28 @@ class Viglet_Dumont_Operations {
 			'events'      => Viglet_Dumont_Events::all(),
 			'sources'     => Viglet_Dumont_Settings::sources(),
 			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+			'foreign'     => $this->count_foreign(),
 		);
+	}
+
+	/**
+	 * How many documents under this site key another source sent (D322): every one the key
+	 * holds less the ones carrying this plugin's `source_apps`. The plugin's deletes leave them
+	 * alone, and Health says they are there. Null when Turing cannot say.
+	 */
+	private function count_foreign(): ?int {
+		$all  = $this->client->search( '*', 1, 0, array( 'fq[]' => $this->indexer->own_filter() ) );
+		$mine = $this->client->search(
+			'*',
+			1,
+			0,
+			array( 'fq[]' => array( $this->indexer->own_filter(), 'source_apps:' . $this->client->source_app() ) )
+		);
+		if ( is_wp_error( $all ) || is_wp_error( $mine ) ) {
+			return null;
+		}
+
+		return max( 0, (int) ( $all['queryContext']['count'] ?? 0 ) - (int) ( $mine['queryContext']['count'] ?? 0 ) );
 	}
 
 	/**
