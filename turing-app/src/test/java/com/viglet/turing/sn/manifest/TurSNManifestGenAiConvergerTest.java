@@ -106,6 +106,23 @@ class TurSNManifestGenAiConvergerTest {
         assertThat(site.getTurSNSiteGenAi().getKnowledgeBaseMode()).isEqualTo(TurSNKnowledgeBaseMode.HYBRID);
     }
 
+    /** T1228 — entity extraction is set when declared, and left as it is when not. */
+    @Test
+    void entityExtractionIsSetOnlyWhenDeclared() {
+        TurSNSiteGenAi live = new TurSNSiteGenAi();
+        live.setTurAIAgent(agent("a1"));
+        site.setTurSNSiteGenAi(live);
+        when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(converger.plan(site, new TurSNManifestGenAi(null, null, true))).isTrue();
+        assertThat(converger.converge(site, new TurSNManifestGenAi(null, null, true))).isTrue();
+        assertThat(live.isEntityExtraction()).isTrue();
+
+        assertThat(converger.converge(site, new TurSNManifestGenAi(null, null))).isFalse();
+        assertThat(converger.converge(site, new TurSNManifestGenAi(null, null, true))).isFalse();
+        assertThat(live.isEntityExtraction()).isTrue();
+    }
+
     @Test
     void aMatchingBindingIsANoOp() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();

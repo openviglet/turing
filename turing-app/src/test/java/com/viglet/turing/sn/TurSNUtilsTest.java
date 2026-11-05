@@ -54,7 +54,6 @@ class TurSNUtilsTest {
 
     @Test
     void constantsShouldHaveExpectedValues() {
-        assertThat(TurSNUtils.TURING_ENTITY).isEqualTo("turing_entity");
         assertThat(TurSNUtils.DEFAULT_LANGUAGE).isEqualTo("en");
         assertThat(TurSNUtils.URL).isEqualTo("url");
     }
@@ -478,21 +477,6 @@ class TurSNUtilsTest {
         assertThat(docs).hasSize(1);
         // should return empty bean
         assertThat(docs.get(0).getFields()).isNull();
-    }
-
-    @Test
-    void addSNDocumentShouldFilterTuringEntityFields() {
-        URI uri = URI.create("http://localhost/search?q=test");
-        Map<String, Object> fields = new java.util.HashMap<>();
-        fields.put("title", "Doc");
-        fields.put("turing_entity_person", "John");
-        TurSEResult result = TurSEResult.builder().fields(fields).build();
-
-        List<TurSNSiteSearchDocumentBean> docs = new java.util.ArrayList<>();
-        TurSNUtils.addSNDocument(uri, new java.util.HashMap<>(), new java.util.HashMap<>(), docs, result, false);
-
-        assertThat(docs.get(0).getFields()).containsKey("title");
-        assertThat(docs.get(0).getFields()).doesNotContainKey("turing_entity_person");
     }
 
     @Test

@@ -101,6 +101,9 @@ public class TurSNManifestGenAiConverger {
         if (genAi.knowledgeBaseMode() != null) {
             target.setKnowledgeBaseMode(genAi.knowledgeBaseMode());
         }
+        if (genAi.entityExtraction() != null) {
+            target.setEntityExtraction(genAi.entityExtraction());
+        }
         site.setTurSNSiteGenAi(turSNSiteGenAiRepository.save(target));
         return true;
     }
@@ -112,6 +115,8 @@ public class TurSNManifestGenAiConverger {
         String liveAgentId = live.getTurAIAgent() == null ? null : live.getTurAIAgent().getId();
         return (genAi.keepsLiveAgent() || Objects.equals(liveAgentId, genAi.ownAgentId()))
                 && (genAi.knowledgeBaseMode() == null
-                        || genAi.knowledgeBaseMode() == live.getKnowledgeBaseMode());
+                        || genAi.knowledgeBaseMode() == live.getKnowledgeBaseMode())
+                && (genAi.entityExtraction() == null
+                        || genAi.entityExtraction() == live.isEntityExtraction());
     }
 }

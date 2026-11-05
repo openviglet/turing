@@ -204,6 +204,18 @@ public class TurSNSiteGenAi implements Serializable {
     private Double snSemanticRecallMinScore;
 
     /**
+     * T1228 — extract the people, organisations and places each indexed
+     * document names into {@code turing_entity_person}, {@code _org} and
+     * {@code _place}, with the site's LLM, so they become facets without a
+     * vocabulary. Default {@code false}: a site indexes exactly as before and
+     * spends no tokens.
+     *
+     * @since 2026.3.5
+     */
+    @Column(name = "entityExtraction", nullable = false)
+    private boolean entityExtraction = false;
+
+    /**
      * T1105 — the vector share of the hybrid blend, 0 (lexical rank only) to 1
      * (vector rank only). {@code null} is 0.5, plain RRF, the order every hybrid
      * site had before.

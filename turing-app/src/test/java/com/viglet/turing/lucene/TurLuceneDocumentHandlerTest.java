@@ -322,27 +322,6 @@ class TurLuceneDocumentHandlerTest {
     }
 
     @Test
-    void indexingShouldHandleTuringEntityPrefix() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
-
-        Map<String, Object> attrs = new LinkedHashMap<>();
-        attrs.put("id", "doc13");
-        attrs.put("turing_entity_person", new ArrayList<>(List.of("John", "Jane")));
-
-        handler.indexing(instance, turSNSite, attrs);
-        writer.commit();
-
-        DirectoryReader reader = DirectoryReader.open(directory);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs topDocs = searcher.search(new FieldExistsQuery("id"), 10);
-        Document doc = searcher.storedFields().document(topDocs.scoreDocs[0].doc);
-        String[] personValues = doc.getValues("turing_entity_person");
-        assertThat(personValues).containsExactly("John", "Jane");
-        reader.close();
-    }
-
-    @Test
     void indexingShouldSkipNullValues() throws IOException {
         Map<String, TurSNSiteField> fieldMap = new HashMap<>();
         when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);

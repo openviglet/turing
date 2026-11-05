@@ -11,7 +11,6 @@ public final class TurSolrConstants {
     public static final String SCORE = "score";
     public static final String VERSION = "_version_";
     public static final String BOOST = "boost";
-    public static final String TURING_ENTITY = "turing_entity_";
     public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String TYPE = "type";

@@ -35,7 +35,6 @@ public final class TurLuceneConstants {
     public static final String SCORE = "score";
     public static final String VERSION = "_version_";
     public static final String BOOST = "boost";
-    public static final String TURING_ENTITY = "turing_entity_";
 
     public static final String NEWEST = "newest";
     public static final String OLDEST = "oldest";

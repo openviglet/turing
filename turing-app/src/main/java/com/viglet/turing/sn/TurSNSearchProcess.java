@@ -185,12 +185,6 @@ public class TurSNSearchProcess {
                                 .orElse(false);
         }
 
-        private static boolean istTuringEntity(TurSNFieldType snType) {
-                return Collections.unmodifiableSet(
-                                EnumSet.of(TurSNFieldType.NER, TurSNFieldType.THESAURUS))
-                                .contains(snType);
-        }
-
         public List<String> latestSearches(String siteName, String locale, String userId,
                         int rows) {
                 return snapshotService.getSnapshot(siteName, null)
@@ -676,11 +670,6 @@ public class TurSNSearchProcess {
                         List<TurSNSiteFieldExtDto> turSNSiteFacetFieldExtList) {
                 Map<String, TurSNSiteFieldExtDto> facetMap = new HashMap<>();
                 turSNSiteFacetFieldExtList.forEach(turSNSiteFacetFieldExt -> {
-                        if (istTuringEntity(turSNSiteFacetFieldExt.getSnType())) {
-                                facetMap.put(String.format("%s_%s", TurSNUtils.TURING_ENTITY,
-                                                turSNSiteFacetFieldExt.getName()),
-                                                turSNSiteFacetFieldExt);
-                        }
                         facetMap.put(turSNSiteFacetFieldExt.getName(), turSNSiteFacetFieldExt);
                 });
 

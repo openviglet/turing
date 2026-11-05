@@ -222,7 +222,7 @@ public class TurLuceneDocumentHandler {
     private void addJsonArrayToDocument(Document doc, String key, JSONArray jsonArray,
             TurSEFieldType fieldType, boolean multiValued) {
         if (jsonArray.isEmpty()) return;
-        if (multiValued || key.startsWith(TURING_ENTITY)) {
+        if (multiValued) {
             IntStream.range(0, jsonArray.length())
                     .mapToObj(jsonArray::get)
                     .forEach(item -> addSingleValueToDocument(doc, key, item, fieldType));
@@ -234,7 +234,7 @@ public class TurLuceneDocumentHandler {
     private void addListToDocument(Document doc, String key, List<?> list,
             TurSEFieldType fieldType, boolean multiValued) {
         if (list.isEmpty()) return;
-        if (multiValued || key.startsWith(TURING_ENTITY)) {
+        if (multiValued) {
             list.forEach(item -> addSingleValueToDocument(doc, key, item, fieldType));
         } else {
             addSingleValueToDocument(doc, key, list.getFirst(), fieldType);

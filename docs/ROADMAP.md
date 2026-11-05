@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
-
-- 📋 **T1228** (deps: —) **Nothing fills the turing_entity facets: people and places a document names outside any thesaurus are no facet** — No source can offer browsing by person or place it has no vocabulary for, though Turing already facets the fields. → §CLXXIII.1
-
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 - 📋 **T1229** (deps: —) **A structured feed is re-ingested only on its hourly timer: no endpoint lets a publisher trigger a pull after a deploy** — The vectorless copilot answers from the previous feed for up to an hour after every catalog release, and operators cannot re-sync on demand. → §CLXXIV.1
@@ -34,6 +30,10 @@
 
 - 📋 **T1232** (deps: —) **An Elasticsearch SN site never counts its custom facets: only terms aggregations are requested** — The same site lists posting-date or agenda buckets on Solr and Lucene and none on Elasticsearch, though clicking one filters. → §CLXXV.1
 - 📋 **T1233** (deps: —) **A negative filter query (fq[]=-field:value) excludes nothing on Lucene and Elasticsearch, and misgroups on Solr** — A client cannot say all but its own documents, so it pages the whole index to find another source's records. → §CLXXV.2
+
+## Block CO — SDK errors that carry Turing's own answer
+
+- 📋 **T1234** (deps: —) **The JS SDK's TuringHttpError drops the response body, so a 429 quota-exhausted never shows its resetsAt or detail** — A client cannot tell visitors when AI answers come back, nor read any problem field Turing sends. → §CLXXVI.1
 
 ## Done when — T1184
 

@@ -27,11 +27,21 @@ package com.viglet.turing.client.sn.manifest;
  *                          on a site with no binding (T1146)
  * @param knowledgeBaseMode {@code VECTOR}, {@code VECTORLESS_STRUCTURED} or
  *                          {@code HYBRID}; {@code null} keeps the live mode
+ * @param entityExtraction  (T1228) whether indexing finds the people, organisations
+ *                          and places each document names into the
+ *                          {@code entity_person}, {@code entity_organization} and
+ *                          {@code entity_place} facets; {@code null} keeps the live
+ *                          setting, off on a new binding
  *
  * @author Alexandre Oliveira
  * @since 2026.3.6
  */
-public record TurSNManifestGenAi(String agentId, String knowledgeBaseMode) {
+public record TurSNManifestGenAi(String agentId, String knowledgeBaseMode, Boolean entityExtraction) {
+
+    /** The binding as it was before {@link #entityExtraction}, kept for existing callers. */
+    public TurSNManifestGenAi(String agentId, String knowledgeBaseMode) {
+        this(agentId, knowledgeBaseMode, null);
+    }
 
     /** The {@link #agentId} that means "the server's global Default AI Agent". */
     public static final String DEFAULT_AGENT = "default";
@@ -56,6 +66,11 @@ public record TurSNManifestGenAi(String agentId, String knowledgeBaseMode) {
 
     /** The same binding with the knowledge-base mode set. */
     public TurSNManifestGenAi withKnowledgeBaseMode(String mode) {
-        return new TurSNManifestGenAi(agentId, mode);
+        return new TurSNManifestGenAi(agentId, mode, entityExtraction);
+    }
+
+    /** The same binding with entity extraction at import turned on or off (T1228). */
+    public TurSNManifestGenAi withEntityExtraction(boolean enabled) {
+        return new TurSNManifestGenAi(agentId, knowledgeBaseMode, enabled);
     }
 }

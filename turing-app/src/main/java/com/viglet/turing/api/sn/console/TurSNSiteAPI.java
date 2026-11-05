@@ -232,6 +232,8 @@ public class TurSNSiteAPI {
                 // master switch + target-audience persona id drive the
                 // deterministic readability scorer at index time.
                 turSNSiteGenAi.setContentFitIndexingEnabled(genAi.isContentFitIndexingEnabled());
+                // T1228 — entities at import (opt-in).
+                turSNSiteGenAi.setEntityExtraction(genAi.isEntityExtraction());
                 turSNSiteGenAi.setContentFitPersonaId(genAi.getContentFitPersonaId());
                 // T501 / §X.19 — index-time native video/audio understanding (opt-in,
                 // Gemini-only). Appends the clip transcript/scenes to the document text

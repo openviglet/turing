@@ -104,7 +104,6 @@ class TurSolrDocumentHandlerTest {
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("title", new JSONArray(List.of("first", "second")));
                 attributes.put("tags", new JSONArray(List.of("alpha", "beta")));
-                attributes.put("turing_entity_person", new ArrayList<>(List.of("Alice", "Bob")));
                 attributes.put("count", 42);
                 attributes.put(TurSolrConstants.SCORE, 1.0);
                 attributes.put(TurSolrConstants.VERSION, 3);
@@ -121,8 +120,6 @@ class TurSolrDocumentHandlerTest {
                                 .isEqualTo("first" + LINE_SEPARATOR + "second");
                 assertThat(document.getFieldValues("tags"))
                                 .containsExactly("alpha", "beta");
-                assertThat(document.getFieldValues("turing_entity_person"))
-                                .containsExactly("Alice", "Bob");
                 assertThat(document.getFieldValue("count")).isEqualTo(42);
                 assertThat(document.getFieldValue(TurSolrConstants.SCORE)).isNull();
                 assertThat(document.getFieldValue(TurSolrConstants.VERSION)).isNull();
@@ -248,21 +245,6 @@ class TurSolrDocumentHandlerTest {
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
                 assertThat(document.getFieldValues("authors")).containsExactly("Alice", "Bob");
-        }
-
-        @Test
-        void testIndexingTuringEntityPrefixAlwaysMultiValued() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
-
-                Map<String, Object> attributes = new HashMap<>();
-                attributes.put("turing_entity_org", new org.json.JSONArray(List.of("Viglet", "Turing")));
-
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
-
-                UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
-                SolrInputDocument document = updateRequest.getDocuments().getFirst();
-                assertThat(document.getFieldValues("turing_entity_org")).containsExactly("Viglet", "Turing");
         }
 
         @Test

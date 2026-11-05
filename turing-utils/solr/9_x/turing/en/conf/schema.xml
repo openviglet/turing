@@ -507,13 +507,6 @@
   <field name="text_suggest" type="text_suggest" multiValued="true" indexed="true" stored="false" />
   <field name="text" type="text_general" multiValued="false" indexed="true" stored="true" />
   <field name="title" type="text_general" multiValued="false" indexed="true" stored="true" />
-  <field name="turing_entity_DATE" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_GL" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_MONEY" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_ON" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_PERCENTAGE" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_PN" type="string" multiValued="true" indexed="true" stored="true" />
-  <field name="turing_entity_TIME" type="string" multiValued="true" indexed="true" stored="true" />
   <field name="type" type="string" multiValued="false" indexed="true" stored="true" />
   <field name="url" type="string" multiValued="false" indexed="true" stored="true" />
   <field name="site" type="string" multiValued="false" indexed="true" stored="true" />
@@ -607,13 +600,6 @@
   <copyField source="section" dest="_text_" />
   <copyField source="text" dest="_text_" />
   <copyField source="title" dest="_text_" />
-  <copyField source="turing_entity_DATE" dest="_text_" />
-  <copyField source="turing_entity_GL" dest="_text_" />
-  <copyField source="turing_entity_MONEY" dest="_text_" />
-  <copyField source="turing_entity_ON" dest="_text_" />
-  <copyField source="turing_entity_PERCENTAGE" dest="_text_" />
-  <copyField source="turing_entity_PN" dest="_text_" />
-  <copyField source="turing_entity_TIME" dest="_text_" />
   <copyField source="url" dest="_text_" />
 
   <!-- Suggest -->

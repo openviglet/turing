@@ -17,13 +17,6 @@
 		<field name="text_spellcheck" type="text_spellcheck" multiValued="true" indexed="true" stored="false" />
 		<field name="text_suggest" type="text_suggest" multiValued="true" indexed="true" stored="false" />
 		<field name="title" type="text_general" multiValued="false" indexed="true" stored="true" />
-		<field name="turing_entity_DATE" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_GL" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_MONEY" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_ON" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_PERCENTAGE" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_PN" type="string" multiValued="true" indexed="true" stored="true" />
-		<field name="turing_entity_TIME" type="string" multiValued="true" indexed="true" stored="true" />
 		<field name="type" type="string" multiValued="false" indexed="true" stored="true" />
 		<field name="url" type="string" multiValued="false" indexed="true" stored="true" />
 		<field name="site" type="string" multiValued="false" indexed="true" stored="true" />
@@ -47,13 +40,6 @@
 	<copyField source="author" dest="content" />
 	<copyField source="section" dest="content" />
 	<copyField source="title" dest="content" />
-	<copyField source="turing_entity_DATE" dest="content" />
-	<copyField source="turing_entity_GL" dest="content" />
-	<copyField source="turing_entity_MONEY" dest="content" />
-	<copyField source="turing_entity_ON" dest="content" />
-	<copyField source="turing_entity_PERCENTAGE" dest="content" />
-	<copyField source="turing_entity_PN" dest="content" />
-	<copyField source="turing_entity_TIME" dest="content" />
 	<copyField source="type" dest="content" />
 	<copyField source="site" dest="content" />
 	<copyField source="url" dest="content" />

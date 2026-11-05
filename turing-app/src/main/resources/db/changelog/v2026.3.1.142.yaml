@@ -1,0 +1,30 @@
+databaseChangeLog:
+  # T1228 (Block AQ) - entities at import. A site can opt into extracting the
+  # people, organisations and places each document names, with its LLM, into the
+  # turing_entity_* facets, beside the Thesaurus that already resolves known terms.
+  #
+  # Defaults to false: every existing site indexes exactly as before.
+  #
+  # Idempotent (columnExists + MARK_RAN); portable lowercase types.
+
+  - changeSet:
+      id: v2026.3.1.142-add-sn_site_genai-entityExtraction
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_genai
+        - not:
+            - columnExists:
+                tableName: sn_site_genai
+                columnName: entityExtraction
+      changes:
+        - addColumn:
+            tableName: sn_site_genai
+            columns:
+              - column:
+                  name: entityExtraction
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

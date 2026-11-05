@@ -185,6 +185,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
             // T472 — index-time content-fit signal; off by default so a pre-T472
             // binding renders the disabled state and the indexing path is unchanged.
             contentFitIndexingEnabled: snSite.turSNSiteGenAi?.contentFitIndexingEnabled ?? false,
+            // T1228 — people, organisations and places extracted at import; off by default.
+            entityExtraction: snSite.turSNSiteGenAi?.entityExtraction ?? false,
             contentFitPersonaId: snSite.turSNSiteGenAi?.contentFitPersonaId ?? null,
             // T501 — index-time Gemini video/audio understanding; off by default so
             // a pre-T501 binding renders disabled and the indexing path is unchanged.
@@ -1492,6 +1494,40 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                             persona as it is indexed and stores content_fit_score;
                             surfaced in the Field Coverage dashboard. Independent of
                             the RAG / ranking cards above. */}
+                        {/* T1228 — entities at import: the site's LLM names the people,
+                            organisations and places each document mentions into the
+                            entity_person / entity_organization / entity_place facets. */}
+                        <SNFormSection icon={IconUserSearch} tone="violet" title={t("forms.snGenai.entityExtractionTitle")} description={t("forms.snGenai.entityExtractionDesc")}>
+                                <FormField
+                                    control={form.control}
+                                    name="entityExtraction"
+                                    render={({ field }) => (
+                                        <FormItemTwoColumns>
+                                            <FormItemTwoColumns.Left>
+                                                <FormItemTwoColumns.Label>
+                                                    {t("forms.snGenai.entityExtractionEnable")}
+                                                </FormItemTwoColumns.Label>
+                                                <FormItemTwoColumns.Description>
+                                                    {t("forms.snGenai.entityExtractionEnableDesc")}
+                                                </FormItemTwoColumns.Description>
+                                            </FormItemTwoColumns.Left>
+                                            <FormItemTwoColumns.Right>
+                                                <FormControl>
+                                                    <GradientButton
+                                                        type="button"
+                                                        variant={field.value === true ? "default" : "outline"}
+                                                        onClick={() => field.onChange(field.value !== true)}
+                                                    >
+                                                        {field.value === true
+                                                            ? t("forms.common.enabled")
+                                                            : t("forms.common.disabled")}
+                                                    </GradientButton>
+                                                </FormControl>
+                                            </FormItemTwoColumns.Right>
+                                        </FormItemTwoColumns>
+                                    )}
+                                />
+                        </SNFormSection>
                         <SNFormSection icon={IconUserSearch} tone="emerald" title={t("forms.snGenai.contentFitTitle")} description={t("forms.snGenai.contentFitDesc")}>
                                 <FormField
                                     control={form.control}

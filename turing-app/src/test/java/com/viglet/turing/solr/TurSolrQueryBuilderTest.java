@@ -947,7 +947,7 @@ class TurSolrQueryBuilderTest {
                 builder().prepareQueryFacetWithOneFacet(site, entityQuery, TurSNFilterParams.builder().build(),
                                 "person");
                 assertThat(entityQuery.getFacetFields()).isNotEmpty();
-                assertThat(String.join(",", entityQuery.getFacetFields())).contains("turing_entity_person");
+                assertThat(String.join(",", entityQuery.getFacetFields())).contains("person").doesNotContain("turing_entity");
                 assertThat(entityQuery.get("f.person.facet.sort")).isEqualTo("index");
         }
 
@@ -1709,17 +1709,6 @@ class TurSolrQueryBuilderTest {
         }
 
         // --- isNerOrThesaurus (via reflection) ---
-
-        @Test
-        void testIsNerOrThesaurus() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "isNerOrThesaurus", TurSNFieldType.class);
-                method.setAccessible(true);
-
-                assertThat((boolean) method.invoke(null, TurSNFieldType.NER)).isTrue();
-                assertThat((boolean) method.invoke(null, TurSNFieldType.THESAURUS)).isTrue();
-                assertThat((boolean) method.invoke(null, TurSNFieldType.SE)).isFalse();
-        }
 
         // --- isDateRangeFacet (via reflection) ---
 

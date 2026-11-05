@@ -25,9 +25,9 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
-
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+## Block CO — SDK errors that carry Turing's own answer
 

@@ -27,7 +27,6 @@ import static com.viglet.turing.solr.TurSolrConstants.UPCOMING_DATES;
 import static com.viglet.turing.solr.TurSolrConstants.ROWS;
 import static com.viglet.turing.solr.TurSolrConstants.SOLR_DATE_PATTERN;
 import static com.viglet.turing.solr.TurSolrConstants.TRUE;
-import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -998,8 +997,7 @@ public class TurSolrQueryBuilder {
 
     private void addFacetField(TurSNFacetTypeContext context, SolrQuery query) {
         query.addFacetField(setFacetTypeConditionInFacet(context,
-                setEntityPrefix(context.getTurSNSiteFacetFieldExtDto())
-                        .concat(context.getTurSNSiteFacetFieldExtDto().getName())));
+                context.getTurSNSiteFacetFieldExtDto().getName()));
     }
 
     private void addFacetRange(TurSNFacetTypeContext context, SolrQuery query) {
@@ -1072,16 +1070,6 @@ public class TurSolrQueryBuilder {
             TurSNSiteFieldExt turSNSiteFieldExt,
             TurSNSiteCustomFacet turSNSiteCustomFacet,
             TurSNSiteCustomFacetItem customFacetItem) {
-    }
-
-    @NotNull
-    private static String setEntityPrefix(TurSNSiteFieldExtDto turSNSiteFacetFieldExtDto) {
-        return isNerOrThesaurus(turSNSiteFacetFieldExtDto.getSnType()) ? TURING_ENTITY : EMPTY;
-    }
-
-    private static boolean isNerOrThesaurus(TurSNFieldType snType) {
-        return Collections.unmodifiableSet(EnumSet.of(TurSNFieldType.NER, TurSNFieldType.THESAURUS))
-                .contains(snType);
     }
 
     public List<TurSNSiteFieldExt> prepareQueryHL(TurSNSite turSNSite, SolrQuery query,

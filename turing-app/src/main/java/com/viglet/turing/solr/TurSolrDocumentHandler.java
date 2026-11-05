@@ -2,7 +2,6 @@ package com.viglet.turing.solr;
 
 import static com.viglet.turing.solr.TurSolrConstants.BOOST;
 import static com.viglet.turing.solr.TurSolrConstants.SCORE;
-import static com.viglet.turing.solr.TurSolrConstants.TURING_ENTITY;
 import static com.viglet.turing.solr.TurSolrConstants.TYPE;
 import static com.viglet.turing.solr.TurSolrConstants.VERSION;
 
@@ -303,7 +302,7 @@ public class TurSolrDocumentHandler {
     private void processJSONArray(Map<String, TurSNSiteField> turSNSiteFieldMap,
             SolrInputDocument document, String key, Object attribute) {
         JSONArray value = (JSONArray) attribute;
-        if (key.startsWith(TURING_ENTITY) || isMultiValued(turSNSiteFieldMap, key)) {
+        if (isMultiValued(turSNSiteFieldMap, key)) {
             Optional.ofNullable(value).ifPresent(v -> IntStream.range(0, value.length())
                     .forEachOrdered(i -> document.addField(key, value.getString(i))));
         } else {
@@ -326,7 +325,7 @@ public class TurSolrDocumentHandler {
         @SuppressWarnings("rawtypes")
         List attributeList = (ArrayList) attribute;
         Optional.ofNullable(attributeList).ifPresent(values -> {
-            if (key.startsWith(TURING_ENTITY) || isMultiValued(turSNSiteFieldMap, key)) {
+            if (isMultiValued(turSNSiteFieldMap, key)) {
                 for (Object valueItem : values) {
                     document.addField(key, TurSolrField.convertFieldToString(valueItem));
                 }

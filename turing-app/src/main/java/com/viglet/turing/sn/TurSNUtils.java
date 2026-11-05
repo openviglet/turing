@@ -53,7 +53,6 @@ import com.viglet.turing.solr.TurSolrField;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class TurSNUtils {
-    public static final String TURING_ENTITY = "turing_entity";
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String URL = "url";
 
@@ -260,12 +259,8 @@ public class TurSNUtils {
             Map<String, TurSNSiteFieldExtDto> fieldExtMap, Map<String, Object> turSEResultAttr,
             Set<String> attributes) {
         Map<String, Object> fields = new HashMap<>();
-        attributes.forEach(attribute -> {
-            if (!attribute.startsWith(TURING_ENTITY)) {
-                addFieldAndValueToMap(turSEResultAttr, fields, attribute,
-                        getFieldName(fieldExtMap, attribute));
-            }
-        });
+        attributes.forEach(attribute -> addFieldAndValueToMap(turSEResultAttr, fields, attribute,
+                getFieldName(fieldExtMap, attribute)));
         return fields;
     }
 

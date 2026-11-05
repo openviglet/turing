@@ -37,11 +37,11 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
-
 ## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+## Block CO — SDK errors that carry Turing's own answer
 
 ## Table of contents
 
@@ -2319,34 +2319,6 @@ with `fqItemOperator` sends it.
 
 ## CLXXIII Knowledge Base: microthesauri & index-time term expansion (§XL)
 
-### CLXXIII.1 Entities at import, beside the Thesaurus (D310) (T1228)
-
-**Where it came from.** Dumont D310 (the WordPress plugin, for a client): visitors
-should explore by person and theme, across its WordPress sites and its DSpace repository
-in one SN site, and the repository's author facet mixes "Bosso, Bruno" with "Antonio
-Prado". Moved here from T1225: this block owns index-time recognition.
-
-**What exists.** Themes and known names already work: `TurSNMicrothesaurusIndexer`
-(T672) recognises a site's vocabulary terms at index time into a faceted field,
-resolving `USE`/`USED_FOR` variants to the preferred term, and T673 imports authority
-files the console edits. What nothing does is find people and places that are in no
-vocabulary: `TurSNFieldType.NER` is declared and `turing_entity_*` is faceted at query
-time, but no import path fills them. Every source needs it alike, so it belongs at
-Turing's import.
-
-**What Turing should do.**
-1. At import, for an SN site that opts in, extract people, organisations and places from
-   `title` and `text` with the site's LLM through tool calling (the non-goals rule out
-   structured JSON output), into `turing_entity_person`, `_org`, `_place`. Each value is
-   a span the document holds, checked against the text before it is kept.
-2. Resolve variants through the site's Thesaurus (`USED_FOR` to the preferred term), not
-   a second alias list; an unknown name can be offered as a candidate term.
-3. Cache by content hash; log skipped extractions.
-
-**Done when:** a document naming a person outside any vocabulary is found under the
-person facet, a Thesaurus variant resolves to its preferred name, on Solr, Lucene and
-Elasticsearch.
-
 ## CLXXIV Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 ### CLXXIV.1 On-demand structured-feed ingest (T1229)
@@ -2432,3 +2404,31 @@ as a selected facet item. Content AI answers 400 rather than matching nothing.
 documents under `x` whose `source_apps` is not `wordpress` on Solr (AND and OR sites),
 Lucene and Elasticsearch; an exclusion alone matches every other document; Content AI
 refuses it with 400.
+
+## CLXXVI SDK errors that carry Turing's own answer
+
+### CLXXVI.1 Problem details on SDK errors (T1234)
+
+**Where it came from.** Dumont D332 (the WordPress plugin): when the site's AI budget
+runs out, Turing answers the copilot, answer and nl-filters calls with HTTP 429 and an
+RFC 7807 body whose `type` ends in `quota-exhausted`, carrying `detail`, `used`,
+`limit`, `resetsAt` and `upgradeUrl`. The plugin's visitor surfaces call Turing from the
+browser through `@viglet/turing-sdk` (`client.post(...)`, the answer controller).
+
+**What happens.** The SDK throws `TuringHttpError` with `status`, `statusText` and `url`
+only (`errors.ts`, T1005). The body is read and dropped, so a client can tell "429" but
+not "the budget is spent until 1 December", nor any other problem-details field Turing
+sends.
+
+**Workaround in Dumont.** The browser treats any 429 as "paused" and pings the WordPress
+server, which makes one call of its own to Turing (PHP reads the whole body) to learn
+`resetsAt` and show it on Health. That is an extra call, and a visitor still cannot be
+told when answers come back.
+
+**What Turing should do.** `TuringHttpError` carries the parsed problem body when the
+response is `application/problem+json` (or JSON): at least `type`, `title`, `detail` and
+the extension members, e.g. as `error.problem`, typed, with `resetsAt` for quota errors.
+Same for the streaming calls that fail before the first event.
+
+**Done when:** a 429 `quota-exhausted` from any SDK call surfaces
+`error.problem.resetsAt`.

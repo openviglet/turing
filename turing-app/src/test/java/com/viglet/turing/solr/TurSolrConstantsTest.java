@@ -62,7 +62,6 @@ class TurSolrConstantsTest {
         assertThat(TurSolrConstants.SCORE).isEqualTo("score");
         assertThat(TurSolrConstants.VERSION).isEqualTo("_version_");
         assertThat(TurSolrConstants.BOOST).isEqualTo("boost");
-        assertThat(TurSolrConstants.TURING_ENTITY).isEqualTo("turing_entity_");
         assertThat(TurSolrConstants.ID).isEqualTo("id");
         assertThat(TurSolrConstants.TITLE).isEqualTo("title");
         assertThat(TurSolrConstants.TYPE).isEqualTo("type");
@@ -133,7 +132,6 @@ class TurSolrConstantsTest {
                 TurSolrConstants.SCORE,
                 TurSolrConstants.VERSION,
                 TurSolrConstants.BOOST,
-                TurSolrConstants.TURING_ENTITY,
                 TurSolrConstants.ID,
                 TurSolrConstants.TITLE,
                 TurSolrConstants.TYPE,
@@ -169,7 +167,6 @@ class TurSolrConstantsTest {
         assertThat(TurSolrConstants.VERSION)
                 .startsWith("_")
                 .endsWith("_");
-        assertThat(TurSolrConstants.TURING_ENTITY).endsWith("_");
         assertThat(TurSolrConstants.TUR_SUGGEST).startsWith("/");
         assertThat(TurSolrConstants.TUR_SPELL).startsWith("/");
         assertThat(TurSolrConstants.FILTER_QUERY_OR).contains("tag=");

@@ -167,6 +167,11 @@ export interface TurSNSiteGenAi {
    */
   contentFitIndexingEnabled?: boolean;
   /**
+   * T1228 — extract the people, organisations and places each document names
+   * into the entity facets at import, with the site's LLM. @since 2026.3.5
+   */
+  entityExtraction?: boolean;
+  /**
    * T472 / §XXVI.9 — target-audience `TurPersona` id read as the reader proxy
    * by the index-time scorer. Null/blank disables the signal even when
    * {@link contentFitIndexingEnabled} is `true`. @since 2026.3.4

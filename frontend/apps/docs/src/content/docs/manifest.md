@@ -191,12 +191,24 @@ POST /api/sn/manifest
 |---|---|
 | `agentId` | The [AI agent](/docs/ai-agents/) the site answers through. `default` switches the site to the [Default AI Agent](/docs/ai-agents/#default-ai-agent-global-fallback). Leave it out (`"genAi": {}`) to keep whichever agent the site already uses, for example one an admin picked in the console; a site with no GenAI configuration then starts on the Default AI Agent. An id that names no agent is refused |
 | `knowledgeBaseMode` | `VECTOR`, `VECTORLESS_STRUCTURED` or `HYBRID`. Leave it out to keep the site's current mode (`VECTOR` on a new configuration) |
+| `entityExtraction` | `true` to find the people, organisations and places each document names while it is indexed (see [Entities at import](#entities-at-import)). Leave it out to keep the current setting (off on a new configuration) |
 
-Only these two settings are compared and written. Ranking, semantic recall and the RAG flags stay as the console left them, and a manifest without `genAi` does not touch the site's configuration. The response says `genAiChanged: true` when the configuration was created or changed, and the [plan](#dry-run-the-diff) says `genAiToChange`. From Java, `.genAi(TurSNManifestGenAi.keepAgent())`, `.genAi(TurSNManifestGenAi.defaultAgent())` or `.genAi(TurSNManifestGenAi.agent("my-agent"))`.
+Only these settings are compared and written. Ranking, semantic recall and the RAG flags stay as the console left them, and a manifest without `genAi` does not touch the site's configuration. The response says `genAiChanged: true` when the configuration was created or changed, and the [plan](#dry-run-the-diff) says `genAiToChange`. From Java, `.genAi(TurSNManifestGenAi.keepAgent())`, `.genAi(TurSNManifestGenAi.defaultAgent())` or `.genAi(TurSNManifestGenAi.agent("my-agent"))`.
 
 :::note[Changed in 2026.3.6]
 Before this release, leaving `agentId` out meant the same as `default`, so re-posting a manifest rebound a site to the Default AI Agent. A connector that relied on that now sends `"agentId": "default"`.
 :::
+
+#### Entities at import
+
+With `"entityExtraction": true`, every document indexed into the site is read by the LLM of the site's AI agent (or of the Default AI Agent), which names the people, organisations and places in its title, description and text. They are written to three facet fields that Turing creates on first use: `entity_person`, `entity_organization` and `entity_place`. Visitors can then browse by person or place without anyone listing them in a vocabulary first.
+
+- Only names the document actually contains are kept: a name the model returns that is not in the text is dropped.
+- A name the site's [Thesaurus](/docs/thesaurus/) knows is written as its preferred term, so variants such as *Bosso, Bruno* and *Bruno Bosso* become one facet value.
+- Re-indexing a document whose text has not changed does not call the model again (the results are kept in memory by content).
+- The calls are counted in the site's LLM spend. If the model fails, the document is indexed without entities.
+
+Turn it on before indexing: documents indexed earlier get entities when they are next re-indexed. From Java, `TurSNManifestGenAi.keepAgent().withEntityExtraction(true)`; in the console, **Extract entities** on the site's Generative AI page.
 
 <a id="facet-behaviour"></a>
 

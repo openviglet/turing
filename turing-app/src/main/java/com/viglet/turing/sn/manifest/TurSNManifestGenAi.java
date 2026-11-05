@@ -37,11 +37,20 @@ import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
  *                          an omitted id rebound the site like {@code "default"})
  * @param knowledgeBaseMode how the site retrieves; {@code null} keeps the live
  *                          mode, or {@code VECTOR} on a new binding
+ * @param entityExtraction  (T1228) whether indexing finds the people, organisations
+ *                          and places each document names into the entity facets;
+ *                          {@code null} keeps the live setting, off on a new binding
  *
  * @author Alexandre Oliveira
  * @since 2026.3.6
  */
-public record TurSNManifestGenAi(String agentId, TurSNKnowledgeBaseMode knowledgeBaseMode) {
+public record TurSNManifestGenAi(String agentId, TurSNKnowledgeBaseMode knowledgeBaseMode,
+        Boolean entityExtraction) {
+
+    /** The binding as it was before {@link #entityExtraction}, kept for existing callers. */
+    public TurSNManifestGenAi(String agentId, TurSNKnowledgeBaseMode knowledgeBaseMode) {
+        this(agentId, knowledgeBaseMode, null);
+    }
 
     /** The {@link #agentId} that means "the global Default AI Agent". */
     public static final String DEFAULT_AGENT = "default";
