@@ -107,6 +107,20 @@ export function cardOverride( fields, field ) {
 }
 
 /**
+ * A document's type as a badge, a label and a card's looks read it, as the server's
+ * Viglet_Dumont_Mapping::document_type() does: the first value when Turing holds several (a
+ * catalog record's `dc:type`, D327), without the highlight a type filter puts on it.
+ *
+ * @param {Object} fields The document's fields.
+ * @return {string} The type, or empty.
+ */
+export function documentType( fields ) {
+	const raw = fields?.type;
+	const value = Array.isArray( raw ) ? raw[ 0 ] : raw;
+	return cardText( String( value ?? '' ) ).trim();
+}
+
+/**
  * The date a result card shows: the type's own card date field where Fields chose one
  * (`cardTypes`), else the publication date (D305).
  *
@@ -114,7 +128,7 @@ export function cardOverride( fields, field ) {
  * @return {string|number|undefined} The raw value, or undefined.
  */
 export function cardWhen( fields ) {
-	const type = cardText( String( fields.type ?? '' ) );
+	const type = documentType( fields );
 	return (
 		cardOverride( fields, config.cardTypes?.[ type ]?.date ) ??
 		fields.publication_date

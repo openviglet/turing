@@ -593,6 +593,94 @@ final class NativeSearchTest extends PluginTestCase {
 	}
 
 	/**
+	 * D327: a record another source sent, typed ["Article","Thesis"], reads as Article: its
+	 * badge is the label Fields gave Article, and its card date is the field chosen for Article.
+	 * The same looks reach the browser as `cardTypes`.
+	 */
+	public function test_a_foreign_types_label_and_card_date_follow_its_first_value(): void {
+		$options = array(
+			'viglet_dumont_foreign_types' => array(
+				'Article' => array(
+					'label'      => 'Journal article',
+					'card_date'  => 'defense_date',
+					'card_image' => 'cover_url',
+				),
+				// Its second value configured too: never what the record reads as.
+				'Thesis'  => array(
+					'label'     => 'Thesis',
+					'card_date' => 'issued',
+				),
+			),
+		);
+		Functions\stubs(
+			array(
+				'wp_date'            => static fn ( $format, $ts ) => gmdate( 'Y-m-d', $ts ),
+				'get_option'         => static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback,
+				'wp_unslash'         => static fn ( $v ) => $v,
+				'wp_strip_all_tags'  => static fn ( $v ) => trim( strip_tags( $v ) ),
+				'number_format_i18n' => static fn ( $n ) => (string) $n,
+				'_n'                 => static fn ( $one, $many, $n ) => 1 === $n ? $one : $many,
+			)
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'queryContext' => array( 'count' => 1 ),
+							'results'      => array(
+								'document' => array(
+									array(
+										'fields' => array(
+											'id'           => 'oai:repo.example:1',
+											'title'        => 'Tidal marshes',
+											'url'          => 'https://repo.example/record/1',
+											'type'         => array( 'Article', 'Thesis' ),
+											'publication_date' => '2020-01-01T00:00:00Z',
+											'defense_date' => '2024-03-15T00:00:00Z',
+											'issued'       => '2019-05-05T00:00:00Z',
+											'cover_url'    => 'https://repo.example/cover.png',
+										),
+									),
+								),
+							),
+						)
+					),
+				);
+			}
+		);
+		$mapping = new \Viglet_Dumont_Mapping( $this->settings() );
+		$state   = array(
+			'query'      => 'marshes',
+			'perPage'    => 10,
+			'sort'       => '',
+			// As render.php gives it: the post types' names, then the foreign labels.
+			'typeLabels' => array( 'post' => 'Post' ) + $mapping->foreign_labels(),
+			'cartLabel'  => '%s',
+			'noneLabel'  => 'None',
+		);
+
+		$result = $this->search()->first_page( $state )['results'][0];
+		$this->assertSame( 'Journal article', $result['type'] );
+		$this->assertSame( '2024-03-15', $result['date'], 'the date chosen for Article, not Thesis\'s nor the publication date' );
+		$this->assertSame( 'https://repo.example/cover.png', $result['image'] );
+
+		$preview = $this->search()->preview_state( 10, $state + array( 'errorLabel' => 'Error' ) )['results'][0];
+		$this->assertSame( 'Journal article', $preview['type'] );
+		$this->assertSame( '2024-03-15', $preview['date'] );
+
+		$this->assertSame(
+			array(
+				'date'  => 'defense_date',
+				'image' => 'cover_url',
+			),
+			$this->search()->public_config()['cardTypes']['Article']
+		);
+	}
+
+	/**
 	 * D263: the crumb drops this site's domain, and keeps another site's.
 	 */
 	public function test_crumb_names_the_host_only_for_another_site(): void {

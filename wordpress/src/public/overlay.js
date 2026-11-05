@@ -17,6 +17,7 @@ import {
 	createAnswerController,
 	createClient,
 	createSiteSearch,
+	documentType,
 	formatCardDate,
 	isQuestion,
 	siteUrl,
@@ -325,7 +326,7 @@ function render( s ) {
 			? form.replace( '%d', String( total ) )
 			: labels.none;
 		results = s.documents.slice( 0, shown ).map( ( d ) => {
-			const type = plainText( String( d.raw?.fields?.type ?? '' ) );
+			const type = documentType( d.raw?.fields );
 			return {
 				kind: 'result',
 				id: String( d.raw?.fields?.id ?? '' ),

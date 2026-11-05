@@ -797,6 +797,8 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 	foreach ( array_keys( $all ) as $post_type ) {
 		$sources[ $post_type ] = Viglet_Dumont_Mapping::sources( $post_type );
 	}
+	// The types other sources sent under this site key (D327), for their labels and card looks.
+	$found = $mapping->discover_foreign( new Viglet_Dumont_API_Client( $settings ) );
 
 	return new WP_REST_Response(
 		array(
@@ -809,6 +811,8 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 			'genai_change' => ! is_wp_error( $plan ) && $plan['genai_to_change'],
 			'sources'      => $sources,
 			'types'        => Viglet_Dumont_Mapping::TYPES,
+			'foreign'      => (object) $mapping->foreign(),
+			'foreign_seen' => is_wp_error( $found ) ? array() : $found,
 		),
 		200
 	);
@@ -909,7 +913,15 @@ function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Re
 		return new WP_REST_Response( array( 'message' => __( 'The body needs a mapping object keyed by post type.', 'viglet-turing-search' ) ), 400 );
 	}
 
-	return new WP_REST_Response( array( 'mapping' => ( new Viglet_Dumont_Mapping() )->save( $mapping ) ), 200 );
+	$fields   = new Viglet_Dumont_Mapping();
+	$response = array( 'mapping' => $fields->save( $mapping ) );
+	// How the types other sources sent show (D327), when the body carries them.
+	$foreign = $request->get_param( 'foreign' );
+	if ( is_array( $foreign ) ) {
+		$response['foreign'] = (object) $fields->save_foreign( $foreign );
+	}
+
+	return new WP_REST_Response( $response, 200 );
 }
 
 /**

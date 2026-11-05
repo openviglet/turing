@@ -129,7 +129,7 @@ wp_enqueue_style(
 						$viglet_dumont_author = $viglet_dumont_fields['author'] ?? '';
 						$viglet_dumont_date   = $viglet_dumont_fields['publication_date'] ?? '';
 						$viglet_dumont_image  = $viglet_dumont_fields['image'] ?? '';
-						$viglet_dumont_type   = $viglet_dumont_fields['type'] ?? '';
+						$viglet_dumont_type   = Viglet_Dumont_Mapping::document_type( $viglet_dumont_fields['type'] ?? '' );
 						?>
 						<article class="vd-result">
 							<?php if ( $viglet_dumont_image ) : ?>

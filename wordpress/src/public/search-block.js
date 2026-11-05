@@ -17,6 +17,7 @@ import {
 	cardLines,
 	cardOverride,
 	cardWhen,
+	documentType,
 	formatCardDate,
 	isQuestion,
 	isScopeFilter,
@@ -1659,8 +1660,9 @@ const boundFormat = new Intl.DateTimeFormat(
  */
 function card( d, position ) {
 	const fields = d.raw?.fields || {};
-	// A search filtered by type gets the type back highlighted, as `<mark>post</mark>`.
-	const type = plain( String( fields.type ?? '' ) );
+	// A search filtered by type gets the type back highlighted, as `<mark>post</mark>`; a
+	// catalog record's may be a list, read by its first value (D327).
+	const type = documentType( fields );
 	// The type's own card date and image, where Fields chose a mapped field (D305).
 	const when = cardWhen( fields );
 	const lines = cardLines( fields );

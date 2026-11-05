@@ -39,6 +39,22 @@ class Viglet_Dumont_Mapping {
 	/** The option the mapping lives in. */
 	public const OPTION = 'viglet_dumont_mapping';
 
+	/**
+	 * The option holding how the search block shows a type no post type has (D327): a record
+	 * another source sent under this site key, as `dc:type`'s "Article". Keyed by that value,
+	 * each `{label, card_date, card_image}`. Display only: nothing about indexing reads it.
+	 */
+	public const FOREIGN_OPTION = 'viglet_dumont_foreign_types';
+
+	/** How many foreign types the option keeps. */
+	private const MAX_FOREIGN = 100;
+
+	/** How many pages of 100 documents the Fields screen reads to find the foreign types. */
+	private const FOREIGN_PAGES = 20;
+
+	/** A document's fields that are never a card's date or image. */
+	private const NOT_CARD_FIELDS = array( 'id', 'title', 'text', 'abstract', 'description', 'url', 'type', 'site', 'site_key', 'source_apps', 'score', 'publication_date', 'image', 'author', 'categories', 'section', 'tags' );
+
 	/** The option recording the last manifest sent: its hash, when, and the error if any. */
 	public const PROVISIONED_OPTION = 'viglet_dumont_provisioned';
 
@@ -132,6 +148,186 @@ class Viglet_Dumont_Mapping {
 		$this->resolved = null;
 
 		return $clean;
+	}
+
+	/**
+	 * A document's type as a badge, a label and a card's looks read it: the first value when
+	 * Turing holds several (a catalog record's `dc:type`, D327), without highlight markup.
+	 *
+	 * @param mixed $type The document's `type` field.
+	 */
+	public static function document_type( $type ): string {
+		$value = is_array( $type ) ? reset( $type ) : $type;
+
+		return is_scalar( $value ) ? trim( wp_strip_all_tags( (string) $value ) ) : '';
+	}
+
+	/**
+	 * The types this site's own documents carry: its indexed post types and a PDF's.
+	 *
+	 * @return array<int, string>
+	 */
+	private static function own_types(): array {
+		return array_merge( viglet_dumont_get_indexable_types(), array( Viglet_Dumont_Pdf::TYPE ) );
+	}
+
+	/**
+	 * How the search block shows each type no post type has (D327), keyed by that type.
+	 *
+	 * @return array<string, array{label: string, card_date: string, card_image: string}>
+	 */
+	public function foreign(): array {
+		return self::sanitize_foreign( get_option( self::FOREIGN_OPTION, array() ) );
+	}
+
+	/**
+	 * Each foreign type's badge text, where Fields gave one.
+	 *
+	 * @return array<string, string>
+	 */
+	public function foreign_labels(): array {
+		return array_filter( array_map( static fn ( $looks ) => $looks['label'], $this->foreign() ), static fn ( $label ) => '' !== $label );
+	}
+
+	/**
+	 * Store how the foreign types show, keeping only what validates. Returns what was stored.
+	 *
+	 * @param array $foreign Keyed by type, each `{label, card_date, card_image}`.
+	 */
+	public function save_foreign( array $foreign ): array {
+		$clean = self::sanitize_foreign( $foreign );
+		update_option( self::FOREIGN_OPTION, $clean, false );
+
+		return $clean;
+	}
+
+	/**
+	 * The foreign types validated: a type is any text but one of this site's own, and a card's
+	 * field is a Turing field name or '' for the default. A type that changes nothing is left out.
+	 *
+	 * @param mixed $foreign As stored or posted.
+	 * @return array<string, array{label: string, card_date: string, card_image: string}>
+	 */
+	public static function sanitize_foreign( $foreign ): array {
+		$own   = self::own_types();
+		$clean = array();
+		$name  = static fn ( $value ) => (string) preg_replace( '/[^A-Za-z0-9_]/', '', is_scalar( $value ) ? (string) $value : '' );
+		foreach ( is_array( $foreign ) ? $foreign : array() as $type => $looks ) {
+			$type = sanitize_text_field( (string) $type );
+			if ( '' === $type || strlen( $type ) > 100 || in_array( $type, $own, true ) || ! is_array( $looks ) ) {
+				continue;
+			}
+			$entry = array(
+				'label'      => sanitize_text_field( is_scalar( $looks['label'] ?? '' ) ? (string) ( $looks['label'] ?? '' ) : '' ),
+				'card_date'  => $name( $looks['card_date'] ?? '' ),
+				'card_image' => $name( $looks['card_image'] ?? '' ),
+			);
+			if ( '' === $entry['label'] . $entry['card_date'] . $entry['card_image'] ) {
+				continue;
+			}
+			$clean[ $type ] = $entry;
+			if ( count( $clean ) >= self::MAX_FOREIGN ) {
+				break;
+			}
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * The types the SN site holds under this site key beyond this site's own (D327), each with
+	 * how many documents were seen and the fields they carry that a card could show: the ones
+	 * holding a date, and the ones holding text (an image's URL). Turing has no negative filter
+	 * (T1231) nor a facet on `type`, so the documents are read, a page of 100 at a time, until
+	 * every foreign one was seen or after the first 2000; one `-source_apps:` query replaces
+	 * the paging once T1231 ships.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to search through.
+	 * @return array<int, array{type: string, count: int, dates: array<int, string>, texts: array<int, string>}>|WP_Error
+	 */
+	public function discover_foreign( Viglet_Dumont_API_Client $client ) {
+		$filter = ( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter();
+		$mine   = $client->search( '*', 1, 0, array( 'fq[]' => array( $filter, 'source_apps:' . $client->source_app() ) ) );
+		$all    = $client->search( '*', 1, 0, array( 'fq[]' => $filter ) );
+		if ( is_wp_error( $all ) ) {
+			return $all;
+		}
+		if ( is_wp_error( $mine ) ) {
+			return $mine;
+		}
+		$expected = (int) ( $all['queryContext']['count'] ?? 0 ) - (int) ( $mine['queryContext']['count'] ?? 0 );
+		$own      = self::own_types();
+		$found    = array();
+		$seen     = 0;
+
+		for ( $page = 1; $expected > 0 && $seen < $expected && $page <= self::FOREIGN_PAGES; $page++ ) {
+			$response = $client->search( '*', $page, 100, array( 'fq[]' => $filter ) );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+			$documents = (array) ( $response['results']['document'] ?? array() );
+			foreach ( $documents as $document ) {
+				$fields = (array) ( $document['fields'] ?? array() );
+				$type   = self::document_type( $fields['type'] ?? '' );
+				if ( $client->source_app() === self::document_type( $fields['source_apps'] ?? '' ) ) {
+					continue;
+				}
+				++$seen;
+				if ( '' === $type || in_array( $type, $own, true ) ) {
+					continue;
+				}
+				$found[ $type ] = $found[ $type ] ?? array(
+					'type'  => $type,
+					'count' => 0,
+					'dates' => array(),
+					'texts' => array(),
+				);
+				++$found[ $type ]['count'];
+				foreach ( $fields as $field => $value ) {
+					$field = (string) $field;
+					$value = is_array( $value ) ? reset( $value ) : $value;
+					if ( in_array( $field, self::NOT_CARD_FIELDS, true ) || ! is_scalar( $value ) || '' === (string) $value ) {
+						continue;
+					}
+					if ( self::looks_like_date( $value ) ) {
+						$found[ $type ]['dates'][ $field ] = $field;
+					} elseif ( is_string( $value ) ) {
+						$found[ $type ]['texts'][ $field ] = $field;
+					}
+				}
+			}//end foreach
+			if ( count( $documents ) < 100 ) {
+				break;
+			}
+		}//end for
+
+		ksort( $found );
+
+		return array_values(
+			array_map(
+				static function ( array $entry ): array {
+					$entry['dates'] = array_values( $entry['dates'] );
+					$entry['texts'] = array_values( $entry['texts'] );
+					sort( $entry['dates'] );
+					sort( $entry['texts'] );
+					return $entry;
+				},
+				$found
+			)
+		);
+	}
+
+	/**
+	 * Whether a value Turing answered is a date: an ISO day, or epoch milliseconds.
+	 *
+	 * @param mixed $value The value.
+	 */
+	private static function looks_like_date( $value ): bool {
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return $value > 1e11;
+		}
+
+		return is_string( $value ) && 1 === preg_match( '/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}|$)/', $value );
 	}
 
 	/**

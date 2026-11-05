@@ -481,6 +481,188 @@ function CardAppearance( { value, fields, onChange } ) {
 	);
 }
 
+/**
+ * The types other sources sent under this site key (D327), a catalog's "Article" or "Thesis":
+ * no post type has them, so they are shown, not indexed, and here they get their badge text
+ * and the fields their cards show as the date and the image.
+ *
+ * @param {Object}                 props          The types seen and how each shows.
+ * @param {Object[]}               props.seen     Each type Turing holds: type, count, dates, texts.
+ * @param {Object}                 props.value    How each type shows, keyed by type.
+ * @param {(next: Object) => void} props.onChange Receives the map changed.
+ */
+function ForeignTypes( { seen, value, onChange } ) {
+	// A type configured before but not seen this time keeps its row, so it can be cleared.
+	const names = [
+		...new Set( [
+			...seen.map( ( s ) => s.type ),
+			...Object.keys( value ),
+		] ),
+	];
+	if ( ! names.length ) {
+		return null;
+	}
+	const byType = Object.fromEntries( seen.map( ( s ) => [ s.type, s ] ) );
+	const set = ( type, key ) => ( v ) =>
+		onChange( {
+			...value,
+			[ type ]: {
+				label: '',
+				card_date: '',
+				card_image: '',
+				...value[ type ],
+				[ key ]: v,
+			},
+		} );
+	const options = ( list, current, none ) => [
+		{ label: none, value: '' },
+		...[ ...new Set( [ ...list, current ].filter( Boolean ) ) ].map(
+			( f ) => ( { label: f, value: f } )
+		),
+	];
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>
+					{ __( 'Types from other sources', 'viglet-turing-search' ) }
+				</h2>
+			</CardHeader>
+			<CardBody>
+				<p>
+					{ __(
+						'Documents another source sent under this site key, such as a catalog, carry types no post type has. Name each one as its result badge reads, and choose the fields its cards show as the date and the image. This changes how they show, never what is indexed.',
+						'viglet-turing-search'
+					) }
+				</p>
+				<table className="widefat striped viglet-dumont-foreign-types">
+					<thead>
+						<tr>
+							<th scope="col">
+								{ __( 'Type', 'viglet-turing-search' ) }
+							</th>
+							<th scope="col">
+								{ __( 'Label', 'viglet-turing-search' ) }
+							</th>
+							<th scope="col">
+								{ __(
+									'Date shown on cards',
+									'viglet-turing-search'
+								) }
+							</th>
+							<th scope="col">
+								{ __(
+									'Image on cards',
+									'viglet-turing-search'
+								) }
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ names.map( ( type ) => {
+							const looks = value[ type ] || {};
+							const found = byType[ type ];
+							return (
+								<tr key={ type } data-type={ type }>
+									<th scope="row">
+										{ type }
+										{ found && (
+											<>
+												<br />
+												<small>
+													{ sprintf(
+														/* translators: %d: how many documents of the type were read. */
+														__(
+															'Documents read: %d',
+															'viglet-turing-search'
+														),
+														found.count
+													) }
+												</small>
+											</>
+										) }
+									</th>
+									<td>
+										<TextControl
+											__nextHasNoMarginBottom
+											hideLabelFromVision
+											label={ sprintf(
+												/* translators: %s: a document type, e.g. Article. */
+												__(
+													'Label for %s',
+													'viglet-turing-search'
+												),
+												type
+											) }
+											placeholder={ type }
+											value={ looks.label || '' }
+											onChange={ set( type, 'label' ) }
+										/>
+									</td>
+									<td>
+										<SelectControl
+											__nextHasNoMarginBottom
+											hideLabelFromVision
+											label={ sprintf(
+												/* translators: %s: a document type, e.g. Article. */
+												__(
+													'Date shown on %s cards',
+													'viglet-turing-search'
+												),
+												type
+											) }
+											value={ looks.card_date || '' }
+											options={ options(
+												found?.dates || [],
+												looks.card_date,
+												__(
+													'Publication date',
+													'viglet-turing-search'
+												)
+											) }
+											onChange={ set(
+												type,
+												'card_date'
+											) }
+										/>
+									</td>
+									<td>
+										<SelectControl
+											__nextHasNoMarginBottom
+											hideLabelFromVision
+											label={ sprintf(
+												/* translators: %s: a document type, e.g. Article. */
+												__(
+													'Image on %s cards',
+													'viglet-turing-search'
+												),
+												type
+											) }
+											value={ looks.card_image || '' }
+											options={ options(
+												found?.texts || [],
+												looks.card_image,
+												__(
+													'Its image field',
+													'viglet-turing-search'
+												)
+											) }
+											onChange={ set(
+												type,
+												'card_image'
+											) }
+										/>
+									</td>
+								</tr>
+							);
+						} ) }
+					</tbody>
+				</table>
+			</CardBody>
+		</Card>
+	);
+}
+
 function TypeCard( { postType, value, sources, types, status, onChange } ) {
 	const [ preview, setPreview ] = useState( null );
 	const [ previewError, setPreviewError ] = useState( '' );
@@ -648,6 +830,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 function Mapping() {
 	const [ data, setData ] = useState( null );
 	const [ mapping, setMapping ] = useState( null );
+	const [ foreign, setForeign ] = useState( {} );
 	const [ error, setError ] = useState( '' );
 	const [ notice, setNotice ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
@@ -657,6 +840,7 @@ function Mapping() {
 			.then( ( result ) => {
 				setData( result );
 				setMapping( result.mapping );
+				setForeign( result.foreign || {} );
 			} )
 			.catch( ( e ) => setError( e.message || String( e ) ) );
 	}, [] );
@@ -669,7 +853,7 @@ function Mapping() {
 		apiFetch( {
 			path: '/viglet-dumont/v1/mapping',
 			method: 'POST',
-			data: { mapping },
+			data: { mapping, foreign },
 		} )
 			.then( () =>
 				apiFetch( {
@@ -757,6 +941,11 @@ function Mapping() {
 					}
 				/>
 			) ) }
+			<ForeignTypes
+				seen={ data.foreign_seen || [] }
+				value={ foreign }
+				onChange={ setForeign }
+			/>
 			<Flex justify="flex-start">
 				<Button
 					variant="primary"

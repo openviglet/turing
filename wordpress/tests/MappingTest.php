@@ -239,6 +239,173 @@ final class MappingTest extends PluginTestCase {
 	}
 
 	/**
+	 * D327: a catalog record's `type` may be several values, as `dc:type` gives them; a badge, a
+	 * label and a card's looks read the first. A plain string reads as it always did.
+	 */
+	public function test_a_documents_type_is_its_first_value_without_highlights(): void {
+		$this->assertSame( 'Article', Viglet_Dumont_Mapping::document_type( array( 'Article', 'Thesis' ) ) );
+		$this->assertSame( 'post', Viglet_Dumont_Mapping::document_type( 'post' ) );
+		$this->assertSame( 'post', Viglet_Dumont_Mapping::document_type( '<mark>post</mark>' ) );
+		$this->assertSame( 'Article', Viglet_Dumont_Mapping::document_type( array( '<mark>Article</mark>' ) ) );
+		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( array() ) );
+		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( null ) );
+		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( array( array( 'nested' ) ) ) );
+	}
+
+	/**
+	 * D327: a foreign type keeps a label and two field names, cleaned; one of this site's own
+	 * types, an empty type or one that changes nothing is not kept.
+	 */
+	public function test_a_foreign_types_looks_are_stored_sanitized(): void {
+		$stored = $this->mapping()->save_foreign(
+			array(
+				'Article'     => array(
+					'label'      => '<b>Article</b> ',
+					'card_date'  => 'defense-date; DROP',
+					'card_image' => 'cover_url',
+					'extra'      => 'dropped',
+				),
+				'Thesis'      => array( 'label' => 'Thesis' ),
+				// This site's own types are configured as post types, never here.
+				'post'        => array( 'label' => 'Not here' ),
+				'pdf'         => array( 'label' => 'Not here' ),
+				''            => array( 'label' => 'No type' ),
+				'Dataset'     => array(
+					'label'      => '',
+					'card_date'  => '',
+					'card_image' => '',
+				),
+				'Not a looks' => 'Article',
+				'Listed'      => array( 'label' => array( 'not text' ) ),
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'Article' => array(
+					'label'      => 'Article',
+					'card_date'  => 'defensedateDROP',
+					'card_image' => 'cover_url',
+				),
+				'Thesis'  => array(
+					'label'      => 'Thesis',
+					'card_date'  => '',
+					'card_image' => '',
+				),
+			),
+			$stored
+		);
+		$this->assertSame( $stored, $this->options[ Viglet_Dumont_Mapping::FOREIGN_OPTION ] );
+		$this->assertSame( $stored, $this->mapping()->foreign() );
+		$this->assertSame(
+			array(
+				'Article' => 'Article',
+				'Thesis'  => 'Thesis',
+			),
+			$this->mapping()->foreign_labels()
+		);
+	}
+
+	/**
+	 * D327: the Fields screen lists the types other sources sent under this site key, by their
+	 * first value, with the fields their documents carry as dates and as text; the plugin's own
+	 * documents and this site's types are not among them.
+	 */
+	public function test_the_foreign_types_are_read_from_the_sites_other_documents(): void {
+		$documents = array(
+			array(
+				'fields' => array(
+					'id'          => 'site-a:post:1',
+					'type'        => 'post',
+					'source_apps' => 'wordpress',
+				),
+			),
+			array(
+				'fields' => array(
+					'id'           => 'oai:repo.example:1',
+					'type'         => array( 'Article', 'Thesis' ),
+					'source_apps'  => 'catalog',
+					'defense_date' => '2024-03-15T00:00:00Z',
+					'cover_url'    => 'https://repo.example/cover.png',
+					'pages'        => 120,
+					'title'        => 'Tidal marshes',
+				),
+			),
+			array(
+				'fields' => array(
+					'id'          => 'oai:repo.example:2',
+					'type'        => 'Article',
+					'source_apps' => 'catalog',
+					'issued'      => 1710460800000,
+				),
+			),
+			array(
+				'fields' => array(
+					'id'          => 'oai:repo.example:3',
+					'type'        => 'Dataset',
+					'source_apps' => array( 'catalog' ),
+				),
+			),
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $documents ) {
+				$this->requests[] = array( $url, $args );
+				$counts           = str_contains( $url, 'rows=0' );
+				$mine             = str_contains( $url, rawurlencode( 'source_apps:wordpress' ) );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode(
+						array(
+							'queryContext' => array( 'count' => $counts ? ( $mine ? 1 : 4 ) : 4 ),
+							'results'      => array( 'document' => $counts ? array() : $documents ),
+						)
+					),
+				);
+			}
+		);
+
+		$found = ( new Viglet_Dumont_Mapping( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) );
+
+		$this->assertSame(
+			array(
+				array(
+					'type'  => 'Article',
+					'count' => 2,
+					'dates' => array( 'defense_date', 'issued' ),
+					'texts' => array( 'cover_url' ),
+				),
+				array(
+					'type'  => 'Dataset',
+					'count' => 1,
+					'dates' => array(),
+					'texts' => array(),
+				),
+			),
+			$found
+		);
+		$this->assertCount( 3, $this->requests, 'two counts, then one page holds every foreign document' );
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $this->requests[2][0] );
+	}
+
+	/**
+	 * D327: with nothing but the plugin's own documents under the key, nothing is read.
+	 */
+	public function test_with_no_foreign_document_no_page_is_read(): void {
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => json_encode( array( 'queryContext' => array( 'count' => 5 ) ) ),
+				);
+			}
+		);
+
+		$this->assertSame( array(), $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) ) );
+		$this->assertCount( 2, $this->requests );
+	}
+
+	/**
 	 * D308: a type's "Leaves search on" date takes a post out of search once it has passed,
 	 * a day-only date lasting to that day's end, and a post before it schedules its leaving.
 	 */

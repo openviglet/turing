@@ -237,7 +237,9 @@ class Viglet_Dumont_Native_Search {
 			}
 		}
 		$types[ Viglet_Dumont_Pdf::TYPE ] = __( 'PDF files', 'viglet-turing-search' );
-		$immersive                        = 'immersive' === ( $this->settings['overlay_layout'] ?? '' );
+		// A type another source sent (D327) groups under the label Fields gave it.
+		$types    += ( new Viglet_Dumont_Mapping( $this->settings ) )->foreign_labels();
+		$immersive = 'immersive' === ( $this->settings['overlay_layout'] ?? '' );
 
 		wp_interactivity_config(
 			'viglet-dumont/overlay',
@@ -359,13 +361,23 @@ class Viglet_Dumont_Native_Search {
 	/**
 	 * Per post type, the mapped fields its result cards show as the date and the image in
 	 * place of the publication date and the featured image (D305); a type that keeps both
-	 * defaults is left out. The browser gets the same map as `cardTypes`.
+	 * defaults is left out. A type another source sent under this site key (D327) has its own
+	 * in Fields as well. The browser gets the same map as `cardTypes`.
 	 *
 	 * @return array<string, array{date: string, image: string}>
 	 */
 	public function card_types(): array {
-		$types = array();
-		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $post_type => $type_mapping ) {
+		$types   = array();
+		$mapping = new Viglet_Dumont_Mapping( $this->settings );
+		foreach ( $mapping->foreign() as $type => $looks ) {
+			if ( '' !== $looks['card_date'] || '' !== $looks['card_image'] ) {
+				$types[ (string) $type ] = array(
+					'date'  => $looks['card_date'],
+					'image' => $looks['card_image'],
+				);
+			}
+		}
+		foreach ( $mapping->all() as $post_type => $type_mapping ) {
 			if ( ! $type_mapping['exclude'] && ( '' !== $type_mapping['card_date'] || '' !== $type_mapping['card_image'] ) ) {
 				$types[ $post_type ] = array(
 					'date'  => $type_mapping['card_date'],
@@ -586,7 +598,7 @@ class Viglet_Dumont_Native_Search {
 			$url       = (string) $field( $fields, 'url', 'url' );
 			$title     = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
 			$title     = '' !== $title ? $title : $url;
-			$type      = wp_strip_all_tags( (string) ( $fields['type'] ?? '' ) );
+			$type      = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
 			$looks     = $types[ $type ] ?? array(
 				'date'  => '',
 				'image' => '',
@@ -810,7 +822,8 @@ class Viglet_Dumont_Native_Search {
 		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
 			$url       = (string) ( $fields['url'] ?? '' );
-			$looks     = $types[ (string) ( $fields['type'] ?? '' ) ] ?? array(
+			$type      = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
+			$looks     = $types[ $type ] ?? array(
 				'date'  => '',
 				'image' => '',
 			);
@@ -821,7 +834,7 @@ class Viglet_Dumont_Native_Search {
 			$card      = array(
 				'url'       => $url,
 				'title'     => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
-				'type'      => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
+				'type'      => $labels['typeLabels'][ $type ] ?? $type,
 				'date'      => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'       => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'     => self::crumb( $url ),
