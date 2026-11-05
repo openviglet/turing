@@ -7,6 +7,8 @@
 
 ---
 
+## Block CO — Structured feeds refresh when the publisher says so
+
 ## VIII. Strategic moves — repositioning beyond features
 
 > The Education customer engagement proved the product. This section is

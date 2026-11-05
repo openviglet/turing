@@ -39,6 +39,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete inside a filtered scope
 
+## Block CO — Structured feeds refresh when the publisher says so
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2391,3 +2393,31 @@ mode, make it an explicit parameter rather than a side effect of `fq`.
 
 **Done when:** `ac?q=works` and `ac?q=works&fq[]=type:post` both answer `["workshop"]`
 on a site whose posts hold it, and the filtered call omits terms only other types hold.
+
+## CLXXII Structured feeds refresh when the publisher says so
+
+### CLXXII.1 On-demand structured-feed ingest (T1227)
+
+Seen from `openviglet/model-catalog`, the reference consumer of the structured-feed pull
+ingester (`TurStructuredFeedIngestService`). On 2026-11-05 its GitHub Actions workflow
+(`.github/workflows/publish.yml`) deployed a new `catalog.ndjson` to GitHub Pages at
+14:59 UTC (`last-modified: Thu, 05 Nov 2026 14:59:26 GMT`, 1,238 rows). Minutes later
+the `model-catalog` SN site on turing-demo.viglet.org still served the previous feed:
+`GET /api/sn/model-catalog/search?q=eleven_v3` returns `lastVerified: 2026-10-30`, and
+Claude Opus 5.5's new benchmark fields are absent, so the copilot answers from stale
+rows.
+
+The ingester has exactly two entry points: the `@Scheduled` fixed-delay sweep
+(`turing.genai.structured-feed.interval-ms`, default one hour, counted from node start)
+and the one-off ingest inside startup provisioning. No REST endpoint, webhook or console
+action runs `ingestSource` for one source on demand, so a publisher cannot say "the feed
+changed, pull it now", and an operator cannot re-sync after fixing a feed. Lowering the
+interval only trades staleness for load. No workaround was written: the consumer would
+add a post-deploy step calling such an endpoint.
+
+What Turing should do: an authenticated endpoint, e.g. `POST
+/api/genai/structured-feed/{sourceId}/ingest`, that runs `ingestSource` for that
+configured source under the same ShedLock (a request while a sweep runs answers 409 or
+queues it), returns the `IngestResult` (records, imported, de-indexed, failure reason),
+and accepts an API key a CI job can hold. The console's SN site page could expose the
+same action with the last run's result. The scheduled sweep stays as the fallback.

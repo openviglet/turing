@@ -31,6 +31,10 @@
 
 - 📋 **T1226** (deps: —) **Autocomplete with fq answers highlighted document titles instead of term completions, markup included** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
 
+## Block CO — Structured feeds refresh when the publisher says so
+
+- 📋 **T1227** (deps: —) **A structured feed is re-ingested only on its hourly timer: no endpoint lets a publisher trigger a pull after a deploy** — The vectorless copilot answers from the previous feed for up to an hour after every catalog release, and operators cannot re-sync on demand. → §CLXXII.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

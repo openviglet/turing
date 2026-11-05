@@ -25,3 +25,5 @@
 
 ## Block CN — Autocomplete inside a filtered scope
 
+## Block CO — Structured feeds refresh when the publisher says so
+
