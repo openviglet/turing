@@ -37,6 +37,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
+## Block CP — Every endpoint honours a request's filters and partition
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2322,3 +2324,54 @@ the facets it counts and the order it answers in. A line here names a difference
 engine shows and the shared seam that closes it for all of them.
 
 ## CLXXVI SDK errors that carry Turing's own answer
+
+## CLXXVII Every endpoint honours a request's filters and partition
+
+### CLXXVII.1 Filter operators on similar documents (T1235)
+
+**Where it came from.** Dumont D303 (the WordPress plugin): a site that also searches
+its sibling sites on a shared SN site asks for Related posts across them, so `site_key`
+must match any of several values.
+
+**What happens.** `GET
+/api/sn/{site}/search/similar?id=...&fq[]=site_key:a&fq[]=site_key:b` returns 0 with
+every operator tried (`fqi.op=OR`, `fq.or[]`), while the same filters on `/search` with
+`fqi.op=OR` return both sites' documents (T1223). The similar endpoint does not read the
+filter operators the search endpoint now honours.
+
+**Workaround in Dumont.** With `sites: all` the Related block asks `similar` unfiltered
+and keyless for up to 50 rows and keeps the ids whose prefix is a key in scope
+(`class-viglet-dumont-related.php`). That drops relevant neighbours past the 50th and
+reads the whole SN site.
+
+**What Turing should do.** `/search/similar` (MLT and VECTOR) takes `fqi.op`, `fq.op`,
+`fq.and[]` and `fq.or[]` exactly as `/search` does, through the same shared fq parser
+(T1233).
+
+**Done when:** `similar` with `fq[]=site_key:a&fq[]=site_key:b&fqi.op=OR` returns
+neighbours from both sites, on Solr, Lucene and Elasticsearch.
+
+### CLXXVII.2 AI calls honour filters and partitions (T1236)
+
+**Where it came from.** Dumont D303 (the WordPress plugin), the `network` e2e project:
+two WordPress sites share one SN site, each under its own `site_key` (`localhost`,
+`localhost-second`). The copilot and the kit are asked from the first site's browser
+with `filters: {"site_key": ["localhost"]}` (the map T1213 takes).
+
+**What happens.** `POST /api/sn/{site}/copilot` and `POST /api/sn/{site}/copilot/kit`
+answer with citations and staged documents whose ids are `localhost-second:post:<n>`,
+the other site's. The search endpoint with `fq[]=site_key:localhost` returns only the
+first site's documents, so the filter is honoured there and not on these calls (or not
+on one of their retrieval stages). In the same project the API keys bound to each site's
+partition (D190) also read the other site's documents (HTTP 200), which may be the same
+cause.
+
+**Workaround in Dumont.** None: the plugin cannot filter what the copilot cited after
+the fact without rewriting its answer.
+
+**What Turing should do.** Every retrieval stage of the copilot, the kit, the answer and
+chat applies the request's `filters` (and the key's partition) before ranking, as
+`/search` does, so a site never cites or stages another site's documents.
+
+**Done when:** with `filters: {site_key: [a]}`, no copilot citation or kit item carries
+another site's id, and a partition-bound key never reads outside its partition.
