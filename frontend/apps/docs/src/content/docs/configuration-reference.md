@@ -327,6 +327,12 @@ Turing enriches its LLM-instance model picker from a public, vendor-neutral [**m
 | `turing.model-catalog.price-sync.enabled` | `true` | Auto-seed/refresh the per-model price table (`tur_llm_price`) from the catalog's indicative pricing on a TTL. Only CATALOG-sourced rows are written, an operator's MANUAL rate is never overwritten. `false` keeps the price table manual-only. See [Cost Governance](/docs/cost-governance/). |
 | `turing.model-catalog.change-feed.email-enabled` | `false` | Opt-in: a daily job emails the Global Settings recipient a digest when the catalog change feed affects a model you use (removed / superseded / changed), deduped. The in-UI change-feed banner is always on regardless. |
 
+The catalog fetch follows HTTP redirects, so a moved endpoint keeps working. A failed refresh is logged at `WARN` while the catalog is still empty, and at `DEBUG` once a last-good copy is in memory.
+
+:::caution[Builds released before the catalog moved]
+The catalog moved from `openviglet.github.io/model-catalog` to `models.viglet.org` on 2026-11-05, and the old address now answers `301`. Earlier builds default to the old address and do not follow redirects, so their model picker loses the catalog without logging an error. Until you upgrade, set `TURING_MODEL_CATALOG_URL=https://models.viglet.org/catalog.json`.
+:::
+
 <a id="abuse-controls-turingabuse"></a>
 
 ### Abuse Controls (`turing.abuse`)

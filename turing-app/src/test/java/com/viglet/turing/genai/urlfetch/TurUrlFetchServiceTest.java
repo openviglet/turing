@@ -16,8 +16,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.sun.net.httpserver.HttpServer;
 import com.viglet.turing.commons.file.TurFileAttributes;
 
 /**
@@ -129,6 +134,64 @@ class TurUrlFetchServiceTest {
 
         assertThat(result.getContent()).isEqualTo("tiny");
         verify(headlessFetcher, never()).fetch(any(), any());
+    }
+
+    /** A local server where /old answers the given status pointing at /new, and /new serves the body. */
+    private static HttpServer redirectingServer(int status, String location) throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/old", exchange -> {
+            exchange.getResponseHeaders().add("Location", location);
+            exchange.sendResponseHeaders(status, -1);
+            exchange.close();
+        });
+        server.createContext("/new", exchange -> {
+            byte[] body = "{\"ok\":true}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        return server;
+    }
+
+    private static URI at(HttpServer server, String path) {
+        return URI.create("http://127.0.0.1:" + server.getAddress().getPort() + path);
+    }
+
+    @Test
+    void rawFetchFollowsAMovedPermanentlyRedirect() throws Exception {
+        HttpServer server = redirectingServer(301, "/new");
+        try {
+            String body = service.fetchRawFollowingRedirects(at(server, "/old"), Duration.ofSeconds(5),
+                    u -> true);
+            assertThat(body).isEqualTo("{\"ok\":true}");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void rawFetchRefusesARedirectTheGuardBlocks() throws Exception {
+        HttpServer server = redirectingServer(301, "/new");
+        try {
+            String body = service.fetchRawFollowingRedirects(at(server, "/old"), Duration.ofSeconds(5),
+                    u -> u.endsWith("/old"));
+            assertThat(body).isNull();
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void rawFetchGivesUpOnARedirectLoop() throws Exception {
+        HttpServer server = redirectingServer(302, "/old");
+        try {
+            String body = service.fetchRawFollowingRedirects(at(server, "/old"), Duration.ofSeconds(5),
+                    u -> true);
+            assertThat(body).isNull();
+        } finally {
+            server.stop(0);
+        }
     }
 
     @Test

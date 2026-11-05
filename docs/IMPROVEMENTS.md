@@ -39,8 +39,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
-## Block CQ — The model catalog at models.viglet.org
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2357,31 +2355,3 @@ and keyless for up to 50 rows and keeps the ids whose prefix is a key in scope.
 Lucene and Elasticsearch, and an SDK test checks the query string carries `fqi.op`.
 
 ## CLXXVIII The model catalog at models.viglet.org
-
-### CLXXVIII.1 The catalog endpoint moved, and installed builds lost it (T1237)
-
-**What broke.** On 2026-11-05 the model catalog moved from
-openviglet.github.io/model-catalog to models.viglet.org, and the old address now answers
-`301`. Every Turing build released before commit c009728be8 reads
-`https://openviglet.github.io/model-catalog/catalog.json` by default
-(`turing.model-catalog.url`), through `io.github.openviglet:model-catalog-client` 1.0.5.
-That client builds `HttpClient.newHttpClient()`, whose redirect policy is `NEVER`, and
-treats any non-2xx as a failure. The refresh logs the failure at debug and keeps the
-current map, which on a fresh start is empty, so the LLM-instance model picker loses its
-catalog fallback, with no visible error.
-
-**What is already done.** Commit c009728be8 moved the default to
-`https://models.viglet.org/catalog.json` in `TurLlmModelCatalog` and
-`application.yaml`,. The model-catalog repository moved the client's `DEFAULT_BASE_URL`
-too (its T99), but no client release after 1.0.5 carries it.
-
-**What to do.**
-1. Ship a 2026.3 patch release with the new default, so running installs recover by upgrading.
-2. Until then, the release notes and the configuration reference tell operators to set `TURING_MODEL_CATALOG_URL=https://models.viglet.org/catalog.json`.
-3. Bump the client once the model-catalog repository releases one that follows redirects (`Redirect.NORMAL`), so the next move of the endpoint does not empty the catalog again.
-4. Log a failed refresh at warn when the catalog is still empty.
-5. Check that `urlFetchService.fetchRaw`, which the structured feed uses, follows redirects too.
-
-**Done when** an instance on the released default, or on an upgraded build, logs
-"Refreshed LLM model catalog from https://models.viglet.org/catalog.json" after
-start-up, and a test covers a catalog endpoint that answers 301.

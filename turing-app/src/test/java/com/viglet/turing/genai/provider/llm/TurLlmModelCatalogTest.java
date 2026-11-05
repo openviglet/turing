@@ -302,4 +302,63 @@ class TurLlmModelCatalogTest {
         catalog.refreshFromRemote();
         assertThat(catalog.staticModels("openai")).isEmpty();
     }
+
+    /**
+     * T1237: the endpoint moved and the old address answers 301. The client's own
+     * 1.0.5 fetcher never follows redirects and emptied the catalog; the fetcher
+     * Turing hands it does.
+     */
+    @Test
+    void refreshFollowsAMovedPermanentlyCatalogEndpoint() throws Exception {
+        String envelope = """
+                { "version": 1, "vendors": { "openai": [ { "id": "gpt-4o", "kind": "CHAT" } ] } }
+                """;
+        com.sun.net.httpserver.HttpServer server = com.sun.net.httpserver.HttpServer.create(
+                new java.net.InetSocketAddress(java.net.InetAddress.getLoopbackAddress(), 0), 0);
+        int port = server.getAddress().getPort();
+        server.createContext("/old", exchange -> {
+            exchange.getResponseHeaders().add("Location",
+                    "http://127.0.0.1:" + port + "/new" + exchange.getRequestURI().getPath().substring(4));
+            exchange.sendResponseHeaders(301, -1);
+            exchange.close();
+        });
+        server.createContext("/new", exchange -> {
+            byte[] body = envelope.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        try {
+            ModelCatalogClient client = ModelCatalogClient.builder()
+                    .baseUrl("http://127.0.0.1:" + port + "/old")
+                    .fetcher(new TurLlmModelCatalog.RedirectFollowingFetcher(java.time.Duration.ofSeconds(5)))
+                    .build();
+            catalog.refreshFrom(client);
+            assertThat(catalog.staticModels("openai")).extracting(TurLlmModelOption::id)
+                    .containsExactly("gpt-4o");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void redirectFollowingFetcherTreatsAFinalNon2xxAsAFailure() throws Exception {
+        com.sun.net.httpserver.HttpServer server = com.sun.net.httpserver.HttpServer.create(
+                new java.net.InetSocketAddress(java.net.InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/", exchange -> {
+            exchange.sendResponseHeaders(404, -1);
+            exchange.close();
+        });
+        server.start();
+        try {
+            var fetcher = new TurLlmModelCatalog.RedirectFollowingFetcher(java.time.Duration.ofSeconds(5));
+            String url = "http://127.0.0.1:" + server.getAddress().getPort() + "/catalog.json";
+            org.assertj.core.api.Assertions.assertThatThrownBy(() -> fetcher.get(url))
+                    .isInstanceOf(java.io.IOException.class)
+                    .hasMessageContaining("404");
+        } finally {
+            server.stop(0);
+        }
+    }
 }

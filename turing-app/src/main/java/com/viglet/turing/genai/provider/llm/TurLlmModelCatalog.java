@@ -1,5 +1,11 @@
 package com.viglet.turing.genai.provider.llm;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -77,6 +83,8 @@ public class TurLlmModelCatalog {
      */
     private volatile TurCatalogPlans consumerPlans = TurCatalogPlans.EMPTY;
 
+    private static final Duration FETCH_TIMEOUT = Duration.ofSeconds(5);
+
     /** Lazily built from the configured base URL; overridable for tests. */
     private volatile ModelCatalogClient client;
 
@@ -118,8 +126,15 @@ public class TurLlmModelCatalog {
             }
         } catch (Exception e) {
             // Offline / unreachable / malformed — keep the current (last-good) catalog.
-            log.debug("Remote LLM model catalog refresh from {} failed, keeping current: {}",
-                    remoteUrl, e.getMessage());
+            // With nothing to keep, the model picker has no fallback at all, so that case
+            // is worth a warn (T1237: an endpoint move once emptied it silently).
+            if (catalog.isEmpty()) {
+                log.warn("Remote LLM model catalog refresh from {} failed and the catalog is empty: {}",
+                        remoteUrl, e.getMessage());
+            } else {
+                log.debug("Remote LLM model catalog refresh from {} failed, keeping current: {}",
+                        remoteUrl, e.getMessage());
+            }
         }
         refreshProviderLinks(modelCatalogClient);
         refreshCatalogChanges(modelCatalogClient);
@@ -325,11 +340,50 @@ public class TurLlmModelCatalog {
         if (current == null) {
             current = ModelCatalogClient.builder()
                     .baseUrl(catalogBaseUrl())
-                    .timeout(Duration.ofSeconds(5))
+                    .timeout(FETCH_TIMEOUT)
+                    .fetcher(new RedirectFollowingFetcher(FETCH_TIMEOUT))
                     .build();
             this.client = current;
         }
         return current;
+    }
+
+    /**
+     * The transport handed to the catalog client (T1237). The client's own fetcher
+     * (1.0.5) builds {@code HttpClient.newHttpClient()}, whose redirect policy is
+     * {@code NEVER}, so an endpoint that moves and answers {@code 301} empties the
+     * catalog. This one follows redirects ({@link HttpClient.Redirect#NORMAL}, which
+     * never downgrades https to http) and treats any final non-2xx as a failure, as
+     * the client's own fetcher does. The URL is operator configuration, not user
+     * input, so no SSRF guard applies here.
+     */
+    static final class RedirectFollowingFetcher implements ModelCatalogClient.Fetcher {
+
+        private final HttpClient http;
+        private final Duration timeout;
+
+        RedirectFollowingFetcher(Duration timeout) {
+            this.timeout = timeout;
+            this.http = HttpClient.newBuilder()
+                    .connectTimeout(timeout)
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .build();
+        }
+
+        @Override
+        public String get(String url) throws IOException, InterruptedException {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                    .timeout(timeout)
+                    .header("Accept", "application/json")
+                    .GET()
+                    .build();
+            HttpResponse<String> response = http.send(request,
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (response.statusCode() / 100 != 2) {
+                throw new IOException("HTTP " + response.statusCode() + " from " + response.uri());
+            }
+            return response.body();
+        }
     }
 
     /** Inject a client (built with a fake fetcher) for tests. */

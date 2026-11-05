@@ -19,6 +19,9 @@ import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -54,6 +57,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class TurUrlFetchService {
+
+    /** Redirect hops {@link #fetchRaw(String)} follows before giving up (T1237). */
+    static final int MAX_RAW_REDIRECTS = 5;
+    private static final Set<Integer> REDIRECT_STATUSES = Set.of(301, 302, 303, 307, 308);
 
     private final Map<TurUrlFetchMode, TurUrlFetcher> byBackend =
             new EnumMap<>(TurUrlFetchMode.class);
@@ -118,19 +125,49 @@ public class TurUrlFetchService {
             return null;
         }
         int timeoutSeconds = Math.max(1, configResolver.resolve().timeoutSeconds());
+        return fetchRawFollowingRedirects(uri, Duration.ofSeconds(timeoutSeconds),
+                TurFileUtils::isAllowedRemoteUrlString);
+    }
+
+    /**
+     * T1237 — the raw GET behind {@link #fetchRaw(String)}, following up to
+     * {@value #MAX_RAW_REDIRECTS} redirects <em>by hand</em>. {@code probeClient}
+     * never follows redirects, so a feed whose host moved and answers {@code 301}
+     * used to fail; letting the client follow them instead would send the request
+     * to a {@code Location} the SSRF guard never saw. Here every hop's target goes
+     * back through {@code allowed} before it is requested. Package-private so the
+     * loop can be tested against a local server with a permissive guard.
+     */
+    String fetchRawFollowingRedirects(URI start, Duration timeout, Predicate<String> allowed) {
+        String urlString = start.toString();
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .timeout(Duration.ofSeconds(timeoutSeconds))
-                    .header("Accept", "application/json, application/x-ndjson, text/plain, */*")
-                    .GET()
-                    .build();
-            HttpResponse<String> response = probeClient.send(request,
-                    HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() / 100 == 2) {
-                return response.body();
+            URI uri = start;
+            for (int hop = 0; hop <= MAX_RAW_REDIRECTS; hop++) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(uri)
+                        .timeout(timeout)
+                        .header("Accept", "application/json, application/x-ndjson, text/plain, */*")
+                        .GET()
+                        .build();
+                HttpResponse<String> response = probeClient.send(request,
+                        HttpResponse.BodyHandlers.ofString());
+                int status = response.statusCode();
+                if (status / 100 == 2) {
+                    return response.body();
+                }
+                Optional<String> location = response.headers().firstValue("Location");
+                if (!REDIRECT_STATUSES.contains(status) || location.isEmpty()) {
+                    log.warn("[UrlFetch] raw fetch of {} returned HTTP {}", urlString, status);
+                    return null;
+                }
+                URI next = uri.resolve(location.get());
+                if (!allowed.test(next.toString())) {
+                    log.warn("[UrlFetch] raw fetch of {} redirected to a blocked URL: {}", urlString, next);
+                    return null;
+                }
+                uri = next;
             }
-            log.warn("[UrlFetch] raw fetch of {} returned HTTP {}", urlString, response.statusCode());
+            log.warn("[UrlFetch] raw fetch of {} exceeded {} redirects", urlString, MAX_RAW_REDIRECTS);
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -24,11 +24,7 @@
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
-- 📋 **T1235** (deps: —) **Similar documents and duplicates ignore fqi.op: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
-
-## Block CQ — The model catalog at models.viglet.org
-
-- 📋 **T1237** (deps: —) **Released builds read the model catalog from a URL that now answers 301, which the client does not follow** — Client 1.0.5 uses HttpClient.newHttpClient(), which never follows redirects; the fetch fails at debug level and the catalog stays empty. → §CLXXVIII.1
+- 🛠 **T1235** (deps: —) **Similar documents and duplicates ignore fqi.op: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
 
 ## Done when — T1184
 
