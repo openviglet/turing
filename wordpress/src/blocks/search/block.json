@@ -19,7 +19,8 @@
 		"viglet-dumont/search/showImage": "showImage",
 		"viglet-dumont/search/showDate": "showDate",
 		"viglet-dumont/search/showType": "showType",
-		"viglet-dumont/search/showSnippet": "showSnippet"
+		"viglet-dumont/search/showSnippet": "showSnippet",
+		"viglet-dumont/search/filters": "filters"
 	},
 	"attributes": {
 		"placeholder": {

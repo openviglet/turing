@@ -304,13 +304,13 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:119
+#: src/blocks/search/render.php:122
 #: src/includes/class-viglet-dumont-native-search.php:243
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:124
+#: src/blocks/search/render.php:127
 #: src/includes/class-viglet-dumont-native-search.php:244
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -1201,15 +1201,15 @@ msgstr "Mostrar menos"
 msgid "Show results"
 msgstr "Ver resultados"
 
-#: src/includes/class-viglet-dumont-search-block.php:97
+#: src/includes/class-viglet-dumont-search-block.php:145
 msgid "Relevance"
 msgstr "Relevância"
 
-#: src/includes/class-viglet-dumont-search-block.php:98
+#: src/includes/class-viglet-dumont-search-block.php:146
 msgid "Newest"
 msgstr "Mais recentes"
 
-#: src/includes/class-viglet-dumont-search-block.php:99
+#: src/includes/class-viglet-dumont-search-block.php:147
 msgid "Oldest"
 msgstr "Mais antigos"
 
@@ -1811,8 +1811,8 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:115
-#: src/blocks/search/render.php:117
+#: src/blocks/search/render.php:118
+#: src/blocks/search/render.php:120
 #: src/includes/class-viglet-dumont-native-search.php:239
 #: src/includes/class-viglet-dumont-native-search.php:241
 #: src/includes/class-viglet-dumont-native-search.php:631
@@ -2010,7 +2010,7 @@ msgid "Written by Turing’s language model from the saved post. Nothing changes
 msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
 #: src/includes/class-viglet-dumont-compare.php:69
-#: src/includes/class-viglet-dumont-search-block.php:126
+#: src/includes/class-viglet-dumont-search-block.php:174
 #: src/includes/class-viglet-dumont-woocommerce.php:106
 #: src/includes/class-viglet-dumont-woocommerce.php:138
 msgid "Price"
@@ -2436,11 +2436,11 @@ msgstr "São necessários dois produtos ou mais para comparar."
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr "O resumo citou um número que a tabela não tem, por isso não é mostrado."
 
-#: src/blocks/search/parts/trending.php:27
+#: src/blocks/search/parts/trending.php:29
 msgid "Popular searches"
 msgstr "Buscas populares"
 
-#: src/blocks/search/parts/trending.php:28
+#: src/blocks/search/parts/trending.php:30
 msgid "Popular:"
 msgstr "Populares:"
 
@@ -2805,7 +2805,7 @@ msgstr "O site SN %s responde a buscas sem chave."
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
 
-#: src/blocks/search/render.php:121
+#: src/blocks/search/render.php:124
 msgid "Reading your search…"
 msgstr "Lendo sua busca…"
 
@@ -2908,3 +2908,13 @@ msgstr "Sempre filtrar por"
 #: src/admin/js/search-block-editor.js:137
 msgid "Each as field:value (type:event, or a mapped facet). Every search this block makes stays inside them, and visitors cannot remove them."
 msgstr "Cada um como campo:valor (type:event, ou uma faceta mapeada). Toda busca deste bloco fica dentro deles, e os visitantes não podem removê-los."
+
+#. translators: %s: what the search is limited to, e.g. "Events".
+#: src/blocks/search/parts/box.php:80
+#, php-format
+msgid "In %s"
+msgstr "Em %s"
+
+#: src/blocks/search/parts/box.php:83
+msgid "Search the whole site"
+msgstr "Buscar no site todo"

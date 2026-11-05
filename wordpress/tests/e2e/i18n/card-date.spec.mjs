@@ -71,7 +71,7 @@ test( "a type's card date is its mapped DATE field, in pt_BR", async ( {
 
 	// "20 de nov. de 2026" from the script, "20 de novembro de 2026" on the first paint.
 	await expect( result.locator( 'time' ) ).toHaveText( /^20 de nov/ );
-	await expect( result.locator( '.viglet-dumont-search__field' ) ).toHaveText(
-		/Dia:?\s*20 de nov/
-	);
+	await expect(
+		result.locator( '.viglet-dumont-search__card-field' )
+	).toHaveText( /Dia:?\s*20 de nov/ );
 } );

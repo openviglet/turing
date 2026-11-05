@@ -58,6 +58,24 @@ final class SearchBlockTest extends PluginTestCase {
 		$this->assertSame( array(), Viglet_Dumont_Search_Block::fixed_filters( 'type:page' ) );
 	}
 
+	/**
+	 * The scope is the block's own filters and what a box-only block carried in `scope[]`, and
+	 * reads as the post type's name or the value (D306).
+	 */
+	public function test_the_scope_joins_the_carried_one_and_reads_as_names(): void {
+		Functions\when( 'wp_unslash' )->returnArg();
+		Functions\when( 'get_post_type_object' )->alias(
+			static fn ( $type ) => 'page' === $type ? (object) array( 'labels' => (object) array( 'name' => 'Pages' ) ) : null
+		);
+		$_GET = array( 'scope' => array( 'editora:sociologia', 'bad' ) );
+
+		$scope = Viglet_Dumont_Search_Block::scope( array( 'filters' => array( 'type:page' ) ) );
+
+		$this->assertSame( array( 'type:page', 'editora:sociologia' ), $scope );
+		$this->assertSame( 'Pages, sociologia', Viglet_Dumont_Search_Block::scope_label( $scope ) );
+		$_GET = array();
+	}
+
 	public function test_every_part_draws_pieces_that_exist(): void {
 		foreach ( Viglet_Dumont_Search_Block::PARTS as $part => $pieces ) {
 			foreach ( $pieces as $piece ) {

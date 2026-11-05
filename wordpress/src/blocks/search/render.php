@@ -106,8 +106,11 @@ $viglet_dumont_state = array(
 	),
 	'sort'            => Viglet_Dumont_Search_Block::sort(),
 	'perPage'         => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
-	// The block's scope (D306): applied to every search it makes, never a chip to remove.
-	'fixedFilters'    => Viglet_Dumont_Search_Block::fixed_filters( $attributes['filters'] ?? array() ),
+	// The block's scope (D306): applied to every search it makes, never a chip to remove, and
+	// where "Search the whole site" leads with the same query.
+	'fixedFilters'    => Viglet_Dumont_Search_Block::scope( $attributes ),
+	'wholeSiteUrl'    => Viglet_Dumont_Search_Block::whole_site_url( $attributes ),
+	'wholeSiteParam'  => ( new Viglet_Dumont_Native_Search() )->search_page()['queryParam'],
 	'typeLabels'      => $viglet_dumont_types,
 	'homeUrl'         => home_url( '/' ),
 	'foundLabels'     => array(

@@ -513,31 +513,40 @@
 	overflow-wrap: anywhere;
 }
 
+/* The block's scope (D306): the context of the search, and a way out of it. */
+.viglet-dumont-search__scope {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	gap: 0 0.75em;
+	margin: 0.4em 0 0;
+}
+
 /* The mapped fields a card shows (D305): one "Label: value" line each. */
-.viglet-dumont-search__fields {
+.viglet-dumont-search__card-fields {
 	font-size: var(--wp--preset--font-size--small, 0.875rem);
 	margin: 0.25em 0 0;
 }
 
-.viglet-dumont-search__fields[hidden] {
+.viglet-dumont-search__card-fields[hidden] {
 	display: none;
 }
 
-.viglet-dumont-search__field {
+.viglet-dumont-search__card-field {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0 0.4em;
 }
 
-.viglet-dumont-search__field dt {
+.viglet-dumont-search__card-field dt {
 	font-weight: 600;
 }
 
-.viglet-dumont-search__field dt::after {
+.viglet-dumont-search__card-field dt::after {
 	content: ":";
 }
 
-.viglet-dumont-search__field dd {
+.viglet-dumont-search__card-field dd {
 	margin: 0;
 	overflow-wrap: anywhere;
 }

@@ -180,6 +180,20 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get hasQuery() {
 			return '' !== state.query;
 		},
+		// "Search the whole site" from a scoped block (D306): the same query, no scope.
+		get wholeSiteHref() {
+			if ( ! state.wholeSiteUrl ) {
+				return '';
+			}
+			const url = new URL( state.wholeSiteUrl, window.location.href );
+			if ( state.query.trim() ) {
+				url.searchParams.set(
+					state.wholeSiteParam || 'q',
+					state.query.trim()
+				);
+			}
+			return url.href;
+		},
 		get hasSpotlights() {
 			return state.spotlights.length > 0;
 		},
@@ -1140,6 +1154,10 @@ function goElsewhere( query ) {
 	);
 	const url = new URL( elsewhere.url, window.location.href );
 	url.searchParams.set( elsewhere.param || 'q', query.trim() );
+	// The block's scope goes along as the context of the search, never as a filter (D306).
+	( state.fixedFilters || [] ).forEach( ( filter ) =>
+		url.searchParams.append( 'scope[]', filter )
+	);
 	window.location.assign( url.href );
 	return true;
 }

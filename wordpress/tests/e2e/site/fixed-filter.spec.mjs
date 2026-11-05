@@ -5,25 +5,74 @@ import { expect, test } from '../fixtures.mjs';
 import { wp } from '../global-setup.mjs';
 
 let pageId = '';
+let boxId = '';
 
-test.beforeAll( () => {
-	pageId = wp( [
+/**
+ * Publish a page and return its id.
+ *
+ * @param {string} title   Its title.
+ * @param {string} content Its block markup.
+ */
+const publish = ( title, content ) =>
+	wp( [
 		'post',
 		'create',
 		'--post_type=page',
 		'--post_status=publish',
-		'--post_title=Pages only',
-		'--post_content=<!-- wp:viglet-dumont/search {"filters":["type:page"]} /-->',
+		`--post_title=${ title }`,
+		`--post_content=${ content }`,
 		'--porcelain',
 	] )
 		.trim()
 		.split( /\r?\n/ )
 		.pop()
 		.trim();
+
+test.beforeAll( () => {
+	pageId = publish(
+		'Pages only',
+		'<!-- wp:viglet-dumont/search {"filters":["type:page"]} /-->'
+	);
+	// A box with no results of its own (D208), scoped: its query goes to the search page.
+	boxId = publish(
+		'Search the pages',
+		'<!-- wp:viglet-dumont/search {"filters":["type:page"]} --><!-- wp:viglet-dumont/search-box /--><!-- /wp:viglet-dumont/search -->'
+	);
 } );
 
 test.afterAll( () => {
-	wp( [ 'post', 'delete', pageId, '--force' ] );
+	wp( [ 'post', 'delete', pageId, boxId, '--force' ] );
+} );
+
+test( 'a box-only block takes its scope to the search page, said there and left by a link', async ( {
+	page,
+} ) => {
+	await page.goto( `/?page_id=${ boxId }` );
+	await expect(
+		page.locator( '.viglet-dumont-search__scope' )
+	).toContainText( 'In Pages' );
+	const box = page.locator( '.viglet-dumont-search input[type="search"]' );
+	await box.fill( 'search' );
+	await box.press( 'Enter' );
+
+	await expect( page ).toHaveURL( /[?&]scope(%5B%5D|\[\])=type(%3A|:)page/ );
+	await expect(
+		page.locator( '.viglet-dumont-search__results li' ).first()
+	).toBeVisible();
+	expect( ( await types( page ) ).every( ( t ) => 'Page' === t ) ).toBe(
+		true
+	);
+	const scope = page.locator( '.viglet-dumont-search__scope' );
+	await expect( scope ).toContainText( 'In Pages' );
+
+	// The whole site: the same query, the scope gone, posts back.
+	await scope.getByRole( 'link', { name: 'Search the whole site' } ).click();
+	await expect( page ).not.toHaveURL( /scope/ );
+	await expect( page ).toHaveURL( /[?&]q=search/ );
+	await expect(
+		page.locator( '.viglet-dumont-search__results li' ).first()
+	).toBeVisible();
+	expect( await types( page ) ).toContain( 'Post' );
 } );
 
 const types = ( page ) =>

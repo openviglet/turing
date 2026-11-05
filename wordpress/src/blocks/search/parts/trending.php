@@ -16,7 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( empty( $attributes['showTrending'] ) ) {
+// A scoped block (D306) shows none: the site's popular searches may find nothing in its scope,
+// and checking each chip against the scope would cost a search per chip.
+if ( empty( $attributes['showTrending'] ) || array() !== Viglet_Dumont_Search_Block::scope( $attributes ) ) {
 	return;
 }
 $viglet_dumont_chips = ( new Viglet_Dumont_Trending() )->chips();

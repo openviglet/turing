@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T00:38:05+00:00\n"
+"POT-Creation-Date: 2026-11-05T00:42:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -717,6 +717,16 @@ msgstr ""
 msgid "Clear recent searches"
 msgstr ""
 
+#. translators: %s: what the search is limited to, e.g. "Events".
+#: src/blocks/search/parts/box.php:80
+#, php-format
+msgid "In %s"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:83
+msgid "Search the whole site"
+msgstr ""
+
 #: src/blocks/search/parts/correction.php:22
 msgid "Showing results for"
 msgstr ""
@@ -780,11 +790,11 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: src/blocks/search/parts/trending.php:27
+#: src/blocks/search/parts/trending.php:29
 msgid "Popular searches"
 msgstr ""
 
-#: src/blocks/search/parts/trending.php:28
+#: src/blocks/search/parts/trending.php:30
 msgid "Popular:"
 msgstr ""
 
@@ -830,8 +840,8 @@ msgid "Published"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:115
-#: src/blocks/search/render.php:117
+#: src/blocks/search/render.php:118
+#: src/blocks/search/render.php:120
 #: src/includes/class-viglet-dumont-native-search.php:239
 #: src/includes/class-viglet-dumont-native-search.php:241
 #: src/includes/class-viglet-dumont-native-search.php:631
@@ -842,17 +852,17 @@ msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:119
+#: src/blocks/search/render.php:122
 #: src/includes/class-viglet-dumont-native-search.php:243
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:121
+#: src/blocks/search/render.php:124
 msgid "Reading your search…"
 msgstr ""
 
-#: src/blocks/search/render.php:124
+#: src/blocks/search/render.php:127
 #: src/includes/class-viglet-dumont-native-search.php:244
 msgid "Search is unavailable right now."
 msgstr ""
@@ -1163,7 +1173,7 @@ msgid "%1$d sent, %2$d failed."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-compare.php:69
-#: src/includes/class-viglet-dumont-search-block.php:126
+#: src/includes/class-viglet-dumont-search-block.php:174
 #: src/includes/class-viglet-dumont-woocommerce.php:106
 #: src/includes/class-viglet-dumont-woocommerce.php:138
 msgid "Price"
@@ -1549,15 +1559,15 @@ msgstr ""
 msgid "Turing wrote no draft."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:97
+#: src/includes/class-viglet-dumont-search-block.php:145
 msgid "Relevance"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:98
+#: src/includes/class-viglet-dumont-search-block.php:146
 msgid "Newest"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:99
+#: src/includes/class-viglet-dumont-search-block.php:147
 msgid "Oldest"
 msgstr ""
 

@@ -68,9 +68,9 @@ $viglet_dumont_recent = array_map(
 					<?php
 					// The mapped fields marked "Show on result cards" in Fields (D305).
 					?>
-					<dl class="viglet-dumont-search__fields" hidden data-wp-bind--hidden="!context.result.hasFields">
+					<dl class="viglet-dumont-search__card-fields" hidden data-wp-bind--hidden="!context.result.hasFields">
 						<template data-wp-each--line="context.result.fields" data-wp-each-key="context.line.field">
-							<div class="viglet-dumont-search__field">
+							<div class="viglet-dumont-search__card-field">
 								<dt data-wp-text="context.line.label"></dt>
 								<dd data-wp-text="context.line.value"></dd>
 							</div>

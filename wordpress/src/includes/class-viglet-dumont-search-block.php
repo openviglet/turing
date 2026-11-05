@@ -80,6 +80,54 @@ class Viglet_Dumont_Search_Block {
 	}
 
 	/**
+	 * The scope the block searches inside (D306): its own fixed filters, then the scope a
+	 * box-only block carried here in the URL (`scope[]`), never as a plain `fq[]`, so it shows
+	 * as the context rather than as a filter to remove.
+	 *
+	 * @param array $attributes The search block's attributes.
+	 * @return array<int, string>
+	 */
+	public static function scope( array $attributes ): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a read-only search.
+		$carried = isset( $_GET['scope'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_GET['scope'] ) ) : array();
+
+		return self::fixed_filters( array_merge( (array) ( $attributes['filters'] ?? array() ), $carried ) );
+	}
+
+	/**
+	 * The scope as a reader names it: a post type by its own name, a facet value as it is.
+	 *
+	 * @param array<int, string> $scope scope().
+	 */
+	public static function scope_label( array $scope ): string {
+		$names = array();
+		foreach ( $scope as $filter ) {
+			[ $field, $value ] = explode( ':', $filter, 2 );
+			$type              = 'type' === $field ? get_post_type_object( $value ) : null;
+			$names[]           = $type ? (string) $type->labels->name : $value;
+		}
+
+		return implode( ', ', $names );
+	}
+
+	/**
+	 * Where "Search the whole site" leads from a scoped block (D306): the site's search page,
+	 * with no scope; '' when that is this very page and the scope is the block's own, since
+	 * the link would land on the same scoped search.
+	 *
+	 * @param array $attributes The search block's attributes.
+	 */
+	public static function whole_site_url( array $attributes ): string {
+		$target = ( new Viglet_Dumont_Native_Search() )->search_page();
+		$here   = untrailingslashit( (string) get_permalink() ) === untrailingslashit( $target['searchPage'] );
+		if ( $here && array() !== self::fixed_filters( $attributes['filters'] ?? array() ) ) {
+			return '';
+		}
+
+		return remove_query_arg( 'scope', $target['searchPage'] );
+	}
+
+	/**
 	 * The query the page was opened with (?q=, or WordPress's ?s=).
 	 */
 	public static function query(): string {

@@ -68,3 +68,19 @@ $viglet_dumont_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' 
 	</div>
 	<p class="screen-reader-text" aria-live="polite" data-wp-text="state.optionsAnnouncement"></p>
 </form>
+<?php
+// The block's scope (D306), said as the context of the search rather than a filter to remove.
+$viglet_dumont_scope = Viglet_Dumont_Search_Block::scope( $attributes );
+if ( array() !== $viglet_dumont_scope ) :
+	$viglet_dumont_whole = Viglet_Dumont_Search_Block::whole_site_url( $attributes );
+	?>
+	<p class="viglet-dumont-search__scope">
+		<?php
+		/* translators: %s: what the search is limited to, e.g. "Events". */
+		echo esc_html( sprintf( __( 'In %s', 'viglet-turing-search' ), Viglet_Dumont_Search_Block::scope_label( $viglet_dumont_scope ) ) );
+		?>
+		<?php if ( '' !== $viglet_dumont_whole ) : ?>
+			<a href="<?php echo esc_url( $viglet_dumont_whole ); ?>" data-wp-bind--href="state.wholeSiteHref"><?php esc_html_e( 'Search the whole site', 'viglet-turing-search' ); ?></a>
+		<?php endif; ?>
+	</p>
+<?php endif; ?>
