@@ -23,6 +23,10 @@
 - 📋 **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — A site searching its own and sibling site keys gets zero results, and the only switches flip every facet to OR. → §CLXIX.1
 - 📋 **T1224** (deps: —) **A custom facet buckets one date field: an event spanning a start and an end date cannot fall in the periods it overlaps** — An exhibition running all month sits under Past once it has started, so an agenda's Next 7 days misses what is on. → §CLXIX.2
 
+## Block CM — People, themes and places extracted at import, as facets
+
+- 📋 **T1225** (deps: —) **Nothing fills the turing_entity facets: who and what a document names is no facet, and name variants stay split** — No source can offer browsing by person or theme, though Turing already facets the fields. → §CLXX.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

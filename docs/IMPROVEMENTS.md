@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
+## Block CM — People, themes and places extracted at import, as facets
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2329,3 +2331,33 @@ docs.
 **Done when:** a facet over `start`/`end` puts a span from five days ago to five days
 ahead under an item `NOW/DAY` to `NOW/DAY+7DAYS`, and a span that ended yesterday
 outside it.
+
+## CLXX People, themes and places extracted at import, as facets
+
+### CLXX.1 Entities at import, with aliases (D310) (T1225)
+
+**Where it came from.** Dumont D310 (the WordPress plugin, for FESPSP): visitors should
+explore a site by person and theme, across its WordPress sites and its DSpace repository
+in one SN site. People and themes sit in the text, not in fields, and the repository's
+author facet mixes "Bosso, Bruno" with "Antonio Prado".
+
+**What exists.** `TurSNFieldType.NER` is declared and `TurSolrQueryBuilder` facets
+`turing_entity_*` at query time, but nothing fills those fields: no import path extracts
+entities. Every source would need it alike (the WordPress plugin, Dumont's DSpace and
+OAI-PMH sources, every connector), so it belongs at Turing's import, not in each
+producer.
+
+**What Turing should do.**
+1. At import, for an SN site that turns it on, extract people, themes, institutions and
+   places from `title` and `text` with the site's LLM, into `turing_entity_person`,
+   `turing_entity_theme`, `turing_entity_org`, `turing_entity_place`. Each value is a span
+   the document holds (never a guess), checked against the text before it is kept.
+2. Resolve variants against a per-SN-site list of canonical names and their aliases
+   ("Bosso, Bruno" and "Bruno Bosso"), editable through the API and the console.
+3. Cache by content hash, one extraction per changed document, and say in the import log
+   when extraction was skipped (no LLM, budget).
+
+**Workaround in Dumont.** None: D310 waits on this line.
+
+**Done when:** a document naming a person and a theme is found under both facets, and an
+alias resolves to the canonical name, on Solr, Lucene and Elasticsearch.

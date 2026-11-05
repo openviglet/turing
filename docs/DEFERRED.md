@@ -21,3 +21,5 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
+## Block CM — People, themes and places extracted at import, as facets
+
