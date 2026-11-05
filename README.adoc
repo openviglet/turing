@@ -24,7 +24,8 @@ image:https://img.shields.io/badge/docs-turing.viglet.org%2Fdocs-brightgreen?sty
 **Site:** https://openviglet.github.io/turing[openviglet.github.io/turing] ·
 **Docs:** https://openviglet.github.io/turing/docs/[openviglet.github.io/turing/docs] ·
 **Compare:** https://openviglet.github.io/turing/compare/[Turing vs Algolia, Coveo, Lucidworks and Elasticsearch] ·
-**AEM:** https://openviglet.github.io/turing/aem-search[enterprise search for Adobe AEM]
+**AEM:** https://openviglet.github.io/turing/aem-search[enterprise search for Adobe AEM] ·
+**Blog:** https://www.viglet.org/blog/[articles on Turing]
 
 toc::[]
 
@@ -348,6 +349,19 @@ More at https://www.viglet.org[viglet.org].
 | https://openviglet.github.io/turing/latest/javadoc/[Javadoc] | API reference for the Java classes
 | link:CHANGELOG.md[Changelog] | What shipped in each release
 |===
+
+== Articles
+
+Walkthroughs and comparisons on the https://www.viglet.org/blog/[Viglet blog]:
+
+* https://www.viglet.org/blog/turing-aem-search/[Turing AEM Search: what your AEM site could do if search actually understood people]
+* https://www.viglet.org/blog/rag-enterprise-content-turing-mcp/[RAG over enterprise content with Viglet Turing and MCP]
+* https://www.viglet.org/blog/semantic-vector-search-aem/[Semantic and vector search in Adobe AEM with Viglet Turing]
+* https://www.viglet.org/blog/solr-elasticsearch-or-turing-es/[When to choose Apache Solr, Elasticsearch or Viglet Turing]
+* https://www.viglet.org/blog/turing-es-vs-coveo-lucidworks/[Coveo vs. Lucidworks Fusion (and an open source option)]
+* https://www.viglet.org/blog/enterprise-search-for-wordpress/[Adding enterprise search to WordPress with Viglet Turing]
+* https://www.viglet.org/blog/open-source-alternative-to-algolia-for-aem/[Open source alternatives to Algolia and Coveo for Adobe AEM]
+* https://www.viglet.org/blog/enterprise-search-for-adobe-aem/[How to add enterprise search to Adobe AEM with Viglet Turing]
 
 == Contributing
 
