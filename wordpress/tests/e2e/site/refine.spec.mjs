@@ -55,7 +55,14 @@ test( 'a sentence offers the filters it names, and a click applies one', async (
 	await expect( suggested( page ) ).toContainText(
 		/Published: Jan 1, 2026 – Jan 6, 2026/
 	);
-	expect( asked ).toEqual( [ { text: reading.text, locale: 'en_US' } ] );
+	// Values checked against this site's documents only (D287, Turing T1213).
+	expect( asked ).toEqual( [
+		{
+			text: reading.text,
+			locale: 'en_US',
+			filters: { site_key: [ expect.any( String ) ] },
+		},
+	] );
 	await expect(
 		block( page ).locator(
 			'.viglet-dumont-search__chip:not(.viglet-dumont-search__chip--suggested)'
