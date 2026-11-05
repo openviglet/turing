@@ -21,12 +21,54 @@ import {
 } from 'viglet-dumont/search';
 /* eslint-enable import/no-unresolved */
 
-const { labels, searchPage, queryParam } = getConfig( 'viglet-dumont/overlay' );
+const { labels, searchPage, queryParam, layout, typeLabels } = getConfig(
+	'viglet-dumont/overlay'
+);
 
+// D311: results grouped by type, with images and a "See all" per type, recent searches before
+// anything is typed, and the whole screen on a phone.
+const immersive = 'immersive' === layout;
 // How long typing must pause before the results follow it, as in the search block.
 const instantMs = 250;
 // How many results the overlay lists before "See all results".
-const shown = 6;
+const shown = immersive ? 12 : 6;
+// The search block's recent searches, kept in this browser only (search-block.js).
+const recentKey = 'viglet-dumont-recent-searches';
+const recentMax = 5;
+
+/**
+ * This browser's recent searches, newest first; none when storage is unavailable.
+ */
+function loadRecent() {
+	try {
+		const list = JSON.parse( window.localStorage.getItem( recentKey ) );
+		return Array.isArray( list ) ? list.filter( Boolean ) : [];
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Remember a search the visitor settled on, as the search block does.
+ *
+ * @param {string} query The query.
+ */
+function saveRecent( query ) {
+	if ( ! query ) {
+		return;
+	}
+	try {
+		window.localStorage.setItem(
+			recentKey,
+			JSON.stringify(
+				[ query, ...loadRecent().filter( ( q ) => q !== query ) ].slice(
+					0,
+					recentMax
+				)
+			)
+		);
+	} catch {}
+}
 // The page language's plural rule, for the results count.
 const plurals = new Intl.PluralRules(
 	document.documentElement.lang || undefined
@@ -84,10 +126,15 @@ function make( tag, className, attributes = {}, text = '' ) {
  * Where the full search for a query lives.
  *
  * @param {string} query The query.
+ * @param {string} type  A post type to filter the results page to; empty for none.
  */
-function fullSearchUrl( query ) {
+function fullSearchUrl( query, type = '' ) {
 	const url = new URL( searchPage );
 	url.searchParams.set( queryParam, query );
+	// A type group's "See all" opens the results page filtered to that type (D311).
+	if ( type ) {
+		url.searchParams.append( 'fq[]', `type:${ type }` );
+	}
 	return url.toString();
 }
 
@@ -96,7 +143,9 @@ function fullSearchUrl( query ) {
  */
 function build() {
 	dialog = make( 'dialog', '', { 'aria-label': labels.title } );
-	dialog.className = 'viglet-dumont-overlay';
+	dialog.className = immersive
+		? 'viglet-dumont-overlay viglet-dumont-overlay--immersive'
+		: 'viglet-dumont-overlay';
 
 	const form = make( 'form', 'form', { role: 'search' } );
 	const label = make(
@@ -166,7 +215,15 @@ function build() {
 function update() {
 	const typed = input.value.trim();
 	if ( typed.length < 2 ) {
-		results = [];
+		// The immersive overlay starts from this browser's recent searches (D311).
+		results = immersive
+			? loadRecent().map( ( query ) => ( {
+					kind: 'recent',
+					group: labels.recent,
+					title: query,
+					query,
+				} ) )
+			: [];
 		active = -1;
 		draw();
 		status.textContent = '';
@@ -178,6 +235,7 @@ function update() {
 		q: typed,
 		mode: 'instant',
 		page: 1,
+		rows: shown,
 	} );
 }
 
@@ -204,12 +262,22 @@ function render( s ) {
 		status.textContent = total
 			? form.replace( '%d', String( total ) )
 			: labels.none;
-		results = s.documents.slice( 0, shown ).map( ( d ) => ( {
-			id: String( d.raw?.fields?.id ?? '' ),
-			url: siteUrl( d.url, d.raw?.fields?.id ),
-			title: plainText( d.title ) || d.url,
-			meta: meta( d.raw?.fields || {} ),
-		} ) );
+		results = s.documents.slice( 0, shown ).map( ( d ) => {
+			const type = plainText( String( d.raw?.fields?.type ?? '' ) );
+			return {
+				kind: 'result',
+				id: String( d.raw?.fields?.id ?? '' ),
+				url: siteUrl( d.url, d.raw?.fields?.id ),
+				title: plainText( d.title ) || d.url,
+				meta: meta( d.raw?.fields || {} ),
+				image: d.image || '',
+				type,
+				group: typeLabels?.[ type ] || type,
+			};
+		} );
+		if ( immersive ) {
+			results = grouped( results, input.value.trim() );
+		}
 	}
 	active = -1;
 	draw();
@@ -228,29 +296,101 @@ function plainText( html ) {
 }
 
 /**
+ * The results gathered by type, in the order each type first ranked, each group closed by
+ * its "See all" entry into the results page filtered to that type (D311).
+ *
+ * @param {Object[]} entries The results, in Turing's order.
+ * @param {string}   query   What is typed.
+ */
+function grouped( entries, query ) {
+	const groups = new Map();
+	for ( const entry of entries ) {
+		groups.set( entry.type, [
+			...( groups.get( entry.type ) || [] ),
+			entry,
+		] );
+	}
+	return [ ...groups.values() ].flatMap( ( group ) => [
+		...group,
+		{
+			kind: 'all',
+			group: group[ 0 ].group,
+			title: labels.seeAll.replace( '%s', group[ 0 ].group ),
+			url: fullSearchUrl( query, group[ 0 ].type ),
+		},
+	] );
+}
+
+/**
+ * One entry as an option of the listbox.
+ *
+ * @param {Object} result The entry.
+ * @param {number} i      Its index in `results`.
+ */
+function optionFor( result, i ) {
+	const option = make( 'li', 'all' === result.kind ? 'see-all' : 'result', {
+		id: `viglet-dumont-overlay-result-${ i }`,
+		role: 'option',
+		'aria-selected': String( i === active ),
+	} );
+	if ( immersive && result.image ) {
+		option.classList.add( 'viglet-dumont-overlay__result--with-image' );
+		const image = make( 'img', 'image', { alt: '', loading: 'lazy' } );
+		image.src = result.image;
+		option.append( image );
+	}
+	option.append( make( 'span', 'title', {}, result.title ) );
+	if ( result.meta ) {
+		option.append( make( 'span', 'meta', {}, result.meta ) );
+	}
+	if ( 'result' === result.kind ) {
+		option.append( make( 'span', 'url', {}, result.url ) );
+	}
+	// The input keeps the focus; a click on a result only opens it.
+	option.addEventListener( 'mousedown', ( event ) => event.preventDefault() );
+	option.addEventListener( 'click', () => openResult( i ) );
+	return option;
+}
+
+/**
+ * The listbox's children: the options, or in the immersive layout a group per type (or for
+ * the recent searches), each named, its options inside.
+ */
+function children() {
+	if ( ! immersive ) {
+		return results.map( optionFor );
+	}
+	const groups = [];
+	results.forEach( ( result, i ) => {
+		let group = groups[ groups.length - 1 ];
+		if ( ! group || group.name !== result.group ) {
+			const element = make( 'li', 'group', {
+				role: 'group',
+				'aria-label': result.group,
+			} );
+			element.append(
+				make(
+					'span',
+					'group-title',
+					{ 'aria-hidden': 'true' },
+					result.group
+				)
+			);
+			const items = make( 'ul', 'group-items', { role: 'none' } );
+			element.append( items );
+			group = { name: result.group, element, items };
+			groups.push( group );
+		}
+		group.items.append( optionFor( result, i ) );
+	} );
+	return groups.map( ( group ) => group.element );
+}
+
+/**
  * Redraw the list and the combobox's state from `results` and `active`.
  */
 function draw() {
-	list.replaceChildren(
-		...results.map( ( result, i ) => {
-			const option = make( 'li', 'result', {
-				id: `viglet-dumont-overlay-result-${ i }`,
-				role: 'option',
-				'aria-selected': String( i === active ),
-			} );
-			option.append( make( 'span', 'title', {}, result.title ) );
-			if ( result.meta ) {
-				option.append( make( 'span', 'meta', {}, result.meta ) );
-			}
-			option.append( make( 'span', 'url', {}, result.url ) );
-			// The input keeps the focus; a click on a result only opens it.
-			option.addEventListener( 'mousedown', ( event ) =>
-				event.preventDefault()
-			);
-			option.addEventListener( 'click', () => openResult( i ) );
-			return option;
-		} )
-	);
+	list.replaceChildren( ...children() );
 	input.setAttribute( 'aria-expanded', String( results.length > 0 ) );
 	if ( active >= 0 ) {
 		input.setAttribute(
@@ -288,6 +428,7 @@ function go() {
 		openResult( active );
 		return;
 	}
+	saveRecent( input.value.trim() );
 	window.location.assign( fullSearchUrl( input.value.trim() ) );
 }
 
@@ -297,6 +438,17 @@ function go() {
  * @param {number} i Its index in the list.
  */
 function openResult( i ) {
+	const result = results[ i ];
+	if ( 'recent' === result.kind ) {
+		input.value = result.query;
+		update();
+		return;
+	}
+	if ( 'all' === result.kind ) {
+		saveRecent( input.value.trim() );
+		window.location.assign( result.url );
+		return;
+	}
 	trackResultClick(
 		{
 			documentId: results[ i ].id,

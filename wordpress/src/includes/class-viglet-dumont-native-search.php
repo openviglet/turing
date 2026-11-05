@@ -222,12 +222,27 @@ class Viglet_Dumont_Native_Search {
 		);
 		wp_enqueue_script_module( 'viglet-dumont/overlay' );
 		wp_enqueue_style( 'viglet-dumont-overlay', VIGLET_DUMONT_URL . 'public/overlay.css', array(), VIGLET_DUMONT_VERSION );
+		// Each type's name, one and many, for an immersive overlay's groups (D311).
+		$types = array();
+		foreach ( viglet_dumont_get_indexable_types() as $type ) {
+			$object = get_post_type_object( $type );
+			if ( $object ) {
+				$types[ $type ] = (string) $object->labels->name;
+			}
+		}
+		$types[ Viglet_Dumont_Pdf::TYPE ] = __( 'PDF files', 'viglet-turing-search' );
+
 		wp_interactivity_config(
 			'viglet-dumont/overlay',
 			array_merge(
 				$this->search_page(),
 				array(
-					'labels' => array(
+					'layout'     => 'immersive' === ( $this->settings['overlay_layout'] ?? '' ) ? 'immersive' : 'list',
+					'typeLabels' => $types,
+					'labels'     => array(
+						/* translators: %s: a type's name, e.g. "Events". */
+						'seeAll'   => __( 'See all %s', 'viglet-turing-search' ),
+						'recent'   => __( 'Recent searches', 'viglet-turing-search' ),
 						'title'    => __( 'Search this site', 'viglet-turing-search' ),
 						'search'   => __( 'Search', 'viglet-turing-search' ),
 						'close'    => __( 'Close', 'viglet-turing-search' ),

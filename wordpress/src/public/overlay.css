@@ -92,6 +92,81 @@
 	margin-top: 0.75rem;
 }
 
+/* The immersive layout (D311): a large panel, the whole screen on a phone, results by type. */
+.viglet-dumont-overlay--immersive {
+	max-height: 85vh;
+	max-width: 60rem;
+	overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+
+	.viglet-dumont-overlay--immersive {
+		border: 0;
+		border-radius: 0;
+		/* The padding inside the screen's width, or the panel scrolls sideways. */
+		box-sizing: border-box;
+		height: 100dvh;
+		margin: 0;
+		max-height: none;
+		max-width: none;
+		width: 100vw;
+	}
+}
+
+.viglet-dumont-overlay__group {
+	list-style: none;
+	margin: 0 0 0.75rem;
+}
+
+.viglet-dumont-overlay__group-title {
+	display: block;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	margin: 0.5rem 0.75rem 0.25rem;
+	text-transform: uppercase;
+}
+
+.viglet-dumont-overlay__group-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* A column for the image only when the result has one. */
+.viglet-dumont-overlay__result--with-image {
+	align-items: center;
+	column-gap: 0.75rem;
+	grid-template-columns: 3.5rem 1fr;
+}
+
+.viglet-dumont-overlay__result--with-image > :not(.viglet-dumont-overlay__image) {
+	grid-column: 2;
+}
+
+.viglet-dumont-overlay__image {
+	aspect-ratio: 1;
+	border-radius: 4px;
+	grid-column: 1;
+	grid-row: 1 / span 3;
+	object-fit: cover;
+	width: 3.5rem;
+}
+
+.viglet-dumont-overlay__see-all {
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 0.4rem 0.75rem;
+	text-decoration: underline;
+}
+
+.viglet-dumont-overlay__see-all:hover,
+.viglet-dumont-overlay__see-all[aria-selected="true"] {
+	background: var(--wp--preset--color--contrast, #111);
+	color: var(--wp--preset--color--base, #fff);
+}
+
 .viglet-dumont-overlay__hint {
 	font-size: 0.8rem;
 	margin: 0.75rem 0 0;

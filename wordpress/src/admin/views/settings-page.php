@@ -390,6 +390,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 
 						<div class="viglet-dumont-field">
+							<label for="overlay_layout"><?php esc_html_e( 'Instant search layout', 'viglet-turing-search' ); ?></label>
+							<select id="overlay_layout" name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[overlay_layout]">
+								<option value="list" <?php selected( $settings['overlay_layout'], 'list' ); ?>><?php esc_html_e( 'A list of titles', 'viglet-turing-search' ); ?></option>
+								<option value="immersive" <?php selected( $settings['overlay_layout'], 'immersive' ); ?>><?php esc_html_e( 'Immersive: results by type, with images', 'viglet-turing-search' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'Immersive groups the results by type, each with its image, date and a link to all of that type, shows recent searches before anything is typed, and fills a phone\'s screen.', 'viglet-turing-search' ); ?></p>
+						</div>
+
+						<div class="viglet-dumont-field">
 							<label for="search_page"><?php esc_html_e( 'Full search page', 'viglet-turing-search' ); ?></label>
 							<?php
 							wp_dropdown_pages(

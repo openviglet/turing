@@ -64,6 +64,8 @@ class Viglet_Dumont_Settings {
 		'results_per_page'    => 10,
 		// With Turing search on: Ctrl/⌘+K and the theme's search box open an instant search.
 		'instant_overlay'     => 1,
+		// `list` (six titles) or `immersive` (D311): grouped by type, with images, full screen on a phone.
+		'overlay_layout'      => 'list',
 		// The full search page the overlay sends Enter to; 0 finds the page holding the block.
 		'search_page'         => 0,
 		// A results page on another site every search here goes to (D304); empty keeps them here.
