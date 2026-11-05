@@ -662,9 +662,10 @@ function ask( query ) {
 	}
 }
 
-// Words that name a period, in the languages the plugin ships (en, pt_BR).
+// Words that name a period, in the languages the plugin ships (en, pt_BR): backward, forward
+// (D324) and the months.
 const dateWords =
-	/\b(\d{4}|today|yesterday|week|month|year|ago|since|last|hoje|ontem|semana|m[eê]s|ano|desde|passad[oa]|[uú]ltim[oa]s?)\b/iu;
+	/(?<![\p{L}\p{N}])(\d{4}|today|yesterday|tomorrow|tonight|weekend|week|month|year|ago|since|last|next|upcoming|hoje|ontem|amanh[aã]|semana|m[eê]s|ano|desde|passad[oa]|[uú]ltim[oa]s?|pr[oó]xim[oa]s?|january|february|march|april|may|june|july|august|september|october|november|december|janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?![\p{L}\p{N}])/iu;
 
 /**
  * Whether a query reads as a sentence that may name filters rather than a lookup: a
@@ -793,6 +794,20 @@ async function readFilters( text ) {
 	) {
 		fqs.push( price.fq );
 		q = q.replace( price.words, ' ' ).replace( /\s+/g, ' ' ).trim();
+	}
+	// A period (D324), on the date Turing did not already read one for.
+	const period = readPeriod( text );
+	if (
+		period &&
+		! applied.includes( period.fq ) &&
+		! fqs.some(
+			( fq ) =>
+				fq.startsWith( `${ period.field }:` ) ||
+				fq.startsWith( `${ period.field }_range:` )
+		)
+	) {
+		fqs.push( period.fq );
+		q = q.replace( period.words, ' ' ).replace( /\s+/g, ' ' ).trim();
 	}
 	if ( ! fqs.length ) {
 		countAsTyped( text );
@@ -1059,6 +1074,153 @@ function readPrice( text ) {
 		};
 	}
 	return null;
+}
+
+// The months, each language's names in calendar order (en, pt_BR).
+const monthNames = [
+	[ 'january', 'janeiro' ],
+	[ 'february', 'fevereiro' ],
+	[ 'march', 'março', 'marco' ],
+	[ 'april', 'abril' ],
+	[ 'may', 'maio' ],
+	[ 'june', 'junho' ],
+	[ 'july', 'julho' ],
+	[ 'august', 'agosto' ],
+	[ 'september', 'setembro' ],
+	[ 'october', 'outubro' ],
+	[ 'november', 'novembro' ],
+	[ 'december', 'dezembro' ],
+];
+// A month's name alone is a period, except where the word is also a verb ("may I…", "march
+// on"): those need "in", "em", "de", "during" before them or a year after.
+const verbMonths = [ 'may', 'march', 'marco' ];
+const monthPattern = new RegExp(
+	`(?<![\\p{L}\\p{N}])(?:(in|em|de|during|durante|for|para)\\s+)?(${ monthNames
+		.flat()
+		.join( '|' ) })(?:\\s+(?:de\\s+|of\\s+)?(\\d{4}))?(?![\\p{L}\\p{N}])`,
+	'iu'
+);
+// Relative periods, as [pattern, start offset, end offset, unit] from the start of today: a
+// day unit counts days, a month unit counts calendar months from the first of this one.
+const relativePeriods = [
+	[ /\b(?:today|tonight|hoje)\b/iu, 0, 1, 'day' ],
+	[ /(?<![\p{L}])(?:tomorrow|amanh[aã])(?![\p{L}])/iu, 1, 2, 'day' ],
+	[
+		/(?<![\p{L}])(?:next week|pr[oó]xima semana|semana que vem)(?![\p{L}])/iu,
+		7,
+		14,
+		'day',
+	],
+	[
+		/(?<![\p{L}])(?:this week|esta semana|essa semana|nesta semana|nessa semana)(?![\p{L}])/iu,
+		0,
+		7,
+		'day',
+	],
+	[
+		/(?<![\p{L}])(?:next month|pr[oó]ximo m[eê]s|m[eê]s que vem)(?![\p{L}])/iu,
+		1,
+		2,
+		'month',
+	],
+	[
+		/(?<![\p{L}])(?:this month|este m[eê]s|esse m[eê]s|neste m[eê]s|nesse m[eê]s)(?![\p{L}])/iu,
+		0,
+		1,
+		'month',
+	],
+];
+
+/**
+ * The date filter on the site's dates for the days from `start` up to, not including, `end`:
+ * day-only dates are indexed at midnight UTC, so the bounds are calendar days in UTC, the end
+ * the last second of the period's last day.
+ *
+ * @param {string} field A DATE field.
+ * @param {Date}   start The first day, local.
+ * @param {Date}   end   The day after the last, local.
+ * @return {string} The filter query.
+ */
+function dayRange( field, start, end ) {
+	const day = ( d ) =>
+		`${ d.getFullYear() }-${ String( d.getMonth() + 1 ).padStart(
+			2,
+			'0'
+		) }-${ String( d.getDate() ).padStart( 2, '0' ) }`;
+	const last = new Date( end );
+	last.setDate( last.getDate() - 1 );
+	return `${ field }:[${ day( start ) }T00:00:00Z TO ${ day(
+		last
+	) }T23:59:59Z]`;
+}
+
+/**
+ * The period a sentence names, read in code (D324) so an agenda filters by when whether or not
+ * Turing has a language model: "em novembro", "next week", "amanhã", "this month". It filters
+ * the date the mapping gives a period facet, an agenda's first (D307); a month with no year is
+ * the next one to come on an agenda and the last one gone on past dates.
+ *
+ * @param {string} text  The visitor's sentence.
+ * @param {Date}   [now] Today, for tests.
+ * @return {{field: string, fq: string, words: string}|null} The filter, its field, and the words it was read from.
+ */
+function readPeriod( text, now = new Date() ) {
+	const dates = ( config.facets || [] ).filter(
+		( facet ) => facet.range && 'DATE' === facet.type
+	);
+	const facet =
+		dates.find( ( f ) => 'agenda' === f.periods ) || dates[ 0 ] || null;
+	if ( ! facet ) {
+		return null;
+	}
+	const field = facet.field.replace( /_range$/, '' );
+	const today = new Date( now.getFullYear(), now.getMonth(), now.getDate() );
+	for ( const [ pattern, from, to, unit ] of relativePeriods ) {
+		const match = text.match( pattern );
+		if ( ! match ) {
+			continue;
+		}
+		const at = ( offset ) =>
+			'day' === unit
+				? new Date(
+						today.getFullYear(),
+						today.getMonth(),
+						today.getDate() + offset
+					)
+				: new Date( today.getFullYear(), today.getMonth() + offset, 1 );
+		return {
+			field,
+			fq: dayRange( field, at( from ), at( to ) ),
+			words: match[ 0 ],
+		};
+	}
+	const month = text.match( monthPattern );
+	if ( ! month ) {
+		return null;
+	}
+	const name = month[ 2 ].toLowerCase();
+	if ( verbMonths.includes( name ) && ! month[ 1 ] && ! month[ 3 ] ) {
+		return null;
+	}
+	const index = monthNames.findIndex( ( names ) => names.includes( name ) );
+	let year = month[ 3 ] ? Number( month[ 3 ] ) : today.getFullYear();
+	if ( ! month[ 3 ] ) {
+		const agenda = 'agenda' === facet.periods;
+		if ( agenda && index < today.getMonth() ) {
+			year++;
+		} else if ( ! agenda && index > today.getMonth() ) {
+			year--;
+		}
+	}
+	return {
+		field,
+		fq: dayRange(
+			field,
+			new Date( year, index, 1 ),
+			new Date( year, index + 1, 1 )
+		),
+		words: month[ 0 ],
+	};
 }
 
 /**
@@ -1423,6 +1585,9 @@ async function suggestCorrection( query ) {
 function facetLabel( field ) {
 	return (
 		( config.facets || [] ).find( ( f ) => f.field === field )?.label ||
+		// A date filtered by a period read from a sentence (D324) is named as its range facet.
+		( config.facets || [] ).find( ( f ) => f.field === `${ field }_range` )
+			?.label ||
 		state.fieldLabels?.[ field ] ||
 		field
 	);

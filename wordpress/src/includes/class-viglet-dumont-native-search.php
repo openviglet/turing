@@ -998,6 +998,11 @@ class Viglet_Dumont_Native_Search {
 						'multi' => false,
 						'range' => true,
 					);
+					// Which way a date's periods run (D307), so a period read from a sentence
+					// (D324) lands on the agenda's dates to come, or a past date's.
+					if ( 'DATE' === $field['type'] ) {
+						$facets[ $range ]['periods'] = (string) ( $field['periods'] ?? 'past' );
+					}
 				}
 			}//end foreach
 		}//end foreach
