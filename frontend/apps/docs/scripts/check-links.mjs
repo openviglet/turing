@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-import { DOCS_BASE, SITE_ORIGIN } from "../site.mjs";
+import { DOCS_BASE, SITE_ORIGIN, SITE_ROOT } from "../site.mjs";
 
 const HERE = path.dirname(url.fileURLToPath(import.meta.url));
 const OUT = path.resolve(HERE, "..", "..", "site", "dist", "docs");
@@ -44,9 +44,10 @@ for (const file of htmlFiles(OUT)) {
   const html = fs.readFileSync(file, "utf8");
   for (const m of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
     const ref = m[1];
-    // A link written as "/docs/<page>/" that astro.config.mjs did not rebase points at
-    // the origin's root, outside the site, and 404s in production alone.
-    if (ref.startsWith("/docs/") || ref === "/docs") {
+    // Under a project path (SITE_ROOT non-empty), a link written as "/docs/<page>/" that
+    // astro.config.mjs did not rebase points at the origin's root, outside the site, and
+    // 404s in production alone. At a domain root "/docs/" IS the base.
+    if (SITE_ROOT && (ref.startsWith("/docs/") || ref === "/docs")) {
       broken.push(`${path.relative(OUT, file)}: ${ref} (missing the ${BASE} base)`);
       continue;
     }

@@ -41,7 +41,7 @@
     "semantic-search",
     "self-hosted"
   ],
-  "homepage": "https://openviglet.github.io/turing",
+  "homepage": "https://turing.viglet.org",
   "bugs": {
     "url": "https://github.com/openviglet/turing/issues"
   },

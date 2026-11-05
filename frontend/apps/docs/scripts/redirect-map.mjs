@@ -27,7 +27,7 @@ const HERE = path.dirname(url.fileURLToPath(import.meta.url));
 const AREA = path.resolve(HERE, "..");
 const SOURCE_ROOT = path.resolve(process.argv[2] ?? "D:/Git/viglet/vigletdocs/vigletdocs.github.io");
 const CONTENT = path.join(AREA, "src", "content", "docs");
-const TARGET = "https://openviglet.github.io/turing/docs";
+const TARGET = "https://turing.viglet.org/docs";
 const SKIP = new Set(["COVERAGE.md", "_documentation-update-plan.md"]);
 
 function walk(dir, rel = "") {

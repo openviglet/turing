@@ -1,4 +1,4 @@
-// The Viglet Turing end-user documentation, at https://openviglet.github.io/turing/docs/.
+// The Viglet Turing end-user documentation, at https://turing.viglet.org/docs/.
 //
 // T1160 — the docs used to live in a separate Docusaurus repo (vigletdocs, published at
 // docs.viglet.org), so every user-facing task needed a second commit in a second repo and
@@ -21,10 +21,10 @@ const sidebar = JSON.parse(
 // production alone. Link relatively, or through the sidebar.
 const BASE = DOCS_BASE;
 
-// The pages link to each other as "/docs/<page>/", the path from the site root they
-// had when the site owned a domain. GitHub Pages serves it under a project path
-// (SITE_ROOT), so this prefixes those hrefs and srcs at build time instead of
-// rewriting every page. MDX component props (`<LinkCard href="/docs/...">`) are
+// The pages link to each other as "/docs/<page>/", the path from the site root. The
+// site owns the root of turing.viglet.org, so SITE_ROOT is empty and this is a no-op;
+// it stays so a move under a project path (SITE_ROOT) prefixes those hrefs and srcs
+// at build time instead of rewriting every page. MDX component props (`<LinkCard href="/docs/...">`) are
 // attributes of a JSX node rather than properties of an element, so both are covered.
 function rebaseDocsLinks() {
   const rebase = (value) =>

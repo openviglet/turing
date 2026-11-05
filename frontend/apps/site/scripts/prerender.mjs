@@ -15,7 +15,7 @@ import { pathToFileURL } from "node:url";
 
 // The public URL of the site root: GitHub Pages serves it under the project path
 // that vite.config.ts sets as `base`.
-const SITE_URL = "https://openviglet.github.io/turing";
+const SITE_URL = "https://turing.viglet.org";
 const distDir = resolve(process.cwd(), "dist");
 const serverEntry = resolve(process.cwd(), "dist-ssr", "entry-server.js");
 

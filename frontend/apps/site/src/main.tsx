@@ -6,7 +6,7 @@ import { stripBase } from "@/lib/site-url";
 import "./index.css";
 
 // The route is derived from the URL, with the same trivial rule the server used,
-// once the base path ("/turing/") is stripped off.
+// once the base path (Vite's `base`, "/" today) is stripped off.
 const container = document.getElementById("root")!;
 const tree = (
   <React.StrictMode>

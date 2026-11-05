@@ -3,10 +3,10 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
 
-// Deployed by GitHub Pages under a project path, https://openviglet.github.io/turing/,
-// so assets and links carry that prefix (read back by src/lib/site-url.ts).
+// Deployed by GitHub Pages at the root of the custom domain https://turing.viglet.org/
+// (read back by src/lib/site-url.ts, which prefixes root-absolute links with it).
 export default defineConfig({
-  base: "/turing/",
+  base: "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
