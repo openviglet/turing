@@ -1,5 +1,6 @@
 // A PDF attached to a post in search is found by a sentence inside it (D309): Turing reads
-// its text from the zip the plugin sends, and deleting the attachment takes it out again.
+// its text from the zip the plugin sends, and deleting the attachment takes it out again. A
+// PDF a page only links is found too, and leaves with the page (D319).
 // Desktop only: it uploads, indexes and deletes.
 import { expect, test } from '../fixtures.mjs';
 import { setSetting, wp } from '../global-setup.mjs';
@@ -83,15 +84,16 @@ test.beforeEach( ( {}, testInfo ) => {
 } );
 
 /**
- * The titles the search page lists for the sentence, once Turing has had time to commit.
+ * The titles the search page lists for a sentence, once Turing has had time to commit.
  *
- * @param {import('@playwright/test').Page} page The page.
- * @param {Object}                          seed The seeded ids.
+ * @param {import('@playwright/test').Page} page  The page.
+ * @param {Object}                          seed  The seeded ids.
+ * @param {string}                          words The sentence searched for.
  */
-async function titlesFor( page, seed ) {
+async function titlesFor( page, seed, words = sentence ) {
 	await page.waitForTimeout( 4000 );
 	await page.goto(
-		`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( sentence ) }`
+		`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( words ) }`
 	);
 	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
 		/result/
@@ -174,5 +176,59 @@ test( "a PDF a post's meta names puts its words in the post's own text", async (
 		wp( [ 'post', 'meta', 'delete', String( seed.postId ), 'paper' ] );
 		wp( [ 'post', 'delete', paper, '--force' ] );
 		wp( [ 'dumont', 'reindex' ] );
+	}
+} );
+
+/**
+ * Send the queue now, as the worker would. The cron service may be sending it at that very
+ * moment, and then the run refuses ("Another worker"): wait for that one and send again.
+ *
+ * @param {import('@playwright/test').Page} page The page, for its clock.
+ */
+async function drainQueue( page ) {
+	try {
+		wp( [ 'dumont', 'queue', 'run' ] );
+	} catch {
+		await page.waitForTimeout( 5000 );
+		wp( [ 'dumont', 'queue', 'run' ] );
+	}
+}
+
+test( 'a PDF a page links is found, and unpublishing the page removes it without a sweep', async ( {
+	page,
+	seed,
+} ) => {
+	const words = 'Pangolin admission timetable';
+	const form = ask( [
+		'eval',
+		uploadPdf( words, 0, 'Admission timetable' ),
+	] );
+	const url = ask( [ 'eval', `echo wp_get_attachment_url( ${ form } );` ] );
+	let linking = '';
+	try {
+		linking = ask( [
+			'post',
+			'create',
+			'--post_type=page',
+			'--post_status=publish',
+			'--post_title=Admissions office',
+			`--post_content=<p>Download the <a href="${ url }">admission timetable</a>.</p>`,
+			'--porcelain',
+		] );
+		await drainQueue( page );
+		expect( await titlesFor( page, seed, words ) ).toContain(
+			'Admission timetable'
+		);
+
+		wp( [ 'post', 'update', linking, '--post_status=draft' ] );
+		await drainQueue( page );
+		expect( await titlesFor( page, seed, words ) ).not.toContain(
+			'Admission timetable'
+		);
+	} finally {
+		if ( linking ) {
+			wp( [ 'post', 'delete', linking, '--force' ] );
+		}
+		wp( [ 'post', 'delete', form, '--force' ] );
 	}
 } );

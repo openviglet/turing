@@ -13,11 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Indexes, and removes, the PDF attachments of the posts in search.
+ * Indexes, and removes, the PDFs the posts in search attach or link.
  *
- * A PDF is in search when "Index PDF files" is on, it is attached to a post that is in search
- * itself, and it is this site's own upload under the size cap: the plugin never fetches a
- * file from another host.
+ * A PDF is in search when "Index PDF files" is on, a post that is in search itself holds it
+ * (attaches it, or links it in its content, D319), and it is this site's own upload under
+ * the size cap: the plugin never fetches a file from another host.
+ *
+ * The posts that link a PDF are recorded on the attachment, one `LINKED_META` row per post,
+ * so a post leaving search knows which PDFs it held and whether another post still holds them.
  */
 class Viglet_Dumont_Pdf {
 
@@ -26,6 +29,12 @@ class Viglet_Dumont_Pdf {
 
 	/** The `type` a PDF's document carries, and so the facet value it shows under. */
 	public const TYPE = 'pdf';
+
+	/** On a PDF attachment, one row per post whose content links it (D319). */
+	public const LINKED_META = '_viglet_dumont_linked_from';
+
+	/** On a post, set once the PDFs it holds were sent; gone when the post leaves search. */
+	public const HELD_META = '_viglet_dumont_pdfs_held';
 
 	/**
 	 * The plugin settings.
@@ -59,8 +68,7 @@ class Viglet_Dumont_Pdf {
 		if ( ! $this->enabled() || ! $attachment instanceof WP_Post || 'attachment' !== $attachment->post_type || 'application/pdf' !== $attachment->post_mime_type ) {
 			return false;
 		}
-		$parent = $attachment->post_parent ? get_post( (int) $attachment->post_parent ) : null;
-		if ( ! $parent instanceof WP_Post || ! ( new Viglet_Dumont_Indexer( $this->settings ) )->should_index( $parent ) ) {
+		if ( null === $this->holder( $attachment ) ) {
 			return false;
 		}
 		$file = get_attached_file( $attachment->ID );
@@ -77,7 +85,218 @@ class Viglet_Dumont_Pdf {
 	}
 
 	/**
-	 * A PDF's document: its title, address and parent, with its text left to Turing, which
+	 * The first post in search that holds a PDF: its parent, else a post that links it.
+	 *
+	 * @param WP_Post $attachment The PDF.
+	 */
+	public function holder( WP_Post $attachment ): ?WP_Post {
+		$ids     = array_map( 'intval', (array) get_post_meta( $attachment->ID, self::LINKED_META, false ) );
+		$ids     = array_unique( array_filter( array_merge( array( (int) $attachment->post_parent ), $ids ) ) );
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		foreach ( $ids as $id ) {
+			$post = get_post( $id );
+			if ( $post instanceof WP_Post && 'attachment' !== $post->post_type && $indexer->should_index( $post ) ) {
+				return $post;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * The PDF attachments a post's content links: `href` and `src` addresses under this site's
+	 * uploads, absolute, scheme-relative or root-relative. Another host's file is never one.
+	 *
+	 * @param WP_Post $post The post.
+	 * @return int[] The attachment ids.
+	 */
+	public function linked_ids( WP_Post $post ): array {
+		if ( ! preg_match_all( '/\b(?:href|src)\s*=\s*(["\'])(.+?)\1/i', (string) $post->post_content, $matches ) ) {
+			return array();
+		}
+		$base     = untrailingslashit( wp_get_upload_dir()['baseurl'] );
+		$relative = (string) preg_replace( '#^https?:#i', '', $base );
+		$home     = wp_parse_url( home_url() );
+		$origin   = '//' . ( $home['host'] ?? '' ) . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+		$ids      = array();
+		foreach ( $matches[2] as $url ) {
+			$url = (string) preg_replace( '/[?#].*$/', '', html_entity_decode( $url, ENT_QUOTES ) );
+			if ( str_starts_with( $url, '/' ) && ! str_starts_with( $url, '//' ) ) {
+				$url = $origin . $url;
+			}
+			$url = (string) preg_replace( '#^https?:#i', '', $url );
+			if ( '' === $base || 0 !== stripos( $url, $relative . '/' ) ) {
+				continue;
+			}
+			$id   = attachment_url_to_postid( $base . substr( $url, strlen( $relative ) ) );
+			$file = $id > 0 ? get_post( $id ) : null;
+			if ( $file instanceof WP_Post && 'attachment' === $file->post_type && 'application/pdf' === $file->post_mime_type ) {
+				$ids[] = $id;
+			}
+		}
+
+		return array_values( array_unique( $ids ) );
+	}
+
+	/**
+	 * Bring the PDFs in step with posts just sent to search or just removed from it (D319).
+	 *
+	 * A post sent records the PDFs its content links; the first time it is sent (or the first
+	 * after it left search) its attached and linked PDFs go with it, later only the ones it
+	 * newly links. A post removed, or one that stopped linking a PDF, lets go of it, and a PDF
+	 * no other post in search holds leaves search too.
+	 *
+	 * @param WP_Post[] $sent    The posts now in search.
+	 * @param int[]     $removed The posts now out of it.
+	 * @param bool      $send    Send the PDFs that came into search; false when Index All
+	 *                           sends every PDF afterwards anyway.
+	 * @return array{sent: int, removed: int}
+	 */
+	public function settle( array $sent, array $removed, bool $send = true ): array {
+		$outcome = array(
+			'sent'    => 0,
+			'removed' => 0,
+		);
+		if ( ! $this->enabled() ) {
+			return $outcome;
+		}
+		$in  = array();
+		$out = array();
+		foreach ( $sent as $post ) {
+			[ $gained, $lost ] = $this->follow( $post );
+			$in                = array_merge( $in, $gained );
+			$out               = array_merge( $out, $lost );
+		}
+		foreach ( $removed as $post_id ) {
+			$out = array_merge( $out, $this->release( (int) $post_id ) );
+		}
+
+		// Read once every post above is settled: a PDF one post let go of, another may hold.
+		$in  = array_values( array_filter( array_map( 'get_post', array_unique( $in ) ), array( $this, 'indexable' ) ) );
+		$out = array_values( array_filter( array_unique( $out ), fn ( $id ) => ! $this->indexable( get_post( $id ) ) ) );
+		if ( $send ) {
+			foreach ( array_chunk( $in, 10 ) as $chunk ) {
+				if ( $this->index( $chunk )['success'] ) {
+					$outcome['sent'] += count( $chunk );
+				}
+			}
+		}
+		if ( array() !== $out ) {
+			$indexer = new Viglet_Dumont_Indexer( $this->settings );
+			$result  = ( new Viglet_Dumont_API_Client( $this->settings ) )->deindex( array_map( array( $indexer, 'build_delete_item' ), $out ) );
+			if ( $result['success'] ) {
+				$outcome['removed'] = count( $out );
+			}
+		}
+
+		return $outcome;
+	}
+
+	/**
+	 * Record the PDFs a post in search links now, and say which may have come into search
+	 * with it and which it let go of.
+	 *
+	 * @param WP_Post $post The post sent.
+	 * @return array{0: int[], 1: int[]} The PDFs to send, and the ones it no longer links.
+	 */
+	private function follow( WP_Post $post ): array {
+		$now    = $this->linked_ids( $post );
+		$before = $this->linking( $post->ID );
+		$gained = array_diff( $now, $before );
+		$lost   = array_diff( $before, $now );
+		foreach ( $gained as $id ) {
+			add_post_meta( $id, self::LINKED_META, $post->ID );
+		}
+		foreach ( $lost as $id ) {
+			delete_post_meta( $id, self::LINKED_META, $post->ID );
+		}
+		// Its first time in search, or the first since it left: everything it holds goes.
+		if ( ! metadata_exists( 'post', $post->ID, self::HELD_META ) ) {
+			$gained = array_merge( $now, $this->children( $post->ID ) );
+			update_post_meta( $post->ID, self::HELD_META, 1 );
+		}
+
+		return array( array_values( $gained ), array_values( $lost ) );
+	}
+
+	/**
+	 * Let go of the PDFs a post that left search attached or linked.
+	 *
+	 * @param int $post_id The post removed.
+	 * @return int[] The PDFs it held.
+	 */
+	private function release( int $post_id ): array {
+		$linked = $this->linking( $post_id );
+		foreach ( $linked as $id ) {
+			delete_post_meta( $id, self::LINKED_META, $post_id );
+		}
+		delete_post_meta( $post_id, self::HELD_META );
+
+		return array_merge( $linked, $this->children( $post_id ) );
+	}
+
+	/**
+	 * Before a post is deleted for good, which leaves its attachments with no parent, record
+	 * its PDFs as linked from it, so the removal that follows still finds them.
+	 *
+	 * @param int $post_id The post being deleted.
+	 */
+	public function hold_children( int $post_id ): void {
+		foreach ( $this->children( $post_id ) as $id ) {
+			if ( ! in_array( $post_id, array_map( 'intval', (array) get_post_meta( $id, self::LINKED_META, false ) ), true ) ) {
+				add_post_meta( $id, self::LINKED_META, $post_id );
+			}
+		}
+	}
+
+	/**
+	 * The PDFs a post's content was recorded as linking.
+	 *
+	 * @param int $post_id The post.
+	 * @return int[]
+	 */
+	private function linking( int $post_id ): array {
+		return array_map(
+			'intval',
+			get_posts(
+				array(
+					'post_type'      => 'attachment',
+					'post_mime_type' => 'application/pdf',
+					'post_status'    => 'any',
+					'numberposts'    => -1,
+					'fields'         => 'ids',
+					// One exact row per link, read only when a post enters or leaves search.
+					'meta_key'       => self::LINKED_META, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'     => (string) $post_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				)
+			)
+		);
+	}
+
+	/**
+	 * The PDFs attached to a post.
+	 *
+	 * @param int $post_id The post.
+	 * @return int[]
+	 */
+	private function children( int $post_id ): array {
+		return array_map(
+			'intval',
+			get_posts(
+				array(
+					'post_type'      => 'attachment',
+					'post_mime_type' => 'application/pdf',
+					'post_status'    => 'any',
+					'post_parent'    => $post_id,
+					'numberposts'    => -1,
+					'fields'         => 'ids',
+				)
+			)
+		);
+	}
+
+	/**
+	 * A PDF's document: its title, address and the post that holds it, with its text left to Turing, which
 	 * reads the file named in `text` out of the zip.
 	 *
 	 * @param WP_Post $attachment The PDF.
@@ -85,7 +304,7 @@ class Viglet_Dumont_Pdf {
 	 */
 	public function document( WP_Post $attachment ): array {
 		$indexer = new Viglet_Dumont_Indexer( $this->settings );
-		$parent  = get_post( (int) $attachment->post_parent );
+		$parent  = $this->holder( $attachment );
 
 		return array(
 			'id'                => $indexer->build_doc_id( $attachment->ID ),

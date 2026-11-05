@@ -164,6 +164,8 @@ class Viglet_Dumont_Queue {
 			}
 
 			$this->record( $batch, $outcomes );
+
+			$this->settle_pdfs( $items, $outcomes );
 		} finally {
 			delete_transient( self::LOCK );
 		}//end try
@@ -303,6 +305,33 @@ class Viglet_Dumont_Queue {
 		}
 
 		return $outcomes;
+	}
+
+	/**
+	 * The PDFs the posts that went through attach or link follow them in or out of search (D319).
+	 *
+	 * @param array<int, array>        $items    The items sent, keyed by post id.
+	 * @param array<int, string|array> $outcomes The error per post as a note, '' for success.
+	 */
+	private function settle_pdfs( array $items, array $outcomes ): void {
+		$pdf = new Viglet_Dumont_Pdf( $this->settings );
+		if ( ! $pdf->enabled() ) {
+			return;
+		}
+		$sent    = array();
+		$removed = array();
+		foreach ( $items as $post_id => $item ) {
+			if ( '' !== Viglet_Dumont_Events::text( $outcomes[ $post_id ] ?? 'failed' ) ) {
+				continue;
+			}
+			$post = 'CREATE' === $item['turSNJobAction'] ? get_post( (int) $post_id ) : null;
+			if ( $post instanceof WP_Post ) {
+				$sent[] = $post;
+			} else {
+				$removed[] = (int) $post_id;
+			}
+		}
+		$pdf->settle( $sent, $removed );
 	}
 
 	/**

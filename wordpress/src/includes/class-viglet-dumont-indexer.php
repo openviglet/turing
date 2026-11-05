@@ -147,7 +147,10 @@ class Viglet_Dumont_Indexer {
 	public function expire( int $post_id ): void {
 		$post = get_post( $post_id );
 		if ( ! $post instanceof WP_Post || ! $this->should_index( $post ) ) {
-			$this->deindex_post( $post_id );
+			if ( $this->deindex_post( $post_id )['success'] ) {
+				// The PDFs it alone held leave with it (D319).
+				( new Viglet_Dumont_Pdf( $this->settings ) )->settle( array(), array( $post_id ) );
+			}
 			return;
 		}
 		$this->schedule_expiry( $post );
@@ -242,6 +245,10 @@ class Viglet_Dumont_Indexer {
 
 			if ( ! empty( $job_items ) ) {
 				$result = $this->client->import( $job_items );
+			}
+			if ( $result['success'] ) {
+				// The PDFs these posts newly attach or link go with them (D319).
+				( new Viglet_Dumont_Pdf( $this->settings ) )->settle( $query->posts, array() );
 			}
 		}
 

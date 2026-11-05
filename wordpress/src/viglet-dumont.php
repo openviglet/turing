@@ -170,11 +170,14 @@ function viglet_dumont_init(): void {
 		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
 	}
 	// PDFs attached to the posts in search (D309): sent when uploaded or edited, gone when deleted.
+	// The ones a post links follow it through the queue (D319); a post deleted for good first
+	// records its attached PDFs as linked, since deleting it leaves them without a parent.
 	if ( ! empty( $settings['index_pdfs'] ) ) {
 		$viglet_dumont_pdf = new Viglet_Dumont_Pdf( $settings );
 		add_action( 'add_attachment', array( $viglet_dumont_pdf, 'sync' ) );
 		add_action( 'edit_attachment', array( $viglet_dumont_pdf, 'sync' ) );
 		add_action( 'delete_attachment', array( $viglet_dumont_pdf, 'remove' ) );
+		add_action( 'before_delete_post', array( $viglet_dumont_pdf, 'hold_children' ) );
 	}
 	// A product whose stock changed from an order, which saves no post (D173).
 	Viglet_Dumont_WooCommerce::register();

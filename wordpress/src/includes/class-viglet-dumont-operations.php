@@ -89,30 +89,41 @@ class Viglet_Dumont_Operations {
 	 * A batch Turing did not answer in time was still sent, and Turing goes on importing it
 	 * (D256): it counts as `unconfirmed`, never as failed.
 	 *
-	 * @param int[]         $post_ids The posts.
-	 * @param callable|null $progress Called with the number of posts done after each batch.
+	 * @param int[]         $post_ids  The posts.
+	 * @param callable|null $progress  Called with the number of posts done after each batch.
+	 * @param bool          $send_pdfs Send the PDFs the posts newly hold (D319); false when the
+	 *                                 caller sends every PDF afterwards (Index All).
 	 * @return array{sent: int, failed: int, errors: array<int, string>, unconfirmed: int}
 	 */
-	public function index( array $post_ids, ?callable $progress = null ): array {
+	public function index( array $post_ids, ?callable $progress = null, bool $send_pdfs = true ): array {
 		$batch_size  = max( 1, (int) $this->settings['batch_size'] );
 		$sent        = 0;
 		$unconfirmed = 0;
 		$errors      = array();
 
 		$this->indexer->provision();
+		$pdf = new Viglet_Dumont_Pdf( $this->settings );
 
 		foreach ( array_chunk( $post_ids, $batch_size ) as $chunk ) {
-			$items = array();
+			$items   = array();
+			$kept    = array();
+			$removed = array();
 			foreach ( $chunk as $post_id ) {
-				$post    = get_post( $post_id );
-				$items[] = ( $post instanceof WP_Post && $this->indexer->should_index( $post ) )
-					? $this->indexer->build_create_item( $post )
-					: $this->indexer->build_delete_item( (int) $post_id );
+				$post = get_post( $post_id );
+				if ( $post instanceof WP_Post && $this->indexer->should_index( $post ) ) {
+					$items[] = $this->indexer->build_create_item( $post );
+					$kept[]  = $post;
+				} else {
+					$items[]   = $this->indexer->build_delete_item( (int) $post_id );
+					$removed[] = (int) $post_id;
+				}
 			}
 
 			$result = $this->client->import( $items );
 			if ( $result['success'] ) {
 				$sent += count( $chunk );
+				// The PDFs the posts attach or link follow them in or out (D319).
+				$pdf->settle( $kept, $removed, $send_pdfs );
 			} elseif ( ! empty( $result['timed_out'] ) ) {
 				$unconfirmed += count( $chunk );
 			} else {
@@ -231,8 +242,9 @@ class Viglet_Dumont_Operations {
 	 */
 	public function reindex( ?callable $progress = null ): array {
 		$this->indexer->provision( true );
-		$result = $this->index( $this->find_post_ids(), $progress );
-		// The PDFs of the posts in search (D309), once their parents are there.
+		// Each post records the PDFs it links on the way (D319); all of them are sent below.
+		$result = $this->index( $this->find_post_ids(), $progress, false );
+		// The PDFs of the posts in search (D309), once the posts that hold them are there.
 		$pdfs = ( new Viglet_Dumont_Pdf( $this->settings ) )->index_all();
 		if ( ! $pdfs['success'] ) {
 			++$result['failed'];
