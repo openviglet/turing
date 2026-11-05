@@ -184,7 +184,7 @@ class Viglet_Dumont_Related {
 		}
 
 		$all_sites = $all_sites && array() !== ( new Viglet_Dumont_Indexer( $this->settings ) )->sibling_sites();
-		$rows      = $all_sites ? self::MAX_ROWS : min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN );
+		$rows      = min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN );
 		$items     = array();
 		foreach ( $this->neighbours( $post_id, $mode, $rows, $all_sites ) as $neighbour ) {
 			if ( is_array( $neighbour ) ) {
@@ -216,10 +216,9 @@ class Viglet_Dumont_Related {
 	 * with `$all_sites` a sibling's as the document Turing described.
 	 *
 	 * Turing filters by this site's key (T1132), so only posts and terms are left to tell
-	 * apart. The similar-documents search cannot take one field's values as alternatives
-	 * (it has no `fqi.op`), so across sites it is asked unfiltered and without the key (a
-	 * key bound to this site's partition, D190, sees only its own), and what comes back is
-	 * kept to the keys in scope by each id's `<site key>:` prefix.
+	 * apart. Across sites the scope goes as the search sends it, one `site_key` per site with
+	 * `fqi.op=OR` (Turing T1235, D337), without the key: a key bound to this site's
+	 * partition (D190) sees only its own.
 	 *
 	 * @param int    $post_id   The post.
 	 * @param string $mode      The similarity, as for posts().
@@ -239,7 +238,7 @@ class Viglet_Dumont_Related {
 		// A page read (D328): a hung Turing costs this view a few seconds, the next ones nothing.
 		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
 		$similar = $all_sites
-			? $client->for_scope( $indexer )->similar( $indexer->build_doc_id( $post_id ), $rows, $mode )
+			? $client->for_scope( $indexer )->similar( $indexer->build_doc_id( $post_id ), $rows, $mode, $indexer->scope_query() )
 			: $client->similar( $indexer->build_doc_id( $post_id ), $rows, $mode, array( $indexer->own_filter() ) );
 		// A site without embeddings may refuse a semantic question: ask by shared words. A
 		// Turing that did not answer at all is not asked again.

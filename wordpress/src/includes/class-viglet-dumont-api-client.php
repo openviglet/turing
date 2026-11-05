@@ -708,16 +708,18 @@ class Viglet_Dumont_API_Client {
 	 * @param string $doc_id The indexed document's id.
 	 * @param int    $rows   How many.
 	 * @param string $mode   `MLT` (lexical) or `VECTOR` (semantic); empty lets Turing choose.
-	 * @param array  $fq     Filter queries, as the search takes them (Turing T1132).
+	 * @param array  $fq     Filter queries, as the search takes them (Turing T1132), or a scope
+	 *                       as `Viglet_Dumont_Indexer::scope_query()` builds it, `fqi.op`
+	 *                       included (Turing T1235 reads it here as the search does).
 	 * @return array<int, array{id: string, title: string, url: string, type?: string}>|WP_Error An empty list when the id is not indexed.
 	 */
 	public function similar( string $doc_id, int $rows = 5, string $mode = '', array $fq = array() ) {
+		$scope  = isset( $fq['fq[]'] ) ? $fq : array( 'fq[]' => $fq );
 		$params = array(
 			'id'         => $doc_id,
 			'rows'       => $rows,
 			'_setlocale' => $this->locale,
-			'fq[]'       => $fq,
-		);
+		) + $scope;
 		if ( in_array( $mode, array( 'MLT', 'VECTOR' ), true ) ) {
 			$params['mode'] = $mode;
 		}
