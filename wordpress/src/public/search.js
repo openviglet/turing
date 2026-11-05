@@ -25,7 +25,7 @@ import { getConfig, store } from '@wordpress/interactivity';
 
 export * from '@viglet/turing-sdk';
 
-/** viglet_dumont_public_config(): { url, site, locale, siteKey, facets, analytics }. */
+/** viglet_dumont_public_config(): { url, site, locale, siteKey, home, aiPaused, facets, analytics }. */
 export const config = getConfig( 'viglet-dumont' );
 
 /** The filter that keeps a search to this site's documents. */
@@ -182,6 +182,44 @@ export function isQuestion( query ) {
 		questionWords.test( typed ) ||
 		typed.split( /\s+/ ).length >= 5
 	);
+}
+
+/**
+ * Whether Turing refused an AI call because the site's AI budget is spent (D332): HTTP 429.
+ * The SDK's TuringHttpError carries the status but never the body, so the reset date is the
+ * server's to read (reportAiPaused). Takes the error a call threw, or the `error` text an
+ * answer controller keeps ("HTTP 429", with the reason phrase when the server sent one).
+ *
+ * @param {unknown} error What the call threw, or the controller's error text.
+ * @return {boolean} Whether it is a 429.
+ */
+export function isAiPaused( error ) {
+	if ( 'string' === typeof error ) {
+		return /^HTTP 429\b/.test( error );
+	}
+	return 429 === error?.status;
+}
+
+// Once per page is enough: the server asks Turing itself, at most every ten minutes.
+let pausedReported = false;
+
+/**
+ * Tell this WordPress that Turing refused an AI call with 429 (D332). The report carries
+ * nothing: the server asks Turing once to confirm it and read when the budget resets, which
+ * Health then shows. Sent with `keepalive`, so it outlives a page the visitor leaves.
+ */
+export function reportAiPaused() {
+	if ( pausedReported || ! config.aiPaused ) {
+		return;
+	}
+	pausedReported = true;
+	window
+		.fetch( config.aiPaused, {
+			method: 'POST',
+			keepalive: true,
+			credentials: 'omit',
+		} )
+		.catch( () => {} );
 }
 
 /**

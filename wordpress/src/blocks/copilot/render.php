@@ -109,6 +109,8 @@ wp_interactivity_state(
 		'thinking'          => $viglet_dumont_copy['thinking'],
 		'failed'            => $viglet_dumont_copy['failed'],
 		'nothing'           => $viglet_dumont_copy['nothing'],
+		// Turing refused with 429: the site's AI budget is spent until it resets (D332).
+		'paused'            => __( 'Answers are paused for now; search still works.', 'viglet-turing-search' ),
 		// Build my kit (D201).
 		'kitOffered'        => $viglet_dumont_kit,
 		'mode'              => 'ask',

@@ -648,6 +648,13 @@
 	margin: 0;
 }
 
+/* Answers paused while the site's AI budget in Turing is spent (D332): one quiet line. */
+.viglet-dumont-search__answer-paused {
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+	margin: 0 0 1.5rem;
+	opacity: 0.8;
+}
+
 /* The count, and the sort beside it. */
 .viglet-dumont-search__toolbar {
 	align-items: baseline;

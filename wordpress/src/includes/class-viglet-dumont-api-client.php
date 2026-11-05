@@ -626,6 +626,9 @@ class Viglet_Dumont_API_Client {
 			set_transient( self::DOWN_TRANSIENT, time(), self::DOWN_SECONDS );
 		}
 
+		// A spent AI budget is kept, and a later AI call that went through forgets it (D332).
+		Viglet_Dumont_AI_Quota::observe( $path, $response );
+
 		return self::playground_refusal( $response, $this->server_url ) ?? $response;
 	}
 
@@ -1052,6 +1055,30 @@ class Viglet_Dumont_API_Client {
 				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Turing has no catalog copilot set up.', 'viglet-turing-search' ) : '' ),
 			),
 		);
+	}
+
+	/**
+	 * One short natural-language filter reading, the AI call the search block makes, to learn
+	 * whether the site's AI budget is spent (D332): request() records a quota-exhausted 429
+	 * and forgets the record on a 2xx. Spends one LLM call when the budget is not spent.
+	 *
+	 * @param array<string, string[]> $filters The scope, field to values, as the block sends it.
+	 * @return int The HTTP status, 0 when no answer arrived.
+	 */
+	public function ai_probe( array $filters ): int {
+		$response = $this->request(
+			'POST',
+			'/api/sn/' . rawurlencode( $this->site_name ) . '/nl-filters',
+			null,
+			array(
+				'text'    => 'last week',
+				'locale'  => $this->locale,
+				'filters' => $filters,
+			),
+			array( 'timeout' => 15 )
+		);
+
+		return is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
 	}
 
 	/**

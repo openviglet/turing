@@ -1022,15 +1022,17 @@ class Viglet_Dumont_Native_Search {
 		}//end foreach
 
 		$config = array(
-			'url'     => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),
-			'site'    => (string) $this->settings['site_name'],
-			'locale'  => (string) $this->settings['locale'],
-			'siteKey' => ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key(),
+			'url'      => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),
+			'site'     => (string) $this->settings['site_name'],
+			'locale'   => (string) $this->settings['locale'],
+			'siteKey'  => ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key(),
 			// Where a post of this site opens when its indexed URL is another WordPress's (D239).
-			'home'    => home_url( '/' ),
-			'facets'  => array_values( $facets ),
+			'home'     => home_url( '/' ),
+			// Where a browser reports that Turing refused an AI call with 429 (D332).
+			'aiPaused' => rest_url( 'viglet-dumont/v1/ai-paused' ),
+			'facets'   => array_values( $facets ),
 			// The mapped fields a result card shows as labelled lines (D305).
-			'cards'   => $this->card_fields(),
+			'cards'    => $this->card_fields(),
 		);
 		// Each type's card date and image fields, where a type changed them (D305).
 		$card_types = $this->card_types();

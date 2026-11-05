@@ -174,6 +174,34 @@ final class OperationsTest extends PluginTestCase {
 		$this->assertSame( 2, $this->operations()->status()['foreign'] );
 	}
 
+	public function test_status_names_a_spent_ai_budget_and_its_reset_date(): void {
+		// D332: Health reads it from here while the record is live.
+		$quota   = array(
+			'resetsAt' => '2099-12-01T00:00:00Z',
+			'detail'   => 'The monthly AI budget of this site is spent.',
+			'seen_at'  => time(),
+		);
+		$options = array( 'viglet_dumont_ai_quota' => $quota );
+		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback );
+		Functions\stubs(
+			array(
+				'wp_cache_delete' => true,
+				'wp_date'         => static fn ( $format, $at ) => gmdate( 'Y-m-d', $at ),
+			)
+		);
+
+		$status = $this->operations()->status()['ai_quota'];
+
+		$this->assertSame( 'AI budget exhausted until 2099-12-01.', $status['message'] );
+		$this->assertSame( 'The monthly AI budget of this site is spent.', $status['detail'] );
+	}
+
+	public function test_status_has_no_ai_budget_line_while_none_is_known_spent(): void {
+		Functions\stubs( array( 'wp_cache_delete' => true ) );
+
+		$this->assertNull( $this->operations()->status()['ai_quota'] );
+	}
+
 	public function test_a_dry_run_sweep_lists_without_deleting(): void {
 		WP_Query::$ids = array( 1 );
 		$this->held    = array( 'site-a:post:1', 'site-a:post:7' );

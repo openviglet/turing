@@ -18,8 +18,10 @@ import {
 	compare,
 	config,
 	createClient,
+	isAiPaused,
 	postIdOf,
 	renderMarkdown,
+	reportAiPaused,
 	shopProducts,
 	siteFilters,
 	siteUrl,
@@ -169,6 +171,7 @@ const { state } = store( 'viglet-dumont/copilot', {
 			state.status = state.thinking;
 			messages.push( { role: 'user', content: question } );
 			let answer;
+			let paused = false;
 			try {
 				answer = await client.post(
 					`/sn/${ site }/copilot`,
@@ -184,13 +187,18 @@ const { state } = store( 'viglet-dumont/copilot', {
 					},
 					{ csrf: false }
 				);
-			} catch {
+			} catch ( error ) {
 				answer = null;
+				paused = isAiPaused( error );
 			}
 			state.busy = false;
 			if ( ! answer?.available ) {
 				messages.pop();
-				state.status = state.failed;
+				// A spent AI budget is said as such, and the server told (D332).
+				state.status = paused ? state.paused : state.failed;
+				if ( paused ) {
+					reportAiPaused();
+				}
 				return;
 			}
 			messages.push( {
@@ -319,6 +327,7 @@ async function buildKit() {
 	state.status = state.kitThinking;
 	state.kitStatus = '';
 	let kit;
+	let paused = false;
 	try {
 		kit = await client.post(
 			`/sn/${ site }/copilot/kit`,
@@ -331,12 +340,16 @@ async function buildKit() {
 			},
 			{ csrf: false }
 		);
-	} catch {
+	} catch ( error ) {
 		kit = null;
+		paused = isAiPaused( error );
 	}
 	state.busy = false;
 	if ( ! kit || kit.error ) {
-		state.status = state.failed;
+		state.status = paused ? state.paused : state.failed;
+		if ( paused ) {
+			reportAiPaused();
+		}
 		return;
 	}
 	const stages = ( kit.stages || [] ).map( ( stage, index ) => ( {

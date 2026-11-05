@@ -16,7 +16,8 @@ class Viglet_Dumont_CLI_AI {
 
 	/**
 	 * One row per AI feature: on or off, and why when off. Exits non-zero when any is off,
-	 * so a pipeline that needs them can stop.
+	 * so a pipeline that needs them can stop. While Turing says the site's AI budget is spent,
+	 * a warning names it and its reset date; in JSON each row that is on carries it as `paused`.
 	 *
 	 * Checking answers and natural-language filters spends a short LLM call each when they
 	 * are on: Turing has no cheaper probe for them yet.
@@ -52,7 +53,12 @@ class Viglet_Dumont_CLI_AI {
 				),
 				array( 'feature', 'on', 'why' )
 			);
-		}
+			// A spent AI budget (D332): the features are on, and Turing refuses them until it resets.
+			$paused = implode( '', array_slice( array_filter( array_column( $rows, 'paused' ) ), 0, 1 ) );
+			if ( '' !== $paused ) {
+				WP_CLI::warning( $paused );
+			}
+		}//end if
 
 		$off = count( array_filter( $rows, static fn ( array $row ) => ! $row['on'] ) );
 		if ( $off > 0 ) {

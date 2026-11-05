@@ -84,6 +84,9 @@ $viglet_dumont_state = array(
 	'answerSources'   => array(),
 	'answerStatus'    => 'idle',
 	'answerRated'     => false,
+	// Turing refused the answer with 429: the site's AI budget is spent until it resets (D332).
+	'answerPaused'    => false,
+	'pausedLabel'     => __( 'Answers are paused for now; search still works.', 'viglet-turing-search' ),
 	// The filters a sentence names (D170), and the names of the core fields they may filter.
 	'suggestEnabled'  => ! empty( $attributes['suggestFilters'] ),
 	'suggested'       => array(),

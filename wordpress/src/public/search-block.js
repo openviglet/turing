@@ -19,10 +19,12 @@ import {
 	cardWhen,
 	documentType,
 	formatCardDate,
+	isAiPaused,
 	isQuestion,
 	isScopeFilter,
 	postIdOf,
 	renderMarkdown,
+	reportAiPaused,
 	scopeFilters,
 	siteFilter,
 	siteUrl,
@@ -240,6 +242,11 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				'' !== state.answer &&
 				state.answerSources.length > 0
 			);
+		},
+		// Turing refused the answer with 429 (D332): a line says answers are paused, in place of
+		// a panel that would otherwise just stay hidden.
+		get showAnswerPaused() {
+			return state.answerEnabled && state.answerPaused;
 		},
 		get hasSuggested() {
 			return state.suggestEnabled && state.suggested.length > 0;
@@ -587,6 +594,11 @@ const { state, actions } = store( 'viglet-dumont/search', {
 				answerer.subscribe( ( s ) => {
 					state.answer = s.answer;
 					state.answerStatus = s.status;
+					state.answerPaused =
+						'error' === s.status && isAiPaused( s.error );
+					if ( state.answerPaused ) {
+						reportAiPaused();
+					}
 					state.answerSources = (
 						s.citations.length ? s.citations : s.sources
 					)
@@ -741,9 +753,13 @@ async function readFilters( text ) {
 				{ text, locale: config.locale, filters: scopeMap() },
 				{ csrf: false }
 			);
-		} catch {
-			// No reading is not an error the visitor needs to see.
+		} catch ( error ) {
+			// No reading is not an error the visitor needs to see; a spent AI budget is the
+			// server's to know (D332), and the search goes on as typed.
 			answer = null;
+			if ( isAiPaused( error ) ) {
+				reportAiPaused();
+			}
 		}
 		// Each reading is an LLM call: the same sentence again, in this page, is not another.
 		if ( answer?.available ) {

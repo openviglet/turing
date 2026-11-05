@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T16:45:24+00:00\n"
+"POT-Creation-Date: 2026-11-05T17:02:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -23,7 +23,7 @@ msgid "Integrate WordPress with Viglet Turing search engine for powerful content
 msgstr ""
 
 #: src/admin/views/settings-page.php:40
-#: assets/admin/health.js:355
+#: assets/admin/health.js:375
 msgid "Connection"
 msgstr ""
 
@@ -490,22 +490,22 @@ msgid "Posts it used"
 msgstr ""
 
 #: src/blocks/assistant/render.php:75
-#: src/blocks/search/parts/answer.php:30
+#: src/blocks/search/parts/answer.php:31
 msgid "Was this helpful?"
 msgstr ""
 
 #: src/blocks/assistant/render.php:76
-#: src/blocks/search/parts/answer.php:31
+#: src/blocks/search/parts/answer.php:32
 msgid "Yes"
 msgstr ""
 
 #: src/blocks/assistant/render.php:77
-#: src/blocks/search/parts/answer.php:32
+#: src/blocks/search/parts/answer.php:33
 msgid "No"
 msgstr ""
 
 #: src/blocks/assistant/render.php:79
-#: src/blocks/search/parts/answer.php:34
+#: src/blocks/search/parts/answer.php:35
 msgid "Thank you."
 msgstr ""
 
@@ -649,7 +649,7 @@ msgstr ""
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:101
-#: src/blocks/search/render.php:100
+#: src/blocks/search/render.php:103
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
@@ -657,7 +657,7 @@ msgstr ""
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:104
 #: src/blocks/related/render.php:117
-#: src/blocks/search/render.php:104
+#: src/blocks/search/render.php:107
 #, php-format
 msgid "Compare %s"
 msgstr ""
@@ -665,77 +665,82 @@ msgstr ""
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:106
 #: src/blocks/related/render.php:53
-#: src/blocks/search/render.php:102
+#: src/blocks/search/render.php:105
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
 #: src/blocks/copilot/render.php:107
-#: src/blocks/search/render.php:105
+#: src/blocks/search/render.php:108
 msgid "Added to your cart."
 msgstr ""
 
 #: src/blocks/copilot/render.php:108
-#: src/blocks/search/render.php:106
+#: src/blocks/search/render.php:109
 msgid "It could not be added to the cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:126
-#: src/blocks/copilot/render.php:236
+#: src/blocks/copilot/render.php:113
+#: src/blocks/search/render.php:89
+msgid "Answers are paused for now; search still works."
+msgstr ""
+
+#: src/blocks/copilot/render.php:128
+#: src/blocks/copilot/render.php:238
 msgid "Ask"
 msgstr ""
 
-#: src/blocks/copilot/render.php:127
+#: src/blocks/copilot/render.php:129
 msgid "Describe your plan"
 msgstr ""
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:134
+#: src/blocks/copilot/render.php:136
 #, php-format
 msgid "Add %d products to the cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:135
+#: src/blocks/copilot/render.php:137
 msgid "Add 1 product to the cart"
 msgstr ""
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:137
+#: src/blocks/copilot/render.php:139
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr ""
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:139
+#: src/blocks/copilot/render.php:141
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr ""
 
-#: src/blocks/copilot/render.php:153
+#: src/blocks/copilot/render.php:155
 msgid "Mode"
 msgstr ""
 
-#: src/blocks/copilot/render.php:154
+#: src/blocks/copilot/render.php:156
 msgid "Ask a question"
 msgstr ""
 
-#: src/blocks/copilot/render.php:169
+#: src/blocks/copilot/render.php:171
 #: src/blocks/search/parts/main.php:85
 msgid "Was"
 msgstr ""
 
-#: src/blocks/copilot/render.php:171
+#: src/blocks/copilot/render.php:173
 #: src/blocks/search/parts/main.php:88
 msgid "Add to cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:175
+#: src/blocks/copilot/render.php:177
 #: src/blocks/related/render.php:118
 #: src/blocks/search/parts/main.php:92
 msgid "Compare"
 msgstr ""
 
-#: src/blocks/copilot/render.php:213
+#: src/blocks/copilot/render.php:215
 msgid "Guides for this plan"
 msgstr ""
 
@@ -748,11 +753,11 @@ msgstr ""
 msgid "Related posts"
 msgstr ""
 
-#: src/blocks/search/parts/answer.php:20
+#: src/blocks/search/parts/answer.php:21
 msgid "Answer generated from this site"
 msgstr ""
 
-#: src/blocks/search/parts/answer.php:22
+#: src/blocks/search/parts/answer.php:23
 msgid "Sources"
 msgstr ""
 
@@ -897,25 +902,25 @@ msgid "Show fewer"
 msgstr ""
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:97
+#: src/blocks/search/render.php:100
 #, php-format
 msgid "Understood: %s"
 msgstr ""
 
-#: src/blocks/search/render.php:109
+#: src/blocks/search/render.php:112
 #: assets/admin/mapping.js:289
 #: assets/admin/mapping.js:542
 #: assets/admin/mapping.js:720
 msgid "Type"
 msgstr ""
 
-#: src/blocks/search/render.php:110
+#: src/blocks/search/render.php:113
 msgid "Published"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:125
-#: src/blocks/search/render.php:127
+#: src/blocks/search/render.php:128
+#: src/blocks/search/render.php:130
 #: src/includes/class-viglet-dumont-native-search.php:270
 #: src/includes/class-viglet-dumont-native-search.php:272
 #: src/includes/class-viglet-dumont-native-search.php:672
@@ -926,17 +931,17 @@ msgid_plural "%d results"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blocks/search/render.php:129
+#: src/blocks/search/render.php:132
 #: src/includes/class-viglet-dumont-native-search.php:274
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
 
-#: src/blocks/search/render.php:131
+#: src/blocks/search/render.php:134
 msgid "Reading your search…"
 msgstr ""
 
-#: src/blocks/search/render.php:134
+#: src/blocks/search/render.php:137
 #: src/includes/class-viglet-dumont-native-search.php:275
 msgid "Search is unavailable right now."
 msgstr ""
@@ -1069,6 +1074,16 @@ msgstr ""
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
+#. translators: %s: when Turing's AI budget for this site resets, as the site writes a date and time.
+#: src/includes/class-viglet-dumont-ai-quota.php:164
+#, php-format
+msgid "AI budget exhausted until %s."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-ai-quota.php:165
+msgid "AI budget exhausted for now."
+msgstr ""
+
 #: src/includes/class-viglet-dumont-api-client.php:154
 msgid "Connection successful"
 msgstr ""
@@ -1104,81 +1119,81 @@ msgid "Turing did not answer a moment ago; this page renders without it."
 msgstr ""
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:641
+#: src/includes/class-viglet-dumont-api-client.php:644
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr ""
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:676
+#: src/includes/class-viglet-dumont-api-client.php:679
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr ""
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:852
+#: src/includes/class-viglet-dumont-api-client.php:855
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:856
+#: src/includes/class-viglet-dumont-api-client.php:859
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:954
+#: src/includes/class-viglet-dumont-api-client.php:957
 msgid "Generative AI is off for this SN site in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:955
+#: src/includes/class-viglet-dumont-api-client.php:958
 msgid "The SN site has no AI agent in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:956
+#: src/includes/class-viglet-dumont-api-client.php:959
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:957
+#: src/includes/class-viglet-dumont-api-client.php:960
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:958
+#: src/includes/class-viglet-dumont-api-client.php:961
 msgid "The SN site’s AI agent has no language model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:959
+#: src/includes/class-viglet-dumont-api-client.php:962
 msgid "The SN site’s AI agent has no embedding model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:960
+#: src/includes/class-viglet-dumont-api-client.php:963
 msgid "The SN site’s AI agent has no vector store."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:964
-#: src/includes/class-viglet-dumont-api-client.php:1052
+#: src/includes/class-viglet-dumont-api-client.php:967
+#: src/includes/class-viglet-dumont-api-client.php:1055
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:965
-#: src/includes/class-viglet-dumont-api-client.php:1047
+#: src/includes/class-viglet-dumont-api-client.php:968
+#: src/includes/class-viglet-dumont-api-client.php:1050
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:987
+#: src/includes/class-viglet-dumont-api-client.php:990
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-ai.php:48
+#: src/includes/class-viglet-dumont-cli-ai.php:49
 msgid "yes"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-ai.php:48
+#: src/includes/class-viglet-dumont-cli-ai.php:49
 msgid "no"
 msgstr ""
 
 #. translators: %d: how many AI features are off.
-#: src/includes/class-viglet-dumont-cli-ai.php:60
+#: src/includes/class-viglet-dumont-cli-ai.php:66
 #, php-format
 msgid "%d AI feature is off."
 msgid_plural "%d AI features are off."
@@ -1457,7 +1472,7 @@ msgstr ""
 
 #. translators: %d: documents removed from Turing.
 #: src/includes/class-viglet-dumont-events.php:141
-#: assets/admin/health.js:147
+#: assets/admin/health.js:148
 #, php-format,js-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
@@ -1478,6 +1493,10 @@ msgstr ""
 #: src/includes/class-viglet-dumont-events.php:153
 #, php-format
 msgid "Turing answered again: %d stopped edits put back in the queue."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:159
+msgid "Turing answered an AI call again: the AI budget is no longer exhausted."
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
@@ -1701,7 +1720,7 @@ msgstr ""
 
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
-#: assets/admin/health.js:598
+#: assets/admin/health.js:618
 #: src/admin/js/editor-panel.js:288
 msgid "Failed"
 msgstr ""
@@ -1859,51 +1878,51 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:99
+#: src/viglet-dumont.php:101
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:100
+#: src/viglet-dumont.php:102
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:101
+#: src/viglet-dumont.php:103
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:102
+#: src/viglet-dumont.php:104
 msgid "Copilot"
 msgstr ""
 
-#: src/viglet-dumont.php:106
+#: src/viglet-dumont.php:108
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:107
+#: src/viglet-dumont.php:109
 msgid "Site assistant block, or its launcher on every page"
 msgstr ""
 
-#: src/viglet-dumont.php:108
+#: src/viglet-dumont.php:110
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:109
+#: src/viglet-dumont.php:111
 msgid "Ask this site block"
 msgstr ""
 
-#: src/viglet-dumont.php:123
+#: src/viglet-dumont.php:133
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:817
+#: src/viglet-dumont.php:840
 msgid "Name the content to index: post_type is all, or one post type."
 msgstr ""
 
-#: src/viglet-dumont.php:969
+#: src/viglet-dumont.php:992
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:994
+#: src/viglet-dumont.php:1017
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1928,226 +1947,234 @@ msgid "Replayed"
 msgstr ""
 
 #: assets/admin/health.js:32
-#: assets/admin/health.js:65
+#: assets/admin/health.js:66
 msgid "Reindex"
 msgstr ""
 
-#: assets/admin/health.js:36
-msgid "Done"
+#: assets/admin/health.js:33
+msgid "AI budget"
 msgstr ""
 
 #: assets/admin/health.js:37
-msgid "Ended with failures"
+msgid "Done"
 msgstr ""
 
 #: assets/admin/health.js:38
+msgid "Ended with failures"
+msgstr ""
+
+#: assets/admin/health.js:39
 msgid "Cancelled"
 msgstr ""
 
-#: assets/admin/health.js:42
+#: assets/admin/health.js:43
 msgid "Sending the posts."
 msgstr ""
 
-#: assets/admin/health.js:43
+#: assets/admin/health.js:44
 msgid "Sending the PDFs."
 msgstr ""
 
-#: assets/admin/health.js:44
+#: assets/admin/health.js:45
 msgid "Removing what WordPress no longer publishes."
 msgstr ""
 
-#: assets/admin/health.js:77
+#: assets/admin/health.js:78
 msgid "Reindex progress"
 msgstr ""
 
 #. translators: 1: when it started, 2: posts done, 3: posts to do in all, 4: posts that failed.
-#: assets/admin/health.js:86
+#: assets/admin/health.js:87
 #, js-format
 msgid "Running since %1$s: %2$d of %3$d posts done, %4$d failed."
 msgstr ""
 
 #. translators: 1: why the batch failed, 2: when it is tried again.
-#: assets/admin/health.js:101
+#: assets/admin/health.js:102
 #, js-format
 msgid "A batch failed (%1$s). It is tried again at %2$s."
 msgstr ""
 
-#: assets/admin/health.js:112
+#: assets/admin/health.js:113
 msgid "Nothing has moved for a while: WP-Cron is not running. It runs when someone visits the site; with DISABLE_WP_CRON, the server’s own cron has to call it."
 msgstr ""
 
-#: assets/admin/health.js:125
+#: assets/admin/health.js:126
 msgid "Cancel reindex"
 msgstr ""
 
 #. translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do.
-#: assets/admin/health.js:133
+#: assets/admin/health.js:134
 #, js-format
 msgid "Last reindex: %1$s, %2$s. %3$d sent, %4$d failed, of %5$d posts."
 msgstr ""
 
-#: assets/admin/health.js:161
+#: assets/admin/health.js:162
 msgid "No reindex has run from wp-admin yet. Index All under Settings › Actions starts one."
 msgstr ""
 
-#: assets/admin/health.js:180
+#: assets/admin/health.js:181
 msgid "never"
 msgstr ""
 
-#: assets/admin/health.js:205
-msgid "AI features"
-msgstr ""
-
-#: assets/admin/health.js:209
-msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
-msgstr ""
-
-#: assets/admin/health.js:224
-msgid "Feature"
-msgstr ""
-
-#: assets/admin/health.js:227
-msgid "State"
-msgstr ""
-
-#: assets/admin/health.js:230
-msgid "Shown by"
-msgstr ""
-
-#: assets/admin/health.js:233
-msgid "Why"
-msgstr ""
-
-#: assets/admin/health.js:243
-msgid "On"
-msgstr ""
-
-#: assets/admin/health.js:244
+#: assets/admin/health.js:191
 msgid "Off"
 msgstr ""
 
-#: assets/admin/health.js:268
+#: assets/admin/health.js:194
+msgid "Paused"
+msgstr ""
+
+#: assets/admin/health.js:195
+msgid "On"
+msgstr ""
+
+#: assets/admin/health.js:226
+msgid "AI features"
+msgstr ""
+
+#: assets/admin/health.js:230
+msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
+msgstr ""
+
+#: assets/admin/health.js:251
+msgid "Feature"
+msgstr ""
+
+#: assets/admin/health.js:254
+msgid "State"
+msgstr ""
+
+#: assets/admin/health.js:257
+msgid "Shown by"
+msgstr ""
+
+#: assets/admin/health.js:260
+msgid "Why"
+msgstr ""
+
+#: assets/admin/health.js:288
 #: src/admin/js/editor-panel.js:236
 msgid "Check again"
 msgstr ""
 
-#: assets/admin/health.js:269
+#: assets/admin/health.js:289
 msgid "Check AI features"
 msgstr ""
 
 #. translators: 1: the SN site, 2: the site key.
-#: assets/admin/health.js:367
+#: assets/admin/health.js:387
 #, js-format
 msgid "SN site %1$s, site key %2$s."
 msgstr ""
 
 #. translators: %s: why Turing refused the fields.
-#: assets/admin/health.js:379
+#: assets/admin/health.js:399
 #, js-format
 msgid "The mapped fields are not provisioned: %s"
 msgstr ""
 
 #. translators: %d: how many documents another source sent under this site key.
-#: assets/admin/health.js:391
+#: assets/admin/health.js:411
 #, js-format
 msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
 msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/admin/health.js:406
+#: assets/admin/health.js:426
 msgid "Documents"
 msgstr ""
 
-#: assets/admin/health.js:413
+#: assets/admin/health.js:433
 msgid "Post type"
 msgstr ""
 
-#: assets/admin/health.js:419
+#: assets/admin/health.js:439
 msgid "Published in WordPress"
 msgstr ""
 
-#: assets/admin/health.js:425
+#: assets/admin/health.js:445
 msgid "Indexed in Turing"
 msgstr ""
 
-#: assets/admin/health.js:440
+#: assets/admin/health.js:460
 msgid "unknown"
 msgstr ""
 
-#: assets/admin/health.js:450
+#: assets/admin/health.js:470
 msgid "(differs: run a reindex)"
 msgstr ""
 
-#: assets/admin/health.js:470
+#: assets/admin/health.js:490
 msgid "Reindex cancelled."
 msgstr ""
 
-#: assets/admin/health.js:477
+#: assets/admin/health.js:497
 msgid "Queue"
 msgstr ""
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: assets/admin/health.js:483
+#: assets/admin/health.js:503
 #, js-format
 msgid "%1$d waiting, %2$d stopped retrying."
 msgstr ""
 
 #. translators: 1: when, 2: documents sent, 3: documents that failed.
-#: assets/admin/health.js:495
+#: assets/admin/health.js:515
 #, js-format
 msgid "Last run %1$s: %2$d sent, %3$d failed."
 msgstr ""
 
-#: assets/admin/health.js:503
+#: assets/admin/health.js:523
 msgid "The queue has not sent anything yet."
 msgstr ""
 
 #. translators: %d: failed jobs put back in line.
-#: assets/admin/health.js:517
+#: assets/admin/health.js:537
 #, js-format
 msgid "%d failed jobs put back in line."
 msgstr ""
 
-#: assets/admin/health.js:526
+#: assets/admin/health.js:546
 msgid "Retry failed"
 msgstr ""
 
 #. translators: 1: sent, 2: failed.
-#: assets/admin/health.js:539
+#: assets/admin/health.js:559
 #, js-format
 msgid "Sent %1$d, %2$d failed."
 msgstr ""
 
-#: assets/admin/health.js:549
+#: assets/admin/health.js:569
 msgid "Send queue now"
 msgstr ""
 
-#: assets/admin/health.js:559
+#: assets/admin/health.js:579
 msgid "Last events"
 msgstr ""
 
-#: assets/admin/health.js:567
+#: assets/admin/health.js:587
 msgid "When"
 msgstr ""
 
-#: assets/admin/health.js:570
+#: assets/admin/health.js:590
 msgid "What"
 msgstr ""
 
-#: assets/admin/health.js:573
+#: assets/admin/health.js:593
 msgid "Post"
 msgstr ""
 
-#: assets/admin/health.js:576
+#: assets/admin/health.js:596
 msgid "Result"
 msgstr ""
 
-#: assets/admin/health.js:594
+#: assets/admin/health.js:614
 msgid "OK"
 msgstr ""
 
-#: assets/admin/health.js:612
+#: assets/admin/health.js:632
 msgid "Nothing has been sent yet."
 msgstr ""
 

@@ -31,7 +31,7 @@ class Viglet_Dumont_Events {
 	 * wrote it (a WP-CLI run, another admin). A plain string is stored as it is: an error
 	 * WordPress's HTTP layer or Turing wrote.
 	 *
-	 * @param string       $type    What happened: index, delete, provision, sweep, reindex.
+	 * @param string       $type    What happened: index, delete, provision, sweep, reindex, ai.
 	 * @param bool         $ok      Whether it went through.
 	 * @param string|array $message What to show: a note, or text to show as it is.
 	 * @param int|null     $post_id The post it was about, when it was about one.
@@ -152,6 +152,11 @@ class Viglet_Dumont_Events {
 				/* translators: %d: queued edits that had stopped retrying and were sent again. */
 				$format = __( 'Turing answered again: %d stopped edits put back in the queue.', 'viglet-turing-search' );
 				break;
+			case 'quota':
+				// D332: Turing's reset date, as the site writes a moment, then Turing's own words.
+				return trim( Viglet_Dumont_AI_Quota::line( Viglet_Dumont_AI_Quota::until( (string) ( $args[0] ?? '' ) ) ) . ' ' . (string) ( $args[1] ?? '' ) );
+			case 'quota_back':
+				return __( 'Turing answered an AI call again: the AI budget is no longer exhausted.', 'viglet-turing-search' );
 			default:
 				return $key;
 		}//end switch

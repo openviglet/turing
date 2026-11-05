@@ -28,6 +28,7 @@ define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-settings.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-ai-quota.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-pdf.php';
@@ -90,7 +91,8 @@ function viglet_dumont_public_config(): array {
  * Against a Turing without the capabilities probe it spends LLM calls when features are on
  * (Turing T1123), so it runs on demand only.
  *
- * @return array<int, array{feature: string, label: string, on: bool, reason: string, fix: string}>
+ * @return array<int, array{feature: string, label: string, block: string, on: bool, paused: string, reason: string, fix: string}>
+ *         `paused` says the site's AI budget is spent, on a feature that is on (D332).
  */
 function viglet_dumont_ai_status(): array {
 	$settings = viglet_dumont_get_settings();
@@ -109,12 +111,20 @@ function viglet_dumont_ai_status(): array {
 		'copilot'    => __( 'Ask this site block', 'viglet-turing-search' ),
 	);
 
+	$features = ( new Viglet_Dumont_API_Client( $settings ) )->ai_features();
+	// A spent budget (D332) is asked about again first, so a raised one reads as back at once.
+	Viglet_Dumont_AI_Quota::confirm( $settings );
+	$quota  = Viglet_Dumont_AI_Quota::report();
+	$paused = null === $quota ? '' : trim( $quota['message'] . ' ' . $quota['detail'] );
+
 	return array_map(
 		static fn ( array $row ) => array(
 			'feature' => $row['feature'],
 			'label'   => $labels[ $row['feature'] ] ?? $row['feature'],
 			'block'   => $blocks[ $row['feature'] ] ?? '',
 			'on'      => $row['on'],
+			// On, but refused for now: the site's AI budget in Turing is spent (D332).
+			'paused'  => $row['on'] ? $paused : '',
 			// A sentence, so the fix after it reads as the next one.
 			'reason'  => '' === $row['reason'] || preg_match( '/[.!?]$/', $row['reason'] ) ? $row['reason'] : $row['reason'] . '.',
 			// The manifest turns the site's generative AI on (Turing T1116). Once it does, an
@@ -123,7 +133,7 @@ function viglet_dumont_ai_status(): array {
 				? __( 'Turn on Generative AI under Settings › Search, then save the fields on the Fields screen.', 'viglet-turing-search' )
 				: '',
 		),
-		( new Viglet_Dumont_API_Client( $settings ) )->ai_features()
+		$features
 	);
 }
 
@@ -786,6 +796,19 @@ function viglet_dumont_register_rest_routes(): void {
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
+		)
+	);
+
+	// Public on purpose (D332): a visitor's browser says Turing refused an AI call with 429. The
+	// report only makes the server ask Turing itself, at most once every ten minutes, so it
+	// can never invent a spent budget.
+	register_rest_route(
+		'viglet-dumont/v1',
+		'/ai-paused',
+		array(
+			'methods'             => 'POST',
+			'callback'            => static fn () => new WP_REST_Response( Viglet_Dumont_AI_Quota::reported( viglet_dumont_get_settings() ), 202 ),
+			'permission_callback' => '__return_true',
 		)
 	);
 

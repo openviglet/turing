@@ -130,3 +130,51 @@ test( 'a plan switched on stages the types the block names', async ( {
 		useInnerText: true,
 	} );
 } );
+
+// D332: Turing refuses the copilot with 429 once the site's AI budget is spent. The block says
+// answers are paused instead of failing, and tells this WordPress, whose server asks Turing
+// itself (the local Turing has a budget left, so nothing is recorded).
+test( 'a spent AI budget reads as paused, and the browser reports it', async ( {
+	page,
+	problems,
+} ) => {
+	problems.allow( /\/copilot$/ );
+	problems.allow( /status of 429/ );
+	await page.route( /\/copilot$/, ( route ) =>
+		route.fulfill( {
+			status: 429,
+			contentType: 'application/problem+json',
+			json: {
+				type: 'https://turing.example.org/problems/quota-exhausted',
+				title: 'AI budget exhausted',
+				detail: 'The monthly AI budget of this site is spent. Resets on December 1.',
+				resetsAt: '2099-12-01T00:00:00Z',
+			},
+		} )
+	);
+	await page.goto( `/?page_id=${ pages.plain }` );
+	const block = page.locator( '.viglet-dumont-copilot' );
+	const reported = page.waitForResponse( /ai-paused/ );
+
+	// On a page of its own the box asks about that page (D242).
+	await block.getByRole( 'textbox' ).fill( 'When does the library open?' );
+	await block.getByRole( 'button', { name: 'Ask' } ).click();
+
+	await expect(
+		block.locator( '.viglet-dumont-copilot__status' )
+	).toHaveText( 'Answers are paused for now; search still works.' );
+	const report = await reported;
+	expect( report.request().method() ).toBe( 'POST' );
+	expect( report.status() ).toBe( 202 );
+	await expect( block ).not.toContainText( 'could not answer' );
+} );
+
+test.afterAll( ( {}, testInfo ) => {
+	if ( 'site' !== testInfo.project.name ) {
+		return;
+	}
+	// The report's ten-minute throttle, so the site is left as it was found.
+	try {
+		wp( [ 'transient', 'delete', 'viglet_dumont_ai_paused_report' ] );
+	} catch {}
+} );

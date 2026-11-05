@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <?php if ( ! empty( $attributes['showAnswer'] ) ) : ?>
+	<p class="viglet-dumont-search__answer-paused" role="status" hidden data-wp-bind--hidden="!state.showAnswerPaused" data-wp-text="state.pausedLabel"></p>
 	<section class="viglet-dumont-search__answer" aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer" hidden data-wp-bind--hidden="!state.showAnswer" data-wp-bind--aria-busy="state.answerStreaming">
 		<h2 class="viglet-dumont-search__answer-label" id="<?php echo esc_attr( $viglet_dumont_id ); ?>-answer"><?php esc_html_e( 'Answer generated from this site', 'viglet-turing-search' ); ?></h2>
 		<div class="viglet-dumont-search__answer-text" data-wp-watch="callbacks.renderAnswer"></div>

@@ -30,6 +30,7 @@ const EVENT_LABEL = {
 	sweep: __( 'Sweep', 'viglet-turing-search' ),
 	replay: __( 'Replayed', 'viglet-turing-search' ),
 	reindex: __( 'Reindex', 'viglet-turing-search' ),
+	ai: __( 'AI budget', 'viglet-turing-search' ),
 };
 
 const ENDED = {
@@ -181,11 +182,31 @@ function formatTime( item ) {
 }
 
 /**
+ * An AI feature's state in a word: on, off, or paused while the site's AI budget is spent (D332).
+ *
+ * @param {{on: boolean, paused?: string}} row A row from `/ai`.
+ */
+function rowState( row ) {
+	if ( ! row.on ) {
+		return __( 'Off', 'viglet-turing-search' );
+	}
+	return row.paused
+		? __( 'Paused', 'viglet-turing-search' )
+		: __( 'On', 'viglet-turing-search' );
+}
+
+/**
  * Which of Turing's AI features this site can use. Checked on demand: Turing has no cheap
  * probe for answers and natural-language filters (T1123), so a check spends a short LLM
  * call on each one that is on.
+ *
+ * While Turing says the site's AI budget is spent (D332), the card says so without a check:
+ * until when, and Turing's own words.
+ *
+ * @param {Object}      props       The props.
+ * @param {Object|null} props.quota `ai_quota` from `/status`: `{message, detail}`, or null.
  */
-function AiFeatures() {
+function AiFeatures( { quota } ) {
 	const [ rows, setRows ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
@@ -211,6 +232,12 @@ function AiFeatures() {
 						'viglet-turing-search'
 					) }
 				</p>
+				{ quota && (
+					<Notice status="warning" isDismissible={ false }>
+						<strong>{ quota.message }</strong>
+						{ quota.detail ? ' ' + quota.detail : '' }
+					</Notice>
+				) }
 				{ error && (
 					<Notice status="error" isDismissible={ false }>
 						{ error }
@@ -238,17 +265,10 @@ function AiFeatures() {
 							{ rows.map( ( row ) => (
 								<tr key={ row.feature }>
 									<th scope="row">{ row.label }</th>
-									<td>
-										{ row.on
-											? __( 'On', 'viglet-turing-search' )
-											: __(
-													'Off',
-													'viglet-turing-search'
-												) }
-									</td>
+									<td>{ rowState( row ) }</td>
 									<td>{ row.block || '—' }</td>
 									<td>
-										{ [ row.reason, row.fix ]
+										{ [ row.paused, row.reason, row.fix ]
 											.filter( Boolean )
 											.join( ' ' ) || '—' }
 									</td>
@@ -552,7 +572,7 @@ function Health() {
 				</CardBody>
 			</Card>
 
-			<AiFeatures />
+			<AiFeatures quota={ status.ai_quota } />
 
 			<Card>
 				<CardHeader>

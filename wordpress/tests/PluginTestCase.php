@@ -41,6 +41,7 @@ abstract class PluginTestCase extends TestCase {
 				'get_object_taxonomies'             => array(),
 				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
 				'home_url'                          => 'https://site.example.org',
+				'rest_url'                          => static fn ( $path = '' ) => 'https://site.example.org/wp-json/' . ltrim( $path, '/' ),
 				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
 				'is_sticky'                         => false,
 				// D308: indexing schedules a post's leaving search; nothing is scheduled by default.

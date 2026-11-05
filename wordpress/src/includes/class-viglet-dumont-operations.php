@@ -343,7 +343,7 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The connection, the SN site, published versus indexed documents per type, and the queue.
 	 *
-	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed, foreign: int|null, reindex: array} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
+	 * @return array{connection: array, site_name: string, site_key: string, types: array<string, array{published: int, indexed: int|null}>, queue: array, last_run: mixed, events: array, sources: array, provisioned: mixed, foreign: int|null, reindex: array, ai_quota: array|null} Per type, `published` is what WordPress publishes for the index and `indexed` what Turing holds; null when it cannot say.
 	 */
 	public function status(): array {
 		$types = array();
@@ -367,6 +367,8 @@ class Viglet_Dumont_Operations {
 			'foreign'     => $this->count_foreign(),
 			// The Index All running in the background and the last one that ended (D331).
 			'reindex'     => ( new Viglet_Dumont_Reindex( $this->settings ) )->report(),
+			// The site's AI budget in Turing, while it is known to be spent (D332).
+			'ai_quota'    => Viglet_Dumont_AI_Quota::report(),
 		);
 	}
 
