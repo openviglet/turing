@@ -473,7 +473,23 @@ class TurSNEngineConformanceIT {
                 Arguments.of("an ISO date range", request(p -> p.setFq(List.of(
                         "publishedAt:[2026-10-01T00:00:00Z TO *]"))), Set.of("creche", "baba", "enfermeira")),
                 Arguments.of("a custom facet selection", request(p -> p.setFq(List.of("posted:Recent"))),
-                        Set.of("creche", "enfermeira")));
+                        Set.of("creche", "enfermeira")),
+                // T1233 — an exclusion narrows, alone or beside a selection, whatever the operators.
+                Arguments.of("an exclusion beside a selection", request(p -> p.setFq(List.of(
+                        "sector:educacao", "-salary:2000"))), Set.of("monitor")),
+                Arguments.of("an exclusion alone", request(p -> p.setFq(List.of("-sector:educacao"))),
+                        Set.of("baba", "enfermeira", "dados")),
+                Arguments.of("an exclusion is never OR'd in", request(p -> {
+                    p.setFq(List.of("sector:educacao", "-salary:2000"));
+                    p.setFqOp(TurSNFilterQueryOperator.OR);
+                    p.setFqiOp(TurSNFilterQueryOperator.OR);
+                }), Set.of("monitor")),
+                Arguments.of("an exclusion in fqOr still narrows", request(p -> {
+                    p.setFq(List.of("sector:educacao"));
+                    p.setFqOr(List.of("-salary:2000"));
+                }), Set.of("monitor")),
+                Arguments.of("a quoted exclusion", request(p -> p.setFq(List.of(
+                        "sector:educacao", "-sector:\"educacao\""))), Set.of()));
     }
 
     @ParameterizedTest(name = "{0}")

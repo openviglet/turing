@@ -7,8 +7,6 @@
 
 ---
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Block CO — SDK errors that carry Turing's own answer
 
 ## VIII. Strategic moves — repositioning beyond features

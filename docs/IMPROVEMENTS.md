@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Block CO — SDK errors that carry Turing's own answer
 
 ## Table of contents
@@ -2324,31 +2322,6 @@ with `fqItemOperator` sends it.
 A request means the same on every engine an SN site can run on: the filters it applies,
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
-
-### CLXXV.2 Negative filter queries (T1233)
-
-**Where it came from.** Dumont D327 (the WordPress plugin): its Fields screen lists the
-`type` values other sources sent under the site's key. The natural query is `GET
-/api/sn/{site}/search?q=*&fq[]=site_key:localhost&fq[]=-source_apps:wordpress`, and it
-answers 0 results. Dumont works around it by paging up to 2,000 documents (D334 waits).
-
-**What happens.** Lucene (`TurLuceneQueryBuilder.parseFieldValue`), Elasticsearch
-(`TurElasticsearchFilterQueries.collect`) and Content AI (`parseFieldValue`) each split
-on the colon and take `-source_apps` as the field name: a term on a field that does not
-exist. Solr already rewrites it to `*:* -field:"value"` (`wrapNegationWithMatchAll`),
-but the unknown name lands in the no-facet group, joined by the site's facet item type:
-on an OR site the exclusion is OR'd with `site_key`, which is wrong.
-
-**What Turing should do.** One shared parser for `fq`, `fqAnd` and `fqOr` items that
-reads a leading `-` as an exclusion of that field's value, with the quoting a positive
-`fq` has. An exclusion always narrows (MUST_NOT / `must_not` / `-`), whatever `fqOr` or
-`fqItemOperator` say, and is never grouped with the field's positive values or rendered
-as a selected facet item. Content AI answers 400 rather than matching nothing.
-
-**Done when:** `fq[]=site_key:x&fq[]=-source_apps:wordpress` answers exactly the
-documents under `x` whose `source_apps` is not `wordpress` on Solr (AND and OR sites),
-Lucene and Elasticsearch; an exclusion alone matches every other document; Content AI
-refuses it with 400.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

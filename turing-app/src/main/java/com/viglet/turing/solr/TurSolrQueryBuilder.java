@@ -94,6 +94,7 @@ import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
+import com.viglet.turing.sn.facet.TurSNFilterExclusion;
 import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFacetMapForFilterQuery;
 import com.viglet.turing.sn.facet.TurSNFacetProperties;
@@ -358,6 +359,11 @@ public class TurSolrQueryBuilder {
 
     private void prepareQueryFilterQuery(TurSNFilterParams turSNFilterParams, SolrQuery query,
             TurSNSite turSNSite) {
+        // T1233 — each exclusion is its own filter query, so it always narrows and is
+        // never joined to a facet group by fqOr, fqItemOperator or the site's item type.
+        Optional.ofNullable(turSNFilterParams).ifPresent(params -> TurSNFilterExclusion
+                .in(params.getDefaultValues(), params.getAnd(), params.getOr())
+                .forEach(exclusion -> query.addFilterQuery(exclusionFilterQuery(exclusion))));
         Optional.of(getFilterQueryMap(turSNFilterParams, turSNSite))
                 .filter(facetMapForFilterQuery -> !CollectionUtils.isEmpty(facetMapForFilterQuery))
                 .ifPresent(facetMapForFilterQuery -> query.addFilterQuery(String.format("%s(%s)",
@@ -433,6 +439,12 @@ public class TurSolrQueryBuilder {
     // Solr cannot evaluate a purely negative boolean clause like `-field:"value"`
     // when it stands alone inside parentheses (e.g. `(A AND (-id:"x"))`). Prefix
     // such items with `*:*` so they become well-formed: `*:* -field:"value"`.
+    /** T1233 — {@code -field:"value"}, quoted as a positive selection is. */
+    static String exclusionFilterQuery(TurSNFilterExclusion exclusion) {
+        String positive = exclusion.positive();
+        return HYPHEN + (queryWithoutExpression(positive) ? addDoubleQuotesToValue(positive) : positive);
+    }
+
     private static String wrapNegationWithMatchAll(String fq) {
         return fq != null && fq.startsWith(HYPHEN) ? "*:* " + fq : fq;
     }
@@ -445,14 +457,17 @@ public class TurSolrQueryBuilder {
                 .findByFieldExtsWithDetails(enabledFields);
         Optional.ofNullable(turSNFilterParams).ifPresent(filterQueryParameters -> {
             Optional.ofNullable(filterQueryParameters.getDefaultValues())
-                    .ifPresent(f -> f.forEach(fItem -> addEnabledFieldAsFacetItem(
+                    .ifPresent(f -> f.stream().filter(fItem -> !TurSNFilterExclusion.isExclusion(fItem))
+                            .forEach(fItem -> addEnabledFieldAsFacetItem(
                             TurSNSiteFacetFieldEnum.DEFAULT, fItem, enabledFields, customFacets,
                             facetMapForFilterQuery, turSNSite, turSNFilterParams)));
             Optional.ofNullable(filterQueryParameters.getAnd())
-                    .ifPresent(f -> f.forEach(fItem -> addEnabledFieldAsFacetItem(
+                    .ifPresent(f -> f.stream().filter(fItem -> !TurSNFilterExclusion.isExclusion(fItem))
+                            .forEach(fItem -> addEnabledFieldAsFacetItem(
                             TurSNSiteFacetFieldEnum.AND, fItem, enabledFields, customFacets,
                             facetMapForFilterQuery, turSNSite, turSNFilterParams)));
-            Optional.ofNullable(filterQueryParameters.getOr()).ifPresent(f -> f
+            Optional.ofNullable(filterQueryParameters.getOr()).ifPresent(f -> f.stream()
+                    .filter(fItem -> !TurSNFilterExclusion.isExclusion(fItem))
                     .forEach(fItem -> addEnabledFieldAsFacetItem(TurSNSiteFacetFieldEnum.OR, fItem,
                             enabledFields, customFacets, facetMapForFilterQuery, turSNSite,
                             turSNFilterParams)));

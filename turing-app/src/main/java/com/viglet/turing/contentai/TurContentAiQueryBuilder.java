@@ -413,6 +413,11 @@ public class TurContentAiQueryBuilder {
         if (StringUtils.isBlank(fq)) {
             return Optional.empty();
         }
+        // T1233 — Content AI has no exclusion filter: refuse rather than match nothing.
+        if (com.viglet.turing.sn.facet.TurSNFilterExclusion.isExclusion(fq)) {
+            throw new IllegalArgumentException("Content AI cannot exclude a value: '" + fq
+                    + "' is a negative filter query, which this source does not support");
+        }
         int colon = fq.indexOf(':');
         if (colon <= 0 || colon >= fq.length() - 1) {
             log.warn("Invalid Content AI filter '{}' — expected 'field:value'", fq);

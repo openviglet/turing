@@ -37,6 +37,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
+import com.viglet.turing.sn.facet.TurSNFilterExclusion;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -92,6 +93,25 @@ final class TurElasticsearchFilterQueries {
         if (params == null) {
             return Optional.empty();
         }
+        // T1233 — exclusions always narrow, apart from the facet groups.
+        List<Query> exclusions = TurSNFilterExclusion.in(params.getDefaultValues(), params.getAnd(),
+                params.getOr()).stream()
+                .map(exclusion -> valueQuery(exclusion.field(), fieldsByName.get(exclusion.field()),
+                        exclusion.value(), customFacet, now))
+                .toList();
+        Optional<Query> selections = selections(site, params, fieldsByName, customFacet, now);
+        if (exclusions.isEmpty()) {
+            return selections;
+        }
+        return Optional.of(Query.of(q -> q.bool(b -> {
+            selections.ifPresent(b::filter);
+            return b.mustNot(exclusions);
+        })));
+    }
+
+    private static Optional<Query> selections(TurSNSite site, TurSNFilterParams params,
+            Map<String, TurSNSiteFieldExt> fieldsByName,
+            BiFunction<String, String, Optional<TurLuceneCustomFacets.ItemFilter>> customFacet, Instant now) {
         TurSNSiteFacetFieldEnum defaultType = params.getOperator() == TurSNFilterQueryOperator.OR
                 ? TurSNSiteFacetFieldEnum.OR
                 : TurSNSiteFacetFieldEnum.AND;
@@ -133,6 +153,9 @@ final class TurElasticsearchFilterQueries {
             return;
         }
         for (String fq : filterQueries) {
+            if (TurSNFilterExclusion.isExclusion(fq)) {
+                continue;
+            }
             int colon = fq == null ? -1 : fq.indexOf(':');
             if (colon <= 0 || colon >= fq.length() - 1) {
                 continue;

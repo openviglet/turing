@@ -25,7 +25,5 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Block CO — SDK errors that carry Turing's own answer
 

@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
-- 📋 **T1233** (deps: —) **A negative filter query (fq[]=-field:value) excludes nothing on Lucene and Elasticsearch, and misgroups on Solr** — A client cannot say all but its own documents, so it pages the whole index to find another source's records. → §CLXXV.2
-
 ## Block CO — SDK errors that carry Turing's own answer
 
 - 📋 **T1234** (deps: —) **The JS SDK's TuringHttpError drops the response body, so a 429 quota-exhausted never shows its resetsAt or detail** — A client cannot tell visitors when AI answers come back, nor read any problem field Turing sends. → §CLXXVI.1

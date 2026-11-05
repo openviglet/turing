@@ -71,6 +71,7 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.plugins.se.lucene.TurLuceneSynonymAnalyzer;
 import com.viglet.turing.plugins.se.lucene.TurLuceneSynonymRegistry;
+import com.viglet.turing.sn.facet.TurSNFilterExclusion;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -212,12 +213,19 @@ public class TurLuceneQueryBuilder {
         collectFilterGroups(groups, filterParams.getDefaultValues(), defaultFacetType);
         collectFilterGroups(groups, filterParams.getAnd(), TurSNSiteFacetFieldEnum.AND);
         collectFilterGroups(groups, filterParams.getOr(), TurSNSiteFacetFieldEnum.OR);
+        Map<String, TurSNSiteFieldExt> fieldsByName = enabledFieldsByName(turSNSite);
+        Instant now = Instant.now();
+        // T1233 — an exclusion always narrows, whatever fqOr or fqItemOperator say.
+        TurSNFilterExclusion.in(filterParams.getDefaultValues(), filterParams.getAnd(), filterParams.getOr())
+                .forEach(exclusion -> {
+                    TurSNSiteFieldExt ext = fieldsByName.get(exclusion.field());
+                    builder.add(valueQuery(turSNSite, exclusion.field(), ext, exclusion.value(),
+                            ext != null ? ext.getType() : null, now), BooleanClause.Occur.MUST_NOT);
+                });
         if (groups.isEmpty()) {
             return;
         }
 
-        Map<String, TurSNSiteFieldExt> fieldsByName = enabledFieldsByName(turSNSite);
-        Instant now = Instant.now();
         List<Query> intersected = new ArrayList<>();
         List<Query> united = new ArrayList<>();
         groups.values().forEach(group -> {
@@ -270,7 +278,8 @@ public class TurLuceneQueryBuilder {
         if (filterQueries == null) {
             return;
         }
-        filterQueries.forEach(fq -> parseFieldValue(fq).ifPresent(fv -> groups
+        filterQueries.stream().filter(fq -> !TurSNFilterExclusion.isExclusion(fq))
+                .forEach(fq -> parseFieldValue(fq).ifPresent(fv -> groups
                 .computeIfAbsent(fv.field(), field -> new FilterGroup(field, facetType, new ArrayList<>()))
                 .values().add(fv.value())));
     }

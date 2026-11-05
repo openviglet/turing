@@ -1411,12 +1411,14 @@ class TurSolrQueryBuilderTest {
                                 contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
-                assertThat(query.getFilterQueries()).hasSize(1);
-                String fq = query.getFilterQueries()[0];
-                assertThat(fq)
+                // T1233 — the exclusion is a filter query of its own, so it always
+                // narrows and is never joined to a facet group.
+                assertThat(query.getFilterQueries()).containsExactlyInAnyOrder(
+                                "-id:\"/content/excluded-page\"",
+                                query.getFilterQueries()[1]);
+                assertThat(query.getFilterQueries()[1])
                                 .contains("temas-secundarios:\"Políticas Públicas\"")
-                                .contains("*:* -id:\"/content/excluded-page\"")
-                                .doesNotContain("(-id:");
+                                .doesNotContain("excluded-page");
         }
 
         // --- buildFilterQueryByOperator (via reflection) ---
