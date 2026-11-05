@@ -416,6 +416,81 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( 'seats', $facets[1]['defaultLabel'] );
 	}
 
+	/**
+	 * A date's periods are a set to choose (D307): an agenda's look forward from today, and a
+	 * field's own keep only bounds in Turing's date math, a label each.
+	 */
+	public function test_a_date_range_facet_takes_the_agenda_or_its_own_periods(): void {
+		$this->store(
+			array(
+				array(
+					'source'  => 'meta:inicio',
+					'field'   => 'event_start',
+					'type'    => 'DATE',
+					'range'   => true,
+					'periods' => 'agenda',
+				),
+				array(
+					'source'  => 'meta:prazo',
+					'field'   => 'deadline',
+					'type'    => 'DATE',
+					'range'   => true,
+					'periods' => 'custom',
+					'ranges'  => array(
+						array(
+							'label' => 'Closing soon',
+							'from'  => 'now/day',
+							'to'    => 'NOW/DAY+3DAYS',
+						),
+						array(
+							'label' => 'Bad bound',
+							'from'  => 'tomorrow',
+						),
+						array( 'from' => 'NOW' ),
+						array(
+							'label' => 'Open',
+							'from'  => '2026-12-01',
+						),
+					),
+				),
+				array(
+					'source'  => 'meta:seats',
+					'field'   => 'seats',
+					'type'    => 'INT',
+					'periods' => 'agenda',
+				),
+			)
+		);
+
+		$facets = $this->mapping()->manifest()['customFacets'];
+
+		$this->assertSame( array( 'Today', 'Next 7 days', 'This month', 'Upcoming', 'Past' ), array_column( $facets[0]['items'], 'label' ) );
+		$this->assertSame(
+			array(
+				'label'          => 'Next 7 days',
+				'rangeStartDate' => 'NOW/DAY',
+				'rangeEndDate'   => 'NOW/DAY+7DAYS',
+			),
+			$facets[0]['items'][1]
+		);
+		$this->assertSame(
+			array(
+				array(
+					'label'          => 'Closing soon',
+					'rangeStartDate' => 'NOW/DAY',
+					'rangeEndDate'   => 'NOW/DAY+3DAYS',
+				),
+				array(
+					'label'          => 'Open',
+					'rangeStartDate' => '2026-12-01',
+				),
+			),
+			$facets[1]['items']
+		);
+		$fields = $this->mapping()->all()['evento']['fields'];
+		$this->assertSame( 'past', $fields[2]['periods'], 'only a date has periods' );
+	}
+
 	public function test_without_a_range_the_manifest_declares_no_custom_facet(): void {
 		$this->store(
 			array(

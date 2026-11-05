@@ -285,7 +285,10 @@ class Viglet_Dumont_Mapping {
 
 		$items = array();
 		if ( 'DATE' === $field['type'] ) {
-			foreach ( self::date_ranges() as $range ) {
+			// The field's period set (D307): past dates, an agenda's, or its own.
+			$periods = $field['periods'] ?? 'past';
+			$set     = 'custom' === $periods ? $field['ranges'] : self::date_ranges( $periods );
+			foreach ( $set as $range ) {
 				$items[] = array_filter(
 					array(
 						'label'          => $range['label'],
@@ -326,9 +329,42 @@ class Viglet_Dumont_Mapping {
 	 * The periods a date's range facet offers, as Turing date math. They overlap on purpose:
 	 * a visitor narrows from "this year" to "last 7 days", not between disjoint slices.
 	 *
+	 * @param string $set `past` (publication dates, the default) or `agenda` (dates to come, D307).
 	 * @return array<int, array{label: string, from: ?string, to: ?string}>
 	 */
-	public static function date_ranges(): array {
+	public static function date_ranges( string $set = 'past' ): array {
+		if ( 'agenda' === $set ) {
+			// For dates still to come (D307), each from the start of today. Turing's date math
+			// rounds to a day, a month or a year but not to a week, so the week is the next 7 days.
+			return array(
+				array(
+					'label' => __( 'Today', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => 'NOW/DAY+1DAY',
+				),
+				array(
+					'label' => __( 'Next 7 days', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => 'NOW/DAY+7DAYS',
+				),
+				array(
+					'label' => __( 'This month', 'viglet-turing-search' ),
+					'from'  => 'NOW/MONTH',
+					'to'    => 'NOW/MONTH+1MONTH',
+				),
+				array(
+					'label' => __( 'Upcoming', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => null,
+				),
+				array(
+					'label' => __( 'Past', 'viglet-turing-search' ),
+					'from'  => null,
+					'to'    => 'NOW/DAY',
+				),
+			);
+		}//end if
+
 		return array(
 			array(
 				'label' => __( 'Upcoming', 'viglet-turing-search' ),
@@ -702,7 +738,15 @@ class Viglet_Dumont_Mapping {
 
 		$weight    = $field['weight'] ?? null;
 		$rangeable = in_array( $type, self::RANGE_TYPES, true );
-		$ranges    = $rangeable && 'DATE' !== $type ? self::sanitize_ranges( $field['ranges'] ?? array() ) : array();
+		// A date's periods (D307): `past` (the default), `agenda`, or `custom` with its own ranges.
+		$periods = 'DATE' === $type && in_array( $field['periods'] ?? '', array( 'agenda', 'custom' ), true ) ? (string) $field['periods'] : 'past';
+		if ( ! $rangeable ) {
+			$ranges = array();
+		} elseif ( 'DATE' === $type ) {
+			$ranges = 'custom' === $periods ? self::sanitize_date_ranges( $field['ranges'] ?? array() ) : array();
+		} else {
+			$ranges = self::sanitize_ranges( $field['ranges'] ?? array() );
+		}
 
 		return array(
 			'source'      => $source,
@@ -716,7 +760,45 @@ class Viglet_Dumont_Mapping {
 			'weight'      => is_numeric( $weight ) ? max( 1.0, min( 100.0, (float) $weight ) ) : null,
 			'range'       => $rangeable && ! empty( $field['range'] ),
 			'ranges'      => $ranges,
+			'periods'     => $periods,
 		);
+	}
+
+	/**
+	 * A date field's own periods (D307), validated: each bound is Turing date math (`NOW` or a
+	 * `yyyy-MM-dd` day, then `/DAY`-style rounding or `+7DAYS`-style steps) or open, a period
+	 * needs one bound and a label, and a label two share keeps the first. At most eight.
+	 *
+	 * @param mixed $ranges The periods as stored or filtered.
+	 * @return array<int, array{label: string, from: ?string, to: ?string}>
+	 */
+	private static function sanitize_date_ranges( $ranges ): array {
+		$math   = static function ( $bound ): ?string {
+			$bound = strtoupper( trim( (string) $bound ) );
+			return 1 === preg_match( '#^(NOW|\d{4}-\d{2}-\d{2})(/(YEAR|MONTH|DAY|HOUR)|[+-]\d+(YEAR|MONTH|DAY|HOUR)S?)*$#', $bound ) ? $bound : null;
+		};
+		$clean  = array();
+		$labels = array();
+		foreach ( is_array( $ranges ) ? $ranges : array() as $range ) {
+			$range = is_array( $range ) ? $range : array();
+			$from  = $math( $range['from'] ?? '' );
+			$to    = $math( $range['to'] ?? '' );
+			$label = sanitize_text_field( (string) ( $range['label'] ?? '' ) );
+			if ( ( null === $from && null === $to ) || '' === $label || isset( $labels[ $label ] ) ) {
+				continue;
+			}
+			$labels[ $label ] = true;
+			$clean[]          = array(
+				'label' => $label,
+				'from'  => $from,
+				'to'    => $to,
+			);
+			if ( count( $clean ) >= 8 ) {
+				break;
+			}
+		}
+
+		return $clean;
 	}
 
 	/**

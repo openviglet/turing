@@ -42,7 +42,7 @@ msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:421
+#: assets/admin/mapping.js:539
 #: assets/admin/tuning.js:273
 #: assets/admin/tuning.js:406
 msgid "Actions"
@@ -653,39 +653,39 @@ msgstr "%1$d de %2$d documentos indexados..."
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-dumont-mapping.php:379
+#: src/includes/class-viglet-dumont-mapping.php:415
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-dumont-mapping.php:389
+#: src/includes/class-viglet-dumont-mapping.php:425
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:457
+#: src/includes/class-viglet-dumont-mapping.php:493
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr "%1$s é %2$s no Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:486
+#: src/includes/class-viglet-dumont-mapping.php:522
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:502
+#: src/includes/class-viglet-dumont-mapping.php:538
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:510
+#: src/includes/class-viglet-dumont-mapping.php:546
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-dumont-mapping.php:515
+#: src/includes/class-viglet-dumont-mapping.php:551
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -900,7 +900,7 @@ msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:414
+#: assets/admin/mapping.js:532
 msgid "In Turing"
 msgstr "No Turing"
 
@@ -912,87 +912,87 @@ msgstr "Entra no próximo salvamento"
 msgid "Conflict"
 msgstr "Conflito"
 
-#: assets/admin/mapping.js:151
-#: assets/admin/mapping.js:393
+#: assets/admin/mapping.js:270
+#: assets/admin/mapping.js:511
 msgid "Source"
 msgstr "Origem"
 
-#: assets/admin/mapping.js:161
-#: assets/admin/mapping.js:396
+#: assets/admin/mapping.js:280
+#: assets/admin/mapping.js:514
 msgid "Turing field"
 msgstr "Campo no Turing"
 
 #: src/blocks/search/render.php:102
-#: assets/admin/mapping.js:170
-#: assets/admin/mapping.js:402
+#: assets/admin/mapping.js:289
+#: assets/admin/mapping.js:520
 msgid "Type"
 msgstr "Tipo"
 
-#: assets/admin/mapping.js:182
-#: assets/admin/mapping.js:405
+#: assets/admin/mapping.js:301
+#: assets/admin/mapping.js:523
 msgid "Multiple"
 msgstr "Múltiplo"
 
-#: assets/admin/mapping.js:199
-#: assets/admin/mapping.js:408
+#: assets/admin/mapping.js:318
+#: assets/admin/mapping.js:526
 msgid "Facet"
 msgstr "Faceta"
 
-#: assets/admin/mapping.js:226
+#: assets/admin/mapping.js:337
 msgid "Facet label"
 msgstr "Rótulo da faceta"
 
-#: assets/admin/mapping.js:241
+#: assets/admin/mapping.js:352
 msgid "Search weight"
 msgstr "Peso na busca"
 
-#: assets/admin/mapping.js:271
+#: assets/admin/mapping.js:382
 msgid "Remove field"
 msgstr "Remover campo"
 
-#: assets/admin/mapping.js:273
+#: assets/admin/mapping.js:384
 #: assets/admin/tuning.js:51
 msgid "Remove"
 msgstr "Remover"
 
-#: assets/admin/mapping.js:370
+#: assets/admin/mapping.js:488
 msgid "Leave this type out of search"
 msgstr "Deixar este tipo fora da busca"
 
-#: assets/admin/mapping.js:383
+#: assets/admin/mapping.js:501
 msgid "Only the standard fields are sent for this type."
 msgstr "Este tipo envia apenas os campos padrão."
 
 #: src/includes/class-viglet-dumont-compare.php:71
-#: assets/admin/mapping.js:411
+#: assets/admin/mapping.js:529
 msgid "Weight"
 msgstr "Peso"
 
-#: assets/admin/mapping.js:470
+#: assets/admin/mapping.js:588
 msgid "Add field"
 msgstr "Adicionar campo"
 
-#: assets/admin/mapping.js:473
+#: assets/admin/mapping.js:591
 msgid "Preview document"
 msgstr "Pré-visualizar documento"
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:486
+#: assets/admin/mapping.js:604
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr "O que \"%s\" envia, como está salvo (alterações não salvas não aparecem):"
 
-#: assets/admin/mapping.js:573
+#: assets/admin/mapping.js:691
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
 msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Turing; depois, rode uma reindexação para que os posts existentes os tenham."
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:587
+#: assets/admin/mapping.js:705
 #, js-format
 msgid "Turing did not say where the fields stand: %s"
 msgstr "O Turing não informou a situação dos campos: %s"
 
-#: assets/admin/mapping.js:631
+#: assets/admin/mapping.js:749
 msgid "Save and send to Turing"
 msgstr "Salvar e enviar ao Turing"
 
@@ -1883,48 +1883,49 @@ msgctxt "block description"
 msgid "The Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-dumont-mapping.php:334
+#: src/includes/class-viglet-dumont-mapping.php:356
+#: src/includes/class-viglet-dumont-mapping.php:370
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-dumont-mapping.php:339
+#: src/includes/class-viglet-dumont-mapping.php:375
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:344
+#: src/includes/class-viglet-dumont-mapping.php:380
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-dumont-mapping.php:349
+#: src/includes/class-viglet-dumont-mapping.php:385
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-dumont-mapping.php:354
+#: src/includes/class-viglet-dumont-mapping.php:390
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:772
+#: src/includes/class-viglet-dumont-mapping.php:854
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:776
+#: src/includes/class-viglet-dumont-mapping.php:858
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:780
+#: src/includes/class-viglet-dumont-mapping.php:862
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
 
 #: assets/admin/mapping.js:72
-#: assets/admin/mapping.js:206
+#: assets/admin/mapping.js:325
 msgid "Ranges"
 msgstr "Faixas"
 
@@ -1933,29 +1934,30 @@ msgid "Leave a bound empty for an open end, and a label empty to name the range 
 msgstr "Deixe um limite vazio para uma ponta aberta, e o rótulo vazio para nomear a faixa pelos seus limites."
 
 #: assets/admin/mapping.js:83
-#: assets/admin/mapping.js:230
+#: assets/admin/mapping.js:194
+#: assets/admin/mapping.js:341
 msgid "Label"
 msgstr "Rótulo"
 
 #: assets/admin/mapping.js:89
+#: assets/admin/mapping.js:202
 msgid "From"
 msgstr "De"
 
 #: assets/admin/mapping.js:98
+#: assets/admin/mapping.js:211
 msgid "To"
 msgstr "Até"
 
 #: assets/admin/mapping.js:112
+#: assets/admin/mapping.js:227
 msgid "Remove range"
 msgstr "Remover faixa"
 
 #: assets/admin/mapping.js:126
+#: assets/admin/mapping.js:242
 msgid "Add range"
 msgstr "Adicionar faixa"
-
-#: assets/admin/mapping.js:209
-msgid "Upcoming, last 7 and 30 days, this year, before."
-msgstr "Próximos, últimos 7 e 30 dias, este ano, antes."
 
 #: src/blocks/search/parts/suggested.php:23
 msgid "Filter by what you asked for:"
@@ -2504,7 +2506,7 @@ msgstr "Em relação ao período anterior"
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Turing como está."
 
-#: assets/admin/mapping.js:597
+#: assets/admin/mapping.js:715
 msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
 msgstr "Salvar também liga a IA generativa deste site no Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Turing."
 
@@ -2881,23 +2883,23 @@ msgstr "O agente de IA do site SN não tem modelo de embedding."
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
-#: assets/admin/mapping.js:188
+#: assets/admin/mapping.js:307
 msgid "Show on result cards"
 msgstr "Mostrar nos cards de resultado"
 
-#: assets/admin/mapping.js:311
+#: assets/admin/mapping.js:429
 msgid "Date shown on cards"
 msgstr "Data mostrada nos cards"
 
-#: assets/admin/mapping.js:315
+#: assets/admin/mapping.js:433
 msgid "Publication date"
 msgstr "Data de publicação"
 
-#: assets/admin/mapping.js:327
+#: assets/admin/mapping.js:445
 msgid "Image on cards"
 msgstr "Imagem nos cards"
 
-#: assets/admin/mapping.js:331
+#: assets/admin/mapping.js:449
 msgid "Featured image"
 msgstr "Imagem destacada"
 
@@ -2918,3 +2920,39 @@ msgstr "Em %s"
 #: src/blocks/search/parts/box.php:83
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
+
+#: src/includes/class-viglet-dumont-mapping.php:341
+msgid "Today"
+msgstr "Hoje"
+
+#: src/includes/class-viglet-dumont-mapping.php:346
+msgid "Next 7 days"
+msgstr "Próximos 7 dias"
+
+#: src/includes/class-viglet-dumont-mapping.php:351
+msgid "This month"
+msgstr "Este mês"
+
+#: src/includes/class-viglet-dumont-mapping.php:361
+msgid "Past"
+msgstr "Passados"
+
+#: assets/admin/mapping.js:154
+msgid "Periods"
+msgstr "Períodos"
+
+#: assets/admin/mapping.js:158
+msgid "Past: last 7 and 30 days, this year, before (and upcoming)"
+msgstr "Passado: últimos 7 e 30 dias, este ano, antes (e próximos)"
+
+#: assets/admin/mapping.js:165
+msgid "Agenda: today, next 7 days, this month, upcoming, past"
+msgstr "Agenda: hoje, próximos 7 dias, este mês, próximos, passados"
+
+#: assets/admin/mapping.js:172
+msgid "My own"
+msgstr "Os meus"
+
+#: assets/admin/mapping.js:181
+msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR and moved with +7DAYS, -1MONTH and so on. Leave one empty for an open end. Up to 8."
+msgstr "Cada limite é NOW ou um dia aaaa-mm-dd, arredondado com /DAY, /MONTH ou /YEAR e deslocado com +7DAYS, -1MONTH e assim por diante. Deixe um vazio para um extremo aberto. Até 8."

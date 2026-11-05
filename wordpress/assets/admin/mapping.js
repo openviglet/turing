@@ -129,6 +129,125 @@ function RangeRows( { ranges, onChange } ) {
 	);
 }
 
+/**
+ * A date's range facet periods (D307): the past (publication dates), an agenda's (dates to
+ * come), or its own, each bound written in Turing's date math.
+ *
+ * @param {Object}                                             props       The field and its setter.
+ * @param {Object}                                             props.field The mapped field.
+ * @param {(key: string) => (v: string|Object[]|null) => void} props.set   Sets one of its keys.
+ */
+function DatePeriods( { field, set } ) {
+	const periods = field.periods || 'past';
+	const ranges = field.ranges || [];
+	const setRange = ( index, key, value ) =>
+		set( 'ranges' )(
+			ranges.map( ( r, i ) =>
+				i === index ? { ...r, [ key ]: value } : r
+			)
+		);
+	return (
+		<fieldset>
+			<SelectControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				label={ __( 'Periods', 'viglet-turing-search' ) }
+				value={ periods }
+				options={ [
+					{
+						label: __(
+							'Past: last 7 and 30 days, this year, before (and upcoming)',
+							'viglet-turing-search'
+						),
+						value: 'past',
+					},
+					{
+						label: __(
+							'Agenda: today, next 7 days, this month, upcoming, past',
+							'viglet-turing-search'
+						),
+						value: 'agenda',
+					},
+					{
+						label: __( 'My own', 'viglet-turing-search' ),
+						value: 'custom',
+					},
+				] }
+				onChange={ set( 'periods' ) }
+			/>
+			{ 'custom' === periods && (
+				<>
+					<p className="description">
+						{ __(
+							'Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR and moved with +7DAYS, -1MONTH and so on. Leave one empty for an open end. Up to 8.',
+							'viglet-turing-search'
+						) }
+					</p>
+					{ ranges.map( ( range, index ) => (
+						<Flex
+							key={ index }
+							justify="flex-start"
+							align="flex-end"
+						>
+							<TextControl
+								__nextHasNoMarginBottom
+								label={ __( 'Label', 'viglet-turing-search' ) }
+								value={ range.label || '' }
+								onChange={ ( v ) =>
+									setRange( index, 'label', v )
+								}
+							/>
+							<TextControl
+								__nextHasNoMarginBottom
+								label={ __( 'From', 'viglet-turing-search' ) }
+								value={ range.from ?? '' }
+								placeholder="NOW/DAY"
+								onChange={ ( v ) =>
+									setRange( index, 'from', v || null )
+								}
+							/>
+							<TextControl
+								__nextHasNoMarginBottom
+								label={ __( 'To', 'viglet-turing-search' ) }
+								value={ range.to ?? '' }
+								placeholder="NOW/DAY+7DAYS"
+								onChange={ ( v ) =>
+									setRange( index, 'to', v || null )
+								}
+							/>
+							<Button
+								variant="tertiary"
+								isDestructive
+								onClick={ () =>
+									set( 'ranges' )(
+										ranges.filter( ( r, i ) => i !== index )
+									)
+								}
+							>
+								{ __( 'Remove range', 'viglet-turing-search' ) }
+							</Button>
+						</Flex>
+					) ) }
+					{ ranges.length < 8 && (
+						<Button
+							variant="secondary"
+							style={ { marginTop: 8 } }
+							onClick={ () =>
+								set( 'ranges' )( [
+									...ranges,
+									{ label: '', from: null, to: null },
+								] )
+							}
+						>
+							{ __( 'Add range', 'viglet-turing-search' ) }
+						</Button>
+					) }
+				</>
+			) }
+		</fieldset>
+	);
+}
+
 function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 	const set = ( key ) => ( value ) =>
 		onChange( { ...field, [ key ]: value } );
@@ -204,14 +323,6 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Ranges', 'viglet-turing-search' ) }
-							help={
-								'DATE' === field.type
-									? __(
-											'Upcoming, last 7 and 30 days, this year, before.',
-											'viglet-turing-search'
-										)
-									: undefined
-							}
 							checked={ !! field.range }
 							onChange={ set( 'range' ) }
 						/>
@@ -281,6 +392,13 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 							ranges={ field.ranges || [] }
 							onChange={ set( 'ranges' ) }
 						/>
+					</td>
+				</tr>
+			) }
+			{ field.range && 'DATE' === field.type && (
+				<tr>
+					<td colSpan={ 8 }>
+						<DatePeriods field={ field } set={ set } />
 					</td>
 				</tr>
 			) }
