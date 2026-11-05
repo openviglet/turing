@@ -23,17 +23,17 @@
 - 📋 **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — A site searching its own and sibling site keys gets zero results, and the only switches flip every facet to OR. → §CLXIX.1
 - 📋 **T1224** (deps: —) **A custom facet buckets one date field: an event spanning a start and an end date cannot fall in the periods it overlaps** — An exhibition running all month sits under Past once it has started, so an agenda's Next 7 days misses what is on. → §CLXIX.2
 
-## Block CM — People, themes and places extracted at import, as facets
+## Block CN — Autocomplete and suggestions
 
-- 📋 **T1225** (deps: —) **Nothing fills the turing_entity facets: who and what a document names is no facet, and name variants stay split** — No source can offer browsing by person or theme, though Turing already facets the fields. → §CLXX.1
+- 📋 **T1226** (deps: —) **Scoped autocomplete (fq or a partitioned key) answers document titles, not terms, and Lucene marks them up** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
 
-## Block CN — Autocomplete inside a filtered scope
+## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
 
-- 📋 **T1226** (deps: —) **Autocomplete with fq answers highlighted document titles instead of term completions, markup included** — A client cannot scope its suggestions without changing what a suggestion is, and raw <mark> tags reach plain-text lists. → §CLXXI.1
+- 📋 **T1228** (deps: —) **Nothing fills the turing_entity facets: people and places a document names outside any thesaurus are no facet** — No source can offer browsing by person or place it has no vocabulary for, though Turing already facets the fields. → §CLXXIII.1
 
-## Block CO — Structured feeds refresh when the publisher says so
+## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
-- 📋 **T1227** (deps: —) **A structured feed is re-ingested only on its hourly timer: no endpoint lets a publisher trigger a pull after a deploy** — The vectorless copilot answers from the previous feed for up to an hour after every catalog release, and operators cannot re-sync on demand. → §CLXXII.1
+- 📋 **T1229** (deps: —) **A structured feed is re-ingested only on its hourly timer: no endpoint lets a publisher trigger a pull after a deploy** — The vectorless copilot answers from the previous feed for up to an hour after every catalog release, and operators cannot re-sync on demand. → §CLXXIV.1
 
 ## Done when — T1184
 

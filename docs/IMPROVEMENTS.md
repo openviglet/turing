@@ -35,11 +35,11 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CM — People, themes and places extracted at import, as facets
+## Block CN — Autocomplete and suggestions
 
-## Block CN — Autocomplete inside a filtered scope
+## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
 
-## Block CO — Structured feeds refresh when the publisher says so
+## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 ## Table of contents
 
@@ -2280,30 +2280,29 @@ here of what already works.
 
 ### CLXIX.1 A manifest field's facet item type (D303) (T1223)
 
-**Where it came from.** Dumont D303 (the WordPress plugin, search across sibling site
-keys): several WordPress sites share one SN site (Dumont D148) and one of them searches
-its own key plus its siblings', so the read path sends
+**Where it came from.** Dumont D303 (the WordPress plugin): several WordPress sites
+share one SN site (Dumont D148) and one searches its own key plus its siblings', sending
 `fq[]=site_key:a&fq[]=site_key:b`.
 
 **What happens.** `TurLuceneQueryBuilder#addFilterQueries` (and the Solr builder)
-combine the values of one field by `fqItemOperator`, else the field's `facetItemType`,
-else the site's, which defaults to AND. So the two keys intersect and the search returns
-nothing. The two ways out both fail the consumer:
+combine one field's values by `fqItemOperator`, else the field's `facetItemType`, else
+the site's (default AND), so the keys intersect to nothing. The ways out fail:
 
-- `fqItemOperator=OR` is request-wide: it also turns a visitor's two picks in another facet
-  from AND into OR, and the JS SDK's GET search (`api.ts` line 98, the query-string builder)
-  serializes `fq[]` but drops `fqOperator`/`fqItemOperator`, though `SearchParams` types them.
-- The site-wide `facetItemType` changes every facet; the field's own `facetItemType` exists
-  (`TurSNSiteFieldExt`) but only the console sets it.
+- `fqItemOperator=OR` is request-wide (a visitor's two picks in another facet become OR),
+  and the JS SDK's GET search (`api.ts` line 98) drops `fqOperator`/`fqItemOperator`,
+  though `SearchParams` types them.
+- The site-wide `facetItemType` changes every facet; the field's own (`TurSNSiteFieldExt`)
+  is set only by the console. `fqOr[]` unions across fields, not values within one.
 
 **What Turing should do.**
-1. The manifest field spec (`VigletFieldSpec` -> `TurSNManifestMapper#toJobSpec` -> the field
-   ext) carries an optional `facetItemType` (`AND`/`OR`/`DEFAULT`), converged like `facetName`,
-   so `POST /api/sn/manifest` can declare `site_key` as OR. Absent keeps today's value.
-2. The JS SDK's GET search query string carries `fqOperator`, `fqItemOperator`, `fqAnd[]`,
-   `fqOr[]` when set (they are typed and silently dropped today).
+1. The manifest field spec carries an optional `facetItemType` (`AND`/`OR`/`DEFAULT`),
+   converged like `facetName`; absent keeps today's value. `VigletFieldSpec` lives in
+   viglet-core-manifest (its own repo): the field lands there first, then in the Java
+   SDK's `TurSNJobAttributeSpec` with the old constructor kept, as T1082 did `searchWeight`,
+   then `TurSNManifestMapper#toJobSpec` and the field ext.
+2. The JS SDK's GET search sends `fqOperator`, `fqItemOperator`, `fqAnd[]`, `fqOr[]` when set.
 
-**Workaround in Dumont.** None: D303 waits on this line for the sibling keys.
+**Workaround in Dumont.** None: D303 waits on this line.
 
 **Done when:** a manifest declaring `site_key` with `facetItemType: OR` makes
 `fq[]=site_key:a&fq[]=site_key:b` return both sites' documents while two values of
@@ -2334,90 +2333,100 @@ docs.
 
 **Done when:** a facet over `start`/`end` puts a span from five days ago to five days
 ahead under an item `NOW/DAY` to `NOW/DAY+7DAYS`, and a span that ended yesterday
-outside it.
+outside it. Overlap alone keeps a running span under an open-start item (Past), the
+reported complaint: such an item tests `endField < item end`, so Past means "ended".
 
 ## CLXX People, themes and places extracted at import, as facets
-
-### CLXX.1 Entities at import, with aliases (D310) (T1225)
-
-**Where it came from.** Dumont D310 (the WordPress plugin, for a client): visitors
-should explore a site by person and theme, across its WordPress sites and its DSpace
-repository in one SN site. People and themes sit in the text, not in fields, and the
-repository's author facet mixes "Bosso, Bruno" with "Antonio Prado".
-
-**What exists.** `TurSNFieldType.NER` is declared and `TurSolrQueryBuilder` facets
-`turing_entity_*` at query time, but nothing fills those fields: no import path extracts
-entities. Every source would need it alike (the WordPress plugin, Dumont's DSpace and
-OAI-PMH sources, every connector), so it belongs at Turing's import, not in each
-producer.
-
-**What Turing should do.**
-1. At import, for an SN site that turns it on, extract people, themes, institutions and
-   places from `title` and `text` with the site's LLM, into `turing_entity_person`,
-   `turing_entity_theme`, `turing_entity_org`, `turing_entity_place`. Each value is a span
-   the document holds (never a guess), checked against the text before it is kept.
-2. Resolve variants against a per-SN-site list of canonical names and their aliases
-   ("Bosso, Bruno" and "Bruno Bosso"), editable through the API and the console.
-3. Cache by content hash, one extraction per changed document, and say in the import log
-   when extraction was skipped (no LLM, budget).
-
-**Workaround in Dumont.** None: D310 waits on this line.
-
-**Done when:** a document naming a person and a theme is found under both facets, and an
-alias resolves to the canonical name, on Solr, Lucene and Elasticsearch.
 
 ## CLXXI Autocomplete inside a filtered scope
 
 ### CLXXI.1 Filtered autocomplete answers terms (D318) (T1226)
 
 **Where it came from.** Dumont D318 (the WordPress plugin): a search block scoped by
-fixed filters (`type:page`) or by its site key on a shared SN site should only suggest
-terms its scope holds, so it passes the scope to autocomplete: `GET
-/api/sn/{site}/ac?q=works&fq[]=site_key:localhost` (the SDK's
+fixed filters (`type:page`) or its site key on a shared SN site passes the scope to
+autocomplete: `GET /api/sn/{site}/ac?q=works&fq[]=site_key:localhost` (the SDK's
 `createAutoComplete().fetch(query, { fq })`).
 
-**What happens.** Without `fq`, `TurSNSiteAutoCompleteAPI` answers term completions
-(`["workshop"]`). With any `fq` it switches to `autoCompleteWithRegularSearch`, which
-answers whole document titles with the highlight markup in them:
-`["<mark>Workshop</mark> on search", "<mark>Workshop</mark> on facets", ...]`. The same
-query gets a different kind of answer, the markup reaches a plain-text list, and a
-client cannot scope its suggestions without changing what a suggestion is.
+**What happens.** Two causes, both wider than `fq`:
 
-**What Turing should do.** A filtered autocomplete answers the same shape as an
-unfiltered one: term completions, drawn only from documents matching the filters (for
-example the suggester's terms intersected with a filtered search, or a terms facet on
-the text field over the filtered set), never highlighted text. If titles are a wanted
-mode, make it an explicit parameter rather than a side effect of `fq`.
+1. **Shape.** Without filters `TurSNSiteAutoCompleteAPI` answers term completions
+   (`["workshop"]`). With any `fq`, and always for a key bound to a partition (T1133),
+   it takes `autoCompleteWithRegularSearch`, which answers whole document titles.
+2. **Markup.** That path sets `hlEnabled=false`, but only `TurSolrQueryBuilder` honours
+   it; `TurLuceneResultProcessor` highlights from the site's settings, so Lucene returns
+   `<mark>Workshop</mark> on search`. Every caller turning highlighting off meets this
+   (Elasticsearch has no highlighting).
+
+**What Turing should do.**
+1. Every engine honours `TurSNConfig.hlEnabled=false`, with a conformance test across Solr,
+   Lucene and Elasticsearch.
+2. A filtered or partitioned autocomplete answers the unfiltered shape: term completions
+   drawn only from documents matching the scope (the suggester's terms intersected with a
+   filtered search, or a terms facet on the text field over the filtered set). If titles
+   are a wanted mode, make it an explicit parameter.
 
 **Workaround in Dumont.** None: D318 waits on this line.
 
 **Done when:** `ac?q=works` and `ac?q=works&fq[]=type:post` both answer `["workshop"]`
-on a site whose posts hold it, and the filtered call omits terms only other types hold.
+on a site whose posts hold it, the filtered call omits terms only other types hold, a
+partitioned key gets terms too, and no suggestion carries markup on any engine.
 
 ## CLXXII Structured feeds refresh when the publisher says so
 
-### CLXXII.1 On-demand structured-feed ingest (T1227)
+## CLXXIII Knowledge Base: microthesauri & index-time term expansion (§XL)
 
-Seen from `openviglet/model-catalog`, the reference consumer of the structured-feed pull
-ingester (`TurStructuredFeedIngestService`). On 2026-11-05 its GitHub Actions workflow
-(`.github/workflows/publish.yml`) deployed a new `catalog.ndjson` to GitHub Pages at
-14:59 UTC (`last-modified: Thu, 05 Nov 2026 14:59:26 GMT`, 1,238 rows). Minutes later
-the `model-catalog` SN site on turing-demo.viglet.org still served the previous feed:
-`GET /api/sn/model-catalog/search?q=eleven_v3` returns `lastVerified: 2026-10-30`, and
-Claude Opus 5.5's new benchmark fields are absent, so the copilot answers from stale
-rows.
+### CLXXIII.1 Entities at import, beside the Thesaurus (D310) (T1228)
 
-The ingester has exactly two entry points: the `@Scheduled` fixed-delay sweep
+**Where it came from.** Dumont D310 (the WordPress plugin, for a client): visitors
+should explore by person and theme, across its WordPress sites and its DSpace repository
+in one SN site, and the repository's author facet mixes "Bosso, Bruno" with "Antonio
+Prado". Moved here from T1225: this block owns index-time recognition.
+
+**What exists.** Themes and known names already work: `TurSNMicrothesaurusIndexer`
+(T672) recognises a site's vocabulary terms at index time into a faceted field,
+resolving `USE`/`USED_FOR` variants to the preferred term, and T673 imports authority
+files the console edits. What nothing does is find people and places that are in no
+vocabulary: `TurSNFieldType.NER` is declared and `turing_entity_*` is faceted at query
+time, but no import path fills them. Every source needs it alike, so it belongs at
+Turing's import.
+
+**What Turing should do.**
+1. At import, for an SN site that opts in, extract people, organisations and places from
+   `title` and `text` with the site's LLM through tool calling (the non-goals rule out
+   structured JSON output), into `turing_entity_person`, `_org`, `_place`. Each value is
+   a span the document holds, checked against the text before it is kept.
+2. Resolve variants through the site's Thesaurus (`USED_FOR` to the preferred term), not
+   a second alias list; an unknown name can be offered as a candidate term.
+3. Cache by content hash; log skipped extractions.
+
+**Done when:** a document naming a person outside any vocabulary is found under the
+person facet, a Thesaurus variant resolves to its preferred name, on Solr, Lucene and
+Elasticsearch.
+
+## CLXXIV Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
+
+### CLXXIV.1 On-demand structured-feed ingest (T1229)
+
+Seen from `openviglet/model-catalog`, the reference consumer of the T791 pull ingester
+(`TurStructuredFeedIngestService`). Moved here from T1227: this block owns the ingester.
+On 2026-11-05 its GitHub Actions workflow deployed a new `catalog.ndjson` to GitHub
+Pages at 14:59 UTC (1,238 rows). Minutes later the `model-catalog` SN site on
+turing-demo.viglet.org still served the previous feed (`lastVerified: 2026-10-30`, the
+new benchmark fields absent), so the copilot answers from stale rows.
+
+The ingester has two entry points: the `@Scheduled` fixed-delay sweep
 (`turing.genai.structured-feed.interval-ms`, default one hour, counted from node start)
-and the one-off ingest inside startup provisioning. No REST endpoint, webhook or console
+and the one-off ingest in startup provisioning. No REST endpoint, webhook or console
 action runs `ingestSource` for one source on demand, so a publisher cannot say "the feed
-changed, pull it now", and an operator cannot re-sync after fixing a feed. Lowering the
-interval only trades staleness for load. No workaround was written: the consumer would
-add a post-deploy step calling such an endpoint.
+changed, pull it now", nor an operator re-sync after fixing a feed. Lowering the
+interval only trades staleness for load.
 
 What Turing should do: an authenticated endpoint, e.g. `POST
 /api/genai/structured-feed/{sourceId}/ingest`, that runs `ingestSource` for that
-configured source under the same ShedLock (a request while a sweep runs answers 409 or
-queues it), returns the `IngestResult` (records, imported, de-indexed, failure reason),
-and accepts an API key a CI job can hold. The console's SN site page could expose the
-same action with the last run's result. The scheduled sweep stays as the fallback.
+configured source under the same ShedLock (a request during a sweep answers 409),
+returns the `IngestResult`, and accepts an API key a CI job can hold. The console can
+expose the same action with the last run's result. The sweep stays as the fallback.
+
+Edge case to test: `lastSeenIds` is in memory per node, so a trigger served by a node
+that never ran the source de-indexes nothing; the result must say so rather than report
+zero removals as a clean sync.

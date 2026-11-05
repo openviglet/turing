@@ -1630,7 +1630,10 @@
 
 ## Block CM — People, themes and places extracted at import, as facets
 
-## Block CN — Autocomplete inside a filtered scope
+- 🗑 **T1225** — superseded by T1228: Moved to Block AQ and narrowed: the Thesaurus already resolves name variants and themes at index time, so only open-vocabulary entities remain.
+
+## Block CN — Autocomplete and suggestions
 
 ## Block CO — Structured feeds refresh when the publisher says so
 
+- 🗑 **T1227** — superseded by T1229: Moved to Block BF, the block that owns the structured-feed ingester; the design is unchanged.

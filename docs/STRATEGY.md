@@ -7,7 +7,9 @@
 
 ---
 
-## Block CO — Structured feeds refresh when the publisher says so
+## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
+
+## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
 ## VIII. Strategic moves — repositioning beyond features
 

@@ -21,9 +21,9 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CM — People, themes and places extracted at import, as facets
+## Block CN — Autocomplete and suggestions
 
-## Block CN — Autocomplete inside a filtered scope
+## Block AQ — Knowledge Base: microthesauri & index-time term expansion (§XL)
 
-## Block CO — Structured feeds refresh when the publisher says so
+## Block BF — Vectorless (Structured-Data) RAG: name it, feed it, integrate it (§LIV)
 
