@@ -238,9 +238,9 @@ class Viglet_Dumont_Mapping {
 	 * The types the SN site holds under this site key beyond this site's own (D327), each with
 	 * how many documents were seen and the fields they carry that a card could show: the ones
 	 * holding a date, and the ones holding text (an image's URL). Turing has no negative filter
-	 * (T1231) nor a facet on `type`, so the documents are read, a page of 100 at a time, until
-	 * every foreign one was seen or after the first 2000; one `-source_apps:` query replaces
-	 * the paging once T1231 ships.
+	 * (Turing T1233) nor a facet on `type`, so the documents are read, a page of 100 at a time,
+	 * until every foreign one was seen or after the first 2000; one `-source_apps:` query
+	 * replaces the paging once T1233 ships (D334).
 	 *
 	 * @param Viglet_Dumont_API_Client $client The client to search through.
 	 * @return array<int, array{type: string, count: int, dates: array<int, string>, texts: array<int, string>}>|WP_Error
