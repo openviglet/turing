@@ -43,6 +43,9 @@ abstract class PluginTestCase extends TestCase {
 				'home_url'                          => 'https://site.example.org',
 				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
 				'is_sticky'                         => false,
+				// D308: indexing schedules a post's leaving search; nothing is scheduled by default.
+				'wp_clear_scheduled_hook'           => 0,
+				'wp_timezone'                       => static fn () => new \DateTimeZone( 'UTC' ),
 			)
 		);
 		Functions\when( 'wp_remote_request' )->alias(

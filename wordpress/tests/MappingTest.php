@@ -238,6 +238,48 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( '', $all['post']['card_image'] );
 	}
 
+	/**
+	 * D308: a type's "Leaves search on" date takes a post out of search once it has passed,
+	 * a day-only date lasting to that day's end, and a post before it schedules its leaving.
+	 */
+	public function test_a_post_leaves_search_once_its_date_has_passed(): void {
+		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+			'evento' => array(
+				'fields'  => array(
+					array(
+						'source' => 'meta:prazo',
+						'field'  => 'deadline',
+						'type'   => 'DATE',
+					),
+				),
+				'expires' => 'deadline',
+			),
+		);
+		$this->post->post_status                        = 'publish';
+		$scheduled                                      = array();
+		Functions\when( 'wp_schedule_single_event' )->alias(
+			function ( $at, $hook, $args ) use ( &$scheduled ) {
+				$scheduled[] = array( $at, $hook, $args );
+				return true;
+			}
+		);
+		$indexer = new Viglet_Dumont_Indexer( $this->settings() );
+
+		$this->meta['prazo'] = gmdate( 'Y-m-d', time() - 86400 );
+		$this->assertSame( strtotime( 'today' ), $this->mapping()->expiry( $this->post ), 'yesterday lasts until today begins' );
+		$this->assertFalse( $indexer->should_index( $this->post ) );
+
+		$this->meta['prazo'] = gmdate( 'Y-m-d', time() + 3 * 86400 );
+		$indexer             = new Viglet_Dumont_Indexer( $this->settings() );
+		$this->assertTrue( $indexer->should_index( $this->post ), 'moved forward, it is back' );
+		$indexer->schedule_expiry( $this->post );
+		$this->assertSame( array( array( strtotime( 'today' ) + 4 * 86400, 'viglet_dumont_expire', array( 42 ) ) ), $scheduled );
+
+		// The filter has the last word, for rules no field can say.
+		Filters\expectApplied( 'viglet_dumont_should_index' )->once()->andReturn( false );
+		$this->assertFalse( $indexer->should_index( $this->post ) );
+	}
+
 	public function test_with_nothing_stored_a_public_custom_taxonomy_is_a_facet(): void {
 		Functions\when( 'get_object_taxonomies' )->justReturn(
 			array(

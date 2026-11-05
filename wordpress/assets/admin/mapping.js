@@ -459,6 +459,24 @@ function CardAppearance( { value, fields, onChange } ) {
 					onChange( { ...value, card_image: cardImage } )
 				}
 			/>
+			<SelectControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				label={ __( 'Leaves search on', 'viglet-turing-search' ) }
+				help={ __(
+					'A post leaves search once this date has passed, and comes back if it moves forward.',
+					'viglet-turing-search'
+				) }
+				value={ value.expires || '' }
+				options={ [
+					{
+						label: __( 'Never', 'viglet-turing-search' ),
+						value: '',
+					},
+					...named( fields.filter( ( f ) => 'DATE' === f.type ) ),
+				] }
+				onChange={ ( expires ) => onChange( { ...value, expires } ) }
+			/>
 		</Flex>
 	);
 }

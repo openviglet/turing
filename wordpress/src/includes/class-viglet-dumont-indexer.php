@@ -73,6 +73,21 @@ class Viglet_Dumont_Indexer {
 	 * @param WP_Post $post The candidate post.
 	 */
 	public function should_index( WP_Post $post ): bool {
+		/**
+		 * Filters whether a post is in search, for the rules a mapped field cannot express.
+		 *
+		 * @param bool    $index Whether the plugin would index it.
+		 * @param WP_Post $post  The post.
+		 */
+		return (bool) apply_filters( 'viglet_dumont_should_index', $this->indexable( $post ), $post );
+	}
+
+	/**
+	 * Whether a post is in search by the settings, the mapping and its own date (D308).
+	 *
+	 * @param WP_Post $post The candidate post.
+	 */
+	private function indexable( WP_Post $post ): bool {
 		if ( 'publish' !== $post->post_status ) {
 			return false;
 		}
@@ -95,7 +110,47 @@ class Viglet_Dumont_Indexer {
 			return false;
 		}
 
+		// A post past its type's "Leaves search on" date is out (D308).
+		$expiry = $this->mapping->expiry( $post );
+		if ( null !== $expiry && $expiry <= time() ) {
+			return false;
+		}
+
 		return ! get_post_meta( $post->ID, Viglet_Dumont_Mapping::EXCLUDE_META, true );
+	}
+
+	/**
+	 * The hook that takes a post out of search when its date passes (D308).
+	 */
+	public const EXPIRE_HOOK = 'viglet_dumont_expire';
+
+	/**
+	 * Schedule a post's leaving search for the moment its date passes, replacing whatever was
+	 * scheduled for it before; a post with no date, or one already past, gets none.
+	 *
+	 * @param WP_Post $post The post being indexed.
+	 */
+	public function schedule_expiry( WP_Post $post ): void {
+		wp_clear_scheduled_hook( self::EXPIRE_HOOK, array( $post->ID ) );
+		$expiry = $this->mapping->expiry( $post );
+		if ( null !== $expiry && $expiry > time() ) {
+			wp_schedule_single_event( $expiry, self::EXPIRE_HOOK, array( $post->ID ) );
+		}
+	}
+
+	/**
+	 * The scheduled moment: take the post out of search when it no longer belongs there. A
+	 * post whose date moved forward meanwhile stays, and its new moment is scheduled.
+	 *
+	 * @param int $post_id The post.
+	 */
+	public function expire( int $post_id ): void {
+		$post = get_post( $post_id );
+		if ( ! $post instanceof WP_Post || ! $this->should_index( $post ) ) {
+			$this->deindex_post( $post_id );
+			return;
+		}
+		$this->schedule_expiry( $post );
 	}
 
 	/**
@@ -122,6 +177,9 @@ class Viglet_Dumont_Indexer {
 	 * @param WP_Post $post The post to index.
 	 */
 	public function build_create_item( WP_Post $post ): array {
+		// Every path that indexes a post comes through here, so each one schedules its leaving.
+		$this->schedule_expiry( $post );
+
 		return $this->client->build_create_item( $this->build_attributes( $post ) );
 	}
 

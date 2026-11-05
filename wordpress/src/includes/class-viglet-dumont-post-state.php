@@ -62,9 +62,19 @@ class Viglet_Dumont_Post_State {
 		if ( 'publish' !== $post->post_status ) {
 			return $this->state( 'unpublished', __( 'Not published', 'viglet-turing-search' ) );
 		}
+		// D308: a post past its type's "Leaves search on" date says so, and one before it says when.
+		$expiry = ( new Viglet_Dumont_Mapping( $this->settings ) )->expiry( $post );
+		if ( null !== $expiry && $expiry <= time() ) {
+			return $this->state( 'expired', __( 'Out of search: the date has passed', 'viglet-turing-search' ) );
+		}
 		if ( ! $indexer->should_index( $post ) ) {
 			return $this->state( 'excluded', __( 'Excluded', 'viglet-turing-search' ) );
 		}
+		$leaves = null === $expiry ? '' : sprintf(
+			/* translators: %s: the date the post leaves search. */
+			__( 'Leaves search on %s', 'viglet-turing-search' ),
+			wp_date( get_option( 'date_format' ), $expiry - 1 )
+		);
 
 		$job = ( new Viglet_Dumont_Queue( $this->settings ) )->jobs()[ $post->ID ] ?? null;
 		if ( is_array( $job ) ) {
@@ -83,11 +93,12 @@ class Viglet_Dumont_Post_State {
 			return $this->state(
 				'indexed',
 				/* translators: %s: how long ago, e.g. "2 mins". */
-				sprintf( __( 'Indexed %s ago', 'viglet-turing-search' ), human_time_diff( (int) $recorded['indexed_at'] ) )
+				sprintf( __( 'Indexed %s ago', 'viglet-turing-search' ), human_time_diff( (int) $recorded['indexed_at'] ) ),
+				$leaves
 			);
 		}
 
-		return $this->state( 'not_indexed', __( 'Not indexed yet', 'viglet-turing-search' ) );
+		return $this->state( 'not_indexed', __( 'Not indexed yet', 'viglet-turing-search' ), $leaves );
 	}
 
 	/**

@@ -171,6 +171,14 @@ function viglet_dumont_init(): void {
 	// A product whose stock changed from an order, which saves no post (D173).
 	Viglet_Dumont_WooCommerce::register();
 
+	// A post leaves search when its type's "Leaves search on" date passes (D308).
+	add_action(
+		Viglet_Dumont_Indexer::EXPIRE_HOOK,
+		static function ( $post_id ) use ( $settings ) {
+			( new Viglet_Dumont_Indexer( $settings ) )->expire( (int) $post_id );
+		}
+	);
+
 	// Where each post stands: the Search column in the post lists and the editor panel.
 	( new Viglet_Dumont_Post_State( $settings ) )->register();
 
@@ -255,8 +263,13 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
 	$queue    = new Viglet_Dumont_Queue( $settings );
 
 	if ( 'publish' === $post->post_status ) {
-		if ( $settings['auto_index'] && $indexer->should_index( $post ) ) {
-			$queue->enqueue( $post_id, 'index' );
+		if ( $indexer->should_index( $post ) ) {
+			if ( $settings['auto_index'] ) {
+				$queue->enqueue( $post_id, 'index' );
+			}
+		} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+			// Published but out of search now (its date passed, D308, or it was excluded).
+			$queue->enqueue( $post_id, 'delete' );
 		}
 	} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
 		$queue->enqueue( $post_id, 'delete' );

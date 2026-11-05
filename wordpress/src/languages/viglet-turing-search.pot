@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T10:12:38+00:00\n"
+"POT-Creation-Date: 2026-11-05T10:18:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -36,7 +36,7 @@ msgstr ""
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
 #: src/includes/class-viglet-dumont-native-search.php:232
-#: src/includes/class-viglet-dumont-post-state.php:99
+#: src/includes/class-viglet-dumont-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
 #: src/admin/js/editor-panel.js:293
@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:539
+#: assets/admin/mapping.js:557
 #: assets/admin/tuning.js:273
 #: assets/admin/tuning.js:406
 msgid "Actions"
@@ -831,7 +831,7 @@ msgstr ""
 
 #: src/blocks/search/render.php:102
 #: assets/admin/mapping.js:289
-#: assets/admin/mapping.js:520
+#: assets/admin/mapping.js:538
 msgid "Type"
 msgstr ""
 
@@ -1184,7 +1184,7 @@ msgid "Availability"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-compare.php:71
-#: assets/admin/mapping.js:529
+#: assets/admin/mapping.js:547
 msgid "Weight"
 msgstr ""
 
@@ -1346,13 +1346,13 @@ msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:217
+#: src/includes/class-viglet-dumont-indexer.php:275
 #, php-format
 msgid "Indexing complete. %d documents indexed."
 msgstr ""
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:219
+#: src/includes/class-viglet-dumont-indexer.php:277
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
@@ -1383,99 +1383,99 @@ msgstr ""
 msgid "All search insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:195
+#: src/includes/class-viglet-dumont-mapping.php:221
 msgid "Site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:341
+#: src/includes/class-viglet-dumont-mapping.php:367
 msgid "Today"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:346
+#: src/includes/class-viglet-dumont-mapping.php:372
 msgid "Next 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:351
+#: src/includes/class-viglet-dumont-mapping.php:377
 msgid "This month"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:356
-#: src/includes/class-viglet-dumont-mapping.php:370
+#: src/includes/class-viglet-dumont-mapping.php:382
+#: src/includes/class-viglet-dumont-mapping.php:396
 msgid "Upcoming"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:361
+#: src/includes/class-viglet-dumont-mapping.php:387
 msgid "Past"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:375
+#: src/includes/class-viglet-dumont-mapping.php:401
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:380
+#: src/includes/class-viglet-dumont-mapping.php:406
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:385
+#: src/includes/class-viglet-dumont-mapping.php:411
 msgid "This year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:390
+#: src/includes/class-viglet-dumont-mapping.php:416
 msgid "Before this year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:415
+#: src/includes/class-viglet-dumont-mapping.php:441
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:425
+#: src/includes/class-viglet-dumont-mapping.php:451
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:493
+#: src/includes/class-viglet-dumont-mapping.php:519
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:522
+#: src/includes/class-viglet-dumont-mapping.php:548
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:538
+#: src/includes/class-viglet-dumont-mapping.php:564
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:546
+#: src/includes/class-viglet-dumont-mapping.php:572
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:551
+#: src/includes/class-viglet-dumont-mapping.php:577
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:854
+#: src/includes/class-viglet-dumont-mapping.php:882
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:858
+#: src/includes/class-viglet-dumont-mapping.php:886
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:862
+#: src/includes/class-viglet-dumont-mapping.php:890
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""
@@ -1516,63 +1516,73 @@ msgstr ""
 msgid "Not published"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:66
+#: src/includes/class-viglet-dumont-post-state.php:68
+msgid "Out of search: the date has passed"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:71
 msgid "Excluded"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:72
-#: src/includes/class-viglet-dumont-post-state.php:80
+#. translators: %s: the date the post leaves search.
+#: src/includes/class-viglet-dumont-post-state.php:75
+#, php-format
+msgid "Leaves search on %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:82
+#: src/includes/class-viglet-dumont-post-state.php:90
 #: assets/admin/health.js:414
 #: src/admin/js/editor-panel.js:284
 msgid "Failed"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:74
+#: src/includes/class-viglet-dumont-post-state.php:84
 msgid "Queued"
 msgstr ""
 
 #. translators: %s: how long ago, e.g. "2 mins".
-#: src/includes/class-viglet-dumont-post-state.php:86
+#: src/includes/class-viglet-dumont-post-state.php:96
 #, php-format
 msgid "Indexed %s ago"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:90
+#: src/includes/class-viglet-dumont-post-state.php:101
 msgid "Not indexed yet"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:249
+#: src/includes/class-viglet-dumont-post-state.php:260
 msgid "Save some text first: the fit is judged on the saved post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:291
+#: src/includes/class-viglet-dumont-post-state.php:302
 msgid "Too complex"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:292
+#: src/includes/class-viglet-dumont-post-state.php:303
 msgid "Jargon"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:293
+#: src/includes/class-viglet-dumont-post-state.php:304
 msgid "Tone"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:294
+#: src/includes/class-viglet-dumont-post-state.php:305
 msgid "Missing context"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:308
-#: src/includes/class-viglet-dumont-post-state.php:370
-#: src/includes/class-viglet-dumont-post-state.php:439
-#: src/includes/class-viglet-dumont-post-state.php:453
+#: src/includes/class-viglet-dumont-post-state.php:319
+#: src/includes/class-viglet-dumont-post-state.php:381
+#: src/includes/class-viglet-dumont-post-state.php:450
+#: src/includes/class-viglet-dumont-post-state.php:464
 msgid "No such post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:328
+#: src/includes/class-viglet-dumont-post-state.php:339
 msgid "Save some text first: the draft is written from the saved post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:352
+#: src/includes/class-viglet-dumont-post-state.php:363
 msgid "Turing wrote no draft."
 msgstr ""
 
@@ -1702,11 +1712,11 @@ msgstr ""
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:860
+#: src/viglet-dumont.php:873
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:885
+#: src/viglet-dumont.php:898
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -1998,7 +2008,7 @@ msgid "Every search that found results led to a click."
 msgstr ""
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:532
+#: assets/admin/mapping.js:550
 msgid "In Turing"
 msgstr ""
 
@@ -2066,17 +2076,17 @@ msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR
 msgstr ""
 
 #: assets/admin/mapping.js:270
-#: assets/admin/mapping.js:511
+#: assets/admin/mapping.js:529
 msgid "Source"
 msgstr ""
 
 #: assets/admin/mapping.js:280
-#: assets/admin/mapping.js:514
+#: assets/admin/mapping.js:532
 msgid "Turing field"
 msgstr ""
 
 #: assets/admin/mapping.js:301
-#: assets/admin/mapping.js:523
+#: assets/admin/mapping.js:541
 msgid "Multiple"
 msgstr ""
 
@@ -2085,7 +2095,7 @@ msgid "Show on result cards"
 msgstr ""
 
 #: assets/admin/mapping.js:318
-#: assets/admin/mapping.js:526
+#: assets/admin/mapping.js:544
 msgid "Facet"
 msgstr ""
 
@@ -2122,43 +2132,55 @@ msgstr ""
 msgid "Featured image"
 msgstr ""
 
-#: assets/admin/mapping.js:488
+#: assets/admin/mapping.js:465
+msgid "Leaves search on"
+msgstr ""
+
+#: assets/admin/mapping.js:466
+msgid "A post leaves search once this date has passed, and comes back if it moves forward."
+msgstr ""
+
+#: assets/admin/mapping.js:473
+msgid "Never"
+msgstr ""
+
+#: assets/admin/mapping.js:506
 msgid "Leave this type out of search"
 msgstr ""
 
-#: assets/admin/mapping.js:501
+#: assets/admin/mapping.js:519
 msgid "Only the standard fields are sent for this type."
 msgstr ""
 
-#: assets/admin/mapping.js:588
+#: assets/admin/mapping.js:606
 msgid "Add field"
 msgstr ""
 
-#: assets/admin/mapping.js:591
+#: assets/admin/mapping.js:609
 msgid "Preview document"
 msgstr ""
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:604
+#: assets/admin/mapping.js:622
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr ""
 
-#: assets/admin/mapping.js:691
+#: assets/admin/mapping.js:709
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
 msgstr ""
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:705
+#: assets/admin/mapping.js:723
 #, js-format
 msgid "Turing did not say where the fields stand: %s"
 msgstr ""
 
-#: assets/admin/mapping.js:715
+#: assets/admin/mapping.js:733
 msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
 msgstr ""
 
-#: assets/admin/mapping.js:749
+#: assets/admin/mapping.js:767
 msgid "Save and send to Turing"
 msgstr ""
 

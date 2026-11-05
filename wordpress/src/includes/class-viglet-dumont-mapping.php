@@ -86,7 +86,7 @@ class Viglet_Dumont_Mapping {
 	/**
 	 * The mapping of every indexed post type, after the `viglet_dumont_mapping` filter.
 	 *
-	 * @return array<string, array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}>
+	 * @return array<string, array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}>
 	 */
 	public function all(): array {
 		if ( null !== $this->resolved ) {
@@ -132,6 +132,32 @@ class Viglet_Dumont_Mapping {
 		$this->resolved = null;
 
 		return $clean;
+	}
+
+	/**
+	 * When a post leaves search (D308): the moment its type's "Leaves search on" DATE field
+	 * says, or null when the type sets none or the post carries no such date.
+	 *
+	 * @param WP_Post $post The post.
+	 */
+	public function expiry( WP_Post $post ): ?int {
+		$field = $this->all()[ $post->post_type ]['expires'] ?? '';
+		if ( '' === $field ) {
+			return null;
+		}
+		$value = $this->values( $post )[ $field ] ?? null;
+		$value = is_array( $value ) ? reset( $value ) : $value;
+		$at    = is_string( $value ) ? strtotime( $value ) : false;
+		if ( false === $at ) {
+			return null;
+		}
+		// A day with no time of day ("the last day to apply") lasts to the end of that day where
+		// the site is, not to its first minute in UTC.
+		if ( 0 === $at % 86400 ) {
+			return ( new DateTimeImmutable( gmdate( 'Y-m-d', $at ), wp_timezone() ) )->modify( '+1 day' )->getTimestamp();
+		}
+
+		return $at;
 	}
 
 	/**
@@ -561,7 +587,7 @@ class Viglet_Dumont_Mapping {
 	 * The mapping a post type gets when nothing is stored: its public custom taxonomies.
 	 *
 	 * @param string $post_type The post type.
-	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}
 	 */
 	private function default_for( string $post_type ): array {
 		$fields = array();
@@ -680,7 +706,7 @@ class Viglet_Dumont_Mapping {
 	 * One post type's mapping with every field validated; an invalid field is dropped.
 	 *
 	 * @param mixed $type_mapping The post type's mapping as stored or filtered.
-	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}
 	 */
 	private static function sanitize_type( $type_mapping ): array {
 		$type_mapping = is_array( $type_mapping ) ? $type_mapping : array();
@@ -709,6 +735,8 @@ class Viglet_Dumont_Mapping {
 			'fields'     => $fields,
 			'card_date'  => $pick( 'card_date', $typed( array( 'DATE' ) ) ),
 			'card_image' => $pick( 'card_image', $typed( array( 'STRING', 'TEXT' ) ) ),
+			// The DATE field after which a post leaves search (D308), or '' for never.
+			'expires'    => $pick( 'expires', $typed( array( 'DATE' ) ) ),
 		);
 	}
 
