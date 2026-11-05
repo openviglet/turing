@@ -1651,5 +1651,7 @@
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
+- 🗑 **T1236** — abandoned: Not reproducible against the code: T1213 confines every copilot and kit read and the hybrid pass, and no release carries it yet; re-file with the image digest and the stage if a current build leaks.
+
 ## Block CQ — The model catalog at models.viglet.org
 

@@ -24,8 +24,7 @@
 
 ## Block CP — Every endpoint honours a request's filters and partition
 
-- 📋 **T1235** (deps: —) **Similar documents ignore the filter operators: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
-- 📋 **T1236** (deps: —) **The copilot and the kit cite and stage another site's documents despite filters naming one site_key** — A site on a shared SN site shows its visitors a sibling's content, and partition-bound keys read across too. → §CLXXVII.2
+- 📋 **T1235** (deps: —) **Similar documents and duplicates ignore fqi.op: two values of one field return nothing** — A client cannot ask for Related across sibling sites, so it pages the unfiltered neighbours and loses some. → §CLXXVII.1
 
 ## Block CQ — The model catalog at models.viglet.org
 
