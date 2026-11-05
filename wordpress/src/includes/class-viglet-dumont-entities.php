@@ -358,7 +358,8 @@ class Viglet_Dumont_Entities {
 	 * preferred name in the entity facets: a thesaurus and a microthesaurus (in the site's
 	 * language) of the plugin's own, created when missing, one term per name with its variants
 	 * as surface forms, and the microthesaurus selected for the SN site. Terms are added, changed
-	 * and removed to match the list; an empty list leaves no term and drops the selection.
+	 * and removed to match the list; an empty list drops the selection and the plugin's
+	 * thesaurus with it.
 	 *
 	 * A key bound to a partition of a shared SN site cannot write the Thesaurus (Turing answers
 	 * 403): the message says so.
@@ -423,11 +424,42 @@ class Viglet_Dumont_Entities {
 		if ( is_wp_error( $selected ) ) {
 			return self::failed( $selected );
 		}
+		// No names left: the plugin's thesaurus goes too, rather than staying in Turing's
+		// console as an empty tree nobody made there.
+		if ( array() === $variants ) {
+			$gone = $this->drop_thesaurus( $client );
+			if ( is_wp_error( $gone ) ) {
+				return self::failed( $gone );
+			}
+		}
 
 		return array(
 			'success' => true,
 			'message' => '',
 		);
+	}
+
+	/**
+	 * Delete the plugin's own thesaurus, found by its name, with what it holds.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client.
+	 * @return true|WP_Error
+	 */
+	private function drop_thesaurus( Viglet_Dumont_API_Client $client ) {
+		$all = $client->call( 'GET', '/api/kb' );
+		if ( is_wp_error( $all ) ) {
+			return $all;
+		}
+		foreach ( $all as $thesaurus ) {
+			if ( is_array( $thesaurus ) && (string) ( $thesaurus['name'] ?? '' ) === $this->thesaurus_name() ) {
+				$deleted = $client->call( 'DELETE', '/api/kb/' . rawurlencode( (string) $thesaurus['id'] ) );
+				if ( is_wp_error( $deleted ) ) {
+					return $deleted;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**

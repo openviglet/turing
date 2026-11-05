@@ -249,6 +249,31 @@ final class EntitiesTest extends PluginTestCase {
 		);
 	}
 
+	public function test_an_emptied_list_removes_the_plugin_s_thesaurus_from_turing(): void {
+		// No empty tree is left in Turing's console for a list the editor cleared.
+		$this->bodies = array(
+			'GET /api/sn'                                => '[{"id":"sn-1","name":"Sample Site"}]',
+			'GET /api/kb'                                => '[{"id":"kb-other","name":"Education"},{"id":"kb-1","name":"WordPress name variants: site-a"}]',
+			'GET /api/kb/kb-1/microthesaurus'            => '[{"id":"mt-1","domain":"NAMES","language":"pt-BR"}]',
+			'GET /api/kb/microthesaurus/mt-1/term'       => '[{"id":"t-1","label":"Marta Vilar","variations":[]}]',
+			'DELETE /api/kb/microthesaurus/mt-1/term/.+' => 'true',
+			'GET /api/sn/sn-1/microthesaurus'            => '[{"id":"sel-1","microthesaurusId":"mt-1","enabled":true}]',
+			'DELETE /api/sn/sn-1/microthesaurus/sel-1'   => 'true',
+			'DELETE /api/kb/kb-1'                        => 'true',
+		);
+
+		$result = ( new Viglet_Dumont_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Dumont_API_Client( $this->with( 1, 1 ) ), array() );
+
+		$this->assertTrue( $result['success'], $result['message'] );
+		$deleted = array_map(
+			static fn ( $r ) => (string) parse_url( $r[0], PHP_URL_PATH ),
+			array_values( array_filter( $this->requests, static fn ( $r ) => 'DELETE' === $r[1]['method'] ) )
+		);
+		$this->assertContains( '/api/sn/sn-1/microthesaurus/sel-1', $deleted );
+		$this->assertContains( '/api/kb/kb-1', $deleted );
+		$this->assertNotContains( '/api/kb/kb-other', $deleted, 'a thesaurus the plugin did not make stays' );
+	}
+
 	public function test_a_partitioned_key_is_named_as_why_the_variants_were_not_written(): void {
 		$this->bodies = array( 'GET /api/sn' => '[{"id":"sn-1","name":"Sample Site"}]' );
 		Functions\when( 'wp_remote_request' )->alias(
