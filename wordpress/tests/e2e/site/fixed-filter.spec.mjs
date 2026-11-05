@@ -124,3 +124,28 @@ test( 'its script searches only pages, and shows the scope as no chip', async ( 
 	);
 	expect( new URL( page.url() ).searchParams.getAll( 'fq[]' ) ).toEqual( [] );
 } );
+
+test( 'its suggestions stay inside the scope: a term only posts hold is never offered', async ( {
+	page,
+} ) => {
+	// D318: the autocomplete is asked with the block's scope (Turing T1226 answers terms).
+	const asked = [];
+	page.on( 'request', ( request ) => {
+		if ( /\/ac\?/.test( request.url() ) ) {
+			asked.push( decodeURIComponent( request.url() ) );
+		}
+	} );
+	await page.goto( `/?page_id=${ pageId }` );
+	await page
+		.locator( '.viglet-dumont-search input[type="search"]' )
+		.pressSequentially( 'work', { delay: 50 } );
+
+	await expect.poll( () => asked.length ).toBeGreaterThan( 0 );
+	expect( asked.at( -1 ) ).toContain( 'fq[]=type:page' );
+	// Every seeded workshop is a post, so inside type:page there is nothing to suggest.
+	await expect(
+		page
+			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+			.filter( { hasText: 'workshop' } )
+	).toHaveCount( 0 );
+} );

@@ -385,7 +385,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 			state.suggested = [];
 			window.clearTimeout( instant );
 			if ( state.query.trim().length > 1 ) {
-				autocomplete.fetch( state.query );
+				// Suggestions stay inside the block's scope (D318): the site keys it searches
+				// and its fixed filters, so a box scoped to events never offers a term only
+				// posts hold. Turing answers a scoped autocomplete with terms (T1226).
+				autocomplete.fetch( state.query, { fq: blockScope() } );
 				// Results follow the typing once it pauses; the SDK drops any answer a
 				// newer search has overtaken.
 				instant = window.setTimeout(
