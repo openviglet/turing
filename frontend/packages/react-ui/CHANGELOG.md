@@ -1,5 +1,11 @@
 # @viglet/turing-react-ui
 
+## 2026.3.9
+
+- Load in plain Node, not only through a bundler (T1214): relative imports in the emitted JavaScript and type declarations now carry their `.js` extension, and `@viglet/turing-react-sdk` declares `"type": "module"`. A Node script, a test runner in plain Node mode or server rendering that keeps `node_modules` external can now `import` these packages, and a `moduleResolution: "NodeNext"` consumer gets the real types of `@viglet/turing-sdk` instead of `any`.
+
+- The `@viglet/turing-react-ui` root no longer needs the optional `react-markdown` peer (T1215): a project with only `react` and `react-dom` can import it. `TuringMarkdown` is no longer exported from the root; import it from `@viglet/turing-react-ui/TuringMarkdown` (or from `@viglet/turing-react-sdk`, which still re-exports it). `resolveSandboxUrl` and the `TuringMarkdownProps` type stay on the root.
+
 ## 2026.3.8
 
 - a11y + SSR hardening pass (T304): the `TuringHtmlSandbox` fullscreen portal is now a labelled modal dialog (`role="dialog"` + `aria-modal` + `aria-label`) with a focus trap (Tab/Shift+Tab cycle inside), initial focus into the dialog, and focus restoration to the trigger on close. The code/preview toggle gained an accessible name for icon-only use. `TuringD2Diagram` exposes its loading state as an `aria-live` status, the rendered SVG as a labelled `role="img"` (new `labels.diagram`), and the source fallback caption as a `role="alert"`. `TuringCopyButton` announces its "Copied" state via `aria-live`. SSR/RSC-safety audited across all components — client-only `document`/`navigator`/portal access stays guarded and effect-scoped.

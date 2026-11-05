@@ -1,5 +1,15 @@
 # @viglet/turing-sdk
 
+## 2026.3.17
+
+- The catalog copilot, its kit and nl-filters take `filters` (field to accepted values) that every read of the call stays inside (T1213), for an SN site several sites share: pass it in the request of `postCopilot` and `postCopilotKit`, in the options of the vanilla `postNlFilters`, or as the last argument of the React SDK's `postCopilot` and `postNlFilters`.
+
+- Load in plain Node, not only through a bundler (T1214): relative imports in the emitted JavaScript and type declarations now carry their `.js` extension, and `@viglet/turing-react-sdk` declares `"type": "module"`. A Node script, a test runner in plain Node mode or server rendering that keeps `node_modules` external can now `import` these packages, and a `moduleResolution: "NodeNext"` consumer gets the real types of `@viglet/turing-sdk` instead of `any`.
+
+- `fetchSearch` sends the `fqAnd`, `fqOr`, `fqOperator` and `fqItemOperator` its search params take, as `fq.and[]`, `fq.or[]`, `fq.op` and `fqi.op` (T1223). Before, the GET search dropped them, so `fqItemOperator: "OR"` still intersected two values of one field.
+
+- `TuringHttpError` carries the problem-details body of an error answer on `problem` (T1234), typed with the RFC 7807 members and the quota fields: a 429 `quota-exhausted` now tells a page `problem.resetsAt`, when AI answers come back. The `TuringProblem` type is exported. `problem` is `undefined` when the error body is not JSON.
+
 ## 2026.3.15
 
 - T1005 — the status is a field, not a substring.
