@@ -24,6 +24,7 @@
 	const {
 		Button,
 		Disabled,
+		FormTokenField,
 		PanelBody,
 		Placeholder,
 		SelectControl,
@@ -115,6 +116,29 @@
 						onChange: ( placeholder ) =>
 							setAttributes( { placeholder } ),
 					} ),
+					// D306: a box scoped to one section of the site, not a filter to clear.
+					el( FormTokenField, {
+						label: __( 'Always filter by', 'viglet-turing-search' ),
+						value: attributes.filters || [],
+						onChange: ( tokens ) =>
+							setAttributes( {
+								filters: tokens
+									.map( ( t ) =>
+										String( t.value ?? t ).trim()
+									)
+									.filter( ( t ) => /^\w+:.+/.test( t ) ),
+							} ),
+						__next40pxDefaultSize: true,
+						__nextHasNoMarginBottom: true,
+					} ),
+					el(
+						'p',
+						{ className: 'components-base-control__help' },
+						__(
+							'Each as field:value (type:event, or a mapped facet). Every search this block makes stays inside them, and visitors cannot remove them.',
+							'viglet-turing-search'
+						)
+					),
 					el( ToggleControl, {
 						label: __(
 							'Show filters (facets)',

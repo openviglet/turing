@@ -23,7 +23,6 @@ import {
 	renderMarkdown,
 	scopeFilters,
 	siteFilter,
-	siteFilters,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -56,6 +55,37 @@ let uncounted = '';
 let beforeReading = null;
 // The readings this page already paid for, by sentence: each one is an LLM call.
 const readings = new Map();
+
+/**
+ * Every filter this block's searches stay inside: the site's scope (scopeFilters) and the
+ * block's own fixed filters (D306), which a visitor never sees as a filter to remove.
+ */
+function blockScope() {
+	return [ ...scopeFilters, ...( state.fixedFilters || [] ) ];
+}
+
+/**
+ * Whether a filter query is the block's scope rather than one the visitor chose.
+ *
+ * @param {string} fq A filter query, `<field>:<value>`.
+ */
+function inScope( fq ) {
+	return isScopeFilter( fq ) || ( state.fixedFilters || [] ).includes( fq );
+}
+
+/**
+ * The block's scope as a field-to-values map, for Turing's generative calls (nl-filters:
+ * Turing T1213): values of one field are alternatives, fields are all required.
+ */
+function scopeMap() {
+	const map = {};
+	for ( const fq of blockScope() ) {
+		const at = fq.indexOf( ':' );
+		const field = fq.slice( 0, at );
+		map[ field ] = [ ...( map[ field ] || [] ), fq.slice( at + 1 ) ];
+	}
+	return map;
+}
 
 // Each facet as Turing last described it unfiltered, by field (see facets()).
 const facetMemory = new Map();
@@ -429,7 +459,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		// The words Turing read as the filter leave the query, so they no longer match as text.
 		applySuggestion() {
 			const { suggestion } = getContext();
-			const fq = search.getState().request?.fq || [ ...scopeFilters ];
+			const fq = search.getState().request?.fq || blockScope();
 			state.suggested = state.suggested.filter(
 				( s ) => s.fq !== suggestion.fq
 			);
@@ -463,7 +493,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		clearFilters() {
 			// The SDK's clearAllFilters would drop the site filter too; keep it.
-			send( { fq: [ ...scopeFilters ], page: 1 } );
+			send( { fq: blockScope(), page: 1 } );
 			writeUrl( true );
 		},
 		retry() {
@@ -529,7 +559,10 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		},
 		init() {
 			prerendered = 'success' === state.status;
-			search = createSiteSearch( { track: true } );
+			search = createSiteSearch( {
+				track: true,
+				params: { fq: blockScope() },
+			} );
 			if ( state.answerEnabled ) {
 				answerer = createAnswerController( createClient(), {
 					site: config.site,
@@ -707,7 +740,7 @@ async function readFilters( text ) {
 			answer = await client.post(
 				`/sn/${ encodeURIComponent( config.site ) }/nl-filters`,
 				// Values checked against this site's documents only (D287, T1213).
-				{ text, locale: config.locale, filters: siteFilters },
+				{ text, locale: config.locale, filters: scopeMap() },
 				{ csrf: false }
 			);
 		} catch {
@@ -863,7 +896,7 @@ function answerUnderstood( text ) {
  */
 function applyReading( q, fqs ) {
 	const request = search.getState().request || {};
-	const fq = request.fq || [ ...scopeFilters ];
+	const fq = request.fq || blockScope();
 	beforeReading = { q: request.q || lastQuery || '*', fq };
 	state.understood = state.understoodText.replace(
 		'%s',
@@ -900,7 +933,7 @@ function allFacets() {
 		probe.searchRequest( {
 			locale: config.locale,
 			q: '*',
-			fq: [ ...scopeFilters ],
+			fq: blockScope(),
 			page: 1,
 		} );
 	} );
@@ -1320,7 +1353,7 @@ function writeUrl( push ) {
 	);
 	url.searchParams.set( 'q', state.query );
 	( request.fq || [] )
-		.filter( ( fq ) => ! isScopeFilter( fq ) )
+		.filter( ( fq ) => ! inScope( fq ) )
 		.forEach( ( fq ) => url.searchParams.append( 'fq[]', fq ) );
 	if ( Number( request.page ) > 1 ) {
 		url.searchParams.set( 'pg', String( request.page ) );
@@ -1345,7 +1378,7 @@ function readUrl() {
 	clearCorrection();
 	send( {
 		q: lastQuery,
-		fq: [ ...scopeFilters, ...params.getAll( 'fq[]' ) ],
+		fq: [ ...blockScope(), ...params.getAll( 'fq[]' ) ],
 		page: Math.max( 1, Number( params.get( 'pg' ) ) || 1 ),
 		...provisional( lastQuery ),
 	} );
@@ -1650,7 +1683,7 @@ function learnFacets() {
 	probe.searchRequest( {
 		locale: config.locale,
 		q: lastQuery,
-		fq: [ ...scopeFilters ],
+		fq: blockScope(),
 		rows: 1,
 		// The block's own bookkeeping, not a search the visitor made: counted, every filtered
 		// search would read as two in the insights (D294).
@@ -1693,12 +1726,12 @@ function sync( s ) {
 		} ) );
 	state.facets = facets(
 		response?.facets || [],
-		( s.request?.fq || [] ).filter( ( fq ) => ! isScopeFilter( fq ) )
+		( s.request?.fq || [] ).filter( ( fq ) => ! inScope( fq ) )
 	);
 	// Turing's response stops describing a facet once it filters on it (T1115), so the
 	// applied filters come from the request: every filter but the site's own.
 	state.applied = ( s.request?.fq || [] )
-		.filter( ( fq ) => ! isScopeFilter( fq ) )
+		.filter( ( fq ) => ! inScope( fq ) )
 		.map( ( fq ) => ( {
 			label: filterLabel( fq ),
 			target: {

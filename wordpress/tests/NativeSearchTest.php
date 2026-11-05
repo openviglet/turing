@@ -467,6 +467,7 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertStringContainsString( 'q=search', $url );
 		$this->assertStringContainsString( 'sort=newest', $url );
 		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a', $url );
+		$this->assertStringNotContainsString( 'type%3Apage', $url, 'no fixed filter, none sent' );
 
 		$result = $page['results'][0];
 		$this->assertSame( 'Workshop on search', $result['title'] );
@@ -536,31 +537,35 @@ final class NativeSearchTest extends PluginTestCase {
 				'_n'                 => static fn ( $one, $many, $n ) => 1 === $n ? $one : $many,
 			)
 		);
-		Functions\when( 'wp_remote_request' )->justReturn(
-			array(
-				'response' => array( 'code' => 200 ),
-				'body'     => json_encode(
-					array(
-						'queryContext' => array( 'count' => 1 ),
-						'results'      => array(
-							'document' => array(
-								array(
-									'fields' => array(
-										'id'               => 'site-a:post:8',
-										'title'            => 'Open day',
-										'url'              => 'https://site.example.org/open-day/',
-										'type'             => 'post',
-										'publication_date' => '2026-01-01T00:00:00Z',
-										'event_start'      => '2026-11-20T13:00:00Z',
-										'image'            => 'https://site.example.org/thumb.jpg',
-										'cover'            => 'https://site.example.org/cover.jpg',
-									),
+		$answer = array(
+			'response' => array( 'code' => 200 ),
+			'body'     => json_encode(
+				array(
+					'queryContext' => array( 'count' => 1 ),
+					'results'      => array(
+						'document' => array(
+							array(
+								'fields' => array(
+									'id'               => 'site-a:post:8',
+									'title'            => 'Open day',
+									'url'              => 'https://site.example.org/open-day/',
+									'type'             => 'post',
+									'publication_date' => '2026-01-01T00:00:00Z',
+									'event_start'      => '2026-11-20T13:00:00Z',
+									'image'            => 'https://site.example.org/thumb.jpg',
+									'cover'            => 'https://site.example.org/cover.jpg',
 								),
 							),
 						),
-					)
-				),
-			)
+					),
+				)
+			),
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) use ( $answer ) {
+				$this->requests[] = array( $url, $args );
+				return $answer;
+			}
 		);
 		Filters\expectApplied( 'viglet_dumont_result_card' )->once()->andReturnUsing(
 			static fn ( array $card ) => array_merge( $card, array( 'title' => 'Filtered' ) )
@@ -568,12 +573,13 @@ final class NativeSearchTest extends PluginTestCase {
 
 		$result = $this->search()->first_page(
 			array(
-				'query'      => 'open',
-				'perPage'    => 10,
-				'sort'       => '',
-				'typeLabels' => array(),
-				'cartLabel'  => '%s',
-				'noneLabel'  => 'None',
+				'query'        => 'open',
+				'perPage'      => 10,
+				'sort'         => '',
+				'typeLabels'   => array(),
+				'cartLabel'    => '%s',
+				'noneLabel'    => 'None',
+				'fixedFilters' => array( 'type:post' ),
 			)
 		)['results'][0];
 
@@ -582,6 +588,8 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertTrue( $result['hasFields'] );
 		$this->assertSame( 'Starts', $result['fields'][0]['label'] );
 		$this->assertSame( 'Filtered', $result['title'] );
+		// The block's fixed filter (D306) right after the site's scope.
+		$this->assertStringContainsString( 'fq%5B%5D=site_key%3Asite-a&fq%5B%5D=type%3Apost', $this->requests[0][0] );
 	}
 
 	/**

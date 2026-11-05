@@ -536,7 +536,8 @@ class Viglet_Dumont_Native_Search {
 				'p'    => $page,
 				'rows' => $rows,
 				'sort' => $state['sort'],
-				'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $filters ),
+				// The site's scope, the block's own (D306), then what the visitor picked.
+				'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $state['fixedFilters'] ?? array(), $filters ),
 			)
 		);
 		// Unanswered here, the script asks as it always did.
@@ -764,7 +765,7 @@ class Viglet_Dumont_Native_Search {
 			'*',
 			1,
 			$rows,
-			array( 'fq[]' => ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters() )
+			array( 'fq[]' => array_merge( ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_filters(), $labels['fixedFilters'] ?? array() ) )
 		);
 		if ( ! is_array( $response ) ) {
 			return array(

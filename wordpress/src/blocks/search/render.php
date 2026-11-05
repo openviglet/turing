@@ -106,6 +106,8 @@ $viglet_dumont_state = array(
 	),
 	'sort'            => Viglet_Dumont_Search_Block::sort(),
 	'perPage'         => max( 1, min( 100, (int) ( $attributes['perPage'] ?? 10 ) ) ),
+	// The block's scope (D306): applied to every search it makes, never a chip to remove.
+	'fixedFilters'    => Viglet_Dumont_Search_Block::fixed_filters( $attributes['filters'] ?? array() ),
 	'typeLabels'      => $viglet_dumont_types,
 	'homeUrl'         => home_url( '/' ),
 	'foundLabels'     => array(

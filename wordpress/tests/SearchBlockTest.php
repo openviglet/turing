@@ -49,6 +49,15 @@ final class SearchBlockTest extends PluginTestCase {
 		);
 	}
 
+	/** The block's fixed filters keep only `field:value` queries, once each (D306). */
+	public function test_fixed_filters_keep_only_field_value_queries(): void {
+		$this->assertSame(
+			array( 'type:page', 'editora:sociologia e politica' ),
+			Viglet_Dumont_Search_Block::fixed_filters( array( ' type:page ', 'no-colon', ':value', 'type:', 'type:page', 'editora:sociologia e politica' ) )
+		);
+		$this->assertSame( array(), Viglet_Dumont_Search_Block::fixed_filters( 'type:page' ) );
+	}
+
 	public function test_every_part_draws_pieces_that_exist(): void {
 		foreach ( Viglet_Dumont_Search_Block::PARTS as $part => $pieces ) {
 			foreach ( $pieces as $piece ) {

@@ -38,6 +38,11 @@
 			"type": "number",
 			"default": 10
 		},
+		"filters": {
+			"type": "array",
+			"items": { "type": "string" },
+			"default": []
+		},
 		"facetsPosition": {
 			"type": "string",
 			"enum": [ "left", "right", "top" ],

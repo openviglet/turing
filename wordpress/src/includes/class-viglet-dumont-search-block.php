@@ -60,6 +60,26 @@ class Viglet_Dumont_Search_Block {
 	}
 
 	/**
+	 * The block's fixed filters (D306), as `field:value` filter queries: the `filters`
+	 * attribute with anything that is not one dropped. Every search the block makes stays
+	 * inside them, and a visitor never sees them as a filter to remove.
+	 *
+	 * @param mixed $filters The attribute as stored.
+	 * @return array<int, string>
+	 */
+	public static function fixed_filters( $filters ): array {
+		$fixed = array();
+		foreach ( is_array( $filters ) ? $filters : array() as $filter ) {
+			$filter = trim( sanitize_text_field( (string) $filter ) );
+			if ( preg_match( '/^\w+:\S.*$/', $filter ) && ! in_array( $filter, $fixed, true ) ) {
+				$fixed[] = $filter;
+			}
+		}
+
+		return $fixed;
+	}
+
+	/**
 	 * The query the page was opened with (?q=, or WordPress's ?s=).
 	 */
 	public static function query(): string {
