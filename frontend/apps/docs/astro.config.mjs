@@ -57,7 +57,10 @@ export default defineConfig({
   base: BASE,
   outDir: OUT_DIR,
   trailingSlash: "always",
-  markdown: { rehypePlugins: [rebaseDocsLinks] },
+  // Only under a project path: at a domain root the rebase is a no-op, and since Astro 7
+  // made Sätteri the default Markdown processor, any rehypePlugins entry requires the
+  // separately installed @astrojs/markdown-remark (a clean CI install fails without it).
+  ...(SITE_ROOT ? { markdown: { rehypePlugins: [rebaseDocsLinks] } } : {}),
 
   integrations: [
     starlight({
