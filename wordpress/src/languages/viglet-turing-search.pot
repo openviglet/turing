@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T10:24:51+00:00\n"
+"POT-Creation-Date: 2026-11-05T10:30:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -979,89 +979,89 @@ msgstr ""
 msgid "Server returned HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:169
+#: src/includes/class-viglet-dumont-api-client.php:174
 msgid "The files could not be packed for Turing."
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:344
+#: src/includes/class-viglet-dumont-api-client.php:391
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:413
+#: src/includes/class-viglet-dumont-api-client.php:460
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:421
+#: src/includes/class-viglet-dumont-api-client.php:468
 msgid "Invalid JSON response from server"
 msgstr ""
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:530
+#: src/includes/class-viglet-dumont-api-client.php:577
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr ""
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:565
+#: src/includes/class-viglet-dumont-api-client.php:612
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr ""
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:741
+#: src/includes/class-viglet-dumont-api-client.php:788
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:745
+#: src/includes/class-viglet-dumont-api-client.php:792
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:843
+#: src/includes/class-viglet-dumont-api-client.php:890
 msgid "Generative AI is off for this SN site in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:844
+#: src/includes/class-viglet-dumont-api-client.php:891
 msgid "The SN site has no AI agent in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:845
+#: src/includes/class-viglet-dumont-api-client.php:892
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:846
+#: src/includes/class-viglet-dumont-api-client.php:893
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:847
+#: src/includes/class-viglet-dumont-api-client.php:894
 msgid "The SN site’s AI agent has no language model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:848
+#: src/includes/class-viglet-dumont-api-client.php:895
 msgid "The SN site’s AI agent has no embedding model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:849
+#: src/includes/class-viglet-dumont-api-client.php:896
 msgid "The SN site’s AI agent has no vector store."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:853
-#: src/includes/class-viglet-dumont-api-client.php:941
+#: src/includes/class-viglet-dumont-api-client.php:900
+#: src/includes/class-viglet-dumont-api-client.php:988
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:854
-#: src/includes/class-viglet-dumont-api-client.php:936
+#: src/includes/class-viglet-dumont-api-client.php:901
+#: src/includes/class-viglet-dumont-api-client.php:983
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:876
+#: src/includes/class-viglet-dumont-api-client.php:923
 msgid "Turing did not answer."
 msgstr ""
 
@@ -1464,30 +1464,36 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#. translators: %s: the core field, e.g. excerpt.
+#. translators: %s: the meta key.
 #: src/includes/class-viglet-dumont-mapping.php:572
+#, php-format
+msgid "Text of the PDF in meta: %s"
+msgstr ""
+
+#. translators: %s: the core field, e.g. excerpt.
+#: src/includes/class-viglet-dumont-mapping.php:580
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:577
+#: src/includes/class-viglet-dumont-mapping.php:585
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:882
+#: src/includes/class-viglet-dumont-mapping.php:894
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:886
+#: src/includes/class-viglet-dumont-mapping.php:898
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:890
+#: src/includes/class-viglet-dumont-mapping.php:902
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""

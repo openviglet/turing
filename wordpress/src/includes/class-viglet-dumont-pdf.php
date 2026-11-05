@@ -198,6 +198,34 @@ class Viglet_Dumont_Pdf {
 	}
 
 	/**
+	 * A `file:<meta key>` source's value (D309): the PDF the post's meta names, by this site's
+	 * upload URL or by attachment id, handed to the import as a file Turing reads, and the
+	 * `file://` name that stands for its text. Null for anything else: another host's file, a
+	 * file that is no PDF or is over the size cap.
+	 *
+	 * @param WP_Post $post The post.
+	 * @param string  $meta The meta key.
+	 */
+	public static function file_reference( WP_Post $post, string $meta ): ?string {
+		$value = get_post_meta( $post->ID, $meta, true );
+		$id    = is_numeric( $value ) ? (int) $value : ( is_string( $value ) && '' !== $value ? attachment_url_to_postid( $value ) : 0 );
+		$file  = $id > 0 ? get_post( $id ) : null;
+		if ( ! $file instanceof WP_Post || 'attachment' !== $file->post_type || 'application/pdf' !== $file->post_mime_type ) {
+			return null;
+		}
+		$path = get_attached_file( $id );
+		/** This filter is documented in indexable(). */
+		$cap = (int) apply_filters( 'viglet_dumont_pdf_max_bytes', self::MAX_BYTES );
+		if ( ! is_string( $path ) || ! is_readable( $path ) || (int) filesize( $path ) > $cap ) {
+			return null;
+		}
+		$name = $post->ID . '-' . $id . '.pdf';
+		Viglet_Dumont_API_Client::attach_file( $name, $path );
+
+		return 'file://' . $name;
+	}
+
+	/**
 	 * The name a PDF goes by inside the zip: its id, so two files called the same never meet.
 	 *
 	 * @param WP_Post $attachment The PDF.

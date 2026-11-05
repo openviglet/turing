@@ -140,6 +140,32 @@ final class PdfTest extends PluginTestCase {
 		$this->assertFalse( ( new Viglet_Dumont_API_Client( $this->settings() ) )->import_files( array( array() ), array() )['success'] );
 	}
 
+	/**
+	 * A `file:` source names this site's PDF by URL, and the import that sends the post takes
+	 * the file along as a zip, so its text lands in the post's own field (D309).
+	 */
+	public function test_a_meta_named_pdf_goes_with_its_post_and_another_hosts_does_not(): void {
+		if ( ! class_exists( ZipArchive::class ) ) {
+			$this->markTestSkipped( 'No zip extension here.' );
+		}
+		Functions\when( 'get_post_meta' )->justReturn( 'https://site.example.org/wp-content/uploads/regulations.pdf' );
+		Functions\when( 'attachment_url_to_postid' )->alias( static fn ( $url ) => str_starts_with( $url, 'https://site.example.org/' ) ? 20 : 0 );
+
+		$reference = Viglet_Dumont_Pdf::file_reference( $this->posts[10], 'paper' );
+		$this->assertSame( 'file://10-20.pdf', $reference );
+
+		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client->import( array( $client->build_create_item( array( 'paper_text' => $reference ) ) ) );
+		$this->assertStringEndsWith( '/api/sn/import/zip', $this->requests[0][0] );
+
+		// Sent once: the next import of the same item is plain JSON again.
+		$client->import( array( $client->build_create_item( array( 'paper_text' => $reference ) ) ) );
+		$this->assertStringEndsWith( '/api/sn/import', $this->requests[1][0] );
+
+		Functions\when( 'get_post_meta' )->justReturn( 'https://elsewhere.example/paper.pdf' );
+		$this->assertNull( Viglet_Dumont_Pdf::file_reference( $this->posts[10], 'paper' ), "another host's file is never fetched" );
+	}
+
 	public function test_a_deleted_pdf_leaves_search(): void {
 		$this->pdf()->remove( 20 );
 

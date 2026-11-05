@@ -564,6 +564,14 @@ class Viglet_Dumont_Mapping {
 				'label'  => sprintf( __( 'Meta: %s', 'viglet-turing-search' ), $key ),
 			);
 		}
+		// The text of a PDF a meta names, by URL or attachment id (D309).
+		foreach ( (array) $keys as $key ) {
+			$sources[] = array(
+				'source' => 'file:' . $key,
+				/* translators: %s: the meta key. */
+				'label'  => sprintf( __( 'Text of the PDF in meta: %s', 'viglet-turing-search' ), $key ),
+			);
+		}
 
 		foreach ( self::CORE_SOURCES as $core ) {
 			$sources[] = array(
@@ -629,6 +637,9 @@ class Viglet_Dumont_Mapping {
 				return is_wp_error( $terms ) ? array() : $terms;
 			case 'meta':
 				return get_post_meta( $post->ID, $name, ! $multi );
+			case 'file':
+				// The PDF a meta names (D309): Turing reads its text out of the zip the import sends.
+				return Viglet_Dumont_Pdf::file_reference( $post, $name );
 			case 'thumbnail':
 				$url = get_the_post_thumbnail_url( $post->ID, 'large' );
 				return is_string( $url ) ? $url : null;
@@ -642,7 +653,7 @@ class Viglet_Dumont_Mapping {
 					'parent'     => $post->post_parent,
 				);
 				return $core[ $name ] ?? null;
-		}
+		}//end switch
 
 		return null;
 	}
@@ -753,12 +764,13 @@ class Viglet_Dumont_Mapping {
 		$source          = trim( (string) ( $field['source'] ?? '' ) );
 		[ $kind, $name ] = array_pad( explode( ':', $source, 2 ), 2, '' );
 		$valid_source    = ( 'thumbnail' === $source )
-			|| ( in_array( $kind, array( 'taxonomy', 'meta' ), true ) && '' !== $name )
+			|| ( in_array( $kind, array( 'taxonomy', 'meta', 'file' ), true ) && '' !== $name )
 			|| ( 'core' === $kind && in_array( $name, self::CORE_SOURCES, true ) )
 			|| ( 'woo' === $kind && isset( Viglet_Dumont_WooCommerce::FIELDS[ $name ] ) );
 
 		$target = preg_replace( '/[^A-Za-z0-9_]/', '', (string) ( $field['field'] ?? '' ) );
-		$type   = strtoupper( (string) ( $field['type'] ?? 'STRING' ) );
+		// A PDF's text is searched as text, never as one exact value (D309).
+		$type = 'file' === $kind ? 'TEXT' : strtoupper( (string) ( $field['type'] ?? 'STRING' ) );
 
 		if ( ! $valid_source || '' === $target || in_array( $target, self::RESERVED, true ) || ! in_array( $type, self::TYPES, true ) ) {
 			return null;

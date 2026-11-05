@@ -13,9 +13,16 @@ const sentence = 'Quokka enrolment clause';
  */
 const ask = ( args ) => wp( args ).trim().split( /\r?\n/ ).pop().trim();
 
-// A one-page PDF whose only text is the sentence, its cross-reference table counted.
-const writePdf = `
-$text = ${ JSON.stringify( sentence ) };
+/**
+ * PHP that uploads a one-page PDF whose only text is a sentence, its cross-reference table
+ * counted, and prints the attachment's id.
+ *
+ * @param {string} text   The sentence.
+ * @param {number} parent The post it is attached to; 0 for none.
+ * @param {string} title  The attachment's title.
+ */
+const uploadPdf = ( text, parent, title ) => `
+$text = ${ JSON.stringify( text ) };
 $objects = array(
 	'<< /Type /Catalog /Pages 2 0 R >>',
 	'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
@@ -41,9 +48,9 @@ $pdf .= 'trailer << /Size ' . ( count( $objects ) + 1 ) . " /Root 1 0 R >>\\nsta
 require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/media.php';
 require_once ABSPATH . 'wp-admin/includes/image.php';
-$tmp = wp_tempnam( 'quokka-enrolment.pdf' );
+$tmp = wp_tempnam( 'upload.pdf' );
 file_put_contents( $tmp, $pdf );
-echo media_handle_sideload( array( 'name' => 'quokka-enrolment.pdf', 'tmp_name' => $tmp ), (int) getenv( 'PARENT' ), 'Enrolment rules' );
+echo media_handle_sideload( array( 'name' => 'upload.pdf', 'tmp_name' => $tmp ), ${ parent }, ${ JSON.stringify( title ) } );
 `;
 
 let attachment = '';
@@ -62,7 +69,7 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	] );
 	attachment = ask( [
 		'eval',
-		writePdf.replace( "getenv( 'PARENT' )", String( seed.postId ) ),
+		uploadPdf( sentence, seed.postId, 'Enrolment rules' ),
 	] );
 } );
 
@@ -124,4 +131,61 @@ test( "a PDF's inner sentence finds it, and deleting the attachment removes it",
 	wp( [ 'post', 'delete', attachment, '--force' ] );
 	attachment = '';
 	expect( await titlesFor( page, seed ) ).not.toContain( 'Enrolment rules' );
+} );
+
+test( "a PDF a post's meta names puts its words in the post's own text", async ( {
+	page,
+	seed,
+} ) => {
+	const words = 'Wombat thesis appendix';
+	const paper = ask( [ 'eval', uploadPdf( words, 0, 'Wombat paper' ) ] );
+	const url = ask( [ 'eval', `echo wp_get_attachment_url( ${ paper } );` ] );
+	const saved = ask( [
+		'option',
+		'get',
+		'viglet_dumont_mapping',
+		'--format=json',
+	] );
+	const title = ask( [
+		'post',
+		'get',
+		String( seed.postId ),
+		'--field=post_title',
+	] );
+	try {
+		wp( [
+			'eval',
+			`$m = get_option( 'viglet_dumont_mapping' );
+			$m['post']['fields'][] = array( 'source' => 'file:paper', 'field' => 'paper_text', 'type' => 'TEXT' );
+			update_option( 'viglet_dumont_mapping', $m );`,
+		] );
+		wp( [ 'post', 'meta', 'update', String( seed.postId ), 'paper', url ] );
+		wp( [ 'dumont', 'reindex' ] );
+
+		await page.waitForTimeout( 4000 );
+		await page.goto(
+			`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( words ) }`
+		);
+		await expect(
+			page.locator( '.viglet-dumont-search__results li' ).first()
+		).toBeVisible();
+		expect(
+			await page
+				.locator(
+					'.viglet-dumont-search__results .viglet-dumont-search__title'
+				)
+				.allTextContents()
+		).toContain( title );
+	} finally {
+		wp( [
+			'option',
+			'update',
+			'viglet_dumont_mapping',
+			saved,
+			'--format=json',
+		] );
+		wp( [ 'post', 'meta', 'delete', String( seed.postId ), 'paper' ] );
+		wp( [ 'post', 'delete', paper, '--force' ] );
+		wp( [ 'dumont', 'reindex' ] );
+	}
 } );

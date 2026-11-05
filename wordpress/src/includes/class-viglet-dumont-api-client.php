@@ -124,6 +124,11 @@ class Viglet_Dumont_API_Client {
 		if ( Viglet_Dumont_Settings::demo() ) {
 			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
 		}
+		// Items whose attributes name a file (a `file:` source, D309) go with their files.
+		$files = self::files_named_by( $job_items );
+		if ( array() !== $files ) {
+			return $this->import_files( $job_items, $files );
+		}
 		$payload = array( 'snJobItems' => $job_items );
 
 		/**
@@ -200,6 +205,48 @@ class Viglet_Dumont_API_Client {
 			$ok ? Viglet_Dumont_Events::note( 'imported' ) : Viglet_Dumont_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
 			$code
 		);
+	}
+
+	/**
+	 * The files documents being built have named, by the name their `file://` value carries
+	 * (D309): a mapping's `file:` source reads a PDF while the document is built, and the
+	 * import that sends the document takes the file along.
+	 *
+	 * @var array<string, string>
+	 */
+	private static array $attached = array();
+
+	/**
+	 * Hold a file for the next import whose items name it.
+	 *
+	 * @param string $name The name the attribute's `file://` value carries.
+	 * @param string $path The file's local path.
+	 */
+	public static function attach_file( string $name, string $path ): void {
+		self::$attached[ $name ] = $path;
+	}
+
+	/**
+	 * The held files these items name, released from the hold.
+	 *
+	 * @param array $job_items TurSNJobItem-compatible arrays.
+	 * @return array<string, string>
+	 */
+	private static function files_named_by( array $job_items ): array {
+		$files = array();
+		foreach ( $job_items as $item ) {
+			foreach ( (array) ( $item['attributes'] ?? array() ) as $value ) {
+				foreach ( (array) $value as $one ) {
+					$name = is_string( $one ) && str_starts_with( $one, 'file://' ) ? substr( $one, 7 ) : '';
+					if ( isset( self::$attached[ $name ] ) ) {
+						$files[ $name ] = self::$attached[ $name ];
+						unset( self::$attached[ $name ] );
+					}
+				}
+			}
+		}
+
+		return $files;
 	}
 
 	/**
