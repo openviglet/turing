@@ -36,19 +36,26 @@ describe("the classes are the vanilla SDK's", () => {
 });
 
 describe("assertOk", () => {
-  it("throws TuringHttpError carrying the status", () => {
+  it("throws TuringHttpError carrying the status", async () => {
     const response = new Response("", { status: 404, statusText: "Not Found" });
-    try {
-      assertOk(response);
-      expect.unreachable("a 404 must throw");
-    } catch (err) {
-      expect(err).toBeInstanceOf(TuringHttpError);
-      expect((err as TuringHttpError).status).toBe(404);
-    }
+    const err = await assertOk(response).then(() => undefined, (e: unknown) => e);
+
+    expect(err).toBeInstanceOf(TuringHttpError);
+    expect((err as TuringHttpError).status).toBe(404);
   });
 
-  it("passes a 2xx through", () => {
-    expect(() => assertOk(new Response("{}", { status: 200 }))).not.toThrow();
+  it("passes a 2xx through", async () => {
+    await expect(assertOk(new Response("{}", { status: 200 }))).resolves.toBeUndefined();
+  });
+
+  it("T1234 - carries the problem details of a JSON error body", async () => {
+    const response = new Response(JSON.stringify({ type: "urn:quota-exhausted", resetsAt: "2026-12-01T00:00:00Z" }), {
+      status: 429,
+      headers: { "Content-Type": "application/problem+json" },
+    });
+    const err = (await assertOk(response).then(() => undefined, (e: unknown) => e)) as TuringHttpError;
+
+    expect(err.problem?.resetsAt).toBe("2026-12-01T00:00:00Z");
   });
 });
 

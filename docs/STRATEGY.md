@@ -7,8 +7,6 @@
 
 ---
 
-## Block CO — SDK errors that carry Turing's own answer
-
 ## VIII. Strategic moves — repositioning beyond features
 
 > The Education customer engagement proved the product. This section is

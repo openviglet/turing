@@ -767,7 +767,7 @@ export async function postChatConversation(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const {
     text,
@@ -896,7 +896,7 @@ export async function postAgentChat(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const {
     text,
@@ -1006,7 +1006,7 @@ export async function postPersonaChat(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const {
     text,
@@ -1094,7 +1094,7 @@ export async function postClientToolResult(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const {
     text,
@@ -1194,7 +1194,7 @@ export async function postLlmChat(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const { text } = await consumeAssistantStream(response, options?.onToken);
   return { role: "assistant", content: text, options: [] };
@@ -1232,7 +1232,7 @@ export async function postSemanticChat(
     signal: options?.signal,
   });
 
-  assertOk(response);
+  await assertOk(response);
 
   const { text } = await consumeAssistantStream(response, options?.onToken);
   return { role: "assistant", content: text, options: [] };
@@ -2779,7 +2779,7 @@ export async function postAnswer(
     { method: "GET", headers: { Accept: "text/event-stream" }, signal: options?.signal },
     false,
   );
-  assertOk(response);
+  await assertOk(response);
   return consumeAnswerStream(response, options);
 }
 
@@ -2877,7 +2877,7 @@ export async function postResearch(
     body: JSON.stringify({ question, locale, filters: options?.filters, maxSteps: options?.maxSteps }),
     signal: options?.signal,
   });
-  assertOk(response);
+  await assertOk(response);
   if (!response.body) {
     throw emptyBody(response.url, "Research response");
   }

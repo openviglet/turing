@@ -83,6 +83,26 @@ The Turing backend uses Spring Security's `CookieCsrfTokenRepository`, which wri
 - **Anonymous / public deployments** with CSRF disabled work **tokenless**: the priming call fails softly and requests go through.
 - **Different origins?** Enable CORS with credentials on the backend (`Access-Control-Allow-Credentials: true` + an explicit allowed origin). `credentials: "include"` (the default) sends the cookie.
 
+### Errors
+
+A call that gets an error answer throws `TuringHttpError`, with the HTTP `status` and, when Turing explained the error in a JSON (problem details) body, that body on `problem`. A request that never completes throws `TuringTransportError` (`TuringTimeoutError` when it ran past `timeoutMs`). When the site's AI budget runs out, the AI calls answer 429 with a `type` ending in `quota-exhausted`, and `problem.resetsAt` says when answers come back:
+
+```ts
+import { TuringHttpError } from "@viglet/turing-sdk";
+
+try {
+  await postCopilot(client, "my-site", { q });
+} catch (err) {
+  if (err instanceof TuringHttpError && err.problem?.type?.endsWith("quota-exhausted")) {
+    showNotice(`AI answers are back on ${new Date(err.problem.resetsAt!).toLocaleDateString()}`);
+  } else {
+    throw err;
+  }
+}
+```
+
+`problem` carries every member Turing sent (`title`, `detail`, `used`, `limit`, `upgradeUrl`, and any other), and is `undefined` when the error body is not JSON. The React SDK throws the same error.
+
 ---
 
 ## Controllers

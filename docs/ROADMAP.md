@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CO — SDK errors that carry Turing's own answer
-
-- 📋 **T1234** (deps: —) **The JS SDK's TuringHttpError drops the response body, so a 429 quota-exhausted never shows its resetsAt or detail** — A client cannot tell visitors when AI answers come back, nor read any problem field Turing sends. → §CLXXVI.1
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

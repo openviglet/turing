@@ -1,6 +1,7 @@
 import {
   TuringHttpError,
   TuringTransportError,
+  type TuringProblem,
 } from "@viglet/turing-sdk";
 
 /**
@@ -32,10 +33,25 @@ import {
 
 export { TuringHttpError, TuringTransportError };
 
-/** Throw {@link TuringHttpError} when a response is not ok. */
-export function assertOk(response: Response): void {
+/**
+ * Throw {@link TuringHttpError} when a response is not ok, carrying (T1234) the
+ * problem-details body the server explained it with, as the vanilla SDK does.
+ */
+export async function assertOk(response: Response): Promise<void> {
   if (!response.ok) {
-    throw new TuringHttpError(response.status, response.statusText, response.url);
+    throw new TuringHttpError(response.status, response.statusText, response.url, await readProblem(response));
+  }
+}
+
+/** T1234 — the error body when it is a JSON object, else `undefined`. */
+async function readProblem(response: Response): Promise<TuringProblem | undefined> {
+  const contentType = response.headers?.get?.("content-type") ?? "";
+  if (!contentType.includes("json")) return undefined;
+  try {
+    const body: unknown = JSON.parse(await response.text());
+    return body !== null && typeof body === "object" && !Array.isArray(body) ? (body as TuringProblem) : undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -75,6 +91,6 @@ export async function fetchOrThrow(url: string, init?: RequestInit): Promise<Res
     if (isAbort(cause)) throw cause;
     throw new TuringTransportError(url, cause);
   }
-  assertOk(response);
+  await assertOk(response);
   return response;
 }

@@ -321,7 +321,7 @@ export function createTuringClient(config: TuringClientConfig): TuringClient {
       csrf,
     );
 
-    assertOk(res);
+    await assertOk(res);
     // 204 No Content or empty body → undefined.
     if (res.status === 204) return undefined as T;
     const text = await res.text();

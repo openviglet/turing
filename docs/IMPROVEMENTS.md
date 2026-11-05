@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CO — SDK errors that carry Turing's own answer
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2324,29 +2322,3 @@ the facets it counts and the order it answers in. A line here names a difference
 engine shows and the shared seam that closes it for all of them.
 
 ## CLXXVI SDK errors that carry Turing's own answer
-
-### CLXXVI.1 Problem details on SDK errors (T1234)
-
-**Where it came from.** Dumont D332 (the WordPress plugin): when the site's AI budget
-runs out, Turing answers the copilot, answer and nl-filters calls with HTTP 429 and an
-RFC 7807 body whose `type` ends in `quota-exhausted`, carrying `detail`, `used`,
-`limit`, `resetsAt` and `upgradeUrl`. The plugin's visitor surfaces call Turing from the
-browser through `@viglet/turing-sdk` (`client.post(...)`, the answer controller).
-
-**What happens.** The SDK throws `TuringHttpError` with `status`, `statusText` and `url`
-only (`errors.ts`, T1005). The body is read and dropped, so a client can tell "429" but
-not "the budget is spent until 1 December", nor any other problem-details field Turing
-sends.
-
-**Workaround in Dumont.** The browser treats any 429 as "paused" and pings the WordPress
-server, which makes one call of its own to Turing (PHP reads the whole body) to learn
-`resetsAt` and show it on Health. That is an extra call, and a visitor still cannot be
-told when answers come back.
-
-**What Turing should do.** `TuringHttpError` carries the parsed problem body when the
-response is `application/problem+json` (or JSON): at least `type`, `title`, `detail` and
-the extension members, e.g. as `error.problem`, typed, with `resetsAt` for quota errors.
-Same for the streaming calls that fail before the first event.
-
-**Done when:** a 429 `quota-exhausted` from any SDK call surfaces
-`error.problem.resetsAt`.

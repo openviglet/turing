@@ -40,16 +40,50 @@ export class TuringHttpError extends Error {
   readonly statusText: string;
   /** The URL that was requested, for logs that have to say which call failed. */
   readonly url: string;
+  /**
+   * T1234 — the RFC 7807 problem details the server explained the error with,
+   * when it answered JSON. A spent AI budget answers 429 with a `type` ending in
+   * `quota-exhausted`, so `error.problem?.resetsAt` says when answers come back.
+   */
+  readonly problem?: TuringProblem;
 
-  constructor(status: number, statusText: string, url: string) {
-    super(`HTTP ${status}${statusText ? `: ${statusText}` : ""}`);
+  constructor(status: number, statusText: string, url: string, problem?: TuringProblem) {
+    super(`HTTP ${status}${statusText ? `: ${statusText}` : ""}${problem?.detail ? ` - ${problem.detail}` : ""}`);
     // Set explicitly rather than inherited: a subclass of Error reports the base
     // name otherwise, so a log line or a Sentry group would read "Error".
     this.name = "TuringHttpError";
     this.status = status;
     this.statusText = statusText;
     this.url = url;
+    this.problem = problem;
   }
+}
+
+/**
+ * T1234 — an RFC 7807 problem-details body, as Turing answers an error. The
+ * standard members are typed; any extension member the server adds is kept.
+ */
+export interface TuringProblem {
+  /** A URI naming the kind of problem, e.g. one ending in `quota-exhausted`. */
+  type?: string;
+  /** A short summary of the kind of problem. */
+  title?: string;
+  /** The HTTP status, as the server repeated it in the body. */
+  status?: number;
+  /** What went wrong this time, readable by a person. */
+  detail?: string;
+  /** A URI naming this occurrence. */
+  instance?: string;
+  /** Quota errors: when the budget resets (ISO-8601). */
+  resetsAt?: string;
+  /** Quota errors: how much of the budget was used. */
+  used?: number;
+  /** Quota errors: the budget. */
+  limit?: number;
+  /** Quota errors: where the budget can be raised. */
+  upgradeUrl?: string;
+  /** Any other member the server sent. */
+  [member: string]: unknown;
 }
 
 /**
@@ -130,9 +164,25 @@ function describe(cause: unknown): string {
  * The single place the status becomes an error, so a new endpoint cannot go back
  * to throwing a plain `Error` by copying its neighbour.
  */
-export function assertOk(response: Response): void {
+export async function assertOk(response: Response): Promise<void> {
   if (!response.ok) {
-    throw new TuringHttpError(response.status, response.statusText, response.url);
+    throw new TuringHttpError(response.status, response.statusText, response.url, await readProblem(response));
+  }
+}
+
+/**
+ * T1234 — the problem-details body of an error response, when it is a JSON
+ * object; `undefined` for any other body, so a page that answers HTML or nothing
+ * still throws the plain status.
+ */
+export async function readProblem(response: Response): Promise<TuringProblem | undefined> {
+  const contentType = response.headers?.get?.("content-type") ?? "";
+  if (!contentType.includes("json")) return undefined;
+  try {
+    const body: unknown = JSON.parse(await response.text());
+    return body !== null && typeof body === "object" && !Array.isArray(body) ? (body as TuringProblem) : undefined;
+  } catch {
+    return undefined;
   }
 }
 

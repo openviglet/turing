@@ -1647,3 +1647,4 @@
 ## Block CO — Structured feeds refresh when the publisher says so
 
 - 🗑 **T1227** — superseded by T1229: Moved to Block BF, the block that owns the structured-feed ingester; the design is unchanged.
+- **T1234** — TuringHttpError in both SDKs carries the problem-details body on problem, so a 429 quota-exhausted from any call, streaming ones included, surfaces error.problem.resetsAt (design §CLXXVI.1 recorded in `frontend/apps/docs/src/content/docs/javascript-sdk.md`).

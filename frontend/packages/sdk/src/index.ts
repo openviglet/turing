@@ -17,6 +17,7 @@
 // request produced no usable response (refused, offline, CORS, empty body).
 // T1079 — TuringTimeoutError (a TuringTransportError) when the client's timeoutMs elapses.
 export { TuringHttpError, TuringTimeoutError, TuringTransportError } from "./errors.js";
+export type { TuringProblem } from "./errors.js";
 
 // ── Client ──
 export { createTuringClient } from "./client.js";
