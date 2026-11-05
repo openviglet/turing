@@ -14,6 +14,10 @@ import {
 	createSiteAutoComplete,
 	createSiteSearch,
 	fetchSpellCheck,
+	cardLines,
+	cardOverride,
+	cardWhen,
+	formatCardDate,
 	isScopeFilter,
 	postIdOf,
 	renderMarkdown,
@@ -1442,10 +1446,6 @@ function crumb( url ) {
 	}
 }
 
-const dateFormat = new Intl.DateTimeFormat(
-	document.documentElement.lang || undefined,
-	{ dateStyle: 'medium' }
-);
 // A filter's date bound is a calendar day at midnight UTC: read in the visitor's own zone, it
 // would show the day before west of Greenwich.
 const boundFormat = new Intl.DateTimeFormat(
@@ -1463,8 +1463,11 @@ function card( d, position ) {
 	const fields = d.raw?.fields || {};
 	// A search filtered by type gets the type back highlighted, as `<mark>post</mark>`.
 	const type = plain( String( fields.type ?? '' ) );
-	const at = new Date( fields.publication_date ?? d.date );
-	const valid = d.date || fields.publication_date ? ! isNaN( at ) : false;
+	// The type's own card date and image, where Fields chose a mapped field (D305).
+	const when = cardWhen( fields );
+	const lines = cardLines( fields );
+	const at = new Date( when ?? d.date );
+	const valid = d.date || when ? ! isNaN( at ) : false;
 	const title = plain( d.title ) || d.url;
 	const url = siteUrl( d.url, fields.id );
 	return {
@@ -1473,45 +1476,20 @@ function card( d, position ) {
 		url,
 		title,
 		type: state.typeLabels[ type ] || type,
-		date: valid ? dateFormat.format( at ) : '',
+		date: valid ? formatCardDate( at ) : '',
 		iso: valid ? at.toISOString() : '',
 		crumb: crumb( url ),
-		image: d.image || '',
+		image: String(
+			cardOverride( fields, config.cardTypes?.[ type ]?.image ) ??
+				( d.image || '' )
+		),
 		snippet: highlighted( d.description ),
 		// What the server draws before the highlights go in (D209).
 		snippetText: plain( d.description ),
-		...cardValues( fields ),
+		fields: lines,
+		hasFields: lines.length > 0,
 		...product( fields, title ),
 	};
-}
-
-/**
- * A result's card lines (D305): each mapped field marked "Show on result cards" that the
- * document carries, as the server's card_values() writes it. A date in the page's language,
- * a list joined, and a URL never shown raw.
- *
- * @param {Object} fields The document's fields.
- */
-function cardValues( fields ) {
-	const lines = ( config.cards || [] )
-		.map( ( { field, label, type } ) => {
-			const raw = fields[ field ];
-			const value = ( Array.isArray( raw ) ? raw : [ raw ] )
-				.map( ( v ) => plain( String( v ?? '' ) ).trim() )
-				.filter( ( v ) => v && ! /^https?:\/\//i.test( v ) )
-				.map( ( v ) => {
-					if ( 'DATE' !== type ) {
-						return v;
-					}
-					const at = new Date( /^\d+$/.test( v ) ? Number( v ) : v );
-					return isNaN( at ) ? '' : dateFormat.format( at );
-				} )
-				.filter( Boolean )
-				.join( ', ' );
-			return { field, label, value };
-		} )
-		.filter( ( line ) => line.value );
-	return { fields: lines, hasFields: lines.length > 0 };
 }
 
 /**

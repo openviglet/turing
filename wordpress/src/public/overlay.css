@@ -74,6 +74,11 @@
 	font-weight: 600;
 }
 
+/* The result's date and first card field (D305). */
+.viglet-dumont-overlay__meta {
+	font-size: 0.85rem;
+}
+
 .viglet-dumont-overlay__url {
 	font-size: 0.8rem;
 	opacity: 0.75;

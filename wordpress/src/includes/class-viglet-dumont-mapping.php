@@ -86,7 +86,7 @@ class Viglet_Dumont_Mapping {
 	/**
 	 * The mapping of every indexed post type, after the `viglet_dumont_mapping` filter.
 	 *
-	 * @return array<string, array{exclude: bool, fields: array<int, array>}>
+	 * @return array<string, array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}>
 	 */
 	public function all(): array {
 		if ( null !== $this->resolved ) {
@@ -525,7 +525,7 @@ class Viglet_Dumont_Mapping {
 	 * The mapping a post type gets when nothing is stored: its public custom taxonomies.
 	 *
 	 * @param string $post_type The post type.
-	 * @return array{exclude: bool, fields: array<int, array>}
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}
 	 */
 	private function default_for( string $post_type ): array {
 		$fields = array();
@@ -644,7 +644,7 @@ class Viglet_Dumont_Mapping {
 	 * One post type's mapping with every field validated; an invalid field is dropped.
 	 *
 	 * @param mixed $type_mapping The post type's mapping as stored or filtered.
-	 * @return array{exclude: bool, fields: array<int, array>}
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string}
 	 */
 	private static function sanitize_type( $type_mapping ): array {
 		$type_mapping = is_array( $type_mapping ) ? $type_mapping : array();
@@ -659,10 +659,20 @@ class Viglet_Dumont_Mapping {
 			}
 		}
 
+		// What the type's result cards show instead of the publication date and the featured
+		// image (D305): one of its own fields, of a type that can hold one, or '' for the default.
+		$typed = static fn ( array $types ) => array_column(
+			array_filter( $fields, static fn ( $f ) => in_array( $f['type'], $types, true ) ),
+			'field'
+		);
+		$pick  = static fn ( string $key, array $allowed ) => in_array( (string) ( $type_mapping[ $key ] ?? '' ), $allowed, true ) ? (string) $type_mapping[ $key ] : '';
+
 		return array(
 			// The mapping's own flag (a post type left out), not a WP_Query argument.
-			'exclude' => ! empty( $type_mapping['exclude'] ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
-			'fields'  => $fields,
+			'exclude'    => ! empty( $type_mapping['exclude'] ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+			'fields'     => $fields,
+			'card_date'  => $pick( 'card_date', $typed( array( 'DATE' ) ) ),
+			'card_image' => $pick( 'card_image', $typed( array( 'STRING', 'TEXT' ) ) ),
 		);
 	}
 

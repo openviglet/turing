@@ -288,6 +288,63 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 	);
 }
 
+/**
+ * What this type's result cards show in place of the defaults (D305): a mapped DATE field
+ * for the date (an event's start, not the day it was posted) and a mapped field for the image.
+ *
+ * @param {Object}                 props          The type's mapping, its fields and the change handler.
+ * @param {Object}                 props.value    The type's mapping.
+ * @param {Object[]}               props.fields   Its fields.
+ * @param {(next: Object) => void} props.onChange Receives the type's mapping changed.
+ */
+function CardAppearance( { value, fields, onChange } ) {
+	const named = ( list ) =>
+		list.map( ( f ) => ( {
+			label: f.facet_label || f.field,
+			value: f.field,
+		} ) );
+	return (
+		<Flex justify="flex-start" align="flex-end" style={ { marginTop: 12 } }>
+			<SelectControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				label={ __( 'Date shown on cards', 'viglet-turing-search' ) }
+				value={ value.card_date || '' }
+				options={ [
+					{
+						label: __( 'Publication date', 'viglet-turing-search' ),
+						value: '',
+					},
+					...named( fields.filter( ( f ) => 'DATE' === f.type ) ),
+				] }
+				onChange={ ( cardDate ) =>
+					onChange( { ...value, card_date: cardDate } )
+				}
+			/>
+			<SelectControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				label={ __( 'Image on cards', 'viglet-turing-search' ) }
+				value={ value.card_image || '' }
+				options={ [
+					{
+						label: __( 'Featured image', 'viglet-turing-search' ),
+						value: '',
+					},
+					...named(
+						fields.filter( ( f ) =>
+							[ 'STRING', 'TEXT' ].includes( f.type )
+						)
+					),
+				] }
+				onChange={ ( cardImage ) =>
+					onChange( { ...value, card_image: cardImage } )
+				}
+			/>
+		</Flex>
+	);
+}
+
 function TypeCard( { postType, value, sources, types, status, onChange } ) {
 	const [ preview, setPreview ] = useState( null );
 	const [ previewError, setPreviewError ] = useState( '' );
@@ -395,6 +452,13 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 							) ) }
 						</tbody>
 					</table>
+				) }
+				{ fields.length > 0 && (
+					<CardAppearance
+						value={ value }
+						fields={ fields }
+						onChange={ onChange }
+					/>
 				) }
 				<Flex justify="flex-start" style={ { marginTop: 12 } }>
 					<Button

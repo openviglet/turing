@@ -11,8 +11,11 @@
 import { getConfig } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
 import {
+	cardLines,
+	cardWhen,
 	config,
 	createSiteSearch,
+	formatCardDate,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -28,6 +31,23 @@ const shown = 6;
 const plurals = new Intl.PluralRules(
 	document.documentElement.lang || undefined
 );
+/**
+ * A result's date and first card field (D305), as one line: the same date the search
+ * block's card shows (the type's card date field, else the publication date).
+ *
+ * @param {Object} fields The document's fields.
+ */
+function meta( fields ) {
+	const when = cardWhen( fields );
+	const at = when ? new Date( when ) : null;
+	const first = cardLines( fields )[ 0 ];
+	return [
+		at && ! isNaN( at ) ? formatCardDate( at ) : '',
+		first ? `${ first.label }: ${ first.value }` : '',
+	]
+		.filter( Boolean )
+		.join( ' · ' );
+}
 
 let dialog = null;
 let input = null;
@@ -188,6 +208,7 @@ function render( s ) {
 			id: String( d.raw?.fields?.id ?? '' ),
 			url: siteUrl( d.url, d.raw?.fields?.id ),
 			title: plainText( d.title ) || d.url,
+			meta: meta( d.raw?.fields || {} ),
 		} ) );
 	}
 	active = -1;
@@ -217,10 +238,11 @@ function draw() {
 				role: 'option',
 				'aria-selected': String( i === active ),
 			} );
-			option.append(
-				make( 'span', 'title', {}, result.title ),
-				make( 'span', 'url', {}, result.url )
-			);
+			option.append( make( 'span', 'title', {}, result.title ) );
+			if ( result.meta ) {
+				option.append( make( 'span', 'meta', {}, result.meta ) );
+			}
+			option.append( make( 'span', 'url', {}, result.url ) );
 			// The input keeps the focus; a click on a result only opens it.
 			option.addEventListener( 'mousedown', ( event ) =>
 				event.preventDefault()

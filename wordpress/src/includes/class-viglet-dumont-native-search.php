@@ -328,6 +328,75 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
+	 * Per post type, the mapped fields its result cards show as the date and the image in
+	 * place of the publication date and the featured image (D305); a type that keeps both
+	 * defaults is left out. The browser gets the same map as `cardTypes`.
+	 *
+	 * @return array<string, array{date: string, image: string}>
+	 */
+	public function card_types(): array {
+		$types = array();
+		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $post_type => $type_mapping ) {
+			if ( ! $type_mapping['exclude'] && ( '' !== $type_mapping['card_date'] || '' !== $type_mapping['card_image'] ) ) {
+				$types[ $post_type ] = array(
+					'date'  => $type_mapping['card_date'],
+					'image' => $type_mapping['card_image'],
+				);
+			}
+		}
+
+		return $types;
+	}
+
+	/**
+	 * A document's value for a card's date or image field, its first when a list; null when
+	 * the type keeps the default or the document carries nothing there.
+	 *
+	 * @param array  $fields The document's fields.
+	 * @param string $field  The mapped field, or '' for the default.
+	 * @return mixed
+	 */
+	private static function card_override( array $fields, string $field ) {
+		$value = '' !== $field ? ( $fields[ $field ] ?? null ) : null;
+		$value = is_array( $value ) ? reset( $value ) : $value;
+
+		return null === $value || false === $value || '' === $value ? null : $value;
+	}
+
+	/**
+	 * A card's date in the site's date format (D305). A date with no time of day (a day-only
+	 * meta, indexed as midnight UTC) is that day everywhere: read in the site's own zone it
+	 * would show the day before west of Greenwich, as search.js's formatCardDate() knows.
+	 *
+	 * @param int $timestamp The date.
+	 */
+	public static function card_day( int $timestamp ): string {
+		$zone = 0 === $timestamp % 86400 ? new DateTimeZone( 'UTC' ) : null;
+
+		return (string) wp_date( get_option( 'date_format' ), $timestamp, $zone );
+	}
+
+	/**
+	 * A server-drawn result card through `viglet_dumont_result_card` (D305).
+	 *
+	 * @param array $card   The card, in the keys search-block.js's card() gives the store.
+	 * @param array $fields The document's fields.
+	 */
+	private static function filter_card( array $card, array $fields ): array {
+		/**
+		 * Filters a result card the search block draws on the server, before its script runs.
+		 *
+		 * The keys are the store's (title, url, type, date, iso, image, snippetText, fields,
+		 * ...). The script redraws a card it searched itself from the mapping, not through
+		 * this filter, so change only what Fields cannot say, or the card changes on hydration.
+		 *
+		 * @param array $card     The card.
+		 * @param array $document The document's fields, as Turing answered them.
+		 */
+		return apply_filters( 'viglet_dumont_result_card', $card, $fields );
+	}
+
+	/**
 	 * A result's card lines (D305): each card field the document carries, as search-block.js's
 	 * cardValues() writes it. A date in the site's date format, a list joined, and a URL never
 	 * shown raw; a field with nothing left to show is no line.
@@ -351,7 +420,7 @@ class Viglet_Dumont_Native_Search {
 					if ( false === $timestamp ) {
 						continue;
 					}
-					$value = wp_date( get_option( 'date_format' ), $timestamp );
+					$value = self::card_day( $timestamp );
 				}
 				$values[] = $value;
 			}
@@ -480,6 +549,7 @@ class Viglet_Dumont_Native_Search {
 		$shop    = Viglet_Dumont_WooCommerce::active();
 		$offset  = ( $page - 1 ) * $rows;
 		$cards   = $this->card_fields();
+		$types   = $this->card_types();
 		$results = array();
 		foreach ( array_values( (array) ( $response['results']['document'] ?? array() ) ) as $i => $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
@@ -487,7 +557,11 @@ class Viglet_Dumont_Native_Search {
 			$title     = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
 			$title     = '' !== $title ? $title : $url;
 			$type      = wp_strip_all_tags( (string) ( $fields['type'] ?? '' ) );
-			$date      = $fields['publication_date'] ?? $field( $fields, 'date', 'publication_date' );
+			$looks     = $types[ $type ] ?? array(
+				'date'  => '',
+				'image' => '',
+			);
+			$date      = self::card_override( $fields, $looks['date'] ) ?? $fields['publication_date'] ?? $field( $fields, 'date', 'publication_date' );
 			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
 			$parts     = wp_parse_url( $url );
 			$result    = array(
@@ -496,10 +570,10 @@ class Viglet_Dumont_Native_Search {
 				'url'         => $url,
 				'title'       => $title,
 				'type'        => $state['typeLabels'][ $type ] ?? $type,
-				'date'        => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
+				'date'        => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'       => self::crumb( $url ),
-				'image'       => (string) $field( $fields, 'image', 'image' ),
+				'image'       => (string) ( self::card_override( $fields, $looks['image'] ) ?? $field( $fields, 'image', 'image' ) ),
 				'snippet'     => self::snippet( (string) $field( $fields, 'description', 'abstract' ) ),
 				// The snippet as plain text, so the server draws it at its height; the script then
 				// puts the highlights in.
@@ -526,7 +600,7 @@ class Viglet_Dumont_Native_Search {
 			}
 			$result['snippetText'] = implode( '', array_column( $result['snippet'], 'text' ) );
 			$result['hasFields']   = array() !== $result['fields'];
-			$results[]             = $result;
+			$results[]             = self::filter_card( $result, $fields );
 		}//end foreach
 
 		$total  = (int) ( $response['queryContext']['count'] ?? 0 );
@@ -701,26 +775,32 @@ class Viglet_Dumont_Native_Search {
 		}
 
 		$cards   = $this->card_fields();
+		$types   = $this->card_types();
 		$results = array();
 		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
 			$url       = (string) ( $fields['url'] ?? '' );
-			$date      = $fields['publication_date'] ?? null;
+			$looks     = $types[ (string) ( $fields['type'] ?? '' ) ] ?? array(
+				'date'  => '',
+				'image' => '',
+			);
+			$date      = self::card_override( $fields, $looks['date'] ) ?? $fields['publication_date'] ?? null;
 			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
 			$parts     = wp_parse_url( $url );
 			$values    = self::card_values( $cards, $fields );
-			$results[] = array(
+			$card      = array(
 				'url'       => $url,
 				'title'     => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
 				'type'      => $labels['typeLabels'][ $fields['type'] ?? '' ] ?? (string) ( $fields['type'] ?? '' ),
-				'date'      => $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : '',
+				'date'      => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'       => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'     => self::crumb( $url ),
-				'image'     => (string) ( $fields['image'] ?? '' ),
+				'image'     => (string) ( self::card_override( $fields, $looks['image'] ) ?? $fields['image'] ?? '' ),
 				'fields'    => $values,
 				'hasFields' => array() !== $values,
 			);
-		}
+			$results[] = self::filter_card( $card, $fields );
+		}//end foreach
 
 		$facets = array();
 		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
@@ -903,6 +983,11 @@ class Viglet_Dumont_Native_Search {
 			// The mapped fields a result card shows as labelled lines (D305).
 			'cards'   => $this->card_fields(),
 		);
+		// Each type's card date and image fields, where a type changed them (D305).
+		$card_types = $this->card_types();
+		if ( array() !== $card_types ) {
+			$config['cardTypes'] = $card_types;
+		}
 		// The results page on another site (D304), so a theme's own field sends its query there.
 		$remote = $this->remote_search_url();
 		if ( '' !== $remote ) {

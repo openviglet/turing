@@ -55,6 +55,101 @@ export const siteFilters = {
 	[ siteFilter.split( ':' )[ 0 ] ]: [ config.siteKey ],
 };
 
+// A card's dates, as the page's language writes them (D305).
+const cardDate = new Intl.DateTimeFormat(
+	document.documentElement.lang || undefined,
+	{ dateStyle: 'medium' }
+);
+const cardDay = new Intl.DateTimeFormat(
+	document.documentElement.lang || undefined,
+	{ dateStyle: 'medium', timeZone: 'UTC' }
+);
+
+/**
+ * A card's date as the page's language writes it (D305). A date with no time of day (a
+ * day-only meta, indexed as midnight UTC) is that day everywhere: read in the visitor's own
+ * zone it would show the day before west of Greenwich, as the server's card_day() knows.
+ *
+ * @param {Date} at The date.
+ */
+export function formatCardDate( at ) {
+	return ( 0 === at.getTime() % 86400000 ? cardDay : cardDate ).format( at );
+}
+
+/**
+ * The text of a value Turing may have highlighted with markup.
+ *
+ * @param {string} html The value.
+ */
+function cardText( html ) {
+	return (
+		new window.DOMParser().parseFromString( html || '', 'text/html' ).body
+			.textContent || ''
+	);
+}
+
+/**
+ * A document's value for a card's date or image field, its first when a list, as the
+ * server's card_override() reads it; undefined for the default or nothing there (D305).
+ *
+ * @param {Object} fields The document's fields.
+ * @param {string} field  The mapped field, or empty for the default.
+ */
+export function cardOverride( fields, field ) {
+	const raw = field ? fields[ field ] : undefined;
+	const value = Array.isArray( raw ) ? raw[ 0 ] : raw;
+	return value === undefined ||
+		value === null ||
+		value === '' ||
+		false === value
+		? undefined
+		: value;
+}
+
+/**
+ * The date a result card shows: the type's own card date field where Fields chose one
+ * (`cardTypes`), else the publication date (D305).
+ *
+ * @param {Object} fields The document's fields.
+ * @return {string|number|undefined} The raw value, or undefined.
+ */
+export function cardWhen( fields ) {
+	const type = cardText( String( fields.type ?? '' ) );
+	return (
+		cardOverride( fields, config.cardTypes?.[ type ]?.date ) ??
+		fields.publication_date
+	);
+}
+
+/**
+ * A result's card lines (D305): each mapped field marked "Show on result cards" that the
+ * document carries, as the server's card_values() writes it. A date in the page's language,
+ * a list joined, and a URL never shown raw.
+ *
+ * @param {Object} fields The document's fields.
+ * @return {Array<{field: string, label: string, value: string}>} The lines.
+ */
+export function cardLines( fields ) {
+	return ( config.cards || [] )
+		.map( ( { field, label, type } ) => {
+			const raw = fields[ field ];
+			const value = ( Array.isArray( raw ) ? raw : [ raw ] )
+				.map( ( v ) => cardText( String( v ?? '' ) ).trim() )
+				.filter( ( v ) => v && ! /^https?:\/\//i.test( v ) )
+				.map( ( v ) => {
+					if ( 'DATE' !== type ) {
+						return v;
+					}
+					const at = new Date( /^\d+$/.test( v ) ? Number( v ) : v );
+					return isNaN( at ) ? '' : formatCardDate( at );
+				} )
+				.filter( Boolean )
+				.join( ', ' );
+			return { field, label, value };
+		} )
+		.filter( ( line ) => line.value );
+}
+
 /**
  * An SDK client for this site's Turing.
  *

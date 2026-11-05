@@ -198,6 +198,46 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( array(), $this->mapping()->all()['evento']['fields'] );
 	}
 
+	/**
+	 * A type's card date and image name one of its own fields of a type that can hold one
+	 * (D305); anything else is the default, never a field the cards cannot read.
+	 */
+	public function test_a_types_card_date_and_image_must_be_its_own_fitting_fields(): void {
+		$fields = array(
+			array(
+				'source' => 'meta:inicio',
+				'field'  => 'event_start',
+				'type'   => 'DATE',
+				'card'   => true,
+			),
+			array(
+				'source' => 'meta:capa',
+				'field'  => 'cover',
+				'type'   => 'STRING',
+			),
+		);
+		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+			'evento' => array(
+				'fields'     => $fields,
+				'card_date'  => 'event_start',
+				'card_image' => 'cover',
+			),
+			'post'   => array(
+				'fields'     => $fields,
+				// A STRING is no date, a DATE is no image, and a field the type lacks is nothing.
+				'card_date'  => 'cover',
+				'card_image' => 'missing',
+			),
+		);
+
+		$all = $this->mapping()->all();
+		$this->assertSame( 'event_start', $all['evento']['card_date'] );
+		$this->assertSame( 'cover', $all['evento']['card_image'] );
+		$this->assertTrue( $all['evento']['fields'][0]['card'] );
+		$this->assertSame( '', $all['post']['card_date'] );
+		$this->assertSame( '', $all['post']['card_image'] );
+	}
+
 	public function test_with_nothing_stored_a_public_custom_taxonomy_is_a_facet(): void {
 		Functions\when( 'get_object_taxonomies' )->justReturn(
 			array(

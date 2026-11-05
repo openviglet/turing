@@ -500,6 +500,91 @@ final class NativeSearchTest extends PluginTestCase {
 	}
 
 	/**
+	 * A type whose cards show a mapped date and image draws them on the first page (D305),
+	 * with the card lines, and the card goes through viglet_dumont_result_card.
+	 */
+	public function test_the_first_page_draws_a_types_card_date_image_and_lines(): void {
+		$options = array(
+			'viglet_dumont_mapping' => array(
+				'post' => array(
+					'fields'     => array(
+						array(
+							'source'      => 'meta:inicio',
+							'field'       => 'event_start',
+							'type'        => 'DATE',
+							'facet_label' => 'Starts',
+							'card'        => true,
+						),
+						array(
+							'source' => 'meta:capa',
+							'field'  => 'cover',
+							'type'   => 'STRING',
+						),
+					),
+					'card_date'  => 'event_start',
+					'card_image' => 'cover',
+				),
+			),
+		);
+		Functions\stubs(
+			array(
+				'wp_date'            => static fn ( $format, $ts ) => gmdate( 'Y-m-d', $ts ),
+				'get_option'         => static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback,
+				'wp_unslash'         => static fn ( $v ) => $v,
+				'wp_strip_all_tags'  => static fn ( $v ) => trim( strip_tags( $v ) ),
+				'number_format_i18n' => static fn ( $n ) => (string) $n,
+				'_n'                 => static fn ( $one, $many, $n ) => 1 === $n ? $one : $many,
+			)
+		);
+		Functions\when( 'wp_remote_request' )->justReturn(
+			array(
+				'response' => array( 'code' => 200 ),
+				'body'     => json_encode(
+					array(
+						'queryContext' => array( 'count' => 1 ),
+						'results'      => array(
+							'document' => array(
+								array(
+									'fields' => array(
+										'id'               => 'site-a:post:8',
+										'title'            => 'Open day',
+										'url'              => 'https://site.example.org/open-day/',
+										'type'             => 'post',
+										'publication_date' => '2026-01-01T00:00:00Z',
+										'event_start'      => '2026-11-20T13:00:00Z',
+										'image'            => 'https://site.example.org/thumb.jpg',
+										'cover'            => 'https://site.example.org/cover.jpg',
+									),
+								),
+							),
+						),
+					)
+				),
+			)
+		);
+		Filters\expectApplied( 'viglet_dumont_result_card' )->once()->andReturnUsing(
+			static fn ( array $card ) => array_merge( $card, array( 'title' => 'Filtered' ) )
+		);
+
+		$result = $this->search()->first_page(
+			array(
+				'query'      => 'open',
+				'perPage'    => 10,
+				'sort'       => '',
+				'typeLabels' => array(),
+				'cartLabel'  => '%s',
+				'noneLabel'  => 'None',
+			)
+		)['results'][0];
+
+		$this->assertSame( '2026-11-20', $result['date'], 'the event starts, not the day it was posted' );
+		$this->assertSame( 'https://site.example.org/cover.jpg', $result['image'] );
+		$this->assertTrue( $result['hasFields'] );
+		$this->assertSame( 'Starts', $result['fields'][0]['label'] );
+		$this->assertSame( 'Filtered', $result['title'] );
+	}
+
+	/**
 	 * D263: the crumb drops this site's domain, and keeps another site's.
 	 */
 	public function test_crumb_names_the_host_only_for_another_site(): void {
