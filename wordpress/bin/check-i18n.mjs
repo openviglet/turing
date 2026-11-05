@@ -10,7 +10,7 @@
 // Fails naming each string, so a task sees it before committing. The README's "Translations"
 // section says how to regenerate and translate.
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { chmodSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -88,6 +88,9 @@ const shown = ( key ) => {
  */
 function freshPot() {
 	const out = mkdtempSync( join( tmpdir(), 'viglet-i18n-' ) );
+	// mkdtemp makes it 0700 for this user, and the image writes as its own (www-data on Linux,
+	// so the CI runner refused it); Windows has no such modes and never showed it.
+	chmodSync( out, 0o777 );
 	try {
 		execFileSync(
 			'docker',
