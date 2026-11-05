@@ -317,7 +317,9 @@ docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
 ```
 
 then translate the new entries in `viglet-turing-search-pt_BR.po` and run the last two commands
-again. These files, and `src/includes/bundled-translations.php` that loads them, serve the GitHub
+again. `npm run check:i18n` checks both halves: it regenerates the `.pot` and fails, naming
+each string, when the committed one is out of date or a string has no pt_BR translation. CI
+runs it on every push. These files, and `src/includes/bundled-translations.php` that loads them, serve the GitHub
 zip and Composer only: the WordPress.org package (`bin/build-zip.sh --wporg`) leaves them out,
 keeping the `.pot`, as translate.wordpress.org delivers the language packs there. The pt_BR `.po`
 is what to import into translate.wordpress.org. The JSON files are named after the source script (`assets/admin/health.js`), and
