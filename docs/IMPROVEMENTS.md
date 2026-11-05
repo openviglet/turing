@@ -41,6 +41,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CR — SDK errors that carry Turing's own answer
 
+## Block CS — Schema changes through the manifest converge in one call
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2383,3 +2385,28 @@ filter, sent as JSON, answers the same neighbours as the GET with `fqi.op=OR`.
 ## CLXXVIII The model catalog at models.viglet.org
 
 ## CLXXIX The quality gate stops at the package boundary
+
+### CLXXIX.1 Create and migrate in one manifest (T1241)
+
+**Where it came from.** Dumont D314: the catalog connector's DSpace profile provisions
+an SN site through `POST /api/sn/manifest`, and the plugin (D326) and the connector
+(Dumont D340) both need to declare `RECREATE` migrations for fields whose cardinality
+changes.
+
+**What happens.** A manifest that creates the site and carries a `RECREATE` migration in
+the same call answers 500: `TransientPropertyValueException` in
+`TurSNFieldProvisioner.recreateField`, the field being recreated before the new site is
+persisted. The same migration on a site that already exists works. Separately, `PUT
+/api/sn/{id}/field/ext/{id}` answers 400 "invalid URI scheme null" on the local build,
+so a client cannot fix the field by hand through the API either.
+
+**Workaround in Dumont.** `catalog/dspace-dev/e2e.py` creates the site with one manifest
+and posts a second one with the migrations.
+
+**What Turing should do.** Apply migrations only after the site and its new fields are
+saved, so a create-plus-migrate manifest succeeds (a migration for a field that did not
+exist simply creates it); and make the field-ext PUT accept the body the console sends.
+
+**Done when:** one manifest call that creates a site and declares `RECREATE` for
+`author` answers 200 with the field multi-valued, and the field-ext PUT changes a
+field's cardinality.

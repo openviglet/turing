@@ -30,6 +30,10 @@
 
 - 📋 **T1240** (deps: —) **The SDK's answer and chat controllers keep a failed call's error as text, so a 429's resetsAt never reaches a subscriber** — Streaming surfaces cannot say when AI answers come back, though a direct call now can. → §CLXXVI.2
 
+## Block CS — Schema changes through the manifest converge in one call
+
+- 📋 **T1241** (deps: —) **A manifest that creates a site and declares a RECREATE migration answers 500, and the field-ext PUT answers 400** — A connector cannot create a site with the fields it needs in one call, nor fix one through the API. → §CLXXIX.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
