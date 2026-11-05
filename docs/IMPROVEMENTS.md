@@ -37,6 +37,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
+## Block CP — Every endpoint honours a request's filters and partition
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2324,6 +2326,31 @@ engine shows and the shared seam that closes it for all of them.
 ## CLXXVI SDK errors that carry Turing's own answer
 
 ## CLXXVII Every endpoint honours a request's filters and partition
+
+### CLXXVII.3 Similar and duplicates as POST queries (T1239)
+
+**Where it came from.** Dumont D337 (the WordPress plugin): Related across sibling sites
+asks `similar` inside the scope, one `site_key` per site with `fqi.op=OR` (T1235), plus
+the block's own filters. Search and autocomplete take that as a JSON body (`POST
+/api/sn/{site}/search/query`, `POST /api/sn/{site}/ac/query`), but similar documents and
+duplicates are GET only (`TurSNSiteSearchAPI` `@GetMapping("similar")`,
+`@GetMapping("duplicates")`).
+
+**What happens.** Every filter, the operator and the locale go in the query string. A
+scope with several sites and filters builds a long, hand-escaped URL (`fq[]` repeated,
+`:` and spaces escaped per value), which a client has to spell differently from the
+search call it makes beside it, and which a proxy or a logged URL limit can cut.
+
+**Workaround in Dumont.** None needed yet: the plugin spells `fq[]` by hand in
+`Viglet_Dumont_API_Client::request()` and sends `similar` as GET.
+
+**What Turing should do.** `POST /api/sn/{site}/search/similar/query` and `POST
+/api/sn/{site}/search/duplicates/query`, taking the same body as `search/query` (`fq`,
+`fqOperator`, `fqItemOperator`, `fqAnd`, `fqOr`, `locale`, `rows`) plus `id` and `mode`,
+answering as the GET does; and `fetchSimilar` in both SDKs sending it.
+
+**Done when:** a similar request with two `site_key` values as alternatives and a type
+filter, sent as JSON, answers the same neighbours as the GET with `fqi.op=OR`.
 
 ## CLXXVIII The model catalog at models.viglet.org
 

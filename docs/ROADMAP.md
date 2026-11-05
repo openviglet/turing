@@ -22,6 +22,10 @@
 
 ## Block CN — Autocomplete and suggestions
 
+## Block CP — Every endpoint honours a request's filters and partition
+
+- 📋 **T1239** (deps: —) **Similar documents and duplicates take filters only as a GET query string, never as the JSON body search takes** — A scoped similar call is a long hand-escaped URL that a client spells unlike the search beside it. → §CLXXVII.3
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
