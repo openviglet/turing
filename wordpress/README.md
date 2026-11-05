@@ -4,7 +4,7 @@ The WordPress plugin that indexes a site's content into Viglet Turing and answer
 from it. The plugin itself is [`src/`](src/); [`src/readme.txt`](src/readme.txt) is its
 WordPress readme and changelog.
 
-**Try it in your browser**: [the demo store in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fopenviglet.github.io%2Fdumont%2Fplayground%2Fblueprint.json),
+**Try it in your browser**: [the demo store in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json),
 with nothing to install ([`demo/playground/blueprint.json`](demo/playground/blueprint.json),
 published by the site's Pages workflow; `npm run test:e2e:playground` checks it on
 playground.wordpress.net).

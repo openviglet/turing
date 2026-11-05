@@ -8,7 +8,7 @@
  * Tarnfell's tour numbers the shopper's.
  */
 ( () => {
-	const docs = 'https://openviglet.github.io/dumont/docs/connectors/wordpress/';
+	const docs = 'https://dumont.viglet.org/docs/connectors/wordpress/';
 	const pt = ( document.documentElement.lang || '' ).startsWith( 'pt' );
 	const text = pt
 		? {

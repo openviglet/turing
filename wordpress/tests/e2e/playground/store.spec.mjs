@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 
 const blueprint =
 	process.env.PLAYGROUND_BLUEPRINT ||
-	'https://openviglet.github.io/dumont/playground/blueprint.json';
+	'https://dumont.viglet.org/playground/blueprint.json';
 
 test( 'the blueprint boots the store, and a search opens the product it names', async ( {
 	page,

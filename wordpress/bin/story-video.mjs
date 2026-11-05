@@ -272,7 +272,7 @@ const developerWords = {
 	tryIt: 'Code, docs and a demo',
 	tryTitle: 'Viglet Turing Search',
 	tryLine:
-		'github.com/openviglet/dumont<br>openviglet.github.io/dumont/docs/connectors/wordpress<br>openviglet.github.io/dumont/wordpress · the demo, nothing to install',
+		'github.com/openviglet/dumont<br>dumont.viglet.org/docs/connectors/wordpress<br>dumont.viglet.org/wordpress · the demo, nothing to install',
 	fullIt: 'See the whole setup',
 	fullTitle: 'The full walkthrough',
 };
@@ -288,7 +288,7 @@ const storyWords =
 				tryIt: 'Experimente',
 				tryTitle: 'A loja de demonstração no seu navegador',
 				tryLine:
-					'openviglet.github.io/dumont/wordpress · sem instalar nada<br>github.com/openviglet/dumont',
+					'dumont.viglet.org/wordpress · sem instalar nada<br>github.com/openviglet/dumont',
 				fullIt: 'Veja a visita inteira',
 				fullTitle: 'O vídeo completo e a loja de demonstração',
 			}
@@ -302,7 +302,7 @@ const storyWords =
 				tryIt: 'Try it',
 				tryTitle: 'The demo store in your browser',
 				tryLine:
-					'openviglet.github.io/dumont/wordpress · nothing to install<br>github.com/openviglet/dumont',
+					'dumont.viglet.org/wordpress · nothing to install<br>github.com/openviglet/dumont',
 				fullIt: 'See the whole visit',
 				fullTitle: 'The full video and the demo store',
 			};

@@ -31,7 +31,7 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://openviglet.github.io/dumont/playground/viglet-turing-search.zip"
+				"url": "https://dumont.viglet.org/playground/viglet-turing-search.zip"
 			},
 			"options": {
 				"activate": true
@@ -41,7 +41,7 @@
 			"step": "installTheme",
 			"themeData": {
 				"resource": "url",
-				"url": "https://openviglet.github.io/dumont/playground/tarnfell.zip"
+				"url": "https://dumont.viglet.org/playground/tarnfell.zip"
 			},
 			"options": {
 				"activate": true
@@ -61,7 +61,7 @@
 			"step": "unzip",
 			"zipFile": {
 				"resource": "url",
-				"url": "https://openviglet.github.io/dumont/playground/tarnfell-demo.zip"
+				"url": "https://dumont.viglet.org/playground/tarnfell-demo.zip"
 			},
 			"extractToPath": "/tmp"
 		},
