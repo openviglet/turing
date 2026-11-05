@@ -256,6 +256,8 @@ class Viglet_Dumont_Admin {
 		$sanitized['related_after']       = array_values( array_intersect( (array) ( $input['related_after'] ?? array() ), get_post_types( array( 'public' => true ) ) ) );
 		$sanitized['generative_ai']       = ! empty( $input['generative_ai'] ) ? 1 : 0;
 		$sanitized['assistant_launcher']  = ! empty( $input['assistant_launcher'] ) ? 1 : 0;
+		$sanitized['entity_extraction']   = ! empty( $input['entity_extraction'] ) ? 1 : 0;
+		$sanitized['name_variants']       = Viglet_Dumont_Entities::variants( (string) ( $input['name_variants'] ?? '' ) );
 		$sanitized['trending_block']      = Viglet_Dumont_Trending::lines( (string) ( $input['trending_block'] ?? '' ) );
 		$sanitized['trending_fallback']   = Viglet_Dumont_Trending::lines( (string) ( $input['trending_fallback'] ?? '' ) );
 		// The chips follow the new lists at once, not after the hour they are kept.

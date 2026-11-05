@@ -559,6 +559,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
+							<label class="viglet-dumont-toggle">
+								<input type="checkbox"
+										name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[entity_extraction]"
+										value="1" <?php checked( $settings['entity_extraction'], 1 ); ?>
+										aria-describedby="entity_extraction_help" />
+								<span class="viglet-dumont-toggle__slider"></span>
+								<span class="viglet-dumont-toggle__label">
+									<?php esc_html_e( 'Find people, organisations and places in posts', 'viglet-turing-search' ); ?>
+									<small id="entity_extraction_help"><?php esc_html_e( 'Turing\'s language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed.', 'viglet-turing-search' ); ?></small>
+									<?php if ( ! empty( $settings['entity_extraction'] ) && ! Viglet_Dumont_Mapping::declares_generative_ai( $settings ) ) : ?>
+										<small class="viglet-dumont-warning"><?php esc_html_e( 'Off until generative AI is turned on.', 'viglet-turing-search' ); ?></small>
+									<?php endif; ?>
+								</span>
+							</label>
+						</div>
+						<div class="viglet-dumont-field">
+							<label for="name_variants"><?php esc_html_e( 'Name variants', 'viglet-turing-search' ); ?></label>
+							<textarea id="name_variants" rows="4"
+									name="<?php echo esc_attr( VIGLET_DUMONT_OPTION ); ?>[name_variants]"
+									class="large-text"
+									placeholder="<?php echo esc_attr( 'Marta Vilar | Vilar, Marta; M. Vilar' ); ?>"
+									aria-describedby="name_variants_help"><?php echo esc_textarea( Viglet_Dumont_Entities::variants_text( $settings['name_variants'] ?? array() ) ); ?></textarea>
+							<p class="description" id="name_variants_help"><?php esc_html_e( 'One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Turing\'s Thesaurus for this site; posts already indexed follow once reindexed.', 'viglet-turing-search' ); ?></p>
+							<?php
+							$viglet_dumont_sync = get_option( Viglet_Dumont_Entities::SYNC_OPTION, array() );
+							if ( is_array( $viglet_dumont_sync ) && ! empty( $viglet_dumont_sync['at'] ) ) :
+								?>
+								<p class="description" role="status">
+									<?php
+									if ( '' !== (string) ( $viglet_dumont_sync['error'] ?? '' ) ) {
+										/* translators: %s: why Turing did not take the name variants. */
+										echo esc_html( sprintf( __( 'Not saved to Turing: %s', 'viglet-turing-search' ), $viglet_dumont_sync['error'] ) );
+									} else {
+										/* translators: 1: how many names, 2: when they were saved. */
+										echo esc_html( sprintf( _n( '%1$d name saved to Turing %2$s ago.', '%1$d names saved to Turing %2$s ago.', (int) $viglet_dumont_sync['names'], 'viglet-turing-search' ), (int) $viglet_dumont_sync['names'], human_time_diff( (int) $viglet_dumont_sync['at'] ) ) );
+									}
+									?>
+								</p>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>

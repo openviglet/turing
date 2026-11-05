@@ -74,7 +74,7 @@ class Viglet_Dumont_Mapping {
 	private const CORE_SOURCES = array( 'excerpt', 'slug', 'menu_order', 'parent' );
 
 	/** Fields the indexer always sends; a mapping cannot take their names. */
-	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key' );
+	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key', 'entity_person', 'entity_organization', 'entity_place' );
 
 	/**
 	 * The plugin settings this mapping was built with.
@@ -403,7 +403,7 @@ class Viglet_Dumont_Mapping {
 	 * `site_key` is always declared: delete-all filters on it, and with several sites in one SN
 	 * site it is the facet that tells them apart.
 	 *
-	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>}
+	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
 	 */
 	public function manifest(): array {
 		$locale = $this->settings['locale'] ?? 'en_US';
@@ -437,6 +437,9 @@ class Viglet_Dumont_Mapping {
 				'facet'       => false,
 			),
 		);
+		// The entity facets Turing fills (D310), declared as Turing creates them so a label and
+		// "offered" reach it; a mapped field cannot take their names.
+		$fields = array_merge( $fields, ( new Viglet_Dumont_Entities( $this->settings ) )->manifest_fields( $locale ) );
 		$custom = array();
 
 		foreach ( $this->all() as $type_mapping ) {
@@ -490,6 +493,15 @@ class Viglet_Dumont_Mapping {
 		// Agent only to a site that has none (Turing T1146, D214). An object, so `{}` in JSON.
 		if ( self::declares_generative_ai( $this->settings ) ) {
 			$manifest['genAi'] = new stdClass();
+			// Entities at import (Turing T1228, D310): the site's LLM reads every document for
+			// the people, organisations and places it names. Left out, Turing keeps its setting,
+			// so turning it off here sends `false` once, after a manifest that turned it on.
+			$last = get_option( self::PROVISIONED_OPTION, array() );
+			if ( Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+				$manifest['genAi'] = array( 'entityExtraction' => true );
+			} elseif ( is_array( $last ) && ! empty( $last['entities'] ) ) {
+				$manifest['genAi'] = array( 'entityExtraction' => false );
+			}
 		}
 
 		return $manifest;
@@ -674,12 +686,15 @@ class Viglet_Dumont_Mapping {
 
 		$result = $client->provision( $manifest );
 		Viglet_Dumont_Events::record( 'provision', $result['success'], $result['note'] );
+		$sent = is_array( $manifest['genAi'] ?? null ) ? $manifest['genAi']['entityExtraction'] : null;
 		update_option(
 			self::PROVISIONED_OPTION,
 			array(
-				'hash'  => $hash,
-				'at'    => time(),
-				'error' => $result['success'] ? '' : $result['message'],
+				'hash'     => $hash,
+				'at'       => time(),
+				'error'    => $result['success'] ? '' : $result['message'],
+				// Whether Turing was last told to find entities (D310), until it hears otherwise.
+				'entities' => null === $sent || ! $result['success'] ? is_array( $last ) && ! empty( $last['entities'] ) : $sent,
 			),
 			false
 		);

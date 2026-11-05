@@ -243,6 +243,31 @@
         );
     }
 
+    /**
+     * The people, organisations and places Turing found in this post when it was indexed
+     * (D310), read from its indexed document. Shown only: Turing keeps a name only when the
+     * text holds it, so changing the text and reindexing is what changes them.
+     */
+    function Entities(props) {
+        if (!props.entities) {
+            return null;
+        }
+        return el('div', { className: 'viglet-dumont-entities', style: { margin: '0 0 12px' } },
+            el('h3', null, __('Names in this post', 'viglet-turing-search')),
+            props.entities.length
+                ? el('dl', { className: 'viglet-dumont-entities__list', style: { margin: '0 0 8px' } },
+                    props.entities.map(function (group) {
+                        return [
+                            el('dt', { key: group.kind + '-t', style: { fontWeight: 600 } }, group.label),
+                            el('dd', { key: group.kind + '-d', 'data-kind': group.kind, style: { margin: '0 0 8px' } }, group.values.join(', '))
+                        ];
+                    }))
+                : el('p', null, __('Turing found no person, organisation or place in this post.', 'viglet-turing-search')),
+            el('p', { className: 'viglet-dumont-assist__note' },
+                __('Found by Turing’s language model when the post was indexed. To change them, change the text and reindex.', 'viglet-turing-search'))
+        );
+    }
+
     function SearchPanel() {
         var post = useSelect(function (select) {
             var editor = select('core/editor');
@@ -302,6 +327,7 @@
                 state && state.detail ? el('br') : null,
                 state && state.detail ? el('span', { className: 'viglet-dumont-search-panel__detail' }, state.detail) : null
             ),
+            el(Entities, { entities: state && state.entities }),
             el(components.ToggleControl, {
                 label: __('Exclude from search', 'viglet-turing-search'),
                 help: __('Takes effect when the post is saved.', 'viglet-turing-search'),

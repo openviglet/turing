@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T18:21:58+00:00\n"
+"POT-Creation-Date: 2026-11-05T18:47:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -39,14 +39,14 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
-#: src/admin/js/editor-panel.js:299
+#: src/admin/js/editor-panel.js:324
 #: src/admin/js/search-block-editor.js:112
 msgid "Search"
 msgstr ""
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:739
+#: assets/admin/mapping.js:892
 #: assets/admin/tuning.js:273
 #: assets/admin/tuning.js:406
 msgid "Actions"
@@ -128,7 +128,7 @@ msgid "Source App Identifier"
 msgstr ""
 
 #: src/admin/views/settings-page.php:197
-#: src/admin/views/settings-page.php:591
+#: src/admin/views/settings-page.php:630
 msgid "Test Connection"
 msgstr ""
 
@@ -393,70 +393,104 @@ msgid "A button in the corner of every page opens a chat that answers from this 
 msgstr ""
 
 #: src/admin/views/settings-page.php:569
-msgid "Save Settings"
+msgid "Find people, organisations and places in posts"
 msgstr ""
 
-#: src/admin/views/settings-page.php:577
-msgid "Indexing Actions"
+#: src/admin/views/settings-page.php:570
+msgid "Turing's language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed."
+msgstr ""
+
+#: src/admin/views/settings-page.php:572
+msgid "Off until generative AI is turned on."
 msgstr ""
 
 #: src/admin/views/settings-page.php:578
+msgid "Name variants"
+msgstr ""
+
+#: src/admin/views/settings-page.php:584
+msgid "One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Turing's Thesaurus for this site; posts already indexed follow once reindexed."
+msgstr ""
+
+#. translators: %s: why Turing did not take the name variants.
+#: src/admin/views/settings-page.php:593
+#, php-format
+msgid "Not saved to Turing: %s"
+msgstr ""
+
+#. translators: 1: how many names, 2: when they were saved.
+#: src/admin/views/settings-page.php:596
+#, php-format
+msgid "%1$d name saved to Turing %2$s ago."
+msgid_plural "%1$d names saved to Turing %2$s ago."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/admin/views/settings-page.php:608
+msgid "Save Settings"
+msgstr ""
+
+#: src/admin/views/settings-page.php:616
+msgid "Indexing Actions"
+msgstr ""
+
+#: src/admin/views/settings-page.php:617
 msgid "Manage your Turing search index."
 msgstr ""
 
-#: src/admin/views/settings-page.php:586
+#: src/admin/views/settings-page.php:625
 msgid "Connection Status"
 msgstr ""
 
-#: src/admin/views/settings-page.php:587
+#: src/admin/views/settings-page.php:626
 msgid "Test the connection to your Turing server."
 msgstr ""
 
-#: src/admin/views/settings-page.php:603
+#: src/admin/views/settings-page.php:642
 msgid "Index All Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:604
+#: src/admin/views/settings-page.php:643
 msgid "Send all published content to the Turing index. This may take a while for large sites."
 msgstr ""
 
-#: src/admin/views/settings-page.php:607
+#: src/admin/views/settings-page.php:646
 msgid "Content to index"
 msgstr ""
 
-#: src/admin/views/settings-page.php:609
+#: src/admin/views/settings-page.php:648
 msgid "All Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:610
+#: src/admin/views/settings-page.php:649
 msgid "Posts Only"
 msgstr ""
 
-#: src/admin/views/settings-page.php:611
+#: src/admin/views/settings-page.php:650
 msgid "Pages Only"
 msgstr ""
 
-#: src/admin/views/settings-page.php:615
+#: src/admin/views/settings-page.php:654
 msgid "Start Indexing"
 msgstr ""
 
-#: src/admin/views/settings-page.php:634
+#: src/admin/views/settings-page.php:673
 msgid "Delete All Indexed Content"
 msgstr ""
 
-#: src/admin/views/settings-page.php:635
+#: src/admin/views/settings-page.php:674
 msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
 msgstr ""
 
-#: src/admin/views/settings-page.php:639
+#: src/admin/views/settings-page.php:678
 msgid "Delete All"
 msgstr ""
 
-#: src/admin/views/settings-page.php:650
+#: src/admin/views/settings-page.php:689
 msgid "Content Overview"
 msgstr ""
 
-#: src/admin/views/settings-page.php:654
+#: src/admin/views/settings-page.php:693
 msgid "Loading stats..."
 msgstr ""
 
@@ -918,7 +952,7 @@ msgstr ""
 #: src/blocks/search/render.php:112
 #: assets/admin/mapping.js:289
 #: assets/admin/mapping.js:542
-#: assets/admin/mapping.js:720
+#: assets/admin/mapping.js:873
 msgid "Type"
 msgstr ""
 
@@ -971,7 +1005,7 @@ msgstr[1] ""
 #: src/includes/class-viglet-dumont-admin.php:63
 #: src/includes/class-viglet-dumont-admin.php:136
 #: src/includes/class-viglet-dumont-admin.php:196
-#: src/includes/class-viglet-dumont-admin.php:330
+#: src/includes/class-viglet-dumont-admin.php:332
 msgid "Search health"
 msgstr ""
 
@@ -1028,63 +1062,63 @@ msgstr ""
 msgid "Insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:313
+#: src/includes/class-viglet-dumont-admin.php:315
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:314
+#: src/includes/class-viglet-dumont-admin.php:316
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:315
+#: src/includes/class-viglet-dumont-admin.php:317
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:316
+#: src/includes/class-viglet-dumont-admin.php:318
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:317
+#: src/includes/class-viglet-dumont-admin.php:319
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:318
+#: src/includes/class-viglet-dumont-admin.php:320
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:319
+#: src/includes/class-viglet-dumont-admin.php:321
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:320
+#: src/includes/class-viglet-dumont-admin.php:322
 msgid "Total"
 msgstr ""
 
 #. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:323
+#: src/includes/class-viglet-dumont-admin.php:325
 #, php-format
 msgid "Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:325
+#: src/includes/class-viglet-dumont-admin.php:327
 #, php-format
 msgid "Indexing complete: %1$d posts sent."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:327
+#: src/includes/class-viglet-dumont-admin.php:329
 #, php-format
 msgid "The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:329
+#: src/includes/class-viglet-dumont-admin.php:331
 #, php-format
 msgid "The reindex was cancelled after %1$d posts sent."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:349
+#: src/includes/class-viglet-dumont-admin.php:351
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
@@ -1145,56 +1179,56 @@ msgid "WordPress Playground could not reach Turing at %s. From Playground, Turin
 msgstr ""
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:891
+#: src/includes/class-viglet-dumont-api-client.php:907
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:895
+#: src/includes/class-viglet-dumont-api-client.php:911
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:993
+#: src/includes/class-viglet-dumont-api-client.php:1009
 msgid "Generative AI is off for this SN site in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:994
+#: src/includes/class-viglet-dumont-api-client.php:1010
 msgid "The SN site has no AI agent in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:995
+#: src/includes/class-viglet-dumont-api-client.php:1011
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:996
+#: src/includes/class-viglet-dumont-api-client.php:1012
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:997
+#: src/includes/class-viglet-dumont-api-client.php:1013
 msgid "The SN site’s AI agent has no language model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:998
+#: src/includes/class-viglet-dumont-api-client.php:1014
 msgid "The SN site’s AI agent has no embedding model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:999
+#: src/includes/class-viglet-dumont-api-client.php:1015
 msgid "The SN site’s AI agent has no vector store."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1003
-#: src/includes/class-viglet-dumont-api-client.php:1091
+#: src/includes/class-viglet-dumont-api-client.php:1019
+#: src/includes/class-viglet-dumont-api-client.php:1107
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1004
-#: src/includes/class-viglet-dumont-api-client.php:1086
+#: src/includes/class-viglet-dumont-api-client.php:1020
+#: src/includes/class-viglet-dumont-api-client.php:1102
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1026
+#: src/includes/class-viglet-dumont-api-client.php:1042
 msgid "Turing did not answer."
 msgstr ""
 
@@ -1329,7 +1363,7 @@ msgid "Availability"
 msgstr ""
 
 #: src/includes/class-viglet-dumont-compare.php:71
-#: assets/admin/mapping.js:729
+#: assets/admin/mapping.js:882
 msgid "Weight"
 msgstr ""
 
@@ -1440,6 +1474,29 @@ msgstr ""
 #: src/includes/class-viglet-dumont-diagnostics.php:186
 #, php-format
 msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:84
+#: assets/admin/mapping.js:671
+msgid "People"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:85
+#: assets/admin/mapping.js:676
+msgid "Organisations"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:86
+#: assets/admin/mapping.js:681
+msgid "Places"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:501
+msgid "Turing did not create the thesaurus."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:613
+msgid "Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Turing's Thesaurus."
 msgstr ""
 
 #: src/includes/class-viglet-dumont-events.php:114
@@ -1556,101 +1613,101 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:587
+#: src/includes/class-viglet-dumont-mapping.php:599
 msgid "Today"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:592
+#: src/includes/class-viglet-dumont-mapping.php:604
 msgid "Next 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:597
+#: src/includes/class-viglet-dumont-mapping.php:609
 msgid "This month"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:602
-#: src/includes/class-viglet-dumont-mapping.php:616
+#: src/includes/class-viglet-dumont-mapping.php:614
+#: src/includes/class-viglet-dumont-mapping.php:628
 msgid "Upcoming"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:607
+#: src/includes/class-viglet-dumont-mapping.php:619
 msgid "Past"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:621
+#: src/includes/class-viglet-dumont-mapping.php:633
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:626
+#: src/includes/class-viglet-dumont-mapping.php:638
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:631
+#: src/includes/class-viglet-dumont-mapping.php:643
 msgid "This year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:636
+#: src/includes/class-viglet-dumont-mapping.php:648
 msgid "Before this year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:661
+#: src/includes/class-viglet-dumont-mapping.php:673
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:671
+#: src/includes/class-viglet-dumont-mapping.php:683
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:739
+#: src/includes/class-viglet-dumont-mapping.php:754
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:768
+#: src/includes/class-viglet-dumont-mapping.php:783
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:784
+#: src/includes/class-viglet-dumont-mapping.php:799
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:792
+#: src/includes/class-viglet-dumont-mapping.php:807
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:800
+#: src/includes/class-viglet-dumont-mapping.php:815
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:805
+#: src/includes/class-viglet-dumont-mapping.php:820
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:1114
+#: src/includes/class-viglet-dumont-mapping.php:1129
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:1118
+#: src/includes/class-viglet-dumont-mapping.php:1133
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:1122
+#: src/includes/class-viglet-dumont-mapping.php:1137
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""
@@ -1731,7 +1788,7 @@ msgstr ""
 #: src/includes/class-viglet-dumont-post-state.php:82
 #: src/includes/class-viglet-dumont-post-state.php:90
 #: assets/admin/health.js:625
-#: src/admin/js/editor-panel.js:288
+#: src/admin/js/editor-panel.js:313
 msgid "Failed"
 msgstr ""
 
@@ -1784,7 +1841,7 @@ msgstr ""
 msgid "Turing wrote no draft."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:499
+#: src/includes/class-viglet-dumont-post-state.php:521
 msgid "Turing did not take the post."
 msgstr ""
 
@@ -1888,51 +1945,51 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:101
+#: src/viglet-dumont.php:102
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:102
+#: src/viglet-dumont.php:103
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:103
+#: src/viglet-dumont.php:104
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:104
+#: src/viglet-dumont.php:105
 msgid "Copilot"
 msgstr ""
 
-#: src/viglet-dumont.php:108
+#: src/viglet-dumont.php:109
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:109
+#: src/viglet-dumont.php:110
 msgid "Site assistant block, or its launcher on every page"
 msgstr ""
 
-#: src/viglet-dumont.php:110
+#: src/viglet-dumont.php:111
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:111
+#: src/viglet-dumont.php:112
 msgid "Ask this site block"
 msgstr ""
 
-#: src/viglet-dumont.php:133
+#: src/viglet-dumont.php:134
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:859
+#: src/viglet-dumont.php:863
 msgid "Name the content to index: post_type is all, or one post type."
 msgstr ""
 
-#: src/viglet-dumont.php:1011
+#: src/viglet-dumont.php:1024
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:1036
+#: src/viglet-dumont.php:1049
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -2311,7 +2368,8 @@ msgid "Every search that found results led to a click."
 msgstr ""
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:732
+#: assets/admin/mapping.js:758
+#: assets/admin/mapping.js:885
 msgid "In Turing"
 msgstr ""
 
@@ -2380,17 +2438,18 @@ msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR
 msgstr ""
 
 #: assets/admin/mapping.js:270
-#: assets/admin/mapping.js:711
+#: assets/admin/mapping.js:864
 msgid "Source"
 msgstr ""
 
 #: assets/admin/mapping.js:280
-#: assets/admin/mapping.js:714
+#: assets/admin/mapping.js:749
+#: assets/admin/mapping.js:867
 msgid "Turing field"
 msgstr ""
 
 #: assets/admin/mapping.js:301
-#: assets/admin/mapping.js:723
+#: assets/admin/mapping.js:876
 msgid "Multiple"
 msgstr ""
 
@@ -2399,11 +2458,12 @@ msgid "Show on result cards"
 msgstr ""
 
 #: assets/admin/mapping.js:318
-#: assets/admin/mapping.js:726
+#: assets/admin/mapping.js:879
 msgid "Facet"
 msgstr ""
 
 #: assets/admin/mapping.js:337
+#: assets/admin/mapping.js:752
 msgid "Facet label"
 msgstr ""
 
@@ -2487,43 +2547,79 @@ msgstr ""
 msgid "Its image field"
 msgstr ""
 
-#: assets/admin/mapping.js:688
+#: assets/admin/mapping.js:709
+msgid "Off: turn on \"Find people, organisations and places in posts\" under Settings › Generative AI. Until then nothing is found and these facets are not offered."
+msgstr ""
+
+#: assets/admin/mapping.js:714
+msgid "Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered."
+msgstr ""
+
+#: assets/admin/mapping.js:724
+msgid "People, organisations and places"
+msgstr ""
+
+#: assets/admin/mapping.js:732
+msgid "Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
+msgstr ""
+
+#: assets/admin/mapping.js:741
+msgid "Open Settings"
+msgstr ""
+
+#: assets/admin/mapping.js:755
+msgid "Offered"
+msgstr ""
+
+#. translators: %s: the Turing field, e.g. entity_person.
+#: assets/admin/mapping.js:777
+#, js-format
+msgid "Facet label for %s"
+msgstr ""
+
+#. translators: %s: a facet's label, e.g. People.
+#: assets/admin/mapping.js:793
+#, js-format
+msgid "Offer %s"
+msgstr ""
+
+#: assets/admin/mapping.js:841
 msgid "Leave this type out of search"
 msgstr ""
 
-#: assets/admin/mapping.js:701
+#: assets/admin/mapping.js:854
 msgid "Only the standard fields are sent for this type."
 msgstr ""
 
-#: assets/admin/mapping.js:788
+#: assets/admin/mapping.js:941
 msgid "Add field"
 msgstr ""
 
-#: assets/admin/mapping.js:791
+#: assets/admin/mapping.js:944
 msgid "Preview document"
 msgstr ""
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:804
+#: assets/admin/mapping.js:957
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr ""
 
-#: assets/admin/mapping.js:893
+#: assets/admin/mapping.js:1048
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
 msgstr ""
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:907
+#: assets/admin/mapping.js:1062
 #, js-format
 msgid "Turing did not say where the fields stand: %s"
 msgstr ""
 
-#: assets/admin/mapping.js:917
+#: assets/admin/mapping.js:1072
 msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
 msgstr ""
 
-#: assets/admin/mapping.js:956
+#: assets/admin/mapping.js:1119
 msgid "Save and send to Turing"
 msgstr ""
 
@@ -3008,27 +3104,39 @@ msgstr ""
 msgid "Judged by Turing against %s, from the saved post."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:268
+#: src/admin/js/editor-panel.js:256
+msgid "Names in this post"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:265
+msgid "Turing found no person, organisation or place in this post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:267
+msgid "Found by Turing’s language model when the post was indexed. To change them, change the text and reindex."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:293
 msgid "Unknown"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:301
+#: src/admin/js/editor-panel.js:326
 msgid "Checking…"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:306
+#: src/admin/js/editor-panel.js:332
 msgid "Exclude from search"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:307
+#: src/admin/js/editor-panel.js:333
 msgid "Takes effect when the post is saved."
 msgstr ""
 
-#: src/admin/js/editor-panel.js:320
+#: src/admin/js/editor-panel.js:346
 msgid "Reindex now"
 msgstr ""
 
-#: src/admin/js/editor-panel.js:325
+#: src/admin/js/editor-panel.js:351
 msgid "Promote for a search…"
 msgstr ""
 

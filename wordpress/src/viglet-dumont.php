@@ -30,6 +30,7 @@ require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-ai-quota.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
+require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-entities.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-pdf.php';
 require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
@@ -237,6 +238,9 @@ function viglet_dumont_init(): void {
 	}
 }
 add_action( 'init', 'viglet_dumont_init' );
+// Name variants saved in Settings go to Turing's Thesaurus (D310).
+add_action( 'update_option_' . VIGLET_DUMONT_OPTION, array( 'Viglet_Dumont_Entities', 'on_settings_saved' ), 10, 2 );
+add_action( 'add_option_' . VIGLET_DUMONT_OPTION, static fn ( $option, $value ) => Viglet_Dumont_Entities::on_settings_saved( array(), $value ), 10, 2 );
 add_filter( 'wp_robots', array( 'Viglet_Dumont_Native_Search', 'robots' ) );
 // The WP Consent API's handshake: this plugin asks for statistics consent before reporting.
 add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_DUMONT_FILE ), '__return_true' );
@@ -936,6 +940,15 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
 			'types'        => Viglet_Dumont_Mapping::TYPES,
 			'foreign'      => (object) $mapping->foreign(),
 			'foreign_seen' => is_wp_error( $found ) ? array() : $found,
+			// The entity facets (D310): how each is labelled and offered, and whether Turing is
+			// asked to fill them, which needs both settings.
+			'entities'     => ( new Viglet_Dumont_Entities( $settings ) )->facets(),
+			'extraction'   => array(
+				'on'            => Viglet_Dumont_Entities::extracts( $settings ),
+				'asked'         => ! empty( $settings['entity_extraction'] ),
+				'generative_ai' => Viglet_Dumont_Mapping::declares_generative_ai( $settings ),
+				'settings_url'  => admin_url( 'admin.php?page=viglet-dumont' ),
+			),
 		),
 		200
 	);
@@ -1042,6 +1055,11 @@ function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Re
 	$foreign = $request->get_param( 'foreign' );
 	if ( is_array( $foreign ) ) {
 		$response['foreign'] = (object) $fields->save_foreign( $foreign );
+	}
+	// How the entity facets are labelled and offered (D310), when the body carries them.
+	$entities = $request->get_param( 'entities' );
+	if ( is_array( $entities ) ) {
+		$response['entities'] = ( new Viglet_Dumont_Entities() )->save( $entities );
 	}
 
 	return new WP_REST_Response( $response, 200 );

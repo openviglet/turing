@@ -663,6 +663,159 @@ function ForeignTypes( { seen, value, onChange } ) {
 	);
 }
 
+// The entity facets Turing fills (D310), in the order the screen lists them.
+const ENTITY_KINDS = [
+	{
+		kind: 'person',
+		field: 'entity_person',
+		label: __( 'People', 'viglet-turing-search' ),
+	},
+	{
+		kind: 'organization',
+		field: 'entity_organization',
+		label: __( 'Organisations', 'viglet-turing-search' ),
+	},
+	{
+		kind: 'place',
+		field: 'entity_place',
+		label: __( 'Places', 'viglet-turing-search' ),
+	},
+];
+
+/**
+ * The people, organisations and places Turing's language model finds in the posts (D310): no
+ * post type maps them, Turing fills them as it indexes, and here each gets its facet label
+ * and whether the search block offers it.
+ *
+ * @param {Object}                 props            The facets, the settings they depend on and the change handler.
+ * @param {Object}                 props.value      Each kind's `{label, offered}`.
+ * @param {Object}                 props.extraction Whether Turing is asked to find them, and why not.
+ * @param {Object}                 props.status     Where each field stands in Turing.
+ * @param {(next: Object) => void} props.onChange   Receives the facets changed.
+ */
+function EntityFacets( { value, extraction, status, onChange } ) {
+	const set = ( kind, key ) => ( v ) =>
+		onChange( {
+			...value,
+			[ kind ]: {
+				label: '',
+				offered: true,
+				...value[ kind ],
+				[ key ]: v,
+			},
+		} );
+	let off = '';
+	if ( ! extraction.asked ) {
+		off = __(
+			'Off: turn on "Find people, organisations and places in posts" under Settings › Generative AI. Until then nothing is found and these facets are not offered.',
+			'viglet-turing-search'
+		);
+	} else if ( ! extraction.generative_ai ) {
+		off = __(
+			'Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered.',
+			'viglet-turing-search'
+		);
+	}
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2>
+					{ __(
+						'People, organisations and places',
+						'viglet-turing-search'
+					) }
+				</h2>
+			</CardHeader>
+			<CardBody>
+				<p>
+					{ __(
+						"Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers.",
+						'viglet-turing-search'
+					) }
+				</p>
+				{ off && (
+					<Notice status="info" isDismissible={ false }>
+						{ off }{ ' ' }
+						<a href={ extraction.settings_url }>
+							{ __( 'Open Settings', 'viglet-turing-search' ) }
+						</a>
+					</Notice>
+				) }
+				<table className="widefat striped viglet-dumont-entity-facets">
+					<thead>
+						<tr>
+							<th scope="col">
+								{ __( 'Turing field', 'viglet-turing-search' ) }
+							</th>
+							<th scope="col">
+								{ __( 'Facet label', 'viglet-turing-search' ) }
+							</th>
+							<th scope="col">
+								{ __( 'Offered', 'viglet-turing-search' ) }
+							</th>
+							<th scope="col">
+								{ __( 'In Turing', 'viglet-turing-search' ) }
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ ENTITY_KINDS.map( ( { kind, field, label } ) => {
+							const facet = value[ kind ] || {};
+							const state = status ? status[ field ] : null;
+							return (
+								<tr key={ kind } data-kind={ kind }>
+									<th scope="row">
+										<code>{ field }</code>
+									</th>
+									<td>
+										<TextControl
+											__nextHasNoMarginBottom
+											hideLabelFromVision
+											label={ sprintf(
+												/* translators: %s: the Turing field, e.g. entity_person. */
+												__(
+													'Facet label for %s',
+													'viglet-turing-search'
+												),
+												field
+											) }
+											placeholder={ label }
+											value={ facet.label || '' }
+											onChange={ set( kind, 'label' ) }
+										/>
+									</td>
+									<td>
+										<CheckboxControl
+											__nextHasNoMarginBottom
+											label={ sprintf(
+												/* translators: %s: a facet's label, e.g. People. */
+												__(
+													'Offer %s',
+													'viglet-turing-search'
+												),
+												facet.label || label
+											) }
+											checked={ false !== facet.offered }
+											onChange={ set( kind, 'offered' ) }
+										/>
+									</td>
+									<td>
+										{ state
+											? STATUS_LABEL[ state.status ] ||
+												state.status
+											: '—' }
+									</td>
+								</tr>
+							);
+						} ) }
+					</tbody>
+				</table>
+			</CardBody>
+		</Card>
+	);
+}
+
 function TypeCard( { postType, value, sources, types, status, onChange } ) {
 	const [ preview, setPreview ] = useState( null );
 	const [ previewError, setPreviewError ] = useState( '' );
@@ -831,6 +984,7 @@ function Mapping() {
 	const [ data, setData ] = useState( null );
 	const [ mapping, setMapping ] = useState( null );
 	const [ foreign, setForeign ] = useState( {} );
+	const [ entities, setEntities ] = useState( {} );
 	const [ error, setError ] = useState( '' );
 	const [ notice, setNotice ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
@@ -841,6 +995,7 @@ function Mapping() {
 				setData( result );
 				setMapping( result.mapping );
 				setForeign( result.foreign || {} );
+				setEntities( result.entities || {} );
 			} )
 			.catch( ( e ) => setError( e.message || String( e ) ) );
 	}, [] );
@@ -853,7 +1008,7 @@ function Mapping() {
 		apiFetch( {
 			path: '/viglet-dumont/v1/mapping',
 			method: 'POST',
-			data: { mapping, foreign },
+			data: { mapping, foreign, entities },
 		} )
 			.then( () =>
 				apiFetch( {
@@ -946,6 +1101,14 @@ function Mapping() {
 				value={ foreign }
 				onChange={ setForeign }
 			/>
+			{ data.extraction && (
+				<EntityFacets
+					value={ entities }
+					extraction={ data.extraction }
+					status={ data.field_status }
+					onChange={ setEntities }
+				/>
+			) }
 			<Flex justify="flex-start">
 				<Button
 					variant="primary"

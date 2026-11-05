@@ -815,6 +815,22 @@ class Viglet_Dumont_API_Client {
 	}
 
 	/**
+	 * The stored documents with these ids, whole and unhighlighted (`/search/document`, Turing
+	 * T1077): every stored field, in the order asked. An empty list when none is indexed.
+	 *
+	 * @param array<int, string> $ids The documents' ids.
+	 * @return array<int, array>|WP_Error
+	 */
+	public function documents( array $ids ) {
+		$url = '/api/sn/' . rawurlencode( $this->site_name ) . '/search/document?_setlocale=' . rawurlencode( $this->locale );
+		foreach ( $ids as $id ) {
+			$url .= '&id=' . rawurlencode( (string) $id );
+		}
+
+		return $this->decoded( $this->request( 'GET', $url ) );
+	}
+
+	/**
 	 * The audience personas the SN site's agent accepts for content-fit (Turing T1143): id,
 	 * name and description, ordered by name, none when the site has no agent.
 	 *

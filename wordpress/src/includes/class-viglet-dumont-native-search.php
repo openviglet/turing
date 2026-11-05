@@ -1169,6 +1169,8 @@ class Viglet_Dumont_Native_Search {
 				}
 			}//end foreach
 		}//end foreach
+		// The people, organisations and places Turing finds in the text (D310), as Fields names them.
+		$facets += ( new Viglet_Dumont_Entities( $this->settings ) )->public_facets();
 
 		$config = array(
 			'url'      => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),

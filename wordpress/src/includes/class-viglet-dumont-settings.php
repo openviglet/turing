@@ -89,6 +89,11 @@ class Viglet_Dumont_Settings {
 		'trending_fallback'   => array(),
 		// Opt-in: the manifest turns the site's generative AI on, which spends the owner's LLM budget.
 		'generative_ai'       => 0,
+		// Opt-in (D310): Turing's LLM finds the people, organisations and places a post names.
+		// Needs generative_ai, since the names are found by the site's GenAI agent.
+		'entity_extraction'   => 0,
+		// Names written several ways, each `{name, variants}`, kept in Turing's Thesaurus (D310).
+		'name_variants'       => array(),
 		// The Site assistant's launcher on every page (D175); the block works without it.
 		'assistant_launcher'  => 0,
 	);

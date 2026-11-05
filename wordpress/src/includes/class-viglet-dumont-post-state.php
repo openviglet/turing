@@ -465,7 +465,29 @@ class Viglet_Dumont_Post_State {
 			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
 		}
 
-		return new WP_REST_Response( $this->describe( $post ), 200 );
+		return new WP_REST_Response( $this->with_entities( $post, $this->describe( $post ) ), 200 );
+	}
+
+	/**
+	 * A post's state with the people, organisations and places Turing found in it (D310), read
+	 * from its indexed document: only while Turing is asked to find them and the post is
+	 * indexed. Shown, never edited: Turing has no way to keep a name it found off one document,
+	 * so the text is what changes them. The list column never reads this.
+	 *
+	 * @param WP_Post $post  The post.
+	 * @param array   $state Its state, as describe() gives it.
+	 * @return array The state, with `entities` when there are any to read.
+	 */
+	public function with_entities( WP_Post $post, array $state ): array {
+		if ( 'indexed' !== ( $state['state'] ?? '' ) || ! Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+			return $state;
+		}
+		$doc_id   = ( new Viglet_Dumont_Indexer( $this->settings ) )->build_doc_id( $post->ID );
+		$entities = ( new Viglet_Dumont_Entities( $this->settings ) )->of_document( new Viglet_Dumont_API_Client( $this->settings ), $doc_id );
+		// A failed read leaves the names out: the state above it is what the panel is for.
+		$state['entities'] = is_wp_error( $entities ) ? array() : $entities;
+
+		return $state;
 	}
 
 	/**
@@ -492,7 +514,7 @@ class Viglet_Dumont_Post_State {
 			update_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, $state );
 		}
 
-		$body = $post instanceof WP_Post ? $this->describe( $post ) : array();
+		$body = $post instanceof WP_Post ? $this->with_entities( $post, $this->describe( $post ) ) : array();
 		if ( 0 !== $result['failed'] ) {
 			// Any client gets Turing's reason, not only the panel that reads `detail` (D330).
 			$reason          = Viglet_Dumont_Events::text( $result['errors'][ $post_id ] ?? '' );
