@@ -293,6 +293,7 @@
       "connectionSettings": "Connection Settings",
       "connectionSettingsDesc": "Vendor and endpoint configuration.",
       "endpointDesc": "Enter the full URL of the search engine.",
+      "endpointSolrDesc": "Enter the full URL of the Solr node. For several nodes holding the same cores, list their URLs separated by commas: requests are spread across them, and a node that stops answering is skipped until it comes back.",
       "endpointPlaceholder": "e.g. http://localhost:8983/solr",
       "titleRequired": "Title is required.",
       "vendorRequired": "Vendor is required.",

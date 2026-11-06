@@ -77,12 +77,8 @@ public class TurSolrUtils {
     }
 
     private static String getSolrUrl(TurSEInstance turSEInstance) {
-        try {
-            URI uri = URI.create(turSEInstance.getEndpointUrl());
-            return uri.getScheme() + "://" + uri.getAuthority();
-        } catch (Exception e) {
-            return turSEInstance.getEndpointUrl();
-        }
+        // T1247 — a node list sends its raw-HTTP calls to the first node.
+        return TurSolrEndpoints.adminRoot(turSEInstance.getEndpointUrl());
     }
 
     /**

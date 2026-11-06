@@ -2351,22 +2351,23 @@ engine shows and the shared seam that closes it for all of them.
 **Where it came from.** GitHub issue #95 (2024): reach Solr in the topologies customers
 run, not only through one URL.
 
-**What happens today.** A Solr search-engine instance is one HTTP endpoint
-(`TurSEInstance.endpointUrl`, or the env-configured one through
-`TurSolrInstanceSource`); `turing.solr.cloud` switches core calls to the Collections API
-on that same node. There is no ZooKeeper connection, no list of nodes to balance or fail
-over across, and no way to send queries and updates to different nodes.
+**What landed (node list).** `TurSolrEndpoints` parses the instance's `endpointUrl` as
+one URL or a comma/whitespace-separated node list and is the one place the SolrJ client
+is built (`createClient()`): one node gets an `HttpJdkSolrClient`, a list an
+`LBSolrClient` over it that skips a dead node and probes it every 30 s. Raw-HTTP admin
+calls (`TurSolrUtils`, the plugin's core and collection calls) go to `adminRoot()`, the
+first node. The console field takes text for Solr. `TurSolrNodeListFailoverIT` proves a
+dead first node does not stop indexing or search.
 
-**What Turing should do.** Let an instance declare its connection mode: a single node
-(today), a node list (load-balanced, with failover), or a ZooKeeper ensemble (cluster
-state from ZK), optionally with separate query and update endpoints. Build the SolrJ
-client from the mode in one factory, so `TurSolrUtils`, the plugin and the schema calls
-all use it, and show the mode in the console's search-engine form. Existing instances
-keep the single-node mode.
+**What is left.** A ZooKeeper ensemble mode (cluster state from ZK, `CloudSolrClient`
+from `solr-solrj-zookeeper`), and optional separate query and update endpoints. Both
+belong in `TurSolrEndpoints.createClient()`, plus an explicit mode on the instance (a
+`zk://host:2181,host2:2181/chroot` endpoint form avoids a schema change). Admin calls
+under ZK should read a live node from cluster state instead of the first URL.
 
-**Done when:** an instance configured with two node URLs keeps answering searches when
-the first node is down, and an instance pointed at a ZooKeeper ensemble creates its
-collections and searches them (Testcontainers SolrCloud IT).
+**Done when:** an instance pointed at a ZooKeeper ensemble creates its collections and
+searches them (Testcontainers SolrCloud IT), and an instance with a separate update
+endpoint indexes through it while searching through the query nodes.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

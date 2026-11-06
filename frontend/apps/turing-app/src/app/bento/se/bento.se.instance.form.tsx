@@ -104,6 +104,7 @@ export const BentoSEInstanceForm: React.FC<Props> = ({ value, isNew, readOnly = 
   const stagedTitle = staged?.title?.trim() ?? ""
   const titleMissing = !stagedTitle
   const vendorLabel = vendors.find((v) => v.id === selectedVendorId)?.title
+  const isSolr = selectedVendorId === "SOLR"
   // Save bar is present on any editable detail page so it stays suspended on
   // scroll; Save is disabled until there is something to persist.
   const showSaveBar = !readOnly
@@ -174,9 +175,12 @@ export const BentoSEInstanceForm: React.FC<Props> = ({ value, isNew, readOnly = 
                   <IconPlug className="mr-1.5 inline size-4 text-muted-foreground" />
                   {t("forms.common.endpointUrl")}
                 </FormLabel>
-                <p className="text-sm text-muted-foreground">{t("forms.se.endpointDesc")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t(isSolr ? "forms.se.endpointSolrDesc" : "forms.se.endpointDesc")}
+                </p>
                 <FormControl>
-                  <Input placeholder={t("forms.se.endpointPlaceholder")} type="url" className="w-full" readOnly={readOnly} {...field} />
+                  {/* T1247 — a Solr endpoint may list several node URLs, which type="url" refuses. */}
+                  <Input placeholder={t("forms.se.endpointPlaceholder")} type={isSolr ? "text" : "url"} className="w-full" readOnly={readOnly} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

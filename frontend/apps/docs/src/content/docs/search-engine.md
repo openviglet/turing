@@ -46,6 +46,20 @@ The Content AI base URL carries both a version and an expiry date, so paste it
 exactly as Adobe's developer portal shows it rather than assembling it by hand.
 :::
 
+### Several Solr nodes
+
+A Solr endpoint can list more than one node, separated by commas:
+
+```text
+http://solr-1:8983/solr, http://solr-2:8983/solr, http://solr-3:8983/solr
+```
+
+Searches and indexing are spread across the nodes. A node that stops answering is set
+aside and probed every 30 seconds; the others take its requests until it comes back,
+so one node down does not stop search. Every node must hold the same cores, as the
+replicas of one another do. Creating and deleting cores and editing their schema go
+to the first node in the list.
+
 ---
 
 ## Instance Detail Pages

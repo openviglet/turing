@@ -23,7 +23,6 @@ package com.viglet.turing.solr;
 import java.net.URL;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +37,8 @@ public class TurSolrInstance {
     private URL solrUrl;
     private String core;
 
-    public TurSolrInstance(HttpJdkSolrClient solrClient, URL solrUrl, String core) {
+    /** T1247 — any SolrJ client: one node's, or a load-balancing one over a node list. */
+    public TurSolrInstance(SolrClient solrClient, URL solrUrl, String core) {
         this.solrClient = solrClient;
         this.solrUrl = solrUrl;
         this.core = core;

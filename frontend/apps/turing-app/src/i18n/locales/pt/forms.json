@@ -293,6 +293,7 @@
       "connectionSettings": "Configurações de Conexão",
       "connectionSettingsDesc": "Configuração de fornecedor e endpoint.",
       "endpointDesc": "Digite a URL completa do mecanismo de busca.",
+      "endpointSolrDesc": "Digite a URL completa do nó Solr. Para vários nós com os mesmos cores, liste as URLs separadas por vírgula: as requisições são distribuídas entre eles, e um nó que para de responder é ignorado até voltar.",
       "endpointPlaceholder": "ex.: http://localhost:8983/solr",
       "titleRequired": "Título é obrigatório.",
       "vendorRequired": "Fornecedor é obrigatório.",

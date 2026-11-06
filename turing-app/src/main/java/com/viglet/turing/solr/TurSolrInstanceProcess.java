@@ -25,9 +25,8 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.SolrClient;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -47,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class TurSolrInstanceProcess {
-    private final ConcurrentHashMap<String, HttpJdkSolrClient> clientCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SolrClient> clientCache = new ConcurrentHashMap<>();
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSolrInstanceSource solrInstanceSource;
@@ -64,22 +63,22 @@ public class TurSolrInstanceProcess {
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSEInstance turSEInstance, String core) {
-        String baseUrl = resolveEndpoint(turSEInstance);
-        if (baseUrl == null || (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://"))) {
-            log.debug("Skipping Solr client init for non-HTTP endpoint: {}", baseUrl);
+        String endpoint = resolveEndpoint(turSEInstance);
+        // T1247 — one URL, or a node list served with load balancing and failover.
+        TurSolrEndpoints endpoints = TurSolrEndpoints.parse(endpoint);
+        if (endpoints == null || !endpoints.isHttp()) {
+            log.debug("Skipping Solr client init for non-HTTP endpoint: {}", endpoint);
             return Optional.empty();
         }
-        HttpJdkSolrClient httpSolrClient = clientCache.computeIfAbsent(baseUrl, url -> {
-            log.info("Starting Solr connection pool for URL: {}", url);
-            return new HttpJdkSolrClient.Builder(url)
-                    .useHttp1_1(true)
-                    .withConnectionTimeout(5000, TimeUnit.MILLISECONDS)
-                    .withIdleTimeout(15000, TimeUnit.MILLISECONDS)
-                    .build();
+        SolrClient solrClient = clientCache.computeIfAbsent(String.join(",", endpoints.urls()), key -> {
+            log.info("Starting Solr connection pool for {}: {}",
+                    endpoints.isNodeList() ? "nodes" : "URL", key);
+            return endpoints.createClient();
         });
 
         try {
-            TurSolrInstance solrInstance = new TurSolrInstance(httpSolrClient, URI.create(baseUrl).toURL(), core);
+            TurSolrInstance solrInstance = new TurSolrInstance(solrClient, URI.create(endpoints.first()).toURL(),
+                    core);
             return Optional.of(solrInstance);
         } catch (MalformedURLException e) {
             log.error(e.getMessage(), e);

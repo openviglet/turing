@@ -29,6 +29,7 @@ import com.viglet.turing.plugins.se.TurSESynonymRule;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.se.result.TurSEResults;
 import com.viglet.turing.solr.TurSolr;
+import com.viglet.turing.solr.TurSolrEndpoints;
 import com.viglet.turing.solr.TurSolrFieldAction;
 import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrUtils;
@@ -149,8 +150,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         if (!Arrays.asList(locales).contains(configSet)) {
             configSet = "en";
         }
-        URI solrUri = URI.create(seInstance.getEndpointUrl());
-        String solrURL = solrUri.getScheme() + "://" + solrUri.getAuthority();
+        String solrURL = getSolrUrl(seInstance);
         if (turConfigProperties.getSolr().isCloud()) {
             try {
                 TurSolrUtils.createCollection(solrURL, indexName,
@@ -1156,11 +1156,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Helpers ---------------------------------------------------------
 
     private static String getSolrUrl(TurSEInstance seInstance) {
-        try {
-            URI uri = URI.create(seInstance.getEndpointUrl());
-            return uri.getScheme() + "://" + uri.getAuthority();
-        } catch (Exception e) {
-            return seInstance.getEndpointUrl();
-        }
+        // T1247 — a node list sends its admin calls to the first node.
+        return TurSolrEndpoints.adminRoot(seInstance.getEndpointUrl());
     }
 }

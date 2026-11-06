@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ */
+package com.viglet.turing.solr;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.List;
+
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.impl.LBSolrClient;
+import org.junit.jupiter.api.Test;
+
+/**
+ * T1247 — a Solr endpoint is one node or a node list, and the client follows.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.8
+ */
+class TurSolrEndpointsTest {
+
+    @Test
+    void oneUrlIsOneNode() {
+        TurSolrEndpoints endpoints = TurSolrEndpoints.parse("http://solr:8983/solr/");
+
+        assertThat(endpoints.urls()).containsExactly("http://solr:8983/solr");
+        assertThat(endpoints.isNodeList()).isFalse();
+        assertThat(endpoints.isHttp()).isTrue();
+    }
+
+    @Test
+    void commasOrWhitespaceSeparateANodeList() {
+        TurSolrEndpoints endpoints = TurSolrEndpoints
+                .parse(" http://a:8983/solr, http://b:8983/solr\nhttp://c:8983/solr ,http://a:8983/solr");
+
+        assertThat(endpoints.urls()).containsExactly("http://a:8983/solr", "http://b:8983/solr",
+                "http://c:8983/solr");
+        assertThat(endpoints.isNodeList()).isTrue();
+        assertThat(endpoints.first()).isEqualTo("http://a:8983/solr");
+    }
+
+    @Test
+    void nothingNamedIsNoEndpoint() {
+        assertThat(TurSolrEndpoints.parse(null)).isNull();
+        assertThat(TurSolrEndpoints.parse(" , ")).isNull();
+        assertThatThrownBy(() -> new TurSolrEndpoints(List.of())).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void aNonHttpNodeIsNotHttp() {
+        assertThat(TurSolrEndpoints.parse("http://a:8983/solr,file:///tmp/index").isHttp()).isFalse();
+    }
+
+    @Test
+    void adminCallsGoToTheFirstNodesRoot() {
+        assertThat(TurSolrEndpoints.adminRoot("http://a:8983/solr, http://b:8983/solr"))
+                .isEqualTo("http://a:8983");
+        assertThat(TurSolrEndpoints.adminRoot("https://solr.example.com/solr")).isEqualTo("https://solr.example.com");
+    }
+
+    @Test
+    void oneNodeGetsItsOwnClientAndANodeListALoadBalancingOne() throws Exception {
+        try (SolrClient single = TurSolrEndpoints.parse("http://a:8983/solr").createClient();
+                SolrClient list = TurSolrEndpoints.parse("http://a:8983/solr,http://b:8983/solr").createClient()) {
+            assertThat(single).isInstanceOf(HttpJdkSolrClient.class);
+            assertThat(list).isInstanceOf(LBSolrClient.class);
+        }
+    }
+}
