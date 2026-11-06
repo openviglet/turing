@@ -84,6 +84,8 @@ $viglet_turing_state = array(
 	'answerSources'   => array(),
 	'answerStatus'    => 'idle',
 	'answerRated'     => false,
+	// A Site assistant on the page that can continue the answer (T1258), told by assistant.js.
+	'assistantHere'   => false,
 	// Turing refused the answer with 429: the site's AI budget is spent until it resets (D332).
 	'answerPaused'    => false,
 	// A spent AI budget, with its reset when the site knows it (D336).

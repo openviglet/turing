@@ -20,6 +20,8 @@ $viglet_turing_suggestions = ( new Viglet_Turing_Assistant() )->suggestions( (st
 // its document first. The conversation lasts across pages, so each turn names its own page.
 $viglet_turing_indexer = new Viglet_Turing_Indexer();
 $viglet_turing_subject = $viglet_turing_indexer->subject();
+// Where an answer that cites many posts sends the visitor for all of them (T1258).
+$viglet_turing_results = ( new Viglet_Turing_Native_Search() )->search_page();
 
 wp_interactivity_state(
 	'viglet-turing/assistant',
@@ -34,6 +36,8 @@ wp_interactivity_state(
 		// A spent AI budget, with its reset when the site knows it (D336).
 		'paused'     => Viglet_Turing_AI_Quota::visitor_line(),
 		'documentId' => $viglet_turing_subject ? $viglet_turing_indexer->build_doc_id( $viglet_turing_subject->ID ) : '',
+		'searchPage' => $viglet_turing_results['searchPage'],
+		'queryParam' => $viglet_turing_results['queryParam'],
 	)
 );
 $viglet_turing_context = (string) wp_json_encode(
@@ -73,6 +77,7 @@ $viglet_turing_context = (string) wp_json_encode(
 							<li class="viglet-turing-assistant__source"><a data-wp-bind--href="context.source.url" data-wp-text="context.source.title"></a></li>
 						</template>
 					</ul>
+					<p class="viglet-turing-assistant__more" hidden data-wp-bind--hidden="!context.message.more"><a data-wp-bind--href="context.message.more"><?php esc_html_e( 'See every result for this question', 'viglet-turing-search' ); ?></a></p>
 					<p class="viglet-turing-assistant__feedback" hidden data-wp-bind--hidden="!context.message.canRate">
 						<?php esc_html_e( 'Was this helpful?', 'viglet-turing-search' ); ?>
 						<button type="button" data-wp-on--click="actions.helpful"><?php esc_html_e( 'Yes', 'viglet-turing-search' ); ?></button>

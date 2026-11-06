@@ -254,7 +254,10 @@ export interface ChatControllerOptions {
   readonly persona?: ChatControllerPersona;
   /** Controlled conversation id (host owns the session lifecycle). */
   readonly conversationId?: string;
-  /** Seed the message list at construction. */
+  /**
+   * Seed the message list at construction. With {@link persist}, a conversation
+   * already stored wins, and these seed it only when none is (T1258).
+   */
   readonly initialMessages?: ChatMessage[];
   /**
    * T439 — frontend ("client") tool handlers, keyed by tool name. When the agent
@@ -491,9 +494,16 @@ export function createChatController(
   }
 
   const persistKey = persist && site ? storageKey(site, persist) : null;
-  const initialPersisted = persistKey
-    ? loadPersisted(persistKey)
-    : { conversationId: controlledConversationId ?? null, messages: initialMessages ?? [] };
+  // T1258 — a persisted conversation wins; with none stored yet, `initialMessages`
+  // seeds it, so a host can open a persisted chat with turns already in it.
+  const stored = persistKey ? loadPersisted(persistKey) : null;
+  const initialPersisted =
+    stored && stored.messages.length > 0
+      ? stored
+      : {
+          conversationId: stored ? stored.conversationId : (controlledConversationId ?? null),
+          messages: initialMessages ?? [],
+        };
 
   const store = createStore<ChatControllerState>({
     enabled: isSubjectMode ? true : null,

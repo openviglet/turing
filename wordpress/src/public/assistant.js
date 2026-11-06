@@ -25,8 +25,13 @@ import {
 // Turing exempts /api/sn/** from CSRF, so the token round trip would be wasted.
 const client = createClient( { getCsrfToken: () => null } );
 let chat = null;
+let unsubscribe = null;
 // The answers already rated, by message id.
 const rated = new Set();
+// The answers the search block handed over (T1258): rated there, so not asked about again.
+const seeded = new Set();
+// Whether chat is on, as last told to the search blocks on the page (T1258).
+let announced = null;
 
 /**
  * What a turn asked on this page carries (D242): the indexed post it shows, which Turing reads
@@ -111,12 +116,52 @@ function sourcesOf( message ) {
 }
 
 /**
+ * The results page for a question (T1258), for an answer that cites more posts than it can
+ * list: where the visitor sees everything the site has on it.
+ *
+ * @param {string} question What the visitor asked.
+ * @return {string} The URL, or '' without a question or a results page.
+ */
+function resultsFor( question ) {
+	if ( ! question || ! state.searchPage ) {
+		return '';
+	}
+	try {
+		const url = new URL( state.searchPage, window.location.href );
+		url.searchParams.set( state.queryParam || 's', question );
+		return url.href;
+	} catch {
+		return '';
+	}
+}
+
+/**
+ * Tell the search blocks on the page whether the assistant can take a conversation over
+ * (T1258), now and to any that starts later.
+ *
+ * @param {boolean} available Whether chat is on.
+ */
+function announce( available ) {
+	if ( available === announced ) {
+		return;
+	}
+	announced = available;
+	window.vigletTuringAssistant = { available };
+	window.dispatchEvent(
+		new window.CustomEvent( 'viglet-turing:assistant', {
+			detail: { available },
+		} )
+	);
+}
+
+/**
  * The controller's state, as the template reads it.
  *
  * @param {Object} s ChatControllerState.
  */
 function sync( s ) {
 	state.available = true === s.enabled;
+	announce( state.available );
 	state.streaming = s.isStreaming;
 	state.status = s.isStreaming ? state.thinking : '';
 	if ( 'error' === s.status ) {
@@ -133,12 +178,23 @@ function sync( s ) {
 		const answer = 'assistant' === message.role;
 		const done =
 			answer && ! ( last && s.isStreaming ) && !! message.content;
+		const sources = answer ? sourcesOf( message ) : [];
+		const asked = answer
+			? s.messages
+					.slice( 0, i )
+					.reverse()
+					.find( ( m ) => 'user' === m.role )
+			: null;
 		return {
 			id: message.id,
 			visitor: ! answer,
 			text: message.content,
-			sources: answer ? sourcesOf( message ) : [],
-			canRate: done && ! rated.has( message.id ),
+			sources,
+			// More posts than it lists (T1258): the results page has them all.
+			more:
+				done && sources.length > 3 ? resultsFor( asked?.content ) : '',
+			canRate:
+				done && ! rated.has( message.id ) && ! seeded.has( message.id ),
 			rated: rated.has( message.id ),
 		};
 	} );
@@ -165,6 +221,73 @@ function rate( signal ) {
 		query: asked?.content,
 	} );
 }
+
+/**
+ * The chat controller, created with `initialMessages` to start from turns already had.
+ *
+ * @param {Array} initialMessages ChatMessages to start a new conversation with.
+ */
+function start( initialMessages ) {
+	chat = createChatController( client, {
+		site: config.site,
+		locale: config.locale,
+		// This site's documents only, where several sites share one SN site
+		// (D287): the search block's own filter, sent as each turn's filters.
+		filters: siteFilters,
+		persist: 'viglet-turing-assistant',
+		clientTools: { navigate },
+		initialMessages,
+	} );
+	unsubscribe = chat.subscribe( sync );
+}
+
+/**
+ * Continue a search answer here (T1258): a new conversation whose first exchange is the
+ * question the visitor searched and the answer they read, with its sources, so the next
+ * question follows on from it. The open assistant is the page's first one shown.
+ *
+ * @param {{question: string, answer: string, sources: Array}} turns What the search block had.
+ */
+function openWith( { question, answer, sources } ) {
+	if ( ! chat || ! question || ! answer ) {
+		return;
+	}
+	// The stored conversation is emptied, so the new controller starts from these turns.
+	chat.reset();
+	unsubscribe?.();
+	chat.destroy();
+	clearTurSession();
+	rated.clear();
+	const now = Date.now();
+	const reply = `seed-${ now }-a`;
+	seeded.add( reply );
+	start( [
+		{
+			id: `seed-${ now }-q`,
+			role: 'user',
+			content: question,
+			timestamp: now,
+		},
+		{
+			id: reply,
+			role: 'assistant',
+			content: answer,
+			sources: Array.isArray( sources ) ? sources : [],
+			timestamp: now,
+		},
+	] );
+	sync( chat.getState() );
+	const dialog = document.querySelector(
+		'.viglet-turing-assistant:not([hidden]) dialog'
+	);
+	if ( dialog && ! dialog.open ) {
+		dialog.showModal();
+	}
+	dialog?.querySelector( 'input' )?.focus();
+}
+window.addEventListener( 'viglet-turing:assistant-open', ( event ) =>
+	openWith( event.detail || {} )
+);
 
 /**
  * The dialog of the block an event came from.
@@ -235,16 +358,7 @@ const { state } = store( 'viglet-turing/assistant', {
 		init() {
 			// One conversation for every assistant on the page, kept for this tab.
 			if ( ! chat ) {
-				chat = createChatController( client, {
-					site: config.site,
-					locale: config.locale,
-					// This site's documents only, where several sites share one SN site
-					// (D287): the search block's own filter, sent as each turn's filters.
-					filters: siteFilters,
-					persist: 'viglet-turing-assistant',
-					clientTools: { navigate },
-				} );
-				chat.subscribe( sync );
+				start();
 			}
 			sync( chat.getState() );
 		},

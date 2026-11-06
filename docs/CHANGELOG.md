@@ -1689,3 +1689,4 @@
 - **T1255 (workflow written, actionlint clean)** — wordpress-plugin.yml checks, tests and releases the plugin on manual dispatch, the e2e job against a Turing built from the branch; build-zip.sh checks all three version strings.
 - **T1256 (built with Turing's site)** — Turing's Pages workflow builds the Playground demo into /playground/, and the blueprint, /wp-demo, the docs and the README point at turing.viglet.org/playground/.
 - **T1257 (transcript, docs and readme)** — The video's transcript, generated from the narration script, is on the site and docs pages; the docs page and readme.txt link the video and the demo store.
+- **T1258** — The search answer opens the Site assistant with that exchange as its first turns, and an assistant answer citing over three posts links to the results page (design §CLXXXII.8 superseded: the type filter needs chat sources to carry a type, filed as T1264).

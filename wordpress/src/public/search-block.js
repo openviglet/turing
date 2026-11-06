@@ -44,6 +44,10 @@ let autocomplete = null;
 let client = null;
 // Turing's grounded answer, when the block's Answer setting is on (D166).
 let answerer = null;
+// The question the answer is for, and its sources as Turing gave them, for the assistant
+// to continue from (T1258).
+let answeredQuestion = '';
+let answeredSources = [];
 // Whether the results on the page are the server's (D209), not yet answered by the script.
 let prerendered = false;
 // The query last sent, so a late spell-check answer for an older one is dropped.
@@ -323,6 +327,15 @@ const { state, actions } = store( 'viglet-turing/search', {
 		},
 		get answerStreaming() {
 			return 'loading' === state.answerStatus;
+		},
+		// T1258: a finished answer can go on in the page's Site assistant, when there is one.
+		get canContinue() {
+			return (
+				state.assistantHere &&
+				state.showAnswer &&
+				'success' === state.answerStatus &&
+				'' !== answeredQuestion
+			);
 		},
 		get hasResults() {
 			return 'success' === state.status && state.total > 0;
@@ -622,6 +635,18 @@ const { state, actions } = store( 'viglet-turing/search', {
 		citationClicked() {
 			answerer?.signal( 'CITATION_CLICKED' );
 		},
+		// T1258: the question and the answer become the assistant's first exchange.
+		continueInAssistant() {
+			window.dispatchEvent(
+				new window.CustomEvent( 'viglet-turing:assistant-open', {
+					detail: {
+						question: answeredQuestion,
+						answer: state.answer,
+						sources: answeredSources,
+					},
+				} )
+			);
+		},
 		// A left click, or a middle click opening it in a new tab.
 		resultClicked( event ) {
 			if ( 'auxclick' === event.type && 1 !== event.button ) {
@@ -682,18 +707,28 @@ const { state, actions } = store( 'viglet-turing/search', {
 					if ( state.answerPaused ) {
 						reportAiPaused();
 					}
-					state.answerSources = (
+					const cited = (
 						s.citations.length ? s.citations : s.sources
-					)
-						.filter( ( source ) => source.url )
-						.map( ( source, i ) => ( {
-							key: `${ source.url }#${ i }`,
-							rank: source.rank ?? source.footnote ?? i + 1,
-							title: source.title || source.url,
-							url: siteUrl( source.url, source.sourceId ),
-						} ) );
+					).filter( ( source ) => source.url );
+					answeredSources = cited.map( ( source ) => ( {
+						sourceId: source.sourceId,
+						title: source.title || source.url,
+						url: source.url,
+					} ) );
+					state.answerSources = cited.map( ( source, i ) => ( {
+						key: `${ source.url }#${ i }`,
+						rank: source.rank ?? source.footnote ?? i + 1,
+						title: source.title || source.url,
+						url: siteUrl( source.url, source.sourceId ),
+					} ) );
 				} );
 			}
+			// Whether a Site assistant on the page can continue the answer (T1258): what it
+			// said before this block started, then what it says from now on.
+			state.assistantHere = !! window.vigletTuringAssistant?.available;
+			window.addEventListener( 'viglet-turing:assistant', ( event ) => {
+				state.assistantHere = !! event.detail?.available;
+			} );
 			autocomplete = createSiteAutoComplete();
 			client = createClient();
 			search.subscribe( sync );
@@ -771,8 +806,10 @@ function ask( query ) {
 	}
 	state.answerRated = false;
 	if ( isQuestion( query ) ) {
-		answerer.ask( query.trim(), { locale: config.locale } );
+		answeredQuestion = query.trim();
+		answerer.ask( answeredQuestion, { locale: config.locale } );
 	} else {
+		answeredQuestion = '';
 		answerer.reset();
 	}
 }
@@ -1012,6 +1049,7 @@ function countAsTyped( text ) {
  */
 function answerUnderstood( text ) {
 	if ( answerer && ! isQuestion( text ) ) {
+		answeredQuestion = text;
 		answerer.ask( text, { locale: config.locale } );
 	}
 }

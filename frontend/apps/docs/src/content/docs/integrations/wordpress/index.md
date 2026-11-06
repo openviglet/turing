@@ -766,6 +766,14 @@ the same: a question asked in it on a product's page is about that product, and 
 after moving to another page is about that page. This needs a Turing that takes the document
 (2026.3 builds after T1178); an older one answers from the whole catalog, as before.
 
+**From the search answer to the assistant and back.** When the page also has the Site
+assistant (its block, or its launcher on every page), the Turing search block's answer ends
+with **Ask a follow-up in the assistant**. It opens the assistant with the search and its
+answer, sources included, as the conversation's first exchange, so "and on Saturdays?" is
+read as a follow-up instead of starting over. The other way, an assistant answer that cites
+more than three posts ends with **See every result for this question**, which opens the
+site's results page for that question.
+
 **Build my kit.** With **Offer Build my kit** on (the default, in the block's settings), the
 block has a second mode, **Plan a kit**. The visitor describes a plan ("two days crossing the
 mountains in July, first time") and Turing answers with the needs the plan implies, each

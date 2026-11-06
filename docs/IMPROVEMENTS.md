@@ -2388,22 +2388,6 @@ uploaded through GitHub's editor. The release job attaches story.mp4, story-30s.
 the caption files to the plugin release, for anyone who wants the file. readme.txt links
 the video in its description, and its FAQ answers where the demo store is.
 
-### CLXXXII.8 From the search answer into the assistant and back (T1258)
-
-On a client's site the plugin's search answer and its Site assistant are separate. A
-visitor who reads the answer to "como funciona a biblioteca" and wants "and on
-Saturdays?" has to start over. The answer runs its own createAnswerController with its
-own conversation (search-block.js), while the assistant runs createChatController and
-cannot be opened with turns already in it. Nor does an assistant answer that cites many
-documents link to the results page. Nothing is missing in Turing:
-ConversationRequest.messages already becomes the chat's history, and the SDK chat
-controller takes initialMessages. The gap is the plugin's alone. Search to assistant:
-under the answer, "Continue in the assistant" opens the assistant, floating or the
-page's block, seeded through initialMessages with the query and the answer as the first
-exchange, through a small open-with-turns API. Assistant to search: when an answer cites
-more than three documents, or the visitor asks to see everything, a link opens the
-results page with the query and, where the citations share a type, that filter.
-
 ### CLXXXII.9 Turing chat flows in the Site assistant (T1259)
 
 A client wants its site assistant to run guided conversations built as Turing chat
@@ -2458,3 +2442,22 @@ citations event arrives after the block has drawn the list.
 **Done when** the same search on the demo store shows only sources the answer cites, a
 test covers an answer with no citations, and the story video's chapter 2 is recorded
 again with it.
+
+### CLXXXII.11 Chat sources say their document type (from T1258) (T1264)
+
+T1258 gave the WordPress plugin's Site assistant a link to the results page when an
+answer cites more than three posts. Its design also wanted that link filtered to the
+cited posts' type when they share one (all products, all events), as the overlay's "See
+all" opens the results page with `fq[]=type:<type>` (D311). That half could not be
+built: a chat answer's `TurChatSource` (sourceId, title, url, chunkIndex, score) and
+`TurChatCitation` carry no document type, and the plugin's document ids (`<site
+key>:post:<id>`) do not name one either, so the browser would need one search per cited
+post to learn it.
+
+Turing knows the type when it retrieves the passage: the SN document's `type` field. The
+chat conversation's `sources` event adds an optional `type` per source (the first value
+when the field holds several, as the plugin's documentType() reads it), the SDK's
+TurChatSource and TurAnswerCitation gain it as optional, and a client that ignores it is
+unchanged. The plugin then appends `fq[]=type:<type>` to the "See every result" link
+when every cited source shares the type. Done when an assistant answer citing four
+products links to the results page filtered to products.

@@ -33,5 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<button type="button" class="viglet-turing-search__link" data-wp-on--click="actions.answerNotHelpful"><?php esc_html_e( 'No', 'viglet-turing-search' ); ?></button>
 		</p>
 		<p class="viglet-turing-search__answer-feedback" role="status" hidden data-wp-bind--hidden="!state.answerRated"><?php esc_html_e( 'Thank you.', 'viglet-turing-search' ); ?></p>
+		<p class="viglet-turing-search__answer-continue" hidden data-wp-bind--hidden="!state.canContinue">
+			<button type="button" class="viglet-turing-search__link" data-wp-on--click="actions.continueInAssistant"><?php esc_html_e( 'Ask a follow-up in the assistant', 'viglet-turing-search' ); ?></button>
+		</p>
 	</section>
 <?php endif; ?>
