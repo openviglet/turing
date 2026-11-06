@@ -96,6 +96,24 @@ jobs:
       # Served at https://turing.viglet.org/ with the Pages source set to "GitHub
       # Actions": this job deploys the artifact itself, no branch in between. The
       # custom domain lives in the repo's Pages settings, so no CNAME file is needed.
+      # T1256: the WordPress Playground demo under /playground/, the blueprint and the three zips
+      # its URLs name (the plugin, the Tarnfell theme, the catalog seed). Playground downloads them
+      # from the visitor's browser, and Pages sends the CORS headers a release does not. Built in
+      # the same deploy as the site, so /wp-demo and the files it opens always agree.
+      - name: Build the JS SDK the plugin ships
+        working-directory: frontend
+        run: pnpm --filter "@viglet/turing-sdk..." run build
+
+      - name: Build the WordPress Playground demo
+        working-directory: wordpress
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          sh bin/build-playground.sh ../_site/playground
+          for file in blueprint.json viglet-turing-search.zip tarnfell.zip tarnfell-demo.zip; do
+            test -s "../_site/playground/$file" || { echo "playground/$file is missing"; exit 1; }
+          done
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

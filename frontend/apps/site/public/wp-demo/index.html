@@ -2,8 +2,9 @@
 <!--
   turing.viglet.org/wp-demo: a stable short link to the WordPress Playground demo
   store, the one the demo video points at. GitHub Pages has no server redirects,
-  so this page redirects in the browser. When the blueprint moves (T1256 puts it
-  under turing.viglet.org/playground/), change the URL here, in all three places.
+  so this page redirects in the browser. The blueprint is this site's own
+  /playground/blueprint.json (T1256), built by the Pages workflow from
+  wordpress/demo/playground/; if it ever moves, change the URL in all three places.
 -->
 <html lang="en">
   <head>
@@ -13,11 +14,11 @@
     <title>Viglet Turing WordPress demo</title>
     <meta
       http-equiv="refresh"
-      content="0; url=https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json"
+      content="0; url=https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fturing.viglet.org%2Fplayground%2Fblueprint.json"
     />
     <script>
       location.replace(
-        "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json",
+        "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fturing.viglet.org%2Fplayground%2Fblueprint.json",
       );
     </script>
   </head>
@@ -25,7 +26,7 @@
     <p>
       Opening the
       <a
-        href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json"
+        href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fturing.viglet.org%2Fplayground%2Fblueprint.json"
         >Viglet Turing demo store in WordPress Playground</a
       >…
     </p>

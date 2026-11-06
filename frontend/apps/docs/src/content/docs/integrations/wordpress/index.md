@@ -732,7 +732,7 @@ reach Turing at another address than the server does, set `VIGLET_TURING_PUBLIC_
 
 ## Try it in your browser
 
-[Open the demo store in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json).
+[Open the demo store in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fturing.viglet.org%2Fplayground%2Fblueprint.json).
 WordPress, WooCommerce, the plugin and the Tarnfell store start in your browser, with nothing
 to install, and search a hosted Viglet Turing. The first load takes two or three minutes
 while the catalog is created. The plugin runs in demo mode: it reads the hosted index and

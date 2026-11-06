@@ -1687,3 +1687,4 @@
 - **T1253** — The plugin's classes, constants, options, hooks, REST namespace, blocks and `wp turing` command use the Viglet_Turing prefix; a one-time upgrade moves an old site's data.
 - **T1254** — The WordPress plugin's docs live at turing.viglet.org/docs/integrations/wordpress/ under the plugin's new names, linked from the sidebar, six Turing pages, the WordPress page and the demo tours.
 - **T1255 (workflow written, actionlint clean)** — wordpress-plugin.yml checks, tests and releases the plugin on manual dispatch, the e2e job against a Turing built from the branch; build-zip.sh checks all three version strings.
+- **T1256 (built with Turing's site)** — Turing's Pages workflow builds the Playground demo into /playground/, and the blueprint, /wp-demo, the docs and the README point at turing.viglet.org/playground/.
