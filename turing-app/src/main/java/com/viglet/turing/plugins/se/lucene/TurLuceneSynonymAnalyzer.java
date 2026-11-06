@@ -43,6 +43,7 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
 
     private final SynonymMap synonymMap;
     private final String stemmer;
+    private final org.apache.lucene.analysis.CharArraySet stopWords;
 
     public TurLuceneSynonymAnalyzer(SynonymMap synonymMap) {
         this(synonymMap, null);
@@ -50,8 +51,15 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
 
     /** T1170 — also adds the stem in {@code locale}'s language, as the index side does. */
     public TurLuceneSynonymAnalyzer(SynonymMap synonymMap, Locale locale) {
+        this(synonymMap, locale, false);
+    }
+
+    /** T1242 — and drops the language's stop words, unless the query is made only of them. */
+    public TurLuceneSynonymAnalyzer(SynonymMap synonymMap, Locale locale, boolean keepStopWords) {
         this.synonymMap = synonymMap;
         this.stemmer = TurLuceneFoldingAnalyzer.stemmerFor(locale);
+        this.stopWords = keepStopWords ? org.apache.lucene.analysis.CharArraySet.EMPTY_SET
+                : TurLuceneFoldingAnalyzer.stopWordsFor(locale);
     }
 
     /** T1194 — decomposed (NFD) accents recomposed, as the index side does. */
@@ -64,6 +72,10 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
     protected TokenStreamComponents createComponents(String fieldName) {
         Tokenizer source = new StandardTokenizer();
         TokenStream tokens = new LowerCaseFilter(source);
+        // T1242 — stop words dropped before the synonyms: a filter that removes
+        // tokens from a synonym graph breaks its position lengths. A rule spelled
+        // with a stop word fires with it skipped, as on the index side.
+        tokens = TurLuceneFoldingAnalyzer.stop(tokens, stopWords);
         tokens = new SynonymGraphFilter(tokens, synonymMap, true);
         // T1170 — stemmed after the synonyms, so a rule keyed on a plural still fires.
         tokens = TurLuceneFoldingAnalyzer.stem(tokens, stemmer);

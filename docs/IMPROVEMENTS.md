@@ -2323,37 +2323,6 @@ A request means the same on every engine an SN site can run on: the filters it a
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
 
-### CLXXV.3 Lucene drops the language's stopwords, as Solr does (T1242)
-
-**Seen in.** The Dumont WordPress demo store (SN site `recanto-da-serra`, Lucene core
-`recanto-da-serra_pt_BR`): `uma barraca para 2 pessoas` returns snippets with `uma`,
-`para` and `duas` highlighted beside `barraca` and `pessoas`. On Solr the schema's
-`StopFilterFactory` drops them (`TurSEStopWord`).
-
-**Why.** `TurLuceneFoldingAnalyzer` is `StandardTokenizer -> LowerCase -> stem ->
-ASCIIFolding` with no `StopFilter`, and it analyzes every text field: the index
-(`TurLucenePerFieldAnalyzer` per core locale), the query
-(`TurLuceneQueryBuilder.queryAnalyzer`, also through `TurLuceneSynonymAnalyzer`) and,
-without any locale, the highlighter (`TurLuceneResultProcessor` ~171, `new
-TurLuceneFoldingAnalyzer()`).
-
-**What it should do.**
-
-- Built for a locale, drop that language's stopwords before stemming, index and query side:
-  `pt` and `en` at least (Lucene's `PortugueseAnalyzer.getDefaultStopSet()`,
-  `EnglishAnalyzer.ENGLISH_STOP_WORDS_SET`, or the Snowball lists `TurSNQueryRelaxer`
-  already loads); the other `STEMMERS` languages have sets too. No list for an unknown one.
-- Load the lists from where `TurSNQueryRelaxer` (T1176) already does, one source for both.
-- A query of only stopwords (`para`, `the`) falls back to its unfiltered terms; T1176's
-  relaxed retry already returns nothing for one. `TurDslLuceneExecutor` gets it for free.
-- The highlighter takes the core's locale, so it marks stems and never a stopword.
-- An older index keeps working: queries stop asking for stopwords; documents drop them on
-  reindex. Check the title phrase boost (`TurLuceneQueryBuilder` ~604) across a dropped word.
-- Tests: a pt and an en core where a query with stopwords matches and highlights only the
-  content words, and a stopword-only query still returns results.
-
-**Workaround.** None: the plugin renders Turing's highlight as it comes.
-
 ### CLXXV.4 Console field APIs go through the search-engine plugin (T1243)
 
 **Where it came from.** Split from T1241 (Dumont D314): on the local build, `PUT

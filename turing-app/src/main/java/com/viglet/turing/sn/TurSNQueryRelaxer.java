@@ -102,8 +102,38 @@ public final class TurSNQueryRelaxer {
         return false;
     }
 
-    /** The Snowball stop words of the locale's language; empty without a list. */
-    private static CharArraySet stopWords(Locale locale) {
+    /**
+     * T1242 — whether every word of {@code query} is a stop word of the locale's
+     * language ({@code para}, {@code the}): such a query is searched with its words
+     * kept, since dropping them would leave nothing to search for.
+     */
+    public static boolean onlyStopWords(String query, Locale locale) {
+        if (query == null || query.isBlank()) {
+            return false;
+        }
+        CharArraySet stop = stopWords(locale);
+        if (stop.isEmpty()) {
+            return false;
+        }
+        boolean any = false;
+        for (String word : query.trim().split("[^\\p{L}\\p{N}]+")) {
+            if (word.isEmpty()) {
+                continue;
+            }
+            any = true;
+            if (!stop.contains(word.toLowerCase(Locale.ROOT))) {
+                return false;
+            }
+        }
+        return any;
+    }
+
+    /**
+     * The Snowball stop words of the locale's language; empty without a list. T1242 —
+     * also the list the Lucene analyzer drops, so the relaxed retry and the index
+     * agree on what a stop word is.
+     */
+    public static CharArraySet stopWords(Locale locale) {
         String list = locale == null ? null : LISTS.get(locale.getLanguage());
         if (list == null) {
             return CharArraySet.EMPTY_SET;

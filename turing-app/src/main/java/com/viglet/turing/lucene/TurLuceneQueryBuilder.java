@@ -543,7 +543,11 @@ public class TurLuceneQueryBuilder {
         }
 
         String[] textFields = resolveTextFields(turSNSite);
-        Analyzer analyzer = queryAnalyzer(turSNSite, locale);
+        // T1242 — a query made only of stop words keeps them, or it would search for
+        // nothing; so does a quoted phrase, which asks for its words as typed (and a
+        // dropped word would leave a hole the synonym graph cannot carry).
+        Analyzer analyzer = queryAnalyzer(turSNSite, locale, queryStr.indexOf('"') >= 0
+                || com.viglet.turing.sn.TurSNQueryRelaxer.onlyStopWords(queryStr, locale));
         try {
             if (textFields.length == 0) {
                 // Fallback: search the id field
@@ -601,7 +605,9 @@ public class TurLuceneQueryBuilder {
             return Optional.empty();
         }
         try {
-            Query phrase = new QueryParser(titleField, new TurLuceneFoldingAnalyzer(locale))
+            // T1242 — stop words dropped as in the main query; their positions stay, so
+            // the phrase still lines up with a title that holds them.
+            Query phrase = new QueryParser(titleField, TurLuceneFoldingAnalyzer.forQuery(locale, false))
                     .parse("\"" + queryStr.trim() + "\"");
             return phrase instanceof PhraseQuery || phrase instanceof MultiPhraseQuery
                     ? Optional.of(new BoostQuery(phrase, TITLE_PHRASE_BOOST))
@@ -637,12 +643,13 @@ public class TurLuceneQueryBuilder {
      * overhead for sites without synonyms â€” the registry short-circuits and no
      * locale/core lookup runs.
      */
-    private Analyzer queryAnalyzer(TurSNSite turSNSite, Locale locale) {
+    private Analyzer queryAnalyzer(TurSNSite turSNSite, Locale locale, boolean keepStopWords) {
         // T1080 — both analyzers add the accent-folded form of each token, as the
         // index side does, so "saude" and "saúde" find each other. T1170 — and the
         // stem in the search locale's language, so "jackets" finds "jacket".
+        // T1242 — and drop that language's stop words (the index keeps them).
         if (locale == null || synonymRegistry == null || synonymRegistry.isEmpty()) {
-            return new TurLuceneFoldingAnalyzer(locale);
+            return TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords);
         }
         String core = turSNSiteLocaleRepository.findByTurSNSite(turSNSite).stream()
                 .filter(l -> locale.equals(l.getLanguage()))
@@ -650,7 +657,8 @@ public class TurLuceneQueryBuilder {
                 .findFirst()
                 .orElse(null);
         SynonymMap map = core == null ? null : synonymRegistry.get(core);
-        return map == null ? new TurLuceneFoldingAnalyzer(locale) : new TurLuceneSynonymAnalyzer(map, locale);
+        return map == null ? TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords)
+                : new TurLuceneSynonymAnalyzer(map, locale, keepStopWords);
     }
 
     /**

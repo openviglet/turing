@@ -21,6 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
@@ -68,25 +70,57 @@ public class TurLuceneFoldingAnalyzer extends Analyzer {
             Map.entry("nl", "Dutch"));
 
     private final String stemmer;
+    private final CharArraySet stopWords;
 
-    /** Folding only, no stemming. */
+    /** Folding only, no stemming and no stop words. */
     public TurLuceneFoldingAnalyzer() {
-        this((String) null);
+        this(null, CharArraySet.EMPTY_SET);
     }
 
-    /** Folding plus the stemmer of {@code locale}'s language, when it has one. */
+    /**
+     * Folding plus the stemmer of {@code locale}'s language, when it has one: the
+     * index analyzer, which keeps stop words (T1242), so a query made only of them
+     * still finds the documents that hold them.
+     */
     public TurLuceneFoldingAnalyzer(Locale locale) {
-        this(stemmerFor(locale));
+        this(stemmerFor(locale), CharArraySet.EMPTY_SET);
     }
 
-    private TurLuceneFoldingAnalyzer(String stemmer) {
+    /**
+     * T1242 — the query analyzer: as {@link #TurLuceneFoldingAnalyzer(Locale)},
+     * and without the language's stop words, so {@code uma barraca para 2 pessoas}
+     * needs, and highlights, only the content words. {@code keepStopWords} is for
+     * a query made only of stop words, which would otherwise analyze to nothing.
+     */
+    public static TurLuceneFoldingAnalyzer forQuery(Locale locale, boolean keepStopWords) {
+        return new TurLuceneFoldingAnalyzer(stemmerFor(locale),
+                keepStopWords ? CharArraySet.EMPTY_SET : stopWordsFor(locale));
+    }
+
+    private TurLuceneFoldingAnalyzer(String stemmer, CharArraySet stopWords) {
         this.stemmer = stemmer;
+        this.stopWords = stopWords;
     }
 
     @Override
     protected TokenStreamComponents createComponents(String fieldName) {
         Tokenizer source = new StandardTokenizer();
-        return new TokenStreamComponents(source, fold(stem(new LowerCaseFilter(source), stemmer)));
+        return new TokenStreamComponents(source,
+                fold(stem(stop(new LowerCaseFilter(source), stopWords), stemmer)));
+    }
+
+    /**
+     * T1242 — drops the stop words before stemming, keeping their positions, so a
+     * phrase across a dropped word still lines up; an empty set returns
+     * {@code tokens} unchanged.
+     */
+    public static TokenStream stop(TokenStream tokens, CharArraySet stopWords) {
+        return stopWords == null || stopWords.isEmpty() ? tokens : new StopFilter(tokens, stopWords);
+    }
+
+    /** T1242 — the stop words of {@code locale}'s language: the Snowball lists the query relaxer uses. */
+    public static CharArraySet stopWordsFor(Locale locale) {
+        return com.viglet.turing.sn.TurSNQueryRelaxer.stopWords(locale);
     }
 
     /** T1194 — decomposed (NFD) accents recomposed before tokenizing, index and query side alike. */

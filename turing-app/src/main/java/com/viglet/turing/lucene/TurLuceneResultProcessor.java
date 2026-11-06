@@ -120,7 +120,7 @@ public class TurLuceneResultProcessor {
 
             // Prepare highlighting
             Map<String, Map<String, String>> hlByDoc = buildHighlighting(
-                    searcher, query, topDocs, turSNSite, hlFields);
+                    searcher, highlightAnalyzer(instance), query, topDocs, turSNSite, hlFields);
 
             // Map hits to TurSEResult (apply pagination offset)
             List<TurSEResult> resultList = new ArrayList<>();
@@ -150,8 +150,19 @@ public class TurLuceneResultProcessor {
     // Highlighting
     // -------------------------------------------------------------------------
 
+    /**
+     * T1242 — the analyzer the core was written with (per field, for its locale),
+     * or folding alone when the instance has no writer to ask.
+     */
+    static org.apache.lucene.analysis.Analyzer highlightAnalyzer(TurLuceneInstance instance) {
+        org.apache.lucene.analysis.Analyzer analyzer = instance == null || instance.getWriter() == null
+                ? null
+                : instance.getWriter().getAnalyzer();
+        return analyzer != null ? analyzer : new TurLuceneFoldingAnalyzer();
+    }
+
     private Map<String, Map<String, String>> buildHighlighting(IndexSearcher searcher,
-            Query query, TopDocs topDocs, TurSNSite turSNSite,
+            org.apache.lucene.analysis.Analyzer analyzer, Query query, TopDocs topDocs, TurSNSite turSNSite,
             List<TurSNSiteFieldExt> hlFields) {
         if (!isHL(turSNSite, hlFields) || topDocs.scoreDocs.length == 0) {
             return Map.of();
@@ -167,9 +178,10 @@ public class TurLuceneResultProcessor {
             // The default "summary" fallback would replace it with its first sentence,
             // silently dropping the rest of the text on a q=* search.
             // T1080 — the index analyzer, so an unaccented query term ("saude")
-            // highlights the stored, accented spelling ("Saúde").
+            // highlights the stored, accented spelling ("Saúde"). T1242 — the core's
+            // own, built for its locale: it marks a stem, never a stop word.
             UnifiedHighlighter highlighter = new UnifiedHighlighter.Builder(searcher,
-                    new TurLuceneFoldingAnalyzer())
+                    analyzer)
                     .withMaxNoHighlightPassages(0)
                     .build();
 
