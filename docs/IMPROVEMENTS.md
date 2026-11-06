@@ -2349,7 +2349,9 @@ TurLuceneFoldingAnalyzer()`).
   `pt` and `en` at least (Lucene's `PortugueseAnalyzer.getDefaultStopSet()`,
   `EnglishAnalyzer.ENGLISH_STOP_WORDS_SET`, or the Snowball lists `TurSNQueryRelaxer`
   already loads); the other `STEMMERS` languages have sets too. No list for an unknown one.
-- A query of only stopwords (`para`, `the`) falls back to its unfiltered terms, as T811 does.
+- Load the lists from where `TurSNQueryRelaxer` (T1176) already does, one source for both.
+- A query of only stopwords (`para`, `the`) falls back to its unfiltered terms; T1176's
+  relaxed retry already returns nothing for one. `TurDslLuceneExecutor` gets it for free.
 - The highlighter takes the core's locale, so it marks stems and never a stopword.
 - An older index keeps working: queries stop asking for stopwords; documents drop them on
   reindex. Check the title phrase boost (`TurLuceneQueryBuilder` ~604) across a dropped word.
@@ -2357,6 +2359,31 @@ TurLuceneFoldingAnalyzer()`).
   content words, and a stopword-only query still returns results.
 
 **Workaround.** None: the plugin renders Turing's highlight as it comes.
+
+### CLXXV.4 Console field APIs go through the search-engine plugin (T1243)
+
+**Where it came from.** Split from T1241 (Dumont D314): on the local build, `PUT
+/api/sn/{id}/field/ext/{id}` changing a field's cardinality answers 400 "invalid URI
+scheme null", so a client cannot fix a field through the API.
+
+**Why.** The console field APIs call `TurSolrUtils` directly instead of the site's
+`TurSearchEnginePlugin`: `TurSNSiteFieldExtAPI.updateSolrSchema` and `deleteSolrSchema`
+(PUT and DELETE), `TurSNSiteFieldRepairAPI` (add, replace, exists) and
+`TurSNSiteFieldCheckAPI` (exists). On a Lucene or Elasticsearch site they talk Solr to
+an instance that is not Solr; on Solr they skip the plugin's `effective()` instance,
+which is how an env-configured endpoint becomes a null URI. The manifest path
+(`TurSNFieldProvisioner`) already goes through the plugin (`addOrUpdateField`,
+`deleteField`, `fieldExists`).
+
+**What Turing should do.** Route all of them through
+`pluginFactory.getPluginForSite(site)`, the way the provisioner does, and drop the
+direct `TurSolrUtils` calls from `api/sn/console`. Where an engine has no schema to
+change (Lucene), the plugin's own answer stands.
+
+**Done when:** on a Lucene site and on a Solr site configured by environment, the
+field-ext PUT changes a field's cardinality and the DELETE removes it, and field check
+and repair report the engine's own state; no class under `api/sn/console` imports
+`TurSolrUtils`.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 
@@ -2378,10 +2405,11 @@ slots controllers) are `string | null` (`dist/controllers/*.d.ts` in 2026.3.17).
 server recorded from its own 429 (`Viglet_Dumont_AI_Quota::visitor_line()`); a visitor
 whose 429 is the first one the site sees reads "paused for now" until the next page.
 
-**What Turing should do.** Each controller's state carries the error's problem details
-beside the text, e.g. `errorProblem?: TuringProblem` (or `error` as the
-`TuringHttpError` itself with its `status` and `problem`), in both the vanilla and the
-React SDK, without breaking a consumer that reads `error` as a string.
+**What Turing should do.** Each controller's state carries an additive `errorProblem?:
+TuringProblem` beside the `error` text, in every vanilla controller and React hook that
+keeps `error: string | null`. Not `error` as the `TuringHttpError` itself: that breaks
+every consumer reading it as a string. The text already carries `problem.detail`
+(`errors.ts`), so only `resetsAt`, `upgradeUrl` and `type` are lost.
 
 **Done when:** an answer or chat controller whose call answers 429 `quota-exhausted`
 exposes `resetsAt` in its state.
@@ -2408,7 +2436,10 @@ search call it makes beside it, and which a proxy or a logged URL limit can cut.
 **What Turing should do.** `POST /api/sn/{site}/search/similar/query` and `POST
 /api/sn/{site}/search/duplicates/query`, taking the same body as `search/query` (`fq`,
 `fqOperator`, `fqItemOperator`, `fqAnd`, `fqOr`, `locale`, `rows`) plus `id` and `mode`,
-answering as the GET does; and `fetchSimilar` in both SDKs sending it.
+answering as the GET does; and `fetchSimilar` in both SDKs sending it. The GETs bind
+`fq` with `@RequestParam List<String>`, which splits a single `fq[]=type:a,b` on its
+comma: read it through `readFilterQueries` as search does, and test a one-value comma
+filter.
 
 **Done when:** a similar request with two `site_key` values as alternatives and a type
 filter, sent as JSON, answers the same neighbours as the GET with `fqi.op=OR`.
@@ -2424,20 +2455,25 @@ an SN site through `POST /api/sn/manifest`, and the plugin (D326) and the connec
 (Dumont D340) both need to declare `RECREATE` migrations for fields whose cardinality
 changes.
 
-**What happens.** A manifest that creates the site and carries a `RECREATE` migration in
-the same call answers 500: `TransientPropertyValueException` in
-`TurSNFieldProvisioner.recreateField`, the field being recreated before the new site is
-persisted. The same migration on a site that already exists works. Separately, `PUT
-/api/sn/{id}/field/ext/{id}` answers 400 "invalid URI scheme null" on the local build,
-so a client cannot fix the field by hand through the API either.
+**What happens.** A manifest that creates the site and carries a `RECREATE` migration
+for a field the template seeds (`author`) answers 500,
+`TransientPropertyValueException`. The same migration on a site that already exists
+works.
+
+**Why.** Not the site: `createSite` saves it first. `TurSNTemplate.createSNSiteField`
+saves each field's `TurSNSiteFieldExtFacet` rows without adding them to the ext's
+`facetLocales`, so in the same transaction `recreateField` deletes the ext, the cascade
+never reaches those managed rows, and they still reference it at flush. On an existing
+site they are not loaded and `ON DELETE CASCADE` removes them. Confirm with a failing IT
+first.
 
 **Workaround in Dumont.** `catalog/dspace-dev/e2e.py` creates the site with one manifest
 and posts a second one with the migrations.
 
-**What Turing should do.** Apply migrations only after the site and its new fields are
-saved, so a create-plus-migrate manifest succeeds (a migration for a field that did not
-exist simply creates it); and make the field-ext PUT accept the body the console sends.
+**What Turing should do.** `recreateField` removes the ext's facet-locale and
+custom-facet rows before the ext, and the template keeps both sides of the association.
+A migration for a field that does not exist already just creates it.
 
 **Done when:** one manifest call that creates a site and declares `RECREATE` for
-`author` answers 200 with the field multi-valued, and the field-ext PUT changes a
-field's cardinality.
+`author` answers 200 with the field multi-valued, and an IT covers both the create and
+the existing-site path. The field-ext PUT 400 is a separate defect, T1243.
