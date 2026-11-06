@@ -71,8 +71,8 @@
       "spa"
     ],
     "icon": "aem",
-    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/wknd/wknd.zip",
-    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/wknd/README.md",
+    "downloadUrl": "https://dumont.viglet.org/marketplace/wknd/wknd.zip",
+    "readmeUrl": "https://dumont.viglet.org/marketplace/wknd/README.md",
     "hasContent": true,
     "hasTemplate": true
   },
@@ -92,8 +92,8 @@
       "spa"
     ],
     "icon": "assets",
-    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/celestial-gallery/celestial-gallery.zip",
-    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/celestial-gallery/README.md",
+    "downloadUrl": "https://dumont.viglet.org/marketplace/celestial-gallery/celestial-gallery.zip",
+    "readmeUrl": "https://dumont.viglet.org/marketplace/celestial-gallery/README.md",
     "hasContent": true,
     "hasTemplate": true
   },
@@ -114,8 +114,8 @@
       "spa"
     ],
     "icon": "database",
-    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/retro-arcade/retro-arcade.zip",
-    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/retro-arcade/README.md",
+    "downloadUrl": "https://dumont.viglet.org/marketplace/retro-arcade/retro-arcade.zip",
+    "readmeUrl": "https://dumont.viglet.org/marketplace/retro-arcade/README.md",
     "hasContent": true,
     "hasTemplate": true
   },
@@ -135,8 +135,8 @@
       "spa"
     ],
     "icon": "web",
-    "downloadUrl": "https://openviglet.github.io/dumont/marketplace/wikipedia/wikipedia.zip",
-    "readmeUrl": "https://openviglet.github.io/dumont/marketplace/wikipedia/README.md",
+    "downloadUrl": "https://dumont.viglet.org/marketplace/wikipedia/wikipedia.zip",
+    "readmeUrl": "https://dumont.viglet.org/marketplace/wikipedia/README.md",
     "hasContent": true,
     "hasTemplate": true
   }
