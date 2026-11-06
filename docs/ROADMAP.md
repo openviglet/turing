@@ -20,7 +20,6 @@
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-- 📋 **T1259** (deps: T1252 ✅) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — Guided conversations built in Turing's console never reach a WordPress site (moved from Dumont D313). → §CLXXXII.9
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 - 📋 **T1261** (deps: T1252 ✅) **The plugin's search answer lists every retrieved document as a source when it cites none** — The block falls back from citations to retrieval, so the published video shows a running shirt under a tent answer while Ana says each source can be checked. → §CLXXXII.10
 - 📋 **T1264** (deps: —) **A chat answer's sources carry no document type, so its link to all results cannot filter to what it cited** — An assistant answer citing four products opens a results page of every type, not the products. → §CLXXXII.11

@@ -145,6 +145,44 @@
 	margin: 0.5rem 0 0;
 }
 
+.viglet-turing-assistant__choices {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0.5rem 0 0;
+	padding: 0;
+}
+
+.viglet-turing-assistant__choices button {
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	font: inherit;
+	padding: 0.25rem 0.75rem;
+}
+
+/* A chat flow's form (T1259): one labelled field per row, then its button. */
+.viglet-turing-assistant__flow-form {
+	display: grid;
+	gap: 0.25rem 0;
+	margin: 0.5rem 0 0;
+}
+
+.viglet-turing-assistant__flow-form :is(input, select, textarea) {
+	font: inherit;
+	margin-bottom: 0.5rem;
+	padding: 0.5rem 0.75rem;
+}
+
+.viglet-turing-assistant__flow-form button {
+	justify-self: start;
+}
+
+.viglet-turing-assistant__flow-title {
+	font-weight: 600;
+	margin: 0 0 0.25rem;
+}
+
 .viglet-turing-assistant__suggestions p {
 	margin: 0 0 0.25rem;
 }

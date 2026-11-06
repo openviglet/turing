@@ -774,6 +774,13 @@ read as a follow-up instead of starting over. The other way, an assistant answer
 more than three posts ends with **See every result for this question**, which opens the
 site's results page for that question.
 
+**Guided conversations.** A [chat flow](/docs/chat-flow/) built for the SN site's chat runs
+in the Site assistant as it does in Turing: the choices a step offers show as buttons (typing
+an answer still works), and a form step shows its fields as a labelled form, sent only when
+the visitor submits it; the browser checks required fields and email, phone, number and date
+fields first. **New conversation** also clears the flow's place on Turing, so the next
+question starts it from the beginning.
+
 **Build my kit.** With **Offer Build my kit** on (the default, in the block's settings), the
 block has a second mode, **Plan a kit**. The visitor describes a plan ("two days crossing the
 mountains in July, first time") and Turing answers with the needs the plan implies, each

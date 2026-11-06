@@ -36,6 +36,9 @@ wp_interactivity_state(
 		// A spent AI budget, with its reset when the site knows it (D336).
 		'paused'     => Viglet_Turing_AI_Quota::visitor_line(),
 		'documentId' => $viglet_turing_subject ? $viglet_turing_indexer->build_doc_id( $viglet_turing_subject->ID ) : '',
+		// A chat flow's form (T1259): its select's empty choice and its submit button.
+		'chooseOne'  => __( 'Choose one', 'viglet-turing-search' ),
+		'sendLabel'  => __( 'Send', 'viglet-turing-search' ),
 		'searchPage' => $viglet_turing_results['searchPage'],
 		'queryParam' => $viglet_turing_results['queryParam'],
 	)
@@ -77,6 +80,12 @@ $viglet_turing_context = (string) wp_json_encode(
 							<li class="viglet-turing-assistant__source"><a data-wp-bind--href="context.source.url" data-wp-text="context.source.title"></a></li>
 						</template>
 					</ul>
+					<ul class="viglet-turing-assistant__choices" aria-label="<?php esc_attr_e( 'Choices', 'viglet-turing-search' ); ?>" hidden data-wp-bind--hidden="!context.message.choices.length">
+						<template data-wp-each--choice="context.message.choices" data-wp-each-key="context.choice.key">
+							<li><button type="button" data-wp-on--click="actions.choose" data-wp-bind--disabled="state.streaming" data-wp-text="context.choice.text"></button></li>
+						</template>
+					</ul>
+					<form class="viglet-turing-assistant__flow-form" data-id="<?php echo esc_attr( $viglet_turing_id ); ?>" hidden data-wp-bind--hidden="!context.message.form" data-wp-watch="callbacks.renderForm" data-wp-on--submit="actions.submitForm"></form>
 					<p class="viglet-turing-assistant__more" hidden data-wp-bind--hidden="!context.message.more"><a data-wp-bind--href="context.message.more"><?php esc_html_e( 'See every result for this question', 'viglet-turing-search' ); ?></a></p>
 					<p class="viglet-turing-assistant__feedback" hidden data-wp-bind--hidden="!context.message.canRate">
 						<?php esc_html_e( 'Was this helpful?', 'viglet-turing-search' ); ?>

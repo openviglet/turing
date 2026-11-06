@@ -32,6 +32,8 @@ const rated = new Set();
 const seeded = new Set();
 // Whether chat is on, as last told to the search blocks on the page (T1258).
 let announced = null;
+// The visitor's question box: a flow's form (T1259) has inputs of its own.
+const QUESTION = '.viglet-turing-assistant__form input';
 
 /**
  * What a turn asked on this page carries (D242): the indexed post it shows, which Turing reads
@@ -185,11 +187,21 @@ function sync( s ) {
 					.reverse()
 					.find( ( m ) => 'user' === m.role )
 			: null;
+		// What a chat flow asks next (T1259), on its latest turn only: choices to tap and a form
+		// to fill. A typed answer is still read, as the flow reads any message.
+		const current = done && last;
 		return {
 			id: message.id,
 			visitor: ! answer,
 			text: message.content,
 			sources,
+			choices: current
+				? ( message.options || [] ).map( ( text ) => ( {
+						key: text,
+						text,
+					} ) )
+				: [],
+			form: current && message.form?.fields?.length ? message.form : null,
 			// More posts than it lists (T1258): the results page has them all.
 			more:
 				done && sources.length > 3 ? resultsFor( asked?.content ) : '',
@@ -220,6 +232,70 @@ function rate( signal ) {
 		conversationId: chat.getState().conversationId,
 		query: asked?.content,
 	} );
+}
+
+/**
+ * A chat flow's form (T1259) as native, labelled fields, built from the field list with DOM
+ * calls and text nodes, never HTML. The browser checks `required` and the input types before
+ * the form is sent, and only the visitor's submit sends it.
+ *
+ * @param {HTMLFormElement}                element Where the fields go; its children are replaced.
+ * @param {{title: string, fields: Array}} form    The flow's form.
+ * @param {string}                         id      A prefix that keeps the field ids unique.
+ */
+function renderForm( element, form, id ) {
+	const nodes = [];
+	if ( form.title ) {
+		const title = document.createElement( 'p' );
+		title.className = 'viglet-turing-assistant__flow-title';
+		title.textContent = form.title;
+		nodes.push( title );
+	}
+	form.fields.forEach( ( field, i ) => {
+		const fieldId = `${ id }-${ i }`;
+		const label = document.createElement( 'label' );
+		label.htmlFor = fieldId;
+		label.textContent = field.label || field.name;
+		let input;
+		if ( 'select' === field.type ) {
+			input = document.createElement( 'select' );
+			const none = document.createElement( 'option' );
+			none.value = '';
+			none.textContent = state.chooseOne;
+			input.append(
+				none,
+				...( field.options || [] ).map( ( value ) => {
+					const option = document.createElement( 'option' );
+					option.value = value;
+					option.textContent = value;
+					return option;
+				} )
+			);
+		} else if ( 'textarea' === field.type ) {
+			input = document.createElement( 'textarea' );
+			input.rows = 3;
+		} else {
+			input = document.createElement( 'input' );
+			input.type = [ 'email', 'tel', 'number', 'date' ].includes(
+				field.type
+			)
+				? field.type
+				: 'text';
+		}
+		input.id = fieldId;
+		input.name = field.name;
+		input.required = false !== field.required;
+		if ( field.placeholder && 'select' !== field.type ) {
+			input.placeholder = field.placeholder;
+		}
+		nodes.push( label, input );
+	} );
+	const send = document.createElement( 'button' );
+	send.type = 'submit';
+	send.className = 'wp-element-button';
+	send.textContent = state.sendLabel;
+	nodes.push( send );
+	element.replaceChildren( ...nodes );
 }
 
 /**
@@ -283,7 +359,7 @@ function openWith( { question, answer, sources } ) {
 	if ( dialog && ! dialog.open ) {
 		dialog.showModal();
 	}
-	dialog?.querySelector( 'input' )?.focus();
+	dialog?.querySelector( QUESTION )?.focus();
 }
 window.addEventListener( 'viglet-turing:assistant-open', ( event ) =>
 	openWith( event.detail || {} )
@@ -310,7 +386,7 @@ const { state } = store( 'viglet-turing/assistant', {
 		open() {
 			const dialog = dialogOf();
 			dialog.showModal();
-			dialog.querySelector( 'input' ).focus();
+			dialog.querySelector( QUESTION ).focus();
 		},
 		close() {
 			dialogOf().close();
@@ -336,12 +412,35 @@ const { state } = store( 'viglet-turing/assistant', {
 		suggest() {
 			void chat.send( getContext().suggestion.text, turn() );
 		},
+		// A chat flow's choice (T1259), sent as the visitor's answer.
+		choose() {
+			if ( ! state.streaming ) {
+				void chat.send( getContext().choice.text, turn() );
+			}
+		},
+		// A chat flow's form (T1259): every field's value, once the browser found them valid.
+		submitForm( event ) {
+			event.preventDefault();
+			if ( state.streaming ) {
+				return;
+			}
+			const values = {};
+			for ( const [ name, value ] of new window.FormData(
+				event.target
+			) ) {
+				values[ name ] = String( value );
+			}
+			void chat.submitForm( values, turn() );
+		},
 		restart() {
+			// A chat flow's place on Turing's side is dropped too (T1259), before the
+			// conversation it belongs to is forgotten.
+			void chat.resetFlow();
 			chat.reset();
 			// The next question opens a conversation of its own on Turing's side too.
 			clearTurSession();
 			rated.clear();
-			dialogOf().querySelector( 'input' ).focus();
+			dialogOf().querySelector( QUESTION ).focus();
 		},
 		helpful() {
 			rate( 'THUMBS_UP' );
@@ -354,6 +453,20 @@ const { state } = store( 'viglet-turing/assistant', {
 		// A message's Markdown as lists and emphasis (D247), from text nodes, never HTML.
 		renderMessage() {
 			renderMarkdown( getElement().ref, getContext().message.text );
+		},
+		// A chat flow's form (T1259), when the latest turn carries one.
+		renderForm() {
+			const { message } = getContext();
+			const { ref } = getElement();
+			if ( message.form ) {
+				renderForm(
+					ref,
+					message.form,
+					`${ ref.dataset.id }-${ message.id }`
+				);
+			} else {
+				ref.replaceChildren();
+			}
 		},
 		init() {
 			// One conversation for every assistant on the page, kept for this tab.
