@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { postSiteChatResume, type TurChatResumeResponse } from "../core/api.js";
 import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
 import { useTuringContext } from "../core/use-turing-context.js";
@@ -21,6 +23,8 @@ export interface UseTuringResumeReturn {
   ) => Promise<TurChatResumeResponse>;
   readonly status: ResumeStatus;
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Most recent successful response. */
   readonly lastResult: TurChatResumeResponse | null;
 }
@@ -50,6 +54,8 @@ export function useTuringResume(
 
   const [status, setStatus] = useState<ResumeStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastResult, setLastResult] = useState<TurChatResumeResponse | null>(null);
 
   const resume = useCallback(
@@ -61,12 +67,14 @@ export function useTuringResume(
         explicitConversationId ?? readTurSession(sessionCookieName);
       if (!conversationId) {
         const msg = "No active conversation — nothing to resume.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
       }
       setStatus("resuming");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const result = await postSiteChatResume(
           config.site,
@@ -75,6 +83,7 @@ export function useTuringResume(
           resumeReason,
         );
         if (result.error) {
+          setErrorProblem(undefined);
           setError(result.error);
           setStatus("error");
           return result;
@@ -84,6 +93,7 @@ export function useTuringResume(
         return result;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Resume failed";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -92,5 +102,5 @@ export function useTuringResume(
     [config.site, explicitConversationId, sessionCookieName],
   );
 
-  return { resume, status, error, lastResult };
+  return { resume, status, error, errorProblem, lastResult };
 }

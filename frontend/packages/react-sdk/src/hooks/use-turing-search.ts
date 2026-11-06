@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/refs -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   applyFacetAction,
   fetchChat,
@@ -79,6 +81,8 @@ export interface UseTuringSearchReturn {
   groups: ResolvedGroup[];
   /** Error message */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Current search params (synced with URL) */
   params: SearchParams;
   /** Execute a search with given params */
@@ -279,6 +283,8 @@ export function useTuringSearch(
   const [documents, setDocuments] = useState<ResolvedDocument[]>([]);
   const [groups, setGroups] = useState<ResolvedGroup[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [params, setParams] = useState<SearchParams>(defaultParams);
   const [structured, setStructured] = useState<TurStructuredSearchResponse | null>(null);
   const [request, setRequest] = useState<TurSearchRequest>(() =>
@@ -298,6 +304,7 @@ export function useTuringSearch(
       const requestId = ++abortRef.current;
       setStatus("loading");
       setError(null);
+      setErrorProblem(undefined);
       setParams(searchParams);
 
       try {
@@ -324,6 +331,7 @@ export function useTuringSearch(
         emitSearchEvents(q, searchResult?.queryContext?.count ?? resolved.length);
       } catch (err) {
         if (requestId !== abortRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Search failed");
         setStatus("error");
       }
@@ -341,6 +349,7 @@ export function useTuringSearch(
       const requestId = ++abortRef.current;
       setStatus("loading");
       setError(null);
+      setErrorProblem(undefined);
       setRequest(searchRequest);
       requestRef.current = searchRequest;
       setParams(requestToSearchParams(searchRequest));
@@ -379,6 +388,7 @@ export function useTuringSearch(
         }
       } catch (err) {
         if (requestId !== abortRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Search failed");
         setStatus("error");
       }
@@ -498,6 +508,7 @@ export function useTuringSearch(
     documents,
     groups,
     error,
+    errorProblem,
     params,
     search,
     searchRequest: executeRequest,

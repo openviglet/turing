@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
 import axios from "axios";
 import type { TurWorkspaceArtifact, TurWorkspaceArtifacts } from "../core/api.js";
 import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
@@ -61,6 +62,8 @@ export interface UseTuringWorkspaceReturn {
   status: WorkspaceStatus;
   /** Error message when the stream closed unexpectedly. */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
 }
 
 const EMPTY_ARTIFACTS: readonly TurWorkspaceArtifact[] = Object.freeze([]);
@@ -124,6 +127,8 @@ export function useTuringWorkspace(
     useState<readonly TurWorkspaceArtifact[]>(EMPTY_ARTIFACTS);
   const [status, setStatus] = useState<WorkspaceStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [tick, setTick] = useState(0);
 
   // Track the conversation we last streamed for, to clear stale artifacts when
@@ -148,11 +153,13 @@ export function useTuringWorkspace(
     if (!enabled || !conversationId) return;
     if (globalThis.EventSource === undefined) {
       setStatus("error");
+      setErrorProblem(undefined);
       setError("EventSource is not supported in this environment.");
       return;
     }
     setStatus("loading");
     setError(null);
+    setErrorProblem(undefined);
     const baseURL = axios.defaults.baseURL ?? "";
     // Agent mode → path-scoped agent endpoint (no site). Site mode → site
     // endpoint, with `agentId` riding along to back-fill the initial snapshot.
@@ -167,6 +174,7 @@ export function useTuringWorkspace(
       },
       onClosed: () => {
         setStatus("error");
+        setErrorProblem(undefined);
         setError("Workspace stream closed.");
       },
     });
@@ -184,5 +192,5 @@ export function useTuringWorkspace(
     }
   }, [conversationId]);
 
-  return { artifacts, conversationId, status, error };
+  return { artifacts, conversationId, status, error, errorProblem };
 }

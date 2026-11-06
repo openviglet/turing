@@ -56,6 +56,22 @@ async function readProblem(response: Response): Promise<TuringProblem | undefine
 }
 
 /**
+ * T1240 — the problem details a failure carries, for a hook to keep beside its
+ * `error` text. Reads a {@link TuringHttpError} (the streaming calls) and an
+ * axios rejection (the JSON calls, which go through the host's axios instance and
+ * reject with its error, whose `response.data` is the problem body). `undefined`
+ * for anything else, or a body that is not a JSON object.
+ */
+export function problemOf(err: unknown): TuringProblem | undefined {
+  if (err instanceof TuringHttpError) return err.problem;
+  if (err === null || typeof err !== "object" || !(err as { isAxiosError?: unknown }).isAxiosError) {
+    return undefined;
+  }
+  const data = (err as { response?: { data?: unknown } }).response?.data;
+  return data !== null && typeof data === "object" && !Array.isArray(data) ? (data as TuringProblem) : undefined;
+}
+
+/**
  * A response arrived carrying nothing to read — a streaming endpoint with a null
  * body, or a JSON endpoint that answered empty.
  *

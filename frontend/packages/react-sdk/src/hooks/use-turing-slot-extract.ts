@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   postSiteSlotExtract,
   type TurChatSlotExtractResponse,
@@ -24,6 +26,8 @@ export interface UseTuringSlotExtractReturn {
   readonly extract: (file: File) => Promise<TurChatSlotExtractResponse>;
   readonly status: SlotExtractStatus;
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Last successful extraction's result, kept for the UI to render. */
   readonly lastResult: TurChatSlotExtractResponse | null;
 }
@@ -66,6 +70,8 @@ export function useTuringSlotExtract(
 
   const [status, setStatus] = useState<SlotExtractStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastResult, setLastResult] = useState<TurChatSlotExtractResponse | null>(null);
 
   const extract = useCallback(
@@ -74,12 +80,14 @@ export function useTuringSlotExtract(
         explicitConversationId ?? readTurSession(sessionCookieName);
       if (!conversationId) {
         const msg = "No active conversation — send a chat message first.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
       }
       setStatus("uploading");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const result = await postSiteSlotExtract(
           config.site,
@@ -91,6 +99,7 @@ export function useTuringSlotExtract(
         // response body (e.g. "No AI agent configured"). Treat that as
         // a failure so the caller can render a user-facing message.
         if (result.error) {
+          setErrorProblem(undefined);
           setError(result.error);
           setStatus("error");
           return result;
@@ -100,6 +109,7 @@ export function useTuringSlotExtract(
         return result;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Slot extraction failed";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -108,5 +118,5 @@ export function useTuringSlotExtract(
     [config.site, explicitConversationId, sessionCookieName, slotNames],
   );
 
-  return { extract, status, error, lastResult };
+  return { extract, status, error, errorProblem, lastResult };
 }

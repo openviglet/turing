@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { postSiteChatSlot, type TurChatSlotWriteResponse } from "../core/api.js";
 import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../core/session.js";
 import { useTuringContext } from "../core/use-turing-context.js";
@@ -30,6 +32,8 @@ export interface UseTuringSlotWriterReturn {
   readonly status: SlotWriteStatus;
   /** Error message from the last failed call. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Number of state rows the last successful write updated. */
   readonly lastUpdatedStates: number;
 }
@@ -67,6 +71,8 @@ export function useTuringSlotWriter(
 
   const [status, setStatus] = useState<SlotWriteStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastUpdatedStates, setLastUpdatedStates] = useState(0);
 
   const write = useCallback(
@@ -78,12 +84,14 @@ export function useTuringSlotWriter(
         explicitConversationId ?? readTurSession(sessionCookieName);
       if (!conversationId) {
         const err = "No active conversation — send a chat message first.";
+        setErrorProblem(undefined);
         setError(err);
         setStatus("error");
         throw new Error(err);
       }
       setStatus("writing");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const res = await postSiteChatSlot(config.site, conversationId, name, value);
         setLastUpdatedStates(res.updatedStates);
@@ -91,6 +99,7 @@ export function useTuringSlotWriter(
         return res;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Failed to write slot";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -99,5 +108,5 @@ export function useTuringSlotWriter(
     [config.site, explicitConversationId, sessionCookieName],
   );
 
-  return { write, status, error, lastUpdatedStates };
+  return { write, status, error, errorProblem, lastUpdatedStates };
 }

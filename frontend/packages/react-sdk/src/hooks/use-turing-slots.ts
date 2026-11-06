@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import axios from "axios";
 import {
   fetchAgentChatSlots,
@@ -94,6 +96,8 @@ export interface UseTuringSlotsReturn {
   status: SlotsStatus;
   /** Error message from the last failed fetch. */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Force a refetch right now (also resets {@code status} to "loading"). */
   refresh: () => void;
 }
@@ -161,6 +165,8 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
   const [slots, setSlots] = useState<Readonly<Record<string, string>>>(EMPTY_SLOTS);
   const [status, setStatus] = useState<SlotsStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [tick, setTick] = useState(0);
 
   // Track the conversation id we last successfully fetched for, so we can
@@ -189,6 +195,7 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
     let alive = true;
     setStatus("loading");
     setError(null);
+    setErrorProblem(undefined);
 
     const fetcher: Promise<TurChatSessionSlots> = agentId
       ? fetchAgentChatSlots(agentId, conversationId)
@@ -203,6 +210,7 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
       })
       .catch((err) => {
         if (!alive) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Failed to load chat slots");
         setStatus("error");
       });
@@ -228,6 +236,7 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
     }
     setStatus("loading");
     setError(null);
+    setErrorProblem(undefined);
     const baseURL = axios.defaults.baseURL ?? "";
     const subscription = subscribeSlotsSse(baseURL, siteName as string, conversationId, {
       onMessage: (payload) => {
@@ -239,6 +248,7 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
         // Server severed the connection (readyState=CLOSED). Fall back
         // to polling — the polling effect re-runs when sseActive flips.
         setSseDisabled(true);
+        setErrorProblem(undefined);
         setError("SSE channel closed; falling back to polling.");
       },
     }, { delta: sseDelta });
@@ -298,6 +308,7 @@ export function useTuringSlots(options: UseTuringSlotsOptions = {}): UseTuringSl
     conversationId,
     status,
     error,
+    errorProblem,
     refresh,
   };
 }

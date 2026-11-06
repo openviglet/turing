@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useEffect, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { fetchIntents } from "../core/api.js";
 import { useTuringContext } from "../core/use-turing-context.js";
 import type { TurIntent } from "../core/types.js";
@@ -11,6 +13,8 @@ export interface UseTuringIntentsReturn {
   loading: boolean;
   /** Error message from the last failed fetch */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Re-fetch intents */
   refresh: () => void;
 }
@@ -38,12 +42,15 @@ export function useTuringIntents(): UseTuringIntentsReturn {
   const [intents, setIntents] = useState<TurIntent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
     setError(null);
+    setErrorProblem(undefined);
     fetchIntents(config.site)
       .then((res) => {
         if (!alive) return;
@@ -52,6 +59,7 @@ export function useTuringIntents(): UseTuringIntentsReturn {
       })
       .catch((err) => {
         if (!alive) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Failed to load intents");
         setIntents([]);
         setLoading(false);
@@ -65,6 +73,7 @@ export function useTuringIntents(): UseTuringIntentsReturn {
     intents,
     loading,
     error,
+    errorProblem,
     refresh: () => setTick((t) => t + 1),
   };
 }

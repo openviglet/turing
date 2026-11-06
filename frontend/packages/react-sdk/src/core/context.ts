@@ -11,6 +11,7 @@ import type {
   SearchStatus,
 } from "./types.js";
 import type { SearchParams } from "./api.js";
+import type { TuringProblem } from "@viglet/turing-sdk";
 
 // ── Configuration context (always available) ──
 
@@ -45,6 +46,8 @@ export interface SearchStoreValue {
   groups: ResolvedGroup[];
   /** Error message */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /**
    * Effective search params (explicit URL + implicit merged).
    * This is what gets sent to the API.

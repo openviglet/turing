@@ -139,7 +139,9 @@ export type { TurSessionOptions } from "./core/session.js";
 // what the vanilla SDK throws and a consumer of both would be back to reading
 // messages. A non-2xx throws TuringHttpError with a numeric `status`; a request
 // that produced no usable response throws TuringTransportError.
-export { TuringHttpError, TuringTransportError, problemOf } from "@viglet/turing-sdk";
+export { TuringHttpError, TuringTransportError } from "@viglet/turing-sdk";
+// T1240 — reads an axios rejection as well as a TuringHttpError.
+export { problemOf } from "./core/errors.js";
 
 // ── Resolve utilities ──
 export { resolveDocuments, resolveGroups, resolveStructuredGroups } from "./core/resolve.js";

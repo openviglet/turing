@@ -1,4 +1,6 @@
 import { useCallback, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { postSemanticChat } from "../core/api.js";
 import type { TurChatConversationMessage } from "../core/types.js";
 import type { ChatMessage, ChatStatus } from "./use-turing-chat.js";
@@ -24,6 +26,8 @@ export interface UseTuringSemanticChatReturn {
   status: ChatStatus;
   /** Error message from the last failed send. */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Whether a turn is in progress. */
   isStreaming: boolean;
   /**
@@ -97,6 +101,8 @@ export function useTuringSemanticChat(
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
 
   // Cross-send guards mirror the useTuringLlmChat implementation: a request
   // counter to drop late chunks from a previous send, an aborted flag, and
@@ -113,6 +119,7 @@ export function useTuringSemanticChat(
       setStatus("idle");
       return;
     }
+    setErrorProblem(problemOf(err));
     setError(err instanceof Error ? err.message : "Chat request failed");
     setStatus("error");
   }, []);
@@ -135,6 +142,7 @@ export function useTuringSemanticChat(
       const controller = new AbortController();
       abortControllerRef.current = controller;
       setError(null);
+      setErrorProblem(undefined);
       setStatus("loading");
 
       const all = [...messagesRef.current, userMsg];
@@ -211,6 +219,7 @@ export function useTuringSemanticChat(
     messagesRef.current = [];
     setMessages([]);
     setError(null);
+    setErrorProblem(undefined);
     setStatus("idle");
   }, []);
 
@@ -218,6 +227,7 @@ export function useTuringSemanticChat(
     messages,
     status,
     error,
+    errorProblem,
     isStreaming: status === "loading",
     send,
     stop,

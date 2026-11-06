@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { fetchSortOptions } from "../core/api.js";
 import { useTuringContext } from "../core/use-turing-context.js";
 import type { TurSortOption } from "../core/types.js";
@@ -8,6 +10,8 @@ export interface UseTuringSortOptionsReturn {
   sortOptions: TurSortOption[];
   isLoading: boolean;
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   refresh: () => Promise<void>;
 }
 
@@ -34,14 +38,18 @@ export function useTuringSortOptions(): UseTuringSortOptionsReturn {
   const [sortOptions, setSortOptions] = useState<TurSortOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    setErrorProblem(undefined);
     try {
       const options = await fetchSortOptions(config.site);
       setSortOptions(options);
     } catch (err) {
+      setErrorProblem(problemOf(err));
       setError(err instanceof Error ? err.message : "Failed to load sort options");
     } finally {
       setIsLoading(false);
@@ -52,5 +60,5 @@ export function useTuringSortOptions(): UseTuringSortOptionsReturn {
     refresh();
   }, [refresh]);
 
-  return { sortOptions, isLoading, error, refresh };
+  return { sortOptions, isLoading, error, errorProblem, refresh };
 }

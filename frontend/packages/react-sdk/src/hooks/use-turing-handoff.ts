@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   postSiteHandoff,
   type TurChatHandoffChannel,
@@ -52,6 +54,8 @@ export interface UseTuringHandoffReturn {
   ) => Promise<TurChatHandoffResponse>;
   readonly status: HandoffStatus;
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Most recent successful response; preserved across calls for UI preview. */
   readonly lastResult: TurChatHandoffResponse | null;
 }
@@ -94,6 +98,8 @@ export function useTuringHandoff(
 
   const [status, setStatus] = useState<HandoffStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastResult, setLastResult] = useState<TurChatHandoffResponse | null>(null);
 
   const handoff = useCallback(
@@ -106,6 +112,7 @@ export function useTuringHandoff(
         explicitConversationId ?? readTurSession(sessionCookieName);
       if (!conversationId) {
         const msg = "No active conversation — send a chat message first.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
@@ -114,12 +121,14 @@ export function useTuringHandoff(
       const destination = overrides?.destination ?? defaultDestination;
       if (!destination) {
         const msg = "Handoff destination is required (phone / email).";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
       }
       setStatus("building");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const result = await postSiteHandoff(config.site, {
           conversationId,
@@ -129,6 +138,7 @@ export function useTuringHandoff(
           slotsToInclude: overrides?.slotsToInclude ?? defaultSlots,
         });
         if (result.error || !result.url) {
+          setErrorProblem(undefined);
           setError(result.error ?? "Handoff build returned no URL");
           setStatus("error");
           return result;
@@ -144,6 +154,7 @@ export function useTuringHandoff(
         return result;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Handoff failed";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -161,5 +172,5 @@ export function useTuringHandoff(
     ],
   );
 
-  return { handoff, status, error, lastResult };
+  return { handoff, status, error, errorProblem, lastResult };
 }

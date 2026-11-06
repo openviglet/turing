@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { fetchSimilar, type TurSimilarMode, type TurSimilarResult } from "../core/api.js";
 import { useTuringContext } from "../core/use-turing-context.js";
 
@@ -27,6 +29,8 @@ export interface UseTuringSimilarReturn {
   readonly loading: boolean;
   /** Error message from the last failed lookup, or {@code null}. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Imperatively load neighbours for a given document id. */
   readonly load: (documentId: string) => Promise<void>;
   /** Clear the current results and error. */
@@ -55,6 +59,8 @@ export function useTuringSimilar(
   const [results, setResults] = useState<TurSimilarResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   // Monotonic request id — a superseded response is dropped.
   const requestIdRef = useRef(0);
 
@@ -63,6 +69,7 @@ export function useTuringSimilar(
       const requestId = ++requestIdRef.current;
       setLoading(true);
       setError(null);
+      setErrorProblem(undefined);
       try {
         const res = await fetchSimilar(config.site, {
           id,
@@ -75,6 +82,7 @@ export function useTuringSimilar(
         setLoading(false);
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Similar lookup failed");
         setResults([]);
         setLoading(false);
@@ -87,6 +95,7 @@ export function useTuringSimilar(
     requestIdRef.current++;
     setResults([]);
     setError(null);
+    setErrorProblem(undefined);
     setLoading(false);
   }, []);
 
@@ -95,5 +104,5 @@ export function useTuringSimilar(
     void load(documentId);
   }, [enabled, documentId, load]);
 
-  return { results, loading, error, load, reset };
+  return { results, loading, error, errorProblem, load, reset };
 }

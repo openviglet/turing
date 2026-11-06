@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "./errors.js";
 import { TuringContext, SearchStoreContext, type SearchStoreValue } from "./context.js";
 import {
   applyFacetAction,
@@ -187,6 +189,8 @@ function UrlSyncSearchStore({
   const [documents, setDocuments] = useState<ResolvedDocument[]>([]);
   const [groups, setGroups] = useState<ResolvedGroup[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [inputValue, setInputValue] = useState(searchParams.get("q") || "");
 
   // ── Implicit params registry ──
@@ -229,6 +233,7 @@ function UrlSyncSearchStore({
     const requestId = ++abortRef.current;
     setStatus("loading");
     setError(null);
+    setErrorProblem(undefined);
 
     const q = params.q || "*";
     const shouldChat = q !== "*";
@@ -264,6 +269,7 @@ function UrlSyncSearchStore({
       })
       .catch((err) => {
         if (requestId !== abortRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Search failed");
         setStatus("error");
       });
@@ -376,6 +382,7 @@ function UrlSyncSearchStore({
     documents,
     groups,
     error,
+    errorProblem,
     params,
     inputValue,
     setInputValue,
@@ -392,7 +399,7 @@ function UrlSyncSearchStore({
     updateParams,
     setImplicitParams,
   }), [
-    status, data, structured, chatData, documents, groups, error, params,
+    status, data, structured, chatData, documents, groups, error, errorProblem, params,
     inputValue, submitSearch, navigate, setLocale, setSort, showAll,
     updateParams, setImplicitParams,
     toggleFacet, clearFacet, clearAllFilters, goToPage, applySpellCheck,

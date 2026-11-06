@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/refs -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   fetchCopilotAvailable,
   postCopilot,
@@ -61,6 +63,8 @@ export interface UseTuringCopilotReturn {
   isLoading: boolean;
   /** Error message from the last failed send, or a copilot-unavailable reason. */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /**
    * Whether the copilot can answer (a default LLM is configured). {@code null}
    * while unknown / not probed.
@@ -121,6 +125,8 @@ export function useTuringCopilot(
   const [totalHits, setTotalHits] = useState<number>(0);
   const [status, setStatus] = useState<CopilotStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [available, setAvailable] = useState<boolean | null>(null);
 
   const messagesRef = useRef<CopilotMessage[]>(messages);
@@ -159,6 +165,7 @@ export function useTuringCopilot(
       messagesRef.current = trimmed;
       setMessages(trimmed);
       setError(null);
+      setErrorProblem(undefined);
       setStatus("loading");
 
       try {
@@ -176,6 +183,7 @@ export function useTuringCopilot(
 
         if (!result.available) {
           setAvailable(false);
+          setErrorProblem(undefined);
           setError(result.error ?? "The catalog copilot is not available.");
           setStatus("error");
           return;
@@ -206,6 +214,7 @@ export function useTuringCopilot(
         if (result.error) setError(result.error);
       } catch (err) {
         if (requestId !== requestRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Copilot request failed");
         setStatus("error");
       }
@@ -221,6 +230,7 @@ export function useTuringCopilot(
     setGroundedQuerySummary(null);
     setTotalHits(0);
     setError(null);
+    setErrorProblem(undefined);
     setStatus("idle");
   }, []);
 
@@ -232,6 +242,7 @@ export function useTuringCopilot(
     status,
     isLoading: status === "loading",
     error,
+    errorProblem,
     available,
     send,
     reset,

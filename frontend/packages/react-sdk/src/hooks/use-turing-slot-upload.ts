@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   postSiteSlotUpload,
   type PostSlotUploadOptions,
@@ -30,6 +32,8 @@ export interface UseTuringSlotUploadReturn {
   ) => Promise<TurChatSlotUploadResponse>;
   readonly status: SlotUploadStatus;
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Most recent successful response, preserved for UI preview. */
   readonly lastResult: TurChatSlotUploadResponse | null;
 }
@@ -60,6 +64,8 @@ export function useTuringSlotUpload(
 
   const [status, setStatus] = useState<SlotUploadStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastResult, setLastResult] = useState<TurChatSlotUploadResponse | null>(null);
 
   const upload = useCallback(
@@ -72,12 +78,14 @@ export function useTuringSlotUpload(
         explicitConversationId ?? readTurSession(sessionCookieName);
       if (!conversationId) {
         const msg = "No active conversation — send a chat message first.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
       }
       setStatus("uploading");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const result = await postSiteSlotUpload(
           config.site,
@@ -90,6 +98,7 @@ export function useTuringSlotUpload(
           },
         );
         if (result.error) {
+          setErrorProblem(undefined);
           setError(result.error);
           setStatus("error");
           return result;
@@ -99,6 +108,7 @@ export function useTuringSlotUpload(
         return result;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Slot upload failed";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -113,5 +123,5 @@ export function useTuringSlotUpload(
     ],
   );
 
-  return { upload, status, error, lastResult };
+  return { upload, status, error, errorProblem, lastResult };
 }

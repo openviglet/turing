@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
 import { postLlmChat } from "../core/api.js";
 import type { TurChatConversationMessage } from "../core/types.js";
 import {
@@ -44,6 +45,8 @@ export interface UseTuringLlmChatReturn {
   status: ChatStatus;
   /** Error message from the last failed send. */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Whether a turn is in progress. */
   isStreaming: boolean;
   /**
@@ -103,6 +106,7 @@ export function useTuringLlmChat(
     messages,
     status,
     error,
+    errorProblem,
     messagesRef,
     beginSend,
     commitMessages,
@@ -174,6 +178,7 @@ export function useTuringLlmChat(
     messages,
     status,
     error,
+    errorProblem,
     isStreaming: status === "loading",
     send,
     stop,

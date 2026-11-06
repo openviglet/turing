@@ -25,8 +25,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CR — SDK errors that carry Turing's own answer
-
 ## Block CS — Schema changes through the manifest converge in one call
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)

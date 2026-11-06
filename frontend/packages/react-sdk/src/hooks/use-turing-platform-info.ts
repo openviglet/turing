@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useEffect, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   fetchDiscovery,
   fetchFeatures,
@@ -33,6 +35,8 @@ export interface UseTuringPlatformInfoReturn {
   readonly loaded: boolean;
   /** Aggregated error message from the discovery/features fetch, or {@code null}. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
 }
 
 /**
@@ -60,12 +64,15 @@ export function useTuringPlatformInfo(
   const [vendors, setVendors] = useState<TurLlmVendor[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
 
   useEffect(() => {
     if (!enabled) return;
     let alive = true;
     setLoaded(false);
     setError(null);
+    setErrorProblem(undefined);
 
     Promise.all([
       fetchDiscovery().then(
@@ -73,8 +80,10 @@ export function useTuringPlatformInfo(
           if (alive) setDiscovery(d);
         },
         (err: unknown) => {
-          if (alive)
+          if (alive) {
+            setErrorProblem(problemOf(err));
             setError(err instanceof Error ? err.message : "Failed to load discovery");
+          }
         },
       ),
       fetchFeatures().then(
@@ -82,8 +91,10 @@ export function useTuringPlatformInfo(
           if (alive) setFeatures(f);
         },
         (err: unknown) => {
-          if (alive)
+          if (alive) {
+            setErrorProblem(problemOf(err));
             setError(err instanceof Error ? err.message : "Failed to load features");
+          }
         },
       ),
       includeLocales
@@ -115,5 +126,5 @@ export function useTuringPlatformInfo(
     };
   }, [enabled, includeVendors, includeLocales]);
 
-  return { discovery, features, locales, vendors, loaded, error };
+  return { discovery, features, locales, vendors, loaded, error, errorProblem };
 }

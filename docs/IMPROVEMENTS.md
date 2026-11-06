@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CR — SDK errors that carry Turing's own answer
-
 ## Block CS — Schema changes through the manifest converge in one call
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -2384,29 +2382,6 @@ and repair report the engine's own state; no class under `api/sn/console` import
 `TurSolrUtils`.
 
 ## CLXXVI SDK errors that carry Turing's own answer
-
-### CLXXVI.2 Problem details in controller state (T1240)
-
-**Where it came from.** Dumont D336 (the WordPress plugin): with the site's AI budget
-spent, the overlay's instant answer and the Site assistant should say when answers come
-back. T1234 put the problem-details body on `TuringHttpError.problem`.
-
-**What landed (part).** `problemOf(err)` in `errors.ts`, exported from both packages,
-and an additive `errorProblem?: TuringProblem` beside `error` in the six vanilla
-controllers and in `useTuringAnswer` and `useTuringChat` (through
-`streaming-chat-core.ts`, which also backs `useTuringLlmChat`). Each request start and
-`reset()` sets it back to `undefined`. Tests: `problem-state.test.ts` in both packages.
-
-**What is left.** Every other React hook that keeps `error: string | null`
-(`useTuringSearch`, `useTuringSimilar`, `useTuringCopilot`, `useTuringLlmChat`,
-`useTuringSemanticChat`, `useTuringSlots` and the rest under `react-sdk/src/hooks`).
-Most of them call through axios, which rejects with an `AxiosError`, not a
-`TuringHttpError`, so `problemOf` answers `undefined` there: read `err.response?.data`
-when it is a JSON object (a small `problemOf` variant in the React SDK's
-`core/errors.ts`), then add the field hook by hook as above.
-
-**Done when:** every React hook that keeps an `error` text exposes `errorProblem`, and a
-429 `quota-exhausted` through an axios-based hook carries `resetsAt`.
 
 ## CLXXVII Every endpoint honours a request's filters and partition
 

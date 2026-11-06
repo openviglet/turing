@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { fetchSpellCheck } from "../core/api.js";
 import { useTuringContext } from "../core/use-turing-context.js";
 import type { TurSpellCheck } from "../core/types.js";
@@ -26,6 +28,8 @@ export interface UseTuringSpellCheckReturn {
   readonly loading: boolean;
   /** Error message from the last failed check, or {@code null}. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Imperatively run a spell-check for a given query. */
   readonly check: (query: string) => Promise<void>;
 }
@@ -53,6 +57,8 @@ export function useTuringSpellCheck(
   const [spellCheck, setSpellCheck] = useState<TurSpellCheck | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const requestIdRef = useRef(0);
 
   const check = useCallback(
@@ -64,6 +70,7 @@ export function useTuringSpellCheck(
       const requestId = ++requestIdRef.current;
       setLoading(true);
       setError(null);
+      setErrorProblem(undefined);
       try {
         const res = await fetchSpellCheck(config.site, resolvedLocale, q);
         if (requestId !== requestIdRef.current) return;
@@ -71,6 +78,7 @@ export function useTuringSpellCheck(
         setLoading(false);
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Spell-check failed");
         setSpellCheck(null);
         setLoading(false);
@@ -89,5 +97,5 @@ export function useTuringSpellCheck(
       ? spellCheck.corrected.text
       : null;
 
-  return { spellCheck, suggestion, loading, error, check };
+  return { spellCheck, suggestion, loading, error, errorProblem, check };
 }

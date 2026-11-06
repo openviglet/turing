@@ -8,6 +8,8 @@
  * the change that adds the compiler.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   fetchAgentContextInfo,
   fetchLlmContextInfo,
@@ -65,6 +67,8 @@ export interface UseTuringLlmInstancesReturn {
   readonly select: (id: string) => void;
   /** Last error string from the listing fetch, or {@code null}. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
 }
 
 const DEFAULT_CONTEXT_WINDOW = 128000;
@@ -124,6 +128,8 @@ export function useTuringLlmInstances(
   const [selectedId, setSelectedId] = useState<string>(() => readPersisted(persistKey));
   const [fetchedContextWindow, setFetchedContextWindow] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const persistKeyRef = useRef(persistKey);
   persistKeyRef.current = persistKey;
 
@@ -146,6 +152,7 @@ export function useTuringLlmInstances(
       })
       .catch((err: unknown) => {
         if (!alive) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Failed to fetch LLM instances");
       })
       .finally(() => {
@@ -220,6 +227,7 @@ export function useTuringLlmInstances(
     contextWindow,
     select,
     error,
+    errorProblem,
   };
 }
 

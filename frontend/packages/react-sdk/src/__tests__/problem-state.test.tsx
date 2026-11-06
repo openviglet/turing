@@ -1,7 +1,12 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import axios, { AxiosError, type AxiosResponse } from "axios";
+import { createElement, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { TuringContext } from "../core/context.js";
+import { problemOf } from "../index.js";
 import { useTuringAnswer } from "../hooks/use-turing-answer.js";
+import { useTuringSimilar } from "../hooks/use-turing-similar.js";
 
 /**
  * T1240 — the React answer hook keeps the problem details of a failed call
@@ -38,5 +43,31 @@ describe("useTuringAnswer problem details (T1240)", () => {
 
     act(() => result.current.reset());
     expect(result.current.errorProblem).toBeUndefined();
+  });
+});
+
+function axios429(): AxiosError {
+  const response = { status: 429, statusText: "", data: QUOTA, headers: {}, config: {} } as AxiosResponse;
+  return new AxiosError("Request failed with status code 429", "ERR_BAD_REQUEST", undefined, undefined, response);
+}
+
+describe("axios-based hooks (T1240)", () => {
+  it("problemOf reads an axios rejection's problem body, and nothing from other errors", () => {
+    expect(problemOf(axios429())?.resetsAt).toBe(QUOTA.resetsAt);
+    expect(problemOf(new Error("boom"))).toBeUndefined();
+    const htmlBody = axios429();
+    htmlBody.response!.data = "<html>Too many</html>";
+    expect(problemOf(htmlBody)).toBeUndefined();
+  });
+
+  it("useTuringSimilar exposes resetsAt on a 429", async () => {
+    vi.spyOn(axios, "post").mockRejectedValue(axios429());
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(TuringContext.Provider, { value: { config: { site: "site1" } } }, children);
+
+    const { result } = renderHook(() => useTuringSimilar({ documentId: "post-7" }), { wrapper });
+
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+    expect(result.current.errorProblem?.resetsAt).toBe(QUOTA.resetsAt);
   });
 });

@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import { fetchRelatedTerms } from "../core/api.js";
 import { useTuringContext } from "../core/use-turing-context.js";
 import type { TurRelatedTermSuggestion } from "../core/types.js";
@@ -26,6 +28,8 @@ export interface UseTuringRelatedTermsReturn {
   readonly loading: boolean;
   /** Error message from the last failed lookup, or {@code null}. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Imperatively run a related-terms lookup for a given query. */
   readonly lookup: (query: string) => Promise<void>;
 }
@@ -56,6 +60,8 @@ export function useTuringRelatedTerms(
   const [suggestions, setSuggestions] = useState<TurRelatedTermSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const requestIdRef = useRef(0);
 
   const lookup = useCallback(
@@ -67,6 +73,7 @@ export function useTuringRelatedTerms(
       const requestId = ++requestIdRef.current;
       setLoading(true);
       setError(null);
+      setErrorProblem(undefined);
       try {
         const res = await fetchRelatedTerms(config.site, resolvedLocale, q);
         if (requestId !== requestIdRef.current) return;
@@ -74,6 +81,7 @@ export function useTuringRelatedTerms(
         setLoading(false);
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Related-terms lookup failed");
         setSuggestions([]);
         setLoading(false);
@@ -91,5 +99,5 @@ export function useTuringRelatedTerms(
     new Set(suggestions.flatMap((s) => s.related)),
   );
 
-  return { suggestions, relatedLabels, loading, error, lookup };
+  return { suggestions, relatedLabels, loading, error, errorProblem, lookup };
 }

@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect -- T1027; rationale in eslint.config.js */
 import { useCallback, useEffect, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   fetchSiteChatState,
   type TurChatConversationState,
@@ -24,6 +26,8 @@ export interface UseTuringFlowStateReturn {
   readonly conversationId: string | null;
   readonly isLoading: boolean;
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   readonly refresh: () => void;
 }
 
@@ -61,6 +65,8 @@ export function useTuringFlowState(
   const [state, setState] = useState<TurChatConversationState | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -73,6 +79,7 @@ export function useTuringFlowState(
     let alive = true;
     setIsLoading(true);
     setError(null);
+    setErrorProblem(undefined);
     fetchSiteChatState(config.site, conversationId)
       .then((res) => {
         if (!alive) return;
@@ -81,6 +88,7 @@ export function useTuringFlowState(
       })
       .catch((err) => {
         if (!alive) return;
+        setErrorProblem(problemOf(err));
         setError(err instanceof Error ? err.message : "Failed to load chat state");
         setIsLoading(false);
       });
@@ -97,5 +105,5 @@ export function useTuringFlowState(
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
 
-  return { state, conversationId, isLoading, error, refresh };
+  return { state, conversationId, isLoading, error, errorProblem, refresh };
 }

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
+import { problemOf } from "../core/errors.js";
 import {
   postSiteFlowSelect,
   type TurChatFlowSelectResponse,
@@ -66,6 +68,8 @@ export interface UseTuringFlowChooserReturn {
   readonly status: FlowChooserStatus;
   /** Error message from the last failed (or unsuccessful) pin. */
   readonly error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  readonly errorProblem?: TuringProblem;
   /** Most recent server response; preserved across calls for UI feedback. */
   readonly lastResult: TurChatFlowSelectResponse | null;
   /** Flow id the engine locked onto in the last successful pin. */
@@ -123,6 +127,8 @@ export function useTuringFlowChooser(
 
   const [status, setStatus] = useState<FlowChooserStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [lastResult, setLastResult] = useState<TurChatFlowSelectResponse | null>(null);
 
   const chooseFlow = useCallback(
@@ -130,6 +136,7 @@ export function useTuringFlowChooser(
       const target = flow ?? defaultFlow;
       if (!target) {
         const msg = "No flow to pin — pass a flow id/name or set options.flow.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
@@ -144,16 +151,19 @@ export function useTuringFlowChooser(
           : readTurSession(sessionCookieName));
       if (!conversationId) {
         const msg = "No active conversation — send a chat message first.";
+        setErrorProblem(undefined);
         setError(msg);
         setStatus("error");
         throw new Error(msg);
       }
       setStatus("selecting");
       setError(null);
+      setErrorProblem(undefined);
       try {
         const result = await postSiteFlowSelect(config.site, conversationId, target);
         setLastResult(result);
         if (!result.success) {
+          setErrorProblem(undefined);
           setError(result.reason ?? "Flow could not be pinned.");
           setStatus("error");
           return result;
@@ -162,6 +172,7 @@ export function useTuringFlowChooser(
         return result;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Failed to pin flow";
+        setErrorProblem(problemOf(err));
         setError(msg);
         setStatus("error");
         throw err;
@@ -190,6 +201,7 @@ export function useTuringFlowChooser(
     chooseFlow,
     status,
     error,
+    errorProblem,
     lastResult,
     pinnedFlowId: lastResult?.pinnedFlowId ?? null,
     pinnedFlowName: lastResult?.pinnedFlowName ?? null,
