@@ -20,7 +20,6 @@
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-- 📋 **T1257** (deps: T1251 ✅, T1254 ✅, T1255 ✅) **The plugin video is not on the plugin docs, the README or the release, and no page carries its transcript** — Assistants and search read text, not video, and a release asset downloads instead of streaming (rest of Dumont D282). → §CLXXXII.7
 - 📋 **T1258** (deps: T1252 ✅) **The plugin's search answer and Site assistant do not share context, so a follow-up starts over** — A visitor who asks one more thing after the answer loses the question, the answer and its sources (moved from Dumont D312). → §CLXXXII.8
 - 📋 **T1259** (deps: T1252 ✅) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — Guided conversations built in Turing's console never reach a WordPress site (moved from Dumont D313). → §CLXXXII.9
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6

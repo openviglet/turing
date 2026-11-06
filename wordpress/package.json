@@ -23,7 +23,9 @@
     "demo:broll": "node bin/demo-broll.mjs",
     "demo:photos": "node bin/demo-photos.mjs",
     "story:narration": "node bin/story-narration.mjs",
-    "story:video": "node bin/story-video.mjs"
+    "story:video": "node bin/story-video.mjs",
+    "transcript": "node bin/transcript.mjs",
+    "check:transcript": "node bin/transcript.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

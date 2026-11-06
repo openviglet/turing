@@ -25,3 +25,4 @@
 
 - ⏸ **T1255** (deps: T1252 ✅) **No workflow in this repository checks, tests or releases the WordPress plugin** — set aside (Needs a push and one dispatch on GitHub.): Dispatch wordpress-plugin.yml once on GitHub with every job on, and fix what a real runner finds. → §CLXXXII.4
 - ⏸ **T1256** (deps: T1252 ✅) **The Playground demo store loads its blueprint and zips from dumont.viglet.org/playground** — set aside (Needs a push and a Pages deploy.): Deploy Pages once, check /wp-demo boots the store and searches, then remove Dumont's copy. → §CLXXXII.5
+- ⏸ **T1257** (deps: T1251 ✅, T1254 ✅, T1255 ✅) **The plugin video is not on the plugin docs, the README or the release, and no page carries its transcript** — set aside (Needs GitHub's web editor.): Left: the README player, via GitHub's editor, and the videos and captions on the release. → §CLXXXII.7

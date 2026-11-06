@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 import { PUBLISHED_VIDEO_LANGS as PUBLISHED, videoLangFor } from "@/lib/wordpress-video";
+import { WORDPRESS_TRANSCRIPT } from "@/lib/wordpress-transcript";
 
 const noSubscription = () => () => {};
 const browserVideoLang = () => videoLangFor(navigator.language);
@@ -145,6 +146,17 @@ function VideoFacade() {
       <p className="mt-3 text-xs text-[#7f8bbd]">
         Plays from YouTube (youtube-nocookie.com) after you press play.
       </p>
+      {/* T1257: what Ana says in this cut, as text for readers, search and assistants. */}
+      <details className="mt-3 text-sm text-[#aeb7d4]">
+        <summary className="cursor-pointer font-semibold text-white">
+          {lang === "pt-BR" ? "Transcrição" : "Transcript"}
+        </summary>
+        <div className="mt-3 max-h-72 space-y-3 overflow-y-auto pr-2 leading-relaxed" lang={lang}>
+          {(WORDPRESS_TRANSCRIPT[lang] ?? []).map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      </details>
     </div>
   );
 }

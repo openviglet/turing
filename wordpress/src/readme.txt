@@ -30,6 +30,11 @@ Navigation site and replaces the WordPress search page with Turing's results.
 The plugin needs a Viglet Turing server, which you run yourself (it is open source) or use as
 a hosted service. It does nothing until you give it that server's address.
 
+The demo store, in the video below (in Portuguese, with a transcript at
+https://turing.viglet.org/docs/integrations/wordpress/):
+
+https://www.youtube.com/watch?v=UVoQXGcd-aI
+
 == Installation ==
 
 1. In wp-admin, go to Plugins > Add New, search for "Viglet Turing Search", then Install Now and
@@ -39,6 +44,20 @@ a hosted service. It does nothing until you give it that server's address.
 
 A zip from the GitHub releases (Plugins > Add New > Upload Plugin) and Composer are described
 in the plugin's README.
+
+== Frequently Asked Questions ==
+
+= Where can I try it before installing? =
+
+The Tarnfell demo store runs the plugin in WordPress Playground, in your browser, with nothing
+to install: https://turing.viglet.org/wp-demo/ . It searches a hosted Viglet Turing, and a
+reload starts it again.
+
+= Is there a video? =
+
+Yes: https://www.youtube.com/watch?v=UVoQXGcd-aI shows the demo store, from a vague need to a
+paid-for cart. Its transcript is in the documentation:
+https://turing.viglet.org/docs/integrations/wordpress/
 
 == External services ==
 
