@@ -2513,9 +2513,12 @@ demo store in your browser" (Playground), the eight-chapter shopper story
 reindex" band and the shared CTA, in Turing's identity (the hero shell of aem.tsx). The
 video sits under the hero as a click-to-load youtube-nocookie facade over the existing
 thumbnail, so no third-party cookie loads before the click and the consent posture
-holds. JSON-LD carries BreadcrumbList, SoftwareApplication, VideoObject and FAQPage. A
-"beyond WordPress" section links Dumont for AEM, databases and files. The route is wired
-into App.tsx, entry-server.tsx, the Solutions dropdown, the footer, a landing card,
+holds. There are two cuts: pt-BR (UVoQXGcd-aI, published first to see how it performs)
+and English (to follow). The ids live in one map, the page picks by navigator.language
+with a pt/en toggle, and while the English id is absent every visitor gets pt-BR.
+JSON-LD carries BreadcrumbList, SoftwareApplication, VideoObject and FAQPage. A "beyond
+WordPress" section links Dumont for AEM, databases and files. The route is wired into
+App.tsx, entry-server.tsx, the Solutions dropdown, the footer, a landing card,
 sitemap.xml and llms.txt, and the site-content mentions of WordPress link to it. Done
 when the redirect file is gone and the prerendered page builds.
 
@@ -2551,7 +2554,8 @@ already says so. The rename covers the classes, the file names, the constants, o
 and transient keys, hooks, REST namespaces, block names and the i18n strings that carry
 the old name. An upgrade routine copies any viglet_dumont_* option to its new key once,
 so the demo stores and early installs keep their settings. The PHPUnit stubs, phpstan
-and the Playwright suites move with it. Done when grep for viglet_dumont finds only the
+and the Playwright suites move with it. The new prefix is Viglet_Turing_* /
+VIGLET_TURING_* (confirmed 2026-11-06). Done when grep for viglet_dumont finds only the
 one-time upgrade routine.
 
 ### CLXXXII.3 The plugin's docs move to turing-docs (T1254)
@@ -2590,13 +2594,13 @@ when that link boots the Tarnfell store and its search answers.
 ### CLXXXII.7 The video beyond the WordPress page, with its transcript (T1257)
 
 T1251 embeds the YouTube video UVoQXGcd-aI on the site's WordPress page. The rest of
-what Dumont's D282 asked for follows here. The plugin's docs page embeds the same video,
-with the narration from demo/narration/script.json as a transcript below it, on the docs
-page and on the site page alike. The plugin README carries story-30s.mp4 (under 1 MB) as
-an inline player, uploaded through GitHub's editor. The release job attaches story.mp4,
-story-30s.mp4 and the caption files to the plugin release, for anyone who wants the
-file. readme.txt links the video in its description, and its FAQ answers where the demo
-store is.
+what Dumont's D282 asked for follows here. The plugin's docs page embeds the same pt-BR
+and English cuts, chosen as on the site page, with the narration from
+demo/narration/script.json as a transcript below it, on the docs page and on the site
+page alike. The plugin README carries story-30s.mp4 (under 1 MB) as an inline player,
+uploaded through GitHub's editor. The release job attaches story.mp4, story-30s.mp4 and
+the caption files to the plugin release, for anyone who wants the file. readme.txt links
+the video in its description, and its FAQ answers where the demo store is.
 
 ### CLXXXII.8 From the search answer into the assistant and back (T1258)
 
