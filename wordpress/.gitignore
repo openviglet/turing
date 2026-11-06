@@ -15,3 +15,5 @@ demo/photos/**/*.png
 # The demo video's B-roll (D261): fetched from Pixabay by `npm run demo:broll`, several MB each.
 # Their .json records (source, author, licence) are committed.
 demo/broll/*.mp4
+# The demo video's opening animation (made with Gemini), 5.6 MB; intro.json is committed.
+demo/intro/*.mp4

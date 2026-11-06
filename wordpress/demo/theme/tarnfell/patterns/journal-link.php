@@ -10,6 +10,6 @@
  */
 
 ?>
-<!-- wp:paragraph {"fontSize":"small","textColor":"granite"} -->
-<p class="has-granite-color has-text-color has-small-font-size"><a href="/journal/"><?php esc_html_e( 'Trail journal', 'tarnfell' ); ?></a></p>
+<!-- wp:paragraph {"align":"wide","fontSize":"small","textColor":"granite"} -->
+<p class="alignwide has-granite-color has-text-color has-small-font-size"><a href="/journal/"><?php esc_html_e( 'Trail journal', 'tarnfell' ); ?></a></p>
 <!-- /wp:paragraph -->

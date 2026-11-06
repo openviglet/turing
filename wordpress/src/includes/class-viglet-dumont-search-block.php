@@ -128,6 +128,34 @@ class Viglet_Dumont_Search_Block {
 	}
 
 	/**
+	 * The popular-search chips in a block's drawn parts, pointed at the page its searches go
+	 * to: a box without results of its own sends its query to the search page (D208), and its
+	 * chips, drawn before the block knew that, linked to the page they sat on.
+	 *
+	 * @param string $html       The block's inner blocks, drawn.
+	 * @param string $page       The search page.
+	 * @param string $query_arg  The parameter it reads the query from.
+	 * @return string The same HTML, with each chip's link on that page.
+	 */
+	public static function chips_to( string $html, string $page, string $query_arg ): string {
+		$tags = new WP_HTML_Tag_Processor( $html );
+		while ( $tags->next_tag(
+			array(
+				'tag_name'   => 'A',
+				'class_name' => 'viglet-dumont-search__chip',
+			)
+		) ) {
+			$args = wp_parse_args( (string) wp_parse_url( (string) $tags->get_attribute( 'href' ), PHP_URL_QUERY ) );
+			if ( ! isset( $args['q'] ) ) {
+				continue;
+			}
+			$tags->set_attribute( 'href', add_query_arg( $query_arg, rawurlencode( (string) $args['q'] ), $page ) );
+		}
+
+		return $tags->get_updated_html();
+	}
+
+	/**
 	 * The query the page was opened with (?q=, or WordPress's ?s=).
 	 */
 	public static function query(): string {

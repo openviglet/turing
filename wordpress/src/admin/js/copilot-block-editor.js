@@ -79,7 +79,23 @@
 								),
 						checked: kit,
 						onChange: ( value ) => setAttributes( { kit: value } ),
-					} )
+					} ),
+					kit &&
+						el( ToggleControl, {
+							label: shop
+								? __(
+										'Build my kit only',
+										'viglet-turing-search'
+									)
+								: __( 'Plan only', 'viglet-turing-search' ),
+							help: __(
+								'Opens on the plan, without Ask a question beside it: for a page of its own.',
+								'viglet-turing-search'
+							),
+							checked: !! attributes.planOnly,
+							onChange: ( value ) =>
+								setAttributes( { planOnly: value } ),
+						} )
 				),
 				kit &&
 					el(

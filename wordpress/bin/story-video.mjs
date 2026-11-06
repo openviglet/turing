@@ -25,7 +25,8 @@
 // clip under a minute for someone searching for that one thing: a title card, the chapter with
 // its two lines, its result held still to the end of the second, and a card pointing at the full
 // video and the demo store. Built from the same recording, so a new recording rebuilds the clips.
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
+import { availableParallelism } from 'node:os';
 import {
 	copyFileSync,
 	existsSync,
@@ -35,7 +36,7 @@ import {
 	statSync,
 	writeFileSync,
 } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 import { narration, narrationFor } from './narration-takes.mjs';
@@ -188,10 +189,156 @@ for ( const source of [
  *
  * @param {string[]} args Its arguments.
  */
-const ffmpeg = ( args ) =>
-	execFileSync( 'ffmpeg', [ '-y', '-loglevel', 'error', ...args ], {
-		stdio: [ 'ignore', 'inherit', 'inherit' ],
+// STORY_TIMING=1 prints each encode that takes over two seconds, to see where a build goes.
+const timing = !! process.env.STORY_TIMING;
+const timed = ( started, args ) => {
+	const took = ( Date.now() - started ) / 1000;
+	if ( timing && took > 2 ) {
+		process.stderr.write(
+			`[timing] ${ took.toFixed( 1 ) }s ${ basename( String( args.at( -1 ) ) ) }\n`
+		);
+	}
+};
+const ffmpeg = ( args ) => {
+	const started = Date.now();
+	const done = execFileSync(
+		'ffmpeg',
+		[ '-y', '-loglevel', 'error', ...args ],
+		{
+			stdio: [ 'ignore', 'inherit', 'inherit' ],
+		}
+	);
+	timed( started, args );
+	return done;
+};
+
+/**
+ * ffmpeg without waiting on it, for the pieces that do not depend on one another.
+ *
+ * @param {string[]} args Its arguments.
+ * @return {Promise<void>} Settled when it exits; rejected on a failure.
+ */
+const ffmpegAsync = ( args ) =>
+	new Promise( ( done, fail ) => {
+		const started = Date.now();
+		const run = spawn( 'ffmpeg', [ '-y', '-loglevel', 'error', ...args ], {
+			stdio: [ 'ignore', 'inherit', 'inherit' ],
+		} );
+		run.on( 'error', fail );
+		run.on( 'close', ( code ) => {
+			timed( started, args );
+			if ( 0 === code ) {
+				done();
+			} else {
+				fail(
+					new Error( `ffmpeg exited ${ code }: ${ args.at( -1 ) }` )
+				);
+			}
+		} );
 	} );
+
+// How many encodes run at once. Most of a build is filters that use one core each (zoompan)
+// run one after another, which left the rest of the machine idle; six at a time also stays
+// under a consumer NVIDIA card's limit on concurrent encode sessions.
+const parallel = Math.max(
+	1,
+	Math.min( 6, Math.floor( availableParallelism() / 4 ) )
+);
+
+/**
+ * Run tasks with at most `parallel` of them at once, keeping their results in order.
+ *
+ * @param {Array<function(): Promise<string>>} tasks The tasks.
+ * @return {Promise<Array<string>>} Their results (files), in the tasks' order.
+ */
+const pool = async ( tasks ) => {
+	const results = new Array( tasks.length );
+	let next = 0;
+	const worker = async () => {
+		while ( next < tasks.length ) {
+			const n = next++;
+			results[ n ] = await tasks[ n ]();
+		}
+	};
+	await Promise.all(
+		Array.from( { length: Math.min( parallel, tasks.length ) }, worker )
+	);
+	return results;
+};
+
+// The video encoder: NVIDIA's NVENC where this machine has one, several times faster than
+// x264 on a build that encodes every card, clip and dissolve; x264 elsewhere. Every encode
+// goes through `videoCodec()`, so the pieces stay one codec and still join without another
+// encode. STORY_ENCODER=x264 or =nvenc forces one.
+const nvenc = ( () => {
+	const forced = process.env.STORY_ENCODER;
+	if ( forced ) {
+		return 'nvenc' === forced;
+	}
+	const probe = spawnSync(
+		'ffmpeg',
+		[
+			'-hide_banner',
+			'-loglevel',
+			'error',
+			'-f',
+			'lavfi',
+			'-i',
+			'color=c=black:s=256x256:d=0.1',
+			'-c:v',
+			'h264_nvenc',
+			'-f',
+			'null',
+			'-',
+		],
+		{ encoding: 'utf8' }
+	);
+	return 0 === probe.status;
+} )();
+
+/**
+ * The encoder arguments, at a quality: x264's CRF, or NVENC's constant quality at the
+ * same number, which lands at about the same size and look.
+ *
+ * @param {number} quality 18 to 20 here; lower is better.
+ * @return {string[]} ffmpeg's video codec arguments.
+ */
+// A keyframe every half second exactly (15 frames at 30 fps), on every piece: a dissolve then
+// re-encodes only the half second it blends and copies the rest, cut on a keyframe. Without
+// it, a dissolve into a chapter re-encoded the whole chapter, twenty seconds a time.
+const keyEvery = 15;
+const videoCodec = ( quality ) =>
+	nvenc
+		? [
+				'-c:v',
+				'h264_nvenc',
+				'-preset',
+				'p5',
+				'-rc',
+				'vbr',
+				'-cq',
+				String( quality ),
+				'-b:v',
+				'0',
+				'-g',
+				String( keyEvery ),
+				'-no-scenecut',
+				'1',
+			]
+		: [
+				'-c:v',
+				'libx264',
+				'-preset',
+				'veryfast',
+				'-crf',
+				String( quality ),
+				'-g',
+				String( keyEvery ),
+				'-keyint_min',
+				String( keyEvery ),
+				'-sc_threshold',
+				'0',
+			];
 
 /**
  * A file's length in seconds.
@@ -219,7 +366,39 @@ const font = ( file ) =>
 	`data:font/woff2;base64,${ readFileSync( join( fonts, file ) ).toString(
 		'base64'
 	) }`;
+// The cards wear the thumbnail's look (demo/thumbnail), so the video opens as the picture that
+// was clicked promised: its dark pine, a warm glow behind the words, the hills along the
+// bottom, Barlow Condensed in capitals for titles and labels, Source Sans for what is read.
+// Two ranges of hills, far and near, each a strip wider than the frame: on a card's video they
+// slide at two speeds behind the words (parallax), and the card's still is their first frame.
+const ridge = ( fill, points ) =>
+	`data:image/svg+xml,${ encodeURIComponent(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 420" preserveAspectRatio="none">' +
+			`<polygon ${ fill } points="${ points }"/></svg>`
+	) }`;
+const hillsFar = ridge(
+	'fill="#1B3A2A" fill-opacity=".75"',
+	'0,420 0,250 230,170 410,235 650,110 880,220 1090,140 1330,245 1560,130 1760,215 1920,160 1920,420'
+);
+const hillsNear = ridge(
+	'fill="#11261B"',
+	'0,420 0,330 290,245 520,320 760,225 990,310 1210,235 1470,330 1710,255 1920,300 1920,420'
+);
+const hillsBox = {
+	width: Math.round( size.width * 1.6 ),
+	height: Math.round( size.height * ( vertical ? 0.22 : 0.34 ) ),
+};
+// How fast each range slides, in pixels a second: the near one faster, which reads as depth.
+const drift = { far: 24, near: 64 };
+const glow = `radial-gradient(ellipse 50% 55% at ${
+	vertical ? '30% 40%' : '24% 46%'
+}, rgba(245, 180, 58, .36), transparent 70%)`;
+const pine = 'linear-gradient(160deg, #1F3F2E 0%, #173327 55%, #10271C 100%)';
+const hillsAt = `${ hillsBox.width }px ${ hillsBox.height }px`;
 const style = `
+@font-face { font-family: Barlow; font-weight: 600; src: url(${ font(
+	'barlow-condensed-latin-600-normal.woff2'
+) }); }
 @font-face { font-family: Barlow; font-weight: 700; src: url(${ font(
 	'barlow-condensed-latin-700-normal.woff2'
 ) }); }
@@ -228,25 +407,117 @@ const style = `
 ) }); }
 html, body { margin: 0; width: ${ size.width }px; height: ${ size.height }px; }
 body { display: flex; flex-direction: column; justify-content: center;
-	padding: 0 ${ vertical ? 90 : 160 }px;
-	box-sizing: border-box; background: linear-gradient(160deg, #1F3B2D 0%, #2E5E73 100%);
+	padding: 0 ${ vertical ? 90 : 160 }px ${ vertical ? 120 : 60 }px;
+	box-sizing: border-box;
+	background:
+		url("${ hillsNear }") left bottom / ${ hillsAt } no-repeat,
+		url("${ hillsFar }") left bottom / ${ hillsAt } no-repeat,
+		${ glow }, ${ pine };
 	color: #F6F3EC; font-family: Source, sans-serif; }
-small { font-size: ${ vertical ? 40 : 44 }px; letter-spacing: .08em; text-transform: uppercase;
-	color: #C9D8B6; }
-h1 { font-family: Barlow, sans-serif; font-size: ${ vertical ? 116 : 132 }px; line-height: 1.05;
-	margin: 24px 0; }
-p { font-size: ${ vertical ? 40 : 48 }px; margin: 0; color: #C9D8B6; overflow-wrap: anywhere; }`;
+/* The layers a card's video is put together from (parallax). */
+body.layer-text { background: transparent; }
+body.layer-backdrop { background: ${ glow }, ${ pine }; }
+.ridge { width: ${ hillsBox.width }px; height: ${ hillsBox.height }px;
+	background-size: 100% 100%; }
+small { font-family: Barlow, sans-serif; font-weight: 600; font-size: ${
+	vertical ? 42 : 46
+}px; letter-spacing: .1em; text-transform: uppercase; color: #C9D8B6; }
+h1 { font-family: Barlow, sans-serif; font-weight: 700; font-size: ${
+	vertical ? 112 : 128
+}px; line-height: 1; margin: 24px 0 28px; text-transform: uppercase; letter-spacing: .01em;
+	text-shadow: 0 6px 28px rgba(0, 0, 0, .35); }
+h1 em { color: #F5B43A; font-style: normal; }
+p { font-size: ${ vertical ? 40 : 48 }px; margin: 0; color: #C9D8B6; overflow-wrap: anywhere; }
+small.pill { align-self: flex-start; background: #F5B43A; color: #1F3B2D; border-radius: 999px;
+	padding: 6px 26px 8px; letter-spacing: .08em; }
+.badges { display: flex; gap: 20px; margin-top: 48px; }
+.badge { font-family: Barlow, sans-serif; font-weight: 700; font-size: 52px; line-height: 1;
+	padding: 16px 30px; border-radius: 14px; background: #F6F3EC; color: #1F3B2D;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
+.badge.hot { background: #C8551B; color: #FFF; }`;
 
 /**
  * A card's markup.
  *
- * @param {string} kicker The line above.
- * @param {string} title  The title.
- * @param {string} line   The line below.
+ * @param {string}                                                    kicker         The line above.
+ * @param {string}                                                    title          The title.
+ * @param {string}                                                    line           The line below.
+ * @param {{pill?: boolean, badges?: Array<Array<(string|boolean)>>}} options        How the kicker and the
+ *                                                                                   badges under the line read.
+ * @param {boolean}                                                   options.pill   The kicker as an amber pill.
+ * @param {Array<Array<(string|boolean)>>}                            options.badges [text, hot] pairs, as on the
+ *                                                                                   thumbnail.
  */
-const card = ( kicker, title, line ) =>
-	`<!doctype html><meta charset="utf-8"><style>${ style }</style>` +
-	`<small>${ kicker }</small><h1>${ title }</h1><p>${ line }</p>`;
+const card = ( kicker, title, line, { pill = false, badges = [] } = {} ) => {
+	const row = badges.length
+		? `<div class="badges">${ badges
+				.map(
+					( [ text, hot ] ) =>
+						`<span class="badge${ hot ? ' hot' : '' }">${ text }</span>`
+				)
+				.join( '' ) }</div>`
+		: '';
+	return (
+		`<!doctype html><meta charset="utf-8"><style>${ style }</style>` +
+		`<body><small class="${ pill ? 'pill' : '' }">${ kicker }</small><h1>${ title }</h1>` +
+		`<p>${ line }</p>${ row }</body>`
+	);
+};
+
+// The closing card's icons, drawn in the line's colour.
+const icons = {
+	store: '<path d="M4 9l2-5h12l2 5M4 9v11h16V9M4 9h16M9 20v-6h6v6"/>',
+	docs: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2zM4 17a2 2 0 0 1 2-2h12M8 7h6"/>',
+	code: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
+};
+
+/**
+ * The size of an address on the closing card: one alone is the card's point, as large as the
+ * line allows; several share the width.
+ *
+ * @param {number} count How many addresses the card has.
+ * @return {number} The font size, in pixels.
+ */
+const urlSize = ( count ) => {
+	if ( 1 === count ) {
+		return vertical ? 72 : 88;
+	}
+	return vertical ? 54 : 46;
+};
+
+/**
+ * The closing card (D275): where to go next, one tile per address with what it is above it, so
+ * three addresses read as three places rather than one paragraph. The first is the main one.
+ *
+ * @param {string}                                            kicker The line above.
+ * @param {string}                                            title  The title.
+ * @param {Array<{icon: string, label: string, url: string}>} links  The places, main one first.
+ */
+const linksCard = ( kicker, title, links ) =>
+	`<!doctype html><meta charset="utf-8"><style>${ style }
+	h1 { font-size: ${ vertical ? 104 : 112 }px; margin: 20px 0 ${ vertical ? 56 : 64 }px; }
+	.links { display: grid; gap: ${ vertical ? 32 : 36 }px;
+		grid-template-columns: ${ vertical ? '1fr' : `repeat(${ links.length }, 1fr)` }; }
+	.link { background: rgba(246,243,236,.08); border: 2px solid rgba(246,243,236,.18);
+		border-radius: 28px; padding: ${ vertical ? '36px 40px' : '40px 40px 44px' }; }
+	.link.main { background: #C8551B; border-color: #C8551B; }
+	.label { display: flex; align-items: center; gap: 18px; font-size: ${ vertical ? 36 : 34 }px;
+		color: #C9D8B6; margin-bottom: 18px; }
+	.main .label { color: #FBE3D3; }
+	.label svg { width: 48px; height: 48px; flex: none; fill: none; stroke: currentColor;
+		stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+	.url { font-family: Barlow, sans-serif; font-size: ${ urlSize(
+		links.length
+	) }px; line-height: 1.15; color: #F6F3EC; overflow-wrap: anywhere; }
+	${ 1 === links.length ? '.links { justify-items: start; } .link { padding: 44px 56px 52px; }' : '' }</style>` +
+	`<body><small class="pill">${ kicker }</small><h1>${ title }</h1><div class="links">${ links
+		.map(
+			( { icon, label, url }, n ) =>
+				`<div class="link${ 0 === n ? ' main' : '' }"><div class="label">` +
+				`<svg viewBox="0 0 24 24">${ icons[ icon ] }</svg>${ label }</div>` +
+				`<div class="url">${ url.replace( /\//g, '/<wbr>' ) }</div></div>`
+		)
+		.join( '' ) }</div></body>`;
 
 // "3. Asks the Site assistant, and gets…" → 3 and its name.
 const parts = chapters.map( ( { title } ) => {
@@ -271,8 +542,23 @@ const developerWords = {
 	name: ( number, name ) => name,
 	tryIt: 'Code, docs and a demo',
 	tryTitle: 'Viglet Turing Search',
-	tryLine:
-		'github.com/openviglet/dumont<br>dumont.viglet.org/docs/connectors/wordpress<br>dumont.viglet.org/wordpress · the demo, nothing to install',
+	tryLinks: [
+		{
+			icon: 'code',
+			label: 'The code, open source',
+			url: 'github.com/openviglet/dumont',
+		},
+		{
+			icon: 'docs',
+			label: 'Install and configure',
+			url: 'dumont.viglet.org/docs/connectors/wordpress',
+		},
+		{
+			icon: 'store',
+			label: 'The demo, nothing to install',
+			url: 'dumont.viglet.org/wordpress',
+		},
+	],
 	fullIt: 'See the whole setup',
 	fullTitle: 'The full walkthrough',
 };
@@ -281,28 +567,56 @@ const storyWords =
 		? {
 				what: 'Plugin open source para WordPress e WooCommerce',
 				brand: 'Viglet Turing Search',
+				// The opening card keeps the thumbnail's promise; the name is in the intro,
+				// her lines and the closing card.
+				openKicker: 'Para lojas WordPress e WooCommerce',
+				openTitle: 'A busca que <em>entende</em>',
+				badges: [
+					[ 'WordPress', false ],
+					[ '+ IA', true ],
+				],
 				line: 'Uma cliente, uma visita: de uma necessidade vaga a um carrinho pago.',
 				chapter: 'Capítulo',
 				store: 'Recanto da Serra, a loja de demonstração',
 				name: ( number, name ) => portuguese[ number ] ?? name,
 				tryIt: 'Experimente',
 				tryTitle: 'A loja de demonstração no seu navegador',
-				tryLine:
-					'dumont.viglet.org/wordpress · sem instalar nada<br>github.com/openviglet/dumont',
+				// One address: the story is about Viglet Turing, and its page leads on to the
+				// demo, the docs and the code.
+				tryLinks: [
+					{
+						icon: 'store',
+						label: 'A loja de demonstração, a documentação e o código',
+						url: 'turing.viglet.org/wordpress',
+					},
+				],
 				fullIt: 'Veja a visita inteira',
 				fullTitle: 'O vídeo completo e a loja de demonstração',
 			}
 		: {
 				what: 'Open source plugin for WordPress and WooCommerce',
 				brand: 'Viglet Turing Search',
+				openKicker: 'For WordPress and WooCommerce shops',
+				openTitle: 'Search that <em>understands</em>',
+				badges: [
+					[ 'WordPress', false ],
+					[ '+ AI', true ],
+				],
 				line: 'One shopper, one visit: from a vague need to a paid-for cart.',
 				chapter: 'Chapter',
 				store: 'Tarnfell, the demo store',
 				name: ( number, name ) => name,
 				tryIt: 'Try it',
 				tryTitle: 'The demo store in your browser',
-				tryLine:
-					'dumont.viglet.org/wordpress · nothing to install<br>github.com/openviglet/dumont',
+				// One address: the story is about Viglet Turing, and its page leads on to the
+				// demo, the docs and the code.
+				tryLinks: [
+					{
+						icon: 'store',
+						label: 'The demo store, the docs and the code',
+						url: 'turing.viglet.org/wordpress',
+					},
+				],
 				fullIt: 'See the whole visit',
 				fullTitle: 'The full video and the demo store',
 			};
@@ -310,15 +624,21 @@ const words = developer ? developerWords : storyWords;
 // The opening says what this is, for a viewer who arrives from a search or watches muted; the
 // closing says where to try it (D275).
 const cards = [
-	card( words.what, words.brand, words.line ),
+	card(
+		words.openKicker ?? words.what,
+		words.openTitle ?? words.brand,
+		words.line,
+		{ badges: words.badges ?? [] }
+	),
 	...parts.map( ( { number, name } ) =>
 		card(
 			`${ words.chapter } ${ number }`,
 			words.name( number, name ),
-			words.store
+			words.store,
+			{ pill: true }
 		)
 	),
-	card( words.tryIt, words.tryTitle, words.tryLine ),
+	linksCard( words.tryIt, words.tryTitle, words.tryLinks ),
 ];
 // A clip's own two cards (D279): it opens on what the chapter shows, under the product's name,
 // for a viewer who has seen none of the rest, and closes on where the full video and the
@@ -327,13 +647,63 @@ if ( null !== clipChapter ) {
 	const { number, name } = parts[ clipChapter - 1 ];
 	cards.push(
 		card( words.brand, words.name( number, name ), words.what ),
-		card( words.fullIt, words.fullTitle, words.tryLine )
+		linksCard( words.fullIt, words.fullTitle, words.tryLinks )
 	);
 }
+// `--cards` renders the cards alone, as previews beside the build's own, and stops: a look at
+// a change to their design in seconds, without a build or touching one in progress.
+const cardsOnly = process.argv.includes( '--cards' );
+const layer = ( name ) =>
+	join( out, 'parts', `${ cardsOnly ? 'preview-' : '' }${ name }.png` );
 for ( const [ i, html ] of cards.entries() ) {
 	await page.setContent( html );
 	await page.evaluate( () => document.fonts.ready );
-	await page.screenshot( { path: join( out, 'parts', `card-${ i }.png` ) } );
+	await page.screenshot( { path: layer( `card-${ i }` ) } );
+	// Its words alone, over nothing, for the parallax video to lay over the moving hills.
+	await page.evaluate( () => document.body.classList.add( 'layer-text' ) );
+	await page.screenshot( {
+		path: layer( `card-${ i }-text` ),
+		omitBackground: true,
+	} );
+}
+// The layers behind every card's words: the pine and its glow, then each range of hills.
+await page.setContent(
+	`<!doctype html><meta charset="utf-8"><style>${ style }</style><body class="layer-backdrop"></body>`
+);
+await page.screenshot( { path: layer( 'card-backdrop' ) } );
+for ( const [ name, image ] of [
+	[ 'far', hillsFar ],
+	[ 'near', hillsNear ],
+] ) {
+	await page.setContent(
+		`<!doctype html><meta charset="utf-8"><style>${ style }
+		html, body { background: transparent; width: auto; height: auto; padding: 0; }</style>` +
+			`<body><div class="ridge" style="background-image:url('${ image }')"></div></body>`
+	);
+	await page.locator( '.ridge' ).screenshot( {
+		path: layer( `card-hills-${ name }` ),
+		omitBackground: true,
+	} );
+}
+if ( cardsOnly ) {
+	await browser.close();
+	// The opening card as it moves (parallax), four seconds, to watch before a build.
+	const moving = join( out, 'parts', 'preview-card-0.mp4' );
+	ffmpeg(
+		parallaxArgs(
+			( name ) => join( out, 'parts', `preview-${ name }.png` ),
+			0,
+			4,
+			moving
+		)
+	);
+	process.stdout.write(
+		`${ cards.length } cards in ${ join(
+			out,
+			'parts'
+		) } (preview-card-*.png), the opening one moving in ${ moving }\n`
+	);
+	process.exit( 0 );
 }
 
 // The store's own pages, for what Ana says over the opening and closing cards (D261): she
@@ -383,12 +753,7 @@ await browser.close();
 const encode = [
 	'-vf',
 	`scale=${ size.width }:${ size.height }:force_original_aspect_ratio=decrease,pad=${ size.width }:${ size.height }:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p`,
-	'-c:v',
-	'libx264',
-	'-preset',
-	'veryfast',
-	'-crf',
-	'20',
+	...videoCodec( 20 ),
 	'-an',
 ];
 const still = ( i, length = cardSeconds ) => {
@@ -400,18 +765,61 @@ const still = ( i, length = cardSeconds ) => {
 			? `card-${ i }.mp4`
 			: `card-${ i }-held-${ length.toFixed( 2 ) }.mp4`
 	);
-	ffmpeg( [
-		'-loop',
-		'1',
-		'-t',
-		length.toFixed( 3 ),
-		'-i',
-		join( out, 'parts', `card-${ i }.png` ),
-		...encode,
-		file,
-	] );
+	const part = ( name ) => join( out, 'parts', `${ name }.png` );
+	if ( ! existsSync( part( `card-${ i }-text` ) ) ) {
+		ffmpeg( [
+			'-loop',
+			'1',
+			'-t',
+			length.toFixed( 3 ),
+			'-i',
+			part( `card-${ i }` ),
+			...encode,
+			file,
+		] );
+		return file;
+	}
+	ffmpeg( parallaxArgs( part, i, length, file ) );
 	return file;
 };
+
+/**
+ * A card as a parallax video: the pine and its glow still, the far hills sliding slowly, the
+ * near ones faster, the words still over them. Its first frame is the card's still, so a
+ * dissolve lands on it.
+ *
+ * @param {function(string): string} part   A layer's file, by name.
+ * @param {number}                   i      The card's index.
+ * @param {number}                   length How long it plays, in seconds.
+ * @param {string}                   file   The video to write.
+ * @return {string[]} ffmpeg's arguments.
+ */
+function parallaxArgs( part, i, length, file ) {
+	const held = [ '-loop', '1', '-t', length.toFixed( 3 ), '-i' ];
+	const slide = ( speed ) =>
+		`x='-min(t*${ speed },${ hillsBox.width - size.width })':y=${
+			size.height - hillsBox.height
+		}`;
+	return [
+		...held,
+		part( 'card-backdrop' ),
+		...held,
+		part( 'card-hills-far' ),
+		...held,
+		part( 'card-hills-near' ),
+		...held,
+		part( `card-${ i }-text` ),
+		'-filter_complex',
+		`[0:v][1:v]overlay=${ slide( drift.far ) }:shortest=1[a];` +
+			`[a][2:v]overlay=${ slide( drift.near ) }:shortest=1[b];` +
+			'[b][3:v]overlay=0:0:shortest=1,fps=30,format=yuv420p[v]',
+		'-map',
+		'[v]',
+		...videoCodec( 20 ),
+		'-an',
+		file,
+	];
+}
 
 /**
  * A segment cut from a file, encoded like the rest.
@@ -419,9 +827,13 @@ const still = ( i, length = cardSeconds ) => {
  * @param {string}   name  The part's file name.
  * @param {string[]} input ffmpeg's input arguments, seek included.
  */
-const cut = ( name, input ) => {
+const cutJob = ( name, input ) => {
 	const file = join( out, 'parts', name );
-	ffmpeg( [ ...input, ...encode, file ] );
+	return { file, args: [ ...input, ...encode, file ] };
+};
+const cut = ( name, input ) => {
+	const { file, args } = cutJob( name, input );
+	ffmpeg( args );
 	return file;
 };
 
@@ -819,6 +1231,11 @@ const musicTrim = () => {
 	return musicTrimDb;
 };
 
+// Sound that comes with a piece of picture, mixed as recorded where the piece plays: the
+// opening animation's own (demo/intro). The music bed waits for it to end.
+const sounds = [];
+let musicFrom = 0;
+
 /**
  * One language's narration as a single track the video's length, each take placed where its
  * screen shows, over the music bed when there is one.
@@ -836,16 +1253,42 @@ const voiceTrack = ( language, placed, total ) => {
 	);
 	let labels = placed.map( ( _, i ) => `[d${ i }]` ).join( '' );
 	let count = placed.length;
+	for ( const [ n, sound ] of sounds.entries() ) {
+		inputs.push(
+			'-ss',
+			sound.from.toFixed( 3 ),
+			'-t',
+			sound.length.toFixed( 3 ),
+			'-i',
+			sound.file
+		);
+		graph.push(
+			`[${ count }:a]afade=t=out:st=${ Math.max(
+				0,
+				sound.length - 0.6
+			).toFixed( 3 ) }:d=0.6,adelay=${ Math.round(
+				sound.at * 1000
+			) }:all=1[s${ n }]`
+		);
+		labels += `[s${ n }]`;
+		count++;
+	}
 	if ( existsSync( music ) ) {
 		// Ducked under each line and up between them (D291), faded in and out, looped for as long
-		// as the video runs.
-		const fadeOut = Math.max( 0, total - 3 ).toFixed( 3 );
+		// as the video runs; from where the opening's own sound ends, when it has one.
+		const bedLength = total - musicFrom;
+		const fadeOut = Math.max( 0, bedLength - 3 ).toFixed( 3 );
+		const onBed = placed.map( ( take ) => ( {
+			...take,
+			at: take.at - musicFrom,
+		} ) );
 		inputs.push( '-stream_loop', '-1', '-i', music );
 		graph.push(
-			`[${ placed.length }:a]atrim=0:${ total.toFixed( 3 ) },` +
+			`[${ count }:a]atrim=0:${ bedLength.toFixed( 3 ) },` +
 				`volume=${ musicTrim() }dB,` +
-				`volume='${ duckExpression( placed ) }':eval=frame,afade=t=in:d=2,` +
-				`afade=t=out:st=${ fadeOut }:d=3[m]`
+				`volume='${ duckExpression( onBed ) }':eval=frame,afade=t=in:d=2,` +
+				`afade=t=out:st=${ fadeOut }:d=3,` +
+				`adelay=${ Math.round( musicFrom * 1000 ) }:all=1[m]`
 		);
 		labels += '[m]';
 		count++;
@@ -990,19 +1433,17 @@ const kenBurns = ( image, length, n, name ) => {
 		'-i',
 		image,
 		'-vf',
-		`scale=${ size.width * 2 }:${ size.height * 2 }:force_original_aspect_ratio=increase,` +
-			`crop=${ size.width * 2 }:${ size.height * 2 },` +
+		// zoompan crops at whole pixels of its input, so each frame's position and size round;
+		// at 2x those steps showed as a shake on a slow zoom. At 4x a step is a quarter of an
+		// output pixel and the move reads smooth.
+		`scale=${ size.width * 4 }:${ size.height * 4 }:force_original_aspect_ratio=increase:flags=lanczos,` +
+			`crop=${ size.width * 4 }:${ size.height * 4 },` +
 			`zoompan=z='1+0.12*on/${ frames }':x='(iw-iw/zoom)*${ side }':` +
 			`y='(ih-ih/zoom)/2':d=${ frames }:s=${ size.width }x${ size.height }:fps=30,` +
 			'format=yuv420p',
 		'-frames:v',
 		String( frames ),
-		'-c:v',
-		'libx264',
-		'-preset',
-		'veryfast',
-		'-crf',
-		'20',
+		...videoCodec( 20 ),
 		'-an',
 		file,
 	] );
@@ -1031,12 +1472,7 @@ const footage = ( video, length, name ) => {
 		'-vf',
 		`scale=${ size.width }:${ size.height }:force_original_aspect_ratio=increase,` +
 			`crop=${ size.width }:${ size.height },fps=30,format=yuv420p`,
-		'-c:v',
-		'libx264',
-		'-preset',
-		'veryfast',
-		'-crf',
-		'20',
+		...videoCodec( 20 ),
 		'-an',
 		file,
 	] );
@@ -1144,6 +1580,10 @@ const photos = [ 'guide', 'product' ].flatMap( ( kind ) => {
 				.map( ( name ) => join( dir, name ) )
 		: [];
 } );
+// The opening animation, made with Gemini (demo/intro/intro.json says where it came from and
+// where its usable part starts). Not committed, as the footage is not.
+const introFile = join( root, 'demo', 'intro', 'intro.mp4' );
+const introMeta = join( root, 'demo', 'intro', 'intro.json' );
 // Footage of the hills from Pixabay (`npm run demo:broll`), where it was fetched.
 const brollDir = join( root, 'demo', 'broll' );
 const clips = existsSync( brollDir )
@@ -1205,12 +1645,7 @@ const verticalCut = ( joined, name, narrated, total ) => {
 				joined,
 				'-vf',
 				`subtitles=${ name }.${ language }.srt:force_style='${ verticalCaptionStyle }'`,
-				'-c:v',
-				'libx264',
-				'-preset',
-				'veryfast',
-				'-crf',
-				'20',
+				...videoCodec( 20 ),
 				'-an',
 				picture,
 			],
@@ -1244,9 +1679,19 @@ const verticalCut = ( joined, name, narrated, total ) => {
 };
 
 // The push-in (D292): the most the frame zooms, so text stays sharp from a 1080p source; the
-// room kept around the element; and how long the move takes either way. A focus with less time
-// than both moves and a short hold is left at the full frame.
-const pushIn = { cap: 1.6, margin: 1.25, ease: 0.8, hold: 0.5 };
+// room kept around the element; and how long the move takes either way: slow, while Ana talks,
+// up to `slow` seconds each way when the step lasts long enough, never under `ease`. A focus
+// with less time than both short moves and a hold is left at the full frame. `over` is how much
+// the recording is enlarged before zoompan, which crops at whole pixels of its input: at 1x
+// those steps showed as a shake on a slow move.
+const pushIn = {
+	cap: 1.6,
+	margin: 1.25,
+	ease: 0.8,
+	slow: 2.5,
+	hold: 0.5,
+	over: 2,
+};
 
 /**
  * A chapter's clip with the frame following the action (D292): for each element the story
@@ -1270,7 +1715,10 @@ const pushWindows = ( { start, end, focus = [] } ) =>
 	vertical
 		? []
 		: focus
-				.map( ( { at, box }, n ) => ( {
+				.map( ( { at, box }, n ) => ( { at, box, n } ) )
+				// A mark with no box is a release: it only ends the window before it.
+				.filter( ( { box } ) => box )
+				.map( ( { at, box, n } ) => ( {
 					from: at - start,
 					to: ( focus[ n + 1 ]?.at ?? end ) - start,
 					zoom: Math.min(
@@ -1291,7 +1739,17 @@ const pushWindows = ( { start, end, focus = [] } ) =>
 					( w ) =>
 						w.zoom >= 1.1 &&
 						w.to - w.from >= 2 * pushIn.ease + pushIn.hold
-				);
+				)
+				.map( ( w ) => ( {
+					...w,
+					ease: Math.min(
+						pushIn.slow,
+						Math.max(
+							pushIn.ease,
+							( w.to - w.from - pushIn.hold ) / 2
+						)
+					),
+				} ) );
 
 /**
  * The push-in at a moment, as zoompan draws it: the zoom, and the point of the page at the
@@ -1302,13 +1760,10 @@ const pushWindows = ( { start, end, focus = [] } ) =>
  * @return {{zoom: number, x: number, y: number}} The zoom and the centre shown.
  */
 const pushAt = ( windows, t ) => {
-	const weights = windows.map( ( { from, to } ) => {
+	const weights = windows.map( ( { from, to, ease } ) => {
 		const ramp = Math.min(
 			1,
-			Math.max(
-				0,
-				Math.min( ( t - from ) / pushIn.ease, ( to - t ) / pushIn.ease )
-			)
+			Math.max( 0, Math.min( ( t - from ) / ease, ( to - t ) / ease ) )
 		);
 		return ramp * ramp * ( 3 - 2 * ramp );
 	} );
@@ -1336,45 +1791,131 @@ const pushAt = ( windows, t ) => {
 };
 
 const follow = ( file, chapter, name ) => {
+	const job = followJob( file, chapter, name );
+	if ( ! job ) {
+		return file;
+	}
+	ffmpeg( job.args );
+	return job.file;
+};
+
+/**
+ * The push-ins' encode for a chapter's clip, without running it: null when it has none.
+ *
+ * @param {string} file    The chapter's clip.
+ * @param {Object} chapter Its timings.
+ * @param {string} name    The followed clip's file name.
+ * @return {?{file: string, args: string[]}} The followed clip and ffmpeg's arguments.
+ */
+function followJob( file, chapter, name ) {
 	const windows = pushWindows( chapter );
 	if ( ! windows.length ) {
-		return file;
+		return null;
 	}
 	// Each window's weight at the frame's time, 0 to 1, eased (smoothstep).
 	const time = 'in/30';
-	const weight = ( { from, to } ) => {
-		const ramp = `clip(min((${ time }-${ from.toFixed( 3 ) })/${
-			pushIn.ease
-		},(${ to.toFixed( 3 ) }-${ time })/${ pushIn.ease }),0,1)`;
+	const weight = ( { from, to, ease } ) => {
+		const ramp = `clip(min((${ time }-${ from.toFixed( 3 ) })/${ ease.toFixed(
+			3
+		) },(${ to.toFixed( 3 ) }-${ time })/${ ease.toFixed( 3 ) }),0,1)`;
 		return `(${ ramp }*${ ramp }*(3-2*${ ramp }))`;
 	};
 	const sum = ( term ) => windows.map( term ).join( '+' );
 	const zoom = `1+${ sum(
 		( w ) => `${ ( w.zoom - 1 ).toFixed( 4 ) }*${ weight( w ) }`
 	) }`;
+	// Centres in the enlarged input's pixels.
+	const { over } = pushIn;
 	const centre = ( axis, half ) =>
-		`${ half }+${ sum(
-			( w ) => `${ ( w[ axis ] - half ).toFixed( 1 ) }*${ weight( w ) }`
+		`${ half * over }+${ sum(
+			( w ) =>
+				`${ ( ( w[ axis ] - half ) * over ).toFixed( 1 ) }*${ weight( w ) }`
 		) }`;
 	const followed = join( out, 'parts', name );
-	ffmpeg( [
-		'-i',
-		file,
-		'-vf',
-		`zoompan=z='${ zoom }':` +
-			`x='clip(${ centre( 'cx', size.width / 2 ) }-iw/zoom/2,0,iw-iw/zoom)':` +
-			`y='clip(${ centre( 'cy', size.height / 2 ) }-ih/zoom/2,0,ih-ih/zoom)':` +
-			`d=1:s=${ size.width }x${ size.height }:fps=30,format=yuv420p`,
-		'-c:v',
-		'libx264',
-		'-preset',
-		'veryfast',
-		'-crf',
-		'20',
-		'-an',
-		followed,
-	] );
-	return followed;
+	return {
+		file: followed,
+		args: [
+			'-i',
+			file,
+			'-vf',
+			`scale=${ size.width * over }:${ size.height * over }:flags=lanczos,` +
+				`zoompan=z='${ zoom }':` +
+				`x='clip(${ centre( 'cx', size.width / 2 ) }-iw/zoom/2,0,iw-iw/zoom)':` +
+				`y='clip(${ centre( 'cy', size.height / 2 ) }-ih/zoom/2,0,ih-ih/zoom)':` +
+				`d=1:s=${ size.width }x${ size.height }:fps=30,format=yuv420p`,
+			...videoCodec( 20 ),
+			'-an',
+			followed,
+		],
+	};
+}
+
+// A wait the story marked (`skip` in chapters.json, from `skipping()` in the spec): an AI answer
+// being written, which a viewer should not sit through. A moment of it is kept either side, so
+// the cut reads as the answer arriving rather than a jump; a wait shorter than a second stays.
+const skipKeep = { before: 0.6, after: 0.3, least: 1 };
+
+/**
+ * The stretches of a chapter's clip the video keeps, in seconds from its start: all of it, less
+ * the waits it marked.
+ *
+ * @param {{start: number, skip?: Array<{from: number, to: number}>}} chapter Its timings.
+ * @param {number}                                                    length  Its clip's length.
+ * @return {Array<Array<number>>} The kept stretches, in order.
+ */
+const kept = ( { start, skip = [] }, length ) => {
+	const stretches = [];
+	let from = 0;
+	for ( const wait of skip ) {
+		const a = wait.from - start + skipKeep.before;
+		const b = Math.min( length, wait.to - start - skipKeep.after );
+		if ( b - a >= skipKeep.least && a > from ) {
+			stretches.push( [ from, a ] );
+			from = b;
+		}
+	}
+	stretches.push( [ from, length ] );
+	return stretches;
+};
+
+/**
+ * Where a moment of the chapter falls once its waits are cut.
+ *
+ * @param {Array<Array<number>>} stretches The kept stretches.
+ * @param {number}               t         Seconds from the chapter's start, as recorded.
+ * @return {number} Seconds from the chapter's start, as the video plays it.
+ */
+const along = ( stretches, t ) =>
+	stretches.reduce(
+		( sum, [ a, b ] ) => sum + Math.max( 0, Math.min( b, t ) - a ),
+		0
+	);
+
+/**
+ * A chapter's clip with its waits cut out, and where its moments land in it.
+ *
+ * @param {string} clip The chapter's clip.
+ * @param {number} i    The chapter's index.
+ * @param {string} name The trimmed clip's base name.
+ * @return {{file: string, into: function(number): number}} The clip, and its time map.
+ */
+const trimmed = ( clip, i, name ) => {
+	const stretches = kept( chapters[ i ], seconds( clip ) );
+	const into = ( t ) => along( stretches, t );
+	if ( 1 === stretches.length ) {
+		return { file: clip, into };
+	}
+	const pieces = stretches.map( ( [ a, b ], n ) =>
+		cut( `${ name }-${ n }.mp4`, [
+			'-ss',
+			a.toFixed( 3 ),
+			'-t',
+			( b - a ).toFixed( 3 ),
+			'-i',
+			clip,
+		] )
+	);
+	return { file: concat( pieces, `${ name }.mp4` ), into };
 };
 
 /**
@@ -1385,27 +1926,40 @@ const follow = ( file, chapter, name ) => {
  * @param {number} i The chapter's index.
  */
 const chapterClip = ( i ) => {
-	const { start, end, voice } = chapters[ i ];
+	const { start, end, voice, result: told } = chapters[ i ];
 	const name = `story-chapter-${ i + 1 }${ vertical ? '-vertical' : '' }`;
-	const clip = follow(
-		cut( `clip-${ i + 1 }.mp4`, [
-			'-ss',
-			start.toFixed( 2 ),
-			'-to',
-			end.toFixed( 2 ),
-			'-i',
-			webm,
-		] ),
-		chapters[ i ],
-		`clip-${ i + 1 }-followed.mp4`
+	const { file: clip, into } = trimmed(
+		follow(
+			cut( `clip-${ i + 1 }.mp4`, [
+				'-ss',
+				start.toFixed( 2 ),
+				'-to',
+				end.toFixed( 2 ),
+				'-i',
+				webm,
+			] ),
+			chapters[ i ],
+			`clip-${ i + 1 }-followed.mp4`
+		),
+		i,
+		`clip-${ i + 1 }-trimmed`
 	);
-	const at = Math.min( best( i ), seconds( clip ) - 0.1 );
+	// Where the result is: the moment she starts on it, when the story spoke it over the action,
+	// else the moment held still while she does.
+	const at = Math.min(
+		into( told ? told.at - start : best( i ) ),
+		seconds( clip ) - 0.1
+	);
 	const lineTakes = voice ? takes( voice.name ) : [];
-	const lineAt = voice ? Math.max( 0, voice.at - start ) : 0;
+	const lineAt = voice ? into( Math.max( 0, voice.at - start ) ) : 0;
 	// Played as recorded up to where her line ends.
 	const spokenUntil = Math.min( at, lineAt + needs( lineTakes ) );
 	const result = takes( `chapter-${ i + 1 }-result` );
-	const held = result.length ? needs( result ) : cardSeconds;
+	// Spoken over the action, the result plays out as recorded; else it is held still.
+	let held = result.length ? needs( result ) : cardSeconds;
+	if ( told ) {
+		held = seconds( clip ) - at;
+	}
 	const fixed = cardSeconds + spokenUntil + held + clipClosingSeconds;
 	const silent = at - spokenUntil;
 	if ( fixed + 1 > clipLimit ) {
@@ -1452,7 +2006,16 @@ const chapterClip = ( i ) => {
 		pieces.push( file );
 		clipClock += seconds( file );
 	}
-	pieces.push( freeze( clip, at, held, `clip-${ i + 1 }-result` ) );
+	pieces.push(
+		told
+			? cut( `clip-${ i + 1 }-result.mp4`, [
+					'-ss',
+					at.toFixed( 3 ),
+					'-i',
+					clip,
+				] )
+			: freeze( clip, at, held, `clip-${ i + 1 }-result` )
+	);
 	say( clipClock, result );
 	clipClock += held;
 	pieces.push( still( cards.length - 1, clipClosingSeconds ) );
@@ -1503,83 +2066,128 @@ if ( null !== clipChapter ) {
 	process.exit( 0 );
 }
 
-// The developer walkthrough opens and closes on its cards alone: the hills belong to Ana's shop.
-titleCard( 0, 'intro', developer ? [] : broll );
-for ( const [ i, { start, end } ] of chapters.entries() ) {
-	const clip = follow(
-		cut( `chapter-${ i + 1 }.mp4`, [
+// The opening animation (demo/intro): the brands joining, before the opening card, with its
+// own sound; the card dissolves in over its end. Ana's story only, and only where it is on disk.
+if ( ! developer && existsSync( introFile ) ) {
+	const { from = 0 } = JSON.parse( readFileSync( introMeta, 'utf8' ) );
+	const opening = cut( 'opening.mp4', [
+		'-ss',
+		from.toFixed( 3 ),
+		'-i',
+		introFile,
+	] );
+	const length = seconds( opening );
+	place( opening, { track: 'V3', source: opening, at: 0 } );
+	sounds.push( { file: introFile, from, at: clock, length } );
+	clock += length;
+	musicFrom = clock;
+}
+// Each chapter's clip and its push-ins, the build's heaviest encodes, made side by side before
+// the timeline: they depend on nothing but the recording, and run one after another they kept
+// one core busy for minutes while the others idled.
+const chapterClips = await pool(
+	chapters.map( ( { start, end }, i ) => async () => {
+		const cutting = cutJob( `chapter-${ i + 1 }.mp4`, [
 			'-ss',
 			start.toFixed( 2 ),
 			'-to',
 			end.toFixed( 2 ),
 			'-i',
 			webm,
-		] ),
-		chapters[ i ],
-		`chapter-${ i + 1 }-followed.mp4`
-	);
+		] );
+		await ffmpegAsync( cutting.args );
+		const following = followJob(
+			cutting.file,
+			chapters[ i ],
+			`chapter-${ i + 1 }-followed.mp4`
+		);
+		if ( ! following ) {
+			return cutting.file;
+		}
+		await ffmpegAsync( following.args );
+		return following.file;
+	} )
+);
+
+// The developer walkthrough opens and closes on its cards alone: the hills belong to Ana's shop.
+titleCard( 0, 'intro', developer ? [] : broll );
+for ( const [ i, { start } ] of chapters.entries() ) {
+	const clip = chapterClips[ i ];
 	// The chapter's card is its title alone: Ana's line about it is spoken over the action
 	// itself, where the recording marked it (`speak()` in the story), its end on the Enter.
 	place( still( i + 1 ), cardPiece( i + 1 ) );
 	clock += cardSeconds;
 	const from = clock;
-	const { voice } = chapters[ i ];
+	const { voice, result: told } = chapters[ i ];
+	// The waits the story marked are cut (`skip`); every moment after one moves up by it.
+	const stretches = kept( chapters[ i ], seconds( clip ) );
+	const into = ( t ) => along( stretches, t );
 	if ( voice ) {
-		say( from + Math.max( 0, voice.at - start ), takes( voice.name ) );
+		say(
+			from + into( Math.max( 0, voice.at - start ) ),
+			takes( voice.name )
+		);
 	}
 	// Where the chapter's clip starts in the recording, as the cut above seeked it.
 	const inRecording = Number( start.toFixed( 2 ) );
 	const result = takes( `chapter-${ i + 1 }-result` );
-	if ( result.length ) {
-		// Up to the result, the result held while she talks about it, then the rest.
-		const at = Math.min( best( i ), seconds( clip ) - 0.1 );
-		const before = cut( `chapter-${ i + 1 }-a.mp4`, [
-			'-t',
-			at.toFixed( 3 ),
-			'-i',
-			clip,
-		] );
-		place( before, {
-			track: 'V1',
-			source: webm,
-			at: inRecording,
-			chapter: i,
-			inChapter: 0,
-		} );
-		clock += seconds( before );
-		const length = needs( result );
-		const held = freeze( clip, at, length, `chapter-${ i + 1 }-result` );
-		place( held, {
-			track: 'V1',
-			source: held.replace( /\.mp4$/, '.png' ),
-			at: 0,
-			still: true,
-		} );
-		say( clock, result );
-		clock += length;
-		const after = cut( `chapter-${ i + 1 }-b.mp4`, [
-			'-ss',
-			at.toFixed( 3 ),
-			'-i',
-			clip,
-		] );
-		place( after, {
-			track: 'V1',
-			source: webm,
-			at: inRecording + Number( at.toFixed( 3 ) ),
-			chapter: i,
-			inChapter: Number( at.toFixed( 3 ) ),
-		} );
-		clock += seconds( after );
-	} else {
-		place( clip, {
-			track: 'V1',
-			source: webm,
-			at: inRecording,
-			chapter: i,
-			inChapter: 0,
-		} );
-		clock += seconds( clip );
+	// Her line about the result is spoken over the action where the story said it (`result`,
+	// from `tell()`), or else over the result held still (`highlight()`).
+	if ( told && result.length ) {
+		say( from + into( told.at - start ), result );
+	}
+	let at = result.length && ! told ? best( i ) : null;
+	if ( null !== at ) {
+		// Held inside a kept stretch, never inside a cut wait.
+		const [ , last ] =
+			stretches.find( ( [ a, b ] ) => at >= a && at < b ) ??
+			stretches.findLast( ( [ a ] ) => a <= at ) ??
+			stretches[ 0 ];
+		at = Math.min( at, last - 0.1, seconds( clip ) - 0.1 );
+	}
+	let n = 0;
+	for ( const [ a, b ] of stretches ) {
+		const stops = null !== at && at > a && at < b ? [ a, at, b ] : [ a, b ];
+		for ( let k = 0; k + 1 < stops.length; k++ ) {
+			const [ p, q ] = [ stops[ k ], stops[ k + 1 ] ];
+			const piece =
+				1 === stretches.length && 2 === stops.length
+					? clip
+					: cut( `chapter-${ i + 1 }-${ n++ }.mp4`, [
+							'-ss',
+							p.toFixed( 3 ),
+							'-t',
+							( q - p ).toFixed( 3 ),
+							'-i',
+							clip,
+						] );
+			place( piece, {
+				track: 'V1',
+				source: webm,
+				at: inRecording + Number( p.toFixed( 3 ) ),
+				chapter: i,
+				inChapter: Number( p.toFixed( 3 ) ),
+			} );
+			clock += seconds( piece );
+			if ( q === at ) {
+				// The result held while she talks about it; the rest follows.
+				const length = needs( result );
+				const held = freeze(
+					clip,
+					at,
+					length,
+					`chapter-${ i + 1 }-result`
+				);
+				place( held, {
+					track: 'V1',
+					source: held.replace( /\.mp4$/, '.png' ),
+					at: 0,
+					still: true,
+				} );
+				say( clock, result );
+				clock += length;
+			}
+		}
 	}
 	cues.push( { from, to: clock, chapter: i } );
 }
@@ -1629,24 +2237,28 @@ for ( const i of chapters.keys() ) {
 const dissolveSeconds = 0.5;
 
 /**
- * A clip with a still crossfading over one end of it.
+ * A stretch of a clip with a still crossfading over one end of it, encoded.
  *
- * @param {string}     file  The clip.
- * @param {string}     image The still.
- * @param {'in'|'out'} end   'out' fades the still out over the clip's start, 'in' fades it in
- *                           over the clip's end.
- * @param {number}     n     The piece's index, for the file's name.
+ * @param {string}     file   The clip.
+ * @param {number}     from   Where the stretch starts in it, on a keyframe.
+ * @param {number}     length How long the stretch is.
+ * @param {string}     image  The still.
+ * @param {'in'|'out'} end    'out' fades the still out over the stretch's start, 'in' fades it
+ *                            in over its end.
+ * @param {string}     name   The blended stretch's file name.
  */
-const blend = ( file, image, end, n ) => {
-	const length = seconds( file );
+const blendSpan = async ( file, from, length, image, end, name ) => {
 	const fade =
 		'out' === end
 			? `fade=t=out:st=0:d=${ dissolveSeconds }:alpha=1`
-			: `fade=t=in:st=${ ( length - dissolveSeconds ).toFixed(
+			: `fade=t=in:st=${ Math.max( 0, length - dissolveSeconds ).toFixed(
 					3
 				) }:d=${ dissolveSeconds }:alpha=1`;
-	const blended = join( out, 'parts', `dissolve-${ n }-${ end }.mp4` );
-	ffmpeg( [
+	const blended = join( out, 'parts', name );
+	await ffmpegAsync( [
+		...( from > 0 ? [ '-ss', from.toFixed( 3 ) ] : [] ),
+		'-t',
+		length.toFixed( 3 ),
 		'-i',
 		file,
 		'-loop',
@@ -1660,16 +2272,112 @@ const blend = ( file, image, end, n ) => {
 			'[0:v][still]overlay=shortest=1,format=yuv420p[v]',
 		'-map',
 		'[v]',
-		'-c:v',
-		'libx264',
-		'-preset',
-		'veryfast',
-		'-crf',
-		'20',
+		...videoCodec( 20 ),
 		'-an',
 		blended,
 	] );
 	return blended;
+};
+
+/**
+ * A stretch of a clip copied as encoded, cut on its keyframes.
+ *
+ * @param {string}  file The clip.
+ * @param {number}  from Where it starts, on a keyframe.
+ * @param {?number} to   Where it ends, on a keyframe; null for the clip's end.
+ * @param {string}  name The copy's file name.
+ */
+const copySpan = async ( file, from, to, name ) => {
+	const copied = join( out, 'parts', name );
+	await ffmpegAsync( [
+		...( from > 0 ? [ '-ss', from.toFixed( 3 ) ] : [] ),
+		'-i',
+		file,
+		...( null === to ? [] : [ '-t', ( to - from ).toFixed( 3 ) ] ),
+		'-c',
+		'copy',
+		'-an',
+		'-avoid_negative_ts',
+		'make_zero',
+		copied,
+	] );
+	return copied;
+};
+
+/**
+ * A piece with its dissolves (D291): the still fading out over its first half second and in
+ * over its last. Only the half second blended is encoded again; the rest is copied, cut on the
+ * keyframe every piece carries each half second. A piece too short to split is blended whole.
+ *
+ * @param {string}                      file The piece.
+ * @param {{out: ?string, in: ?string}} with The stills it dissolves from and into.
+ * @param {number}                      n    The piece's index, for the files' names.
+ * @return {Promise<string[]>} The piece, as the files that join into it.
+ */
+const dissolvePiece = async ( file, { out: from, in: into }, n ) => {
+	const step = keyEvery / 30;
+	let pieces = [ file ];
+	if ( from ) {
+		const length = seconds( file );
+		pieces =
+			length >= 2 * step
+				? [
+						await blendSpan(
+							file,
+							0,
+							step,
+							from,
+							'out',
+							`dissolve-${ n }-out-head.mp4`
+						),
+						await copySpan(
+							file,
+							step,
+							null,
+							`dissolve-${ n }-out-rest.mp4`
+						),
+					]
+				: [
+						await blendSpan(
+							file,
+							0,
+							length,
+							from,
+							'out',
+							`dissolve-${ n }-out.mp4`
+						),
+					];
+	}
+	if ( into ) {
+		const last = pieces.pop();
+		const length = seconds( last );
+		const keyAt = Math.floor( ( length - dissolveSeconds ) / step ) * step;
+		if ( keyAt > 0 ) {
+			pieces.push(
+				await copySpan( last, 0, keyAt, `dissolve-${ n }-in-head.mp4` ),
+				await blendSpan(
+					last,
+					keyAt,
+					length - keyAt,
+					into,
+					'in',
+					`dissolve-${ n }-in-tail.mp4`
+				)
+			);
+		} else {
+			pieces.push(
+				await blendSpan(
+					last,
+					0,
+					length,
+					into,
+					'in',
+					`dissolve-${ n }-in.mp4`
+				)
+			);
+		}
+	}
+	return pieces;
 };
 
 /**
@@ -1684,7 +2392,10 @@ const lastFrame = ( file, n ) => {
 	return frame;
 };
 
-const joinedFiles = videoPieces.map( ( piece ) => piece.file );
+// Which still each piece dissolves from at its start and into at its end, decided first;
+// then the pieces are blended side by side, each one's two blends in order (out, then in).
+// A start's fade leaves a piece's last frame as it was, so it is read from the piece itself.
+const dissolves = videoPieces.map( () => ( { out: null, in: null } ) );
 for ( let n = 0; n < videoPieces.length - 1; n++ ) {
 	const [ from, to ] = [ videoPieces[ n ], videoPieces[ n + 1 ] ];
 	if ( 'V1' === from.track && 'V1' === to.track ) {
@@ -1692,20 +2403,21 @@ for ( let n = 0; n < videoPieces.length - 1; n++ ) {
 	}
 	if ( to.still ) {
 		// Into a card: the card fades in over the end of what plays before it.
-		joinedFiles[ n ] = blend( joinedFiles[ n ], to.source, 'in', n );
+		dissolves[ n ].in = to.source;
 	} else {
 		// Out of a card or a shot: it fades out over the start of what comes next.
-		const image = from.still
+		dissolves[ n + 1 ].out = from.still
 			? from.source
-			: lastFrame( joinedFiles[ n ], n );
-		joinedFiles[ n + 1 ] = blend(
-			joinedFiles[ n + 1 ],
-			image,
-			'out',
-			n + 1
-		);
+			: lastFrame( from.file, n );
 	}
 }
+const joinedFiles = (
+	await pool(
+		videoPieces.map(
+			( piece, n ) => () => dissolvePiece( piece.file, dissolves[ n ], n )
+		)
+	)
+).flat();
 const joined = concat( joinedFiles, 'joined.mp4' );
 const joinedLength = seconds( joined );
 const narrated = Object.entries( spoken ).filter(
@@ -1779,12 +2491,7 @@ const writeProject = ( total ) => {
 				webm,
 				'-vf',
 				`fps=${ fps },format=yuv420p`,
-				'-c:v',
-				'libx264',
-				'-preset',
-				'veryfast',
-				'-crf',
-				'18',
+				...videoCodec( 18 ),
 				'-an',
 				file,
 			] );
@@ -1959,10 +2666,10 @@ const writeProject = ( total ) => {
 			inChapter,
 			...windows.flatMap( ( w ) => [
 				w.from,
-				w.from + pushIn.ease / 2,
-				w.from + pushIn.ease,
-				w.to - pushIn.ease,
-				w.to - pushIn.ease / 2,
+				w.from + w.ease / 2,
+				w.from + w.ease,
+				w.to - w.ease,
+				w.to - w.ease / 2,
 				w.to,
 			] ),
 			until,

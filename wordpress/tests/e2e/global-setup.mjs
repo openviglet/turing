@@ -110,7 +110,7 @@ export default async function globalSetup( config ) {
 		'list',
 		'--post_type=page',
 		'--post_status=publish',
-		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,compare-products,find-gear,search-and-ask',
+		'--post_name__in=shop,cart,checkout,my-account,ask-the-shop,plan-a-kit,compare-products,find-gear,search-and-ask',
 		'--format=ids',
 	] ).trim();
 	if ( shopPages ) {

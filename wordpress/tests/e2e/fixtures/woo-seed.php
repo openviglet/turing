@@ -112,6 +112,25 @@ wp_update_post(
 // Out of the index, so the jacket searches find the jackets alone.
 update_post_meta( $ask_id, '_viglet_dumont_exclude', '1' );
 
+// A page with the plan alone (woo/kit.spec.mjs): the block's planOnly, as a shop's page of its
+// own for Build my kit; drafted again too.
+$plan    = get_page_by_path( 'plan-a-kit' );
+$plan_id = $plan ? $plan->ID : (int) wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_name'    => 'plan-a-kit',
+		'post_title'   => 'Plan a kit',
+		'post_content' => '<!-- wp:viglet-dumont/copilot {"kit":true,"planOnly":true} /-->',
+	)
+);
+wp_update_post(
+	array(
+		'ID'          => $plan_id,
+		'post_status' => 'publish',
+	)
+);
+update_post_meta( $plan_id, '_viglet_dumont_exclude', '1' );
+
 // A page with the Compare products block (woo/compare.spec.mjs, D200); drafted again too.
 $compare    = get_page_by_path( 'compare-products' );
 $compare_id = $compare ? $compare->ID : (int) wp_insert_post(

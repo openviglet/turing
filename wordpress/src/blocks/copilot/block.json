@@ -20,6 +20,10 @@
 		"kit": {
 			"type": "boolean"
 		},
+		"planOnly": {
+			"type": "boolean",
+			"default": false
+		},
 		"stageTypes": {
 			"type": "string",
 			"default": ""

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T21:18:12+00:00\n"
+"POT-Creation-Date: 2026-11-05T23:42:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -600,112 +600,112 @@ msgid "Ask the catalog"
 msgstr ""
 
 #. translators: %s: the name of the product or post the page shows.
-#: src/blocks/copilot/render.php:54
+#: src/blocks/copilot/render.php:57
 #, php-format
 msgid "Ask about %s"
 msgstr ""
 
-#: src/blocks/copilot/render.php:55
+#: src/blocks/copilot/render.php:58
 msgid "What are you looking for?"
 msgstr ""
 
-#: src/blocks/copilot/render.php:60
+#: src/blocks/copilot/render.php:63
 msgid "Looking through the catalog…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:61
+#: src/blocks/copilot/render.php:64
 msgid "The catalog could not answer right now."
 msgstr ""
 
-#: src/blocks/copilot/render.php:62
+#: src/blocks/copilot/render.php:65
 msgid "Nothing in the catalog matches that."
 msgstr ""
 
-#: src/blocks/copilot/render.php:63
+#: src/blocks/copilot/render.php:66
 msgid "Plan a kit"
 msgstr ""
 
-#: src/blocks/copilot/render.php:64
+#: src/blocks/copilot/render.php:67
 msgid "Build my kit"
 msgstr ""
 
-#: src/blocks/copilot/render.php:65
+#: src/blocks/copilot/render.php:68
 msgid "Putting your kit together…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:66
+#: src/blocks/copilot/render.php:69
 msgid "The catalog has nothing for that plan."
 msgstr ""
 
 #. translators: %s: the needs the catalog has no product for, comma-separated.
-#: src/blocks/copilot/render.php:68
+#: src/blocks/copilot/render.php:71
 #, php-format
 msgid "Nothing in the catalog yet for: %s."
 msgstr ""
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:70
+#: src/blocks/copilot/render.php:73
 #, php-format
 msgid "Keep %s in the kit"
 msgstr ""
 
-#: src/blocks/copilot/render.php:71
+#: src/blocks/copilot/render.php:74
 msgid "Out of stock"
 msgstr ""
 
-#: src/blocks/copilot/render.php:74
+#: src/blocks/copilot/render.php:77
 msgid "Looking through this site…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:75
+#: src/blocks/copilot/render.php:78
 msgid "This site could not answer right now."
 msgstr ""
 
-#: src/blocks/copilot/render.php:76
+#: src/blocks/copilot/render.php:79
 msgid "Nothing on this site matches that."
 msgstr ""
 
-#: src/blocks/copilot/render.php:77
+#: src/blocks/copilot/render.php:80
 msgid "Make a plan"
 msgstr ""
 
-#: src/blocks/copilot/render.php:78
+#: src/blocks/copilot/render.php:81
 msgid "Build my plan"
 msgstr ""
 
-#: src/blocks/copilot/render.php:79
+#: src/blocks/copilot/render.php:82
 msgid "Putting your plan together…"
 msgstr ""
 
-#: src/blocks/copilot/render.php:80
+#: src/blocks/copilot/render.php:83
 msgid "Nothing on this site fits that plan."
 msgstr ""
 
 #. translators: %s: the needs nothing on the site covers, comma-separated.
-#: src/blocks/copilot/render.php:82
+#: src/blocks/copilot/render.php:85
 #, php-format
 msgid "Nothing on this site yet for: %s."
 msgstr ""
 
 #. translators: %s: the name of a page, event or other item.
-#: src/blocks/copilot/render.php:84
+#: src/blocks/copilot/render.php:87
 #, php-format
 msgid "Keep %s in the plan"
 msgstr ""
 
-#: src/blocks/copilot/render.php:85
+#: src/blocks/copilot/render.php:88
 msgid "Unavailable"
 msgstr ""
 
 #. translators: %s: the product's name.
-#: src/blocks/copilot/render.php:101
+#: src/blocks/copilot/render.php:104
 #: src/blocks/search/render.php:105
 #, php-format
 msgid "Add to cart: %s"
 msgstr ""
 
 #. translators: %s: a product's name.
-#: src/blocks/copilot/render.php:104
+#: src/blocks/copilot/render.php:107
 #: src/blocks/related/render.php:146
 #: src/blocks/search/render.php:109
 #, php-format
@@ -713,79 +713,79 @@ msgid "Compare %s"
 msgstr ""
 
 #. translators: %d: how many products, two to four.
-#: src/blocks/copilot/render.php:106
+#: src/blocks/copilot/render.php:109
 #: src/blocks/related/render.php:55
 #: src/blocks/search/render.php:107
 #, php-format
 msgid "Compare %d products"
 msgstr ""
 
-#: src/blocks/copilot/render.php:107
+#: src/blocks/copilot/render.php:110
 #: src/blocks/search/render.php:110
 msgid "Added to your cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:108
+#: src/blocks/copilot/render.php:111
 #: src/blocks/search/render.php:111
 msgid "It could not be added to the cart."
 msgstr ""
 
-#: src/blocks/copilot/render.php:130
-#: src/blocks/copilot/render.php:240
+#: src/blocks/copilot/render.php:133
+#: src/blocks/copilot/render.php:245
 msgid "Ask"
 msgstr ""
 
-#: src/blocks/copilot/render.php:131
+#: src/blocks/copilot/render.php:134
 msgid "Describe your plan"
 msgstr ""
 
 #. translators: %d: how many products.
-#: src/blocks/copilot/render.php:138
+#: src/blocks/copilot/render.php:141
 #, php-format
 msgid "Add %d products to the cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:139
+#: src/blocks/copilot/render.php:142
 msgid "Add 1 product to the cart"
 msgstr ""
 
 #. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
-#: src/blocks/copilot/render.php:141
+#: src/blocks/copilot/render.php:144
 #, php-format
 msgid "Added %1$d to your cart. Cart total: %2$s."
 msgstr ""
 
 #. translators: 1: how many were added, 2: how many were asked for.
-#: src/blocks/copilot/render.php:143
+#: src/blocks/copilot/render.php:146
 #, php-format
 msgid "Added %1$d of %2$d to your cart; the rest could not be added."
 msgstr ""
 
-#: src/blocks/copilot/render.php:157
+#: src/blocks/copilot/render.php:160
 msgid "Mode"
 msgstr ""
 
-#: src/blocks/copilot/render.php:158
+#: src/blocks/copilot/render.php:161
 msgid "Ask a question"
 msgstr ""
 
-#: src/blocks/copilot/render.php:173
+#: src/blocks/copilot/render.php:177
 #: src/blocks/search/parts/main.php:89
 msgid "Was"
 msgstr ""
 
-#: src/blocks/copilot/render.php:175
+#: src/blocks/copilot/render.php:180
 #: src/blocks/search/parts/main.php:92
 msgid "Add to cart"
 msgstr ""
 
-#: src/blocks/copilot/render.php:179
+#: src/blocks/copilot/render.php:184
 #: src/blocks/related/render.php:147
 #: src/blocks/search/parts/main.php:96
 msgid "Compare"
 msgstr ""
 
-#: src/blocks/copilot/render.php:217
+#: src/blocks/copilot/render.php:222
 msgid "Guides for this plan"
 msgstr ""
 
@@ -806,15 +806,15 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
-#: src/blocks/search/partslied.php:18
+#: src/blocks/search/parts/applied.php:18
 msgid "Active filters"
 msgstr ""
 
-#: src/blocks/search/partslied.php:24
+#: src/blocks/search/parts/applied.php:24
 msgid "Remove this filter"
 msgstr ""
 
-#: src/blocks/search/partslied.php:29
+#: src/blocks/search/parts/applied.php:29
 #: src/blocks/search/parts/facets.php:49
 msgid "Clear all filters"
 msgstr ""
@@ -2999,35 +2999,47 @@ msgstr ""
 msgid "A visitor describes a plan and gets the items it needs from this site, grouped by need."
 msgstr ""
 
+#: src/admin/js/copilot-block-editor.js:86
+msgid "Build my kit only"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:87
+msgid "Plan only"
+msgstr ""
+
 #: src/admin/js/copilot-block-editor.js:88
+msgid "Opens on the plan, without Ask a question beside it: for a page of its own."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:101
 msgid "What the plan uses"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:94
+#: src/admin/js/copilot-block-editor.js:107
 msgid "Types it proposes"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:98
+#: src/admin/js/copilot-block-editor.js:111
 msgid "Indexed types, comma-separated, e.g. course, event. Blank: products on a shop, any type elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:107
+#: src/admin/js/copilot-block-editor.js:120
 msgid "Types it cites as guides"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:111
+#: src/admin/js/copilot-block-editor.js:124
 msgid "Indexed types, comma-separated, e.g. page. Blank: posts on a shop, none elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:120
+#: src/admin/js/copilot-block-editor.js:133
 msgid "Availability field"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:124
+#: src/admin/js/copilot-block-editor.js:137
 msgid "The indexed field that says whether an item can be taken, e.g. seats_left. Blank: stock_status on a shop, none elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:137
+#: src/admin/js/copilot-block-editor.js:150
 msgid "Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr ""
 

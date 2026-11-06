@@ -18,6 +18,7 @@ return array(
 		'Free returns for 60 days · Repairs on every jacket we sell' => 'Devolução grátis em 60 dias · Consertamos toda jaqueta que vendemos',
 		'Shop'                                                       => 'Loja',
 		'Search'                                                     => 'Busca',
+		'Plan a kit'                                                 => 'Monte seu kit',
 		'Journal'                                                    => 'Diário',
 		'Compare'                                                    => 'Comparar',
 		// The home.

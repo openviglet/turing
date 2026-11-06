@@ -39,6 +39,8 @@ const words = {
 		compareIn: [ 'Category', 'Waterproof jackets' ],
 		plan: 'Two days crossing the mountains in July, first time',
 		check: 'Will this keep me dry on a wet day in the hills?',
+		// The product it is asked of: the Helvellyn mountain shell, waterproof.
+		checkSku: 'TF-02',
 		// A word WordPress's own search finds nothing for (curated.json, `native: null`).
 		backstage: 'raincoat',
 		synonym: 'bothy bag, bivvy bag',
@@ -92,6 +94,8 @@ const words = {
 		compareIn: [ 'Categoria', 'Jaquetas impermeáveis' ],
 		plan: 'Dois dias atravessando a montanha em julho, primeira vez',
 		check: 'Isso me mantém seca num dia de chuva na montanha?',
+		// A jaqueta de montanha Helvellyn, impermeável.
+		checkSku: 'TF-02',
 		backstage: 'puffer',
 		synonym: 'cantil, garrafa térmica',
 		ui: {
@@ -216,25 +220,68 @@ function pointer() {
 		},
 		true
 	);
+	// The dot is moved by a transform on its own layer, never by left/top, so a move is drawn by
+	// the compositor every frame without a layout. The ring inside it is what grows on a click.
+	let place = null;
 	window.addEventListener( 'DOMContentLoaded', () => {
 		const dot = document.createElement( 'div' );
 		dot.setAttribute( 'aria-hidden', 'true' );
 		dot.style.cssText =
-			'position:fixed;z-index:2147483647;left:-40px;top:-40px;width:22px;height:22px;' +
-			'margin:-11px 0 0 -11px;border-radius:50%;background:rgba(232,93,4,.45);' +
-			'border:2px solid #E85D04;pointer-events:none;transition:transform .15s';
+			'position:fixed;z-index:2147483647;left:0;top:0;pointer-events:none;' +
+			'will-change:transform;transform:translate3d(-40px,-40px,0)';
+		const ring = document.createElement( 'div' );
+		ring.style.cssText =
+			'width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;' +
+			'background:rgba(232,93,4,.45);border:2px solid #E85D04;box-sizing:border-box;' +
+			'transition:transform .15s';
+		dot.append( ring );
 		document.body.append( dot );
-		document.addEventListener( 'mousemove', ( event ) => {
-			dot.style.left = `${ event.clientX }px`;
-			dot.style.top = `${ event.clientY }px`;
-		} );
+		place = ( x, y ) => {
+			dot.style.transform = `translate3d(${ x }px,${ y }px,0)`;
+		};
+		document.addEventListener( 'mousemove', ( event ) =>
+			place( event.clientX, event.clientY )
+		);
 		document.addEventListener( 'mousedown', () => {
-			dot.style.transform = 'scale(1.8)';
+			ring.style.transform = 'scale(1.8)';
 		} );
 		document.addEventListener( 'mouseup', () => {
-			dot.style.transform = '';
+			ring.style.transform = '';
 		} );
 	} );
+	// A hand's move from one point to another, drawn by the page at its own frame rate: a
+	// minimum-jerk curve (quick away, settling onto the target) along a slight arc, as a wrist
+	// moves. The story calls it, then moves the real mouse once to where the dot already is.
+	window.__storyGlide = ( from, to, ms ) =>
+		new Promise( ( done ) => {
+			if ( ! place ) {
+				done();
+				return;
+			}
+			const dx = to.x - from.x;
+			const dy = to.y - from.y;
+			const bend = 0.12;
+			const control = {
+				x: from.x + dx / 2 - dy * bend,
+				y: from.y + dy / 2 + dx * bend,
+			};
+			const t0 = performance.now();
+			const step = ( now ) => {
+				const t = Math.min( 1, ( now - t0 ) / ms );
+				const s = t * t * t * ( 10 - 15 * t + 6 * t * t );
+				const u = 1 - s;
+				place(
+					u * u * from.x + 2 * u * s * control.x + s * s * to.x,
+					u * u * from.y + 2 * u * s * control.y + s * s * to.y
+				);
+				if ( t < 1 ) {
+					window.requestAnimationFrame( step );
+				} else {
+					done();
+				}
+			};
+			window.requestAnimationFrame( step );
+		} );
 }
 
 /**
@@ -332,12 +379,120 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			focused.push( { at: now(), box } );
 		}
 	};
+	// A slow scroll until the element sits above the bottom of the window, eased at both ends,
+	// so a long result is read on the way down rather than jumped over by a click's own scroll.
+	// About 200 px a second, between 3 and 12 s; or, given a deadline (a line's end), over the
+	// time left to it, so she talks while it scrolls. `whole` shows all of the element: its
+	// bottom, but never past its top, for one taller than the window.
+	const glide = async (
+		locator,
+		{ whole = false, deadline = null } = {}
+	) => {
+		const to = await locator.evaluate( ( el, all ) => {
+			const box = el.getBoundingClientRect();
+			const bottom =
+				box.bottom + window.scrollY - window.innerHeight + 160;
+			return all
+				? Math.min( bottom, box.top + window.scrollY - 24 )
+				: bottom;
+		}, whole );
+		const paced = deadline ? ( deadline - now() - 1 ) * 1000 : 0;
+		await page.evaluate(
+			( [ target, given ] ) =>
+				new Promise( ( done ) => {
+					const from = window.scrollY;
+					const distance = Math.max( 0, target ) - from;
+					const ms = given
+						? Math.min( 20_000, Math.max( 3_000, given ) )
+						: Math.min(
+								12_000,
+								Math.max(
+									3_000,
+									( Math.abs( distance ) / 200 ) * 1000
+								)
+							);
+					const t0 = performance.now();
+					const step = ( t ) => {
+						const k = Math.min( 1, ( t - t0 ) / ms );
+						const eased =
+							k < 0.5
+								? 2 * k * k
+								: 1 - Math.pow( -2 * k + 2, 2 ) / 2;
+						window.scrollTo( {
+							top: from + distance * eased,
+							behavior: 'instant',
+						} );
+						if ( k < 1 ) {
+							window.requestAnimationFrame( step );
+						} else {
+							done();
+						}
+					};
+					window.requestAnimationFrame( step );
+				} ),
+			[ to, record ? paced : 0 ]
+		);
+	};
+	// The pointer moved to a control before it is used, so a viewer's eye follows it to what is
+	// about to happen; a click alone teleports it there. The page draws the move (`__storyGlide`)
+	// at its own frame rate: driven from here, step by step, each step waited on a round trip
+	// and the dot stuttered. Its length grows with the distance, as a hand's does.
+	let cursor = { x: 960, y: 540 };
+	const reach = async ( locator ) => {
+		let box = await locator.boundingBox();
+		if ( ! record || ! box ) {
+			return;
+		}
+		// Out of the window: the page scrolls to it slowly first, never a jump.
+		const { height } = page.viewportSize();
+		if ( box.y < 0 || box.y + box.height > height ) {
+			await glide( locator, { whole: true } );
+			box = await locator.boundingBox();
+		}
+		const to = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+		const distance = Math.hypot( to.x - cursor.x, to.y - cursor.y );
+		const ms = Math.min( 900, Math.max( 350, 250 + distance * 0.45 ) );
+		await page.evaluate(
+			( [ from, target, length ] ) =>
+				window.__storyGlide?.( from, target, length ),
+			[ cursor, to, ms ]
+		);
+		await page.mouse.move( to.x, to.y );
+		cursor = to;
+		// A beat on the target before the click, as a hand settles.
+		await page.waitForTimeout( 150 );
+	};
+	// A wait a viewer should not sit through (an AI answer being written): recorded as `skip`,
+	// for the video to cut. The wait itself still happens, and is checked as any other.
+	let skipped = [];
+	const skipping = async ( wait ) => {
+		const from = now();
+		await wait();
+		skipped.push( { from, to: now() } );
+	};
+	// Her line about the result, spoken over the action instead of over the result held still
+	// (`result` in chapters.json): returns when it ends, as `speak()` does.
+	let told = null;
+	const tell = ( name ) => {
+		const length = record ? takeLength( name ) : 0;
+		told = { name, at: now() };
+		return now() + ( length ? length + 0.4 : 0 );
+	};
+	// Back to the full frame: ends the push-in on the last focused element here instead of at
+	// the chapter's end, for a step whose result is the whole page.
+	const release = () => {
+		if ( record ) {
+			focused.push( { at: now() } );
+		}
+	};
 	const chapter = ( title, body ) =>
 		test.step( title, async () => {
 			const start = now();
 			highlighted = null;
 			voiced = null;
 			focused = [];
+			skipped = [];
+			told = null;
 			await body();
 			if ( null === highlighted ) {
 				await highlight();
@@ -348,6 +503,8 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 				highlight: highlighted,
 				...( voiced ? { voice: voiced } : {} ),
 				...( focused.length ? { focus: focused } : {} ),
+				...( skipped.length ? { skip: skipped } : {} ),
+				...( told ? { result: told } : {} ),
 				end: now(),
 			} );
 		} );
@@ -391,16 +548,23 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	await chapter(
 		'1. Arrives: popular searches show the catalog',
 		async () => {
-			await page.goto( '/?pagename=search-gear' );
-			const chips = page.getByRole( 'navigation', {
-				name: ui.popular,
-			} );
+			// The home page, the shop's front door: its box offers the popular searches, and a
+			// chip opens the search page on its results. Opened on its own, an empty search page
+			// was the video's first screen.
+			await page.goto( '/' );
+			const line = speak( 'chapter-1' );
+			const chips = page
+				.locator( '.tarnfell-hero' )
+				.getByRole( 'navigation', { name: ui.popular } );
 			const chip = chips.getByRole( 'link' ).first();
 			await expect( chip ).toBeVisible();
-			await until( speak( 'chapter-1' ) );
+			// Her line ends as the pointer arrives on the chip.
+			await until( line - 1.4 );
 			const name = ( await chip.textContent() ).trim();
-			// A chip searches for itself, and the chips step aside for the results.
+			// A chip searches for itself, on the search page the box sends its searches to.
+			await reach( chip );
 			await chip.click();
+			await page.waitForURL( /search-gear/ );
 			await expect( block.locator( 'input[type="search"]' ) ).toHaveValue(
 				name
 			);
@@ -410,17 +574,25 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	);
 
 	await chapter( '2. Says what she needs, in a sentence', async () => {
-		await page.goto( '/?pagename=search-gear' );
-		const box = block.locator( 'input[type="search"]' ).first();
+		// Typed into the home page's box, under its photo and its promise, rather than on an
+		// empty search page; Enter takes it to the search page with the results.
+		await page.goto( '/' );
+		const box = page
+			.locator( '.tarnfell-hero input[type="search"]' )
+			.first();
 		await focus( box );
+		await reach( box );
+		await box.click();
 		await type( box, say.need, speak( 'chapter-2' ) );
 		await box.press( 'Enter' );
+		// The result is the whole page (the facet it understood, the answer, the list), so the
+		// frame goes back out as she presses Enter rather than pushing in on the answer.
+		release();
 		await expect(
 			block.locator( '.viglet-dumont-search__understood' )
 		).toContainText( say.understood );
 		await expect( titles.first() ).toHaveText( say.needFound );
 		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
-		await focus( block.locator( '.viglet-dumont-search__answer' ) );
 		// The chapter ends on its result: every search the story makes is one Ana talks about
 		// (D289). A typo searched as corrected is site/search.spec.mjs's to show.
 		await highlight();
@@ -429,19 +601,23 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	await chapter(
 		'3. Asks the Site assistant, and gets an answer with its sources',
 		async () => {
-			await page
+			const open = page
 				.locator( '.viglet-dumont-assistant.is-floating' )
 				.getByRole( 'button' )
-				.first()
-				.click();
+				.first();
+			await reach( open );
+			await open.click();
 			const dialog = page.getByRole( 'dialog' );
 			await focus( dialog );
-			await type(
-				dialog.getByRole( 'textbox' ),
-				say.question,
-				speak( 'chapter-3' )
-			);
-			await dialog.locator( 'form button[type="submit"]' ).click();
+			const question = dialog.getByRole( 'textbox' );
+			await reach( question );
+			await type( question, say.question, speak( 'chapter-3' ) );
+			const send = dialog.locator( 'form button[type="submit"]' );
+			await reach( send );
+			await send.click();
+			// The answer grows the dialog past the box measured while it was empty, so a push-in
+			// on it cut the dialog's top: the whole dialog is shown at the full frame instead.
+			release();
 			const answer = dialog
 				.locator( '.viglet-dumont-assistant__message' )
 				.nth( 1 );
@@ -456,7 +632,6 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await answered(
 				answer.locator( '.viglet-dumont-assistant__text' )
 			);
-			await focus( answer );
 			await highlight();
 			await page.keyboard.press( 'Escape' );
 		}
@@ -472,17 +647,19 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		const drawer = block.locator( '.viglet-dumont-search__filters-toggle' );
 		const phone = await drawer.isVisible();
 		if ( phone ) {
+			await reach( drawer );
 			await drawer.click();
 		}
-		await block
+		const facet = block
 			.locator( '.viglet-dumont-search__facet' )
 			.filter( {
 				has: page.locator( 'summary', { hasText: facetLabel } ),
 			} )
 			.locator( 'label' )
 			.filter( { hasText: category } )
-			.locator( 'input' )
-			.click();
+			.locator( 'input' );
+		await reach( facet );
+		await facet.click();
 		if ( phone ) {
 			await page.keyboard.press( 'Escape' );
 		}
@@ -498,66 +675,85 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		const comparing = speak( 'chapter-4' );
 		await linger( 1.5 );
 		for ( let i = 0; i < 3; i++ ) {
+			await reach( boxes.nth( i ) );
 			await boxes.nth( i ).check();
 		}
 		const bar = block.locator( '.viglet-dumont-search__compare-bar' );
 		await expect( bar.getByRole( 'link' ) ).toHaveText( ui.compareBar );
-		await until( comparing );
+		await until( comparing - 1 );
+		await reach( bar.getByRole( 'link' ) );
 		await bar.getByRole( 'link' ).click();
 		await expect(
 			page.locator( '.viglet-dumont-compare__table thead th' )
 		).toHaveCount( 3 );
 		const summary = page.locator( '.viglet-dumont-compare__summary-text' );
 		await answered( summary );
-		await focus( summary );
+		// No push-in: Ana talks about the table under the summary, which a push-in on the
+		// summary left out of the frame.
 		// The table's prices reach the model as text, not HTML entities (D249).
 		await expect( summary ).not.toContainText( '&#' );
 	} );
 
 	const copilot = page.locator( '.viglet-dumont-copilot' );
 	const kit = copilot.locator( '.viglet-dumont-copilot__kit' );
-	let item = '';
 
 	await chapter( '5. Builds the kit and puts it in the cart', async () => {
-		await page.goto( '/showcase/' );
-		await copilot
-			.locator( '.viglet-dumont-copilot__modes' )
-			.getByRole( 'button', { name: ui.planMode } )
-			.click();
-		await focus( copilot.getByLabel( ui.plan ) );
-		await type(
-			copilot.getByLabel( ui.plan ),
-			say.plan,
-			speak( 'chapter-5' )
-		);
-		await copilot
-			.getByRole( 'button', { name: ui.build, exact: true } )
-			.click();
-		await expect(
-			kit.locator( '.viglet-dumont-copilot__stage' ).first()
-		).toBeVisible( { timeout: 90_000 } );
-		await answered( kit.locator( '.viglet-dumont-copilot__kit-summary' ) );
-		await expect(
-			kit.locator( '.viglet-dumont-copilot__kit-item' )
-		).not.toHaveCount( 0 );
+		// The kit has a page of its own, which opens on the plan: no search beside it, and the
+		// room for the kit it builds.
+		await page.goto( '/plan-a-kit/' );
+		const plan = copilot.getByLabel( ui.plan );
+		await focus( plan );
+		await reach( plan );
+		await type( plan, say.plan, speak( 'chapter-5' ) );
+		const build = copilot.getByRole( 'button', {
+			name: ui.build,
+			exact: true,
+		} );
+		await reach( build );
+		await build.click();
+		// The kit is longer than the window: shown at the full frame, read top to bottom.
+		release();
+		// The kit takes seconds to be written: the video cuts the wait.
+		await skipping( async () => {
+			await expect(
+				kit.locator( '.viglet-dumont-copilot__stage' ).first()
+			).toBeVisible( { timeout: 90_000 } );
+			await answered(
+				kit.locator( '.viglet-dumont-copilot__kit-summary' )
+			);
+			await expect(
+				kit.locator( '.viglet-dumont-copilot__kit-item' )
+			).not.toHaveCount( 0 );
+		} );
 		await kit.scrollIntoViewIfNeeded();
-		await linger( 6 );
 		const add = kit.locator( '.viglet-dumont-copilot__kit-cart button' );
 		await expect( add ).toBeEnabled();
+		// She talks about the kit as soon as it is there, while the list goes by, down to the
+		// cart button the click would otherwise jump to; it is pressed as she finishes.
+		const telling = tell( 'chapter-5-result' );
+		await linger( 1 );
+		await glide( add, { deadline: telling - 1.2 } );
+		await reach( add );
+		await until( telling );
 		await add.click();
 		await expect(
 			kit.locator( '.viglet-dumont-copilot__kit-status' )
 		).toContainText( ui.cartTotal );
-		item = await kit
-			.locator( '.viglet-dumont-copilot__kit-item:not(.is-out) a' )
-			.first()
-			.getAttribute( 'href' );
 	} );
 
 	await chapter(
 		'6. Checks one item: Related, and a question about it',
 		async () => {
-			await page.goto( item );
+			// Always the same product, the one her question and line are about: a waterproof
+			// jacket. Taken from the kit, it was whatever the model staged first that run, a
+			// backpack asked whether it keeps her dry. Found by its SKU, the same in both stores.
+			const [ jacket ] = await (
+				await page.request.get(
+					`/?rest_route=/wc/store/v1/products&sku=${ say.checkSku }`
+				)
+			).json();
+			expect( jacket?.permalink ).toBeTruthy();
+			await page.goto( jacket.permalink );
 			const looking = speak( 'chapter-6' );
 			await expect(
 				page
@@ -565,16 +761,27 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					.getByRole( 'link' )
 			).not.toHaveCount( 0 );
 			await linger( 2.5 );
-			await focus( copilot.getByLabel( ui.question ) );
-			await type( copilot.getByLabel( ui.question ), say.check, looking );
-			await copilot
-				.getByRole( 'button', { name: ui.ask, exact: true } )
-				.click();
+			const asking = copilot.getByLabel( ui.question );
+			await focus( asking );
+			await reach( asking );
+			await type( asking, say.check, looking );
+			const ask = copilot.getByRole( 'button', {
+				name: ui.ask,
+				exact: true,
+			} );
+			await reach( ask );
+			await ask.click();
+			// The answer grows the panel past the window's bottom, so a push-in on it cut the
+			// panel off: back to the full frame, and down until the whole panel shows.
+			release();
 			const answer = copilot
 				.locator( '.viglet-dumont-copilot__answer' )
 				.first();
 			await answered( answer );
-			await focus( answer );
+			// Down to the panel's end: its cited products and Compare are what the answer
+			// leads to, and an answer citing two of them makes the panel taller than the
+			// window, so keeping its top in view cut them off. The answer passes on the way.
+			await glide( copilot );
 			// The question is about the product on the page (D242): the answer cites it.
 			const product = (
 				await page.locator( 'h1' ).first().textContent()
@@ -591,6 +798,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		const paying = speak( 'chapter-7' );
 		// Exact: "Nome" is also inside "Sobrenome".
 		const field = ( name ) => page.getByLabel( name, { exact: true } );
+		// The address is not the story: filled at once, as a browser's autofill would.
 		await field( form.email ).fill( 'shopper@example.org' );
 		await field( form.first ).fill( 'Ana' );
 		await field( form.last ).fill( 'Fell' );
@@ -599,9 +807,13 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await field( form.state[ 0 ] ).selectOption( form.state[ 1 ] );
 		await field( form.postcode[ 0 ] ).fill( form.postcode[ 1 ] );
 		// The demo's one payment method, offline: an order is placed and nothing is charged.
-		await page.getByRole( 'radio', { name: form.payment } ).check();
+		const payment = page.getByRole( 'radio', { name: form.payment } );
+		await reach( payment );
+		await payment.check();
+		const place = page.getByRole( 'button', { name: form.place } );
+		await reach( place );
 		await until( paying );
-		await page.getByRole( 'button', { name: form.place } ).click();
+		await place.click();
 		await expect( page ).toHaveURL( /order-received/, {
 			timeout: 60_000,
 		} );
@@ -628,17 +840,28 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await until( speak( 'chapter-8' ) );
 			await linger( 1.5 );
 
-			await page.goto( '/wp-login.php' );
-			await page.fill( '#user_login', 'admin' );
-			await page.fill( '#user_pass', 'admin' );
-			await Promise.all( [
-				page.waitForURL( /wp-admin/ ),
-				page.click( '#wp-submit' ),
-			] );
-			await page.goto(
-				'/wp-admin/admin.php?page=viglet-dumont-insights'
-			);
-			await page.getByLabel( ui.period ).selectOption( 'today' );
+			// Logging in is not the story: the video cuts from the comparison to the insights.
+			await skipping( async () => {
+				await page.goto( '/wp-login.php' );
+				await page.fill( '#user_login', 'admin' );
+				await page.fill( '#user_pass', 'admin' );
+				await Promise.all( [
+					page.waitForURL( /wp-admin/ ),
+					page.click( '#wp-submit' ),
+				] );
+				await page.goto(
+					'/wp-admin/admin.php?page=viglet-dumont-insights'
+				);
+				await expect( page.getByLabel( ui.period ) ).toBeVisible();
+			} );
+			// Her secret weapon is told over the walk through the insights to the synonym, at a
+			// pace a viewer can follow: the pointer goes to each control before it is used, and
+			// the page scrolls down to each card rather than jumping there.
+			const telling = tell( 'chapter-8-result' );
+			await linger( 2 );
+			const period = page.getByLabel( ui.period );
+			await reach( period );
+			await period.selectOption( 'today' );
 			const card = ( name ) =>
 				page.locator( '.components-card' ).filter( {
 					has: page.getByRole( 'heading', { name } ),
@@ -646,24 +869,36 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await expect(
 				card( ui.top ).locator( 'tbody tr' )
 			).not.toHaveCount( 0 );
-			await linger();
+			await linger( 1.5 );
+			await glide( card( ui.top ), { whole: true } );
+			await linger( 1.5 );
 			// The search as Turing logged it, which can differ from how she typed it.
 			const logged = say.logged;
+			await glide( card( ui.failed ), { whole: true } );
 			const row = card( ui.failed )
 				.locator( 'tr' )
 				.filter( { hasText: logged } );
-			await row
-				.getByRole( 'link', { name: ui.addSynonym( logged ) } )
-				.click();
+			const add = row.getByRole( 'link', {
+				name: ui.addSynonym( logged ),
+			} );
+			await reach( add );
+			await linger( 0.8 );
+			await add.click();
 			const field = page.getByLabel( ui.synonymField );
 			await expect( field ).toHaveValue( `${ logged }, ` );
-			await type( field, say.synonym );
-			await page.getByRole( 'button', { name: ui.saveSynonym } ).click();
+			await field.scrollIntoViewIfNeeded();
+			await reach( field );
+			// Typed over her line, leaving time to reach the button as she ends.
+			await type( field, say.synonym, telling - 3 );
+			const save = page.getByRole( 'button', { name: ui.saveSynonym } );
+			await reach( save );
+			await save.click();
 			await expect(
 				page.getByRole( 'button', {
 					name: ui.removeSynonym( say.synonym ),
 				} )
 			).toBeVisible();
+			await until( telling );
 		}
 	);
 

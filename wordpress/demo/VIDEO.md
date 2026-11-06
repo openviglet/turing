@@ -19,6 +19,7 @@ narration as captions (D278). The **pt-BR** one (Recanto da Serra, 7m37s) was re
 | Music bed | `demo/narration/music.mp3` (not committed) | polyweave `sound.buy` on ElevenLabs |
 | Product and guide photos | `demo/photos/<kind>/<slug>.webp` (800 px, committed; PNGs are not) | `npm run demo:photos`: Ideogram 4.0 through polyweave; the seed imports a photo where one exists, draws one where none does |
 | Footage of the hills | `demo/broll/*.mp4` (not committed; `.json` with source, author, licence are) | `npm run demo:broll` with `PIXABAY_API_KEY` |
+| Opening animation: the Viglet and Turing marks joining WordPress, with its own sound | `demo/intro/intro.mp4` (not committed; `intro.json` is, with its source and `from`) | made with Gemini; the video plays it from `from` (3.45 s: before that it drew an invented store with garbled text), then dissolves into the opening card, and the music bed starts after it. Story only; a video built without the file opens on the card |
 | The recording | `tests/e2e/artifacts/story/story.webm` + `chapters.json` | `npm run e2e:story:record` (`tests/e2e/story/shopper.story.mjs`) |
 | The video | `tests/e2e/artifacts/video/story.<lang>.mp4` | `node bin/story-video.mjs --language en` (or `pt-BR`) |
 | An editable project | `tests/e2e/artifacts/video/story.<lang>.project/` (`story.<lang>.fcpxml` + `media/`) | `node bin/story-video.mjs --language en --project` (D290) |
@@ -34,7 +35,14 @@ Credits for all of it: `demo/seed/CREDITS.md`.
   action starts, reads the take's length, types at the pace that fills it, and presses Enter (or
   clicks) as her last word lands. `chapters.json` records where each line starts.
 - The line about the **result** is spoken over that moment **held still** (the chapter's
-  `highlight()`), so she always talks about what is on screen.
+  `highlight()`), so she always talks about what is on screen. Where the result is longer
+  than a window (the kit), the spec calls `tell('chapter-N-result')` as it appears instead
+  (`result` in `chapters.json`): she talks while the page scrolls down it, `glide()` paced
+  to her line, and nothing is held still.
+- A wait a viewer should not sit through, an AI answer being written, is wrapped in
+  `skipping()` (`skip` in `chapters.json`): the video cuts it, keeping 0.6 s before and 0.3 s
+  after so it reads as the answer arriving, and every moment after it moves up. The wait still
+  happens and is checked; a wait under a second stays.
 - The opening and closing cards hold a title for 3 s, then footage, photos and two of the store's
   pages, changing at a pause in her voice at least 4 s apart.
 - Chapter cards are the title alone, 2.5 s.
@@ -135,8 +143,16 @@ Its first run found D299: the Setup page could not create an SN site at all.
 ## The frame follows the action (D292)
 
 The story marks the element each step acts on (`focus()` in the spec: the search box, the
-answer, the assistant, the comparison, the kit's plan, the product question) with its box on
-screen, into `chapters.json`. The video eases in on each box over 0.8 s, holds while the step
+assistant while the question is typed, the kit's plan, the product question) with its box on
+screen, into `chapters.json`. A step whose result is the whole page calls `release()` instead,
+which ends the push-in there: the search goes back to the full frame as Enter is pressed,
+since what follows is the facet it understood, the answer and the list together; the
+assistant goes back out as the question is sent, since the answer grows the dialog past the
+box measured while it was empty, and the product question likewise, scrolling slowly down
+until its answer and sources show. The comparison has no push-in: Ana talks about the table
+under the summary. The video eases in on each box slowly, while Ana talks (up to
+2.5 s each way, never under 0.8 s, from the time the step lasts; the recording is enlarged 2x
+first, since zoompan crops at whole pixels and a slow move shook at 1x), holds while the step
 runs and eases back out before the next, at most 1.6x so text stays sharp from 1080p, with a
 quarter of the box's size as room; a box too big to zoom, or a step too short for both moves,
 stays at the full frame. The held result frame is taken from the followed clip, so it is
@@ -171,9 +187,11 @@ project does not carry the moves yet.
   probe a store with `populateMetrics: false`, or on another site.
 - A take is placed only if its `.prov.json` says the current line, voice and model: change a line,
   buy it again.
-- The Turing image must carry T1190, T1191, T1196 and T1200 (`ghcr.io/openviglet/turing`
-  2026.3.8 or later). A `latest` pulled before 2026-11-02 lacks T1200, so it counts every
-  sentence the block searches uncounted, and chapter 8 lists it as a failed search:
+- The Turing image must carry T1190, T1191, T1196, T1200 and T1242 (`ghcr.io/openviglet/turing`
+  `latest` pulled on or after 2026-11-06). A `latest` pulled before 2026-11-02 lacks T1200, so it
+  counts every sentence the block searches uncounted, and chapter 8 lists it as a failed search;
+  one pulled before 2026-11-06 lacks T1242, so "uma barraca para duas pessoas" also matches
+  and highlights "uma" and "para" in the results:
   `docker pull ghcr.io/openviglet/turing:latest`, then `docker compose up -d turing`.
 - Chapter 8 shows today's insights, so the store's own tests and probes show there too. Before
   recording, clear the SN site's metrics (`DELETE /api/sn/<site id>/metrics`, T1195), delete

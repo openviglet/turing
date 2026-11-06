@@ -26,7 +26,7 @@ $tarnfell_tiles = array(
 <p class="has-lichen-color has-text-color has-large-font-size"><?php esc_html_e( 'Tell us where you are going. Search answers as you type, in words a shop assistant would understand.', 'tarnfell' ); ?></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:viglet-dumont/search <?php echo wp_json_encode( array( 'placeholder' => __( 'A waterproof jacket for the Lakes…', 'tarnfell' ) ) ); ?> -->
+<!-- wp:viglet-dumont/search <?php echo wp_json_encode( array( 'placeholder' => __( 'A waterproof jacket for the Lakes…', 'tarnfell' ), 'showTrending' => true ) ); ?> -->
 <!-- wp:viglet-dumont/search-box /-->
 <!-- /wp:viglet-dumont/search -->
 

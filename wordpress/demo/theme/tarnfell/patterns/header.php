@@ -25,6 +25,7 @@
 foreach ( array(
 	'/shop/'             => __( 'Shop', 'tarnfell' ),
 	'/search-gear/'      => __( 'Search', 'tarnfell' ),
+	'/plan-a-kit/'       => __( 'Plan a kit', 'tarnfell' ),
 	'/journal/'          => __( 'Journal', 'tarnfell' ),
 	'/compare-searches/' => __( 'Compare', 'tarnfell' ),
 ) as $tarnfell_url => $tarnfell_label ) {

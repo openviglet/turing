@@ -193,3 +193,26 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 		`Added 2 to your cart. Cart total: ${ total }.`
 	);
 } );
+
+// The plan alone (planOnly), for a shop's page of its own: it opens on the plan, with no Ask a
+// question beside it, and its form is the plan's.
+test( 'a page of its own opens Build my kit on the plan alone', async ( {
+	page,
+	axe,
+} ) => {
+	await page.route( '**/copilot/available', ( route ) =>
+		route.fulfill( { json: { available: true } } )
+	);
+	await page.goto( '/?pagename=plan-a-kit' );
+	const block = page.locator( '.viglet-dumont-copilot' );
+	await expect( block.getByLabel( 'Describe your plan' ) ).toBeVisible();
+	await expect(
+		block.getByRole( 'button', { name: 'Build my kit', exact: true } )
+	).toBeVisible();
+	await expect(
+		block.locator( '.viglet-dumont-copilot__modes' )
+	).toHaveCount( 0 );
+	await axe( 'Build my kit on a page of its own', {
+		include: '.viglet-dumont-copilot',
+	} );
+} );

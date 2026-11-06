@@ -26,8 +26,9 @@ $pages = array(
 	'home-demo'   => array( 'Home', '', '' ),
 	'search-gear' => array( 'Search the shop', $search, 'page-search' ),
 	'journal'     => array( 'Trail journal', '', '' ),
-	// WordPress's own search beside Turing's, on one query (D195).
-	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', '' ),
+	// WordPress's own search beside Turing's, on one query (D195). Two columns of results need
+	// the search page's wide template; the default page squeezed them into its text width.
+	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', 'page-search' ),
 	// Products ticked in the results or the copilot, side by side (D200).
 	'compare-products' => array( 'Compare products', '<!-- wp:viglet-dumont/compare /-->', '' ),
 );
@@ -56,6 +57,42 @@ $pages['showcase'] = array(
 	'',
 );
 
+// Build my kit on a page of its own: the plan is not a search, and beside Ask a question on the
+// showcase it read as an afterthought with an empty page around it. Here it is introduced,
+// says what it does in three steps, and has the width for the kit it builds.
+$step  = static fn ( string $title, string $text ): string =>
+	'<!-- wp:column --><div class="wp-block-column"><!-- wp:heading {"level":3,"fontSize":"large"} --><h3 class="wp-block-heading has-large-font-size">' . $say( $title ) . '</h3><!-- /wp:heading -->'
+	. '<!-- wp:paragraph --><p>' . $say( $text ) . '</p><!-- /wp:paragraph --></div><!-- /wp:column -->';
+$pages['plan-a-kit'] = array(
+	'Plan a kit',
+	implode(
+		"\n\n",
+		array(
+			'<!-- wp:group {"align":"wide","className":"tarnfell-plan-hero","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|50","left":"var:preset|spacing|50","right":"var:preset|spacing|50"}},"border":{"radius":"6px"},"color":{"gradient":"linear-gradient(160deg,#1F3B2D 0%,#2E5E73 100%)"}},"textColor":"paper","layout":{"type":"constrained","contentSize":"760px","justifyContent":"left"}} -->'
+			. '<div class="wp-block-group alignwide tarnfell-plan-hero has-paper-color has-text-color has-background" style="border-radius:6px;background:linear-gradient(160deg,#1F3B2D 0%,#2E5E73 100%);padding-top:var(--wp--preset--spacing--50);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50);padding-left:var(--wp--preset--spacing--50)">'
+			. '<!-- wp:heading {"textColor":"paper","fontSize":"x-large"} --><h2 class="wp-block-heading has-paper-color has-text-color has-x-large-font-size">' . $say( 'Tell us about your trip. We put the kit together.' ) . '</h2><!-- /wp:heading -->'
+			. '<!-- wp:paragraph {"fontSize":"medium"} --><p class="has-medium-font-size">' . $say( 'Where you are going, for how long and when, in your own words. Viglet Turing works out what the trip needs and fills each need with gear we have in stock, at its price.' ) . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->',
+			'<!-- wp:columns {"align":"wide","className":"tarnfell-plan-steps"} --><div class="wp-block-columns alignwide tarnfell-plan-steps">'
+			. $step( '1. Describe the plan', 'Two days across the mountains in July, a first winter camp, a day walk with rain forecast.' )
+			. $step( '2. See what it needs', 'Grouped by need, a place to sleep, something warm, safe footing, each with why it is there.' )
+			. $step( '3. Take it all at once', 'Swap any item, untick what you have, and put the whole kit in the cart with one click.' )
+			. '</div><!-- /wp:columns -->',
+			'<!-- wp:viglet-dumont/copilot ' . wp_json_encode(
+				array(
+					'heading'     => $names['Your plan'] ?? 'Your plan',
+					'placeholder' => $names['e.g. two days across the mountains in July, first time'] ?? 'e.g. two days across the mountains in July, first time',
+					'kit'         => true,
+					'planOnly'    => true,
+					'align'       => 'wide',
+					'className'   => 'tarnfell-plan',
+				),
+				JSON_UNESCAPED_UNICODE
+			) . ' /-->',
+		)
+	),
+	'',
+);
+
 $ids = array();
 foreach ( $pages as $slug => list( $title, $content, $template ) ) {
 	$title = $names[ $title ] ?? $title;
@@ -79,8 +116,10 @@ update_post_meta( $ids['compare-products'], '_viglet_dumont_exclude', '1' );
 foreach ( array( 'home-demo', 'search-gear', 'journal' ) as $chrome ) {
 	update_post_meta( $ids[ $chrome ], '_viglet_dumont_exclude', '1' );
 }
-// The showcase describes features, not gear: never a search result.
+// The showcase describes features, not gear: never a search result. Nor is the kit's page,
+// which the kit itself would otherwise stage as a product.
 update_post_meta( $ids['showcase'], '_viglet_dumont_exclude', '1' );
+update_post_meta( $ids['plan-a-kit'], '_viglet_dumont_exclude', '1' );
 
 // WordPress's own first post and page are no part of a shop, and in its search they would
 // read as a fresh install (D264).

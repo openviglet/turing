@@ -167,6 +167,7 @@ $viglet_dumont_parts = '' !== trim( (string) $content );
 // A block holding no results part, a search box in a hero say, sends the query to the full
 // search page (D208), unless that page is this one.
 $viglet_dumont_elsewhere = null;
+$viglet_dumont_inner     = (string) $content;
 if ( $viglet_dumont_parts && ! str_contains( (string) $content, 'viglet-dumont-search__results' ) ) {
 	$viglet_dumont_target = ( new Viglet_Dumont_Native_Search() )->search_page();
 	if ( untrailingslashit( $viglet_dumont_target['searchPage'] ) !== untrailingslashit( (string) get_permalink() ) ) {
@@ -174,6 +175,10 @@ if ( $viglet_dumont_parts && ! str_contains( (string) $content, 'viglet-dumont-s
 			'url'   => $viglet_dumont_target['searchPage'],
 			'param' => $viglet_dumont_target['queryParam'],
 		);
+		// Its popular searches go there too: drawn before this block knew where its searches
+		// go, each chip linked to this page, so a chip on a home page's hero box opened the
+		// home again with ?q= and no results under it.
+		$viglet_dumont_inner = Viglet_Dumont_Search_Block::chips_to( (string) $content, $viglet_dumont_target['searchPage'], $viglet_dumont_target['queryParam'] );
 	}
 }
 $viglet_dumont_classes = implode(
@@ -201,7 +206,7 @@ $viglet_dumont_classes = implode(
 		// The inner blocks (the parts, and any block a theme puts between them), each already
 		// rendered and escaped by its own render callback, as WordPress hands $content to every
 		// block that wraps others.
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inner blocks, escaped by their own render callbacks.
+		echo $viglet_dumont_inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inner blocks, escaped by their own render callbacks; chips_to() only rewrites hrefs through the HTML API.
 		?>
 	<?php else : ?>
 		<?php

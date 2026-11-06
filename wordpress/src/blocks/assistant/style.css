@@ -17,10 +17,12 @@
 	border-radius: 8px;
 	box-sizing: border-box;
 	color: var(--wp--preset--color--contrast, CanvasText);
-	max-height: min(40rem, calc(100vh - 2rem));
+	/* As tall as the window allows: a cap of 40rem cut an answer with its sources short on a
+	   screen that had the room for it. */
+	max-height: calc(100vh - 4rem);
 	max-width: calc(100vw - 2rem);
 	padding: 1rem 1.25rem;
-	width: 32rem;
+	width: 36rem;
 }
 
 .viglet-dumont-assistant__dialog[open] {
@@ -71,7 +73,21 @@
 	opacity: 0.8;
 }
 
+/* The conversation scrolls inside the dialog. A shade at an edge says there is more past it:
+   the covers scroll with the content and hide the shade once that edge is reached. Where
+   scrollbars are hidden (overlay scrollbars, a phone), a line cut at the bottom read as the
+   end of the answer. */
 .viglet-dumont-assistant__log {
+	--viglet-dumont-assistant-bg: var(--wp--preset--color--base, Canvas);
+	background:
+		linear-gradient(var(--viglet-dumont-assistant-bg) 30%, transparent) center top,
+		linear-gradient(transparent, var(--viglet-dumont-assistant-bg) 70%) center bottom,
+		radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 35%), transparent) center top,
+		radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 35%), transparent) center bottom;
+	background-attachment: local, local, scroll, scroll;
+	background-color: var(--viglet-dumont-assistant-bg);
+	background-repeat: no-repeat;
+	background-size: 100% 3rem, 100% 3rem, 100% 1.75rem, 100% 1.75rem;
 	flex: 1;
 	min-height: 4rem;
 	overflow-y: auto;

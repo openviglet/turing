@@ -4462,5 +4462,41 @@
     "sha256": "e26c4391071f83034f680a577db5f69c9a74a9668237da2b6062a889921e6d5a",
     "surprised": false,
     "task_id": "ideogram:gZ6NeN71RHyZTRUtBpYHkw"
+  },
+  {
+    "artefact": "demo/thumbnail/presenter.png",
+    "at": "2026-11-06T00:06:39Z",
+    "balance_after": null,
+    "balance_before": null,
+    "bought": "image",
+    "bytes": 5163103,
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "prompt": "Waist-up photograph of a friendly woman in her thirties who owns an outdoor gear shop, wearing a moss green fleece jacket, looking at the camera with a delighted, amazed expression, mouth open in a smile, one hand pointing to the right side of the frame. Bright soft studio lighting, sharp focus, plain light background, no text, no logos.",
+    "reference": null,
+    "service": "ideogram",
+    "sha256": "ce9457d579726a365df089d58ea72250a70fa67bc6f564157e0982969c6c16b5",
+    "surprised": false,
+    "task_id": "ideogram:SjyU1A9ETMyVqQZQ8nm6FA"
+  },
+  {
+    "artefact": "demo/thumbnail/presenter.png",
+    "at": "2026-11-06T00:11:15Z",
+    "balance_after": null,
+    "balance_before": null,
+    "bought": "image",
+    "bytes": 2148258,
+    "credits": 0.06,
+    "expected_credits": 0.06,
+    "measured": false,
+    "outputs": 1,
+    "prompt": "Waist-up photograph of a friendly woman in her thirties who owns an outdoor gear shop, wearing a moss green half-zip fleece, smiling with an excited, amazed expression and looking toward the viewer. Her right arm is stretched out to the side and her index finger points to the right; the whole arm, hand and fingertip are fully inside the frame with empty space to the right of the fingertip. She stands slightly left of centre. Bright soft studio lighting, sharp focus, crisp hair edges, isolated subject on a transparent background, no text, no logos.",
+    "reference": null,
+    "service": "ideogram",
+    "sha256": "3b2c2488ac9dda4ef4a165512fda7c41808a7f0faccd51c756295bc663653fe4",
+    "surprised": false,
+    "task_id": "ideogram:U3Cxa2hkQrCO1sdxD8qm9g"
   }
 ]

@@ -118,6 +118,30 @@ button {
 	flex: 1;
 }
 
+/* The checkout's address form: every row the same distance from the one above. WooCommerce
+   takes the country's top margin away on the assumption that it opens the form; in a locale
+   whose form opens on the name (pt_BR), it sat flush under the name fields while the other
+   rows are 12px apart (WooCommerce's own spacing, kept). */
+.wc-block-components-form .wc-block-components-checkout-step .wc-block-components-address-form__country:not(:first-child) {
+	margin-top: 12px;
+}
+
+/* "Place order" as tall and as legible as the store's other actions, not a thin strip. */
+.wc-block-components-checkout-place-order-button {
+	font-size: var(--wp--preset--font-size--medium);
+	letter-spacing: 0.04em;
+	min-height: 3.5rem;
+}
+
+/* Build my kit's own page: the planner framed as the page's tool, in the lichen of the copilot
+   on a product, with room for the kit it builds below the plan. */
+.viglet-dumont-copilot.tarnfell-plan {
+	background: var(--wp--preset--color--lichen);
+	border-radius: 6px;
+	margin-top: var(--wp--preset--spacing--40);
+	padding: var(--wp--preset--spacing--50);
+}
+
 /* WooCommerce's sale badge, in the brand's action colour at AA contrast. */
 .wc-block-components-product-sale-badge,
 body .woocommerce span.onsale {

@@ -25,6 +25,9 @@ $viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' )
 	? (string) $attributes['heading']
 	: ( $viglet_dumont_shop ? __( 'Ask the catalog', 'viglet-turing-search' ) : __( 'Ask this site', 'viglet-turing-search' ) );
 $viglet_dumont_kit     = isset( $attributes['kit'] ) ? (bool) $attributes['kit'] : $viglet_dumont_shop;
+// The plan alone, for a page of its own: it opens on the plan and offers no question beside it,
+// which on a page about planning read as a second, unrelated tool.
+$viglet_dumont_plan_only = $viglet_dumont_kit && ! empty( $attributes['planOnly'] );
 
 /**
  * A comma-separated attribute as a list of names, or the shop's default when it is blank.
@@ -115,7 +118,7 @@ wp_interactivity_state(
 		'pausedUntil'       => Viglet_Dumont_AI_Quota::visitor_until(),
 		// Build my kit (D201).
 		'kitOffered'        => $viglet_dumont_kit,
-		'mode'              => 'ask',
+		'mode'              => $viglet_dumont_plan_only ? 'kit' : 'ask',
 		'kit'               => array(
 			'shown'    => false,
 			'summary'  => '',
@@ -153,7 +156,7 @@ wp_interactivity_state(
 	data-wp-bind--hidden="!state.available"
 >
 	<h2 id="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"><?php echo esc_html( $viglet_dumont_heading ); ?></h2>
-	<?php if ( $viglet_dumont_kit ) : ?>
+	<?php if ( $viglet_dumont_kit && ! $viglet_dumont_plan_only ) : ?>
 	<div class="viglet-dumont-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-turing-search' ); ?>">
 		<button type="button" data-mode="ask" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.asking"><?php esc_html_e( 'Ask a question', 'viglet-turing-search' ); ?></button>
 		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php echo esc_html( $viglet_dumont_copy['planMode'] ); ?></button>
@@ -170,8 +173,10 @@ wp_interactivity_state(
 							<span class="viglet-dumont-copilot__rank" data-wp-text="context.item.rank"></span>
 							<a data-wp-bind--href="context.item.url" data-wp-text="context.item.title"></a>
 							<span class="viglet-dumont-copilot__shop" hidden data-wp-bind--hidden="!context.item.price">
-								<del hidden data-wp-bind--hidden="!context.item.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-turing-search' ); ?></span> <span data-wp-text="context.item.regular"></span></del>
-								<strong data-wp-text="context.item.price"></strong>
+								<span class="viglet-dumont-copilot__price">
+									<del hidden data-wp-bind--hidden="!context.item.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-turing-search' ); ?></span> <span data-wp-text="context.item.regular"></span></del>
+									<strong data-wp-text="context.item.price"></strong>
+								</span>
 								<button type="button" class="wp-element-button" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.item.adding" data-wp-bind--hidden="!context.item.buyable" data-wp-bind--aria-label="context.item.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-turing-search' ); ?></button>
 								<span role="status" data-wp-text="context.item.cartStatus"></span>
 								<label class="viglet-dumont-copilot__compare" hidden data-wp-bind--hidden="!state.canCompare">
@@ -185,9 +190,15 @@ wp_interactivity_state(
 			</li>
 		</template>
 	</ol>
+	<?php
+	// Compare is for the products an answer cites; the plan alone cites none, and the bar it
+	// would show is the visitor's list from elsewhere, out of place above a plan.
+	if ( ! $viglet_dumont_plan_only ) :
+		?>
 	<p class="viglet-dumont-copilot__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
 		<a class="wp-element-button" data-wp-bind--href="state.compareUrl" data-wp-text="state.compareText"></a>
 	</p>
+	<?php endif; ?>
 	<?php if ( $viglet_dumont_kit ) : ?>
 	<div class="viglet-dumont-copilot__kit" hidden data-wp-bind--hidden="!state.kitShown">
 		<p class="viglet-dumont-copilot__kit-summary" data-wp-text="state.kit.summary"></p>

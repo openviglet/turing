@@ -340,9 +340,15 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		get isLoading() {
 			return 'loading' === state.status;
 		},
-		// Placeholders only for a first search: a later one dims the results it replaces.
+		// Placeholders only for a first search: a later one dims the results it replaces. A
+		// sentence being read is still loading for the shopper: its words as typed found
+		// nothing and the search its filters make is next, so the placeholders stay through the
+		// reading instead of going out between the two searches and coming back (a flicker).
 		get showSkeleton() {
-			return state.isLoading && 0 === state.results.length;
+			return (
+				( state.isLoading || state.readingSentence ) &&
+				0 === state.results.length
+			);
 		},
 		// A sentence still being read is not empty yet: its words as typed found nothing,
 		// and the filters read from them are about to search again (D262).

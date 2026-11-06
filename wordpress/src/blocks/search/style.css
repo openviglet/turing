@@ -45,9 +45,13 @@
 	transform: translateY(-50%);
 }
 
+/* The popup sets its own background, so it sets the text colour that goes with it too: it
+   inherited the box's, and a box on a dark band (a theme's hero, with light text) drew its
+   suggestions in that light text on the popup's white. */
 .viglet-dumont-search__popup {
 	background: var(--wp--preset--color--base, #fff);
 	border: 1px solid currentColor;
+	color: var(--wp--preset--color--contrast, #000);
 	left: 0;
 	padding: 0.25rem 0;
 	position: absolute;
@@ -145,7 +149,10 @@
 	margin-top: 0.5rem;
 }
 
+/* The price on its own line: beside the button on one card and above it on the next, where
+   it fitted or did not, left the buttons of a row at different heights. */
 .viglet-dumont-search__price {
+	flex-basis: 100%;
 	font-weight: 600;
 	margin: 0;
 }
@@ -281,7 +288,8 @@
 		grid-column: 1;
 	}
 
-	.viglet-dumont-search--parts > .wp-block-viglet-dumont-search-results {
+	/* The pages belong to the results: under their column, not under the filters. */
+	.viglet-dumont-search--parts > :is(.wp-block-viglet-dumont-search-results, .wp-block-viglet-dumont-search-pages) {
 		grid-column: 2;
 	}
 
@@ -293,11 +301,11 @@
 		grid-column: 2;
 	}
 
-	.viglet-dumont-search--parts.viglet-dumont-search--facets-right > .wp-block-viglet-dumont-search-results {
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-right > :is(.wp-block-viglet-dumont-search-results, .wp-block-viglet-dumont-search-pages) {
 		grid-column: 1;
 	}
 
-	.viglet-dumont-search--parts.viglet-dumont-search--facets-top > :is(.wp-block-viglet-dumont-search-filters, .wp-block-viglet-dumont-search-results) {
+	.viglet-dumont-search--parts.viglet-dumont-search--facets-top > :is(.wp-block-viglet-dumont-search-filters, .wp-block-viglet-dumont-search-results, .wp-block-viglet-dumont-search-pages) {
 		grid-column: 1 / -1;
 	}
 }
@@ -309,6 +317,19 @@
 
 .viglet-dumont-search--grid .viglet-dumont-search__result {
 	flex-direction: column;
+}
+
+/* A card's price, button and Compare sit at its bottom, so a row's line up whatever the
+   length of each snippet above them. */
+.viglet-dumont-search--grid .viglet-dumont-search__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+
+.viglet-dumont-search--grid .viglet-dumont-search__shop {
+	margin-top: auto;
+	padding-top: 0.5rem;
 }
 
 .viglet-dumont-search--grid .viglet-dumont-search__frame {
@@ -448,7 +469,10 @@
 
 /* The whole picture, whatever its shape, over itself blurred where it
    does not fill the frame: a crop cut the subject out of a portrait. */
+/* Held at the top of its row: stretched to the text beside it, a frame took the height of the
+   snippet and every result's picture came out a different shape. */
 .viglet-dumont-search__frame {
+	align-self: flex-start;
 	aspect-ratio: 4 / 3;
 	background-position: center;
 	background-size: cover;
@@ -611,13 +635,35 @@
 	gap: 1rem;
 }
 
+/* The pages, centred under the results and sized as the block's other controls, not the
+   browser's small default buttons. */
 .viglet-dumont-search__pages {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25rem;
+	gap: 0.5rem;
+	justify-content: center;
+	margin-top: 2rem;
+}
+
+.viglet-dumont-search__pages button {
+	background: transparent;
+	border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+	border-radius: 4px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	min-height: 2.75rem;
+	min-width: 2.75rem;
+	padding: 0 0.75rem;
+}
+
+.viglet-dumont-search__pages button:hover {
+	border-color: currentColor;
 }
 
 .viglet-dumont-search__pages [aria-current="true"] {
+	background: color-mix(in srgb, currentColor 12%, transparent);
+	border: 2px solid currentColor;
 	font-weight: 700;
 }
 
@@ -672,7 +718,7 @@
 
 /* The count, and the sort beside it. */
 .viglet-dumont-search__toolbar {
-	align-items: baseline;
+	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem 1.5rem;
@@ -680,9 +726,24 @@
 }
 
 .viglet-dumont-search__sort {
-	align-items: baseline;
+	align-items: center;
 	display: flex;
-	gap: 0.5rem;
+	gap: 0.75rem;
+	margin: 0;
+}
+
+/* The sort is a control beside the search field: the browser's small default select looked
+   like it belonged to another page. */
+.viglet-dumont-search__sort select {
+	background-color: transparent;
+	border: 1px solid color-mix(in srgb, currentColor 60%, transparent);
+	border-radius: 4px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	min-height: 2.75rem;
+	min-width: 12rem;
+	padding: 0.4rem 0.75rem;
 }
 
 /* Promoted results (Search tuning, D172), above the rest with their badge. */
@@ -726,6 +787,13 @@
 .viglet-dumont-search__trending-label {
 	font-size: 0.875em;
 	opacity: 0.8;
+}
+
+/* A chip keeps its own colour under the pointer and takes a tint of it: a theme's link hover
+   (dark, for a light page) left a chip on a dark band, a home page's hero, unreadable. */
+.viglet-dumont-search__chip:is(:hover, :focus-visible) {
+	background: color-mix(in srgb, currentColor 16%, transparent);
+	color: inherit;
 }
 
 .viglet-dumont-search__trending .viglet-dumont-search__chip {
