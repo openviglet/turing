@@ -1,5 +1,13 @@
 # @viglet/turing-react-sdk
 
+## 2026.3.11
+
+- `fetchSimilar` sends its request as a JSON body to `POST /sn/{site}/search/similar/query` (T1239) instead of a query string, in both SDKs, so a scope of several sites and filters never has to survive a URL. `similarRequestBody` builds that body and is exported. Needs a Turing server with the POST endpoint (2026.3.8 or later).
+
+- The controllers keep a failed call's problem details on `errorProblem`, beside the `error` text (T1240): the answer, chat, search, research, similar and slots controllers, and the React `useTuringAnswer` and `useTuringChat` hooks. A 429 `quota-exhausted` now tells a subscriber `errorProblem.resetsAt`. `problemOf(err)` returns the problem details of any caught error, and is exported from both packages.
+
+- Every hook that returns an `error` now returns `errorProblem` beside it, and so does the search provider's store (T1240): `useTuringSearch`, `useTuringSimilar`, `useTuringCopilot`, `useTuringLlmChat`, `useTuringSemanticChat`, `useTuringSlots` and the rest. The React SDK's `problemOf(err)` also reads the problem body of a call made through axios, so a 429 `quota-exhausted` on a JSON call carries `resetsAt` too.
+
 ## 2026.3.10
 
 - The catalog copilot, its kit and nl-filters take `filters` (field to accepted values) that every read of the call stays inside (T1213), for an SN site several sites share: pass it in the request of `postCopilot` and `postCopilotKit`, in the options of the vanilla `postNlFilters`, or as the last argument of the React SDK's `postCopilot` and `postNlFilters`.
