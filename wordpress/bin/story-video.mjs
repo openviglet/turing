@@ -83,8 +83,9 @@ const videoSuffix = process.argv.includes( '--language' )
 // The narration starts this long after its card shows, and ends this long before the next.
 const voiceLead = 0.4;
 const voiceTail = 0.5;
-// The music bed under the voice: low enough that every word stays clear.
-const musicVolume = 0.12;
+// The music bed under the voice: low enough that every word stays clear, loud enough to be heard
+// on a phone's speaker. At 0.12 it sat some 22 dB under her and was gone on the published video.
+const musicVolume = 0.2;
 const out = join( root, 'tests', 'e2e', 'artifacts', 'video' );
 const size = vertical
 	? { width: 1080, height: 1920 }
@@ -1129,7 +1130,7 @@ const needs = ( lineTakes ) =>
 
 // The music bed's level (D291): up between Ana's lines, down to `musicVolume` under each, with
 // a short ramp either side so it never jumps.
-const duck = { between: 0.3, ramp: 0.4 };
+const duck = { between: 0.4, ramp: 0.4 };
 
 /**
  * How far the music is pulled down at a moment, 0 to 1: a take's span with its ramps.
@@ -1533,6 +1534,7 @@ const cardPiece = ( i ) => ( {
  * @param {number}   i     The card's index.
  * @param {string}   name  The line spoken over it.
  * @param {string[]} shots Stills to show after the title.
+ * @return {string[]} The shots it showed.
  */
 const titleCard = ( i, name, shots = [] ) => {
 	const lineTakes = takes( name );
@@ -1541,7 +1543,7 @@ const titleCard = ( i, name, shots = [] ) => {
 	clock += length;
 	if ( ! shots.length || length < titleSeconds + shotSeconds ) {
 		place( still( i, length ), cardPiece( i ) );
-		return;
+		return [];
 	}
 	// The cuts follow the longest take's pauses, as they fall on the video.
 	const longest = lineTakes.reduce( ( a, b ) =>
@@ -1558,7 +1560,9 @@ const titleCard = ( i, name, shots = [] ) => {
 	}
 	place( still( i, titleSeconds ), cardPiece( i ) );
 	const bounds = [ titleSeconds, ...cuts, length ];
+	const shown = [];
 	for ( let n = 0; n < bounds.length - 1; n++ ) {
+		shown.push( shots[ n % shots.length ] );
 		const shotFile = shotOf(
 			shots[ n % shots.length ],
 			bounds[ n + 1 ] - bounds[ n ],
@@ -1568,6 +1572,7 @@ const titleCard = ( i, name, shots = [] ) => {
 		// A shot is placed as rendered: its zoom and drift, or its trim of looped footage.
 		place( shotFile, { track: 'V3', source: shotFile, at: 0 } );
 	}
+	return shown;
 };
 
 // The opening and closing talk about the shop and the hills: the photos bought for it
@@ -2110,7 +2115,7 @@ const chapterClips = await pool(
 );
 
 // The developer walkthrough opens and closes on its cards alone: the hills belong to Ana's shop.
-titleCard( 0, 'intro', developer ? [] : broll );
+const openingShots = titleCard( 0, 'intro', developer ? [] : broll );
 for ( const [ i, { start } ] of chapters.entries() ) {
 	const clip = chapterClips[ i ];
 	// The chapter's card is its title alone: Ana's line about it is spoken over the action
@@ -2191,7 +2196,15 @@ for ( const [ i, { start } ] of chapters.entries() ) {
 	}
 	cues.push( { from, to: clock, chapter: i } );
 }
-titleCard( cards.length - 1, 'outro', developer ? [] : [ ...broll ].reverse() );
+// The closing opens on the footage the opening left unseen, moving like the opening does, then
+// the rest as before; a still with a zoom there read as the slideshow the opening is not.
+const closingShots = [
+	...clips.filter( ( clip ) => ! openingShots.includes( clip ) ).reverse(),
+	...[ ...broll ]
+		.reverse()
+		.filter( ( source ) => ! clips.includes( source ) ),
+];
+titleCard( cards.length - 1, 'outro', developer ? [] : closingShots );
 // The video ends on the closing card, alone and long enough to read its two addresses: under
 // the outro it gives way to the footage after its title (D275).
 const closingSeconds = 6;

@@ -166,9 +166,10 @@ project does not carry the moves yet.
   sit louder under the voice. Cut it into a loop first with polyweave (`python -m polyweave
   sound.loop --track <wav> --out <loop.wav>`), which keeps the cut on the beat and checks the
   seam; `sound.stems` says whether it carries vocals.
-- The music bed ducks under every line: 0.12 under a take, 0.3 between takes, with a 0.4 s
-  ramp either side (about 8 dB). The project carries the same envelope as volume keyframes
-  on A2, so it can be moved in Fairlight.
+- The music bed ducks under every line: 0.2 under a take, 0.4 between takes, with a 0.4 s
+  ramp either side (about 6 dB). At 0.12 and 0.3 the first published video had no music to a
+  phone's speaker: it sat some 22 dB under her voice, which runs nearly the whole video. The
+  project carries the same envelope as volume keyframes on A2, so it can be moved in Fairlight.
 - The mix is set to -14 LUFS integrated, YouTube's playback level, under -1 dBTP: a measured
   gain, a limiter 1.5 dB under the ceiling (AAC overshoots a sample-peak limit), and a few
   corrections until it is within 0.3 LU. loudnorm alone stopped at -15.1. The script prints
