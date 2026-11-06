@@ -335,7 +335,7 @@ Beyond the standard settings, each field can override the site-level facet behav
 |---|---|
 | **Facet Type** | Overrides the site-level operator between this facet and others (`AND` / `OR`) |
 | **Facet Item Type** | Overrides the site-level operator between values within this facet (`AND` / `OR`) |
-| **Facet Range** | Enables date range faceting for this field. Instead of listing discrete values, the facet groups documents by predefined date periods: **day**, **month**, or **year** |
+| **Facet Range** | Enables date range faceting for this field. Instead of listing discrete values, the facet groups documents by predefined date periods: **day**, **month**, or **year**. Shown only for a `DATE` field; any other type is saved with the range disabled |
 
 A date field configured with **Facet Range** groups results into date period buckets rather than listing individual values. The available granularities are **day**, **month**, and **year**, selected in the field configuration. The response returns one facet item per period that has at least one matching document, each with its pre-built filter link.
 

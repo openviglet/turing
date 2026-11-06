@@ -71,8 +71,10 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
     facetSort: snField.facetSort ?? "DEFAULT",
     facetType: snField.facetType ?? "DEFAULT",
     facetItemType: snField.facetItemType ?? "DEFAULT",
-    facetRange: snField.facetRange ?? "DISABLED"
+    // T1248 — a range is a date-field setting; any other type carries DISABLED.
+    facetRange: snField.type === "DATE" ? (snField.facetRange ?? "DISABLED") : "DISABLED"
   } as TurSNSiteField), [snField]);
+  const isDateField = snField.type === "DATE";
 
   const form = useForm<TurSNSiteField>({
     defaultValues: normalizedField
@@ -161,6 +163,7 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
         enabled: snField.enabled ?? 0,
         required: snField.required ?? 0,
         facet: snField.facet ?? 0,
+        facetRange: snField.type === "DATE" ? (snField.facetRange ?? "DISABLED") : "DISABLED",
       };
 
       if (isNew) {
@@ -443,8 +446,8 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                     </FormItemTwoColumns>
                   )}
                 />
-                {/* Facet Range Select */}
-                <FormField
+                {/* Facet Range Select — T1248: a date-field setting only */}
+                {isDateField && <FormField
                   control={form.control}
                   name="facetRange"
                   render={({ field }) => (
@@ -474,7 +477,7 @@ export const SNSiteFacetedFieldForm: React.FC<Props> = ({ snSiteId, snField, isN
                       <FormMessage />
                     </FormItemTwoColumns>
                   )}
-                />
+                />}
             </SNFormSection>
 
             {/* Action Footer */}

@@ -278,6 +278,11 @@ public class TurSNSiteFieldExtAPI {
                 .build());
     }
 
+    /** T1248 — the range a field of {@code type} keeps: its own on a DATE field, else DISABLED. */
+    static TurSNSiteFacetRangeEnum facetRangeFor(TurSEFieldType type, TurSNSiteFacetRangeEnum range) {
+        return TurSEFieldType.DATE.equals(type) && range != null ? range : TurSNSiteFacetRangeEnum.DISABLED;
+    }
+
     private void updateFieldExtProperties(TurSNSiteFieldExt existing, TurSNSiteFieldExt payload) {
         if (payload == null || existing == null) {
             return;
@@ -289,7 +294,8 @@ public class TurSNSiteFieldExtAPI {
         existing.setFacet(payload.getFacet());
         existing.setFacetName(payload.getFacetName());
         existing.setMultiValued(payload.getMultiValued());
-        existing.setFacetRange(payload.getFacetRange());
+        // T1248 — a range is a date-field setting: any other type stores DISABLED.
+        existing.setFacetRange(facetRangeFor(payload.getType(), payload.getFacetRange()));
         existing.setFacetSort(payload.getFacetSort());
         existing.setFacetType(payload.getFacetType());
         existing.setFacetItemType(payload.getFacetItemType());

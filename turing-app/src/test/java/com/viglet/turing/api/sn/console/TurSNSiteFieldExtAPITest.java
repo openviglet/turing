@@ -933,4 +933,16 @@ class TurSNSiteFieldExtAPITest {
                                         .hasMessageContaining("searchWeight");
                 }
         }
+
+        /** T1248 — a range is kept on a DATE field only; any other type stores DISABLED. */
+        @Test
+        void facetRangeIsKeptOnlyOnADateField() {
+                var month = com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum.MONTH;
+                var disabled = com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum.DISABLED;
+                assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.DATE, month)).isEqualTo(month);
+                assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.DATE, null)).isEqualTo(disabled);
+                assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.STRING, month)).isEqualTo(disabled);
+                assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.TEXT, month)).isEqualTo(disabled);
+                assertThat(TurSNSiteFieldExtAPI.facetRangeFor(null, month)).isEqualTo(disabled);
+        }
 }

@@ -27,10 +27,6 @@
 
 - 📋 **T1262** (deps: —) **Solr standalone index and delete calls name no core, so the RAG BM25 and intent indexes stay empty on Solr** — The plugin's standalone writes post to the node's /solr/update, which answers 404, and the failure is only logged. → §CLXXV.7
 
-## Block AG — Bento UI: complete the interface migration (§XXXI)
-
-- 📋 **T1248** (deps: —) **The faceted-field form shows the date Range select for every field type, not only DATE** — A range set on a text or string field does nothing useful and leaves a stale setting behind (GitHub #72). → §XXXI.15
-
 ## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
 
 - 📋 **T1251** (deps: —) **turing.viglet.org/wordpress, the address the plugin video ends on, only redirects to Dumont** — The plugin talks to Turing directly, so its page, video and demo belong on Turing's site, with a link to Dumont for other sources. → §CLXXXI.1

@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
-## Block AG — Bento UI: complete the interface migration (§XXXI)
-
 ## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
@@ -1483,25 +1481,6 @@ rest cheap:
 
 The read paths already use React Query hooks (`api/queries/*.queries.ts`), which
 the bento pages consume directly — no data-layer work per screen.
-
-### XXXI.15 Range only for date fields (GitHub #72) (T1248)
-
-**Where it came from.** GitHub issue #72 (2024): the field's Range option should only
-appear for a date field.
-
-**What happens today.** `components/sn/facet/sn.site.faceted.field.form.tsx` (used by
-the bento faceted-field page) always renders the **Range** select (`facetRange`:
-disabled, day, month, year), whatever the field's type. On a text or string field the
-option does nothing useful, and setting it confuses the facet.
-
-**What Turing should do.** Render the Range select only when the field's type is `DATE`,
-and save `DISABLED` for any other type, so a field whose type changes away from DATE
-does not keep a stale range. The backend should treat a range on a non-date field as
-disabled too, so an old row or an API write cannot turn it on.
-
-**Done when:** the faceted-field form shows Range for a DATE field and hides it for
-STRING, a vitest test covers both, and a non-date field with a stored range renders a
-plain facet.
 
 ## XXXIII. Evaluation platform — pluggable graders + datasets (Block AJ)
 
