@@ -34,6 +34,10 @@
 
 - 📋 **T1241** (deps: —) **A manifest that creates a site and declares a RECREATE migration answers 500, and the field-ext PUT answers 400** — A connector cannot create a site with the fields it needs in one call, nor fix one through the API. → §CLXXIX.1
 
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+- 📋 **T1242** (deps: —) **Lucene keeps stopwords: a pt_BR search for 'uma barraca para 2 pessoas' matches and highlights 'uma' and 'para'** — Function words rank and get highlighted as if they were the search, where the same site on Solr drops them. → §CLXXV.3
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

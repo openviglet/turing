@@ -31,3 +31,5 @@
 
 ## Block CS — Schema changes through the manifest converge in one call
 
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
