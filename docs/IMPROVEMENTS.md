@@ -2347,20 +2347,6 @@ with its photo and narration provenance, the end-user docs and the release workf
 Dumont keeps one tile and a redirect. In this repository the plugin builds against the
 SDK from the same commit and is released with tags of the form wordpress-v*.
 
-### CLXXXII.3 The plugin's docs move to turing-docs (T1254)
-
-dumont-site/docs/src/content/docs/connectors/wordpress.md (775 lines: how it works,
-install, connect to Turing, what gets indexed, several sites, WP-CLI, admin, search,
-Playground, local Docker) and wordpress-turing.md (the features tour) move into
-frontend/apps/docs/src/content/docs under an integrations/wordpress section, with the
-nine dumont-wordpress-*.png screenshots. They get sidebar entries in
-sidebar.generated.json and a row in COVERAGE.md. The six Turing pages that mention
-WordPress in passing (intro, integration, architecture-overview, javascript-sdk,
-rest-api, installation-guide) link to the new page. The pages carry the names T1253 gave
-the plugin, not Dumont's: `wp turing`, the viglet-turing/* blocks, the viglet-turing/v1
-REST namespace, VIGLET_TURING_* constants and viglet_turing_* filters. Done when pnpm
---filter turing-docs build passes its link gate.
-
 ### CLXXXII.4 Port the plugin workflow as manual dispatch (T1255)
 
 wordpress-plugin.yml in Dumont runs check (PHP 8.1 and 8.5), admin, plugin-check, e2e

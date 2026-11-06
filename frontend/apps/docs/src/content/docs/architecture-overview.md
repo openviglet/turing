@@ -32,7 +32,7 @@ graph LR
     end
 
     subgraph External [" 🔌 External Services "]
-        CON["📡 Dumont\nWebCrawler · DB · FS\nAEM · WordPress"]
+        CON["📡 Dumont\nWebCrawler · DB · FS\nAEM"]
         KC["🔑 Keycloak\nOAuth2 / OIDC"]
         LLM["🧠 LLM Providers\nClaude · OpenAI\nAzure · Gemini · Ollama"]
     end
@@ -202,7 +202,7 @@ The **Semantic Navigation Site** is the central configuration artifact that driv
 
 **Spotlight persistence:** When an incoming document matches a configured Spotlight (for example, its URL or ID matches a spotlight term) the pipeline indexes the document in Solr normally and also persists the spotlight content (title, description, URL, position) in the relational database. This ensures the spotlight data remains available for injection even if the document is later removed from the Solr index.
 
-**Viglet Dumont:** The connector system that feeds Turing. It runs as a separate application and manages its own connector lifecycle (schedules, credentials, field mappings). Connectors currently available in Dumont include WebCrawler (Nutch-based), Database, FileSystem, AEM, and WordPress. Refer to the Dumont documentation for connector configuration.
+**Viglet Dumont:** The connector system that feeds Turing. It runs as a separate application and manages its own connector lifecycle (schedules, credentials, field mappings). Connectors currently available in Dumont include WebCrawler (Nutch-based), Database, FileSystem and AEM. Refer to the Dumont documentation for connector configuration. A WordPress site is indexed by the [Viglet Turing Search plugin](/docs/integrations/wordpress/) instead, from inside WordPress.
 
 **Merge Providers:** When two Dumont connectors independently index different representations of the same real-world document (for example, AEM indexing structured metadata from `model.json` and WebCrawler indexing the rendered HTML of the same page) the Merge Provider identifies them as the same document using a configured join key and merges their fields before writing to Solr. See [Semantic Navigation](/docs/semantic-navigation/) for a detailed explanation.
 

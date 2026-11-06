@@ -4,7 +4,7 @@ description: "@viglet/turing-sdk, a zero-dependency, framework-agnostic JavaScri
 ---
 **`@viglet/turing-sdk`** is a **zero-dependency**, framework-agnostic JavaScript client for the Viglet Turing API. No React, no axios, just native `fetch`, `TextDecoder`, `EventSource` and `crypto.randomUUID`. It ships as a self-contained ESM bundle (`dist/turing-sdk.js`) plus a UMD build and TypeScript types.
 
-**When you'd reach for it.** Use this SDK when you're building a search box or chat widget **outside React**: an [Adobe Edge Delivery Services (EDS)](#adobe-eds) block, a plain `<script>` tag, an Astro island, a WordPress theme, or any bundler-based app. If you're in a React app, use **[`@viglet/turing-react-sdk`](/docs/react-sdk/)** instead: it's the same backend and the same `Tur*` types, exposed as hooks. This vanilla SDK was extracted from the React SDK's framework-agnostic `core/` layer (axios → `fetch`), so the two stay in lockstep.
+**When you'd reach for it.** Use this SDK when you're building a search box or chat widget **outside React**: an [Adobe Edge Delivery Services (EDS)](#adobe-eds) block, a plain `<script>` tag, an Astro island, a [WordPress theme](/docs/integrations/wordpress/#building-your-own-search-on-the-sdk), or any bundler-based app. If you're in a React app, use **[`@viglet/turing-react-sdk`](/docs/react-sdk/)** instead: it's the same backend and the same `Tur*` types, exposed as hooks. This vanilla SDK was extracted from the React SDK's framework-agnostic `core/` layer (axios → `fetch`), so the two stay in lockstep.
 
 > **The mental model.** The SDK has three layers, from lowest to highest:
 >

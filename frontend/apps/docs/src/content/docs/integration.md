@@ -158,7 +158,8 @@ Built-in SSRF protection validates the endpoint before forwarding. Requests to p
 | [Semantic Navigation](/docs/semantic-navigation/) | Configure the SN Sites that receive indexed content |
 | [Architecture Overview](/docs/architecture-overview/) | End-to-end indexing flow from connector to Solr |
 | [REST API Reference](/docs/rest-api/) | API endpoints for programmatic indexing |
-| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem, WordPress) and how to deploy them |
+| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem) and how to deploy them |
+| [WordPress](/docs/integrations/wordpress/) | The Viglet Turing Search plugin: indexes a WordPress site and serves its search, with no connector process |
 | [Dumont: REST API](https://dumont.viglet.org/docs/rest-api/) | Connector-side API for triggering indexing, monitoring, and source management |
 
 ---

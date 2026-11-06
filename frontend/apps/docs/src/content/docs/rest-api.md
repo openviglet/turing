@@ -120,7 +120,7 @@ POST http://localhost:2700/api/sn/{siteName}/search
 | `p` | | Page number (default: `1`) |
 | `rows` | | Results per page (overrides site default) |
 | `sort` | | Sort field and direction (e.g., `date desc`) |
-| `fq[]` | | Filter query: apply a facet filter (e.g., `fq[]=type:news`). A leading `-` excludes the value instead: `fq[]=site_key:a&fq[]=-source_apps:wordpress` answers the documents under `a` that did not come from WordPress. An exclusion always narrows, whatever `fq.op` or `fqi.op` say, also inside `fq.or[]`, and on its own it matches every other document. A Content AI source answers 400, as it cannot exclude |
+| `fq[]` | | Filter query: apply a facet filter (e.g., `fq[]=type:news`). A leading `-` excludes the value instead: `fq[]=site_key:a&fq[]=-source_apps:wordpress` answers the documents under `a` that did not come from the [WordPress plugin](/docs/integrations/wordpress/). An exclusion always narrows, whatever `fq.op` or `fqi.op` say, also inside `fq.or[]`, and on its own it matches every other document. A Content AI source answers 400, as it cannot exclude |
 | `fq.and[]` / `fq.or[]` | | Filter queries every result must match / of which a result must match one |
 | `fq.op` | | How filters on different fields combine: `AND`, `OR` or `NONE` (the site's setting) |
 | `fqi.op` | | How the values of one field combine: `AND`, `OR` or `NONE`. `fqi.op=OR` with `fq[]=site_key:a&fq[]=site_key:b` returns both sites' documents, and applies to every field in the request |

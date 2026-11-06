@@ -11,8 +11,8 @@ export const LINKS = {
   // Connectors ship in the Dumont project; the AEM connector docs live under
   // the /dumont route (docs-dumont/connectors/aem.md), not under /turing.
   aemConnector: "https://docs.viglet.org/dumont/connectors/aem",
-  // T1251 — the WordPress plugin's docs are still Dumont's until T1254 moves them here.
-  wordpressDocs: "https://dumont.viglet.org/docs/connectors/wordpress/",
+  // T1254 — the WordPress plugin's docs, moved here from Dumont's site.
+  wordpressDocs: withBase("/docs/integrations/wordpress/"),
   // The demo store in WordPress Playground, through this site's own short link.
   wordpressDemo: withBase("/wp-demo/"),
   // The connector platform for the sources WordPress is not (AEM, databases, files).

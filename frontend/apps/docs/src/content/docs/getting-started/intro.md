@@ -20,7 +20,7 @@ Enable generative AI on your search site and let users ask questions in natural 
 Compose AI Agents that combine a language model with a curated set of tools: search your content, browse the web, run code, query financial data, call external systems via MCP, and more. Each agent appears as a chat tab ready to assist users.
 
 ### Connect any content source
-Turing receives content from **Viglet Dumont**, a companion application that provides connectors for web crawlers, databases, file systems, AEM, and WordPress. Connectors run independently and push content to Turing through its REST API.
+Turing receives content from **Viglet Dumont**, a companion application that provides connectors for web crawlers, databases, file systems and AEM. Connectors run independently and push content to Turing through its REST API. A WordPress site uses the [Viglet Turing Search plugin](/docs/integrations/wordpress/) instead, which runs inside WordPress.
 
 ### Integrate with any stack
 Consume Turing from your application via **REST API**, **GraphQL**, the **Java SDK** (available on Maven Central), or the **JavaScript / TypeScript SDK** `@viglet/turing-sdk` (available on npm).

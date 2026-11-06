@@ -441,7 +441,7 @@ Each service installed individually following this guide:
 
 ### Connectors
 
-Content ingestion is handled by **Viglet Dumont**, a separate application. Available connectors include WebCrawler (Apache Nutch), Database, FileSystem, AEM, and WordPress. Refer to the [Dumont documentation](https://dumont.viglet.org/docs/) for connector setup.
+Content ingestion is handled by **Viglet Dumont**, a separate application. Available connectors include WebCrawler (Apache Nutch), Database, FileSystem and AEM. Refer to the [Dumont documentation](https://dumont.viglet.org/docs/) for connector setup. A WordPress site needs no connector: install the [Viglet Turing Search plugin](/docs/integrations/wordpress/).
 
 **Prerequisites:**
 1. A server with access to the content sources to be indexed

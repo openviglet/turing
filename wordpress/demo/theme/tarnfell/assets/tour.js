@@ -8,7 +8,7 @@
  * the tour, the site and the story walk the demo in one order across pages.
  */
 ( () => {
-	const docs = 'https://dumont.viglet.org/docs/connectors/wordpress/';
+	const docs = 'https://turing.viglet.org/docs/integrations/wordpress/';
 	const pt = ( document.documentElement.lang || '' ).startsWith( 'pt' );
 	const text = pt
 		? {

@@ -65,6 +65,19 @@
           },
           {
             "slug": "integration-aem"
+          },
+          {
+            "label": "WordPress",
+            "collapsed": true,
+            "items": [
+              {
+                "label": "Plugin",
+                "slug": "integrations/wordpress"
+              },
+              {
+                "slug": "integrations/wordpress/features"
+              }
+            ]
           }
         ]
       },
