@@ -108,29 +108,41 @@ function sourcesOf( message ) {
 		url: c.url,
 		title: c.documentTitle,
 		sourceId: c.sourceId,
+		// A citation names its source by id; that source says its type (T1264).
+		type: ( message.sources || [] ).find(
+			( s ) => s.sourceId === c.sourceId
+		)?.type,
 	} ) );
 	return ( cited.length ? cited : message.sources || [] )
 		.filter( ( s ) => s.url && ! seen.has( s.url ) && seen.add( s.url ) )
 		.map( ( s ) => ( {
 			url: siteUrl( s.url, s.sourceId ),
 			title: s.title || s.url,
+			type: s.type || '',
 		} ) );
 }
 
 /**
  * The results page for a question (T1258), for an answer that cites more posts than it can
- * list: where the visitor sees everything the site has on it.
+ * list: where the visitor sees everything the site has on it, filtered to the posts' type
+ * when they all share one (T1264), as the overlay's "See all" filters (D311).
  *
  * @param {string} question What the visitor asked.
+ * @param {Array}  sources  The posts the answer lists, each with its `type` when Turing knows it.
  * @return {string} The URL, or '' without a question or a results page.
  */
-function resultsFor( question ) {
+function resultsFor( question, sources = [] ) {
 	if ( ! question || ! state.searchPage ) {
 		return '';
 	}
 	try {
 		const url = new URL( state.searchPage, window.location.href );
 		url.searchParams.set( state.queryParam || 's', question );
+		const types = new Set( sources.map( ( source ) => source.type ) );
+		const [ type ] = types;
+		if ( 1 === types.size && type ) {
+			url.searchParams.append( 'fq[]', `type:${ type }` );
+		}
 		return url.href;
 	} catch {
 		return '';
@@ -204,7 +216,9 @@ function sync( s ) {
 			form: current && message.form?.fields?.length ? message.form : null,
 			// More posts than it lists (T1258): the results page has them all.
 			more:
-				done && sources.length > 3 ? resultsFor( asked?.content ) : '',
+				done && sources.length > 3
+					? resultsFor( asked?.content, sources )
+					: '',
 			canRate:
 				done && ! rated.has( message.id ) && ! seeded.has( message.id ),
 			rated: rated.has( message.id ),

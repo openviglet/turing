@@ -85,7 +85,7 @@ public record TurAnswerCitation(
                 source.rank() == null ? 0 : source.rank(),
                 source.sourceId(), source.title(), source.url(), source.score(),
                 source.chunkIndex(), source.keywordOnly(),
-                null, null, null, null);
+                null, null, null, null, source.type());
     }
 
     /** @return a copy carrying {@code footnote} as its rank (identity when equal). */

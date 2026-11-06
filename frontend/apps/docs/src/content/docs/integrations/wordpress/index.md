@@ -772,7 +772,9 @@ with **Ask a follow-up in the assistant**. It opens the assistant with the searc
 answer, sources included, as the conversation's first exchange, so "and on Saturdays?" is
 read as a follow-up instead of starting over. The other way, an assistant answer that cites
 more than three posts ends with **See every result for this question**, which opens the
-site's results page for that question.
+site's results page for that question, filtered to the posts' type when they all share one
+(all products, say). The type comes from Turing with each source (2026.3 builds after T1264,
+for a site that indexes a `type` field); without it the page opens unfiltered.
 
 **Guided conversations.** A [chat flow](/docs/chat-flow/) built for the SN site's chat runs
 in the Site assistant as it does in Turing: the choices a step offers show as buttons (typing

@@ -50,6 +50,34 @@ class TurRagSourceTest {
         assertThat(source.keywordOnly()).isFalse();
     }
 
+    /** T1264 — the document's type rides on the source, so a client can filter by it. */
+    @Test
+    void carriesTheDocumentTypeThroughNumberingAndCitation() {
+        Map<String, Object> meta = new LinkedHashMap<>();
+        meta.put(TurSNGenAi.SOURCE_ID, "tarnfell:post:12");
+        meta.put("url", "https://tarnfell.example/glaramara");
+        meta.put("type", List.of("product", "bundle"));
+        Document doc = Document.builder().id("chunk-1").text("body").metadata(meta).score(0.8).build();
+
+        TurRagSource numbered = TurRagSource.fromDocument(doc).withRank(2);
+
+        assertThat(numbered.type()).isEqualTo("product");
+        assertThat(numbered.rank()).isEqualTo(2);
+        assertThat(com.viglet.turing.genai.citation.TurAnswerCitation.fromRagSource(numbered).type())
+                .isEqualTo("product");
+    }
+
+    @Test
+    void aSourceWithoutATypeSaysNone() {
+        Map<String, Object> meta = new LinkedHashMap<>();
+        meta.put(TurSNGenAi.SOURCE_ID, "doc-1");
+        meta.put("type", " ");
+        Document doc = Document.builder().id("chunk-1").text("body").metadata(meta).build();
+
+        assertThat(TurRagSource.fromDocument(doc).type()).isNull();
+        assertThat(new TurRagSource("doc-1", "A", "u", null, 0.5, false).type()).isNull();
+    }
+
     @Test
     void extractsAssetMetadataWithDownloadUrl() {
         Map<String, Object> meta = new LinkedHashMap<>();

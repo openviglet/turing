@@ -750,6 +750,8 @@ export interface TurChatSource {
   score?: number | null;
   /** `true` when this chunk reached the answer via the keyword (BM25) fallback only. */
   keywordOnly?: boolean;
+  /** T1264 — the source document's indexed `type` (first value), when the site carries it. */
+  type?: string | null;
   /**
    * T832/T837 — 1-based footnote assigned by the answer engine so a source chip
    * carries the same number the answer's `[n]` markers cite. Present on the

@@ -2443,25 +2443,6 @@ citations event arrives after the block has drawn the list.
 test covers an answer with no citations, and the story video's chapter 2 is recorded
 again with it.
 
-### CLXXXII.11 Chat sources say their document type (from T1258) (T1264)
-
-T1258 gave the WordPress plugin's Site assistant a link to the results page when an
-answer cites more than three posts. Its design also wanted that link filtered to the
-cited posts' type when they share one (all products, all events), as the overlay's "See
-all" opens the results page with `fq[]=type:<type>` (D311). That half could not be
-built: a chat answer's `TurChatSource` (sourceId, title, url, chunkIndex, score) and
-`TurChatCitation` carry no document type, and the plugin's document ids (`<site
-key>:post:<id>`) do not name one either, so the browser would need one search per cited
-post to learn it.
-
-Turing knows the type when it retrieves the passage: the SN document's `type` field. The
-chat conversation's `sources` event adds an optional `type` per source (the first value
-when the field holds several, as the plugin's documentType() reads it), the SDK's
-TurChatSource and TurAnswerCitation gain it as optional, and a client that ignores it is
-unchanged. The plugin then appends `fq[]=type:<type>` to the "See every result" link
-when every cited source shares the type. Done when an assistant answer citing four
-products links to the results page filtered to products.
-
 ### CLXXXII.12 Answer citations say when the answer cited nothing (from T1261) (T1265)
 
 T1261 found it while fixing the WordPress plugin's answer panel. The answer engine's

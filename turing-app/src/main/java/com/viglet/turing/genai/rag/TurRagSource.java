@@ -49,12 +49,22 @@ import com.viglet.turing.genai.provider.store.lucene.TurLuceneVectorStore;
  *                   so a chip carries the same number the answer prose cites;
  *                   {@code null} until numbering runs (e.g. straight off
  *                   {@link #fromDocument})
+ * @param type       T1264 — the source document's indexed {@code type} (the first
+ *                   value when it holds several), from the chunk's metadata, so a
+ *                   client can filter a results page to what an answer cited;
+ *                   {@code null} when the site does not carry the field
  *
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
 public record TurRagSource(String sourceId, String title, String url,
-        Integer chunkIndex, Double score, boolean keywordOnly, Integer rank) {
+        Integer chunkIndex, Double score, boolean keywordOnly, Integer rank, String type) {
+
+    /** A numbered source with no known type. */
+    public TurRagSource(String sourceId, String title, String url,
+            Integer chunkIndex, Double score, boolean keywordOnly, Integer rank) {
+        this(sourceId, title, url, chunkIndex, score, keywordOnly, rank, null);
+    }
 
     /**
      * Retrieval-time convenience constructor: a source starts life un-numbered
@@ -63,13 +73,13 @@ public record TurRagSource(String sourceId, String title, String url,
      */
     public TurRagSource(String sourceId, String title, String url,
             Integer chunkIndex, Double score, boolean keywordOnly) {
-        this(sourceId, title, url, chunkIndex, score, keywordOnly, null);
+        this(sourceId, title, url, chunkIndex, score, keywordOnly, null, null);
     }
 
     /** @return a copy of this source carrying {@code footnote} as its rank. */
     public TurRagSource withRank(int footnote) {
         return (rank != null && rank == footnote) ? this
-                : new TurRagSource(sourceId, title, url, chunkIndex, score, keywordOnly, footnote);
+                : new TurRagSource(sourceId, title, url, chunkIndex, score, keywordOnly, footnote, type);
     }
 
     private static final String OBJECT_NAME = "objectName";
@@ -77,6 +87,7 @@ public record TurRagSource(String sourceId, String title, String url,
     private static final String CONTENT_TYPE = "contentType";
     private static final String CHUNK_INDEX = "chunkIndex";
     private static final String CHUNK_INDEX_SNAKE = "chunk_index";
+    private static final String TYPE = "type";
 
     /**
      * Extracts provenance metadata from a retrieved Spring AI {@link Document},
@@ -118,7 +129,17 @@ public record TurRagSource(String sourceId, String title, String url,
             title = contentType;
         }
 
-        return new TurRagSource(sourceId, title, url, chunkIndex, doc.getScore(), keywordOnly);
+        return new TurRagSource(sourceId, title, url, chunkIndex, doc.getScore(), keywordOnly,
+                null, typeOf(meta.get(TYPE)));
+    }
+
+    /** T1264 — a metadata value as one type: the first of several, {@code null} when blank. */
+    static String typeOf(Object value) {
+        Object first = value instanceof java.util.Collection<?> values
+                ? values.stream().filter(java.util.Objects::nonNull).findFirst().orElse(null)
+                : value;
+        String type = str(first).trim();
+        return type.isEmpty() ? null : type;
     }
 
     /**
