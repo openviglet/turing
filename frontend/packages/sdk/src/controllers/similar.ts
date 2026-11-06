@@ -5,6 +5,7 @@ import {
   type TurSimilarMode,
   type TurSimilarResult,
 } from "../api.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 
 /**
@@ -33,6 +34,8 @@ export interface SimilarControllerState {
   seedId: string | null;
   results: TurSimilarResult[];
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
 }
 
 export interface SimilarControllerOptions {
@@ -63,6 +66,7 @@ export function createSimilarController(
     seedId: null,
     results: [],
     error: null,
+    errorProblem: undefined,
   });
 
   // Monotonic request id — a late response from a superseded load is dropped.
@@ -73,7 +77,7 @@ export function createSimilarController(
     overrides?: Partial<Omit<FetchSimilarParams, "id">>,
   ): Promise<void> {
     const requestId = ++latestRequestId;
-    store.setState({ status: "loading", seedId: documentId, error: null });
+    store.setState({ status: "loading", seedId: documentId, error: null, errorProblem: undefined });
     try {
       const results = await fetchSimilar(client, site, {
         id: documentId,
@@ -88,6 +92,7 @@ export function createSimilarController(
       if (requestId !== latestRequestId) return;
       store.setState({
         error: err instanceof Error ? err.message : "Similar lookup failed",
+        errorProblem: problemOf(err),
         status: "error",
       });
     }
@@ -95,7 +100,7 @@ export function createSimilarController(
 
   function clear(): void {
     latestRequestId++;
-    store.setState({ status: "idle", seedId: null, results: [], error: null });
+    store.setState({ status: "idle", seedId: null, results: [], error: null, errorProblem: undefined });
   }
 
   return {

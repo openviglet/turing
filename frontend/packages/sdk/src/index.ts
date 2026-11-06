@@ -16,7 +16,7 @@
 // message. `status` is a field on TuringHttpError; TuringTransportError means the
 // request produced no usable response (refused, offline, CORS, empty body).
 // T1079 — TuringTimeoutError (a TuringTransportError) when the client's timeoutMs elapses.
-export { TuringHttpError, TuringTimeoutError, TuringTransportError } from "./errors.js";
+export { TuringHttpError, TuringTimeoutError, TuringTransportError, problemOf } from "./errors.js";
 export type { TuringProblem } from "./errors.js";
 
 // ── Client ──

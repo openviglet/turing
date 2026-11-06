@@ -2388,29 +2388,25 @@ and repair report the engine's own state; no class under `api/sn/console` import
 ### CLXXVI.2 Problem details in controller state (T1240)
 
 **Where it came from.** Dumont D336 (the WordPress plugin): with the site's AI budget
-spent, the overlay's instant answer (`createAnswerController`) and the Site assistant
-(`createChatController`) should say when answers come back. T1234 put the
-problem-details body on `TuringHttpError.problem`, which a direct call (`client.post`)
-now reads.
+spent, the overlay's instant answer and the Site assistant should say when answers come
+back. T1234 put the problem-details body on `TuringHttpError.problem`.
 
-**What happens.** The controllers catch that error and keep only text:
-`AnswerState.error`, `ChatControllerState.error` (and the search, research, similar and
-slots controllers) are `string | null` (`dist/controllers/*.d.ts` in 2026.3.17). A 429
-`quota-exhausted` reaches the subscriber as `"HTTP 429"`, so `resetsAt`, `detail` and
-`upgradeUrl` are lost again on exactly the surfaces that stream.
+**What landed (part).** `problemOf(err)` in `errors.ts`, exported from both packages,
+and an additive `errorProblem?: TuringProblem` beside `error` in the six vanilla
+controllers and in `useTuringAnswer` and `useTuringChat` (through
+`streaming-chat-core.ts`, which also backs `useTuringLlmChat`). Each request start and
+`reset()` sets it back to `undefined`. Tests: `problem-state.test.ts` in both packages.
 
-**Workaround in Dumont.** The page renders the line with the reset date the WordPress
-server recorded from its own 429 (`Viglet_Dumont_AI_Quota::visitor_line()`); a visitor
-whose 429 is the first one the site sees reads "paused for now" until the next page.
+**What is left.** Every other React hook that keeps `error: string | null`
+(`useTuringSearch`, `useTuringSimilar`, `useTuringCopilot`, `useTuringLlmChat`,
+`useTuringSemanticChat`, `useTuringSlots` and the rest under `react-sdk/src/hooks`).
+Most of them call through axios, which rejects with an `AxiosError`, not a
+`TuringHttpError`, so `problemOf` answers `undefined` there: read `err.response?.data`
+when it is a JSON object (a small `problemOf` variant in the React SDK's
+`core/errors.ts`), then add the field hook by hook as above.
 
-**What Turing should do.** Each controller's state carries an additive `errorProblem?:
-TuringProblem` beside the `error` text, in every vanilla controller and React hook that
-keeps `error: string | null`. Not `error` as the `TuringHttpError` itself: that breaks
-every consumer reading it as a string. The text already carries `problem.detail`
-(`errors.ts`), so only `resetsAt`, `upgradeUrl` and `type` are lost.
-
-**Done when:** an answer or chat controller whose call answers 429 `quota-exhausted`
-exposes `resetsAt` in its state.
+**Done when:** every React hook that keeps an `error` text exposes `errorProblem`, and a
+429 `quota-exhausted` through an axios-based hook carries `resetsAt`.
 
 ## CLXXVII Every endpoint honours a request's filters and partition
 

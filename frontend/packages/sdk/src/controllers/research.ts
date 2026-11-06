@@ -7,6 +7,7 @@ import {
   type TurResearchStep,
   type TurResearchTimelineEntry,
 } from "../api.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 import type { TuringConfig } from "../types.js";
 
@@ -39,6 +40,8 @@ export interface ResearchControllerState {
   /** The cited documents by type; each `rank` is the `[n]` the sections cite. */
   sourceGroups: Record<string, TurResearchSource[]>;
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   isStreaming: boolean;
 }
 
@@ -70,6 +73,7 @@ const INITIAL: ResearchControllerState = {
   timeline: [],
   sourceGroups: {},
   error: null,
+  errorProblem: undefined,
   isStreaming: false,
 };
 
@@ -127,7 +131,7 @@ export function createResearchController(client: TuringClient, config: TuringCon
       store.setState({ status: result.error ? "error" : "success", isStreaming: false, error: result.error ?? null });
     } catch (err) {
       if (isStale(requestId) || isAbortError(err)) return;
-      store.setState({ status: "error", isStreaming: false, error: err instanceof Error ? err.message : String(err) });
+      store.setState({ status: "error", isStreaming: false, error: err instanceof Error ? err.message : String(err), errorProblem: problemOf(err) });
     }
   }
 

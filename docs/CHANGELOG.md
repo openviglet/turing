@@ -1662,5 +1662,7 @@
 
 ## Block CR — SDK errors that carry Turing's own answer
 
+- **T1240 (vanilla controllers + React answer/chat)** — The answer, chat, search, research, similar and slots controllers and useTuringAnswer/useTuringChat keep errorProblem beside error, so a 429 exposes resetsAt; problemOf exported.
+
 ## Block CS — Schema changes through the manifest converge in one call
 

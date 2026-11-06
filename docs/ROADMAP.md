@@ -24,7 +24,7 @@
 
 ## Block CR — SDK errors that carry Turing's own answer
 
-- 📋 **T1240** (deps: —) **The SDK's answer and chat controllers keep a failed call's error as text, so a 429's resetsAt never reaches a subscriber** — Streaming surfaces cannot say when AI answers come back, though a direct call now can. → §CLXXVI.2
+- ⏳ **T1240** (deps: —) **The SDK's answer and chat controllers keep a failed call's error as text, so a 429's resetsAt never reaches a subscriber** — The other React hooks keep error as text alone, and the axios-based ones throw an AxiosError that problemOf cannot read. → §CLXXVI.2
 
 ## Block CS — Schema changes through the manifest converge in one call
 
@@ -40,6 +40,15 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
+
+## Done when — T1240
+
+- **Every React hook that keeps an error text exposes errorProblem** A grep for `error:
+  string | null` under react-sdk/src/hooks finds no hook whose return lacks
+  errorProblem.
+- **An axios-based hook's 429 quota-exhausted carries resetsAt** A react-sdk test stubs
+  axios to reject with a 429 problem body, and useTuringSearch's errorProblem.resetsAt
+  reads the body's value.
 
 ## Non-goals (do NOT add as tasks)
 

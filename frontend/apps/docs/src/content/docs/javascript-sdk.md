@@ -103,6 +103,19 @@ try {
 
 `problem` carries every member Turing sent (`title`, `detail`, `used`, `limit`, `upgradeUrl`, and any other), and is `undefined` when the error body is not JSON. The React SDK throws the same error.
 
+The controllers catch the error and keep it as text on `error`, with the problem details beside it on `errorProblem`: the answer, chat, search, research, similar and slots controllers, and the React `useTuringAnswer` and `useTuringChat` hooks. A streaming surface reads `resetsAt` from its own state:
+
+```ts
+const answer = createAnswerController(client, { site: "my-site" });
+answer.subscribe((state) => {
+  if (state.errorProblem?.type?.endsWith("quota-exhausted")) {
+    showNotice(`AI answers are back on ${new Date(state.errorProblem.resetsAt!).toLocaleDateString()}`);
+  }
+});
+```
+
+`problemOf(err)` returns the same details from any caught error, and `undefined` for one that is not a `TuringHttpError`.
+
 ---
 
 ## Controllers

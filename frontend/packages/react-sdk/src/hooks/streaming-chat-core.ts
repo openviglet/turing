@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { problemOf, type TuringProblem } from "@viglet/turing-sdk";
 import type {
   TurChatCitation,
   TurChatConversationMessage,
@@ -177,6 +178,8 @@ export function useStreamingChatCore(options: UseStreamingChatCoreOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages ?? []);
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // T1240 — the problem details behind `error` (a 429's `resetsAt`).
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
 
   const requestRef = useRef(0);
   const abortedRef = useRef(false);
@@ -205,6 +208,7 @@ export function useStreamingChatCore(options: UseStreamingChatCoreOptions) {
         return;
       }
       setError(err instanceof Error ? err.message : "Chat request failed");
+      setErrorProblem(problemOf(err));
       setStatus("error");
     },
     [isStale],
@@ -232,6 +236,7 @@ export function useStreamingChatCore(options: UseStreamingChatCoreOptions) {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     setError(null);
+    setErrorProblem(undefined);
     setStatus("loading");
     return { requestId, controller };
   }, []);
@@ -285,6 +290,7 @@ export function useStreamingChatCore(options: UseStreamingChatCoreOptions) {
     messagesRef.current = [];
     setMessages([]);
     setError(null);
+    setErrorProblem(undefined);
     setStatus("idle");
     extra?.();
   }, []);
@@ -293,6 +299,8 @@ export function useStreamingChatCore(options: UseStreamingChatCoreOptions) {
     messages,
     status,
     error,
+    errorProblem,
+    setErrorProblem,
     setMessages,
     setStatus,
     setError,

@@ -17,6 +17,7 @@ import {
 } from "../analytics-lifecycle.js";
 import { getOrCreateTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session.js";
 import { resolveDocuments, resolveGroups, resolveStructuredGroups } from "../resolve.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 import type {
   ResolvedDocument,
@@ -67,6 +68,8 @@ export interface SearchControllerState {
   documents: ResolvedDocument[];
   groups: ResolvedGroup[];
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Legacy GET params. Kept in sync in both modes for backwards compatibility. */
   params: SearchParams;
   /**
@@ -280,6 +283,7 @@ export function createSearchController(
     documents: [],
     groups: [],
     error: null,
+    errorProblem: undefined,
     params: defaultParams,
     request: searchParamsToRequest(defaultParams),
   });
@@ -391,7 +395,7 @@ export function createSearchController(
     }
     const requestId = ++latestRequestId;
     const signal = nextSignal();
-    store.setState({ status: "loading", error: null, params: searchParams });
+    store.setState({ status: "loading", error: null, errorProblem: undefined, params: searchParams });
 
     try {
       const q = searchParams.q || "*";
@@ -423,6 +427,7 @@ export function createSearchController(
       if (requestId !== latestRequestId) return;
       store.setState({
         error: err instanceof Error ? err.message : "Search failed",
+        errorProblem: problemOf(err),
         status: "error",
       });
     }
@@ -442,6 +447,7 @@ export function createSearchController(
     store.setState({
       status: "loading",
       error: null,
+      errorProblem: undefined,
       request: carried,
       params: requestToSearchParams(carried),
     });
@@ -487,6 +493,7 @@ export function createSearchController(
       if (requestId !== latestRequestId) return;
       store.setState({
         error: err instanceof Error ? err.message : "Search failed",
+        errorProblem: problemOf(err),
         status: "error",
       });
     }

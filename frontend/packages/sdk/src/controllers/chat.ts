@@ -24,6 +24,7 @@ import {
   type AbandonmentOptions,
   type AbandonmentWatcher,
 } from "../analytics-lifecycle.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 import type {
   TurChatCitation,
@@ -299,6 +300,8 @@ export interface ChatControllerState {
   messages: ChatMessage[];
   status: ChatStatus;
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   isStreaming: boolean;
   conversationId: string | null;
   /**
@@ -498,6 +501,7 @@ export function createChatController(
     messages: initialPersisted.messages,
     status: "idle",
     error: null,
+    errorProblem: undefined,
     isStreaming: false,
     conversationId: initialPersisted.conversationId,
     activeForm: null,
@@ -658,6 +662,7 @@ export function createChatController(
     }
     store.setState({
       error: err instanceof Error ? err.message : "Chat request failed",
+      errorProblem: problemOf(err),
       status: "error",
       isStreaming: false,
     });
@@ -685,7 +690,7 @@ export function createChatController(
     abortController?.abort();
     const controller = new AbortController();
     abortController = controller;
-    store.setState({ error: null, status: "loading", isStreaming: true });
+    store.setState({ error: null, errorProblem: undefined, status: "loading", isStreaming: true });
 
     const all = [...messages, userMsg];
     const nextMessages = all.length > maxMessages ? all.slice(-maxMessages) : all;
@@ -919,7 +924,7 @@ export function createChatController(
     abortController?.abort();
     const controller = new AbortController();
     abortController = controller;
-    store.setState({ error: null, status: "loading", isStreaming: true });
+    store.setState({ error: null, errorProblem: undefined, status: "loading", isStreaming: true });
 
     // Consume the pending form: clear it from state and from the assistant
     // message that carried it so the UI stops rendering inputs immediately.
@@ -979,7 +984,7 @@ export function createChatController(
     convStartedAt = 0;
     lastNodeId = null;
     commitMessages([]);
-    store.setState({ error: null, status: "idle", isStreaming: false, activeForm: null });
+    store.setState({ error: null, errorProblem: undefined, status: "idle", isStreaming: false, activeForm: null });
   }
 
   async function resetFlow(): Promise<boolean> {

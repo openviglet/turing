@@ -8,6 +8,7 @@
  * the change that adds the compiler.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { TuringProblem } from "@viglet/turing-sdk";
 import {
   deleteAgentFlowState,
   deleteSiteConversationState,
@@ -300,6 +301,8 @@ export interface UseTuringChatReturn {
   status: ChatStatus;
   /** Error message from the last failed send */
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   /** Whether a turn is in progress */
   isStreaming: boolean;
   /**
@@ -723,6 +726,7 @@ export function useTuringChat(
     messages,
     status,
     error,
+    errorProblem,
     setMessages,
     setStatus,
     setError,
@@ -1108,6 +1112,7 @@ export function useTuringChat(
     messages,
     status,
     error,
+    errorProblem,
     isStreaming: status === "loading",
     conversationId,
     send,

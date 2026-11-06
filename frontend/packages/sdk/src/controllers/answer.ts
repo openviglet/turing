@@ -7,6 +7,7 @@ import {
   type AnswerFilters,
   type TurAnswerSignalKind,
 } from "../api.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 import type {
   TurAnswerArtifact,
@@ -51,6 +52,11 @@ export interface AnswerControllerState {
   /** Minimal run summary. */
   trace: TurAnswerTrace | null;
   error: string | null;
+  /**
+   * T1240 — the problem details behind {@link error}, when the server answered
+   * with them: a 429 `quota-exhausted` carries `resetsAt`, when answers come back.
+   */
+  errorProblem?: TuringProblem;
   /** Derived convenience mirror of `status === "loading"`. */
   isStreaming: boolean;
   /** T840 — ISO instant the answer completed (drift is measured from here). */
@@ -105,6 +111,7 @@ const INITIAL: AnswerControllerState = {
   traceSteps: [],
   trace: null,
   error: null,
+  errorProblem: undefined,
   isStreaming: false,
   answeredAt: null,
   staleSources: [],
@@ -173,6 +180,7 @@ export function createAnswerController(
       traceSteps: [],
       trace: null,
       error: null,
+      errorProblem: undefined,
       answeredAt: null,
       staleSources: [],
     });
@@ -219,7 +227,12 @@ export function createAnswerController(
       });
     } catch (err) {
       if (isStale(requestId) || isAbortError(err)) return;
-      store.setState({ status: "error", isStreaming: false, error: errorMessage(err) });
+      store.setState({
+        status: "error",
+        isStreaming: false,
+        error: errorMessage(err),
+        errorProblem: problemOf(err),
+      });
     }
   }
 

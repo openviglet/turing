@@ -6,6 +6,7 @@ import {
 } from "../api.js";
 import { readTurSession, TUR_SESSION_DEFAULT_COOKIE_NAME } from "../session.js";
 import { subscribeSlotsSse, type SlotsSseSubscription } from "../slots-sse.js";
+import { problemOf, type TuringProblem } from "../errors.js";
 import { createStore, type Store } from "../store.js";
 
 /**
@@ -65,6 +66,8 @@ export interface SlotsControllerState {
   conversationId: string | null;
   status: SlotsStatus;
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
 }
 
 export interface SlotsController extends Store<SlotsControllerState> {
@@ -103,6 +106,7 @@ export function createSlotsController(
     conversationId: explicitConversationId ?? readTurSession(sessionCookieName),
     status: "idle",
     error: null,
+    errorProblem: undefined,
   });
 
   let lastFetchedConversation: string | null = null;
@@ -121,7 +125,7 @@ export function createSlotsController(
   }
 
   function pollOnce(conversationId: string): void {
-    store.setState({ status: "loading", error: null });
+    store.setState({ status: "loading", error: null, errorProblem: undefined });
     const fetcher = agentId
       ? fetchAgentChatSlots(client, agentId, conversationId)
       : fetchSiteChatSlots(client, site as string, conversationId);
@@ -134,13 +138,14 @@ export function createSlotsController(
         if (destroyed || store.getState().conversationId !== conversationId) return;
         store.setState({
           error: err instanceof Error ? err.message : "Failed to load chat slots",
+          errorProblem: problemOf(err),
           status: "error",
         });
       });
   }
 
   function openSse(conversationId: string): void {
-    store.setState({ status: "loading", error: null });
+    store.setState({ status: "loading", error: null, errorProblem: undefined });
     subscription = subscribeSlotsSse(client.baseURL, site as string, conversationId, {
       onMessage: (payload) => {
         if (destroyed) return;

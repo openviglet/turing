@@ -187,6 +187,16 @@ export async function readProblem(response: Response): Promise<TuringProblem | u
 }
 
 /**
+ * T1240 — the problem details a failure carries, for a controller or hook to keep
+ * beside its `error` text: `undefined` unless `err` is a {@link TuringHttpError}
+ * whose server answered problem-details JSON. A 429 `quota-exhausted` keeps its
+ * `resetsAt` and `upgradeUrl` this way, which the text alone loses.
+ */
+export function problemOf(err: unknown): TuringProblem | undefined {
+  return err instanceof TuringHttpError ? err.problem : undefined;
+}
+
+/**
  * Whether this rejection is the caller's own `AbortSignal` firing.
  *
  * Cancellation is not a transport failure, and wrapping it would break every

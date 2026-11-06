@@ -16,6 +16,7 @@ import type {
   TurChatToolCall,
 } from "../core/types.js";
 import { useOptionalTuringContext } from "../core/use-turing-context.js";
+import { problemOf, type TuringProblem } from "@viglet/turing-sdk";
 import { isAbortError } from "./streaming-chat-core.js";
 
 /**
@@ -62,6 +63,8 @@ export interface UseTuringAnswerReturn {
   trace: TurAnswerTrace | null;
   status: TuringAnswerStatus;
   error: string | null;
+  /** T1240 — the problem details behind `error`, when the server answered with them (a 429's `resetsAt`). */
+  errorProblem?: TuringProblem;
   isStreaming: boolean;
   /** T840 — ISO instant the answer completed (drift is measured from here). */
   answeredAt: string | null;
@@ -106,6 +109,7 @@ export function useTuringAnswer(options: UseTuringAnswerOptions = {}): UseTuring
   const [trace, setTrace] = useState<TurAnswerTrace | null>(null);
   const [status, setStatus] = useState<TuringAnswerStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [errorProblem, setErrorProblem] = useState<TuringProblem | undefined>(undefined);
   const [answeredAt, setAnsweredAt] = useState<string | null>(null);
   const [staleSources, setStaleSources] = useState<string[]>([]);
 
@@ -154,6 +158,7 @@ export function useTuringAnswer(options: UseTuringAnswerOptions = {}): UseTuring
       setTraceSteps([]);
       setTrace(null);
       setError(null);
+      setErrorProblem(undefined);
       setAnsweredAt(null);
       setStaleSources([]);
 
@@ -178,6 +183,7 @@ export function useTuringAnswer(options: UseTuringAnswerOptions = {}): UseTuring
       } catch (err) {
         if (stale() || isAbortError(err)) return;
         setError(err instanceof Error ? err.message : String(err));
+        setErrorProblem(problemOf(err));
         setStatus("error");
       }
     },
@@ -245,6 +251,7 @@ export function useTuringAnswer(options: UseTuringAnswerOptions = {}): UseTuring
     setTraceSteps([]);
     setTrace(null);
     setError(null);
+    setErrorProblem(undefined);
     setStatus("idle");
     setAnsweredAt(null);
     setStaleSources([]);
@@ -260,6 +267,7 @@ export function useTuringAnswer(options: UseTuringAnswerOptions = {}): UseTuring
     trace,
     status,
     error,
+    errorProblem,
     isStreaming: status === "loading",
     answeredAt,
     staleSources,
