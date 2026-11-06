@@ -74,7 +74,8 @@ public class TurApiKeyPartitionGuardFilter extends OncePerRequestFilter {
     static final List<Route> ENFORCED = List.of(
             new Route("GET", Pattern.compile(
                     "^/api/sn/[^/]+/search(?:/list|/locales|/sort-options|/similar|/document|/duplicates)?$")),
-            new Route("POST", Pattern.compile("^/api/sn/[^/]+/search(?:/query|/list/query)?$")),
+            new Route("POST", Pattern.compile(
+                    "^/api/sn/[^/]+/search(?:/query|/list/query|/similar/query|/duplicates/query)?$")),
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/ac$")),
             new Route("POST", Pattern.compile("^/api/sn/[^/]+/ac/query$")),
             new Route("GET", Pattern.compile("^/api/sn/[^/]+/[^/]+/(?:spell-check|related-terms)$")),

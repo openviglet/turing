@@ -235,8 +235,8 @@ export {
  * T1086 — the chat request body and the `"filters"` event parser are the vanilla
  * SDK's, so the two SDKs cannot send different fields to the same endpoint.
  */
-import { chatConversationBody, parseFiltersEvent } from "@viglet/turing-sdk";
-export { chatConversationBody, parseFiltersEvent };
+import { chatConversationBody, parseFiltersEvent, similarRequestBody } from "@viglet/turing-sdk";
+export { chatConversationBody, parseFiltersEvent, similarRequestBody };
 
 
 /**
@@ -1634,28 +1634,24 @@ export function fetchSortOptions(site: string): Promise<TurSortOption[]> {
 }
 
 /**
- * T400 — fetches documents similar to a seed document (T384's
- * {@code GET /sn/{site}/search/similar}). Powers a "related" / "you may also
- * like" rail with one call.
+ * T400 — fetches documents similar to a seed document. Powers a "related" /
+ * "you may also like" rail with one call.
+ *
+ * T1239 — sent as `POST /sn/{site}/search/similar/query` with the body the
+ * vanilla SDK's {@link similarRequestBody} builds, so the two SDKs cannot send
+ * different fields to the same endpoint.
  *
  * @since 2026.3.4
  */
-export function fetchSimilar(
+export async function fetchSimilar(
   site: string,
   params: FetchSimilarParams,
 ): Promise<TurSimilarResult[]> {
-  const qs = new URLSearchParams({ id: params.id });
-  if (params.rows != null) qs.append("rows", String(params.rows));
-  // T1140 — the server reads the locale as `_setlocale`, like search.
-  if (params.locale) qs.append("_setlocale", params.locale);
-  if (params.mode) qs.append("mode", params.mode);
-  // T1235 — the filters the vanilla SDK sends, spelled as the endpoint reads them.
-  for (const v of params.fq ?? []) qs.append("fq[]", v);
-  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
-  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
-  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
-  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
-  return get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`);
+  const { data } = await axios.post<TurSimilarResult[]>(
+    `/sn/${site}/search/similar/query`,
+    similarRequestBody(params),
+  );
+  return data;
 }
 
 /**

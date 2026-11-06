@@ -46,7 +46,7 @@ const PUBLIC_ENDPOINTS: readonly EndpointContract[] = [
   { method: "POST", path: "/sn/{site}/click", fn: "postClick" },
   { method: "GET", path: "/sn/{site}/ac", fn: "fetchAutoComplete" },
   { method: "GET", path: "/sn/{site}/search/sort-options", fn: "fetchSortOptions" },
-  { method: "GET", path: "/sn/{site}/search/similar", fn: "fetchSimilar" }, // T400
+  { method: "POST", path: "/sn/{site}/search/similar/query", fn: "fetchSimilar" }, // T400, T1239
   { method: "GET", path: "/sn/{site}/search/document", fn: "fetchStoredDocuments" }, // T1077
   { method: "POST", path: "/sn/{site}/nl-filters", fn: "postNlFilters" }, // T1085
   { method: "POST", path: "/sn/{site}/copilot/kit", fn: "postCopilotKit" }, // T1159

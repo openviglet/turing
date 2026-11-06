@@ -74,6 +74,7 @@ export {
   fetchClickThrough,
   fetchAiCapabilities,
   fetchSimilar,
+  similarRequestBody,
   fetchStoredDocuments,
   postNlFilters,
   postCopilotKit,

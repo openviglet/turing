@@ -72,6 +72,8 @@ class TurGuestReadOnlyFilterTest {
             "DELETE, /api/llm/l1, false",
             "POST, /api/v2/summary, false",
             "POST, /api/sn/site-1/search, true",
+            "POST, /api/sn/site-1/search/similar/query, true",
+            "POST, /api/sn/site-1/search/duplicates/query, true",
             "POST, /api/sn/site-1/chat/conversation, true",
             "POST, /api/sn/site-1/chat/conversation/stream, false",
             "POST, /logout, true"

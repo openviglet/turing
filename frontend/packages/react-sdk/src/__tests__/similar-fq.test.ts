@@ -4,18 +4,19 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { fetchSimilar } from "../core/api.js";
 
 /**
- * T1235 — the React SDK's similar-documents call sends the search's filters,
- * which it used to drop: `fq[]`, `fq.and[]`, `fq.or[]`, `fq.op` and `fqi.op`.
+ * T1235 — the React SDK's similar-documents call sends the search's filters.
+ * T1239 — as the JSON body of `POST /search/similar/query`, built by the vanilla
+ * SDK's `similarRequestBody`.
  */
 describe("fetchSimilar filters (T1235)", () => {
   afterEach(() => vi.restoreAllMocks());
 
-  function stubGet() {
-    return vi.spyOn(axios, "get").mockResolvedValue({ data: [] });
+  function stubPost() {
+    return vi.spyOn(axios, "post").mockResolvedValue({ data: [] });
   }
 
-  it("sends every filter parameter, fqi.op included", async () => {
-    const get = stubGet();
+  it("posts every filter field, fqItemOperator included", async () => {
+    const post = stubPost();
 
     await fetchSimilar("shared", {
       id: "post-7",
@@ -26,20 +27,22 @@ describe("fetchSimilar filters (T1235)", () => {
       fqItemOperator: "OR",
     });
 
-    const url = new URL(get.mock.calls[0][0] as string, "https://turing.example");
-    expect(url.pathname).toBe("/sn/shared/search/similar");
-    expect(url.searchParams.getAll("fq[]")).toEqual(["site_key:a", "site_key:b"]);
-    expect(url.searchParams.getAll("fq.and[]")).toEqual(["type:post"]);
-    expect(url.searchParams.getAll("fq.or[]")).toEqual(["lang:en"]);
-    expect(url.searchParams.get("fq.op")).toBe("AND");
-    expect(url.searchParams.get("fqi.op")).toBe("OR");
+    expect(post.mock.calls[0][0]).toBe("/sn/shared/search/similar/query");
+    expect(post.mock.calls[0][1]).toEqual({
+      id: "post-7",
+      fq: ["site_key:a", "site_key:b"],
+      fqAnd: ["type:post"],
+      fqOr: ["lang:en"],
+      fqOperator: "AND",
+      fqItemOperator: "OR",
+    });
   });
 
   it("sends no filter when none is given", async () => {
-    const get = stubGet();
+    const post = stubPost();
 
     await fetchSimilar("shared", { id: "post-7" });
 
-    expect(get.mock.calls[0][0]).not.toContain("fq");
+    expect(post.mock.calls[0][1]).toEqual({ id: "post-7" });
   });
 });

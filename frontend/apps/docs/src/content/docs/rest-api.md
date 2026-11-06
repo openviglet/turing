@@ -40,7 +40,7 @@ The server then confines that key, whatever the request asks for:
 |---|---|
 | Search: `GET`/`POST /api/sn/{site}/search`, `/search/query`, `/search/list`, `/search/list/query` | Only the partition's documents are returned, and facets count only them. The similar-documents widget and duplicate clusters are left out, and the search cache is not used. |
 | `/search/locales`, `/search/sort-options`, `POST /click` | As for any key |
-| `GET /api/sn/{site}/search/similar` | Only the partition's documents are returned, for a seed document in the partition (another seed answers `[]`). The lexical (MLT) path answers, even on a site whose vector mode would otherwise answer. |
+| `GET /api/sn/{site}/search/similar`, `POST /search/similar/query` | Only the partition's documents are returned, for a seed document in the partition (another seed answers `[]`). The lexical (MLT) path answers, even on a site whose vector mode would otherwise answer. |
 | `GET /api/sn/{site}/search/document` | Only the partition's documents are returned, and `404` when none of the ids is in it |
 | `GET /api/sn/{site}/ac`, `POST /ac/query` | Suggestions are the site's terms that occur in the partition's documents, never another partition's |
 | `GET /api/sn/{site}/{locale}/spell-check` | No correction: the dictionary is built from the whole site |
@@ -56,7 +56,7 @@ The server then confines that key, whatever the request asks for:
 | `GET /api/sn/{siteId}/synonym`, `/synonym/{id}` | As for any key. Changing synonyms is refused with `403`, because the site has one set of synonyms that every partition shares |
 | `POST /api/sn/{site}/chat/conversation`, `GET /api/sn/{site}/answer` | The answer is grounded only in the partition's documents, and runs without the agent's tools. Natural-language filters are not extracted from the question. A site whose AI index was built before its documents carried the partition field answers that the index holds nothing for the partition until an administrator reindexes the site's vectors. A site answered by the catalog assistant (vectorless) refuses the key |
 | `POST /api/sn/{site}/nl-filters` | Each value is checked against the values the partition's documents hold, so a value only another partition holds is dropped |
-| `GET /api/sn/{site}/search/duplicates` | A seed document outside the partition answers an empty cluster, and only the partition's documents can join one. A site whose vectors were written before they carried the partition field answers `403` until an administrator reindexes it |
+| `GET /api/sn/{site}/search/duplicates`, `POST /search/duplicates/query` | A seed document outside the partition answers an empty cluster, and only the partition's documents can join one. A site whose vectors were written before they carried the partition field answers `403` until an administrator reindexes it |
 | `POST /api/sn/{site}/copilot`, `/copilot/kit` | The catalog assistant answers, and stages kits, from the partition's documents only. A vectorless site's chat (`/chat/conversation`, answered by this assistant) still refuses the key |
 | Every other endpoint, including the other chat endpoints, the DSL `_search`, ranking expressions and the other tuning APIs, the other metrics, the zip import and MCP | Refused with `403` (`401` on MCP) until it enforces partitions |
 
@@ -73,6 +73,7 @@ Certain endpoints are publicly accessible, allowing client applications to perfo
 | `POST /api/sn/*/search/list/query` | Select-list projection, JSON body |
 | `GET /api/sn/*/search/similar` | Documents similar to `id`, narrowed by `fq[]`, `fq.and[]`, `fq.or[]`, `fq.op` and `fqi.op` like a search: `fq[]=site_key:a&fq[]=site_key:b&fqi.op=OR` returns neighbours from either site |
 | `GET /api/sn/*/search/duplicates` | Near-identical copies of `id` (hybrid sites), with `threshold` and `rows`. `fq[]`, `fq.and[]`, `fq.or[]`, `fq.op` and `fqi.op` keep the cluster to the documents a search with those filters would return, and `rows` counts what passes. An engine that cannot restrict a search to ids answers the seed alone when filters are sent |
+| `POST /api/sn/*/search/similar/query`, `POST /api/sn/*/search/duplicates/query` | The same two calls with a JSON body, answering as the GET does: `{"id": "post-7", "rows": 6, "locale": "en_US", "fq": ["site_key:a", "site_key:b", "type:post"], "fqItemOperator": "OR"}`. The body takes `fq`, `fqAnd`, `fqOr`, `fqOperator` and `fqItemOperator` as [POST-native search](#post-native-search) does, plus `mode` for similar and `threshold` for duplicates. A filter value can hold a comma or a space without escaping |
 | `GET /api/sn/*/chat` | GenAI chat on an SN Site |
 | `GET /api/sn/*/ac` | Autocomplete |
 | `POST /api/sn/*/ac/query` | Autocomplete, JSON body |

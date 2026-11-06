@@ -1897,9 +1897,29 @@ export interface FetchSimilarParams {
 }
 
 /**
- * T400 — fetches documents similar to a seed document (T384's
- * {@code GET /sn/{site}/search/similar}). Powers a "related" / "you may also
- * like" rail next to a result or detail page with one call.
+ * T1239 — the JSON body {@link fetchSimilar} sends: the params with every
+ * absent field left out, so the server applies its own defaults.
+ */
+export function similarRequestBody(params: FetchSimilarParams): Record<string, unknown> {
+  const body: Record<string, unknown> = { id: params.id };
+  if (params.rows != null) body.rows = params.rows;
+  if (params.locale) body.locale = params.locale;
+  if (params.mode) body.mode = params.mode;
+  if (params.fq?.length) body.fq = [...params.fq];
+  if (params.fqAnd?.length) body.fqAnd = [...params.fqAnd];
+  if (params.fqOr?.length) body.fqOr = [...params.fqOr];
+  if (params.fqOperator) body.fqOperator = params.fqOperator;
+  if (params.fqItemOperator) body.fqItemOperator = params.fqItemOperator;
+  return body;
+}
+
+/**
+ * T400 — fetches documents similar to a seed document. Powers a "related" /
+ * "you may also like" rail next to a result or detail page with one call.
+ *
+ * T1239 — sent as `POST /sn/{site}/search/similar/query` with a JSON body, the
+ * way {@link postSearch} sends a search, so a scope of several sites and filters
+ * never has to survive a query string. Like search, the POST needs no CSRF token.
  */
 export function fetchSimilar(
   client: TuringClient,
@@ -1907,19 +1927,11 @@ export function fetchSimilar(
   params: FetchSimilarParams,
   options: TuringCallOptions = {},
 ): Promise<TurSimilarResult[]> {
-  const qs = new URLSearchParams({ id: params.id });
-  if (params.rows != null) qs.append("rows", String(params.rows));
-  // T1140 — the server reads the locale as `_setlocale`, like search.
-  if (params.locale) qs.append("_setlocale", params.locale);
-  if (params.mode) qs.append("mode", params.mode);
-  for (const fq of params.fq ?? []) qs.append("fq[]", fq);
-  for (const v of params.fqAnd ?? []) qs.append("fq.and[]", v);
-  for (const v of params.fqOr ?? []) qs.append("fq.or[]", v);
-  if (params.fqOperator) qs.append("fq.op", params.fqOperator);
-  if (params.fqItemOperator) qs.append("fqi.op", params.fqItemOperator);
-  return client.get<TurSimilarResult[]>(`/sn/${site}/search/similar?${qs}`, {
-    signal: options.signal,
-  });
+  return client.post<TurSimilarResult[]>(
+    `/sn/${site}/search/similar/query`,
+    similarRequestBody(params),
+    { csrf: false, signal: options.signal },
+  );
 }
 
 /**

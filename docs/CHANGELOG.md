@@ -1654,6 +1654,7 @@
 
 - 🗑 **T1236** — abandoned: Not reproducible against the code: T1213 confines every copilot and kit read and the hybrid pass, and no release carries it yet; re-file with the image digest and the stage if a current build leaks.
 - **T1235** — Similar documents and duplicates read fqi.op, so fq[]=site_key:a&fq[]=site_key:b&fqi.op=OR returns neighbours from both sites, and fetchSimilar sends every filter operator in both SDKs.
+- **T1239** — POST /search/similar/query and /search/duplicates/query take the JSON body search takes and answer as the GET; fetchSimilar posts it in both SDKs, and the GETs keep a one-value comma filter whole.
 
 ## Block CQ — The model catalog at models.viglet.org
 

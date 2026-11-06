@@ -904,6 +904,15 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
             assertEquals(200, eitherValue.statusCode(), eitherValue.body());
             assertTrue(eitherValue.body().contains(partitionProbeId("b")),
                     "fqi.op=OR must admit B, which holds one of the two values: " + eitherValue.body());
+            // T1239 — the same request as a JSON body answers the same neighbours.
+            String similarBody = """
+                    {"id":"%s","locale":"%s","fq":["%s:t1133-a","%s:t1133-b"],"fqItemOperator":"OR"}"""
+                    .formatted(partitionProbeId("a"), LOCALE, RESERVED_FACET_FIELD, RESERVED_FACET_FIELD);
+            HttpResponse<String> eitherValuePost = postJson("/sn/" + SITE + "/search/similar/query", similarBody);
+            assertEquals(200, eitherValuePost.statusCode(), eitherValuePost.body());
+            assertEquals(eitherValue.body(), eitherValuePost.body(), "the POST must answer as the GET does");
+            HttpResponse<String> duplicatesPost = postJson("/sn/" + SITE + "/search/duplicates/query", similarBody);
+            assertEquals(200, duplicatesPost.statusCode(), duplicatesPost.body());
             HttpResponse<String> duplicatesEither = get("/sn/" + SITE + "/search/duplicates?id="
                     + partitionProbeId("a") + "&_setlocale=" + LOCALE + bothValues + "&fqi.op=OR");
             assertEquals(200, duplicatesEither.statusCode(), "duplicates must bind fqi.op: "

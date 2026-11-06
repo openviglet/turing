@@ -115,6 +115,96 @@ class TurSNSiteSearchAPITest {
                 .hasMessageContaining("missing");
     }
 
+    /**
+     * T1239 — a similar request sent as JSON reaches the service with the filters,
+     * operators, rows and locale a GET with the same values would send.
+     */
+    @Test
+    void similarQueryPostAnswersAsTheGetWithTheSameFilters() {
+        TurSNSimilarDocumentsService similar = mock(TurSNSimilarDocumentsService.class);
+        TurSNSiteSearchAPI api = new TurSNSiteSearchAPI(mock(TurSNSiteSearchService.class),
+                mock(TurSNSearchProcess.class), mock(TurSNSiteSearchSnapshotService.class), similar,
+                mock(TurSNDuplicateClusteringService.class));
+        var expectedFilters = com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
+                .defaultValues(List.of("site_key:a", "site_key:b", "type:post"))
+                .and(null).or(null).operator(TurSNFilterQueryOperator.NONE)
+                .itemOperator(TurSNFilterQueryOperator.OR).build();
+        List<com.viglet.turing.commons.se.similar.TurSESimilarResult> neighbours = List.of();
+        when(similar.findSimilar("shared", "post-7", 6, Locale.of("pt", "BR"),
+                com.viglet.turing.sn.TurSNSimilarMode.MLT, expectedFilters)).thenReturn(neighbours);
+
+        TurSNSimilarRequest body = new TurSNSimilarRequest();
+        body.setId("post-7");
+        body.setRows(6);
+        body.setLocale("pt_BR");
+        body.setMode(com.viglet.turing.sn.TurSNSimilarMode.MLT);
+        body.setFq(List.of("site_key:a", "site_key:b", "type:post"));
+        body.setFqItemOperator(TurSNFilterQueryOperator.OR);
+        assertThat(api.turSNSiteSimilarDocumentsQuery("shared", body).getBody()).isSameAs(neighbours);
+
+        org.springframework.mock.web.MockHttpServletRequest get =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        get.addParameter("fq[]", "site_key:a", "site_key:b", "type:post");
+        assertThat(api.turSNSiteSimilarDocuments("shared", "post-7", 6, Locale.of("pt", "BR"),
+                com.viglet.turing.sn.TurSNSimilarMode.MLT, TurSNFilterQueryOperator.NONE,
+                TurSNFilterQueryOperator.OR, get).getBody()).isSameAs(neighbours);
+    }
+
+    /**
+     * T1239 — a single {@code fq[]=type:a,b} on the GET is one filter, not two:
+     * it is read off the request as search reads it, not split on its comma.
+     */
+    @Test
+    void similarGetKeepsTheCommaOfASingleFilter() {
+        TurSNSimilarDocumentsService similar = mock(TurSNSimilarDocumentsService.class);
+        TurSNSiteSearchAPI api = new TurSNSiteSearchAPI(mock(TurSNSiteSearchService.class),
+                mock(TurSNSearchProcess.class), mock(TurSNSiteSearchSnapshotService.class), similar,
+                mock(TurSNDuplicateClusteringService.class));
+        org.springframework.mock.web.MockHttpServletRequest get =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        get.addParameter("fq[]", "type:a,b");
+
+        api.turSNSiteSimilarDocuments("shared", "post-7", 10, null, null, TurSNFilterQueryOperator.NONE,
+                TurSNFilterQueryOperator.NONE, get);
+
+        var captor = org.mockito.ArgumentCaptor.forClass(com.viglet.turing.commons.sn.bean.TurSNFilterParams.class);
+        verify(similar).findSimilar(eq("shared"), eq("post-7"), eq(10), eq(null), eq(null), captor.capture());
+        assertThat(captor.getValue().getDefaultValues()).containsExactly("type:a,b");
+    }
+
+    /**
+     * T1239 — the duplicates POST applies the GET's threshold and rows defaults
+     * and the body's filters.
+     */
+    @Test
+    void duplicatesQueryPostUsesTheGetDefaults() {
+        TurSNDuplicateClusteringService duplicates = mock(TurSNDuplicateClusteringService.class);
+        TurSNSiteSearchAPI api = new TurSNSiteSearchAPI(mock(TurSNSiteSearchService.class),
+                mock(TurSNSearchProcess.class), mock(TurSNSiteSearchSnapshotService.class),
+                mock(TurSNSimilarDocumentsService.class), duplicates);
+        TurSNSimilarRequest body = new TurSNSimilarRequest();
+        body.setId("post-7");
+        body.setFqAnd(List.of("type:post"));
+
+        api.turSNSiteDuplicateClusterQuery("shared", body);
+
+        var captor = org.mockito.ArgumentCaptor.forClass(com.viglet.turing.commons.sn.bean.TurSNFilterParams.class);
+        verify(duplicates).findCluster(eq("shared"), eq("post-7"), eq(0.92), eq(10), eq(null), eq(null),
+                captor.capture());
+        assertThat(captor.getValue().getAnd()).containsExactly("type:post");
+        assertThat(captor.getValue().getDefaultValues()).isNull();
+    }
+
+    @Test
+    void similarQueryPostRefusesABodyWithoutId() {
+        TurSNSiteSearchAPI api = new TurSNSiteSearchAPI(mock(TurSNSiteSearchService.class),
+                mock(TurSNSearchProcess.class), mock(TurSNSiteSearchSnapshotService.class),
+                mock(TurSNSimilarDocumentsService.class), mock(TurSNDuplicateClusteringService.class));
+
+        assertThatThrownBy(() -> api.turSNSiteSimilarDocumentsQuery("shared", new TurSNSimilarRequest()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @Test
     void testSearchPostReturnsUnauthorizedWhenPrincipalMissing() {
         TurSNSiteSearchService service = mock(TurSNSiteSearchService.class);
