@@ -192,6 +192,9 @@ public class TurSNTemplate {
                 fieldDefinition.locales().forEach(facetLocale -> {
                         facetLocale.setTurSNSiteFieldExt(turSNSiteFieldExt);
                         turSNSiteFieldExtFacetRepository.save(facetLocale);
+                        // T1241 — both sides, so a migration that deletes this ext in
+                        // the same transaction cascades to its facet rows.
+                        turSNSiteFieldExt.getFacetLocales().add(facetLocale);
                 });
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite).forEach(
                                 turSNSiteLocale -> createCopyField(fieldDefinition.multiValued(), turSNSiteLocale,

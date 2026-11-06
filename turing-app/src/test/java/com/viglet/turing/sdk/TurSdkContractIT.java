@@ -187,6 +187,15 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private TurDevTokenRepository devTokenRepository;
 
     @Autowired
+    private com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository siteFieldExtRepository;
+
+    @Autowired
+    private com.viglet.turing.api.sn.console.TurSNSiteAPI siteAPI;
+
+    @Autowired
+    private org.springframework.transaction.PlatformTransactionManager transactionManager;
+
+    @Autowired
     private com.viglet.turing.sn.insights.TurSNSiteMetricsResetService metricsResetService;
 
     @Autowired
@@ -966,6 +975,61 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     }
 
     /**
+     * T1241 — one manifest creates a site and recreates a field its template
+     * seeds ({@code author}, single-valued) as multi-valued; a later manifest
+     * recreates it again on the existing site.
+     */
+    @Test
+    void aManifestCreatesASiteAndMigratesATemplateFieldInOneCall() throws Exception {
+        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstance().getId();
+        String newSite = "t1241-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+        String manifest = """
+                {"name":"%s","seInstanceId":"%s","locales":["%s"],
+                 "fields":[{"name":"author","type":"STRING","multiValued":%s}],
+                 "migrations":[{"field":"author","action":"RECREATE"}]}""";
+        String key = unpartitionedKey();
+        try {
+            HttpResponse<String> created = postJson("/sn/manifest",
+                    manifest.formatted(newSite, seInstanceId, LOCALE, "true"), key);
+            assertEquals(200, created.statusCode(), created.body());
+            JsonNode createdBody = json.readTree(created.body());
+            assertTrue(createdBody.path("siteCreated").asBoolean(), created.body());
+            assertEquals("author", createdBody.path("fieldsMigrated").path(0).asString(), created.body());
+            assertEquals(1, authorMultiValued(newSite), "author is multi-valued after the create");
+
+            HttpResponse<String> migrated = postJson("/sn/manifest",
+                    manifest.formatted(newSite, seInstanceId, LOCALE, "false"), key);
+            assertEquals(200, migrated.statusCode(), migrated.body());
+            assertEquals(0, authorMultiValued(newSite), "the existing-site migration still works");
+        } finally {
+            deleteSiteAsAdmin(newSite);
+        }
+    }
+
+    /** Deletes a site the way the console does, so its fields and locales go with it. */
+    private void deleteSiteAsAdmin(String siteName) {
+        var context = org.springframework.security.core.context.SecurityContextHolder.getContext();
+        var previous = context.getAuthentication();
+        context.setAuthentication(new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                "admin", null, List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                        "ROLE_ADMIN"))));
+        try {
+            new org.springframework.transaction.support.TransactionTemplate(transactionManager)
+                    .executeWithoutResult(status -> siteRepository.findByName(siteName)
+                            .ifPresent(site -> siteAPI.turSNSiteDelete(site.getId())));
+        } finally {
+            context.setAuthentication(previous);
+        }
+    }
+
+    private int authorMultiValued(String siteName) {
+        var site = siteRepository.findByName(siteName).orElseThrow();
+        return siteFieldExtRepository.findByTurSNSite(org.springframework.data.domain.Sort.unsorted(), site)
+                .stream().filter(ext -> "author".equals(ext.getName())).findFirst().orElseThrow()
+                .getMultiValued();
+    }
+
+    /**
      * T1209 — the admin routes a site sharing an SN site needs, over two partitions:
      * a key reads the site's configuration and synonyms, cannot change the shared
      * schema or synonyms, and its spotlights are its partition's alone.
@@ -1082,6 +1146,14 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         token.setToken("t1133" + partition + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 18));
         token.setPartitionField(RESERVED_FACET_FIELD);
         token.setPartitionValue("t1133-" + partition);
+        devTokenRepository.save(token);
+        return token.getToken();
+    }
+
+    private String unpartitionedKey() {
+        TurDevToken token = new TurDevToken();
+        token.setTitle("T1241 manifest");
+        token.setToken("t1241" + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 18));
         devTokenRepository.save(token);
         return token.getToken();
     }

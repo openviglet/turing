@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CS — Schema changes through the manifest converge in one call
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 ## Table of contents
@@ -2388,33 +2386,3 @@ and repair report the engine's own state; no class under `api/sn/console` import
 ## CLXXVIII The model catalog at models.viglet.org
 
 ## CLXXIX The quality gate stops at the package boundary
-
-### CLXXIX.1 Create and migrate in one manifest (T1241)
-
-**Where it came from.** Dumont D314: the catalog connector's DSpace profile provisions
-an SN site through `POST /api/sn/manifest`, and the plugin (D326) and the connector
-(Dumont D340) both need to declare `RECREATE` migrations for fields whose cardinality
-changes.
-
-**What happens.** A manifest that creates the site and carries a `RECREATE` migration
-for a field the template seeds (`author`) answers 500,
-`TransientPropertyValueException`. The same migration on a site that already exists
-works.
-
-**Why.** Not the site: `createSite` saves it first. `TurSNTemplate.createSNSiteField`
-saves each field's `TurSNSiteFieldExtFacet` rows without adding them to the ext's
-`facetLocales`, so in the same transaction `recreateField` deletes the ext, the cascade
-never reaches those managed rows, and they still reference it at flush. On an existing
-site they are not loaded and `ON DELETE CASCADE` removes them. Confirm with a failing IT
-first.
-
-**Workaround in Dumont.** `catalog/dspace-dev/e2e.py` creates the site with one manifest
-and posts a second one with the migrations.
-
-**What Turing should do.** `recreateField` removes the ext's facet-locale and
-custom-facet rows before the ext, and the template keeps both sides of the association.
-A migration for a field that does not exist already just creates it.
-
-**Done when:** one manifest call that creates a site and declares `RECREATE` for
-`author` answers 200 with the field multi-valued, and an IT covers both the create and
-the existing-site path. The field-ext PUT 400 is a separate defect, T1243.

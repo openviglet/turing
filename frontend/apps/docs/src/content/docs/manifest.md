@@ -257,6 +257,19 @@ Facet / mandatory / description tweaks are **not** breaking: they don't require 
 
 If `plan` reports a breaking change and you provision anyway, `POST /api/sn/manifest` returns **HTTP 409** and mutates nothing. To apply the change, declare it explicitly in the manifest's `migrations` list as a `RECREATE` action for that field. On provision, Turing then drops the field across every locale core, deletes its rows, and recreates it from the new spec.
 
+A migration works in the same call that creates the site. A connector can create a site and change a field the site template seeds (for example making `author` multi-valued) with one manifest:
+
+```json
+POST /api/sn/manifest
+{
+  "name": "repository",
+  "seInstanceId": "<search-engine-instance-id>",
+  "locales": ["en_US"],
+  "fields": [{ "name": "author", "type": "STRING", "multiValued": true }],
+  "migrations": [{ "field": "author", "action": "RECREATE" }]
+}
+```
+
 :::caution[RECREATE is destructive]
 A `RECREATE` migration drops the field's indexed data. The source **must reindex** to repopulate it. This is the deliberate safety trade: breaking schema changes are explicit, reviewable, and never accidental.
 :::

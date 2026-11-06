@@ -38,6 +38,7 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
@@ -76,6 +77,7 @@ public class TurSNFieldProvisioner {
     private final TurSNSiteFieldRepository turSNSiteFieldRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
+    private final TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
@@ -119,11 +121,25 @@ public class TurSNFieldProvisioner {
                 .map(TurSNSiteFieldExt::getType).orElse(spec.getType());
 
         dropFieldInSearchEngine(turSNSite, spec.getName(), liveType);
-        liveExts.forEach(turSNSiteFieldExtRepository::delete);
+        liveExts.forEach(this::deleteFieldExt);
         turSNSiteFieldRepository.findByTurSNSite(turSNSite).stream()
                 .filter(field -> field.getName().equals(spec.getName()))
                 .forEach(turSNSiteFieldRepository::delete);
         return ensureField(turSNSite, spec);
+    }
+
+    /**
+     * T1241 — deletes an ext with its facet-locale and custom-facet rows first. On
+     * a site created in this same transaction those rows are managed but were never
+     * added to the ext's collections, so the ext's cascade cannot reach them and
+     * they would still reference it at flush ({@code TransientPropertyValueException}).
+     */
+    private void deleteFieldExt(TurSNSiteFieldExt ext) {
+        turSNSiteFieldExtFacetRepository.deleteAll(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(ext));
+        ext.getFacetLocales().clear();
+        turSNSiteCustomFacetRepository.deleteAll(turSNSiteCustomFacetRepository.findByFieldExtWithDetails(ext));
+        ext.getCustomFacets().clear();
+        turSNSiteFieldExtRepository.delete(ext);
     }
 
     private void dropFieldInSearchEngine(TurSNSite turSNSite, String name, TurSEFieldType liveType) {
@@ -153,6 +169,9 @@ public class TurSNFieldProvisioner {
             }
         });
         turSNSiteFieldExtFacetRepository.saveAll(facetLocales);
+        // T1241 — both sides of the association, so a later delete in this
+        // transaction cascades to these rows.
+        turSNSiteFieldExt.getFacetLocales().addAll(facetLocales);
     }
 
     @NotNull

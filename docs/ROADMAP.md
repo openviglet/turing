@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CS — Schema changes through the manifest converge in one call
-
-- 📋 **T1241** (deps: —) **A manifest that creates a site and declares a RECREATE migration for a template field answers 500** — A connector cannot create a site with the fields it needs in one call, so it posts a second manifest. → §CLXXIX.1
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 - 📋 **T1242** (deps: —) **Lucene keeps stopwords: a pt_BR search for 'uma barraca para 2 pessoas' matches and highlights 'uma' and 'para'** — Under Lucene's AND a document without the function words does not match at all, and those that do highlight them. → §CLXXV.3

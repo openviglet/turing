@@ -44,6 +44,9 @@ class TurSNFieldProvisionerTest {
     @Mock
     private TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     @Mock
+    private com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository
+            turSNSiteCustomFacetRepository;
+    @Mock
     private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     @Mock
     private TurSEInstanceRepository turSEInstanceRepository;
@@ -109,6 +112,39 @@ class TurSNFieldProvisionerTest {
         verify(turSNSiteFieldExtFacetRepository).saveAll(any());
         verify(plugin).addOrUpdateField(seInstance, "core_en",
                 "customField", TurSEFieldType.STRING, true, false, true);
+    }
+
+    /**
+     * T1241 — a migration deletes the ext's facet-locale and custom-facet rows
+     * before the ext, so rows its collections never held cannot outlive it.
+     */
+    @Test
+    void recreateFieldDeletesTheFacetRowsBeforeTheExt() {
+        TurSNSite site = site();
+        site.setTurSEInstance(null);
+        TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("author").type(TurSEFieldType.STRING).build();
+        var facet = new com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet();
+        java.util.Set<com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet> facets =
+                java.util.Set.of(facet);
+        List<com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet> customFacets = List.of();
+        TurSNJobAttributeSpec spec = TurSNJobAttributeSpec.builder()
+                .name("author").type(TurSEFieldType.STRING).multiValued(true).build();
+
+        when(turSNSiteFieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
+                .thenReturn(List.of(ext));
+        when(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(ext)).thenReturn(facets);
+        when(turSNSiteCustomFacetRepository.findByFieldExtWithDetails(ext)).thenReturn(customFacets);
+        when(turSNSiteFieldRepository.findByTurSNSite(site)).thenReturn(List.of());
+        when(turSNSiteFieldExtRepository.existsByTurSNSiteAndName(site, "author")).thenReturn(false);
+        when(turSNSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of());
+
+        assertTrue(provisioner.recreateField(site, spec));
+
+        var order = org.mockito.Mockito.inOrder(turSNSiteFieldExtFacetRepository, turSNSiteCustomFacetRepository,
+                turSNSiteFieldExtRepository);
+        order.verify(turSNSiteFieldExtFacetRepository).deleteAll(facets);
+        order.verify(turSNSiteCustomFacetRepository).deleteAll(customFacets);
+        order.verify(turSNSiteFieldExtRepository).delete(ext);
     }
 
     @Test
