@@ -131,6 +131,50 @@ class TurSNSiteExportFileServiceTest {
         }
     }
 
+    /** T1263 — synonyms are written with the site and read back the way the import reads them. */
+    @Test
+    void shouldWriteSynonymsThatTheImportReadsBack() throws Exception {
+        TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
+                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class));
+        TurSNSite site = new TurSNSite();
+        site.setId("tarnfell");
+        site.setName("tarnfell");
+        site.setFacet(0);
+        site.setHl(0);
+        site.setMlt(0);
+        site.setThesaurus(0);
+        TurSNSynonymExchange regular = new TurSNSynonymExchange("syn-1", "raincoat",
+                com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType.REGULAR,
+                java.util.Locale.US, null, List.of("raincoat", "rain jacket"), true);
+        TurSNSynonymExchange oneWay = new TurSNSynonymExchange("syn-2", null,
+                com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType.ONE_WAY,
+                java.util.Locale.US, "rucksack", List.of("backpack"), false);
+
+        Path zipPath = service.exportSNSitesToZip(List.of(site),
+                java.util.Map.of("tarnfell", List.of(regular, oneWay)), null, false);
+        Path exportFolder = Path.of(zipPath.toString().replace(".zip", ""));
+        try {
+            JsonNode synonyms = readExportJsonFromZip(zipPath).path("snSites").get(0)
+                    .path("turSNSiteSynonyms");
+            assertThat(synonyms).hasSize(2);
+            assertThat(synonyms.get(0).path("terms").get(1).asText()).isEqualTo("rain jacket");
+
+            com.viglet.turing.exchange.TurExchange read;
+            try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+                read = tools.jackson.databind.json.JsonMapper.builder().build().readValue(
+                        zipFile.getInputStream(zipFile.getEntry("export.json")),
+                        com.viglet.turing.exchange.TurExchange.class);
+            }
+            assertThat(read.getSnSites().getFirst().getTurSNSiteSynonyms())
+                    .containsExactly(regular, oneWay);
+        } finally {
+            Files.deleteIfExists(zipPath);
+            if (Files.exists(exportFolder)) {
+                FileUtils.deleteDirectory(exportFolder.toFile());
+            }
+        }
+    }
+
     private JsonNode readExportJsonFromZip(Path zipPath) throws IOException {
         try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
             ZipEntry exportEntry = zipFile.getEntry("export.json");

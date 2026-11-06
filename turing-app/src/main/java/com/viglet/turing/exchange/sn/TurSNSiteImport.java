@@ -98,6 +98,7 @@ public class TurSNSiteImport {
 	private final TurSearchEnginePluginFactory turSearchEnginePluginFactory;
 	private final com.viglet.turing.tenant.TurInfraTenantScope infraTenantScope;
 	private final CacheManager cacheManager;
+	private final TurSNSiteSynonymExchangeService synonymExchangeService;
 
 	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
 			TurSEInstanceRepository turSEInstanceRepository,
@@ -119,7 +120,9 @@ public class TurSNSiteImport {
 			com.viglet.turing.persistence.repository.agent.TurAIAgentRepository turAIAgentRepository,
 			TurSearchEnginePluginFactory turSearchEnginePluginFactory,
 			com.viglet.turing.tenant.TurInfraTenantScope infraTenantScope,
-			CacheManager cacheManager) {
+			CacheManager cacheManager,
+			TurSNSiteSynonymExchangeService synonymExchangeService) {
+		this.synonymExchangeService = synonymExchangeService;
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSEInstanceRepository = turSEInstanceRepository;
 		this.turSEVendorRepository = turSEVendorRepository;
@@ -154,13 +157,22 @@ public class TurSNSiteImport {
 		List<String> warnings = new ArrayList<>();
 
 		for (TurSNSiteExchange turSNSiteExchange : turExchange.getSnSites()) {
+			// T1263 — the synonyms to write: the export's, or, for an export
+			// written before synonyms were carried, the existing site's own.
+			List<TurSNSynonymExchange> synonyms = turSNSiteExchange.getTurSNSiteSynonyms();
 			// Delete existing site if present (handles re-import with same ID)
-			turSNSiteRepository.findById(turSNSiteExchange.getId()).ifPresent(existing -> {
+			var existingSite = turSNSiteExchange.getId() == null ? java.util.Optional.<TurSNSite>empty()
+					: turSNSiteRepository.findById(turSNSiteExchange.getId());
+			if (existingSite.isPresent()) {
+				TurSNSite existing = existingSite.get();
+				if (synonyms == null) {
+					synonyms = synonymExchangeService.snapshot(existing);
+				}
 				log.info("SN Site already exists, deleting for re-import: {} ({})",
 						existing.getName(), existing.getId());
 				turSNSiteRepository.delete(existing);
 				turSNSiteRepository.flush();
-			});
+			}
 
 			TurSNSite turSNSite = createSNSiteFromExchange(turSNSiteExchange);
 
@@ -198,6 +210,10 @@ public class TurSNSiteImport {
 			saveSNRankingExpressions(turSNSiteExchange, savedSite);
 			saveSNSiteMergeProviders(turSNSiteExchange, savedSite);
 			saveSNSiteCustomSorts(turSNSiteExchange, savedSite);
+			int savedSynonyms = synonymExchangeService.restore(savedSite, synonyms);
+			if (savedSynonyms > 0) {
+				log.info("Imported {} synonym rule(s) for SN Site {}", savedSynonyms, savedSite.getName());
+			}
 
 			log.info("Imported SN Site: {} ({})", savedSite.getName(), savedSite.getId());
 		}

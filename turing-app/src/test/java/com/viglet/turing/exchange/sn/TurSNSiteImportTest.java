@@ -100,6 +100,8 @@ class TurSNSiteImportTest {
         private Cache cache;
         @Mock
         private com.viglet.turing.tenant.TurInfraTenantScope infraTenantScope;
+        @Mock
+        private TurSNSiteSynonymExchangeService synonymExchangeService;
 
         @InjectMocks
         private TurSNSiteImport turSNSiteImport;
@@ -319,6 +321,67 @@ class TurSNSiteImportTest {
                 verify(turSNSiteRepository).delete(existingSite);
                 verify(turSNSiteRepository).flush();
                 verify(turSNSiteRepository).saveAndFlush(any(TurSNSite.class));
+        }
+
+        /** T1263 — the export's synonyms are written onto the recreated site. */
+        @Test
+        void shouldRestoreTheExportedSynonyms() {
+                TurSEInstance seInstance = new TurSEInstance();
+                seInstance.setId("se-1");
+                TurSNSynonymExchange synonym = new TurSNSynonymExchange("syn-1", null, null,
+                                java.util.Locale.US, null, List.of("raincoat", "rain jacket"), true);
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-1");
+                siteExchange.setName("Site 1");
+                siteExchange.setTurSEInstance("se-1");
+                siteExchange.setTurSNSiteSynonyms(List.of(synonym));
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+
+                TurSNSite existingSite = new TurSNSite();
+                existingSite.setId("site-1");
+                when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(existingSite));
+                when(turSEInstanceRepository.findById("se-1")).thenReturn(Optional.of(seInstance));
+                when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+
+                turSNSiteImport.importSNSite(exchange);
+
+                verify(synonymExchangeService, never()).snapshot(any());
+                verify(synonymExchangeService).restore(any(TurSNSite.class),
+                                org.mockito.ArgumentMatchers.eq(List.of(synonym)));
+        }
+
+        /** T1263 — an export without synonyms keeps the re-imported site's own. */
+        @Test
+        void shouldKeepTheExistingSynonymsWhenTheExportCarriesNone() {
+                TurSEInstance seInstance = new TurSEInstance();
+                seInstance.setId("se-1");
+                TurSNSite existingSite = new TurSNSite();
+                existingSite.setId("site-1");
+                TurSNSiteExchange siteExchange = new TurSNSiteExchange();
+                siteExchange.setId("site-1");
+                siteExchange.setName("Site 1");
+                siteExchange.setTurSEInstance("se-1");
+                TurExchange exchange = new TurExchange();
+                exchange.setSnSites(List.of(siteExchange));
+                List<TurSNSynonymExchange> kept = List.of(new TurSNSynonymExchange(null, null, null,
+                                java.util.Locale.US, null, List.of("puffer", "down jacket"), true));
+
+                when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(existingSite));
+                when(synonymExchangeService.snapshot(existingSite)).thenReturn(kept);
+                when(turSEInstanceRepository.findById("se-1")).thenReturn(Optional.of(seInstance));
+                when(turSNSiteRepository.saveAndFlush(any(TurSNSite.class)))
+                                .thenAnswer(invocation -> invocation.getArgument(0));
+
+                turSNSiteImport.importSNSite(exchange);
+
+                org.mockito.InOrder order = org.mockito.Mockito.inOrder(synonymExchangeService,
+                                turSNSiteRepository);
+                order.verify(synonymExchangeService).snapshot(existingSite);
+                order.verify(turSNSiteRepository).delete(existingSite);
+                order.verify(synonymExchangeService).restore(any(TurSNSite.class),
+                                org.mockito.ArgumentMatchers.eq(kept));
         }
 
         @Test

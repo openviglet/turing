@@ -8,7 +8,7 @@ Viglet Turing supports exporting and importing **Semantic Navigation site config
 
 ## Export
 
-Export creates a ZIP archive containing a complete snapshot of one or all SN Sites, including field definitions, facet settings, spotlights, ranking expressions, merge providers, locale configuration, and GenAI settings.
+Export creates a ZIP archive containing a complete snapshot of one or all SN Sites, including field definitions, facet settings, spotlights, synonyms, ranking expressions, merge providers, locale configuration, and GenAI settings.
 
 ### Export a Single Site
 
@@ -38,7 +38,7 @@ The `export.json` inside the ZIP archive contains:
 
 | Section | Description |
 |---|---|
-| `snSites` | Complete SN Site configurations: fields, facets, spotlights, ranking expressions, merge providers, locales, and GenAI settings |
+| `snSites` | Complete SN Site configurations: fields, facets, spotlights, synonyms (`turSNSiteSynonyms`), ranking expressions, merge providers, locales, and GenAI settings |
 | `llm` | LLM instance references used by sites with GenAI enabled |
 | `store` | Embedding store instance references |
 | `se` | Search engine instance references |
@@ -155,6 +155,12 @@ curl -X POST "http://localhost:2700/api/import" \
   -H "Key: <YOUR_API_TOKEN>" \
   -F "file=@turing-sites-export.zip"
 ```
+
+### Synonyms
+
+An imported site gets the synonym rules its bundle carries, and Turing pushes them to the site's search engine once the import completes, as **Push to engine** does in the console. A site seeded from a bundle therefore answers synonym searches straight away, with no admin step.
+
+A bundle exported before synonyms were included has no `turSNSiteSynonyms` entry. Re-importing such a bundle over an existing site keeps that site's current synonyms instead of removing them.
 
 ### Bundles that carry agents
 

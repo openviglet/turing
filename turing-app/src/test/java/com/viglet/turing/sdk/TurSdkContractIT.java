@@ -129,6 +129,8 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private static final String RESERVED_DOCUMENT_ID = "myth-contract-999";
     /** T911 — a document indexed and removed within one test, to move the answer. */
     private static final String CACHE_PROBE_ID = "t911-cache-probe";
+    /** T1263 — a word only the imported synonym rule connects to the dragons. */
+    private static final String IMPORTED_SYNONYM = "wyrm";
 
     @Value("${local.server.port}")
     private int port;
@@ -256,6 +258,17 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         assertNotNull(token, "/csrf must surface the token via the X-XSRF-TOKEN header "
                 + "(XSRF-TOKEN cookie is HttpOnly; SDK reads the header)");
         assertTrue(!token.isBlank(), "X-XSRF-TOKEN must be non-blank");
+    }
+
+    // ── T1263: an export's synonyms survive the import ──
+
+    @Test
+    void anImportedSynonymIsSearchable() throws Exception {
+        HttpResponse<String> res = get("/sn/" + SITE + "/search?q=" + IMPORTED_SYNONYM + "&_setlocale=" + LOCALE);
+        assertEquals(200, res.statusCode());
+        JsonNode documents = json.readTree(res.body()).path("results").path("document");
+        assertTrue(documents.isArray() && !documents.isEmpty(),
+                "'" + IMPORTED_SYNONYM + "' must find the dragons through the synonym the bundle carried");
     }
 
     // ── Search: shape consumed by resolveDocuments() + real Lucene results ──
@@ -1449,7 +1462,22 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         assertTrue(seArray.isArray() && !seArray.isEmpty(), "export.json must declare a search engine");
         ((ObjectNode) seArray.get(0)).put("endpointUrl",
                 targetIndexDir.toString().replace('\\', '/'));
+        addImportedSynonym((ObjectNode) root.path("snSites").get(0));
         return json.writeValueAsBytes(root);
+    }
+
+    /**
+     * T1263 — the bundle carries one synonym rule the way an export now writes it,
+     * so {@link #anImportedSynonymIsSearchable} can prove the import restores and
+     * applies it. No fixture document says "wyrm", so the rule moves no other answer.
+     */
+    private void addImportedSynonym(ObjectNode site) {
+        ObjectNode synonym = site.putArray("turSNSiteSynonyms").addObject();
+        synonym.put("id", "t1263-wyrm");
+        synonym.put("type", "REGULAR");
+        synonym.put("language", LOCALE);
+        synonym.putArray("terms").add(IMPORTED_SYNONYM).add("dragon");
+        synonym.put("enabled", true);
     }
 
     private byte[] readResource(String classpath) throws IOException {

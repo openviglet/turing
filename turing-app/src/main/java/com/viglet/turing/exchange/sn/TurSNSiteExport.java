@@ -59,6 +59,7 @@ public class TurSNSiteExport {
 	private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
 	private final TurSNSiteExportFileService exportFileService;
 	private final TurSNSiteContentExchangeService contentExchangeService;
+	private final TurSNSiteSynonymExchangeService synonymExchangeService;
 	private final TransactionTemplate readOnlyTransactionTemplate;
 	private final ConcurrentHashMap<String, Path> asyncExportFiles = new ConcurrentHashMap<>();
 
@@ -68,7 +69,9 @@ public class TurSNSiteExport {
 			TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
 			TurSNSiteExportFileService exportFileService,
 			TurSNSiteContentExchangeService contentExchangeService,
+			TurSNSiteSynonymExchangeService synonymExchangeService,
 			PlatformTransactionManager transactionManager) {
+		this.synonymExchangeService = synonymExchangeService;
 		this.turSNSiteRepository = turSNSiteRepository;
 		this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
 		this.turSNSiteMergeProvidersRepository = turSNSiteMergeProvidersRepository;
@@ -79,17 +82,30 @@ public class TurSNSiteExport {
 		this.readOnlyTransactionTemplate.setReadOnly(true);
 	}
 
-	public StreamingResponseBody exportAll(HttpServletResponse response) {
-		List<TurSNSite> turSNSites = readOnlyTransactionTemplate.execute(status -> {
-			List<TurSNSite> sites = turSNSiteRepository.findAll();
+	/** The sites to export, hydrated, with each site's synonym rules (T1263). */
+	private record ExportSites(List<TurSNSite> sites, Map<String, List<TurSNSynonymExchange>> synonyms) {
+		boolean isEmpty() {
+			return sites.isEmpty();
+		}
+	}
+
+	private ExportSites loadForExport(java.util.function.Supplier<List<TurSNSite>> finder) {
+		return readOnlyTransactionTemplate.execute(status -> {
+			List<TurSNSite> sites = finder.get();
+			Map<String, List<TurSNSynonymExchange>> synonyms = new java.util.HashMap<>();
 			sites.forEach(site -> {
 				hydrateExportCollections(site);
 				initializeLazyAssociations(site);
+				synonyms.put(site.getId(), synonymExchangeService.export(site));
 			});
-			return sites;
+			return new ExportSites(sites, synonyms);
 		});
+	}
 
-		return createSNSiteZipResponse(response, turSNSites, "sn-sites-all", null, false);
+	public StreamingResponseBody exportAll(HttpServletResponse response) {
+		ExportSites exportSites = loadForExport(turSNSiteRepository::findAll);
+
+		return createSNSiteZipResponse(response, exportSites, "sn-sites-all", null, false);
 	}
 
 	public StreamingResponseBody exportBySiteId(String siteId, HttpServletResponse response) {
@@ -98,18 +114,12 @@ public class TurSNSiteExport {
 
 	public StreamingResponseBody exportBySiteId(String siteId, boolean includeContent,
 			boolean includeTemplate, String taskId, HttpServletResponse response) {
-		List<TurSNSite> turSNSites = readOnlyTransactionTemplate.execute(status -> {
-			// Loaded inside this read-only transaction so lazy associations
-			// initialize through the open session (T488 / §XXVIII.3 — repositories
-			// are uncached, so a plain findById returns a session-attached entity).
-			List<TurSNSite> sites = turSNSiteRepository.findById(siteId).map(List::of).orElse(List.of());
-			sites.forEach(site -> {
-				hydrateExportCollections(site);
-				initializeLazyAssociations(site);
-			});
-			return sites;
-		});
-		if (turSNSites.isEmpty()) {
+		// Loaded inside a read-only transaction so lazy associations initialize
+		// through the open session (T488 / §XXVIII.3 — repositories are uncached,
+		// so a plain findById returns a session-attached entity).
+		ExportSites exportSites = loadForExport(
+				() -> turSNSiteRepository.findById(siteId).map(List::of).orElse(List.of()));
+		if (exportSites.isEmpty()) {
 			return null;
 		}
 
@@ -120,8 +130,8 @@ public class TurSNSiteExport {
 						.orElse(null)
 				: null;
 
-		return createSNSiteZipResponse(response, turSNSites,
-				"sn-site-" + turSNSites.get(0).getName(), content, includeTemplate);
+		return createSNSiteZipResponse(response, exportSites,
+				"sn-site-" + exportSites.sites().get(0).getName(), content, includeTemplate);
 	}
 
 	private void hydrateExportCollections(TurSNSite turSNSite) {
@@ -154,13 +164,14 @@ public class TurSNSiteExport {
 		}
 	}
 
-	private StreamingResponseBody createSNSiteZipResponse(HttpServletResponse response, List<TurSNSite> turSNSites,
+	private StreamingResponseBody createSNSiteZipResponse(HttpServletResponse response, ExportSites exportSites,
 			String prefixZipFileName, TurSNSiteContentPages content,
 			boolean includeTemplate) {
 		try {
 			String strDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
 			String zipFileName = prefixZipFileName + "_" + strDate + ".zip";
-			Path zipFilePath = exportFileService.exportSNSitesToZip(turSNSites, content, includeTemplate);
+			Path zipFilePath = exportFileService.exportSNSitesToZip(exportSites.sites(),
+					exportSites.synonyms(), content, includeTemplate);
 
 			response.addHeader("Content-disposition", "attachment;filename=" + zipFileName);
 			response.setContentType("application/octet-stream");
@@ -187,15 +198,9 @@ public class TurSNSiteExport {
 	}
 
 	public void exportBySiteIdAsync(String siteId, boolean includeContent, boolean includeTemplate, String taskId) {
-		List<TurSNSite> turSNSites = readOnlyTransactionTemplate.execute(status -> {
-			List<TurSNSite> sites = turSNSiteRepository.findById(siteId).map(List::of).orElse(List.of());
-			sites.forEach(site -> {
-				hydrateExportCollections(site);
-				initializeLazyAssociations(site);
-			});
-			return sites;
-		});
-		if (turSNSites.isEmpty()) {
+		ExportSites exportSites = loadForExport(
+				() -> turSNSiteRepository.findById(siteId).map(List::of).orElse(List.of()));
+		if (exportSites.isEmpty()) {
 			return;
 		}
 
@@ -206,7 +211,8 @@ public class TurSNSiteExport {
 				: null;
 
 		contentExchangeService.updatePhase(taskId, "packaging");
-		Path zipFilePath = exportFileService.exportSNSitesToZip(turSNSites, content, includeTemplate);
+		Path zipFilePath = exportFileService.exportSNSitesToZip(exportSites.sites(),
+				exportSites.synonyms(), content, includeTemplate);
 		asyncExportFiles.put(taskId, zipFilePath);
 		contentExchangeService.updatePhase(taskId, "completed");
 	}

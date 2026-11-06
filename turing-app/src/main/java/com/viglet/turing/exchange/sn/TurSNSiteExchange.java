@@ -21,6 +21,7 @@
 
 package com.viglet.turing.exchange.sn;
 
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -87,6 +88,11 @@ public class TurSNSiteExchange {
 	private Set<TurSNRankingExpression> turSNRankingExpressions;
 	private Set<TurSNSiteMergeProviders> turSNSiteMergeProviders;
 	private Set<TurSNSiteCustomSort> turSNSiteCustomSorts;
+	/**
+	 * T1263 — the site's synonym rules. {@code null} (an export written before
+	 * they were carried) tells the import to keep the site's existing rules.
+	 */
+	private List<TurSNSynonymExchange> turSNSiteSynonyms;
 
 	public TurSNSiteExchange(TurSNSite turSNSite) {
 		this.setDefaultDateField(turSNSite.getDefaultDateField());

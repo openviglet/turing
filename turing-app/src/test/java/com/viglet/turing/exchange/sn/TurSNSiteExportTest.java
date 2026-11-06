@@ -43,15 +43,19 @@ class TurSNSiteExportTest {
         TurSNSiteCustomSortRepository customSortRepository = mock(TurSNSiteCustomSortRepository.class);
         TurSNSiteExportFileService exportFileService = mock(TurSNSiteExportFileService.class);
 
-        TurSNSiteContentExchangeService contentExchangeService = mock(TurSNSiteContentExchangeService.class);
-        PlatformTransactionManager transactionManager = mock(PlatformTransactionManager.class);
-        TurSNSiteExport turSNSiteExport = new TurSNSiteExport(siteRepository, spotlightRepository,
-                mergeProvidersRepository, customSortRepository, exportFileService, contentExchangeService,
-                transactionManager);
-
         TurSNSite site = new TurSNSite();
         site.setId("site-1");
         site.setName("Site 1");
+
+        TurSNSiteContentExchangeService contentExchangeService = mock(TurSNSiteContentExchangeService.class);
+        TurSNSiteSynonymExchangeService synonymExchangeService = mock(TurSNSiteSynonymExchangeService.class);
+        PlatformTransactionManager transactionManager = mock(PlatformTransactionManager.class);
+        TurSNSiteExport turSNSiteExport = new TurSNSiteExport(siteRepository, spotlightRepository,
+                mergeProvidersRepository, customSortRepository, exportFileService, contentExchangeService,
+                synonymExchangeService, transactionManager);
+        TurSNSynonymExchange synonym = new TurSNSynonymExchange("syn-1", null, null,
+                java.util.Locale.US, null, List.of("raincoat", "rain jacket"), true);
+        when(synonymExchangeService.export(site)).thenReturn(List.of(synonym));
 
         TurSNSiteSpotlight spotlight = new TurSNSiteSpotlight();
         TurSNSiteSpotlightTerm term = new TurSNSiteSpotlightTerm();
@@ -67,7 +71,7 @@ class TurSNSiteExportTest {
         when(spotlightRepository.findByTurSNSite(any(Sort.class), eq(site))).thenReturn(List.of(spotlight));
         when(mergeProvidersRepository.findByTurSNSite(site)).thenReturn(List.of(mergeProvider));
         when(customSortRepository.findByTurSNSiteWithItems(site)).thenReturn(List.of());
-        when(exportFileService.exportSNSitesToZip(any(), any(), eq(false))).thenReturn(Path.of("site-export.zip"));
+        when(exportFileService.exportSNSitesToZip(any(), any(), any(), eq(false))).thenReturn(Path.of("site-export.zip"));
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         StreamingResponseBody responseBody = turSNSiteExport.exportAll(response);
@@ -81,6 +85,7 @@ class TurSNSiteExportTest {
 
         verify(spotlightRepository).findByTurSNSite(any(Sort.class), eq(site));
         verify(mergeProvidersRepository).findByTurSNSite(site);
-        verify(exportFileService).exportSNSitesToZip(eq(List.of(site)), any(), eq(false));
+        verify(exportFileService).exportSNSitesToZip(eq(List.of(site)),
+                eq(java.util.Map.of("site-1", List.of(synonym))), any(), eq(false));
     }
 }

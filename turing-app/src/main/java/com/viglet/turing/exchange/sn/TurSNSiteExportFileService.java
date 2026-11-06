@@ -143,6 +143,17 @@ public class TurSNSiteExportFileService {
 	 */
 	public Path exportSNSitesToZip(List<TurSNSite> turSNSites, TurSNSiteContentPages content,
 			boolean includeTemplate) {
+		return exportSNSitesToZip(turSNSites, Map.of(), content, includeTemplate);
+	}
+
+	/**
+	 * T1263 — {@code synonymsBySiteId} holds each site's synonym rules, read by
+	 * the caller inside its transaction; a site missing from it is written with
+	 * no {@code turSNSiteSynonyms} at all.
+	 */
+	public Path exportSNSitesToZip(List<TurSNSite> turSNSites,
+			Map<String, List<TurSNSynonymExchange>> synonymsBySiteId, TurSNSiteContentPages content,
+			boolean includeTemplate) {
 		File tmpDir = getOrCreateTmpDir();
 		String folderName = "SNSite_" + System.currentTimeMillis();
 
@@ -153,7 +164,9 @@ public class TurSNSiteExportFileService {
 		Map<String, TurEmbeddingModel> embeddingModels = new LinkedHashMap<>();
 
 		for (TurSNSite turSNSite : turSNSites) {
-			shSiteExchanges.add(this.exportSNSite(turSNSite));
+			TurSNSiteExchange siteExchange = this.exportSNSite(turSNSite);
+			siteExchange.setTurSNSiteSynonyms(synonymsBySiteId.get(turSNSite.getId()));
+			shSiteExchanges.add(siteExchange);
 			collectReferences(turSNSite, llmInstances, storeInstances, seInstances, embeddingModels);
 		}
 		TurExchange turExchange = new TurExchange();
