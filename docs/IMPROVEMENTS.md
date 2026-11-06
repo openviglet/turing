@@ -2303,6 +2303,43 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
 
+### CLXIX.3 SN site export and import carry synonyms (T1263)
+
+**Where it happened.** The public demo `turing-demo.viglet.org` is wiped every 6 h and
+re-seeded by `TurExportImportOnStartup` from an export (`viglet/cloud` →
+`docker/demo-seed-src/tarnfell/export.json`). The Tarnfell store that WordPress
+Playground boots (Dumont D239, `dumont.viglet.org/playground/blueprint.json`) searches
+that SN site.
+
+**What happens.** The Dumont WordPress seed (`wordpress/demo/seed/catalog.php`) creates
+the site's synonyms through `POST /api/sn/{site}/synonym` and applies them. A Docker run
+of that seed against a local Turing gets them, but the export written from it does not
+carry them. `snSites[0]` lists `turSNSiteSpotlights`, `turSNSiteFields`,
+`turSNSiteCustomSorts` and the other site parts, but no synonyms, and it has
+`"thesaurus": false`. After every reset:
+
+```
+GET /api/sn/tarnfell/search?q=raincoat&_setlocale=en_US   → count 0
+GET /api/sn/tarnfell/search?q=puffer&_setlocale=en_US     → count 0
+GET /api/sn/tarnfell/search?q=rucksack&_setlocale=en_US   → count 0
+GET /api/sn/tarnfell/search?q=rain%20jacket&...           → count 4
+```
+
+The demo's "raincoat finds the rain jackets" story (Tarnfell's curated searches, the
+tour) reads as broken on the public demo.
+
+**Workaround.** None is possible from the consuming side. The public demo blocks the
+admin API, so neither Playground nor the plugin can re-create the synonyms, and live
+admin edits are discarded on the next reset.
+
+**What Turing should do.** Export writes the site's synonyms (`TurSNSynonym`: terms,
+locale, kind, enabled) and the thesaurus state with the SN site. Import restores them
+and applies them to the engine (Lucene and Solr), as `TurSNSiteSynonymAPI`'s apply does.
+An import of an older export without synonyms leaves the site's existing ones alone.
+Done when a site exported with synonyms and imported into a fresh store answers
+`raincoat` with the rain jackets. The cloud repo then regenerates
+`demo-seed-src/tarnfell` once.
+
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope

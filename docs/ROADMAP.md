@@ -18,6 +18,8 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
+- 📋 **T1263** (deps: —) **An SN site export carries no synonyms, so a site rebuilt from one finds nothing for raincoat** — Every store seeded from an export (the public demo resets every 6 h) loses its synonym search, with no admin surface there to put it back. → §CLXIX.3
+
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1253** (deps: T1252 ⏸) **The plugin's PHP classes, constants and stored option keys are still named Viglet_Dumont_*** — Before the first wordpress.org release a rename is free; after it, every installed site needs an option migration. → §CLXXXII.2
