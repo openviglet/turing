@@ -2461,3 +2461,22 @@ TurChatSource and TurAnswerCitation gain it as optional, and a client that ignor
 unchanged. The plugin then appends `fq[]=type:<type>` to the "See every result" link
 when every cited source shares the type. Done when an assistant answer citing four
 products links to the results page filtered to products.
+
+### CLXXXII.12 Answer citations say when the answer cited nothing (from T1261) (T1265)
+
+T1261 found it while fixing the WordPress plugin's answer panel. The answer engine's
+trailing `citations` event comes from TurAnswerStreamFramer.trailingEvents, which calls
+TurAnswerCitationNumberer.renumberByMarkers with failOpenTopK = every source. When the
+answer text carries no `[n]` marker, the event therefore lists every retrieved source,
+positionally numbered, and a client cannot tell "the answer cited these" from "the
+answer cited nothing". The plugin now trusts only sources whose number appears in the
+text; the SDK's own answer UI and any other client still show retrieval as citations.
+
+Two halves. First, why a plain product question ("uma barraca para duas pessoas" on the
+Recanto da Serra demo) is answered with no marker at all: whether the RAG system prompt
+the answer path uses asks for `[n]` footnotes on a short answer, and whether the catalog
+path (T1212) does. Second, the event says what it is: an opt-in per site (default the
+current fail-open, per the behaviour-flag rule) under which a marker-less answer's
+`citations` is empty, plus a `cited: false` flag on the trace event either way so a
+client can tell without parsing the text. Done when the demo question returns a marker
+in the answer, and a marker-less answer on an opted-in site sends no citations.

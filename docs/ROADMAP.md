@@ -21,8 +21,8 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1261** (deps: T1252 ✅) **The plugin's search answer lists every retrieved document as a source when it cites none** — The block falls back from citations to retrieval, so the published video shows a running shirt under a tent answer while Ana says each source can be checked. → §CLXXXII.10
 - 📋 **T1264** (deps: —) **A chat answer's sources carry no document type, so its link to all results cannot filter to what it cited** — An assistant answer citing four products opens a results page of every type, not the products. → §CLXXXII.11
+- 📋 **T1265** (deps: —) **An answer with no [n] marker still sends every retrieved source as its citations** — A client cannot tell an answer that cited nothing from one that cited everything it read. → §CLXXXII.12
 
 ## Done when — T1184
 

@@ -707,9 +707,18 @@ const { state, actions } = store( 'viglet-turing/search', {
 					if ( state.answerPaused ) {
 						reportAiPaused();
 					}
+					// T1261: only what the answer's text cites by its [n] footnotes. Turing
+					// fails open to every retrieved document when the text has no marker, and
+					// retrieval is wider than the answer; with none cited the panel stays
+					// hidden, as the block's setting says.
+					const used = footnotesIn( s.answer );
 					const cited = (
 						s.citations.length ? s.citations : s.sources
-					).filter( ( source ) => source.url );
+					).filter(
+						( source ) =>
+							source.url &&
+							used.has( Number( source.rank ?? source.footnote ) )
+					);
 					answeredSources = cited.map( ( source ) => ( {
 						sourceId: source.sourceId,
 						title: source.title || source.url,
@@ -791,6 +800,24 @@ function counted( labels, n ) {
 function close() {
 	state.open = false;
 	state.active = -1;
+}
+
+/**
+ * The footnote numbers an answer's text cites (T1261): `[2]`, and each number of `[1, 3]`.
+ *
+ * @param {string} text The answer, as far as it has streamed.
+ * @return {Set<number>} The numbers.
+ */
+function footnotesIn( text ) {
+	const used = new Set();
+	for ( const match of String( text || '' ).matchAll(
+		/\[(\d+(?:\s*,\s*\d+)*)\]/g
+	) ) {
+		for ( const number of match[ 1 ].split( ',' ) ) {
+			used.add( Number( number.trim() ) );
+		}
+	}
+	return used;
 }
 
 /**
