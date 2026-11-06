@@ -2358,30 +2358,6 @@ it, deletes it by id and by field, and finds nothing.
 
 ## CLXXX Analytics & observability gaps
 
-### CLXXX.2 Clearing facets keeps the secondary ones (GitHub #120) (T1249)
-
-**Where it came from.** GitHub issue #120 (INS, 2025): a client wants the facets it
-marks secondary (rendered as tabs) to keep their selection when the visitor clears the
-primary facets.
-
-**What happens today.** A field can be a secondary facet
-(`TurSNSiteFieldExt.secondaryFacet`, rendered by
-`TurSNFacetRenderer.responseSecondaryFacet`), but the clear-all action ignores it:
-`TurSNSearchProcess` builds `cleanUpFacets` from every facet field in the filter query
-(`getFacetFieldsInFilterQuery`), and the SDKs' `clearAllFilters` send `fq: []`. Clearing
-the side filters also drops the tab the visitor is on.
-
-**What Turing should do.** Leave secondary-facet filters in place when clearing:
-`cleanUpFacets` removes only the primary facet fields, and the structured response
-exposes the same list so `clearAllFilters` in both SDKs keeps the secondary filters. The
-issue also asks for the secondary set to be chosen per request (a parameter); the
-per-field flag already exists, so start with it and add a request override only if a
-client still needs one, next to the request-level facet exclusion filed beside this
-line.
-
-**Done when:** with a secondary facet `type=post` and a primary `year=2024` selected,
-the clean-up link and `clearAllFilters` keep `type=post`, on Solr and Lucene.
-
 ### CLXXX.3 A request can exclude facets (GitHub #103) (T1250)
 
 **Where it came from.** GitHub issue #103 (INS, 2024): hide a facet through a search

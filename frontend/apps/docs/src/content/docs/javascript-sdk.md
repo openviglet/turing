@@ -145,7 +145,7 @@ await search.searchQuery("lap", { mode: "instant" }); // as the visitor types: "
 await search.toggleFacet(facetItem);       // click a facet value (applies its own action)
 await search.toggleFacet(doc.metadata[0]); // ...or a result's own facet chip
 await search.clearFacet(facet);            // clear one facet
-await search.clearAllFilters();            // clear every filter
+await search.clearAllFilters();            // clear every filter but the secondary facets' (tabs)
 await search.goToPage(2);
 await search.applySpellCheck();            // accept "did you mean"
 await search.changeSort("relevance");

@@ -247,6 +247,8 @@ export {
   // SDK so the two cannot drift on how a legacy param maps onto the POST body.
   searchParamsToRequest,
   requestToSearchParams,
+  // T1249 — what clearing every filter keeps: the secondary facets' selections.
+  keepSecondaryFilterQueries,
 } from "./controllers/search.js";
 export type {
   SearchController,

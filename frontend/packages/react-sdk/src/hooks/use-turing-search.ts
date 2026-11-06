@@ -6,6 +6,7 @@ import {
   applyFacetAction,
   fetchChat,
   fetchSearch,
+  keepSecondaryFilterQueries,
   parseHrefToParams,
   postClick,
   postStructuredSearch,
@@ -436,7 +437,17 @@ export function useTuringSearch(
     [patchRequest],
   );
 
-  const clearAllFilters = useCallback(() => patchRequest({ fq: [] }), [patchRequest]);
+  // T1249 — the secondary facets (the tab the visitor is on) stay selected.
+  const clearAllFilters = useCallback(
+    () =>
+      patchRequest({
+        fq: keepSecondaryFilterQueries(
+          requestRef.current.fq ?? [],
+          structuredRef.current?.secondaryFacets,
+        ),
+      }),
+    [patchRequest],
+  );
 
   const applySpellCheck = useCallback(
     (useOriginal = false) => {

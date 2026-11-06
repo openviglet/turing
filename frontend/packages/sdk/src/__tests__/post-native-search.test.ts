@@ -322,6 +322,25 @@ describe("POST-native search (T709)", () => {
     expect((postCalls(c).at(-1)![1] as Record<string, unknown>).fq).toEqual([]);
   });
 
+  it("clearAllFilters keeps a secondary facet's filter (T1249)", async () => {
+    const c = makeClient();
+    const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {
+      chat: false,
+    });
+    await search.toggleFacet(facetItem("ADD"));
+    await search.toggleFacet(facetItem("ADD", "type:post"));
+    const structured = search.getState().structured;
+    search.setState({
+      structured: {
+        ...structured!,
+        secondaryFacets: [{ name: "type", multiValued: false, items: [] }],
+      },
+    });
+    await search.clearAllFilters();
+
+    expect((postCalls(c).at(-1)![1] as Record<string, unknown>).fq).toEqual(["type:post"]);
+  });
+
   it("goToPage keeps the filters and does not reset the page", async () => {
     const c = makeClient();
     const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {

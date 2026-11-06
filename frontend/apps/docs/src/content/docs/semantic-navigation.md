@@ -324,7 +324,7 @@ An older Solr core has no such field and searches as before until it is recreate
 reindexed.
 
 :::tip[Secondary Facets]
-A secondary facet is a regular facet that is additionally returned in a separate `secondaryFacet` section of the search response. This lets the front-end render it differently, for example, as horizontal tabs ("All · Articles · Videos"), while other facets appear as sidebar filters. The field must have **Facet** enabled first; **Secondary Facet** is a promotion, not a replacement.
+A secondary facet is a regular facet that is additionally returned in a separate `secondaryFacet` section of the search response. This lets the front-end render it differently, for example, as horizontal tabs ("All · Articles · Videos"), while other facets appear as sidebar filters. The field must have **Facet** enabled first; **Secondary Facet** is a promotion, not a replacement. Clearing the facets keeps a secondary facet's selection: the `cleanUpFacets` link and the SDKs' `clearAllFilters` drop only the other filters, so the visitor stays on the tab they chose.
 :::
 
 #### Field-Level Facet Overrides

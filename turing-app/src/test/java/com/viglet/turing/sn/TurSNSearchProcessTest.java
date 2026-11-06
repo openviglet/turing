@@ -352,6 +352,23 @@ class TurSNSearchProcessTest {
                 verify(turSNSiteMetricAccessRepository).save(any());
         }
 
+        /** T1249 — the clean-up link drops the primary facet fields and keeps the secondary ones. */
+        @Test
+        void testCleanUpKeepsTheSecondaryFacetFields() {
+                com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto type =
+                                new com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto();
+                type.setName("type");
+                type.setSecondaryFacet(true);
+                com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto year =
+                                new com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto();
+                year.setName("year");
+
+                assertThat(TurSNSearchProcess.primaryFacetFields(List.of("type", "year"),
+                                Map.of("type", type, "year", year))).containsExactly("year");
+                assertThat(TurSNSearchProcess.primaryFacetFields(List.of("type", "year"), null))
+                                .containsExactly("type", "year");
+        }
+
         /** T1244 — a 2,000-character query is recorded by its first 255 characters. */
         @Test
         void testPopulateMetricsCapsALongQueryToTheColumn() {

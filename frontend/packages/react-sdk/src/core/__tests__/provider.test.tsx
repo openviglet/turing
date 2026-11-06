@@ -255,6 +255,21 @@ describe("URL writes", () => {
     expect(new URLSearchParams(lastWrite()).getAll("fq[]")).toEqual([]);
   });
 
+  it("clearAllFilters keeps a secondary facet's selection (T1249)", async () => {
+    postStructuredSearch.mockResolvedValue({
+      ...STRUCTURED,
+      secondaryFacets: [{ name: "type", multiValued: false, items: [] }],
+    } as unknown as TurStructuredSearchResponse);
+    const { result, lastWrite } = renderStore(
+      "?q=shoes&fq[]=type:Post&fq[]=lang:en",
+    );
+    await waitFor(() => expect(result.current.status).toBe("success"));
+
+    act(() => result.current.clearAllFilters());
+
+    expect(new URLSearchParams(lastWrite()).getAll("fq[]")).toEqual(["type:Post"]);
+  });
+
   it("goToPage, setSort and setLocale write their own param and keep the query", async () => {
     const { result, lastWrite } = renderStore("?q=shoes");
     await waitFor(() => expect(result.current.status).toBe("success"));

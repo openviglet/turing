@@ -119,7 +119,10 @@ export interface SearchController extends Store<SearchControllerState> {
   toggleFacet(item: TurFacetToggleTarget): Promise<void>;
   /** T709 — clear every selection of one facet (replaces `cleanUpLink`). */
   clearFacet(facet: TurStructuredFacet): Promise<void>;
-  /** T709 — clear every filter (replaces `cleanUpFacets`). */
+  /**
+   * T709 — clear every filter (replaces `cleanUpFacets`). T1249: except those of a
+   * secondary facet (`secondaryFacets`, usually rendered as tabs), which stay.
+   */
   clearAllFilters(): Promise<void>;
   /**
    * T709 — re-run using the spell-checker's suggestion, or force the original
@@ -245,6 +248,26 @@ export function requestToSearchParams(request: TurSearchRequest): SearchParams {
     group: request.group,
     nfpr: nfprOf(request.autoCorrectionDisabled),
   };
+}
+
+/**
+ * T1249 — the filter queries of `fq` that belong to a secondary facet: what
+ * clearing every filter keeps. A filter's field is what precedes its first `:`.
+ */
+export function keepSecondaryFilterQueries(
+  fq: string[],
+  secondaryFacets: TurStructuredFacet[] | undefined,
+): string[] {
+  const fields = new Set<string>();
+  for (const facet of secondaryFacets ?? []) {
+    fields.add(facet.name);
+    for (const item of facet.items ?? []) fields.add(item.field);
+  }
+  if (fields.size === 0) return [];
+  return fq.filter((filterQuery) => {
+    const colon = filterQuery.indexOf(":");
+    return colon > 0 && fields.has(filterQuery.slice(0, colon));
+  });
 }
 
 function nfprOf(autoCorrectionDisabled: boolean | undefined): string | undefined {
@@ -527,7 +550,14 @@ export function createSearchController(
         fq: (store.getState().request.fq ?? []).filter((fq) => !clear.has(fq)),
       });
     },
-    clearAllFilters: () => patchRequest({ fq: [] }),
+    // T1249 — the secondary facets (the tab the visitor is on) stay selected.
+    clearAllFilters: () =>
+      patchRequest({
+        fq: keepSecondaryFilterQueries(
+          store.getState().request.fq ?? [],
+          store.getState().structured?.secondaryFacets,
+        ),
+      }),
     applySpellCheck: (useOriginal = false) => {
       const spellCheck = store.getState().structured?.spellCheck;
       const text = useOriginal ? spellCheck?.originalText : spellCheck?.correctedTextValue;

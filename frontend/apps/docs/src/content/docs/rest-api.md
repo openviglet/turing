@@ -198,7 +198,7 @@ The search response is a **self-describing navigational JSON**: every link a use
 | **widget.spellCheck** | Spelling correction with `original`, `corrected` text, and `usingCorrectedText` flag. Enabled by `Spell Check = true` |
 | **widget.spotlights** | Curated documents injected at configured positions when the query matches a spotlight term |
 | **widget.locales** | All configured locales with pre-built links: use as valid values for `_setlocale` |
-| **widget.cleanUpFacets** | Pre-built link to clear all active facet filters |
+| **widget.cleanUpFacets** | Pre-built link to clear the active facet filters, keeping those of a secondary facet (the selected tab) |
 | **groups** | Grouped results when the `group` parameter is used |
 
 **Self-describing navigation** operates at three levels:

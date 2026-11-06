@@ -229,6 +229,7 @@ export {
   applyFacetAction,
   searchParamsToRequest,
   requestToSearchParams,
+  keepSecondaryFilterQueries,
 } from "@viglet/turing-sdk";
 
 /**

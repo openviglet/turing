@@ -7,6 +7,7 @@ import {
   applyFacetAction,
   fetchChat,
   fetchSearch,
+  keepSecondaryFilterQueries,
   parseHrefToParams,
   postStructuredSearch,
   searchParamsToRequest,
@@ -337,7 +338,11 @@ function UrlSyncSearchStore({
     [explicitParams.fq, setFilterQueries],
   );
 
-  const clearAllFilters = useCallback(() => setFilterQueries([]), [setFilterQueries]);
+  // T1249 — the secondary facets (the tab the visitor is on) stay selected.
+  const clearAllFilters = useCallback(
+    () => setFilterQueries(keepSecondaryFilterQueries(explicitParams.fq ?? [], structured?.secondaryFacets)),
+    [explicitParams.fq, structured, setFilterQueries],
+  );
 
   const goToPage = useCallback(
     (page: number) => updateParams({ p: String(page) }),

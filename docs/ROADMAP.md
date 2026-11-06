@@ -20,7 +20,6 @@
 
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
-- 📋 **T1249** (deps: —) **Clearing the facets also clears the secondary facets, so the visitor loses the tab they are on** — The clean-up link and clearAllFilters drop every facet filter, secondary ones included (GitHub #120). → §CLXXX.2
 - 📋 **T1250** (deps: —) **A search request cannot leave out a facet the site enables; a page hides it client-side after it is computed** — One page of a site cannot drop a facet the rest of the site shows without code in the client (GitHub #103). → §CLXXX.3
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)

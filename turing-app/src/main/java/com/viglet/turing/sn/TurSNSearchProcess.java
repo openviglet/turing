@@ -770,8 +770,11 @@ public class TurSNSearchProcess {
                                 .setIcon(turSNSite.getIcon())
                                 .setLocales(responseLocales(snap, context.getUri()))
                                 .setSpotlights(responseSpotlights(context, turSNSite))
+                                // T1249 — clearing the facets keeps the secondary ones (the tab
+                                // the visitor is on).
                                 .setCleanUpFacets(TurSNUtils.removeFilterQueryByFieldNames(context.getUri(),
-                                                facetFieldsInFilterQuery).toString())
+                                                primaryFacetFields(facetFieldsInFilterQuery, facetMap))
+                                                .toString())
                                 .setSelectedFilterQueries(TurSNUtils.filterQueryByFieldNames(context.getUri(),
                                                 facetFieldsInFilterQuery));
         }
@@ -845,6 +848,19 @@ public class TurSNSearchProcess {
                 return TurSNUtils.isTrue(turSNSite.getMlt())
                                 && turSEResults.getSimilarResults() != null
                                 && !turSEResults.getSimilarResults().isEmpty();
+        }
+
+        /** T1249 — {@code fields} without the site's secondary facet fields. */
+        static List<String> primaryFacetFields(List<String> fields,
+                        Map<String, TurSNSiteFieldExtDto> facetMap) {
+                Set<String> secondary = new HashSet<>();
+                if (facetMap != null) {
+                        facetMap.values().stream()
+                                        .filter(field -> field != null
+                                                        && Boolean.TRUE.equals(field.getSecondaryFacet()))
+                                        .forEach(field -> secondary.add(field.getName()));
+                }
+                return fields.stream().filter(field -> !secondary.contains(field)).toList();
         }
 
         private List<String> getFacetFieldsInFilterQuery(TurSNSiteSearchContext context,
