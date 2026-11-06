@@ -38,6 +38,7 @@ const NAV_GROUPS = [
   {
     label: "Solutions",
     items: [
+      { label: "WordPress & WooCommerce", href: withBase("/wordpress/") },
       { label: "Security & data residency", href: withBase("/security/") },
       { label: "Compare", href: withBase("/compare/") },
       { label: "Migrate", href: withBase("/migrate/") },

@@ -13,6 +13,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Compare", href: withBase("/compare/") },
       { label: "Migrate", href: withBase("/migrate/") },
       { label: "AEM search", href: withBase("/aem-search/") },
+      { label: "WordPress", href: withBase("/wordpress/") },
       { label: "Security", href: withBase("/security/") },
       { label: "Self-host", href: withBase("/#self-host") },
       { label: "Marketplace", href: withBase("/#marketplace") },

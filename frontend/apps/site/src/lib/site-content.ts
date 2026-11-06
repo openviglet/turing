@@ -286,6 +286,13 @@ export const MARKETPLACE: LinkCard[] = [
 
 export const RESOURCES: LinkCard[] = [
   {
+    title: "WordPress & WooCommerce plugin",
+    description:
+      "Index posts, pages and WooCommerce products into Turing and add search as you type, cited answers and a shopping copilot to your store. Watch the demo, or try it in your browser.",
+    href: withBase("/wordpress/"),
+    tag: "WordPress",
+  },
+  {
     title: "React SDK Storybook",
     description:
       "Interactive component docs: headless hooks and UI components with live examples for enterprise search.",
@@ -409,6 +416,118 @@ export const AUDIENCES: Audience[] = [
     ],
     primary: { label: "AEM AI Search", href: withBase("/aem-search/") },
     secondary: { label: "Security & data residency", href: withBase("/security/") },
+  },
+];
+
+/* -------------------------------------------------------------------------- */
+/* WordPress and WooCommerce page (/wordpress) · T1251                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The /wordpress page, told as the demo store's story: each chapter is one step the
+ * recorded story plays live against Turing, and its picture is a still from that
+ * recording (public/wordpress/chapter-N.webp). A capability the story does not play
+ * is not a chapter here.
+ */
+export interface StoryChapter {
+  title: string;
+  feature: string;
+  body: string;
+  alt: string;
+}
+
+export const WORDPRESS_STORY: StoryChapter[] = [
+  {
+    title: "Arrives",
+    feature: "Popular searches",
+    body: "Before she types, the week's searches that found something sit under the box as chips, so the catalog shows at a glance. A search that found nothing never becomes a chip.",
+    alt: "The demo store's search page with popular-search chips under the box.",
+  },
+  {
+    title: "Says what she needs",
+    feature: "A sentence becomes filters",
+    body: "“light rain jacket under $400” sets the price filter, says back Understood: Price ≤ 400, and keeps the words that are left in the box. A misspelt name is offered its correction.",
+    alt: "Search results for a sentence, with the price filter it set shown as understood.",
+  },
+  {
+    title: "Asks",
+    feature: "Answers with their sources",
+    body: "The Site assistant answers from the shop's own guides and products and lists what it read. Asked what size of backpack a night in a hut needs, it cites the backpack guide.",
+    alt: "The Site assistant's answer to a question, with the guide it cites below it.",
+  },
+  {
+    title: "Compares",
+    feature: "Side by side, with a summary",
+    body: "Compare, ticked on the search results, opens the products together: the rows that differ are marked, and a summary written by AI from the table sits above it, labelled as such.",
+    alt: "A rain jacket, gloves and trousers compared in a table, with an AI summary above it.",
+  },
+  {
+    title: "Builds the kit",
+    feature: "A plan becomes a kit",
+    body: "She describes the trip, and the catalog copilot stages products by need, each priced and stocked by WooCommerce, with the journal guides that cover the plan. One click puts the kit in the cart.",
+    alt: "A kit staged by need for a two-day trip, each product with its price.",
+  },
+  {
+    title: "Checks one item",
+    feature: "Related, by meaning",
+    body: "On a product's page, Related shows the products and guides most like it, and the copilot under the product answers her question with the products it cites.",
+    alt: "A product page with Related products and guides and the catalog copilot.",
+  },
+  {
+    title: "Buys",
+    feature: "WooCommerce's own checkout",
+    body: "The cart and checkout are the store's own: prices and the total come from WooCommerce, never from the model. The demo pays with an offline method, so an order is placed and nothing is charged.",
+    alt: "The WooCommerce checkout with the kit in the order summary.",
+  },
+  {
+    title: "Backstage",
+    feature: "What the owner sees",
+    body: "WordPress's own search finds nothing for “raincoat”; Turing finds the rain jackets through a synonym. Search insights list what was searched and what found nothing, and one click turns a miss into a synonym.",
+    alt: "Search tuning in wp-admin with the synonym just added from Search insights.",
+  },
+];
+
+/** A language the plugin video was cut in. */
+export type WordPressVideoLang = "pt-BR" | "en";
+
+/**
+ * The plugin video, one YouTube id per cut. The pt-BR cut is published first; until the
+ * English id is filled in, every visitor gets pt-BR. The poster is
+ * public/wordpress/video-<lang>.jpg, the thumbnail the video was published with.
+ */
+export const WORDPRESS_VIDEOS: Record<WordPressVideoLang, { id: string | null; label: string; title: string }> = {
+  "pt-BR": {
+    id: "UVoQXGcd-aI",
+    label: "Português",
+    title: "Viglet Turing para WordPress e WooCommerce: a loja de demonstração",
+  },
+  en: {
+    id: null,
+    label: "English",
+    title: "Viglet Turing for WordPress and WooCommerce: the demo store",
+  },
+};
+
+export const WORDPRESS_FAQ: { q: string; a: string }[] = [
+  {
+    q: "Does the plugin need Dumont?",
+    a: "No. The plugin talks to Turing directly: it indexes posts, pages, custom post types and WooCommerce products into a Turing site and searches it from WordPress. Dumont is the connector platform for the sources WordPress is not, such as AEM, databases and file shares.",
+  },
+  {
+    q: "What does it index?",
+    a: "Posts, pages, custom post types and WooCommerce products, with their taxonomies and product fields provisioned as facets. It keeps the index in step as content is published, updated and deleted.",
+  },
+  {
+    q: "Do the answers need a language model?",
+    a: "The cited answers, the shopping copilot and the Site assistant use the language model configured in Turing, and stay hidden on a Turing that has none. Search as you type, filters, related products and search insights work without one.",
+  },
+  {
+    q: "Can the model change a price?",
+    a: "No. Prices, stock and the cart total always come from WooCommerce. The copilot stages products the catalog holds; it never writes a price.",
+  },
+  {
+    q: "Can I try it without installing anything?",
+    a: "Yes. The demo store opens in WordPress Playground, in your browser, with the plugin installed and pointed at a Turing that holds the demo catalog.",
   },
 ];
 

@@ -56,6 +56,12 @@ export const routes: PrerenderRoute[] = [
     description:
       "Self-hosted AI search, RAG and agents for regulated industries: your content, embeddings and queries stay in your network and region. Data residency by construction, SSO, encrypted secrets, any LLM including fully local, Apache 2.0.",
   },
+  {
+    path: "/wordpress/",
+    title: "AI Search for WordPress & WooCommerce | Viglet Turing",
+    description:
+      "A WordPress plugin that indexes posts, pages and WooCommerce products into Viglet Turing: search as you type, filters from a sentence, cited answers, a shopping copilot and search insights. Watch the demo store, or try it in your browser. Open source.",
+  },
 ];
 
 /** Render a route's app shell to an HTML string for the prerender step. */

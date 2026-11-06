@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
-## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
-
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 ## Table of contents
@@ -2361,26 +2359,6 @@ it, deletes it by id and by field, and finds nothing.
 The marketing site at frontend/apps/site is where a visitor first meets Viglet Turing. A
 page that redirects elsewhere, or a product surface with no page, is a visitor sent to
 someone else's site.
-
-### CLXXXI.1 A WordPress page of Turing's own (T1251)
-
-frontend/apps/site/public/wordpress/index.html is a meta refresh to
-dumont.viglet.org/wordpress, and the YouTube video UVoQXGcd-aI closes on
-turing.viglet.org/wordpress. A /wordpress/ route replaces it, modelled on
-dumont-site/src/pages/wordpress.tsx: a dark hero with "Install the plugin" and "Try the
-demo store in your browser" (Playground), the eight-chapter shopper story
-(WORDPRESS_STORY and the chapter-1..8.webp stills), the "install it, point it at Turing,
-reindex" band and the shared CTA, in Turing's identity (the hero shell of aem.tsx). The
-video sits under the hero as a click-to-load youtube-nocookie facade over the existing
-thumbnail, so no third-party cookie loads before the click and the consent posture
-holds. There are two cuts: pt-BR (UVoQXGcd-aI, published first to see how it performs)
-and English (to follow). The ids live in one map, the page picks by navigator.language
-with a pt/en toggle, and while the English id is absent every visitor gets pt-BR.
-JSON-LD carries BreadcrumbList, SoftwareApplication, VideoObject and FAQPage. A "beyond
-WordPress" section links Dumont for AEM, databases and files. The route is wired into
-App.tsx, entry-server.tsx, the Solutions dropdown, the footer, a landing card,
-sitemap.xml and llms.txt, and the site-content mentions of WordPress link to it. Done
-when the redirect file is gone and the prerendered page builds.
 
 ## CLXXXII The WordPress plugin (Viglet Turing Search)
 

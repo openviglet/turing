@@ -6,6 +6,7 @@ import { ComparePage } from "@/pages/compare";
 import { AemPage } from "@/pages/aem";
 import { PersonaPage } from "@/pages/persona";
 import { SecurityPage } from "@/pages/security";
+import { WordPressPage } from "@/pages/wordpress";
 import { ConsentBanner } from "@/components/consent-banner";
 import { FEATURE_DETAILS } from "@/lib/site-content";
 import { matchRoute } from "./route-match";
@@ -16,6 +17,7 @@ export const COMPARE_PATH = "/compare/";
 export const AEM_PATH = "/aem-search/";
 export const PERSONA_PATH = "/persona/";
 export const SECURITY_PATH = "/security/";
+export const WORDPRESS_PATH = "/wordpress/";
 
 export default function App({ path = "/" }: Readonly<{ path?: string }>) {
   // Cross-page links to a home anchor (e.g. "/#playground") full-load "/" and
@@ -61,6 +63,7 @@ function Page({ path }: Readonly<{ path: string }>) {
   if (/^\/aem-search\/?$/.test(path)) return <AemPage />;
   if (/^\/persona\/?$/.test(path)) return <PersonaPage />;
   if (/^\/security\/?$/.test(path)) return <SecurityPage />;
+  if (/^\/wordpress\/?$/.test(path)) return <WordPressPage />;
   const slug = matchRoute(path);
   if (slug) return <FeaturePage detail={FEATURE_DETAILS[slug]} />;
   return <LandingPage />;

@@ -41,6 +41,10 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://turing.viglet.org/wordpress/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://turing.viglet.org/marketplace/mythical-creatures/</loc>
     <priority>0.6</priority>
   </url>

@@ -713,6 +713,7 @@
 - 🗑 **T477** — abandoned: the demo is live at turing-demo.viglet.org and the one remaining step is a budget cap set on the host, which is an ops setting rather than repo work
 - 🗑 **T480** — abandoned: Viglet Cloud owns the hosted signup path in its own repo, so the site links to it instead of Turing building a second one
 - 🗑 **T481** — abandoned: social proof needs real named adopters, which is a business precondition rather than work a backlog can hold open
+- **T1251** — turing.viglet.org/wordpress is a prerendered page of its own: hero with install and Playground demo, click-to-load nocookie video (pt-BR), the eight-chapter story, FAQ and JSON-LD, Dumont linked.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 
