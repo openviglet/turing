@@ -97,6 +97,28 @@ public interface TurSearchEnginePlugin {
 
     boolean fieldExists(TurSEInstance seInstance, String indexName, String fieldName);
 
+    /**
+     * T1243 — whether this engine keeps a field schema the console can check and
+     * repair. Default: no (Lucene and Elasticsearch, whose fields follow the
+     * documents and Turing's own configuration).
+     *
+     * @since 2026.3.8
+     */
+    default boolean hasFieldSchema() {
+        return false;
+    }
+
+    /**
+     * T1243 — the field as the engine's schema holds it, or empty when it holds
+     * none or the engine keeps no schema.
+     *
+     * @since 2026.3.8
+     */
+    default java.util.Optional<TurSEFieldSchema> fieldSchema(TurSEInstance seInstance, String indexName,
+            String fieldName) {
+        return java.util.Optional.empty();
+    }
+
     // ---- Document operations (plugin resolves instance via site+locale) --
 
     boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes);

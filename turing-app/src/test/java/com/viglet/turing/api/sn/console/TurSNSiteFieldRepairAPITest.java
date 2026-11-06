@@ -22,7 +22,10 @@
 package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -38,70 +41,110 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.solr.TurSolrFieldAction;
-import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.plugins.se.TurSEFieldSchema;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 
 /**
- * Unit tests for TurSNSiteFieldRepairAPI.
+ * Unit tests for TurSNSiteFieldRepairAPI. T1243 — every repair writes through the
+ * site's engine plugin.
  *
  * @author Alexandre Oliveira
  * @since 2026.1.10
  */
 class TurSNSiteFieldRepairAPITest {
 
-    @Test
-    void testFieldRepairReturnsOkWhenSiteMissing() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
-        TurSNSiteFieldRepairAPI api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository,
-                instanceRepository);
+    private final TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+    private final TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+    private final TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
+    private final TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+    private final TurSEInstance instance = new TurSEInstance();
+    private final TurSNSiteFieldRepairAPI api;
 
-        TurSNFieldRepairPayload payload = new TurSNFieldRepairPayload();
-        payload.setId("field");
-        payload.setCore("core");
-        payload.setRepairType(TurSNFieldRepairType.SE_CREATE_FIELD);
-
-        try (org.mockito.MockedStatic<TurSolrUtils> utils = org.mockito.Mockito.mockStatic(TurSolrUtils.class)) {
-            String result = api.turSNSiteFieldRepair("site", payload);
-
-            assertThat(result).isEqualTo("ok");
-            utils.verifyNoInteractions();
-        }
+    TurSNSiteFieldRepairAPITest() {
+        TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
+        when(factory.getPluginForSite(any())).thenReturn(plugin);
+        api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository, instanceRepository, factory);
     }
 
-    @Test
-    void testFieldRepairCreatesFieldWhenRequested() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
-        TurSNSiteFieldRepairAPI api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository,
-                instanceRepository);
-
-        TurSEInstance instance = new TurSEInstance();
+    private TurSNSiteFieldExt field(TurSEFieldType type, int multiValued) {
         instance.setId("se");
         TurSNSite site = new TurSNSite();
         site.setTurSEInstance(instance);
         TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
         fieldExt.setName("title");
-        fieldExt.setType(TurSEFieldType.STRING);
-        fieldExt.setMultiValued(1);
-
+        fieldExt.setType(type);
+        fieldExt.setMultiValued(multiValued);
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
         when(fieldExtRepository.findById("field")).thenReturn(Optional.of(fieldExt));
         when(instanceRepository.findById("se")).thenReturn(Optional.of(instance));
+        return fieldExt;
+    }
 
+    private static TurSNFieldRepairPayload payload(TurSNFieldRepairType type) {
         TurSNFieldRepairPayload payload = new TurSNFieldRepairPayload();
         payload.setId("field");
         payload.setCore("core");
-        payload.setRepairType(TurSNFieldRepairType.SE_CREATE_FIELD);
+        payload.setRepairType(type);
+        return payload;
+    }
 
-        try (org.mockito.MockedStatic<TurSolrUtils> utils = org.mockito.Mockito.mockStatic(TurSolrUtils.class)) {
-            String result = api.turSNSiteFieldRepair("site", payload);
+    @Test
+    void testFieldRepairReturnsOkWhenSiteMissing() {
+        assertThat(api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.SE_CREATE_FIELD))).isEqualTo("ok");
+        verify(plugin, never()).addOrUpdateField(any(), any(), any(), any(), org.mockito.ArgumentMatchers.anyBoolean(),
+                org.mockito.ArgumentMatchers.anyBoolean(), org.mockito.ArgumentMatchers.anyBoolean());
+    }
 
-            assertThat(result).isEqualTo("ok");
-            utils.verify(() -> TurSolrUtils.addOrUpdateField(TurSolrFieldAction.ADD, instance,
-                    "core", "title", TurSEFieldType.STRING, true, true));
-        }
+    @Test
+    void testFieldRepairCreatesFieldWhenRequested() {
+        field(TurSEFieldType.STRING, 1);
+
+        assertThat(api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.SE_CREATE_FIELD))).isEqualTo("ok");
+
+        verify(plugin).addOrUpdateField(instance, "core", "title", TurSEFieldType.STRING, true, true, true);
+    }
+
+    @Test
+    void changingTheTypeKeepsTheEnginesCardinality() {
+        field(TurSEFieldType.STRING, 0);
+        when(plugin.fieldSchema(instance, "core", "title"))
+                .thenReturn(Optional.of(new TurSEFieldSchema("text_general", TurSEFieldType.TEXT, true)));
+
+        api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.SE_CHANGE_TYPE));
+
+        verify(plugin).addOrUpdateField(instance, "core", "title", TurSEFieldType.STRING, true, true, false);
+    }
+
+    @Test
+    void syncingTheCardinalityKeepsTheEnginesType() {
+        field(TurSEFieldType.STRING, 1);
+        when(plugin.fieldSchema(instance, "core", "title"))
+                .thenReturn(Optional.of(new TurSEFieldSchema("text_general", TurSEFieldType.TEXT, false)));
+
+        api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.SE_ENABLE_MULTI_VALUE));
+
+        verify(plugin).addOrUpdateField(instance, "core", "title", TurSEFieldType.TEXT, true, true, false);
+    }
+
+    @Test
+    void repairAllReplacesAMismatchedFieldAndLeavesAMatchingOne() {
+        field(TurSEFieldType.STRING, 1);
+        when(plugin.fieldSchema(instance, "core", "title"))
+                .thenReturn(Optional.of(new TurSEFieldSchema("string", TurSEFieldType.STRING, false)));
+
+        api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.REPAIR_ALL));
+
+        verify(plugin).addOrUpdateField(instance, "core", "title", TurSEFieldType.STRING, true, true, false);
+    }
+
+    @Test
+    void repairAllCreatesAFieldTheSchemaLacks() {
+        field(TurSEFieldType.STRING, 0);
+        when(plugin.fieldSchema(instance, "core", "title")).thenReturn(Optional.empty());
+
+        api.turSNSiteFieldRepair("site", payload(TurSNFieldRepairType.REPAIR_ALL));
+
+        verify(plugin).addOrUpdateField(instance, "core", "title", TurSEFieldType.STRING, true, false, true);
     }
 }

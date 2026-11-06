@@ -87,6 +87,49 @@ class TurSolrSearchEnginePluginTest {
         assertEquals("solr", plugin.getPluginType());
     }
 
+    // ---- field schema (T1243) ------------------------------------------------
+
+    @Test
+    void solrKeepsAFieldSchemaAndMapsItsTypesBackToTuringTypes() {
+        assertTrue(plugin.hasFieldSchema());
+        assertEquals(TurSEFieldType.STRING, TurSolrSearchEnginePlugin.turingType("string"));
+        assertEquals(TurSEFieldType.TEXT, TurSolrSearchEnginePlugin.turingType("text_general"));
+        assertEquals(TurSEFieldType.ARRAY, TurSolrSearchEnginePlugin.turingType("strings"));
+        assertEquals(null, TurSolrSearchEnginePlugin.turingType("custom_type"));
+        assertEquals(null, TurSolrSearchEnginePlugin.turingType(null));
+    }
+
+    @Test
+    void theFieldSchemaIsReadFromTheCore() {
+        TurSEInstance instance = new TurSEInstance();
+        try (var utils = org.mockito.Mockito.mockStatic(com.viglet.turing.solr.TurSolrUtils.class)) {
+            utils.when(() -> com.viglet.turing.solr.TurSolrUtils.existsField(instance, "core", "author"))
+                    .thenReturn(true);
+            utils.when(() -> com.viglet.turing.solr.TurSolrUtils.getField(instance, "core", "author"))
+                    .thenReturn(com.viglet.turing.solr.bean.TurSolrFieldBean.builder().name("author")
+                            .type("strings").multiValued(true).build());
+            utils.when(() -> com.viglet.turing.solr.TurSolrUtils.getSolrFieldType(org.mockito.ArgumentMatchers.any()))
+                    .thenCallRealMethod();
+
+            var schema = plugin.fieldSchema(instance, "core", "author").orElseThrow();
+
+            assertEquals("strings", schema.engineType());
+            assertEquals(TurSEFieldType.ARRAY, schema.type());
+            assertTrue(schema.multiValued());
+        }
+    }
+
+    @Test
+    void anAbsentFieldHasNoSchema() {
+        TurSEInstance instance = new TurSEInstance();
+        try (var utils = org.mockito.Mockito.mockStatic(com.viglet.turing.solr.TurSolrUtils.class)) {
+            utils.when(() -> com.viglet.turing.solr.TurSolrUtils.existsField(instance, "core", "author"))
+                    .thenReturn(false);
+
+            assertFalse(plugin.fieldSchema(instance, "core", "author").isPresent());
+        }
+    }
+
     // ---- retrieveSearchResults -----------------------------------------------
 
     @Test

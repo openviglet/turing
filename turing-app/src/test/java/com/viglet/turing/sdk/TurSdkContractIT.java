@@ -1006,6 +1006,43 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
         }
     }
 
+    /**
+     * T1243 — on a Lucene site the console's field-ext PUT changes a field's
+     * cardinality (it used to answer 400, talking Solr to an engine that is not
+     * Solr), and the field check reports the field correct.
+     */
+    @Test
+    void theFieldExtApiChangesAFieldOnALuceneSite() throws Exception {
+        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstance().getId();
+        String newSite = "t1243-" + java.util.UUID.randomUUID().toString().substring(0, 8);
+        String key = unpartitionedKey();
+        try {
+            HttpResponse<String> created = postJson("/sn/manifest", """
+                    {"name":"%s","seInstanceId":"%s","locales":["%s"]}""".formatted(newSite, seInstanceId, LOCALE),
+                    key);
+            assertEquals(200, created.statusCode(), created.body());
+            var site = siteRepository.findByName(newSite).orElseThrow();
+            var author = siteFieldExtRepository.findByTurSNSite(org.springframework.data.domain.Sort.unsorted(), site)
+                    .stream().filter(ext -> "author".equals(ext.getName())).findFirst().orElseThrow();
+            String path = "/sn/" + site.getId() + "/field/ext/" + author.getId();
+
+            tools.jackson.databind.node.ObjectNode dto = (tools.jackson.databind.node.ObjectNode) json
+                    .readTree(getWithKey(path, key).body());
+            dto.put("multiValued", 1);
+            HttpResponse<String> put = http.send(HttpRequest.newBuilder(URI.create(base() + path))
+                    .header("Key", key).header("Content-Type", "application/json")
+                    .PUT(BodyPublishers.ofString(json.writeValueAsString(dto))).build(), BodyHandlers.ofString());
+
+            assertEquals(200, put.statusCode(), put.body());
+            assertEquals(1, authorMultiValued(newSite), "the PUT changes the field's cardinality");
+            HttpResponse<String> check = getWithKey("/sn/" + site.getId() + "/field/check", key);
+            assertEquals(200, check.statusCode(), check.body());
+            assertTrue(!check.body().contains("\"correct\":false"), check.body());
+        } finally {
+            deleteSiteAsAdmin(newSite);
+        }
+    }
+
     /** Deletes a site the way the console does, so its fields and locales go with it. */
     private void deleteSiteAsAdmin(String siteName) {
         var context = org.springframework.security.core.context.SecurityContextHolder.getContext();

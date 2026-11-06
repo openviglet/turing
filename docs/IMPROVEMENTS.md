@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2322,31 +2320,6 @@ with `fqItemOperator` sends it.
 A request means the same on every engine an SN site can run on: the filters it applies,
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
-
-### CLXXV.4 Console field APIs go through the search-engine plugin (T1243)
-
-**Where it came from.** Split from T1241 (Dumont D314): on the local build, `PUT
-/api/sn/{id}/field/ext/{id}` changing a field's cardinality answers 400 "invalid URI
-scheme null", so a client cannot fix a field through the API.
-
-**Why.** The console field APIs call `TurSolrUtils` directly instead of the site's
-`TurSearchEnginePlugin`: `TurSNSiteFieldExtAPI.updateSolrSchema` and `deleteSolrSchema`
-(PUT and DELETE), `TurSNSiteFieldRepairAPI` (add, replace, exists) and
-`TurSNSiteFieldCheckAPI` (exists). On a Lucene or Elasticsearch site they talk Solr to
-an instance that is not Solr; on Solr they skip the plugin's `effective()` instance,
-which is how an env-configured endpoint becomes a null URI. The manifest path
-(`TurSNFieldProvisioner`) already goes through the plugin (`addOrUpdateField`,
-`deleteField`, `fieldExists`).
-
-**What Turing should do.** Route all of them through
-`pluginFactory.getPluginForSite(site)`, the way the provisioner does, and drop the
-direct `TurSolrUtils` calls from `api/sn/console`. Where an engine has no schema to
-change (Lucene), the plugin's own answer stands.
-
-**Done when:** on a Lucene site and on a Solr site configured by environment, the
-field-ext PUT changes a field's cardinality and the DELETE removes it, and field check
-and repair report the engine's own state; no class under `api/sn/console` imports
-`TurSolrUtils`.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

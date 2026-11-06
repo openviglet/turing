@@ -1602,6 +1602,7 @@
 - **T1232** — An Elasticsearch SN site counts its custom facets with one filters aggregation per facet, built from the same queries a click filters with, in the facet list and the drill-down, matching Lucene on a live index (design §CLXXV.1 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
 - **T1233** — fq[]=-field:value excludes the value on Solr, Lucene and Elasticsearch through one shared parser, always narrowing whatever fqOr or the operators say; Content AI answers 400 instead of matching nothing (design §CLXXV.2 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 - **T1242** — A Lucene search drops the locale's Snowball stop words, so uma barraca para 2 pessoas matches and highlights only content words; stop-word-only and quoted queries keep them (design §CLXXV.3 superseded: stop words are dropped on the query side only; dropping them from the index too would leave a stop-word-only query nothing to match, against its own test).
+- **T1243** — The field-ext save, field check and repair go through the site's engine plugin (new fieldSchema/hasFieldSchema): a Lucene site's PUT answers 200, and env-configured Solr is reached.
 
 ## Block CH — Published container images track the shipped source
 

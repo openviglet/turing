@@ -23,7 +23,6 @@ package com.viglet.turing.api.sn.console;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +42,8 @@ import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.solr.TurSolrUtils;
-import com.viglet.turing.solr.bean.TurSolrFieldBean;
+import com.viglet.turing.plugins.se.TurSEFieldSchema;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,25 +84,25 @@ public class TurSNSiteFieldCheckAPI {
                 List<TurSolrFieldStatus> fieldsExist = new ArrayList<>();
                 TurSEInstance turSEInstance = turSNSite.getTurSEInstance();
                 List<TurSNSiteLocale> siteLocales = turSNSiteLocaleRepository.findByTurSNSite(turSNSite);
+                // T1243 — the site's engine answers, not Solr directly.
+                TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
 
                 turSNSiteFieldExtRepository
                                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite)
-                                .forEach(turSNSiteFieldExt -> {
-                                        TurSolrFieldStatus fieldStatus = validateField(turSNSiteFieldExt, turSEInstance,
-                                                        siteLocales);
-                                        fieldsExist.add(fieldStatus);
-                                });
+                                .forEach(turSNSiteFieldExt -> fieldsExist.add(validateField(turSNSiteFieldExt,
+                                                plugin, turSEInstance, siteLocales)));
 
                 return fieldsExist;
         }
 
-        private TurSolrFieldStatus validateField(TurSNSiteFieldExt turSNSiteFieldExt,
+        private TurSolrFieldStatus validateField(TurSNSiteFieldExt turSNSiteFieldExt, TurSearchEnginePlugin plugin,
                         TurSEInstance turSEInstance, List<TurSNSiteLocale> siteLocales) {
                 List<TurSolrFieldCore> cores = new ArrayList<>();
                 boolean allCoresValid = true;
 
                 for (TurSNSiteLocale locale : siteLocales) {
-                        TurSolrFieldCore coreStatus = validateFieldInCore(turSNSiteFieldExt, locale, turSEInstance);
+                        TurSolrFieldCore coreStatus = validateFieldInCore(turSNSiteFieldExt, locale, plugin,
+                                        turSEInstance);
                         cores.add(coreStatus);
                         if (!coreStatus.isCorrect()) {
                                 allCoresValid = false;
@@ -120,18 +119,12 @@ public class TurSNSiteFieldCheckAPI {
                                 .build();
         }
 
-        private boolean isSolrBased(TurSEInstance turSEInstance) {
-                return turSEInstance != null
-                        && turSEInstance.getTurSEVendor() != null
-                        && "SOLR".equalsIgnoreCase(turSEInstance.getTurSEVendor().getId());
-        }
-
         private TurSolrFieldCore validateFieldInCore(TurSNSiteFieldExt turSNSiteFieldExt,
-                        TurSNSiteLocale locale, TurSEInstance turSEInstance) {
+                        TurSNSiteLocale locale, TurSearchEnginePlugin plugin, TurSEInstance turSEInstance) {
                 String coreName = locale.getCore();
 
-                // Non-Solr engines (Lucene, Elasticsearch) are schema-less — fields are always valid
-                if (!isSolrBased(turSEInstance)) {
+                // Engines without a schema (Lucene, Elasticsearch): fields are always valid
+                if (!plugin.hasFieldSchema()) {
                         return TurSolrFieldCore.builder()
                                         .name(coreName)
                                         .exists(true)
@@ -141,27 +134,23 @@ public class TurSNSiteFieldCheckAPI {
                                         .build();
                 }
 
-                if (!fieldExists(turSNSiteFieldExt, locale, turSEInstance)) {
-                        return buildMissingFieldCore(coreName);
-                }
-
-                TurSolrFieldBean solrField = TurSolrUtils.getField(turSEInstance, coreName,
-                                turSNSiteFieldExt.getName());
-                return buildFieldCore(coreName, turSNSiteFieldExt, solrField);
+                return plugin.fieldSchema(turSEInstance, coreName, turSNSiteFieldExt.getName())
+                                .map(schema -> buildFieldCore(coreName, turSNSiteFieldExt, schema))
+                                .orElseGet(() -> buildMissingFieldCore(coreName));
         }
 
         private TurSolrFieldCore buildFieldCore(String coreName, TurSNSiteFieldExt turSNSiteFieldExt,
-                        TurSolrFieldBean solrField) {
-                boolean multiValuedIsCorrect = validateMultiValued(turSNSiteFieldExt, solrField);
-                boolean typeIsCorrect = validateType(turSNSiteFieldExt, solrField);
+                        TurSEFieldSchema schema) {
+                boolean multiValuedIsCorrect = schema.multiValued() == (turSNSiteFieldExt.getMultiValued() == 1);
+                boolean typeIsCorrect = schema.hasType(turSNSiteFieldExt.getType());
                 boolean isCorrect = multiValuedIsCorrect && typeIsCorrect;
 
                 return TurSolrFieldCore.builder()
                                 .name(coreName)
                                 .exists(true)
-                                .type(solrField.getType())
+                                .type(schema.engineType())
                                 .typeIsCorrect(typeIsCorrect)
-                                .multiValued(solrField.isMultiValued())
+                                .multiValued(schema.multiValued())
                                 .multiValuedIsCorrect(multiValuedIsCorrect)
                                 .correct(isCorrect)
                                 .build();
@@ -177,26 +166,9 @@ public class TurSNSiteFieldCheckAPI {
                                 .build();
         }
 
-        private boolean validateMultiValued(TurSNSiteFieldExt turSNSiteFieldExt, TurSolrFieldBean solrField) {
-                boolean isMultiValued = (turSNSiteFieldExt.getMultiValued() == 1);
-                return (isMultiValued && solrField.isMultiValued()) || (!isMultiValued && !solrField.isMultiValued());
-        }
-
-        private boolean validateType(TurSNSiteFieldExt turSNSiteFieldExt, TurSolrFieldBean solrField) {
-                String expectedSolrType = TurSolrUtils.getSolrFieldType(turSNSiteFieldExt.getType());
-                return Objects.equals(solrField.getType(), expectedSolrType);
-        }
-
         private boolean isFacetConfigValid(TurSNSiteFieldExt turSNSiteFieldExt) {
                 return turSNSiteFieldExt.getFacet() != 1 || !turSNSiteFieldExt.getType().equals(TurSEFieldType.TEXT);
         }
-
-        private static boolean fieldExists(TurSNSiteFieldExt turSNSiteFieldExt, TurSNSiteLocale turSNSiteLocale,
-                        TurSEInstance turSEInstance) {
-                return TurSolrUtils.existsField(turSEInstance, turSNSiteLocale.getCore(),
-                                turSNSiteFieldExt.getName());
-        }
-
         private List<TurSolrCoreExists> coresExist(TurSNSite turSNSite) {
                 List<TurSolrCoreExists> coresExist = new ArrayList<>();
                 var plugin = pluginFactory.getPluginForSite(turSNSite);

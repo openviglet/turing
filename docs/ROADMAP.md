@@ -22,10 +22,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
-- 📋 **T1243** (deps: —) **The console field-ext, field-repair and field-check APIs call Solr directly, so a field-ext PUT answers 400 off Solr** — A field cannot be fixed through the API on Lucene, Elasticsearch or an env-configured Solr. → §CLXXV.4
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

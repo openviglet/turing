@@ -21,7 +21,6 @@
 
 package com.viglet.turing.api.sn.console;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +38,9 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.solr.TurSolrFieldAction;
-import com.viglet.turing.solr.TurSolrUtils;
-import com.viglet.turing.solr.bean.TurSolrFieldBean;
+import com.viglet.turing.plugins.se.TurSEFieldSchema;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,10 +48,14 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * REST endpoint that reconciles a single {@code TurSNSiteFieldExt} entry with
- * the corresponding Solr schema field. Each {@link com.viglet.turing.api.sn.bean.TurSNFieldRepairType}
+ * the corresponding field in the search engine's schema. Each {@link com.viglet.turing.api.sn.bean.TurSNFieldRepairType}
  * targets one specific discrepancy reported by {@code /field/check}, keeping
  * unrelated attributes untouched. {@code REPAIR_ALL} chains every applicable
  * repair for the given core in one round-trip.
+ *
+ * <p>T1243 — every schema call goes through the site's
+ * {@link TurSearchEnginePlugin}, so an env-configured Solr is reached through its
+ * effective instance and an engine without a schema answers for itself.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.7
@@ -66,13 +69,16 @@ public class TurSNSiteFieldRepairAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
+    private final TurSearchEnginePluginFactory pluginFactory;
 
     public TurSNSiteFieldRepairAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSEInstanceRepository turSEInstanceRepository) {
+            TurSEInstanceRepository turSEInstanceRepository,
+            TurSearchEnginePluginFactory pluginFactory) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
+        this.pluginFactory = pluginFactory;
     }
 
     @Operation(summary = "Semantic Navigation Site Repair Field")
@@ -82,8 +88,22 @@ public class TurSNSiteFieldRepairAPI {
         turSNSiteRepository.findById(siteId)
                 .ifPresent(turSNSite -> turSNSiteFieldExtRepository.findById(payload.getId())
                         .ifPresent(fieldExt -> resolveInstance(turSNSite)
-                                .ifPresent(turSEInstance -> applyRepair(payload, fieldExt, turSEInstance))));
+                                .ifPresent(turSEInstance -> applyRepair(payload, fieldExt,
+                                        new Engine(pluginFactory.getPluginForSite(turSNSite), turSEInstance,
+                                                payload.getCore())))));
         return "ok";
+    }
+
+    /** The site's engine, instance and core one repair works on. */
+    private record Engine(TurSearchEnginePlugin plugin, TurSEInstance instance, String core) {
+
+        Optional<TurSEFieldSchema> schema(String fieldName) {
+            return plugin.fieldSchema(instance, core, fieldName);
+        }
+
+        void write(String fieldName, TurSEFieldType type, boolean multiValued, boolean isNew) {
+            plugin.addOrUpdateField(instance, core, fieldName, type, true, multiValued, isNew);
+        }
     }
 
     private Optional<TurSEInstance> resolveInstance(TurSNSite turSNSite) {
@@ -92,60 +112,51 @@ public class TurSNSiteFieldRepairAPI {
                 .flatMap(turSEInstanceRepository::findById);
     }
 
-    private void applyRepair(TurSNFieldRepairPayload payload, TurSNSiteFieldExt fieldExt,
-            TurSEInstance turSEInstance) {
+    private void applyRepair(TurSNFieldRepairPayload payload, TurSNSiteFieldExt fieldExt, Engine engine) {
         switch (payload.getRepairType()) {
-            case SE_CREATE_FIELD -> createSolrField(turSEInstance, payload.getCore(), fieldExt);
-            case SE_CHANGE_TYPE -> changeSolrType(turSEInstance, payload.getCore(), fieldExt);
-            case SE_ENABLE_MULTI_VALUE -> syncSolrMultiValue(turSEInstance, payload.getCore(), fieldExt);
+            case SE_CREATE_FIELD -> createField(engine, fieldExt);
+            case SE_CHANGE_TYPE -> changeType(engine, fieldExt);
+            case SE_ENABLE_MULTI_VALUE -> syncMultiValue(engine, fieldExt);
             case SN_CHANGE_TYPE -> changeTuringTypeToString(fieldExt);
-            case REPAIR_ALL -> repairAll(turSEInstance, payload.getCore(), fieldExt);
+            case REPAIR_ALL -> repairAll(engine, fieldExt);
         }
     }
 
     /**
-     * Solr-side: create the field from scratch using Turing's configured type
+     * Engine-side: create the field from scratch using Turing's configured type
      * and multiValued setting. Used when the field is missing from the schema.
      */
-    private void createSolrField(TurSEInstance turSEInstance, String coreName,
-            TurSNSiteFieldExt fieldExt) {
-        TurSolrUtils.addOrUpdateField(TurSolrFieldAction.ADD, turSEInstance, coreName,
-                fieldExt.getName(), fieldExt.getType(), true,
-                fieldExt.getMultiValued() == 1);
+    private void createField(Engine engine, TurSNSiteFieldExt fieldExt) {
+        engine.write(fieldExt.getName(), fieldExt.getType(), fieldExt.getMultiValued() == 1, true);
     }
 
     /**
-     * Solr-side: replace the existing field, updating only the type to match
-     * Turing's configuration. The current multiValued setting on Solr is
+     * Engine-side: replace the existing field, updating only the type to match
+     * Turing's configuration. The engine's current multiValued setting is
      * preserved so this operation never silently flips that flag.
      */
-    private void changeSolrType(TurSEInstance turSEInstance, String coreName,
-            TurSNSiteFieldExt fieldExt) {
-        boolean preservedMultiValued = readSolrMultiValued(turSEInstance, coreName, fieldExt.getName())
+    private void changeType(Engine engine, TurSNSiteFieldExt fieldExt) {
+        boolean preservedMultiValued = engine.schema(fieldExt.getName()).map(TurSEFieldSchema::multiValued)
                 .orElse(fieldExt.getMultiValued() == 1);
-        TurSolrUtils.addOrUpdateField(TurSolrFieldAction.REPLACE, turSEInstance, coreName,
-                fieldExt.getName(), fieldExt.getType(), true, preservedMultiValued);
+        engine.write(fieldExt.getName(), fieldExt.getType(), preservedMultiValued, false);
     }
 
     /**
-     * Solr-side: replace the existing field, updating only multiValued to
-     * match Turing's configuration. The current Solr type is preserved so
+     * Engine-side: replace the existing field, updating only multiValued to
+     * match Turing's configuration. The engine's current type is preserved so
      * the type isn't changed by a multiValued repair.
      */
-    private void syncSolrMultiValue(TurSEInstance turSEInstance, String coreName,
-            TurSNSiteFieldExt fieldExt) {
-        TurSEFieldType preservedType = readSolrType(turSEInstance, coreName, fieldExt.getName())
+    private void syncMultiValue(Engine engine, TurSNSiteFieldExt fieldExt) {
+        TurSEFieldType preservedType = engine.schema(fieldExt.getName()).map(TurSEFieldSchema::type)
                 .orElse(fieldExt.getType());
-        TurSolrUtils.addOrUpdateField(TurSolrFieldAction.REPLACE, turSEInstance, coreName,
-                fieldExt.getName(), preservedType, true,
-                fieldExt.getMultiValued() == 1);
+        engine.write(fieldExt.getName(), preservedType, fieldExt.getMultiValued() == 1, false);
     }
 
     /**
      * Turing-side: when a facet field is misconfigured (e.g. facet=1 on a
      * TEXT field), normalize the Turing type to STRING so the facet works.
-     * The Solr schema is not touched here — pair with {@code SE_CHANGE_TYPE}
-     * (or {@code REPAIR_ALL}) to re-align the Solr field afterwards.
+     * The engine's schema is not touched here — pair with {@code SE_CHANGE_TYPE}
+     * (or {@code REPAIR_ALL}) to re-align the engine field afterwards.
      */
     private void changeTuringTypeToString(TurSNSiteFieldExt fieldExt) {
         fieldExt.setType(TurSEFieldType.STRING);
@@ -155,60 +166,28 @@ public class TurSNSiteFieldRepairAPI {
     /**
      * Apply every fix needed to bring the (field, core) tuple to a fully
      * correct state, in the right order: normalize Turing's type first
-     * (so subsequent Solr writes see the corrected type), then create or
-     * replace the Solr field with Turing's full state.
+     * (so subsequent engine writes see the corrected type), then create or
+     * replace the engine field with Turing's full state.
      */
-    private void repairAll(TurSEInstance turSEInstance, String coreName,
-            TurSNSiteFieldExt fieldExt) {
+    private void repairAll(Engine engine, TurSNSiteFieldExt fieldExt) {
         if (!isFacetConfigValid(fieldExt)) {
             changeTuringTypeToString(fieldExt);
         }
-
-        if (!TurSolrUtils.existsField(turSEInstance, coreName, fieldExt.getName())) {
-            createSolrField(turSEInstance, coreName, fieldExt);
+        Optional<TurSEFieldSchema> current = engine.schema(fieldExt.getName());
+        if (current.isEmpty()) {
+            // Absent from the schema, or an engine without one (whose write is a no-op).
+            createField(engine, fieldExt);
             return;
         }
-
-        TurSolrFieldBean current = TurSolrUtils.getField(turSEInstance, coreName, fieldExt.getName());
-        boolean typeMatches = Objects.equals(current.getType(),
-                TurSolrUtils.getSolrFieldType(fieldExt.getType()));
-        boolean multiValuedMatches = current.isMultiValued() == (fieldExt.getMultiValued() == 1);
-
+        boolean typeMatches = current.get().hasType(fieldExt.getType());
+        boolean multiValuedMatches = current.get().multiValued() == (fieldExt.getMultiValued() == 1);
         if (typeMatches && multiValuedMatches) {
             return;
         }
-
-        TurSolrUtils.addOrUpdateField(TurSolrFieldAction.REPLACE, turSEInstance, coreName,
-                fieldExt.getName(), fieldExt.getType(), true,
-                fieldExt.getMultiValued() == 1);
+        engine.write(fieldExt.getName(), fieldExt.getType(), fieldExt.getMultiValued() == 1, false);
     }
 
     private boolean isFacetConfigValid(TurSNSiteFieldExt fieldExt) {
         return fieldExt.getFacet() != 1 || !TurSEFieldType.TEXT.equals(fieldExt.getType());
-    }
-
-    private Optional<Boolean> readSolrMultiValued(TurSEInstance turSEInstance, String coreName,
-            String fieldName) {
-        if (!TurSolrUtils.existsField(turSEInstance, coreName, fieldName)) {
-            return Optional.empty();
-        }
-        return Optional.of(TurSolrUtils.getField(turSEInstance, coreName, fieldName).isMultiValued());
-    }
-
-    private Optional<TurSEFieldType> readSolrType(TurSEInstance turSEInstance, String coreName,
-            String fieldName) {
-        if (!TurSolrUtils.existsField(turSEInstance, coreName, fieldName)) {
-            return Optional.empty();
-        }
-        String solrType = TurSolrUtils.getField(turSEInstance, coreName, fieldName).getType();
-        if (solrType == null || solrType.isBlank()) {
-            return Optional.empty();
-        }
-        for (TurSEFieldType type : TurSEFieldType.values()) {
-            if (Objects.equals(TurSolrUtils.getSolrFieldType(type), solrType)) {
-                return Optional.of(type);
-            }
-        }
-        return Optional.empty();
     }
 }

@@ -42,7 +42,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -62,8 +61,8 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.template.TurSNTemplate;
-import com.viglet.turing.solr.TurSolrFieldAction;
-import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 
 /**
  * Unit tests for TurSNSiteFieldExtAPI.
@@ -146,14 +145,19 @@ class TurSNSiteFieldExtAPITest {
                 return mapper;
         }
 
-        private static TurSNSiteFieldExtAPI newApi(TurSNSiteRepository siteRepository,
+        /** T1243 — the site's engine, which every schema change goes through. */
+        private final TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+
+        private TurSNSiteFieldExtAPI newApi(TurSNSiteRepository siteRepository,
                         TurSNSiteFieldExtRepository fieldExtRepository,
                         TurSNSiteFieldExtFacetRepository facetRepository,
                         TurSNSiteFieldRepository fieldRepository,
                         TurSEInstanceRepository instanceRepository,
                         TurSNTemplate template) {
+                TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
+                Mockito.lenient().when(factory.getPluginForSite(any())).thenReturn(plugin);
                 return new TurSNSiteFieldExtAPI(siteRepository, fieldExtRepository, facetRepository, fieldRepository,
-                                instanceRepository, template, createFieldExtMapper());
+                                instanceRepository, template, createFieldExtMapper(), factory);
         }
 
         private static Object invokePrivate(Object target, String methodName, Class<?>[] parameterTypes,
@@ -818,24 +822,19 @@ class TurSNSiteFieldExtAPITest {
                                 .thenAnswer(invocation -> invocation.getArgument(0));
                 when(instanceRepository.findById("se-id")).thenReturn(Optional.of(seInstance));
 
-                try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-                        invokePrivate(api, "updateExternalField",
-                                        new Class<?>[] { TurSNSiteFieldExt.class, TurSNSite.class }, fieldExt, site);
+                // T1243 — the core already holds the field, so it is replaced, not added.
+                when(plugin.fieldExists(seInstance, "core_en", "title")).thenReturn(true);
 
-                        assertThat(field.getName()).isEqualTo("title");
-                        assertThat(field.getDescription()).isEqualTo("desc");
-                        assertThat(field.getType()).isEqualTo(TurSEFieldType.STRING);
-                        assertThat(field.getMultiValued()).isEqualTo(1);
-                        verify(fieldRepository).save(field);
-                        utils.verify(() -> TurSolrUtils.addOrUpdateField(
-                                        TurSolrFieldAction.ADD,
-                                        seInstance,
-                                        "core_en",
-                                        "title",
-                                        TurSEFieldType.STRING,
-                                        true,
-                                        true));
-                }
+                invokePrivate(api, "updateExternalField",
+                                new Class<?>[] { TurSNSiteFieldExt.class, TurSNSite.class }, fieldExt, site);
+
+                assertThat(field.getName()).isEqualTo("title");
+                assertThat(field.getDescription()).isEqualTo("desc");
+                assertThat(field.getType()).isEqualTo(TurSEFieldType.STRING);
+                assertThat(field.getMultiValued()).isEqualTo(1);
+                verify(fieldRepository).save(field);
+                verify(plugin).addOrUpdateField(seInstance, "core_en", "title", TurSEFieldType.STRING, true, true,
+                                false);
         }
 
         @Test
@@ -875,15 +874,12 @@ class TurSNSiteFieldExtAPITest {
                 when(fieldRepository.findById("ext")).thenReturn(Optional.of(field));
                 when(instanceRepository.findById("se-id")).thenReturn(Optional.of(seInstance));
 
-                try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-                        boolean result = api.turSNSiteFieldExtDelete("site", "id");
+                boolean result = api.turSNSiteFieldExtDelete("site", "id");
 
-                        assertThat(result).isTrue();
-                        utils.verify(() -> TurSolrUtils.deleteField(seInstance, "core_en", "title",
-                                        TurSEFieldType.STRING));
-                        verify(fieldRepository).delete("ext");
-                        verify(fieldExtRepository).delete(any(TurSNSiteFieldExt.class));
-                }
+                assertThat(result).isTrue();
+                verify(plugin).deleteField(seInstance, "core_en", "title", TurSEFieldType.STRING);
+                verify(fieldRepository).delete("ext");
+                verify(fieldExtRepository).delete(any(TurSNSiteFieldExt.class));
         }
 
         @Test

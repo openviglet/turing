@@ -296,6 +296,8 @@ Clicking a field opens its detail form:
 | **Default Value** | Value used when a document is indexed without this field |
 | **Search weight** | How much a query match in this field counts, from 1 to 100 (empty means 1). Set `title` to 3 so a title match outranks the same word in the body. Works on Solr and the embedded Lucene engine |
 
+Saving a field (in the console, or `PUT /api/sn/{siteId}/field/ext/{fieldId}`) changes it in the site's own search engine: on Solr a changed **Type** or **Multi Valued** replaces the field in each locale's core, including a Solr configured through environment variables. Lucene and Elasticsearch hold no field schema, so there the change is Turing's configuration alone, and the field check reports every field correct.
+
 A title that holds a query of two words or more as an exact phrase is boosted on top of
 the search weight: the site's default title field is searched for the query as typed,
 without synonyms. A guide titled "How to choose a waterproof jacket" then ranks above

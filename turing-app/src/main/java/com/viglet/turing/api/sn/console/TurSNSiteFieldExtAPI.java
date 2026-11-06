@@ -59,8 +59,7 @@ import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.template.TurSNTemplate;
-import com.viglet.turing.solr.TurSolrFieldAction;
-import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,6 +93,7 @@ public class TurSNSiteFieldExtAPI {
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSNTemplate turSNTemplate;
     private final TurSNSiteFieldExtMapper turSNSiteFieldExtMapper;
+    private final TurSearchEnginePluginFactory pluginFactory;
 
     public TurSNSiteFieldExtAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
@@ -101,7 +101,8 @@ public class TurSNSiteFieldExtAPI {
             TurSNSiteFieldRepository turSNSiteFieldRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSNTemplate turSNTemplate,
-            TurSNSiteFieldExtMapper turSNSiteFieldExtMapper) {
+            TurSNSiteFieldExtMapper turSNSiteFieldExtMapper,
+            TurSearchEnginePluginFactory pluginFactory) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
@@ -109,6 +110,7 @@ public class TurSNSiteFieldExtAPI {
         this.turSEInstanceRepository = turSEInstanceRepository;
         this.turSNTemplate = turSNTemplate;
         this.turSNSiteFieldExtMapper = turSNSiteFieldExtMapper;
+        this.pluginFactory = pluginFactory;
     }
 
     @Operation(summary = "Semantic Navigation Site Field Ext List")
@@ -423,8 +425,11 @@ public class TurSNSiteFieldExtAPI {
                 || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+                // T1243 — through the site's engine, not Solr directly: a Lucene or
+                // Elasticsearch site has no Solr to talk to, and an env-configured Solr
+                // is reached through the plugin's effective instance.
                 .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().forEach(
-                        locale -> TurSolrUtils.deleteField(
+                        locale -> pluginFactory.getPluginForSite(turSNSite).deleteField(
                                 turSEInstance,
                                 locale.getCore(),
                                 field.getName(),
@@ -436,15 +441,19 @@ public class TurSNSiteFieldExtAPI {
                 || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
         turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
-                .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().forEach(
-                        locale -> TurSolrUtils.addOrUpdateField(
-                                TurSolrFieldAction.ADD,
-                                turSEInstance,
-                                locale.getCore(),
-                                field.getName(),
-                                field.getType(),
-                                true,
-                                field.getMultiValued() == 1)));
+                .ifPresent(turSEInstance -> {
+                    // T1243 — through the site's engine; a field the core already holds
+                    // is replaced, so a changed type or cardinality takes effect.
+                    var plugin = pluginFactory.getPluginForSite(turSNSite);
+                    turSNSite.getTurSNSiteLocales().forEach(locale -> plugin.addOrUpdateField(
+                            turSEInstance,
+                            locale.getCore(),
+                            field.getName(),
+                            field.getType(),
+                            true,
+                            field.getMultiValued() == 1,
+                            !plugin.fieldExists(turSEInstance, locale.getCore(), field.getName())));
+                });
     }
 
     private void updateExternalField(TurSNSiteFieldExt fieldExt, TurSNSite turSNSite) {

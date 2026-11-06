@@ -221,6 +221,41 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         return TurSolrUtils.existsField(effective(seInstance), indexName, fieldName);
     }
 
+    /** T1243 — Solr keeps a schema the console checks and repairs. */
+    @Override
+    public boolean hasFieldSchema() {
+        return true;
+    }
+
+    /** T1243 — the field from the core's schema, read from the effective instance. */
+    @Override
+    public java.util.Optional<com.viglet.turing.plugins.se.TurSEFieldSchema> fieldSchema(
+            TurSEInstance seInstance, String indexName, String fieldName) {
+        TurSEInstance instance = effective(seInstance);
+        if (!TurSolrUtils.existsField(instance, indexName, fieldName)) {
+            return java.util.Optional.empty();
+        }
+        com.viglet.turing.solr.bean.TurSolrFieldBean field = TurSolrUtils.getField(instance, indexName, fieldName);
+        if (field == null) {
+            return java.util.Optional.empty();
+        }
+        return java.util.Optional.of(new com.viglet.turing.plugins.se.TurSEFieldSchema(field.getType(),
+                turingType(field.getType()), field.isMultiValued()));
+    }
+
+    /** The Turing type whose Solr type is {@code solrType}, or {@code null}. */
+    static TurSEFieldType turingType(String solrType) {
+        if (solrType == null || solrType.isBlank()) {
+            return null;
+        }
+        for (TurSEFieldType type : TurSEFieldType.values()) {
+            if (java.util.Objects.equals(TurSolrUtils.getSolrFieldType(type), solrType)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
     // ---- Synonyms (T663 / §XXXIX, Block AP) ------------------------------
 
     /**

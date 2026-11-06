@@ -23,6 +23,7 @@ package com.viglet.turing.api.sn.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,77 +32,75 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import com.viglet.turing.api.sn.bean.TurSNFieldExtCheck;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.solr.TurSolrUtils;
-import com.viglet.turing.solr.bean.TurSolrFieldBean;
+import com.viglet.turing.plugins.se.TurSEFieldSchema;
+import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
+import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 
 /**
- * Unit tests for TurSNSiteFieldCheckAPI.
+ * Unit tests for TurSNSiteFieldCheckAPI. T1243 — the site's engine plugin answers
+ * for the schema, so the tests stub the plugin rather than Solr.
  *
  * @author Alexandre Oliveira
  * @since 2026.1.10
  */
 class TurSNSiteFieldCheckAPITest {
 
-    private static TurSEInstance createSolrInstance() {
-        TurSEVendor vendor = new TurSEVendor();
-        vendor.setId("SOLR");
-        TurSEInstance instance = new TurSEInstance();
-        instance.setTurSEVendor(vendor);
-        return instance;
+    private final TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+    private final TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
+    private final TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
+    private final TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+    private final TurSEInstance instance = new TurSEInstance();
+    private final TurSNSite site = new TurSNSite();
+
+    private TurSNSiteFieldCheckAPI api(boolean indexExists, boolean hasSchema) {
+        lenient().when(plugin.indexExists(any(), any())).thenReturn(indexExists);
+        lenient().when(plugin.hasFieldSchema()).thenReturn(hasSchema);
+        TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
+        lenient().when(factory.getPluginForSite(any())).thenReturn(plugin);
+        return new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, factory);
     }
 
-    private static com.viglet.turing.plugins.se.TurSearchEnginePluginFactory stubPluginFactory() {
-        return stubPluginFactory(true, true);
-    }
-
-    private static com.viglet.turing.plugins.se.TurSearchEnginePluginFactory stubPluginFactory(
-            boolean indexExists, boolean fieldExists) {
-        var plugin = mock(com.viglet.turing.plugins.se.TurSearchEnginePlugin.class);
-        when(plugin.indexExists(any(), any())).thenReturn(indexExists);
-        when(plugin.fieldExists(any(), any(), any())).thenReturn(fieldExists);
-        var factory = mock(com.viglet.turing.plugins.se.TurSearchEnginePluginFactory.class);
-        when(factory.getPluginForSite(any())).thenReturn(plugin);
-        return factory;
+    private TurSNSiteFieldExt field(String core, String name, TurSEFieldType type, int multiValued, int facet) {
+        site.setTurSEInstance(instance);
+        TurSNSiteLocale locale = new TurSNSiteLocale();
+        locale.setCore(core);
+        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
+        fieldExt.setId("id-" + name);
+        fieldExt.setExternalId("ext-" + name);
+        fieldExt.setName(name);
+        fieldExt.setType(type);
+        fieldExt.setMultiValued(multiValued);
+        fieldExt.setFacet(facet);
+        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
+                .thenReturn(List.of(fieldExt));
+        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
+        return fieldExt;
     }
 
     @Test
     void testFieldCheckReturnsEmptyWhenSiteMissing() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory());
-
+        TurSNSiteFieldCheckAPI api = api(true, true);
         when(siteRepository.findById("site")).thenReturn(Optional.empty());
 
-        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
-
-        assertThat(result).isNotNull();
+        assertThat(api.turSNSiteFieldExtCheckList("site")).isNotNull();
     }
 
     @Test
     void testFieldCheckReturnsEmptyListsWhenNoFieldsOrLocales() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory());
-        TurSNSite site = new TurSNSite();
-
+        TurSNSiteFieldCheckAPI api = api(true, true);
         when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSite(org.mockito.ArgumentMatchers.any(),
-                org.mockito.ArgumentMatchers.eq(site)))
+        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
                 .thenReturn(Collections.emptyList());
         when(localeRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
@@ -113,180 +112,72 @@ class TurSNSiteFieldCheckAPITest {
 
     @Test
     void testFieldCheckReturnsCoreAndCorrectFieldStatusWhenSchemaMatches() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory());
+        TurSNSiteFieldCheckAPI api = api(true, true);
+        field("core_en", "title", TurSEFieldType.STRING, 1, 0);
+        when(plugin.fieldSchema(instance, "core_en", "title"))
+                .thenReturn(Optional.of(new TurSEFieldSchema("string", TurSEFieldType.STRING, true)));
 
-        TurSEInstance instance = createSolrInstance();
-        TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(instance);
+        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
 
-        TurSNSiteLocale locale = new TurSNSiteLocale();
-        locale.setCore("core_en");
-
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setId("id1");
-        fieldExt.setExternalId("ext1");
-        fieldExt.setName("title");
-        fieldExt.setType(TurSEFieldType.STRING);
-        fieldExt.setMultiValued(1);
-        fieldExt.setFacet(0);
-
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
-                .thenReturn(List.of(fieldExt));
-        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
-
-        TurSolrFieldBean schemaField = TurSolrFieldBean.builder().name("title").type("string").multiValued(true)
-                .build();
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.coreExists(instance, "core_en")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.existsField(instance, "core_en", "title")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.getField(instance, "core_en", "title")).thenReturn(schemaField);
-            utils.when(() -> TurSolrUtils.getSolrFieldType(TurSEFieldType.STRING)).thenReturn("string");
-
-            TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
-
-            assertThat(result.getCores()).hasSize(1);
-            assertThat(result.getCores().get(0).isExists()).isTrue();
-            assertThat(result.getFields()).hasSize(1);
-            assertThat(result.getFields().get(0).isCorrect()).isTrue();
-            assertThat(result.getFields().get(0).isFacetIsCorrect()).isTrue();
-            assertThat(result.getFields().get(0).getCores()).hasSize(1);
-            assertThat(result.getFields().get(0).getCores().get(0).isCorrect()).isTrue();
-        }
+        assertThat(result.getCores()).hasSize(1);
+        assertThat(result.getCores().get(0).isExists()).isTrue();
+        assertThat(result.getFields()).hasSize(1);
+        assertThat(result.getFields().get(0).isCorrect()).isTrue();
+        assertThat(result.getFields().get(0).isFacetIsCorrect()).isTrue();
+        assertThat(result.getFields().get(0).getCores().get(0).getType()).isEqualTo("string");
+        assertThat(result.getFields().get(0).getCores().get(0).isCorrect()).isTrue();
     }
 
     @Test
     void testFieldCheckMarksIncorrectWhenFieldMissingAndFacetInvalid() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory(false, false));
+        TurSNSiteFieldCheckAPI api = api(false, true);
+        field("core_pt", "content", TurSEFieldType.TEXT, 0, 1);
+        when(plugin.fieldSchema(instance, "core_pt", "content")).thenReturn(Optional.empty());
 
-        TurSEInstance instance = createSolrInstance();
-        TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(instance);
+        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
 
-        TurSNSiteLocale locale = new TurSNSiteLocale();
-        locale.setCore("core_pt");
-
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setId("id2");
-        fieldExt.setExternalId("ext2");
-        fieldExt.setName("content");
-        fieldExt.setType(TurSEFieldType.TEXT);
-        fieldExt.setMultiValued(0);
-        fieldExt.setFacet(1);
-
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
-                .thenReturn(List.of(fieldExt));
-        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
-
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.coreExists(instance, "core_pt")).thenReturn(false);
-            utils.when(() -> TurSolrUtils.existsField(instance, "core_pt", "content")).thenReturn(false);
-
-            TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
-
-            assertThat(result.getCores()).hasSize(1);
-            assertThat(result.getCores().get(0).isExists()).isFalse();
-            assertThat(result.getFields()).hasSize(1);
-            assertThat(result.getFields().get(0).isCorrect()).isFalse();
-            assertThat(result.getFields().get(0).isFacetIsCorrect()).isFalse();
-            assertThat(result.getFields().get(0).getCores()).hasSize(1);
-            assertThat(result.getFields().get(0).getCores().get(0).isExists()).isFalse();
-        }
+        assertThat(result.getCores().get(0).isExists()).isFalse();
+        assertThat(result.getFields().get(0).isCorrect()).isFalse();
+        assertThat(result.getFields().get(0).isFacetIsCorrect()).isFalse();
+        assertThat(result.getFields().get(0).getCores().get(0).isExists()).isFalse();
     }
 
     @Test
     void testFieldCheckMarksIncorrectWhenTypeOrMultivaluedMismatch() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory());
+        TurSNSiteFieldCheckAPI api = api(true, true);
+        field("core_es", "summary", TurSEFieldType.STRING, 1, 0);
+        when(plugin.fieldSchema(instance, "core_es", "summary"))
+                .thenReturn(Optional.of(new TurSEFieldSchema("text_general", TurSEFieldType.TEXT, false)));
 
-        TurSEInstance instance = createSolrInstance();
-        TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(instance);
+        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
 
-        TurSNSiteLocale locale = new TurSNSiteLocale();
-        locale.setCore("core_es");
-
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setId("id3");
-        fieldExt.setExternalId("ext3");
-        fieldExt.setName("summary");
-        fieldExt.setType(TurSEFieldType.STRING);
-        fieldExt.setMultiValued(1);
-        fieldExt.setFacet(0);
-
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
-                .thenReturn(List.of(fieldExt));
-        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
-
-        TurSolrFieldBean schemaField = TurSolrFieldBean.builder().name("summary").type("text_general")
-                .multiValued(false)
-                .build();
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.coreExists(instance, "core_es")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.existsField(instance, "core_es", "summary")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.getField(instance, "core_es", "summary")).thenReturn(schemaField);
-            utils.when(() -> TurSolrUtils.getSolrFieldType(TurSEFieldType.STRING)).thenReturn("string");
-
-            TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
-
-            assertThat(result.getFields()).hasSize(1);
-            assertThat(result.getFields().get(0).isCorrect()).isFalse();
-            assertThat(result.getFields().get(0).getCores()).hasSize(1);
-            assertThat(result.getFields().get(0).getCores().get(0).isTypeIsCorrect()).isFalse();
-            assertThat(result.getFields().get(0).getCores().get(0).isMultiValuedIsCorrect()).isFalse();
-        }
+        assertThat(result.getFields().get(0).isCorrect()).isFalse();
+        assertThat(result.getFields().get(0).getCores().get(0).isTypeIsCorrect()).isFalse();
+        assertThat(result.getFields().get(0).getCores().get(0).isMultiValuedIsCorrect()).isFalse();
     }
 
     @Test
-    void testFieldCheckDoesNotThrowWhenSolrFieldTypeIsNull() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
-        TurSNSiteFieldCheckAPI api = new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, stubPluginFactory());
+    void testFieldCheckDoesNotThrowWhenTheEngineTypeIsUnknown() {
+        TurSNSiteFieldCheckAPI api = api(true, true);
+        field("core_ca", "author", TurSEFieldType.STRING, 0, 0);
+        when(plugin.fieldSchema(instance, "core_ca", "author"))
+                .thenReturn(Optional.of(new TurSEFieldSchema(null, null, false)));
 
-        TurSEInstance instance = createSolrInstance();
-        TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(instance);
+        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
 
-        TurSNSiteLocale locale = new TurSNSiteLocale();
-        locale.setCore("core_ca");
+        assertThat(result.getFields().get(0).isCorrect()).isFalse();
+        assertThat(result.getFields().get(0).getCores().get(0).isTypeIsCorrect()).isFalse();
+    }
 
-        TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
-        fieldExt.setId("id4");
-        fieldExt.setExternalId("ext4");
-        fieldExt.setName("author");
-        fieldExt.setType(TurSEFieldType.STRING);
-        fieldExt.setMultiValued(0);
-        fieldExt.setFacet(0);
+    /** T1243 — an engine without a schema (Lucene, Elasticsearch) reports every field correct. */
+    @Test
+    void anEngineWithoutASchemaReportsTheFieldCorrect() {
+        TurSNSiteFieldCheckAPI api = api(true, false);
+        field("lucene_pt", "author", TurSEFieldType.STRING, 1, 0);
 
-        when(siteRepository.findById("site")).thenReturn(Optional.of(site));
-        when(fieldExtRepository.findByTurSNSite(any(), org.mockito.ArgumentMatchers.eq(site)))
-                .thenReturn(List.of(fieldExt));
-        when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
+        TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
 
-        TurSolrFieldBean schemaField = TurSolrFieldBean.builder().name("author").multiValued(false).build();
-        try (MockedStatic<TurSolrUtils> utils = Mockito.mockStatic(TurSolrUtils.class)) {
-            utils.when(() -> TurSolrUtils.coreExists(instance, "core_ca")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.existsField(instance, "core_ca", "author")).thenReturn(true);
-            utils.when(() -> TurSolrUtils.getField(instance, "core_ca", "author")).thenReturn(schemaField);
-            utils.when(() -> TurSolrUtils.getSolrFieldType(TurSEFieldType.STRING)).thenReturn("string");
-
-            TurSNFieldExtCheck result = api.turSNSiteFieldExtCheckList("site");
-
-            assertThat(result.getFields()).hasSize(1);
-            assertThat(result.getFields().get(0).isCorrect()).isFalse();
-            assertThat(result.getFields().get(0).getCores()).hasSize(1);
-            assertThat(result.getFields().get(0).getCores().get(0).isTypeIsCorrect()).isFalse();
-        }
+        assertThat(result.getFields().get(0).isCorrect()).isTrue();
+        org.mockito.Mockito.verify(plugin, org.mockito.Mockito.never()).fieldSchema(any(), any(), any());
     }
 }

@@ -24,6 +24,3 @@
 - ⏸ **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — set aside (Needs a viglet-core release.): A manifest field cannot yet declare facetItemType: VigletFieldSpec in viglet-core needs the field and a release first. → §CLXIX.1
 
 ## Block CN — Autocomplete and suggestions
-
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
