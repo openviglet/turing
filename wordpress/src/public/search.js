@@ -603,6 +603,44 @@ export function siteUrl( url, documentId ) {
 }
 
 /**
+ * The picture a result shows (D239): its indexed image, unless the document is one of this
+ * site's own posts indexed by another WordPress and the image is that WordPress's upload (on
+ * the same foreign origin as its URL), which this site asks for by the post's id instead. An
+ * image on any other host (a CDN, a mapped field) is shown as indexed.
+ *
+ * @param {string} image      The image Turing indexed.
+ * @param {string} url        The URL Turing indexed.
+ * @param {string} documentId Turing's id of the document.
+ * @return {string} The image to show.
+ */
+export function siteImage( image, url, documentId ) {
+	const prefix = `${ config.siteKey }:post:`;
+	const id = String( documentId || '' ).slice( prefix.length );
+	if (
+		! image ||
+		! String( documentId || '' ).startsWith( prefix ) ||
+		! /^\d+$/.test( id )
+	) {
+		return image || '';
+	}
+	try {
+		const base = window.location.href;
+		const from = new URL( String( image ), base ).origin;
+		if (
+			from === window.location.origin ||
+			from !== new URL( String( url || '' ), base ).origin
+		) {
+			return image;
+		}
+	} catch {
+		return image;
+	}
+	const here = new URL( config.home || '/', window.location.href );
+	here.searchParams.set( 'viglet_dumont_image', id );
+	return here.href;
+}
+
+/**
  * Write a model's answer into an element as the small Markdown it is written in (D247):
  * paragraphs, line breaks, bulleted and numbered lists, bold and italic. Built from DOM nodes
  * and text nodes only, never from HTML, so nothing the model writes becomes markup: a

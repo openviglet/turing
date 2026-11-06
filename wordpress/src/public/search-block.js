@@ -32,6 +32,7 @@ import {
 	siblingSites,
 	siteField,
 	siteLabel,
+	siteImage,
 	siteSelection,
 	siteUrl,
 	trackResultClick,
@@ -1799,9 +1800,13 @@ function card( d, position ) {
 		date: valid ? formatCardDate( at ) : '',
 		iso: valid ? at.toISOString() : '',
 		crumb: crumb( url ),
-		image: String(
-			cardOverride( fields, config.cardTypes?.[ type ]?.image ) ??
-				( d.image || '' )
+		image: siteImage(
+			String(
+				cardOverride( fields, config.cardTypes?.[ type ]?.image ) ??
+					( d.image || '' )
+			),
+			d.url,
+			fields.id
 		),
 		snippet: highlighted( d.description ),
 		// What the server draws before the highlights go in (D209).

@@ -11,6 +11,7 @@ use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use Viglet_Dumont_Native_Search;
 use WP_Error;
+use WP_Post;
 
 final class NativeSearchTest extends PluginTestCase {
 
@@ -539,7 +540,7 @@ final class NativeSearchTest extends PluginTestCase {
 								'document' => array(
 									array(
 										'fields' => array(
-											'id'       => 'site-a:post:8',
+											'id'       => 'site-b:post:8', // Another site's: one of this site's posts would open here by id (D239).
 											'title'    => 'Workshop on <mark>search</mark>',
 											'abstract' => 'About <mark>search</mark> and facets.',
 											'url'      => 'https://example.org/workshop/',
@@ -832,5 +833,57 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertSame( 'product › catbells', Viglet_Dumont_Native_Search::crumb( 'https://site.example.org/product/catbells/' ) );
 		$this->assertSame( 'other.example › journal › hut', Viglet_Dumont_Native_Search::crumb( 'https://other.example/journal/hut/' ) );
 		$this->assertSame( 'other.example:8081 › hut', Viglet_Dumont_Native_Search::crumb( 'http://other.example:8081/hut' ) );
+	}
+
+	/**
+	 * D239: an index built by another WordPress links this site's own posts there; the card
+	 * opens them here by id, and asks for the picture that WordPress served by id too.
+	 */
+	public function test_a_post_indexed_by_another_wordpress_links_and_shows_here_by_id(): void {
+		$this->assertSame(
+			array( 'https://site.example.org?p=10300', 'https://site.example.org?viglet_dumont_image=10300' ),
+			Viglet_Dumont_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'http://localhost:38082/wp-content/uploads/2026/11/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
+		);
+		// A picture on another host (a CDN) is shown as indexed.
+		$this->assertSame(
+			array( 'https://site.example.org?p=10300', 'https://cdn.example/catbells.webp' ),
+			Viglet_Dumont_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'https://cdn.example/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
+		);
+		// This site's own address, a sibling's document and a catalog record stay as indexed.
+		foreach ( array(
+			array( 'https://site.example.org/product/catbells/', 'https://site.example.org/a.webp', 'tarnfell:post:10300' ),
+			array( 'https://other.example/hut/', 'https://other.example/a.webp', 'other:post:7' ),
+			array( 'https://other.example/hut/', 'https://other.example/a.webp', 'tarnfell:record:7' ),
+		) as list( $url, $image, $id ) ) {
+			$this->assertSame( array( $url, $image ), Viglet_Dumont_Native_Search::local_card( $url, $image, $id, 'tarnfell' ) );
+		}
+	}
+
+	/**
+	 * D239: the picture asked for by id is a public post's featured image, at the size indexed.
+	 */
+	public function test_image_url_answers_a_public_posts_featured_image_only(): void {
+		$posts = array(
+			7 => new WP_Post(
+				array(
+					'ID'          => 7,
+					'post_status' => 'publish',
+				)
+			),
+			8 => new WP_Post(
+				array(
+					'ID'          => 8,
+					'post_status' => 'draft',
+				)
+			),
+		);
+		Functions\when( 'get_post' )->alias( static fn ( $id ) => $posts[ $id ] ?? null );
+		Functions\when( 'post_password_required' )->justReturn( false );
+		Functions\expect( 'get_the_post_thumbnail_url' )->once()->with( $posts[7], 'large' )->andReturn( 'https://site.example.org/a.webp' );
+
+		$this->assertSame( 'https://site.example.org/a.webp', Viglet_Dumont_Native_Search::image_url( 7 ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 8 ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 9 ) );
+		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 0 ) );
 	}
 }

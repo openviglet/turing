@@ -63,6 +63,83 @@ class Viglet_Dumont_Native_Search {
 		);
 	}
 
+	/** The query argument that asks for a post's picture by id (image_url()). */
+	public const IMAGE_ARG = 'viglet_dumont_image';
+
+	/**
+	 * The picture a post's results show, by its id: the featured image the indexer sends as
+	 * `image`, at the same size. A result indexed by another WordPress (the hosted index a
+	 * WordPress Playground demo searches, D239) names that WordPress's upload, which this site
+	 * does not serve; search.js asks for it here by id, as siteUrl() opens the post by id.
+	 * Empty for a post that is not public.
+	 *
+	 * @param int $post_id The post.
+	 */
+	public static function image_url( int $post_id ): string {
+		$post = $post_id > 0 ? get_post( $post_id ) : null;
+		if ( ! $post || 'publish' !== $post->post_status || post_password_required( $post ) ) {
+			return '';
+		}
+
+		return (string) get_the_post_thumbnail_url( $post, 'large' );
+	}
+
+	/**
+	 * A result's link and picture on this site, as search.js's siteUrl() and siteImage() draw
+	 * them for the first page the server renders (D239): one of this site's own posts indexed
+	 * by another WordPress opens here by its id, and its picture, when that WordPress served
+	 * it, comes from image_url() by the same id. Anything else is left as indexed.
+	 *
+	 * @param string $url      The URL Turing indexed.
+	 * @param string $image    The image Turing indexed.
+	 * @param string $doc_id   Turing's id of the document.
+	 * @param string $site_key This site's key.
+	 * @return array{0: string, 1: string} The link and the picture.
+	 */
+	public static function local_card( string $url, string $image, string $doc_id, string $site_key ): array {
+		$prefix = $site_key . ':post:';
+		$id     = substr( $doc_id, strlen( $prefix ) );
+		if ( ! str_starts_with( $doc_id, $prefix ) || ! ctype_digit( $id ) ) {
+			return array( $url, $image );
+		}
+		$origin  = static function ( string $address ): string {
+			$parts = wp_parse_url( $address );
+			return isset( $parts['host'] ) ? strtolower( ( $parts['scheme'] ?? '' ) . '://' . $parts['host'] . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' ) ) : '';
+		};
+		$home    = $origin( home_url( '/' ) );
+		$foreign = $origin( $url );
+		if ( '' === $foreign || $home === $foreign ) {
+			return array( $url, $image );
+		}
+
+		return array(
+			add_query_arg( array( 'p' => $id ), home_url( '/' ) ),
+			'' !== $image && $foreign === $origin( $image ) ? add_query_arg( array( self::IMAGE_ARG => $id ), home_url( '/' ) ) : $image,
+		);
+	}
+
+	/**
+	 * Answer `?viglet_dumont_image=<id>` (`template_redirect`) with a redirect to that post's
+	 * picture, or a 404 when it has none.
+	 */
+	public static function redirect_image(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public read, like ?p=.
+		if ( ! isset( $_GET[ self::IMAGE_ARG ] ) ) {
+			return;
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public read, like ?p=.
+		$url = self::image_url( absint( wp_unslash( $_GET[ self::IMAGE_ARG ] ) ) );
+		if ( '' === $url ) {
+			status_header( 404 );
+			nocache_headers();
+			exit;
+		}
+		// The upload's own address, which may be a CDN's host: not a visitor-supplied target.
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		wp_redirect( $url, 302, 'Viglet Turing Search' );
+		exit;
+	}
+
 	/**
 	 * Keep a refined search out of search engines (`wp_robots`): a page holding the Turing
 	 * search block, opened with filters, a results page or a sort in its URL (search-block.js
@@ -602,15 +679,24 @@ class Viglet_Dumont_Native_Search {
 		$types   = $this->card_types();
 		$results = array();
 		foreach ( array_values( (array) ( $response['results']['document'] ?? array() ) ) as $i => $document ) {
-			$fields    = (array) ( $document['fields'] ?? array() );
-			$url       = (string) $field( $fields, 'url', 'url' );
-			$title     = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
-			$title     = '' !== $title ? $title : $url;
-			$type      = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
-			$looks     = $types[ $type ] ?? array(
+			$fields = (array) ( $document['fields'] ?? array() );
+			$url    = (string) $field( $fields, 'url', 'url' );
+			$title  = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
+			$title  = '' !== $title ? $title : $url;
+			$type   = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
+			$looks  = $types[ $type ] ?? array(
 				'date'  => '',
 				'image' => '',
 			);
+
+			// An index built by another WordPress (D239): its links and uploads, read here by id.
+			list( $url, $image ) = self::local_card(
+				$url,
+				(string) ( self::card_override( $fields, $looks['image'] ) ?? $field( $fields, 'image', 'image' ) ),
+				(string) ( $fields['id'] ?? '' ),
+				$indexer->site_key()
+			);
+
 			$date      = self::card_override( $fields, $looks['date'] ) ?? $fields['publication_date'] ?? $field( $fields, 'date', 'publication_date' );
 			$timestamp = is_numeric( $date ) ? (int) ( $date / 1000 ) : ( $date ? strtotime( (string) $date ) : false );
 			$parts     = wp_parse_url( $url );
@@ -623,7 +709,7 @@ class Viglet_Dumont_Native_Search {
 				'date'        => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'       => self::crumb( $url ),
-				'image'       => (string) ( self::card_override( $fields, $looks['image'] ) ?? $field( $fields, 'image', 'image' ) ),
+				'image'       => $image,
 				'snippet'     => self::snippet( (string) $field( $fields, 'description', 'abstract' ) ),
 				// The snippet as plain text, so the server draws it at its height; the script then
 				// puts the highlights in.

@@ -242,6 +242,8 @@ add_action( 'init', 'viglet_dumont_init' );
 add_action( 'update_option_' . VIGLET_DUMONT_OPTION, array( 'Viglet_Dumont_Entities', 'on_settings_saved' ), 10, 2 );
 add_action( 'add_option_' . VIGLET_DUMONT_OPTION, static fn ( $option, $value ) => Viglet_Dumont_Entities::on_settings_saved( array(), $value ), 10, 2 );
 add_filter( 'wp_robots', array( 'Viglet_Dumont_Native_Search', 'robots' ) );
+// A result's picture by its post's id, for an index built by another WordPress (D239).
+add_action( 'template_redirect', array( 'Viglet_Dumont_Native_Search', 'redirect_image' ), 0 );
 // The WP Consent API's handshake: this plugin asks for statistics consent before reporting.
 add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_DUMONT_FILE ), '__return_true' );
 

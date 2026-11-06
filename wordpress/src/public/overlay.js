@@ -24,6 +24,7 @@ import {
 	isQuestion,
 	originOf,
 	reportAiPaused,
+	siteImage,
 	siteUrl,
 	trackResultClick,
 } from 'viglet-dumont/search';
@@ -392,7 +393,7 @@ function render( s ) {
 				url: siteUrl( d.url, d.raw?.fields?.id ),
 				title: plainText( d.title ) || d.url,
 				meta: meta( d.raw?.fields || {} ),
-				image: d.image || '',
+				image: siteImage( d.image, d.url, d.raw?.fields?.id ),
 				snippet: plainText( d.description ),
 				lines: cardLines( d.raw?.fields || {} ),
 				type,

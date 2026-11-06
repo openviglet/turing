@@ -148,6 +148,14 @@ $settings['related_after']     = array();
 // the Site assistant on every page. Both stay hidden on a stack whose Turing has no LLM key.
 $settings['generative_ai']      = 1;
 $settings['assistant_launcher'] = 1;
+// Popular searches before the store has its own (D202): a WordPress Playground store never does,
+// since the week's searches come from a Turing report the public demo does not serve (D239).
+// Each is still checked to find something, so a search the catalog lacks is left out.
+if ( empty( $settings['trending_fallback'] ) ) {
+	$settings['trending_fallback'] = 'pt_BR' === get_locale()
+		? array( 'jaqueta impermeável', 'barraca', 'bota de trilha', 'jaqueta de pluma', 'mochila', 'saco de dormir' )
+		: array( 'rain jacket', 'tent', 'hiking boots', 'down jacket', 'backpack', 'sleeping bag' );
+}
 
 // A launched store: WooCommerce shows visitors a "coming soon" page until it is.
 update_option( 'woocommerce_coming_soon', 'no' );
