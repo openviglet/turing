@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6244843,
+    "path": "demo/photos/product/borrowdale-gaiters.png",
+    "sha256": "99de17c3056c5856016b12409944676c72be4bce5770d3a75f5887bf08ebb07f"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"An overhead flat-lay photograph of a pair of black Borrowdale waterproof gaiters arranged side by side on a pale natural wooden table, lit by soft diffused daylight with a clean commercial aesthetic.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A pale natural wooden table surface fills the entire frame, viewed from directly overhead. The wood has a subtle horizontal grain in light honey and cream tones with fine linear striations running left to right. Soft diffused daylight from a north-facing window produces even, neutral cool-toned illumination across the surface. Gentle soft-edged shadows pool beneath the gaiters, grounding them to the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Left black Borrowdale waterproof gaiter laid flat on the wooden surface, slightly angled counter-clockwise. Matte black woven nylon fabric with subtle sheen catching the light along its curves. Fully unzipped front zipper running vertically along the inner leg, fine metal teeth and small pull tab visible. Top cuff opening faces upward revealing dark inner lining and elasticized top edge. Tough instep strap extended outward from the lower portion showing reinforced webbing and metal buckle hardware.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Right black Borrowdale waterproof gaiter laid flat on the wooden surface, mirrored opposite the left gaiter and angled clockwise. Matching matte black woven nylon with subtle sheen along the curves. Front zipper fully unzipped along the inner leg, metal teeth and pull tab visible. Top cuff opening faces upward showing inner lining and elasticized top edge. Instep strap extended outward with reinforced webbing and metal buckle hardware visible.\"\n      }\n    ]\n  }\n}",
+    "seed": 1649376197,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6244843,
+    "sha256": "99de17c3056c5856016b12409944676c72be4bce5770d3a75f5887bf08ebb07f"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:31:48Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Borrowdale gaiters, in black. Waterproof gaiters that keep bog water and snow out of the boots. Weight 240 g a pair. A front zip and a tough instep strap. Colour: Black, Slate. Materials: Nylon. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:UpGNzVk9R9KhDAG_ekDJIQ"
+}

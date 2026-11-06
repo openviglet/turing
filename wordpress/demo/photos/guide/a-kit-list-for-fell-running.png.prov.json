@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6059125,
+    "path": "demo/photos/guide/a-kit-list-for-fell-running.png",
+    "sha256": "728f7524b681f22295ff1c214baeb84c879065deae1c5fc07cbbcd627698dcc0"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a lean male fell runner pausing mid-route on a green Lake District slope, checking a compass and paper map, with rolling fells, stone walls, and a distant slate-grey lake receding behind him under overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Late-morning overcast sky in the English Lake District, pale cool grey with a thin band of low cloud drifting across distant peaks and softening their silhouettes. Rolling green fells recede into the middle distance, dotted with low grey dry-stone walls snaking along contour lines. A distant slate-grey lake catches the pale sky light between two ridges in the deep background. Wet heather-strewn ground extends across the foreground slope, dark green-brown mossy turf with patches of damp earth. Natural diffused north light, neutral cool-toned white balance, soft shadows, gentle atmospheric haze separating depth layers.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Single distant runner silhouette far up the slope behind the main runner, small and barely readable against the green fell, suggesting a race route ahead.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lean male fell runner in his thirties, anchored slightly right of center in the midground, body filling roughly 60% of the frame height as the focal subject. In three-quarter view angled toward camera, weight settled on his back foot as he pauses. Head tilted down reading an unfolded paper map held against his right thigh, focused considering expression, gaze directed at the map. Light skin tone, short dark hair under a small grey beanie pulled low. Wearing a lightweight olive-green waterproof shell jacket with taped seams visible along shoulders and sleeves, hem cinched at the waist, hood down; coral-pink long-sleeve running top visible beneath the open shell at collar and cuffs. Compact black-and-grey twelve-litre running vest strapped snug across his torso, two small water-bottle pockets on the front, thin chest strap, subtle reflective piping along seams. Thin black gloves on both hands \u2014 left hand raised to a small compass held at chest height, right hand holding the unfolded map. Black and grey trail running shoes laced tight over low-cut technical socks, planted on wet heather-strewn ground.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus clump of bright green bracken slicing into the lower-left foreground edge of the frame, feathery fronds blurred into soft green shapes.\"\n      }\n    ]\n  }\n}",
+    "seed": 1346111229,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6059125,
+    "sha256": "728f7524b681f22295ff1c214baeb84c879065deae1c5fc07cbbcd627698dcc0"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:37:16Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"A kit list for fell running\". Most fell races ask for full waterproof cover with taped seams, a hat, gloves, a map and a compass. The Wasdale running shell meets that rule at 150 g. Wear the Wansfell running top under it and the Ennerdale trail shoe on your feet; carry it all in the Wasdale 12 litre running vest. A... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:PKfVYvvQRYizwmAjCFl4vw"
+}

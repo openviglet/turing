@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 132954,
+    "path": "demo/narration/en/chapter-7-result.mp3",
+    "sha256": "10fc84ec6ee47ed15f6974fee7d2be17d674e6d7486cff8949e879426383cd64"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00177,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00441,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 132954,
+    "sha256": "10fc84ec6ee47ed15f6974fee7d2be17d674e6d7486cff8949e879426383cd64"
+  },
+  "params": {},
+  "produced_at": "2026-11-02T19:58:14Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[happy] The checkout itself is the same as always. What changed is everything before it: the search and the help just got them here so much faster.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:HxrfP8oEwIUVycuVjxiC"
+}

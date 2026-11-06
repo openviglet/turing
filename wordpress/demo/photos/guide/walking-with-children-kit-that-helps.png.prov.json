@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6659598,
+    "path": "demo/photos/guide/walking-with-children-kit-that-helps.png",
+    "sha256": "618b51291d102bfe61325d89449c6089ae531e2b682bfc23d5326caffd2264fc"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor lifestyle photograph of a family of four walking along a grassy fell ridge in the Lake District, arranged in a loose diagonal from mother and toddler in the foreground-left through the father mid-stride to the young daughter leading ahead, with rolling green fells and a distant slate-blue lake opening out behind them under overcast-bright daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-morning Lake District fell ridge under overcast-bright northern English daylight, neutral cool-to-neutral white balance with no warm grading. Pale grey-white sky filling the upper portion of the frame with soft directional light raking from the upper left. Rolling green fells recede into atmospheric haze across the middle distance, their ridgelines softening into paler greens and blues toward the horizon. A dark slate-blue lake catches the sky far below in a valley fold behind the family. The grassy path runs along the ridge in the foreground, tufted long grass and patches of purple bell heather scattered across it. Fine Kodak Portra grain sits evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant lone walker as a tiny dark silhouette on a parallel ridge to the right of the frame, small enough to read only as a figure shape against the pale green slope, suggesting shared trail use.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Loose flock of about twelve swallows wheeling high against the pale sky above the far fells, small dark crescent shapes scattered across the upper-right region of the frame.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young daughter around seven years old leading the family on the path at background-right of the group, body taking up roughly 45% of the frame height. Mid-step with one foot lifted clear of the grass, head turned back over her right shoulder to glance at her dad, mouth in a small open smile, gaze directed back toward her father. Light skin tone, brown hair tied back with a few loose strands at her temple. Coral-red waterproof shell jacket, navy leggings tucked into grey hiking boots.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small 20-litre kids' backpack in dusty teal strapped to the daughter's shoulders, chest strap visible across her coral-red jacket with a bright yellow pea whistle clipped to it. Top lid slightly open showing a folded cream wool layer and a silver foil snack pouch peeking out.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Father in his late thirties mid-stride on the path at center-midground, weight on his front foot, body angled three-quarters toward the camera, gaze directed down toward his daughter with a small private smile. Light skin tone, short brown hair, clean-shaven. Charcoal softshell jacket zipped halfway, olive walking trousers, scuffed brown hiking boots. Hands loose at his sides.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mother around thirty-five a few paces behind the father on the left of the path, body angled forward into the walk, gaze directed down at the toddler beside her. Light skin tone, shoulder-length light brown hair loose. Heather-grey fleece under an open tan shell, dark trousers, brown hiking boots. Right hand holding a stainless steel insulated bottle at hip height, left hand reaching down to adjust the strap of the toddler's pack.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Toddler around four years old beside the mother on the left, smaller dusty-teal kids' pack on his back, both small hands gripping a wooden stick held upright like a walking pole, looking up at the mother with mouth slightly open mid-question. Light skin tone, short tousled brown hair, round cheeks. Navy fleece top, grey trousers, small grey hiking boots.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of purple bell heather and long grass slicing into the lower-left foreground edge of the frame, soft purple flower clusters and pale green blades blurred close to the lens.\"\n      }\n    ]\n  }\n}",
+    "seed": 743523366,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6659598,
+    "sha256": "618b51291d102bfe61325d89449c6089ae531e2b682bfc23d5326caffd2264fc"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:38:19Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Walking with children: kit that helps\". Children get cold faster than adults and wet sooner. A pack of their own makes the walk theirs. The Catbells 20 litre kids pack has a whistle on the chest strap. Keep spare layers and snacks in it, and bring the Ennerdale insulated bottle with something hot. For a night out together, the Langdale family... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:RRu2dQd_QMiaTjxt8p14KQ"
+}

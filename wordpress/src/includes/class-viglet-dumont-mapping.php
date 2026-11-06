@@ -1,0 +1,1154 @@
+<?php
+/**
+ * Viglet Dumont Mapping
+ *
+ * The per-post-type field mapping: which taxonomies, meta keys and core fields a post sends
+ * beyond the fixed document, as which Turing field and type, and the manifest that tells
+ * Turing about those fields so a facet needs no console step.
+ *
+ * @package Viglet_Dumont
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Reads the mapping, turns a post into typed values and provisions the fields.
+ *
+ * The stored shape (option `viglet_dumont_mapping`, also what the REST route exports and
+ * imports) is keyed by post type:
+ *
+ *     { "evento": { "exclude": false, "fields": [
+ *         { "source": "meta:start_date", "field": "start_date", "type": "DATE",
+ *           "multi": false, "facet": true, "facet_label": "Date", "weight": null,
+ *           "range": true, "ranges": [] } ] } }
+ *
+ * A source is `taxonomy:<slug>`, `meta:<key>`, `core:<excerpt|slug|menu_order|parent>`,
+ * `thumbnail`, or for a WooCommerce product `woo:<price|regular_price|sale_price|stock_status
+ * |sku|average_rating>` (D173). With nothing stored, every public custom taxonomy of an
+ * indexed type is mapped as a multi-valued STRING facet, so a custom taxonomy is searchable
+ * out of the box, and a product adds its price, its stock and its global attributes.
+ *
+ * `range` gives a DATE or number field a range facet as well, declared as a Turing custom
+ * facet named `<field>_range`: a fixed set of periods for a date, and for a number the
+ * `ranges` it lists, each `{label, from, to}` with either bound open.
+ */
+class Viglet_Dumont_Mapping {
+
+	/** The option the mapping lives in. */
+	public const OPTION = 'viglet_dumont_mapping';
+
+	/**
+	 * The option holding how the search block shows a type no post type has (D327): a record
+	 * another source sent under this site key, as `dc:type`'s "Article". Keyed by that value,
+	 * each `{label, card_date, card_image}`. Display only: nothing about indexing reads it.
+	 */
+	public const FOREIGN_OPTION = 'viglet_dumont_foreign_types';
+
+	/** How many foreign types the option keeps. */
+	private const MAX_FOREIGN = 100;
+
+	/** How many pages of 100 documents the Fields screen reads to find the foreign types. */
+	private const FOREIGN_PAGES = 20;
+
+	/** A document's fields that are never a card's date or image. */
+	private const NOT_CARD_FIELDS = array( 'id', 'title', 'text', 'abstract', 'description', 'url', 'type', 'site', 'site_key', 'source_apps', 'score', 'publication_date', 'image', 'author', 'categories', 'section', 'tags' );
+
+	/** The option recording the last manifest sent: its hash, when, and the error if any. */
+	public const PROVISIONED_OPTION = 'viglet_dumont_provisioned';
+
+	/** The post meta that keeps one post out of the index. */
+	public const EXCLUDE_META = '_viglet_dumont_exclude';
+
+	/** The field types Turing's manifest accepts and the plugin knows how to convert to. */
+	public const TYPES = array( 'STRING', 'TEXT', 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE', 'BOOL' );
+
+	/** The types a range facet can bucket. */
+	public const RANGE_TYPES = array( 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE' );
+
+	/** How many ranges a number field may list. */
+	private const MAX_RANGES = 20;
+
+	/** The core sources a mapping may name. */
+	private const CORE_SOURCES = array( 'excerpt', 'slug', 'menu_order', 'parent' );
+
+	/** Fields the indexer always sends; a mapping cannot take their names. */
+	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key', 'entity_person', 'entity_organization', 'entity_place' );
+
+	/**
+	 * The plugin settings this mapping was built with.
+	 *
+	 * @var array
+	 */
+	private array $settings;
+
+	/**
+	 * The mapping, read once per instance.
+	 *
+	 * @var array|null
+	 */
+	private ?array $resolved = null;
+
+	/**
+	 * Build a mapping over the given settings, or over the stored ones.
+	 *
+	 * @param array|null $settings The plugin settings; null reads them from the options table.
+	 */
+	public function __construct( ?array $settings = null ) {
+		$this->settings = $settings ?? viglet_dumont_get_settings();
+	}
+
+	/**
+	 * The mapping of every indexed post type, after the `viglet_dumont_mapping` filter.
+	 *
+	 * @return array<string, array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}>
+	 */
+	public function all(): array {
+		if ( null !== $this->resolved ) {
+			return $this->resolved;
+		}
+
+		$stored  = get_option( self::OPTION, array() );
+		$stored  = is_array( $stored ) ? $stored : array();
+		$mapping = array();
+
+		foreach ( viglet_dumont_get_indexable_types() as $post_type ) {
+			$mapping[ $post_type ] = isset( $stored[ $post_type ] )
+				? self::sanitize_type( $stored[ $post_type ] )
+				: $this->default_for( $post_type );
+		}
+
+		/**
+		 * Filters the field mapping, so a theme can map in code what the settings cannot.
+		 *
+		 * @param array $mapping  The mapping, keyed by post type.
+		 * @param array $settings The plugin settings.
+		 */
+		$filtered = apply_filters( 'viglet_dumont_mapping', $mapping, $this->settings );
+
+		$this->resolved = array_map( array( self::class, 'sanitize_type' ), $filtered );
+
+		return $this->resolved;
+	}
+
+	/**
+	 * Store a mapping, keeping only what validates. Returns what was stored.
+	 *
+	 * @param array $mapping The mapping, keyed by post type.
+	 */
+	public function save( array $mapping ): array {
+		$clean = array();
+		foreach ( $mapping as $post_type => $type_mapping ) {
+			if ( is_array( $type_mapping ) ) {
+				$clean[ sanitize_key( (string) $post_type ) ] = self::sanitize_type( $type_mapping );
+			}
+		}
+		update_option( self::OPTION, $clean, false );
+		$this->resolved = null;
+
+		return $clean;
+	}
+
+	/**
+	 * A document's type as a badge, a label and a card's looks read it: the first value when
+	 * Turing holds several (a catalog record's `dc:type`, D327), without highlight markup.
+	 *
+	 * @param mixed $type The document's `type` field.
+	 */
+	public static function document_type( $type ): string {
+		$value = is_array( $type ) ? reset( $type ) : $type;
+
+		return is_scalar( $value ) ? trim( wp_strip_all_tags( (string) $value ) ) : '';
+	}
+
+	/**
+	 * The types this site's own documents carry: its indexed post types and a PDF's.
+	 *
+	 * @return array<int, string>
+	 */
+	private static function own_types(): array {
+		return array_merge( viglet_dumont_get_indexable_types(), array( Viglet_Dumont_Pdf::TYPE ) );
+	}
+
+	/**
+	 * How the search block shows each type no post type has (D327), keyed by that type.
+	 *
+	 * @return array<string, array{label: string, card_date: string, card_image: string}>
+	 */
+	public function foreign(): array {
+		return self::sanitize_foreign( get_option( self::FOREIGN_OPTION, array() ) );
+	}
+
+	/**
+	 * Each foreign type's badge text, where Fields gave one.
+	 *
+	 * @return array<string, string>
+	 */
+	public function foreign_labels(): array {
+		return array_filter( array_map( static fn ( $looks ) => $looks['label'], $this->foreign() ), static fn ( $label ) => '' !== $label );
+	}
+
+	/**
+	 * Store how the foreign types show, keeping only what validates. Returns what was stored.
+	 *
+	 * @param array $foreign Keyed by type, each `{label, card_date, card_image}`.
+	 */
+	public function save_foreign( array $foreign ): array {
+		$clean = self::sanitize_foreign( $foreign );
+		update_option( self::FOREIGN_OPTION, $clean, false );
+
+		return $clean;
+	}
+
+	/**
+	 * The foreign types validated: a type is any text but one of this site's own, and a card's
+	 * field is a Turing field name or '' for the default. A type that changes nothing is left out.
+	 *
+	 * @param mixed $foreign As stored or posted.
+	 * @return array<string, array{label: string, card_date: string, card_image: string}>
+	 */
+	public static function sanitize_foreign( $foreign ): array {
+		$own   = self::own_types();
+		$clean = array();
+		$name  = static fn ( $value ) => (string) preg_replace( '/[^A-Za-z0-9_]/', '', is_scalar( $value ) ? (string) $value : '' );
+		foreach ( is_array( $foreign ) ? $foreign : array() as $type => $looks ) {
+			$type = sanitize_text_field( (string) $type );
+			if ( '' === $type || strlen( $type ) > 100 || in_array( $type, $own, true ) || ! is_array( $looks ) ) {
+				continue;
+			}
+			$entry = array(
+				'label'      => sanitize_text_field( is_scalar( $looks['label'] ?? '' ) ? (string) ( $looks['label'] ?? '' ) : '' ),
+				'card_date'  => $name( $looks['card_date'] ?? '' ),
+				'card_image' => $name( $looks['card_image'] ?? '' ),
+			);
+			if ( '' === $entry['label'] . $entry['card_date'] . $entry['card_image'] ) {
+				continue;
+			}
+			$clean[ $type ] = $entry;
+			if ( count( $clean ) >= self::MAX_FOREIGN ) {
+				break;
+			}
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * The types the SN site holds under this site key beyond this site's own (D327), each with
+	 * how many documents were seen and the fields they carry that a card could show: the ones
+	 * holding a date, and the ones holding text (an image's URL). Turing has no facet on `type`,
+	 * so the other sources' documents are read, a page of 100 at a time, through one filter that
+	 * excludes this plugin's own (Turing T1233, D334): however many posts the site holds, only
+	 * the foreign documents are paged, up to the first 2000 of them.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to search through.
+	 * @return array<int, array{type: string, count: int, dates: array<int, string>, texts: array<int, string>}>|WP_Error
+	 */
+	public function discover_foreign( Viglet_Dumont_API_Client $client ) {
+		// This site key's documents another source sent, and only those (D334): Turing
+		// excludes a value with a negative filter (T1233), so the plugin's own posts are never
+		// read to be skipped.
+		$own_filter = ( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter();
+		$filters    = array( $own_filter, '-source_apps:' . $client->source_app() );
+		$first      = $client->search( '*', 1, 0, array( 'fq[]' => $filters ) );
+		if ( is_wp_error( $first ) ) {
+			return $first;
+		}
+		$total = (int) ( $first['queryContext']['count'] ?? 0 );
+		if ( 0 === $total ) {
+			// A Turing older than T1233 answers a negative filter with nothing at all: there,
+			// count what the key holds less the plugin's own, and page the key's documents.
+			$all  = $client->search( '*', 1, 0, array( 'fq[]' => $own_filter ) );
+			$mine = $client->search( '*', 1, 0, array( 'fq[]' => array( $own_filter, 'source_apps:' . $client->source_app() ) ) );
+			if ( is_wp_error( $all ) ) {
+				return $all;
+			}
+			if ( is_wp_error( $mine ) ) {
+				return $mine;
+			}
+			$total   = (int) ( $all['queryContext']['count'] ?? 0 ) - (int) ( $mine['queryContext']['count'] ?? 0 );
+			$filters = array( $own_filter );
+		}
+		$own   = self::own_types();
+		$found = array();
+		$seen  = 0;
+
+		for ( $page = 1; $total > 0 && $seen < $total && $page <= self::FOREIGN_PAGES; $page++ ) {
+			$response = $client->search( '*', $page, 100, array( 'fq[]' => $filters ) );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+			$documents = (array) ( $response['results']['document'] ?? array() );
+			foreach ( $documents as $document ) {
+				$fields = (array) ( $document['fields'] ?? array() );
+				$type   = self::document_type( $fields['type'] ?? '' );
+				// Paging the whole key (an older Turing), the plugin's own never count.
+				if ( $client->source_app() === self::document_type( $fields['source_apps'] ?? '' ) ) {
+					continue;
+				}
+				++$seen;
+				if ( '' === $type || in_array( $type, $own, true ) ) {
+					continue;
+				}
+				$found[ $type ] = $found[ $type ] ?? array(
+					'type'  => $type,
+					'count' => 0,
+					'dates' => array(),
+					'texts' => array(),
+				);
+				++$found[ $type ]['count'];
+				foreach ( $fields as $field => $value ) {
+					$field = (string) $field;
+					$value = is_array( $value ) ? reset( $value ) : $value;
+					if ( in_array( $field, self::NOT_CARD_FIELDS, true ) || ! is_scalar( $value ) || '' === (string) $value ) {
+						continue;
+					}
+					if ( self::looks_like_date( $value ) ) {
+						$found[ $type ]['dates'][ $field ] = $field;
+					} elseif ( is_string( $value ) ) {
+						$found[ $type ]['texts'][ $field ] = $field;
+					}
+				}
+			}//end foreach
+			if ( count( $documents ) < 100 ) {
+				break;
+			}
+		}//end for
+
+		ksort( $found );
+
+		return array_values(
+			array_map(
+				static function ( array $entry ): array {
+					$entry['dates'] = array_values( $entry['dates'] );
+					$entry['texts'] = array_values( $entry['texts'] );
+					sort( $entry['dates'] );
+					sort( $entry['texts'] );
+					return $entry;
+				},
+				$found
+			)
+		);
+	}
+
+	/**
+	 * Whether a value Turing answered is a date: an ISO day, or epoch milliseconds.
+	 *
+	 * @param mixed $value The value.
+	 */
+	private static function looks_like_date( $value ): bool {
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return $value > 1e11;
+		}
+
+		return is_string( $value ) && 1 === preg_match( '/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}|$)/', $value );
+	}
+
+	/**
+	 * When a post leaves search (D308): the moment its type's "Leaves search on" DATE field
+	 * says, or null when the type sets none or the post carries no such date.
+	 *
+	 * @param WP_Post $post The post.
+	 */
+	public function expiry( WP_Post $post ): ?int {
+		$field = $this->all()[ $post->post_type ]['expires'] ?? '';
+		if ( '' === $field ) {
+			return null;
+		}
+		$value = $this->values( $post )[ $field ] ?? null;
+		$value = is_array( $value ) ? reset( $value ) : $value;
+		$at    = is_string( $value ) ? strtotime( $value ) : false;
+		if ( false === $at ) {
+			return null;
+		}
+		// A day with no time of day ("the last day to apply") lasts to the end of that day where
+		// the site is, not to its first minute in UTC.
+		if ( 0 === $at % 86400 ) {
+			return ( new DateTimeImmutable( gmdate( 'Y-m-d', $at ), wp_timezone() ) )->modify( '+1 day' )->getTimestamp();
+		}
+
+		return $at;
+	}
+
+	/**
+	 * Whether a post type is switched off in the mapping.
+	 *
+	 * @param string $post_type The post type.
+	 */
+	public function excludes_type( string $post_type ): bool {
+		return ! empty( $this->all()[ $post_type ]['exclude'] );
+	}
+
+	/**
+	 * The mapped fields of a post, as typed values. A value that does not convert is left out.
+	 *
+	 * @param WP_Post $post The post.
+	 * @return array<string, mixed>
+	 */
+	public function values( WP_Post $post ): array {
+		$fields = $this->all()[ $post->post_type ]['fields'] ?? array();
+		$values = array();
+
+		foreach ( $fields as $field ) {
+			$raw = $this->read( $post, $field['source'], $field['multi'] );
+			$raw = is_array( $raw ) ? $raw : array( $raw );
+
+			$converted = array();
+			foreach ( $raw as $value ) {
+				$value = self::convert( $value, $field['type'] );
+				if ( null !== $value ) {
+					$converted[] = $value;
+				}
+			}
+
+			if ( empty( $converted ) ) {
+				continue;
+			}
+			$values[ $field['field'] ] = $field['multi'] ? $converted : $converted[0];
+		}
+
+		return $values;
+	}
+
+	/**
+	 * The manifest the mapped fields converge to, as `POST /api/sn/manifest` binds it.
+	 *
+	 * A field two post types declare differently is declared once, as the first type has it.
+	 * `site_key` is always declared: delete-all filters on it, and with several sites in one SN
+	 * site it is the facet that tells them apart.
+	 *
+	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
+	 */
+	public function manifest(): array {
+		$locale = $this->settings['locale'] ?? 'en_US';
+		$fields = array(
+			'site_key' => array(
+				'name'        => 'site_key',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => false,
+				'facet'       => true,
+				'facetName'   => array( $locale => __( 'Site', 'viglet-turing-search' ) ),
+			),
+			// The field contract a post shares with an archive record on one SN site (D326):
+			// Turing's own `author`, declared as Dumont's OAI-PMH and DSpace sources declare it,
+			// several values and a facet, so a thesis's co-authors and a post's author are one
+			// facet. A post still sends one. The search block shows only the mapping's facets.
+			'author'   => array(
+				'name'        => 'author',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => true,
+				'facet'       => true,
+				'facetName'   => array( $locale => __( 'Author', 'viglet-turing-search' ) ),
+			),
+			// Whether a post is sticky, for Search tuning's "sticky posts first" boost.
+			'sticky'   => array(
+				'name'        => 'sticky',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => false,
+				'facet'       => false,
+			),
+		);
+		// The entity facets Turing fills (D310), declared as Turing creates them so a label and
+		// "offered" reach it; a mapped field cannot take their names.
+		$fields = array_merge( $fields, ( new Viglet_Dumont_Entities( $this->settings ) )->manifest_fields( $locale ) );
+		$custom = array();
+
+		foreach ( $this->all() as $type_mapping ) {
+			if ( $type_mapping['exclude'] ) {
+				continue;
+			}
+			foreach ( $type_mapping['fields'] as $field ) {
+				if ( isset( $fields[ $field['field'] ] ) ) {
+					continue;
+				}
+				$range = self::range_facet( $field, $locale );
+				if ( null !== $range ) {
+					$custom[] = $range;
+				}
+				$spec = array(
+					'name'        => $field['field'],
+					'type'        => $field['type'],
+					'mandatory'   => false,
+					'multiValued' => $field['multi'],
+					'facet'       => $field['facet'],
+				);
+				if ( '' !== $field['facet_label'] ) {
+					$spec['facetName'] = array( $locale => $field['facet_label'] );
+				}
+				if ( null !== $field['weight'] ) {
+					$spec['searchWeight'] = $field['weight'];
+				}
+				$fields[ $field['field'] ] = $spec;
+			}//end foreach
+		}//end foreach
+
+		$manifest = array(
+			'name'       => $this->settings['site_name'],
+			'locales'    => array( $locale ),
+			'fields'     => array_values( $fields ),
+			// A site whose `author` an older plugin left single-valued takes it to several
+			// values once (D326); Turing recreates the field only while it differs, so on every
+			// later provisioning this changes nothing.
+			'migrations' => array(
+				array(
+					'field'  => 'author',
+					'action' => 'RECREATE',
+				),
+			),
+		);
+		if ( ! empty( $custom ) ) {
+			$manifest['customFacets'] = $custom;
+		}
+		// Declaring the block is what turns the site's GenAI on (Turing T1116). With no agent
+		// named, Turing keeps the agent an admin chose in its console and binds the Default AI
+		// Agent only to a site that has none (Turing T1146, D214). An object, so `{}` in JSON.
+		if ( self::declares_generative_ai( $this->settings ) ) {
+			$manifest['genAi'] = new stdClass();
+			// Entities at import (Turing T1228, D310): the site's LLM reads every document for
+			// the people, organisations and places it names. Left out, Turing keeps its setting,
+			// so turning it off here sends `false` once, after a manifest that turned it on.
+			$last = get_option( self::PROVISIONED_OPTION, array() );
+			if ( Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+				$manifest['genAi'] = array( 'entityExtraction' => true );
+			} elseif ( is_array( $last ) && ! empty( $last['entities'] ) ) {
+				$manifest['genAi'] = array( 'entityExtraction' => false );
+			}
+		}
+
+		return $manifest;
+	}
+
+	/**
+	 * Whether the manifest turns the site's generative AI on. Off by default, since answers
+	 * spend the owner's LLM budget.
+	 *
+	 * @param array $settings The plugin settings.
+	 */
+	public static function declares_generative_ai( array $settings ): bool {
+		return ! empty( $settings['generative_ai'] );
+	}
+
+	/**
+	 * The name of a field's range facet. A filter on it reads `<name>:<range label>`.
+	 *
+	 * @param string $field The Turing field.
+	 */
+	public static function range_facet_name( string $field ): string {
+		return $field . '_range';
+	}
+
+	/**
+	 * A field's range facet as the manifest declares it, or null when it has none.
+	 *
+	 * @param array  $field  A sanitized mapped field.
+	 * @param string $locale The site's locale.
+	 * @return array{field: string, name: string, defaultLabel: string, label: array, items: array}|null
+	 */
+	public static function range_facet( array $field, string $locale ): ?array {
+		if ( empty( $field['range'] ) ) {
+			return null;
+		}
+
+		$items = array();
+		if ( 'DATE' === $field['type'] ) {
+			// The field's period set (D307): past dates, an agenda's, or its own.
+			$periods = $field['periods'] ?? 'past';
+			$set     = 'custom' === $periods ? $field['ranges'] : self::date_ranges( $periods );
+			foreach ( $set as $range ) {
+				$items[] = array_filter(
+					array(
+						'label'          => $range['label'],
+						'rangeStartDate' => $range['from'],
+						'rangeEndDate'   => $range['to'],
+					),
+					static fn ( $value ) => null !== $value
+				);
+			}
+		} else {
+			foreach ( $field['ranges'] as $range ) {
+				$items[] = array_filter(
+					array(
+						'label'      => $range['label'],
+						'rangeStart' => $range['from'],
+						'rangeEnd'   => $range['to'],
+					),
+					static fn ( $value ) => null !== $value
+				);
+			}
+		}//end if
+		if ( empty( $items ) ) {
+			return null;
+		}
+
+		$label = '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'];
+
+		return array(
+			'field'        => $field['field'],
+			'name'         => self::range_facet_name( $field['field'] ),
+			'defaultLabel' => $label,
+			'label'        => array( $locale => $label ),
+			'items'        => $items,
+		);
+	}
+
+	/**
+	 * The periods a date's range facet offers, as Turing date math. They overlap on purpose:
+	 * a visitor narrows from "this year" to "last 7 days", not between disjoint slices.
+	 *
+	 * @param string $set `past` (publication dates, the default) or `agenda` (dates to come, D307).
+	 * @return array<int, array{label: string, from: ?string, to: ?string}>
+	 */
+	public static function date_ranges( string $set = 'past' ): array {
+		if ( 'agenda' === $set ) {
+			// For dates still to come (D307), each from the start of today. Turing's date math
+			// rounds to a day, a month or a year but not to a week, so the week is the next 7 days.
+			// Turing includes a range's end and a day-only date is indexed at midnight UTC, the
+			// very instant the next period starts, so each ends a second before it (D333):
+			// today's event is never Past, tomorrow's never Today.
+			return array(
+				array(
+					'label' => __( 'Today', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => 'NOW/DAY+1DAY-1SECOND',
+				),
+				array(
+					'label' => __( 'Next 7 days', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => 'NOW/DAY+7DAYS-1SECOND',
+				),
+				array(
+					'label' => __( 'This month', 'viglet-turing-search' ),
+					'from'  => 'NOW/MONTH',
+					'to'    => 'NOW/MONTH+1MONTH-1SECOND',
+				),
+				array(
+					'label' => __( 'Upcoming', 'viglet-turing-search' ),
+					'from'  => 'NOW/DAY',
+					'to'    => null,
+				),
+				array(
+					'label' => __( 'Past', 'viglet-turing-search' ),
+					'from'  => null,
+					'to'    => 'NOW/DAY-1SECOND',
+				),
+			);
+		}//end if
+
+		return array(
+			array(
+				'label' => __( 'Upcoming', 'viglet-turing-search' ),
+				'from'  => 'NOW',
+				'to'    => null,
+			),
+			array(
+				'label' => __( 'Last 7 days', 'viglet-turing-search' ),
+				'from'  => 'NOW-7DAYS',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'Last 30 days', 'viglet-turing-search' ),
+				'from'  => 'NOW-30DAYS',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'This year', 'viglet-turing-search' ),
+				'from'  => 'NOW/YEAR',
+				'to'    => 'NOW',
+			),
+			array(
+				'label' => __( 'Before this year', 'viglet-turing-search' ),
+				'from'  => null,
+				'to'    => 'NOW/YEAR',
+			),
+		);
+	}
+
+	/**
+	 * Send the manifest to Turing unless the same one already went through.
+	 *
+	 * Re-posting an unchanged manifest is a no-op on Turing's side too, but it is a request
+	 * on every worker run, so the hash of the last accepted one is kept. A refusal (a 409 when
+	 * a field's type would have to change) does not stop indexing: the documents still flow
+	 * with the site's current schema, and the error is kept for the admin to show.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to send it through.
+	 * @param bool                     $force  Send even when the same manifest went through.
+	 * @return array{sent: bool, success: bool, message: string}
+	 */
+	public function provision( Viglet_Dumont_API_Client $client, bool $force = false ): array {
+		$manifest = $this->manifest();
+		if ( empty( $manifest['fields'] ) ) {
+			return array(
+				'sent'    => false,
+				'success' => true,
+				'message' => __( 'No mapped field to provision.', 'viglet-turing-search' ),
+			);
+		}
+
+		$hash = md5( (string) wp_json_encode( array( $manifest, $client->get_server_url() ) ) );
+		$last = get_option( self::PROVISIONED_OPTION, array() );
+		if ( ! $force && is_array( $last ) && ( $last['hash'] ?? '' ) === $hash && '' === ( $last['error'] ?? '' ) ) {
+			return array(
+				'sent'    => false,
+				'success' => true,
+				'message' => __( 'The fields are already provisioned.', 'viglet-turing-search' ),
+			);
+		}
+
+		$result = $client->provision( $manifest );
+		Viglet_Dumont_Events::record( 'provision', $result['success'], $result['note'] );
+		$sent = is_array( $manifest['genAi'] ?? null ) ? $manifest['genAi']['entityExtraction'] : null;
+		update_option(
+			self::PROVISIONED_OPTION,
+			array(
+				'hash'     => $hash,
+				'at'       => time(),
+				'error'    => $result['success'] ? '' : $result['message'],
+				// Whether Turing was last told to find entities (D310), until it hears otherwise.
+				'entities' => null === $sent || ! $result['success'] ? is_array( $last ) && ! empty( $last['entities'] ) : $sent,
+			),
+			false
+		);
+
+		return array(
+			'sent'    => true,
+			'success' => $result['success'],
+			'message' => $result['message'],
+		);
+	}
+
+	/**
+	 * Where each manifest field stands in Turing, from the manifest's plan: `provisioned`
+	 * (Turing has it as declared), `pending` (the next send adds it) or `conflict` (Turing
+	 * holds it with another type or cardinality, so it is refused until renamed or migrated).
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @return array<string, array{status: string, detail: string}>|WP_Error
+	 */
+	public function field_status( Viglet_Dumont_API_Client $client ) {
+		$plan = $this->plan_status( $client );
+
+		return is_wp_error( $plan ) ? $plan : $plan['fields'];
+	}
+
+	/**
+	 * The manifest's plan, read once: where each field stands (as field_status() has it) and
+	 * whether the next send creates or changes the site's GenAI binding.
+	 *
+	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @return array{fields: array<string, array{status: string, detail: string}>, genai_to_change: bool}|WP_Error
+	 */
+	public function plan_status( Viglet_Dumont_API_Client $client ) {
+		$plan = $client->plan( $this->manifest() );
+		if ( is_wp_error( $plan ) ) {
+			return $plan;
+		}
+
+		$status = array();
+		foreach ( (array) ( $plan['fieldsUnchanged'] ?? array() ) as $name ) {
+			$status[ (string) $name ] = array(
+				'status' => 'provisioned',
+				'detail' => '',
+			);
+		}
+		foreach ( (array) ( $plan['fieldsToAdd'] ?? array() ) as $name ) {
+			$status[ (string) $name ] = array(
+				'status' => 'pending',
+				'detail' => '',
+			);
+		}
+		foreach ( (array) ( $plan['breakingChanges'] ?? array() ) as $change ) {
+			$status[ (string) ( $change['field'] ?? '' ) ] = array(
+				'status' => 'conflict',
+				'detail' => sprintf(
+					/* translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares. */
+					__( '%1$s is %2$s in Turing, %3$s here', 'viglet-turing-search' ),
+					(string) ( $change['attribute'] ?? '' ),
+					(string) ( $change['liveValue'] ?? '' ),
+					(string) ( $change['manifestValue'] ?? '' )
+				),
+			);
+		}
+
+		return array(
+			'fields'          => $status,
+			'genai_to_change' => ! empty( $plan['genAiToChange'] ),
+		);
+	}
+
+	/**
+	 * The sources a post type's posts can be mapped from: its taxonomies, the meta keys its
+	 * posts carry (protected `_` keys left out), the core fields and the featured image.
+	 *
+	 * @param string $post_type The post type.
+	 * @return array<int, array{source: string, label: string}>
+	 */
+	public static function sources( string $post_type ): array {
+		global $wpdb;
+
+		$sources = array();
+		foreach ( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy ) {
+			$sources[] = array(
+				'source' => 'taxonomy:' . $taxonomy->name,
+				/* translators: %s: the taxonomy's name. */
+				'label'  => sprintf( __( 'Taxonomy: %s', 'viglet-turing-search' ), $taxonomy->label ),
+			);
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- a distinct over postmeta, read only on the mapping screen.
+		$keys = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.meta_key FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE p.post_type = %s AND pm.meta_key NOT LIKE %s ORDER BY pm.meta_key LIMIT 200",
+				$post_type,
+				$wpdb->esc_like( '_' ) . '%'
+			)
+		);
+		foreach ( (array) $keys as $key ) {
+			$sources[] = array(
+				'source' => 'meta:' . $key,
+				/* translators: %s: the meta key. */
+				'label'  => sprintf( __( 'Meta: %s', 'viglet-turing-search' ), $key ),
+			);
+		}
+		// The text of a PDF a meta names, by URL or attachment id (D309).
+		foreach ( (array) $keys as $key ) {
+			$sources[] = array(
+				'source' => 'file:' . $key,
+				/* translators: %s: the meta key. */
+				'label'  => sprintf( __( 'Text of the PDF in meta: %s', 'viglet-turing-search' ), $key ),
+			);
+		}
+
+		foreach ( self::CORE_SOURCES as $core ) {
+			$sources[] = array(
+				'source' => 'core:' . $core,
+				/* translators: %s: the core field, e.g. excerpt. */
+				'label'  => sprintf( __( 'Post: %s', 'viglet-turing-search' ), $core ),
+			);
+		}
+		$sources[] = array(
+			'source' => 'thumbnail',
+			'label'  => __( 'Featured image URL', 'viglet-turing-search' ),
+		);
+		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
+			$sources = array_merge( $sources, Viglet_Dumont_WooCommerce::sources() );
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * The mapping a post type gets when nothing is stored: its public custom taxonomies.
+	 *
+	 * @param string $post_type The post type.
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}
+	 */
+	private function default_for( string $post_type ): array {
+		$fields = array();
+		foreach ( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy ) {
+			if ( ! $taxonomy->public || in_array( $taxonomy->name, array( 'category', 'post_tag', 'post_format' ), true ) ) {
+				continue;
+			}
+			$fields[] = array(
+				'source'      => 'taxonomy:' . $taxonomy->name,
+				'field'       => $taxonomy->name,
+				'type'        => 'STRING',
+				'multi'       => true,
+				'facet'       => true,
+				'facet_label' => (string) $taxonomy->label,
+				'weight'      => null,
+			);
+		}
+		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
+			$fields = array_merge( $fields, Viglet_Dumont_WooCommerce::default_fields() );
+		}
+
+		return self::sanitize_type( array( 'fields' => $fields ) );
+	}
+
+	/**
+	 * Read a source's raw value(s) from a post.
+	 *
+	 * @param WP_Post $post   The post.
+	 * @param string  $source The source, e.g. `meta:start_date`.
+	 * @param bool    $multi  Whether every value is wanted, or the first.
+	 * @return mixed
+	 */
+	private function read( WP_Post $post, string $source, bool $multi ) {
+		[ $kind, $name ] = array_pad( explode( ':', $source, 2 ), 2, '' );
+
+		switch ( $kind ) {
+			case 'taxonomy':
+				$terms = wp_get_post_terms( $post->ID, $name, array( 'fields' => 'names' ) );
+				return is_wp_error( $terms ) ? array() : $terms;
+			case 'meta':
+				return get_post_meta( $post->ID, $name, ! $multi );
+			case 'file':
+				// The PDF a meta names (D309): Turing reads its text out of the zip the import sends.
+				return Viglet_Dumont_Pdf::file_reference( $post, $name );
+			case 'thumbnail':
+				$url = get_the_post_thumbnail_url( $post->ID, 'large' );
+				return is_string( $url ) ? $url : null;
+			case 'woo':
+				return Viglet_Dumont_WooCommerce::value( $post, $name );
+			case 'core':
+				$core = array(
+					'excerpt'    => $post->post_excerpt,
+					'slug'       => $post->post_name,
+					'menu_order' => $post->menu_order,
+					'parent'     => $post->post_parent,
+				);
+				return $core[ $name ] ?? null;
+		}//end switch
+
+		return null;
+	}
+
+	/**
+	 * Convert one raw value to its declared type; null when it does not convert or is empty.
+	 *
+	 * A value that does not parse is dropped rather than coerced: a date field holding "soon"
+	 * sends nothing, never the epoch.
+	 *
+	 * @param mixed  $value The raw value.
+	 * @param string $type  One of self::TYPES.
+	 * @return string|int|float|bool|null
+	 */
+	public static function convert( $value, string $type ) {
+		if ( null === $value || '' === $value || is_array( $value ) || is_object( $value ) ) {
+			return null;
+		}
+
+		switch ( $type ) {
+			case 'INT':
+			case 'LONG':
+				return is_numeric( $value ) && (string) (int) $value === (string) $value ? (int) $value : null;
+			case 'FLOAT':
+			case 'DOUBLE':
+				return is_numeric( $value ) ? (float) $value : null;
+			case 'BOOL':
+				return filter_var( $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+			case 'DATE':
+				return self::convert_date( (string) $value );
+		}
+
+		$value = trim( (string) $value );
+
+		return '' === $value ? null : $value;
+	}
+
+	/**
+	 * A date as Turing reads it (UTC, ISO 8601), from the shapes WordPress meta holds it in.
+	 *
+	 * Eight digits are a `Ymd` date (how ACF stores a date picker), other digits a Unix
+	 * timestamp, anything else what strtotime() reads.
+	 *
+	 * @param string $value The raw date.
+	 */
+	private static function convert_date( string $value ): ?string {
+		$value = trim( $value );
+		if ( preg_match( '/^\d{8}$/', $value ) ) {
+			$date      = DateTimeImmutable::createFromFormat( '!Ymd', $value, new DateTimeZone( 'UTC' ) );
+			$timestamp = $date ? $date->getTimestamp() : false;
+		} elseif ( ctype_digit( $value ) ) {
+			$timestamp = (int) $value;
+		} else {
+			$timestamp = strtotime( $value );
+		}
+
+		return false === $timestamp ? null : gmdate( 'Y-m-d\TH:i:s\Z', $timestamp );
+	}
+
+	/**
+	 * One post type's mapping with every field validated; an invalid field is dropped.
+	 *
+	 * @param mixed $type_mapping The post type's mapping as stored or filtered.
+	 * @return array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}
+	 */
+	private static function sanitize_type( $type_mapping ): array {
+		$type_mapping = is_array( $type_mapping ) ? $type_mapping : array();
+		$fields       = array();
+		$names        = array();
+
+		foreach ( (array) ( $type_mapping['fields'] ?? array() ) as $field ) {
+			$field = self::sanitize_field( $field );
+			if ( null !== $field && ! isset( $names[ $field['field'] ] ) ) {
+				$names[ $field['field'] ] = true;
+				$fields[]                 = $field;
+			}
+		}
+
+		// What the type's result cards show instead of the publication date and the featured
+		// image (D305): one of its own fields, of a type that can hold one, or '' for the default.
+		$typed = static fn ( array $types ) => array_column(
+			array_filter( $fields, static fn ( $f ) => in_array( $f['type'], $types, true ) ),
+			'field'
+		);
+		$pick  = static fn ( string $key, array $allowed ) => in_array( (string) ( $type_mapping[ $key ] ?? '' ), $allowed, true ) ? (string) $type_mapping[ $key ] : '';
+
+		return array(
+			// The mapping's own flag (a post type left out), not a WP_Query argument.
+			'exclude'    => ! empty( $type_mapping['exclude'] ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+			'fields'     => $fields,
+			'card_date'  => $pick( 'card_date', $typed( array( 'DATE' ) ) ),
+			'card_image' => $pick( 'card_image', $typed( array( 'STRING', 'TEXT' ) ) ),
+			// The DATE field after which a post leaves search (D308), or '' for never.
+			'expires'    => $pick( 'expires', $typed( array( 'DATE' ) ) ),
+		);
+	}
+
+	/**
+	 * One field validated, or null when its source, name or type is not one the plugin knows.
+	 *
+	 * @param mixed $field The field as stored or filtered.
+	 */
+	private static function sanitize_field( $field ): ?array {
+		if ( ! is_array( $field ) ) {
+			return null;
+		}
+
+		$source          = trim( (string) ( $field['source'] ?? '' ) );
+		[ $kind, $name ] = array_pad( explode( ':', $source, 2 ), 2, '' );
+		$valid_source    = ( 'thumbnail' === $source )
+			|| ( in_array( $kind, array( 'taxonomy', 'meta', 'file' ), true ) && '' !== $name )
+			|| ( 'core' === $kind && in_array( $name, self::CORE_SOURCES, true ) )
+			|| ( 'woo' === $kind && isset( Viglet_Dumont_WooCommerce::FIELDS[ $name ] ) );
+
+		$target = preg_replace( '/[^A-Za-z0-9_]/', '', (string) ( $field['field'] ?? '' ) );
+		// A PDF's text is searched as text, never as one exact value (D309).
+		$type = 'file' === $kind ? 'TEXT' : strtoupper( (string) ( $field['type'] ?? 'STRING' ) );
+
+		if ( ! $valid_source || '' === $target || in_array( $target, self::RESERVED, true ) || ! in_array( $type, self::TYPES, true ) ) {
+			return null;
+		}
+
+		$weight    = $field['weight'] ?? null;
+		$rangeable = in_array( $type, self::RANGE_TYPES, true );
+		// A date's periods (D307): `past` (the default), `agenda`, or `custom` with its own ranges.
+		$periods = 'DATE' === $type && in_array( $field['periods'] ?? '', array( 'agenda', 'custom' ), true ) ? (string) $field['periods'] : 'past';
+		if ( ! $rangeable ) {
+			$ranges = array();
+		} elseif ( 'DATE' === $type ) {
+			$ranges = 'custom' === $periods ? self::sanitize_date_ranges( $field['ranges'] ?? array() ) : array();
+		} else {
+			$ranges = self::sanitize_ranges( $field['ranges'] ?? array() );
+		}
+
+		return array(
+			'source'      => $source,
+			'field'       => $target,
+			'type'        => $type,
+			'multi'       => ! empty( $field['multi'] ),
+			'facet'       => ! empty( $field['facet'] ),
+			'facet_label' => sanitize_text_field( (string) ( $field['facet_label'] ?? '' ) ),
+			// A labelled line on the search block's result cards (D305), under facet_label.
+			'card'        => ! empty( $field['card'] ),
+			'weight'      => is_numeric( $weight ) ? max( 1.0, min( 100.0, (float) $weight ) ) : null,
+			'range'       => $rangeable && ! empty( $field['range'] ),
+			'ranges'      => $ranges,
+			'periods'     => $periods,
+		);
+	}
+
+	/**
+	 * A date field's own periods (D307), validated: each bound is Turing date math (`NOW` or a
+	 * `yyyy-MM-dd` day, then `/DAY`-style rounding or `+7DAYS`-style steps) or open, a period
+	 * needs one bound and a label, and a label two share keeps the first. At most eight.
+	 *
+	 * @param mixed $ranges The periods as stored or filtered.
+	 * @return array<int, array{label: string, from: ?string, to: ?string}>
+	 */
+	private static function sanitize_date_ranges( $ranges ): array {
+		$math   = static function ( $bound ): ?string {
+			$bound = strtoupper( trim( (string) $bound ) );
+			return 1 === preg_match( '#^(NOW|\d{4}-\d{2}-\d{2})(/(YEAR|MONTH|DAY|HOUR)|[+-]\d+(YEAR|MONTH|DAY|HOUR)S?)*$#', $bound ) ? $bound : null;
+		};
+		$clean  = array();
+		$labels = array();
+		foreach ( is_array( $ranges ) ? $ranges : array() as $range ) {
+			$range = is_array( $range ) ? $range : array();
+			$from  = $math( $range['from'] ?? '' );
+			$to    = $math( $range['to'] ?? '' );
+			$label = sanitize_text_field( (string) ( $range['label'] ?? '' ) );
+			if ( ( null === $from && null === $to ) || '' === $label || isset( $labels[ $label ] ) ) {
+				continue;
+			}
+			$labels[ $label ] = true;
+			$clean[]          = array(
+				'label' => $label,
+				'from'  => $from,
+				'to'    => $to,
+			);
+			if ( count( $clean ) >= 8 ) {
+				break;
+			}
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * A number field's ranges, validated: a range needs one bound at least, and one with no
+	 * label is named after its bounds. A label two ranges share keeps the first, since the
+	 * label is what a filter on the facet names.
+	 *
+	 * @param mixed $ranges The ranges as stored or filtered.
+	 * @return array<int, array{label: string, from: int|float|null, to: int|float|null}>
+	 */
+	private static function sanitize_ranges( $ranges ): array {
+		$clean  = array();
+		$labels = array();
+		foreach ( is_array( $ranges ) ? $ranges : array() as $range ) {
+			if ( ! is_array( $range ) ) {
+				continue;
+			}
+			$from = is_numeric( $range['from'] ?? null ) ? 0 + $range['from'] : null;
+			$to   = is_numeric( $range['to'] ?? null ) ? 0 + $range['to'] : null;
+			if ( null === $from && null === $to ) {
+				continue;
+			}
+			$label = sanitize_text_field( (string) ( $range['label'] ?? '' ) );
+			if ( '' === $label ) {
+				$label = self::range_label( $from, $to );
+			}
+			if ( isset( $labels[ $label ] ) ) {
+				continue;
+			}
+			$labels[ $label ] = true;
+			$clean[]          = array(
+				'label' => $label,
+				'from'  => $from,
+				'to'    => $to,
+			);
+			if ( count( $clean ) >= self::MAX_RANGES ) {
+				break;
+			}
+		}//end foreach
+
+		return $clean;
+	}
+
+	/**
+	 * A range named after its bounds: "20 – 50", "Up to 20", "50 or more".
+	 *
+	 * @param int|float|null $from The lower bound, or null when open.
+	 * @param int|float|null $to   The upper bound, or null when open.
+	 */
+	private static function range_label( $from, $to ): string {
+		if ( null === $from ) {
+			/* translators: %s: a range's upper bound. */
+			return sprintf( __( 'Up to %s', 'viglet-turing-search' ), $to );
+		}
+		if ( null === $to ) {
+			/* translators: %s: a range's lower bound. */
+			return sprintf( __( '%s or more', 'viglet-turing-search' ), $from );
+		}
+
+		/* translators: 1: a range's lower bound, 2: its upper bound. */
+		return sprintf( __( '%1$s – %2$s', 'viglet-turing-search' ), $from, $to );
+	}
+}

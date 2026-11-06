@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5972382,
+    "path": "demo/photos/product/fairfield-synthetic-summer-bag.png",
+    "sha256": "0e04581109abeb3fe6c4c3865acd4234ef902c505542d8c3df321cc535acb8e6"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a Fairfield synthetic summer sleeping bag in sky blue rolled into a compact cylinder resting upright on a mossy rock along a quiet mountain trail, with rolling green fells dissolving into soft haze behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail on a soft overcast morning after light rain, the air still and damp. Rolling green fells recede into soft atmospheric haze, dotted with heather and grass tufts across the slopes. A distant ridgeline of darker peaks fades into pale grey-blue mist at the horizon. Soft diffused overcast daylight, neutral cool-toned white balance with no warm cast. Palette of sky blue against deep emerald moss and muted sage-green hills. Fine natural grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Large flat-topped rock anchoring the foreground slightly right of center, crusted with thick emerald moss across its upper surface and sides, a few pale grey-green lichen patches scattered among the moss. Rough weathered stone visible at the edges where the moss thins.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel trail winding diagonally from behind the rock back into the mid-ground, pale tan and grey earth scattered with small loose stones. Trail leads the eye into the depth of the scene.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Fairfield synthetic summer sleeping bag in sky blue, rolled into a compact cylinder resting upright on the mossy rock slightly right of center in the lower third of the frame. Drawcord cinched at one end with a small fabric loop. Smooth ripstop polyester shell catching faint highlights along its curves, subtle sheen where moisture beads on the surface. Completely blank shell \u2014 no labels, tags, or printed markings.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus fern frond slicing in from the lower-left foreground edge, soft green fronds blurred into creamy shapes.\"\n      }\n    ]\n  }\n}",
+    "seed": 892405528,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5972382,
+    "sha256": "0e04581109abeb3fe6c4c3865acd4234ef902c505542d8c3df321cc535acb8e6"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:16:05Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, shallow depth of field with the item in sharp focus and the landscape softly blurred behind. Nobody in the frame. The item is Fairfield synthetic summer bag, in sky blue. A light synthetic sleeping bag for summer nights and hostels, warm even if it gets damp. Comfort 8 \u00b0C, limit 3 \u00b0C (EN ISO 23537). Weight 750 g. Colour: Moss, Sky, Navy. Materials: Synthetic insulation, Polyester. Care: Store loose in its storage sack, not compressed. Wash rarely, with a specialist wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:XY-dYWSvTKiQROOrSNlYBg"
+}

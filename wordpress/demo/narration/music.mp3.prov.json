@@ -1,0 +1,33 @@
+{
+  "artefact": {
+    "bytes": 3025023,
+    "path": "demo/narration/music.mp3",
+    "sha256": "ce12a49fbe4a75a1de7b85f02e4566fe871cf558a24ad3407152fead25f9190d"
+  },
+  "borrowed": {
+    "commit": null,
+    "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+    "project": null
+  },
+  "credit": "Music: Monday Market Open, generated with Google Gemini (Lyria)",
+  "elapsed_s": null,
+  "engine": {
+    "name": "provenance.borrow"
+  },
+  "inputs": [
+    {
+      "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+      "role": "borrowed",
+      "sha256": "ce12a49fbe4a75a1de7b85f02e4566fe871cf558a24ad3407152fead25f9190d"
+    }
+  ],
+  "kind": "borrow",
+  "licence": "Google Gemini generative AI terms; commercial use not confirmed",
+  "measurements": {},
+  "params": {},
+  "produced_at": "2026-11-03T22:43:44Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  }
+}

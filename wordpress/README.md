@@ -1,0 +1,461 @@
+# Viglet Turing Search
+
+The WordPress plugin that indexes a site's content into Viglet Turing and answers its search
+from it. The plugin itself is [`src/`](src/); [`src/readme.txt`](src/readme.txt) is its
+WordPress readme and changelog.
+
+**Try it in your browser**: [the demo store in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fdumont.viglet.org%2Fplayground%2Fblueprint.json),
+with nothing to install ([`demo/playground/blueprint.json`](demo/playground/blueprint.json),
+published by the site's Pages workflow; `npm run test:e2e:playground` checks it on
+playground.wordpress.net).
+
+## Install
+
+Each release is a zip on the Dumont GitHub releases page, tagged `wordpress-v<version>`, holding
+one `viglet-turing-search/` folder, the slug it has in the WordPress.org plugin directory.
+
+**From wp-admin**: download `viglet-turing-search-<version>.zip` and upload it under
+Plugins > Add New > Upload Plugin.
+
+**With Composer** (a site built in CI, or one running with `DISALLOW_FILE_MODS`): Composer
+cannot install from a subfolder of this repository, so declare the release zip as a package and
+let [`composer/installers`](https://github.com/composer/installers) place it in the plugins
+directory:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "viglet/dumont-wordpress",
+                "version": "1.0.0",
+                "type": "wordpress-plugin",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://github.com/openviglet/dumont/releases/download/wordpress-v1.0.0/viglet-turing-search-1.0.0.zip"
+                },
+                "require": { "composer/installers": "^2.0" }
+            }
+        }
+    ],
+    "require": {
+        "viglet/dumont-wordpress": "1.0.0"
+    }
+}
+```
+
+**With WP-CLI**: `wp plugin install <zip URL> --activate`.
+
+## Configure from the environment
+
+A container deploy can set the connection without a wp-admin step. Each of these is read
+from a `wp-config.php` constant or, failing that, an environment variable of the same name;
+a value set either way wins over the settings page, shows there read-only, and is never
+written to `wp_options`, so the key stays out of database backups.
+
+| Name | Setting |
+|---|---|
+| `VIGLET_DUMONT_TURING_URL` | Turing's URL, as this server reaches it |
+| `VIGLET_DUMONT_TURING_SITE` | The SN site |
+| `VIGLET_DUMONT_TURING_API_KEY` | The API key |
+| `VIGLET_DUMONT_TURING_LOCALE` | The locale content is indexed in |
+| `VIGLET_DUMONT_SITE_KEY` | The site key that starts every document id |
+| `VIGLET_DUMONT_PUBLIC_URL` | Turing's URL as visitors' browsers reach it, when different |
+
+`wp dumont status` says where each value came from. The Docker stack below sets the first
+three this way.
+
+`VIGLET_DUMONT_DEMO=1` is demo mode, for a site whose wp-admin belongs to whoever opens it
+(a WordPress Playground demo): no API key, nothing ever written to Turing, Search tuning and
+Search insights hidden, and search against a PUBLIC SN site indexed elsewhere.
+
+## Search
+
+With "Replace WordPress search with Turing" on (off on a fresh install), the default results
+page is the **theme's own**: Turing answers WordPress's main search query and the theme's
+search template renders it, so a block theme keeps its header, footer and styles. Results
+are this site's documents only (its site key), and if Turing does not answer, WordPress
+searches its database as before. The older plugin results page, with facets, stays
+available as "The plugin's results page" for classic themes.
+
+The **Turing search** block (`viglet-dumont/search`) is a complete search UI for any page: a
+box with suggestions, "did you mean", facets from the mapping, results and pages, built with
+the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (or `?s=`),
+so a page holding it can be the site's search page. A site with its own search blocks
+turns it off: `add_filter( 'viglet_dumont_register_blocks', '__return_false' );`.
+
+Its parts can be blocks of their own: Layout → **Arrange its parts** turns the box, the
+filters, the results and the pages into inner blocks (`viglet-dumont/search-box`,
+`-filters`, `-results`, `-pages`). A theme can then reorder them, put the pages above the
+results, or set its own blocks between them. They stay one search with one store, and the
+filters stay beside the results. A block whose parts were never arranged draws them in the
+default order.
+
+**Filters from a sentence** (`suggestFilters`, `applyFilters`). With the first on, a sentence
+goes to Turing's `POST /api/sn/{site}/nl-filters` and the filters it grounded on the site's
+facets are offered as chips. With the second on too, they are applied, the words they came
+from leave the query, and a line built from the filters themselves (never from model prose)
+says what was understood, with Undo. `applyFilters` is off by default: suggestions shipped
+first as "a guess is the visitor's to take", and turning every such site to auto-apply
+would change their visitors' search unasked. Two readings run in code in
+`src/public/search-block.js`, so they work with no language model: a price marked as money
+(`readPrice`, en and pt_BR), on the field the WooCommerce price is mapped to, and a size
+(`readSize`) on a facet whose field or name says size, grounded on the values the site's
+products have. The plugin keeps no cap on readings: Turing throttles anonymous
+`nl-filters` calls itself (`TurAnonymousAbuseRateLimitFilter`), and a second limiter here
+would be two counts of one budget.
+
+The **Related content** block (`viglet-dumont/related`) lists the posts Turing's
+similar-documents search finds most like the one being read. It never lists the post itself,
+only this site's published posts, and renders nothing when there are none. It is drawn on the
+server, so the links are in the HTML, and each post's neighbours are cached for an hour.
+Settings → Search → Related Content puts it after the content of chosen post types. The
+block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meaning falls back
+to shared words on a site without embeddings), same post type only, and grid or list.
+
+The **Site assistant** block (`viglet-dumont/assistant`) is a button that opens a chat with
+Turing over the site's posts (`POST /api/sn/{site}/chat/conversation`, through the SDK's chat
+controller). Answers stream in, labelled as generated, with the posts they used as links and
+a "Was this helpful?" that goes to Turing's answer signals. The conversation is the visitor's
+own (Turing's `TUR_SESSION` cookie) and lasts across the pages of the tab, so a cited post can
+be opened without losing it; "New conversation" starts again. The only action the agent may
+take on the page is opening one of this site's pages. The block suggests first questions,
+its own or else the week's popular searches, and stays hidden while Turing reports chat off.
+Settings → Search → Generative AI → "Site assistant on every page" puts it in a corner of
+every page instead.
+
+A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
+registers two script modules, `@viglet/turing-sdk` (the SDK built from the same Turing commit) and
+`viglet-dumont/search` (the SDK configured for this site, filtered to its site key):
+
+```js
+// In a theme's module (registered with 'viglet-dumont/search' as a dependency).
+import { createSiteSearch, createSiteAutoComplete, config } from 'viglet-dumont/search';
+
+const search = createSiteSearch();          // search-only; { controller: { chat: true } } for answers
+search.subscribe( ( state ) => render( state ) );
+await search.searchQuery( 'workshop' );
+```
+
+The configuration it reads is the same one `viglet_dumont_public_config()` and
+`GET /wp-json/viglet-dumont/v1/public-config` return:
+Turing's public URL, the SN site, the locale, the site key (filter on `site_key`) and the
+mapped facets. It holds no key. For the browser to call Turing, the SN site must allow the
+WordPress origin in Turing's CORS settings (`TURING_ALLOWEDORIGINS` in a container).
+
+### Search analytics
+
+Two opt-in settings under Search, both off on a fresh install:
+
+- **Report result clicks to Turing**: the block and the instant search send each opened
+  result (query, document id, rank) to `POST /api/sn/{site}/click`, with `keepalive` so the
+  navigation never waits for it. Turing keeps clicks only with search metrics on
+  (`TURING_SEARCH_METRICS_ENABLED=true`).
+- **Send search events to Google Analytics**: searches the visitor settled on (not each
+  as-you-type one, nor a filter, sort or page on one), no-result searches, changed queries
+  and result clicks, as the SDK's `turing_search*` events through the Google tag or Tag
+  Manager the site already loads, with GA4's own `search` and `select_content` beside them so
+  its built-in site-search reports fill. With clicks reported too, a search left without
+  opening a result sends `turing_search_abandoned`. The measurement id is optional.
+
+Events carry no visitor data, and the plugin sets no cookie. With a consent plugin that
+speaks the WP Consent API, nothing is sent until the visitor allows `statistics`. Without
+one, the site decides: `add_filter( 'viglet_dumont_tracking_consent', '__return_false' );`
+sends nothing at all. A theme's own blocks report the same way: through
+`createSiteSearch( { track: true } )` and `trackResultClick( click, controller )` from
+`viglet-dumont/search`, or, searching without a tracked controller, `trackSearch()`.
+
+## Develop
+
+PHP 8.1+ and Composer:
+
+```sh
+composer install
+composer check      # PHPCS (WordPress Coding Standards), PHPStan and PHPUnit
+composer lint       # PHPCS alone; vendor/bin/phpcbf fixes what it can
+```
+
+The admin screens (the Health page) are React with `@wordpress/components`, written in
+[`assets/admin/`](assets/admin/) and built into `src/admin/build/`, which is not committed:
+
+```sh
+npm ci
+npm run build       # or npm start to rebuild on change
+npm run lint:js
+```
+
+`npm run build` copies the JS SDK from this repository's `frontend/packages/sdk/dist`, not from
+npm, so the plugin ships the SDK of its own commit. When that folder has no build yet, it runs
+`pnpm --filter @viglet/turing-sdk build` in `frontend/` (which needs its `pnpm install`).
+
+The release zip and `run-docker.cmd` build them; a checkout without a build shows a notice on
+the Health page instead of a blank one.
+
+### Browser tests (Playwright)
+
+[`tests/e2e/`](tests/e2e/) drives the admin screens and the site in a real browser against
+the `run-docker.cmd` stack. It uses the installed Microsoft Edge, so no browser download is
+needed (`E2E_CHANNEL=chromium` after `npx playwright install chromium` to switch).
+
+```sh
+run-docker.cmd                 # the stack, once
+npm run test:e2e               # seed, log in, run every spec
+```
+
+The global setup runs [`fixtures/seed.php`](tests/e2e/fixtures/seed.php) through WP-CLI:
+twelve posts with a `seats` facet, a "Busca" page holding the search block, Turing search
+on. It also installs a small mu-plugin, on the test stack only, that hides core's "Please
+update WordPress now" nag: that link fails axe, so without it the admin specs went red the
+day core released a version newer than the stack's image. It then reindexes and logs in
+once. Every test fails on a console error, an uncaught
+page error, a failed request or a 4xx/5xx response, and saves its screens to
+`tests/e2e/artifacts/screens/<project>/`. The HTML report is in `tests/e2e/artifacts/report/`.
+`E2E_SKIP_SEED=1` reruns without seeding. It is not in CI, which has no Turing.
+
+Beyond behaviour, the suite also checks:
+
+- **Accessibility**: axe (WCAG 2.1 A and AA) on every screen it visits, failing on a serious
+  or critical violation in the plugin's own region.
+- **Viewports**: the site specs run at desktop (1280), tablet (820) and phone (390), as the
+  projects `site`, `site-tablet` and `site-phone`.
+- **Visual regression**: the search block and the admin screens against the baselines in
+  `tests/e2e/snapshots/<platform>/<project>/` (50 pixels of tolerance, for antialiasing only; counts and events are masked).
+  After a change to the look, refresh them on purpose with
+  `npm run test:e2e -- --update-snapshots` and commit the new PNGs.
+- **Speed**: the first results within 1.5 s of the navigation and a suggestion within
+  500 ms of the typing, as the browser measures them (`site/budgets.spec.mjs`).
+- **Keyboard**: every admin action and the search block reached with Tab alone, with a
+  visible focus ring, and used with Enter or Space.
+- **Themes and language**: after the default projects (Twenty Twenty-Five, English), the
+  site specs run again under Twenty Twenty-One (`site-classic`, a classic theme) and Ollie
+  1.6.5 (`site-ollie`, a third-party block theme), then `pt-br` switches the site to
+  Portuguese and checks every admin screen and the block for Portuguese, failing on any
+  English string the `.po` translates. One WordPress serves them all, so each variant is a
+  `switch:` project chained by dependencies; the global setup puts back Twenty Twenty-Five
+  in English at the start of every run. `--project=site` and the like skip the variants.
+- **Multisite**: `run-docker.cmd multisite` adds a two-site network on
+  `localhost:8081` (`/` and `/second/`), sharing the local Turing under its own SN site
+  ("Network"). Each site holds its own API key, bound to its site key, after one key without
+  a partition has provisioned the fields. `E2E_MULTISITE=1 npm run test:e2e` seeds both sites
+  and adds the `network` project, which checks that each site's search block finds only its
+  own documents and that one site's key never reads, lists or deletes the other's, and that
+  the copilot and Build my kit, asked with each site's key as `filters` the way a visitor's
+  browser asks them, cite and stage that site's documents only (D287). It needs a Turing with
+  partitioned keys on every route the plugin calls and filters on the copilot, the kit and
+  nl-filters (T1209, T1210, T1213): until a release carries them, set `TURING_IMAGE` to one
+  built from a Turing checkout. When another project holds port 8081, set `WP_MS_PORT` and
+  `WP_MS_URL` to another; a network installed on the old port then needs `wp search-replace`
+  and `wp config set DOMAIN_CURRENT_SITE` to the new one.
+- **Demo storefront**: the `demo` project checks the curated searches, the comparison page
+  and the tour on a demo store of its own (`run-docker.cmd demo`: `localhost:38082` in English, `localhost:38083` with `DEMO_LOCALE=pt_BR`), after
+  `demo-setup` seeds its catalog if missing. It needs no switch, so `npm run test:e2e` runs it
+  beside the rest and `npm run test:e2e:demo` runs it alone.
+- **Demo school** (D325): the `demo-edu` project walks the school's agenda periods, a month read
+  from a sentence, its cards' dates and posters, an opening leaving search after its closing day
+  and a book found by a sentence in its PDF, on the school's own WordPress (`run-docker.cmd demo
+  edu`: `localhost:38085` in English, `localhost:38086` with `DEMO_LOCALE=pt_BR` after `demo
+  edu-pt`). Its setup seeds the school again from today before every run. It is not part of
+  `npm run test:e2e`, so a laptop that never started the school runs everything else;
+  `npm run test:e2e:edu` runs it.
+
+**The live-LLM suite** (`npm run test:e2e:ai`, `playwright.ai.config.mjs`) asks Turing's
+generative features real questions, on a stack started with `OPENAI_API_KEY`. It is never
+part of `npm run test:e2e`, which stays free and deterministic. Its seed
+([`fixtures/ai-seed.php`](tests/e2e/fixtures/ai-seed.php)) adds posts holding known facts,
+in English and Portuguese, and one with a planted instruction; the specs check that answers
+come from those posts, ignore the instruction, invent no figure a post does not hold, and
+stay within a p95 time budget (`E2E_AI_P95_MS`, 20 s). Each spec skips, with the reason
+`wp dumont ai status` gives, a feature that is off. The answers land in
+`tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again. The
+`demo-ai` project asks the demo store's curated prompts
+([`ai-prompts.json`](demo/theme/tarnfell/ai-prompts.json)) through the Site assistant on its
+showcase: each answer must cite the guide the prompt names, and a question about something the
+store does not sell must come back with no price. It skips while the demo's chat is off (a
+stack without the key, or a demo not reindexed since its setup).
+
+**The recorded tour** (`npm run e2e:tour`, `playwright.tour.config.mjs`) walks the demo's
+showcase with "How it works" on, after a search so the filters show, and opens each numbered
+feature in turn. It leaves one screenshot per feature and `tour.webm` in
+`tests/e2e/artifacts/tour/`, the source of the docs' per-feature screenshots. It asks the stack
+as it is, so a feature with no language model behind it is skipped, not failed. Recording needs
+Playwright's ffmpeg once: `npx playwright install ffmpeg`.
+
+**The story** (`npm run e2e:story`, `playwright.story.config.mjs`) plays `demo/story.md`, one
+shopper's visit in eight chapters, end to end on the demo with `OPENAI_API_KEY` set: popular
+searches, a sentence turned into filters, the Site assistant, a comparison, Build my kit, a
+product page, a test-mode checkout, and the owner's Search insights. Nothing is replayed, and it
+leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in the language the demo speaks:
+English on Tarnfell, or pt_BR on Recanto da Serra with `DEMO_LOCALE=pt_BR` (D283: both stores run side by side).
+`npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
+`npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
+`tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the
+last seconds of each chapter for social posts; with `-- --language en` (or `pt-BR`) it carries
+that language alone and is named for it, `story.en.mp4` and `story-30s.en.mp4`. Both carry English and pt_BR captions, also
+written beside them as `.srt`. `-- --chapter <n>` cuts one chapter as a clip of its own instead,
+`story-chapter-<n>.<lang>.mp4`, under a minute (D279). `npm run e2e:story:vertical` records the
+story again at a phone's width, and `-- --vertical --chapter <n>` cuts that one as a 9:16 clip
+with its captions burned in (D280). `-- --project` also writes the video's timeline as a
+DaVinci Resolve project, `story.<lang>.project/`, so a cut can be changed by hand (D290). The videos are release assets, never
+committed, and the script refuses a recording older than the story.
+
+To look at one page in detail, logged in or not:
+
+```sh
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
+npm run e2e:look -- "/?page_id=7&q=workshop" --anon --mobile
+npm run e2e:look -- /wp-admin/edit.php --script ./my-steps.mjs   # export default async ( page ) => { ... }
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont --a11y
+```
+
+It saves a full-page screenshot to `tests/e2e/artifacts/look/` and prints the console
+errors, failed requests, headings, buttons, form fields with their labels, and the
+visible text. `--a11y` adds every axe violation on the whole page, marking with `!` the
+serious and critical ones a spec would fail on.
+
+### Translations
+
+The plugin ships pt_BR in [`src/languages/`](src/languages/): the `.po` source, the `.mo`
+PHP reads and one `.json` per admin script. After changing a string, regenerate them with
+WP-CLI (Docker works where it is not installed):
+
+```sh
+docker run --rm -v "$PWD:/plugin" -w /plugin wordpress:cli-2.12-php8.5 sh -c '
+  wp i18n make-pot . src/languages/viglet-turing-search.pot --slug=viglet-turing-search --domain=viglet-turing-search \
+    --exclude=node_modules,vendor,src/admin/build,tests,build,demo &&
+  wp i18n update-po src/languages/viglet-turing-search.pot src/languages &&
+  wp i18n make-mo src/languages && wp i18n make-json src/languages --no-purge'
+```
+
+then translate the new entries in `viglet-turing-search-pt_BR.po` and run the last two commands
+again. `npm run check:i18n` checks both halves: it regenerates the `.pot` and fails, naming
+each string, when the committed one is out of date or a string has no pt_BR translation. CI
+runs it on every push. These files, and `src/includes/bundled-translations.php` that loads them, serve the GitHub
+zip and Composer only: the WordPress.org package (`bin/build-zip.sh --wporg`) leaves them out,
+keeping the `.pot`, as translate.wordpress.org delivers the language packs there. The pt_BR `.po`
+is what to import into translate.wordpress.org. The JSON files are named after the source script (`assets/admin/health.js`), and
+`viglet_dumont_script_translation_path` maps the built script to it.
+
+The tests run on [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/), with no
+WordPress install. Without PHP locally, the same runs in a container:
+
+```sh
+docker run --rm -v "$PWD:/app" -w /app composer:2 sh -c "composer install && composer check"
+```
+
+### Try it in a real WordPress
+
+[`run-docker.cmd`](run-docker.cmd) starts WordPress 7.1.3 on PHP 8.5 with MariaDB and a local Turing
+([`docker-compose.yml`](docker-compose.yml)), mounts `src/` as the plugin and, on the first run,
+installs WordPress, creates the SN site in Turing and gives the plugin an API key for it
+([`bin/turing-setup.ps1`](bin/turing-setup.ps1)). Edits under `src/` show on the next page load.
+
+```bat
+run-docker.cmd                         :: WordPress http://localhost:8080/wp-admin (admin / admin)
+                                       :: Turing    http://localhost:2700 (admin / dumont-dev)
+run-docker.cmd wp dumont queue run     :: any WP-CLI command
+run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
+run-docker.cmd demo                    :: also the demo stores: Tarnfell http://localhost:38082, Recanto da Serra http://localhost:38083
+run-docker.cmd demo en                 :: only one of them (en or pt)
+run-docker.cmd demo reset pt           :: drop one store's WordPress and database only (en or pt)
+run-docker.cmd demo edu                :: also the demo school: Lumen School http://localhost:38085
+run-docker.cmd demo edu-pt             :: the school in Portuguese: Escola Lumen http://localhost:38086
+run-docker.cmd multisite               :: also a two-site network on http://localhost:8081
+run-docker.cmd logs turing             :: follow a log: wordpress, turing or db
+run-docker.cmd stop                    :: keep the data
+run-docker.cmd reset                   :: drop WordPress, its database and Turing's store
+```
+
+On Linux and macOS, `sh bin/run-docker.sh` starts the same stack, and `sh bin/run-docker.sh
+demo` (or `demo en|pt|edu|edu-pt`, `demo reset en|pt|edu|edu-pt`) the demo sites; both provision Turing through PowerShell (`pwsh`).
+
+WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
+and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
+saved post reaches Turing without `wp dumont queue run`.
+
+Start the stack through `run-docker.cmd`, not a bare `docker compose up`: the script is what
+installs WordPress and provisions the SN site.
+
+Turing runs as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
+local login, on the published `ghcr.io/openviglet/turing:latest`. To run a Turing built from a
+checkout instead, build it after `mvnw package` with `docker build -f Dockerfile.local -t
+turing:local .` and set `TURING_IMAGE=turing:local`. Set `WP_PORT`, `TURING_PORT`, `SN_SITE`, `TURING_LOCALE`,
+`TURING_ADMIN_PASSWORD`, `TURING_IMAGE`, `WP_DEMO_PORT`, `WP_DEMO_PT_PORT`, `SN_DEMO_SITE`, `SN_DEMO_PT_SITE`,
+`WP_DEMO_EDU_PORT`, `WP_DEMO_EDU_PT_PORT`, `SN_DEMO_EDU_SITE` or `SN_DEMO_EDU_PT_SITE` before the first run
+to change the defaults.
+To move an installed stack to another port (another project holds 8080, say), set `WP_PORT`,
+run `run-docker.cmd`, then
+`run-docker.cmd wp search-replace localhost:8080 localhost:<port> --all-tables --skip-columns=guid`;
+the browser tests then need `WP_URL=http://localhost:<port>`. Their setup compares each URL
+with the site URL WP-CLI reports (`WP_URL`, `WP_MS_URL`, `WP_DEMO_URL`) and stops before
+seeding when they differ, so another WordPress on that port is never tested by mistake.
+
+The demo storefront (`demo/`, outside the plugin zip) is Tarnfell, a fictional outdoor gear
+shop: its own theme, WooCommerce with its catalog (`demo/seed`), a home whose hero is the
+search block's box alone, a results page, product pages with the copilot and Related, a
+journal, and a showcase (`/showcase/`) holding the search, the copilot and the Site assistant
+on one page; "How it works" (`?tour=1`) marks each Turing feature a page shows with its chapter in the
+shopper's story (`demo/story.md`). The setup
+turns the site's generative AI on (sent with the fields on the next index) and puts the Site
+assistant in a corner of every page; both stay hidden while Turing has no language model. Lighthouse in headless Edge (October 2026): home 93 performance and 96
+accessibility, results 90 and 96. axe finds nothing on home, search and a post; on a product,
+only WooCommerce's own mini-cart drawer. The name was checked with a web search only (no
+brand or store called Tarnfell): run a trademark registry search before any public use.
+
+The demo is two stores side by side (D283), each a WordPress of its own in the compose `demo`
+profile, sharing the one Turing under its own SN site with its own API key: Tarnfell in
+English (`wordpress-demo`, `db-demo`, `cron-demo`) on `WP_DEMO_PORT` (38082), SN site
+`SN_DEMO_SITE` (`tarnfell`), and Recanto da Serra in Portuguese (`wordpress-demo-pt`,
+`db-demo-pt`, `cron-demo-pt`) on `WP_DEMO_PT_PORT` (38083), SN site `SN_DEMO_PT_SITE`
+(`recanto-da-serra`), its catalog and journal seeded from `demo/seed/pt_BR.php` with
+Portuguese synonyms. Resetting one never touches the other's orders or search history. The site
+on `WP_PORT` stays the browser tests' and is never switched to a store, so the demos can stay up
+while the tests run and no site's searches return another's documents. WP-CLI on a store is
+`docker compose run --rm --no-deps cli-demo wp <command>` (`cli-demo-pt` for the Portuguese
+one). The `demo` Playwright project runs against Tarnfell (`WP_DEMO_URL`, default
+`http://localhost:38082`), or Recanto da Serra with `DEMO_LOCALE=pt_BR` (38083), and seeds its
+catalog only when it is missing; `npm run test:e2e:demo` runs those specs alone, without touching the test
+site. A test site that ran the demo before this split keeps its `TF-` products and journal:
+`run-docker.cmd reset` clears them.
+
+Each demo site is described by one file in `demo/sites/` (D325): `en.json` and `pt.json` are the
+stores, `edu.json` and `edu-pt.json` the school. A descriptor names the site's title, theme,
+seed (and search history, for a store), whether it runs WooCommerce, its port and SN site with
+the environment variable that overrides each, its language, and its specs' folder.
+`run-docker.cmd demo <key>`, `bin/run-docker.sh demo <key>` and the Playwright configs read it
+through `bin/demo-site.mjs`, so a new demo site is a descriptor, its compose services
+(`wordpress-demo<suffix>`, `db-demo<suffix>`, `cron-demo<suffix>`, `cli-demo<suffix>`, mounting
+its theme) and its origin in Turing's `TURING_ALLOWEDORIGINS`.
+
+The demo school (`demo/school`, theme `demo/theme/lumen`) is Lumen School, or Escola Lumen in
+Portuguese: no WooCommerce, and the plugin's non-commerce features together on one site. Its
+theme registers three types: events, whose day is a DATE field with the agenda's periods and
+the card's date, and whose poster is the card's image; openings, whose closing day is the card's
+date and the day they leave search; and books, whose sample chapter is a PDF attached to the
+book and mapped as its text, with **Index PDF files** on. The **Agenda**, **Openings** and
+**Library** pages are search blocks each fixed to one type, and `/search/` searches them all.
+An opening's full call is a PDF its page only links. The seed counts every date from the day it
+runs and re-dates what it finds, so the agenda's periods hold whenever it runs;
+`demo/school/story.md` walks the site in six chapters, and `?tour=1` numbers the agenda's
+features by them. WP-CLI on the school is `docker compose run --rm --no-deps cli-demo-edu wp
+<command>` (`cli-demo-edu-pt` for the Portuguese one). The archive half of a school (a Dumont
+OAI-PMH source over a repository) is not in the demo yet.
+
+`phpcbf` capitalises `wordpress` wherever it reads it as prose, and the `source_apps` value is
+data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that sniff; keep it.
+
+## Release
+
+1. Bump `Version:` and `VIGLET_DUMONT_VERSION` in `src/viglet-dumont.php`, `Stable tag:` in
+   `src/readme.txt`, and add the changelog entry there.
+2. Push a tag `wordpress-v<version>`. The workflow
+   [`wordpress-plugin.yml`](../.github/workflows/wordpress-plugin.yml) runs the checks, builds
+   the zip with `bin/build-zip.sh` and attaches it to that tag's release. The script refuses a
+   tag that disagrees with the plugin header or with the readme's stable tag.
+3. For WordPress.org, upload `sh bin/build-zip.sh --wporg` instead: the same plugin without the
+   bundled translations, named `viglet-turing-search-<version>-wporg.zip`. Never the plain zip:
+   its translations and `load_plugin_textdomain()` are what the 3 Nov 2026 pre-review flagged.
+   Before uploading, unzip it and run `node bin/wporg-check.mjs --package <its
+   viglet-turing-search/ folder>`, which reads it for what that review found (CI does the same).
+   On Windows, build it in a container: `docker run --rm -v "%cd%:/w" -w /w alpine sh -c "apk
+   add zip && sh bin/build-zip.sh --wporg"`.

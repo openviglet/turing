@@ -1,0 +1,542 @@
+<?php
+/**
+ * Viglet Dumont Post State
+ *
+ * Tells an editor whether a post is in the index: a column in the post lists and a panel in
+ * the block editor's sidebar, both reading the same state.
+ *
+ * @package Viglet_Dumont
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Where a post stands with Turing, from its queue job, its recorded send and its exclusion.
+ */
+class Viglet_Dumont_Post_State {
+
+	/** How much of a post's text the excerpt draft reads: the opening is what an excerpt sums up. */
+	private const EXCERPT_SOURCE_CHARS = 6000;
+
+	/**
+	 * The plugin settings this state is read with.
+	 *
+	 * @var array
+	 */
+	private array $settings;
+
+	/**
+	 * Build over the given settings, or over the stored ones.
+	 *
+	 * @param array|null $settings The plugin settings; null reads them from the options table.
+	 */
+	public function __construct( ?array $settings = null ) {
+		$this->settings = $settings ?? viglet_dumont_get_settings();
+	}
+
+	/**
+	 * Hook the list column, the editor panel and their REST routes.
+	 */
+	public function register(): void {
+		foreach ( viglet_dumont_get_indexable_types() as $type ) {
+			add_filter( "manage_{$type}_posts_columns", array( $this, 'add_column' ) );
+			add_action( "manage_{$type}_posts_custom_column", array( $this, 'render_column' ), 10, 2 );
+		}
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_panel' ) );
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+	}
+
+	/**
+	 * The state of a post: a machine `state`, a short `label` and a `detail` (an error, or
+	 * when it was indexed). `state` is one of indexed, queued, failed, excluded, unpublished,
+	 * not_indexed.
+	 *
+	 * @param WP_Post $post The post.
+	 * @return array{state: string, label: string, detail: string}
+	 */
+	public function describe( WP_Post $post ): array {
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+
+		if ( 'publish' !== $post->post_status ) {
+			return $this->state( 'unpublished', __( 'Not published', 'viglet-turing-search' ) );
+		}
+		// D308: a post past its type's "Leaves search on" date says so, and one before it says when.
+		$expiry = ( new Viglet_Dumont_Mapping( $this->settings ) )->expiry( $post );
+		if ( null !== $expiry && $expiry <= time() ) {
+			return $this->state( 'expired', __( 'Out of search: the date has passed', 'viglet-turing-search' ) );
+		}
+		if ( ! $indexer->should_index( $post ) ) {
+			return $this->state( 'excluded', __( 'Excluded', 'viglet-turing-search' ) );
+		}
+		$leaves = null === $expiry ? '' : sprintf(
+			/* translators: %s: the date the post leaves search. */
+			__( 'Leaves search on %s', 'viglet-turing-search' ),
+			wp_date( get_option( 'date_format' ), $expiry - 1 )
+		);
+
+		$job = ( new Viglet_Dumont_Queue( $this->settings ) )->jobs()[ $post->ID ] ?? null;
+		if ( is_array( $job ) ) {
+			if ( ! empty( $job['failed'] ) ) {
+				return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $job['error'] );
+			}
+			return $this->state( 'queued', __( 'Queued', 'viglet-turing-search' ), (string) $job['error'] );
+		}
+
+		$recorded = get_post_meta( $post->ID, Viglet_Dumont_Queue::STATE_META, true );
+		$recorded = is_array( $recorded ) ? $recorded : array();
+		if ( '' !== ( $recorded['error'] ?? '' ) ) {
+			return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $recorded['error'] );
+		}
+		if ( ! empty( $recorded['indexed_at'] ) ) {
+			return $this->state(
+				'indexed',
+				/* translators: %s: how long ago, e.g. "2 mins". */
+				sprintf( __( 'Indexed %s ago', 'viglet-turing-search' ), human_time_diff( (int) $recorded['indexed_at'] ) ),
+				$leaves
+			);
+		}
+
+		return $this->state( 'not_indexed', __( 'Not indexed yet', 'viglet-turing-search' ), $leaves );
+	}
+
+	/**
+	 * Add the Search column to a post list.
+	 *
+	 * @param array $columns The list's columns.
+	 */
+	public function add_column( array $columns ): array {
+		$columns['viglet_dumont'] = __( 'Search', 'viglet-turing-search' );
+		return $columns;
+	}
+
+	/**
+	 * Print a post's state in the Search column.
+	 *
+	 * @param string $column  The column being printed.
+	 * @param int    $post_id The row's post.
+	 */
+	public function render_column( string $column, int $post_id ): void {
+		$post = get_post( $post_id );
+		if ( 'viglet_dumont' !== $column || ! $post instanceof WP_Post ) {
+			return;
+		}
+
+		$state = $this->describe( $post );
+		printf(
+			'<span class="viglet-dumont-state viglet-dumont-state--%1$s" title="%2$s">%3$s</span>',
+			esc_attr( $state['state'] ),
+			esc_attr( $state['detail'] ),
+			esc_html( $state['label'] )
+		);
+	}
+
+	/**
+	 * Load the block editor's Search panel for the indexed post types.
+	 */
+	public function enqueue_editor_panel(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! in_array( $screen->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'viglet-dumont-editor',
+			VIGLET_DUMONT_URL . 'admin/js/editor-panel.js',
+			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-blocks', 'wp-block-editor', 'wp-escape-html', 'wp-core-data' ),
+			VIGLET_DUMONT_VERSION,
+			true
+		);
+		wp_set_script_translations( 'viglet-dumont-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
+	}
+
+	/**
+	 * `GET viglet-dumont/v1/post/<id>/state`, `POST .../reindex`, `GET .../assist` and
+	 * `POST .../excerpt`, for whoever can edit the post.
+	 */
+	public function register_routes(): void {
+		$can_edit = static fn ( WP_REST_Request $request ) => current_user_can( 'edit_post', (int) $request['id'] );
+
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/state',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_state' ),
+				'permission_callback' => $can_edit,
+			)
+		);
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/reindex',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_reindex' ),
+				'permission_callback' => $can_edit,
+			)
+		);
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/assist',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_assist' ),
+				'permission_callback' => $can_edit,
+			)
+		);
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/excerpt',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_excerpt' ),
+				'permission_callback' => $can_edit,
+				'args'                => array(
+					'again' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+				),
+			)
+		);
+		// Audience fit (D171): GET lists the site's personas, POST judges the saved post.
+		register_rest_route(
+			'viglet-dumont/v1',
+			'/post/(?P<id>\d+)/fit',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => fn () => new WP_REST_Response( array( 'personas' => $this->personas() ), 200 ),
+					'permission_callback' => $can_edit,
+				),
+				array(
+					'methods'             => 'POST',
+					'callback'            => array( $this, 'rest_fit' ),
+					'permission_callback' => $can_edit,
+				),
+			)
+		);
+	}
+
+	/** The most personas one audience-fit check asks about: each is an LLM call. */
+	public const FIT_PERSONAS = 4;
+
+	/**
+	 * The SN site's audience personas, id and name; none when Turing has none or cannot say.
+	 *
+	 * @return array<int, array{id: string, name: string}>
+	 */
+	public function personas(): array {
+		$personas = ( new Viglet_Dumont_API_Client( $this->settings ) )->personas();
+		if ( ! is_array( $personas ) ) {
+			return array();
+		}
+
+		return array_values(
+			array_map(
+				static fn ( array $p ) => array(
+					'id'   => (string) $p['id'],
+					'name' => (string) ( $p['name'] ?? $p['id'] ),
+				),
+				array_filter( $personas, static fn ( $p ) => is_array( $p ) && '' !== (string) ( $p['id'] ?? '' ) )
+			)
+		);
+	}
+
+	/**
+	 * How the saved post suits each of the site's audience personas (D171), by Turing's
+	 * content-fit: a score, a summary, and the spans that do not fit with the reason. Nothing
+	 * here writes to the post.
+	 *
+	 * @param WP_Post $post The post being written.
+	 * @return array{fits: array, error: string}
+	 */
+	public function audience_fit( WP_Post $post ): array {
+		$text = trim( wp_strip_all_tags( strip_shortcodes( (string) $post->post_content ) ) );
+		if ( '' === $text ) {
+			return array(
+				'fits'  => array(),
+				'error' => __( 'Save some text first: the fit is judged on the saved post.', 'viglet-turing-search' ),
+			);
+		}
+		$client = new Viglet_Dumont_API_Client( $this->settings );
+		$fits   = array();
+		$error  = '';
+		foreach ( array_slice( $this->personas(), 0, self::FIT_PERSONAS ) as $persona ) {
+			$fit = $client->content_fit( $persona['id'], trim( $post->post_title . "\n\n" . $text ), $post->post_title );
+			if ( is_wp_error( $fit ) ) {
+				$error = $fit->get_error_message();
+				continue;
+			}
+			$fits[] = array(
+				'persona' => $persona['name'],
+				'score'   => (int) round( (float) ( $fit['fitScore'] ?? 0 ) ),
+				'summary' => (string) ( $fit['summary'] ?? '' ),
+				'misfits' => array_values(
+					array_map(
+						static fn ( array $m ) => array(
+							'reason'     => self::misfit_reason( (string) ( $m['reason'] ?? '' ) ),
+							'span'       => (string) ( $m['span'] ?? '' ),
+							'suggestion' => (string) ( $m['suggestion'] ?? '' ),
+						),
+						array_filter( (array) ( $fit['misfits'] ?? array() ), 'is_array' )
+					)
+				),
+			);
+		}//end foreach
+
+		return array(
+			'fits'  => $fits,
+			'error' => $fits ? '' : $error,
+		);
+	}
+
+	/**
+	 * What one of content-fit's misfit codes means, for the author.
+	 *
+	 * @param string $code `too-complex`, `jargon`, `tone` or `missing-context` (Turing T634).
+	 */
+	private static function misfit_reason( string $code ): string {
+		$labels = array(
+			'too-complex'     => __( 'Too complex', 'viglet-turing-search' ),
+			'jargon'          => __( 'Jargon', 'viglet-turing-search' ),
+			'tone'            => __( 'Tone', 'viglet-turing-search' ),
+			'missing-context' => __( 'Missing context', 'viglet-turing-search' ),
+		);
+
+		return $labels[ $code ] ?? $code;
+	}
+
+	/**
+	 * REST: the saved post judged against each audience persona.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_fit( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->audience_fit( $post ), 200 );
+	}
+
+	/**
+	 * An excerpt drafted by Turing's language model from the post as saved (D171), for the
+	 * author to use or not: nothing here writes to the post (the D13 non-goal). The call goes
+	 * from this server with the stored key, never from the browser.
+	 *
+	 * @param WP_Post $post  The post being written.
+	 * @param bool    $again Write another draft rather than the one Turing cached.
+	 * @return array{excerpt: string, error: string}
+	 */
+	public function draft_excerpt( WP_Post $post, bool $again = false ): array {
+		$text = trim( wp_strip_all_tags( strip_shortcodes( (string) $post->post_content ) ) );
+		if ( '' === $text ) {
+			return array(
+				'excerpt' => '',
+				'error'   => __( 'Save some text first: the draft is written from the saved post.', 'viglet-turing-search' ),
+			);
+		}
+
+		$data   = trim( $post->post_title . "\n\n" . mb_substr( $text, 0, self::EXCERPT_SOURCE_CHARS ) );
+		$locale = get_locale();
+		$prompt = sprintf(
+			'You draft the excerpt of a post: one or two sentences, at most 55 words, saying what the post is about. Write it in the language of the locale %s. Use only what the post says. Answer with the excerpt alone, as plain text: no quotes, no heading, no markdown.',
+			$locale
+		);
+		// Keyed by what was read, so an edited post gets a new draft and an unchanged one the cached.
+		$key = 'viglet-dumont-excerpt-' . md5( $locale . "\n" . $data );
+
+		$result = ( new Viglet_Dumont_API_Client( $this->settings ) )->summary( $key, $data, $prompt, $again );
+		if ( is_wp_error( $result ) ) {
+			return array(
+				'excerpt' => '',
+				'error'   => $result->get_error_message(),
+			);
+		}
+		$excerpt = trim( (string) ( $result['content'] ?? '' ), " \n\r\t\"“”" );
+		if ( empty( $result['success'] ) || '' === $excerpt ) {
+			return array(
+				'excerpt' => '',
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no draft.', 'viglet-turing-search' ),
+			);
+		}
+
+		return array(
+			'excerpt' => $excerpt,
+			'error'   => '',
+		);
+	}
+
+	/**
+	 * REST: an excerpt drafted from the saved post.
+	 *
+	 * @param WP_REST_Request $request Carries `id`, and `again` for another draft.
+	 */
+	public function rest_excerpt( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->draft_excerpt( $post, (bool) $request['again'] ), 200 );
+	}
+
+	/**
+	 * What the site already has near a post, for the editor's Assist section (D171): posts that
+	 * may already cover it, and posts to link to. An indexed post is compared by Turing's
+	 * similar-documents and duplicate-cluster searches; a draft not yet in the index, by a
+	 * search for its title. Nothing here writes to the post.
+	 *
+	 * @param WP_Post $post The post being written.
+	 * @return array{basis: string, covered: array<int, array{title: string, url: string}>, links: array<int, array{title: string, url: string}>}
+	 */
+	public function assist( WP_Post $post ): array {
+		$client  = new Viglet_Dumont_API_Client( $this->settings );
+		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$doc_id  = $indexer->build_doc_id( $post->ID );
+		$pick    = static fn ( array $docs ): array => array_values(
+			array_map(
+				static fn ( array $doc ) => array(
+					'title' => wp_strip_all_tags( (string) ( $doc['title'] ?? $doc['url'] ?? '' ) ),
+					'url'   => (string) ( $doc['url'] ?? '' ),
+				),
+				array_filter( $docs, static fn ( array $doc ) => ( $doc['id'] ?? '' ) !== $doc_id && '' !== (string) ( $doc['url'] ?? '' ) )
+			)
+		);
+
+		// This site's own posts only, as the title search below, siblings listed or not (D303).
+		$similar = $client->similar( $doc_id, 6, '', array( $indexer->own_filter() ) );
+		if ( is_array( $similar ) && $similar ) {
+			$cluster = $client->duplicates( $doc_id );
+			$members = is_array( $cluster ) && ! empty( $cluster['duplicate'] ) ? (array) ( $cluster['members'] ?? array() ) : array();
+
+			return array(
+				'basis'   => 'similar',
+				'covered' => $pick( $members ),
+				'links'   => array_slice( $pick( $similar ), 0, 5 ),
+			);
+		}
+
+		if ( '' === trim( $post->post_title ) ) {
+			return array(
+				'basis'   => 'title',
+				'covered' => array(),
+				'links'   => array(),
+			);
+		}
+		$found = $client->search( $post->post_title, 1, 6, array( 'fq[]' => array( $indexer->own_filter() ) ) );
+		$docs  = is_array( $found )
+			? array_map( static fn ( array $doc ) => (array) ( $doc['fields'] ?? array() ), (array) ( $found['results']['document'] ?? array() ) )
+			: array();
+		$hits  = $pick( $docs );
+
+		return array(
+			'basis'   => 'title',
+			'covered' => array_slice( $hits, 0, 3 ),
+			'links'   => array_slice( $hits, 0, 5 ),
+		);
+	}
+
+	/**
+	 * REST: what the site already has near a post.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_assist( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->assist( $post ), 200 );
+	}
+
+	/**
+	 * REST: a post's state.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_state( WP_REST_Request $request ): WP_REST_Response {
+		$post = get_post( (int) $request['id'] );
+		if ( ! $post instanceof WP_Post ) {
+			return new WP_REST_Response( array( 'message' => __( 'No such post.', 'viglet-turing-search' ) ), 404 );
+		}
+
+		return new WP_REST_Response( $this->with_entities( $post, $this->describe( $post ) ), 200 );
+	}
+
+	/**
+	 * A post's state with the people, organisations and places Turing found in it (D310), read
+	 * from its indexed document: only while Turing is asked to find them and the post is
+	 * indexed. Shown, never edited: Turing has no way to keep a name it found off one document,
+	 * so the text is what changes them. The list column never reads this.
+	 *
+	 * @param WP_Post $post  The post.
+	 * @param array   $state Its state, as describe() gives it.
+	 * @return array The state, with `entities` when there are any to read.
+	 */
+	public function with_entities( WP_Post $post, array $state ): array {
+		if ( 'indexed' !== ( $state['state'] ?? '' ) || ! Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+			return $state;
+		}
+		$doc_id   = ( new Viglet_Dumont_Indexer( $this->settings ) )->build_doc_id( $post->ID );
+		$entities = ( new Viglet_Dumont_Entities( $this->settings ) )->of_document( new Viglet_Dumont_API_Client( $this->settings ), $doc_id );
+		// A failed read leaves the names out: the state above it is what the panel is for.
+		$state['entities'] = is_wp_error( $entities ) ? array() : $entities;
+
+		return $state;
+	}
+
+	/**
+	 * REST: send a post now, without the queue, and answer with its new state.
+	 *
+	 * @param WP_REST_Request $request Carries `id`.
+	 */
+	public function rest_reindex( WP_REST_Request $request ): WP_REST_Response {
+		$post_id = (int) $request['id'];
+		$result  = ( new Viglet_Dumont_Operations( $this->settings ) )->index( array( $post_id ) );
+
+		$post = get_post( $post_id );
+		if ( $post instanceof WP_Post ) {
+			$state = get_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, true );
+			$state = is_array( $state ) ? $state : array();
+			if ( 0 === $result['failed'] ) {
+				// An excluded or unpublished post was sent as a delete: it is now out of the index.
+				$state['indexed_at'] = ( new Viglet_Dumont_Indexer( $this->settings ) )->should_index( $post ) ? time() : null;
+				$state['error']      = '';
+				$state['attempts']   = 0;
+			} else {
+				$state['error'] = $result['errors'][ $post_id ] ?? '';
+			}
+			update_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, $state );
+		}
+
+		$body = $post instanceof WP_Post ? $this->with_entities( $post, $this->describe( $post ) ) : array();
+		if ( 0 !== $result['failed'] ) {
+			// Any client gets Turing's reason, not only the panel that reads `detail` (D330).
+			$reason          = Viglet_Dumont_Events::text( $result['errors'][ $post_id ] ?? '' );
+			$body['message'] = '' !== $reason ? $reason : __( 'Turing did not take the post.', 'viglet-turing-search' );
+		}
+
+		return new WP_REST_Response( $body, 0 === $result['failed'] ? 200 : 502 );
+	}
+
+	/**
+	 * One state.
+	 *
+	 * @param string $state  The machine state.
+	 * @param string $label  What the column shows.
+	 * @param string $detail The error, or nothing.
+	 * @return array{state: string, label: string, detail: string}
+	 */
+	private function state( string $state, string $label, string $detail = '' ): array {
+		return array(
+			'state'  => $state,
+			'label'  => $label,
+			'detail' => $detail,
+		);
+	}
+}

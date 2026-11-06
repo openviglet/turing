@@ -1,0 +1,547 @@
+# A throwaway WordPress and Turing for trying the plugin end to end: run-docker.cmd drives it.
+#
+# src/ is mounted as the plugin, so an edit shows up on the next page load with no build.
+# WordPress, its database and Turing's store live in named volumes; `run-docker.cmd reset`
+# drops them. The plugin reaches Turing as http://turing:2700; the console is on
+# http://localhost:2700 (admin / the TURING_ADMIN_PASSWORD below).
+
+name: viglet-dumont-wp
+
+services:
+  # Turing as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
+  # single tenant, local login. TURING_IMAGE picks another image, such as one built from a
+  # Turing checkout.
+  turing:
+    image: ${TURING_IMAGE:-ghcr.io/openviglet/turing:latest}
+    ports:
+      - "127.0.0.1:${TURING_PORT:-2700}:2700"
+    environment:
+      PORT: 2700
+      TURING_AI_CRYPTO_KEY: viglet-dumont-wp-dev-only
+      # Applied only while no password is stored: changing it later needs `run-docker.cmd reset`.
+      TURING_ADMIN_PASSWORD: ${TURING_ADMIN_PASSWORD:-dumont-dev}
+      TURING_KEYCLOAK: "false"
+      TURING_TENANCY_ENABLED: "false"
+      TURING_TENANCY_AUTOPROVISION: "false"
+      TURING_OPEN_BROWSER: "false"
+      TURING_URL: http://localhost:${TURING_PORT:-2700}
+      TURING_ALLOWEDORIGINS: http://localhost:${WP_PORT:-8080},http://localhost:${WP_MS_PORT:-8081},http://localhost:${WP_DEMO_PORT:-38082},http://localhost:${WP_DEMO_PT_PORT:-38083},http://localhost:${WP_FRESH_PORT:-38084},http://localhost:${WP_DEMO_EDU_PORT:-38085},http://localhost:${WP_DEMO_EDU_PT_PORT:-38086},http://localhost:${TURING_PORT:-2700}
+      # In-memory broker: no journal lock (AMQ219007) when the container is recreated.
+      SPRING_ARTEMIS_EMBEDDED_PERSISTENT: "false"
+      # Generative AI (answers, chat, summaries): with a key in the shell, a boot that finds no
+      # LLM instance creates one, a default AI agent with RAG and a local embedding store.
+      # Unset: no AI, search works as before.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TURING_STARTUP_DEFAULT_LLM_MODEL: ${TURING_STARTUP_DEFAULT_LLM_MODEL:-gpt-4o-mini}
+      # The OpenAI-compatible gateway (/v1/chat/completions), as trabalharei enables it.
+      TURING_GATEWAY_ENABLED: "true"
+      # Keep the searches and the result clicks the search block reports (D176); off, Turing
+      # answers the click with 202 and drops it.
+      TURING_SEARCH_METRICS_ENABLED: "true"
+    volumes:
+      - turing:/app/store
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/2700' 2>/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress:
+    image: wordpress:7.1.3-php8.5-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${WP_PORT:-8080}:80"
+    environment: &wp-env
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      # WP-Cron's loopback calls the site URL, localhost:${WP_PORT}, which nothing answers
+      # inside the container. The cron service below runs due events instead, as a host
+      # with a system cron does.
+      WORDPRESS_CONFIG_EXTRA: define( 'DISABLE_WP_CRON', true );
+      # The plugin's connection, from the environment as a container deploy sets it (D151):
+      # read-only in the admin and never stored. The API key is minted on the first run and
+      # stored in the option instead, since it does not exist before Turing does.
+      VIGLET_DUMONT_TURING_URL: http://turing:2700
+      VIGLET_DUMONT_TURING_SITE: ${SN_SITE:-Sample}
+      VIGLET_DUMONT_TURING_LOCALE: ${TURING_LOCALE:-en_US}
+      # Browsers reach Turing on the host port, not on the compose network's name.
+      VIGLET_DUMONT_PUBLIC_URL: http://localhost:${TURING_PORT:-2700}
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      # The demo storefront theme (D193), outside the plugin zip; active only after run-docker.cmd demo.
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The system cron: runs due WP-Cron events (the plugin's queue worker among them) every 15s.
+  cron:
+    image: wordpress:cli-2.12-php8.5
+    depends_on:
+      - wordpress
+    user: "33:33"
+    environment: *wp-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # WP-CLI over the same files and database: `run-docker.cmd wp <command>`.
+  # tests/e2e/fixtures is the browser tests' seed data (npm run test:e2e).
+  cli:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    depends_on:
+      - wordpress
+    user: "33:33"
+    environment: *wp-env
+    volumes:
+      - wp:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./tests/e2e/fixtures:/e2e:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # A multisite network beside the single site, for the browser tests (D161): its own
+  # WordPress and database on WP_MS_PORT, the same Turing, and its own SN site (SN_MS_SITE)
+  # that both of its sites share, each under its own site key. `run-docker.cmd multisite`
+  # starts and installs it; nothing here runs without that profile.
+  db-ms:
+    image: mariadb:11.4
+    profiles: ["multisite"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-ms:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-ms:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["multisite"]
+    depends_on:
+      db-ms:
+        condition: service_healthy
+    ports:
+      - "${WP_MS_PORT:-8081}:80"
+    environment: &wp-ms-env
+      <<: *wp-env
+      WORDPRESS_DB_HOST: db-ms
+      VIGLET_DUMONT_TURING_SITE: ${SN_MS_SITE:-Network}
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The system cron for every site of the network, not only the main one.
+  cron-ms:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["multisite"]
+    depends_on:
+      - wordpress-ms
+    user: "33:33"
+    environment: *wp-ms-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed --network 2>/dev/null && for u in $$(wp site list --field=url); do wp --url=$$u cron event run --due-now --quiet; done; sleep 15; done"]
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-ms:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-ms-env
+    volumes:
+      - wp-ms:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./tests/e2e/fixtures:/e2e:ro
+      - ./demo:/demo:ro
+      - ./bin/multisite.htaccess:/dumont/multisite.htaccess:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The demo storefront (D219), English since D283: Tarnfell on a WordPress and database of its own on WP_DEMO_PORT,
+  # the same Turing with its own SN site (SN_DEMO_SITE), so it stays up while the browser tests
+  # run against the site above. `run-docker.cmd demo` starts, installs and seeds it.
+  db-demo:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_PORT:-38082}:80"
+    environment: &wp-demo-env
+      <<: *wp-env
+      WORDPRESS_DB_HOST: db-demo
+      # The demo's SN site, like its language below, is its plugin's own setting, which
+      # run-docker demo writes from SN_DEMO_SITE (D274): read from here, a `docker compose run
+      # cli-demo` started without SN_DEMO_SITE indexed into Demo. Empty is unset.
+      VIGLET_DUMONT_TURING_SITE: ""
+      # The demo's language (D217) is its plugin's own setting, which run-docker demo writes
+      # from DEMO_LOCALE (D272). Read from here, a `docker compose run cli-demo` started
+      # without DEMO_LOCALE indexed into en_US while the site searched pt_BR. Empty is unset.
+      VIGLET_DUMONT_TURING_LOCALE: ""
+    volumes:
+      - wp-demo:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo
+    user: "33:33"
+    environment: *wp-demo-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-env
+    volumes:
+      - wp-demo:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The pt-BR demo storefront (D283): Recanto da Serra on a WordPress and database of its own on
+  # WP_DEMO_PT_PORT, beside Tarnfell above, so recording or resetting one store never deletes
+  # the other. The same Turing, its own SN site. `run-docker.cmd demo pt` sets it up.
+  db-demo-pt:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-pt:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-pt:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-pt:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_PT_PORT:-38083}:80"
+    environment: &wp-demo-pt-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-pt
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-pt
+    user: "33:33"
+    environment: *wp-demo-pt-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-pt-env
+    volumes:
+      - wp-demo-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The school (D325): Lumen School in English on WP_DEMO_EDU_PORT and Escola Lumen in Portuguese
+  # on WP_DEMO_EDU_PT_PORT, each a WordPress and database of its own like the stores above, the
+  # same Turing, its own SN site, no WooCommerce. Its theme (demo/theme/lumen) registers the
+  # events, openings and books, so every container that loads WordPress mounts it. Described by
+  # demo/sites/edu.json and edu-pt.json; `run-docker.cmd demo edu` (or `demo edu-pt`) sets it up.
+  db-demo-edu:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-edu:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-edu:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-edu:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_EDU_PORT:-38085}:80"
+    environment: &wp-demo-edu-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-edu
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-edu:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-edu
+    user: "33:33"
+    environment: *wp-demo-edu-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-edu:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-edu-env
+    volumes:
+      - wp-demo-edu:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  db-demo-edu-pt:
+    image: mariadb:11.4
+    profiles: ["demo"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-demo-edu-pt:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-demo-edu-pt:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["demo"]
+    depends_on:
+      db-demo-edu-pt:
+        condition: service_healthy
+    ports:
+      - "${WP_DEMO_EDU_PT_PORT:-38086}:80"
+    environment: &wp-demo-edu-pt-env
+      <<: *wp-demo-env
+      WORDPRESS_DB_HOST: db-demo-edu-pt
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-demo-edu-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["demo"]
+    depends_on:
+      - wordpress-demo-edu-pt
+    user: "33:33"
+    environment: *wp-demo-edu-pt-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-demo-edu-pt:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-demo-edu-pt-env
+    volumes:
+      - wp-demo-edu-pt:/var/www/html
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # A WordPress the plugin has never been installed on (D281), for the developer video: the
+  # Tarnfell theme, WooCommerce and its catalog, and no plugin in its files, so the recording
+  # installs the release zip through wp-admin and connects it on the Setup page. Only its WP-CLI
+  # mounts src/, to run the catalog seed; `run-docker.cmd fresh` then deactivates that copy and
+  # deletes every option it wrote. The connection is not set from the environment here: the
+  # Setup page is what the video shows.
+  db-fresh:
+    image: mariadb:11.4
+    profiles: ["fresh"]
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db-fresh:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 20
+
+  wordpress-fresh:
+    image: wordpress:7.1.3-php8.5-apache
+    profiles: ["fresh"]
+    depends_on:
+      db-fresh:
+        condition: service_healthy
+    ports:
+      - "${WP_FRESH_PORT:-38084}:80"
+    environment: &wp-fresh-env
+      <<: *wp-env
+      WORDPRESS_DB_HOST: db-fresh
+      # Empty is unset: every connection value comes from the Setup page.
+      VIGLET_DUMONT_TURING_URL: ""
+      VIGLET_DUMONT_TURING_SITE: ""
+      VIGLET_DUMONT_TURING_LOCALE: ""
+    volumes:
+      - wp-fresh:/var/www/html
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cron-fresh:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["fresh"]
+    depends_on:
+      - wordpress-fresh
+    user: "33:33"
+    environment: *wp-fresh-env
+    entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
+    volumes:
+      - wp-fresh:/var/www/html
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cli-fresh:
+    image: wordpress:cli-2.12-php8.5
+    profiles: ["cli"]
+    user: "33:33"
+    environment: *wp-fresh-env
+    volumes:
+      - wp-fresh:/var/www/html
+      # Under another folder name than the zip's (viglet-turing-search), only for the seed.
+      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
+      - ./demo:/demo:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  db:
+  wp:
+  turing:
+  db-ms:
+  wp-ms:
+  db-demo:
+  wp-demo:
+  db-demo-pt:
+  wp-demo-pt:
+  db-demo-edu:
+  wp-demo-edu:
+  db-demo-edu-pt:
+  wp-demo-edu-pt:
+  db-fresh:
+  wp-fresh:

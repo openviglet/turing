@@ -1,0 +1,96 @@
+{
+	"narrator": "Ana, who owns Tarnfell (Recanto da Serra on the pt_BR store): talkative, warm and thrilled, she switched her WordPress shop's search to Viglet Turing and tells, at length and with joy, what her customers see now and how it compares with the search she had before. Every \"before\" she states was measured on the demo: WordPress's own search finds nothing for the tent sentence, for raincoat or for the backpack question.",
+	"voice": "XrExE9yKIg1WjnnlVkGX",
+	"voiceName": "Matilda (ElevenLabs premade voice)",
+	"model": "eleven_v3",
+	"intro": {
+		"en": "[excited] Hi! I'm Ana, and this is Tarnfell, my little outdoor shop. Tents, jackets, boots, everything for the hills, all running on WordPress. [laughs] Now, I'll be honest with you: for years my search box was the saddest part of the shop. People typed something, got nothing, and left. A few weeks ago I switched the search to Viglet Turing, and oh, it changed everything. So grab a coffee, and let me show you what my customers see now!",
+		"pt-BR": "[excited] Oi! Eu sou a Ana, e essa é a Recanto da Serra, a minha lojinha de aventura. Barracas, jaquetas, botas, tudo pra montanha. A loja roda em WordPress, com o WooCommerce cuidando do catálogo, do carrinho e do pagamento. [laughs] Agora, vou ser sincera com você: durante anos a caixa de busca foi a parte mais triste da loja. A pessoa digitava alguma coisa, não achava nada e ia embora. Há poucas semanas eu troquei a busca pelo Viglet Turing, e nossa, mudou tudo. Então pega um café, e vem ver o que os meus clientes encontram agora!"
+	},
+	"chapters": {
+		"1": {
+			"card": {
+				"en": "Let's start where everyone starts: the search page. You know that moment when you land on a shop and have no idea what to type? I used to lose so many people right here.",
+				"pt-BR": "Vamos começar por onde todo mundo começa: a página de busca. Sabe aquele momento em que você entra numa loja e não faz ideia do que digitar? Eu perdia tanta gente bem aqui."
+			},
+			"result": {
+				"en": "[happy] Now look! The popular searches give people somewhere to start. One tap, and Viglet Turing brings back exactly the gear that matches, products and my guides together. Nobody is staring at an empty box anymore, and honestly, that alone made me smile.",
+				"pt-BR": "[happy] Agora olha! As buscas populares dão um ponto de partida. Um toque, e o Viglet Turing traz exatamente os produtos que combinam, junto com os meus guias. Ninguém mais fica olhando pra uma caixa vazia, e sinceramente, só isso já me fez sorrir."
+			}
+		},
+		"2": {
+			"card": {
+				"en": "Here's the thing about my customers: they don't type keywords. They write the way they talk to me at the counter. Something like, a two-person tent under four hundred dollars. My old search choked on sentences like that.",
+				"pt-BR": "O negócio dos meus clientes é o seguinte: eles não digitam palavras-chave. Eles escrevem do jeito que falam comigo no balcão. Algo como, uma barraca para duas pessoas até dois mil e duzentos reais. A minha busca antiga travava com frases assim."
+			},
+			"result": {
+				"en": "[excited] And look at this! Viglet Turing read under four hundred dollars as a price filter, all by itself, and showed only what fits the budget. And up top, a short answer that names the best one, with the price and why, and every source right below it. [laughs] My old WordPress search found nothing at all for this sentence. Nothing! Now it reads like a friend who knows the shop.",
+				"pt-BR": "[excited] E olha isso! O Viglet Turing entendeu até dois mil e duzentos reais como um filtro de preço, sozinho, e mostrou só o que cabe no orçamento. E lá em cima, uma resposta curta indicando a melhor, com o preço e o porquê, e todas as fontes logo abaixo. [laughs] A minha busca antiga do WordPress não achava nada com essa frase. Nada! Agora parece uma amiga que conhece a loja."
+			}
+		},
+		"3": {
+			"card": {
+				"en": "And people ask questions. The kind they'd feel a bit silly asking in a shop, like what size backpack do I need for a night in a hut. So they ask the site instead.",
+				"pt-BR": "E as pessoas fazem perguntas. Daquelas que teriam um pouco de vergonha de fazer numa loja, tipo que mochila eu levo pra uma noite num refúgio. Então elas perguntam pro site."
+			},
+			"result": {
+				"en": "The Site assistant answers from my own guides, the ones I wrote, and every source is a link they can open and check. That's what I love most: Viglet Turing reads my site, it doesn't make things up. [happy] It feels like I'm there, answering every customer myself, even at midnight.",
+				"pt-BR": "O Assistente do site responde com base nos meus próprios guias, os que eu escrevi, e cada fonte é um link que dá pra abrir e conferir. É isso que eu mais amo: o Viglet Turing lê o meu site, ele não inventa nada. [happy] Parece que eu estou ali, respondendo cada cliente pessoalmente, até de madrugada."
+			}
+		},
+		"4": {
+			"card": {
+				"en": "Some of my products look a lot alike, I know. So people pick a few and compare them, side by side.",
+				"pt-BR": "Alguns dos meus produtos se parecem bastante, eu sei. Então as pessoas escolhem alguns e comparam, lado a lado."
+			},
+			"result": {
+				"en": "The table lines everything up, attribute by attribute, and Viglet Turing writes a short summary from that very same table, so it never wanders off. The differences are clear at a glance. [laughs] Before, people emailed me to ask which one to buy. Now the page tells them.",
+				"pt-BR": "A tabela coloca tudo lado a lado, atributo por atributo, e o Viglet Turing escreve um resumo curto a partir dessa mesma tabela, então ele não sai inventando. As diferenças ficam claras na hora. [laughs] Antes, as pessoas me mandavam e-mail perguntando qual comprar. Agora a própria página conta."
+			}
+		},
+		"5": {
+			"card": {
+				"en": "[excited] Okay, this is my favourite part. Really, my favourite. A customer doesn't search at all. They just describe their trip, like, two days crossing the mountains in July, first time.",
+				"pt-BR": "[excited] Tá, essa é a minha parte favorita. Sério, a favorita. O cliente nem busca nada. Ele só descreve a viagem, tipo, dois dias atravessando a montanha em julho, primeira vez."
+			},
+			"result": {
+				"en": "And Viglet Turing turns that plan into the things they'll need, a place to sleep, something warm, and fills each one with gear I really sell, with the price and the stock straight from my shop. They can swap any item for another one, and with one click, the whole kit is in the cart. [laughs] Can you believe it? It's like having my best salesperson on every page.",
+				"pt-BR": "E o Viglet Turing transforma esse plano nas coisas que a pessoa vai precisar, onde dormir, algo pra se aquecer, e preenche cada uma com produtos que eu vendo de verdade, com o preço e o estoque direto da minha loja. Dá pra trocar qualquer item por outro, e com um clique, o kit inteiro vai pro carrinho. [laughs] Dá pra acreditar? É como ter a minha melhor vendedora em cada página."
+			}
+		},
+		"6": {
+			"card": {
+				"en": "Before paying, people like to take a closer look at one product. Fair enough, I do it too!",
+				"pt-BR": "Antes de pagar, as pessoas gostam de olhar um produto com mais calma. Justo, eu também faço isso!"
+			},
+			"result": {
+				"en": "Related gear shows up right below it, and when they ask a question on that page, Viglet Turing answers about that exact product, not some other one, and it cites it. Will this keep me dry on a wet day? It knows which jacket they mean.",
+				"pt-BR": "Os itens relacionados aparecem logo abaixo, e quando a pessoa faz uma pergunta ali, o Viglet Turing responde sobre aquele produto exato, não sobre outro qualquer, e ainda cita. Isso me mantém seca num dia de chuva? Ele sabe de qual produto ela está falando."
+			}
+		},
+		"7": {
+			"card": {
+				"en": "And then they check out, just like in any WooCommerce shop. Don't worry, this is a demo, so nobody is charged.",
+				"pt-BR": "E aí eles finalizam a compra, igualzinho a qualquer loja WooCommerce. Fica tranquilo, isso é uma demonstração, ninguém é cobrado."
+			},
+			"result": {
+				"en": "[happy] The checkout itself is the same as always. What changed is everything before it: the search and the help just got them here so much faster.",
+				"pt-BR": "[happy] O pagamento em si é o mesmo de sempre. O que mudou foi tudo antes dele: a busca e a ajuda trouxeram a pessoa até aqui muito mais rápido."
+			}
+		},
+		"8": {
+			"card": {
+				"en": "[excited] Now, my favourite comparison: the before and after. On the left, my old WordPress search. Someone types raincoat, and gets nothing. On the right, Viglet Turing finds my rain jackets right away. Same shop, same products, completely different experience.",
+				"pt-BR": "[excited] Agora, a minha comparação favorita: o antes e o depois. À esquerda, a minha antiga busca do WordPress. Alguém digita puffer, e não acha nada. À direita, o Viglet Turing encontra as minhas jaquetas na hora. Mesma loja, mesmos produtos, uma experiência completamente diferente."
+			},
+			"result": {
+				"en": "And here's my secret weapon. Every search my customers make shows up in my insights, including the ones that found nothing. When I see one, I turn it into a synonym with a single click, and the next person finds what they wanted. [happy] So my shop keeps getting better, every single day, and I'm learning what my customers really want.",
+				"pt-BR": "E aqui está a minha arma secreta. Cada busca dos meus clientes aparece nos meus insights, inclusive as que não acharam nada. Quando eu vejo uma, transformo num sinônimo com um clique, e a próxima pessoa encontra o que queria. [happy] Então a minha loja fica melhor a cada dia, e eu vou aprendendo o que os meus clientes querem de verdade."
+			}
+		}
+	},
+	"outro": {
+		"en": "[excited] So that's Tarnfell, with Viglet Turing! If you run a WordPress shop too, and you're tired of that sad little search box, the plugin and this whole demo are at the address on screen. Come and try it, I think you're going to love it as much as I do!",
+		"pt-BR": "[excited] Então essa é a Recanto da Serra, com o Viglet Turing! Se você também tem uma loja em WordPress com WooCommerce e está cansado daquela caixinha de busca triste, o plugin e essa demonstração inteira estão no endereço na tela. Vem experimentar, acho que você vai amar tanto quanto eu!"
+	}
+}

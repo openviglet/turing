@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5990732,
+    "path": "demo/photos/guide/layering-for-the-hills.png",
+    "sha256": "2d322f146ac25fddf2b9d80b8c9625f68b2c539fe3ae2dc3e932e24719ba11d8"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of three hikers ascending a windswept Lake District fell on a late overcast morning, demonstrating a layered merino-fleece-shell wardrobe, with rolling green fells, patches of heather, and a distant blue lake receding into haze.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A windswept Lake District fell under soft overcast daylight from a high diffused sky, neutral cool-to-neutral white balance. Rolling green fells recede into atmospheric haze across the upper two-thirds of the frame, slopes dotted with patches of brown bracken and purple heather. A distant blue lake glints between two ridges in the far background. The rocky path winds up the incline through the midground. Fine Kodak Portra grain sits evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Low drystone wall running along the right side of the path, weathered grey stones covered in pale green lichen, irregular stacked courses, receding diagonally into the midground.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Third hiker further back near the stone wall in three-quarter view facing right toward his companions, gaze directed at the lead hiker. Deep navy merino base layer visible at the neck, forest-green waffle-grid fleece vest over it, tan softshell jacket. Right hand resting on a wooden walking pole planted into the ground beside him. Medium skin tone, short dark hair lifted slightly by the breeze.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Second hiker a few paces behind on the lower path in three-quarter view, half-turned facing the lead hiker to his right, gaze directed at her. Charcoal merino base layer tucked into olive cargo hiking trousers, rust-orange grid fleece zipped halfway, black shell jacket open with collar flipped up against the breeze. Light skin tone, shoulder-length brown hair lifting loose strands.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lead hiker mid-stride on the rocky path, body angled three-quarters toward camera anchored on the right third, head turned slightly back down the trail to look at her companions. Weight settled on her front foot pushing up the incline. Cream ribbed merino crew-neck visible at collar and cuffs, heather-grey waffle-grid fleece pullover unzipped over it, slate-blue matte waterproof shell jacket with hood pushed back and sleeves rolled once. Medium skin tone, light brown hair with loose strands lifted by the breeze, hem of the shell catching the wind.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of tall grass slicing into the lower-left foreground edge with a single bright yellow gorse flower among the blades, softly blurred against the sharper midground.\"\n      }\n    ]\n  }\n}",
+    "seed": 1566403215,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5990732,
+    "sha256": "2d322f146ac25fddf2b9d80b8c9625f68b2c539fe3ae2dc3e932e24719ba11d8"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:36:56Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Layering for the hills\". Three layers do most of the work: a base layer that moves sweat away, a midlayer that holds warmth, and a shell that keeps out wind and rain. Start with the Coniston merino base layer, which stays fresh for days. Add the Fairfield grid fleece, the midlayer for most days. Carry a shell such as... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:8B95J-qBQju1ZD-hNjDV0A"
+}

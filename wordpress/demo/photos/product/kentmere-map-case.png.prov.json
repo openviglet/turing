@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5356343,
+    "path": "demo/photos/product/kentmere-map-case.png",
+    "sha256": "acb57c7180a9ab2e14fa1b3d80ca1d239be89a25a41d76b0ec9a686408c43786"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a burnt-orange polyurethane map case resting upright on a mossy granite rock along a quiet mountain footpath in the green fells, with rolling ridges fading into pale mist under overcast afternoon light.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on an overcast afternoon, the air still and damp after a light drizzle. Rolling green fell slopes recede into layered ridges that fade into pale grey mist toward the horizon. Soft even overcast daylight provides cool-neutral illumination with no harsh shadows. The ground around the rock is packed dirt and gravel softened by tufts of heather and grass, with a few damp pebbles scattered near the base. The overall palette is muted moss-green and slate-grey, dissolving into gentle green-grey blur in the distance.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Distant stone wall fragment barely visible deep in the right mid-ground, low and weathered, partially obscured by heather and mist, rendered soft and out of focus.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-gravel footpath winding diagonally behind the rock from lower-left to upper-right, edges softened by tufts of heather and grass. Pale brown gravel surface, slightly damp.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lichen-speckled grey granite rock anchored just left of center in the lower third of the frame, medium-sized. Thick emerald moss cushions its top surface. Pale yellow-green lichen patches speckle the exposed grey stone sides. A few damp pebbles scattered around its base on the path.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Burnt-orange polyurethane map case resting upright on the mossy rock top, the focal subject occupying roughly 25% of the frame height. Roll-top seal cinched at the top with a thin black strap and small buckle. Soft sheen on the waterproof surface, faint creases where it has been folded. Empty interior visible as a subtle shadow through the semi-translucent orange. Tack-sharp focus, ambient light catching the roll-top seam.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus fern frond slicing into the lower-left foreground edge, deep green fronds blurred into soft shapes, framing the lower-left corner.\"\n      }\n    ]\n  }\n}",
+    "seed": 1222545603,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5356343,
+    "sha256": "acb57c7180a9ab2e14fa1b3d80ca1d239be89a25a41d76b0ec9a686408c43786"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:32:22Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Kentmere map case, in burnt orange. A waterproof map case that takes a folded OS map and hangs round the neck. Weight 70 g. A roll-top seal. Colour: Black, Ember. Materials: Polyurethane. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:OXC00hSXTKmptnmzI_rrRg"
+}

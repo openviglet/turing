@@ -1,0 +1,20 @@
+{
+	"plans": [
+		{
+			"plan": "Two days crossing the mountains in July, first time",
+			"gaps": [
+				{ "need": "a waterproof", "matches": "waterproof|rain|shell" },
+				{ "need": "a warm layer", "matches": "warm|insulat|fleece|down|layer" },
+				{ "need": "a night out", "matches": "shelter|tent|bivvy|sleep" }
+			]
+		},
+		{
+			"plan": "My first wild camp, one night in the hills in autumn",
+			"gaps": [
+				{ "need": "shelter", "matches": "shelter|tent|bivvy" },
+				{ "need": "a place to sleep", "matches": "sleep|mat" },
+				{ "need": "autumn weather", "matches": "waterproof|rain|warm|insulat|fleece|layer" }
+			]
+		}
+	]
+}

@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6724014,
+    "path": "demo/photos/guide/how-to-choose-a-waterproof-jacket.png",
+    "sha256": "70611a68ffea5b4ac5a6c5d613eefb7dad5b3f781e0d984009158c8beb37e6a1"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a young woman hiker in a coral-red waterproof jacket mid-stride on a wet grassy path across the green fells of the Lake District, with a second hiker ahead and Catbells rising under an overcast sky, shot on 35mm with Kodak Portra grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Late-morning Lake District fellscape under a soft overcast sky in cool diffused daylight. The distant fell ridge of Catbells rises across the upper background in muted slate-grey and mossy green tones, with faint mist pooling in the hollows between ridges. A small tarn glints as a pale silver sliver in the far valley between two ridges. Light drizzle hangs in the air as fine streaks against the darker background. Wet heather and bracken line both edges of the grassy path, droplets clinging to the leaves. Palette of mossy greens, slate greys, and wet earth browns. Fine Kodak Portra grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Second hiker further up the path in the mid-ground, softly defocused, walking away from camera. Navy shell jacket, wide-brimmed hat, dark trousers. Small in the frame, positioned on the path ahead of the lead hiker.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young woman hiker mid-stride on the wet grassy path, anchored slightly right of center on the rule-of-thirds line, body filling roughly half the frame height as the focal subject. In three-quarter front view angled toward the camera, weight settled on her front foot. Bright coral-red lightweight waterproof jacket zipped to mid-chest, slight motion in the hem from her stride. Dark grey hiking trousers, scuffed brown leather hiking boots. Olive canvas daypack slung over both shoulders. Right hand adjusting the drawcord of her hood at her temple, left hand holding a rolled-up map at chest height. Medium skin tone, light brown hair tucked under the hood, gaze directed forward up the path toward the second hiker.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of wet grass slicing into the lower-left foreground close to the lens, heavily defocused into soft green and brown streaks.\"\n      }\n    ]\n  }\n}",
+    "seed": 1981626813,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6724014,
+    "sha256": "70611a68ffea5b4ac5a6c5d613eefb7dad5b3f781e0d984009158c8beb37e6a1"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:12:40Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to choose a waterproof jacket\". Hydrostatic head says how much water a fabric holds back; breathability says how much sweat it lets out. For a day of showers 10,000 mm is plenty. For a ridge in wind-driven rain, look for 20,000 mm or more and a hood that takes a helmet. The Catbells light rain jacket packs into its own... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:LKytConYQqWNpyeE5j0R8A"
+}

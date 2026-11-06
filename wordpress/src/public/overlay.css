@@ -1,0 +1,248 @@
+/* The instant-search overlay. Colours and type come from the theme where it declares them. */
+
+.viglet-dumont-overlay {
+	background: var(--wp--preset--color--base, #fff);
+	border: 1px solid currentColor;
+	border-radius: 8px;
+	color: var(--wp--preset--color--contrast, #111);
+	margin: 10vh auto auto;
+	max-height: 80vh;
+	max-width: 40rem;
+	padding: 1rem;
+	width: calc(100vw - 2rem);
+}
+
+.viglet-dumont-overlay::backdrop {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.viglet-dumont-overlay__form {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.viglet-dumont-overlay__input {
+	flex: 1;
+	font: inherit;
+	font-size: 1.125rem;
+	min-width: 0;
+	padding: 0.5rem 0.75rem;
+}
+
+/* The dialog's own close button is the one ×; the browser's clear control would be a second. */
+.viglet-dumont-overlay__input::-webkit-search-cancel-button {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.viglet-dumont-overlay__close {
+	background: none;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	font-size: 1.5rem;
+	line-height: 1;
+	padding: 0 0.5rem;
+}
+
+.viglet-dumont-overlay__status {
+	font-size: 0.875rem;
+	margin: 0.75rem 0 0.25rem;
+	opacity: 0.8;
+}
+
+.viglet-dumont-overlay__results {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.viglet-dumont-overlay__result {
+	border-radius: 4px;
+	cursor: pointer;
+	display: grid;
+	padding: 0.5rem 0.75rem;
+}
+
+.viglet-dumont-overlay__result:hover,
+.viglet-dumont-overlay__result[aria-selected="true"] {
+	background: var(--wp--preset--color--contrast, #111);
+	color: var(--wp--preset--color--base, #fff);
+}
+
+.viglet-dumont-overlay__title {
+	font-weight: 600;
+}
+
+/* The result's date and first card field (D305). */
+.viglet-dumont-overlay__meta {
+	font-size: 0.85rem;
+}
+
+.viglet-dumont-overlay__url {
+	font-size: 0.8rem;
+	opacity: 0.75;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.viglet-dumont-overlay__all {
+	display: inline-block;
+	margin-top: 0.75rem;
+}
+
+/* The immersive layout (D311): a large panel, the whole screen on a phone, results by type. */
+.viglet-dumont-overlay--immersive {
+	max-height: 85vh;
+	max-width: 60rem;
+	overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+
+	.viglet-dumont-overlay--immersive {
+		border: 0;
+		border-radius: 0;
+		/* The padding inside the screen's width, or the panel scrolls sideways. */
+		box-sizing: border-box;
+		height: 100dvh;
+		margin: 0;
+		max-height: none;
+		max-width: none;
+		width: 100vw;
+	}
+}
+
+.viglet-dumont-overlay__group {
+	list-style: none;
+	margin: 0 0 0.75rem;
+}
+
+.viglet-dumont-overlay__group-title {
+	display: block;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	margin: 0.5rem 0.75rem 0.25rem;
+	text-transform: uppercase;
+}
+
+.viglet-dumont-overlay__group-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* A column for the image only when the result has one. */
+.viglet-dumont-overlay__result--with-image {
+	align-items: center;
+	column-gap: 0.75rem;
+	grid-template-columns: 3.5rem 1fr;
+}
+
+.viglet-dumont-overlay__result--with-image > :not(.viglet-dumont-overlay__image) {
+	grid-column: 2;
+}
+
+.viglet-dumont-overlay__image {
+	aspect-ratio: 1;
+	border-radius: 4px;
+	grid-column: 1;
+	grid-row: 1 / span 3;
+	object-fit: cover;
+	width: 3.5rem;
+}
+
+.viglet-dumont-overlay__see-all {
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 0.4rem 0.75rem;
+	text-decoration: underline;
+}
+
+.viglet-dumont-overlay__see-all:hover,
+.viglet-dumont-overlay__see-all[aria-selected="true"] {
+	background: var(--wp--preset--color--contrast, #111);
+	color: var(--wp--preset--color--base, #fff);
+}
+
+/* The answer strip and the preview pane of the immersive layout (D311). */
+.viglet-dumont-overlay__answer {
+	border-left: 3px solid currentColor;
+	margin: 0.5rem 0;
+	padding: 0.5rem 0.75rem;
+	white-space: pre-line;
+}
+
+.viglet-dumont-overlay__body {
+	display: flex;
+	gap: 1rem;
+}
+
+.viglet-dumont-overlay__body > .viglet-dumont-overlay__results {
+	flex: 1;
+	min-width: 0;
+}
+
+.viglet-dumont-overlay__preview {
+	border-left: 1px solid currentColor;
+	flex: 0 0 18rem;
+	padding-left: 1rem;
+}
+
+.viglet-dumont-overlay__preview[hidden],
+.viglet-dumont-overlay__answer[hidden],
+.viglet-dumont-overlay__explore[hidden] {
+	display: none;
+}
+
+/* The zero state's Explore row (D311): the site's own links, in a row that wraps. */
+.viglet-dumont-overlay__explore-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0 0.75rem;
+	padding: 0;
+}
+
+.viglet-dumont-overlay__explore-link {
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	display: inline-block;
+	padding: 0.25rem 0.75rem;
+}
+
+.viglet-dumont-overlay__explore-link:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+/* A phone has no room beside the results: the preview is the desktop's. */
+@media (max-width: 899px) {
+
+	.viglet-dumont-overlay__preview {
+		display: none;
+	}
+}
+
+.viglet-dumont-overlay__preview-image {
+	border-radius: 4px;
+	max-width: 100%;
+}
+
+.viglet-dumont-overlay__preview-title {
+	font-weight: 600;
+}
+
+.viglet-dumont-overlay__preview-snippet,
+.viglet-dumont-overlay__preview-line {
+	font-size: 0.875rem;
+}
+
+.viglet-dumont-overlay__hint {
+	font-size: 0.8rem;
+	margin: 0.75rem 0 0;
+	opacity: 0.7;
+}

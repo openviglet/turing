@@ -1,0 +1,12 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 5
+    phpVersion: 80100
+    paths:
+        - src
+    bootstrapFiles:
+        - tests/phpstan-constants.php
+        - tests/stubs/wp-cli.php
+        - tests/stubs/woocommerce.php

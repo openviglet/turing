@@ -1,0 +1,112 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/search",
+	"title": "Turing search",
+	"category": "widgets",
+	"icon": "search",
+	"description": "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages.",
+	"keywords": [ "search", "turing", "facets" ],
+	"textdomain": "viglet-turing-search",
+	"providesContext": {
+		"viglet-dumont/search/placeholder": "placeholder",
+		"viglet-dumont/search/showFacets": "showFacets",
+		"viglet-dumont/search/showSort": "showSort",
+		"viglet-dumont/search/showAnswer": "showAnswer",
+		"viglet-dumont/search/suggestFilters": "suggestFilters",
+		"viglet-dumont/search/applyFilters": "applyFilters",
+		"viglet-dumont/search/showTrending": "showTrending",
+		"viglet-dumont/search/showImage": "showImage",
+		"viglet-dumont/search/showDate": "showDate",
+		"viglet-dumont/search/showType": "showType",
+		"viglet-dumont/search/showSnippet": "showSnippet",
+		"viglet-dumont/search/filters": "filters"
+	},
+	"attributes": {
+		"placeholder": {
+			"type": "string",
+			"default": ""
+		},
+		"showFacets": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSort": {
+			"type": "boolean",
+			"default": true
+		},
+		"perPage": {
+			"type": "number",
+			"default": 10
+		},
+		"filters": {
+			"type": "array",
+			"items": { "type": "string" },
+			"default": []
+		},
+		"facetsPosition": {
+			"type": "string",
+			"enum": [ "left", "right", "top" ],
+			"default": "left"
+		},
+		"resultsLayout": {
+			"type": "string",
+			"enum": [ "list", "grid" ],
+			"default": "list"
+		},
+		"showImage": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDate": {
+			"type": "boolean",
+			"default": true
+		},
+		"showType": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSnippet": {
+			"type": "boolean",
+			"default": true
+		},
+		"showAnswer": {
+			"type": "boolean",
+			"default": false
+		},
+		"showTrending": {
+			"type": "boolean",
+			"default": false
+		},
+		"suggestFilters": {
+			"type": "boolean",
+			"default": false
+		},
+		"applyFilters": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"styles": [
+		{ "name": "default", "label": "Default", "isDefault": true },
+		{ "name": "minimal", "label": "Minimal" },
+		{ "name": "cards", "label": "Cards" }
+	],
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": { "margin": true, "padding": true, "blockGap": true },
+		"color": { "background": true, "text": true, "link": true },
+		"typography": { "fontSize": true, "lineHeight": true },
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true
+		},
+		"interactivity": true
+	},
+	"editorScript": "viglet-dumont-search-block-editor",
+	"style": "viglet-dumont-search-block",
+	"render": "file:./render.php"
+}

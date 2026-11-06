@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6330105,
+    "path": "demo/photos/guide/hiking-boots-or-trail-shoes.png",
+    "sha256": "f0e517a14fd93cbe8a7714661870ffea5dd79dfb5d50cc6de39793752f1705ce"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of two hikers paused on a wet fell path in the northern English Lake District, one kneeling to lace a brown leather hiking boot while the other stands beside them in olive trail shoes, with layered fells and a small lake receding to the left.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-morning scene on a wet fell path in the northern English Lake District under overcast diffused daylight with a neutral-cool white balance. Pale slate sky fills the upper portion of the frame. Distant fells recede in cool blue-grey layers across the left and center background, with a small dark lake glinting between ridges. Faint mist clings to the lower slopes and light drizzle hangs suspended in the air. The ground is a muddy grass-and-stone path running through the midground, edged by wet heather and boggy patches with small puddles reflecting the pale sky. Palette of mossy greens, wet stone greys, muted earth tones, and pale slate.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Third hiker far in the mid-distance along the path, walking away from camera as a small silhouetted figure against the pale sky, centered-left in the frame at small scale.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Two hikers paused on the muddy path, anchored right-of-center, occupying roughly 50% of the frame height. Left hiker kneeling on one knee facing three-quarter view toward the right, head bowed down toward their boot, gaze directed at the laces. Right hiker standing upright in three-quarter front view, looking down toward the kneeling hiker's boot. Both wear layered merino base layers, softshell jackets in muted earth tones (one sage, one warm taupe), and worn cargo trousers cuffed above the ankle. Medium skin tones, short dark hair on the standing figure, shoulder-length light brown hair tied back on the kneeling figure. Natural skin texture, eyes catching the cool diffused daylight.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Tall waterproof brown leather hiking boot on the kneeling hiker's foot, fitted over a grey wool sock visible above the cuff. The boot sits on the muddy path, laces partially undone, the kneeling hiker's hands working at the laces.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Low-cut olive-green trail shoes on the standing hiker's feet, mesh uppers with visible weave texture, chunky black lugged soles, grey laces. Standing on the wet stone path.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Pair of steel C1 crampons resting on a flat grey rock beside the kneeling hiker's boot, twelve curved spikes per crampon catching faint highlights from the overcast sky, steel frames with leather straps coiled loosely.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of bright green bracken slicing diagonally into the lower-left foreground, fronds softly blurred, adding depth to the composition.\"\n      }\n    ]\n  }\n}",
+    "seed": 2015662978,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6330105,
+    "sha256": "f0e517a14fd93cbe8a7714661870ffea5dd79dfb5d50cc6de39793752f1705ce"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:35:35Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Hiking boots or trail shoes?\". Boots protect ankles on rough ground and keep feet dry in bog; trail shoes are lighter and dry faster when they do get wet. For scree, snow patches and long days, the Scafell waterproof hiking boot takes a C1 crampon. For good paths, the Pillar lightweight hiking boot is comfortable from the first walk. If... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:cBVnl795S129sRBktQlIdg"
+}

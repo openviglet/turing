@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5647539,
+    "path": "demo/photos/product/kirkstone-winter-boot.png",
+    "sha256": "4f233eaa90b84adff562985b4d9a9392b128faf007a7b1bc32df1c606b856db0"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A casual iPhone snapshot of a brown leather winter mountaineering boot placed on a mossy granite boulder along a quiet mountain trail, with rolling green fells and low mist receding into the distance under overcast afternoon light.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on an overcast afternoon. Rolling green fells recede into the distance, covered in heather and grass rendered in soft focus. Low hanging mist threads between the far ridges in pale grey bands. The sky is a flat diffused overcast white-grey with no visible sun. Cool neutral daylight throughout, with accurate color on the brown leather and moss.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mountain trail of packed dirt and loose scree running diagonally behind the boulder from lower-left to upper-right. Pale tan and grey loose stones scattered across the packed earth surface.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder occupying the center of the frame, large and rounded. Dense emerald moss cushions the top and sides, with small patches of bare grey stone showing through where the moss thins. Sits just right of center as the boot's perch.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Brown leather insulated winter mountaineering boot placed on the mossy boulder just right of center, three-quarter angle showing the full profile from toe to heel. Tall padded collar with soft fleece lining peeking at the cuff. Thick waxed laces threaded through heavy metal eyelets and speed hooks up the shaft. Stiff black rubber sole with deep lugged tread, prominent stitched heel welt wrapping the base of the shaft. Slight scuffs and dust on the toe box suggesting recent use. Tack-sharp focus on the leather grain, stitching, and laces.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of bent grass at the bottom-left foreground edge, soft green blades leaning across the corner, heavily blurred.\"\n      }\n    ]\n  }\n}",
+    "seed": 714379959,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5647539,
+    "sha256": "4f233eaa90b84adff562985b4d9a9392b128faf007a7b1bc32df1c606b856db0"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:20:20Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Kirkstone winter boot, in brown. An insulated winter mountaineering boot for snow and ice, rated for B2 crampons. Weight 1,780 g a pair (size 42). Insulated to about -15 \u00b0C. A stiff sole and a heel welt. Colour: Brown, Black. Materials: Leather. Care: Brush off mud, dry away from direct heat and reproof with a leather or fabric treatment. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:N-7apiE-Rj6zF6JT5RX5Kg"
+}

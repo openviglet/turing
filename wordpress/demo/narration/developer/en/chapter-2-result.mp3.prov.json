@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 189378,
+    "path": "demo/narration/developer/en/chapter-2-result.mp3",
+    "sha256": "f39bfc3c20f0b66bf95a8cd664eea36a17a40140784f42ca2c4b29033832ffdc"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00231,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00576,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 189378,
+    "sha256": "f39bfc3c20f0b66bf95a8cd664eea36a17a40140784f42ca2c4b29033832ffdc"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:50:26Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[pleased] It tests every step on the way: the address, the network, Turing itself, the key, and the site. This site didn't exist yet, so one click created it, with the fields the plugin needs.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:3ycdasuSDDU0WY8eCkp9"
+}

@@ -1,0 +1,51 @@
+{
+  "artefact": {
+    "bytes": 2148258,
+    "path": "demo/thumbnail/presenter.png",
+    "sha256": "3b2c2488ac9dda4ef4a165512fda7c41808a7f0faccd51c756295bc663653fe4"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "asked_resolution": "2304x1728",
+    "aspect_ratio": "4x3",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "896x1120",
+    "returned_prompt": "{\n  \"high_level_description\": \"A clean studio cutout photograph of a friendly outdoor-gear-shop owner in her thirties, waist-up, mid-presentation with an excited amazed expression, pointing to the right with empty space beyond her finger, on a transparent background.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"transparent background\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Woman in her thirties, waist-up, standing slightly left of center with body angled three-quarters toward camera and weight on her back foot. Head turned toward the viewer in three-quarter front view with an excited amazed expression \u2014 wide bright eyes catching the soft key light from camera-left, open-mouthed smile showing teeth, brows lifted high, cheeks raised. Shoulder-length brown hair with natural movement, a few strands catching the light. Her skin has a natural, detailed texture. Right arm stretched out fully to the side at shoulder height toward the right of the frame, elbow slightly bent, hand open with index finger extended pointing right, remaining fingers loosely curled, wrist relaxed. Wearing a moss green half-zip fleece pullover with visible brushed-fleece texture, half-zip pulled up to mid-chest, ribbed collar and cuffs.\"\n      }\n    ]\n  }\n}",
+    "seed": 1516206346,
+    "transparent": true
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 2148258,
+    "sha256": "3b2c2488ac9dda4ef4a165512fda7c41808a7f0faccd51c756295bc663653fe4"
+  },
+  "mismatch": {
+    "aspect_ratio": {
+      "asked": "4x3",
+      "got": "896x1120"
+    }
+  },
+  "params": {},
+  "produced_at": "2026-11-06T00:11:15Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Waist-up photograph of a friendly woman in her thirties who owns an outdoor gear shop, wearing a moss green half-zip fleece, smiling with an excited, amazed expression and looking toward the viewer. Her right arm is stretched out to the side and her index finger points to the right; the whole arm, hand and fingertip are fully inside the frame with empty space to the right of the fingertip. She stands slightly left of centre. Bright soft studio lighting, sharp focus, crisp hair edges, isolated subject on a transparent background, no text, no logos.",
+  "service": "ideogram",
+  "task_id": "ideogram:U3Cxa2hkQrCO1sdxD8qm9g"
+}

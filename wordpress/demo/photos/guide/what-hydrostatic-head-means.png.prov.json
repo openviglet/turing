@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5848042,
+    "path": "demo/photos/guide/what-hydrostatic-head-means.png",
+    "sha256": "4112ac196bb244a830dbc9c50b311f897f480db21617d58dcab3e1042999d664"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a young woman in a teal hardshell jacket pausing on a wet fell ridge in the Lake District to check her sleeve in a passing shower, with a border collie beside her and rolling green fells receding into haze.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-afternoon Lake District fell ridge under a broken shower sky. Soft diffused overcast daylight from above with a single break in the clouds sending a slanted shaft across the distant fells. Cool-neutral white balance, slightly desaturated palette of mossy green, slate grey, and wet rock. Rolling green fells recede into atmospheric haze in the mid-ground, hedgerow lines tracing their flanks, layered greens and blues softened by light mist. A thin veil of mist drifts across the middle distance between two hills. Far below in the valley, a narrow ribbon of lake water reflects the pale sky. Wet granite outcrop at the lower-left edge of the frame, slick with rain, a single bright green moss patch clinging to its face.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lone red-roofed stone farmhouse nestled against a distant slope on the left side of the frame, tiny but readable, weathered grey stone walls catching faint light.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Loose flock of starlings wheeling above the far ridge on the left side of the upper frame, small dark specks against the pale sky.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Young woman standing on the right third of the frame, body angled three-quarters toward the camera, weight settled on her back foot. Deep teal technical hardshell jacket with hood pulled up over damp dark hair, fine droplets beaded on the outer shell with a few running down the sleeve, small specular highlights along the shoulders and hood. Charcoal hiking trousers with reinforced knees, scuffed brown leather boots laced over thick wool socks. Right hand lifted to the cuff of her opposite sleeve checking the fabric. Faint smile of relief, gaze directed down at the cuff she is inspecting.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Worn olive-green backpack on the woman's shoulders, weathered canvas with darker patches from rain. A coiled length of climbing rope clipped to the side, a stainless steel water bottle tucked into the hip strap catching a small highlight.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small black-and-white border collie sitting close beside the woman's right boot, facing the camera in three-quarter front view. Tongue out, ears alert and upright, bright eyes looking up toward the woman's face. Black collar with a metal tag catching a small highlight.\"\n      }\n    ]\n  }\n}",
+    "seed": 1747806556,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5848042,
+    "sha256": "4112ac196bb244a830dbc9c50b311f897f480db21617d58dcab3e1042999d664"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:42:03Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"What hydrostatic head means\". Hydrostatic head is the height of a column of water, in millimetres, a fabric holds back before it leaks. More is more waterproof. A tent fly needs about 3,000 mm, a tent floor more because you kneel on it. A jacket needs 10,000 mm for showers and 20,000 mm or more for a storm: the... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:mhWwChRNTqG1JiwHET_qtA"
+}

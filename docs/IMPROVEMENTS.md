@@ -2347,23 +2347,6 @@ with its photo and narration provenance, the end-user docs and the release workf
 Dumont keeps one tile and a redirect. In this repository the plugin builds against the
 SDK from the same commit and is released with tags of the form wordpress-v*.
 
-### CLXXXII.1 The plugin moves in with its history (T1252)
-
-Dumont's wordpress/ directory (576 tracked files, 264 of them under demo/) is split out
-with git filter-repo --subdirectory-filter wordpress and merged as a top-level
-wordpress/ directory here, so blame and log survive the move. bin/copy-sdk.mjs reads
-frontend/packages/sdk/dist from this workspace instead of the npm package, so the plugin
-ships the SDK of its own commit. The plugin header's Plugin URI and readme.txt point at
-turing.viglet.org/wordpress/ and the Turing docs. Media provenance moves with the media:
-demo/seed/CREDITS.md, polyweave.toml and polyweave.purchases*.json. Done when composer
-test, the wp-scripts build and bin/build-zip.sh pass from this repository.
-
-**Set aside (2026-11-06).** The machine that ran the backlog had no PHP, composer or
-git-filter-repo, so neither the split nor the gate could run. Dumont's wordpress/ was
-also still taking commits that day (the demo video and Playground seed, 13:12), and a
-move while it changes forks the plugin: pick the move up when that work pauses, and
-remove the directory from Dumont in the same step.
-
 ### CLXXXII.2 Rename the Dumont prefix before the directory listing (T1253)
 
 The 28 classes in src/includes are class-viglet-dumont-*.php with Viglet_Dumont_*
@@ -2409,6 +2392,15 @@ and demo/playground/blueprint.json points at those URLs. The blueprint keeps
 turing-demo.viglet.org and the tarnfell site as its backend. The WordPress page's "Try
 the demo store" button opens playground.wordpress.net with the new blueprint-url. Done
 when that link boots the Tarnfell store and its search answers.
+
+**Then Dumont lets go of its copy (from T1252).** T1252 moved wordpress/ here with its
+history but left Dumont's directory in place: Dumont's Pages publish builds the
+Playground from it, so deleting it first would fail the whole dumont.viglet.org deploy
+and freeze the public demo. Once turing.viglet.org/playground/ serves the demo, remove
+from Dumont, in one commit there: wordpress/, .github/workflows/wordpress-plugin.yml,
+the Playground step of publish-github-pages.yml, and point its README and site pages
+(dumont-site wordpress page, connector docs) at turing.viglet.org/wordpress/. Until then
+the plugin's changes land here only; Dumont's copy is frozen.
 
 ### CLXXXII.7 The video beyond the WordPress page, with its transcript (T1257)
 

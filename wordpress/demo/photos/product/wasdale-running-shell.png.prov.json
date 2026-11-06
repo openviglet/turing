@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6507342,
+    "path": "demo/photos/product/wasdale-running-shell.png",
+    "sha256": "c852b41805223163175b68d0bbe88ed7ac48e345b0d9a266c9db9e06134210d8"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, an overhead flat-lay product photo of a sky-blue fell-running shell laid out centered on a pale natural wooden tabletop, square framing with even breathing room on all sides under soft north-facing daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A pale natural wooden tabletop fills the entire frame, fine linear grain running horizontally beneath the garment. Soft even north-facing daylight, neutral cool-toned white balance, no amber cast. A soft contact shadow pools just under the shell's edges, grounding it on the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue nylon fell-running running shell laid flat and front-facing, centered in the frame and occupying roughly 65% of the frame height as the unambiguous focal subject. Sleeves arranged naturally with a slight outward curve, fitted hood fanned open above the collar at the top, elasticated cuffs gathered at the wrists. Visible taped seams run along the shoulders, side panels, and underarms; rear hem line indicates a subtle back vent. Lightweight technical fabric with a faint matte sheen, fine nylon weave visible. No labels, logos, or printed graphics anywhere.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small natural highlight catching the crown of the hood where daylight grazes the fabric, a soft bright patch across the upper dome of the fanned-open hood.\"\n      }\n    ]\n  }\n}",
+    "seed": 1674341643,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6507342,
+    "sha256": "c852b41805223163175b68d0bbe88ed7ac48e345b0d9a266c9db9e06134210d8"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:34:20Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Wasdale running shell, in sky blue. A minimal waterproof for fell running, with taped seams that meet race kit rules. Weight 150 g (size M). Hydrostatic head 20,000 mm. Elasticated cuffs, a fitted hood and a back vent. Colour: Ember, Sky, Black. Materials: Nylon. Care: Wash at 30 \u00b0C with a technical cleaner, then tumble dry low to restore the water-repellent... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:V9gMtBpaRbSzWjRU6VGdWg"
+}

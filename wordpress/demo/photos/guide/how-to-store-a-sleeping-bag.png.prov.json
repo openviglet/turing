@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 7255156,
+    "path": "demo/photos/guide/how-to-store-a-sleeping-bag.png",
+    "sha256": "1ae2bf61c1e80a97d2f3aea669563ee43650b4f05387d157e633089ee13141fe"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a mid-thirties hiker kneeling on a heather-covered Lake District fell ridge, holding open a large oat-beige cotton storage sack to reveal a fluffy cream down sleeping bag, with a distant lake glinting between ridges behind her.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A grassy fell ridge in the Lake District under soft overcast daylight diffused through thin cloud, with a neutral cool-toned white balance and pale slate sky. The slope rises behind the figure in patches of purple heather bloom and rust-orange bracken. In the deep distance between two ridges, a small lake glints softly, partially veiled by low cloud and rendered out of focus. Fine Kodak Portra grain sits evenly across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Heather-covered fell slope filling the lower and middle frame, mossy green ground with patches of purple bloom and rust-orange bracken tufts scattered across the terrain. Rocky patches show through near the foreground.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of yellow gorse catching the lower-left foreground edge, soft blurred yellow blossoms against green foliage.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mid-thirties hiker kneeling on one knee on the heather just right of centre, body angled three-quarters toward camera, weight settled on her right leg. Both hands hold open a large storage sack at chest height, head tilted slightly down watching the bag with a small private smile, gaze directed at the sleeping bag inside the sack. Shoulder-length brown hair, fair skin with natural detailed texture, wearing a forest-green fleece jacket and dark olive trousers.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Large natural cotton storage sack in oat-beige canvas held at chest height by the hiker's hands, mouth spread wide to reveal its contents. Two sturdy webbing handles visible at the top edges, canvas texture slightly wrinkled from being pulled open.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Cream-colored down sleeping bag nested inside the open storage sack, clearly lofted and uncompressed. Visible puffy baffles along its length and a soft rolled collar at one end, fluffy texture contrasting against the flat canvas interior.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Smaller compressed stuff sack in muted olive nylon sitting on the ground beside the hiker's knee as visual contrast, cinched closed with its drawcord, compact cylindrical shape.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Worn leather hiking boots laced high, scuffed from recent miles, planted on the rocky ground beneath the hiker's kneeling pose. Tan-brown leather with darker scuff marks along the toe and sides.\"\n      }\n    ]\n  }\n}",
+    "seed": 295285859,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 7255156,
+    "sha256": "1ae2bf61c1e80a97d2f3aea669563ee43650b4f05387d157e633089ee13141fe"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:40:42Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to store a sleeping bag\". A sleeping bag kept in its stuff sack for months loses its loft for good. Store it loose in a large storage sack or hung in a cupboard. Dry it fully after every trip. The Skiddaw three-season down bag and the Bowfell winter down bag come with storage sacks for exactly this. Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:MqM6rIVYQP-P1baQoMSegg"
+}

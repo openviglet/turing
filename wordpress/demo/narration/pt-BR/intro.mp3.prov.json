@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 597724,
+    "path": "demo/narration/pt-BR/intro.mp3",
+    "sha256": "79068f512c9d74ab564fa038d892534bcb199fe90fccb95018c8e740c9d30fd2"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.01617,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 597724,
+    "sha256": "79068f512c9d74ab564fa038d892534bcb199fe90fccb95018c8e740c9d30fd2"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:10:07Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] Oi! Eu sou a Ana, e essa \u00e9 a Recanto da Serra, a minha lojinha de aventura. Barracas, jaquetas, botas, tudo pra montanha. A loja roda em WordPress, com o WooCommerce cuidando do cat\u00e1logo, do carrinho e do pagamento. [laughs] Agora, vou ser sincera com voc\u00ea: durante anos a caixa de busca foi a parte mais triste da loja. A pessoa digitava alguma coisa, n\u00e3o achava nada e ia embora. H\u00e1 poucas semanas eu troquei a busca pelo Viglet Turing, e nossa, mudou tudo. Ent\u00e3o pega um caf\u00e9, e vem ver o que os meus clientes encontram agora!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:AvsBaKBsg1NuRXhXctA4"
+}

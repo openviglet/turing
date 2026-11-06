@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6926633,
+    "path": "demo/photos/product/glaramara-synthetic-jacket.png",
+    "sha256": "ebbd31faa9440737db2a903e4f27f19f2d086c134d45d6b438eeed6f6b764c12"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a top-down flat-lay product photo of a navy synthetic insulated jacket laid out centered on a pale natural wooden table in soft even daylight, with the hood at the top and sleeves extended outward.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural wooden table surface filling the entire frame, fine grain running diagonally across the frame with subtle knots and tonal variation in the wood. Soft diffused daylight falls evenly from above with no harsh shadows, neutral cool-toned white balance, gentle ambient shadow under the jacket's edges grounding it on the wood. Clean e-commerce flat-lay aesthetic with even breathing room around the garment.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue synthetic insulated jacket, size M, laid flat and centered on the table, viewed from directly overhead. Deep saturated blue nylon face with subtle sheen. Hood arranged naturally at the top with drawcord ends trailing slightly to one side. Sleeves extended outward and gently curved with cuffs relaxed. Front zipper closed down the centerline. Two chest pockets visible, one zippered chest pocket slightly puffed from its packable nature. Hem straight across the bottom. Horizontal quilted baffles across the body and vertical baffles along the sleeves, faint highlights catching the loft of the synthetic fill inside each baffle.\"\n      }\n    ]\n  }\n}",
+    "seed": 172924046,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6926633,
+    "sha256": "ebbd31faa9440737db2a903e4f27f19f2d086c134d45d6b438eeed6f6b764c12"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:20:26Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Glaramara synthetic jacket, in navy blue. A synthetic insulated jacket that stays warm when damp, for the wet cold of a British winter. Weight 420 g (size M). 100 g/m\u00b2 synthetic fill that keeps its loft in drizzle. Packs into its chest pocket. Colour: Moss, Navy, Ember. Materials: Synthetic insulation, Nylon. Care: Wash at 30 \u00b0C with a down or synthetic... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:ytNlCEWnQlW2rC2ThmNUkA"
+}

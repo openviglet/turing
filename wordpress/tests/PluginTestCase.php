@@ -1,0 +1,96 @@
+<?php
+/**
+ * Brain Monkey set up and torn down around each test, with the WordPress functions every test reads.
+ *
+ * @package Viglet_Dumont
+ */
+
+namespace Viglet\Dumont\Tests;
+
+use Brain\Monkey;
+use Brain\Monkey\Functions;
+use PHPUnit\Framework\TestCase;
+
+abstract class PluginTestCase extends TestCase {
+
+	/** The requests the plugin sent, each as [url, args]. */
+	protected array $requests = array();
+
+	/** The status code every stubbed request answers with. */
+	protected int $status = 200;
+
+	protected function setUp(): void {
+		parent::setUp();
+		Monkey\setUp();
+
+		Functions\stubTranslationFunctions();
+		Functions\stubs(
+			array(
+				'untrailingslashit'                 => static fn ( $value ) => rtrim( $value, '/' ),
+				'wp_json_encode'                    => static fn ( $value ) => json_encode( $value ),
+				'is_wp_error'                       => static fn ( $value ) => $value instanceof \WP_Error,
+				'add_query_arg'                     => static fn ( array $args, string $url ) => $url . '?' . http_build_query( $args ),
+				'wp_remote_retrieve_response_code'  => static fn ( $response ) => $response['response']['code'],
+				'wp_remote_retrieve_body'           => static fn ( $response ) => $response['body'],
+				'wp_remote_retrieve_header'         => static fn ( $response, $name ) => $response['headers'][ $name ] ?? '',
+				'sanitize_key'                      => static fn ( $key ) => strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', $key ) ),
+				'sanitize_text_field'               => static fn ( $text ) => trim( strip_tags( $text ) ),
+				// No stored mapping and no custom taxonomy: a post sends the fixed document only.
+				'get_option'                        => static fn ( $name, $fallback = false ) => $fallback,
+				'update_option'                     => true,
+				'get_object_taxonomies'             => array(),
+				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
+				'home_url'                          => 'https://site.example.org',
+				'rest_url'                          => static fn ( $path = '' ) => 'https://site.example.org/wp-json/' . ltrim( $path, '/' ),
+				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
+				'is_sticky'                         => false,
+				// D308: indexing schedules a post's leaving search; nothing is scheduled by default.
+				'wp_clear_scheduled_hook'           => 0,
+				'wp_timezone'                       => static fn () => new \DateTimeZone( 'UTC' ),
+			)
+		);
+		Functions\when( 'wp_remote_request' )->alias(
+			function ( string $url, array $args ) {
+				$this->requests[] = array( $url, $args );
+				return array(
+					'response' => array( 'code' => $this->status ),
+					'body'     => '',
+				);
+			}
+		);
+	}
+
+	protected function tearDown(): void {
+		Monkey\tearDown();
+		parent::tearDown();
+	}
+
+	protected function settings( array $overrides = array() ): array {
+		return array_merge(
+			array(
+				'server_url'          => 'https://turing.example.org/',
+				'site_name'           => 'Sample Site',
+				'api_key'             => 'secret',
+				'locale'              => 'pt_BR',
+				'source_app'          => 'wordpress',
+				'index_posts'         => 1,
+				'index_pages'         => 1,
+				'index_custom_types'  => array(),
+				'index_comments'      => 0,
+				'index_custom_fields' => '',
+				'index_categories'    => 1,
+				'index_tags'          => 1,
+				'exclude_ids'         => '',
+				'batch_size'          => 50,
+				'results_per_page'    => 10,
+				'public_url'          => '',
+			),
+			$overrides
+		);
+	}
+
+	/** The JSON body of the n-th request, decoded. */
+	protected function body( int $index = 0 ): array {
+		return json_decode( $this->requests[ $index ][1]['body'], true );
+	}
+}

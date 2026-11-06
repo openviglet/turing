@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 231592,
+    "path": "demo/narration/en/outro.mp3",
+    "sha256": "10aadcbca3bf39b14412f5a27459fa35f8f729bf2cc391231c35c90ed9c1d46f"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00309,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00771,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 231592,
+    "sha256": "10aadcbca3bf39b14412f5a27459fa35f8f729bf2cc391231c35c90ed9c1d46f"
+  },
+  "params": {},
+  "produced_at": "2026-11-02T19:59:22Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] So that's Tarnfell, with Viglet Turing! If you run a WordPress shop too, and you're tired of that sad little search box, the plugin and this whole demo are at the address on screen. Come and try it, I think you're going to love it as much as I do!",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:GaKO1E14zpiu3QQw4Qjm"
+}

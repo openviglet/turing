@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6693956,
+    "path": "demo/photos/guide/how-to-wash-a-down-jacket.png",
+    "sha256": "2a0963dc5cbd327505507a25eb510e83c4799664e1384da35a503dbfccbe9f35"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor portrait of a hiker on a rocky fell ridge above a northern English lake, checking her freshly washed charcoal down jacket hung to air between two stone cairns, with distant blue-green ridges and a glimmering lake in the valley below.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A late-afternoon northern English fell landscape under cool-neutral daylight raking from camera-left. Distant fells layer in receding blue-green ridges across the middle distance, with a glimmering lake tucked into a valley below catching the pale sky. The rocky ridge surface is scattered with weathered grey stones and tufts of low vegetation. Soft Kodak Portra grain across the frame. The hiker's cheekbone catches a faint warm glow from the low sun; otherwise the palette stays cool green-blue.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Two small silhouetted walkers far below the cairns on a faint path winding through the valley slope, rendered as tiny dark figures against the blue-green ridges, midground distance.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Charcoal-grey puffy down jacket hanging from a length of paracord strung between two weathered stone cairns, filling the upper-left third of the frame. Baffles visibly plumped and evenly filled with down, hood flopped forward over the shoulders, drawcord dangling loose at the hem. Late-afternoon light rakes across the baffles from camera-left showing their loft.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Woman in her early thirties standing three-quarters turned toward the jacket at left, body filling roughly half the frame height as the focal subject, anchored slightly right of center in the midground. Weight settled on her back foot. Right hand reaching up to gently squeeze the jacket sleeve testing for clumps, gaze directed at the sleeve she is testing. Left hand holding a stainless steel flask at hip height. Heather-grey merino base layer, dark olive technical trousers cuffed over brown leather hiking boots, faded red beanie pushed back on her head. Light skin with natural detailed texture, faint warm glow on her cheekbone from the low sun.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Lower weathered stone cairn at right, stacked grey rocks with a flat top surface. Two clean white tennis balls rest on the flat top beside a folded grey microfibre towel.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Upper weathered stone cairn at right, taller stack of lichen-flecked grey rocks supporting the paracord line that runs leftward to anchor the jacket.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Battered enamel mug of tea sitting on a flat rock in the foreground left, chipped cream-white enamel with a thin blue rim, faint steam curling upward catching the warm side light.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of purple heather and yellow gorse slicing in from the bottom-right foreground edge, soft blurred color against the sharper midground.\"\n      }\n    ]\n  }\n}",
+    "seed": 1400308238,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6693956,
+    "sha256": "2a0963dc5cbd327505507a25eb510e83c4799664e1384da35a503dbfccbe9f35"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:39:18Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to wash a down jacket\". Down clumps when wet, and a down jacket washed like a cotton one comes out flat. Use a down wash at 30 \u00b0C on a gentle cycle, rinse twice and tumble dry on low with two clean tennis balls until no clumps are left, which takes hours. The Blencathra down jacket and the Bowfell parka... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:ld7v-eUWTeSJR8ctxaKUFQ"
+}

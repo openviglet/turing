@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 374952,
+    "path": "demo/narration/en/chapter-2-result.mp3",
+    "sha256": "204e0db90344e5248ef637282e21d1ca0184fdcc740aaec34e7423e79fad795f"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00459,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.01149,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 374952,
+    "sha256": "204e0db90344e5248ef637282e21d1ca0184fdcc740aaec34e7423e79fad795f"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T19:33:15Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] And look at this! Viglet Turing read under four hundred dollars as a price filter, all by itself, and showed only what fits the budget. And up top, a short answer that names the best one, with the price and why, and every source right below it. [laughs] My old WordPress search found nothing at all for this sentence. Nothing! Now it reads like a friend who knows the shop.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:kgJkThYafZFTv3TqhfE3"
+}

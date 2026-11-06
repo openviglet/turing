@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6325850,
+    "path": "demo/photos/product/haystacks-one-person-tent.png",
+    "sha256": "119836b3aefc05c22455b9cf73e276372a508e17f8d423cdeb9ed6f5667cf20e"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a quiet wild camp with a sand-beige Haystacks one-person backpacking tent pitched on a flat patch of short grass among rolling green fells under soft overcast daylight, framed off-center with the shelter sitting just below center and blurred hills receding behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet fellside campsite under soft overcast daylight. Rolling green fell slopes softly blurred in the distance, gentle undulations fading toward a hazy horizon in cool neutral tones. Flat level patch of short trampled grass extends across the foreground and around the tent site, no rocks or boulders anywhere under or near it. Even diffused light across the scene, no harsh shadows, cool-toned neutral white balance.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Haystacks one-person backpacking tent fully pitched in sand beige nylon, low dome profile with a single central pole, positioned just below center and occupying roughly 40% of the frame width as the focal subject. Outer fly already up with the inner tent tucked beneath. Mesh door panel visible at the front facing the camera, small vestibule flap folded back to one side. Subtle fabric weave texture visible across the nylon panels, seam tape along the panel joins.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Four taut guy lines radiating from the fly corners of the tent, thin dark cords extending outward and downward into the turf. Each line anchored with a small black peg hammered flush into the grass at its end.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"A few scattered tufts of taller grass and a thin wisp of peat moss at the lower-left foreground edge, slightly out of focus, darker green-brown tones against the surrounding short turf.\"\n      }\n    ]\n  }\n}",
+    "seed": 1880629851,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6325850,
+    "sha256": "119836b3aefc05c22455b9cf73e276372a508e17f8d423cdeb9ed6f5667cf20e"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:22:44Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the shelter fully pitched on a flat, level patch of short grass at a wild camp in the green fells, guy lines taut and pegged into the turf, no rocks or boulders under it, the whole shelter in frame, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Haystacks one-person tent, in sand beige. A one-person backpacking tent that pitches outer first, so the inner stays dry in rain. Weight 1,100 g. Hydrostatic head 3,000 mm on the fly, 5,000 mm on the floor. One pole. Colour: Moss, Sand. Materials: Nylon. Care: Pitch to dry before storing, loosely packed and out of sunlight. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:_aXZY4XPSAalE_QdW-Dnkw"
+}

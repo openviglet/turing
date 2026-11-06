@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5929797,
+    "path": "demo/photos/product/kirkstone-silk-liner.png",
+    "sha256": "185f6e0494027da26ab12b73fd0d492a4e006696a6d6e917f7d863b11ac9bbb6"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"A vertical product photograph of a navy blue silk sleeping bag liner rolled into a soft cylindrical bundle, resting on a mossy granite boulder along a quiet mountain trail in the green fells under overcast daylight.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on an overcast afternoon with soft diffused daylight and neutral cool-toned white balance. Rolling green fell slopes recede into the distance, heather-streaked grass and low peat ridges giving way to distant hazy fells fading into pale atmospheric mist at the horizon. A narrow dirt-and-gravel footpath winds diagonally behind the rock, scattered loose stones along its edge. Fine editorial grain across the frame.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder centered in the frame at midground, covered in thick emerald and olive moss across its rounded upper surface. Damp patches near the base, small ferns sprouting from cracks along the lower edge. Falls into gentle softness behind the liner.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue silk sleeping bag liner rolled loosely into a soft cylindrical bundle, resting on top of the mossy boulder, centered horizontally. Smooth lustrous silk surface catching faint highlights along the folds, subtle sheen and fine weave visible in crisp sharp focus. A small drawstring cinched at one end.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of tall grass and a single small wildflower in the lower-left foreground, just inside the frame edge. Soft blurred greens with a faint pale flower head.\"\n      }\n    ]\n  }\n}",
+    "seed": 1620222762,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5929797,
+    "sha256": "185f6e0494027da26ab12b73fd0d492a4e006696a6d6e917f7d863b11ac9bbb6"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:16:39Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, shallow depth of field with the item in sharp focus and the landscape softly blurred behind. Nobody in the frame. The item is Kirkstone silk liner, in navy blue. A silk sleeping bag liner that adds warmth and keeps a bag clean. Weight 130 g. Adds about 2 \u00b0C. Colour: Sand, Navy. Materials: Silk. Care: Store loose in its storage sack, not compressed. Wash rarely, with a specialist wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:Pact6zNBTp6hPHe3CchbOg"
+}

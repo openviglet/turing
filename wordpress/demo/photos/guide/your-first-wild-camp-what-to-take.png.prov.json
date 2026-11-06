@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6733042,
+    "path": "demo/photos/guide/your-first-wild-camp-what-to-take.png",
+    "sha256": "e6cb14c5080364159e15331ae0171325f9842f0a8f92bff6145a7b760528d14d"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a one-person wild camp on a windswept fell above a northern English lake in late afternoon, with a small dome tent, kettle steaming on a stone, and distant fells receding toward a still lake, shot on 35mm equivalent with fine Kodak Portra grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A windswept northern English fell in late afternoon under clearing overcast daylight, cool-leaning neutral white balance. Distant fells layer across the lower third in soft blue-green haze, receding toward a still lake at the bottom of the valley. A single low sun rakes from the right edge, catching grass tips and steam. Heather-covered slope fills the foreground in mossy greens and heather purple-brown, dotted with low grasses and scattered stones. Slight breeze visible in the grass tips. Palette of mossy greens, heather purple-brown, slate grey, with warm cream as the only saturated note.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Compact one-person dome tent, midground left-of-center, anchored to the peat with taut guy lines staked into the ground. Rainfly slightly damp from earlier drizzle, rim catching low sun from the right. Entrance flap rolled back revealing a glimpse of dark interior. Slate-grey body with subtle sheen.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Compressed down sleeping bag in slate-grey and charcoal laid out on the ground beside the tent, partially unzipped showing a darker inner lining. Muted olive sleeping mat beneath it, edges slightly rumpled.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small portable camp stove set up on a flat grey stone just outside the tent in the foreground right. Battered enamel kettle perched on top with chipped white enamel and dark rim, thin curl of steam rising from the spout catching the low sun.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Enamel mug of tea steaming beside the stove on the flat stone, cream-colored exterior with a faint ring of condensation on the rock beneath it. Thin wisp of steam curling upward, the only saturated warm note in the frame.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Folded wool blanket in muted earth tones and a small canvas rucksack in faded olive resting against a weathered grey boulder near the tent. Rucksack straps loose, blanket neatly folded.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Tuft of heather and low grass cropped close to the lens in the foreground left, blades catching the low sun from the right, slight motion blur from the breeze.\"\n      }\n    ]\n  }\n}",
+    "seed": 788057491,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6733042,
+    "sha256": "e6cb14c5080364159e15331ae0171325f9842f0a8f92bff6145a7b760528d14d"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:37:55Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"Your first wild camp: what to take\". Shelter, sleep and something hot are the three things a first wild camp needs. Everything else is comfort. The Haystacks one-person tent, the Skiddaw three-season down bag and a Grisedale sleeping mat cover shelter and sleep. The Fairfield camp stove and the Langdale cook set boil water for tea in four minutes. Keep your sleeping... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:8DoT1zhJRNKAqTmqcy0xrA"
+}

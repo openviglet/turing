@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5640397,
+    "path": "demo/photos/product/helvellyn-28-litre-daypack.png",
+    "sha256": "935622d2b274cadc3e30e17e95825bb5aaeb1c6f89778764d2310e9003907b13"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a Helvellyn 28 litre daypack in moss green nylon resting upright on a moss-crusted granite boulder beside a narrow trail in the Lake District fells, with rolling green slopes receding into overcast haze behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Overcast afternoon in the Lake District fells. A slate-grey sky implied by even, cool-neutral diffuse daylight across the scene, no harsh shadows. Rolling green fell slopes layer into the distance behind the boulder, heather-dotted ridges softening into atmospheric haze. A low cloud bank hugs the far ridge line. Cool-neutral white balance, accurate greens ranging from deep forest to pale heather. Deep depth of field with everything in focus, sharp on the pack and falling into soft natural depth-of-field blur on the distant fells without creamy bokeh.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Flat-topped grey granite boulder filling the lower third of the frame, crusted in thick emerald moss across its upper surface. Small white liverwort patches dot the edges. Granite visible in patches where moss thins, weathered grey stone texture.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Narrow dirt-and-stone trail winding diagonally behind the boulder from lower-right into the mid-ground left, pale earthy brown path with scattered small stones, narrowing as it recedes.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Helvellyn 28 litre daypack in moss green nylon, resting upright on the boulder just right of center, medium-large size dominating the midground. Ventilated mesh back panel facing the camera, top lid closed and slightly cinched at the neck, padded shoulder straps folded flat against the body, hipbelt at the base with two small zippered pockets at the front, side compression straps loosely buckled. Faint sheen of water beads on the nylon catching tiny specular highlights.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of mountain grass and a single bent fern frond cropping into the lower-left foreground corner, soft green blur.\"\n      }\n    ]\n  }\n}",
+    "seed": 81823773,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5640397,
+    "sha256": "935622d2b274cadc3e30e17e95825bb5aaeb1c6f89778764d2310e9003907b13"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:20:52Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Helvellyn 28 litre daypack, in moss green. A 28 litre daypack with a ventilated back, the right size for a full day on the fells. Weight 980 g. A rain cover in the base, a hydration sleeve and hipbelt pockets. Colour: Slate, Ember, Moss, Black. Materials: Nylon. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:N1nxqbjiQwCZxkfrTr-u0Q"
+}

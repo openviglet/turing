@@ -1683,3 +1683,4 @@
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+- **T1252** — The WordPress plugin lives in wordpress/ with its 267-commit history; its build copies the workspace SDK, and composer check, wp-scripts build and build-zip.sh pass here (design §CLXXXII.1 superseded: Dumont's copy stays until T1256 moves the Playground: its Pages deploy builds from it).

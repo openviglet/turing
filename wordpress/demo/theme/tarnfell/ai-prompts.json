@@ -1,0 +1,24 @@
+{
+	"prompts": [
+		{
+			"question": "Which jacket should I carry when rain is only forecast?",
+			"cite": "How to choose a waterproof jacket",
+			"mentions": "Catbells"
+		},
+		{
+			"question": "What size backpack do I need for a night in a hut?",
+			"cite": "What size backpack do you need?",
+			"mentions": "4[05]"
+		},
+		{
+			"locale": "pt_BR",
+			"question": "Que mochila eu levo para uma noite num refúgio?",
+			"cite": "De que tamanho deve ser sua mochila?",
+			"mentions": "4[05]"
+		}
+	],
+	"declined": {
+		"question": "How much does a kayak cost in your shop?",
+		"why": "The store sells no kayak: the answer must name no price."
+	}
+}

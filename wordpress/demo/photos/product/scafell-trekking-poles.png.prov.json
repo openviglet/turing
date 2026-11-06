@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5600750,
+    "path": "demo/photos/product/scafell-trekking-poles.png",
+    "sha256": "8f6f1617a1ee82c1508991c0382d5b76ac24f1eab1f475cac7058a02dad7fb0f"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a pair of burnt-orange trekking poles crossed in an X on a mossy granite boulder beside a narrow footpath in the green fells of the Lake District, with rolling hills fading into pale haze behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"The green fells of the Lake District under soft overcast daylight from a high open sky, neutral cool-toned white balance. Rolling fell slopes layered into the distance, saturated greens broken by soft heather patches and tufts of grass. A distant ridgeline fades into pale atmospheric haze at the horizon, rendered as gentle bokeh. A narrow dirt-and-stone footpath winds away into the mid-distance behind the rock.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder occupying the lower-center of the frame, large in scale. Thick emerald and chartreuse moss blankets the upper surface with small lichen patches in pale grey-green scattered across it. Rough grey granite edges peek through at the base.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Pair of adjustable aluminium trekking poles in burnt orange, crossed in an X centered on top of the mossy boulder, dominating the central frame. Cork grips visible at the upper ends with flick-lock collars just below, black rubber baskets above the tips, sharp tungsten carbide tips pointing down into the moss. Brushed aluminium finish catches subtle highlights along the shafts.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small out-of-focus fern frond cropping into the lower-left foreground edge, soft green blur.\"\n      }\n    ]\n  }\n}",
+    "seed": 1101922870,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5600750,
+    "sha256": "8f6f1617a1ee82c1508991c0382d5b76ac24f1eab1f475cac7058a02dad7fb0f"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:17:31Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, shallow depth of field with the item in sharp focus and the landscape softly blurred behind. Nobody in the frame. The item is Scafell trekking poles, in burnt orange. A pair of adjustable aluminium trekking poles that take the strain off knees on the descent. Weight 520 g a pair. Adjusts from 105 to 135 cm. Flick locks and cork grips. Colour: Slate, Ember, Black. Materials: Aluminium. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:umdv1E4ORdedo6gl0sxdkw"
+}

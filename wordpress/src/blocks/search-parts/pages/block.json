@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "viglet-dumont/search-pages",
+	"title": "Search pages",
+	"category": "widgets",
+	"icon": "ellipsis",
+	"description": "The Turing search block’s result pages.",
+	"textdomain": "viglet-turing-search",
+	"ancestor": [
+		"viglet-dumont/search"
+	],
+	"usesContext": [
+		"viglet-dumont/search/placeholder",
+		"viglet-dumont/search/showFacets",
+		"viglet-dumont/search/showSort",
+		"viglet-dumont/search/showAnswer",
+		"viglet-dumont/search/suggestFilters", "viglet-dumont/search/applyFilters",
+		"viglet-dumont/search/showImage",
+		"viglet-dumont/search/showDate",
+		"viglet-dumont/search/showType",
+		"viglet-dumont/search/showSnippet",
+		"viglet-dumont/search/filters"
+	],
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "viglet-dumont-search-block-editor",
+	"render": "file:../render.php"
+}

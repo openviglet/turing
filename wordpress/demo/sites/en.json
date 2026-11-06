@@ -1,0 +1,17 @@
+{
+	"name": "Tarnfell",
+	"kind": "store",
+	"locale": "en_US",
+	"services": "",
+	"port": 38082,
+	"portEnv": "WP_DEMO_PORT",
+	"snSite": "tarnfell",
+	"snSiteEnv": "SN_DEMO_SITE",
+	"title": "Tarnfell",
+	"theme": "tarnfell",
+	"woocommerce": true,
+	"seed": "/demo/seed/catalog.php",
+	"history": "/demo/seed/searches.php",
+	"seeded": "function_exists( 'wc_get_product_id_by_sku' ) && wc_get_product_id_by_sku( 'TF-01-SLA' )",
+	"specs": "demo"
+}

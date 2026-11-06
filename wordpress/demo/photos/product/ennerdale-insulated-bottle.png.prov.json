@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5298330,
+    "path": "demo/photos/product/ennerdale-insulated-bottle.png",
+    "sha256": "0c899ee3cfa022fea7d1032322e968a872ff5ef072db219e436e1d6755302690"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a sky-blue insulated steel bottle resting on a mossy granite rock along a quiet mountain trail in the green fells of the English Lake District on an overcast afternoon, with rolling hills receding into atmospheric haze behind.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Overcast afternoon in the English Lake District, neutral cool-toned daylight with diffused soft light and no harsh shadows. Rolling green fells recede into pale grey-blue atmospheric haze, layered ridgelines dissolving into painterly blur. A narrow dirt-and-gravel trail curves away into the mid-distance. Wet bracken and tufts of purple-grey heather scatter across the foreground slope. Fine natural grain throughout.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite rock at frame center-foreground, roughly the size of a large boulder, occupying the lower-middle third of the frame. Thick emerald and ochre cushion moss creeps over its edges, with pale grey-green lichen patches scattered across the exposed grey stone surface.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue insulated steel bottle, 750 ml, slim cylindrical body with a screw-top cap, resting upright on top of the mossy rock at frame center. Completely clean matte sky-blue steel surface with no labels, logos, or brand marks. Faint condensation beading along the lower third of the body, subtle cool sky reflections along the curved steel sheen.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"A single out-of-focus fern frond slicing in from the lower-left foreground edge, deep green pinnate leaves blurred into soft shapes against the slope.\"\n      }\n    ]\n  }\n}",
+    "seed": 962613359,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5298330,
+    "sha256": "0c899ee3cfa022fea7d1032322e968a872ff5ef072db219e436e1d6755302690"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:32:04Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Ennerdale insulated bottle, in sky blue. A 750 ml insulated steel bottle that keeps tea hot for twelve hours. Weight 380 g. Hot for 12 hours, cold for 24. Colour: Moss, Ember, Sky, Slate, Sand. Materials: Steel. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:V_A5EG96Riai_HUTh5NrsA"
+}

@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6718773,
+    "path": "demo/photos/product/wansfell-running-top.png",
+    "sha256": "0a452ce115ad0deb388621f8d96f469e4d8d05307d435ef18ad841eab30f0083"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a top-down flat lay of a sky-blue long-sleeved running top centered on a pale natural wooden table in soft daylight, clean e-commerce aesthetic with no styling props.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural wooden table surface filling the entire frame, fine straight grain running diagonally across the planks with faint knots and subtle tonal variation between boards. Soft even north-facing window daylight from overhead, neutral cool-toned white balance, gentle ambient falloff at the corners, no harsh shadows or hotspots. A soft diffused shadow sits beneath the garment edges grounding it to the wood.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue long-sleeved running top laid flat and centered in the frame, occupying roughly 60% of the frame width as the unambiguous focal subject. Lightweight polyester knit with subtle technical weave texture catching light softly along folds. Crew neckline at the top center, raglan-style sleeves spread symmetrically outward to either side, cuffs relaxed and slightly open, hem even across the bottom. Fabric slightly gathered at the shoulders suggesting light weight.\"\n      }\n    ]\n  }\n}",
+    "seed": 280283374,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6718773,
+    "sha256": "0a452ce115ad0deb388621f8d96f469e4d8d05307d435ef18ad841eab30f0083"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:10:34Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Wansfell running top, in sky blue. A light long-sleeved top for running in cool weather. Weight 140 g (size M). Wicks sweat and dries in an hour on a line. Colour: Ember, Sky, Black, Moss. Materials: Polyester. Care: Machine wash at 30 \u00b0C. Do not iron. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:k8JF6PYkRuujFmZ3hJ6g9g"
+}

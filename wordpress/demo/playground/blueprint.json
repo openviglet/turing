@@ -1,0 +1,73 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "Tarnfell, a WooCommerce store searched by Viglet Turing",
+		"description": "The Viglet Turing Search plugin on the Tarnfell demo store, searching a hosted Viglet Turing. Nothing is installed and a reload starts it again (D239).",
+		"author": "openviglet",
+		"categories": [ "Search", "WooCommerce" ]
+	},
+	"landingPage": "/",
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"features": {
+		"networking": true
+	},
+	"login": true,
+	"steps": [
+		{
+			"step": "defineWpConfigConsts",
+			"consts": {
+				"VIGLET_DUMONT_DEMO": "1",
+				"VIGLET_DUMONT_TURING_URL": "https://turing-demo.viglet.org",
+				"VIGLET_DUMONT_TURING_SITE": "tarnfell",
+				"VIGLET_DUMONT_SITE_KEY": "tarnfell",
+				"VIGLET_DUMONT_TURING_LOCALE": "en_US",
+				"TARNFELL_TOUR": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://dumont.viglet.org/playground/viglet-turing-search.zip"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "url",
+				"url": "https://dumont.viglet.org/playground/tarnfell.zip"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "woocommerce"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "unzip",
+			"zipFile": {
+				"resource": "url",
+				"url": "https://dumont.viglet.org/playground/tarnfell-demo.zip"
+			},
+			"extractToPath": "/tmp"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; global $wp_rewrite; $wp_rewrite->set_permalink_structure( '/%postname%/' ); ob_start(); require '/tmp/tarnfell-demo/seed/catalog.php'; ob_end_clean(); flush_rewrite_rules( false );"
+		}
+	]
+}

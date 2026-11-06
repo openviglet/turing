@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6862643,
+    "path": "demo/photos/product/catbells-light-rain-jacket.png",
+    "sha256": "e27d573a1aa219b09ba51f8a5d0e54344bc7acfcc451c979a31a56fd10aaf723"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2048x2048",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, an overhead flat-lay of a sky-blue nylon rain jacket laid flat and centered on a pale natural wooden table in soft even daylight, sleeves spread symmetrically with the hood rolled into the collar.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Pale natural wooden table surface filling the frame, soft horizontal grain running across the planks with subtle knots and tonal variation. Soft even daylight from a north-facing window produces gentle directional shadow from the upper-left, with a soft diffused shadow pooling just under the jacket edges grounding it to the wood. Neutral cool-toned white balance.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Sky-blue nylon rain jacket laid flat and centered, front-facing, filling roughly 75% of the frame as the unambiguous focal subject. Sleeves spread symmetrically with a gentle natural curve, slight crinkle where they bend. Hood rolled into the collar at the neckline. Two hand pockets along the lower hem, full-length front zipper running down the center with subtle sheen catching daylight along the teeth. Taped seams faintly visible as fine parallel stitching lines along shoulders and side seams. Smooth ripstop nylon weave texture, no labels or logos.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Small folded pocket of the jacket tucked against the lower-right hem, fabric packed into itself in a compact bundle, hinting at the packaway feature. Same sky-blue ripstop nylon as the rest of the garment.\"\n      }\n    ]\n  }\n}",
+    "seed": 739969415,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6862643,
+    "sha256": "e27d573a1aa219b09ba51f8a5d0e54344bc7acfcc451c979a31a56fd10aaf723"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T18:19:07Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Flat lay product photograph: the garment neatly laid flat on a pale natural wooden table, photographed from directly above, sleeves and hood arranged naturally, soft even daylight. Nothing inside it: not worn, not on a mannequin, not floating. The item is Catbells light rain jacket, in sky blue. A light rain jacket that packs into its own pocket, for a day out when showers are forecast. Weight 240 g (size M). Hydrostatic head 15,000 mm; breathability 20,000 g/m\u00b2/24h. Taped seams, a hood that rolls into the collar, two hand pockets. Colour: Slate, Moss, Ember, Sky. Materials: Nylon. Care: Wash at 30 \u00b0C with... Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:MnEPMkeJQS67ufIG54PbOw"
+}

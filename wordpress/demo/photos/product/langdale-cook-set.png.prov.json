@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5422352,
+    "path": "demo/photos/product/langdale-cook-set.png",
+    "sha256": "b5a846fc40f3d394629f91cd91d120f509fe5270fa4931fea6bdfd6d16879058"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a Langdale cook set in moss green aluminium rests on a mossy granite boulder along a quiet mountain trail, with rolling green fell slopes softly blurred behind under soft overcast morning light.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"A quiet stretch of mountain trail in the green fells on a soft overcast morning, the air still and damp with recent mist. Rolling green fell slopes recede into the distance, layered ridgelines fading into pale atmospheric haze under a flat cool overcast sky. The narrow dirt-and-gravel trail curves away behind the boulder, scattered with loose scree and tufts of grass, neutral cool white balance throughout.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder anchoring the centre of the frame at mid-height, supporting the cook set on its upper surface. Thick cushions of bright green moss cover the top, with a few small pale lichen patches along the visible edge. Grey weathered rock shows through where moss thins.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Langdale cook set in moss green aluminium, centered on the boulder, occupying roughly 30% of the frame as the focal subject. Two pots nested around a compact gas canister and stove: the 1.2 litre outer pot and 0.8 litre inner pot stacked, lid doubling as a frying pan resting on top. Brushed anodised finish with subtle satin sheen.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"A single small feather resting on the moss near the base of the rock, slightly right of center. Pale grey-brown barbs, lying flat against the green cushion.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus heather sprig slicing into the lower-left foreground close to the lens, blurred purple-pink buds on thin green stems angling diagonally across the corner.\"\n      }\n    ]\n  }\n}",
+    "seed": 1654388458,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5422352,
+    "sha256": "b5a846fc40f3d394629f91cd91d120f509fe5270fa4931fea6bdfd6d16879058"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:34:56Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Langdale cook set, in moss green. A two-pot aluminium cook set that nests around a gas canister and the stove. Weight 320 g. A 1.2 litre and a 0.8 litre pot, and a lid that is a frying pan. Colour: Slate, Moss, Ember. Materials: Aluminium. Care: Rinse and dry after use; see the label for washing. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:B5DbOz2KRQ-IQbOItxbOaA"
+}

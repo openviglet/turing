@@ -1,0 +1,193 @@
+// The editor panel's Assist section (D171): what the site already has near this post, links to
+// related posts the author can add, and an excerpt drafted by Turing. It never changes the post
+// on its own, so the specs leave without saving.
+import { expect, openPostSettings, test } from '../fixtures.mjs';
+
+/**
+ * Open the post in the editor with the Search panel showing.
+ *
+ * @param {import('@playwright/test').Page} page The page.
+ * @param {Object}                          seed What global-setup seeded.
+ */
+async function openPanel( page, seed ) {
+	await page.goto( `/wp-admin/post.php?post=${ seed.postId }&action=edit` );
+	const guide = page
+		.getByRole( 'dialog' )
+		.getByRole( 'button', { name: 'Close' } );
+	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
+		await guide.click();
+	}
+	// The panel lives in the post's settings sidebar, as in posts.spec.mjs.
+	const panelToggle = page.getByRole( 'button', {
+		name: 'Search',
+		exact: true,
+	} );
+	await openPostSettings( page );
+	const panel = page.locator( '.viglet-dumont-search-panel' );
+	if (
+		! ( await panel
+			.getByRole( 'button', { name: 'Find related posts' } )
+			.isVisible()
+			.catch( () => false ) )
+	) {
+		await panelToggle.click();
+	}
+	return panel;
+}
+
+test( 'Assist finds related posts, and "Add a link" puts one in the post', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	const panel = await openPanel( page, seed );
+
+	await panel.getByRole( 'button', { name: 'Find related posts' } ).click();
+	const assist = panel.locator( '.viglet-dumont-assist' );
+	await expect(
+		assist.getByRole( 'heading', { name: 'Link ideas' } )
+	).toBeVisible();
+	const ideas = assist
+		.locator( '.viglet-dumont-assist__list' )
+		.last()
+		.locator( 'li' );
+	await expect( ideas.first() ).toBeVisible();
+	// Turing's similar documents for "Workshop on search": the other workshops are among
+	// them (its lexical similarity may rank another "search" page first).
+	await expect( ideas.filter( { hasText: 'Workshop on' } ) ).not.toHaveCount(
+		0
+	);
+	const href = await ideas.first().locator( 'a' ).getAttribute( 'href' );
+	await look( 'editor-assist' );
+	await axe( "the editor panel's Assist section", {
+		include: '.viglet-dumont-assist',
+	} );
+
+	await ideas
+		.first()
+		.getByRole( 'button', { name: /^Add a link to/ } )
+		.click();
+	await expect(
+		page
+			.frameLocator( 'iframe[name="editor-canvas"]' )
+			.locator( `p a[href="${ href }"]` )
+	).toBeVisible();
+} );
+
+// The draft itself is Turing's (ai/assist.spec.mjs asks the real model): here the plugin's
+// route answers with fixed drafts, so the spec checks what the panel does with them.
+test( 'a drafted excerpt goes into the excerpt field only when the author uses it', async ( {
+	page,
+	seed,
+	axe,
+} ) => {
+	const drafts = [ 'A first draft.', 'A second draft.' ];
+	const asked = [];
+	await page.route(
+		( url ) => decodeURIComponent( url.href ).includes( '/excerpt' ),
+		async ( route ) => {
+			asked.push( route.request().postDataJSON() );
+			await route.fulfill( {
+				json: { excerpt: drafts[ asked.length - 1 ], error: '' },
+			} );
+		}
+	);
+	const panel = await openPanel( page, seed );
+	const excerpt = () =>
+		page.evaluate( () =>
+			window.wp.data
+				.select( 'core/editor' )
+				.getEditedPostAttribute( 'excerpt' )
+		);
+	const before = await excerpt();
+
+	await panel.getByRole( 'button', { name: 'Draft an excerpt' } ).click();
+	const draft = panel.locator( '.viglet-dumont-assist__draft' );
+	await expect( draft ).toHaveText( 'A first draft.' );
+	expect( await excerpt() ).toBe( before );
+
+	await panel.getByRole( 'button', { name: 'Draft another' } ).click();
+	await expect( draft ).toHaveText( 'A second draft.' );
+	expect( asked ).toEqual( [ { again: false }, { again: true } ] );
+	await axe( "the editor panel's excerpt draft", {
+		include: '.viglet-dumont-assist__excerpt',
+	} );
+
+	await panel.getByRole( 'button', { name: 'Use this excerpt' } ).click();
+	expect( await excerpt() ).toBe( 'A second draft.' );
+	await expect(
+		panel.getByText( 'In the excerpt field. Save the post to keep it.' )
+	).toBeVisible();
+} );
+
+// Audience fit (D171): Turing's answers replayed here; the live one is ai/assist.spec.mjs's.
+const fitRoute = ( page, personas, fits ) =>
+	page.route(
+		( url ) =>
+			/viglet-dumont\/v1\/post\/\d+\/fit/.test(
+				decodeURIComponent( url.href )
+			),
+		( route ) =>
+			route.fulfill( {
+				json:
+					'POST' === route.request().method()
+						? { fits, error: '' }
+						: { personas },
+			} )
+	);
+
+test( 'a site whose agent has personas scores the post for each, with the reasons', async ( {
+	page,
+	seed,
+	axe,
+} ) => {
+	await fitRoute(
+		page,
+		[ { id: 'p1', name: 'Grant applicant' } ],
+		[
+			{
+				persona: 'Grant applicant',
+				score: 73,
+				summary: 'Clear deadline, little on eligibility.',
+				misfits: [
+					{
+						reason: 'Missing context',
+						span: 'Applications close on 14 March.',
+						suggestion: 'Say who may apply.',
+					},
+				],
+			},
+		]
+	);
+	const panel = await openPanel( page, seed );
+	const fit = panel.locator( '.viglet-dumont-assist__fit' );
+	await expect(
+		fit.getByText( 'Judged by Turing against Grant applicant' )
+	).toBeVisible();
+	await fit.getByRole( 'button', { name: 'Check audience fit' } ).click();
+	await expect( fit.locator( 'li' ).first() ).toContainText(
+		'Grant applicant: 73%'
+	);
+	await expect( fit ).toContainText(
+		'Missing context: “Applications close on 14 March.”'
+	);
+	await expect( fit ).toContainText( 'Try: Say who may apply.' );
+	await axe( "the editor panel's audience fit", {
+		include: '.viglet-dumont-assist__fit',
+	} );
+} );
+
+test( 'a site with no personas offers no audience fit', async ( {
+	page,
+	seed,
+} ) => {
+	await fitRoute( page, [], [] );
+	const panel = await openPanel( page, seed );
+	await expect(
+		panel.getByRole( 'button', { name: 'Draft an excerpt' } )
+	).toBeVisible();
+	await expect(
+		panel.getByRole( 'heading', { name: 'Fits the audience?' } )
+	).toHaveCount( 0 );
+} );

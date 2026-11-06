@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 186870,
+    "path": "demo/narration/pt-BR/chapter-5.mp3",
+    "sha256": "d0fae3e6f7c55c94f43831a7dc17a015932c00642d0e8dd8fb9af2be25f513ac"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.0,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00537,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 186870,
+    "sha256": "d0fae3e6f7c55c94f43831a7dc17a015932c00642d0e8dd8fb9af2be25f513ac"
+  },
+  "params": {},
+  "produced_at": "2026-10-31T17:40:59Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "[excited] T\u00e1, essa \u00e9 a minha parte favorita. S\u00e9rio, a favorita. O cliente nem busca nada. Ele s\u00f3 descreve a viagem, tipo, dois dias atravessando a montanha em julho, primeira vez.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:b7IBTn3bRLuJjO3fUukU"
+}

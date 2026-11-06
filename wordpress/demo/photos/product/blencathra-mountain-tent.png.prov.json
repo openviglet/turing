@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5566604,
+    "path": "demo/photos/product/blencathra-mountain-tent.png",
+    "sha256": "41bd61d06752165a6077b8d676bc3a238d0c6fe25e6cc339adc2019f90d847d3"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"A photorealistic product shot of a Blencathra geodesic mountain tent in burnt ember orange and slate-grey pitched on level green turf at mid-morning, with softly blurred rolling fell slopes receding into atmospheric haze behind it.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Softly blurred rolling fell slopes layered in heather-green and grey-blue ridges receding into atmospheric haze under soft overcast daylight with a neutral cool-toned white balance. A few low wisps of cloud drift across the distant ridgelines. The ground beneath and around the tent is a flat patch of short green grass, slightly trampled near the pegs, with no rocks or boulders anywhere under or beside the tent.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Blencathra geodesic mountain tent pitched centre-frame on level turf, fully symmetrical with four crossing poles forming a geodesic lattice visible through the taut fly. Burnt ember orange fly panels alternating with slate-grey panels, snow valances flaring along the lower edges of each panel with one corner catching a faint breeze. Two mesh vestibule doors zipped shut at the front.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Taut guy lines radiating outward from the tent corners and ridge points, angling down to small dark metal pegs driven flush into the short grass around the tent's perimeter.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus tuft of taller grass and a single bent bracken stem slicing in from the lower-left foreground edge, rendered as soft creamy bokeh shapes framing the corner of the frame.\"\n      }\n    ]\n  }\n}",
+    "seed": 1290179903,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5566604,
+    "sha256": "41bd61d06752165a6077b8d676bc3a238d0c6fe25e6cc339adc2019f90d847d3"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:19:03Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the shelter fully pitched on a flat, level patch of short grass at a wild camp in the green fells, guy lines taut and pegged into the turf, no rocks or boulders under it, the whole shelter in frame, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Blencathra mountain tent, in burnt orange. A geodesic mountain tent for exposed, windy pitches and winter snow. Weight 3,200 g. Four crossing poles and snow valances. Colour: Ember, Slate. Materials: Polyester. Care: Pitch to dry before storing, loosely packed and out of sunlight. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:qIikKjS0Rk684mzP8ndr9Q"
+}

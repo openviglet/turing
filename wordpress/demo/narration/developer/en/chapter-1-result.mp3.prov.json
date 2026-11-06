@@ -1,0 +1,43 @@
+{
+  "artefact": {
+    "bytes": 150926,
+    "path": "demo/narration/developer/en/chapter-1-result.mp3",
+    "sha256": "971fe6c2cb7cc738099e8b16c0a827b1c181a16da2f7cc155c09ee9f863f8bd1"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "sound",
+  "credits": 0.00171,
+  "details": {
+    "cue": null,
+    "delivery": {},
+    "entity": null,
+    "format": "mp3",
+    "spoken": true,
+    "voice": "iP95p4xoKVk53GoZ742B"
+  },
+  "elapsed_s": null,
+  "engine": {
+    "commercial": true,
+    "model": "eleven_v3",
+    "name": "elevenlabs",
+    "plan": "starter",
+    "tier": "starter"
+  },
+  "expected_credits": 0.00429,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 150926,
+    "sha256": "971fe6c2cb7cc738099e8b16c0a827b1c181a16da2f7cc155c09ee9f863f8bd1"
+  },
+  "params": {},
+  "produced_at": "2026-11-03T22:49:47Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Activated. It adds one menu, Viglet Turing Search, and everything it does lives under it: settings, setup, fields, health, tuning and insights.",
+  "service": "elevenlabs",
+  "task_id": "elevenlabs:uwUxbEDj2m1pQeqjOkPP"
+}

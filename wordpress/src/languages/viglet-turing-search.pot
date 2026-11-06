@@ -1,0 +1,3518 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-05T23:42:16+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: viglet-turing-search\n"
+
+#: src/admin/views/settings-page.php:26
+#: src/includes/class-viglet-dumont-admin.php:102
+#: src/includes/class-viglet-dumont-admin.php:103
+msgid "Viglet Turing Search"
+msgstr ""
+
+#: src/admin/views/settings-page.php:31
+msgid "Integrate WordPress with Viglet Turing search engine for powerful content indexing and search."
+msgstr ""
+
+#: src/admin/views/settings-page.php:40
+#: assets/admin/health.js:382
+msgid "Connection"
+msgstr ""
+
+#: src/admin/views/settings-page.php:44
+#: src/includes/class-viglet-dumont-cli.php:97
+msgid "Indexing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:48
+#: src/blocks/search/parts/box.php:22
+#: src/blocks/search/parts/box.php:48
+#: src/includes/class-viglet-dumont-native-search.php:268
+#: src/includes/class-viglet-dumont-post-state.php:110
+#: assets/admin/insights.js:165
+#: assets/admin/tuning.js:396
+#: src/admin/js/editor-panel.js:324
+#: src/admin/js/search-block-editor.js:112
+msgid "Search"
+msgstr ""
+
+#: src/admin/views/settings-page.php:52
+#: assets/admin/insights.js:175
+#: assets/admin/mapping.js:892
+#: assets/admin/tuning.js:273
+#: assets/admin/tuning.js:406
+msgid "Actions"
+msgstr ""
+
+#. translators: %s: the constant or environment variable's name.
+#: src/admin/views/settings-page.php:71
+#, php-format
+msgid "Set by %s outside WordPress; change it there."
+msgstr ""
+
+#: src/admin/views/settings-page.php:84
+msgid "Server Connection"
+msgstr ""
+
+#: src/admin/views/settings-page.php:85
+msgid "Configure the connection to your Viglet Turing server."
+msgstr ""
+
+#: src/admin/views/settings-page.php:89
+msgid "Server URL"
+msgstr ""
+
+#: src/admin/views/settings-page.php:95
+msgid "The full URL of your Turing server (e.g., http://localhost:2700)."
+msgstr ""
+
+#: src/admin/views/settings-page.php:100
+msgid "Site Name"
+msgstr ""
+
+#: src/admin/views/settings-page.php:106
+msgid "The Turing Semantic Navigation site name to use for indexing and search."
+msgstr ""
+
+#: src/admin/views/settings-page.php:111
+msgid "Site Key"
+msgstr ""
+
+#: src/admin/views/settings-page.php:117
+msgid "Starts every document id and fills the site_key field, so several WordPress sites can share one SN site. Empty uses this site's address. Changing it needs an Index All."
+msgstr ""
+
+#: src/admin/views/settings-page.php:122
+msgid "Also search these sites"
+msgstr ""
+
+#: src/admin/views/settings-page.php:127
+msgid "Other sites that publish into this SN site, one per line: its site key, then optionally a label and its address, separated by |. Searches here find their documents too, linked to their own site and marked with the label; indexing and deleting never touch them. Empty searches this site alone."
+msgstr ""
+
+#: src/admin/views/settings-page.php:132
+msgid "API Key"
+msgstr ""
+
+#: src/admin/views/settings-page.php:140
+msgid "A key is stored"
+msgstr ""
+
+#: src/admin/views/settings-page.php:142
+msgid "Optional. API key for authentication with the Turing server."
+msgstr ""
+
+#: src/admin/views/settings-page.php:147
+msgid "Public Turing URL"
+msgstr ""
+
+#: src/admin/views/settings-page.php:152
+msgid "Where visitors' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL."
+msgstr ""
+
+#: src/admin/views/settings-page.php:158
+#: assets/admin/setup.js:259
+msgid "Locale"
+msgstr ""
+
+#: src/admin/views/settings-page.php:184
+msgid "Source App Identifier"
+msgstr ""
+
+#: src/admin/views/settings-page.php:197
+#: src/admin/views/settings-page.php:639
+msgid "Test Connection"
+msgstr ""
+
+#: src/admin/views/settings-page.php:208
+msgid "Content Indexing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:209
+msgid "Choose which content types and metadata to index in Turing."
+msgstr ""
+
+#: src/admin/views/settings-page.php:212
+msgid "Post Types"
+msgstr ""
+
+#: src/admin/views/settings-page.php:219
+msgid "Posts"
+msgstr ""
+
+#: src/admin/views/settings-page.php:227
+msgid "Pages"
+msgstr ""
+
+#: src/admin/views/settings-page.php:244
+msgid "Metadata"
+msgstr ""
+
+#: src/admin/views/settings-page.php:251
+msgid "Categories"
+msgstr ""
+
+#: src/admin/views/settings-page.php:259
+msgid "Tags"
+msgstr ""
+
+#: src/admin/views/settings-page.php:267
+msgid "Comments"
+msgstr ""
+
+#: src/admin/views/settings-page.php:278
+msgid "PDF files attached to them"
+msgstr ""
+
+#: src/admin/views/settings-page.php:284
+msgid "Advanced"
+msgstr ""
+
+#: src/admin/views/settings-page.php:287
+msgid "Custom Fields"
+msgstr ""
+
+#: src/admin/views/settings-page.php:293
+msgid "Comma-separated list of custom field names to include in the index."
+msgstr ""
+
+#: src/admin/views/settings-page.php:297
+msgid "Exclude Posts/Pages"
+msgstr ""
+
+#: src/admin/views/settings-page.php:303
+msgid "Comma-separated list of post/page IDs to exclude from indexing."
+msgstr ""
+
+#: src/admin/views/settings-page.php:308
+msgid "Batch Size"
+msgstr ""
+
+#: src/admin/views/settings-page.php:313
+msgid "Number of documents to send per batch (10-200)."
+msgstr ""
+
+#: src/admin/views/settings-page.php:319
+msgid "Automation"
+msgstr ""
+
+#: src/admin/views/settings-page.php:327
+msgid "Auto-index on publish"
+msgstr ""
+
+#: src/admin/views/settings-page.php:328
+msgid "Automatically index content when published or updated."
+msgstr ""
+
+#: src/admin/views/settings-page.php:338
+msgid "Auto-remove on delete/unpublish"
+msgstr ""
+
+#: src/admin/views/settings-page.php:339
+msgid "Automatically remove content from the index when trashed or unpublished."
+msgstr ""
+
+#: src/admin/views/settings-page.php:351
+msgid "Search Settings"
+msgstr ""
+
+#: src/admin/views/settings-page.php:352
+msgid "Configure how Turing search replaces the default WordPress search."
+msgstr ""
+
+#: src/admin/views/settings-page.php:362
+msgid "Replace WordPress search with Turing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:363
+msgid "When enabled, all search queries will be handled by the Turing search engine."
+msgstr ""
+
+#: src/admin/views/settings-page.php:369
+msgid "Results page"
+msgstr ""
+
+#: src/admin/views/settings-page.php:371
+msgid "The theme's own search page (block and classic themes)"
+msgstr ""
+
+#: src/admin/views/settings-page.php:372
+msgid "The plugin's results page, with facets (classic themes)"
+msgstr ""
+
+#: src/admin/views/settings-page.php:374
+msgid "With the theme's page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead."
+msgstr ""
+
+#: src/admin/views/settings-page.php:380
+msgid "Results Per Page"
+msgstr ""
+
+#: src/admin/views/settings-page.php:396
+msgid "Instant search from anywhere"
+msgstr ""
+
+#: src/admin/views/settings-page.php:397
+msgid "Ctrl+K (⌘K on a Mac) and the theme's own search box open a search that answers as the visitor types."
+msgstr ""
+
+#: src/admin/views/settings-page.php:403
+msgid "Instant search layout"
+msgstr ""
+
+#: src/admin/views/settings-page.php:405
+msgid "A list of titles"
+msgstr ""
+
+#: src/admin/views/settings-page.php:406
+msgid "Immersive: results by type, with images"
+msgstr ""
+
+#: src/admin/views/settings-page.php:408
+msgid "Immersive groups the results by type, each with its image, date and a link to all of that type, shows recent searches before anything is typed, and fills a phone's screen."
+msgstr ""
+
+#: src/admin/views/settings-page.php:413
+msgid "Answer questions on top of the immersive layout (each answer is an LLM call)"
+msgstr ""
+
+#: src/admin/views/settings-page.php:418
+msgid "Explore links"
+msgstr ""
+
+#: src/admin/views/settings-page.php:423
+msgid "Shown in the immersive layout before anything is typed, beside the recent and popular searches. One \"Label | URL\" per line, at most 8; the URL is a full http(s) address or a path on this site, such as /events/."
+msgstr ""
+
+#: src/admin/views/settings-page.php:427
+msgid "Full search page"
+msgstr ""
+
+#: src/admin/views/settings-page.php:434
+msgid "Automatic: the page with the Turing search block"
+msgstr ""
+
+#: src/admin/views/settings-page.php:439
+msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
+msgstr ""
+
+#: src/admin/views/settings-page.php:443
+msgid "Results page on another site"
+msgstr ""
+
+#: src/admin/views/settings-page.php:449
+msgid "For a site that indexes into a search another site shows: the instant search, a search block without results and the theme's search box all send the query there. This site's own search results are then no longer replaced. Empty keeps searches here."
+msgstr ""
+
+#: src/admin/views/settings-page.php:457
+msgid "Search Analytics"
+msgstr ""
+
+#: src/admin/views/settings-page.php:458
+msgid "What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics."
+msgstr ""
+
+#: src/admin/views/settings-page.php:468
+msgid "Report result clicks to Turing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:469
+msgid "Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on."
+msgstr ""
+
+#: src/admin/views/settings-page.php:478
+msgid "Send search events to Google Analytics"
+msgstr ""
+
+#: src/admin/views/settings-page.php:479
+msgid "Searches, searches with no results, refined searches and result clicks, through the Google tag or Tag Manager the site already loads."
+msgstr ""
+
+#: src/admin/views/settings-page.php:485
+msgid "Measurement ID"
+msgstr ""
+
+#: src/admin/views/settings-page.php:490
+msgid "Optional. Leave it empty to send to whatever the Google tag is set up for."
+msgstr ""
+
+#: src/admin/views/settings-page.php:497
+msgid "Related Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:498
+msgid "The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
+msgstr ""
+
+#: src/admin/views/settings-page.php:523
+msgid "Popular Searches"
+msgstr ""
+
+#: src/admin/views/settings-page.php:524
+msgid "The chips a search block shows under its box when \"Show popular searches\" is on: this week's most searched words, each checked to find something."
+msgstr ""
+
+#: src/admin/views/settings-page.php:528
+msgid "Never show"
+msgstr ""
+
+#: src/admin/views/settings-page.php:532
+msgid "One word or phrase per line. A search holding any of them never becomes a chip."
+msgstr ""
+
+#: src/admin/views/settings-page.php:535
+msgid "When there are none yet"
+msgstr ""
+
+#: src/admin/views/settings-page.php:539
+msgid "One search per line, shown while the site has no popular searches of its own. Each is still checked to find something."
+msgstr ""
+
+#: src/admin/views/settings-page.php:546
+msgid "Generative AI"
+msgstr ""
+
+#: src/admin/views/settings-page.php:547
+msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
+msgstr ""
+
+#: src/admin/views/settings-page.php:557
+msgid "Turn on generative AI for this site in Turing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:558
+msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
+msgstr ""
+
+#: src/admin/views/settings-page.php:567
+msgid "Site assistant on every page"
+msgstr ""
+
+#: src/admin/views/settings-page.php:568
+msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
+msgstr ""
+
+#: src/admin/views/settings-page.php:578
+msgid "Find people, organisations and places in posts"
+msgstr ""
+
+#: src/admin/views/settings-page.php:579
+msgid "Turing's language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed."
+msgstr ""
+
+#: src/admin/views/settings-page.php:581
+msgid "Off until generative AI is turned on."
+msgstr ""
+
+#: src/admin/views/settings-page.php:587
+msgid "Name variants"
+msgstr ""
+
+#: src/admin/views/settings-page.php:593
+msgid "One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Turing's Thesaurus for this site; posts already indexed follow once reindexed."
+msgstr ""
+
+#. translators: %s: why Turing did not take the name variants.
+#: src/admin/views/settings-page.php:602
+#, php-format
+msgid "Not saved to Turing: %s"
+msgstr ""
+
+#. translators: 1: how many names, 2: when they were saved.
+#: src/admin/views/settings-page.php:605
+#, php-format
+msgid "%1$d name saved to Turing %2$s ago."
+msgid_plural "%1$d names saved to Turing %2$s ago."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/admin/views/settings-page.php:617
+msgid "Save Settings"
+msgstr ""
+
+#: src/admin/views/settings-page.php:625
+msgid "Indexing Actions"
+msgstr ""
+
+#: src/admin/views/settings-page.php:626
+msgid "Manage your Turing search index."
+msgstr ""
+
+#: src/admin/views/settings-page.php:634
+msgid "Connection Status"
+msgstr ""
+
+#: src/admin/views/settings-page.php:635
+msgid "Test the connection to your Turing server."
+msgstr ""
+
+#: src/admin/views/settings-page.php:651
+msgid "Index All Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:652
+msgid "Send all published content to the Turing index. This may take a while for large sites."
+msgstr ""
+
+#: src/admin/views/settings-page.php:655
+msgid "Content to index"
+msgstr ""
+
+#: src/admin/views/settings-page.php:657
+msgid "All Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:658
+msgid "Posts Only"
+msgstr ""
+
+#: src/admin/views/settings-page.php:659
+msgid "Pages Only"
+msgstr ""
+
+#: src/admin/views/settings-page.php:663
+msgid "Start Indexing"
+msgstr ""
+
+#: src/admin/views/settings-page.php:682
+msgid "Delete All Indexed Content"
+msgstr ""
+
+#: src/admin/views/settings-page.php:683
+msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
+msgstr ""
+
+#: src/admin/views/settings-page.php:687
+msgid "Delete All"
+msgstr ""
+
+#: src/admin/views/settings-page.php:698
+msgid "Content Overview"
+msgstr ""
+
+#: src/admin/views/settings-page.php:702
+msgid "Loading stats..."
+msgstr ""
+
+#: src/blocks/assistant/render.php:17
+#: src/blocks/copilot/render.php:26
+#: src/admin/js/assistant-block-editor.js:41
+#: src/admin/js/assistant-block-editor.js:67
+#: src/admin/js/copilot-block-editor.js:35
+msgid "Ask this site"
+msgstr ""
+
+#: src/blocks/assistant/render.php:32
+msgid "Reading this site’s posts…"
+msgstr ""
+
+#: src/blocks/assistant/render.php:33
+msgid "The assistant could not answer right now. Try again in a moment."
+msgstr ""
+
+#: src/blocks/assistant/render.php:63
+msgid "New conversation"
+msgstr ""
+
+#: src/blocks/assistant/render.php:64
+#: src/includes/class-viglet-dumont-native-search.php:269
+msgid "Close"
+msgstr ""
+
+#: src/blocks/assistant/render.php:66
+msgid "Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite."
+msgstr ""
+
+#: src/blocks/assistant/render.php:67
+msgid "Conversation"
+msgstr ""
+
+#: src/blocks/assistant/render.php:71
+msgid "Posts it used"
+msgstr ""
+
+#: src/blocks/assistant/render.php:77
+#: src/blocks/search/parts/answer.php:31
+msgid "Was this helpful?"
+msgstr ""
+
+#: src/blocks/assistant/render.php:78
+#: src/blocks/search/parts/answer.php:32
+msgid "Yes"
+msgstr ""
+
+#: src/blocks/assistant/render.php:79
+#: src/blocks/search/parts/answer.php:33
+msgid "No"
+msgstr ""
+
+#: src/blocks/assistant/render.php:81
+#: src/blocks/search/parts/answer.php:35
+msgid "Thank you."
+msgstr ""
+
+#: src/blocks/assistant/render.php:86
+msgid "Try asking"
+msgstr ""
+
+#: src/blocks/assistant/render.php:94
+msgid "Your question"
+msgstr ""
+
+#: src/blocks/assistant/render.php:102
+msgid "Send"
+msgstr ""
+
+#: src/blocks/compare/render.php:21
+#: src/admin/js/compare-block-editor.js:34
+#: src/admin/js/compare-block-editor.js:37
+#: src/admin/js/compare-block-editor.js:50
+msgid "Compare products"
+msgstr ""
+
+#: src/blocks/compare/render.php:27
+msgid "Tick Compare on two to four products in the search results to see them side by side here."
+msgstr ""
+
+#: src/blocks/compare/render.php:33
+msgid "Summary written by AI from the table below"
+msgstr ""
+
+#: src/blocks/compare/render.php:57
+msgid "(differs)"
+msgstr ""
+
+#: src/blocks/compare/render.php:68
+msgid "Where they differ"
+msgstr ""
+
+#: src/blocks/copilot/render.php:26
+#: src/admin/js/copilot-block-editor.js:34
+msgid "Ask the catalog"
+msgstr ""
+
+#. translators: %s: the name of the product or post the page shows.
+#: src/blocks/copilot/render.php:57
+#, php-format
+msgid "Ask about %s"
+msgstr ""
+
+#: src/blocks/copilot/render.php:58
+msgid "What are you looking for?"
+msgstr ""
+
+#: src/blocks/copilot/render.php:63
+msgid "Looking through the catalog…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:64
+msgid "The catalog could not answer right now."
+msgstr ""
+
+#: src/blocks/copilot/render.php:65
+msgid "Nothing in the catalog matches that."
+msgstr ""
+
+#: src/blocks/copilot/render.php:66
+msgid "Plan a kit"
+msgstr ""
+
+#: src/blocks/copilot/render.php:67
+msgid "Build my kit"
+msgstr ""
+
+#: src/blocks/copilot/render.php:68
+msgid "Putting your kit together…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:69
+msgid "The catalog has nothing for that plan."
+msgstr ""
+
+#. translators: %s: the needs the catalog has no product for, comma-separated.
+#: src/blocks/copilot/render.php:71
+#, php-format
+msgid "Nothing in the catalog yet for: %s."
+msgstr ""
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:73
+#, php-format
+msgid "Keep %s in the kit"
+msgstr ""
+
+#: src/blocks/copilot/render.php:74
+msgid "Out of stock"
+msgstr ""
+
+#: src/blocks/copilot/render.php:77
+msgid "Looking through this site…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:78
+msgid "This site could not answer right now."
+msgstr ""
+
+#: src/blocks/copilot/render.php:79
+msgid "Nothing on this site matches that."
+msgstr ""
+
+#: src/blocks/copilot/render.php:80
+msgid "Make a plan"
+msgstr ""
+
+#: src/blocks/copilot/render.php:81
+msgid "Build my plan"
+msgstr ""
+
+#: src/blocks/copilot/render.php:82
+msgid "Putting your plan together…"
+msgstr ""
+
+#: src/blocks/copilot/render.php:83
+msgid "Nothing on this site fits that plan."
+msgstr ""
+
+#. translators: %s: the needs nothing on the site covers, comma-separated.
+#: src/blocks/copilot/render.php:85
+#, php-format
+msgid "Nothing on this site yet for: %s."
+msgstr ""
+
+#. translators: %s: the name of a page, event or other item.
+#: src/blocks/copilot/render.php:87
+#, php-format
+msgid "Keep %s in the plan"
+msgstr ""
+
+#: src/blocks/copilot/render.php:88
+msgid "Unavailable"
+msgstr ""
+
+#. translators: %s: the product's name.
+#: src/blocks/copilot/render.php:104
+#: src/blocks/search/render.php:105
+#, php-format
+msgid "Add to cart: %s"
+msgstr ""
+
+#. translators: %s: a product's name.
+#: src/blocks/copilot/render.php:107
+#: src/blocks/related/render.php:146
+#: src/blocks/search/render.php:109
+#, php-format
+msgid "Compare %s"
+msgstr ""
+
+#. translators: %d: how many products, two to four.
+#: src/blocks/copilot/render.php:109
+#: src/blocks/related/render.php:55
+#: src/blocks/search/render.php:107
+#, php-format
+msgid "Compare %d products"
+msgstr ""
+
+#: src/blocks/copilot/render.php:110
+#: src/blocks/search/render.php:110
+msgid "Added to your cart."
+msgstr ""
+
+#: src/blocks/copilot/render.php:111
+#: src/blocks/search/render.php:111
+msgid "It could not be added to the cart."
+msgstr ""
+
+#: src/blocks/copilot/render.php:133
+#: src/blocks/copilot/render.php:245
+msgid "Ask"
+msgstr ""
+
+#: src/blocks/copilot/render.php:134
+msgid "Describe your plan"
+msgstr ""
+
+#. translators: %d: how many products.
+#: src/blocks/copilot/render.php:141
+#, php-format
+msgid "Add %d products to the cart"
+msgstr ""
+
+#: src/blocks/copilot/render.php:142
+msgid "Add 1 product to the cart"
+msgstr ""
+
+#. translators: 1: how many products were added, 2: the cart's total, as the shop formats it.
+#: src/blocks/copilot/render.php:144
+#, php-format
+msgid "Added %1$d to your cart. Cart total: %2$s."
+msgstr ""
+
+#. translators: 1: how many were added, 2: how many were asked for.
+#: src/blocks/copilot/render.php:146
+#, php-format
+msgid "Added %1$d of %2$d to your cart; the rest could not be added."
+msgstr ""
+
+#: src/blocks/copilot/render.php:160
+msgid "Mode"
+msgstr ""
+
+#: src/blocks/copilot/render.php:161
+msgid "Ask a question"
+msgstr ""
+
+#: src/blocks/copilot/render.php:177
+#: src/blocks/search/parts/main.php:89
+msgid "Was"
+msgstr ""
+
+#: src/blocks/copilot/render.php:180
+#: src/blocks/search/parts/main.php:92
+msgid "Add to cart"
+msgstr ""
+
+#: src/blocks/copilot/render.php:184
+#: src/blocks/related/render.php:147
+#: src/blocks/search/parts/main.php:96
+msgid "Compare"
+msgstr ""
+
+#: src/blocks/copilot/render.php:222
+msgid "Guides for this plan"
+msgstr ""
+
+#: src/blocks/related/render.php:36
+msgid "Related posts appear here once this post is indexed and Turing finds posts like it."
+msgstr ""
+
+#: src/blocks/related/render.php:44
+#: src/admin/js/related-block-editor.js:48
+msgid "Related posts"
+msgstr ""
+
+#: src/blocks/search/parts/answer.php:21
+msgid "Answer generated from this site"
+msgstr ""
+
+#: src/blocks/search/parts/answer.php:23
+msgid "Sources"
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:18
+msgid "Active filters"
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:24
+msgid "Remove this filter"
+msgstr ""
+
+#: src/blocks/search/parts/applied.php:29
+#: src/blocks/search/parts/facets.php:49
+msgid "Clear all filters"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:19
+msgid "Search…"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:45
+msgid "Clear the search"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:54
+msgid "Suggestions"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:67
+msgid "Clear recent searches"
+msgstr ""
+
+#. translators: %s: what the search is limited to, e.g. "Events".
+#: src/blocks/search/parts/box.php:80
+#, php-format
+msgid "In %s"
+msgstr ""
+
+#: src/blocks/search/parts/box.php:83
+msgid "Search the whole site"
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:22
+msgid "Showing results for"
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:24
+msgid "Search instead for"
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:28
+msgid "Showing close matches: nothing matched every word you searched for."
+msgstr ""
+
+#: src/blocks/search/parts/correction.php:31
+#: src/templates/search-results.php:78
+msgid "Did you mean:"
+msgstr ""
+
+#: src/blocks/search/parts/facets.php:22
+#: src/blocks/search/render.php:76
+msgid "Filters"
+msgstr ""
+
+#: src/blocks/search/parts/facets.php:48
+msgid "Show results"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:33
+#: src/blocks/search/parts/main.php:37
+msgid "Featured"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:118
+msgid "Or start from the latest posts:"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:128
+msgid "Try again"
+msgstr ""
+
+#: src/blocks/search/parts/main.php:129
+msgid "Search with WordPress instead"
+msgstr ""
+
+#: src/blocks/search/parts/pages.php:18
+msgid "Result pages"
+msgstr ""
+
+#: src/blocks/search/parts/suggested.php:23
+msgid "Filter by what you asked for:"
+msgstr ""
+
+#: src/blocks/search/parts/suggested.php:30
+msgid "Apply this filter"
+msgstr ""
+
+#: src/blocks/search/parts/suggested.php:39
+msgid "Undo"
+msgstr ""
+
+#: src/blocks/search/parts/toolbar.php:25
+msgid "Sort by"
+msgstr ""
+
+#: src/blocks/search/parts/trending.php:29
+#: src/includes/class-viglet-dumont-native-search.php:258
+msgid "Popular searches"
+msgstr ""
+
+#: src/blocks/search/parts/trending.php:30
+msgid "Popular:"
+msgstr ""
+
+#: src/blocks/search/render.php:39
+msgid "PDF"
+msgstr ""
+
+#. translators: %d: how many suggestions the search box offers.
+#: src/blocks/search/render.php:70
+#: src/blocks/search/render.php:72
+#, php-format
+msgid "%d suggestion. Use the up and down arrows to choose it."
+msgid_plural "%d suggestions. Use the up and down arrows to choose one."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: how many filters are applied.
+#: src/blocks/search/render.php:78
+#, php-format
+msgid "Filters (%d)"
+msgstr ""
+
+#. translators: %d: how many more values the facet has.
+#: src/blocks/search/render.php:80
+#, php-format
+msgid "Show %d more"
+msgstr ""
+
+#: src/blocks/search/render.php:81
+msgid "Show fewer"
+msgstr ""
+
+#. translators: %s: the filters read from the visitor's sentence, comma-separated.
+#: src/blocks/search/render.php:102
+#, php-format
+msgid "Understood: %s"
+msgstr ""
+
+#: src/blocks/search/render.php:114
+#: assets/admin/mapping.js:289
+#: assets/admin/mapping.js:542
+#: assets/admin/mapping.js:873
+msgid "Type"
+msgstr ""
+
+#: src/blocks/search/render.php:115
+msgid "Published"
+msgstr ""
+
+#: src/blocks/search/render.php:117
+#: src/includes/class-viglet-dumont-mapping.php:432
+#: src/includes/class-viglet-dumont-native-search.php:778
+msgid "Site"
+msgstr ""
+
+#. translators: %d: how many results Turing found.
+#: src/blocks/search/render.php:132
+#: src/blocks/search/render.php:134
+#: src/includes/class-viglet-dumont-native-search.php:275
+#: src/includes/class-viglet-dumont-native-search.php:277
+#: src/includes/class-viglet-dumont-native-search.php:682
+#: src/includes/class-viglet-dumont-native-search.php:921
+#, php-format
+msgid "%d result"
+msgid_plural "%d results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/blocks/search/render.php:136
+#: src/includes/class-viglet-dumont-native-search.php:279
+#: src/templates/search-results.php:113
+msgid "No results found. Try different keywords."
+msgstr ""
+
+#: src/blocks/search/render.php:138
+msgid "Reading your search…"
+msgstr ""
+
+#: src/blocks/search/render.php:141
+#: src/includes/class-viglet-dumont-native-search.php:280
+msgid "Search is unavailable right now."
+msgstr ""
+
+#. translators: %d: queued edits that stopped retrying.
+#: src/includes/class-viglet-dumont-admin.php:53
+#, php-format
+msgid "%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers."
+msgid_plural "%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/includes/class-viglet-dumont-admin.php:63
+#: src/includes/class-viglet-dumont-admin.php:136
+#: src/includes/class-viglet-dumont-admin.php:196
+#: src/includes/class-viglet-dumont-admin.php:333
+msgid "Search health"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:78
+msgid "Search and the AI features work from the visitors' browsers; Search tuning and Search insights are hidden."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:92
+msgid "Site search this week"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:112
+#: src/includes/class-viglet-dumont-admin.php:113
+msgid "Settings"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:120
+#: src/includes/class-viglet-dumont-admin.php:182
+msgid "Connect to Turing"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:121
+msgid "Setup"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:128
+#: src/includes/class-viglet-dumont-admin.php:189
+msgid "Search fields"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:129
+msgid "Fields"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:137
+msgid "Health"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:148
+#: src/includes/class-viglet-dumont-admin.php:175
+msgid "Search tuning"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:149
+msgid "Tuning"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:156
+#: src/includes/class-viglet-dumont-admin.php:168
+msgid "Search insights"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:157
+msgid "Insights"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:316
+msgid "Indexing..."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:317
+msgid "Complete!"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:318
+msgid "Error"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:319
+msgid "Are you sure you want to delete all indexed content? This cannot be undone."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:320
+msgid "Deleting..."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:321
+msgid "All indexed content has been deleted."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:322
+msgid "Testing connection..."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:323
+msgid "Total"
+msgstr ""
+
+#. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:326
+#, php-format
+msgid "Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:328
+#, php-format
+msgid "Indexing complete: %1$d posts sent."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:330
+#, php-format
+msgid "The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-admin.php:332
+#, php-format
+msgid "The reindex was cancelled after %1$d posts sent."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-admin.php:352
+msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
+msgstr ""
+
+#. translators: %s: when Turing's AI budget for this site resets, as the site writes a date and time.
+#: src/includes/class-viglet-dumont-ai-quota.php:164
+#, php-format
+msgid "AI budget exhausted until %s."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-ai-quota.php:165
+msgid "AI budget exhausted for now."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-ai-quota.php:179
+msgid "Answers are paused for now; search still works."
+msgstr ""
+
+#. translators: %s: when the site's AI answers come back, as a date and time.
+#: src/includes/class-viglet-dumont-ai-quota.php:188
+#, php-format
+msgid "Answers are paused until %s; search still works."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:173
+msgid "Connection successful"
+msgstr ""
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:175
+#, php-format
+msgid "Server returned HTTP %d"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:243
+msgid "The files could not be packed for Turing."
+msgstr ""
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:460
+#, php-format
+msgid "Turing could not plan the fields (HTTP %d)."
+msgstr ""
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:529
+#, php-format
+msgid "Search failed with HTTP %d"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:537
+msgid "Invalid JSON response from server"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:603
+msgid "Turing did not answer a moment ago; this page renders without it."
+msgstr ""
+
+#. translators: %s: the constant or environment variable that turns demo mode on.
+#: src/includes/class-viglet-dumont-api-client.php:663
+#, php-format
+msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
+msgstr ""
+
+#. translators: %s: the Turing address the plugin is set to.
+#: src/includes/class-viglet-dumont-api-client.php:698
+#, php-format
+msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
+msgstr ""
+
+#. translators: %s: Turing's reason for refusing the request.
+#: src/includes/class-viglet-dumont-api-client.php:909
+#, php-format
+msgid "Turing refused this site’s API key here: %s"
+msgstr ""
+
+#. translators: %d: the HTTP status Turing answered with.
+#: src/includes/class-viglet-dumont-api-client.php:913
+#, php-format
+msgid "Turing answered HTTP %d."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1011
+msgid "Generative AI is off for this SN site in Turing."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1012
+msgid "The SN site has no AI agent in Turing."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1013
+msgid "The SN site’s AI agent is turned off in Turing."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1014
+msgid "The SN site’s AI agent does not answer from the site’s content."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1015
+msgid "The SN site’s AI agent has no language model."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1016
+msgid "The SN site’s AI agent has no embedding model."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1017
+msgid "The SN site’s AI agent has no vector store."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1021
+#: src/includes/class-viglet-dumont-api-client.php:1109
+msgid "Turing has no catalog copilot set up."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1022
+#: src/includes/class-viglet-dumont-api-client.php:1104
+msgid "No language model is set up for it in Turing."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-api-client.php:1044
+msgid "Turing did not answer."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-cli-ai.php:49
+msgid "yes"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-cli-ai.php:49
+msgid "no"
+msgstr ""
+
+#. translators: %d: how many AI features are off.
+#: src/includes/class-viglet-dumont-cli-ai.php:66
+#, php-format
+msgid "%d AI feature is off."
+msgid_plural "%d AI features are off."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: how many failed jobs were put back in line.
+#: src/includes/class-viglet-dumont-cli-queue.php:41
+#, php-format
+msgid "Replaying %d failed jobs."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-cli-queue.php:48
+msgid "Another worker is sending the queue; try again in a few minutes."
+msgstr ""
+
+#. translators: 1: jobs sent, 2: jobs still waiting, 3: jobs that stopped retrying.
+#: src/includes/class-viglet-dumont-cli-queue.php:55
+#, php-format
+msgid "%1$d sent, %2$d waiting, %3$d stopped retrying."
+msgstr ""
+
+#. translators: 1: the post id, 2: why sending it failed.
+#: src/includes/class-viglet-dumont-cli-queue.php:60
+#: src/includes/class-viglet-dumont-cli.php:182
+#, php-format
+msgid "Post %1$d: %2$s"
+msgstr ""
+
+#. translators: 1: how many jobs failed, 2: the queue summary.
+#: src/includes/class-viglet-dumont-cli-queue.php:63
+#, php-format
+msgid "Stopped after %1$d failed. %2$s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-cli-queue.php:89
+msgid "The queue is empty."
+msgstr ""
+
+#. translators: 1: Turing's URL answer, 2: the SN site, 3: the site key.
+#: src/includes/class-viglet-dumont-cli.php:43
+#, php-format
+msgid "Connection: %1$s. SN site: %2$s. Site key: %3$s."
+msgstr ""
+
+#. translators: 1: jobs waiting, 2: jobs that stopped retrying.
+#: src/includes/class-viglet-dumont-cli.php:45
+#, php-format
+msgid "Queue: %1$d waiting, %2$d stopped retrying."
+msgstr ""
+
+#. translators: 1: the setting, 2: constant, env or option, 3: the constant's or variable's name.
+#: src/includes/class-viglet-dumont-cli.php:48
+#, php-format
+msgid "Setting %1$s comes from %2$s (%3$s)."
+msgstr ""
+
+#. translators: %s: why Turing refused the fields.
+#: src/includes/class-viglet-dumont-cli.php:52
+#, php-format
+msgid "Fields not provisioned: %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-cli.php:111
+msgid "Reindexing"
+msgstr ""
+
+#. translators: %s: why the sweep did not run or failed.
+#: src/includes/class-viglet-dumont-cli.php:115
+#, php-format
+msgid "Sweep: %s"
+msgstr ""
+
+#. translators: %d: documents removed from Turing.
+#: src/includes/class-viglet-dumont-cli.php:118
+#, php-format
+msgid "Swept %d documents WordPress no longer publishes."
+msgstr ""
+
+#. translators: %d: documents that would be removed.
+#: src/includes/class-viglet-dumont-cli.php:153
+#, php-format
+msgid "%d documents would be removed."
+msgstr ""
+
+#. translators: %d: documents removed.
+#: src/includes/class-viglet-dumont-cli.php:155
+#, php-format
+msgid "%d documents removed."
+msgstr ""
+
+#. translators: %d: posts sent that Turing did not answer for in time.
+#: src/includes/class-viglet-dumont-cli.php:188
+#, php-format
+msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed.
+#: src/includes/class-viglet-dumont-cli.php:193
+#, php-format
+msgid "%1$d sent, %2$d not confirmed, %3$d failed."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-cli.php:196
+#, php-format
+msgid "%1$d sent, %2$d failed."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:69
+#: src/includes/class-viglet-dumont-search-block.php:174
+#: src/includes/class-viglet-dumont-woocommerce.php:106
+#: src/includes/class-viglet-dumont-woocommerce.php:138
+msgid "Price"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:70
+msgid "Availability"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:71
+#: assets/admin/mapping.js:882
+msgid "Weight"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:72
+msgid "Dimensions"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:73
+msgid "Rating"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:118
+msgid "Two products or more are needed to compare."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:144
+#: src/includes/class-viglet-dumont-insights.php:155
+msgid "Turing wrote no summary."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-compare.php:150
+msgid "The summary named a figure the table does not hold, so it is not shown."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:49
+msgid "The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:51
+msgid "The URL is well formed."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:62
+msgid "The server answers."
+msgstr ""
+
+#. translators: %d: the HTTP status the server answered with.
+#: src/includes/class-viglet-dumont-diagnostics.php:71
+#, php-format
+msgid "The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:74
+msgid "It is a Turing."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:82
+msgid "No API key is set. Create one in Turing under API Tokens and paste it here."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:95
+msgid "Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-diagnostics.php:99
+msgid "Turing accepts the API key."
+msgstr ""
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-diagnostics.php:106
+#, php-format
+msgid "The SN site %s exists."
+msgstr ""
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-diagnostics.php:111
+#, php-format
+msgid "There is no SN site named %s in Turing yet. Create it from here, or check the name."
+msgstr ""
+
+#. translators: %s: the constant or environment variable that turns demo mode on.
+#: src/includes/class-viglet-dumont-diagnostics.php:132
+#, php-format
+msgid "Demo mode (%s): no API key is needed, and none is sent."
+msgstr ""
+
+#. translators: 1: the SN site's name, 2: what Turing answered.
+#: src/includes/class-viglet-dumont-diagnostics.php:144
+#, php-format
+msgid "The SN site %1$s does not answer a search without a key (%2$s): in demo mode it has to exist and be PUBLIC."
+msgstr ""
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-diagnostics.php:153
+#, php-format
+msgid "The SN site %s answers searches without a key."
+msgstr ""
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:174
+#, php-format
+msgid "%s does not resolve (DNS): check the address for typos, or whether this server can see that network."
+msgstr ""
+
+#. translators: %s: the transport's own message.
+#: src/includes/class-viglet-dumont-diagnostics.php:178
+#, php-format
+msgid "The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s"
+msgstr ""
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:182
+#, php-format
+msgid "%s did not answer in time: a firewall may be dropping the connection, or Turing is down."
+msgstr ""
+
+#. translators: %s: the host name.
+#: src/includes/class-viglet-dumont-diagnostics.php:186
+#, php-format
+msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:84
+#: assets/admin/mapping.js:671
+msgid "People"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:85
+#: assets/admin/mapping.js:676
+msgid "Organisations"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:86
+#: assets/admin/mapping.js:681
+msgid "Places"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:533
+msgid "Turing did not create the thesaurus."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-entities.php:645
+msgid "Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Turing's Thesaurus."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:114
+msgid "Documents imported successfully"
+msgstr ""
+
+#. translators: 1: the HTTP status code, 2: the response body.
+#: src/includes/class-viglet-dumont-events.php:117
+#, php-format
+msgid "Import failed with HTTP %1$d: %2$s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:120
+msgid "Documents removed successfully"
+msgstr ""
+
+#. translators: %d: the HTTP status code Turing answered with.
+#: src/includes/class-viglet-dumont-events.php:123
+#, php-format
+msgid "Deindex failed with HTTP %d"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:126
+msgid "Fields provisioned"
+msgstr ""
+
+#. translators: %s: the fields whose type Turing would have to change.
+#: src/includes/class-viglet-dumont-events.php:129
+#, php-format
+msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
+msgstr ""
+
+#. translators: 1: the HTTP status code, 2: Turing's error message.
+#: src/includes/class-viglet-dumont-events.php:133
+#, php-format
+msgid "Provisioning failed with HTTP %1$d: %2$s"
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-events.php:137
+#, php-format
+msgid "Bulk: %1$d sent, %2$d failed."
+msgstr ""
+
+#. translators: %d: documents removed from Turing.
+#: src/includes/class-viglet-dumont-events.php:141
+#: assets/admin/health.js:148
+#, php-format,js-format
+msgid "%d documents WordPress no longer publishes removed."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: src/includes/class-viglet-dumont-events.php:145
+#, php-format
+msgid "Reindex finished: %1$d sent, %2$d failed."
+msgstr ""
+
+#. translators: 1: posts done, 2: posts the reindex had to do.
+#: src/includes/class-viglet-dumont-events.php:149
+#, php-format
+msgid "Reindex cancelled after %1$d of %2$d posts."
+msgstr ""
+
+#. translators: %d: queued edits that had stopped retrying and were sent again.
+#: src/includes/class-viglet-dumont-events.php:153
+#, php-format
+msgid "Turing answered again: %d stopped edits put back in the queue."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-events.php:159
+msgid "Turing answered an AI call again: the AI budget is no longer exhausted."
+msgstr ""
+
+#. translators: %d: how many documents were indexed.
+#: src/includes/class-viglet-dumont-indexer.php:291
+#: assets/admin/setup.js:133
+#, php-format,js-format
+msgid "Indexing complete. %d documents indexed."
+msgstr ""
+
+#. translators: 1: documents indexed so far, 2: documents to index in all.
+#: src/includes/class-viglet-dumont-indexer.php:293
+#, php-format
+msgid "Indexed %1$d of %2$d documents..."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:120
+msgid "There are no searches in this period to summarize."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:183
+#: assets/admin/insights.js:370
+msgid "Top searches"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:184
+#: assets/admin/insights.js:393
+msgid "Searches that found nothing"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:188
+msgid "Turing is not keeping search metrics, so no new searches are recorded."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:190
+msgid "No searches this week yet."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-insights.php:206
+msgid "All search insights"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:444
+msgid "Author"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:614
+msgid "Today"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:619
+msgid "Next 7 days"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:624
+msgid "This month"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:629
+#: src/includes/class-viglet-dumont-mapping.php:643
+msgid "Upcoming"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:634
+msgid "Past"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:648
+#: assets/admin/insights.js:23
+msgid "Last 7 days"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:653
+#: assets/admin/insights.js:26
+msgid "Last 30 days"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:658
+msgid "This year"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:663
+msgid "Before this year"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:688
+msgid "No mapped field to provision."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:698
+msgid "The fields are already provisioned."
+msgstr ""
+
+#. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
+#: src/includes/class-viglet-dumont-mapping.php:769
+#, php-format
+msgid "%1$s is %2$s in Turing, %3$s here"
+msgstr ""
+
+#. translators: %s: the taxonomy's name.
+#: src/includes/class-viglet-dumont-mapping.php:798
+#, php-format
+msgid "Taxonomy: %s"
+msgstr ""
+
+#. translators: %s: the meta key.
+#: src/includes/class-viglet-dumont-mapping.php:814
+#, php-format
+msgid "Meta: %s"
+msgstr ""
+
+#. translators: %s: the meta key.
+#: src/includes/class-viglet-dumont-mapping.php:822
+#, php-format
+msgid "Text of the PDF in meta: %s"
+msgstr ""
+
+#. translators: %s: the core field, e.g. excerpt.
+#: src/includes/class-viglet-dumont-mapping.php:830
+#, php-format
+msgid "Post: %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-mapping.php:835
+msgid "Featured image URL"
+msgstr ""
+
+#. translators: %s: a range's upper bound.
+#: src/includes/class-viglet-dumont-mapping.php:1144
+#, php-format
+msgid "Up to %s"
+msgstr ""
+
+#. translators: %s: a range's lower bound.
+#: src/includes/class-viglet-dumont-mapping.php:1148
+#, php-format
+msgid "%s or more"
+msgstr ""
+
+#. translators: 1: a range's lower bound, 2: its upper bound.
+#: src/includes/class-viglet-dumont-mapping.php:1152
+#, php-format
+msgid "%1$s – %2$s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:239
+msgid "PDF files"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:259
+msgid "Explore"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:260
+msgid "Answer"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:263
+msgid "Preview"
+msgstr ""
+
+#. translators: %s: a type's name, e.g. "Events".
+#: src/includes/class-viglet-dumont-native-search.php:265
+#, php-format
+msgid "See all %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:266
+msgid "Recent searches"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:267
+msgid "Search this site"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:270
+msgid "Results"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:271
+msgid "Searching…"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:281
+msgid "See all results"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:282
+msgid "Enter: all results · Up and Down: choose one · Esc: close"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-native-search.php:283
+msgid "Search (Ctrl+K)"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-operations.php:264
+msgid "Turing could not be searched for this site's documents."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-operations.php:319
+#: src/includes/class-viglet-dumont-reindex.php:340
+msgid "Skipped: the reindex had failures."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:63
+msgid "Not published"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:68
+msgid "Out of search: the date has passed"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:71
+msgid "Excluded"
+msgstr ""
+
+#. translators: %s: the date the post leaves search.
+#: src/includes/class-viglet-dumont-post-state.php:75
+#, php-format
+msgid "Leaves search on %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:82
+#: src/includes/class-viglet-dumont-post-state.php:90
+#: assets/admin/health.js:625
+#: src/admin/js/editor-panel.js:313
+msgid "Failed"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:84
+msgid "Queued"
+msgstr ""
+
+#. translators: %s: how long ago, e.g. "2 mins".
+#: src/includes/class-viglet-dumont-post-state.php:96
+#, php-format
+msgid "Indexed %s ago"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:101
+msgid "Not indexed yet"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:260
+msgid "Save some text first: the fit is judged on the saved post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:302
+msgid "Too complex"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:303
+msgid "Jargon"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:304
+msgid "Tone"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:305
+msgid "Missing context"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:319
+#: src/includes/class-viglet-dumont-post-state.php:381
+#: src/includes/class-viglet-dumont-post-state.php:451
+#: src/includes/class-viglet-dumont-post-state.php:465
+msgid "No such post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:339
+msgid "Save some text first: the draft is written from the saved post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:363
+msgid "Turing wrote no draft."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-post-state.php:521
+msgid "Turing did not take the post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-reindex.php:101
+msgid "A reindex is already running."
+msgstr ""
+
+#. translators: %s: the post type asked for.
+#: src/includes/class-viglet-dumont-reindex.php:107
+#, php-format
+msgid "Posts of type %s are not indexed."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:145
+msgid "Relevance"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:146
+msgid "Newest"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-search-block.php:147
+msgid "Oldest"
+msgstr ""
+
+#. translators: %s: the SN site's name.
+#: src/includes/class-viglet-dumont-tuning.php:68
+#, php-format
+msgid "Turing has no SN site named %s."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:141
+msgid "A synonym needs two words or more."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:183
+msgid "Name a search and at least one post."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:294
+msgid "newer first"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:297
+msgid "sticky posts first"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-tuning.php:418
+msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:107
+msgid "Regular price"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:108
+msgid "Sale price"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:109
+msgid "Stock status"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:110
+msgid "SKU"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:111
+msgid "Average rating"
+msgstr ""
+
+#. translators: %s: a product field, e.g. Price.
+#: src/includes/class-viglet-dumont-woocommerce.php:118
+#, php-format
+msgid "Product: %s"
+msgstr ""
+
+#: src/includes/class-viglet-dumont-woocommerce.php:157
+msgid "Stock"
+msgstr ""
+
+#. translators: %s: the search query.
+#: src/templates/search-results.php:51
+#, php-format
+msgid "Search results for: %s"
+msgstr ""
+
+#. translators: %d: how many results the search found.
+#: src/templates/search-results.php:62
+#, php-format
+msgid "%d result found"
+msgid_plural "%d results found"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/templates/search-results.php:180
+msgid "Previous"
+msgstr ""
+
+#: src/templates/search-results.php:181
+msgid "Next"
+msgstr ""
+
+#: src/viglet-dumont.php:102
+msgid "Answers with sources"
+msgstr ""
+
+#: src/viglet-dumont.php:103
+msgid "Chat"
+msgstr ""
+
+#: src/viglet-dumont.php:104
+msgid "Natural-language filters"
+msgstr ""
+
+#: src/viglet-dumont.php:105
+msgid "Copilot"
+msgstr ""
+
+#: src/viglet-dumont.php:109
+msgid "Turing search block, with \"Answer questions from this site’s content\" on"
+msgstr ""
+
+#: src/viglet-dumont.php:110
+msgid "Site assistant block, or its launcher on every page"
+msgstr ""
+
+#: src/viglet-dumont.php:111
+msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
+msgstr ""
+
+#: src/viglet-dumont.php:112
+msgid "Ask this site block"
+msgstr ""
+
+#: src/viglet-dumont.php:134
+msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
+msgstr ""
+
+#: src/viglet-dumont.php:863
+msgid "Name the content to index: post_type is all, or one post type."
+msgstr ""
+
+#: src/viglet-dumont.php:1024
+msgid "No published post of this type to preview."
+msgstr ""
+
+#: src/viglet-dumont.php:1049
+msgid "The body needs a mapping object keyed by post type."
+msgstr ""
+
+#: assets/admin/health.js:27
+msgid "Indexed"
+msgstr ""
+
+#: assets/admin/health.js:28
+msgid "Removed"
+msgstr ""
+
+#: assets/admin/health.js:29
+msgid "Fields sent"
+msgstr ""
+
+#: assets/admin/health.js:30
+msgid "Sweep"
+msgstr ""
+
+#: assets/admin/health.js:31
+msgid "Replayed"
+msgstr ""
+
+#: assets/admin/health.js:32
+#: assets/admin/health.js:66
+msgid "Reindex"
+msgstr ""
+
+#: assets/admin/health.js:33
+msgid "AI budget"
+msgstr ""
+
+#: assets/admin/health.js:37
+msgid "Done"
+msgstr ""
+
+#: assets/admin/health.js:38
+msgid "Ended with failures"
+msgstr ""
+
+#: assets/admin/health.js:39
+msgid "Cancelled"
+msgstr ""
+
+#: assets/admin/health.js:43
+msgid "Sending the posts."
+msgstr ""
+
+#: assets/admin/health.js:44
+msgid "Sending the PDFs."
+msgstr ""
+
+#: assets/admin/health.js:45
+msgid "Removing what WordPress no longer publishes."
+msgstr ""
+
+#: assets/admin/health.js:78
+msgid "Reindex progress"
+msgstr ""
+
+#. translators: 1: when it started, 2: posts done, 3: posts to do in all, 4: posts that failed.
+#: assets/admin/health.js:87
+#, js-format
+msgid "Running since %1$s: %2$d of %3$d posts done, %4$d failed."
+msgstr ""
+
+#. translators: 1: why the batch failed, 2: when it is tried again.
+#: assets/admin/health.js:102
+#, js-format
+msgid "A batch failed (%1$s). It is tried again at %2$s."
+msgstr ""
+
+#: assets/admin/health.js:113
+msgid "Nothing has moved for a while: WP-Cron is not running. It runs when someone visits the site; with DISABLE_WP_CRON, the server’s own cron has to call it."
+msgstr ""
+
+#: assets/admin/health.js:126
+msgid "Cancel reindex"
+msgstr ""
+
+#. translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do.
+#: assets/admin/health.js:134
+#, js-format
+msgid "Last reindex: %1$s, %2$s. %3$d sent, %4$d failed, of %5$d posts."
+msgstr ""
+
+#: assets/admin/health.js:162
+msgid "No reindex has run from wp-admin yet. Index All under Settings › Actions starts one."
+msgstr ""
+
+#: assets/admin/health.js:181
+msgid "never"
+msgstr ""
+
+#: assets/admin/health.js:191
+msgid "Off"
+msgstr ""
+
+#: assets/admin/health.js:194
+msgid "Paused"
+msgstr ""
+
+#: assets/admin/health.js:195
+msgid "On"
+msgstr ""
+
+#: assets/admin/health.js:226
+msgid "AI features"
+msgstr ""
+
+#: assets/admin/health.js:230
+msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
+msgstr ""
+
+#: assets/admin/health.js:251
+msgid "Feature"
+msgstr ""
+
+#: assets/admin/health.js:254
+msgid "State"
+msgstr ""
+
+#: assets/admin/health.js:257
+msgid "Shown by"
+msgstr ""
+
+#: assets/admin/health.js:260
+msgid "Why"
+msgstr ""
+
+#: assets/admin/health.js:288
+#: src/admin/js/editor-panel.js:236
+msgid "Check again"
+msgstr ""
+
+#: assets/admin/health.js:289
+msgid "Check AI features"
+msgstr ""
+
+#. translators: 1: the SN site, 2: the site key.
+#: assets/admin/health.js:394
+#, js-format
+msgid "SN site %1$s, site key %2$s."
+msgstr ""
+
+#. translators: %s: why Turing refused the fields.
+#: assets/admin/health.js:406
+#, js-format
+msgid "The mapped fields are not provisioned: %s"
+msgstr ""
+
+#. translators: %d: how many documents another source sent under this site key.
+#: assets/admin/health.js:418
+#, js-format
+msgid "%d document under this site key came from another source. Index All, Delete All and the sweep leave it alone."
+msgid_plural "%d documents under this site key came from another source. Index All, Delete All and the sweep leave them alone."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/admin/health.js:433
+msgid "Documents"
+msgstr ""
+
+#: assets/admin/health.js:440
+msgid "Post type"
+msgstr ""
+
+#: assets/admin/health.js:446
+msgid "Published in WordPress"
+msgstr ""
+
+#: assets/admin/health.js:452
+msgid "Indexed in Turing"
+msgstr ""
+
+#: assets/admin/health.js:467
+msgid "unknown"
+msgstr ""
+
+#: assets/admin/health.js:477
+msgid "(differs: run a reindex)"
+msgstr ""
+
+#: assets/admin/health.js:497
+msgid "Reindex cancelled."
+msgstr ""
+
+#: assets/admin/health.js:504
+msgid "Queue"
+msgstr ""
+
+#. translators: 1: jobs waiting, 2: jobs that stopped retrying.
+#: assets/admin/health.js:510
+#, js-format
+msgid "%1$d waiting, %2$d stopped retrying."
+msgstr ""
+
+#. translators: 1: when, 2: documents sent, 3: documents that failed.
+#: assets/admin/health.js:522
+#, js-format
+msgid "Last run %1$s: %2$d sent, %3$d failed."
+msgstr ""
+
+#: assets/admin/health.js:530
+msgid "The queue has not sent anything yet."
+msgstr ""
+
+#. translators: %d: failed jobs put back in line.
+#: assets/admin/health.js:544
+#, js-format
+msgid "%d failed jobs put back in line."
+msgstr ""
+
+#: assets/admin/health.js:553
+msgid "Retry failed"
+msgstr ""
+
+#. translators: 1: sent, 2: failed.
+#: assets/admin/health.js:566
+#, js-format
+msgid "Sent %1$d, %2$d failed."
+msgstr ""
+
+#: assets/admin/health.js:576
+msgid "Send queue now"
+msgstr ""
+
+#: assets/admin/health.js:586
+msgid "Last events"
+msgstr ""
+
+#: assets/admin/health.js:594
+msgid "When"
+msgstr ""
+
+#: assets/admin/health.js:597
+msgid "What"
+msgstr ""
+
+#: assets/admin/health.js:600
+msgid "Post"
+msgstr ""
+
+#: assets/admin/health.js:603
+msgid "Result"
+msgstr ""
+
+#: assets/admin/health.js:621
+msgid "OK"
+msgstr ""
+
+#: assets/admin/health.js:639
+msgid "Nothing has been sent yet."
+msgstr ""
+
+#: assets/admin/insights.js:22
+msgid "Last 24 hours"
+msgstr ""
+
+#: assets/admin/insights.js:28
+msgid "All time"
+msgstr ""
+
+#: assets/admin/insights.js:98
+msgid "Summary"
+msgstr ""
+
+#: assets/admin/insights.js:116
+msgid "Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call."
+msgstr ""
+
+#: assets/admin/insights.js:129
+msgid "Write another"
+msgstr ""
+
+#: assets/admin/insights.js:130
+msgid "Summarize this period"
+msgstr ""
+
+#. translators: %s: a search visitors made.
+#: assets/admin/insights.js:199
+#, js-format
+msgid "Write about this: “%s”"
+msgstr ""
+
+#: assets/admin/insights.js:206
+msgid "Write about this"
+msgstr ""
+
+#. translators: %s: a search that found nothing.
+#: assets/admin/insights.js:220
+#, js-format
+msgid "Add a synonym: “%s”"
+msgstr ""
+
+#: assets/admin/insights.js:227
+msgid "Add a synonym"
+msgstr ""
+
+#: assets/admin/insights.js:258
+msgid "New"
+msgstr ""
+
+#: assets/admin/insights.js:262
+msgid "Steady"
+msgstr ""
+
+#. translators: %s: how much more it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:268
+#, js-format
+msgid "Up %s"
+msgstr ""
+
+#. translators: %s: how much less it was searched than in the period before, e.g. 40%.
+#: assets/admin/insights.js:270
+#, js-format
+msgid "Down %s"
+msgstr ""
+
+#: assets/admin/insights.js:280
+msgid "Against the period before"
+msgstr ""
+
+#: assets/admin/insights.js:285
+msgid "Searches"
+msgstr ""
+
+#: assets/admin/insights.js:317
+msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
+msgstr ""
+
+#: assets/admin/insights.js:324
+msgid "Period"
+msgstr ""
+
+#: assets/admin/insights.js:337
+msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
+msgstr ""
+
+#: assets/admin/insights.js:348
+msgid "No searches in this period yet. They appear here once visitors use the site’s search."
+msgstr ""
+
+#. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
+#: assets/admin/insights.js:359
+#, js-format
+msgid "%1$s searches, %2$s clicks, %3$s click-through."
+msgstr ""
+
+#: assets/admin/insights.js:371
+msgid "No searches in this period."
+msgstr ""
+
+#: assets/admin/insights.js:379
+msgid "Clicks"
+msgstr ""
+
+#: assets/admin/insights.js:383
+msgid "Click-through"
+msgstr ""
+
+#: assets/admin/insights.js:397
+msgid "Every search found something."
+msgstr ""
+
+#: assets/admin/insights.js:405
+msgid "Last searched"
+msgstr ""
+
+#: assets/admin/insights.js:421
+msgid "Found, but never opened"
+msgstr ""
+
+#: assets/admin/insights.js:425
+msgid "Every search that found results led to a click."
+msgstr ""
+
+#: assets/admin/mapping.js:32
+#: assets/admin/mapping.js:758
+#: assets/admin/mapping.js:885
+msgid "In Turing"
+msgstr ""
+
+#: assets/admin/mapping.js:33
+msgid "Added on the next save"
+msgstr ""
+
+#: assets/admin/mapping.js:34
+msgid "Conflict"
+msgstr ""
+
+#: assets/admin/mapping.js:72
+#: assets/admin/mapping.js:325
+msgid "Ranges"
+msgstr ""
+
+#: assets/admin/mapping.js:74
+msgid "Leave a bound empty for an open end, and a label empty to name the range after its bounds."
+msgstr ""
+
+#: assets/admin/mapping.js:83
+#: assets/admin/mapping.js:194
+#: assets/admin/mapping.js:341
+#: assets/admin/mapping.js:545
+msgid "Label"
+msgstr ""
+
+#: assets/admin/mapping.js:89
+#: assets/admin/mapping.js:202
+msgid "From"
+msgstr ""
+
+#: assets/admin/mapping.js:98
+#: assets/admin/mapping.js:211
+msgid "To"
+msgstr ""
+
+#: assets/admin/mapping.js:112
+#: assets/admin/mapping.js:227
+msgid "Remove range"
+msgstr ""
+
+#: assets/admin/mapping.js:126
+#: assets/admin/mapping.js:242
+msgid "Add range"
+msgstr ""
+
+#: assets/admin/mapping.js:154
+msgid "Periods"
+msgstr ""
+
+#: assets/admin/mapping.js:158
+msgid "Past: last 7 and 30 days, this year, before (and upcoming)"
+msgstr ""
+
+#: assets/admin/mapping.js:165
+msgid "Agenda: today, next 7 days, this month, upcoming, past"
+msgstr ""
+
+#: assets/admin/mapping.js:172
+msgid "My own"
+msgstr ""
+
+#: assets/admin/mapping.js:181
+msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR and moved with +7DAYS, -1MONTH and so on. Leave one empty for an open end. Up to 8."
+msgstr ""
+
+#: assets/admin/mapping.js:270
+#: assets/admin/mapping.js:864
+msgid "Source"
+msgstr ""
+
+#: assets/admin/mapping.js:280
+#: assets/admin/mapping.js:749
+#: assets/admin/mapping.js:867
+msgid "Turing field"
+msgstr ""
+
+#: assets/admin/mapping.js:301
+#: assets/admin/mapping.js:876
+msgid "Multiple"
+msgstr ""
+
+#: assets/admin/mapping.js:307
+msgid "Show on result cards"
+msgstr ""
+
+#: assets/admin/mapping.js:318
+#: assets/admin/mapping.js:879
+msgid "Facet"
+msgstr ""
+
+#: assets/admin/mapping.js:337
+#: assets/admin/mapping.js:752
+msgid "Facet label"
+msgstr ""
+
+#: assets/admin/mapping.js:352
+msgid "Search weight"
+msgstr ""
+
+#: assets/admin/mapping.js:382
+msgid "Remove field"
+msgstr ""
+
+#: assets/admin/mapping.js:384
+#: assets/admin/tuning.js:51
+msgid "Remove"
+msgstr ""
+
+#: assets/admin/mapping.js:429
+#: assets/admin/mapping.js:548
+msgid "Date shown on cards"
+msgstr ""
+
+#: assets/admin/mapping.js:433
+#: assets/admin/mapping.js:618
+msgid "Publication date"
+msgstr ""
+
+#: assets/admin/mapping.js:445
+#: assets/admin/mapping.js:554
+msgid "Image on cards"
+msgstr ""
+
+#: assets/admin/mapping.js:449
+msgid "Featured image"
+msgstr ""
+
+#: assets/admin/mapping.js:465
+msgid "Leaves search on"
+msgstr ""
+
+#: assets/admin/mapping.js:466
+msgid "A post leaves search once this date has passed, and comes back if it moves forward."
+msgstr ""
+
+#: assets/admin/mapping.js:473
+msgid "Never"
+msgstr ""
+
+#: assets/admin/mapping.js:528
+msgid "Types from other sources"
+msgstr ""
+
+#: assets/admin/mapping.js:533
+msgid "Documents another source sent under this site key, such as a catalog, carry types no post type has. Name each one as its result badge reads, and choose the fields its cards show as the date and the image. This changes how they show, never what is indexed."
+msgstr ""
+
+#. translators: %d: how many documents of the type were read.
+#: assets/admin/mapping.js:575
+#, js-format
+msgid "Documents read: %d"
+msgstr ""
+
+#. translators: %s: a document type, e.g. Article.
+#: assets/admin/mapping.js:591
+#, js-format
+msgid "Label for %s"
+msgstr ""
+
+#. translators: %s: a document type, e.g. Article.
+#: assets/admin/mapping.js:608
+#, js-format
+msgid "Date shown on %s cards"
+msgstr ""
+
+#. translators: %s: a document type, e.g. Article.
+#: assets/admin/mapping.js:635
+#, js-format
+msgid "Image on %s cards"
+msgstr ""
+
+#: assets/admin/mapping.js:645
+msgid "Its image field"
+msgstr ""
+
+#: assets/admin/mapping.js:709
+msgid "Off: turn on \"Find people, organisations and places in posts\" under Settings › Generative AI. Until then nothing is found and these facets are not offered."
+msgstr ""
+
+#: assets/admin/mapping.js:714
+msgid "Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered."
+msgstr ""
+
+#: assets/admin/mapping.js:724
+msgid "People, organisations and places"
+msgstr ""
+
+#: assets/admin/mapping.js:732
+msgid "Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
+msgstr ""
+
+#: assets/admin/mapping.js:741
+msgid "Open Settings"
+msgstr ""
+
+#: assets/admin/mapping.js:755
+msgid "Offered"
+msgstr ""
+
+#. translators: %s: the Turing field, e.g. entity_person.
+#: assets/admin/mapping.js:777
+#, js-format
+msgid "Facet label for %s"
+msgstr ""
+
+#. translators: %s: a facet's label, e.g. People.
+#: assets/admin/mapping.js:793
+#, js-format
+msgid "Offer %s"
+msgstr ""
+
+#: assets/admin/mapping.js:841
+msgid "Leave this type out of search"
+msgstr ""
+
+#: assets/admin/mapping.js:854
+msgid "Only the standard fields are sent for this type."
+msgstr ""
+
+#: assets/admin/mapping.js:941
+msgid "Add field"
+msgstr ""
+
+#: assets/admin/mapping.js:944
+msgid "Preview document"
+msgstr ""
+
+#. translators: %s: the post's title.
+#: assets/admin/mapping.js:957
+#, js-format
+msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
+msgstr ""
+
+#: assets/admin/mapping.js:1048
+msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
+msgstr ""
+
+#. translators: %s: why Turing could not say where each field stands.
+#: assets/admin/mapping.js:1062
+#, js-format
+msgid "Turing did not say where the fields stand: %s"
+msgstr ""
+
+#: assets/admin/mapping.js:1072
+msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
+msgstr ""
+
+#: assets/admin/mapping.js:1119
+msgid "Save and send to Turing"
+msgstr ""
+
+#: assets/admin/setup.js:25
+msgid "Address"
+msgstr ""
+
+#: assets/admin/setup.js:26
+msgid "Network"
+msgstr ""
+
+#: assets/admin/setup.js:27
+msgid "Turing"
+msgstr ""
+
+#: assets/admin/setup.js:28
+#: assets/admin/setup.js:228
+msgid "API key"
+msgstr ""
+
+#: assets/admin/setup.js:29
+#: assets/admin/setup.js:248
+msgid "SN site"
+msgstr ""
+
+#: assets/admin/setup.js:98
+msgid "Starting…"
+msgstr ""
+
+#. translators: 1: posts done, 2: posts to do in all.
+#: assets/admin/setup.js:111
+#, js-format
+msgid "Indexing in the background, so you can leave this page: %1$d of %2$d posts done."
+msgstr ""
+
+#. translators: 1: posts sent, 2: posts that failed.
+#: assets/admin/setup.js:141
+#, js-format
+msgid "The first index ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
+msgstr ""
+
+#: assets/admin/setup.js:199
+msgid "1. Connection"
+msgstr ""
+
+#. translators: %s: the constants or environment variables, comma-separated.
+#: assets/admin/setup.js:206
+#, js-format
+msgid "Set outside WordPress, read-only here: %s."
+msgstr ""
+
+#: assets/admin/setup.js:216
+msgid "Turing URL"
+msgstr ""
+
+#: assets/admin/setup.js:217
+msgid "The address of your Turing, e.g. https://search.example.org."
+msgstr ""
+
+#: assets/admin/setup.js:231
+msgid "A key is stored. Leave this empty to keep it."
+msgstr ""
+
+#: assets/admin/setup.js:235
+msgid "Create one in Turing under API Tokens."
+msgstr ""
+
+#: assets/admin/setup.js:249
+msgid "The Semantic Navigation site this WordPress publishes to and searches."
+msgstr ""
+
+#: assets/admin/setup.js:260
+msgid "The language the content is indexed in, e.g. pt_BR or en_US."
+msgstr ""
+
+#: assets/admin/setup.js:270
+msgid "Site key"
+msgstr ""
+
+#. translators: %s: the key derived from this site's address.
+#: assets/admin/setup.js:273
+#, js-format
+msgid "Keeps this site's documents apart when several sites share one SN site. Empty uses %s."
+msgstr ""
+
+#: assets/admin/setup.js:289
+msgid "Save and test the connection"
+msgstr ""
+
+#: assets/admin/setup.js:300
+msgid "2. Test"
+msgstr ""
+
+#. translators: %s: the SN site's name.
+#: assets/admin/setup.js:313
+#, js-format
+msgid "Create the SN site %s"
+msgstr ""
+
+#: assets/admin/setup.js:329
+msgid "3. First index"
+msgstr ""
+
+#: assets/admin/setup.js:334
+msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
+msgstr ""
+
+#: assets/admin/setup.js:345
+msgid "Index everything now"
+msgstr ""
+
+#: assets/admin/tuning.js:40
+msgid "Set in Turing’s console"
+msgstr ""
+
+#: assets/admin/tuning.js:79
+msgid "No suggestions from recent searches."
+msgstr ""
+
+#: assets/admin/tuning.js:87
+msgid "Suggested synonyms"
+msgstr ""
+
+#. translators: %s: the suggested words.
+#: assets/admin/tuning.js:114
+#, js-format
+msgid "Accept %s"
+msgstr ""
+
+#: assets/admin/tuning.js:118
+msgid "Accept"
+msgstr ""
+
+#: assets/admin/tuning.js:125
+msgid "Suggest from recent searches"
+msgstr ""
+
+#: assets/admin/tuning.js:170
+msgid "No results."
+msgstr ""
+
+#: assets/admin/tuning.js:178
+msgid "Featured:"
+msgstr ""
+
+#: assets/admin/tuning.js:195
+msgid "Try it"
+msgstr ""
+
+#: assets/admin/tuning.js:210
+msgid "A search to watch"
+msgstr ""
+
+#: assets/admin/tuning.js:214
+msgid "Its first results, now and before your last change here."
+msgstr ""
+
+#: assets/admin/tuning.js:223
+msgid "Try"
+msgstr ""
+
+#: assets/admin/tuning.js:232
+msgid "Before"
+msgstr ""
+
+#: assets/admin/tuning.js:234
+msgid "Now"
+msgstr ""
+
+#: assets/admin/tuning.js:255
+msgid "Synonyms"
+msgstr ""
+
+#: assets/admin/tuning.js:259
+msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
+msgstr ""
+
+#: assets/admin/tuning.js:269
+msgid "Words"
+msgstr ""
+
+#. translators: %s: the synonym's words.
+#: assets/admin/tuning.js:290
+#, js-format
+msgid "Remove %s"
+msgstr ""
+
+#: assets/admin/tuning.js:322
+msgid "Words that mean the same, separated by commas"
+msgstr ""
+
+#: assets/admin/tuning.js:331
+msgid "Add synonym"
+msgstr ""
+
+#: assets/admin/tuning.js:382
+msgid "Promoted results"
+msgstr ""
+
+#: assets/admin/tuning.js:386
+msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
+msgstr ""
+
+#: assets/admin/tuning.js:399
+#: assets/admin/tuning.js:525
+msgid "Shown first"
+msgstr ""
+
+#. translators: %s: the search the posts are promoted for.
+#: assets/admin/tuning.js:428
+#, js-format
+msgid "Remove the promotion for %s"
+msgstr ""
+
+#: assets/admin/tuning.js:470
+msgid "When visitors search for"
+msgstr ""
+
+#: assets/admin/tuning.js:480
+msgid "Find a post to show first"
+msgstr ""
+
+#: assets/admin/tuning.js:489
+msgid "Posts found"
+msgstr ""
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:510
+#, js-format
+msgid "Show %s first"
+msgstr ""
+
+#: assets/admin/tuning.js:517
+msgid "Add"
+msgstr ""
+
+#. translators: %s: a post's title.
+#: assets/admin/tuning.js:545
+#, js-format
+msgid "Take %s out"
+msgstr ""
+
+#: assets/admin/tuning.js:552
+msgid "Take out"
+msgstr ""
+
+#: assets/admin/tuning.js:567
+msgid "Promote"
+msgstr ""
+
+#: assets/admin/tuning.js:596
+#: assets/admin/tuning.js:610
+msgid "Boosts"
+msgstr ""
+
+#: assets/admin/tuning.js:614
+msgid "Rank some posts higher among the results that match. A boost never adds a result, it only changes the order."
+msgstr ""
+
+#: assets/admin/tuning.js:621
+msgid "Turing did not say which boosts are set; saving replaces them."
+msgstr ""
+
+#: assets/admin/tuning.js:640
+msgid "Newer first"
+msgstr ""
+
+#: assets/admin/tuning.js:644
+msgid "Recently published posts rank higher."
+msgstr ""
+
+#: assets/admin/tuning.js:653
+msgid "Sticky posts first"
+msgstr ""
+
+#: assets/admin/tuning.js:657
+msgid "Posts marked “Stick to the top of the blog” rank higher."
+msgstr ""
+
+#: assets/admin/tuning.js:666
+msgid "By post type"
+msgstr ""
+
+#: assets/admin/tuning.js:671
+msgid "Up ranks a type’s posts higher; Down ranks every other type higher."
+msgstr ""
+
+#: assets/admin/tuning.js:688
+msgid "Up"
+msgstr ""
+
+#: assets/admin/tuning.js:695
+msgid "Normal"
+msgstr ""
+
+#: assets/admin/tuning.js:702
+msgid "Down"
+msgstr ""
+
+#: assets/admin/tuning.js:722
+msgid "Save boosts"
+msgstr ""
+
+#: src/admin/js/assistant-block-editor.js:35
+msgid "Site assistant"
+msgstr ""
+
+#: src/admin/js/assistant-block-editor.js:37
+msgid "Button and heading"
+msgstr ""
+
+#: src/admin/js/assistant-block-editor.js:49
+msgid "Suggested questions"
+msgstr ""
+
+#: src/admin/js/assistant-block-editor.js:53
+msgid "One per line. Left empty, the assistant suggests this week’s popular searches."
+msgstr ""
+
+#: src/admin/js/assistant-block-editor.js:68
+msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site."
+msgstr ""
+
+#: src/admin/js/compare-block-editor.js:36
+#: src/admin/js/copilot-block-editor.js:47
+#: src/admin/js/related-block-editor.js:47
+msgid "Heading"
+msgstr ""
+
+#: src/admin/js/compare-block-editor.js:51
+msgid "Shows the products a shopper ticked Compare on in the search results, side by side. The search results link here once this page is published."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:53
+#: src/admin/js/search-block-editor.js:114
+msgid "Placeholder"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:55
+msgid "A waterproof jacket under 200"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:59
+msgid "Which courses start next month?"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:69
+msgid "Offer Build my kit"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:70
+msgid "Offer a plan"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:72
+msgid "A visitor describes a plan and gets the products it needs, grouped by need, to put in the cart together."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:76
+msgid "A visitor describes a plan and gets the items it needs from this site, grouped by need."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:86
+msgid "Build my kit only"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:87
+msgid "Plan only"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:88
+msgid "Opens on the plan, without Ask a question beside it: for a page of its own."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:101
+msgid "What the plan uses"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:107
+msgid "Types it proposes"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:111
+msgid "Indexed types, comma-separated, e.g. course, event. Blank: products on a shop, any type elsewhere."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:120
+msgid "Types it cites as guides"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:124
+msgid "Indexed types, comma-separated, e.g. page. Blank: posts on a shop, none elsewhere."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:133
+msgid "Availability field"
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:137
+msgid "The indexed field that says whether an item can be taken, e.g. seats_left. Blank: stock_status on a shop, none elsewhere."
+msgstr ""
+
+#: src/admin/js/copilot-block-editor.js:150
+msgid "Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:74
+msgid "Add a link to"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:75
+msgid "Add a link"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:81
+msgid "Assist"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:84
+msgid "Already covered?"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:87
+msgid "Nothing on the site looks like this post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:88
+msgid "Link ideas"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:91
+msgid "No related posts yet."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:94
+msgid "Compared by title: once this post is indexed, Turing compares the whole text."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:102
+msgid "Look again"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:102
+msgid "Find related posts"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:140
+msgid "Excerpt"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:145
+msgid "In the excerpt field. Save the post to keep it."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:152
+msgid "Use this excerpt"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:159
+msgid "Draft another"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:159
+msgid "Draft an excerpt"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:161
+msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:205
+msgid "Fits the audience?"
+msgstr ""
+
+#. translators: 1: an audience persona's name, 2: how well the post suits it, 0 to 100.
+#: src/admin/js/editor-panel.js:212
+#, js-format
+msgid "%1$s: %2$d%%"
+msgstr ""
+
+#. translators: %s: a rewrite Turing suggests for a passage.
+#: src/admin/js/editor-panel.js:224
+#, js-format
+msgid "Try: %s"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:236
+msgid "Check audience fit"
+msgstr ""
+
+#. translators: %s: the audience personas, comma separated.
+#: src/admin/js/editor-panel.js:240
+#, js-format
+msgid "Judged by Turing against %s, from the saved post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:256
+msgid "Names in this post"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:265
+msgid "Turing found no person, organisation or place in this post."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:267
+msgid "Found by Turing’s language model when the post was indexed. To change them, change the text and reindex."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:293
+msgid "Unknown"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:326
+msgid "Checking…"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:332
+msgid "Exclude from search"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:333
+msgid "Takes effect when the post is saved."
+msgstr ""
+
+#: src/admin/js/editor-panel.js:346
+msgid "Reindex now"
+msgstr ""
+
+#: src/admin/js/editor-panel.js:351
+msgid "Promote for a search…"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:45
+#: src/admin/js/related-block-editor.js:161
+msgid "Related content"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:56
+msgid "How many"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:63
+msgid "Alike by"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:64
+msgid "Meaning needs a site with embeddings in Turing; without them, shared words are used."
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:71
+msgid "Turing’s choice"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:78
+msgid "Shared words"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:85
+msgid "Meaning"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:92
+msgid "Only the same post type"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:101
+msgid "Include the sites this one also searches"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:110
+msgid "Show as"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:114
+#: src/admin/js/search-block-editor.js:247
+msgid "A grid"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:118
+#: src/admin/js/search-block-editor.js:243
+msgid "A list"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:127
+#: src/admin/js/search-block-editor.js:257
+msgid "Show the image"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:131
+#: src/admin/js/search-block-editor.js:265
+msgid "Show the date"
+msgstr ""
+
+#: src/admin/js/related-block-editor.js:135
+msgid "Show the excerpt"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:78
+msgid "Layout"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:85
+msgid "Its parts are blocks: move them, or put other blocks between them."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:89
+msgid "Make its parts (box, filters, results, pages) blocks you can reorder."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:103
+msgid "Back to the default order"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:107
+msgid "Arrange its parts"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:121
+msgid "Always filter by"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:137
+msgid "Each as field:value (type:event, or a mapped facet). Every search this block makes stays inside them, and visitors cannot remove them."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:143
+msgid "Show filters (facets)"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:152
+msgid "Let visitors sort (relevance, newest, oldest)"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:160
+msgid "Answer questions from this site’s content"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:164
+msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:173
+msgid "Suggest the filters a sentence names"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:177
+msgid "“Posts about php from last year” offers Type and Published filters to apply with one click. Each sentence is an LLM call; nothing is applied without a click."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:187
+msgid "Apply them instead of suggesting"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:191
+msgid "“Rain jacket under $400, blue” filters by colour and price at once, and a line says what was understood, with Undo. A price is read even without a language model."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:200
+msgid "Show popular searches under the box"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:204
+msgid "Up to eight of this week’s most searched words, each one checked to find something, before a visitor types."
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:213
+msgid "Where the filters sit"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:220
+msgid "Left"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:224
+msgid "Right"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:228
+msgid "Above the results"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:239
+msgid "Results as"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:261
+msgid "Show the type"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:269
+msgid "Show the snippet"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:281
+msgid "Results per page"
+msgstr ""
+
+#: src/admin/js/search-block-editor.js:305
+msgid "Turing search"
+msgstr ""
+
+#: src/blocks/assistant/block.json
+msgctxt "block title"
+msgid "Site assistant"
+msgstr ""
+
+#: src/blocks/assistant/block.json
+msgctxt "block description"
+msgid "A button that opens a conversation with Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used."
+msgstr ""
+
+#: src/blocks/assistant/block.json
+msgctxt "block keyword"
+msgid "chat"
+msgstr ""
+
+#: src/blocks/assistant/block.json
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "assistant"
+msgstr ""
+
+#: src/blocks/assistant/block.json
+msgctxt "block keyword"
+msgid "question"
+msgstr ""
+
+#: src/blocks/assistant/block.json
+#: src/blocks/copilot/block.json
+#: src/blocks/related/block.json
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "turing"
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block title"
+msgid "Compare products"
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block description"
+msgid "The products a shopper ticked Compare on, side by side: a table of what they all have, the rows where they differ marked. Needs WooCommerce."
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block keyword"
+msgid "compare"
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block keyword"
+msgid "comparison"
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block keyword"
+msgid "shop"
+msgstr ""
+
+#: src/blocks/compare/block.json
+msgctxt "block keyword"
+msgid "products"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block title"
+msgid "Ask this site"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block description"
+msgid "A conversation with Turing's copilot: a request in plain words answered from this site's content, with the items it cites. A described plan can be turned into the items it needs, grouped by need; on a WooCommerce shop those are products that go in the cart together."
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "copilot"
+msgstr ""
+
+#: src/blocks/copilot/block.json
+msgctxt "block keyword"
+msgid "ask"
+msgstr ""
+
+#: src/blocks/related/block.json
+msgctxt "block title"
+msgid "Related content"
+msgstr ""
+
+#: src/blocks/related/block.json
+msgctxt "block description"
+msgid "The posts Turing finds most like the one being read, from its similar-documents search."
+msgstr ""
+
+#: src/blocks/related/block.json
+msgctxt "block keyword"
+msgid "related"
+msgstr ""
+
+#: src/blocks/related/block.json
+msgctxt "block keyword"
+msgid "similar"
+msgstr ""
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block title"
+msgid "Search box"
+msgstr ""
+
+#: src/blocks/search-parts/box/block.json
+msgctxt "block description"
+msgid "The Turing search block’s box: the field, its suggestions and “Did you mean”."
+msgstr ""
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block title"
+msgid "Search filters"
+msgstr ""
+
+#: src/blocks/search-parts/filters/block.json
+msgctxt "block description"
+msgid "The Turing search block’s filters: the applied ones and the facets."
+msgstr ""
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block title"
+msgid "Search pages"
+msgstr ""
+
+#: src/blocks/search-parts/pages/block.json
+msgctxt "block description"
+msgid "The Turing search block’s result pages."
+msgstr ""
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block title"
+msgid "Search results"
+msgstr ""
+
+#: src/blocks/search-parts/results/block.json
+msgctxt "block description"
+msgid "The Turing search block’s results: the count, the sort, the answer and the list."
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block title"
+msgid "Turing search"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block description"
+msgid "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages."
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "search"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block keyword"
+msgid "facets"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Default"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Minimal"
+msgstr ""
+
+#: src/blocks/search/block.json
+msgctxt "block style label"
+msgid "Cards"
+msgstr ""

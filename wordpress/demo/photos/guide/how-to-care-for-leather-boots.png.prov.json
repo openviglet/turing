@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 6456530,
+    "path": "demo/photos/guide/how-to-care-for-leather-boots.png",
+    "sha256": "e75343fccde9dd44f0f5d7ad872f73fe4ed559d829ee33233c0f0a227050dd5b"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "16x9",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "2496x1664",
+    "returned_prompt": "{\n  \"high_level_description\": \"An editorial outdoor photograph of a hiker pausing on a rocky fell path in northern England to tend to a pair of well-worn brown leather boots, with rolling green fells receding into hazy distance under soft overcast daylight, shot on a 50mm lens with fine Kodak Portra grain.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Rolling green fells of northern England receding into hazy blue distance under a pale slate overcast sky, soft diffused daylight from above with no harsh shadows. A small tarn catches the pale sky reflected in a valley fold in the mid-distance. The foreground is a rocky fell path with mossy grass and scattered heather, slightly out of focus near the lens edge.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Weathered canvas rucksack slumped on the grass behind the boots in the midground-left, softly resolved. Faded olive-tan canvas with worn leather straps, a coiled length of cream climbing rope clipped to one side and a battered enamel mug with chipped white-and-blue rim hanging from the other.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Pair of sturdy brown full-grain leather hiking boots set on a flat moss-edged rock just left of center in the midground, sharp focus. The left boot stands upright with a wad of crumpled newspaper stuffed inside the shaft; the right boot lies tipped on its side showing a waxed toe cap with a faint sheen catching the diffused light.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Soft-bristled shoe brush resting against the upright boot, wooden handle and bristles dusted with dried mud. Beside it sits an open small tin of leather wax with a folded grey rag draped over the rim, wax visible inside the tin.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Hiker's hands entering from the right edge of the frame at chest height, sleeves of a faded olive wool jumper pushed up to the forearms. Medium skin tone, fingers just finishing a wiping motion across the waxed toe cap of the tipped boot. Body stays out of frame.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Tufts of rust-orange heather and yellow gorse scattered along the foreground rock edge, slightly out of focus near the lens, framing the lower portion of the scene.\"\n      }\n    ]\n  }\n}",
+    "seed": 1914678205,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 6456530,
+    "sha256": "e75343fccde9dd44f0f5d7ad872f73fe4ed559d829ee33233c0f0a227050dd5b"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:39:39Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Editorial outdoor photograph for a hiking magazine article titled \"How to care for leather boots\". Leather that dries hard cracks, and cracked leather lets water in. Brush the mud off while it is wet, dry the boots at room temperature with newspaper inside, never by a fire, and rub in a leather wax once they are dry. The Scafell waterproof hiking boot and the Kirkstone winter boot will last for... Natural light in the green fells and lakes of northern England, realistic, candid, warm and inviting, shot on a full-frame camera. No text, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:vtuFy7sTQLejhuww8w38zw"
+}

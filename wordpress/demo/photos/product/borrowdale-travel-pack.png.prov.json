@@ -1,0 +1,44 @@
+{
+  "artefact": {
+    "bytes": 5929861,
+    "path": "demo/photos/product/borrowdale-travel-pack.png",
+    "sha256": "7fa3f65642d970cbb1d56b6d6a0e78b5957cd4ac50387af6e38e5049a32bb6a7"
+  },
+  "balance_after": null,
+  "balance_before": null,
+  "bought": "image",
+  "credits": 0.06,
+  "details": {
+    "aspect_ratio": "1x1",
+    "entity": null,
+    "family": null,
+    "json_prompt": null,
+    "model": "4.0",
+    "rendering_speed": null,
+    "resolution": "1792x2240",
+    "returned_prompt": "{\n  \"high_level_description\": \"Shot on iPhone, a navy blue Borrowdale 35-litre travel pack resting on a mossy granite boulder beside a mountain footpath in the green fells, with rolling ridgelines fading into overcast haze.\",\n  \"compositional_deconstruction\": {\n    \"background\": \"Rolling green fells under soft overcast daylight, layered ridgelines receding into atmospheric haze in muted sage, olive, and slate-blue tones. A low cloud bank hugs the far ridges. Cool-toned neutral white balance, even diffused light with no harsh highlights. A narrow dirt-and-gravel footpath winds away behind the rock, scattered with small stones and tufts of heather. Slightly elevated eye-level framing places the pack at the rule-of-thirds intersection.\",\n    \"elements\": [\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Mossy granite boulder anchoring the lower-center of the frame, weathered grey stone with thick emerald moss patches and pale lichen crusts across the surface. Weathered cracks run across the rock. Slight dew beading visible on the moss.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Navy blue Borrowdale 35-litre travel pack resting on the mossy boulder, positioned slightly right of centre. Clamshell suitcase-style opening partially unzipped to reveal a padded laptop sleeve interior and a zipped-away harness compartment. Matte polyester shell in deep saturated navy with subtle tonal stitching, sand-coloured webbing straps with visible weave, black buckles, side compression strap with a small sand loop.\"\n      },\n      {\n        \"type\": \"obj\",\n        \"desc\": \"Out-of-focus bracken fronds and a single wildflower stem slicing diagonally into the lower-left foreground edge, soft blurred green and pale accents framing the scene.\"\n      }\n    ]\n  }\n}",
+    "seed": 2021397640,
+    "transparent": false
+  },
+  "elapsed_s": null,
+  "engine": {
+    "model": "4.0",
+    "name": "ideogram"
+  },
+  "expected_credits": 0.06,
+  "inputs": [],
+  "kind": "fetch",
+  "measurements": {
+    "bytes": 5929861,
+    "sha256": "7fa3f65642d970cbb1d56b6d6a0e78b5957cd4ac50387af6e38e5049a32bb6a7"
+  },
+  "params": {},
+  "produced_at": "2026-11-04T10:22:08Z",
+  "producer": {
+    "tool": "polyweave",
+    "version": "0.1.0"
+  },
+  "prompt": "Product photograph outdoors: the item resting on a mossy rock beside a mountain trail in green fells, soft natural daylight, the item in sharp focus and the fells softly blurred behind. Nobody in the frame. The item is Borrowdale travel pack, in navy blue. A 35 litre travel pack that opens like a suitcase and fits cabin luggage limits. Weight 1,200 g. A laptop sleeve and harness that zips away. Colour: Black, Navy, Sand. Materials: Polyester. Care: Wipe clean with a damp cloth. Do not machine wash. Photorealistic, high detail. No text, no labels, no logos, no brand names.",
+  "service": "ideogram",
+  "task_id": "ideogram:vxF0VlfxQbuk0klXQLuu7g"
+}

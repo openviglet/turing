@@ -1,0 +1,277 @@
+/*
+Theme Name: Tarnfell
+Description: The demo storefront for the Viglet Turing Search plugin: an outdoor gear shop built on Turing search. A fictional brand, for showing the plugin; not for a real store.
+Version: 0.1.0
+Requires at least: 6.6
+Requires PHP: 8.1
+Author: Viglet
+License: MIT
+Text Domain: tarnfell
+*/
+
+/* What theme.json cannot say: the hero's search box, the brand mark and the search block
+   on the birch background. */
+
+.tarnfell-brand {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	text-decoration: none;
+	color: var(--wp--preset--color--pine);
+}
+
+.tarnfell-brand svg {
+	flex: none;
+}
+
+.tarnfell-hero .wp-block-search__inside-wrapper {
+	background: var(--wp--preset--color--paper);
+	border: 0;
+	border-radius: 6px;
+	padding: 0.35rem;
+	box-shadow: 0 12px 32px rgb(0 0 0 / 0.25);
+}
+
+.tarnfell-hero .wp-block-search__input {
+	border: 0;
+	font-size: 1.125rem;
+	padding: 0.75rem 1rem;
+	min-width: 0;
+}
+
+.tarnfell-hero .wp-block-search__label {
+	color: var(--wp--preset--color--lichen);
+}
+
+.tarnfell-tile {
+	transition: transform 0.15s ease-out;
+}
+
+.tarnfell-tile:hover,
+.tarnfell-tile:focus-within {
+	transform: translateY(-3px);
+}
+
+.tarnfell-tile a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tarnfell-tile a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.tarnfell-tile {
+	position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tarnfell-tile {
+		transition: none;
+	}
+}
+
+/* The brand's name, set like the site title it stands for. */
+.tarnfell-brand .wp-block-site-title {
+	font-family: var(--wp--preset--font-family--display);
+	font-weight: 700;
+	font-size: 1.75rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	line-height: 1;
+}
+
+/* A tile's title is on its own colour: it takes the tile's text colour, not the link's. */
+.tarnfell-tile .wp-block-heading a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* The bands meet: no gap between the header, the page and the footer. */
+.wp-site-blocks > * + * {
+	margin-block-start: 0;
+}
+
+/* Form controls speak the theme's type, the search block's field and sort included. */
+input,
+select,
+textarea,
+button {
+	font-family: inherit;
+}
+
+.viglet-dumont-search input[type="search"] {
+	font-size: var(--wp--preset--font-size--medium);
+	padding-inline: 0.75rem;
+}
+
+/* A short page keeps its footer at the bottom of the window. */
+.wp-site-blocks {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.wp-site-blocks > main {
+	flex: 1;
+}
+
+/* The checkout's address form: every row the same distance from the one above. WooCommerce
+   takes the country's top margin away on the assumption that it opens the form; in a locale
+   whose form opens on the name (pt_BR), it sat flush under the name fields while the other
+   rows are 12px apart (WooCommerce's own spacing, kept). */
+.wc-block-components-form .wc-block-components-checkout-step .wc-block-components-address-form__country:not(:first-child) {
+	margin-top: 12px;
+}
+
+/* "Place order" as tall and as legible as the store's other actions, not a thin strip. */
+.wc-block-components-checkout-place-order-button {
+	font-size: var(--wp--preset--font-size--medium);
+	letter-spacing: 0.04em;
+	min-height: 3.5rem;
+}
+
+/* Build my kit's own page: the planner framed as the page's tool, in the lichen of the copilot
+   on a product, with room for the kit it builds below the plan. */
+.viglet-dumont-copilot.tarnfell-plan {
+	background: var(--wp--preset--color--lichen);
+	border-radius: 6px;
+	margin-top: var(--wp--preset--spacing--40);
+	padding: var(--wp--preset--spacing--50);
+}
+
+/* WooCommerce's sale badge, in the brand's action colour at AA contrast. */
+.wc-block-components-product-sale-badge,
+body .woocommerce span.onsale {
+	background: var(--wp--preset--color--ember);
+	border-color: var(--wp--preset--color--ember);
+	color: var(--wp--preset--color--paper);
+}
+
+/* The copilot sits in the product's side column: its heading is a section's, not the page's. */
+.wp-block-viglet-dumont-copilot h2 {
+	font-size: var(--wp--preset--font-size--large);
+	margin-block-start: 0;
+}
+
+/* The header row: the mark left, then the menu and whatever WooCommerce hooks after it
+   (account, cart) together on the right. */
+.tarnfell-header-row > .wp-block-navigation {
+	margin-inline-start: auto;
+}
+
+/* Compare searches (D195): the curated searches, then the two columns side by side. */
+.tarnfell-compare__form {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.tarnfell-compare__form input[type="search"] {
+	flex: 1;
+	font: inherit;
+	padding: 0.6rem 0.8rem;
+}
+
+.tarnfell-compare__examples {
+	display: grid;
+	gap: 0.35rem;
+	list-style: none;
+	margin: 0 0 2rem;
+	padding: 0;
+}
+
+.tarnfell-compare__examples a {
+	font-weight: 600;
+	margin-right: 0.5rem;
+}
+
+.tarnfell-compare__examples a[aria-current="true"] {
+	text-decoration-thickness: 3px;
+}
+
+.tarnfell-compare__examples span {
+	font-size: 0.9em;
+	opacity: 0.8;
+}
+
+.tarnfell-compare__columns {
+	display: grid;
+	gap: 2rem;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 782px) {
+	.tarnfell-compare__columns {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.tarnfell-compare__columns h2 {
+	font-size: 1.4rem;
+	margin-top: 0;
+}
+
+.tarnfell-compare__results {
+	display: grid;
+	gap: 0.75rem;
+	margin: 0;
+	padding-left: 1.2rem;
+}
+
+/* "How it works" (D195): a numbered marker before each feature, its note in the flow. */
+.tarnfell-tour {
+	margin: 0.5rem 0;
+}
+
+.tarnfell-tour__marker {
+	align-items: center;
+	background: var(--wp--preset--color--ember, #b4501c);
+	border: 0;
+	border-radius: 50%;
+	color: #fff;
+	cursor: pointer;
+	display: inline-flex;
+	font: 700 0.9rem/1 sans-serif;
+	height: 1.75rem;
+	justify-content: center;
+	width: 1.75rem;
+}
+
+.tarnfell-tour__marker:focus-visible {
+	outline: 3px solid currentColor;
+	outline-offset: 2px;
+}
+
+.tarnfell-tour__note {
+	background: var(--wp--preset--color--paper, #fff);
+	border-left: 4px solid var(--wp--preset--color--ember, #b4501c);
+	margin-top: 0.5rem;
+	max-width: 36rem;
+	padding: 0.75rem 1rem;
+}
+
+.tarnfell-tour__note p {
+	margin: 0.25rem 0 0.5rem;
+}
+
+.tarnfell-tour__leave {
+	background: var(--wp--preset--color--pine, #1f3b2d);
+	bottom: 1rem;
+	color: #fff;
+	padding: 0.5rem 0.9rem;
+	position: fixed;
+	right: 1rem;
+	z-index: 10;
+}
+
+/* The showcase's notice that the AI features are off (D198): shown by assets/ai-notice.js. */
+.tarnfell-ai-off {
+	display: none;
+}
+
+.tarnfell-ai-off.is-shown {
+	display: block;
+}

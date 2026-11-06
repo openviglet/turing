@@ -1,0 +1,90 @@
+[
+	{
+		"query": "light jacket for rain",
+		"shows": "A need described in words finds the product made for it.",
+		"first": "Catbells light rain jacket",
+		"native": "Catbells light rain jacket"
+	},
+	{
+		"query": "waterproof jacket",
+		"shows": "The guide whose title is the exact phrase comes first, then the other guide that says it.",
+		"first": "How to choose a waterproof jacket",
+		"then": "How to wash and reproof a waterproof jacket",
+		"native": "How to choose a waterproof jacket"
+	},
+	{
+		"query": "raincoat",
+		"shows": "A synonym: no product or guide says raincoat, and the rain jacket and its buying guide come back.",
+		"first": "Catbells light rain jacket",
+		"then": "How to choose a waterproof jacket",
+		"native": null
+	},
+	{
+		"query": "rucksack",
+		"shows": "A synonym in British English for what the shop calls a daypack.",
+		"first": "Helvellyn 28 litre daypack",
+		"native": null
+	},
+	{
+		"query": "puffer",
+		"shows": "A shopper's word for an insulated jacket: the guide to choosing one, then a jacket.",
+		"first": "Down or synthetic: choosing an insulated jacket",
+		"then": "Glaramara synthetic jacket",
+		"native": null
+	},
+	{
+		"query": "helvelyn",
+		"shows": "A misspelling the search offers to correct.",
+		"correction": "helvellyn"
+	},
+	{
+		"query": "tent",
+		"filter": "pa_use:Mountaineering",
+		"shows": "A filter by attribute narrows the tents to the ones for mountains.",
+		"first": "Blencathra mountain tent",
+		"count": 3
+	},
+	{
+		"locale": "pt_BR",
+		"query": "jaqueta leve para chuva",
+		"shows": "Uma necessidade descrita em palavras encontra o produto feito para ela.",
+		"first": "Jaqueta de chuva leve Catbells",
+		"native": "Jaqueta de chuva leve Catbells"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "jaqueta impermeável",
+		"shows": "Um guia de compra primeiro, depois os produtos que ele recomenda.",
+		"first": "Como escolher uma jaqueta impermeável"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "capa de chuva",
+		"shows": "Um sinônimo: nenhum produto diz capa de chuva, e a jaqueta de chuva e o guia para escolher uma voltam.",
+		"first": "Jaqueta de chuva leve Catbells",
+		"then": "Como escolher uma jaqueta impermeável",
+		"native": "Como escolher uma jaqueta impermeável"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "puffer",
+		"shows": "A palavra do cliente para jaqueta de pluma: um guia de pluma, depois a jaqueta.",
+		"first": "Como lavar uma jaqueta de pluma",
+		"then": "Jaqueta de pluma Blencathra",
+		"native": null
+	},
+	{
+		"locale": "pt_BR",
+		"query": "helvelyn",
+		"shows": "Um erro de digitação que a busca oferece corrigir.",
+		"correction": "helvellyn"
+	},
+	{
+		"locale": "pt_BR",
+		"query": "barraca",
+		"filter": "pa_use:Montanhismo",
+		"shows": "Um filtro por atributo deixa só as barracas de montanha.",
+		"first": "Barraca de montanha Blencathra",
+		"count": 3
+	}
+]

@@ -1,0 +1,399 @@
+// The visitor's side: the Turing search block, and the theme's own search page answered by
+// Turing. Anonymous: no stored session. Runs at desktop, tablet and phone
+// (playwright.config.mjs); every state is checked by axe and compared with its stored
+// screenshot. The site-classic and site-ollie projects run it again under a classic and a
+// third-party block theme. A test that compares a screenshot pins the order with
+// sort=oldest: Turing leaves equally relevant results in no fixed order.
+import { expect, test } from '../fixtures.mjs';
+
+const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const results = ( page ) =>
+	block( page ).locator( '.viglet-dumont-search__results li' );
+const summary = ( page ) =>
+	block( page ).locator( '.viglet-dumont-search__summary' );
+const inBlock = { include: '.viglet-dumont-search' };
+const facet = ( page, label ) =>
+	block( page )
+		.locator( '.viglet-dumont-search__facet' )
+		.filter( { has: page.locator( 'summary', { hasText: label } ) } );
+const seatsValue = ( page, value ) =>
+	facet( page, 'Seats' )
+		.locator( 'label' )
+		.filter( { hasText: value } )
+		.locator( 'input' );
+const drawerToggle = ( page ) =>
+	block( page ).locator( '.viglet-dumont-search__filters-toggle' );
+
+// On a phone the facets wait in a drawer; elsewhere these do nothing.
+async function openFilters( page ) {
+	if ( await drawerToggle( page ).isVisible() ) {
+		await drawerToggle( page ).click();
+	}
+}
+async function closeFilters( page ) {
+	const done = block( page ).getByRole( 'button', { name: 'Show results' } );
+	if ( await done.isVisible() ) {
+		await done.click();
+	}
+}
+
+test( "the block answers a query with this site's results, as plain text", async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&sort=oldest`
+	);
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( results( page ) ).toHaveCount( 4 );
+	await expect( results( page ).first().locator( 'a' ) ).not.toContainText(
+		'<mark>'
+	);
+	await look( 'search-block-workshop' );
+	await axe( 'search block with results', inBlock );
+	await expect( block( page ) ).toHaveScreenshot(
+		'search-block-workshop.png'
+	);
+} );
+
+test( 'a facet narrows the results, shows as a removable filter, and removing it restores them', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&q=workshop&sort=oldest`
+	);
+	await expect( summary( page ) ).toHaveText( '4 results' );
+
+	await openFilters( page );
+	// click(), not check(): the facets re-render from the new answer.
+	await seatsValue( page, '40' ).click();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	// The filtered facet stays, its value checked and counted, the other value still there.
+	await expect( seatsValue( page, '40' ) ).toBeChecked();
+	await expect( seatsValue( page, '20' ) ).not.toBeChecked();
+	await expect(
+		facet( page, 'Seats' ).locator( '.viglet-dumont-search__badge' )
+	).toHaveText( '1' );
+	await closeFilters( page );
+	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	await expect( chip ).toHaveCount( 1 );
+	await expect( chip ).toContainText( 'Seats: 40' );
+	await look( 'search-block-facet' );
+	await axe( 'search block with a filter applied', inBlock );
+	await expect( block( page ) ).toHaveScreenshot( 'search-block-facet.png' );
+
+	await chip.click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( chip ).toHaveCount( 0 );
+} );
+
+test( 'a range facet narrows to a range and its chip names the range', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+
+	await openFilters( page );
+	const capacity = facet( page, 'Capacity' );
+	await expect( capacity.locator( 'label' ) ).toHaveText( [
+		/Up to 30\s*1/,
+		/30 or more\s*3/,
+	] );
+	await capacity
+		.locator( 'label' )
+		.filter( { hasText: '30 or more' } )
+		.locator( 'input' )
+		.click();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await expect(
+		capacity
+			.locator( 'label' )
+			.filter( { hasText: '30 or more' } )
+			.locator( 'input' )
+	).toBeChecked();
+	await closeFilters( page );
+	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	await expect( chip ).toHaveText( /Capacity: 30 or more/ );
+
+	await chip.click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+} );
+
+test( 'a long facet shows five values and the rest on demand', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=*` );
+	await openFilters( page );
+	const topic = facet( page, 'Topic' );
+	const values = topic.locator( 'label:visible' );
+	await expect( values ).toHaveCount( 5 );
+	const more = topic.getByRole( 'button', { name: 'Show 7 more' } );
+	await expect( more ).toHaveAttribute( 'aria-expanded', 'false' );
+	await more.click();
+	await expect( values ).toHaveCount( 12 );
+	await topic.getByRole( 'button', { name: 'Show fewer' } ).click();
+	await expect( values ).toHaveCount( 5 );
+
+	// A group folds away under its heading.
+	await topic.locator( 'summary' ).click();
+	await expect( values ).toHaveCount( 0 );
+} );
+
+test( 'on a phone the facets open in a drawer over the results', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	test.skip(
+		( page.viewportSize()?.width ?? 0 ) >= 782,
+		'the drawer is for narrow screens'
+	);
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	const toggle = drawerToggle( page );
+	await expect( toggle ).toHaveText( 'Filters' );
+	await expect( facet( page, 'Seats' ) ).toBeHidden();
+
+	await toggle.click();
+	await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect( facet( page, 'Seats' ) ).toBeVisible();
+	await seatsValue( page, '40' ).click();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await look( 'search-block-drawer' );
+	await axe( 'search block with the filter drawer open', inBlock );
+
+	await block( page ).getByRole( 'button', { name: 'Show results' } ).click();
+	await expect( facet( page, 'Seats' ) ).toBeHidden();
+	await expect( toggle ).toBeFocused();
+	await expect( toggle ).toHaveText( 'Filters (1)' );
+} );
+
+test( 'typing suggests, and picking a suggestion searches it', async ( {
+	page,
+	seed,
+	axe,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }` );
+	await axe( 'search block before a query', inBlock );
+	await block( page )
+		.locator( 'input[type="search"]' )
+		.pressSequentially( 'work', { delay: 50 } );
+	const suggestion = block( page )
+		.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+		.filter( { hasText: 'workshop' } );
+	await expect( suggestion ).toBeVisible();
+	await axe( 'search block suggesting', inBlock );
+	await suggestion.click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( page ).toHaveURL( /q=workshop/ );
+} );
+
+// D259: a misspelling that finds nothing is searched as corrected and says so; the search as
+// typed is one click away, and then the correction is only offered.
+test( 'a misspelling that finds nothing shows the corrected results, and the search as typed is one click away', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=worskhop` );
+	const showing = block( page ).locator(
+		'.viglet-dumont-search__showing-for'
+	);
+	await expect( showing ).toContainText( 'workshop' );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( showing.locator( 'button' ) ).toHaveText( 'worskhop' );
+	await look( 'search-block-showing-for' );
+	await axe( 'search block showing corrected results', inBlock );
+	// The notice alone: the four results tie on relevance, so their order is Turing's to pick.
+	await expect( showing ).toHaveScreenshot( 'search-block-showing-for.png' );
+
+	await showing.locator( 'button' ).click();
+	await expect( showing ).toBeHidden();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__correction button' )
+	).toHaveText( 'workshop' );
+	await expect( page.locator( 'input[type="search"]' ).first() ).toHaveValue(
+		'worskhop'
+	);
+} );
+
+// D286: a correction that finds nothing either is undone, so the page is about what was typed.
+test( 'a misspelling whose correction finds nothing either stays as typed, with no correction notice', async ( {
+	page,
+	seed,
+} ) => {
+	await page.route( '**/spell-check?*', ( route ) =>
+		route.fulfill( {
+			json: {
+				correctedText: true,
+				usingCorrectedText: false,
+				original: { text: 'zzqqtyped' },
+				corrected: { text: 'zzqqcorrected' },
+			},
+		} )
+	);
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=zzqqtyped` );
+	const input = page.locator( 'input[type="search"]' ).first();
+	await expect( block( page ) ).toContainText( 'No results found' );
+	await expect( input ).toHaveValue( 'zzqqtyped' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__showing-for' )
+	).toBeHidden();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__correction' )
+	).toBeHidden();
+	await expect( page ).toHaveURL( /q=zzqqtyped/ );
+} );
+
+test( 'everything spans pages, and the next page shows other results', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=*` );
+	const pages = block( page ).locator(
+		'.viglet-dumont-search__pages button'
+	);
+	await expect( pages ).toHaveCount( 2 );
+	await expect( pages.first() ).toHaveAttribute( 'aria-current', 'true' );
+	const first = await results( page ).first().textContent();
+
+	await pages.nth( 1 ).click();
+	await expect( pages.nth( 1 ) ).toHaveAttribute( 'aria-current', 'true' );
+	await expect( results( page ).first() ).not.toHaveText( first );
+	await look( 'search-block-page-2' );
+	await axe( 'search block on page 2', inBlock );
+} );
+
+test( 'a result is a card: type, date, address and the matched words marked', async ( {
+	page,
+	seed,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	const first = results( page ).first();
+	await expect( first.locator( '.viglet-dumont-search__type' ) ).toHaveText(
+		'Post'
+	);
+	await expect( first.locator( 'time' ) ).toHaveAttribute(
+		'datetime',
+		/^\d{4}-\d{2}-\d{2}T/
+	);
+	// A result on this very site shows its path without the domain (D263); this site's plain
+	// permalinks (?p=) have none, so the crumb says nothing rather than localhost.
+	await expect(
+		first.locator( '.viglet-dumont-search__crumb' )
+	).not.toContainText( 'localhost' );
+	await expect(
+		first.locator( '.viglet-dumont-search__snippet mark' )
+	).toHaveText( 'Workshop' );
+} );
+
+test( 'while a search runs the block shows placeholders and says it is busy', async ( {
+	page,
+	seed,
+	look,
+} ) => {
+	// A page opened with a query has its first results drawn by the server (D209), so the
+	// placeholders are for the first search typed into an empty page.
+	await page.goto( `/?page_id=${ seed.searchPageId }` );
+	// Hold Turing's answer long enough to see the state it leaves the block in.
+	await page.route( '**/api/sn/*/search/**', async ( route ) => {
+		await new Promise( ( resolve ) => setTimeout( resolve, 1500 ) );
+		await route.continue();
+	} );
+	const box = block( page ).getByRole( 'combobox' );
+	await box.fill( 'workshop' );
+	await box.press( 'Enter' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__skeleton' )
+	).toBeVisible();
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__results' )
+	).toHaveAttribute( 'aria-busy', 'true' );
+	await look( 'search-block-loading' );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect(
+		block( page ).locator( '.viglet-dumont-search__skeleton' )
+	).toBeHidden();
+} );
+
+test( 'a search that finds nothing offers the latest posts', async ( {
+	page,
+	seed,
+	look,
+	axe,
+} ) => {
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=xqzvbnmw` );
+	await expect( summary( page ) ).toHaveText(
+		'No results found. Try different keywords.'
+	);
+	const empty = block( page ).locator( '.viglet-dumont-search__empty' );
+	await expect( empty ).toBeVisible();
+	await expect( empty.locator( 'li a' ) ).toHaveCount( 3 );
+	await look( 'search-block-empty' );
+	await axe( 'search block with nothing found', inBlock );
+} );
+
+test( 'a failed search offers to try again and WordPress search', async ( {
+	page,
+	seed,
+	look,
+	axe,
+	problems,
+} ) => {
+	// The failure is the point here, so the guard lets Turing's refusals through.
+	problems.allow( /api\/sn\// );
+	problems.allow( /Failed to load resource/ );
+	await page.route( '**/api/sn/*/search/**', ( route ) => route.abort() );
+	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
+	await expect( summary( page ) ).toHaveText(
+		'Search is unavailable right now.'
+	);
+	const error = block( page ).locator( '.viglet-dumont-search__error' );
+	await expect( error ).toBeVisible();
+	await expect(
+		error.getByRole( 'link', { name: 'Search with WordPress instead' } )
+	).toHaveAttribute( 'href', /[?&]s=workshop/ );
+	await look( 'search-block-error' );
+	await axe( 'search block after a failure', inBlock );
+
+	await page.unroute( '**/api/sn/*/search/**' );
+	await error.getByRole( 'button', { name: 'Try again' } ).click();
+	await expect( summary( page ) ).toHaveText( '4 results' );
+	await expect( error ).toBeHidden();
+} );
+
+test( "the theme's own search page shows Turing's results inside the theme", async ( {
+	page,
+	look,
+	axe,
+}, testInfo ) => {
+	// A block theme prints its header as a template part and titles as post-title blocks; a
+	// classic theme (the site-classic project) has its own markup.
+	const classic = 'twentytwentyone' === testInfo.project.metadata.theme;
+	// WordPress's database search matches nothing for "*"; Turing matches everything.
+	await page.goto( '/?s=*' );
+	await expect(
+		page.locator(
+			classic ? 'header#masthead' : 'header.wp-block-template-part'
+		)
+	).toBeVisible();
+	await expect(
+		page
+			.locator(
+				classic ? 'main .entry-title' : 'main .wp-block-post-title'
+			)
+			.first()
+	).toBeVisible();
+	await look( 'theme-search' );
+	await axe( 'theme search page', { include: 'main' } );
+} );
