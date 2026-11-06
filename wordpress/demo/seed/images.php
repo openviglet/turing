@@ -481,8 +481,14 @@ function tarnfell_import_photo( string $photo, string $key, string $name, string
 			}
 			// Grown back bicubically: a resampled copy grows a small image in blocks.
 			imagesetinterpolation( $tiny, IMG_BICUBIC );
+			// WordPress Playground's GD answers false to a bicubic imagescale(), so the
+			// resampled copy is the fallback there: blockier, but the store still seeds.
 			$grown = imagescale( $tiny, $width, $height, IMG_BICUBIC );
-			imagecopy( $out, $grown, 0, 0, 0, 0, $width, $height );
+			if ( $grown instanceof GdImage ) {
+				imagecopy( $out, $grown, 0, 0, 0, 0, $width, $height );
+			} else {
+				imagecopyresampled( $out, $tiny, 0, 0, 0, 0, $width, $height, imagesx( $tiny ), imagesy( $tiny ) );
+			}
 			for ( $pass = 0; $pass < 4; $pass++ ) {
 				imagefilter( $out, IMG_FILTER_GAUSSIAN_BLUR );
 			}
