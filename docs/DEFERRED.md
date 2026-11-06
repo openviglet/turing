@@ -25,3 +25,4 @@
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+- ⏸ **T1252** (deps: —) **The WordPress plugin's code, tests, demos and video pipeline live in the Dumont repository** — set aside (Needs PHP, composer, git-filter-repo here.): Every call it makes goes to Turing, so a Turing change can break it while CI runs against a published image in another repo. → §CLXXXII.1

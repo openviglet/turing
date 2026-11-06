@@ -2383,6 +2383,12 @@ turing.viglet.org/wordpress/ and the Turing docs. Media provenance moves with th
 demo/seed/CREDITS.md, polyweave.toml and polyweave.purchases*.json. Done when composer
 test, the wp-scripts build and bin/build-zip.sh pass from this repository.
 
+**Set aside (2026-11-06).** The machine that ran the backlog had no PHP, composer or
+git-filter-repo, so neither the split nor the gate could run. Dumont's wordpress/ was
+also still taking commits that day (the demo video and Playground seed, 13:12), and a
+move while it changes forks the plugin: pick the move up when that work pauses, and
+remove the directory from Dumont in the same step.
+
 ### CLXXXII.2 Rename the Dumont prefix before the directory listing (T1253)
 
 The 28 classes in src/includes are class-viglet-dumont-*.php with Viglet_Dumont_*
