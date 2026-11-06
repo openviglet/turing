@@ -1,0 +1,22 @@
+databaseChangeLog:
+  # --- T1246: autocomplete from the site's most searched terms ---
+  # A site flag beside relaxNoResults: autocomplete also offers the most searched
+  # terms whose searches found results. Off (0) by default, so existing sites
+  # suggest exactly as before. Idempotent: gated by columnExists.
+  - changeSet:
+      id: v2026.3.1.144-01-sn-site-autocomplete-top-terms
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: sn_site
+                columnName: autocompleteTopTerms
+      changes:
+        - addColumn:
+            tableName: sn_site
+            columns:
+              - column:
+                  name: autocompleteTopTerms
+                  type: int
+                  defaultValueNumeric: 0

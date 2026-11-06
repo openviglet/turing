@@ -54,6 +54,7 @@ public class TurSNSiteExchange {
 	private Integer wildcardNoResults;
 	private Integer wildcardAlways;
 	private Integer relaxNoResults;
+	private Integer autocompleteTopTerms;
 	private Integer exactMatch;
 	private boolean facet;
 	private Integer itemsPerFacet;
@@ -109,6 +110,7 @@ public class TurSNSiteExchange {
 		this.setWildcardNoResults(turSNSite.getWildcardNoResults());
 		this.setWildcardAlways(turSNSite.getWildcardAlways());
 		this.setRelaxNoResults(turSNSite.getRelaxNoResults());
+		this.setAutocompleteTopTerms(turSNSite.getAutocompleteTopTerms());
 		this.setExactMatch(turSNSite.getExactMatch());
 		this.setFacetType(turSNSite.getFacetType());
 		this.setFacetItemType(turSNSite.getFacetItemType());

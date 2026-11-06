@@ -36,6 +36,8 @@ export type TurSNSite = {
   wildcardAlways: number;
   /** T1176 — 1 retries a search that found nothing with the query's main words. */
   relaxNoResults?: number;
+  /** T1246 — 1 adds the most searched terms (that found results) to autocomplete. */
+  autocompleteTopTerms?: number;
   exactMatch: number;
   turSNSiteGenAi: TurSNSiteGenAi;
   icon?: string | null;

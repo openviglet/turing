@@ -319,6 +319,9 @@ public class TurSNSiteImport {
 		if (turSNSiteExchange.getRelaxNoResults() != null) {
 			turSNSite.setRelaxNoResults(turSNSiteExchange.getRelaxNoResults());
 		}
+		if (turSNSiteExchange.getAutocompleteTopTerms() != null) {
+			turSNSite.setAutocompleteTopTerms(turSNSiteExchange.getAutocompleteTopTerms());
+		}
 		turSNSite.setExactMatch(turSNSiteExchange.getExactMatch());
 		turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
 		turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());

@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +50,8 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
 import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
 import com.viglet.turing.se.TurSEStopWord;
@@ -80,11 +83,59 @@ class TurSNAutoCompleteTest {
         @Mock
         private TurSNSiteRepository turSNSiteRepository;
 
+        @Mock
+        private TurSNSiteMetricAccessRepository metricRepository;
+
+        /**
+         * T1246 — a site that opts in suggests its most searched terms after the
+         * index's own, only those whose searches found results.
+         */
+        @Test
+        void aSiteThatOptsInAlsoSuggestsItsMostSearchedTerms() {
+                TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
+                                turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
+                TurSNSite site = new TurSNSite();
+                site.setId("site-id");
+                site.setAutocompleteTopTerms(1);
+                when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
+                TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(plugin.autoComplete("site", "barr", Locale.US, 10)).thenReturn(List.of("barraca"));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US)).thenReturn(Optional.empty());
+                when(metricRepository.termsBetweenDatesForLocale(eq(site), any(), any(), eq(Locale.US), isNull(),
+                                any())).thenReturn(new java.util.ArrayList<>(List.of(
+                                                new TurSNSiteMetricAccessTerm("barraca iglu", 30, 12.0),
+                                                new TurSNSiteMetricAccessTerm("barril de chopp", 8, 0.0),
+                                                new TurSNSiteMetricAccessTerm("mochila", 5, 3.0),
+                                                new TurSNSiteMetricAccessTerm("barraca", 4, 9.0))));
+
+                List<String> result = autoComplete.autoComplete("site", "barr", Locale.US, 10);
+
+                assertThat(result).containsExactly("barraca", "barraca iglu");
+        }
+
+        @Test
+        void aSiteThatDoesNotOptInNeverReadsTheSearchLog() {
+                TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
+                                turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
+                TurSNSite site = new TurSNSite();
+                when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
+                TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(plugin.autoComplete("site", "barr", Locale.US, 10)).thenReturn(List.of("barraca"));
+                when(turSolrInstanceProcess.initSolrInstance("site", Locale.US)).thenReturn(Optional.empty());
+
+                assertThat(autoComplete.autoComplete("site", "barr", Locale.US, 10)).containsExactly("barraca");
+                org.mockito.Mockito.verifyNoInteractions(metricRepository);
+        }
+
         @Test
         void testAutoCompleteReturnsEmptyForShortQuery() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
-                                turSolrInstanceProcess);
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
 
                 assertThat(autoComplete.autoComplete("site", "a", Locale.US, 10)).isEmpty();
         }
@@ -93,7 +144,7 @@ class TurSNAutoCompleteTest {
         void testAutoCompleteReturnsEmptyWhenSiteNotFound() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
-                                turSolrInstanceProcess);
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.empty());
 
                 assertThat(autoComplete.autoComplete("site", "ab", Locale.US, 10)).isEmpty();
@@ -103,7 +154,7 @@ class TurSNAutoCompleteTest {
         void testAutoCompleteReturnsSuggestionsFromPlugin() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
-                                turSolrInstanceProcess);
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
 
                 TurSNSite site = new TurSNSite();
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
@@ -128,7 +179,7 @@ class TurSNAutoCompleteTest {
         void scopedAutoCompleteAnswersTheSuggesterTermsFoundInScope() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
-                                turSolrInstanceProcess);
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
                 HttpServletRequest request = mock(HttpServletRequest.class);
                 when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost/api"));
                 when(request.getQueryString()).thenReturn("q=works&fq[]=type:post");
@@ -157,7 +208,7 @@ class TurSNAutoCompleteTest {
         void scopedAutoCompleteAnswersNothingWhenNoDocumentIsInScope() {
                 TurSNAutoComplete autoComplete = new TurSNAutoComplete(turSEStopWord,
                                 turSNSiteSearchCachedAPI, pluginFactory, turSNSiteRepository,
-                                turSolrInstanceProcess);
+                                turSolrInstanceProcess, new TurSNAutoCompleteTopTerms(metricRepository));
                 suggesterAnswers("works", List.of("workshop"));
                 when(turSNSiteSearchCachedAPI.searchCached(anyString(), any())).thenReturn(null);
 

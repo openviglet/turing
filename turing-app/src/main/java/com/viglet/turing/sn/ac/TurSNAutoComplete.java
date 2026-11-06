@@ -60,17 +60,20 @@ public class TurSNAutoComplete {
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSolrInstanceProcess turSolrInstanceProcess;
+    private final TurSNAutoCompleteTopTerms topTerms;
 
     public TurSNAutoComplete(TurSEStopWord turSEStopword,
             TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
             TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteRepository turSNSiteRepository,
-            TurSolrInstanceProcess turSolrInstanceProcess) {
+            TurSolrInstanceProcess turSolrInstanceProcess,
+            TurSNAutoCompleteTopTerms topTerms) {
         this.turSEStopword = turSEStopword;
         this.turSNSiteSearchCachedAPI = turSNSiteSearchCachedAPI;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSolrInstanceProcess = turSolrInstanceProcess;
+        this.topTerms = topTerms;
     }
 
     @NotNull
@@ -196,7 +199,10 @@ public class TurSNAutoComplete {
             suggestionFilter.automatonStrategyConfig(numberOfWordsFromQuery);
             List<String> filtered = suggestionFilter.filter(rawSuggestions);
 
-            return filtered.stream().limit(rows >= 0 ? rows : 0).sorted().toList();
+            List<String> fromIndex = filtered.stream().limit(rows >= 0 ? rows : 0).sorted().toList();
+            // T1246 — a site that opts in also offers its most searched terms, after the index's.
+            return TurSNAutoCompleteTopTerms.merge(fromIndex,
+                    topTerms.suggest(turSNSite, q, locale, rows), rows);
         }).orElse(Collections.emptyList());
     }
 }

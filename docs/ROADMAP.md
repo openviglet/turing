@@ -18,10 +18,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CN — Autocomplete and suggestions
-
-- 📋 **T1246** (deps: —) **Autocomplete never suggests the site's most searched terms, though the search log already counts them** — A popular query a visitor starts typing is not offered unless the documents spell it (GitHub #66). → §CLXXI.2
-
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
 - 📋 **T1249** (deps: —) **Clearing the facets also clears the secondary facets, so the visitor loses the tab they are on** — The clean-up link and clearAllFilters drop every facet filter, secondary ones included (GitHub #120). → §CLXXX.2

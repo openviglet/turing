@@ -117,6 +117,22 @@ every word.
 **Wildcard Always** appends `*` to every query term regardless of result count. This increases recall (more documents match) but significantly reduces relevance precision. Avoid using it in sites where ranking quality matters. Prefer **Wildcard No Results** as a safer fallback.
 :::
 
+#### Autocomplete from the most searched terms
+
+Autocomplete suggests words found in the indexed content. Turn on **Suggest the most
+searched terms** (in the same section, off by default) and it also offers what visitors
+searched most on this site in the last 90 days, after the content's own suggestions:
+typing `barr` offers `barraca iglu` once enough visitors searched for it, even if no
+document spells that phrase.
+
+- Only searches that found at least one result are offered, so a popular query with no
+  answer is never suggested.
+- A term is shown as visitors typed it most, accents included, and is matched ignoring
+  case and accents.
+- An API key bound to a partition of a shared site gets only its partition's searches.
+- The list is read from the search metrics, so it needs `turing.search.metrics.enabled=true`
+  (see [Top Search Terms](#top-search-terms)), and it is refreshed every few minutes.
+
 #### Facets
 
 | Setting | Description |

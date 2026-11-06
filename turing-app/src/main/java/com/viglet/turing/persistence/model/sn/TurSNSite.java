@@ -129,6 +129,14 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@Column(name = "relaxNoResults")
 	private Integer relaxNoResults = 0;
 
+	/**
+	 * T1246 — when 1, autocomplete also suggests the site's most searched terms
+	 * (those whose searches found results) after the index's own suggestions.
+	 * Off by default.
+	 */
+	@Column(name = "autocompleteTopTerms")
+	private Integer autocompleteTopTerms = 0;
+
 	@Column
 	private Integer exactMatch = 0;
 

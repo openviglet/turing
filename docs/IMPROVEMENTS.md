@@ -33,8 +33,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CN — Autocomplete and suggestions
-
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -2335,27 +2333,6 @@ with `fqItemOperator` sends it.
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope
-
-### CLXXI.2 Autocomplete from the most searched terms (GitHub #66) (T1246)
-
-**Where it came from.** GitHub issue #66 (MB, 2024): autocomplete should offer the terms
-visitors search most, not only terms found in the documents.
-
-**What happens today.** `TurSNAutoComplete` suggests completions from the index (Solr's
-suggester, the Lucene `*_ac` fields; T1226 scopes them to a filter). The search log
-already counts searches per folded term (`TurSNSiteMetricAccessRepository`, the
-console's Top Terms), but nothing feeds it to autocomplete.
-
-**What Turing should do.** An opt-in per site (`autocompleteTopTerms`, off by default)
-that mixes the most searched terms starting with the typed prefix into the suggestions:
-only terms whose searches found results (`numFound > 0`), from a recent window (90
-days), ranked by count and merged after the index suggestions without duplicates.
-Partitioned keys read only their partition's terms (T1133 already scopes the log). Cache
-the ranked list per site and locale.
-
-**Done when:** on a site with the flag on and 30 searches for `barraca iglu`, `GET
-/ac?q=barr` includes `barraca iglu`; with the flag off, or for a term whose searches
-found nothing, it does not.
 
 ## CLXXII Structured feeds refresh when the publisher says so
 

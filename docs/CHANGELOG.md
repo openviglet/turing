@@ -1648,6 +1648,7 @@
 
 - 🗑 **T1231** — superseded by T1233: Filed under autocomplete; it is engine parity, so it moved to Block CG, widened to one shared fq parser and the Solr OR-grouping flaw.
 - **T1226** — A filtered or partitioned autocomplete answers term completions found in the scope's documents instead of titles, and Lucene honours hlEnabled=false like Solr, so no suggestion carries markup (design §CLXXI.1 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
+- **T1246** — A site can opt in (autocompleteTopTerms) to have autocomplete also offer its most searched terms of the last 90 days that found results, as typed, after the index's suggestions.
 
 ## Block CO — Structured feeds refresh when the publisher says so
 

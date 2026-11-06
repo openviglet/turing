@@ -462,6 +462,8 @@
       "alwaysAddWildcardDesc": "Always append a wildcard to each search term.",
       "relaxNoResults": "Retry with the main words on no results",
       "relaxNoResultsDesc": "When a search finds nothing with every word required, search again without the language's stop words, matching at least half of the remaining words. Helps visitors who type a question.",
+      "autocompleteTopTerms": "Suggest the most searched terms",
+      "autocompleteTopTermsDesc": "Autocomplete also offers what visitors searched most in the last 90 days, after the suggestions from the content. Only searches that found results are offered. Needs search metrics on.",
       "facets": "Facets",
       "facetsDesc": "Filtering options and faceted navigation settings.",
       "enableFacets": "Enable Facets",
