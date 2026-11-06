@@ -76,6 +76,8 @@ public class TurSolr {
     private final TurSolrDocumentHandler turSolrDocumentHandler;
     private final TurSolrQueryBuilder turSolrQueryBuilder;
     private final TurSolrResultProcessor turSolrResultProcessor;
+    /** T1262 — {@code turing.solr.commit.within}, in milliseconds, for writes made outside the handler. */
+    private final int commitWithin;
 
     public TurSolr(@Value("${turing.solr.commit.enabled:false}") boolean isCommitEnabled,
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
@@ -91,6 +93,7 @@ public class TurSolr {
             TurSNSiteSearchSnapshotService snapshotService,
             TurSearchPipelineObservation pipelineObservation) {
         this.isCommitEnabled = isCommitEnabled;
+        this.commitWithin = commitWithin;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, turSNSiteFieldUtils,
                 turDecimalFieldNormalizer);
@@ -100,6 +103,11 @@ public class TurSolr {
                 turSNSearchRuleEvaluator, snapshotService);
         this.turSolrResultProcessor = new TurSolrResultProcessor(turSNFieldProcess,
                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, pipelineObservation);
+    }
+
+    /** T1262 — how soon (ms) a write becomes visible: {@code turing.solr.commit.within}. */
+    public int getCommitWithin() {
+        return commitWithin;
     }
 
     public String dslQuery(TurSolrInstance turSolrInstance, String jsonQuery) {

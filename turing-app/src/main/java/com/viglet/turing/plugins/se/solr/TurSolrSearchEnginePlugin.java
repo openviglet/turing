@@ -383,7 +383,8 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         org.apache.solr.common.SolrInputDocument doc =
                                 new org.apache.solr.common.SolrInputDocument();
                         attributes.forEach(doc::addField);
-                        instance.getUpdateClient().add(doc);
+                        // T1262 — into the core, visible within the configured commitWithin.
+                        instance.getUpdateClient().add(instance.getCore(), doc, turSolr.getCommitWithin());
                         return true;
                     } catch (Exception e) {
                         log.warn("[Solr] standalone index '{}' failed: {}", indexName, e.getMessage());
@@ -411,7 +412,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         batch.add(doc);
                     }
                     try {
-                        instance.getUpdateClient().add(batch);
+                        instance.getUpdateClient().add(instance.getCore(), batch, turSolr.getCommitWithin());
                         return batch.size();
                     } catch (Exception e) {
                         log.warn("[Solr] standalone batch index '{}' failed: {}",
@@ -426,7 +427,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         return turSolrInstanceProcess.initSolrInstance(effective(seInstance), indexName)
                 .map(instance -> {
                     try {
-                        instance.getUpdateClient().deleteById(id);
+                        instance.getUpdateClient().deleteById(instance.getCore(), id, turSolr.getCommitWithin());
                         return true;
                     } catch (Exception e) {
                         log.warn("[Solr] standalone delete id='{}' from '{}' failed: {}",
@@ -445,8 +446,8 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         // Field value is quoted so multi-token values
                         // (e.g. file paths with spaces) get matched as
                         // a phrase, not OR'd across tokens.
-                        instance.getUpdateClient().deleteByQuery(
-                                fieldName + ":\"" + fieldValue + "\"");
+                        instance.getUpdateClient().deleteByQuery(instance.getCore(),
+                                fieldName + ":\"" + fieldValue + "\"", turSolr.getCommitWithin());
                         return true;
                     } catch (Exception e) {
                         log.warn("[Solr] standalone delete-by-field {}='{}' on '{}' failed: {}",

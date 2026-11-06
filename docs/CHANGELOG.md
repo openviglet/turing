@@ -1611,6 +1611,7 @@
 - **T1243** — The field-ext save, field check and repair go through the site's engine plugin (new fieldSchema/hasFieldSchema): a Lucene site's PUT answers 200, and env-configured Solr is reached.
 - **T1247** — A Solr endpoint can list several nodes (load-balanced, failover) or name a ZooKeeper ensemble (zk://, SolrCloud collections), all built by one factory; query/update split is T1247b (design §CLXXV.5 recorded in `turing-app/src/main/java/com/viglet/turing/solr/TurSolrEndpoints.java`).
 - **T1247b** — A Solr endpoint can name query=... ; update=... sides: indexing, deletes and commits go to the update nodes, searches to the query nodes, and a new core is created on both (design §CLXXV.6 recorded in `turing-app/src/main/java/com/viglet/turing/solr/TurSolrEndpoints.java`).
+- **T1262** — Solr standalone index and delete calls name their core and commit within turing.solr.commit.within, so the RAG BM25 and intent indexes fill on Solr (Testcontainers IT).
 
 ## Block CH — Published container images track the shipped source
 

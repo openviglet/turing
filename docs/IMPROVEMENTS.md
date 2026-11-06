@@ -33,8 +33,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 ## Table of contents
@@ -2320,29 +2318,6 @@ with `fqItemOperator` sends it.
 A request means the same on every engine an SN site can run on: the filters it applies,
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
-
-### CLXXV.7 Solr standalone writes name their core (T1262)
-
-**Where it came from.** Found while shipping T1247b: routing every Solr write through
-the update client meant reading each write path.
-
-**What happens today.** `TurSolrSearchEnginePlugin.indexStandaloneDocument`,
-`indexStandaloneDocuments`, `deIndexStandalone` and `deIndexStandaloneByField` call
-`instance.getUpdateClient().add(doc)`, `add(batch)`, `deleteById(id)` and
-`deleteByQuery(q)` with no collection, although `initSolrInstance(seInstance,
-indexName)` carries the core in `instance.getCore()`. The client is built on the node's
-base URL (`http://host:8983/solr`), so SolrJ posts to `/solr/update`, Solr answers 404,
-and the catch logs a warning and returns `false`/`0`. On a Solr instance the RAG BM25
-index (`TurRagBm25Indexer`) and the chat-analytics intent index
-(`TurAnalyticsIntentIndexer`) therefore never receive a document. Nothing commits after
-the add either, so even a corrected add stays invisible until autoCommit.
-
-**What Turing should do.** Pass `instance.getCore()` to each call (`add(core, doc)`,
-`deleteById(core, id)`, ...) and commit within the configured `commitWithin`, as
-`TurSolrDocumentHandler` does.
-
-**Done when:** a Testcontainers Solr IT indexes a standalone document into a core, finds
-it, deletes it by id and by field, and finds nothing.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

@@ -18,10 +18,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
-
-- 📋 **T1262** (deps: —) **Solr standalone index and delete calls name no core, so the RAG BM25 and intent indexes stay empty on Solr** — The plugin's standalone writes post to the node's /solr/update, which answers 404, and the failure is only logged. → §CLXXV.7
-
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1253** (deps: T1252 ⏸) **The plugin's PHP classes, constants and stored option keys are still named Viglet_Dumont_*** — Before the first wordpress.org release a rename is free; after it, every installed site needs an option migration. → §CLXXXII.2
