@@ -892,6 +892,13 @@ public class TurSolrQueryBuilder {
             enabledFacets = new ArrayList<>(enabledFacets);
             enabledFacets.addAll(extraFacets);
         }
+        // T1250 — the request leaves these facets out, rules included: Solr never computes them.
+        if (turSEParameters != null && turSEParameters.getExcludedFacets() != null
+                && !turSEParameters.getExcludedFacets().isEmpty()) {
+            enabledFacets = enabledFacets.stream()
+                    .filter(f -> !turSEParameters.isFacetExcluded(f.getName()))
+                    .toList();
+        }
         return setFacetFields(turSNSite, query, turSNFilterParams, enabledFacets);
     }
 

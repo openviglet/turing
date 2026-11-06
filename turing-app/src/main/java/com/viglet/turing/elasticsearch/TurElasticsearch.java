@@ -116,8 +116,12 @@ public class TurElasticsearch {
                         int from = getStartPosition(turSEParameters);
                         Query query = buildQuery(turSNSite, turSEParameters);
 
+                        // T1250 — the facets the request leaves out are not aggregated.
                         List<TurSNSiteFieldExt> facetFields = turSNSiteFieldExtRepository
-                                .findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(turSNSite, 1, 1);
+                                .findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(turSNSite, 1, 1)
+                                .stream()
+                                .filter(field -> !turSEParameters.isFacetExcluded(field.getName()))
+                                .toList();
                         log.debug("ES search index={} query={} from={} size={} facetFields={}",
                                 elasticsearchInstance.getIndex(), query, from, rows,
                                 facetFields.stream().map(TurSNSiteFieldExt::getName).toList());

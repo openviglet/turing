@@ -104,6 +104,7 @@ public final class TurSNSearchRequestAdapter {
             params.setGroup(request.getGroup());
         }
         params.setFl(nullIfEmpty(request.getFieldList()));
+        params.setExf(nullIfEmpty(request.getExcludeFacets()));
         params.setNfpr(request.isAutoCorrectionDisabled() ? 1 : 0);
         params.setLocale(locale);
         return params;
@@ -196,6 +197,7 @@ public final class TurSNSearchRequestAdapter {
         effective.setSort(params.getSort());
         effective.setGroup(params.getGroup());
         effective.setFieldList(orEmpty(params.getFl()));
+        effective.setExcludeFacets(orEmpty(params.getExf()));
         effective.setLocale(locale == null ? null : locale.toString());
         effective.setTargetingRules(new ArrayList<>());
         effective.setAutoCorrectionDisabled(params.getNfpr() == null || params.getNfpr() == 1);
@@ -244,6 +246,7 @@ public final class TurSNSearchRequestAdapter {
                     request.getGroup());
         }
         addAll(queryString, TurSNParamType.FIELD_LIST, request.getFieldList());
+        addAll(queryString, TurSNParamType.EXCLUDE_FACETS, request.getExcludeFacets());
         if (locale != null) {
             TurCommonsUtils.addParameterToQueryString(queryString, TurSNParamType.LOCALE,
                     locale.toString());

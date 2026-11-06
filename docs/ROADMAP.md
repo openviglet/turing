@@ -18,10 +18,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
-
-- 📋 **T1250** (deps: —) **A search request cannot leave out a facet the site enables; a page hides it client-side after it is computed** — One page of a site cannot drop a facet the rest of the site shows without code in the client (GitHub #103). → §CLXXX.3
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 - 📋 **T1262** (deps: —) **Solr standalone index and delete calls name no core, so the RAG BM25 and intent indexes stay empty on Solr** — The plugin's standalone writes post to the node's /solr/update, which answers 404, and the failure is only logged. → §CLXXV.7

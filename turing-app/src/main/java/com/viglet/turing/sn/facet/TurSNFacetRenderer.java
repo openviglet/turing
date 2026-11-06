@@ -164,6 +164,8 @@ public class TurSNFacetRenderer {
 
         List<TurSNSiteSearchFacetBean> beans = new ArrayList<>();
         turSEResults.getFacetResults().stream()
+                // T1250 — a facet the request leaves out is never returned, whatever the engine sent.
+                .filter(f -> !context.getTurSEParameters().isFacetExcluded(f.getFacet()))
                 .filter(predicate)
                 .forEach(facet -> {
                     if (facetMap.containsKey(facet.getFacet())) {

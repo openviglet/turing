@@ -17,6 +17,8 @@ public class TurSNParamType {
 	public static final String GROUP = "group";
 	public static final String LOCALE = "_setlocale";
 	public static final String FIELD_LIST = "fl";
+	/** T1250 — a facet field the request leaves out, repeatable. */
+	public static final String EXCLUDE_FACETS = "exf";
 	public static final String AUTO_CORRECTION_DISABLED = "nfpr";
 	/** T856 — response-shape flag, honoured on both the GET and the POST entry points. */
 	public static final String RESPONSE_FORMAT = "responseFormat";

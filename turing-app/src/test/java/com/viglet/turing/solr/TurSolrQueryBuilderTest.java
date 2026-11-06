@@ -1069,6 +1069,35 @@ class TurSolrQueryBuilderTest {
                 assertThat(query.getBool("facet")).isTrue();
         }
 
+        /** T1250 — a facet the request leaves out is not asked of Solr. */
+        @Test
+        void testPrepareQueryFacetLeavesOutTheRequestsExcludedFacets() {
+                TurSNSite site = new TurSNSite();
+                site.setFacet(1);
+                site.setItemsPerFacet(10);
+                site.setFacetSort(null);
+                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
+                site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
+                TurSNSiteFieldExt f1 = TurSNSiteFieldExt.builder().name("category").facet(1).enabled(1)
+                                .facetPosition(2).type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT).build();
+                TurSNSiteFieldExt f2 = TurSNSiteFieldExt.builder().name("year").facet(1).enabled(1)
+                                .facetPosition(1).type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
+                                .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT).build();
+                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(f1, f2));
+                com.viglet.turing.commons.sn.bean.TurSNSearchParams searchParams =
+                                new com.viglet.turing.commons.sn.bean.TurSNSearchParams();
+                searchParams.setExf(List.of("year"));
+
+                SolrQuery query = new SolrQuery();
+                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                                TurSNFilterParams.builder().build(),
+                                new com.viglet.turing.commons.se.TurSEParameters(searchParams));
+
+                assertThat(facets).extracting(TurSNSiteFieldExt::getName).containsExactly("category");
+                assertThat(String.join(",", query.getFacetFields())).doesNotContain("year");
+        }
+
         @Test
         void testPrepareQueryFacetWithDisabledFacetReturnsEmpty() {
                 TurSNSite site = new TurSNSite();

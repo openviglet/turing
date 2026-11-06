@@ -119,6 +119,8 @@ public final class TurSNSearchCacheKey {
         appendList(key, "afct", sorted(parameters.getAllowedFacets()));
         appendList(key, "+fct", sorted(parameters.getAddedFacets()));
         appendList(key, "-fct", sorted(parameters.getRemovedFacets()));
+        // T1250 — a request that leaves facets out gets a response of its own.
+        appendList(key, "exf", sorted(parameters.getExcludedFacets()));
     }
 
     private static void appendFilters(StringBuilder key, TurSNFilterParams filters) {

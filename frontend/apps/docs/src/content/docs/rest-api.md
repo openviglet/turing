@@ -125,6 +125,7 @@ POST http://localhost:2700/api/sn/{siteName}/search
 | `fq.op` | | How filters on different fields combine: `AND`, `OR` or `NONE` (the site's setting) |
 | `fqi.op` | | How the values of one field combine: `AND`, `OR` or `NONE`. `fqi.op=OR` with `fq[]=site_key:a&fq[]=site_key:b` returns both sites' documents, and applies to every field in the request |
 | `group` | | Group results by a field value |
+| `exf` | | A facet field to leave out of this response, repeatable (`exf=year&exf=type`): the engine does not compute it and the response does not carry it, while a filter on it still applies. Unknown names are ignored. Lets one page drop a facet the rest of the site shows |
 
 **Example (GET):**
 
@@ -297,6 +298,7 @@ pages.
 | `fq` / `fqAnd` / `fqOr` | `string[]` | Filter queries, each a raw `field:value` |
 | `fqOperator` / `fqItemOperator` | `string` | Operators between / within facet groups |
 | `fieldList` (alias `fl`) | `string[]` | Restrict which fields are returned |
+| `excludeFacets` (alias `exf`) | `string[]` | Facet fields to leave out of this response: they are not computed or returned, a filter on them still applies, and unknown names are ignored. Echoed |
 | `targetingRules` | `string[]` | Targeting rules (no conditional maps, read-only) |
 | `autoCorrectionDisabled` | `boolean` | Skip spelling auto-correction (default `true`) |
 | `responseFormat` | `string` | `LINKS` (default) or `STRUCTURED` (see below) |

@@ -366,6 +366,15 @@ public class TurLuceneQueryBuilder {
         return facets;
     }
 
+    /** T1250 — the site's facet fields without those the request leaves out. */
+    public List<TurSNSiteFieldExt> getFacetFields(TurSNSite turSNSite, TurSEParameters params) {
+        List<TurSNSiteFieldExt> facets = getFacetFields(turSNSite);
+        if (params == null || params.getExcludedFacets() == null || params.getExcludedFacets().isEmpty()) {
+            return facets;
+        }
+        return facets.stream().filter(ext -> !params.isFacetExcluded(ext.getName())).toList();
+    }
+
     /**
      * Returns facet fields limited to a single named facet (used by
      * {@code retrieveFacetResults}).

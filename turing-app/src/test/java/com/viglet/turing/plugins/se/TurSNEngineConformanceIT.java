@@ -450,6 +450,41 @@ class TurSNEngineConformanceIT {
         }
     }
 
+    /**
+     * T1250 — a request that leaves the {@code sector} facet out gets no sector
+     * facet from Elasticsearch, and its filter on sector still applies.
+     */
+    @org.junit.jupiter.api.Test
+    void elasticsearchLeavesOutAFacetTheRequestExcludes() throws Exception {
+        TurSNSiteFieldExt sector = catalogFields.stream().filter(f -> "sector".equals(f.getName()))
+                .findFirst().orElseThrow();
+        Integer siteFacet = site.getFacet();
+        Integer sectorFacet = sector.getFacet();
+        site.setFacet(1);
+        sector.setFacet(1);
+        when(catalogFieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
+                .thenReturn(List.of(sector));
+        try {
+            java.util.function.Function<TurSNSearchParams, List<String>> facetsOf = params -> elasticsearch
+                    .retrieveElasticsearchFromSN(esInstance, new TurSNSiteSearchContext("jobs", new TurSNConfig(),
+                            seParameters(params, false), java.util.Locale.US, URI.create("http://localhost/search")))
+                    .orElseThrow().getFacetResults().stream().map(result -> result.getFacet()).toList();
+
+            assertThat(facetsOf.apply(request(p -> { }))).contains("sector");
+            TurSNSearchParams excluding = request(p -> {
+                p.setExf(List.of("sector"));
+                p.setFq(List.of("sector:educacao"));
+            });
+            assertThat(facetsOf.apply(excluding)).doesNotContain("sector");
+            assertThat(new HashSet<>(elasticsearch(excluding))).isEqualTo(Set.of("creche", "monitor"));
+        } finally {
+            site.setFacet(siteFacet);
+            sector.setFacet(sectorFacet);
+            when(catalogFieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(),
+                    anyInt())).thenReturn(List.of());
+        }
+    }
+
     static Stream<Arguments> filters() {
         return Stream.of(
                 Arguments.of("one value", request(p -> p.setFq(List.of("sector:educacao"))),

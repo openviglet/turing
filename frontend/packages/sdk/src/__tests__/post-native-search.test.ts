@@ -341,6 +341,18 @@ describe("POST-native search (T709)", () => {
     expect((postCalls(c).at(-1)![1] as Record<string, unknown>).fq).toEqual(["type:post"]);
   });
 
+  it("sends excludeFacets and keeps it on the next toggle (T1250)", async () => {
+    const c = makeClient();
+    const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {
+      chat: false,
+    });
+    await search.searchRequest({ q: "*", excludeFacets: ["year"] });
+    expect((postCalls(c).at(-1)![1] as Record<string, unknown>).excludeFacets).toEqual(["year"]);
+
+    await search.toggleFacet(facetItem("ADD"));
+    expect((postCalls(c).at(-1)![1] as Record<string, unknown>).excludeFacets).toEqual(["year"]);
+  });
+
   it("goToPage keeps the filters and does not reset the page", async () => {
     const c = makeClient();
     const search = createSearchController(c, { site: "wknd", locale: "en_US" }, undefined, {

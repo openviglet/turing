@@ -91,7 +91,7 @@ public class TurLucene {
 
             TurSEResults results = turLuceneResultProcessor.getResults(
                     new TurLuceneSearch(instance, turSNSite, query, params),
-                    turLuceneQueryBuilder.getFacetFields(turSNSite),
+                    turLuceneQueryBuilder.getFacetFields(turSNSite, params),
                     hlFields, sort, startTime);
 
             // Wildcard fallback when the query matched nothing and the site allows it. Decided by
@@ -102,7 +102,7 @@ public class TurLucene {
                 Query wildcardQuery = turLuceneQueryBuilder.buildWildcardQuery(turSNSite, params);
                 results = turLuceneResultProcessor.getResults(
                         new TurLuceneSearch(instance, turSNSite, wildcardQuery, params),
-                        turLuceneQueryBuilder.getFacetFields(turSNSite),
+                        turLuceneQueryBuilder.getFacetFields(turSNSite, params),
                         hlFields, sort, startTime);
                 query = wildcardQuery;
             }

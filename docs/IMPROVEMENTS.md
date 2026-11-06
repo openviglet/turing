@@ -33,8 +33,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CF — What the SN site manifest cannot declare
 
-## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
-
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
 ## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
@@ -2357,27 +2355,6 @@ it, deletes it by id and by field, and finds nothing.
 ## CLXXIX The quality gate stops at the package boundary
 
 ## CLXXX Analytics & observability gaps
-
-### CLXXX.3 A request can exclude facets (GitHub #103) (T1250)
-
-**Where it came from.** GitHub issue #103 (INS, 2024): hide a facet through a search
-parameter, so one page of a site can leave out a facet the rest of the site shows.
-
-**What happens today.** Which facets a response carries is site configuration only (the
-`facet` flag per field, the facet settings in the manifest). `TurSNSearchRequest`,
-`TurSNSearchParams` and `TurSNSitePostParamsBean` have no facet-selection field, so a
-page that must not show a facet hides it client-side, after the engine has already
-computed it.
-
-**What Turing should do.** An optional request field, `excludeFacets` (a list of field
-names), on the JSON search body and the GET (`exf[]`), that drops those facets from both
-the legacy and the structured response and skips computing them on the engine. Unknown
-names are ignored. It never adds a facet the site does not enable, and filters on an
-excluded field keep applying.
-
-**Done when:** a POST search with `excludeFacets: ["year"]` answers without the `year`
-facet but still honours `fq: ["year:2024"]`, on Solr, Lucene and Elasticsearch, and both
-SDKs send the field.
 
 ## CLXXXI Public site & top-of-funnel conversion (turing.viglet.org)
 

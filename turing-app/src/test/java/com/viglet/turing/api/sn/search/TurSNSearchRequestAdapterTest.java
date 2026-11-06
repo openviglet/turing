@@ -165,6 +165,31 @@ class TurSNSearchRequestAdapterTest {
         assertThat(params.getNfpr()).isZero();
     }
 
+    /** T1250 — excludeFacets reaches the search, is echoed, and survives the canonical URI. */
+    @Test
+    void testExcludeFacetsMapsEchoesAndRoundTrips() {
+        TurSNSearchRequest request = new TurSNSearchRequest();
+        request.setFq(List.of("year:2024"));
+        request.setExcludeFacets(List.of("year"));
+
+        TurSNSearchParams params = TurSNSearchRequestAdapter.toSearchParams(request, Locale.US);
+        assertThat(params.getExf()).containsExactly("year");
+        assertThat(params.getFq()).as("a filter on an excluded field still applies")
+                .containsExactly("year:2024");
+        com.viglet.turing.commons.se.TurSEParameters seParams =
+                new com.viglet.turing.commons.se.TurSEParameters(params);
+        assertThat(seParams.isFacetExcluded("year")).isTrue();
+        assertThat(seParams.isFacetExcluded("type")).isFalse();
+
+        assertThat(TurSNSearchRequestAdapter.effectiveRequest(request, params, Locale.US).getExcludeFacets())
+                .containsExactly("year");
+        assertThat(TurSNSearchRequestAdapter.canonicalUri(POST_URI, request, Locale.US).getRawQuery())
+                .contains("exf=year");
+        assertThat(new TurSNSearchRequest().getExcludeFacets()).isEmpty();
+        assertThat(TurSNSearchRequestAdapter.toSearchParams(new TurSNSearchRequest(), Locale.US).getExf())
+                .isNull();
+    }
+
     /**
      * The whole point of the block: a facet value carrying reserved characters
      * arrives verbatim because the JSON body has no query-string grammar.

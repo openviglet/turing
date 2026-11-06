@@ -49,7 +49,9 @@ class TurLuceneHighlightSwitchTest {
         when(siteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
         when(queryBuilder.buildQuery(any(), any(), any())).thenReturn(MatchAllDocsQuery.INSTANCE);
         lenient().when(queryBuilder.buildWildcardQuery(any(), any())).thenReturn(MatchAllDocsQuery.INSTANCE);
-        when(queryBuilder.getFacetFields(any())).thenReturn(List.of());
+        when(queryBuilder.getFacetFields(any(),
+                org.mockito.ArgumentMatchers.any(com.viglet.turing.commons.se.TurSEParameters.class)))
+                .thenReturn(List.of());
         lenient().when(queryBuilder.getHLFields(any())).thenReturn(List.of());
         TurLucene lucene = new TurLucene(siteRepository, null, queryBuilder, null, null);
 

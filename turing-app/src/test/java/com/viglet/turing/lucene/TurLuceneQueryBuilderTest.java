@@ -438,6 +438,30 @@ class TurLuceneQueryBuilderTest {
         assertTrue(result.isEmpty());
     }
 
+    /** T1250 — a facet the request leaves out is not among the fields Lucene counts. */
+    @Test
+    void getFacetFieldsLeavesOutTheRequestsExcludedFacets() {
+        TurSNSite site = mock(TurSNSite.class);
+        TurSNSiteFieldExt f1 = mock(TurSNSiteFieldExt.class);
+        when(f1.getFacet()).thenReturn(1);
+        when(f1.getFacetPosition()).thenReturn(1);
+        when(f1.getName()).thenReturn("category");
+        TurSNSiteFieldExt f2 = mock(TurSNSiteFieldExt.class);
+        when(f2.getFacet()).thenReturn(1);
+        when(f2.getFacetPosition()).thenReturn(2);
+        when(f2.getName()).thenReturn("year");
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(f1, f2));
+        com.viglet.turing.commons.sn.bean.TurSNSearchParams searchParams =
+                new com.viglet.turing.commons.sn.bean.TurSNSearchParams();
+        searchParams.setExf(List.of("year", "unknown"));
+
+        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site,
+                new com.viglet.turing.commons.se.TurSEParameters(searchParams));
+
+        assertEquals(1, result.size());
+        assertEquals("category", result.get(0).getName());
+    }
+
     // ---- buildWildcardQuery ----
 
     @Test

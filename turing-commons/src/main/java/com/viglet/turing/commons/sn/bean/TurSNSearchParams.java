@@ -24,6 +24,8 @@ public class TurSNSearchParams {
     private Integer rows = -1;
     private Locale locale;
     private List<String> fl;
+    /** T1250 — facet fields this request leaves out ({@code exf=year&exf=type}). */
+    private List<String> exf;
     private String group;
     private Integer nfpr = 1;
 

@@ -260,6 +260,12 @@ export interface TurSearchRequest {
   locale?: string;
   group?: string;
   fieldList?: string[];
+  /**
+   * T1250 — facet fields this request leaves out: the engine does not compute
+   * them and the response does not carry them. A filter on an excluded field
+   * still applies; unknown names are ignored. Echoed back on `request`.
+   */
+  excludeFacets?: string[];
   targetingRules?: string[];
   autoCorrectionDisabled?: boolean;
   responseFormat?: TurResponseFormat;

@@ -30,6 +30,11 @@ public class TurSEParameters implements Serializable {
     private Set<String> addedFacets;
     private Set<String> removedFacets;
     /**
+     * T1250 — facet fields the request leaves out ({@code exf} / {@code excludeFacets}):
+     * no engine computes them and the response does not carry them.
+     */
+    private Set<String> excludedFacets;
+    /**
      * T1103 — when not empty, the engine returns only the documents with these
      * ids, on top of every other filter. Set by Turing for semantic recall, never
      * read from a request, and kept apart from {@link #turSNFilterParams} so the
@@ -69,8 +74,18 @@ public class TurSEParameters implements Serializable {
         this.group = turSNSearchParams.getGroup();
         this.autoCorrectionDisabled = turSNSearchParams.getNfpr();
         this.fieldList = turSNSearchParams.getFl();
+        this.excludedFacets = turSNSearchParams.getExf() == null ? null
+                : turSNSearchParams.getExf().stream()
+                        .filter(name -> name != null && !name.isBlank())
+                        .map(String::trim)
+                        .collect(java.util.stream.Collectors.toCollection(java.util.TreeSet::new));
         this.turSNSitePostParamsBean = gTurSNSitePostParamsBean;
         overrideFromPost(gTurSNSitePostParamsBean);
+    }
+
+    /** T1250 — whether the request leaves facet {@code field} out. */
+    public boolean isFacetExcluded(String field) {
+        return excludedFacets != null && field != null && excludedFacets.contains(field);
     }
 
     private void overrideFromPost(TurSNSitePostParamsBean postParamsBean) {

@@ -100,6 +100,16 @@ public class TurSNSearchRequest implements Serializable {
     @JsonAlias("fl")
     private List<String> fieldList = new ArrayList<>();
 
+    /**
+     * T1250 — facet fields this request leaves out: neither computed by the engine
+     * nor returned. It never adds a facet the site does not enable, filters on an
+     * excluded field still apply, and unknown names are ignored. Echoed.
+     *
+     * @since 2026.3.8
+     */
+    @JsonAlias("exf")
+    private List<String> excludeFacets = new ArrayList<>();
+
     /** Targeting rules to apply to this request (no conditional maps — read-only). */
     private List<String> targetingRules = new ArrayList<>();
 

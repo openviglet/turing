@@ -423,6 +423,8 @@ public class TurSNSearchProcess {
                                 .itemOperator(filters.getItemOperator())
                                 .build());
                 restricted.setFieldList(original.getFieldList());
+                // T1250 — the recall pass leaves out the same facets.
+                restricted.setExcludedFacets(original.getExcludedFacets());
                 restricted.setCurrentPage(1);
                 restricted.setRows(ids.size());
                 restricted.setAutoCorrectionDisabled(1);

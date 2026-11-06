@@ -191,6 +191,16 @@ class TurSNSearchCacheKeyTest {
                 .isNotEqualTo(TurSNSearchCacheKey.of(context(params("chat"), null, null)));
     }
 
+    /** T1250 — a request that leaves a facet out is not answered from another's entry. */
+    @Test
+    void testExcludedFacetsAreInTheKey() {
+        TurSNSearchParams excluding = params("chat");
+        excluding.setExf(List.of("year"));
+
+        assertThat(TurSNSearchCacheKey.of(context(excluding, null, null)))
+                .isNotEqualTo(TurSNSearchCacheKey.of(context(params("chat"), null, null)));
+    }
+
     @Test
     void testTheLocaleIsInTheKey() {
         TurSNSearchParams english = params("chat");
