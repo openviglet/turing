@@ -91,6 +91,32 @@ class TurAnswerStreamFramerTest {
         assertThat(trace.answerLength()).isEqualTo(11);
     }
 
+    /**
+     * T1265 — the trace says whether the citations are what the answer's markers name or the
+     * retrieved sources an answer with no marker falls back to; the citations themselves are
+     * unchanged, so no client sees a difference unless it reads the flag.
+     */
+    @Test
+    void traceSaysWhetherTheAnswerCitedItsSources() {
+        String sources = sourcesJson(
+                new TurRagSource("a", "A", "ua", null, 0.9, false),
+                new TurRagSource("b", "B", "ub", null, 0.7, false));
+
+        List<ServerSentEvent<String>> marked = frame(Flux.just(
+                new ChatResponse("assistant", sources, "sources"),
+                token("The Glaramara fits two [2].")));
+        List<ServerSentEvent<String>> unmarked = frame(Flux.just(
+                new ChatResponse("assistant", sources, "sources"),
+                token("The Glaramara fits two.")));
+
+        assertThat(MAPPER.readValue(byEvent(marked, "trace").data(), TurAnswerTraceEvent.class).cited())
+                .isTrue();
+        assertThat(citations(marked)).extracting(TurAnswerCitation::sourceId).containsExactly("b");
+        assertThat(MAPPER.readValue(byEvent(unmarked, "trace").data(), TurAnswerTraceEvent.class).cited())
+                .isFalse();
+        assertThat(citations(unmarked)).extracting(TurAnswerCitation::sourceId).containsExactly("a", "b");
+    }
+
     @Test
     void forwardsClientToolCallAsAnArtifactEvent() {
         String artifact = "{\"callId\":\"c1\",\"name\":\"comparison_table\",\"args\":\"{}\"}";

@@ -2456,8 +2456,7 @@ text; the SDK's own answer UI and any other client still show retrieval as citat
 Two halves. First, why a plain product question ("uma barraca para duas pessoas" on the
 Recanto da Serra demo) is answered with no marker at all: whether the RAG system prompt
 the answer path uses asks for `[n]` footnotes on a short answer, and whether the catalog
-path (T1212) does. Second, the event says what it is: an opt-in per site (default the
-current fail-open, per the behaviour-flag rule) under which a marker-less answer's
-`citations` is empty, plus a `cited: false` flag on the trace event either way so a
-client can tell without parsing the text. Done when the demo question returns a marker
-in the answer, and a marker-less answer on an opted-in site sends no citations.
+path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (the
+per-site opt-in that would have emptied the citations was dropped: a client that wants
+none drops them when `cited` is false). Done when the demo question returns a marker in
+the answer, and a marker-less answer on an opted-in site sends no citations.

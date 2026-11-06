@@ -43,12 +43,14 @@ The response is `text/event-stream`. Each frame carries a named event; a client 
 | `token` | A fragment of the answer text | Repeatedly, in order. Concatenate them. |
 | `citations` | The `[n]` → source mapping | After the answer completes. |
 | `followups` | Grounded follow-up questions | After the answer, when follow-ups are enabled. |
-| `trace` | Why this answer: knowledge-base mode, whether reranking ran and with which strategy | After the answer. |
+| `trace` | Why this answer: knowledge-base mode, whether reranking ran and with which strategy, and `cited` | After the answer. |
 | `trace_step` | One step of the retrieval/generation trace | During, when step tracing is on. |
 | `artifact` | A rich artifact produced by a tool | During, when the agent emits one. |
 | `error` | `{"message": "..."}` | Instead of an answer. |
 
 The `[n]` markers inside the `token` text refer to the entries of the `sources` event, and `citations` states that mapping explicitly, so a client never has to parse the prose to build its footnotes.
+
+An answer written without any `[n]` marker still gets a `citations` event: the top retrieved sources, numbered in order. `trace.cited` tells the two apart. It is `true` when `citations` lists what the answer's markers name, and `false` when the answer named nothing and `citations` is the retrieval it fell back to. A client that promises "only the sources the answer cites" (the WordPress plugin's answer panel does) shows no source list when `cited` is `false`.
 
 ### When you get an `error` instead
 

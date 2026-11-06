@@ -25,6 +25,9 @@ package com.viglet.turing.genai.answer;
  * @param rerankStrategy the rerank strategy applied before synthesis, or
  *                       {@code null} when reranking was off
  * @param rerankEnabled  whether the SN RAG reranker ran for this answer
+ * @param cited          T1265 — whether the {@code citations} event lists what the answer's
+ *                       {@code [n]} markers name ({@code true}) or, the answer naming none,
+ *                       the retrieved sources it fell back to ({@code false})
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -34,5 +37,12 @@ public record TurAnswerTraceEvent(
         int answerLength,
         String kbMode,
         String rerankStrategy,
-        boolean rerankEnabled) {
+        boolean rerankEnabled,
+        boolean cited) {
+
+    /** A trace for an answer whose citations its markers name. */
+    public TurAnswerTraceEvent(int sourceCount, int answerLength, String kbMode,
+            String rerankStrategy, boolean rerankEnabled) {
+        this(sourceCount, answerLength, kbMode, rerankStrategy, rerankEnabled, true);
+    }
 }

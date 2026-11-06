@@ -1693,3 +1693,4 @@
 - **T1259 (assistant renders flows)** — The Site assistant shows a chat flow's choices as buttons and its forms as native labelled fields sent on submit, and New conversation resets the flow.
 - **T1261 (only footnoted sources)** — The search answer lists only the sources its text cites by [n]; an answer that cites none stays hidden, as the block's setting says.
 - **T1264** — Chat and answer sources carry the document's type, and the assistant's link to all results filters to it when every listed post shares one.
+- **T1265 (trace says cited)** — The answer's trace event says whether its citations are what the answer's [n] markers name or the retrieval it fell back to; the citations themselves are unchanged.

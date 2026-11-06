@@ -842,6 +842,12 @@ export interface TurAnswerTrace {
   rerankStrategy?: string | null;
   /** Whether the SN RAG reranker ran for this answer. */
   rerankEnabled?: boolean;
+  /**
+   * T1265 — `true` when `citations` are what the answer's `[n]` markers name;
+   * `false` when the answer named none and `citations` are the retrieved sources it
+   * fell back to. Absent from a Turing older than T1265.
+   */
+  cited?: boolean;
 }
 
 /**

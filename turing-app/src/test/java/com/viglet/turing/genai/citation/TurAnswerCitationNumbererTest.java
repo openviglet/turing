@@ -69,6 +69,8 @@ class TurAnswerCitationNumbererTest {
         assertThat(out.citations()).extracting(TurCatalogCitation::title)
                 .containsExactly("Model 3", "Model 7");
         assertThat(out.answer()).isEqualTo("Consider the third [1] or the seventh [2] option.");
+        // T1265 — the answer named its sources.
+        assertThat(out.cited()).isTrue();
     }
 
     @Test
@@ -114,6 +116,8 @@ class TurAnswerCitationNumbererTest {
         assertThat(out.citations()).extracting(TurCatalogCitation::rank)
                 .containsExactly(1, 2, 3, 4, 5, 6, 7, 8);
         assertThat(out.answer()).isEqualTo("A plain answer with no citations at all.");
+        // T1265 — what was retrieved, not what the answer cited, and it says so.
+        assertThat(out.cited()).isFalse();
     }
 
     @Test
@@ -126,6 +130,7 @@ class TurAnswerCitationNumbererTest {
     @Test
     void emptyOrNullGroundingSetReturnsNoCitations() {
         assertThat(ground("answer [1]", List.of()).citations()).isEmpty();
+        assertThat(ground("answer [1]", List.of()).cited()).isFalse();
         assertThat(ground("answer [1]", null).citations()).isEmpty();
         assertThat(ground(null, null).answer()).isNull();
     }

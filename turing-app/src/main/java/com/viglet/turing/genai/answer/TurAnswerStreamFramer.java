@@ -190,7 +190,8 @@ public final class TurAnswerStreamFramer {
         ServerSentEvent<String> citationsEvent = event(EVENT_CITATIONS, toJson(citations));
         ServerSentEvent<String> traceEvent = event(EVENT_TRACE,
                 toJson(new TurAnswerTraceEvent(numberedSources.size(), answerText.length(),
-                        provenance.kbMode(), provenance.rerankStrategy(), provenance.rerankEnabled())));
+                        provenance.kbMode(), provenance.rerankStrategy(), provenance.rerankEnabled(),
+                        aligned.cited())));
         // Emit citations immediately (instant), then the follow-ups — which cost an
         // LLM call and are generated lazily here so they never delay the citations —
         // then the trace. Follow-up generation is fail-open to no chips.

@@ -64,9 +64,14 @@ public final class TurAnswerCitationNumberer {
      * An answer text with its {@code [n]} markers renumbered to compact footnotes,
      * paired with the cited citations in matching footnote order.
      *
+     * @param answer    the answer text, markers renumbered
+     * @param citations the citations in footnote order
+     * @param cited     T1265 — {@code true} when the citations are the ones the answer's own
+     *                  {@code [n]} markers name; {@code false} when the answer named none and
+     *                  they are the fail-open slice of what was retrieved
      * @param <T> the caller's citation type
      */
-    public record Numbered<T>(String answer, List<T> citations) {
+    public record Numbered<T>(String answer, List<T> citations, boolean cited) {
     }
 
     /**
@@ -100,7 +105,7 @@ public final class TurAnswerCitationNumberer {
     public static <T> Numbered<T> renumberByMarkers(String answer, List<T> all,
             ToIntFunction<T> rankOf, Renumber<T> renumber, int maxReturned, int failOpenTopK) {
         if (all == null || all.isEmpty()) {
-            return new Numbered<>(answer, List.of());
+            return new Numbered<>(answer, List.of(), false);
         }
         Map<Integer, T> byRank = new LinkedHashMap<>();
         for (T item : all) {
@@ -119,7 +124,7 @@ public final class TurAnswerCitationNumberer {
             grounded.add(renumber.apply(byRank.get(rawRank), footnote));
         }
         if (!grounded.isEmpty()) {
-            return new Numbered<>(rewriteMarkers(answer, remap), List.copyOf(grounded));
+            return new Numbered<>(rewriteMarkers(answer, remap), List.copyOf(grounded), true);
         }
         // Fail-open: no usable markers — bounded top-k, renumbered 1..k, prose as-is.
         int cap = Math.min(failOpenTopK, all.size());
@@ -127,7 +132,7 @@ public final class TurAnswerCitationNumberer {
         for (int i = 0; i < cap; i++) {
             slice.add(renumber.apply(all.get(i), i + 1));
         }
-        return new Numbered<>(answer, List.copyOf(slice));
+        return new Numbered<>(answer, List.copyOf(slice), false);
     }
 
     /**

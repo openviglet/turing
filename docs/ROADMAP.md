@@ -21,7 +21,6 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1265** (deps: —) **An answer with no [n] marker still sends every retrieved source as its citations** — A client cannot tell an answer that cited nothing from one that cited everything it read. → §CLXXXII.12
 
 ## Done when — T1184
 
