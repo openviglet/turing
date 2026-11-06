@@ -2,10 +2,10 @@
 /**
  * Brain Monkey set up and torn down around each test, with the WordPress functions every test reads.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
@@ -39,7 +39,7 @@ abstract class PluginTestCase extends TestCase {
 				'get_option'                        => static fn ( $name, $fallback = false ) => $fallback,
 				'update_option'                     => true,
 				'get_object_taxonomies'             => array(),
-				'viglet_dumont_get_indexable_types' => array( 'post', 'page' ),
+				'viglet_turing_get_indexable_types' => array( 'post', 'page' ),
 				'home_url'                          => 'https://site.example.org',
 				'rest_url'                          => static fn ( $path = '' ) => 'https://site.example.org/wp-json/' . ltrim( $path, '/' ),
 				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),

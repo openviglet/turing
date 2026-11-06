@@ -21,7 +21,7 @@ test( 'a search that found nothing is listed, with a draft to write about it', a
 		expect( searched.ok() ).toBe( true );
 	}
 
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	await page.getByLabel( 'Period' ).selectOption( 'today' );
 	const failed = page.locator( '.components-card' ).filter( {
 		has: page.getByRole( 'heading', {
@@ -54,9 +54,9 @@ test( 'the dashboard shows the week’s searches', async ( { page, axe } ) => {
 		`${ turingURL }/api/sn/Sample/search?q=seminar&_setlocale=en_US`
 	);
 	expect( searched.ok() ).toBe( true );
-	wp( [ 'transient', 'delete', 'viglet_dumont_insights_widget' ] );
+	wp( [ 'transient', 'delete', 'viglet_turing_insights_widget' ] );
 	await page.goto( '/wp-admin/' );
-	const widget = page.locator( '#viglet_dumont_insights' );
+	const widget = page.locator( '#viglet_turing_insights' );
 	await expect(
 		widget.getByRole( 'heading', { name: 'Site search this week' } )
 	).toBeVisible();
@@ -65,9 +65,9 @@ test( 'the dashboard shows the week’s searches', async ( { page, axe } ) => {
 	).toBeVisible();
 	await expect(
 		widget.getByRole( 'link', { name: 'All search insights' } )
-	).toHaveAttribute( 'href', /page=viglet-dumont-insights/ );
+	).toHaveAttribute( 'href', /page=viglet-turing-insights/ );
 	await axe( 'the Search insights dashboard widget', {
-		include: '#viglet_dumont_insights',
+		include: '#viglet_turing_insights',
 	} );
 } );
 
@@ -81,7 +81,7 @@ test( 'a summary is asked for on a click, and another on the next', async ( {
 	await page.route(
 		( url ) =>
 			decodeURIComponent( url.href ).includes(
-				'viglet-dumont/v1/insights/summary'
+				'viglet-turing/v1/insights/summary'
 			),
 		( route ) => {
 			asked.push( decodeURIComponent( route.request().url() ) );
@@ -93,7 +93,7 @@ test( 'a summary is asked for on a click, and another on the next', async ( {
 			} );
 		}
 	);
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	const card = page.locator( '.components-card' ).filter( {
 		has: page.getByRole( 'heading', { name: 'Summary' } ),
 	} );
@@ -102,13 +102,13 @@ test( 'a summary is asked for on a click, and another on the next', async ( {
 
 	await card.getByRole( 'button', { name: 'Summarize this period' } ).click();
 	await expect(
-		card.locator( '.viglet-dumont-insights__summary' )
+		card.locator( '.viglet-turing-insights__summary' )
 	).toHaveText( 'Visitors looked for workshops (1).' );
 	await look( 'insights-summary' );
 
 	await card.getByRole( 'button', { name: 'Write another' } ).click();
 	await expect(
-		card.locator( '.viglet-dumont-insights__summary' )
+		card.locator( '.viglet-turing-insights__summary' )
 	).toHaveText( 'Visitors looked for workshops (2).' );
 	expect( asked[ 0 ] ).not.toContain( 'again' );
 	expect( asked[ 1 ] ).toContain( 'again=1' );
@@ -118,7 +118,7 @@ test( 'a period with no searches says so', async ( { page } ) => {
 	await page.route(
 		( url ) =>
 			decodeURIComponent( url.href ).includes(
-				'viglet-dumont/v1/insights'
+				'viglet-turing/v1/insights'
 			),
 		( route ) =>
 			route.fulfill( {
@@ -133,7 +133,7 @@ test( 'a period with no searches says so', async ( { page } ) => {
 				},
 			} )
 	);
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	// The notice, not WordPress's screen-reader echo of it.
 	await expect(
 		page
@@ -151,7 +151,7 @@ test( 'metrics turned off in Turing are said, not shown as a quiet period', asyn
 	await page.route(
 		( url ) =>
 			decodeURIComponent( url.href ).includes(
-				'viglet-dumont/v1/insights'
+				'viglet-turing/v1/insights'
 			),
 		( route ) =>
 			route.fulfill( {
@@ -167,7 +167,7 @@ test( 'metrics turned off in Turing are said, not shown as a quiet period', asyn
 				},
 			} )
 	);
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	const notices = page.locator( '.components-notice' );
 	await expect(
 		notices.filter( { hasText: 'Turing is not keeping search metrics' } )
@@ -192,7 +192,7 @@ test( 'each top search reads against the period before: up, down, steady or new'
 	await page.route(
 		( url ) =>
 			decodeURIComponent( url.href ).includes(
-				'viglet-dumont/v1/insights'
+				'viglet-turing/v1/insights'
 			),
 		( route ) =>
 			route.fulfill( {
@@ -212,7 +212,7 @@ test( 'each top search reads against the period before: up, down, steady or new'
 				},
 			} )
 	);
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	const rows = page
 		.locator( '.components-card' )
 		.filter( {

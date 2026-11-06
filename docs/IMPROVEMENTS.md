@@ -2347,19 +2347,6 @@ with its photo and narration provenance, the end-user docs and the release workf
 Dumont keeps one tile and a redirect. In this repository the plugin builds against the
 SDK from the same commit and is released with tags of the form wordpress-v*.
 
-### CLXXXII.2 Rename the Dumont prefix before the directory listing (T1253)
-
-The 28 classes in src/includes are class-viglet-dumont-*.php with Viglet_Dumont_*
-classes and VIGLET_DUMONT_* constants, and the plugin stores its settings in wp_options
-under the same prefix. Turing's product is not Dumont, and the slug viglet-turing-search
-already says so. The rename covers the classes, the file names, the constants, option
-and transient keys, hooks, REST namespaces, block names and the i18n strings that carry
-the old name. An upgrade routine copies any viglet_dumont_* option to its new key once,
-so the demo stores and early installs keep their settings. The PHPUnit stubs, phpstan
-and the Playwright suites move with it. The new prefix is Viglet_Turing_* /
-VIGLET_TURING_* (confirmed 2026-11-06). Done when grep for viglet_dumont finds only the
-one-time upgrade routine.
-
 ### CLXXXII.3 The plugin's docs move to turing-docs (T1254)
 
 dumont-site/docs/src/content/docs/connectors/wordpress.md (775 lines: how it works,
@@ -2369,8 +2356,10 @@ frontend/apps/docs/src/content/docs under an integrations/wordpress section, wit
 nine dumont-wordpress-*.png screenshots. They get sidebar entries in
 sidebar.generated.json and a row in COVERAGE.md. The six Turing pages that mention
 WordPress in passing (intro, integration, architecture-overview, javascript-sdk,
-rest-api, installation-guide) link to the new page. Done when pnpm --filter turing-docs
-build passes its link gate.
+rest-api, installation-guide) link to the new page. The pages carry the names T1253 gave
+the plugin, not Dumont's: `wp turing`, the viglet-turing/* blocks, the viglet-turing/v1
+REST namespace, VIGLET_TURING_* constants and viglet_turing_* filters. Done when pnpm
+--filter turing-docs build passes its link gate.
 
 ### CLXXXII.4 Port the plugin workflow as manual dispatch (T1255)
 

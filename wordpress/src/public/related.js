@@ -7,10 +7,10 @@
  */
 import { getContext, store } from '@wordpress/interactivity';
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
-import { compare, trackResultClick } from 'viglet-dumont/search';
+import { compare, trackResultClick } from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
-const { state } = store( 'viglet-dumont/related', {
+const { state } = store( 'viglet-turing/related', {
 	state: {
 		get canCompare() {
 			return compare.available;

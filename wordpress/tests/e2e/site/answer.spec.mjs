@@ -4,7 +4,7 @@
 // against a real LLM is the `ai` project's (D174). Desktop only (playwright.config.mjs).
 import { expect, test } from '../fixtures.mjs';
 
-const panel = ( page ) => page.locator( '.viglet-dumont-search__answer' );
+const panel = ( page ) => page.locator( '.viglet-turing-search__answer' );
 const answerRoute = '**/api/sn/*/answer?**';
 
 /**
@@ -81,7 +81,7 @@ test( 'an answer written in Markdown shows as lists and emphasis, and its markup
 			'which sessions cover facets?'
 		) }`
 	);
-	const text = panel( page ).locator( '.viglet-dumont-search__answer-text' );
+	const text = panel( page ).locator( '.viglet-turing-search__answer-text' );
 	await expect( text.locator( 'li' ) ).toHaveText( [
 		'Workshop on facets, in March',
 		'Seminar on search',
@@ -121,7 +121,7 @@ test( 'a question gets the cited answer above the results, and a verdict is reco
 	);
 	await expect( panel( page ) ).toBeVisible();
 	await expect(
-		panel( page ).locator( '.viglet-dumont-search__answer-text' )
+		panel( page ).locator( '.viglet-turing-search__answer-text' )
 	).toHaveText( 'Facets are the subject of the Workshop on facets [1].' );
 	await expect( panel( page ).getByRole( 'heading' ) ).toHaveText(
 		'Answer generated from this site'
@@ -135,7 +135,7 @@ test( 'a question gets the cited answer above the results, and a verdict is reco
 	);
 	await look( 'search-block-answer' );
 	await axe( 'the answer panel', {
-		include: '.viglet-dumont-search__answer',
+		include: '.viglet-turing-search__answer',
 	} );
 
 	await panel( page ).getByRole( 'button', { name: 'Yes' } ).click();
@@ -161,7 +161,7 @@ test( 'a lookup is not a question: Turing is not asked and no panel shows', asyn
 		} );
 	} );
 	await page.goto( `/?page_id=${ seed.askPageId }&q=workshop` );
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		'4 results'
 	);
 	expect( asked ).toBe( 0 );
@@ -187,7 +187,7 @@ test( 'an answer that cites nothing is never drawn', async ( {
 			'what is the meaning of life?'
 		) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/results|No results/
 	);
 	await page.waitForLoadState( 'networkidle' );
@@ -220,7 +220,7 @@ test( 'a site whose AI is off shows no panel and no error', async ( {
 			'which workshop covers facets?'
 		) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/results/
 	);
 	await page.waitForLoadState( 'networkidle' );

@@ -3,13 +3,13 @@
  * Product comparison (D200): which products a request may compare, and which rows the table
  * keeps and marks.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Compare;
+use Viglet_Turing_Compare;
 
 final class CompareTest extends PluginTestCase {
 
@@ -22,12 +22,12 @@ final class CompareTest extends PluginTestCase {
 			)
 		);
 
-		$this->assertSame( array( 3, 12, 15, 18 ), Viglet_Dumont_Compare::ids( '3, 3,9,x,7,12,15,18,21' ) );
-		$this->assertSame( array(), Viglet_Dumont_Compare::ids( '' ) );
+		$this->assertSame( array( 3, 12, 15, 18 ), Viglet_Turing_Compare::ids( '3, 3,9,x,7,12,15,18,21' ) );
+		$this->assertSame( array(), Viglet_Turing_Compare::ids( '' ) );
 	}
 
 	public function test_a_row_with_a_gap_is_dropped_and_a_row_that_differs_is_marked(): void {
-		$row = new \ReflectionMethod( Viglet_Dumont_Compare::class, 'row' );
+		$row = new \ReflectionMethod( Viglet_Turing_Compare::class, 'row' );
 
 		$this->assertNull( $row->invoke( null, 'Weight', array( '1 kg', '' ) ), 'a product without it: nothing to compare' );
 		$this->assertSame(
@@ -48,7 +48,7 @@ final class CompareTest extends PluginTestCase {
 				'wp_strip_all_tags' => static fn ( $text ) => trim( strip_tags( $text ) ),
 			)
 		);
-		$text = new \ReflectionMethod( Viglet_Dumont_Compare::class, 'text' );
+		$text = new \ReflectionMethod( Viglet_Turing_Compare::class, 'text' );
 
 		$this->assertSame(
 			'$151.20',
@@ -83,16 +83,16 @@ final class CompareTest extends PluginTestCase {
 			"Products: Rain jacket; Wool jacket\n" .
 			"Price: Rain jacket = \$149.90; Wool jacket = \$89.00 (differs)\n" .
 			'Availability: Rain jacket = In stock; Wool jacket = In stock (the same)',
-			Viglet_Dumont_Compare::facts( $this->jackets() )
+			Viglet_Turing_Compare::facts( $this->jackets() )
 		);
 	}
 
 	public function test_a_summary_holding_a_figure_the_table_lacks_is_not_grounded(): void {
-		$facts = Viglet_Dumont_Compare::facts( $this->jackets() );
+		$facts = Viglet_Turing_Compare::facts( $this->jackets() );
 
-		$this->assertTrue( Viglet_Dumont_Compare::grounded( 'Both are in stock; the Rain jacket costs $149.90 and the Wool jacket $89.00.', $facts ) );
-		$this->assertTrue( Viglet_Dumont_Compare::grounded( 'They differ in price.', $facts ), 'no figure at all' );
-		$this->assertFalse( Viglet_Dumont_Compare::grounded( 'The Wool jacket saves you $60.90.', $facts ), 'a difference the model worked out' );
-		$this->assertFalse( Viglet_Dumont_Compare::grounded( 'The Rain jacket weighs 2 kg.', $facts ) );
+		$this->assertTrue( Viglet_Turing_Compare::grounded( 'Both are in stock; the Rain jacket costs $149.90 and the Wool jacket $89.00.', $facts ) );
+		$this->assertTrue( Viglet_Turing_Compare::grounded( 'They differ in price.', $facts ), 'no figure at all' );
+		$this->assertFalse( Viglet_Turing_Compare::grounded( 'The Wool jacket saves you $60.90.', $facts ), 'a difference the model worked out' );
+		$this->assertFalse( Viglet_Turing_Compare::grounded( 'The Rain jacket weighs 2 kg.', $facts ) );
 	}
 }

@@ -31,7 +31,7 @@ let title = '';
 function saveWith( postId, date ) {
 	wp( [ 'post', 'meta', 'update', String( postId ), 'deadline', date ] );
 	wp( [ 'post', 'update', String( postId ), `--post_title=${ title }` ] );
-	wp( [ 'dumont', 'queue', 'run' ] );
+	wp( [ 'turing', 'queue', 'run' ] );
 }
 
 /**
@@ -46,13 +46,13 @@ async function found( page, seed ) {
 	await page.goto(
 		`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( title ) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/result/
 	);
 	return (
 		await page
 			.locator(
-				'.viglet-dumont-search__results .viglet-dumont-search__title'
+				'.viglet-turing-search__results .viglet-turing-search__title'
 			)
 			.allTextContents()
 	).includes( title );
@@ -65,15 +65,15 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	saved = ask( [
 		'option',
 		'get',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		'--format=json',
 	] );
 	wp( [
 		'eval',
-		`$m = get_option( 'viglet_dumont_mapping' );
+		`$m = get_option( 'viglet_turing_mapping' );
 		$m['post']['fields'][] = array( 'source' => 'meta:deadline', 'field' => 'deadline', 'type' => 'DATE' );
 		$m['post']['expires'] = 'deadline';
-		update_option( 'viglet_dumont_mapping', $m );`,
+		update_option( 'viglet_turing_mapping', $m );`,
 	] );
 	title = ask( [
 		'post',
@@ -90,12 +90,12 @@ test.afterAll( ( { seed }, testInfo ) => {
 	wp( [
 		'option',
 		'update',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		saved,
 		'--format=json',
 	] );
 	wp( [ 'post', 'meta', 'delete', String( seed.postId ), 'deadline' ] );
-	wp( [ 'dumont', 'index', `--ids=${ seed.postId }` ] );
+	wp( [ 'turing', 'index', `--ids=${ seed.postId }` ] );
 } );
 
 test.beforeEach( ( {}, testInfo ) => {

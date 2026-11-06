@@ -3,13 +3,13 @@
  * The Search insights report (D178): a period's searches, failures and unopened results, read
  * from Turing's metrics.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Insights;
+use Viglet_Turing_Insights;
 
 final class InsightsTest extends PluginTestCase {
 
@@ -91,7 +91,7 @@ final class InsightsTest extends PluginTestCase {
 			)
 		);
 
-		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'this-month' );
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'this-month' );
 
 		$this->assertSame( array( 'workshop', 'seminar' ), array_column( $report['top'], 'term' ) );
 		$this->assertSame( 50, $report['searches'], 'the totals are the shown terms’, typing left out' );
@@ -123,14 +123,14 @@ final class InsightsTest extends PluginTestCase {
 		);
 
 		ob_start();
-		( new Viglet_Dumont_Insights( $this->settings() ) )->render_widget();
+		( new Viglet_Turing_Insights( $this->settings() ) )->render_widget();
 		$html = (string) ob_get_clean();
 
 		$this->assertSame( array(), $this->requests, 'a cached report asks Turing nothing' );
 		$this->assertSame( 6, substr_count( $html, '<li>' ), 'five top searches and the one that failed' );
 		$this->assertStringContainsString( 'workshop <span class="count">(1,200)</span>', $html );
 		$this->assertStringContainsString( 'worskhop', $html );
-		$this->assertStringContainsString( 'page=viglet-dumont-insights', $html );
+		$this->assertStringContainsString( 'page=viglet-turing-insights', $html );
 	}
 
 	/**
@@ -172,7 +172,7 @@ final class InsightsTest extends PluginTestCase {
 
 	public function test_metrics_turned_off_in_turing_are_reported_rather_than_read_as_a_quiet_period(): void {
 		$this->metrics( false );
-		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'today' );
 		$this->assertTrue( $report['metricsOff'] );
 
 		$click = array_values( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/click' ) ) );
@@ -181,7 +181,7 @@ final class InsightsTest extends PluginTestCase {
 
 	public function test_metrics_kept_by_turing_are_not_reported_off(): void {
 		$this->metrics( true );
-		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'today' );
 		$this->assertFalse( $report['metricsOff'] );
 	}
 
@@ -189,7 +189,7 @@ final class InsightsTest extends PluginTestCase {
 		foreach ( array( true, false ) as $on ) {
 			$this->requests = array();
 			$this->metrics( $on, true );
-			$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'today' );
+			$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'today' );
 			$this->assertSame( ! $on, $report['metricsOff'] );
 			$this->assertSame( array(), array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/click' ) ) );
 		}
@@ -212,7 +212,7 @@ final class InsightsTest extends PluginTestCase {
 		);
 
 		ob_start();
-		( new Viglet_Dumont_Insights( $this->settings() ) )->render_widget();
+		( new Viglet_Turing_Insights( $this->settings() ) )->render_widget();
 		$html = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'not keeping search metrics', $html );
@@ -264,7 +264,7 @@ final class InsightsTest extends PluginTestCase {
 			)
 		);
 
-		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'this-week' );
+		$result = ( new Viglet_Turing_Insights( $this->settings() ) )->summary( 'this-week' );
 
 		$this->assertSame(
 			array(
@@ -280,7 +280,7 @@ final class InsightsTest extends PluginTestCase {
 		$this->assertStringContainsString( '- workshop: 40 searches, 10 clicks', $body['data'] );
 		$this->assertStringContainsString( "Searches that found nothing:\n- worskhop: 7 searches", $body['data'] );
 		$this->assertStringContainsString( 'pt_BR', $body['systemPrompt'] );
-		$this->assertSame( 'viglet-dumont-insights-' . md5( "pt_BR\n" . $body['data'] ), $body['cacheKey'] );
+		$this->assertSame( 'viglet-turing-insights-' . md5( "pt_BR\n" . $body['data'] ), $body['cacheKey'] );
 		$this->assertSame( 'Sample Site', $body['site'], 'billed to the site that asked' );
 	}
 
@@ -292,7 +292,7 @@ final class InsightsTest extends PluginTestCase {
 			)
 		);
 
-		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'this-week', true );
+		$result = ( new Viglet_Turing_Insights( $this->settings() ) )->summary( 'this-week', true );
 
 		$this->assertSame( 'No default LLM is configured.', $result['error'] );
 		$this->assertSame( '', $result['summary'] );
@@ -300,7 +300,7 @@ final class InsightsTest extends PluginTestCase {
 
 	public function test_a_period_with_no_searches_asks_no_summary(): void {
 		$this->metrics( true );
-		$result = ( new Viglet_Dumont_Insights( $this->settings() ) )->summary( 'today' );
+		$result = ( new Viglet_Turing_Insights( $this->settings() ) )->summary( 'today' );
 
 		$this->assertNotSame( '', $result['error'] );
 		$this->assertCount( 0, array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], '/api/v2/summary' ) ) );
@@ -319,7 +319,7 @@ final class InsightsTest extends PluginTestCase {
 			)
 		);
 
-		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'forever' );
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'forever' );
 
 		$this->assertSame( 'this-week', $report['period'] );
 		$this->assertSame( 0, $report['searches'] );
@@ -373,7 +373,7 @@ final class InsightsTest extends PluginTestCase {
 			}
 		);
 
-		$report = ( new Viglet_Dumont_Insights( $this->settings() ) )->report( 'this-week' );
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'this-week' );
 
 		$this->assertSame( array( 10, 0 ), array_column( $report['top'], 'previous' ), 'whatever the case; a search new this week had none' );
 		$before = array_values( array_filter( $this->requests, static fn ( $r ) => str_contains( $r[0], 'clicks?from=' ) ) );

@@ -1,10 +1,10 @@
 <?php
 /**
- * Viglet Dumont Indexer
+ * Viglet Turing Indexer
  *
  * Handles indexing WordPress content into Turing using the TurSNJobItems format.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Turns posts into Turing job items and sends them.
  */
-class Viglet_Dumont_Indexer {
+class Viglet_Turing_Indexer {
 
 	/**
 	 * The client the job items go through.
 	 *
-	 * @var Viglet_Dumont_API_Client
+	 * @var Viglet_Turing_API_Client
 	 */
-	private Viglet_Dumont_API_Client $client;
+	private Viglet_Turing_API_Client $client;
 
 	/**
 	 * The plugin settings this indexer was built with.
@@ -33,9 +33,9 @@ class Viglet_Dumont_Indexer {
 	/**
 	 * The per-post-type field mapping.
 	 *
-	 * @var Viglet_Dumont_Mapping
+	 * @var Viglet_Turing_Mapping
 	 */
-	private Viglet_Dumont_Mapping $mapping;
+	private Viglet_Turing_Mapping $mapping;
 
 	/**
 	 * Build an indexer over the given settings, or over the stored ones.
@@ -43,9 +43,9 @@ class Viglet_Dumont_Indexer {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
-		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
-		$this->mapping  = new Viglet_Dumont_Mapping( $this->settings );
+		$this->settings = $settings ?? viglet_turing_get_settings();
+		$this->client   = new Viglet_Turing_API_Client( $this->settings );
+		$this->mapping  = new Viglet_Turing_Mapping( $this->settings );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Viglet_Dumont_Indexer {
 		 * @param bool    $index Whether the plugin would index it.
 		 * @param WP_Post $post  The post.
 		 */
-		return (bool) apply_filters( 'viglet_dumont_should_index', $this->indexable( $post ), $post );
+		return (bool) apply_filters( 'viglet_turing_should_index', $this->indexable( $post ), $post );
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Viglet_Dumont_Indexer {
 			return false;
 		}
 
-		$indexable_types = viglet_dumont_get_indexable_types();
+		$indexable_types = viglet_turing_get_indexable_types();
 		if ( ! in_array( $post->post_type, $indexable_types, true ) ) {
 			return false;
 		}
@@ -116,13 +116,13 @@ class Viglet_Dumont_Indexer {
 			return false;
 		}
 
-		return ! get_post_meta( $post->ID, Viglet_Dumont_Mapping::EXCLUDE_META, true );
+		return ! get_post_meta( $post->ID, Viglet_Turing_Mapping::EXCLUDE_META, true );
 	}
 
 	/**
 	 * The hook that takes a post out of search when its date passes (D308).
 	 */
-	public const EXPIRE_HOOK = 'viglet_dumont_expire';
+	public const EXPIRE_HOOK = 'viglet_turing_expire';
 
 	/**
 	 * Schedule a post's leaving search for the moment its date passes, replacing whatever was
@@ -149,7 +149,7 @@ class Viglet_Dumont_Indexer {
 		if ( ! $post instanceof WP_Post || ! $this->should_index( $post ) ) {
 			if ( $this->deindex_post( $post_id )['success'] ) {
 				// The PDFs it alone held leave with it (D319).
-				( new Viglet_Dumont_Pdf( $this->settings ) )->settle( array(), array( $post_id ) );
+				( new Viglet_Turing_Pdf( $this->settings ) )->settle( array(), array( $post_id ) );
 			}
 			return;
 		}
@@ -221,7 +221,7 @@ class Viglet_Dumont_Indexer {
 			$this->provision();
 		}
 
-		$types = ( 'all' === $post_type ) ? viglet_dumont_get_indexable_types() : array( $post_type );
+		$types = ( 'all' === $post_type ) ? viglet_turing_get_indexable_types() : array( $post_type );
 
 		$args = array(
 			'post_type'      => $types,
@@ -257,7 +257,7 @@ class Viglet_Dumont_Indexer {
 			}
 			if ( $result['success'] ) {
 				// The PDFs these posts newly attach or link go with them (D319).
-				( new Viglet_Dumont_Pdf( $this->settings ) )->settle( $query->posts, array() );
+				( new Viglet_Turing_Pdf( $this->settings ) )->settle( $query->posts, array() );
 			}
 		}
 
@@ -379,7 +379,7 @@ class Viglet_Dumont_Indexer {
 
 		return array_values(
 			array_filter(
-				Viglet_Dumont_Settings::search_sites( $this->settings['search_site_keys'] ?? array() ),
+				Viglet_Turing_Settings::search_sites( $this->settings['search_site_keys'] ?? array() ),
 				static fn ( array $site ): bool => $site['key'] !== $own
 			)
 		);
@@ -559,7 +559,7 @@ class Viglet_Dumont_Indexer {
 		 * @param array   $attributes The document's fields.
 		 * @param WP_Post $post       The post.
 		 */
-		return apply_filters( 'viglet_dumont_document', $attributes, $post );
+		return apply_filters( 'viglet_turing_document', $attributes, $post );
 	}
 
 	/**
@@ -580,7 +580,7 @@ class Viglet_Dumont_Indexer {
 
 		$dom      = new DOMDocument();
 		$previous = libxml_use_internal_errors( true );
-		$loaded   = $dom->loadHTML( '<?xml encoding="utf-8"?><div id="viglet-dumont-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		$loaded   = $dom->loadHTML( '<?xml encoding="utf-8"?><div id="viglet-turing-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $previous );
 		if ( ! $loaded ) {
@@ -595,7 +595,7 @@ class Viglet_Dumont_Indexer {
 			}
 		}
 
-		$root = $dom->getElementById( 'viglet-dumont-root' );
+		$root = $dom->getElementById( 'viglet-turing-root' );
 		if ( null === $root ) {
 			return $html;
 		}

@@ -23,7 +23,7 @@ async function openPanel( page, seed ) {
 		exact: true,
 	} );
 	await openPostSettings( page );
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	if (
 		! ( await panel
 			.getByRole( 'button', { name: 'Find related posts' } )
@@ -44,12 +44,12 @@ test( 'Assist finds related posts, and "Add a link" puts one in the post', async
 	const panel = await openPanel( page, seed );
 
 	await panel.getByRole( 'button', { name: 'Find related posts' } ).click();
-	const assist = panel.locator( '.viglet-dumont-assist' );
+	const assist = panel.locator( '.viglet-turing-assist' );
 	await expect(
 		assist.getByRole( 'heading', { name: 'Link ideas' } )
 	).toBeVisible();
 	const ideas = assist
-		.locator( '.viglet-dumont-assist__list' )
+		.locator( '.viglet-turing-assist__list' )
 		.last()
 		.locator( 'li' );
 	await expect( ideas.first() ).toBeVisible();
@@ -61,7 +61,7 @@ test( 'Assist finds related posts, and "Add a link" puts one in the post', async
 	const href = await ideas.first().locator( 'a' ).getAttribute( 'href' );
 	await look( 'editor-assist' );
 	await axe( "the editor panel's Assist section", {
-		include: '.viglet-dumont-assist',
+		include: '.viglet-turing-assist',
 	} );
 
 	await ideas
@@ -103,7 +103,7 @@ test( 'a drafted excerpt goes into the excerpt field only when the author uses i
 	const before = await excerpt();
 
 	await panel.getByRole( 'button', { name: 'Draft an excerpt' } ).click();
-	const draft = panel.locator( '.viglet-dumont-assist__draft' );
+	const draft = panel.locator( '.viglet-turing-assist__draft' );
 	await expect( draft ).toHaveText( 'A first draft.' );
 	expect( await excerpt() ).toBe( before );
 
@@ -111,7 +111,7 @@ test( 'a drafted excerpt goes into the excerpt field only when the author uses i
 	await expect( draft ).toHaveText( 'A second draft.' );
 	expect( asked ).toEqual( [ { again: false }, { again: true } ] );
 	await axe( "the editor panel's excerpt draft", {
-		include: '.viglet-dumont-assist__excerpt',
+		include: '.viglet-turing-assist__excerpt',
 	} );
 
 	await panel.getByRole( 'button', { name: 'Use this excerpt' } ).click();
@@ -125,7 +125,7 @@ test( 'a drafted excerpt goes into the excerpt field only when the author uses i
 const fitRoute = ( page, personas, fits ) =>
 	page.route(
 		( url ) =>
-			/viglet-dumont\/v1\/post\/\d+\/fit/.test(
+			/viglet-turing\/v1\/post\/\d+\/fit/.test(
 				decodeURIComponent( url.href )
 			),
 		( route ) =>
@@ -161,7 +161,7 @@ test( 'a site whose agent has personas scores the post for each, with the reason
 		]
 	);
 	const panel = await openPanel( page, seed );
-	const fit = panel.locator( '.viglet-dumont-assist__fit' );
+	const fit = panel.locator( '.viglet-turing-assist__fit' );
 	await expect(
 		fit.getByText( 'Judged by Turing against Grant applicant' )
 	).toBeVisible();
@@ -174,7 +174,7 @@ test( 'a site whose agent has personas scores the post for each, with the reason
 	);
 	await expect( fit ).toContainText( 'Try: Say who may apply.' );
 	await axe( "the editor panel's audience fit", {
-		include: '.viglet-dumont-assist__fit',
+		include: '.viglet-turing-assist__fit',
 	} );
 } );
 

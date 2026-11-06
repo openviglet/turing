@@ -37,7 +37,7 @@ for ( const example of examples ) {
 		const native = page.locator( '.tarnfell-compare__native' );
 		const turing = page.locator( '.tarnfell-compare__turing' );
 		await expect(
-			turing.locator( '.viglet-dumont-search__title a' ).first()
+			turing.locator( '.viglet-turing-search__title a' ).first()
 		).toHaveText( new RegExp( `^${ example.first }\\b` ) );
 		if ( null === example.native ) {
 			await expect( native ).toContainText(

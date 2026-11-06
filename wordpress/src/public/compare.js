@@ -4,7 +4,7 @@
  * alone, which is the feature without AI.
  */
 for ( const box of document.querySelectorAll(
-	'.viglet-dumont-compare__summary[data-summary-url]'
+	'.viglet-turing-compare__summary[data-summary-url]'
 ) ) {
 	window
 		.fetch( box.dataset.summaryUrl, { credentials: 'same-origin' } )
@@ -12,7 +12,7 @@ for ( const box of document.querySelectorAll(
 		.then( ( answer ) => {
 			if ( answer?.summary ) {
 				box.querySelector(
-					'.viglet-dumont-compare__summary-text'
+					'.viglet-turing-compare__summary-text'
 				).textContent = answer.summary;
 				box.hidden = false;
 			}

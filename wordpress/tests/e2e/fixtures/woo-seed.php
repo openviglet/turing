@@ -10,7 +10,7 @@
  *
  * Prints JSON: { products: { rain, wool, linen } } post ids.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a test fixture run by WP-CLI, not plugin code.
@@ -100,7 +100,7 @@ $ask_id   = $ask_shop ? $ask_shop->ID : (int) wp_insert_post(
 		'post_type'    => 'page',
 		'post_name'    => 'ask-the-shop',
 		'post_title'   => 'Ask the shop',
-		'post_content' => '<!-- wp:viglet-dumont/copilot {"placeholder":"A jacket under 100"} /-->',
+		'post_content' => '<!-- wp:viglet-turing/copilot {"placeholder":"A jacket under 100"} /-->',
 	)
 );
 wp_update_post(
@@ -110,7 +110,7 @@ wp_update_post(
 	)
 );
 // Out of the index, so the jacket searches find the jackets alone.
-update_post_meta( $ask_id, '_viglet_dumont_exclude', '1' );
+update_post_meta( $ask_id, '_viglet_turing_exclude', '1' );
 
 // A page with the plan alone (woo/kit.spec.mjs): the block's planOnly, as a shop's page of its
 // own for Build my kit; drafted again too.
@@ -120,7 +120,7 @@ $plan_id = $plan ? $plan->ID : (int) wp_insert_post(
 		'post_type'    => 'page',
 		'post_name'    => 'plan-a-kit',
 		'post_title'   => 'Plan a kit',
-		'post_content' => '<!-- wp:viglet-dumont/copilot {"kit":true,"planOnly":true} /-->',
+		'post_content' => '<!-- wp:viglet-turing/copilot {"kit":true,"planOnly":true} /-->',
 	)
 );
 wp_update_post(
@@ -129,7 +129,7 @@ wp_update_post(
 		'post_status' => 'publish',
 	)
 );
-update_post_meta( $plan_id, '_viglet_dumont_exclude', '1' );
+update_post_meta( $plan_id, '_viglet_turing_exclude', '1' );
 
 // A page with the Compare products block (woo/compare.spec.mjs, D200); drafted again too.
 $compare    = get_page_by_path( 'compare-products' );
@@ -138,7 +138,7 @@ $compare_id = $compare ? $compare->ID : (int) wp_insert_post(
 		'post_type'    => 'page',
 		'post_name'    => 'compare-products',
 		'post_title'   => 'Compare products',
-		'post_content' => '<!-- wp:viglet-dumont/compare /-->',
+		'post_content' => '<!-- wp:viglet-turing/compare /-->',
 	)
 );
 wp_update_post(
@@ -147,7 +147,7 @@ wp_update_post(
 		'post_status' => 'publish',
 	)
 );
-update_post_meta( $compare_id, '_viglet_dumont_exclude', '1' );
+update_post_meta( $compare_id, '_viglet_turing_exclude', '1' );
 
 // A search page that applies the filters a sentence names (woo/understand.spec.mjs, D199).
 $find    = get_page_by_path( 'find-gear' );
@@ -156,7 +156,7 @@ $find_id = $find ? $find->ID : (int) wp_insert_post(
 		'post_type'    => 'page',
 		'post_name'    => 'find-gear',
 		'post_title'   => 'Find gear',
-		'post_content' => '<!-- wp:viglet-dumont/search {"suggestFilters":true,"applyFilters":true} /-->',
+		'post_content' => '<!-- wp:viglet-turing/search {"suggestFilters":true,"applyFilters":true} /-->',
 	)
 );
 wp_update_post(
@@ -165,7 +165,7 @@ wp_update_post(
 		'post_status' => 'publish',
 	)
 );
-update_post_meta( $find_id, '_viglet_dumont_exclude', '1' );
+update_post_meta( $find_id, '_viglet_turing_exclude', '1' );
 
 // A page holding both blocks that offer Compare (woo/compare.spec.mjs, D302); drafted again too.
 $both    = get_page_by_path( 'search-and-ask' );
@@ -174,7 +174,7 @@ $both_id = $both ? $both->ID : (int) wp_insert_post(
 		'post_type'    => 'page',
 		'post_name'    => 'search-and-ask',
 		'post_title'   => 'Search and ask',
-		'post_content' => '<!-- wp:viglet-dumont/search /--><!-- wp:viglet-dumont/copilot /-->',
+		'post_content' => '<!-- wp:viglet-turing/search /--><!-- wp:viglet-turing/copilot /-->',
 	)
 );
 wp_update_post(
@@ -183,15 +183,15 @@ wp_update_post(
 		'post_status' => 'publish',
 	)
 );
-update_post_meta( $both_id, '_viglet_dumont_exclude', '1' );
+update_post_meta( $both_id, '_viglet_turing_exclude', '1' );
 
-$settings                       = get_option( 'viglet_dumont_settings', array() );
+$settings                       = get_option( 'viglet_turing_settings', array() );
 $settings['index_custom_types'] = array( 'product' );
 // Related content on a product page, whose product cards offer Compare (compare.spec.mjs, D212).
 $settings['related_after'] = array( 'post', 'product' );
-update_option( 'viglet_dumont_settings', $settings );
+update_option( 'viglet_turing_settings', $settings );
 
-$mapping            = get_option( 'viglet_dumont_mapping', array() );
+$mapping            = get_option( 'viglet_turing_mapping', array() );
 $mapping['product'] = array(
 	'exclude' => false,
 	'fields'  => array(
@@ -230,7 +230,7 @@ $mapping['product'] = array(
 		),
 	),
 );
-update_option( 'viglet_dumont_mapping', $mapping, false );
+update_option( 'viglet_turing_mapping', $mapping, false );
 
 echo wp_json_encode(
 	array(

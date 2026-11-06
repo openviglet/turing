@@ -4,12 +4,12 @@
 // asks the real one.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
+	block( page ).locator( '.viglet-turing-search__summary' );
 const suggested = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__chip--suggested' );
-const inBlock = { include: '.viglet-dumont-search' };
+	block( page ).locator( '.viglet-turing-search__chip--suggested' );
+const inBlock = { include: '.viglet-turing-search' };
 
 const reading = {
 	available: true,
@@ -65,7 +65,7 @@ test( 'a sentence offers the filters it names, and a click applies one', async (
 	] );
 	await expect(
 		block( page ).locator(
-			'.viglet-dumont-search__chip:not(.viglet-dumont-search__chip--suggested)'
+			'.viglet-turing-search__chip:not(.viglet-turing-search__chip--suggested)'
 		)
 	).toHaveCount( 0 );
 	await look( 'search-block-suggested' );
@@ -75,7 +75,7 @@ test( 'a sentence offers the filters it names, and a click applies one', async (
 	await expect( summary( page ) ).toHaveText( '5 results' );
 	await expect( suggested( page ) ).toHaveCount( 0 );
 	const chip = block( page ).locator(
-		'.viglet-dumont-search__applied .viglet-dumont-search__chip'
+		'.viglet-turing-search__applied .viglet-turing-search__chip'
 	);
 	await expect( chip ).toContainText(
 		'Published: Jan 1, 2026 – Jan 6, 2026'
@@ -176,6 +176,6 @@ test( 'with no language model in Turing nothing is suggested', async ( {
 	await expect( summary( page ) ).toHaveText( /results/ );
 	await page.waitForLoadState( 'networkidle' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__suggested' )
+		block( page ).locator( '.viglet-turing-search__suggested' )
 	).toBeHidden();
 } );

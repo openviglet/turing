@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "viglet-dumont/search",
+	"name": "viglet-turing/search",
 	"title": "Turing search",
 	"category": "widgets",
 	"icon": "search",
@@ -9,18 +9,18 @@
 	"keywords": [ "search", "turing", "facets" ],
 	"textdomain": "viglet-turing-search",
 	"providesContext": {
-		"viglet-dumont/search/placeholder": "placeholder",
-		"viglet-dumont/search/showFacets": "showFacets",
-		"viglet-dumont/search/showSort": "showSort",
-		"viglet-dumont/search/showAnswer": "showAnswer",
-		"viglet-dumont/search/suggestFilters": "suggestFilters",
-		"viglet-dumont/search/applyFilters": "applyFilters",
-		"viglet-dumont/search/showTrending": "showTrending",
-		"viglet-dumont/search/showImage": "showImage",
-		"viglet-dumont/search/showDate": "showDate",
-		"viglet-dumont/search/showType": "showType",
-		"viglet-dumont/search/showSnippet": "showSnippet",
-		"viglet-dumont/search/filters": "filters"
+		"viglet-turing/search/placeholder": "placeholder",
+		"viglet-turing/search/showFacets": "showFacets",
+		"viglet-turing/search/showSort": "showSort",
+		"viglet-turing/search/showAnswer": "showAnswer",
+		"viglet-turing/search/suggestFilters": "suggestFilters",
+		"viglet-turing/search/applyFilters": "applyFilters",
+		"viglet-turing/search/showTrending": "showTrending",
+		"viglet-turing/search/showImage": "showImage",
+		"viglet-turing/search/showDate": "showDate",
+		"viglet-turing/search/showType": "showType",
+		"viglet-turing/search/showSnippet": "showSnippet",
+		"viglet-turing/search/filters": "filters"
 	},
 	"attributes": {
 		"placeholder": {
@@ -106,7 +106,7 @@
 		},
 		"interactivity": true
 	},
-	"editorScript": "viglet-dumont-search-block-editor",
-	"style": "viglet-dumont-search-block",
+	"editorScript": "viglet-turing-search-block-editor",
+	"style": "viglet-turing-search-block",
 	"render": "file:./render.php"
 }

@@ -10,7 +10,7 @@ test.afterEach( ( { seed } ) => {
 		'post',
 		'update',
 		String( seed.searchPageId ),
-		'--post_content=<!-- wp:viglet-dumont/search /-->',
+		'--post_content=<!-- wp:viglet-turing/search /-->',
 	] );
 } );
 
@@ -29,9 +29,9 @@ test( 'its parts can be arranged as blocks and saved in a new order (D185)', asy
 		await guide.click();
 	}
 	const canvas = page.frameLocator( 'iframe[name="editor-canvas"]' );
-	const inEditor = canvas.locator( '[data-type="viglet-dumont/search"]' );
+	const inEditor = canvas.locator( '[data-type="viglet-turing/search"]' );
 	await expect(
-		inEditor.locator( '.viglet-dumont-search__summary' )
+		inEditor.locator( '.viglet-turing-search__summary' )
 	).toHaveText( /^\d+ results$/ );
 	await inEditor.click();
 	const settings = page.getByRole( 'button', {
@@ -48,7 +48,7 @@ test( 'its parts can be arranged as blocks and saved in a new order (D185)', asy
 		.click();
 
 	const part = ( name ) =>
-		canvas.locator( `[data-type="viglet-dumont/search-${ name }"]` );
+		canvas.locator( `[data-type="viglet-turing/search-${ name }"]` );
 	for ( const name of [ 'box', 'filters', 'results', 'pages' ] ) {
 		await expect( part( name ) ).toBeVisible();
 	}
@@ -73,16 +73,16 @@ test( 'its parts can be arranged as blocks and saved in a new order (D185)', asy
 	).toBeVisible();
 
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=*` );
-	const block = page.locator( '.viglet-dumont-search' );
-	await expect( block ).toHaveClass( /viglet-dumont-search--parts/ );
+	const block = page.locator( '.viglet-turing-search' );
+	await expect( block ).toHaveClass( /viglet-turing-search--parts/ );
 	await expect(
-		block.locator( '.viglet-dumont-search__pages' )
+		block.locator( '.viglet-turing-search__pages' )
 	).toBeVisible();
 	expect(
 		await block.evaluate( ( root ) =>
 			[
 				...root.querySelectorAll(
-					':scope > .viglet-dumont-search__part'
+					':scope > .viglet-turing-search__part'
 				),
 			].map(
 				( p ) =>
@@ -110,13 +110,13 @@ test( 'layout, parts and style chosen in the editor reach the published page', a
 	}
 
 	const canvas = page.frameLocator( 'iframe[name="editor-canvas"]' );
-	const inEditor = canvas.locator( '[data-type="viglet-dumont/search"]' );
+	const inEditor = canvas.locator( '[data-type="viglet-turing/search"]' );
 	// The editor previews what visitors get: Turing's answer, as cards.
 	await expect(
-		inEditor.locator( '.viglet-dumont-search__result' ).first()
+		inEditor.locator( '.viglet-turing-search__result' ).first()
 	).toBeVisible();
 	await expect(
-		inEditor.locator( '.viglet-dumont-search__summary' )
+		inEditor.locator( '.viglet-turing-search__summary' )
 	).toHaveText( /^\d+ results$/ );
 	await inEditor.click();
 	const settings = page.getByRole( 'button', {
@@ -145,22 +145,22 @@ test( 'layout, parts and style chosen in the editor reach the published page', a
 	).toBeVisible();
 
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
-	const block = page.locator( '.viglet-dumont-search' );
-	await expect( block ).toHaveClass( /viglet-dumont-search--facets-right/ );
-	await expect( block ).toHaveClass( /viglet-dumont-search--grid/ );
+	const block = page.locator( '.viglet-turing-search' );
+	await expect( block ).toHaveClass( /viglet-turing-search--facets-right/ );
+	await expect( block ).toHaveClass( /viglet-turing-search--grid/ );
 	await expect( block ).toHaveClass( /is-style-cards/ );
 	await expect(
-		block.locator( '.viglet-dumont-search__result' ).first()
+		block.locator( '.viglet-turing-search__result' ).first()
 	).toBeVisible();
 	await expect(
-		block.locator( '.viglet-dumont-search__snippet' )
+		block.locator( '.viglet-turing-search__snippet' )
 	).toHaveCount( 0 );
 	// Right of the results, as chosen.
 	const facets = await block
-		.locator( '.viglet-dumont-search__facets' )
+		.locator( '.viglet-turing-search__facets' )
 		.boundingBox();
 	const results = await block
-		.locator( '.viglet-dumont-search__results' )
+		.locator( '.viglet-turing-search__results' )
 		.boundingBox();
 	expect( facets.x ).toBeGreaterThan( results.x );
 	await look( 'block-published-settings' );

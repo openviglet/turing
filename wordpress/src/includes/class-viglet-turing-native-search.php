@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont Native Search
+ * Viglet Turing Native Search
  *
  * Turing answers WordPress's own search query, so the theme's search template renders the
  * results: a block theme keeps its header, footer and styles, and a classic theme its
  * search.php. Nothing is printed by the plugin.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Replaces the main search query's database lookup with Turing's ranking, through
  * `posts_pre_query`, keeping WordPress's pagination and templates.
  */
-class Viglet_Dumont_Native_Search {
+class Viglet_Turing_Native_Search {
 
 	/**
 	 * The plugin settings this search runs with.
@@ -32,7 +32,7 @@ class Viglet_Dumont_Native_Search {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -44,27 +44,27 @@ class Viglet_Dumont_Native_Search {
 
 	/**
 	 * Register the script modules a theme imports to search from the browser:
-	 * `@viglet/turing-sdk` (the SDK, as published) and `viglet-dumont/search` (the SDK
+	 * `@viglet/turing-sdk` (the SDK, as published) and `viglet-turing/search` (the SDK
 	 * configured for this site). Nothing is loaded until a theme enqueues or imports them.
 	 */
 	public static function register_modules(): void {
-		$asset = VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php';
+		$asset = VIGLET_TURING_DIR . 'admin/build/turing-sdk.asset.php';
 		if ( ! file_exists( $asset ) ) {
 			return;
 		}
 		$sdk = include $asset;
 
-		wp_register_script_module( '@viglet/turing-sdk', VIGLET_DUMONT_URL . 'admin/build/turing-sdk.js', array(), $sdk['version'] );
+		wp_register_script_module( '@viglet/turing-sdk', VIGLET_TURING_URL . 'admin/build/turing-sdk.js', array(), $sdk['version'] );
 		wp_register_script_module(
-			'viglet-dumont/search',
-			VIGLET_DUMONT_URL . 'public/search.js',
+			'viglet-turing/search',
+			VIGLET_TURING_URL . 'public/search.js',
 			array( '@viglet/turing-sdk', '@wordpress/interactivity' ),
-			VIGLET_DUMONT_VERSION
+			VIGLET_TURING_VERSION
 		);
 	}
 
 	/** The query argument that asks for a post's picture by id (image_url()). */
-	public const IMAGE_ARG = 'viglet_dumont_image';
+	public const IMAGE_ARG = 'viglet_turing_image';
 
 	/**
 	 * The picture a post's results show, by its id: the featured image the indexer sends as
@@ -119,7 +119,7 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
-	 * Answer `?viglet_dumont_image=<id>` (`template_redirect`) with a redirect to that post's
+	 * Answer `?viglet_turing_image=<id>` (`template_redirect`) with a redirect to that post's
 	 * picture, or a 404 when it has none.
 	 */
 	public static function redirect_image(): void {
@@ -134,8 +134,7 @@ class Viglet_Dumont_Native_Search {
 			nocache_headers();
 			exit;
 		}
-		// The upload's own address, which may be a CDN's host: not a visitor-supplied target.
-		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- the upload's own address, which may be a CDN's host: not a visitor-supplied target.
 		wp_redirect( $url, 302, 'Viglet Turing Search' );
 		exit;
 	}
@@ -152,7 +151,7 @@ class Viglet_Dumont_Native_Search {
 	public static function robots( array $robots ): array {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a read-only look at the URL.
 		$refined = isset( $_GET['fq'] ) || isset( $_GET['pg'] ) || isset( $_GET['sort'] );
-		if ( $refined && is_singular() && has_block( 'viglet-dumont/search', get_queried_object() ) ) {
+		if ( $refined && is_singular() && has_block( 'viglet-turing/search', get_queried_object() ) ) {
 			$robots['noindex'] = true;
 			$robots['follow']  = true;
 		}
@@ -163,7 +162,7 @@ class Viglet_Dumont_Native_Search {
 	/**
 	 * Register the Turing search block (blocks/search): a search box with suggestions,
 	 * did-you-mean, facets, results and pages, built on the modules above. A site with its
-	 * own search blocks turns it off with the `viglet_dumont_register_blocks` filter.
+	 * own search blocks turns it off with the `viglet_turing_register_blocks` filter.
 	 */
 	public static function register_blocks(): void {
 		/**
@@ -171,113 +170,113 @@ class Viglet_Dumont_Native_Search {
 		 *
 		 * @param bool $register False to leave the search UI to the theme's blocks.
 		 */
-		if ( ! apply_filters( 'viglet_dumont_register_blocks', true ) || ! file_exists( VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
+		if ( ! apply_filters( 'viglet_turing_register_blocks', true ) || ! file_exists( VIGLET_TURING_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
 			return;
 		}
 
 		wp_register_script_module(
-			'viglet-dumont/search-block',
-			VIGLET_DUMONT_URL . 'public/search-block.js',
-			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
-			VIGLET_DUMONT_VERSION
+			'viglet-turing/search-block',
+			VIGLET_TURING_URL . 'public/search-block.js',
+			array( '@wordpress/interactivity', 'viglet-turing/search' ),
+			VIGLET_TURING_VERSION
 		);
 		wp_register_script(
-			'viglet-dumont-search-block-editor',
-			VIGLET_DUMONT_URL . 'admin/js/search-block-editor.js',
+			'viglet-turing-search-block-editor',
+			VIGLET_TURING_URL . 'admin/js/search-block-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-i18n', 'wp-server-side-render' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-search-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
-		wp_register_style( 'viglet-dumont-search-block', VIGLET_DUMONT_URL . 'blocks/search/style.css', array(), VIGLET_DUMONT_VERSION );
+		wp_set_script_translations( 'viglet-turing-search-block-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
+		wp_register_style( 'viglet-turing-search-block', VIGLET_TURING_URL . 'blocks/search/style.css', array(), VIGLET_TURING_VERSION );
 
-		register_block_type( VIGLET_DUMONT_DIR . 'blocks/search' );
+		register_block_type( VIGLET_TURING_DIR . 'blocks/search' );
 		// Its parts, as inner blocks a theme can reorder (D185).
-		foreach ( array_keys( Viglet_Dumont_Search_Block::PARTS ) as $part ) {
-			register_block_type( VIGLET_DUMONT_DIR . 'blocks/search-parts/' . $part );
+		foreach ( array_keys( Viglet_Turing_Search_Block::PARTS ) as $part ) {
+			register_block_type( VIGLET_TURING_DIR . 'blocks/search-parts/' . $part );
 		}
 
 		// Related content (D177): drawn on the server; its module only reports clicks.
 		wp_register_script_module(
-			'viglet-dumont/related-block',
-			VIGLET_DUMONT_URL . 'public/related.js',
-			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
-			VIGLET_DUMONT_VERSION
+			'viglet-turing/related-block',
+			VIGLET_TURING_URL . 'public/related.js',
+			array( '@wordpress/interactivity', 'viglet-turing/search' ),
+			VIGLET_TURING_VERSION
 		);
 		wp_register_script(
-			'viglet-dumont-related-block-editor',
-			VIGLET_DUMONT_URL . 'admin/js/related-block-editor.js',
+			'viglet-turing-related-block-editor',
+			VIGLET_TURING_URL . 'admin/js/related-block-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-i18n', 'wp-server-side-render' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-related-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
-		wp_register_style( 'viglet-dumont-related-block', VIGLET_DUMONT_URL . 'blocks/related/style.css', array(), VIGLET_DUMONT_VERSION );
+		wp_set_script_translations( 'viglet-turing-related-block-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
+		wp_register_style( 'viglet-turing-related-block', VIGLET_TURING_URL . 'blocks/related/style.css', array(), VIGLET_TURING_VERSION );
 
-		register_block_type( VIGLET_DUMONT_DIR . 'blocks/related' );
+		register_block_type( VIGLET_TURING_DIR . 'blocks/related' );
 
 		// Ask the catalog (D173): a conversation with Turing's catalog copilot.
 		wp_register_script_module(
-			'viglet-dumont/copilot-block',
-			VIGLET_DUMONT_URL . 'public/copilot.js',
-			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
-			VIGLET_DUMONT_VERSION
+			'viglet-turing/copilot-block',
+			VIGLET_TURING_URL . 'public/copilot.js',
+			array( '@wordpress/interactivity', 'viglet-turing/search' ),
+			VIGLET_TURING_VERSION
 		);
 		wp_register_script(
-			'viglet-dumont-copilot-block-editor',
-			VIGLET_DUMONT_URL . 'admin/js/copilot-block-editor.js',
+			'viglet-turing-copilot-block-editor',
+			VIGLET_TURING_URL . 'admin/js/copilot-block-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-copilot-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-turing-copilot-block-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
 		// The editor speaks as the site does (D323): a shop's catalog and kit, or this site and a plan.
 		wp_add_inline_script(
-			'viglet-dumont-copilot-block-editor',
-			'window.vigletDumontCopilot = ' . wp_json_encode( array( 'shop' => Viglet_Dumont_WooCommerce::active() ) ) . ';',
+			'viglet-turing-copilot-block-editor',
+			'window.vigletTuringCopilot = ' . wp_json_encode( array( 'shop' => Viglet_Turing_WooCommerce::active() ) ) . ';',
 			'before'
 		);
-		wp_register_style( 'viglet-dumont-copilot-block', VIGLET_DUMONT_URL . 'blocks/copilot/style.css', array(), VIGLET_DUMONT_VERSION );
+		wp_register_style( 'viglet-turing-copilot-block', VIGLET_TURING_URL . 'blocks/copilot/style.css', array(), VIGLET_TURING_VERSION );
 
-		register_block_type( VIGLET_DUMONT_DIR . 'blocks/copilot' );
+		register_block_type( VIGLET_TURING_DIR . 'blocks/copilot' );
 
 		// Site assistant (D175): a chat with Turing over this site's posts.
 		wp_register_script_module(
-			'viglet-dumont/assistant-block',
-			VIGLET_DUMONT_URL . 'public/assistant.js',
-			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
-			VIGLET_DUMONT_VERSION
+			'viglet-turing/assistant-block',
+			VIGLET_TURING_URL . 'public/assistant.js',
+			array( '@wordpress/interactivity', 'viglet-turing/search' ),
+			VIGLET_TURING_VERSION
 		);
 		wp_register_script(
-			'viglet-dumont-assistant-block-editor',
-			VIGLET_DUMONT_URL . 'admin/js/assistant-block-editor.js',
+			'viglet-turing-assistant-block-editor',
+			VIGLET_TURING_URL . 'admin/js/assistant-block-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-assistant-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
-		wp_register_style( 'viglet-dumont-assistant-block', VIGLET_DUMONT_URL . 'blocks/assistant/style.css', array(), VIGLET_DUMONT_VERSION );
+		wp_set_script_translations( 'viglet-turing-assistant-block-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
+		wp_register_style( 'viglet-turing-assistant-block', VIGLET_TURING_URL . 'blocks/assistant/style.css', array(), VIGLET_TURING_VERSION );
 
-		register_block_type( VIGLET_DUMONT_DIR . 'blocks/assistant' );
+		register_block_type( VIGLET_TURING_DIR . 'blocks/assistant' );
 
 		// Compare products (D200): a table drawn on the server; its module only asks for the summary.
 		wp_register_script_module(
-			'viglet-dumont/compare-block',
-			VIGLET_DUMONT_URL . 'public/compare.js',
+			'viglet-turing/compare-block',
+			VIGLET_TURING_URL . 'public/compare.js',
 			array(),
-			VIGLET_DUMONT_VERSION
+			VIGLET_TURING_VERSION
 		);
 		wp_register_script(
-			'viglet-dumont-compare-block-editor',
-			VIGLET_DUMONT_URL . 'admin/js/compare-block-editor.js',
+			'viglet-turing-compare-block-editor',
+			VIGLET_TURING_URL . 'admin/js/compare-block-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-compare-block-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
-		wp_register_style( 'viglet-dumont-compare-block', VIGLET_DUMONT_URL . 'blocks/compare/style.css', array(), VIGLET_DUMONT_VERSION );
+		wp_set_script_translations( 'viglet-turing-compare-block-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
+		wp_register_style( 'viglet-turing-compare-block', VIGLET_TURING_URL . 'blocks/compare/style.css', array(), VIGLET_TURING_VERSION );
 
-		register_block_type( VIGLET_DUMONT_DIR . 'blocks/compare' );
+		register_block_type( VIGLET_TURING_DIR . 'blocks/compare' );
 	}
 
 	/**
@@ -286,7 +285,7 @@ class Viglet_Dumont_Native_Search {
 	 * the query to the full search page.
 	 */
 	public function register_overlay(): void {
-		if ( ! file_exists( VIGLET_DUMONT_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
+		if ( ! file_exists( VIGLET_TURING_DIR . 'admin/build/turing-sdk.asset.php' ) ) {
 			return;
 		}
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_overlay' ) );
@@ -298,28 +297,28 @@ class Viglet_Dumont_Native_Search {
 	 */
 	public function enqueue_overlay(): void {
 		wp_register_script_module(
-			'viglet-dumont/overlay',
-			VIGLET_DUMONT_URL . 'public/overlay.js',
-			array( '@wordpress/interactivity', 'viglet-dumont/search' ),
-			VIGLET_DUMONT_VERSION
+			'viglet-turing/overlay',
+			VIGLET_TURING_URL . 'public/overlay.js',
+			array( '@wordpress/interactivity', 'viglet-turing/search' ),
+			VIGLET_TURING_VERSION
 		);
-		wp_enqueue_script_module( 'viglet-dumont/overlay' );
-		wp_enqueue_style( 'viglet-dumont-overlay', VIGLET_DUMONT_URL . 'public/overlay.css', array(), VIGLET_DUMONT_VERSION );
+		wp_enqueue_script_module( 'viglet-turing/overlay' );
+		wp_enqueue_style( 'viglet-turing-overlay', VIGLET_TURING_URL . 'public/overlay.css', array(), VIGLET_TURING_VERSION );
 		// Each type's name, one and many, for an immersive overlay's groups (D311).
 		$types = array();
-		foreach ( viglet_dumont_get_indexable_types() as $type ) {
+		foreach ( viglet_turing_get_indexable_types() as $type ) {
 			$object = get_post_type_object( $type );
 			if ( $object ) {
 				$types[ $type ] = (string) $object->labels->name;
 			}
 		}
-		$types[ Viglet_Dumont_Pdf::TYPE ] = __( 'PDF files', 'viglet-turing-search' );
+		$types[ Viglet_Turing_Pdf::TYPE ] = __( 'PDF files', 'viglet-turing-search' );
 		// A type another source sent (D327) groups under the label Fields gave it.
-		$types    += ( new Viglet_Dumont_Mapping( $this->settings ) )->foreign_labels();
+		$types    += ( new Viglet_Turing_Mapping( $this->settings ) )->foreign_labels();
 		$immersive = 'immersive' === ( $this->settings['overlay_layout'] ?? '' );
 
 		wp_interactivity_config(
-			'viglet-dumont/overlay',
+			'viglet-turing/overlay',
 			array_merge(
 				$this->search_page(),
 				array(
@@ -327,7 +326,7 @@ class Viglet_Dumont_Native_Search {
 					'typeLabels' => $types,
 					// The immersive zero state's popular searches (D202), and whether a question
 					// gets Turing's answer on top: opt-in, as each answer is an LLM call.
-					'popular'    => $immersive ? ( new Viglet_Dumont_Trending() )->chips() : array(),
+					'popular'    => $immersive ? ( new Viglet_Turing_Trending() )->chips() : array(),
 					'answers'    => $immersive && ! empty( $this->settings['overlay_answers'] ),
 					// The zero state's Explore row: links the site chose (D311).
 					'explore'    => $this->overlay_explore(),
@@ -336,7 +335,7 @@ class Viglet_Dumont_Native_Search {
 						'explore'  => __( 'Explore', 'viglet-turing-search' ),
 						'answer'   => __( 'Answer', 'viglet-turing-search' ),
 						// A spent AI budget, with its reset when the site knows it (D336).
-						'paused'   => Viglet_Dumont_AI_Quota::visitor_line(),
+						'paused'   => Viglet_Turing_AI_Quota::visitor_line(),
 						'preview'  => __( 'Preview', 'viglet-turing-search' ),
 						/* translators: %s: a type's name, e.g. "Events". */
 						'seeAll'   => __( 'See all %s', 'viglet-turing-search' ),
@@ -396,7 +395,7 @@ class Viglet_Dumont_Native_Search {
 					'orderby'     => 'ID',
 					'order'       => 'ASC',
 					// The block's comment delimiter, as one term (a search splits on spaces).
-					's'           => 'wp:viglet-dumont/search',
+					's'           => 'wp:viglet-turing/search',
 				)
 			);
 			$page_id = $found ? (int) $found[0] : 0;
@@ -422,7 +421,7 @@ class Viglet_Dumont_Native_Search {
 	 */
 	public function card_fields(): array {
 		$cards = array();
-		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $type_mapping ) {
+		foreach ( ( new Viglet_Turing_Mapping( $this->settings ) )->all() as $type_mapping ) {
 			if ( $type_mapping['exclude'] ) {
 				continue;
 			}
@@ -450,7 +449,7 @@ class Viglet_Dumont_Native_Search {
 	 */
 	public function card_types(): array {
 		$types   = array();
-		$mapping = new Viglet_Dumont_Mapping( $this->settings );
+		$mapping = new Viglet_Turing_Mapping( $this->settings );
 		foreach ( $mapping->foreign() as $type => $looks ) {
 			if ( '' !== $looks['card_date'] || '' !== $looks['card_image'] ) {
 				$types[ (string) $type ] = array(
@@ -500,7 +499,7 @@ class Viglet_Dumont_Native_Search {
 	}
 
 	/**
-	 * A server-drawn result card through `viglet_dumont_result_card` (D305).
+	 * A server-drawn result card through `viglet_turing_result_card` (D305).
 	 *
 	 * @param array $card   The card, in the keys search-block.js's card() gives the store.
 	 * @param array $fields The document's fields.
@@ -516,7 +515,7 @@ class Viglet_Dumont_Native_Search {
 		 * @param array $card     The card.
 		 * @param array $document The document's fields, as Turing answered them.
 		 */
-		return apply_filters( 'viglet_dumont_result_card', $card, $fields );
+		return apply_filters( 'viglet_turing_result_card', $card, $fields );
 	}
 
 	/**
@@ -653,8 +652,8 @@ class Viglet_Dumont_Native_Search {
 		$query = '' !== trim( $state['query'] ) ? trim( $state['query'] ) : '*';
 		$rows  = (int) $state['perPage'];
 
-		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search_unrecorded(
+		$indexer  = new Viglet_Turing_Indexer( $this->settings );
+		$response = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search_unrecorded(
 			array_merge(
 				array(
 					'q'    => $query,
@@ -673,7 +672,7 @@ class Viglet_Dumont_Native_Search {
 
 		$names   = (array) ( $response['queryContext']['defaultFields'] ?? array() );
 		$field   = static fn ( array $fields, string $key, string $fallback ) => $fields[ $names[ $key ] ?? $fallback ] ?? '';
-		$shop    = Viglet_Dumont_WooCommerce::active();
+		$shop    = Viglet_Turing_WooCommerce::active();
 		$offset  = ( $page - 1 ) * $rows;
 		$cards   = $this->card_fields();
 		$types   = $this->card_types();
@@ -683,7 +682,7 @@ class Viglet_Dumont_Native_Search {
 			$url    = (string) $field( $fields, 'url', 'url' );
 			$title  = html_entity_decode( wp_strip_all_tags( (string) $field( $fields, 'title', 'title' ) ) );
 			$title  = '' !== $title ? $title : $url;
-			$type   = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
+			$type   = Viglet_Turing_Mapping::document_type( $fields['type'] ?? '' );
 			$looks  = $types[ $type ] ?? array(
 				'date'  => '',
 				'image' => '',
@@ -774,7 +773,7 @@ class Viglet_Dumont_Native_Search {
 			'hasFacets'     => ! empty( $facets ),
 			'hasPages'      => count( $pages ) > 1,
 			'hasSpotlights' => false,
-			'canCompare'    => Viglet_Dumont_WooCommerce::active() && '' !== (string) Viglet_Dumont_Compare::page_url(),
+			'canCompare'    => Viglet_Turing_WooCommerce::active() && '' !== (string) Viglet_Turing_Compare::page_url(),
 			'spotlights'    => array_values(
 				array_map(
 					static fn ( array $spot ) => array(
@@ -798,9 +797,9 @@ class Viglet_Dumont_Native_Search {
 	 *
 	 * @param array                 $answered The response's `widget.facet`.
 	 * @param array                 $config   The script's config, for which facets are ranges.
-	 * @param Viglet_Dumont_Indexer $indexer  The indexer that names the scope.
+	 * @param Viglet_Turing_Indexer $indexer  The indexer that names the scope.
 	 */
-	private static function facets( array $answered, array $config, Viglet_Dumont_Indexer $indexer ): array {
+	private static function facets( array $answered, array $config, Viglet_Turing_Indexer $indexer ): array {
 		$ranges = array_column( array_filter( (array) ( $config['facets'] ?? array() ), static fn ( $f ) => ! empty( $f['range'] ) ), 'field' );
 		$sites  = array() !== $indexer->sibling_sites();
 		$facets = array();
@@ -857,9 +856,9 @@ class Viglet_Dumont_Native_Search {
 	 * site's label, a key out of scope left out.
 	 *
 	 * @param array                 $facet   The facet as Turing answered it.
-	 * @param Viglet_Dumont_Indexer $indexer The indexer that names the scope.
+	 * @param Viglet_Turing_Indexer $indexer The indexer that names the scope.
 	 */
-	public static function site_facet( array $facet, Viglet_Dumont_Indexer $indexer ): array {
+	public static function site_facet( array $facet, Viglet_Turing_Indexer $indexer ): array {
 		$keys            = $indexer->scope_keys();
 		$facet['label']  = array( 'text' => __( 'Site', 'viglet-turing-search' ) );
 		$facet['facets'] = array_values(
@@ -926,8 +925,8 @@ class Viglet_Dumont_Native_Search {
 	 * @return array State to merge over the block's own.
 	 */
 	public function preview_state( int $rows, array $labels ): array {
-		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
-		$response = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search(
+		$indexer  = new Viglet_Turing_Indexer( $this->settings );
+		$response = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render()->for_scope( $indexer )->search(
 			'*',
 			1,
 			$rows,
@@ -947,7 +946,7 @@ class Viglet_Dumont_Native_Search {
 		foreach ( (array) ( $response['results']['document'] ?? array() ) as $document ) {
 			$fields    = (array) ( $document['fields'] ?? array() );
 			$url       = (string) ( $fields['url'] ?? '' );
-			$type      = Viglet_Dumont_Mapping::document_type( $fields['type'] ?? '' );
+			$type      = Viglet_Turing_Mapping::document_type( $fields['type'] ?? '' );
 			$looks     = $types[ $type ] ?? array(
 				'date'  => '',
 				'image' => '',
@@ -1015,23 +1014,23 @@ class Viglet_Dumont_Native_Search {
 	 * Mark the theme's Search block form so the overlay opens from it (`render_block_core/search`).
 	 *
 	 * @param string $html The block's markup.
-	 * @return string The markup, its form carrying `data-viglet-dumont-overlay`.
+	 * @return string The markup, its form carrying `data-viglet-turing-overlay`.
 	 */
 	public static function mark_search_form( string $html ): string {
 		$tags = new WP_HTML_Tag_Processor( $html );
 		if ( $tags->next_tag( array( 'tag_name' => 'form' ) ) ) {
-			$tags->set_attribute( 'data-viglet-dumont-overlay', '' );
+			$tags->set_attribute( 'data-viglet-turing-overlay', '' );
 		}
 
 		return $tags->get_updated_html();
 	}
 
 	/**
-	 * Hand the public config to the modules (read there with getConfig( 'viglet-dumont' )).
+	 * Hand the public config to the modules (read there with getConfig( 'viglet-turing' )).
 	 * It is printed only on a page that loads the Interactivity API.
 	 */
 	public static function provide_config(): void {
-		wp_interactivity_config( 'viglet-dumont', viglet_dumont_public_config() );
+		wp_interactivity_config( 'viglet-turing', viglet_turing_public_config() );
 	}
 
 	/**
@@ -1177,9 +1176,9 @@ class Viglet_Dumont_Native_Search {
 	 * @return array{ids: int[], remote: array<string, array{url: string, title: string, description: string, date: mixed, site: string}>, order: array<int, int|string>, total: int}|null
 	 */
 	public function search( string $query, int $page, int $per_page ): ?array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		// A page read (D328): while Turing is down WordPress searches its own database at once.
-		$client   = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
+		$client   = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
 		$response = $client->search( '' !== trim( $query ) ? $query : '*', $page, $per_page, $indexer->scope_query() );
 		if ( is_wp_error( $response ) ) {
 			return null;
@@ -1231,7 +1230,7 @@ class Viglet_Dumont_Native_Search {
 	 */
 	public function public_config(): array {
 		$facets = array();
-		foreach ( ( new Viglet_Dumont_Mapping( $this->settings ) )->all() as $type_mapping ) {
+		foreach ( ( new Viglet_Turing_Mapping( $this->settings ) )->all() as $type_mapping ) {
 			foreach ( $type_mapping['fields'] as $field ) {
 				$label = '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'];
 				if ( $field['facet'] && ! isset( $facets[ $field['field'] ] ) ) {
@@ -1243,7 +1242,7 @@ class Viglet_Dumont_Native_Search {
 					);
 				}
 				// A range facet filters as `<field>_range:<range label>`, so the chip names it too.
-				$range = Viglet_Dumont_Mapping::range_facet_name( $field['field'] );
+				$range = Viglet_Turing_Mapping::range_facet_name( $field['field'] );
 				if ( $field['range'] && ! isset( $facets[ $range ] ) ) {
 					$facets[ $range ] = array(
 						'field' => $range,
@@ -1261,24 +1260,24 @@ class Viglet_Dumont_Native_Search {
 			}//end foreach
 		}//end foreach
 		// The people, organisations and places Turing finds in the text (D310), as Fields names them.
-		$facets += ( new Viglet_Dumont_Entities( $this->settings ) )->public_facets();
+		$facets += ( new Viglet_Turing_Entities( $this->settings ) )->public_facets();
 
 		$config = array(
 			'url'      => untrailingslashit( '' !== (string) $this->settings['public_url'] ? $this->settings['public_url'] : $this->settings['server_url'] ),
 			'site'     => (string) $this->settings['site_name'],
 			'locale'   => (string) $this->settings['locale'],
-			'siteKey'  => ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key(),
+			'siteKey'  => ( new Viglet_Turing_Indexer( $this->settings ) )->site_key(),
 			// Where a post of this site opens when its indexed URL is another WordPress's (D239).
 			'home'     => home_url( '/' ),
 			// Where a browser reports that Turing refused an AI call with 429 (D332).
-			'aiPaused' => rest_url( 'viglet-dumont/v1/ai-paused' ),
+			'aiPaused' => rest_url( 'viglet-turing/v1/ai-paused' ),
 			'facets'   => array_values( $facets ),
 			// The mapped fields a result card shows as labelled lines (D305).
 			'cards'    => $this->card_fields(),
 		);
 		// The sites a search here also reads (D303): their keys for the scope, their labels for
 		// the site facet and a card's origin, their addresses for the assistant's navigate.
-		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer  = new Viglet_Turing_Indexer( $this->settings );
 		$siblings = $indexer->sibling_sites();
 		if ( array() !== $siblings ) {
 			$config['sites']     = $siblings;
@@ -1299,7 +1298,7 @@ class Viglet_Dumont_Native_Search {
 			$config['analytics'] = $analytics;
 		}
 		// A product result's price and "Add to cart" (D173).
-		$shop = Viglet_Dumont_WooCommerce::shop_config();
+		$shop = Viglet_Turing_WooCommerce::shop_config();
 		if ( null !== $shop ) {
 			$config['shop'] = $shop;
 		}
@@ -1313,7 +1312,7 @@ class Viglet_Dumont_Native_Search {
 	 * Events carry the query, a document id and a rank: nothing about the visitor, and no
 	 * cookie of the plugin's is set. Even so, nothing is sent before the visitor allows statistics. A consent
 	 * plugin speaking the WP Consent API answers that in the browser; without one the
-	 * `viglet_dumont_tracking_consent` filter does, and turning reporting on counts as the
+	 * `viglet_turing_tracking_consent` filter does, and turning reporting on counts as the
 	 * site's answer unless the filter says otherwise.
 	 *
 	 * @return array{clicks: bool, ga: bool, measurementId: string, requireConsent: bool}|null
@@ -1331,7 +1330,7 @@ class Viglet_Dumont_Native_Search {
 		 *
 		 * @param bool $consent False to send nothing until a consent plugin is installed.
 		 */
-		$consent = (bool) apply_filters( 'viglet_dumont_tracking_consent', true );
+		$consent = (bool) apply_filters( 'viglet_turing_tracking_consent', true );
 
 		return array(
 			'clicks'         => $clicks,

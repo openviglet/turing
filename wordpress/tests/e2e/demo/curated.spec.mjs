@@ -5,7 +5,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { curated, demoLocale, localeOf } from './curated.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 
 for ( const search of curated ) {
 	test( `${ localeOf( search ) } "${ search.query }": ${
@@ -27,37 +27,37 @@ for ( const search of curated ) {
 		// A curated misspelling is searched as corrected (D259).
 		if ( search.correction ) {
 			await expect(
-				block( page ).locator( '.viglet-dumont-search__showing-for' )
+				block( page ).locator( '.viglet-turing-search__showing-for' )
 			).toContainText( search.correction );
 			await expect(
 				block( page )
-					.locator( '.viglet-dumont-search__title a' )
+					.locator( '.viglet-turing-search__title a' )
 					.first()
 			).toBeVisible();
 			return;
 		}
 		await expect(
-			block( page ).locator( '.viglet-dumont-search__title a' ).first()
+			block( page ).locator( '.viglet-turing-search__title a' ).first()
 		).toHaveText( new RegExp( `^${ search.first }\\b` ) );
 		if ( search.then ) {
 			await expect(
 				block( page )
-					.locator( '.viglet-dumont-search__title a' )
+					.locator( '.viglet-turing-search__title a' )
 					.nth( 1 )
 			).toHaveText( new RegExp( `^${ search.then }\\b` ) );
 		}
 		// Every result shows its picture (D218): drawn by demo/seed/images.php.
 		const cards = block( page ).locator(
-			'.viglet-dumont-search__results > li'
+			'.viglet-turing-search__results > li'
 		);
 		for ( const card of await cards.all() ) {
 			await expect(
-				card.locator( '.viglet-dumont-search__image' )
+				card.locator( '.viglet-turing-search__image' )
 			).toHaveAttribute( 'src', /\.webp$/ );
 		}
 		if ( search.count ) {
 			await expect(
-				block( page ).locator( '.viglet-dumont-search__summary' )
+				block( page ).locator( '.viglet-turing-search__summary' )
 			).toHaveText( new RegExp( `^${ search.count } ` ) );
 		}
 	} );

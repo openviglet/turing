@@ -1,5 +1,5 @@
 {
-    "name": "viglet/dumont-wordpress",
+    "name": "viglet/turing-wordpress",
     "description": "Indexes WordPress content into Viglet Turing and serves search from it.",
     "type": "wordpress-plugin",
     "license": "MIT",
@@ -22,7 +22,7 @@
     "autoload-dev": {
         "classmap": ["src/includes/"],
         "psr-4": {
-            "Viglet\\Dumont\\Tests\\": "tests/"
+            "Viglet\\Turing\\Tests\\": "tests/"
         }
     },
     "config": {

@@ -4,10 +4,10 @@
 // sessionStorage, so they survive the navigation a click starts.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const titles = ( page ) =>
 	block( page ).locator(
-		'.viglet-dumont-search__results .viglet-dumont-search__title a'
+		'.viglet-turing-search__results .viglet-turing-search__title a'
 	);
 
 /**
@@ -131,7 +131,7 @@ test( 'a filter, a sort or a page on a search is not reported as another search'
 	await expect.poll( async () => ( await events( page ) ).length ).toBe( 2 );
 
 	await block( page )
-		.locator( '.viglet-dumont-search__facet' )
+		.locator( '.viglet-turing-search__facet' )
 		.filter( { has: page.locator( 'summary', { hasText: 'Seats' } ) } )
 		.locator( 'label' )
 		.filter( { hasText: '40' } )
@@ -217,14 +217,14 @@ test( 'with statistics consent, a result opened from the overlay is reported wit
 	await page.keyboard.press( 'Control+K' );
 	await page.keyboard.type( 'worksh' );
 	const options = page.locator(
-		'dialog.viglet-dumont-overlay [role="option"]'
+		'dialog.viglet-turing-overlay [role="option"]'
 	);
 	await expect( options ).toHaveCount( 4 );
 
 	const sent = page.waitForRequest( /\/api\/sn\/[^/]+\/click$/ );
 	const title = await options
 		.nth( 1 )
-		.locator( '.viglet-dumont-overlay__title' )
+		.locator( '.viglet-turing-overlay__title' )
 		.textContent();
 	await page.keyboard.press( 'ArrowDown' );
 	await page.keyboard.press( 'ArrowDown' );

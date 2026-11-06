@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont PDF files
+ * Viglet Turing PDF files
  *
  * The PDFs in the media library as documents of their own (D309): Turing reads their text
  * through Tika when they arrive in a zip, so their words are found like a post's.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,19 +22,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The posts that link a PDF are recorded on the attachment, one `LINKED_META` row per post,
  * so a post leaving search knows which PDFs it held and whether another post still holds them.
  */
-class Viglet_Dumont_Pdf {
+class Viglet_Turing_Pdf {
 
-	/** The largest PDF sent, in bytes; the `viglet_dumont_pdf_max_bytes` filter changes it. */
+	/** The largest PDF sent, in bytes; the `viglet_turing_pdf_max_bytes` filter changes it. */
 	public const MAX_BYTES = 20 * 1024 * 1024;
 
 	/** The `type` a PDF's document carries, and so the facet value it shows under. */
 	public const TYPE = 'pdf';
 
 	/** On a PDF attachment, one row per post whose content links it (D319). */
-	public const LINKED_META = '_viglet_dumont_linked_from';
+	public const LINKED_META = '_viglet_turing_linked_from';
 
 	/** On a post, set once the PDFs it holds were sent; gone when the post leaves search. */
-	public const HELD_META = '_viglet_dumont_pdfs_held';
+	public const HELD_META = '_viglet_turing_pdfs_held';
 
 	/**
 	 * The plugin settings.
@@ -49,7 +49,7 @@ class Viglet_Dumont_Pdf {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -81,7 +81,7 @@ class Viglet_Dumont_Pdf {
 		 *
 		 * @param int $bytes 20 MB.
 		 */
-		return (int) filesize( $file ) <= (int) apply_filters( 'viglet_dumont_pdf_max_bytes', self::MAX_BYTES );
+		return (int) filesize( $file ) <= (int) apply_filters( 'viglet_turing_pdf_max_bytes', self::MAX_BYTES );
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Viglet_Dumont_Pdf {
 	public function holder( WP_Post $attachment ): ?WP_Post {
 		$ids     = array_map( 'intval', (array) get_post_meta( $attachment->ID, self::LINKED_META, false ) );
 		$ids     = array_unique( array_filter( array_merge( array( (int) $attachment->post_parent ), $ids ) ) );
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		foreach ( $ids as $id ) {
 			$post = get_post( $id );
 			if ( $post instanceof WP_Post && 'attachment' !== $post->post_type && $indexer->should_index( $post ) ) {
@@ -182,8 +182,8 @@ class Viglet_Dumont_Pdf {
 			}
 		}
 		if ( array() !== $out ) {
-			$indexer = new Viglet_Dumont_Indexer( $this->settings );
-			$result  = ( new Viglet_Dumont_API_Client( $this->settings ) )->deindex( array_map( array( $indexer, 'build_delete_item' ), $out ) );
+			$indexer = new Viglet_Turing_Indexer( $this->settings );
+			$result  = ( new Viglet_Turing_API_Client( $this->settings ) )->deindex( array_map( array( $indexer, 'build_delete_item' ), $out ) );
 			if ( $result['success'] ) {
 				$outcome['removed'] = count( $out );
 			}
@@ -303,7 +303,7 @@ class Viglet_Dumont_Pdf {
 	 * @return array The attributes.
 	 */
 	public function document( WP_Post $attachment ): array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$parent  = $this->holder( $attachment );
 
 		return array(
@@ -334,7 +334,7 @@ class Viglet_Dumont_Pdf {
 				'message' => '',
 			);
 		}
-		$client = new Viglet_Dumont_API_Client( $this->settings );
+		$client = new Viglet_Turing_API_Client( $this->settings );
 		$items  = array();
 		$files  = array();
 		foreach ( $attachments as $attachment ) {
@@ -363,7 +363,7 @@ class Viglet_Dumont_Pdf {
 		if ( $this->indexable( $attachment ) ) {
 			$this->index( array( $attachment ) );
 		} elseif ( $this->enabled() ) {
-			( new Viglet_Dumont_Indexer( $this->settings ) )->deindex_post( $attachment_id );
+			( new Viglet_Turing_Indexer( $this->settings ) )->deindex_post( $attachment_id );
 		}
 	}
 
@@ -375,7 +375,7 @@ class Viglet_Dumont_Pdf {
 	public function remove( int $attachment_id ): void {
 		$attachment = get_post( $attachment_id );
 		if ( $this->enabled() && $attachment instanceof WP_Post && 'application/pdf' === $attachment->post_mime_type ) {
-			( new Viglet_Dumont_Indexer( $this->settings ) )->deindex_post( $attachment_id );
+			( new Viglet_Turing_Indexer( $this->settings ) )->deindex_post( $attachment_id );
 		}
 	}
 
@@ -434,12 +434,12 @@ class Viglet_Dumont_Pdf {
 		}
 		$path = get_attached_file( $id );
 		/** This filter is documented in indexable(). */
-		$cap = (int) apply_filters( 'viglet_dumont_pdf_max_bytes', self::MAX_BYTES );
+		$cap = (int) apply_filters( 'viglet_turing_pdf_max_bytes', self::MAX_BYTES );
 		if ( ! is_string( $path ) || ! is_readable( $path ) || (int) filesize( $path ) > $cap ) {
 			return null;
 		}
 		$name = $post->ID . '-' . $id . '.pdf';
-		Viglet_Dumont_API_Client::attach_file( $name, $path );
+		Viglet_Turing_API_Client::attach_file( $name, $path );
 
 		return 'file://' . $name;
 	}

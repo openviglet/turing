@@ -2,13 +2,13 @@
 /**
  * A save only queues the post; the worker sends the queue with retry and backoff.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Queue;
+use Viglet_Turing_Queue;
 use WP_Post;
 
 final class QueueTest extends PluginTestCase {
@@ -142,8 +142,8 @@ final class QueueTest extends PluginTestCase {
 		);
 	}
 
-	private function queue(): Viglet_Dumont_Queue {
-		return new Viglet_Dumont_Queue( $this->settings( array( 'auto_deindex' => 1 ) ) );
+	private function queue(): Viglet_Turing_Queue {
+		return new Viglet_Turing_Queue( $this->settings( array( 'auto_deindex' => 1 ) ) );
 	}
 
 	private function actions( int $request = 0 ): array {
@@ -159,7 +159,7 @@ final class QueueTest extends PluginTestCase {
 		$this->assertCount( 1, $jobs );
 		$this->assertSame( 'delete', $jobs[1]['action'] );
 		$this->assertCount( 1, $this->scheduled );
-		$this->assertSame( Viglet_Dumont_Queue::CRON_HOOK, $this->scheduled[0][1] );
+		$this->assertSame( Viglet_Turing_Queue::CRON_HOOK, $this->scheduled[0][1] );
 	}
 
 	public function test_the_worker_sends_the_queue_in_one_import_and_empties_it(): void {
@@ -173,9 +173,9 @@ final class QueueTest extends PluginTestCase {
 		$this->assertSame( array( 'CREATE', 'DELETE' ), $this->actions() );
 		$this->assertSame( 2, $result['sent'] );
 		$this->assertSame( 0, $result['remaining'] );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Queue::OPTION, $this->options );
-		$this->assertIsInt( $this->meta[1][ Viglet_Dumont_Queue::STATE_META ]['indexed_at'] );
-		$this->assertSame( '', $this->meta[1][ Viglet_Dumont_Queue::STATE_META ]['error'] );
+		$this->assertArrayNotHasKey( Viglet_Turing_Queue::OPTION, $this->options );
+		$this->assertIsInt( $this->meta[1][ Viglet_Turing_Queue::STATE_META ]['indexed_at'] );
+		$this->assertSame( '', $this->meta[1][ Viglet_Turing_Queue::STATE_META ]['error'] );
 	}
 
 	public function test_an_outage_keeps_the_job_and_backs_it_off(): void {
@@ -191,11 +191,11 @@ final class QueueTest extends PluginTestCase {
 		$this->assertStringContainsString( '503', $result['errors'][1] );
 		$job = $this->queue()->jobs()[1];
 		$this->assertSame( 1, $job['attempts'] );
-		$this->assertGreaterThanOrEqual( $before + Viglet_Dumont_Queue::BASE_DELAY, $job['next_at'] );
+		$this->assertGreaterThanOrEqual( $before + Viglet_Turing_Queue::BASE_DELAY, $job['next_at'] );
 		$this->assertStringContainsString( '503', $job['error'] );
 		$this->assertFalse( $job['failed'] );
-		$this->assertStringContainsString( '503', $this->meta[1][ Viglet_Dumont_Queue::STATE_META ]['error'] );
-		$this->assertSame( array( array( $job['next_at'], Viglet_Dumont_Queue::CRON_HOOK ) ), $this->scheduled );
+		$this->assertStringContainsString( '503', $this->meta[1][ Viglet_Turing_Queue::STATE_META ]['error'] );
+		$this->assertSame( array( array( $job['next_at'], Viglet_Turing_Queue::CRON_HOOK ) ), $this->scheduled );
 	}
 
 	public function test_a_job_waiting_out_its_backoff_is_not_sent_until_the_cli_forces_it(): void {
@@ -237,7 +237,7 @@ final class QueueTest extends PluginTestCase {
 	public function test_a_job_stops_retrying_after_the_last_attempt_until_it_is_replayed(): void {
 		$this->status = 503;
 		$this->queue()->enqueue( 1, 'index' );
-		for ( $i = 0; $i < Viglet_Dumont_Queue::MAX_ATTEMPTS; $i++ ) {
+		for ( $i = 0; $i < Viglet_Turing_Queue::MAX_ATTEMPTS; $i++ ) {
 			$this->queue()->process( true );
 		}
 
@@ -252,7 +252,7 @@ final class QueueTest extends PluginTestCase {
 
 		// A stopped job is not sent again; the worker only asks whether Turing is back (D329).
 		$this->queue()->process( true );
-		$this->assertCount( Viglet_Dumont_Queue::MAX_ATTEMPTS, $this->imports() );
+		$this->assertCount( Viglet_Turing_Queue::MAX_ATTEMPTS, $this->imports() );
 
 		$this->assertSame( 1, $this->queue()->retry_failed() );
 		$this->status = 200;
@@ -269,7 +269,7 @@ final class QueueTest extends PluginTestCase {
 	private function stop_job( int $post_id ): void {
 		$this->status = 503;
 		$this->queue()->enqueue( $post_id, 'index' );
-		for ( $i = 0; $i < Viglet_Dumont_Queue::MAX_ATTEMPTS; $i++ ) {
+		for ( $i = 0; $i < Viglet_Turing_Queue::MAX_ATTEMPTS; $i++ ) {
 			$this->queue()->process( true );
 		}
 		$this->assertTrue( $this->queue()->jobs()[ $post_id ]['failed'] );
@@ -303,12 +303,12 @@ final class QueueTest extends PluginTestCase {
 
 	public function test_a_document_turing_keeps_refusing_stops_for_good_after_its_replays(): void {
 		$this->stop_job( 1 );
-		for ( $replay = 0; $replay < Viglet_Dumont_Queue::MAX_REPLAYS; $replay++ ) {
+		for ( $replay = 0; $replay < Viglet_Turing_Queue::MAX_REPLAYS; $replay++ ) {
 			$this->status = 200;
 			$this->queue()->enqueue( 2, 'index' );
 			$this->queue()->process( true );
 			$this->status = 503;
-			for ( $i = 0; $i < Viglet_Dumont_Queue::MAX_ATTEMPTS; $i++ ) {
+			for ( $i = 0; $i < Viglet_Turing_Queue::MAX_ATTEMPTS; $i++ ) {
 				$this->queue()->process( true );
 			}
 		}
@@ -347,12 +347,12 @@ final class QueueTest extends PluginTestCase {
 	public function test_in_demo_mode_a_save_queues_nothing_and_the_worker_sends_nothing(): void {
 		// D238: a demo site holds no key and never writes to Turing.
 		$this->queue()->enqueue( 1, 'index' );
-		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		putenv( 'VIGLET_TURING_DEMO=1' );
 		try {
 			$this->queue()->enqueue( 2, 'index' );
 			$result = $this->queue()->process( true );
 		} finally {
-			putenv( 'VIGLET_DUMONT_DEMO' );
+			putenv( 'VIGLET_TURING_DEMO' );
 		}
 
 		$this->assertSame( array( 1 ), array_keys( $this->queue()->jobs() ) );
@@ -363,7 +363,7 @@ final class QueueTest extends PluginTestCase {
 
 	public function test_a_second_worker_sends_nothing_while_the_first_holds_the_lock(): void {
 		$this->queue()->enqueue( 1, 'index' );
-		$this->transients[ Viglet_Dumont_Queue::LOCK ] = 1;
+		$this->transients[ Viglet_Turing_Queue::LOCK ] = 1;
 
 		$result = $this->queue()->process();
 

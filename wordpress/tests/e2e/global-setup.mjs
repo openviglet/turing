@@ -57,7 +57,7 @@ export function setSetting( key, value, extra = [], service = 'cli' ) {
 		[
 			...extra,
 			'eval',
-			`$s = (array) get_option( 'viglet_dumont_settings', array() ); ${ change } update_option( 'viglet_dumont_settings', $s );`,
+			`$s = (array) get_option( 'viglet_turing_settings', array() ); ${ change } update_option( 'viglet_turing_settings', $s );`,
 		],
 		service
 	);
@@ -128,7 +128,7 @@ export default async function globalSetup( config ) {
 		const out = wp( [ 'eval-file', '/e2e/seed.php' ] );
 		const seed = JSON.parse( out.slice( out.indexOf( '{' ) ) );
 		writeFileSync( seedFile, JSON.stringify( seed ) );
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 		if ( process.env.E2E_MULTISITE ) {
 			const network = networkSites.map( ( url, i ) => {
 				const printed = wp(
@@ -140,7 +140,7 @@ export default async function globalSetup( config ) {
 					],
 					'cli-ms'
 				);
-				wp( [ `--url=${ url }`, 'dumont', 'reindex' ], 'cli-ms' );
+				wp( [ `--url=${ url }`, 'turing', 'reindex' ], 'cli-ms' );
 				return {
 					url,
 					...JSON.parse( printed.slice( printed.indexOf( '{' ) ) ),

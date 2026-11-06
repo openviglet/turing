@@ -2,16 +2,16 @@
 /**
  * The per-post-type mapping: typed values, the manifest it provisions, and what stays out.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
-use Viglet_Dumont_API_Client;
-use Viglet_Dumont_Indexer;
-use Viglet_Dumont_Mapping;
+use Viglet_Turing_API_Client;
+use Viglet_Turing_Indexer;
+use Viglet_Turing_Mapping;
 use WP_Post;
 
 final class MappingTest extends PluginTestCase {
@@ -53,7 +53,7 @@ final class MappingTest extends PluginTestCase {
 				return is_array( $value ) ? $value : array( $value );
 			}
 		);
-		Functions\when( 'viglet_dumont_get_indexable_types' )->justReturn( array( 'post', 'evento' ) );
+		Functions\when( 'viglet_turing_get_indexable_types' )->justReturn( array( 'post', 'evento' ) );
 		Functions\when( 'wp_get_post_terms' )->alias(
 			static fn ( $id, $taxonomy ) => 'area' === $taxonomy ? array( 'Culture', 'Education' ) : array()
 		);
@@ -77,7 +77,7 @@ final class MappingTest extends PluginTestCase {
 	}
 
 	private function store( array $fields, bool $exclude = false ): void {
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'evento' => array(
 				'exclude' => $exclude,
 				'fields'  => $fields,
@@ -85,8 +85,8 @@ final class MappingTest extends PluginTestCase {
 		);
 	}
 
-	private function mapping(): Viglet_Dumont_Mapping {
-		return new Viglet_Dumont_Mapping( $this->settings() );
+	private function mapping(): Viglet_Turing_Mapping {
+		return new Viglet_Turing_Mapping( $this->settings() );
 	}
 
 	public function test_mapped_sources_become_typed_values(): void {
@@ -216,7 +216,7 @@ final class MappingTest extends PluginTestCase {
 				'type'   => 'STRING',
 			),
 		);
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'evento' => array(
 				'fields'     => $fields,
 				'card_date'  => 'event_start',
@@ -243,13 +243,13 @@ final class MappingTest extends PluginTestCase {
 	 * label and a card's looks read the first. A plain string reads as it always did.
 	 */
 	public function test_a_documents_type_is_its_first_value_without_highlights(): void {
-		$this->assertSame( 'Article', Viglet_Dumont_Mapping::document_type( array( 'Article', 'Thesis' ) ) );
-		$this->assertSame( 'post', Viglet_Dumont_Mapping::document_type( 'post' ) );
-		$this->assertSame( 'post', Viglet_Dumont_Mapping::document_type( '<mark>post</mark>' ) );
-		$this->assertSame( 'Article', Viglet_Dumont_Mapping::document_type( array( '<mark>Article</mark>' ) ) );
-		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( array() ) );
-		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( null ) );
-		$this->assertSame( '', Viglet_Dumont_Mapping::document_type( array( array( 'nested' ) ) ) );
+		$this->assertSame( 'Article', Viglet_Turing_Mapping::document_type( array( 'Article', 'Thesis' ) ) );
+		$this->assertSame( 'post', Viglet_Turing_Mapping::document_type( 'post' ) );
+		$this->assertSame( 'post', Viglet_Turing_Mapping::document_type( '<mark>post</mark>' ) );
+		$this->assertSame( 'Article', Viglet_Turing_Mapping::document_type( array( '<mark>Article</mark>' ) ) );
+		$this->assertSame( '', Viglet_Turing_Mapping::document_type( array() ) );
+		$this->assertSame( '', Viglet_Turing_Mapping::document_type( null ) );
+		$this->assertSame( '', Viglet_Turing_Mapping::document_type( array( array( 'nested' ) ) ) );
 	}
 
 	/**
@@ -295,7 +295,7 @@ final class MappingTest extends PluginTestCase {
 			),
 			$stored
 		);
-		$this->assertSame( $stored, $this->options[ Viglet_Dumont_Mapping::FOREIGN_OPTION ] );
+		$this->assertSame( $stored, $this->options[ Viglet_Turing_Mapping::FOREIGN_OPTION ] );
 		$this->assertSame( $stored, $this->mapping()->foreign() );
 		$this->assertSame(
 			array(
@@ -363,7 +363,7 @@ final class MappingTest extends PluginTestCase {
 			}
 		);
 
-		$found = ( new Viglet_Dumont_Mapping( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) );
+		$found = ( new Viglet_Turing_Mapping( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->discover_foreign( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertSame(
 			array(
@@ -426,7 +426,7 @@ final class MappingTest extends PluginTestCase {
 			}
 		);
 
-		$found = $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) );
+		$found = $this->mapping()->discover_foreign( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertSame( array( 'Article' ), array_column( $found, 'type' ) );
 		$this->assertCount( 4, $this->requests, 'the negative count, the two legacy counts, one page' );
@@ -447,7 +447,7 @@ final class MappingTest extends PluginTestCase {
 			}
 		);
 
-		$this->assertSame( array(), $this->mapping()->discover_foreign( new Viglet_Dumont_API_Client( $this->settings() ) ) );
+		$this->assertSame( array(), $this->mapping()->discover_foreign( new Viglet_Turing_API_Client( $this->settings() ) ) );
 		$this->assertCount( 3, $this->requests, 'the negative count, then the two legacy counts, no page' );
 	}
 
@@ -456,7 +456,7 @@ final class MappingTest extends PluginTestCase {
 	 * a day-only date lasting to that day's end, and a post before it schedules its leaving.
 	 */
 	public function test_a_post_leaves_search_once_its_date_has_passed(): void {
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'evento' => array(
 				'fields'  => array(
 					array(
@@ -476,20 +476,20 @@ final class MappingTest extends PluginTestCase {
 				return true;
 			}
 		);
-		$indexer = new Viglet_Dumont_Indexer( $this->settings() );
+		$indexer = new Viglet_Turing_Indexer( $this->settings() );
 
 		$this->meta['prazo'] = gmdate( 'Y-m-d', time() - 86400 );
 		$this->assertSame( strtotime( 'today' ), $this->mapping()->expiry( $this->post ), 'yesterday lasts until today begins' );
 		$this->assertFalse( $indexer->should_index( $this->post ) );
 
 		$this->meta['prazo'] = gmdate( 'Y-m-d', time() + 3 * 86400 );
-		$indexer             = new Viglet_Dumont_Indexer( $this->settings() );
+		$indexer             = new Viglet_Turing_Indexer( $this->settings() );
 		$this->assertTrue( $indexer->should_index( $this->post ), 'moved forward, it is back' );
 		$indexer->schedule_expiry( $this->post );
-		$this->assertSame( array( array( strtotime( 'today' ) + 4 * 86400, 'viglet_dumont_expire', array( 42 ) ) ), $scheduled );
+		$this->assertSame( array( array( strtotime( 'today' ) + 4 * 86400, 'viglet_turing_expire', array( 42 ) ) ), $scheduled );
 
 		// The filter has the last word, for rules no field can say.
-		Filters\expectApplied( 'viglet_dumont_should_index' )->once()->andReturn( false );
+		Filters\expectApplied( 'viglet_turing_should_index' )->once()->andReturn( false );
 		$this->assertFalse( $indexer->should_index( $this->post ) );
 	}
 
@@ -524,7 +524,7 @@ final class MappingTest extends PluginTestCase {
 	}
 
 	public function test_the_manifest_declares_each_field_once_with_its_facet_label_and_weight(): void {
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'post'   => array(
 				'fields' => array(
 					array(
@@ -791,7 +791,7 @@ final class MappingTest extends PluginTestCase {
 				),
 			)
 		);
-		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client = new Viglet_Turing_API_Client( $this->settings() );
 
 		$first  = $this->mapping()->provision( $client );
 		$second = $this->mapping()->provision( $client );
@@ -817,20 +817,20 @@ final class MappingTest extends PluginTestCase {
 				),
 			)
 		);
-		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client = new Viglet_Turing_API_Client( $this->settings() );
 
 		$result = $this->mapping()->provision( $client );
 
 		$this->assertFalse( $result['success'] );
 		$this->assertStringContainsString( 'type', $result['message'] );
-		$this->assertNotSame( '', $this->options[ Viglet_Dumont_Mapping::PROVISIONED_OPTION ]['error'] );
+		$this->assertNotSame( '', $this->options[ Viglet_Turing_Mapping::PROVISIONED_OPTION ]['error'] );
 
 		$this->mapping()->provision( $client );
 		$this->assertCount( 2, $this->requests );
 	}
 
 	public function test_the_built_in_fields_are_provisioned_even_with_no_mapped_field(): void {
-		$result = $this->mapping()->provision( new Viglet_Dumont_API_Client( $this->settings() ) );
+		$result = $this->mapping()->provision( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertTrue( $result['sent'] );
 		$this->assertSame( array( 'site_key', 'author', 'sticky' ), array_column( $this->body()['fields'], 'name' ) );
@@ -872,7 +872,7 @@ final class MappingTest extends PluginTestCase {
 			}
 		);
 
-		$status = $this->mapping()->field_status( new Viglet_Dumont_API_Client( $this->settings() ) );
+		$status = $this->mapping()->field_status( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertStringEndsWith( '/api/sn/manifest/plan', $this->requests[0][0] );
 		$this->assertSame( 'provisioned', $status['site_key']['status'] );
@@ -884,16 +884,16 @@ final class MappingTest extends PluginTestCase {
 	public function test_the_manifest_turns_generative_ai_on_only_when_the_setting_does(): void {
 		$this->assertArrayNotHasKey( 'genAi', $this->mapping()->manifest() );
 
-		$manifest = ( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->manifest();
+		$manifest = ( new Viglet_Turing_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->manifest();
 
 		$this->assertEquals( new \stdClass(), $manifest['genAi'], 'no agent named: the site keeps the one it has' );
 		$this->assertSame( '{}', wp_json_encode( $manifest['genAi'] ) );
 	}
 
 	public function test_turning_generative_ai_on_sends_the_manifest_again(): void {
-		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client = new Viglet_Turing_API_Client( $this->settings() );
 		$this->mapping()->provision( $client );
-		( new Viglet_Dumont_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->provision( $client );
+		( new Viglet_Turing_Mapping( $this->settings( array( 'generative_ai' => 1 ) ) ) )->provision( $client );
 
 		$this->assertCount( 2, $this->requests );
 		$this->assertStringContainsString( '"genAi":{}', $this->requests[1][1]['body'] );
@@ -907,22 +907,22 @@ final class MappingTest extends PluginTestCase {
 			)
 		);
 
-		$plan = $this->mapping()->plan_status( new Viglet_Dumont_API_Client( $this->settings() ) );
+		$plan = $this->mapping()->plan_status( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertTrue( $plan['genai_to_change'] );
 		$this->assertSame( 'provisioned', $plan['fields']['site_key']['status'] );
 	}
 
 	public function test_an_excluded_type_or_post_is_not_indexed(): void {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings() );
+		$indexer = new Viglet_Turing_Indexer( $this->settings() );
 		$this->assertTrue( $indexer->should_index( $this->post ) );
 
-		$this->meta[ Viglet_Dumont_Mapping::EXCLUDE_META ] = '1';
+		$this->meta[ Viglet_Turing_Mapping::EXCLUDE_META ] = '1';
 		$this->assertFalse( $indexer->should_index( $this->post ) );
 
 		$this->meta = array();
 		$this->store( array(), true );
-		$this->assertFalse( ( new Viglet_Dumont_Indexer( $this->settings() ) )->should_index( $this->post ) );
+		$this->assertFalse( ( new Viglet_Turing_Indexer( $this->settings() ) )->should_index( $this->post ) );
 	}
 
 	public function test_the_document_carries_the_mapped_fields_and_passes_through_the_filter(): void {
@@ -936,11 +936,11 @@ final class MappingTest extends PluginTestCase {
 				),
 			)
 		);
-		Filters\expectApplied( 'viglet_dumont_document' )->once()->andReturnUsing(
+		Filters\expectApplied( 'viglet_turing_document' )->once()->andReturnUsing(
 			static fn ( $attributes ) => array_merge( $attributes, array( 'origin' => 'theme' ) )
 		);
 
-		$item = ( new Viglet_Dumont_Indexer( $this->settings() ) )->build_create_item( $this->post );
+		$item = ( new Viglet_Turing_Indexer( $this->settings() ) )->build_create_item( $this->post );
 
 		$this->assertSame( array( 'Culture', 'Education' ), $item['attributes']['area'] );
 		$this->assertSame( 'theme', $item['attributes']['origin'] );
@@ -953,7 +953,7 @@ final class MappingTest extends PluginTestCase {
 
 		$this->assertSame(
 			'Visible text.Ção',
-			strip_tags( Viglet_Dumont_Indexer::strip_non_content( $html ) )
+			strip_tags( Viglet_Turing_Indexer::strip_non_content( $html ) )
 		);
 	}
 }

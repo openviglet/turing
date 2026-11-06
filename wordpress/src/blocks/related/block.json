@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "viglet-dumont/related",
+	"name": "viglet-turing/related",
 	"title": "Related content",
 	"category": "widgets",
 	"icon": "networking",
@@ -58,8 +58,8 @@
 		"typography": { "fontSize": true, "lineHeight": true },
 		"interactivity": true
 	},
-	"editorScript": "viglet-dumont-related-block-editor",
-	"style": "viglet-dumont-related-block",
-	"viewScriptModule": "viglet-dumont/related-block",
+	"editorScript": "viglet-turing-related-block-editor",
+	"style": "viglet-turing-related-block",
+	"viewScriptModule": "viglet-turing/related-block",
 	"render": "file:./render.php"
 }

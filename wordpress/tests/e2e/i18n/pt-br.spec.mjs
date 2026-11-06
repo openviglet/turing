@@ -84,16 +84,16 @@ async function speaksPortuguese( page, selector, name, skip = [] ) {
 const screens = [
 	[
 		'Settings, connection',
-		'/wp-admin/admin.php?page=viglet-dumont#connection',
+		'/wp-admin/admin.php?page=viglet-turing#connection',
 	],
-	[ 'Settings, indexing', '/wp-admin/admin.php?page=viglet-dumont#indexing' ],
-	[ 'Settings, search', '/wp-admin/admin.php?page=viglet-dumont#search' ],
-	[ 'Settings, actions', '/wp-admin/admin.php?page=viglet-dumont#actions' ],
-	[ 'Setup', '/wp-admin/admin.php?page=viglet-dumont-setup' ],
-	[ 'Fields', '/wp-admin/admin.php?page=viglet-dumont-fields' ],
-	[ 'Search tuning', '/wp-admin/admin.php?page=viglet-dumont-tuning' ],
+	[ 'Settings, indexing', '/wp-admin/admin.php?page=viglet-turing#indexing' ],
+	[ 'Settings, search', '/wp-admin/admin.php?page=viglet-turing#search' ],
+	[ 'Settings, actions', '/wp-admin/admin.php?page=viglet-turing#actions' ],
+	[ 'Setup', '/wp-admin/admin.php?page=viglet-turing-setup' ],
+	[ 'Fields', '/wp-admin/admin.php?page=viglet-turing-fields' ],
+	[ 'Search tuning', '/wp-admin/admin.php?page=viglet-turing-tuning' ],
 	// Events included: the seed's reindex wrote them in English, and they read in Portuguese.
-	[ 'Health', '/wp-admin/admin.php?page=viglet-dumont-health' ],
+	[ 'Health', '/wp-admin/admin.php?page=viglet-turing-health' ],
 ];
 
 for ( const [ name, url, skip ] of screens ) {
@@ -113,7 +113,7 @@ for ( const [ name, url, skip ] of screens ) {
 test( "Health's dates are written as the site writes them, in Portuguese (D189)", async ( {
 	page,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 	const when = page
 		.locator( '#wpbody-content table' )
 		.last()
@@ -134,36 +134,36 @@ test( 'the search block is in Portuguese, results and filters included', async (
 	look,
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
-	const block = page.locator( '.viglet-dumont-search' );
+	const block = page.locator( '.viglet-turing-search' );
 	await expect(
-		block.locator( '.viglet-dumont-search__summary' )
+		block.locator( '.viglet-turing-search__summary' )
 	).toHaveText( '4 resultados' );
 	await block
-		.locator( '.viglet-dumont-search__facets label' )
+		.locator( '.viglet-turing-search__facets label' )
 		.filter( { hasText: '40' } )
 		.locator( 'input' )
 		.click();
 	await expect(
-		block.locator( '.viglet-dumont-search__chip' )
+		block.locator( '.viglet-turing-search__chip' )
 	).toBeVisible();
 	await look( 'pt-br-search-block' );
-	await speaksPortuguese( page, '.viglet-dumont-search', 'search block' );
+	await speaksPortuguese( page, '.viglet-turing-search', 'search block' );
 
 	// One result is counted in the singular (D184).
 	await page.goto(
 		`/?page_id=${ seed.searchPageId }&q=workshop&fq%5B%5D=seats%3A20`
 	);
 	await expect(
-		block.locator( '.viglet-dumont-search__summary' )
+		block.locator( '.viglet-turing-search__summary' )
 	).toHaveText( '1 resultado' );
 } );
 
 test( 'the settings selects keep their Portuguese text clear of the arrow (D192)', async ( {
 	page,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing' );
 	for ( const tab of [ 'connection', 'indexing', 'search', 'actions' ] ) {
-		await page.click( `.viglet-dumont-tab[data-tab="${ tab }"]` );
+		await page.click( `.viglet-turing-tab[data-tab="${ tab }"]` );
 		expect( await selectsClearOfArrow( page, `#panel-${ tab }` ) ).toEqual(
 			[]
 		);

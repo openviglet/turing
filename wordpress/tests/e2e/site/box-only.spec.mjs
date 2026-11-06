@@ -14,9 +14,9 @@ test.beforeAll( () => {
 			'--post_type=page',
 			'--post_status=publish',
 			'--post_title=Hero',
-			'--post_content=<!-- wp:viglet-dumont/search --><!-- wp:viglet-dumont/search-box /--><!-- /wp:viglet-dumont/search -->',
+			'--post_content=<!-- wp:viglet-turing/search --><!-- wp:viglet-turing/search-box /--><!-- /wp:viglet-turing/search -->',
 			// Out of the index: its text would be one more result for the other specs.
-			'--meta_input={"_viglet_dumont_exclude":"1"}',
+			'--meta_input={"_viglet_turing_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
@@ -29,7 +29,7 @@ test.afterAll( () => {
 } );
 
 const box = ( page ) =>
-	page.locator( '.viglet-dumont-search' ).getByRole( 'combobox' );
+	page.locator( '.viglet-turing-search' ).getByRole( 'combobox' );
 
 test( 'Enter in a box-only search block opens the search page with the results', async ( {
 	page,
@@ -43,7 +43,7 @@ test( 'Enter in a box-only search block opens the search page with the results',
 		new RegExp( `page_id=${ seed.searchPageId }.*q=workshop` )
 	);
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toContainText( /workshop/i );
 } );
 

@@ -18,11 +18,11 @@ test( 'the agenda lists only events, and its When facet offers the agenda period
 	expect( titles ).not.toContain( titleOf( 'tide-atlas' ) );
 	expect( titles ).not.toContain( titleOf( 'arts-scholarship' ) );
 	await expect(
-		page.locator( '.viglet-dumont-search__chip' ),
+		page.locator( '.viglet-turing-search__chip' ),
 		'the fixed filter is no chip a visitor could remove'
 	).toHaveCount( 0 );
 
-	const facets = page.locator( '.viglet-dumont-search__facets' );
+	const facets = page.locator( '.viglet-turing-search__facets' );
 	await expect( facets ).toContainText( say().when );
 	for ( const name of [ 'today', 'week', 'upcoming', 'past' ] ) {
 		await expect( facets ).toContainText( say().periods[ name ] );

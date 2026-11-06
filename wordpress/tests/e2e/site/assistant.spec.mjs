@@ -16,8 +16,8 @@ test.beforeAll( () => {
 			'--post_type=page',
 			'--post_status=publish',
 			'--post_title=Ask us',
-			'--post_content=<!-- wp:viglet-dumont/assistant {"suggestions":"When does the grant close?\\nWhere is the meeting?"} /-->',
-			'--meta_input={"_viglet_dumont_exclude":"1"}',
+			'--post_content=<!-- wp:viglet-turing/assistant {"suggestions":"When does the grant close?\\nWhere is the meeting?"} /-->',
+			'--meta_input={"_viglet_turing_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
@@ -38,9 +38,9 @@ test.afterAll( () => {
 function launcher( on ) {
 	wp( [
 		'eval',
-		`$s = viglet_dumont_get_settings(); $s['assistant_launcher'] = ${
+		`$s = viglet_turing_get_settings(); $s['assistant_launcher'] = ${
 			on ? 1 : 0
-		}; viglet_dumont_update_settings( $s );`,
+		}; viglet_turing_update_settings( $s );`,
 	] );
 }
 
@@ -111,7 +111,7 @@ test( 'without Turing’s chat the assistant stays hidden', async ( {
 	);
 	await page.goto( `/?page_id=${ pageId }` );
 	await page.waitForLoadState( 'networkidle' );
-	await expect( page.locator( '.viglet-dumont-assistant' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-turing-assistant' ) ).toBeHidden();
 } );
 
 test( 'a question gets a streamed answer, the post it used and a follow-up in context', async ( {
@@ -126,7 +126,7 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 		[ { content: 'Hello again.' } ],
 	] );
 	await page.goto( `/?page_id=${ pageId }` );
-	const block = page.locator( '.viglet-dumont-assistant' );
+	const block = page.locator( '.viglet-turing-assistant' );
 	await block.getByRole( 'button', { name: 'Ask this site' } ).click();
 
 	const dialog = page.getByRole( 'dialog', { name: 'Ask this site' } );
@@ -142,7 +142,7 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 		.click();
 	const log = dialog.getByRole( 'log', { name: 'Conversation' } );
 	await expect(
-		log.locator( '.viglet-dumont-assistant__message' ).nth( 1 )
+		log.locator( '.viglet-turing-assistant__message' ).nth( 1 )
 	).toContainText( 'Applications close on 14 March 2026.' );
 	const source = log.getByRole( 'link', { name: 'Research grant 2026' } );
 	await expect( source ).toHaveAttribute( 'href', `/?p=${ seed.postId }` );
@@ -151,7 +151,7 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 	).toBeHidden();
 	await look( 'assistant' );
 	await axe( 'the Site assistant', {
-		include: '.viglet-dumont-assistant__dialog',
+		include: '.viglet-turing-assistant__dialog',
 	} );
 
 	await log.getByRole( 'button', { name: 'Yes' } ).click();
@@ -173,7 +173,7 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 		.fill( 'And where do I send it?' );
 	await dialog.getByRole( 'button', { name: 'Send' } ).click();
 	await expect(
-		log.locator( '.viglet-dumont-assistant__message' )
+		log.locator( '.viglet-turing-assistant__message' )
 	).toHaveCount( 4 );
 	expect( sent.asked[ 1 ].messages.map( ( m ) => m.role ) ).toEqual( [
 		'user',
@@ -189,18 +189,18 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 	await expect( dialog ).toBeHidden();
 	await block.getByRole( 'button', { name: 'Ask this site' } ).click();
 	await expect(
-		log.locator( '.viglet-dumont-assistant__message' )
+		log.locator( '.viglet-turing-assistant__message' )
 	).toHaveCount( 4 );
 
 	// A new conversation starts empty, and Turing is told it is a new one.
 	await dialog.getByRole( 'button', { name: 'New conversation' } ).click();
 	await expect(
-		log.locator( '.viglet-dumont-assistant__message' )
+		log.locator( '.viglet-turing-assistant__message' )
 	).toHaveCount( 0 );
 	await dialog.getByLabel( 'Your question' ).fill( 'Hi' );
 	await dialog.getByRole( 'button', { name: 'Send' } ).click();
 	await expect(
-		log.locator( '.viglet-dumont-assistant__message' )
+		log.locator( '.viglet-turing-assistant__message' )
 	).toHaveCount( 2 );
 	expect( sent.asked[ 2 ].messages ).toEqual( [
 		{ role: 'user', content: 'Hi' },
@@ -267,10 +267,10 @@ test( 'with the setting on, every page has the assistant in a corner, and keeps 
 
 	// A page that holds the block gets no second one.
 	await page.goto( `/?page_id=${ pageId }` );
-	await expect( page.locator( '.viglet-dumont-assistant' ) ).toHaveCount( 1 );
+	await expect( page.locator( '.viglet-turing-assistant' ) ).toHaveCount( 1 );
 
 	await page.goto( `/?page_id=${ seed.searchPageId }` );
-	const corner = page.locator( '.viglet-dumont-assistant.is-floating' );
+	const corner = page.locator( '.viglet-turing-assistant.is-floating' );
 	await corner.getByRole( 'button', { name: 'Ask this site' } ).click();
 	const dialog = page.getByRole( 'dialog', { name: 'Ask this site' } );
 	await dialog
@@ -283,7 +283,7 @@ test( 'with the setting on, every page has the assistant in a corner, and keeps 
 
 	// On the post it cited, the conversation is still there.
 	await page
-		.locator( '.viglet-dumont-assistant.is-floating' )
+		.locator( '.viglet-turing-assistant.is-floating' )
 		.getByRole( 'button', { name: 'Ask this site' } )
 		.click();
 	await expect(

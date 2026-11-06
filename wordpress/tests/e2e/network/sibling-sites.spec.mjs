@@ -27,7 +27,7 @@ const ask = ( url, args ) => {
 
 const secondKey = ask( second.url, [
 	'eval',
-	'echo ( new Viglet_Dumont_Indexer() )->site_key();',
+	'echo ( new Viglet_Turing_Indexer() )->site_key();',
 ] );
 
 /**
@@ -43,12 +43,12 @@ const relatedAllSites = ( url, on ) =>
 		[
 			`--url=${ url }`,
 			'eval',
-			`global $wpdb; $block = '<!-- wp:viglet-dumont/related {"sites":"all","count":6} /-->'; ` +
+			`global $wpdb; $block = '<!-- wp:viglet-turing/related {"sites":"all","count":6} /-->'; ` +
 				`$content = str_replace( "\\n\\n" . $block, '', (string) get_post_field( 'post_content', 1 ) ); ` +
 				`$wpdb->update( $wpdb->posts, array( 'post_content' => ${
 					on ? '$content . "\\n\\n" . $block' : '$content'
 				} ), array( 'ID' => 1 ) ); clean_post_cache( 1 ); ` +
-				`$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\\\_transient%viglet\\\\_dumont\\\\_related\\\\_%'" );`,
+				`$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\\\_transient%viglet\\\\_turing\\\\_related\\\\_%'" );`,
 		],
 		'cli-ms'
 	);
@@ -70,13 +70,13 @@ test.afterAll( () => {
 	relatedAllSites( second.url, false );
 } );
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const results = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__results li' );
+	block( page ).locator( '.viglet-turing-search__results li' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
+	block( page ).locator( '.viglet-turing-search__summary' );
 const titles = ( page ) =>
-	results( page ).locator( '.viglet-dumont-search__title a' );
+	results( page ).locator( '.viglet-turing-search__title a' );
 
 test( 'the main site’s search block finds the second site’s post, marked and linked there', async ( {
 	page,
@@ -89,11 +89,11 @@ test( 'the main site’s search block finds the second site’s post, marked and
 	);
 	const card = results( page ).filter( { hasText: only } ).first();
 	await expect( card ).toBeVisible();
-	await expect( card.locator( '.viglet-dumont-search__origin' ) ).toHaveText(
+	await expect( card.locator( '.viglet-turing-search__origin' ) ).toHaveText(
 		label
 	);
 	await expect(
-		card.locator( '.viglet-dumont-search__title a' )
+		card.locator( '.viglet-turing-search__title a' )
 	).toHaveAttribute( 'href', new RegExp( `^${ second.url }` ) );
 	await look( 'network-sibling-block' );
 
@@ -103,7 +103,7 @@ test( 'the main site’s search block finds the second site’s post, marked and
 	);
 	await expect( summary( page ) ).toHaveText( '4 results' );
 	await expect(
-		results( page ).locator( '.viglet-dumont-search__origin:visible' )
+		results( page ).locator( '.viglet-turing-search__origin:visible' )
 	).toHaveCount( 0 );
 } );
 
@@ -112,7 +112,7 @@ test( 'the site facet narrows the main site’s search to the second site and ba
 } ) => {
 	await page.goto( `${ main.url }?page_id=${ main.searchPageId }&q=*` );
 	const site = block( page )
-		.locator( '.viglet-dumont-search__facet' )
+		.locator( '.viglet-turing-search__facet' )
 		.filter( { has: page.locator( 'summary', { hasText: 'Site' } ) } );
 	const theirs = site
 		.locator( 'label' )
@@ -128,9 +128,9 @@ test( 'the site facet narrows the main site’s search to the second site and ba
 	// Every result is the second site's now.
 	const shown = await results( page ).count();
 	await expect(
-		results( page ).locator( '.viglet-dumont-search__origin:visible' )
+		results( page ).locator( '.viglet-turing-search__origin:visible' )
 	).toHaveCount( shown );
-	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	const chip = block( page ).locator( '.viglet-turing-search__chip' );
 	await expect( chip ).toContainText( `Site: ${ label }` );
 	expect( new URL( page.url() ).searchParams.getAll( 'fq[]' ) ).toEqual( [
 		`site_key:${ secondKey }`,
@@ -157,13 +157,13 @@ test( 'the main site’s instant search answers with the second site’s post, n
 } ) => {
 	await page.goto( `${ main.url }?page_id=${ main.corePageId }` );
 	await page.keyboard.press( 'Control+K' );
-	const overlay = page.locator( 'dialog.viglet-dumont-overlay' );
+	const overlay = page.locator( 'dialog.viglet-turing-overlay' );
 	await expect( overlay ).toBeVisible();
 	await page.keyboard.type( 'Only on the second' );
 	const option = overlay.getByRole( 'option' ).filter( { hasText: only } );
 	await expect( option ).toBeVisible();
 	await expect(
-		option.locator( '.viglet-dumont-overlay__meta' )
+		option.locator( '.viglet-turing-overlay__meta' )
 	).toContainText( label );
 } );
 
@@ -171,10 +171,10 @@ test( 'the main site’s Related block with every site lists the second site’s
 	page,
 } ) => {
 	await page.goto( `${ main.url }?p=1` );
-	const remote = page.locator( '.viglet-dumont-related__item--remote' );
+	const remote = page.locator( '.viglet-turing-related__item--remote' );
 	await expect( remote.first() ).toBeVisible();
 	await expect(
-		remote.first().locator( '.viglet-dumont-related__origin' )
+		remote.first().locator( '.viglet-turing-related__origin' )
 	).toHaveText( label );
 	await expect( remote.first().locator( 'a' ) ).toHaveAttribute(
 		'href',
@@ -199,7 +199,7 @@ test( 'the second site, which lists nobody, still finds only its own, in every s
 	await expect( titles( page ) ).toContainText( [ only ] );
 	await expect(
 		block( page )
-			.locator( '.viglet-dumont-search__facet summary' )
+			.locator( '.viglet-turing-search__facet summary' )
 			.filter( { hasText: /^Site/ } )
 	).toHaveCount( 0 );
 
@@ -212,11 +212,11 @@ test( 'the second site, which lists nobody, still finds only its own, in every s
 	// The instant search.
 	await page.goto( `${ second.url }?page_id=${ second.corePageId }` );
 	await page.keyboard.press( 'Control+K' );
-	const overlay = page.locator( 'dialog.viglet-dumont-overlay' );
+	const overlay = page.locator( 'dialog.viglet-turing-overlay' );
 	await expect( overlay ).toBeVisible();
 	await page.keyboard.type( 'workshop' );
 	await expect(
-		overlay.locator( '.viglet-dumont-overlay__status' )
+		overlay.locator( '.viglet-turing-overlay__status' )
 	).not.toBeEmpty();
 	await expect(
 		overlay.getByRole( 'option' ).filter( { hasText: /^Workshop on/ } )
@@ -225,6 +225,6 @@ test( 'the second site, which lists nobody, still finds only its own, in every s
 	// Related, asked for every site: the second site has no sibling to add.
 	await page.goto( `${ second.url }?p=1` );
 	await expect(
-		page.locator( '.viglet-dumont-related__item--remote' )
+		page.locator( '.viglet-turing-related__item--remote' )
 	).toHaveCount( 0 );
 } );

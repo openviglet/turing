@@ -30,7 +30,7 @@ test( "the second site's instant search sends Enter to the main site's results p
 } ) => {
 	await page.goto( second.url );
 	await page.keyboard.press( 'Control+K' );
-	const overlay = page.locator( 'dialog.viglet-dumont-overlay' );
+	const overlay = page.locator( 'dialog.viglet-turing-overlay' );
 	await expect( overlay ).toBeVisible();
 
 	await page.keyboard.type( 'workshop' );
@@ -41,7 +41,7 @@ test( "the second site's instant search sends Enter to the main site's results p
 	await expect( page ).toHaveURL(
 		new RegExp( `^${ mainSite }(?!second/).*[?&]q=workshop$` )
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		'4 results'
 	);
 } );

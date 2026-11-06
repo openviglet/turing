@@ -31,7 +31,7 @@ test.beforeAll( () => {
 
 test.afterAll( () => {
 	onSchool( [ 'post', 'meta', 'update', id, 'closes_on', closes ] );
-	onSchool( [ 'dumont', 'index', `--ids=${ id }` ] );
+	onSchool( [ 'turing', 'index', `--ids=${ id }` ] );
 } );
 
 /**

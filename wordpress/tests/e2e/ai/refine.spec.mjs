@@ -4,9 +4,9 @@
 import { expect, test } from '../fixtures.mjs';
 import { feature, record } from './helpers.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const suggested = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__chip--suggested' );
+	block( page ).locator( '.viglet-turing-search__chip--suggested' );
 
 test.beforeEach( () => {
 	const nl = feature( 'nl_filters' );
@@ -36,7 +36,7 @@ test( 'a date phrase is offered as a Published filter that narrows the results',
 	await chip.click();
 	await expect(
 		block( page ).locator(
-			'.viglet-dumont-search__applied .viglet-dumont-search__chip'
+			'.viglet-turing-search__applied .viglet-turing-search__chip'
 		)
 	).toContainText( 'Published:' );
 	await expect( page.locator( 'input[type="search"]' ) ).not.toHaveValue(

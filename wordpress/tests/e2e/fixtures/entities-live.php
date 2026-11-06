@@ -6,7 +6,7 @@
  * prints what Turing extracted and what each facet value finds; `... cleanup` puts the
  * site back. Every name here is invented.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited, WordPress.NamingConventions.PrefixAllGlobals -- a WP-CLI fixture, not plugin code.
@@ -17,26 +17,26 @@ if ( 'cleanup' === $step ) {
 	$post = get_page_by_path( 'entities-live-check', OBJECT, 'post' );
 	if ( $post ) {
 		wp_delete_post( $post->ID, true );
-		( new Viglet_Dumont_Operations() )->index( array( $post->ID ) );
+		( new Viglet_Turing_Operations() )->index( array( $post->ID ) );
 	}
-	$stored = (array) get_option( 'viglet_dumont_settings', array() );
+	$stored = (array) get_option( 'viglet_turing_settings', array() );
 	unset( $stored['entity_extraction'], $stored['name_variants'], $stored['generative_ai'] );
-	update_option( 'viglet_dumont_settings', $stored );
-	( new Viglet_Dumont_Entities( viglet_dumont_get_settings() ) )->sync_variants( new Viglet_Dumont_API_Client(), array() );
-	( new Viglet_Dumont_Mapping( viglet_dumont_get_settings() ) )->provision( new Viglet_Dumont_API_Client(), true );
+	update_option( 'viglet_turing_settings', $stored );
+	( new Viglet_Turing_Entities( viglet_turing_get_settings() ) )->sync_variants( new Viglet_Turing_API_Client(), array() );
+	( new Viglet_Turing_Mapping( viglet_turing_get_settings() ) )->provision( new Viglet_Turing_API_Client(), true );
 	echo wp_json_encode( array( 'cleaned' => true ) ), "\n";
 	return;
 }
 
-$stored                      = (array) get_option( 'viglet_dumont_settings', array() );
+$stored                      = (array) get_option( 'viglet_turing_settings', array() );
 $stored['generative_ai']     = 1;
 $stored['entity_extraction'] = 1;
 $stored['name_variants']     = 'Ana Paula Lima | Lima, Ana Paula';
-update_option( 'viglet_dumont_settings', $stored );
-$settings = viglet_dumont_get_settings();
-$client   = new Viglet_Dumont_API_Client( $settings );
-( new Viglet_Dumont_Mapping( $settings ) )->provision( $client, true );
-( new Viglet_Dumont_Entities( $settings ) )->sync_variants( $client, Viglet_Dumont_Entities::variants( $settings['name_variants'] ) );
+update_option( 'viglet_turing_settings', $stored );
+$settings = viglet_turing_get_settings();
+$client   = new Viglet_Turing_API_Client( $settings );
+( new Viglet_Turing_Mapping( $settings ) )->provision( $client, true );
+( new Viglet_Turing_Entities( $settings ) )->sync_variants( $client, Viglet_Turing_Entities::variants( $settings['name_variants'] ) );
 
 $existing = get_page_by_path( 'entities-live-check', OBJECT, 'post' );
 $id       = wp_insert_post(
@@ -48,15 +48,15 @@ $id       = wp_insert_post(
 		'post_content' => 'The opening lecture is given by Lima, Ana Paula, who leads the marine biology group at the Federal University of Pernambuco. The week runs in Recife, with field trips to Porto de Galinhas.',
 	)
 );
-( new Viglet_Dumont_Operations( $settings ) )->index( array( $id ) );
+( new Viglet_Turing_Operations( $settings ) )->index( array( $id ) );
 
-$indexer  = new Viglet_Dumont_Indexer( $settings );
+$indexer  = new Viglet_Turing_Indexer( $settings );
 $doc_id   = $indexer->build_doc_id( $id );
 $entities = array();
 // Turing reads the post with its LLM while it imports: wait until the names are there.
 for ( $try = 0; $try < 24 && ! $entities; $try++ ) {
 	sleep( 5 );
-	$found = ( new Viglet_Dumont_Entities( $settings ) )->of_document( $client, $doc_id );
+	$found = ( new Viglet_Turing_Entities( $settings ) )->of_document( $client, $doc_id );
 	foreach ( is_array( $found ) ? $found : array() as $kind ) {
 		if ( $kind['values'] ) {
 			$entities[ $kind['field'] ] = $kind['values'];

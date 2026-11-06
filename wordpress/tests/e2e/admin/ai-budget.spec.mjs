@@ -4,7 +4,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { wp } from '../global-setup.mjs';
 
-const option = 'viglet_dumont_ai_quota';
+const option = 'viglet_turing_ai_quota';
 
 test.beforeAll( () => {
 	wp( [
@@ -24,7 +24,7 @@ test( 'Health names a spent AI budget, its reset date and Turing’s words', asy
 	look,
 	axe,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 	const card = page
 		.locator( '.components-card' )
 		.filter( { hasText: 'AI features' } );

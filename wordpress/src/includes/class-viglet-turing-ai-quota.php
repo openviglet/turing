@@ -1,6 +1,6 @@
 <?php
 /**
- * Viglet Dumont AI Quota
+ * Viglet Turing AI Quota
  *
  * Whether Turing's AI budget for this site has run out (D332). Turing answers a call over the
  * budget with HTTP 429 and an RFC 7807 problem whose `type` ends in `quota-exhausted`, naming
@@ -8,7 +8,7 @@
  * the last such answer; a visitor's browser, which sees the 429 but never its body, reports it
  * to the `ai-paused` REST route, and the server asks Turing once to read the rest.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,13 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The last quota-exhausted answer, in a non-autoloaded option.
  */
-class Viglet_Dumont_AI_Quota {
+class Viglet_Turing_AI_Quota {
 
 	/** The option the record lives in: `{resetsAt, detail, seen_at}`. */
-	public const OPTION = 'viglet_dumont_ai_quota';
+	public const OPTION = 'viglet_turing_ai_quota';
 
 	/** The transient that keeps a visitor's report from asking Turing more than once a while. */
-	public const THROTTLE = 'viglet_dumont_ai_paused_report';
+	public const THROTTLE = 'viglet_turing_ai_paused_report';
 
 	/** How long a report keeps the next ones from asking Turing, in seconds. */
 	public const THROTTLE_SECONDS = 600;
@@ -80,7 +80,7 @@ class Viglet_Dumont_AI_Quota {
 			),
 			false
 		);
-		Viglet_Dumont_Events::record( 'ai', false, Viglet_Dumont_Events::note( 'quota', array( (string) $resets, $detail ) ) );
+		Viglet_Turing_Events::record( 'ai', false, Viglet_Turing_Events::note( 'quota', array( (string) $resets, $detail ) ) );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Viglet_Dumont_AI_Quota {
 			return;
 		}
 		delete_option( self::OPTION );
-		Viglet_Dumont_Events::record( 'ai', true, Viglet_Dumont_Events::note( 'quota_back' ) );
+		Viglet_Turing_Events::record( 'ai', true, Viglet_Turing_Events::note( 'quota_back' ) );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Viglet_Dumont_AI_Quota {
 	}
 
 	/**
-	 * What Health and `wp dumont ai status` show: the record with its reset as the site writes
+	 * What Health and `wp turing ai status` show: the record with its reset as the site writes
 	 * a moment and the line that says it, or null while the budget is not known to be spent.
 	 *
 	 * @return array{resetsAt: string|null, detail: string, seen_at: int, until: string, message: string}|null
@@ -150,7 +150,7 @@ class Viglet_Dumont_AI_Quota {
 	public static function until( ?string $resets ): string {
 		$at = null !== $resets && '' !== $resets ? strtotime( $resets ) : false;
 
-		return false !== $at ? Viglet_Dumont_Events::when( $at ) : '';
+		return false !== $at ? Viglet_Turing_Events::when( $at ) : '';
 	}
 
 	/**
@@ -195,8 +195,8 @@ class Viglet_Dumont_AI_Quota {
 	 * @param array $settings The plugin settings.
 	 */
 	public static function probe( array $settings ): void {
-		$indexer = new Viglet_Dumont_Indexer( $settings );
-		( new Viglet_Dumont_API_Client( $settings ) )->ai_probe( array( 'site_key' => array( $indexer->site_key() ) ) );
+		$indexer = new Viglet_Turing_Indexer( $settings );
+		( new Viglet_Turing_API_Client( $settings ) )->ai_probe( array( 'site_key' => array( $indexer->site_key() ) ) );
 	}
 
 	/**

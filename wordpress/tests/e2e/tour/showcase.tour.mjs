@@ -25,7 +25,7 @@ test( 'the showcase, one feature at a time', async ( { page } ) => {
 	mkdirSync( out, { recursive: true } );
 	await page.goto( '/showcase/?tour=1&q=waterproof%20jacket' );
 	await expect(
-		page.locator( '.viglet-dumont-search__title a' ).first()
+		page.locator( '.viglet-turing-search__title a' ).first()
 	).toBeVisible();
 	// The copilot and the assistant show once Turing answers their probes, and their markers
 	// with them; give them that moment before counting.

@@ -25,7 +25,7 @@
 	const onProduct = document.body.classList.contains( 'single-product' );
 	const features = [
 		{
-			selector: '.viglet-dumont-search__form',
+			selector: '.viglet-turing-search__form',
 			chapter: 2,
 			anchor: '#the-turing-search-block',
 			en: [
@@ -38,7 +38,7 @@
 			],
 		},
 		{
-			selector: '.viglet-dumont-search__facets',
+			selector: '.viglet-turing-search__facets',
 			chapter: 2,
 			anchor: '#fields-and-facets',
 			en: [
@@ -51,7 +51,7 @@
 			],
 		},
 		{
-			selector: '.viglet-dumont-search__answer',
+			selector: '.viglet-turing-search__answer',
 			chapter: 3,
 			anchor: '#search',
 			en: [
@@ -64,7 +64,7 @@
 			],
 		},
 		{
-			selector: '.wp-block-viglet-dumont-related',
+			selector: '.wp-block-viglet-turing-related',
 			chapter: 6,
 			anchor: '#the-turing-search-block',
 			en: [
@@ -77,7 +77,7 @@
 			],
 		},
 		{
-			selector: '.wp-block-viglet-dumont-copilot',
+			selector: '.wp-block-viglet-turing-copilot',
 			chapter: onProduct ? 6 : 5,
 			anchor: '#search',
 			en: [
@@ -91,7 +91,7 @@
 		},
 		{
 			// A placed block; the corner launcher on every page is the site's chrome, not a stop.
-			selector: '.wp-block-viglet-dumont-assistant:not(.is-floating)',
+			selector: '.wp-block-viglet-turing-assistant:not(.is-floating)',
 			chapter: 3,
 			anchor: '#search',
 			en: [

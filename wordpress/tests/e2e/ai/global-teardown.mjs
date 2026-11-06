@@ -77,7 +77,7 @@ async function leaveIndex( ids ) {
 function drainQueue() {
 	for ( let tries = 0; tries < 30; tries++ ) {
 		try {
-			wp( [ 'dumont', 'queue', 'run' ] );
+			wp( [ 'turing', 'queue', 'run' ] );
 			return;
 		} catch ( error ) {
 			if (

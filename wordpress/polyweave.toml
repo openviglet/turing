@@ -7,7 +7,7 @@
 on = ["sound", "picture"]
 
 [project]
-name = "viglet-dumont-wordpress"
+name = "viglet-turing-wordpress"
 
 [service.elevenlabs]
 base    = "https://api.elevenlabs.io"

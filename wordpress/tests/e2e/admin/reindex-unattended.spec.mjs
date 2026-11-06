@@ -2,7 +2,7 @@
 // WP-Cron's runner stopped. Each step asks the site for the next one over a loopback. In this
 // stack the site's own address (localhost:8080) does not reach WordPress from inside its
 // container, so a must-use plugin points the loopback at the compose service, as the
-// `viglet_dumont_reindex_step_url` filter is there for.
+// `viglet_turing_reindex_step_url` filter is there for.
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,7 @@ const root = join(
 	'..',
 	'..'
 );
-const muPlugin = 'wp-content/mu-plugins/viglet-dumont-e2e-loopback.php';
+const muPlugin = 'wp-content/mu-plugins/viglet-turing-e2e-loopback.php';
 
 /**
  * Run `docker compose` in the plugin's folder.
@@ -42,7 +42,7 @@ test.beforeAll( () => {
 		'eval',
 		`wp_mkdir_p( WPMU_PLUGIN_DIR ); file_put_contents( ABSPATH . ${ JSON.stringify(
 			muPlugin
-		) }, "<?php add_filter( 'viglet_dumont_reindex_step_url', static fn ( \\$url ) => str_replace( untrailingslashit( home_url() ), 'http://wordpress', \\$url ) );\\n" );`,
+		) }, "<?php add_filter( 'viglet_turing_reindex_step_url', static fn ( \\$url ) => str_replace( untrailingslashit( home_url() ), 'http://wordpress', \\$url ) );\\n" );`,
 	] );
 	setSetting( 'batch_size', 2 );
 } );
@@ -59,7 +59,7 @@ test( 'a started reindex finishes with no visitor, no Health page and WP-Cron st
 	expect(
 		ask( [
 			'eval',
-			'$r = ( new Viglet_Dumont_Reindex() )->start(); echo is_wp_error( $r ) ? $r->get_error_message() : $r["state"];',
+			'$r = ( new Viglet_Turing_Reindex() )->start(); echo is_wp_error( $r ) ? $r->get_error_message() : $r["state"];',
 		] )
 	).toBe( 'running' );
 
@@ -68,7 +68,7 @@ test( 'a started reindex finishes with no visitor, no Health page and WP-Cron st
 			() =>
 				ask( [
 					'eval',
-					'$r = ( new Viglet_Dumont_Reindex() )->report(); echo $r["running"] ? "running" : ( $r["last"]["state"] ?? "none" );',
+					'$r = ( new Viglet_Turing_Reindex() )->report(); echo $r["running"] ? "running" : ( $r["last"]["state"] ?? "none" );',
 				] ),
 			{ timeout: 180_000, intervals: [ 5_000 ] }
 		)
@@ -76,7 +76,7 @@ test( 'a started reindex finishes with no visitor, no Health page and WP-Cron st
 	const last = JSON.parse(
 		ask( [
 			'eval',
-			'echo wp_json_encode( ( new Viglet_Dumont_Reindex() )->report()["last"] );',
+			'echo wp_json_encode( ( new Viglet_Turing_Reindex() )->report()["last"] );',
 		] )
 	);
 	expect( last.sent ).toBe( last.total );

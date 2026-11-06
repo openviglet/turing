@@ -1,12 +1,12 @@
 <?php
 /**
- * The constants viglet-dumont.php defines at load, declared for static analysis.
+ * The constants viglet-turing.php defines at load, declared for static analysis.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-define( 'VIGLET_DUMONT_VERSION', '2.0.0' );
-define( 'VIGLET_DUMONT_FILE', __DIR__ . '/../src/viglet-dumont.php' );
-define( 'VIGLET_DUMONT_DIR', __DIR__ . '/../src/' );
-define( 'VIGLET_DUMONT_URL', 'https://example.org/wp-content/plugins/viglet-dumont/' );
-define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
+define( 'VIGLET_TURING_VERSION', '2.0.0' );
+define( 'VIGLET_TURING_FILE', __DIR__ . '/../src/viglet-turing.php' );
+define( 'VIGLET_TURING_DIR', __DIR__ . '/../src/' );
+define( 'VIGLET_TURING_URL', 'https://example.org/wp-content/plugins/viglet-turing/' );
+define( 'VIGLET_TURING_OPTION', 'viglet_turing_settings' );

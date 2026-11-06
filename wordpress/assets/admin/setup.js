@@ -3,7 +3,7 @@
  * names what failed), create the SN site if it is missing, then start the first index and follow
  * its progress.
  *
- * Reads and writes `viglet-dumont/v1/connection`, tests with `/diagnose`, creates the site
+ * Reads and writes `viglet-turing/v1/connection`, tests with `/diagnose`, creates the site
  * with `/provision` and starts the background reindex with `/reindex` (D331).
  */
 import apiFetch from '@wordpress/api-fetch';
@@ -54,7 +54,7 @@ function Setup() {
 	const [ progress, setProgress ] = useState( null );
 
 	useEffect( () => {
-		apiFetch( { path: '/viglet-dumont/v1/connection' } )
+		apiFetch( { path: '/viglet-turing/v1/connection' } )
 			.then( setForm )
 			.catch( ( e ) => setError( e.message || String( e ) ) );
 	}, [] );
@@ -62,14 +62,14 @@ function Setup() {
 	const fail = ( e ) => setError( e.message || String( e ) );
 
 	const test = () =>
-		apiFetch( { path: '/viglet-dumont/v1/diagnose' } ).then( setResult );
+		apiFetch( { path: '/viglet-turing/v1/diagnose' } ).then( setResult );
 
 	const saveAndTest = () => {
 		setBusy( 'test' );
 		setError( '' );
 		setResult( null );
 		apiFetch( {
-			path: '/viglet-dumont/v1/connection',
+			path: '/viglet-turing/v1/connection',
 			method: 'POST',
 			data: { ...form, api_key: apiKey },
 		} )
@@ -84,7 +84,7 @@ function Setup() {
 
 	const createSite = () => {
 		setBusy( 'site' );
-		apiFetch( { path: '/viglet-dumont/v1/provision', method: 'POST' } )
+		apiFetch( { path: '/viglet-turing/v1/provision', method: 'POST' } )
 			.then( test )
 			.catch( fail )
 			.finally( () => setBusy( '' ) );
@@ -118,7 +118,7 @@ function Setup() {
 				} );
 				return new Promise( ( resolve ) => setTimeout( resolve, 2000 ) )
 					.then( () =>
-						apiFetch( { path: '/viglet-dumont/v1/reindex' } )
+						apiFetch( { path: '/viglet-turing/v1/reindex' } )
 					)
 					.then( follow );
 			}
@@ -150,7 +150,7 @@ function Setup() {
 			return report;
 		};
 		apiFetch( {
-			path: '/viglet-dumont/v1/reindex',
+			path: '/viglet-turing/v1/reindex',
 			method: 'POST',
 			data: { type: 'all' },
 		} )
@@ -360,7 +360,7 @@ function Setup() {
 	);
 }
 
-const mount = document.getElementById( 'viglet-dumont-setup' );
+const mount = document.getElementById( 'viglet-turing-setup' );
 if ( mount ) {
 	createRoot( mount ).render( <Setup /> );
 }

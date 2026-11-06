@@ -2,13 +2,13 @@
 /**
  * Popular searches under the search box (D202): which of the week's searches become chips.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Trending;
+use Viglet_Turing_Trending;
 
 final class TrendingTest extends PluginTestCase {
 
@@ -49,14 +49,14 @@ final class TrendingTest extends PluginTestCase {
 	}
 
 	public function test_typed_prefixes_long_searches_and_personal_data_are_never_shown(): void {
-		$this->assertTrue( Viglet_Dumont_Trending::presentable( 'rain jacket' ) );
-		$this->assertTrue( Viglet_Dumont_Trending::presentable( 'size 42 boots' ), 'a short number is a size, not a document' );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( 'work*' ) );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( 'ana@example.org' ) );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( '123.456.789-09' ) );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( '+55 11 98765 4321' ) );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( str_repeat( 'long ', 10 ) ) );
-		$this->assertFalse( Viglet_Dumont_Trending::presentable( '' ) );
+		$this->assertTrue( Viglet_Turing_Trending::presentable( 'rain jacket' ) );
+		$this->assertTrue( Viglet_Turing_Trending::presentable( 'size 42 boots' ), 'a short number is a size, not a document' );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( 'work*' ) );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( 'ana@example.org' ) );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( '123.456.789-09' ) );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( '+55 11 98765 4321' ) );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( str_repeat( 'long ', 10 ) ) );
+		$this->assertFalse( Viglet_Turing_Trending::presentable( '' ) );
 	}
 
 	public function test_the_chips_are_the_weeks_top_searches_that_find_something_now(): void {
@@ -107,7 +107,7 @@ final class TrendingTest extends PluginTestCase {
 		);
 		$this->turing( $top );
 
-		$chips = ( new Viglet_Dumont_Trending( $this->settings() ) )->chips();
+		$chips = ( new Viglet_Turing_Trending( $this->settings() ) )->chips();
 
 		$this->assertSame( array( 'workshop', 'seminar' ), $chips, 'a prefix, an e-mail, an empty answer, a case variant and a rare search left out' );
 		$this->assertSame( $chips, $cached );
@@ -137,10 +137,10 @@ final class TrendingTest extends PluginTestCase {
 				),
 			)
 		);
-		$this->assertSame( array( 'seminary' ), ( new Viglet_Dumont_Trending( $settings ) )->chips(), 'a whole word, whatever the case' );
+		$this->assertSame( array( 'seminary' ), ( new Viglet_Turing_Trending( $settings ) )->chips(), 'a whole word, whatever the case' );
 
 		$this->turing( array() );
-		$this->assertSame( array( 'boots', 'tents' ), ( new Viglet_Dumont_Trending( $settings ) )->chips(), 'no history: the admin list, each still checked' );
+		$this->assertSame( array( 'boots', 'tents' ), ( new Viglet_Turing_Trending( $settings ) )->chips(), 'no history: the admin list, each still checked' );
 	}
 
 	/** A week where one want was searched three ways, most searched first. */
@@ -167,30 +167,30 @@ final class TrendingTest extends PluginTestCase {
 
 		$this->assertSame(
 			array( array( 'rain jacket', 'raincoat', 'rain jaket' ) ),
-			Viglet_Dumont_Trending::parse_groups(
+			Viglet_Turing_Trending::parse_groups(
 				"```json\n[[\"Rain jacket\", \"raincoat\", \"rain jaket\", \"umbrella\"], [\"raincoat\", \"boots\"], [\"boots\"]]\n```",
 				$terms
 			),
 			'fenced JSON read; a search it was not given, one already grouped and a group of one dropped'
 		);
-		$this->assertSame( array(), Viglet_Dumont_Trending::parse_groups( 'They are all rainwear.', $terms ) );
-		$this->assertSame( array(), Viglet_Dumont_Trending::parse_groups( '{"rain": ["raincoat", "boots"]}', $terms ) );
+		$this->assertSame( array(), Viglet_Turing_Trending::parse_groups( 'They are all rainwear.', $terms ) );
+		$this->assertSame( array(), Viglet_Turing_Trending::parse_groups( '{"rain": ["raincoat", "boots"]}', $terms ) );
 	}
 
 	public function test_grouped_spellings_show_as_one_chip_under_the_most_searched(): void {
 		Functions\when( 'get_transient' )->justReturn( false );
 		Functions\when( 'set_transient' )->justReturn( true );
-		$groups = array( Viglet_Dumont_Trending::GROUPS => array( array( 'rain jacket', 'raincoat', 'rain jaket' ) ) );
+		$groups = array( Viglet_Turing_Trending::GROUPS => array( array( 'rain jacket', 'raincoat', 'rain jaket' ) ) );
 		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $groups[ $name ] ?? $fallback );
 		$this->turing( $this->rain_week() );
 
 		$this->assertSame(
 			array( 'Rain jacket', 'boots' ),
-			( new Viglet_Dumont_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->chips()
+			( new Viglet_Turing_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->chips()
 		);
 		$this->assertSame(
 			array( 'Rain jacket', 'raincoat', 'rain jaket', 'boots' ),
-			( new Viglet_Dumont_Trending( $this->settings( array( 'generative_ai' => 0 ) ) ) )->chips(),
+			( new Viglet_Turing_Trending( $this->settings( array( 'generative_ai' => 0 ) ) ) )->chips(),
 			'without generative AI, exact spellings only'
 		);
 	}
@@ -224,10 +224,10 @@ final class TrendingTest extends PluginTestCase {
 			)
 		);
 
-		( new Viglet_Dumont_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->group();
+		( new Viglet_Turing_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->group();
 
-		$this->assertSame( array( array( 'rain jacket', 'raincoat', 'rain jaket' ) ), $stored[ Viglet_Dumont_Trending::GROUPS ] );
-		$this->assertSame( array( Viglet_Dumont_Trending::CACHE ), $deleted );
+		$this->assertSame( array( array( 'rain jacket', 'raincoat', 'rain jaket' ) ), $stored[ Viglet_Turing_Trending::GROUPS ] );
+		$this->assertSame( array( Viglet_Turing_Trending::CACHE ), $deleted );
 		$sent = array_values( array_filter( $this->requests, static fn ( $request ) => str_contains( $request[0], '/api/v2/summary' ) ) );
 		$this->assertCount( 1, $sent );
 		$this->assertSame( "rain jacket\nraincoat\nrain jaket\nboots", json_decode( $sent[0][1]['body'], true )['data'], 'lowercase, one per line, the rare search left out' );
@@ -241,21 +241,21 @@ final class TrendingTest extends PluginTestCase {
 				'error'   => 'No default LLM is configured.',
 			)
 		);
-		( new Viglet_Dumont_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->group();
+		( new Viglet_Turing_Trending( $this->settings( array( 'generative_ai' => 1 ) ) ) )->group();
 		$this->assertSame( array(), $stored );
 
 		// Without generative AI there is nothing to ask, and no grouping is kept.
 		$this->requests = array();
 		$deleted        = array();
-		( new Viglet_Dumont_Trending( $this->settings( array( 'generative_ai' => 0 ) ) ) )->group();
+		( new Viglet_Turing_Trending( $this->settings( array( 'generative_ai' => 0 ) ) ) )->group();
 		$this->assertSame( array(), $this->requests );
-		$this->assertSame( array( Viglet_Dumont_Trending::GROUPS ), $deleted );
+		$this->assertSame( array( Viglet_Turing_Trending::GROUPS ), $deleted );
 	}
 
 	public function test_a_textarea_becomes_a_list_of_its_lines(): void {
 		$this->assertSame(
 			array( 'rain jacket', 'boots' ),
-			Viglet_Dumont_Trending::lines( "rain jacket\r\n\n  boots \nrain jacket\n" ),
+			Viglet_Turing_Trending::lines( "rain jacket\r\n\n  boots \nrain jacket\n" ),
 			'trimmed, blank lines and repeats dropped, Windows line ends read'
 		);
 	}

@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont Entities
+ * Viglet Turing Entities
  *
  * The people, organisations and places Turing finds in a post's text (D310): the opt-in that
  * asks for them, the three facets they fill, the name variants that fold into one name, and
  * what the editor's Search panel shows of them.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,13 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * site, which Turing's Thesaurus API (`/api/kb`, `/api/sn/<id>/microthesaurus`) writes with
  * the site's key when the key is not bound to a partition of a shared site.
  */
-class Viglet_Dumont_Entities {
+class Viglet_Turing_Entities {
 
 	/** The option holding each entity facet's label and whether the search block offers it. */
-	public const OPTION = 'viglet_dumont_entities';
+	public const OPTION = 'viglet_turing_entities';
 
 	/** The option recording the last name-variant sync: when, how many names, the error if any. */
-	public const SYNC_OPTION = 'viglet_dumont_name_variants_sync';
+	public const SYNC_OPTION = 'viglet_turing_name_variants_sync';
 
 	/** Each kind of entity and the facet field Turing fills with it. */
 	public const FIELDS = array(
@@ -60,7 +60,7 @@ class Viglet_Dumont_Entities {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Viglet_Dumont_Entities {
 	 * @param array $settings The plugin settings.
 	 */
 	public static function extracts( array $settings ): bool {
-		return ! empty( $settings['entity_extraction'] ) && Viglet_Dumont_Mapping::declares_generative_ai( $settings );
+		return ! empty( $settings['entity_extraction'] ) && Viglet_Turing_Mapping::declares_generative_ai( $settings );
 	}
 
 	/**
@@ -201,11 +201,11 @@ class Viglet_Dumont_Entities {
 	 * The entities Turing holds for one indexed document, each kind with its label and values,
 	 * a kind with none left out. Read from the stored document, never guessed.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client to read through.
+	 * @param Viglet_Turing_API_Client $client The client to read through.
 	 * @param string                   $doc_id The document's id.
 	 * @return array<int, array{kind: string, field: string, label: string, values: array<int, string>}>|WP_Error
 	 */
-	public function of_document( Viglet_Dumont_API_Client $client, string $doc_id ) {
+	public function of_document( Viglet_Turing_API_Client $client, string $doc_id ) {
 		$documents = $client->documents( array( $doc_id ) );
 		if ( is_wp_error( $documents ) ) {
 			return $documents;
@@ -329,11 +329,11 @@ class Viglet_Dumont_Entities {
 	public static function on_settings_saved( $old_value, $value ): void {
 		$before = self::variants( is_array( $old_value ) ? ( $old_value['name_variants'] ?? array() ) : array() );
 		$after  = self::variants( is_array( $value ) ? ( $value['name_variants'] ?? array() ) : array() );
-		if ( $before === $after || Viglet_Dumont_Settings::demo() ) {
+		if ( $before === $after || Viglet_Turing_Settings::demo() ) {
 			return;
 		}
-		$settings = viglet_dumont_get_settings();
-		$result   = ( new self( $settings ) )->sync_variants( new Viglet_Dumont_API_Client( $settings ), $after );
+		$settings = viglet_turing_get_settings();
+		$result   = ( new self( $settings ) )->sync_variants( new Viglet_Turing_API_Client( $settings ), $after );
 		update_option(
 			self::SYNC_OPTION,
 			array(
@@ -350,7 +350,7 @@ class Viglet_Dumont_Entities {
 	 * SN site keeps its own and none replaces another's.
 	 */
 	public function thesaurus_name(): string {
-		return sprintf( 'WordPress name variants: %s', ( new Viglet_Dumont_Indexer( $this->settings ) )->site_key() );
+		return sprintf( 'WordPress name variants: %s', ( new Viglet_Turing_Indexer( $this->settings ) )->site_key() );
 	}
 
 	/**
@@ -364,12 +364,12 @@ class Viglet_Dumont_Entities {
 	 * A key bound to a partition of a shared SN site cannot write the Thesaurus (Turing answers
 	 * 403): the message says so.
 	 *
-	 * @param Viglet_Dumont_API_Client $client   The client to write through.
+	 * @param Viglet_Turing_API_Client $client   The client to write through.
 	 * @param array                    $variants The names, as variants() returns them.
 	 * @return array{success: bool, message: string}
 	 */
-	public function sync_variants( Viglet_Dumont_API_Client $client, array $variants ): array {
-		$site = ( new Viglet_Dumont_Tuning( $this->settings ) )->site_id();
+	public function sync_variants( Viglet_Turing_API_Client $client, array $variants ): array {
+		$site = ( new Viglet_Turing_Tuning( $this->settings ) )->site_id();
 		if ( is_wp_error( $site ) ) {
 			return self::failed( $site );
 		}
@@ -442,10 +442,10 @@ class Viglet_Dumont_Entities {
 	/**
 	 * Delete the plugin's own thesaurus, found by its name, with what it holds.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client.
+	 * @param Viglet_Turing_API_Client $client The client.
 	 * @return true|WP_Error
 	 */
-	private function drop_thesaurus( Viglet_Dumont_API_Client $client ) {
+	private function drop_thesaurus( Viglet_Turing_API_Client $client ) {
 		$all = $client->call( 'GET', '/api/kb' );
 		if ( is_wp_error( $all ) ) {
 			return $all;
@@ -466,11 +466,11 @@ class Viglet_Dumont_Entities {
 	 * The plugin's microthesaurus for the site's language: its id, created with its thesaurus
 	 * when missing and `$create`, or null when there is none and none is wanted.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client.
+	 * @param Viglet_Turing_API_Client $client The client.
 	 * @param bool                     $create Whether to create what is missing.
 	 * @return string|WP_Error|null
 	 */
-	private function microthesaurus( Viglet_Dumont_API_Client $client, bool $create ) {
+	private function microthesaurus( Viglet_Turing_API_Client $client, bool $create ) {
 		$name   = $this->thesaurus_name();
 		$locale = (string) ( $this->settings['locale'] ?? 'en_US' );
 		$all    = $client->call( 'GET', '/api/kb' );
@@ -530,7 +530,7 @@ class Viglet_Dumont_Entities {
 			return $made;
 		}
 
-		return '' !== (string) ( $made['id'] ?? '' ) ? (string) $made['id'] : new WP_Error( 'viglet_dumont_thesaurus', __( 'Turing did not create the thesaurus.', 'viglet-turing-search' ) );
+		return '' !== (string) ( $made['id'] ?? '' ) ? (string) $made['id'] : new WP_Error( 'viglet_turing_thesaurus', __( 'Turing did not create the thesaurus.', 'viglet-turing-search' ) );
 	}
 
 	/**
@@ -545,13 +545,13 @@ class Viglet_Dumont_Entities {
 	/**
 	 * Select the microthesaurus for the SN site (enabled), or drop the selection.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client.
+	 * @param Viglet_Turing_API_Client $client The client.
 	 * @param string                   $site   The SN site's id.
 	 * @param string                   $micro  The microthesaurus' id.
 	 * @param bool                     $wanted Whether the site should use it.
 	 * @return true|WP_Error
 	 */
-	private function select( Viglet_Dumont_API_Client $client, string $site, string $micro, bool $wanted ) {
+	private function select( Viglet_Turing_API_Client $client, string $site, string $micro, bool $wanted ) {
 		$path       = '/api/sn/' . rawurlencode( $site ) . '/microthesaurus';
 		$selections = $client->call( 'GET', $path );
 		if ( is_wp_error( $selections ) ) {

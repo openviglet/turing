@@ -3,14 +3,14 @@
  * WooCommerce products as mapping sources (D173): the shop fields a product sends, the
  * defaults a product type gets, and the stock change that sends a product again.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Mapping;
-use Viglet_Dumont_WooCommerce;
+use Viglet_Turing_Mapping;
+use Viglet_Turing_WooCommerce;
 use WP_Post;
 
 final class WooCommerceTest extends PluginTestCase {
@@ -74,7 +74,7 @@ final class WooCommerceTest extends PluginTestCase {
 			)
 		);
 		Functions\when( 'get_option' )->alias( fn ( $name, $fallback = false ) => $this->options[ $name ] ?? $fallback );
-		Functions\when( 'viglet_dumont_get_indexable_types' )->justReturn( array( 'product' ) );
+		Functions\when( 'viglet_turing_get_indexable_types' )->justReturn( array( 'product' ) );
 		Functions\when( 'get_object_taxonomies' )->justReturn(
 			array(
 				(object) array(
@@ -92,7 +92,7 @@ final class WooCommerceTest extends PluginTestCase {
 	}
 
 	public function test_a_product_sends_its_shop_fields_with_the_stock_in_words(): void {
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'product' => array(
 				'fields' => array(
 					array(
@@ -124,7 +124,7 @@ final class WooCommerceTest extends PluginTestCase {
 			),
 		);
 
-		$mapping = new Viglet_Dumont_Mapping( $this->settings() );
+		$mapping = new Viglet_Turing_Mapping( $this->settings() );
 
 		$this->assertSame(
 			array(
@@ -139,7 +139,7 @@ final class WooCommerceTest extends PluginTestCase {
 	}
 
 	public function test_a_product_type_maps_its_price_stock_and_attributes_by_default(): void {
-		$fields = ( new Viglet_Dumont_Mapping( $this->settings() ) )->all()['product']['fields'];
+		$fields = ( new Viglet_Turing_Mapping( $this->settings() ) )->all()['product']['fields'];
 
 		$this->assertSame(
 			array( 'taxonomy:product_cat', 'woo:price', 'woo:regular_price', 'woo:stock_status', 'taxonomy:pa_color' ),
@@ -166,13 +166,13 @@ final class WooCommerceTest extends PluginTestCase {
 		Functions\stubs( array( '__' => static fn ( $text ) => $text ) );
 		$this->assertContains(
 			'woo:sku',
-			array_column( Viglet_Dumont_Mapping::sources( 'product' ), 'source' )
+			array_column( Viglet_Turing_Mapping::sources( 'product' ), 'source' )
 		);
 	}
 
 	public function test_a_stock_change_queues_the_product_again(): void {
 		Functions\when( 'get_post' )->justReturn( $this->product );
-		Functions\when( 'viglet_dumont_get_settings' )->justReturn( $this->settings( array( 'auto_index' => 1 ) ) );
+		Functions\when( 'viglet_turing_get_settings' )->justReturn( $this->settings( array( 'auto_index' => 1 ) ) );
 		Functions\when( 'get_post_meta' )->justReturn( '' );
 		Functions\stubs(
 			array(
@@ -189,9 +189,9 @@ final class WooCommerceTest extends PluginTestCase {
 			}
 		);
 
-		Viglet_Dumont_WooCommerce::stock_changed( 77 );
+		Viglet_Turing_WooCommerce::stock_changed( 77 );
 
-		$this->assertSame( 'index', $this->options[ \Viglet_Dumont_Queue::OPTION ][77]['action'] ?? null );
+		$this->assertSame( 'index', $this->options[ \Viglet_Turing_Queue::OPTION ][77]['action'] ?? null );
 	}
 
 	public function test_a_variation_s_stock_change_queues_the_product_it_belongs_to(): void {
@@ -205,7 +205,7 @@ final class WooCommerceTest extends PluginTestCase {
 			)
 		);
 		Functions\when( 'get_post' )->alias( fn ( $id ) => 78 === $id ? $variation : $this->product );
-		Functions\when( 'viglet_dumont_get_settings' )->justReturn( $this->settings( array( 'auto_index' => 1 ) ) );
+		Functions\when( 'viglet_turing_get_settings' )->justReturn( $this->settings( array( 'auto_index' => 1 ) ) );
 		Functions\when( 'get_post_meta' )->justReturn( '' );
 		Functions\stubs(
 			array(
@@ -222,8 +222,8 @@ final class WooCommerceTest extends PluginTestCase {
 			}
 		);
 
-		Viglet_Dumont_WooCommerce::stock_changed( 78 );
+		Viglet_Turing_WooCommerce::stock_changed( 78 );
 
-		$this->assertSame( array( 77 ), array_keys( $this->options[ \Viglet_Dumont_Queue::OPTION ] ?? array() ) );
+		$this->assertSame( array( 77 ), array_keys( $this->options[ \Viglet_Turing_Queue::OPTION ] ?? array() ) );
 	}
 }

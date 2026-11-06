@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont API Client
+ * Viglet Turing API Client
  *
  * Communicates with the Turing REST API for content indexing and search.
  * Uses the modern /api/sn/import JSON endpoint instead of the legacy Solr XML API.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The HTTP client for Turing's import and search endpoints.
  */
-class Viglet_Dumont_API_Client {
+class Viglet_Turing_API_Client {
 
 	/**
 	 * The body of the HTTP 400 WordPress Playground answers with itself when the browser it
@@ -65,7 +65,7 @@ class Viglet_Dumont_API_Client {
 	 */
 	public function __construct( ?array $settings = null ) {
 		if ( null === $settings ) {
-			$settings = viglet_dumont_get_settings();
+			$settings = viglet_turing_get_settings();
 		}
 
 		$this->server_url = untrailingslashit( $settings['server_url'] );
@@ -79,7 +79,7 @@ class Viglet_Dumont_API_Client {
 	/**
 	 * The transient that marks Turing as down for the pages that read it (D328).
 	 */
-	public const DOWN_TRANSIENT = 'viglet_dumont_turing_down';
+	public const DOWN_TRANSIENT = 'viglet_turing_turing_down';
 
 	/**
 	 * How long a failed page read keeps the others from trying, in seconds (D328).
@@ -113,9 +113,9 @@ class Viglet_Dumont_API_Client {
 	 * sibling's. Search is public on Turing, so nothing the key alone could read is lost.
 	 * Without siblings it is this client as it was.
 	 *
-	 * @param Viglet_Dumont_Indexer $indexer The indexer that names the scope.
+	 * @param Viglet_Turing_Indexer $indexer The indexer that names the scope.
 	 */
-	public function for_scope( Viglet_Dumont_Indexer $indexer ): self {
+	public function for_scope( Viglet_Turing_Indexer $indexer ): self {
 		if ( array() === $indexer->sibling_sites() ) {
 			return $this;
 		}
@@ -127,7 +127,7 @@ class Viglet_Dumont_API_Client {
 
 	/**
 	 * The seconds a page read waits for Turing (D328), three unless the
-	 * `viglet_dumont_render_timeout` filter says otherwise.
+	 * `viglet_turing_render_timeout` filter says otherwise.
 	 */
 	private static function render_timeout(): int {
 		/**
@@ -135,7 +135,7 @@ class Viglet_Dumont_API_Client {
 		 *
 		 * @param int $seconds Three by default.
 		 */
-		return max( 1, (int) apply_filters( 'viglet_dumont_render_timeout', 3 ) );
+		return max( 1, (int) apply_filters( 'viglet_turing_render_timeout', 3 ) );
 	}
 
 	/**
@@ -182,7 +182,7 @@ class Viglet_Dumont_API_Client {
 	 *
 	 * Turing embeds each document for RAG while it imports (about half a second each), so the
 	 * wait follows the batch: two seconds a document, never under 30, which the
-	 * `viglet_dumont_http_timeout` filter can change (D256). A request that outlives it is
+	 * `viglet_turing_http_timeout` filter can change (D256). A request that outlives it is
 	 * `timed_out`: sent, with an outcome nobody knows, since Turing goes on importing it.
 	 *
 	 * @param array $job_items Array of TurSNJobItem-compatible arrays.
@@ -190,7 +190,7 @@ class Viglet_Dumont_API_Client {
 	 *         `code` is 0 when no response arrived; `note` is the message for the event log (D180).
 	 */
 	public function import( array $job_items ): array {
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
 		}
 		// Items whose attributes name a file (a `file:` source, D309) go with their files.
@@ -206,7 +206,7 @@ class Viglet_Dumont_API_Client {
 		 * @param int $timeout   Two seconds a document, at least 30.
 		 * @param int $documents How many documents the import carries.
 		 */
-		$timeout  = (int) apply_filters( 'viglet_dumont_http_timeout', max( 30, 2 * count( $job_items ) ), count( $job_items ) );
+		$timeout  = (int) apply_filters( 'viglet_turing_http_timeout', max( 30, 2 * count( $job_items ) ), count( $job_items ) );
 		$response = $this->request( 'POST', '/api/sn/import', null, $payload, array( 'timeout' => max( 1, $timeout ) ) );
 
 		if ( is_wp_error( $response ) ) {
@@ -220,7 +220,7 @@ class Viglet_Dumont_API_Client {
 
 		return $this->outcome(
 			$ok,
-			$ok ? Viglet_Dumont_Events::note( 'imported' ) : Viglet_Dumont_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
+			$ok ? Viglet_Turing_Events::note( 'imported' ) : Viglet_Turing_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
 			$code
 		);
 	}
@@ -235,7 +235,7 @@ class Viglet_Dumont_API_Client {
 	 * @return array{success: bool, message: string, note: string|array, code: int, timed_out: bool}
 	 */
 	public function import_files( array $job_items, array $files ): array {
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
 		}
 		$zip = self::zip( array( 'snJobItems' => $job_items ), $files );
@@ -243,7 +243,7 @@ class Viglet_Dumont_API_Client {
 			return $this->outcome( false, __( 'The files could not be packed for Turing.', 'viglet-turing-search' ), 0 );
 		}
 
-		$boundary = 'viglet-dumont-' . md5( $zip );
+		$boundary = 'viglet-turing-' . md5( $zip );
 		$body     = "--{$boundary}\r\n"
 			. "Content-Disposition: form-data; name=\"file\"; filename=\"import.zip\"\r\n"
 			. "Content-Type: application/zip\r\n\r\n"
@@ -271,7 +271,7 @@ class Viglet_Dumont_API_Client {
 
 		return $this->outcome(
 			$ok,
-			$ok ? Viglet_Dumont_Events::note( 'imported' ) : Viglet_Dumont_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
+			$ok ? Viglet_Turing_Events::note( 'imported' ) : Viglet_Turing_Events::note( 'import_failed', array( $code, wp_remote_retrieve_body( $response ) ) ),
 			$code
 		);
 	}
@@ -328,7 +328,7 @@ class Viglet_Dumont_API_Client {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			return null;
 		}
-		$path    = wp_tempnam( 'viglet-dumont-import' );
+		$path    = wp_tempnam( 'viglet-turing-import' );
 		$archive = new ZipArchive();
 		if ( true !== $archive->open( $path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
 			return null;
@@ -349,14 +349,14 @@ class Viglet_Dumont_API_Client {
 	 * A write's result: whether it went through, its message now and as a note.
 	 *
 	 * @param bool         $ok   Whether it went through.
-	 * @param string|array $note A note from Viglet_Dumont_Events::note(), or text as it came.
+	 * @param string|array $note A note from Viglet_Turing_Events::note(), or text as it came.
 	 * @param int          $code The HTTP status, 0 when no response arrived.
 	 * @return array{success: bool, message: string, note: string|array, code: int, timed_out: bool}
 	 */
 	private function outcome( bool $ok, $note, int $code ): array {
 		return array(
 			'success'   => $ok,
-			'message'   => Viglet_Dumont_Events::text( $note ),
+			'message'   => Viglet_Turing_Events::text( $note ),
 			'note'      => $note,
 			'code'      => $code,
 			'timed_out' => false,
@@ -385,7 +385,7 @@ class Viglet_Dumont_API_Client {
 	 * @return array{success: bool, message: string, note: string|array, code: int} `code` is 0 when no response arrived.
 	 */
 	public function provision( array $manifest ): array {
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
 		}
 		$response = $this->request( 'POST', '/api/sn/manifest', null, $manifest );
@@ -405,11 +405,11 @@ class Viglet_Dumont_API_Client {
 		}
 
 		if ( $code >= 200 && $code < 300 ) {
-			$note = Viglet_Dumont_Events::note( 'provisioned' );
+			$note = Viglet_Turing_Events::note( 'provisioned' );
 		} elseif ( 409 === $code ) {
-			$note = Viglet_Dumont_Events::note( 'provision_breaking', array( wp_json_encode( $body['breakingChanges'] ?? array() ) ) );
+			$note = Viglet_Turing_Events::note( 'provision_breaking', array( wp_json_encode( $body['breakingChanges'] ?? array() ) ) );
 		} else {
-			$note = Viglet_Dumont_Events::note( 'provision_failed', array( $code, is_array( $body ) && isset( $body['error'] ) ? $body['error'] : '' ) );
+			$note = Viglet_Turing_Events::note( 'provision_failed', array( $code, is_array( $body ) && isset( $body['error'] ) ? $body['error'] : '' ) );
 		}
 
 		return $this->outcome( $code >= 200 && $code < 300, $note, $code );
@@ -443,7 +443,7 @@ class Viglet_Dumont_API_Client {
 	 * @return array|WP_Error The plan: `fieldsToAdd`, `fieldsUnchanged`, `breakingChanges`, ...
 	 */
 	public function plan( array $manifest ) {
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return self::demo_refusal();
 		}
 		$response = $this->request( 'POST', '/api/sn/manifest/plan', null, $manifest );
@@ -471,7 +471,7 @@ class Viglet_Dumont_API_Client {
 	 * @return array{success: bool, message: string, note: string|array, code: int}
 	 */
 	public function deindex( array $job_items ): array {
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return $this->outcome( false, self::demo_refusal()->get_error_message(), 0 );
 		}
 		$payload = array( 'snJobItems' => $job_items );
@@ -485,7 +485,7 @@ class Viglet_Dumont_API_Client {
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		$ok   = $code >= 200 && $code < 300;
 
-		return $this->outcome( $ok, $ok ? Viglet_Dumont_Events::note( 'removed' ) : Viglet_Dumont_Events::note( 'deindex_failed', array( $code ) ), $code );
+		return $this->outcome( $ok, $ok ? Viglet_Turing_Events::note( 'removed' ) : Viglet_Turing_Events::note( 'deindex_failed', array( $code ) ), $code );
 	}
 
 	/**
@@ -646,7 +646,7 @@ class Viglet_Dumont_API_Client {
 		}
 
 		// A spent AI budget is kept, and a later AI call that went through forgets it (D332).
-		Viglet_Dumont_AI_Quota::observe( $path, $response );
+		Viglet_Turing_AI_Quota::observe( $path, $response );
 
 		return self::playground_refusal( $response, $this->server_url ) ?? $response;
 	}
@@ -657,11 +657,11 @@ class Viglet_Dumont_API_Client {
 	 */
 	public static function demo_refusal(): WP_Error {
 		return new WP_Error(
-			'viglet_dumont_demo',
+			'viglet_turing_demo',
 			sprintf(
 				/* translators: %s: the constant or environment variable that turns demo mode on. */
 				__( 'Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-turing-search' ),
-				Viglet_Dumont_Settings::DEMO
+				Viglet_Turing_Settings::DEMO
 			)
 		);
 	}
@@ -692,7 +692,7 @@ class Viglet_Dumont_API_Client {
 		}
 
 		return new WP_Error(
-			'viglet_dumont_playground',
+			'viglet_turing_playground',
 			sprintf(
 				/* translators: %s: the Turing address the plugin is set to. */
 				__( 'WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-turing-search' ),
@@ -709,7 +709,7 @@ class Viglet_Dumont_API_Client {
 	 * @param int    $rows   How many.
 	 * @param string $mode   `MLT` (lexical) or `VECTOR` (semantic); empty lets Turing choose.
 	 * @param array  $fq     Filter queries, as the search takes them (Turing T1132), or a scope
-	 *                       as `Viglet_Dumont_Indexer::scope_query()` builds it, `fqi.op`
+	 *                       as `Viglet_Turing_Indexer::scope_query()` builds it, `fqi.op`
 	 *                       included (Turing T1235 reads it here as the search does).
 	 * @return array<int, array{id: string, title: string, url: string, type?: string}>|WP_Error An empty list when the id is not indexed.
 	 */
@@ -945,7 +945,7 @@ class Viglet_Dumont_API_Client {
 			return array();
 		}
 		if ( $code < 200 || $code >= 300 ) {
-			return new WP_Error( 'viglet_dumont_http', self::refusal( $response ), array( 'status' => $code ) );
+			return new WP_Error( 'viglet_turing_http', self::refusal( $response ), array( 'status' => $code ) );
 		}
 		$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 

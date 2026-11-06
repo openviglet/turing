@@ -42,7 +42,7 @@ test( 'the blueprint boots the store, and a search opens the product it names', 
 		);
 	const title = site
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title a'
+			'.viglet-turing-search__results .viglet-turing-search__title a'
 		)
 		.filter( { hasText: /tent/i } )
 		.first();

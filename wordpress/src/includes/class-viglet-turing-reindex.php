@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Reindex
+ * Viglet Turing Reindex
  *
  * Index All from wp-admin, run by WP-Cron rather than by the browser tab that asked for it: the
  * tab can close, a batch can fail, and the run goes on.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,28 +21,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * batch rewrites only the small one. `offset` is how many of them are done.
  *
  * The phases are `posts`, then for a full reindex `pdfs` and `sweep`, as
- * Viglet_Dumont_Operations::reindex() does them. Each WP-Cron run takes a few steps (a step
+ * Viglet_Turing_Operations::reindex() does them. Each WP-Cron run takes a few steps (a step
  * is one batch of posts, the PDFs or the sweep) and schedules the next run. A step that fails
  * waits out a backoff and is tried again; after MAX_ATTEMPTS its posts count as failed and the
  * run moves on, so one bad stretch never stops it. When it ends, the run moves to the last
  * finished one, with its state: done, failed (it ended with failures) or cancelled.
  */
-class Viglet_Dumont_Reindex {
+class Viglet_Turing_Reindex {
 
 	/** The option holding the running reindex. */
-	public const OPTION = 'viglet_dumont_reindex';
+	public const OPTION = 'viglet_turing_reindex';
 
 	/** The option holding the running reindex's post ids, written once when it starts. */
-	public const IDS_OPTION = 'viglet_dumont_reindex_ids';
+	public const IDS_OPTION = 'viglet_turing_reindex_ids';
 
 	/** The option holding the last reindex that ended, however it ended. */
-	public const LAST_OPTION = 'viglet_dumont_reindex_last';
+	public const LAST_OPTION = 'viglet_turing_reindex_last';
 
 	/** The WP-Cron hook a run takes its next steps on. */
-	public const CRON_HOOK = 'viglet_dumont_reindex';
+	public const CRON_HOOK = 'viglet_turing_reindex';
 
 	/** The transient that keeps two runs from sending the same batch. */
-	public const LOCK = 'viglet_dumont_reindex_lock';
+	public const LOCK = 'viglet_turing_reindex_lock';
 
 	/** Steps one run takes at most, before it hands over to the next. */
 	public const STEPS_PER_RUN = 3;
@@ -72,9 +72,9 @@ class Viglet_Dumont_Reindex {
 	/**
 	 * The operations that send a batch, the PDFs and the sweep.
 	 *
-	 * @var Viglet_Dumont_Operations
+	 * @var Viglet_Turing_Operations
 	 */
-	private Viglet_Dumont_Operations $operations;
+	private Viglet_Turing_Operations $operations;
 
 	/**
 	 * Build a reindex over the given settings, or over the stored ones.
@@ -82,8 +82,8 @@ class Viglet_Dumont_Reindex {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings   = $settings ?? viglet_dumont_get_settings();
-		$this->operations = new Viglet_Dumont_Operations( $this->settings );
+		$this->settings   = $settings ?? viglet_turing_get_settings();
+		$this->operations = new Viglet_Turing_Operations( $this->settings );
 	}
 
 	/**
@@ -91,18 +91,18 @@ class Viglet_Dumont_Reindex {
 	 *
 	 * @param string $type `all`, or one of the indexed post types.
 	 * @return array|WP_Error The run as report() shows it; an error when one is running already
-	 *                        (`viglet_dumont_reindex_running`), the type is not indexed, or demo mode is on.
+	 *                        (`viglet_turing_reindex_running`), the type is not indexed, or demo mode is on.
 	 */
 	public function start( string $type = 'all' ) {
-		if ( Viglet_Dumont_Settings::demo() ) {
-			return Viglet_Dumont_API_Client::demo_refusal();
+		if ( Viglet_Turing_Settings::demo() ) {
+			return Viglet_Turing_API_Client::demo_refusal();
 		}
 		if ( null !== $this->current() ) {
-			return new WP_Error( 'viglet_dumont_reindex_running', __( 'A reindex is already running.', 'viglet-turing-search' ), array( 'status' => 409 ) );
+			return new WP_Error( 'viglet_turing_reindex_running', __( 'A reindex is already running.', 'viglet-turing-search' ), array( 'status' => 409 ) );
 		}
-		if ( 'all' !== $type && ! in_array( $type, viglet_dumont_get_indexable_types(), true ) ) {
+		if ( 'all' !== $type && ! in_array( $type, viglet_turing_get_indexable_types(), true ) ) {
 			return new WP_Error(
-				'viglet_dumont_reindex_type',
+				'viglet_turing_reindex_type',
 				/* translators: %s: the post type asked for. */
 				sprintf( __( 'Posts of type %s are not indexed.', 'viglet-turing-search' ), $type ),
 				array( 'status' => 400 )
@@ -170,7 +170,7 @@ class Viglet_Dumont_Reindex {
 		 *
 		 * @param bool $kick True by default.
 		 */
-		if ( ! apply_filters( 'viglet_dumont_reindex_loopback', true ) ) {
+		if ( ! apply_filters( 'viglet_turing_reindex_loopback', true ) ) {
 			return;
 		}
 		/**
@@ -180,7 +180,7 @@ class Viglet_Dumont_Reindex {
 		 *
 		 * @param string $url The REST route on the site's own address.
 		 */
-		$url = (string) apply_filters( 'viglet_dumont_reindex_step_url', rest_url( 'viglet-dumont/v1/reindex/step' ) );
+		$url = (string) apply_filters( 'viglet_turing_reindex_step_url', rest_url( 'viglet-turing/v1/reindex/step' ) );
 		wp_remote_post(
 			$url,
 			array(
@@ -194,7 +194,7 @@ class Viglet_Dumont_Reindex {
 				 *
 				 * @param bool $verify True by default.
 				 */
-				'sslverify' => (bool) apply_filters( 'viglet_dumont_reindex_step_sslverify', true ),
+				'sslverify' => (bool) apply_filters( 'viglet_turing_reindex_step_sslverify', true ),
 			)
 		);
 	}
@@ -209,7 +209,7 @@ class Viglet_Dumont_Reindex {
 		if ( null === $run ) {
 			return false;
 		}
-		Viglet_Dumont_Events::record( 'reindex', false, Viglet_Dumont_Events::note( 'reindex_cancelled', array( (int) $run['offset'], (int) $run['total'] ) ) );
+		Viglet_Turing_Events::record( 'reindex', false, Viglet_Turing_Events::note( 'reindex_cancelled', array( (int) $run['offset'], (int) $run['total'] ) ) );
 		$this->finish( $run, 'cancelled' );
 
 		return true;
@@ -325,7 +325,7 @@ class Viglet_Dumont_Reindex {
 			case 'posts':
 				return $this->step_posts( $run );
 			case 'pdfs':
-				$pdfs = ( new Viglet_Dumont_Pdf( $this->settings ) )->index_all();
+				$pdfs = ( new Viglet_Turing_Pdf( $this->settings ) )->index_all();
 				if ( ! $pdfs['success'] ) {
 					return $this->failed_step( $run, $pdfs['message'], 1 );
 				}
@@ -375,7 +375,7 @@ class Viglet_Dumont_Reindex {
 		if ( 0 === (int) $run['offset'] ) {
 			// The fields reach Turing before the documents that carry them, on each try of the
 			// first batch, since a Turing that refused that batch refused the fields too.
-			( new Viglet_Dumont_Indexer( $this->settings ) )->provision( 'all' === $run['type'] );
+			( new Viglet_Turing_Indexer( $this->settings ) )->provision( 'all' === $run['type'] );
 		}
 
 		// A full reindex sends every PDF at the end; one type's sends the ones its posts hold.
@@ -409,7 +409,7 @@ class Viglet_Dumont_Reindex {
 	 * @return bool False when the step waits out a backoff, true when the run moved on.
 	 */
 	private function failed_step( array &$run, $message, int $count ): bool {
-		$run['error']    = Viglet_Dumont_Events::text( $message );
+		$run['error']    = Viglet_Turing_Events::text( $message );
 		$run['attempts'] = (int) $run['attempts'] + 1;
 
 		if ( $run['attempts'] < self::MAX_ATTEMPTS ) {
@@ -436,7 +436,7 @@ class Viglet_Dumont_Reindex {
 	 */
 	private function end( array &$run ): void {
 		$run['state'] = $run['failed'] > 0 ? 'failed' : 'done';
-		Viglet_Dumont_Events::record( 'reindex', 'done' === $run['state'], Viglet_Dumont_Events::note( 'reindexed', array( (int) $run['sent'], (int) $run['failed'] ) ) );
+		Viglet_Turing_Events::record( 'reindex', 'done' === $run['state'], Viglet_Turing_Events::note( 'reindexed', array( (int) $run['sent'], (int) $run['failed'] ) ) );
 	}
 
 	/**
@@ -467,9 +467,9 @@ class Viglet_Dumont_Reindex {
 		unset( $run['token'] );
 
 		return array(
-			'started'  => Viglet_Dumont_Events::when( (int) $run['started_at'] ),
-			'finished' => Viglet_Dumont_Events::when( (int) $run['finished_at'] ),
-			'retry_at' => (int) $run['next_at'] > time() ? Viglet_Dumont_Events::when( (int) $run['next_at'] ) : '',
+			'started'  => Viglet_Turing_Events::when( (int) $run['started_at'] ),
+			'finished' => Viglet_Turing_Events::when( (int) $run['finished_at'] ),
+			'retry_at' => (int) $run['next_at'] > time() ? Viglet_Turing_Events::when( (int) $run['next_at'] ) : '',
 			'stalled'  => 'running' === $run['state'] && time() - $moving > self::STALL_AFTER,
 			// Seconds a due run has gone without a step, for Health to step it (D335).
 			'idle'     => 'running' === $run['state'] && (int) $run['next_at'] <= time() ? max( 0, time() - $moving ) : 0,

@@ -40,7 +40,7 @@ test( 'on a product page the copilot asks about that product', async ( {
 	} );
 	await page.goto( product.url );
 
-	const copilot = page.locator( '.viglet-dumont-copilot' );
+	const copilot = page.locator( '.viglet-turing-copilot' );
 	const box = copilot.getByLabel( `${ say.ask } ${ product.name }` );
 	await expect( box ).toBeVisible();
 	await box.fill( 'Will this keep me dry?' );
@@ -48,7 +48,7 @@ test( 'on a product page the copilot asks about that product', async ( {
 		.getByRole( 'button', { name: say.button, exact: true } )
 		.click();
 	await expect(
-		copilot.locator( '.viglet-dumont-copilot__answer' )
+		copilot.locator( '.viglet-turing-copilot__answer' )
 	).toHaveText( 'It is.' );
 	expect( asked[ 0 ].documentId ).toMatch(
 		new RegExp( `:post:${ product.id }$` )
@@ -70,13 +70,13 @@ test( 'off a product page the copilot asks the whole catalog', async ( {
 		} );
 	} );
 	await page.goto( '/showcase/' );
-	const copilot = page.locator( '.viglet-dumont-copilot' );
+	const copilot = page.locator( '.viglet-turing-copilot' );
 	await copilot
 		.getByLabel( 'What are you looking for?' )
 		.fill( 'A warm jacket' );
 	await copilot.getByRole( 'button', { name: 'Ask', exact: true } ).click();
 	await expect(
-		copilot.locator( '.viglet-dumont-copilot__answer' )
+		copilot.locator( '.viglet-turing-copilot__answer' )
 	).toHaveText( 'Several.' );
 	expect( asked[ 0 ] ).not.toHaveProperty( 'documentId' );
 } );

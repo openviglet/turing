@@ -2,7 +2,7 @@
 /**
  * The slice of WP-CLI the plugin calls, declared for static analysis only.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a stand-in for WP-CLI's own classes, shaped like WP-CLI rather than like this plugin.

@@ -3,7 +3,7 @@
  * Site assistant reads, decides it. The notice's words are the page's own (demo/setup.php).
  */
 /* eslint-disable import/no-unresolved -- a script module id, resolved by WordPress's import map at runtime. */
-import { config, createClient, fetchChatEnabled } from 'viglet-dumont/search';
+import { config, createClient, fetchChatEnabled } from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
 const notice = document.querySelector( '.tarnfell-ai-off' );

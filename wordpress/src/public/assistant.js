@@ -19,7 +19,7 @@ import {
 	siblingSites,
 	siteFilters,
 	siteUrl,
-} from 'viglet-dumont/search';
+} from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
 // Turing exempts /api/sn/** from CSRF, so the token round trip would be wasted.
@@ -171,11 +171,11 @@ function rate( signal ) {
  */
 function dialogOf() {
 	return getElement()
-		.ref.closest( '.viglet-dumont-assistant' )
+		.ref.closest( '.viglet-turing-assistant' )
 		.querySelector( 'dialog' );
 }
 
-const { state } = store( 'viglet-dumont/assistant', {
+const { state } = store( 'viglet-turing/assistant', {
 	state: {
 		get suggesting() {
 			return (
@@ -241,7 +241,7 @@ const { state } = store( 'viglet-dumont/assistant', {
 					// This site's documents only, where several sites share one SN site
 					// (D287): the search block's own filter, sent as each turn's filters.
 					filters: siteFilters,
-					persist: 'viglet-dumont-assistant',
+					persist: 'viglet-turing-assistant',
 					clientTools: { navigate },
 				} );
 				chat.subscribe( sync );

@@ -43,7 +43,7 @@ if [ "${1:-}" = demo ] && [ "${2:-}" = reset ]; then
 	fi
 	demo_store "$3"
 	docker compose --profile demo rm -s -f "wordpress-demo$sfx" "cron-demo$sfx" "db-demo$sfx"
-	docker volume rm "viglet-dumont-wp_wp-demo$sfx" "viglet-dumont-wp_db-demo$sfx"
+	docker volume rm "viglet-turing-wp_wp-demo$sfx" "viglet-turing-wp_db-demo$sfx"
 	exit 0
 fi
 
@@ -51,7 +51,7 @@ fi
 export WP_FRESH_PORT
 if [ "${1:-}" = fresh ] && [ "${2:-}" = reset ]; then
 	docker compose --profile fresh rm -s -f wordpress-fresh cron-fresh db-fresh
-	docker volume rm viglet-dumont-wp_wp-fresh viglet-dumont-wp_db-fresh
+	docker volume rm viglet-turing-wp_wp-fresh viglet-turing-wp_db-fresh
 	exit 0
 fi
 
@@ -94,13 +94,13 @@ done
 
 if ! wp core is-installed >/dev/null 2>&1; then
 	echo 'Installing WordPress...'
-	wp core install --url="http://localhost:$WP_PORT" --title='Viglet Dumont test' \
+	wp core install --url="http://localhost:$WP_PORT" --title='Viglet Turing test' \
 		--admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email
 fi
-wp plugin activate viglet-dumont >/dev/null
+wp plugin activate viglet-turing >/dev/null
 
 # The SN site is converged on every start; a key is minted only while the plugin has none.
-key=$(wp option pluck viglet_dumont_settings api_key 2>/dev/null | tail -n 1 || true)
+key=$(wp option pluck viglet_turing_settings api_key 2>/dev/null | tail -n 1 || true)
 if [ -z "$key" ]; then
 	key=$(pwsh -NoProfile -File bin/turing-setup.ps1 -Base "http://localhost:$TURING_PORT" \
 		-Password "$TURING_ADMIN_PASSWORD" -Site "$SN_SITE" -Locale "$TURING_LOCALE")
@@ -108,7 +108,7 @@ if [ -z "$key" ]; then
 		echo 'Turing was not provisioned; the plugin has no API key.' >&2
 		exit 1
 	fi
-	wp option patch update viglet_dumont_settings api_key "$key" >/dev/null
+	wp option patch update viglet_turing_settings api_key "$key" >/dev/null
 	echo 'The plugin has an API key for the local Turing.'
 else
 	pwsh -NoProfile -File bin/turing-setup.ps1 -Base "http://localhost:$TURING_PORT" \
@@ -142,9 +142,9 @@ if [ "${1:-}" = fresh ]; then
 		wpf theme activate tarnfell
 		wpf rewrite structure '/%postname%/' --hard
 		wpf plugin install woocommerce --activate
-		wpf plugin activate viglet-dumont
+		wpf plugin activate viglet-turing
 		wpf eval-file /demo/seed/catalog.php
-		wpf plugin deactivate viglet-dumont
+		wpf plugin deactivate viglet-turing
 		wpf eval-file /demo/seed/forget-plugin.php
 		wpf rewrite flush --hard
 	fi
@@ -184,9 +184,9 @@ setup_demo() {
 		wpd core install --url="$demo_url" --title="$demo_title" \
 			--admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email
 	fi
-	wpd plugin activate viglet-dumont >/dev/null 2>&1 || true
+	wpd plugin activate viglet-turing >/dev/null 2>&1 || true
 
-	demo_key=$(wpd option pluck viglet_dumont_settings api_key 2>/dev/null | tail -n 1 || true)
+	demo_key=$(wpd option pluck viglet_turing_settings api_key 2>/dev/null | tail -n 1 || true)
 	if [ -z "$demo_key" ]; then
 		demo_key=$(pwsh -NoProfile -File bin/turing-setup.ps1 -Base "http://localhost:$TURING_PORT" \
 			-Password "$TURING_ADMIN_PASSWORD" -Site "$site" -Locale "$locale")
@@ -200,7 +200,7 @@ setup_demo() {
 	fi
 	# The key, the SN site and the language it indexes and searches in (D272, D274), as the
 	# site's own settings.
-	wpd eval "\$s = get_option( 'viglet_dumont_settings', array() ); \$s['api_key'] = '$demo_key'; \$s['site_name'] = '$site'; \$s['locale'] = '$locale'; update_option( 'viglet_dumont_settings', \$s );"
+	wpd eval "\$s = get_option( 'viglet_turing_settings', array() ); \$s['api_key'] = '$demo_key'; \$s['site_name'] = '$site'; \$s['locale'] = '$locale'; update_option( 'viglet_turing_settings', \$s );"
 
 	wpd theme activate "$demo_theme"
 	# The site speaks its language, and the seed writes its content in it (D217).
@@ -221,7 +221,7 @@ setup_demo() {
 	# The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
 	wpd rewrite flush --hard
 	# The seed makes its posts indexable after saving them, so nothing queued them: send them now.
-	wpd dumont reindex
+	wpd turing reindex
 	# The site's search history, once the content it finds is indexed (D269).
 	if [ -n "$demo_history" ]; then
 		wpd eval-file "$demo_history"

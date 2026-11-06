@@ -13,7 +13,7 @@
  *
  * Prints JSON: { searchPageId, corePageId, postId } for the specs.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a test fixture run by WP-CLI, not plugin code.
@@ -24,9 +24,9 @@
 // nag and update check; every plugin notice stays on the page, and stays checked. The themes and
 // plugins update checks go too (D301): the variants pin older theme versions on purpose, and the
 // admin bar's update count then moved every admin screenshot on the day a check ran.
-$nag_off  = WPMU_PLUGIN_DIR . '/viglet-dumont-e2e-no-core-nag.php';
+$nag_off  = WPMU_PLUGIN_DIR . '/viglet-turing-e2e-no-core-nag.php';
 $no_check = "static fn () => (object) array( 'response' => array(), 'checked' => array(), 'last_checked' => time() )";
-$nag_code = "<?php\n// Written by the Viglet Dumont browser tests' seed (tests/e2e/fixtures/seed.php, D236, D301).\n" .
+$nag_code = "<?php\n// Written by the Viglet Turing browser tests' seed (tests/e2e/fixtures/seed.php, D236, D301).\n" .
 	"add_filter( 'pre_site_transient_update_core', static fn () => (object) array( 'updates' => array(), 'version_checked' => get_bloginfo( 'version' ), 'last_checked' => time() ) );\n" .
 	"add_filter( 'pre_site_transient_update_plugins', {$no_check} );\n" .
 	"add_filter( 'pre_site_transient_update_themes', {$no_check} );\n" .
@@ -69,7 +69,7 @@ foreach ( $titles as $i => $title ) {
 	update_post_meta( $id, 'seats', 0 === $i % 2 ? '20' : '40' );
 	// A facet with more values than a group shows before "Show more": the title's last word.
 	update_post_meta( $id, 'topic', substr( strrchr( ' ' . $title, ' ' ), 1 ) );
-	delete_post_meta( $id, '_viglet_dumont_exclude' );
+	delete_post_meta( $id, '_viglet_turing_exclude' );
 	if ( 0 === $i ) {
 		$post_id = $id;
 	}
@@ -92,7 +92,7 @@ if ( isset( $templated_id ) ) {
 			'<!-- wp:template-part {"slug":"header"} /-->',
 			'<!-- wp:post-title {"level":1} /-->',
 			'<!-- wp:post-content /-->',
-			'<!-- wp:group --><div class="wp-block-group"><!-- wp:viglet-dumont/related /--></div><!-- /wp:group -->',
+			'<!-- wp:group --><div class="wp-block-group"><!-- wp:viglet-turing/related /--></div><!-- /wp:group -->',
 			'<!-- wp:template-part {"slug":"footer"} /-->',
 		)
 	);
@@ -119,15 +119,15 @@ $page_id = $page ? $page->ID : (int) wp_insert_post(
 		'post_name'    => 'busca',
 		'post_title'   => 'Busca',
 		'post_status'  => 'publish',
-		'post_content' => '<!-- wp:viglet-dumont/search /-->',
+		'post_content' => '<!-- wp:viglet-turing/search /-->',
 	)
 );
 // The block with its defaults again: an editor spec changes its settings and saves.
-if ( '<!-- wp:viglet-dumont/search /-->' !== get_post_field( 'post_content', $page_id ) ) {
+if ( '<!-- wp:viglet-turing/search /-->' !== get_post_field( 'post_content', $page_id ) ) {
 	wp_update_post(
 		array(
 			'ID'           => $page_id,
-			'post_content' => '<!-- wp:viglet-dumont/search /-->',
+			'post_content' => '<!-- wp:viglet-turing/search /-->',
 		)
 	);
 }
@@ -135,7 +135,7 @@ if ( '<!-- wp:viglet-dumont/search /-->' !== get_post_field( 'post_content', $pa
 // The search block with Turing's grounded answer and the filters a sentence names turned on
 // (answer.spec.mjs, refine.spec.mjs). Rewritten every run, so a stack seeded before a setting
 // existed gets it.
-$ask_content = '<!-- wp:viglet-dumont/search {"showAnswer":true,"suggestFilters":true} /-->';
+$ask_content = '<!-- wp:viglet-turing/search {"showAnswer":true,"suggestFilters":true} /-->';
 $ask         = get_page_by_path( 'ask' );
 $ask_id      = $ask ? $ask->ID : (int) wp_insert_post(
 	array(
@@ -160,12 +160,12 @@ if ( $ask && $ask->post_content !== $ask_content ) {
 $parts_content = implode(
 	"\n",
 	array(
-		'<!-- wp:viglet-dumont/search {"perPage":5} -->',
-		'<!-- wp:viglet-dumont/search-box /-->',
-		'<!-- wp:viglet-dumont/search-pages /-->',
-		'<!-- wp:viglet-dumont/search-filters /-->',
-		'<!-- wp:viglet-dumont/search-results /-->',
-		'<!-- /wp:viglet-dumont/search -->',
+		'<!-- wp:viglet-turing/search {"perPage":5} -->',
+		'<!-- wp:viglet-turing/search-box /-->',
+		'<!-- wp:viglet-turing/search-pages /-->',
+		'<!-- wp:viglet-turing/search-filters /-->',
+		'<!-- wp:viglet-turing/search-results /-->',
+		'<!-- /wp:viglet-turing/search -->',
 	)
 );
 $parts    = get_page_by_path( 'search-parts' );
@@ -190,15 +190,15 @@ $lonely_id = $lonely ? $lonely->ID : (int) wp_insert_post(
 		'post_name'    => 'related-none',
 		'post_title'   => 'Quokkas',
 		'post_status'  => 'publish',
-		'post_content' => "<!-- wp:paragraph --><p>Marsupials of Rottnest.</p><!-- /wp:paragraph -->\n\n<!-- wp:viglet-dumont/related /-->",
+		'post_content' => "<!-- wp:paragraph --><p>Marsupials of Rottnest.</p><!-- /wp:paragraph -->\n\n<!-- wp:viglet-turing/related /-->",
 	)
 );
 // An event log this version wrote: older ones stored sentences, in whatever language (D180).
-delete_option( 'viglet_dumont_events' );
+delete_option( 'viglet_turing_events' );
 
 // Each post's neighbours as Turing answers them now, not as a previous run cached them.
 global $wpdb;
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient%viglet\\_dumont\\_related\\_%'" );
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient%viglet\\_turing\\_related\\_%'" );
 
 // A page with the theme's own Search block, which the instant-search overlay takes over.
 $core    = get_page_by_path( 'header-search' );
@@ -213,7 +213,7 @@ $core_id = $core ? $core->ID : (int) wp_insert_post(
 );
 
 update_option(
-	'viglet_dumont_mapping',
+	'viglet_turing_mapping',
 	array(
 		'post' => array(
 			'exclude' => false,
@@ -265,7 +265,7 @@ update_option(
 	false
 );
 
-$settings                   = get_option( 'viglet_dumont_settings', array() );
+$settings                   = get_option( 'viglet_turing_settings', array() );
 $settings['search_enabled'] = 1;
 // The woo project indexes products; the default suite indexes posts and pages alone.
 $settings['index_custom_types'] = array();
@@ -278,7 +278,7 @@ $settings['ga_measurement_id'] = 'G-E2ETEST';
 $settings['related_after'] = array( 'post' );
 // The default suite needs no LLM; the AI suite's seed turns it on (D186).
 $settings['generative_ai'] = 0;
-update_option( 'viglet_dumont_settings', $settings );
+update_option( 'viglet_turing_settings', $settings );
 
 echo wp_json_encode(
 	array(

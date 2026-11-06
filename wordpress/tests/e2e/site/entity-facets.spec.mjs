@@ -26,18 +26,18 @@ let title = '';
  * @param {number} id The post.
  */
 const withEntities = ( id ) => `
-$settings = viglet_dumont_get_settings();
-$item     = ( new Viglet_Dumont_Indexer( $settings ) )->build_create_item( get_post( ${ id } ) );
+$settings = viglet_turing_get_settings();
+$item     = ( new Viglet_Turing_Indexer( $settings ) )->build_create_item( get_post( ${ id } ) );
 $item['attributes']['entity_person'] = array( '${ person }' );
 $item['attributes']['entity_place']  = array( '${ place }' );
-$result = ( new Viglet_Dumont_API_Client( $settings ) )->import( array( $item ) );
+$result = ( new Viglet_Turing_API_Client( $settings ) )->import( array( $item ) );
 echo $result['success'] ? 'ok' : 'failed: ' . $result['message'];
 `;
 
 const options = [
-	'viglet_dumont_settings',
-	'viglet_dumont_entities',
-	'viglet_dumont_provisioned',
+	'viglet_turing_settings',
+	'viglet_turing_entities',
+	'viglet_turing_provisioned',
 ];
 
 test.beforeAll( ( { seed }, testInfo ) => {
@@ -59,17 +59,17 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	] );
 	wp( [
 		'eval',
-		`$s = get_option( 'viglet_dumont_settings' );
+		`$s = get_option( 'viglet_turing_settings' );
 		$s['generative_ai'] = 1;
 		$s['entity_extraction'] = 1;
-		update_option( 'viglet_dumont_settings', $s );
-		update_option( 'viglet_dumont_entities', array( 'organization' => array( 'offered' => false ) ) );`,
+		update_option( 'viglet_turing_settings', $s );
+		update_option( 'viglet_turing_entities', array( 'organization' => array( 'offered' => false ) ) );`,
 	] );
 	// The manifest declares the two fields, labelled, before a document carries them.
 	expect(
 		ask( [
 			'eval',
-			'$r = ( new Viglet_Dumont_Indexer() )->provision( true ); echo $r["success"] ? "ok" : "failed: " . $r["message"];',
+			'$r = ( new Viglet_Turing_Indexer() )->provision( true ); echo $r["success"] ? "ok" : "failed: " . $r["message"];',
 		] )
 	).toBe( 'ok' );
 	expect( ask( [ 'eval', withEntities( seed.postId ) ] ) ).toBe( 'ok' );
@@ -89,7 +89,7 @@ test.afterAll( ( { seed }, testInfo ) => {
 	// The post's document as the plugin sends it, without the values put in above.
 	wp( [
 		'eval',
-		`( new Viglet_Dumont_Operations() )->index( array( ${ seed.postId } ) );`,
+		`( new Viglet_Turing_Operations() )->index( array( ${ seed.postId } ) );`,
 	] );
 } );
 
@@ -97,15 +97,15 @@ test.beforeEach( ( {}, testInfo ) => {
 	test.skip( 'site' !== testInfo.project.name, 'desktop only' );
 } );
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const facet = ( page, label ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__facet' )
+		.locator( '.viglet-turing-search__facet' )
 		.filter( { has: page.locator( 'summary', { hasText: label } ) } );
 const titles = ( page ) =>
 	block( page )
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 		.allTextContents();
 
@@ -125,19 +125,19 @@ test( 'the people and places in a post are facets by their labels, and each find
 		.click();
 	await expect( page ).toHaveURL( /entity_person/ );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__summary' )
+		block( page ).locator( '.viglet-turing-search__summary' )
 	).toHaveText( '1 result' );
 	expect( await titles( page ) ).toEqual( [ title ] );
 	// The applied filter is named by the facet's label, not its field.
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__applied' )
+		block( page ).locator( '.viglet-turing-search__applied' )
 	).toContainText( `People: ${ person }` );
 
 	await page.goto(
 		`/?page_id=${ seed.searchPageId }&q=*&fq[]=${ encodeURIComponent( `entity_place:${ place }` ) }`
 	);
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__summary' )
+		block( page ).locator( '.viglet-turing-search__summary' )
 	).toHaveText( '1 result' );
 	expect( await titles( page ) ).toEqual( [ title ] );
 } );

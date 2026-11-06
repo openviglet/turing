@@ -2,7 +2,7 @@
  * The Health page: is Turing reachable, how many documents each post type has in WordPress
  * and in Turing, how the queue stands, and buttons to retry what failed or send the queue now.
  *
- * Reads `viglet-dumont/v1/status`; the buttons call `queue/retry`, `queue/run` and
+ * Reads `viglet-turing/v1/status`; the buttons call `queue/retry`, `queue/run` and
  * `reindex/cancel`. While a reindex runs, `reindex` is read again every few seconds.
  */
 import apiFetch from '@wordpress/api-fetch';
@@ -67,7 +67,7 @@ function Reindex( { report, busy, onCancel } ) {
 			</CardHeader>
 			<CardBody>
 				{ running && (
-					<div aria-live="polite" className="viglet-dumont-reindex">
+					<div aria-live="polite" className="viglet-turing-reindex">
 						<progress
 							max={ 100 }
 							value={
@@ -128,7 +128,7 @@ function Reindex( { report, busy, onCancel } ) {
 					</div>
 				) }
 				{ last ? (
-					<p className="viglet-dumont-reindex-last">
+					<p className="viglet-turing-reindex-last">
 						{ sprintf(
 							/* translators: 1: how it ended (Done, Cancelled...), 2: when, 3: posts sent, 4: posts that failed, 5: posts it had to do. */
 							__(
@@ -214,7 +214,7 @@ function AiFeatures( { quota } ) {
 	const check = () => {
 		setBusy( true );
 		setError( '' );
-		apiFetch( { path: '/viglet-dumont/v1/ai' } )
+		apiFetch( { path: '/viglet-turing/v1/ai' } )
 			.then( setRows )
 			.catch( ( e ) => setError( e.message || String( e ) ) )
 			.finally( () => setBusy( false ) );
@@ -305,7 +305,7 @@ function Health() {
 
 	const load = useCallback( () => {
 		setError( '' );
-		apiFetch( { path: '/viglet-dumont/v1/status' } )
+		apiFetch( { path: '/viglet-turing/v1/status' } )
 			.then( setStatus )
 			.catch( ( e ) => setError( e.message || String( e ) ) );
 	}, [] );
@@ -325,8 +325,8 @@ function Health() {
 			const idle = running.idle > 15;
 			apiFetch(
 				idle
-					? { path: '/viglet-dumont/v1/reindex/step', method: 'POST' }
-					: { path: '/viglet-dumont/v1/reindex' }
+					? { path: '/viglet-turing/v1/reindex/step', method: 'POST' }
+					: { path: '/viglet-turing/v1/reindex' }
 			)
 				.then( ( reindex ) =>
 					reindex.running
@@ -341,7 +341,7 @@ function Health() {
 	const act = ( path, describe ) => {
 		setBusy( path );
 		setNotice( '' );
-		apiFetch( { path: `/viglet-dumont/v1/${ path }`, method: 'POST' } )
+		apiFetch( { path: `/viglet-turing/v1/${ path }`, method: 'POST' } )
 			.then( ( result ) => setNotice( describe( result ) ) )
 			.catch( ( e ) => setError( e.message || String( e ) ) )
 			.finally( () => {
@@ -648,7 +648,7 @@ function Health() {
 	);
 }
 
-const mount = document.getElementById( 'viglet-dumont-health' );
+const mount = document.getElementById( 'viglet-turing-health' );
 if ( mount ) {
 	createRoot( mount ).render( <Health /> );
 }

@@ -56,7 +56,7 @@
 		);
 	}
 
-	wp.blocks.registerBlockType( 'viglet-dumont/compare', {
+	wp.blocks.registerBlockType( 'viglet-turing/compare', {
 		edit: Edit,
 		save: () => null,
 	} );

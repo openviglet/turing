@@ -3,7 +3,7 @@
 // (playwright.config.mjs).
 import { expect, test } from '../fixtures.mjs';
 
-const overlay = ( page ) => page.locator( 'dialog.viglet-dumont-overlay' );
+const overlay = ( page ) => page.locator( 'dialog.viglet-turing-overlay' );
 const input = ( page ) => overlay( page ).getByRole( 'combobox' );
 const options = ( page ) => overlay( page ).getByRole( 'option' );
 
@@ -23,7 +23,7 @@ test( 'Ctrl+K opens it, it answers as you type, and Up/Down plus Enter open a re
 	await expect( options( page ).first() ).toContainText( 'Workshop on' );
 	await look( 'overlay' );
 	await axe( 'the instant-search overlay', {
-		include: 'dialog.viglet-dumont-overlay',
+		include: 'dialog.viglet-turing-overlay',
 	} );
 
 	await page.keyboard.press( 'ArrowDown' );
@@ -33,11 +33,11 @@ test( 'Ctrl+K opens it, it answers as you type, and Up/Down plus Enter open a re
 	);
 	await expect( input( page ) ).toHaveAttribute(
 		'aria-activedescendant',
-		'viglet-dumont-overlay-result-0'
+		'viglet-turing-overlay-result-0'
 	);
 	const title = await options( page )
 		.first()
-		.locator( '.viglet-dumont-overlay__title' )
+		.locator( '.viglet-turing-overlay__title' )
 		.textContent();
 	await page.keyboard.press( 'Enter' );
 	await expect( page ).toHaveTitle( new RegExp( `^${ title }` ) );
@@ -48,7 +48,7 @@ test( "the theme's Search block opens it, and Enter takes the query to the full 
 	seed,
 } ) => {
 	await page.goto( `/?page_id=${ seed.corePageId }` );
-	const core = page.locator( 'form[data-viglet-dumont-overlay]' );
+	const core = page.locator( 'form[data-viglet-turing-overlay]' );
 	await expect( core ).toHaveCount( 1 );
 	await core.locator( 'input[type="search"]' ).click();
 	await expect( overlay( page ) ).toBeVisible();
@@ -60,7 +60,7 @@ test( "the theme's Search block opens it, and Enter takes the query to the full 
 	await expect( page ).toHaveURL(
 		new RegExp( `page_id=${ seed.searchPageId }.*q=workshop` )
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		'4 results'
 	);
 } );
@@ -72,7 +72,7 @@ test( 'Escape closes it and gives the focus back where it was', async ( {
 } ) => {
 	await page.goto( `/?page_id=${ seed.corePageId }` );
 	const button = page
-		.locator( 'form[data-viglet-dumont-overlay]' )
+		.locator( 'form[data-viglet-turing-overlay]' )
 		.getByRole( 'button', { name: 'Search' } );
 	await keyboard.tabTo( button );
 	await page.keyboard.press( 'Control+K' );

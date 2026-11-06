@@ -22,7 +22,7 @@ const createPage = ( slug, attributes ) =>
 		'--post_status=publish',
 		`--post_name=${ slug }`,
 		`--post_title=${ slug }`,
-		`--post_content=<!-- wp:viglet-dumont/copilot ${ JSON.stringify(
+		`--post_content=<!-- wp:viglet-turing/copilot ${ JSON.stringify(
 			attributes
 		) } /-->`,
 		'--porcelain',
@@ -68,7 +68,7 @@ test( 'without a shop the block names this site and offers no kit', async ( {
 	page,
 } ) => {
 	await page.goto( `/?page_id=${ pages.plain }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 
 	await expect(
 		block.getByRole( 'heading', { name: 'Ask this site' } )
@@ -110,7 +110,7 @@ test( 'a plan switched on stages the types the block names', async ( {
 		} );
 	} );
 	await page.goto( `/?page_id=${ pages.plan }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 
 	await block.getByRole( 'button', { name: 'Make a plan' } ).click();
 	await block
@@ -153,7 +153,7 @@ test( 'a spent AI budget reads as paused, and the browser reports it', async ( {
 		} )
 	);
 	await page.goto( `/?page_id=${ pages.plain }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 	const reported = page.waitForResponse( /ai-paused/ );
 
 	// On a page of its own the box asks about that page (D242).
@@ -162,7 +162,7 @@ test( 'a spent AI budget reads as paused, and the browser reports it', async ( {
 
 	// The 429's own reset date, which the SDK carries on the error (Turing T1234, D336).
 	await expect(
-		block.locator( '.viglet-dumont-copilot__status' )
+		block.locator( '.viglet-turing-copilot__status' )
 	).toHaveText( /^Answers are paused until .*2099.*; search still works\.$/ );
 	const report = await reported;
 	expect( report.request().method() ).toBe( 'POST' );
@@ -176,6 +176,6 @@ test.afterAll( ( {}, testInfo ) => {
 	}
 	// The report's ten-minute throttle, so the site is left as it was found.
 	try {
-		wp( [ 'transient', 'delete', 'viglet_dumont_ai_paused_report' ] );
+		wp( [ 'transient', 'delete', 'viglet_turing_ai_paused_report' ] );
 	} catch {}
 } );

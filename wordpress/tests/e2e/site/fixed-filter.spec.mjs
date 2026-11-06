@@ -31,12 +31,12 @@ const publish = ( title, content ) =>
 test.beforeAll( () => {
 	pageId = publish(
 		'Pages only',
-		'<!-- wp:viglet-dumont/search {"filters":["type:page"]} /-->'
+		'<!-- wp:viglet-turing/search {"filters":["type:page"]} /-->'
 	);
 	// A box with no results of its own (D208), scoped: its query goes to the search page.
 	boxId = publish(
 		'Search the pages',
-		'<!-- wp:viglet-dumont/search {"filters":["type:page"]} --><!-- wp:viglet-dumont/search-box /--><!-- /wp:viglet-dumont/search -->'
+		'<!-- wp:viglet-turing/search {"filters":["type:page"]} --><!-- wp:viglet-turing/search-box /--><!-- /wp:viglet-turing/search -->'
 	);
 } );
 
@@ -49,20 +49,20 @@ test( 'a box-only block takes its scope to the search page, said there and left 
 } ) => {
 	await page.goto( `/?page_id=${ boxId }` );
 	await expect(
-		page.locator( '.viglet-dumont-search__scope' )
+		page.locator( '.viglet-turing-search__scope' )
 	).toContainText( 'In Pages' );
-	const box = page.locator( '.viglet-dumont-search input[type="search"]' );
+	const box = page.locator( '.viglet-turing-search input[type="search"]' );
 	await box.fill( 'search' );
 	await box.press( 'Enter' );
 
 	await expect( page ).toHaveURL( /[?&]scope(%5B%5D|\[\])=type(%3A|:)page/ );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	expect( ( await types( page ) ).every( ( t ) => 'Page' === t ) ).toBe(
 		true
 	);
-	const scope = page.locator( '.viglet-dumont-search__scope' );
+	const scope = page.locator( '.viglet-turing-search__scope' );
 	await expect( scope ).toContainText( 'In Pages' );
 
 	// The whole site: the same query, the scope gone, posts back.
@@ -70,14 +70,14 @@ test( 'a box-only block takes its scope to the search page, said there and left 
 	await expect( page ).not.toHaveURL( /scope/ );
 	await expect( page ).toHaveURL( /[?&]q=search/ );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	expect( await types( page ) ).toContain( 'Post' );
 } );
 
 const types = ( page ) =>
 	page
-		.locator( '.viglet-dumont-search__results .viglet-dumont-search__type' )
+		.locator( '.viglet-turing-search__results .viglet-turing-search__type' )
 		.allTextContents();
 
 test( 'without its script, the first page lists no post', async ( {
@@ -91,7 +91,7 @@ test( 'without its script, the first page lists no post', async ( {
 	const page = await context.newPage();
 	await page.goto( `/?page_id=${ pageId }&q=search` );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeAttached();
 	const found = await types( page );
 	expect( found.length ).toBeGreaterThan( 0 );
@@ -103,23 +103,23 @@ test( 'its script searches only pages, and shows the scope as no chip', async ( 
 	page,
 } ) => {
 	await page.goto( `/?page_id=${ pageId }` );
-	const box = page.locator( '.viglet-dumont-search input[type="search"]' );
+	const box = page.locator( '.viglet-turing-search input[type="search"]' );
 	await box.fill( 'workshop' );
 	await box.press( 'Enter' );
 	// Every seeded workshop is a post: inside type:page, none is found.
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/No results/
 	);
 
 	await box.fill( 'search' );
 	await box.press( 'Enter' );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	expect( ( await types( page ) ).every( ( t ) => 'Page' === t ) ).toBe(
 		true
 	);
-	await expect( page.locator( '.viglet-dumont-search__chip' ) ).toHaveCount(
+	await expect( page.locator( '.viglet-turing-search__chip' ) ).toHaveCount(
 		0
 	);
 	expect( new URL( page.url() ).searchParams.getAll( 'fq[]' ) ).toEqual( [] );
@@ -137,7 +137,7 @@ test( 'its suggestions stay inside the scope: a term only posts hold is never of
 	} );
 	await page.goto( `/?page_id=${ pageId }` );
 	await page
-		.locator( '.viglet-dumont-search input[type="search"]' )
+		.locator( '.viglet-turing-search input[type="search"]' )
 		.pressSequentially( 'work', { delay: 50 } );
 
 	await expect.poll( () => asked.length ).toBeGreaterThan( 0 );
@@ -145,7 +145,7 @@ test( 'its suggestions stay inside the scope: a term only posts hold is never of
 	// Every seeded workshop is a post, so inside type:page there is nothing to suggest.
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+			.locator( '.viglet-turing-search__suggestions [role="option"]' )
 			.filter( { hasText: 'workshop' } )
 	).toHaveCount( 0 );
 } );

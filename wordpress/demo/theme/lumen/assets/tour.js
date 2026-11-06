@@ -23,7 +23,7 @@
 			};
 	const features = [
 		{
-			selector: '.viglet-dumont-search__form',
+			selector: '.viglet-turing-search__form',
 			chapter: 2,
 			anchor: '#the-turing-search-block',
 			en: [
@@ -36,7 +36,7 @@
 			],
 		},
 		{
-			selector: '.viglet-dumont-search__facets',
+			selector: '.viglet-turing-search__facets',
 			chapter: 1,
 			anchor: '#fields-and-facets',
 			en: [
@@ -49,7 +49,7 @@
 			],
 		},
 		{
-			selector: '.viglet-dumont-search__results',
+			selector: '.viglet-turing-search__results',
 			chapter: 3,
 			anchor: '#fields-and-facets',
 			en: [

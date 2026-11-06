@@ -29,14 +29,14 @@ test.beforeAll( async ( { request } ) => {
 			'--post_type=page',
 			'--post_status=publish',
 			'--post_title=Popular',
-			'--post_content=<!-- wp:viglet-dumont/search {"showTrending":true} /-->',
+			'--post_content=<!-- wp:viglet-turing/search {"showTrending":true} /-->',
 			// Out of the index: its text would be one more result for the other specs.
-			'--meta_input={"_viglet_dumont_exclude":"1"}',
+			'--meta_input={"_viglet_turing_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
 	// The chips as the log reads now, not as an earlier run cached them.
-	wp( [ 'transient', 'delete', 'viglet_dumont_trending' ] );
+	wp( [ 'transient', 'delete', 'viglet_turing_trending' ] );
 } );
 
 test.afterAll( () => {
@@ -57,7 +57,7 @@ test( 'popular searches that find something become chips, and a chip searches fo
 
 	await chip( chips, 'seminar' ).click();
 	await expect(
-		page.locator( '.viglet-dumont-search__title a' ).first()
+		page.locator( '.viglet-turing-search__title a' ).first()
 	).toHaveText( /Seminar on/ );
 	// Once a search is on the page, the chips step aside.
 	await expect( chips ).toBeHidden();
@@ -79,12 +79,12 @@ test( 'spellings of one want show as one chip, under the most searched', async (
 	expect( second ).toBeTruthy();
 
 	const fresh = () =>
-		wp( [ 'transient', 'delete', 'viglet_dumont_trending' ] );
+		wp( [ 'transient', 'delete', 'viglet_turing_trending' ] );
 	try {
 		wp( [
 			'option',
 			'update',
-			'viglet_dumont_trending_groups',
+			'viglet_turing_trending_groups',
 			JSON.stringify( [ [ 'seminar', 'workshop' ] ] ),
 			'--format=json',
 		] );
@@ -92,7 +92,7 @@ test( 'spellings of one want show as one chip, under the most searched', async (
 			'option',
 			'patch',
 			'update',
-			'viglet_dumont_settings',
+			'viglet_turing_settings',
 			'generative_ai',
 			'1',
 		] );
@@ -105,11 +105,11 @@ test( 'spellings of one want show as one chip, under the most searched', async (
 			'option',
 			'patch',
 			'update',
-			'viglet_dumont_settings',
+			'viglet_turing_settings',
 			'generative_ai',
 			'0',
 		] );
-		wp( [ 'option', 'delete', 'viglet_dumont_trending_groups' ] );
+		wp( [ 'option', 'delete', 'viglet_turing_trending_groups' ] );
 		fresh();
 	}
 } );
@@ -120,10 +120,10 @@ test.describe( 'as the site owner', () => {
 	test( 'a word blocked in Settings never shows as a chip', async ( {
 		page,
 	} ) => {
-		const settings = '/wp-admin/admin.php?page=viglet-dumont';
+		const settings = '/wp-admin/admin.php?page=viglet-turing';
 		const save = async ( words ) => {
 			await page.goto( settings );
-			await page.click( '.viglet-dumont-tab[data-tab="search"]' );
+			await page.click( '.viglet-turing-tab[data-tab="search"]' );
 			await page.getByLabel( 'Never show' ).fill( words );
 			await page.getByRole( 'button', { name: 'Save Settings' } ).click();
 			await expect( page.getByLabel( 'Never show' ) ).toHaveValue(

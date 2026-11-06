@@ -5,7 +5,7 @@
 //   run-docker.cmd demo     # once: the demo storefront beside it, on localhost:38082
 //   npm run test:e2e        # seed, log in, run every spec
 //   npm run test:e2e:demo   # the demo storefront's specs alone
-//   npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
+//   npm run e2e:look -- /wp-admin/admin.php?page=viglet-turing-health
 //
 // Drives the installed Microsoft Edge (`channel: msedge`), so no browser download is needed;
 // set E2E_CHANNEL=chromium after `npx playwright install chromium` to use that instead.

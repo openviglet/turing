@@ -20,7 +20,7 @@
 	const { useBlockProps, InspectorControls } = wp.blockEditor;
 	const { PanelBody, Placeholder, TextControl, ToggleControl } =
 		wp.components;
-	const shop = !! ( window.vigletDumontCopilot || {} ).shop;
+	const shop = !! ( window.vigletTuringCopilot || {} ).shop;
 
 	/**
 	 * The block in the editor.
@@ -158,7 +158,7 @@
 		);
 	}
 
-	wp.blocks.registerBlockType( 'viglet-dumont/copilot', {
+	wp.blocks.registerBlockType( 'viglet-turing/copilot', {
 		edit: Edit,
 		save: () => null,
 	} );

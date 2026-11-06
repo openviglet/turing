@@ -3,7 +3,7 @@
  * The Site assistant (D175): a conversation with Turing's chat over this site's posts, as a
  * block or, with the setting on, as a launcher in a corner of every page.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Puts the assistant in every page's footer when the site asks for it, and picks the first
  * questions it suggests.
  */
-class Viglet_Dumont_Assistant {
+class Viglet_Turing_Assistant {
 
 	/** The block, which the launcher renders too. */
-	public const BLOCK = 'viglet-dumont/assistant';
+	public const BLOCK = 'viglet-turing/assistant';
 
 	/** The most first questions suggested. */
 	public const MAX_SUGGESTIONS = 4;
@@ -35,7 +35,7 @@ class Viglet_Dumont_Assistant {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -59,8 +59,8 @@ class Viglet_Dumont_Assistant {
 		if ( ! $this->wanted() ) {
 			return;
 		}
-		wp_enqueue_script_module( 'viglet-dumont/assistant-block' );
-		wp_enqueue_style( 'viglet-dumont-assistant-block' );
+		wp_enqueue_script_module( 'viglet-turing/assistant-block' );
+		wp_enqueue_style( 'viglet-turing-assistant-block' );
 	}
 
 	/**
@@ -103,8 +103,8 @@ class Viglet_Dumont_Assistant {
 	 * @return string[]
 	 */
 	public function suggestions( string $lines ): array {
-		$own = Viglet_Dumont_Trending::lines( $lines );
-		$top = $own ? $own : ( new Viglet_Dumont_Trending( $this->settings ) )->chips();
+		$own = Viglet_Turing_Trending::lines( $lines );
+		$top = $own ? $own : ( new Viglet_Turing_Trending( $this->settings ) )->chips();
 
 		return array_slice( $top, 0, self::MAX_SUGGESTIONS );
 	}

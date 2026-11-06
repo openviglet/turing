@@ -3,7 +3,7 @@
  * Product comparison (D200): up to four WooCommerce products side by side, in a table of what
  * they all have, with the rows where they differ marked.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Builds the comparison table and finds the page that shows it.
  */
-class Viglet_Dumont_Compare {
+class Viglet_Turing_Compare {
 
 	/** The most products compared at once. */
 	public const MAX = 4;
@@ -128,9 +128,9 @@ class Viglet_Dumont_Compare {
 		// The same products, unchanged, answer from Turing's cache. The facts are in the key too,
 		// so a summary written from differently built facts (D249) is not served again.
 		$modified = array_map( static fn ( int $id ) => (string) get_post_modified_time( 'U', true, $id ), $ids );
-		$key      = 'viglet-dumont-compare-' . md5( $locale . "\n" . implode( ',', $ids ) . "\n" . implode( ',', $modified ) . "\n" . wp_json_encode( $data ) );
+		$key      = 'viglet-turing-compare-' . md5( $locale . "\n" . implode( ',', $ids ) . "\n" . implode( ',', $modified ) . "\n" . wp_json_encode( $data ) );
 
-		$result = ( new Viglet_Dumont_API_Client() )->summary( $key, $data, $prompt, $again );
+		$result = ( new Viglet_Turing_API_Client() )->summary( $key, $data, $prompt, $again );
 		if ( is_wp_error( $result ) ) {
 			return array(
 				'summary' => '',
@@ -195,7 +195,7 @@ class Viglet_Dumont_Compare {
 
 	/**
 	 * The page holding the compare block: the first published one, as the search page is
-	 * found (Viglet_Dumont_Native_Search::search_page()).
+	 * found (Viglet_Turing_Native_Search::search_page()).
 	 */
 	public static function page_url(): string {
 		$found = get_posts(
@@ -206,7 +206,7 @@ class Viglet_Dumont_Compare {
 				'fields'      => 'ids',
 				'orderby'     => 'ID',
 				'order'       => 'ASC',
-				's'           => 'wp:viglet-dumont/compare',
+				's'           => 'wp:viglet-turing/compare',
 			)
 		);
 

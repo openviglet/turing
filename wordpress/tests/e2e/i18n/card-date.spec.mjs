@@ -18,15 +18,15 @@ test.beforeAll( ( { seed } ) => {
 	saved = ask( [
 		'option',
 		'get',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		'--format=json',
 	] );
 	wp( [
 		'eval',
-		`$m = get_option( 'viglet_dumont_mapping' );
+		`$m = get_option( 'viglet_turing_mapping' );
 		$m['post']['fields'][] = array( 'source' => 'meta:event_day', 'field' => 'event_day', 'type' => 'DATE', 'facet_label' => 'Dia', 'card' => true );
 		$m['post']['card_date'] = 'event_day';
-		update_option( 'viglet_dumont_mapping', $m );`,
+		update_option( 'viglet_turing_mapping', $m );`,
 	] );
 	wp( [
 		'post',
@@ -36,19 +36,19 @@ test.beforeAll( ( { seed } ) => {
 		'event_day',
 		'2026-11-20',
 	] );
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test.afterAll( ( { seed } ) => {
 	wp( [
 		'option',
 		'update',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		saved,
 		'--format=json',
 	] );
 	wp( [ 'post', 'meta', 'delete', String( seed.postId ), 'event_day' ] );
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test( "a type's card date is its mapped DATE field, in pt_BR", async ( {
@@ -65,13 +65,13 @@ test( "a type's card date is its mapped DATE field, in pt_BR", async ( {
 		`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( title ) }`
 	);
 	const result = page
-		.locator( '.viglet-dumont-search__result' )
+		.locator( '.viglet-turing-search__result' )
 		.filter( { hasText: title } )
 		.first();
 
 	// "20 de nov. de 2026" from the script, "20 de novembro de 2026" on the first paint.
 	await expect( result.locator( 'time' ) ).toHaveText( /^20 de nov/ );
 	await expect(
-		result.locator( '.viglet-dumont-search__card-field' )
+		result.locator( '.viglet-turing-search__card-field' )
 	).toHaveText( /Dia:?\s*20 de nov/ );
 } );

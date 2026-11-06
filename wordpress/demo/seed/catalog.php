@@ -14,7 +14,7 @@
  *
  * Prints JSON: { products: <count>, colours: <count>, guides: <count>, pages: { … } }.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
@@ -381,9 +381,9 @@ $guides = require __DIR__ . '/journal.php';
 
 // Products indexed, the shop's fields as facets: category, price ranges, stock, colour, material,
 // use and size.
-$settings                       = viglet_dumont_get_settings();
+$settings                       = viglet_turing_get_settings();
 $settings['index_custom_types'] = array( 'product' );
-viglet_dumont_update_settings( $settings );
+viglet_turing_update_settings( $settings );
 
 $facet   = static fn ( string $source, string $field, string $label, bool $multi = true ) => array(
 	'source'      => $source,
@@ -393,7 +393,7 @@ $facet   = static fn ( string $source, string $field, string $label, bool $multi
 	'facet'       => true,
 	'facet_label' => $label,
 );
-$mapping            = get_option( 'viglet_dumont_mapping', array() );
+$mapping            = get_option( 'viglet_turing_mapping', array() );
 $mapping['product'] = array(
 	'exclude' => false,
 	'fields'  => array(
@@ -424,10 +424,10 @@ $mapping['product'] = array(
 		$facet( 'taxonomy:pa_size', 'pa_size', $tr( 'labels', 'Size' ) ),
 	),
 );
-update_option( 'viglet_dumont_mapping', $mapping, false );
+update_option( 'viglet_turing_mapping', $mapping, false );
 
 // Words a shopper uses for the same thing.
-$tuning = new Viglet_Dumont_Tuning();
+$tuning = new Viglet_Turing_Tuning();
 $have   = $tuning->all();
 $kept   = is_wp_error( $have ) ? array() : array_map( static fn ( $row ) => implode( '|', $row['terms'] ), (array) $have['synonyms'] );
 foreach ( $pt['synonyms'] ?? array(

@@ -65,9 +65,9 @@ while ($true) {
 }
 
 function Token() {
-    $body = @{ title = 'viglet-dumont-wp'; description = 'WordPress plugin, local Docker' }
+    $body = @{ title = 'viglet-turing-wp'; description = 'WordPress plugin, local Docker' }
     if ($PartitionValue) {
-        $body.title = "viglet-dumont-wp $PartitionValue"
+        $body.title = "viglet-turing-wp $PartitionValue"
         $body.partitionField = $PartitionField
         $body.partitionValue = $PartitionValue
     }

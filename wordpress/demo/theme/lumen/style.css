@@ -61,7 +61,7 @@ button {
 	font-family: inherit;
 }
 
-.lumen-hero .viglet-dumont-search input[type="search"] {
+.lumen-hero .viglet-turing-search input[type="search"] {
 	font-size: var(--wp--preset--font-size--medium);
 	padding: 0.75rem 1rem;
 }

@@ -10,7 +10,7 @@ test( 'Setup tests the connection and every step passes', async ( {
 	look,
 	axe,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-setup' );
 	await expect(
 		page.getByRole( 'heading', { name: '1. Connection' } )
 	).toBeVisible();
@@ -23,7 +23,7 @@ test( 'Setup tests the connection and every step passes', async ( {
 	await page
 		.getByRole( 'button', { name: 'Save and test the connection' } )
 		.click();
-	const steps = page.locator( '#viglet-dumont-setup li' );
+	const steps = page.locator( '#viglet-turing-setup li' );
 	await expect( steps ).toHaveCount( 5 );
 	await expect( steps.filter( { hasText: '✗' } ) ).toHaveCount( 0 );
 	await expect(
@@ -38,7 +38,7 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 	look,
 	axe,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-fields' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-fields' );
 	const post = page.locator( '.components-card' ).filter( {
 		has: page.getByRole( 'heading', { name: 'post', exact: true } ),
 	} );
@@ -72,7 +72,7 @@ test( 'Health checks the AI features on demand, and every one that is off says w
 	look,
 	axe,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 	const card = page
 		.locator( '.components-card' )
 		.filter( { hasText: 'AI features' } );
@@ -108,7 +108,7 @@ test( 'Health shows published and indexed counts that agree, and the events', as
 	look,
 	axe,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 	// The notice, not WordPress's screen-reader echo of it.
 	await expect(
 		page

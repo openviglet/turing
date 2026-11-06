@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Post State
+ * Viglet Turing Post State
  *
  * Tells an editor whether a post is in the index: a column in the post lists and a panel in
  * the block editor's sidebar, both reading the same state.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Where a post stands with Turing, from its queue job, its recorded send and its exclusion.
  */
-class Viglet_Dumont_Post_State {
+class Viglet_Turing_Post_State {
 
 	/** How much of a post's text the excerpt draft reads: the opening is what an excerpt sums up. */
 	private const EXCERPT_SOURCE_CHARS = 6000;
@@ -33,14 +33,14 @@ class Viglet_Dumont_Post_State {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
 	 * Hook the list column, the editor panel and their REST routes.
 	 */
 	public function register(): void {
-		foreach ( viglet_dumont_get_indexable_types() as $type ) {
+		foreach ( viglet_turing_get_indexable_types() as $type ) {
 			add_filter( "manage_{$type}_posts_columns", array( $this, 'add_column' ) );
 			add_action( "manage_{$type}_posts_custom_column", array( $this, 'render_column' ), 10, 2 );
 		}
@@ -57,13 +57,13 @@ class Viglet_Dumont_Post_State {
 	 * @return array{state: string, label: string, detail: string}
 	 */
 	public function describe( WP_Post $post ): array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 
 		if ( 'publish' !== $post->post_status ) {
 			return $this->state( 'unpublished', __( 'Not published', 'viglet-turing-search' ) );
 		}
 		// D308: a post past its type's "Leaves search on" date says so, and one before it says when.
-		$expiry = ( new Viglet_Dumont_Mapping( $this->settings ) )->expiry( $post );
+		$expiry = ( new Viglet_Turing_Mapping( $this->settings ) )->expiry( $post );
 		if ( null !== $expiry && $expiry <= time() ) {
 			return $this->state( 'expired', __( 'Out of search: the date has passed', 'viglet-turing-search' ) );
 		}
@@ -76,7 +76,7 @@ class Viglet_Dumont_Post_State {
 			wp_date( get_option( 'date_format' ), $expiry - 1 )
 		);
 
-		$job = ( new Viglet_Dumont_Queue( $this->settings ) )->jobs()[ $post->ID ] ?? null;
+		$job = ( new Viglet_Turing_Queue( $this->settings ) )->jobs()[ $post->ID ] ?? null;
 		if ( is_array( $job ) ) {
 			if ( ! empty( $job['failed'] ) ) {
 				return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $job['error'] );
@@ -84,7 +84,7 @@ class Viglet_Dumont_Post_State {
 			return $this->state( 'queued', __( 'Queued', 'viglet-turing-search' ), (string) $job['error'] );
 		}
 
-		$recorded = get_post_meta( $post->ID, Viglet_Dumont_Queue::STATE_META, true );
+		$recorded = get_post_meta( $post->ID, Viglet_Turing_Queue::STATE_META, true );
 		$recorded = is_array( $recorded ) ? $recorded : array();
 		if ( '' !== ( $recorded['error'] ?? '' ) ) {
 			return $this->state( 'failed', __( 'Failed', 'viglet-turing-search' ), (string) $recorded['error'] );
@@ -107,7 +107,7 @@ class Viglet_Dumont_Post_State {
 	 * @param array $columns The list's columns.
 	 */
 	public function add_column( array $columns ): array {
-		$columns['viglet_dumont'] = __( 'Search', 'viglet-turing-search' );
+		$columns['viglet_turing'] = __( 'Search', 'viglet-turing-search' );
 		return $columns;
 	}
 
@@ -119,13 +119,13 @@ class Viglet_Dumont_Post_State {
 	 */
 	public function render_column( string $column, int $post_id ): void {
 		$post = get_post( $post_id );
-		if ( 'viglet_dumont' !== $column || ! $post instanceof WP_Post ) {
+		if ( 'viglet_turing' !== $column || ! $post instanceof WP_Post ) {
 			return;
 		}
 
 		$state = $this->describe( $post );
 		printf(
-			'<span class="viglet-dumont-state viglet-dumont-state--%1$s" title="%2$s">%3$s</span>',
+			'<span class="viglet-turing-state viglet-turing-state--%1$s" title="%2$s">%3$s</span>',
 			esc_attr( $state['state'] ),
 			esc_attr( $state['detail'] ),
 			esc_html( $state['label'] )
@@ -137,29 +137,29 @@ class Viglet_Dumont_Post_State {
 	 */
 	public function enqueue_editor_panel(): void {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! $screen || ! in_array( $screen->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+		if ( ! $screen || ! in_array( $screen->post_type, viglet_turing_get_indexable_types(), true ) ) {
 			return;
 		}
 
 		wp_enqueue_script(
-			'viglet-dumont-editor',
-			VIGLET_DUMONT_URL . 'admin/js/editor-panel.js',
+			'viglet-turing-editor',
+			VIGLET_TURING_URL . 'admin/js/editor-panel.js',
 			array( 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-blocks', 'wp-block-editor', 'wp-escape-html', 'wp-core-data' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
-		wp_set_script_translations( 'viglet-dumont-editor', 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( 'viglet-turing-editor', 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
 	}
 
 	/**
-	 * `GET viglet-dumont/v1/post/<id>/state`, `POST .../reindex`, `GET .../assist` and
+	 * `GET viglet-turing/v1/post/<id>/state`, `POST .../reindex`, `GET .../assist` and
 	 * `POST .../excerpt`, for whoever can edit the post.
 	 */
 	public function register_routes(): void {
 		$can_edit = static fn ( WP_REST_Request $request ) => current_user_can( 'edit_post', (int) $request['id'] );
 
 		register_rest_route(
-			'viglet-dumont/v1',
+			'viglet-turing/v1',
 			'/post/(?P<id>\d+)/state',
 			array(
 				'methods'             => 'GET',
@@ -168,7 +168,7 @@ class Viglet_Dumont_Post_State {
 			)
 		);
 		register_rest_route(
-			'viglet-dumont/v1',
+			'viglet-turing/v1',
 			'/post/(?P<id>\d+)/reindex',
 			array(
 				'methods'             => 'POST',
@@ -177,7 +177,7 @@ class Viglet_Dumont_Post_State {
 			)
 		);
 		register_rest_route(
-			'viglet-dumont/v1',
+			'viglet-turing/v1',
 			'/post/(?P<id>\d+)/assist',
 			array(
 				'methods'             => 'GET',
@@ -186,7 +186,7 @@ class Viglet_Dumont_Post_State {
 			)
 		);
 		register_rest_route(
-			'viglet-dumont/v1',
+			'viglet-turing/v1',
 			'/post/(?P<id>\d+)/excerpt',
 			array(
 				'methods'             => 'POST',
@@ -202,7 +202,7 @@ class Viglet_Dumont_Post_State {
 		);
 		// Audience fit (D171): GET lists the site's personas, POST judges the saved post.
 		register_rest_route(
-			'viglet-dumont/v1',
+			'viglet-turing/v1',
 			'/post/(?P<id>\d+)/fit',
 			array(
 				array(
@@ -228,7 +228,7 @@ class Viglet_Dumont_Post_State {
 	 * @return array<int, array{id: string, name: string}>
 	 */
 	public function personas(): array {
-		$personas = ( new Viglet_Dumont_API_Client( $this->settings ) )->personas();
+		$personas = ( new Viglet_Turing_API_Client( $this->settings ) )->personas();
 		if ( ! is_array( $personas ) ) {
 			return array();
 		}
@@ -260,7 +260,7 @@ class Viglet_Dumont_Post_State {
 				'error' => __( 'Save some text first: the fit is judged on the saved post.', 'viglet-turing-search' ),
 			);
 		}
-		$client = new Viglet_Dumont_API_Client( $this->settings );
+		$client = new Viglet_Turing_API_Client( $this->settings );
 		$fits   = array();
 		$error  = '';
 		foreach ( array_slice( $this->personas(), 0, self::FIT_PERSONAS ) as $persona ) {
@@ -347,9 +347,9 @@ class Viglet_Dumont_Post_State {
 			$locale
 		);
 		// Keyed by what was read, so an edited post gets a new draft and an unchanged one the cached.
-		$key = 'viglet-dumont-excerpt-' . md5( $locale . "\n" . $data );
+		$key = 'viglet-turing-excerpt-' . md5( $locale . "\n" . $data );
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings ) )->summary( $key, $data, $prompt, $again );
+		$result = ( new Viglet_Turing_API_Client( $this->settings ) )->summary( $key, $data, $prompt, $again );
 		if ( is_wp_error( $result ) ) {
 			return array(
 				'excerpt' => '',
@@ -394,8 +394,8 @@ class Viglet_Dumont_Post_State {
 	 * @return array{basis: string, covered: array<int, array{title: string, url: string}>, links: array<int, array{title: string, url: string}>}
 	 */
 	public function assist( WP_Post $post ): array {
-		$client  = new Viglet_Dumont_API_Client( $this->settings );
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$client  = new Viglet_Turing_API_Client( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$doc_id  = $indexer->build_doc_id( $post->ID );
 		$pick    = static fn ( array $docs ): array => array_values(
 			array_map(
@@ -479,11 +479,11 @@ class Viglet_Dumont_Post_State {
 	 * @return array The state, with `entities` when there are any to read.
 	 */
 	public function with_entities( WP_Post $post, array $state ): array {
-		if ( 'indexed' !== ( $state['state'] ?? '' ) || ! Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+		if ( 'indexed' !== ( $state['state'] ?? '' ) || ! Viglet_Turing_Entities::extracts( $this->settings ) ) {
 			return $state;
 		}
-		$doc_id   = ( new Viglet_Dumont_Indexer( $this->settings ) )->build_doc_id( $post->ID );
-		$entities = ( new Viglet_Dumont_Entities( $this->settings ) )->of_document( new Viglet_Dumont_API_Client( $this->settings ), $doc_id );
+		$doc_id   = ( new Viglet_Turing_Indexer( $this->settings ) )->build_doc_id( $post->ID );
+		$entities = ( new Viglet_Turing_Entities( $this->settings ) )->of_document( new Viglet_Turing_API_Client( $this->settings ), $doc_id );
 		// A failed read leaves the names out: the state above it is what the panel is for.
 		$state['entities'] = is_wp_error( $entities ) ? array() : $entities;
 
@@ -497,27 +497,27 @@ class Viglet_Dumont_Post_State {
 	 */
 	public function rest_reindex( WP_REST_Request $request ): WP_REST_Response {
 		$post_id = (int) $request['id'];
-		$result  = ( new Viglet_Dumont_Operations( $this->settings ) )->index( array( $post_id ) );
+		$result  = ( new Viglet_Turing_Operations( $this->settings ) )->index( array( $post_id ) );
 
 		$post = get_post( $post_id );
 		if ( $post instanceof WP_Post ) {
-			$state = get_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, true );
+			$state = get_post_meta( $post_id, Viglet_Turing_Queue::STATE_META, true );
 			$state = is_array( $state ) ? $state : array();
 			if ( 0 === $result['failed'] ) {
 				// An excluded or unpublished post was sent as a delete: it is now out of the index.
-				$state['indexed_at'] = ( new Viglet_Dumont_Indexer( $this->settings ) )->should_index( $post ) ? time() : null;
+				$state['indexed_at'] = ( new Viglet_Turing_Indexer( $this->settings ) )->should_index( $post ) ? time() : null;
 				$state['error']      = '';
 				$state['attempts']   = 0;
 			} else {
 				$state['error'] = $result['errors'][ $post_id ] ?? '';
 			}
-			update_post_meta( $post_id, Viglet_Dumont_Queue::STATE_META, $state );
+			update_post_meta( $post_id, Viglet_Turing_Queue::STATE_META, $state );
 		}
 
 		$body = $post instanceof WP_Post ? $this->with_entities( $post, $this->describe( $post ) ) : array();
 		if ( 0 !== $result['failed'] ) {
 			// Any client gets Turing's reason, not only the panel that reads `detail` (D330).
-			$reason          = Viglet_Dumont_Events::text( $result['errors'][ $post_id ] ?? '' );
+			$reason          = Viglet_Turing_Events::text( $result['errors'][ $post_id ] ?? '' );
 			$body['message'] = '' !== $reason ? $reason : __( 'Turing did not take the post.', 'viglet-turing-search' );
 		}
 

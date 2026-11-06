@@ -12,7 +12,7 @@
  * slug>.webp and demo/photos/guide/<guide slug>.webp, cropped to the drawing's frame. Where none
  * was bought, the seed draws its own.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.

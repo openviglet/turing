@@ -1,5 +1,5 @@
 {
-  "name": "viglet-dumont-wordpress-admin",
+  "name": "viglet-turing-wordpress-admin",
   "private": true,
   "description": "The plugin's admin screens, built with @wordpress/scripts into src/admin/build/.",
   "license": "MIT",

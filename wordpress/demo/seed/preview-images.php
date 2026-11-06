@@ -4,7 +4,7 @@
  * `docker compose run --rm --no-deps cli-demo wp eval-file /demo/seed/preview-images.php`,
  * then open /wp-content/uploads/tarnfell-preview.webp on the demo site.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.

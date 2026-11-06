@@ -19,7 +19,7 @@ test( 'a stopped edit is warned about, then replayed once Turing answers', async
 	// The job as the worker leaves it after its last failed attempt.
 	wp( [
 		'eval',
-		`update_option( Viglet_Dumont_Queue::OPTION, array( ${ seed.postId } => array( 'action' => 'index', 'queued_at' => time() - 4 * HOUR_IN_SECONDS, 'attempts' => Viglet_Dumont_Queue::MAX_ATTEMPTS, 'next_at' => time() - 60, 'error' => 'HTTP 503', 'failed' => true ) ), false );`,
+		`update_option( Viglet_Turing_Queue::OPTION, array( ${ seed.postId } => array( 'action' => 'index', 'queued_at' => time() - 4 * HOUR_IN_SECONDS, 'attempts' => Viglet_Turing_Queue::MAX_ATTEMPTS, 'next_at' => time() - 60, 'error' => 'HTTP 503', 'failed' => true ) ), false );`,
 	] );
 
 	await page.goto( '/wp-admin/index.php' );
@@ -29,16 +29,16 @@ test( 'a stopped edit is warned about, then replayed once Turing answers', async
 	await expect( notice ).toBeVisible();
 	await expect(
 		notice.getByRole( 'link', { name: 'Search health' } )
-	).toHaveAttribute( 'href', /page=viglet-dumont-health/ );
+	).toHaveAttribute( 'href', /page=viglet-turing-health/ );
 
 	// Turing is up: the worker asks, replays the edit and sends it, with no click.
-	wp( [ 'dumont', 'queue', 'run' ] );
+	wp( [ 'turing', 'queue', 'run' ] );
 	await expect
 		.poll(
 			() =>
 				ask( [
 					'eval',
-					'echo count( ( new Viglet_Dumont_Queue() )->jobs() );',
+					'echo count( ( new Viglet_Turing_Queue() )->jobs() );',
 				] ),
 			{ timeout: 60_000 }
 		)

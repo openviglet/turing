@@ -1,8 +1,8 @@
 <?php
 /**
- * Viglet Dumont WP-CLI commands: `wp dumont status|index|reindex|sweep`.
+ * Viglet Turing WP-CLI commands: `wp turing status|index|reindex|sweep`.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Loads, reloads and cleans the index from a script, so a container's first boot or a reset
  * dev stack needs no click in wp-admin.
  */
-class Viglet_Dumont_CLI {
+class Viglet_Turing_CLI {
 
 	/**
 	 * Show the connection, the SN site and site key, documents per type in WordPress versus
@@ -26,13 +26,13 @@ class Viglet_Dumont_CLI {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont status
+	 *     wp turing status
 	 *
 	 * @param array $args       Positional arguments (none).
 	 * @param array $assoc_args `format`.
 	 */
 	public function status( array $args, array $assoc_args ): void {
-		$status = ( new Viglet_Dumont_Operations() )->status();
+		$status = ( new Viglet_Turing_Operations() )->status();
 
 		if ( 'json' === ( $assoc_args['format'] ?? 'table' ) ) {
 			WP_CLI::log( (string) wp_json_encode( $status, JSON_PRETTY_PRINT ) );
@@ -79,15 +79,15 @@ class Viglet_Dumont_CLI {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont index
-	 *     wp dumont index --type=page --since="-1 day"
-	 *     wp dumont index --ids=12,40
+	 *     wp turing index
+	 *     wp turing index --type=page --since="-1 day"
+	 *     wp turing index --ids=12,40
 	 *
 	 * @param array $args       Positional arguments (none).
 	 * @param array $assoc_args `type`, `ids`, `since`.
 	 */
 	public function index( array $args, array $assoc_args ): void {
-		$operations = new Viglet_Dumont_Operations();
+		$operations = new Viglet_Turing_Operations();
 		$ids        = array_filter( array_map( 'intval', explode( ',', (string) ( $assoc_args['ids'] ?? '' ) ) ) );
 		$post_ids   = $operations->find_post_ids( $assoc_args['type'] ?? null, $ids, $assoc_args['since'] ?? null );
 
@@ -103,10 +103,10 @@ class Viglet_Dumont_CLI {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont reindex
+	 *     wp turing reindex
 	 */
 	public function reindex(): void {
-		$operations = new Viglet_Dumont_Operations();
+		$operations = new Viglet_Turing_Operations();
 		$total      = count( $operations->find_post_ids() );
 		$result     = $operations->reindex( $this->progress( __( 'Reindexing', 'viglet-turing-search' ), $total ) );
 
@@ -131,15 +131,15 @@ class Viglet_Dumont_CLI {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont sweep --dry-run
-	 *     wp dumont sweep
+	 *     wp turing sweep --dry-run
+	 *     wp turing sweep
 	 *
 	 * @param array $args       Positional arguments (none).
 	 * @param array $assoc_args `dry-run`.
 	 */
 	public function sweep( array $args, array $assoc_args ): void {
 		$dry_run = ! empty( $assoc_args['dry-run'] );
-		$result  = ( new Viglet_Dumont_Operations() )->sweep( $dry_run );
+		$result  = ( new Viglet_Turing_Operations() )->sweep( $dry_run );
 
 		foreach ( $result['orphans'] as $doc_id ) {
 			WP_CLI::log( $doc_id );
@@ -185,7 +185,7 @@ class Viglet_Dumont_CLI {
 			WP_CLI::warning(
 				sprintf(
 					/* translators: %d: posts sent that Turing did not answer for in time. */
-					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds.', 'viglet-turing-search' ),
+					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp turing status shows what it holds.', 'viglet-turing-search' ),
 					$result['unconfirmed']
 				)
 			);

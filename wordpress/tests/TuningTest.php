@@ -2,13 +2,13 @@
 /**
  * Search tuning writes only what is its own to Turing, and applies synonyms once written.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Tuning;
+use Viglet_Turing_Tuning;
 use WP_Error;
 
 final class TuningTest extends PluginTestCase {
@@ -69,7 +69,7 @@ final class TuningTest extends PluginTestCase {
 	}
 
 	public function test_a_synonym_is_named_as_the_plugins_and_applied_to_the_engine(): void {
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->add_synonym( array( ' lecture ', 'talk', 'talk', '' ) );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_synonym( array( ' lecture ', 'talk', 'talk', '' ) );
 
 		$this->assertTrue( $result );
 		$this->assertSame(
@@ -90,22 +90,22 @@ final class TuningTest extends PluginTestCase {
 	}
 
 	public function test_one_word_is_not_a_synonym_and_nothing_is_sent(): void {
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->add_synonym( array( 'talk' ) );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_synonym( array( 'talk' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( array(), $this->requests );
 	}
 
 	public function test_what_an_operator_set_in_the_console_is_never_removed_here(): void {
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->remove_synonym( 'operator' );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->remove_synonym( 'operator' );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'viglet_dumont_not_ours', $result->get_error_code() );
+		$this->assertSame( 'viglet_turing_not_ours', $result->get_error_code() );
 		$this->assertNotContains( 'DELETE /api/sn/s1/synonym/operator', $this->calls() );
 	}
 
 	public function test_boosts_replace_the_plugins_ranking_expressions_and_leave_an_operators(): void {
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->set_boosts( true, false, array( 'page' => 'down' ) );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->set_boosts( true, false, array( 'page' => 'down' ) );
 
 		$this->assertTrue( $result );
 		$this->assertContains( 'DELETE /api/sn/s1/ranking-expression/old', $this->calls() );
@@ -132,12 +132,12 @@ final class TuningTest extends PluginTestCase {
 	public function test_suggestions_leave_out_wildcards_prefixes_and_single_words(): void {
 		$this->assertSame(
 			array( array( 'terms' => array( 'lecture', 'talk' ) ) ),
-			( new Viglet_Dumont_Tuning( $this->settings() ) )->suggestions()
+			( new Viglet_Turing_Tuning( $this->settings() ) )->suggestions()
 		);
 	}
 
 	public function test_the_plugins_own_synonym_is_removed_and_the_rest_reapplied(): void {
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->remove_synonym( 'ours' );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->remove_synonym( 'ours' );
 
 		$this->assertTrue( $result );
 		$this->assertSame(
@@ -188,7 +188,7 @@ final class TuningTest extends PluginTestCase {
 
 		Functions\when( 'get_post_type_object' )->justReturn( null );
 
-		$all = ( new Viglet_Dumont_Tuning( $this->settings() ) )->all();
+		$all = ( new Viglet_Turing_Tuning( $this->settings() ) )->all();
 
 		$this->assertNull( $all['boosts'] );
 		$this->assertStringContainsString( 'bound to a partition of a shared site', $all['boosts_off'] );
@@ -197,7 +197,7 @@ final class TuningTest extends PluginTestCase {
 	public function test_a_refused_synonym_names_turings_reason(): void {
 		$this->refuse_with( 'This API key is bound to a partition of a shared site, and the site\'s synonyms are one set shared by every partition; change them with an unpartitioned key' );
 
-		$result = ( new Viglet_Dumont_Tuning( $this->settings() ) )->add_synonym( array( 'lecture', 'talk' ) );
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_synonym( array( 'lecture', 'talk' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertStringContainsString( 'shared by every partition', $result->get_error_message() );
@@ -230,7 +230,7 @@ final class TuningTest extends PluginTestCase {
 
 		Functions\when( 'get_post_type_object' )->justReturn( null );
 
-		$all = ( new Viglet_Dumont_Tuning( $this->settings() ) )->all();
+		$all = ( new Viglet_Turing_Tuning( $this->settings() ) )->all();
 
 		$this->assertNull( $all['boosts'] );
 		$this->assertSame( '', $all['boosts_off'] );

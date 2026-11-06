@@ -16,7 +16,7 @@ test( 'the excerpt drafted for the grant post keeps its deadline', async ( {
 	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
 		await guide.click();
 	}
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	await openPostSettings( page );
 	const draftButton = panel.getByRole( 'button', {
 		name: 'Draft an excerpt',
@@ -29,7 +29,7 @@ test( 'the excerpt drafted for the grant post keeps its deadline', async ( {
 
 	const started = Date.now();
 	await draftButton.click();
-	const draft = panel.locator( '.viglet-dumont-assist__draft' );
+	const draft = panel.locator( '.viglet-turing-assist__draft' );
 	await expect( draft ).toHaveText( /14(th)? March|March 14/i, {
 		timeout: 60000,
 	} );
@@ -64,7 +64,7 @@ test( 'the grant post is scored for the audience persona of the site, with a rea
 	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
 		await guide.click();
 	}
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	await openPostSettings( page );
 	const check = panel.getByRole( 'button', { name: 'Check audience fit' } );
 	if ( ! ( await check.isVisible().catch( () => false ) ) ) {
@@ -75,12 +75,12 @@ test( 'the grant post is scored for the audience persona of the site, with a rea
 
 	const started = Date.now();
 	await check.click();
-	const score = panel.locator( '.viglet-dumont-assist__fit li strong' );
+	const score = panel.locator( '.viglet-turing-assist__fit li strong' );
 	await expect( score ).toHaveText( /^Grant applicant: \d{1,3}%$/, {
 		timeout: 60000,
 	} );
 	const answer = await panel
-		.locator( '.viglet-dumont-assist__fit > ul > li' )
+		.locator( '.viglet-turing-assist__fit > ul > li' )
 		.first()
 		.textContent();
 	record(

@@ -5,7 +5,7 @@
  * one seed writes whichever language the site speaks. Written for Brazilian shoppers: numbers
  * in Brazilian notation, units and sizes as they are.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- seed data read by WP-CLI, not plugin code.

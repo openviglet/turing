@@ -1,14 +1,14 @@
 <?php
 /**
- * The bulk operations behind `wp dumont`: index by ids, sweep the orphans, report status.
+ * The bulk operations behind `wp turing`: index by ids, sweep the orphans, report status.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Operations;
+use Viglet_Turing_Operations;
 use WP_Post;
 use WP_Query;
 
@@ -80,8 +80,8 @@ final class OperationsTest extends PluginTestCase {
 		);
 	}
 
-	private function operations(): Viglet_Dumont_Operations {
-		return new Viglet_Dumont_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) );
+	private function operations(): Viglet_Turing_Operations {
+		return new Viglet_Turing_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) );
 	}
 
 	/** Every job item sent to the import endpoint, as [action, id]. */
@@ -118,7 +118,7 @@ final class OperationsTest extends PluginTestCase {
 		$this->status = 500;
 		$done         = array();
 
-		$result = ( new Viglet_Dumont_Operations(
+		$result = ( new Viglet_Turing_Operations(
 			$this->settings(
 				array(
 					'site_key'   => 'site-a',
@@ -181,7 +181,7 @@ final class OperationsTest extends PluginTestCase {
 			'detail'   => 'The monthly AI budget of this site is spent.',
 			'seen_at'  => time(),
 		);
-		$options = array( 'viglet_dumont_ai_quota' => $quota );
+		$options = array( 'viglet_turing_ai_quota' => $quota );
 		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback );
 		Functions\stubs(
 			array(
@@ -241,7 +241,7 @@ final class OperationsTest extends PluginTestCase {
 
 	public function test_status_counts_as_published_only_what_the_index_would_hold(): void {
 		// D284: a post kept out of the index is never in Turing, so it is not a difference.
-		Functions\when( 'get_post_meta' )->alias( static fn ( $id, $key ) => 2 === $id && '_viglet_dumont_exclude' === $key ? '1' : '' );
+		Functions\when( 'get_post_meta' )->alias( static fn ( $id, $key ) => 2 === $id && '_viglet_turing_exclude' === $key ? '1' : '' );
 		$this->held = array( 'site-a:post:1', 'site-a:post:3' );
 		Functions\stubs( array( 'wp_cache_delete' => true ) );
 

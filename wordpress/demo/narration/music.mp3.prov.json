@@ -6,7 +6,7 @@
   },
   "borrowed": {
     "commit": null,
-    "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+    "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-turing-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
     "project": null
   },
   "credit": "Music: Monday Market Open, generated with Google Gemini (Lyria)",
@@ -16,7 +16,7 @@
   },
   "inputs": [
     {
-      "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-dumont-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
+      "path": "C:/Users/alexa/AppData/Local/Temp/claude/D--Git-viglet-turing-2026-3/57db0c9e-2049-4263-9926-d15f0c88103e/scratchpad/music-candidate/monday-market-open.loop.mp3",
       "role": "borrowed",
       "sha256": "ce12a49fbe4a75a1de7b85f02e4566fe871cf558a24ad3407152fead25f9190d"
     }

@@ -1,6 +1,6 @@
 /**
  * The Search tuning page (D172): synonyms and promoted results on the SN site, written through
- * `viglet-dumont/v1/tuning` to Turing's console APIs with the stored key. What an operator
+ * `viglet-turing/v1/tuning` to Turing's console APIs with the stored key. What an operator
  * made in Turing's console is listed but never edited here.
  */
 import apiFetch from '@wordpress/api-fetch';
@@ -66,7 +66,7 @@ function Suggestions( { act } ) {
 
 	const suggest = () => {
 		setBusy( true );
-		apiFetch( { path: '/viglet-dumont/v1/tuning/suggestions' } )
+		apiFetch( { path: '/viglet-turing/v1/tuning/suggestions' } )
 			.then( setSuggestions )
 			.catch( () => setSuggestions( [] ) )
 			.finally( () => setBusy( false ) );
@@ -96,7 +96,7 @@ function Suggestions( { act } ) {
 								variant="link"
 								onClick={ () =>
 									act( {
-										path: '/viglet-dumont/v1/tuning/synonym',
+										path: '/viglet-turing/v1/tuning/synonym',
 										method: 'POST',
 										data: { terms: suggestion.terms },
 									} ).then(
@@ -143,7 +143,7 @@ function TryIt( { version } ) {
 	const run = useCallback(
 		( q ) =>
 			apiFetch( {
-				path: `/viglet-dumont/v1/tuning/try?q=${ encodeURIComponent( q ) }`,
+				path: `/viglet-turing/v1/tuning/try?q=${ encodeURIComponent( q ) }`,
 			} ).catch( () => [] ),
 		[]
 	);
@@ -295,7 +295,7 @@ function Synonyms( { rows, act } ) {
 											) }
 											onRemove={ () =>
 												act( {
-													path: `/viglet-dumont/v1/tuning/synonym/${ row.id }`,
+													path: `/viglet-turing/v1/tuning/synonym/${ row.id }`,
 													method: 'DELETE',
 												} )
 											}
@@ -310,7 +310,7 @@ function Synonyms( { rows, act } ) {
 					onSubmit={ ( event ) => {
 						event.preventDefault();
 						act( {
-							path: '/viglet-dumont/v1/tuning/synonym',
+							path: '/viglet-turing/v1/tuning/synonym',
 							method: 'POST',
 							data: { terms: terms.split( ',' ) },
 						} ).then( ( ok ) => ok && setTerms( '' ) );
@@ -433,7 +433,7 @@ function Promoted( { rows, act } ) {
 											) }
 											onRemove={ () =>
 												act( {
-													path: `/viglet-dumont/v1/tuning/spotlight/${ row.id }`,
+													path: `/viglet-turing/v1/tuning/spotlight/${ row.id }`,
 													method: 'DELETE',
 												} )
 											}
@@ -448,7 +448,7 @@ function Promoted( { rows, act } ) {
 					onSubmit={ ( event ) => {
 						event.preventDefault();
 						act( {
-							path: '/viglet-dumont/v1/tuning/spotlight',
+							path: '/viglet-turing/v1/tuning/spotlight',
 							method: 'POST',
 							data: {
 								query,
@@ -628,7 +628,7 @@ function Boosts( { boosts, off, types, act } ) {
 					onSubmit={ ( event ) => {
 						event.preventDefault();
 						act( {
-							path: '/viglet-dumont/v1/tuning/boosts',
+							path: '/viglet-turing/v1/tuning/boosts',
 							method: 'POST',
 							data: { recency, sticky, types: directions },
 						} );
@@ -734,7 +734,7 @@ function Tuning() {
 	const [ version, setVersion ] = useState( 0 );
 
 	const load = useCallback( () => {
-		apiFetch( { path: '/viglet-dumont/v1/tuning' } )
+		apiFetch( { path: '/viglet-turing/v1/tuning' } )
 			.then( setData )
 			.catch( ( e ) => setError( e.message || String( e ) ) );
 	}, [] );
@@ -785,7 +785,7 @@ function Tuning() {
 	);
 }
 
-const mount = document.getElementById( 'viglet-dumont-tuning' );
+const mount = document.getElementById( 'viglet-turing-tuning' );
 if ( mount ) {
 	createRoot( mount ).render( <Tuning /> );
 }

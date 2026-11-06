@@ -15,7 +15,7 @@ const [ main, second ] = networkSites.map( ( url ) => {
 		[
 			`--url=${ url }`,
 			'eval',
-			'echo ( new Viglet_Dumont_Indexer() )->site_key();',
+			'echo ( new Viglet_Turing_Indexer() )->site_key();',
 		],
 		'cli-ms'
 	)

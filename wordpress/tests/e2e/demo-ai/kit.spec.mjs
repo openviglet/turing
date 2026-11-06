@@ -30,7 +30,7 @@ test.beforeEach( async ( { page } ) => {
 	test.skip( 'en_US' !== demoLocale(), `the demo speaks ${ demoLocale() }` );
 	await page.goto( '/showcase/' );
 	const on = await page
-		.locator( '.viglet-dumont-copilot__modes' )
+		.locator( '.viglet-turing-copilot__modes' )
 		.waitFor( { state: 'visible', timeout: 15_000 } )
 		.then( () => true )
 		.catch( () => false );
@@ -44,9 +44,9 @@ for ( const { plan, gaps } of plans ) {
 	test( `"${ plan }" stages seeded, sellable products for each need`, async ( {
 		page,
 	} ) => {
-		const block = page.locator( '.viglet-dumont-copilot' );
+		const block = page.locator( '.viglet-turing-copilot' );
 		await block
-			.locator( '.viglet-dumont-copilot__modes' )
+			.locator( '.viglet-turing-copilot__modes' )
 			.getByRole( 'button', { name: 'Plan a kit' } )
 			.click();
 		await block.getByLabel( 'Describe your plan' ).fill( plan );
@@ -102,11 +102,11 @@ for ( const { plan, gaps } of plans ) {
 		}
 
 		// What the shop cannot sell is marked and kept out; the rest is offered for the cart.
-		const view = block.locator( '.viglet-dumont-copilot__kit' );
+		const view = block.locator( '.viglet-turing-copilot__kit' );
 		await expect(
-			view.locator( '.viglet-dumont-copilot__stage' )
+			view.locator( '.viglet-turing-copilot__stage' )
 		).toHaveCount( kit.stages.length );
-		const items = view.locator( '.viglet-dumont-copilot__kit-item' );
+		const items = view.locator( '.viglet-turing-copilot__kit-item' );
 		await expect( items ).toHaveCount( staged.length );
 		const sellable = staged.filter(
 			( product ) =>
@@ -128,7 +128,7 @@ for ( const { plan, gaps } of plans ) {
 			)
 			.filter( Boolean );
 		test.skip( ! chosen.length, 'nothing in this kit can be bought' );
-		const add = view.locator( '.viglet-dumont-copilot__kit-cart button' );
+		const add = view.locator( '.viglet-turing-copilot__kit-cart button' );
 		await expect( add ).toHaveText(
 			1 === chosen.length
 				? 'Add 1 product to the cart'
@@ -137,7 +137,7 @@ for ( const { plan, gaps } of plans ) {
 
 		// Prices and the total are WooCommerce's, never the model's.
 		await add.click();
-		const status = view.locator( '.viglet-dumont-copilot__kit-status' );
+		const status = view.locator( '.viglet-turing-copilot__kit-status' );
 		await expect( status ).toContainText(
 			`Added ${ chosen.length } to your cart.`
 		);

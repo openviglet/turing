@@ -26,7 +26,7 @@ rem   run-docker.cmd fresh reset  delete it, to record that video again
 rem   run-docker.cmd stop       stop the containers, keep the data
 rem   run-docker.cmd reset      stop and delete WordPress, its database and Turing's store
 rem   run-docker.cmd logs [svc] follow a log: wordpress (default), turing or db
-rem   run-docker.cmd wp ...     run WP-CLI, e.g. run-docker.cmd wp dumont queue status
+rem   run-docker.cmd wp ...     run WP-CLI, e.g. run-docker.cmd wp turing queue status
 rem
 rem On first run the SN site is created in the local Turing and the plugin gets an API key for
 rem it. Override with environment variables before calling: WP_PORT (8080), TURING_PORT (2700),
@@ -80,15 +80,15 @@ goto :wait
 %WP% core is-installed >nul 2>&1
 if errorlevel 1 (
     echo Installing WordPress...
-    %WP% core install --url=http://localhost:%WP_PORT% --title="Viglet Dumont test" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
-    %WP% plugin activate viglet-dumont || exit /b 1
+    %WP% core install --url=http://localhost:%WP_PORT% --title="Viglet Turing test" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+    %WP% plugin activate viglet-turing || exit /b 1
 ) else (
-    %WP% plugin activate viglet-dumont >nul 2>&1
+    %WP% plugin activate viglet-turing >nul 2>&1
 )
 
 rem The SN site is converged on every start; a key is minted only while the plugin has none.
 set "KEY="
-for /f "delims=" %%k in ('%WP% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
+for /f "delims=" %%k in ('%WP% option pluck viglet_turing_settings api_key 2^>nul') do set "KEY=%%k"
 if "%KEY%"=="" (
     set "NEWKEY="
     for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_SITE%" -Locale "%TURING_LOCALE%"') do set "NEWKEY=%%k"
@@ -99,14 +99,14 @@ if "%KEY%"=="" (
 
 echo.
 echo WordPress:  http://localhost:%WP_PORT%/wp-admin   (admin / admin)
-echo Plugin:     http://localhost:%WP_PORT%/wp-admin/admin.php?page=viglet-dumont
+echo Plugin:     http://localhost:%WP_PORT%/wp-admin/admin.php?page=viglet-turing
 echo Turing:     http://localhost:%TURING_PORT%   (admin / %TURING_ADMIN_PASSWORD%), SN site %SN_SITE%
-echo WP-CLI:     run-docker.cmd wp dumont queue status
+echo WP-CLI:     run-docker.cmd wp turing queue status
 exit /b 0
 
 :setkey
 if "%NEWKEY%"=="" ( echo Turing was not provisioned; the plugin has no API key yet. & exit /b 0 )
-%WP% option patch update viglet_dumont_settings api_key "%NEWKEY%" >nul
+%WP% option patch update viglet_turing_settings api_key "%NEWKEY%" >nul
 echo The plugin has an API key for the local Turing.
 exit /b 0
 
@@ -138,7 +138,7 @@ set "SITE=%D_SITE%"
 set "LOCALE=%D_LOCALE%"
 if defined RESET (
     %DC% --profile demo rm -s -f wordpress-demo%SFX% cron-demo%SFX% db-demo%SFX%
-    docker volume rm viglet-dumont-wp_wp-demo%SFX% viglet-dumont-wp_db-demo%SFX%
+    docker volume rm viglet-turing-wp_wp-demo%SFX% viglet-turing-wp_db-demo%SFX%
     exit /b 0
 )
 rem The single site and Turing first: the demo shares that Turing.
@@ -162,10 +162,10 @@ if errorlevel 1 (
     echo Installing the demo WordPress...
     %WPD% core install --url=%DEMOURL% --title="%D_TITLE%" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
 )
-%WPD% plugin activate viglet-dumont >nul 2>&1
+%WPD% plugin activate viglet-turing >nul 2>&1
 
 set "KEY="
-for /f "delims=" %%k in ('%WPD% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
+for /f "delims=" %%k in ('%WPD% option pluck viglet_turing_settings api_key 2^>nul') do set "KEY=%%k"
 if "%KEY%"=="" (
     for /f "delims=" %%k in ('powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SITE%" -Locale "%LOCALE%"') do set "KEY=%%k"
 ) else (
@@ -174,7 +174,7 @@ if "%KEY%"=="" (
 if "%KEY%"=="" ( echo Turing was not provisioned for %SITE%; the demo has no API key. & exit /b 1 )
 rem The key, the SN site and the language it indexes and searches in (D272, D274), as the site's
 rem own settings.
-%WPD% eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%KEY%'; $s['site_name'] = '%SITE%'; $s['locale'] = '%LOCALE%'; update_option( 'viglet_dumont_settings', $s );" || exit /b 1
+%WPD% eval "$s = get_option( 'viglet_turing_settings', array() ); $s['api_key'] = '%KEY%'; $s['site_name'] = '%SITE%'; $s['locale'] = '%LOCALE%'; update_option( 'viglet_turing_settings', $s );" || exit /b 1
 
 %WPD% theme activate %D_THEME% || exit /b 1
 rem The site speaks its language, and the seed writes its content in it (D217).
@@ -191,7 +191,7 @@ if defined D_WOO (
 rem The seed sets the shop's addresses in its language (D266), after WooCommerce registered them.
 %WPD% rewrite flush --hard || exit /b 1
 rem The seed makes its posts indexable after saving them, so nothing queued them: send them now.
-%WPD% dumont reindex || exit /b 1
+%WPD% turing reindex || exit /b 1
 rem The site's search history, once the content it finds is indexed (D269).
 if defined D_HISTORY (
     %WPD% eval-file %D_HISTORY% || exit /b 1
@@ -209,7 +209,7 @@ rem container never had the plugin, so the developer video installs the release 
 if "%WP_FRESH_PORT%"=="" set "WP_FRESH_PORT=38084"
 if /i "%~2"=="reset" (
     %DC% --profile fresh rm -s -f wordpress-fresh cron-fresh db-fresh
-    docker volume rm viglet-dumont-wp_wp-fresh viglet-dumont-wp_db-fresh
+    docker volume rm viglet-turing-wp_wp-fresh viglet-turing-wp_db-fresh
     exit /b 0
 )
 rem The single site and Turing first: the fresh store connects to that Turing.
@@ -234,9 +234,9 @@ echo Installing the fresh WordPress and its catalog...
 %WPF% theme activate tarnfell || exit /b 1
 %WPF% rewrite structure "/%%postname%%/" --hard || exit /b 1
 %WPF% plugin install woocommerce --activate || exit /b 1
-%WPF% plugin activate viglet-dumont || exit /b 1
+%WPF% plugin activate viglet-turing || exit /b 1
 %WPF% eval-file /demo/seed/catalog.php || exit /b 1
-%WPF% plugin deactivate viglet-dumont || exit /b 1
+%WPF% plugin deactivate viglet-turing || exit /b 1
 %WPF% eval-file /demo/seed/forget-plugin.php || exit /b 1
 %WPF% rewrite flush --hard || exit /b 1
 
@@ -268,18 +268,18 @@ goto :waitms
 %WPMS% core is-installed --network >nul 2>&1
 if errorlevel 1 (
     echo Installing the multisite network...
-    %WPMS% core multisite-install --url=%MSURL% --title="Viglet Dumont network" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
+    %WPMS% core multisite-install --url=%MSURL% --title="Viglet Turing network" --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email || exit /b 1
     %DC% run --rm --no-deps --entrypoint sh cli-ms -c "cp /dumont/multisite.htaccess /var/www/html/.htaccess" || exit /b 1
     %WPMS% site create --slug=second --title="Second site" --email=admin@example.org || exit /b 1
 )
-%WPMS% plugin activate viglet-dumont --network >nul 2>&1
+%WPMS% plugin activate viglet-turing --network >nul 2>&1
 
 rem Each site of the network holds its own key, bound to its site key (D190), so neither can
 rem reach the other's documents. A key without a partition provisions the SN site's fields
 rem once, since a partitioned key may not change the schema every site shares.
 set "SETUP=powershell -NoProfile -ExecutionPolicy Bypass -File bin\turing-setup.ps1 -Base http://localhost:%TURING_PORT% -Password "%TURING_ADMIN_PASSWORD%" -Site "%SN_MS_SITE%" -Locale "%TURING_LOCALE%""
 set "KEY="
-for /f "delims=" %%k in ('%WPMS% option pluck viglet_dumont_settings api_key 2^>nul') do set "KEY=%%k"
+for /f "delims=" %%k in ('%WPMS% option pluck viglet_turing_settings api_key 2^>nul') do set "KEY=%%k"
 if not "%KEY%"=="" (
     %SETUP% -NoToken
     goto :networkready
@@ -288,7 +288,7 @@ for /f "delims=" %%k in ('%SETUP%') do set "KEY=%%k"
 if "%KEY%"=="" ( echo Turing was not provisioned for %SN_MS_SITE%; the network has no API key. & exit /b 1 )
 call :storekey %MSURL%/ %KEY% || exit /b 1
 echo Provisioning the network's fields...
-%WPMS% --url=%MSURL%/ dumont reindex >nul || exit /b 1
+%WPMS% --url=%MSURL%/ turing reindex >nul || exit /b 1
 for %%u in (%MSURL%/ %MSURL%/second/) do call :partitionkey %%u || exit /b 1
 
 :networkready
@@ -299,13 +299,13 @@ exit /b 0
 
 :storekey
 rem %1 the site URL, %2 the key it stores.
-%WPMS% --url=%1 eval "$s = get_option( 'viglet_dumont_settings', array() ); $s['api_key'] = '%2'; update_option( 'viglet_dumont_settings', $s );"
+%WPMS% --url=%1 eval "$s = get_option( 'viglet_turing_settings', array() ); $s['api_key'] = '%2'; update_option( 'viglet_turing_settings', $s );"
 exit /b %ERRORLEVEL%
 
 :partitionkey
 rem %1 the site URL: mints a key bound to that site's key and stores it there.
 set "SITEKEY="
-for /f "delims=" %%s in ('%WPMS% --url^=%1 eval "echo ( new Viglet_Dumont_Indexer() )->site_key();"') do set "SITEKEY=%%s"
+for /f "delims=" %%s in ('%WPMS% --url^=%1 eval "echo ( new Viglet_Turing_Indexer() )->site_key();"') do set "SITEKEY=%%s"
 if "%SITEKEY%"=="" ( echo %1 has no site key. & exit /b 1 )
 set "PKEY="
 for /f "delims=" %%k in ('%SETUP% -TokenOnly -PartitionValue "%SITEKEY%"') do set "PKEY=%%k"

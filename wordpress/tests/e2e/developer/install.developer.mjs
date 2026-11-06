@@ -120,7 +120,7 @@ test.beforeAll( async ( { playwright } ) => {
 	// The store must be as `run-docker.cmd fresh` leaves it: the plugin is what this installs.
 	const installed = await fetch(
 		new URL(
-			'/wp-content/plugins/viglet-turing-search/viglet-dumont.php',
+			'/wp-content/plugins/viglet-turing-search/viglet-turing.php',
 			test.info().project.use.baseURL
 		)
 	);
@@ -249,7 +249,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 	await chapter(
 		'2. Connects it to Viglet Turing on the Setup page',
 		async () => {
-			await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
+			await page.goto( '/wp-admin/admin.php?page=viglet-turing-setup' );
 			const field = ( label ) =>
 				page.getByLabel( label, { exact: true } );
 			const connecting = speak( 'chapter-2' );
@@ -284,21 +284,21 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 		"3. Chooses what to index: the shop's products",
 		async () => {
 			await page.goto(
-				'/wp-admin/admin.php?page=viglet-dumont#indexing'
+				'/wp-admin/admin.php?page=viglet-turing#indexing'
 			);
 			const choosing = speak( 'chapter-3' );
-			await page.click( '.viglet-dumont-tab[data-tab="indexing"]' );
+			await page.click( '.viglet-turing-tab[data-tab="indexing"]' );
 			const products = page.locator(
 				'input[name$="[index_custom_types][]"][value="product"]'
 			);
 			// The toggle draws over its checkbox, which is hidden: the label is what a person
 			// sees and clicks.
 			const toggle = page
-				.locator( 'label.viglet-dumont-toggle' )
+				.locator( 'label.viglet-turing-toggle' )
 				.filter( { has: products } );
 			await toggle.scrollIntoViewIfNeeded();
 			await focus(
-				page.locator( '#panel-indexing .viglet-dumont-card' ).first()
+				page.locator( '#panel-indexing .viglet-turing-card' ).first()
 			);
 			await linger( 1.5 );
 			await toggle.click();
@@ -309,7 +309,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 				page.getByRole( 'button', { name: 'Save Settings' } ).click(),
 			] );
 			// Saved: the page comes back on its first tab, and Indexing shows Products on.
-			await page.click( '.viglet-dumont-tab[data-tab="indexing"]' );
+			await page.click( '.viglet-turing-tab[data-tab="indexing"]' );
 			await expect( products ).toBeChecked();
 			await toggle.scrollIntoViewIfNeeded();
 			await highlight();
@@ -317,7 +317,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 	);
 
 	await chapter( '4. Runs the first index, with its progress', async () => {
-		await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
+		await page.goto( '/wp-admin/admin.php?page=viglet-turing-setup' );
 		await page
 			.getByRole( 'button', { name: 'Save and test the connection' } )
 			.click();
@@ -344,7 +344,7 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 		'5. The storefront searches through Viglet Turing',
 		async () => {
 			await page.goto( '/?pagename=search-gear' );
-			const block = page.locator( '.viglet-dumont-search' );
+			const block = page.locator( '.viglet-turing-search' );
 			const box = block.locator( 'input[type="search"]' ).first();
 			const searching = speak( 'chapter-5' );
 			await focus( box );
@@ -353,14 +353,14 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			await until( searching );
 			await box.press( 'Enter' );
 			await expect(
-				block.locator( '.viglet-dumont-search__title a' ).first()
+				block.locator( '.viglet-turing-search__title a' ).first()
 			).toBeVisible();
 			await highlight();
 		}
 	);
 
 	await chapter( '6. Insights show what visitors searched for', async () => {
-		await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+		await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 		const looking = speak( 'chapter-6' );
 		await page.getByLabel( 'Period' ).selectOption( 'today' );
 		const top = page.locator( '.components-card' ).filter( {

@@ -2,13 +2,13 @@
 /**
  * The Setup page's connection test names what failed.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Diagnostics;
+use Viglet_Turing_Diagnostics;
 use WP_Error;
 
 final class DiagnosticsTest extends PluginTestCase {
@@ -39,7 +39,7 @@ final class DiagnosticsTest extends PluginTestCase {
 	}
 
 	private function run_with( array $overrides = array() ): array {
-		return ( new Viglet_Dumont_Diagnostics( $this->settings( $overrides ) ) )->run();
+		return ( new Viglet_Turing_Diagnostics( $this->settings( $overrides ) ) )->run();
 	}
 
 	private function failed_step( array $result ): array {
@@ -102,11 +102,11 @@ final class DiagnosticsTest extends PluginTestCase {
 	}
 
 	public function test_in_demo_mode_no_key_is_asked_for_and_the_site_is_checked_by_a_public_search(): void {
-		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		putenv( 'VIGLET_TURING_DEMO=1' );
 		try {
 			$result = $this->run_with( array( 'api_key' => '' ) );
 		} finally {
-			putenv( 'VIGLET_DUMONT_DEMO' );
+			putenv( 'VIGLET_TURING_DEMO' );
 		}
 
 		$this->assertTrue( $result['ok'] );
@@ -115,12 +115,12 @@ final class DiagnosticsTest extends PluginTestCase {
 	}
 
 	public function test_in_demo_mode_a_site_that_needs_a_key_fails_at_the_site(): void {
-		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		putenv( 'VIGLET_TURING_DEMO=1' );
 		$this->plan = array( 401, '' );
 		try {
 			$step = $this->failed_step( $this->run_with( array( 'api_key' => '' ) ) );
 		} finally {
-			putenv( 'VIGLET_DUMONT_DEMO' );
+			putenv( 'VIGLET_TURING_DEMO' );
 		}
 
 		$this->assertSame( 'site', $step['step'] );

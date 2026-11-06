@@ -9,7 +9,7 @@ test( "the agenda's tour numbers its features by the story's chapters", async ( 
 	axe,
 } ) => {
 	await page.goto( '/agenda/?q=*&tour=1' );
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/result/
 	);
 	const markers = page.locator( '.lumen-tour__marker' );

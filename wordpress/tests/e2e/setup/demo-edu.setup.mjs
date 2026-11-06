@@ -27,7 +27,7 @@ test( 'the demo school is up, seeded from today and indexed', async () => {
 		.pop();
 	mkdirSync( dirname( schoolFile ), { recursive: true } );
 	writeFileSync( schoolFile, JSON.stringify( { locale, ...seeded } ) );
-	onSchool( [ 'dumont', 'reindex' ] );
+	onSchool( [ 'turing', 'reindex' ] );
 	// Turing commits within a few seconds; the specs read what was just indexed.
 	await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 } );

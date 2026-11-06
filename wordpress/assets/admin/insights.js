@@ -1,6 +1,6 @@
 /**
  * The Search insights page (D178): what visitors searched for in a period, what found nothing
- * and what found results nobody opened, read through `viglet-dumont/v1/insights` from the SN
+ * and what found results nobody opened, read through `viglet-turing/v1/insights` from the SN
  * site's metrics in Turing with the stored key. Nothing here changes the site; "Write about
  * this" opens a new draft titled with the search.
  */
@@ -62,7 +62,7 @@ function draftUrl( term ) {
  * @param {string} term The search.
  */
 function synonymUrl( term ) {
-	return `admin.php?page=viglet-dumont-tuning&synonym=${ encodeURIComponent(
+	return `admin.php?page=viglet-turing-tuning&synonym=${ encodeURIComponent(
 		term
 	) }`;
 }
@@ -81,7 +81,7 @@ function Summary( { period } ) {
 	const ask = ( again ) => {
 		setBusy( true );
 		apiFetch( {
-			path: `/viglet-dumont/v1/insights/summary?period=${ period }${
+			path: `/viglet-turing/v1/insights/summary?period=${ period }${
 				again ? '&again=1' : ''
 			}`,
 		} )
@@ -105,7 +105,7 @@ function Summary( { period } ) {
 				) }
 				{ answer?.summary && (
 					<p
-						className="viglet-dumont-insights__summary"
+						className="viglet-turing-insights__summary"
 						style={ { whiteSpace: 'pre-line' } }
 					>
 						{ answer.summary }
@@ -293,7 +293,7 @@ function Insights() {
 
 	useEffect( () => {
 		let current = true;
-		apiFetch( { path: `/viglet-dumont/v1/insights?period=${ period }` } )
+		apiFetch( { path: `/viglet-turing/v1/insights?period=${ period }` } )
 			.then( ( report ) => current && setAnswer( { period, report } ) )
 			.catch(
 				( error ) =>
@@ -353,7 +353,7 @@ function Insights() {
 				) }
 			{ report && ( report.searches > 0 || report.failed.length > 0 ) && (
 				<>
-					<p className="viglet-dumont-insights__totals">
+					<p className="viglet-turing-insights__totals">
 						{ sprintf(
 							/* translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click. */
 							__(
@@ -436,7 +436,7 @@ function Insights() {
 	);
 }
 
-const mount = document.getElementById( 'viglet-dumont-insights' );
+const mount = document.getElementById( 'viglet-turing-insights' );
 if ( mount ) {
 	createRoot( mount ).render( <Insights /> );
 }

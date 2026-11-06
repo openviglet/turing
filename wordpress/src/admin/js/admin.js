@@ -1,13 +1,13 @@
 /**
- * Viglet Dumont Admin JavaScript
+ * Viglet Turing Admin JavaScript
  */
 (function ($) {
     'use strict';
 
     var api = {
-        url: vigletDumont.restUrl,
-        nonce: vigletDumont.nonce,
-        strings: vigletDumont.strings,
+        url: vigletTuring.restUrl,
+        nonce: vigletTuring.nonce,
+        strings: vigletTuring.strings,
 
         request: function (method, endpoint, data) {
             return $.ajax({
@@ -24,9 +24,9 @@
 
     // Tab switching
     function initTabs() {
-        var $tabs = $('.viglet-dumont-tab');
-        var $panels = $('.viglet-dumont-panel');
-        var $save = $('#viglet-dumont-save');
+        var $tabs = $('.viglet-turing-tab');
+        var $panels = $('.viglet-turing-panel');
+        var $save = $('#viglet-turing-save');
 
         $tabs.on('click', function (e) {
             e.preventDefault();
@@ -59,17 +59,17 @@
 
     // Status badge helper
     function statusBadge(type, message) {
-        return '<span class="viglet-dumont-status viglet-dumont-status--' + type + '">' +
-            (type === 'loading' ? '<span class="viglet-dumont-spinner"></span>' : '') +
+        return '<span class="viglet-turing-status viglet-turing-status--' + type + '">' +
+            (type === 'loading' ? '<span class="viglet-turing-spinner"></span>' : '') +
             message + '</span>';
     }
 
     // Test connection
     function initPing() {
-        $('#viglet-dumont-ping, #viglet-dumont-action-ping').on('click', function () {
-            var $result = $(this).attr('id') === 'viglet-dumont-ping'
-                ? $('#viglet-dumont-ping-result')
-                : $('#viglet-dumont-action-ping-result');
+        $('#viglet-turing-ping, #viglet-turing-action-ping').on('click', function () {
+            var $result = $(this).attr('id') === 'viglet-turing-ping'
+                ? $('#viglet-turing-ping-result')
+                : $('#viglet-turing-action-ping-result');
 
             $result.html(statusBadge('loading', api.strings.pinging));
 
@@ -90,11 +90,11 @@
     // Index All (D331): the button only starts a reindex that WP-Cron runs, so this page can
     // close at any moment. While it stays open it shows how the run goes, read every few seconds.
     function initIndexing() {
-        var $btn = $('#viglet-dumont-index-all');
-        var $progress = $('#viglet-dumont-index-progress');
-        var $fill = $progress.find('.viglet-dumont-progress__fill');
-        var $text = $progress.find('.viglet-dumont-progress__text');
-        var $msg = $progress.find('.viglet-dumont-progress__message');
+        var $btn = $('#viglet-turing-index-all');
+        var $progress = $('#viglet-turing-index-progress');
+        var $fill = $progress.find('.viglet-turing-progress__fill');
+        var $text = $progress.find('.viglet-turing-progress__text');
+        var $msg = $progress.find('.viglet-turing-progress__message');
         var timer = null;
         var started = '';
 
@@ -156,7 +156,7 @@
             $btn.prop('disabled', true);
 
             api.request('POST', 'reindex', {
-                type: $('#viglet-dumont-index-type').val()
+                type: $('#viglet-turing-index-type').val()
             }).done(function (report) {
                 started = report.running ? report.running.id : '';
                 show(report);
@@ -184,10 +184,10 @@
 
     // Delete all
     function initDeleteAll() {
-        $('#viglet-dumont-delete-all').on('click', function () {
+        $('#viglet-turing-delete-all').on('click', function () {
             if (!confirm(api.strings.confirm_del)) return;
 
-            var $result = $('#viglet-dumont-delete-result');
+            var $result = $('#viglet-turing-delete-result');
             var $btn = $(this).prop('disabled', true);
 
             $result.html(statusBadge('loading', api.strings.deleting));
@@ -207,7 +207,7 @@
 
     // Load content stats
     function loadStats() {
-        var $grid = $('#viglet-dumont-stats-grid');
+        var $grid = $('#viglet-turing-stats-grid');
 
         api.request('GET', 'stats').done(function (data) {
             var html = '';
@@ -218,15 +218,15 @@
                 var entry = data[key];
                 if (!entry || typeof entry !== 'object' || typeof entry.total !== 'number') return;
                 total += entry.total;
-                html += '<div class="viglet-dumont-stat">' +
-                    '<span class="viglet-dumont-stat__number">' + data[key].total + '</span>' +
-                    '<span class="viglet-dumont-stat__label">' + data[key].label + '</span>' +
+                html += '<div class="viglet-turing-stat">' +
+                    '<span class="viglet-turing-stat__number">' + data[key].total + '</span>' +
+                    '<span class="viglet-turing-stat__label">' + data[key].label + '</span>' +
                     '</div>';
             });
 
-            html = '<div class="viglet-dumont-stat">' +
-                '<span class="viglet-dumont-stat__number">' + total + '</span>' +
-                '<span class="viglet-dumont-stat__label">' + api.strings.total + '</span>' +
+            html = '<div class="viglet-turing-stat">' +
+                '<span class="viglet-turing-stat__number">' + total + '</span>' +
+                '<span class="viglet-turing-stat__label">' + api.strings.total + '</span>' +
                 '</div>' + html;
 
             $grid.html(html);

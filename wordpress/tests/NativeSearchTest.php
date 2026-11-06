@@ -2,14 +2,14 @@
 /**
  * Turing answers WordPress's own search query; the theme renders it.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Native_Search;
+use Viglet_Turing_Native_Search;
 use WP_Error;
 use WP_Post;
 
@@ -54,8 +54,8 @@ final class NativeSearchTest extends PluginTestCase {
 		);
 	}
 
-	private function search(): Viglet_Dumont_Native_Search {
-		return new Viglet_Dumont_Native_Search( $this->settings( array( 'site_key' => 'site-a' ) ) );
+	private function search(): Viglet_Turing_Native_Search {
+		return new Viglet_Turing_Native_Search( $this->settings( array( 'site_key' => 'site-a' ) ) );
 	}
 
 	public function test_the_answer_is_this_sites_post_ids_in_turings_order_with_the_total(): void {
@@ -87,7 +87,7 @@ final class NativeSearchTest extends PluginTestCase {
 	public function test_the_theme_search_reads_the_siblings_as_alternatives_without_the_key(): void {
 		$this->held = array( 'site-b:post:4', 'site-a:post:7', 'site-c:post:1' );
 
-		$found = ( new Viglet_Dumont_Native_Search(
+		$found = ( new Viglet_Turing_Native_Search(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -125,7 +125,7 @@ final class NativeSearchTest extends PluginTestCase {
 		Functions\when( 'has_block' )->justReturn( true );
 
 		$_GET = array( 'q' => 'workshop' );
-		$this->assertSame( array(), Viglet_Dumont_Native_Search::robots( array() ) );
+		$this->assertSame( array(), Viglet_Turing_Native_Search::robots( array() ) );
 
 		foreach ( array(
 			'fq'   => array( 'seats:40' ),
@@ -141,14 +141,14 @@ final class NativeSearchTest extends PluginTestCase {
 					'noindex' => true,
 					'follow'  => true,
 				),
-				Viglet_Dumont_Native_Search::robots( array() ),
+				Viglet_Turing_Native_Search::robots( array() ),
 				$key
 			);
 		}
 
 		// A refined URL on a page without the block is not this plugin's to judge.
 		Functions\when( 'has_block' )->justReturn( false );
-		$this->assertSame( array(), Viglet_Dumont_Native_Search::robots( array() ) );
+		$this->assertSame( array(), Viglet_Turing_Native_Search::robots( array() ) );
 		$_GET = array();
 	}
 
@@ -158,7 +158,7 @@ final class NativeSearchTest extends PluginTestCase {
 		Functions\when( 'get_post_status' )->justReturn( 'publish' );
 		Functions\when( 'get_posts' )->justReturn( array( 7 ) );
 
-		$chosen = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_page' => 12 ) ) );
+		$chosen = new Viglet_Turing_Native_Search( $this->settings( array( 'search_page' => 12 ) ) );
 		$this->assertSame(
 			array(
 				'searchPage' => 'https://example.org/?page_id=12',
@@ -167,7 +167,7 @@ final class NativeSearchTest extends PluginTestCase {
 			$chosen->search_page()
 		);
 
-		$found = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_page' => 0 ) ) );
+		$found = new Viglet_Turing_Native_Search( $this->settings( array( 'search_page' => 0 ) ) );
 		$this->assertSame( 'https://example.org/?page_id=7', $found->search_page()['searchPage'] );
 
 		Functions\when( 'get_posts' )->justReturn( array() );
@@ -189,7 +189,7 @@ final class NativeSearchTest extends PluginTestCase {
 		Functions\when( 'esc_url_raw' )->returnArg();
 		Functions\expect( 'get_posts' )->never();
 
-		$remote = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) );
+		$remote = new Viglet_Turing_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) );
 		$this->assertSame(
 			array(
 				'searchPage' => 'https://www.example.org/busca/',
@@ -198,7 +198,7 @@ final class NativeSearchTest extends PluginTestCase {
 			$remote->search_page()
 		);
 
-		$theme = new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/?s=' ) ) );
+		$theme = new Viglet_Turing_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/?s=' ) ) );
 		$this->assertSame( 's', $theme->search_page()['queryParam'] );
 	}
 
@@ -206,15 +206,15 @@ final class NativeSearchTest extends PluginTestCase {
 	public function test_a_results_page_url_must_be_https_and_not_this_site(): void {
 		Functions\when( 'esc_url_raw' )->returnArg();
 
-		$this->assertSame( 'https://www.example.org/busca/', Viglet_Dumont_Native_Search::sanitize_search_url( ' https://www.example.org/busca/ ' ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( 'http://www.example.org/busca/' ), 'not https' );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( '/busca/' ), 'not absolute' );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( 'https://site.example.org/?s=' ), 'this site' );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_search_url( '' ) );
+		$this->assertSame( 'https://www.example.org/busca/', Viglet_Turing_Native_Search::sanitize_search_url( ' https://www.example.org/busca/ ' ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_search_url( 'http://www.example.org/busca/' ), 'not https' );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_search_url( '/busca/' ), 'not absolute' );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_search_url( 'https://site.example.org/?s=' ), 'this site' );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_search_url( '' ) );
 
 		// A local stack served over http may point at another http site of the same stack.
 		Functions\when( 'home_url' )->justReturn( 'http://localhost:8081/second/' );
-		$this->assertSame( 'http://localhost:8081/busca/', Viglet_Dumont_Native_Search::sanitize_search_url( 'http://localhost:8081/busca/' ) );
+		$this->assertSame( 'http://localhost:8081/busca/', Viglet_Turing_Native_Search::sanitize_search_url( 'http://localhost:8081/busca/' ) );
 	}
 
 	/** The Explore row keeps labelled http(s) or site-relative links only, at most 8 (D311). */
@@ -257,18 +257,18 @@ final class NativeSearchTest extends PluginTestCase {
 					'url'   => 'http://example.org/bold',
 				),
 			),
-			Viglet_Dumont_Native_Search::sanitize_explore( $typed )
+			Viglet_Turing_Native_Search::sanitize_explore( $typed )
 		);
 
 		$many = implode( "\n", array_map( static fn ( $i ) => "Link $i | /l$i/", range( 1, 12 ) ) );
-		$kept = Viglet_Dumont_Native_Search::sanitize_explore( $many );
-		$this->assertCount( Viglet_Dumont_Native_Search::EXPLORE_MAX, $kept );
+		$kept = Viglet_Turing_Native_Search::sanitize_explore( $many );
+		$this->assertCount( Viglet_Turing_Native_Search::EXPLORE_MAX, $kept );
 		$this->assertSame( '/l8/', $kept[7]['url'] );
 
 		// The stored list saves again unchanged, and a broken entry in it is dropped.
-		$stored = Viglet_Dumont_Native_Search::sanitize_explore( "Events | /events/\nA | B | /a-b/" );
-		$this->assertSame( $stored, Viglet_Dumont_Native_Search::sanitize_explore( array_merge( $stored, array( 'junk', array( 'url' => '/x/' ) ) ) ) );
-		$this->assertSame( array(), Viglet_Dumont_Native_Search::sanitize_explore( '' ) );
+		$stored = Viglet_Turing_Native_Search::sanitize_explore( "Events | /events/\nA | B | /a-b/" );
+		$this->assertSame( $stored, Viglet_Turing_Native_Search::sanitize_explore( array_merge( $stored, array( 'junk', array( 'url' => '/x/' ) ) ) ) );
+		$this->assertSame( array(), Viglet_Turing_Native_Search::sanitize_explore( '' ) );
 	}
 
 	/** Only the immersive overlay shows the Explore row, from the stored list (D311). */
@@ -282,7 +282,7 @@ final class NativeSearchTest extends PluginTestCase {
 			),
 		);
 
-		$immersive = new Viglet_Dumont_Native_Search(
+		$immersive = new Viglet_Turing_Native_Search(
 			$this->settings(
 				array(
 					'overlay_layout'  => 'immersive',
@@ -300,7 +300,7 @@ final class NativeSearchTest extends PluginTestCase {
 		);
 		$this->assertSame( $links, $immersive->overlay_explore() );
 
-		$list = new Viglet_Dumont_Native_Search( $this->settings( array( 'overlay_explore' => $links ) ) );
+		$list = new Viglet_Turing_Native_Search( $this->settings( array( 'overlay_explore' => $links ) ) );
 		$this->assertSame( array(), $list->overlay_explore() );
 	}
 
@@ -308,15 +308,15 @@ final class NativeSearchTest extends PluginTestCase {
 		Functions\when( 'esc_url_raw' )->returnArg();
 		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $fallback );
 
-		$config = ( new Viglet_Dumont_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) ) )->public_config();
+		$config = ( new Viglet_Turing_Native_Search( $this->settings( array( 'search_url' => 'https://www.example.org/busca/' ) ) ) )->public_config();
 		$this->assertSame( 'https://www.example.org/busca/', $config['searchUrl'] );
 
-		$this->assertArrayNotHasKey( 'searchUrl', ( new Viglet_Dumont_Native_Search( $this->settings() ) )->public_config() );
+		$this->assertArrayNotHasKey( 'searchUrl', ( new Viglet_Turing_Native_Search( $this->settings() ) )->public_config() );
 	}
 
 	public function test_the_public_config_carries_no_key_and_lists_the_facets(): void {
 		$options = array(
-			'viglet_dumont_mapping' => array(
+			'viglet_turing_mapping' => array(
 				'post' => array(
 					'fields' => array(
 						array(
@@ -333,7 +333,7 @@ final class NativeSearchTest extends PluginTestCase {
 		);
 		Functions\when( 'get_option' )->alias( static fn ( $name, $fallback = false ) => $options[ $name ] ?? $fallback );
 
-		$config = ( new Viglet_Dumont_Native_Search( $this->settings( array( 'public_url' => 'https://search.example.org/' ) ) ) )->public_config();
+		$config = ( new Viglet_Turing_Native_Search( $this->settings( array( 'public_url' => 'https://search.example.org/' ) ) ) )->public_config();
 
 		$this->assertSame( 'https://search.example.org', $config['url'] );
 		$this->assertSame( 'Sample Site', $config['site'] );
@@ -360,7 +360,7 @@ final class NativeSearchTest extends PluginTestCase {
 	 */
 	public function test_the_public_config_lists_the_card_fields_in_mapping_order(): void {
 		$options = array(
-			'viglet_dumont_mapping' => array(
+			'viglet_turing_mapping' => array(
 				'post' => array(
 					'fields' => array(
 						array(
@@ -410,7 +410,7 @@ final class NativeSearchTest extends PluginTestCase {
 					'type'  => 'STRING',
 				),
 			),
-			( new Viglet_Dumont_Native_Search( $this->settings() ) )->public_config()['cards']
+			( new Viglet_Turing_Native_Search( $this->settings() ) )->public_config()['cards']
 		);
 	}
 
@@ -442,7 +442,7 @@ final class NativeSearchTest extends PluginTestCase {
 				'type'  => 'STRING',
 			),
 		);
-		$lines = Viglet_Dumont_Native_Search::card_values(
+		$lines = Viglet_Turing_Native_Search::card_values(
 			$cards,
 			array(
 				'event_start' => '2026-11-20T13:00:00Z',
@@ -469,7 +469,7 @@ final class NativeSearchTest extends PluginTestCase {
 	}
 
 	public function test_analytics_say_what_is_reported_and_whether_consent_comes_first(): void {
-		$both = new Viglet_Dumont_Native_Search(
+		$both = new Viglet_Turing_Native_Search(
 			$this->settings(
 				array(
 					'track_clicks'      => 1,
@@ -489,10 +489,10 @@ final class NativeSearchTest extends PluginTestCase {
 			$both->analytics()
 		);
 
-		Filters\expectApplied( 'viglet_dumont_tracking_consent' )->andReturn( false );
+		Filters\expectApplied( 'viglet_turing_tracking_consent' )->andReturn( false );
 		$this->assertTrue( $both->analytics()['requireConsent'], 'the filter can make every visitor say yes first' );
 
-		$clicks = new Viglet_Dumont_Native_Search(
+		$clicks = new Viglet_Turing_Native_Search(
 			$this->settings(
 				array(
 					'track_clicks'      => 1,
@@ -505,9 +505,9 @@ final class NativeSearchTest extends PluginTestCase {
 	}
 
 	public function test_only_a_ga4_measurement_id_is_kept(): void {
-		$this->assertSame( 'G-ABC123XYZ', Viglet_Dumont_Native_Search::sanitize_measurement_id( ' g-abc123xyz ' ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'UA-1234-1' ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::sanitize_measurement_id( 'G-"><script>' ) );
+		$this->assertSame( 'G-ABC123XYZ', Viglet_Turing_Native_Search::sanitize_measurement_id( ' g-abc123xyz ' ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_measurement_id( 'UA-1234-1' ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::sanitize_measurement_id( 'G-"><script>' ) );
 	}
 
 	public function test_a_page_opened_with_a_query_draws_its_first_page_unrecorded_in_the_shape_the_script_keeps(): void {
@@ -648,11 +648,11 @@ final class NativeSearchTest extends PluginTestCase {
 
 	/**
 	 * A type whose cards show a mapped date and image draws them on the first page (D305),
-	 * with the card lines, and the card goes through viglet_dumont_result_card.
+	 * with the card lines, and the card goes through viglet_turing_result_card.
 	 */
 	public function test_the_first_page_draws_a_types_card_date_image_and_lines(): void {
 		$options = array(
-			'viglet_dumont_mapping' => array(
+			'viglet_turing_mapping' => array(
 				'post' => array(
 					'fields'     => array(
 						array(
@@ -713,7 +713,7 @@ final class NativeSearchTest extends PluginTestCase {
 				return $answer;
 			}
 		);
-		Filters\expectApplied( 'viglet_dumont_result_card' )->once()->andReturnUsing(
+		Filters\expectApplied( 'viglet_turing_result_card' )->once()->andReturnUsing(
 			static fn ( array $card ) => array_merge( $card, array( 'title' => 'Filtered' ) )
 		);
 
@@ -745,7 +745,7 @@ final class NativeSearchTest extends PluginTestCase {
 	 */
 	public function test_a_foreign_types_label_and_card_date_follow_its_first_value(): void {
 		$options = array(
-			'viglet_dumont_foreign_types' => array(
+			'viglet_turing_foreign_types' => array(
 				'Article' => array(
 					'label'      => 'Journal article',
 					'card_date'  => 'defense_date',
@@ -797,7 +797,7 @@ final class NativeSearchTest extends PluginTestCase {
 				);
 			}
 		);
-		$mapping = new \Viglet_Dumont_Mapping( $this->settings() );
+		$mapping = new \Viglet_Turing_Mapping( $this->settings() );
 		$state   = array(
 			'query'      => 'marshes',
 			'perPage'    => 10,
@@ -830,9 +830,9 @@ final class NativeSearchTest extends PluginTestCase {
 	 * D263: the crumb drops this site's domain, and keeps another site's.
 	 */
 	public function test_crumb_names_the_host_only_for_another_site(): void {
-		$this->assertSame( 'product › catbells', Viglet_Dumont_Native_Search::crumb( 'https://site.example.org/product/catbells/' ) );
-		$this->assertSame( 'other.example › journal › hut', Viglet_Dumont_Native_Search::crumb( 'https://other.example/journal/hut/' ) );
-		$this->assertSame( 'other.example:8081 › hut', Viglet_Dumont_Native_Search::crumb( 'http://other.example:8081/hut' ) );
+		$this->assertSame( 'product › catbells', Viglet_Turing_Native_Search::crumb( 'https://site.example.org/product/catbells/' ) );
+		$this->assertSame( 'other.example › journal › hut', Viglet_Turing_Native_Search::crumb( 'https://other.example/journal/hut/' ) );
+		$this->assertSame( 'other.example:8081 › hut', Viglet_Turing_Native_Search::crumb( 'http://other.example:8081/hut' ) );
 	}
 
 	/**
@@ -841,13 +841,13 @@ final class NativeSearchTest extends PluginTestCase {
 	 */
 	public function test_a_post_indexed_by_another_wordpress_links_and_shows_here_by_id(): void {
 		$this->assertSame(
-			array( 'https://site.example.org?p=10300', 'https://site.example.org?viglet_dumont_image=10300' ),
-			Viglet_Dumont_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'http://localhost:38082/wp-content/uploads/2026/11/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
+			array( 'https://site.example.org?p=10300', 'https://site.example.org?viglet_turing_image=10300' ),
+			Viglet_Turing_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'http://localhost:38082/wp-content/uploads/2026/11/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
 		);
 		// A picture on another host (a CDN) is shown as indexed.
 		$this->assertSame(
 			array( 'https://site.example.org?p=10300', 'https://cdn.example/catbells.webp' ),
-			Viglet_Dumont_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'https://cdn.example/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
+			Viglet_Turing_Native_Search::local_card( 'http://localhost:38082/product/catbells/', 'https://cdn.example/catbells.webp', 'tarnfell:post:10300', 'tarnfell' )
 		);
 		// This site's own address, a sibling's document and a catalog record stay as indexed.
 		foreach ( array(
@@ -855,7 +855,7 @@ final class NativeSearchTest extends PluginTestCase {
 			array( 'https://other.example/hut/', 'https://other.example/a.webp', 'other:post:7' ),
 			array( 'https://other.example/hut/', 'https://other.example/a.webp', 'tarnfell:record:7' ),
 		) as list( $url, $image, $id ) ) {
-			$this->assertSame( array( $url, $image ), Viglet_Dumont_Native_Search::local_card( $url, $image, $id, 'tarnfell' ) );
+			$this->assertSame( array( $url, $image ), Viglet_Turing_Native_Search::local_card( $url, $image, $id, 'tarnfell' ) );
 		}
 	}
 
@@ -881,9 +881,9 @@ final class NativeSearchTest extends PluginTestCase {
 		Functions\when( 'post_password_required' )->justReturn( false );
 		Functions\expect( 'get_the_post_thumbnail_url' )->once()->with( $posts[7], 'large' )->andReturn( 'https://site.example.org/a.webp' );
 
-		$this->assertSame( 'https://site.example.org/a.webp', Viglet_Dumont_Native_Search::image_url( 7 ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 8 ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 9 ) );
-		$this->assertSame( '', Viglet_Dumont_Native_Search::image_url( 0 ) );
+		$this->assertSame( 'https://site.example.org/a.webp', Viglet_Turing_Native_Search::image_url( 7 ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::image_url( 8 ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::image_url( 9 ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::image_url( 0 ) );
 	}
 }

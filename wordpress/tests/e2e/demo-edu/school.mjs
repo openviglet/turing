@@ -137,12 +137,12 @@ export async function titlesOn( page, path, q, fqs = [] ) {
 	const params = new URLSearchParams( { q } );
 	fqs.forEach( ( fq ) => params.append( 'fq[]', fq ) );
 	await page.goto( `${ path }?${ params }` );
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/result/
 	);
 	return page
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 		.allTextContents();
 }
@@ -167,9 +167,9 @@ export async function titlesAfterCommit( page, path, q ) {
  */
 export async function drainQueue( page ) {
 	try {
-		onSchool( [ 'dumont', 'queue', 'run' ] );
+		onSchool( [ 'turing', 'queue', 'run' ] );
 	} catch {
 		await page.waitForTimeout( 5000 );
-		onSchool( [ 'dumont', 'queue', 'run' ] );
+		onSchool( [ 'turing', 'queue', 'run' ] );
 	}
 }

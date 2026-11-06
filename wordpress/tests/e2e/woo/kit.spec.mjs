@@ -93,8 +93,8 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	} );
 
 	await page.goto( `/?page_id=${ pageId }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
-	const modes = block.locator( '.viglet-dumont-copilot__modes' );
+	const block = page.locator( '.viglet-turing-copilot' );
+	const modes = block.locator( '.viglet-turing-copilot__modes' );
 	await expect(
 		modes.getByRole( 'button', { name: 'Ask a question' } )
 	).toHaveAttribute( 'aria-pressed', 'true' );
@@ -110,9 +110,9 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 		.getByRole( 'button', { name: 'Build my kit', exact: true } )
 		.click();
 
-	const kit = block.locator( '.viglet-dumont-copilot__kit' );
+	const kit = block.locator( '.viglet-turing-copilot__kit' );
 	await expect(
-		kit.locator( '.viglet-dumont-copilot__kit-summary' )
+		kit.locator( '.viglet-turing-copilot__kit-summary' )
 	).toHaveText( 'Two days in the mountains need a shell and a warm layer.' );
 	// The plan, the stock field the WooCommerce mapping indexes, and journal posts as guides.
 	expect( asked[ 0 ] ).toMatchObject( {
@@ -126,17 +126,17 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	expect( Object.keys( asked[ 0 ].filters ) ).toEqual( [ 'site_key' ] );
 	expect( asked[ 0 ].filters.site_key ).toHaveLength( 1 );
 	await expect(
-		kit.locator( '.viglet-dumont-copilot__stage h3' )
+		kit.locator( '.viglet-turing-copilot__stage h3' )
 	).toHaveText( [ 'Waterproof shell' ] );
 	// The page is no product: it leaves the kit, and the need it alone stood for joins the
 	// line naming what the catalog has nothing for.
 	await expect(
-		kit.locator( '.viglet-dumont-copilot__kit-item' ).filter( {
+		kit.locator( '.viglet-turing-copilot__kit-item' ).filter( {
 			hasText: 'Ask the shop',
 		} )
 	).toHaveCount( 0 );
 	await expect(
-		kit.locator( '.viglet-dumont-copilot__unfilled' )
+		kit.locator( '.viglet-turing-copilot__unfilled' )
 	).toHaveText( 'Nothing in the catalog yet for: Shelter, Warm layer.' );
 	await expect(
 		kit.getByRole( 'link', { name: 'Packing for the mountains' } )
@@ -145,7 +145,7 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	// The shop's price, and its word on stock over the index's.
 	const item = ( name ) =>
 		kit
-			.locator( '.viglet-dumont-copilot__kit-item' )
+			.locator( '.viglet-turing-copilot__kit-item' )
 			.filter( { hasText: name } );
 	await expect( item( 'Rain jacket' ).locator( 'strong' ) ).toHaveText(
 		'$149.90'
@@ -160,7 +160,7 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 	await expect(
 		item( 'Wool jacket' ).getByRole( 'checkbox' )
 	).not.toBeChecked();
-	const add = kit.locator( '.viglet-dumont-copilot__kit-cart button' );
+	const add = kit.locator( '.viglet-turing-copilot__kit-cart button' );
 	await expect( add ).toHaveText( 'Add 1 product to the cart' );
 
 	// A product ticked joins the cart.
@@ -171,11 +171,11 @@ test( 'a described plan becomes a kit that goes in the cart in one click', async
 
 	await look( 'woo-kit' );
 	await axe( 'the Build my kit mode', {
-		include: '.viglet-dumont-copilot',
+		include: '.viglet-turing-copilot',
 	} );
 
 	await add.click();
-	const status = kit.locator( '.viglet-dumont-copilot__kit-status' );
+	const status = kit.locator( '.viglet-turing-copilot__kit-status' );
 	await expect( status ).toContainText( 'Added 2 to your cart.' );
 	const cart = await page.evaluate( async () =>
 		( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()
@@ -204,15 +204,15 @@ test( 'a page of its own opens Build my kit on the plan alone', async ( {
 		route.fulfill( { json: { available: true } } )
 	);
 	await page.goto( '/?pagename=plan-a-kit' );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 	await expect( block.getByLabel( 'Describe your plan' ) ).toBeVisible();
 	await expect(
 		block.getByRole( 'button', { name: 'Build my kit', exact: true } )
 	).toBeVisible();
 	await expect(
-		block.locator( '.viglet-dumont-copilot__modes' )
+		block.locator( '.viglet-turing-copilot__modes' )
 	).toHaveCount( 0 );
 	await axe( 'Build my kit on a page of its own', {
-		include: '.viglet-dumont-copilot',
+		include: '.viglet-turing-copilot',
 	} );
 } );

@@ -15,8 +15,8 @@ test.beforeAll( () => {
 			'--post_type=page',
 			'--post_status=publish',
 			'--post_title=Ask the copilot',
-			'--post_content=<!-- wp:viglet-dumont/copilot /-->',
-			'--meta_input={"_viglet_dumont_exclude":"1"}',
+			'--post_content=<!-- wp:viglet-turing/copilot /-->',
+			'--meta_input={"_viglet_turing_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
@@ -35,21 +35,21 @@ test( 'the copilot answers from the post that holds the fact, and cites it', asy
 	test.skip( ! copilot.on, `the copilot is off: ${ copilot.reason }` );
 
 	await page.goto( `/?page_id=${ pageId }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 	await expect( block ).toBeVisible();
 
 	const question = 'When do applications for the research grant close?';
 	await block.getByLabel( 'What are you looking for?' ).fill( question );
 	const started = Date.now();
 	await block.getByRole( 'button', { name: 'Ask', exact: true } ).click();
-	const answer = block.locator( '.viglet-dumont-copilot__answer' ).first();
+	const answer = block.locator( '.viglet-turing-copilot__answer' ).first();
 	await expect( answer ).not.toBeEmpty( { timeout: 60_000 } );
 	const text = ( await answer.textContent() ).trim();
 	record( 'copilot: grant deadline', question, text, Date.now() - started );
 
 	expect( text ).toMatch( /14(th)? March|March 14/i );
 	await expect(
-		block.locator( '.viglet-dumont-copilot__item a', {
+		block.locator( '.viglet-turing-copilot__item a', {
 			hasText: 'Research grant 2026',
 		} )
 	).not.toHaveCount( 0 );

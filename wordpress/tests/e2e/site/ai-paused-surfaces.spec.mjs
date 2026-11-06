@@ -23,7 +23,7 @@ test.beforeAll( ( {}, testInfo ) => {
 	setSetting( 'overlay_answers', 1 );
 	wp( [
 		'eval',
-		`update_option( Viglet_Dumont_AI_Quota::OPTION, array( 'resetsAt' => '${ quota.resetsAt }', 'detail' => '${ quota.detail }', 'seen_at' => time() ), false );`,
+		`update_option( Viglet_Turing_AI_Quota::OPTION, array( 'resetsAt' => '${ quota.resetsAt }', 'detail' => '${ quota.detail }', 'seen_at' => time() ), false );`,
 	] );
 	pageId = wp( [
 		'post',
@@ -31,8 +31,8 @@ test.beforeAll( ( {}, testInfo ) => {
 		'--post_type=page',
 		'--post_status=publish',
 		'--post_title=Ask us while paused',
-		'--post_content=<!-- wp:viglet-dumont/assistant /-->',
-		'--meta_input={"_viglet_dumont_exclude":"1"}',
+		'--post_content=<!-- wp:viglet-turing/assistant /-->',
+		'--meta_input={"_viglet_turing_exclude":"1"}',
 		'--porcelain',
 	] )
 		.trim()
@@ -49,7 +49,7 @@ test.afterAll( ( {}, testInfo ) => {
 	setSetting( 'overlay_answers', null );
 	wp( [
 		'eval',
-		'delete_option( Viglet_Dumont_AI_Quota::OPTION ); delete_transient( "viglet_dumont_ai_paused_report" );',
+		'delete_option( Viglet_Turing_AI_Quota::OPTION ); delete_transient( "viglet_turing_ai_paused_report" );',
 	] );
 	if ( pageId ) {
 		wp( [ 'post', 'delete', pageId, '--force' ] );
@@ -76,14 +76,14 @@ test( 'the overlay says answers are paused until the reset date', async ( {
 	);
 	await page.goto( `/?page_id=${ seed.corePageId }` );
 	await page.keyboard.press( 'Control+K' );
-	const overlay = page.locator( 'dialog.viglet-dumont-overlay' );
+	const overlay = page.locator( 'dialog.viglet-turing-overlay' );
 	await overlay
 		.getByRole( 'combobox' )
 		.or( overlay.locator( 'input' ) )
 		.first()
 		.fill( 'when is the next workshop?' );
 
-	const answer = overlay.locator( '.viglet-dumont-overlay__answer' );
+	const answer = overlay.locator( '.viglet-turing-overlay__answer' );
 	await expect( answer ).toHaveText(
 		/^Answers are paused until .*2099.*; search still works\.$/
 	);

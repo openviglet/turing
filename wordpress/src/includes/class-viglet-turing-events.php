@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Events
+ * Viglet Turing Events
  *
  * The last things the plugin did with Turing, for the Health page: what was sent, removed or
  * provisioned, and what failed with which error.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A ring of the last events, newest first, in a non-autoloaded option.
  */
-class Viglet_Dumont_Events {
+class Viglet_Turing_Events {
 
 	/** The option the events live in. */
-	public const OPTION = 'viglet_dumont_events';
+	public const OPTION = 'viglet_turing_events';
 
 	/** How many are kept. */
 	public const KEEP = 50;
@@ -154,7 +154,7 @@ class Viglet_Dumont_Events {
 				break;
 			case 'quota':
 				// D332: Turing's reset date, as the site writes a moment, then Turing's own words.
-				return trim( Viglet_Dumont_AI_Quota::line( Viglet_Dumont_AI_Quota::until( (string) ( $args[0] ?? '' ) ) ) . ' ' . (string) ( $args[1] ?? '' ) );
+				return trim( Viglet_Turing_AI_Quota::line( Viglet_Turing_AI_Quota::until( (string) ( $args[0] ?? '' ) ) ) . ' ' . (string) ( $args[1] ?? '' ) );
 			case 'quota_back':
 				return __( 'Turing answered an AI call again: the AI budget is no longer exhausted.', 'viglet-turing-search' );
 			default:

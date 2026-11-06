@@ -12,67 +12,68 @@
  * Requires at least: 6.6
  * Requires PHP: 8.1
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VIGLET_DUMONT_VERSION', '1.0.0' );
-define( 'VIGLET_DUMONT_FILE', __FILE__ );
-define( 'VIGLET_DUMONT_DIR', plugin_dir_path( __FILE__ ) );
-define( 'VIGLET_DUMONT_URL', plugin_dir_url( __FILE__ ) );
-define( 'VIGLET_DUMONT_OPTION', 'viglet_dumont_settings' );
+define( 'VIGLET_TURING_VERSION', '1.0.0' );
+define( 'VIGLET_TURING_FILE', __FILE__ );
+define( 'VIGLET_TURING_DIR', plugin_dir_path( __FILE__ ) );
+define( 'VIGLET_TURING_URL', plugin_dir_url( __FILE__ ) );
+define( 'VIGLET_TURING_OPTION', 'viglet_turing_settings' );
 
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-settings.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-api-client.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-events.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-ai-quota.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-mapping.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-entities.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-indexer.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-pdf.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-native-search.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-search-block.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-queue.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-operations.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-reindex.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-post-state.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-diagnostics.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-tuning.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-related.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-woocommerce.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-compare.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-insights.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-trending.php';
-require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-assistant.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-upgrade.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-settings.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-api-client.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-events.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-ai-quota.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-mapping.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-entities.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-indexer.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-pdf.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-search.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-native-search.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-search-block.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-queue.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-operations.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-reindex.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-post-state.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-diagnostics.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-tuning.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-related.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-woocommerce.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-compare.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-insights.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-trending.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-assistant.php';
 
 // The GitHub zip and Composer carry their own pt_BR; the WordPress.org package leaves the loader
 // out, as WordPress loads its language packs by itself.
-if ( file_exists( VIGLET_DUMONT_DIR . 'includes/bundled-translations.php' ) ) {
-	require_once VIGLET_DUMONT_DIR . 'includes/bundled-translations.php';
+if ( file_exists( VIGLET_TURING_DIR . 'includes/bundled-translations.php' ) ) {
+	require_once VIGLET_TURING_DIR . 'includes/bundled-translations.php';
 }
 
 if ( is_admin() ) {
-	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-admin.php';
+	require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-admin.php';
 }
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli.php';
-	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-queue.php';
-	require_once VIGLET_DUMONT_DIR . 'includes/class-viglet-dumont-cli-ai.php';
-	WP_CLI::add_command( 'dumont', 'Viglet_Dumont_CLI' );
-	WP_CLI::add_command( 'dumont queue', 'Viglet_Dumont_CLI_Queue' );
-	WP_CLI::add_command( 'dumont ai', 'Viglet_Dumont_CLI_AI' );
+	require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-cli.php';
+	require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-cli-queue.php';
+	require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-cli-ai.php';
+	WP_CLI::add_command( 'turing', 'Viglet_Turing_CLI' );
+	WP_CLI::add_command( 'turing queue', 'Viglet_Turing_CLI_Queue' );
+	WP_CLI::add_command( 'turing ai', 'Viglet_Turing_CLI_AI' );
 }
 
 /**
  * The settings in effect: defaults, the stored option, then what the environment sets.
  */
-function viglet_dumont_get_settings(): array {
-	return Viglet_Dumont_Settings::get();
+function viglet_turing_get_settings(): array {
+	return Viglet_Turing_Settings::get();
 }
 
 /**
@@ -82,12 +83,12 @@ function viglet_dumont_get_settings(): array {
  *
  * @return array{url: string, site: string, locale: string, siteKey: string, facets: array}
  */
-function viglet_dumont_public_config(): array {
-	return ( new Viglet_Dumont_Native_Search() )->public_config();
+function viglet_turing_public_config(): array {
+	return ( new Viglet_Turing_Native_Search() )->public_config();
 }
 
 /**
- * Which of Turing's AI features this site can use, for Health and `wp dumont ai status`: each
+ * Which of Turing's AI features this site can use, for Health and `wp turing ai status`: each
  * row with a label, whether it is on, the reason when it is not, and what to do about it.
  * Against a Turing without the capabilities probe it spends LLM calls when features are on
  * (Turing T1123), so it runs on demand only.
@@ -95,9 +96,9 @@ function viglet_dumont_public_config(): array {
  * @return array<int, array{feature: string, label: string, block: string, on: bool, paused: string, reason: string, fix: string}>
  *         `paused` says the site's AI budget is spent, on a feature that is on (D332).
  */
-function viglet_dumont_ai_status(): array {
-	$settings = viglet_dumont_get_settings();
-	$declared = Viglet_Dumont_Mapping::declares_generative_ai( $settings );
+function viglet_turing_ai_status(): array {
+	$settings = viglet_turing_get_settings();
+	$declared = Viglet_Turing_Mapping::declares_generative_ai( $settings );
 	$labels   = array(
 		'answer'     => __( 'Answers with sources', 'viglet-turing-search' ),
 		'chat'       => __( 'Chat', 'viglet-turing-search' ),
@@ -112,10 +113,10 @@ function viglet_dumont_ai_status(): array {
 		'copilot'    => __( 'Ask this site block', 'viglet-turing-search' ),
 	);
 
-	$features = ( new Viglet_Dumont_API_Client( $settings ) )->ai_features();
+	$features = ( new Viglet_Turing_API_Client( $settings ) )->ai_features();
 	// A spent budget (D332) is asked about again first, so a raised one reads as back at once.
-	Viglet_Dumont_AI_Quota::confirm( $settings );
-	$quota  = Viglet_Dumont_AI_Quota::report();
+	Viglet_Turing_AI_Quota::confirm( $settings );
+	$quota  = Viglet_Turing_AI_Quota::report();
 	$paused = null === $quota ? '' : trim( $quota['message'] . ' ' . $quota['detail'] );
 
 	return array_map(
@@ -143,21 +144,21 @@ function viglet_dumont_ai_status(): array {
  *
  * @param array $settings The full settings array to store.
  */
-function viglet_dumont_update_settings( array $settings ): bool {
-	return Viglet_Dumont_Settings::update( $settings );
+function viglet_turing_update_settings( array $settings ): bool {
+	return Viglet_Turing_Settings::update( $settings );
 }
 
 /**
  * Initialize the plugin.
  */
-function viglet_dumont_init(): void {
-	$settings = viglet_dumont_get_settings();
+function viglet_turing_init(): void {
+	$settings = viglet_turing_get_settings();
 
 	// Per-post "exclude from search", exposed to the block editor so a sidebar can toggle it.
-	foreach ( viglet_dumont_get_indexable_types() as $post_type ) {
+	foreach ( viglet_turing_get_indexable_types() as $post_type ) {
 		register_post_meta(
 			$post_type,
-			Viglet_Dumont_Mapping::EXCLUDE_META,
+			Viglet_Turing_Mapping::EXCLUDE_META,
 			array(
 				'type'          => 'boolean',
 				'single'        => true,
@@ -171,81 +172,83 @@ function viglet_dumont_init(): void {
 	// A save only queues the post; the worker below talks to Turing. save_post fires on every
 	// status change too (publish, unpublish, trash, scheduled publish), so it is the one hook.
 	if ( $settings['auto_index'] || $settings['auto_deindex'] ) {
-		add_action( 'save_post', 'viglet_dumont_handle_save', 10, 2 );
+		add_action( 'save_post', 'viglet_turing_handle_save', 10, 2 );
 	}
 	// Sticking a post from Quick Edit or code saves nothing, yet "Sticky posts first" reads it (D187).
 	if ( $settings['auto_index'] ) {
-		add_action( 'post_stuck', 'viglet_dumont_handle_sticky' );
-		add_action( 'post_unstuck', 'viglet_dumont_handle_sticky' );
+		add_action( 'post_stuck', 'viglet_turing_handle_sticky' );
+		add_action( 'post_unstuck', 'viglet_turing_handle_sticky' );
 	}
 	if ( $settings['auto_deindex'] ) {
-		add_action( 'delete_post', 'viglet_dumont_handle_delete' );
+		add_action( 'delete_post', 'viglet_turing_handle_delete' );
 	}
 	// PDFs attached to the posts in search (D309): sent when uploaded or edited, gone when deleted.
 	// The ones a post links follow it through the queue (D319); a post deleted for good first
 	// records its attached PDFs as linked, since deleting it leaves them without a parent.
 	if ( ! empty( $settings['index_pdfs'] ) ) {
-		$viglet_dumont_pdf = new Viglet_Dumont_Pdf( $settings );
-		add_action( 'add_attachment', array( $viglet_dumont_pdf, 'sync' ) );
-		add_action( 'edit_attachment', array( $viglet_dumont_pdf, 'sync' ) );
-		add_action( 'delete_attachment', array( $viglet_dumont_pdf, 'remove' ) );
-		add_action( 'before_delete_post', array( $viglet_dumont_pdf, 'hold_children' ) );
+		$viglet_turing_pdf = new Viglet_Turing_Pdf( $settings );
+		add_action( 'add_attachment', array( $viglet_turing_pdf, 'sync' ) );
+		add_action( 'edit_attachment', array( $viglet_turing_pdf, 'sync' ) );
+		add_action( 'delete_attachment', array( $viglet_turing_pdf, 'remove' ) );
+		add_action( 'before_delete_post', array( $viglet_turing_pdf, 'hold_children' ) );
 	}
 	// A product whose stock changed from an order, which saves no post (D173).
-	Viglet_Dumont_WooCommerce::register();
+	Viglet_Turing_WooCommerce::register();
 
 	// A post leaves search when its type's "Leaves search on" date passes (D308).
 	add_action(
-		Viglet_Dumont_Indexer::EXPIRE_HOOK,
+		Viglet_Turing_Indexer::EXPIRE_HOOK,
 		static function ( $post_id ) use ( $settings ) {
-			( new Viglet_Dumont_Indexer( $settings ) )->expire( (int) $post_id );
+			( new Viglet_Turing_Indexer( $settings ) )->expire( (int) $post_id );
 		}
 	);
 
 	// Where each post stands: the Search column in the post lists and the editor panel.
-	( new Viglet_Dumont_Post_State( $settings ) )->register();
+	( new Viglet_Turing_Post_State( $settings ) )->register();
 
 	// Search override.
 	// The SDK as script modules, for a theme's own search blocks.
-	Viglet_Dumont_Native_Search::register_modules();
-	Viglet_Dumont_Native_Search::register_blocks();
-	add_action( 'wp_enqueue_scripts', array( 'Viglet_Dumont_Native_Search', 'provide_config' ) );
+	Viglet_Turing_Native_Search::register_modules();
+	Viglet_Turing_Native_Search::register_blocks();
+	add_action( 'wp_enqueue_scripts', array( 'Viglet_Turing_Native_Search', 'provide_config' ) );
 	// Related content after the chosen post types' content (D177).
-	( new Viglet_Dumont_Related( $settings ) )->register();
+	( new Viglet_Turing_Related( $settings ) )->register();
 	// The Site assistant in a corner of every page, when the site asks for it (D175).
-	( new Viglet_Dumont_Assistant( $settings ) )->register();
+	( new Viglet_Turing_Assistant( $settings ) )->register();
 
 	// Searches sent to a results page on another site (D304): the theme's search forms go
 	// there, and this site's own `?s=` page, no longer the results page, is left alone.
-	$viglet_dumont_remote = new Viglet_Dumont_Native_Search( $settings );
-	if ( '' !== $viglet_dumont_remote->remote_search_url() ) {
-		add_filter( 'render_block_core/search', array( $viglet_dumont_remote, 'point_search_form' ), 20 );
-		add_filter( 'get_search_form', array( $viglet_dumont_remote, 'point_search_form' ), 20 );
+	$viglet_turing_remote = new Viglet_Turing_Native_Search( $settings );
+	if ( '' !== $viglet_turing_remote->remote_search_url() ) {
+		add_filter( 'render_block_core/search', array( $viglet_turing_remote, 'point_search_form' ), 20 );
+		add_filter( 'get_search_form', array( $viglet_turing_remote, 'point_search_form' ), 20 );
 	}
 
 	if ( $settings['search_enabled'] ) {
 		// With a results page on another site there is no local search to replace.
-		if ( '' === $viglet_dumont_remote->remote_search_url() ) {
+		if ( '' === $viglet_turing_remote->remote_search_url() ) {
 			if ( 'template' === $settings['search_mode'] ) {
-				add_action( 'template_redirect', 'viglet_dumont_search_redirect', 1 );
+				add_action( 'template_redirect', 'viglet_turing_search_redirect', 1 );
 			} else {
-				( new Viglet_Dumont_Native_Search( $settings ) )->register();
+				( new Viglet_Turing_Native_Search( $settings ) )->register();
 			}
 		}
 		if ( $settings['instant_overlay'] ) {
-			( new Viglet_Dumont_Native_Search( $settings ) )->register_overlay();
+			( new Viglet_Turing_Native_Search( $settings ) )->register_overlay();
 		}
 	}
 }
-add_action( 'init', 'viglet_dumont_init' );
+add_action( 'init', 'viglet_turing_init' );
+// A site that ran the plugin under its old prefix keeps its data (T1253): before anything reads it.
+add_action( 'plugins_loaded', array( 'Viglet_Turing_Upgrade', 'maybe_run' ), 1 );
 // Name variants saved in Settings go to Turing's Thesaurus (D310).
-add_action( 'update_option_' . VIGLET_DUMONT_OPTION, array( 'Viglet_Dumont_Entities', 'on_settings_saved' ), 10, 2 );
-add_action( 'add_option_' . VIGLET_DUMONT_OPTION, static fn ( $option, $value ) => Viglet_Dumont_Entities::on_settings_saved( array(), $value ), 10, 2 );
-add_filter( 'wp_robots', array( 'Viglet_Dumont_Native_Search', 'robots' ) );
+add_action( 'update_option_' . VIGLET_TURING_OPTION, array( 'Viglet_Turing_Entities', 'on_settings_saved' ), 10, 2 );
+add_action( 'add_option_' . VIGLET_TURING_OPTION, static fn ( $option, $value ) => Viglet_Turing_Entities::on_settings_saved( array(), $value ), 10, 2 );
+add_filter( 'wp_robots', array( 'Viglet_Turing_Native_Search', 'robots' ) );
 // A result's picture by its post's id, for an index built by another WordPress (D239).
-add_action( 'template_redirect', array( 'Viglet_Dumont_Native_Search', 'redirect_image' ), 0 );
+add_action( 'template_redirect', array( 'Viglet_Turing_Native_Search', 'redirect_image' ), 0 );
 // The WP Consent API's handshake: this plugin asks for statistics consent before reporting.
-add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_DUMONT_FILE ), '__return_true' );
+add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_TURING_FILE ), '__return_true' );
 
 /**
  * Point WordPress at the JS translations: `wp i18n make-json` names each file after the
@@ -256,8 +259,8 @@ add_filter( 'wp_consent_api_registered_' . plugin_basename( VIGLET_DUMONT_FILE )
  * @param string       $src      The script's URL.
  * @return string|false
  */
-function viglet_dumont_script_translation_path( $relative, $src ) {
-	if ( ! is_string( $relative ) || ! str_starts_with( (string) $src, VIGLET_DUMONT_URL ) ) {
+function viglet_turing_script_translation_path( $relative, $src ) {
+	if ( ! is_string( $relative ) || ! str_starts_with( (string) $src, VIGLET_TURING_URL ) ) {
 		return $relative;
 	}
 	if ( preg_match( '#^admin/build/([a-z-]+)\.js$#', $relative, $match ) ) {
@@ -266,7 +269,7 @@ function viglet_dumont_script_translation_path( $relative, $src ) {
 
 	return 'src/' . $relative;
 }
-add_filter( 'load_script_textdomain_relative_path', 'viglet_dumont_script_translation_path', 10, 2 );
+add_filter( 'load_script_textdomain_relative_path', 'viglet_turing_script_translation_path', 10, 2 );
 
 /**
  * Handle post save — queue an index if published, a removal otherwise.
@@ -274,7 +277,7 @@ add_filter( 'load_script_textdomain_relative_path', 'viglet_dumont_script_transl
  * @param int     $post_id The saved post's ID.
  * @param WP_Post $post    The saved post.
  */
-function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
+function viglet_turing_handle_save( int $post_id, WP_Post $post ): void {
 	if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 		return;
 	}
@@ -286,20 +289,20 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
 		return;
 	}
 
-	$settings = viglet_dumont_get_settings();
-	$indexer  = new Viglet_Dumont_Indexer( $settings );
-	$queue    = new Viglet_Dumont_Queue( $settings );
+	$settings = viglet_turing_get_settings();
+	$indexer  = new Viglet_Turing_Indexer( $settings );
+	$queue    = new Viglet_Turing_Queue( $settings );
 
 	if ( 'publish' === $post->post_status ) {
 		if ( $indexer->should_index( $post ) ) {
 			if ( $settings['auto_index'] ) {
 				$queue->enqueue( $post_id, 'index' );
 			}
-		} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+		} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_turing_get_indexable_types(), true ) ) {
 			// Published but out of search now (its date passed, D308, or it was excluded).
 			$queue->enqueue( $post_id, 'delete' );
 		}
-	} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+	} elseif ( $settings['auto_deindex'] && in_array( $post->post_type, viglet_turing_get_indexable_types(), true ) ) {
 		$queue->enqueue( $post_id, 'delete' );
 	}
 }
@@ -309,11 +312,11 @@ function viglet_dumont_handle_save( int $post_id, WP_Post $post ): void {
  *
  * @param int $post_id The post.
  */
-function viglet_dumont_handle_sticky( int $post_id ): void {
+function viglet_turing_handle_sticky( int $post_id ): void {
 	$post    = get_post( $post_id );
-	$indexer = new Viglet_Dumont_Indexer( viglet_dumont_get_settings() );
+	$indexer = new Viglet_Turing_Indexer( viglet_turing_get_settings() );
 	if ( $post && 'publish' === $post->post_status && $indexer->should_index( $post ) ) {
-		( new Viglet_Dumont_Queue() )->enqueue( $post_id, 'index' );
+		( new Viglet_Turing_Queue() )->enqueue( $post_id, 'index' );
 	}
 }
 
@@ -322,54 +325,54 @@ function viglet_dumont_handle_sticky( int $post_id ): void {
  *
  * @param int $post_id The deleted post.
  */
-function viglet_dumont_handle_delete( int $post_id ): void {
+function viglet_turing_handle_delete( int $post_id ): void {
 	// delete_post fires for revisions, menu items and attachments too; the post is still readable here.
 	$post = get_post( $post_id );
-	if ( ! $post || ! in_array( $post->post_type, viglet_dumont_get_indexable_types(), true ) ) {
+	if ( ! $post || ! in_array( $post->post_type, viglet_turing_get_indexable_types(), true ) ) {
 		return;
 	}
-	( new Viglet_Dumont_Queue() )->enqueue( $post_id, 'delete' );
+	( new Viglet_Turing_Queue() )->enqueue( $post_id, 'delete' );
 }
 
 /**
  * The WP-Cron worker: send one batch of queued jobs.
  */
-function viglet_dumont_process_queue(): void {
-	( new Viglet_Dumont_Queue() )->process();
+function viglet_turing_process_queue(): void {
+	( new Viglet_Turing_Queue() )->process();
 }
-add_action( Viglet_Dumont_Queue::CRON_HOOK, 'viglet_dumont_process_queue' );
+add_action( Viglet_Turing_Queue::CRON_HOOK, 'viglet_turing_process_queue' );
 
 /**
  * The WP-Cron run of the background Index All (D331): its next few batches.
  */
-function viglet_dumont_run_reindex(): void {
-	( new Viglet_Dumont_Reindex() )->tick();
+function viglet_turing_run_reindex(): void {
+	( new Viglet_Turing_Reindex() )->tick();
 }
-add_action( Viglet_Dumont_Reindex::CRON_HOOK, 'viglet_dumont_run_reindex' );
+add_action( Viglet_Turing_Reindex::CRON_HOOK, 'viglet_turing_run_reindex' );
 
 /**
  * The daily WP-Cron job that groups the popular searches' spellings (D213).
  */
-function viglet_dumont_group_trending(): void {
-	( new Viglet_Dumont_Trending() )->group();
+function viglet_turing_group_trending(): void {
+	( new Viglet_Turing_Trending() )->group();
 }
-add_action( Viglet_Dumont_Trending::CRON_HOOK, 'viglet_dumont_group_trending' );
-add_action( 'init', array( 'Viglet_Dumont_Trending', 'schedule' ) );
+add_action( Viglet_Turing_Trending::CRON_HOOK, 'viglet_turing_group_trending' );
+add_action( 'init', array( 'Viglet_Turing_Trending', 'schedule' ) );
 
 /**
  * Search redirect — replaces default WordPress search with Turing.
  */
-function viglet_dumont_search_redirect(): void {
+function viglet_turing_search_redirect(): void {
 	if ( ! is_search() ) {
 		return;
 	}
 
-	$settings = viglet_dumont_get_settings();
+	$settings = viglet_turing_get_settings();
 	if ( ! $settings['search_enabled'] ) {
 		return;
 	}
 
-	$search = new Viglet_Dumont_Search();
+	$search = new Viglet_Turing_Search();
 	$search->render();
 	exit;
 }
@@ -377,34 +380,36 @@ function viglet_dumont_search_redirect(): void {
 /**
  * Plugin activation.
  */
-function viglet_dumont_activate(): void {
-	viglet_dumont_update_settings( viglet_dumont_get_settings() );
+function viglet_turing_activate(): void {
+	// Before the defaults are written, or they would hold the new key the old settings move to.
+	Viglet_Turing_Upgrade::maybe_run();
+	viglet_turing_update_settings( viglet_turing_get_settings() );
 	// An Index All the deactivation left mid-way goes on (D331).
-	( new Viglet_Dumont_Reindex() )->resume();
+	( new Viglet_Turing_Reindex() )->resume();
 }
-register_activation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_activate' );
+register_activation_hook( VIGLET_TURING_FILE, 'viglet_turing_activate' );
 
 /**
  * Plugin deactivation: stop the worker. Queued jobs stay and resume on reactivation's next save;
  * a running Index All resumes on reactivation.
  */
-function viglet_dumont_deactivate(): void {
-	wp_clear_scheduled_hook( Viglet_Dumont_Queue::CRON_HOOK );
-	wp_clear_scheduled_hook( Viglet_Dumont_Reindex::CRON_HOOK );
-	wp_clear_scheduled_hook( Viglet_Dumont_Trending::CRON_HOOK );
+function viglet_turing_deactivate(): void {
+	wp_clear_scheduled_hook( Viglet_Turing_Queue::CRON_HOOK );
+	wp_clear_scheduled_hook( Viglet_Turing_Reindex::CRON_HOOK );
+	wp_clear_scheduled_hook( Viglet_Turing_Trending::CRON_HOOK );
 }
-register_deactivation_hook( VIGLET_DUMONT_FILE, 'viglet_dumont_deactivate' );
+register_deactivation_hook( VIGLET_TURING_FILE, 'viglet_turing_deactivate' );
 
 /**
  * Register REST API endpoints for AJAX operations.
  */
-function viglet_dumont_register_rest_routes(): void {
+function viglet_turing_register_rest_routes(): void {
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/index-batch',
 		array(
 			'methods'             => 'POST',
-			'callback'            => 'viglet_dumont_rest_index_batch',
+			'callback'            => 'viglet_turing_rest_index_batch',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -413,19 +418,19 @@ function viglet_dumont_register_rest_routes(): void {
 
 	// Index All in the background (D331): start it, read how it goes, cancel it.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/reindex',
 		array(
 			array(
 				'methods'             => 'GET',
-				'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Reindex() )->report(), 200 ),
+				'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Turing_Reindex() )->report(), 200 ),
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
 			),
 			array(
 				'methods'             => 'POST',
-				'callback'            => 'viglet_dumont_rest_start_reindex',
+				'callback'            => 'viglet_turing_rest_start_reindex',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
@@ -440,12 +445,12 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/reindex/cancel',
 		array(
 			'methods'             => 'POST',
 			'callback'            => static function () {
-				$reindex   = new Viglet_Dumont_Reindex();
+				$reindex   = new Viglet_Turing_Reindex();
 				$cancelled = $reindex->cancel();
 				return new WP_REST_Response( array( 'cancelled' => $cancelled ) + $reindex->report(), 200 );
 			},
@@ -458,28 +463,28 @@ function viglet_dumont_register_rest_routes(): void {
 	// One step of the running reindex, without WP-Cron (D335): from the site's own loopback,
 	// which carries the run's token, or from Health while an administrator watches it.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/reindex/step',
 		array(
 			'methods'             => 'POST',
 			'callback'            => static function () {
-				$reindex = new Viglet_Dumont_Reindex();
+				$reindex = new Viglet_Turing_Reindex();
 				$reindex->tick();
 				return new WP_REST_Response( $reindex->report(), 200 );
 			},
 			'permission_callback' => static function ( WP_REST_Request $request ) {
 				return current_user_can( 'manage_options' )
-					|| ( new Viglet_Dumont_Reindex() )->accepts( (string) $request->get_param( 'token' ) );
+					|| ( new Viglet_Turing_Reindex() )->accepts( (string) $request->get_param( 'token' ) );
 			},
 		)
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/delete-all',
 		array(
 			'methods'             => 'POST',
-			'callback'            => 'viglet_dumont_rest_delete_all',
+			'callback'            => 'viglet_turing_rest_delete_all',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -487,11 +492,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/ping',
 		array(
 			'methods'             => 'GET',
-			'callback'            => 'viglet_dumont_rest_ping',
+			'callback'            => 'viglet_turing_rest_ping',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -499,19 +504,19 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/mapping',
 		array(
 			array(
 				'methods'             => 'GET',
-				'callback'            => 'viglet_dumont_rest_get_mapping',
+				'callback'            => 'viglet_turing_rest_get_mapping',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
 			),
 			array(
 				'methods'             => 'POST',
-				'callback'            => 'viglet_dumont_rest_save_mapping',
+				'callback'            => 'viglet_turing_rest_save_mapping',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
@@ -521,21 +526,21 @@ function viglet_dumont_register_rest_routes(): void {
 
 	// Public on purpose: what a browser needs to search through Turing, never the API key.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/public-config',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => new WP_REST_Response( viglet_dumont_public_config(), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( viglet_turing_public_config(), 200 ),
 			'permission_callback' => '__return_true',
 		)
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/status',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Operations() )->status(), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Turing_Operations() )->status(), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -543,11 +548,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/index',
 		array(
 			'methods'             => 'POST',
-			'callback'            => 'viglet_dumont_rest_index',
+			'callback'            => 'viglet_turing_rest_index',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -555,11 +560,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/queue/retry',
 		array(
 			'methods'             => 'POST',
-			'callback'            => static fn () => new WP_REST_Response( array( 'replayed' => ( new Viglet_Dumont_Queue() )->retry_failed() ), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( array( 'replayed' => ( new Viglet_Turing_Queue() )->retry_failed() ), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -567,11 +572,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/queue/run',
 		array(
 			'methods'             => 'POST',
-			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Queue() )->process( true ), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Turing_Queue() )->process( true ), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -579,11 +584,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/sweep',
 		array(
 			'methods'             => 'POST',
-			'callback'            => 'viglet_dumont_rest_sweep',
+			'callback'            => 'viglet_turing_rest_sweep',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -591,19 +596,19 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/connection',
 		array(
 			array(
 				'methods'             => 'GET',
-				'callback'            => 'viglet_dumont_rest_get_connection',
+				'callback'            => 'viglet_turing_rest_get_connection',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
 			),
 			array(
 				'methods'             => 'POST',
-				'callback'            => 'viglet_dumont_rest_save_connection',
+				'callback'            => 'viglet_turing_rest_save_connection',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
@@ -612,11 +617,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/diagnose',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Dumont_Diagnostics() )->run(), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( ( new Viglet_Turing_Diagnostics() )->run(), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -624,11 +629,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/mapping/preview',
 		array(
 			'methods'             => 'GET',
-			'callback'            => 'viglet_dumont_rest_preview_mapping',
+			'callback'            => 'viglet_turing_rest_preview_mapping',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -636,11 +641,11 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/provision',
 		array(
 			'methods'             => 'POST',
-			'callback'            => 'viglet_dumont_rest_provision',
+			'callback'            => 'viglet_turing_rest_provision',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -652,12 +657,12 @@ function viglet_dumont_register_rest_routes(): void {
 
 	// Search insights (D178): one period's searches, failures and clicks, read from Turing.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/insights',
 		array(
 			'methods'             => 'GET',
 			'callback'            => static function ( WP_REST_Request $request ) {
-				$report = ( new Viglet_Dumont_Insights() )->report( (string) $request['period'] );
+				$report = ( new Viglet_Turing_Insights() )->report( (string) $request['period'] );
 				return is_wp_error( $report )
 					? new WP_REST_Response( array( 'message' => $report->get_error_message() ), 502 )
 					: new WP_REST_Response( $report, 200 );
@@ -666,7 +671,7 @@ function viglet_dumont_register_rest_routes(): void {
 			'args'                => array(
 				'period' => array(
 					'type'    => 'string',
-					'enum'    => Viglet_Dumont_Insights::PERIODS,
+					'enum'    => Viglet_Turing_Insights::PERIODS,
 					'default' => 'this-week',
 				),
 			),
@@ -675,13 +680,13 @@ function viglet_dumont_register_rest_routes(): void {
 	// The compare block's summary (D200), asked for by its page once the table is drawn. Public:
 	// it reads published products only, and Turing caches it by the products and their dates.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/compare/summary',
 		array(
 			'methods'             => 'GET',
 			'callback'            => static fn ( WP_REST_Request $request ) => new WP_REST_Response(
-				Viglet_Dumont_WooCommerce::active()
-					? Viglet_Dumont_Compare::summary( Viglet_Dumont_Compare::ids( (string) $request['ids'] ) )
+				Viglet_Turing_WooCommerce::active()
+					? Viglet_Turing_Compare::summary( Viglet_Turing_Compare::ids( (string) $request['ids'] ) )
 					: array(
 						'summary' => '',
 						'error'   => '',
@@ -699,19 +704,19 @@ function viglet_dumont_register_rest_routes(): void {
 	);
 	// An LLM call, made only when the owner asks for it (D178).
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/insights/summary',
 		array(
 			'methods'             => 'GET',
 			'callback'            => static fn ( WP_REST_Request $request ) => new WP_REST_Response(
-				( new Viglet_Dumont_Insights() )->summary( (string) $request['period'], (bool) $request['again'] ),
+				( new Viglet_Turing_Insights() )->summary( (string) $request['period'], (bool) $request['again'] ),
 				200
 			),
 			'permission_callback' => $can_manage,
 			'args'                => array(
 				'period' => array(
 					'type'    => 'string',
-					'enum'    => Viglet_Dumont_Insights::PERIODS,
+					'enum'    => Viglet_Turing_Insights::PERIODS,
 					'default' => 'this-week',
 				),
 				'again'  => array(
@@ -722,44 +727,44 @@ function viglet_dumont_register_rest_routes(): void {
 		)
 	);
 	$answer = static fn ( $result ) => is_wp_error( $result )
-		? new WP_REST_Response( array( 'message' => $result->get_error_message() ), 'viglet_dumont_not_ours' === $result->get_error_code() ? 403 : 502 )
-		: new WP_REST_Response( true === $result ? ( new Viglet_Dumont_Tuning() )->all() : $result, 200 );
+		? new WP_REST_Response( array( 'message' => $result->get_error_message() ), 'viglet_turing_not_ours' === $result->get_error_code() ? 403 : 502 )
+		: new WP_REST_Response( true === $result ? ( new Viglet_Turing_Tuning() )->all() : $result, 200 );
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => $answer( ( new Viglet_Dumont_Tuning() )->all() ),
+			'callback'            => static fn () => $answer( ( new Viglet_Turing_Tuning() )->all() ),
 			'permission_callback' => $can_manage,
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/synonym',
 		array(
 			'methods'             => 'POST',
 			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
-				( new Viglet_Dumont_Tuning() )->add_synonym( array_map( 'sanitize_text_field', (array) $request->get_param( 'terms' ) ) )
+				( new Viglet_Turing_Tuning() )->add_synonym( array_map( 'sanitize_text_field', (array) $request->get_param( 'terms' ) ) )
 			),
 			'permission_callback' => $can_manage,
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/synonym/(?P<id>[A-Za-z0-9-]+)',
 		array(
 			'methods'             => 'DELETE',
-			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Dumont_Tuning() )->remove_synonym( (string) $request['id'] ) ),
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Turing_Tuning() )->remove_synonym( (string) $request['id'] ) ),
 			'permission_callback' => $can_manage,
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/spotlight',
 		array(
 			'methods'             => 'POST',
 			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
-				( new Viglet_Dumont_Tuning() )->add_spotlight(
+				( new Viglet_Turing_Tuning() )->add_spotlight(
 					sanitize_text_field( (string) $request->get_param( 'query' ) ),
 					array_map( 'absint', (array) $request->get_param( 'posts' ) )
 				)
@@ -768,12 +773,12 @@ function viglet_dumont_register_rest_routes(): void {
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/boosts',
 		array(
 			'methods'             => 'POST',
 			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
-				( new Viglet_Dumont_Tuning() )->set_boosts(
+				( new Viglet_Turing_Tuning() )->set_boosts(
 					(bool) $request->get_param( 'recency' ),
 					(bool) $request->get_param( 'sticky' ),
 					array_map( 'sanitize_key', (array) $request->get_param( 'types' ) )
@@ -783,41 +788,41 @@ function viglet_dumont_register_rest_routes(): void {
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/suggestions',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => $answer( ( new Viglet_Dumont_Tuning() )->suggestions() ),
+			'callback'            => static fn () => $answer( ( new Viglet_Turing_Tuning() )->suggestions() ),
 			'permission_callback' => $can_manage,
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/try',
 		array(
 			'methods'             => 'GET',
 			'callback'            => static fn ( WP_REST_Request $request ) => $answer(
-				( new Viglet_Dumont_Tuning() )->try_query( sanitize_text_field( (string) $request->get_param( 'q' ) ) )
+				( new Viglet_Turing_Tuning() )->try_query( sanitize_text_field( (string) $request->get_param( 'q' ) ) )
 			),
 			'permission_callback' => $can_manage,
 		)
 	);
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/tuning/spotlight/(?P<id>[A-Za-z0-9-]+)',
 		array(
 			'methods'             => 'DELETE',
-			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Dumont_Tuning() )->remove_spotlight( (string) $request['id'] ) ),
+			'callback'            => static fn ( WP_REST_Request $request ) => $answer( ( new Viglet_Turing_Tuning() )->remove_spotlight( (string) $request['id'] ) ),
 			'permission_callback' => $can_manage,
 		)
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/ai',
 		array(
 			'methods'             => 'GET',
-			'callback'            => static fn () => new WP_REST_Response( viglet_dumont_ai_status(), 200 ),
+			'callback'            => static fn () => new WP_REST_Response( viglet_turing_ai_status(), 200 ),
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
@@ -828,28 +833,28 @@ function viglet_dumont_register_rest_routes(): void {
 	// report only makes the server ask Turing itself, at most once every ten minutes, so it
 	// can never invent a spent budget.
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/ai-paused',
 		array(
 			'methods'             => 'POST',
-			'callback'            => static fn () => new WP_REST_Response( Viglet_Dumont_AI_Quota::reported( viglet_dumont_get_settings() ), 202 ),
+			'callback'            => static fn () => new WP_REST_Response( Viglet_Turing_AI_Quota::reported( viglet_turing_get_settings() ), 202 ),
 			'permission_callback' => '__return_true',
 		)
 	);
 
 	register_rest_route(
-		'viglet-dumont/v1',
+		'viglet-turing/v1',
 		'/stats',
 		array(
 			'methods'             => 'GET',
-			'callback'            => 'viglet_dumont_rest_stats',
+			'callback'            => 'viglet_turing_rest_stats',
 			'permission_callback' => function () {
 				return current_user_can( 'manage_options' );
 			},
 		)
 	);
 }
-add_action( 'rest_api_init', 'viglet_dumont_register_rest_routes' );
+add_action( 'rest_api_init', 'viglet_turing_register_rest_routes' );
 
 /**
  * REST: Index one batch of posts. The admin screens start a background reindex instead
@@ -857,7 +862,7 @@ add_action( 'rest_api_init', 'viglet_dumont_register_rest_routes' );
  *
  * @param WP_REST_Request $request Carries `offset` and `post_type`: `all` or one post type.
  */
-function viglet_dumont_rest_index_batch( WP_REST_Request $request ): WP_REST_Response {
+function viglet_turing_rest_index_batch( WP_REST_Request $request ): WP_REST_Response {
 	$offset    = max( 0, (int) $request->get_param( 'offset' ) );
 	$post_type = sanitize_text_field( (string) $request->get_param( 'post_type' ) );
 	// Nothing named is not "posts": say so rather than index a type nobody asked for (D331).
@@ -865,7 +870,7 @@ function viglet_dumont_rest_index_batch( WP_REST_Request $request ): WP_REST_Res
 		return new WP_REST_Response( array( 'message' => __( 'Name the content to index: post_type is all, or one post type.', 'viglet-turing-search' ) ), 400 );
 	}
 
-	$indexer = new Viglet_Dumont_Indexer();
+	$indexer = new Viglet_Turing_Indexer();
 	$result  = $indexer->index_batch( $post_type, $offset );
 
 	return new WP_REST_Response( $result, empty( $result['error'] ) ? 200 : 502 );
@@ -876,8 +881,8 @@ function viglet_dumont_rest_index_batch( WP_REST_Request $request ): WP_REST_Res
  *
  * @param WP_REST_Request $request Carries `type`: `all` or one post type.
  */
-function viglet_dumont_rest_start_reindex( WP_REST_Request $request ): WP_REST_Response {
-	$reindex = new Viglet_Dumont_Reindex();
+function viglet_turing_rest_start_reindex( WP_REST_Request $request ): WP_REST_Response {
+	$reindex = new Viglet_Turing_Reindex();
 	$run     = $reindex->start( sanitize_key( (string) $request->get_param( 'type' ) ) );
 	if ( is_wp_error( $run ) ) {
 		$data = $run->get_error_data();
@@ -896,8 +901,8 @@ function viglet_dumont_rest_start_reindex( WP_REST_Request $request ): WP_REST_R
 /**
  * REST: Delete all indexed content.
  */
-function viglet_dumont_rest_delete_all(): WP_REST_Response {
-	$indexer = new Viglet_Dumont_Indexer();
+function viglet_turing_rest_delete_all(): WP_REST_Response {
+	$indexer = new Viglet_Turing_Indexer();
 	$result  = $indexer->delete_all();
 
 	return new WP_REST_Response( array( 'success' => $result ), $result ? 200 : 500 );
@@ -906,8 +911,8 @@ function viglet_dumont_rest_delete_all(): WP_REST_Response {
 /**
  * REST: Test server connection.
  */
-function viglet_dumont_rest_ping(): WP_REST_Response {
-	$client = new Viglet_Dumont_API_Client();
+function viglet_turing_rest_ping(): WP_REST_Response {
+	$client = new Viglet_Turing_API_Client();
 	$result = $client->ping();
 
 	return new WP_REST_Response( $result, $result['success'] ? 200 : 500 );
@@ -916,40 +921,40 @@ function viglet_dumont_rest_ping(): WP_REST_Response {
 /**
  * REST: The field mapping in effect, plus the manifest it provisions. This is the JSON export.
  */
-function viglet_dumont_rest_get_mapping(): WP_REST_Response {
-	$settings = viglet_dumont_get_settings();
-	$mapping  = new Viglet_Dumont_Mapping( $settings );
-	$plan     = $mapping->plan_status( new Viglet_Dumont_API_Client( $settings ) );
+function viglet_turing_rest_get_mapping(): WP_REST_Response {
+	$settings = viglet_turing_get_settings();
+	$mapping  = new Viglet_Turing_Mapping( $settings );
+	$plan     = $mapping->plan_status( new Viglet_Turing_API_Client( $settings ) );
 	$all      = $mapping->all();
 
 	$sources = array();
 	foreach ( array_keys( $all ) as $post_type ) {
-		$sources[ $post_type ] = Viglet_Dumont_Mapping::sources( $post_type );
+		$sources[ $post_type ] = Viglet_Turing_Mapping::sources( $post_type );
 	}
 	// The types other sources sent under this site key (D327), for their labels and card looks.
-	$found = $mapping->discover_foreign( new Viglet_Dumont_API_Client( $settings ) );
+	$found = $mapping->discover_foreign( new Viglet_Turing_API_Client( $settings ) );
 
 	return new WP_REST_Response(
 		array(
 			'mapping'      => $all,
 			'manifest'     => $mapping->manifest(),
-			'provisioned'  => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+			'provisioned'  => get_option( Viglet_Turing_Mapping::PROVISIONED_OPTION, null ),
 			'field_status' => is_wp_error( $plan ) ? null : $plan['fields'],
 			'status_error' => is_wp_error( $plan ) ? $plan->get_error_message() : '',
 			// Whether the next send creates or changes the site's GenAI binding.
 			'genai_change' => ! is_wp_error( $plan ) && $plan['genai_to_change'],
 			'sources'      => $sources,
-			'types'        => Viglet_Dumont_Mapping::TYPES,
+			'types'        => Viglet_Turing_Mapping::TYPES,
 			'foreign'      => (object) $mapping->foreign(),
 			'foreign_seen' => is_wp_error( $found ) ? array() : $found,
 			// The entity facets (D310): how each is labelled and offered, and whether Turing is
 			// asked to fill them, which needs both settings.
-			'entities'     => ( new Viglet_Dumont_Entities( $settings ) )->facets(),
+			'entities'     => ( new Viglet_Turing_Entities( $settings ) )->facets(),
 			'extraction'   => array(
-				'on'            => Viglet_Dumont_Entities::extracts( $settings ),
+				'on'            => Viglet_Turing_Entities::extracts( $settings ),
 				'asked'         => ! empty( $settings['entity_extraction'] ),
-				'generative_ai' => Viglet_Dumont_Mapping::declares_generative_ai( $settings ),
-				'settings_url'  => admin_url( 'admin.php?page=viglet-dumont' ),
+				'generative_ai' => Viglet_Turing_Mapping::declares_generative_ai( $settings ),
+				'settings_url'  => admin_url( 'admin.php?page=viglet-turing' ),
 			),
 		),
 		200
@@ -960,8 +965,8 @@ function viglet_dumont_rest_get_mapping(): WP_REST_Response {
  * REST: The connection settings the Setup page edits. The key itself is never sent back,
  * only whether one is set.
  */
-function viglet_dumont_rest_get_connection(): WP_REST_Response {
-	$settings = viglet_dumont_get_settings();
+function viglet_turing_rest_get_connection(): WP_REST_Response {
+	$settings = viglet_turing_get_settings();
 
 	return new WP_REST_Response(
 		array(
@@ -970,9 +975,9 @@ function viglet_dumont_rest_get_connection(): WP_REST_Response {
 			'locale'      => $settings['locale'],
 			'site_key'    => $settings['site_key'],
 			'has_api_key' => '' !== (string) $settings['api_key'],
-			'derived_key' => ( new Viglet_Dumont_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key(),
+			'derived_key' => ( new Viglet_Turing_Indexer( array_merge( $settings, array( 'site_key' => '' ) ) ) )->site_key(),
 			// Per setting, what sets it: constant, env or option. The first two are read-only here.
-			'sources'     => Viglet_Dumont_Settings::sources(),
+			'sources'     => Viglet_Turing_Settings::sources(),
 		),
 		200
 	);
@@ -983,8 +988,8 @@ function viglet_dumont_rest_get_connection(): WP_REST_Response {
  *
  * @param WP_REST_Request $request Carries `server_url`, `site_name`, `locale`, `site_key`, `api_key`.
  */
-function viglet_dumont_rest_save_connection( WP_REST_Request $request ): WP_REST_Response {
-	$settings = viglet_dumont_get_settings();
+function viglet_turing_rest_save_connection( WP_REST_Request $request ): WP_REST_Response {
+	$settings = viglet_turing_get_settings();
 
 	foreach ( array( 'site_name', 'locale' ) as $key ) {
 		if ( null !== $request->get_param( $key ) ) {
@@ -995,16 +1000,16 @@ function viglet_dumont_rest_save_connection( WP_REST_Request $request ): WP_REST
 		$settings['server_url'] = esc_url_raw( (string) $request->get_param( 'server_url' ) );
 	}
 	if ( null !== $request->get_param( 'site_key' ) ) {
-		$settings['site_key'] = Viglet_Dumont_Indexer::sanitize_site_key( (string) $request->get_param( 'site_key' ) );
+		$settings['site_key'] = Viglet_Turing_Indexer::sanitize_site_key( (string) $request->get_param( 'site_key' ) );
 	}
 	$api_key = (string) $request->get_param( 'api_key' );
 	if ( '' !== $api_key ) {
 		$settings['api_key'] = sanitize_text_field( $api_key );
 	}
 
-	viglet_dumont_update_settings( $settings );
+	viglet_turing_update_settings( $settings );
 
-	return viglet_dumont_rest_get_connection();
+	return viglet_turing_rest_get_connection();
 }
 
 /**
@@ -1012,7 +1017,7 @@ function viglet_dumont_rest_save_connection( WP_REST_Request $request ): WP_REST
  *
  * @param WP_REST_Request $request Carries `post_type`.
  */
-function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST_Response {
+function viglet_turing_rest_preview_mapping( WP_REST_Request $request ): WP_REST_Response {
 	$post_type = sanitize_key( (string) $request->get_param( 'post_type' ) );
 	$posts     = get_posts(
 		array(
@@ -1026,7 +1031,7 @@ function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST
 		return new WP_REST_Response( array( 'message' => __( 'No published post of this type to preview.', 'viglet-turing-search' ) ), 404 );
 	}
 
-	$item = ( new Viglet_Dumont_Indexer() )->build_create_item( $posts[0] );
+	$item = ( new Viglet_Turing_Indexer() )->build_create_item( $posts[0] );
 
 	return new WP_REST_Response(
 		array(
@@ -1045,13 +1050,13 @@ function viglet_dumont_rest_preview_mapping( WP_REST_Request $request ): WP_REST
  *
  * @param WP_REST_Request $request Carries `mapping`, keyed by post type.
  */
-function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Response {
+function viglet_turing_rest_save_mapping( WP_REST_Request $request ): WP_REST_Response {
 	$mapping = $request->get_param( 'mapping' );
 	if ( ! is_array( $mapping ) ) {
 		return new WP_REST_Response( array( 'message' => __( 'The body needs a mapping object keyed by post type.', 'viglet-turing-search' ) ), 400 );
 	}
 
-	$fields   = new Viglet_Dumont_Mapping();
+	$fields   = new Viglet_Turing_Mapping();
 	$response = array( 'mapping' => $fields->save( $mapping ) );
 	// How the types other sources sent show (D327), when the body carries them.
 	$foreign = $request->get_param( 'foreign' );
@@ -1061,19 +1066,19 @@ function viglet_dumont_rest_save_mapping( WP_REST_Request $request ): WP_REST_Re
 	// How the entity facets are labelled and offered (D310), when the body carries them.
 	$entities = $request->get_param( 'entities' );
 	if ( is_array( $entities ) ) {
-		$response['entities'] = ( new Viglet_Dumont_Entities() )->save( $entities );
+		$response['entities'] = ( new Viglet_Turing_Entities() )->save( $entities );
 	}
 
 	return new WP_REST_Response( $response, 200 );
 }
 
 /**
- * REST: Index the posts `type`, `ids` and `since` select, synchronously — `wp dumont index`.
+ * REST: Index the posts `type`, `ids` and `since` select, synchronously — `wp turing index`.
  *
  * @param WP_REST_Request $request Carries the optional `type`, `ids` (array) and `since`.
  */
-function viglet_dumont_rest_index( WP_REST_Request $request ): WP_REST_Response {
-	$operations = new Viglet_Dumont_Operations();
+function viglet_turing_rest_index( WP_REST_Request $request ): WP_REST_Response {
+	$operations = new Viglet_Turing_Operations();
 	$ids        = array_filter( array_map( 'intval', (array) $request->get_param( 'ids' ) ) );
 	$type       = sanitize_key( (string) $request->get_param( 'type' ) );
 	$since      = sanitize_text_field( (string) $request->get_param( 'since' ) );
@@ -1084,12 +1089,12 @@ function viglet_dumont_rest_index( WP_REST_Request $request ): WP_REST_Response 
 }
 
 /**
- * REST: Remove this site key's documents WordPress no longer publishes — `wp dumont sweep`.
+ * REST: Remove this site key's documents WordPress no longer publishes — `wp turing sweep`.
  *
  * @param WP_REST_Request $request Carries `dry_run`.
  */
-function viglet_dumont_rest_sweep( WP_REST_Request $request ): WP_REST_Response {
-	$result = ( new Viglet_Dumont_Operations() )->sweep( (bool) $request->get_param( 'dry_run' ) );
+function viglet_turing_rest_sweep( WP_REST_Request $request ): WP_REST_Response {
+	$result = ( new Viglet_Turing_Operations() )->sweep( (bool) $request->get_param( 'dry_run' ) );
 
 	return new WP_REST_Response( $result, $result['success'] ? 200 : 502 );
 }
@@ -1097,8 +1102,8 @@ function viglet_dumont_rest_sweep( WP_REST_Request $request ): WP_REST_Response 
 /**
  * REST: Send the mapped fields' manifest to Turing now.
  */
-function viglet_dumont_rest_provision(): WP_REST_Response {
-	$result = ( new Viglet_Dumont_Indexer() )->provision( true );
+function viglet_turing_rest_provision(): WP_REST_Response {
+	$result = ( new Viglet_Turing_Indexer() )->provision( true );
 
 	return new WP_REST_Response( $result, $result['success'] ? 200 : 502 );
 }
@@ -1106,9 +1111,9 @@ function viglet_dumont_rest_provision(): WP_REST_Response {
 /**
  * REST: Get indexing stats.
  */
-function viglet_dumont_rest_stats(): WP_REST_Response {
-	$settings   = viglet_dumont_get_settings();
-	$post_types = viglet_dumont_get_indexable_types();
+function viglet_turing_rest_stats(): WP_REST_Response {
+	$settings   = viglet_turing_get_settings();
+	$post_types = viglet_turing_get_indexable_types();
 	$stats      = array();
 
 	foreach ( $post_types as $type ) {
@@ -1120,7 +1125,7 @@ function viglet_dumont_rest_stats(): WP_REST_Response {
 	}
 
 	$stats['batch_size'] = (int) $settings['batch_size'];
-	$stats['queue']      = ( new Viglet_Dumont_Queue( $settings ) )->counts();
+	$stats['queue']      = ( new Viglet_Turing_Queue( $settings ) )->counts();
 
 	return new WP_REST_Response( $stats, 200 );
 }
@@ -1128,8 +1133,8 @@ function viglet_dumont_rest_stats(): WP_REST_Response {
 /**
  * Get all post types that should be indexed.
  */
-function viglet_dumont_get_indexable_types(): array {
-	$settings = viglet_dumont_get_settings();
+function viglet_turing_get_indexable_types(): array {
+	$settings = viglet_turing_get_settings();
 	$types    = array();
 
 	if ( $settings['index_posts'] ) {

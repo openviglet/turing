@@ -100,7 +100,7 @@ test( 'the search page names its search box and its filters', async ( {
 		`/?pagename=search-gear&q=${ encodeURIComponent( say().jacket ) }&tour=1`
 	);
 	await expect(
-		page.locator( '.viglet-dumont-search__title a' ).first()
+		page.locator( '.viglet-turing-search__title a' ).first()
 	).toBeVisible();
 	// Both are chapter 2: she says what she needs, and the filters set themselves.
 	await walk( page, [
@@ -125,21 +125,21 @@ test( 'a product page names the catalog copilot and Related, in page order', asy
 	// (and matches "daypack" through the backpack synonym) may rank above it.
 	const product = await page
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__result'
+			'.viglet-turing-search__results .viglet-turing-search__result'
 		)
 		.filter( {
-			has: page.locator( '.viglet-dumont-search__type', {
+			has: page.locator( '.viglet-turing-search__type', {
 				hasText: say().productType,
 			} ),
 		} )
 		.first()
-		.locator( '.viglet-dumont-search__title a' )
+		.locator( '.viglet-turing-search__title a' )
 		.getAttribute( 'href' );
 	const url = new URL( product );
 	url.searchParams.set( 'tour', '1' );
 	await page.goto( url.pathname + url.search );
 	await expect(
-		page.locator( '.wp-block-viglet-dumont-copilot' )
+		page.locator( '.wp-block-viglet-turing-copilot' )
 	).toBeVisible();
 	// Chapter 6, checking one item: on its page the copilot answers about it.
 	await walk( page, [

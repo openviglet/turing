@@ -10,9 +10,9 @@ const blackhole = 'http://192.0.2.1:2700';
 let saved = '';
 
 /** PHP that clears the "Turing is down" mark and every cached Related answer. */
-const clearMarks = `delete_transient( Viglet_Dumont_API_Client::DOWN_TRANSIENT );
+const clearMarks = `delete_transient( Viglet_Turing_API_Client::DOWN_TRANSIENT );
 global $wpdb;
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\\\_transient%viglet\\\\_dumont\\\\_related\\\\_%'" );`;
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\\\_transient%viglet\\\\_turing\\\\_related\\\\_%'" );`;
 
 /**
  * The seconds one server-side render of a URL takes.
@@ -33,7 +33,7 @@ test.beforeAll( ( {}, testInfo ) => {
 	}
 	saved = wp( [
 		'eval',
-		`echo ( (array) get_option( 'viglet_dumont_settings', array() ) )['server_url'] ?? '';`,
+		`echo ( (array) get_option( 'viglet_turing_settings', array() ) )['server_url'] ?? '';`,
 	] )
 		.trim()
 		.split( /\r?\n/ )
@@ -42,9 +42,9 @@ test.beforeAll( ( {}, testInfo ) => {
 	wp( [ 'eval', clearMarks ] );
 	wp( [
 		'eval',
-		`$s = (array) get_option( 'viglet_dumont_settings', array() ); $s['server_url'] = ${ JSON.stringify(
+		`$s = (array) get_option( 'viglet_turing_settings', array() ); $s['server_url'] = ${ JSON.stringify(
 			blackhole
-		) }; update_option( 'viglet_dumont_settings', $s );`,
+		) }; update_option( 'viglet_turing_settings', $s );`,
 	] );
 } );
 
@@ -57,7 +57,7 @@ test.afterAll( ( {}, testInfo ) => {
 		: `unset( $s['server_url'] );`;
 	wp( [
 		'eval',
-		`$s = (array) get_option( 'viglet_dumont_settings', array() ); ${ restore } update_option( 'viglet_dumont_settings', $s );`,
+		`$s = (array) get_option( 'viglet_turing_settings', array() ); ${ restore } update_option( 'viglet_turing_settings', $s );`,
 	] );
 	wp( [ 'eval', clearMarks ] );
 } );

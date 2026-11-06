@@ -1,4 +1,4 @@
-/* Viglet Dumont Admin Styles */
+/* Viglet Turing Admin Styles */
 
 :root {
     --vd-primary: #2271b1;
@@ -21,20 +21,20 @@
 }
 
 /* Header */
-.viglet-dumont-header {
+.viglet-turing-header {
     background: var(--vd-white);
     border-bottom: 1px solid var(--vd-border-light);
     margin: -10px -20px 24px;
     padding: 24px 32px;
 }
 
-.viglet-dumont-header__inner {
+.viglet-turing-header__inner {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.viglet-dumont-header__inner h1 {
+.viglet-turing-header__inner h1 {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -45,14 +45,14 @@
     color: var(--vd-text);
 }
 
-.viglet-dumont-header__inner h1 .dashicons {
+.viglet-turing-header__inner h1 .dashicons {
     font-size: 28px;
     width: 28px;
     height: 28px;
     color: var(--vd-primary);
 }
 
-.viglet-dumont-version {
+.viglet-turing-version {
     background: var(--vd-primary);
     color: var(--vd-white);
     font-size: 11px;
@@ -61,14 +61,14 @@
     border-radius: 10px;
 }
 
-.viglet-dumont-header__desc {
+.viglet-turing-header__desc {
     margin: 8px 0 0;
     color: var(--vd-text-muted);
     font-size: 14px;
 }
 
 /* Tabs Navigation */
-.viglet-dumont-tabs__nav {
+.viglet-turing-tabs__nav {
     display: flex;
     gap: 2px;
     background: var(--vd-white);
@@ -79,7 +79,7 @@
     box-shadow: var(--vd-shadow);
 }
 
-.viglet-dumont-tab {
+.viglet-turing-tab {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -92,35 +92,35 @@
     transition: all 0.2s ease;
 }
 
-.viglet-dumont-tab:hover {
+.viglet-turing-tab:hover {
     color: var(--vd-text);
     background: var(--vd-bg);
 }
 
-.viglet-dumont-tab:focus {
+.viglet-turing-tab:focus {
     box-shadow: none;
     outline: none;
     color: var(--vd-text);
 }
 
 /* A keyboard user still needs to see which tab has the focus. */
-.viglet-dumont-tab:focus-visible {
+.viglet-turing-tab:focus-visible {
     box-shadow: 0 0 0 2px var(--vd-white), 0 0 0 4px var(--vd-primary);
 }
 
-.viglet-dumont-tab.active {
+.viglet-turing-tab.active {
     background: var(--vd-primary);
     color: var(--vd-white);
 }
 
-.viglet-dumont-tab .dashicons {
+.viglet-turing-tab .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
 }
 
 /* Cards */
-.viglet-dumont-card {
+.viglet-turing-card {
     background: var(--vd-white);
     border: 1px solid var(--vd-border-light);
     border-radius: var(--vd-radius);
@@ -128,35 +128,35 @@
     margin-bottom: 20px;
 }
 
-.viglet-dumont-card__header {
+.viglet-turing-card__header {
     padding: 20px 24px 0;
 }
 
-.viglet-dumont-card__header h2 {
+.viglet-turing-card__header h2 {
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 4px;
     color: var(--vd-text);
 }
 
-.viglet-dumont-card__header p {
+.viglet-turing-card__header p {
     color: var(--vd-text-muted);
     font-size: 13px;
     margin: 0;
 }
 
-.viglet-dumont-card__body {
+.viglet-turing-card__body {
     padding: 20px 24px 24px;
 }
 
-.viglet-dumont-card__body h3 {
+.viglet-turing-card__body h3 {
     font-size: 14px;
     font-weight: 600;
     margin: 0 0 12px;
     color: var(--vd-text);
 }
 
-.viglet-dumont-card__footer {
+.viglet-turing-card__footer {
     padding: 16px 24px;
     border-top: 1px solid var(--vd-border-light);
     display: flex;
@@ -165,11 +165,11 @@
 }
 
 /* Fields */
-.viglet-dumont-field {
+.viglet-turing-field {
     margin-bottom: 20px;
 }
 
-.viglet-dumont-field label {
+.viglet-turing-field label {
     display: block;
     font-weight: 600;
     font-size: 13px;
@@ -177,12 +177,12 @@
     color: var(--vd-text);
 }
 
-.viglet-dumont-field textarea,
-.viglet-dumont-field input[type="text"],
-.viglet-dumont-field input[type="url"],
-.viglet-dumont-field input[type="password"],
-.viglet-dumont-field input[type="number"],
-.viglet-dumont-field select {
+.viglet-turing-field textarea,
+.viglet-turing-field input[type="text"],
+.viglet-turing-field input[type="url"],
+.viglet-turing-field input[type="password"],
+.viglet-turing-field input[type="number"],
+.viglet-turing-field select {
     width: 100%;
     max-width: 480px;
     padding: 8px 12px;
@@ -193,50 +193,50 @@
 }
 
 /* Clear of the arrow WordPress draws on the right (D192). */
-.viglet-dumont-field select {
+.viglet-turing-field select {
     padding-right: 32px;
 }
 
-.viglet-dumont-field input:focus,
-.viglet-dumont-field select:focus {
+.viglet-turing-field input:focus,
+.viglet-turing-field select:focus {
     border-color: var(--vd-primary);
     box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.15);
     outline: none;
 }
 
-.viglet-dumont-field .description {
+.viglet-turing-field .description {
     margin-top: 6px;
     color: var(--vd-text-muted);
     font-size: 12px;
 }
 
-.viglet-dumont-field-row {
+.viglet-turing-field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
 }
 
 @media (max-width: 782px) {
-    .viglet-dumont-field-row {
+    .viglet-turing-field-row {
         grid-template-columns: 1fr;
     }
 }
 
 /* Separator */
-.viglet-dumont-separator {
+.viglet-turing-separator {
     border: none;
     border-top: 1px solid var(--vd-border-light);
     margin: 24px 0;
 }
 
 /* Toggle switches */
-.viglet-dumont-toggles {
+.viglet-turing-toggles {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.viglet-dumont-toggle {
+.viglet-turing-toggle {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -247,16 +247,16 @@
     transition: border-color 0.2s, background 0.2s;
 }
 
-.viglet-dumont-toggle:hover {
+.viglet-turing-toggle:hover {
     border-color: var(--vd-primary);
     background: rgba(34, 113, 177, 0.02);
 }
 
-.viglet-dumont-toggle input[type="checkbox"] {
+.viglet-turing-toggle input[type="checkbox"] {
     display: none;
 }
 
-.viglet-dumont-toggle__slider {
+.viglet-turing-toggle__slider {
     position: relative;
     flex-shrink: 0;
     width: 40px;
@@ -267,7 +267,7 @@
     margin-top: 1px;
 }
 
-.viglet-dumont-toggle__slider::after {
+.viglet-turing-toggle__slider::after {
     content: '';
     position: absolute;
     top: 3px;
@@ -280,22 +280,22 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.viglet-dumont-toggle input:checked + .viglet-dumont-toggle__slider {
+.viglet-turing-toggle input:checked + .viglet-turing-toggle__slider {
     background: var(--vd-primary);
 }
 
-.viglet-dumont-toggle input:checked + .viglet-dumont-toggle__slider::after {
+.viglet-turing-toggle input:checked + .viglet-turing-toggle__slider::after {
     transform: translateX(18px);
 }
 
-.viglet-dumont-toggle__label {
+.viglet-turing-toggle__label {
     font-size: 14px;
     font-weight: 500;
     color: var(--vd-text);
     line-height: 1.5;
 }
 
-.viglet-dumont-toggle__label small {
+.viglet-turing-toggle__label small {
     display: block;
     font-weight: 400;
     font-size: 12px;
@@ -304,39 +304,39 @@
 }
 
 /* Save Button */
-.viglet-dumont-save {
+.viglet-turing-save {
     margin-top: 24px;
 }
 
-.viglet-dumont-save .button-primary {
+.viglet-turing-save .button-primary {
     padding: 8px 24px;
     height: auto;
     font-size: 14px;
 }
 
 /* Action Sections */
-.viglet-dumont-action-section {
+.viglet-turing-action-section {
     margin-bottom: 8px;
 }
 
-.viglet-dumont-action-row {
+.viglet-turing-action-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 24px;
 }
 
-.viglet-dumont-action-row h3 {
+.viglet-turing-action-row h3 {
     margin-bottom: 4px !important;
 }
 
-.viglet-dumont-action-row p {
+.viglet-turing-action-row p {
     color: var(--vd-text-muted);
     font-size: 13px;
     margin: 0;
 }
 
-.viglet-dumont-action-buttons {
+.viglet-turing-action-buttons {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -345,7 +345,7 @@
 
 /* The right padding is the room WordPress keeps for the select's arrow (D192); stretched,
    the select takes the height of the button beside it. */
-.viglet-dumont-action-buttons select {
+.viglet-turing-action-buttons select {
     align-self: stretch;
     padding: 0 28px 0 10px;
     border: 1px solid var(--vd-border);
@@ -353,7 +353,7 @@
     font-size: 13px;
 }
 
-.viglet-dumont-action-result {
+.viglet-turing-action-result {
     margin-top: 12px;
 }
 
@@ -384,14 +384,14 @@
 }
 
 /* Progress Bar */
-.viglet-dumont-progress {
+.viglet-turing-progress {
     margin-top: 16px;
     padding: 16px;
     background: var(--vd-bg);
     border-radius: 6px;
 }
 
-.viglet-dumont-progress__bar {
+.viglet-turing-progress__bar {
     width: 100%;
     height: 8px;
     background: var(--vd-border-light);
@@ -400,35 +400,35 @@
     margin-bottom: 8px;
 }
 
-.viglet-dumont-progress__fill {
+.viglet-turing-progress__fill {
     height: 100%;
     background: var(--vd-primary);
     border-radius: 4px;
     transition: width 0.3s ease;
 }
 
-.viglet-dumont-progress__text {
+.viglet-turing-progress__text {
     font-weight: 600;
     font-size: 14px;
     color: var(--vd-primary);
 }
 
-.viglet-dumont-progress__message {
+.viglet-turing-progress__message {
     font-size: 13px;
     color: var(--vd-text-muted);
     margin-left: 8px;
 }
 
-.viglet-dumont-progress.complete .viglet-dumont-progress__fill {
+.viglet-turing-progress.complete .viglet-turing-progress__fill {
     background: var(--vd-success);
 }
 
-.viglet-dumont-progress.complete .viglet-dumont-progress__text {
+.viglet-turing-progress.complete .viglet-turing-progress__text {
     color: var(--vd-success);
 }
 
 /* Status badges */
-.viglet-dumont-status {
+.viglet-turing-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -438,36 +438,36 @@
     font-weight: 500;
 }
 
-.viglet-dumont-status--success {
+.viglet-turing-status--success {
     background: var(--vd-success-bg);
     color: var(--vd-success);
 }
 
-.viglet-dumont-status--error {
+.viglet-turing-status--error {
     background: var(--vd-error-bg);
     color: var(--vd-error);
 }
 
-.viglet-dumont-status--loading {
+.viglet-turing-status--loading {
     background: var(--vd-warning-bg);
     color: var(--vd-warning);
 }
 
 /* Stats Grid */
-.viglet-dumont-stats-grid {
+.viglet-turing-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
 }
 
-.viglet-dumont-stat {
+.viglet-turing-stat {
     text-align: center;
     padding: 16px;
     background: var(--vd-bg);
     border-radius: 6px;
 }
 
-.viglet-dumont-stat__number {
+.viglet-turing-stat__number {
     display: block;
     font-size: 28px;
     font-weight: 700;
@@ -475,7 +475,7 @@
     line-height: 1.2;
 }
 
-.viglet-dumont-stat__label {
+.viglet-turing-stat__label {
     display: block;
     font-size: 12px;
     color: var(--vd-text-muted);
@@ -485,13 +485,13 @@
 }
 
 /* Loading spinner */
-.viglet-dumont-loading {
+.viglet-turing-loading {
     text-align: center;
     color: var(--vd-text-muted);
     padding: 20px;
 }
 
-.viglet-dumont-spinner {
+.viglet-turing-spinner {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -509,24 +509,24 @@
 
 /* Responsive */
 @media (max-width: 782px) {
-    .viglet-dumont-header {
+    .viglet-turing-header {
         padding: 16px 20px;
     }
 
-    .viglet-dumont-tabs__nav {
+    .viglet-turing-tabs__nav {
         flex-wrap: wrap;
     }
 
-    .viglet-dumont-action-row {
+    .viglet-turing-action-row {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .viglet-dumont-action-buttons {
+    .viglet-turing-action-buttons {
         width: 100%;
     }
 
-    .viglet-dumont-stats-grid {
+    .viglet-turing-stats-grid {
         grid-template-columns: 1fr 1fr;
     }
 }

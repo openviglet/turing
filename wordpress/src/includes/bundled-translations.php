@@ -5,7 +5,7 @@
  * compiled translations out (bin/build-zip.sh --wporg), its language packs coming from
  * translate.wordpress.org.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Load the plugin's own translations, before anything on init reads a string.
  */
-function viglet_dumont_load_bundled_translations(): void {
-	load_plugin_textdomain( 'viglet-turing-search', false, dirname( plugin_basename( VIGLET_DUMONT_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
+function viglet_turing_load_bundled_translations(): void {
+	load_plugin_textdomain( 'viglet-turing-search', false, dirname( plugin_basename( VIGLET_TURING_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 }
-add_action( 'init', 'viglet_dumont_load_bundled_translations', 0 );
+add_action( 'init', 'viglet_turing_load_bundled_translations', 0 );

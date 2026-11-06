@@ -28,7 +28,7 @@ directory:
         {
             "type": "package",
             "package": {
-                "name": "viglet/dumont-wordpress",
+                "name": "viglet/turing-wordpress",
                 "version": "1.0.0",
                 "type": "wordpress-plugin",
                 "dist": {
@@ -40,7 +40,7 @@ directory:
         }
     ],
     "require": {
-        "viglet/dumont-wordpress": "1.0.0"
+        "viglet/turing-wordpress": "1.0.0"
     }
 }
 ```
@@ -56,17 +56,17 @@ written to `wp_options`, so the key stays out of database backups.
 
 | Name | Setting |
 |---|---|
-| `VIGLET_DUMONT_TURING_URL` | Turing's URL, as this server reaches it |
-| `VIGLET_DUMONT_TURING_SITE` | The SN site |
-| `VIGLET_DUMONT_TURING_API_KEY` | The API key |
-| `VIGLET_DUMONT_TURING_LOCALE` | The locale content is indexed in |
-| `VIGLET_DUMONT_SITE_KEY` | The site key that starts every document id |
-| `VIGLET_DUMONT_PUBLIC_URL` | Turing's URL as visitors' browsers reach it, when different |
+| `VIGLET_TURING_TURING_URL` | Turing's URL, as this server reaches it |
+| `VIGLET_TURING_TURING_SITE` | The SN site |
+| `VIGLET_TURING_TURING_API_KEY` | The API key |
+| `VIGLET_TURING_TURING_LOCALE` | The locale content is indexed in |
+| `VIGLET_TURING_SITE_KEY` | The site key that starts every document id |
+| `VIGLET_TURING_PUBLIC_URL` | Turing's URL as visitors' browsers reach it, when different |
 
-`wp dumont status` says where each value came from. The Docker stack below sets the first
+`wp turing status` says where each value came from. The Docker stack below sets the first
 three this way.
 
-`VIGLET_DUMONT_DEMO=1` is demo mode, for a site whose wp-admin belongs to whoever opens it
+`VIGLET_TURING_DEMO=1` is demo mode, for a site whose wp-admin belongs to whoever opens it
 (a WordPress Playground demo): no API key, nothing ever written to Turing, Search tuning and
 Search insights hidden, and search against a PUBLIC SN site indexed elsewhere.
 
@@ -79,14 +79,14 @@ are this site's documents only (its site key), and if Turing does not answer, Wo
 searches its database as before. The older plugin results page, with facets, stays
 available as "The plugin's results page" for classic themes.
 
-The **Turing search** block (`viglet-dumont/search`) is a complete search UI for any page: a
+The **Turing search** block (`viglet-turing/search`) is a complete search UI for any page: a
 box with suggestions, "did you mean", facets from the mapping, results and pages, built with
 the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (or `?s=`),
 so a page holding it can be the site's search page. A site with its own search blocks
-turns it off: `add_filter( 'viglet_dumont_register_blocks', '__return_false' );`.
+turns it off: `add_filter( 'viglet_turing_register_blocks', '__return_false' );`.
 
 Its parts can be blocks of their own: Layout → **Arrange its parts** turns the box, the
-filters, the results and the pages into inner blocks (`viglet-dumont/search-box`,
+filters, the results and the pages into inner blocks (`viglet-turing/search-box`,
 `-filters`, `-results`, `-pages`). A theme can then reorder them, put the pages above the
 results, or set its own blocks between them. They stay one search with one store, and the
 filters stay beside the results. A block whose parts were never arranged draws them in the
@@ -106,7 +106,7 @@ products have. The plugin keeps no cap on readings: Turing throttles anonymous
 `nl-filters` calls itself (`TurAnonymousAbuseRateLimitFilter`), and a second limiter here
 would be two counts of one budget.
 
-The **Related content** block (`viglet-dumont/related`) lists the posts Turing's
+The **Related content** block (`viglet-turing/related`) lists the posts Turing's
 similar-documents search finds most like the one being read. It never lists the post itself,
 only this site's published posts, and renders nothing when there are none. It is drawn on the
 server, so the links are in the HTML, and each post's neighbours are cached for an hour.
@@ -114,7 +114,7 @@ Settings → Search → Related Content puts it after the content of chosen post
 block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meaning falls back
 to shared words on a site without embeddings), same post type only, and grid or list.
 
-The **Site assistant** block (`viglet-dumont/assistant`) is a button that opens a chat with
+The **Site assistant** block (`viglet-turing/assistant`) is a button that opens a chat with
 Turing over the site's posts (`POST /api/sn/{site}/chat/conversation`, through the SDK's chat
 controller). Answers stream in, labelled as generated, with the posts they used as links and
 a "Was this helpful?" that goes to Turing's answer signals. The conversation is the visitor's
@@ -127,19 +127,19 @@ every page instead.
 
 A theme that builds its own search on `@viglet/turing-sdk` does not vendor it: the plugin
 registers two script modules, `@viglet/turing-sdk` (the SDK built from the same Turing commit) and
-`viglet-dumont/search` (the SDK configured for this site, filtered to its site key):
+`viglet-turing/search` (the SDK configured for this site, filtered to its site key):
 
 ```js
-// In a theme's module (registered with 'viglet-dumont/search' as a dependency).
-import { createSiteSearch, createSiteAutoComplete, config } from 'viglet-dumont/search';
+// In a theme's module (registered with 'viglet-turing/search' as a dependency).
+import { createSiteSearch, createSiteAutoComplete, config } from 'viglet-turing/search';
 
 const search = createSiteSearch();          // search-only; { controller: { chat: true } } for answers
 search.subscribe( ( state ) => render( state ) );
 await search.searchQuery( 'workshop' );
 ```
 
-The configuration it reads is the same one `viglet_dumont_public_config()` and
-`GET /wp-json/viglet-dumont/v1/public-config` return:
+The configuration it reads is the same one `viglet_turing_public_config()` and
+`GET /wp-json/viglet-turing/v1/public-config` return:
 Turing's public URL, the SN site, the locale, the site key (filter on `site_key`) and the
 mapped facets. It holds no key. For the browser to call Turing, the SN site must allow the
 WordPress origin in Turing's CORS settings (`TURING_ALLOWEDORIGINS` in a container).
@@ -161,10 +161,10 @@ Two opt-in settings under Search, both off on a fresh install:
 
 Events carry no visitor data, and the plugin sets no cookie. With a consent plugin that
 speaks the WP Consent API, nothing is sent until the visitor allows `statistics`. Without
-one, the site decides: `add_filter( 'viglet_dumont_tracking_consent', '__return_false' );`
+one, the site decides: `add_filter( 'viglet_turing_tracking_consent', '__return_false' );`
 sends nothing at all. A theme's own blocks report the same way: through
 `createSiteSearch( { track: true } )` and `trackResultClick( click, controller )` from
-`viglet-dumont/search`, or, searching without a tracked controller, `trackSearch()`.
+`viglet-turing/search`, or, searching without a tracked controller, `trackSearch()`.
 
 ## Develop
 
@@ -266,7 +266,7 @@ part of `npm run test:e2e`, which stays free and deterministic. Its seed
 in English and Portuguese, and one with a planted instruction; the specs check that answers
 come from those posts, ignore the instruction, invent no figure a post does not hold, and
 stay within a p95 time budget (`E2E_AI_P95_MS`, 20 s). Each spec skips, with the reason
-`wp dumont ai status` gives, a feature that is off. The answers land in
+`wp turing ai status` gives, a feature that is off. The answers land in
 `tests/e2e/artifacts/ai/answers.json`, and the teardown deletes the seeded posts again. The
 `demo-ai` project asks the demo store's curated prompts
 ([`ai-prompts.json`](demo/theme/tarnfell/ai-prompts.json)) through the Site assistant on its
@@ -302,10 +302,10 @@ committed, and the script refuses a recording older than the story.
 To look at one page in detail, logged in or not:
 
 ```sh
-npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont-health
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-turing-health
 npm run e2e:look -- "/?page_id=7&q=workshop" --anon --mobile
 npm run e2e:look -- /wp-admin/edit.php --script ./my-steps.mjs   # export default async ( page ) => { ... }
-npm run e2e:look -- /wp-admin/admin.php?page=viglet-dumont --a11y
+npm run e2e:look -- /wp-admin/admin.php?page=viglet-turing --a11y
 ```
 
 It saves a full-page screenshot to `tests/e2e/artifacts/look/` and prints the console
@@ -334,7 +334,7 @@ runs it on every push. These files, and `src/includes/bundled-translations.php` 
 zip and Composer only: the WordPress.org package (`bin/build-zip.sh --wporg`) leaves them out,
 keeping the `.pot`, as translate.wordpress.org delivers the language packs there. The pt_BR `.po`
 is what to import into translate.wordpress.org. The JSON files are named after the source script (`assets/admin/health.js`), and
-`viglet_dumont_script_translation_path` maps the built script to it.
+`viglet_turing_script_translation_path` maps the built script to it.
 
 The tests run on [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/), with no
 WordPress install. Without PHP locally, the same runs in a container:
@@ -353,8 +353,8 @@ installs WordPress, creates the SN site in Turing and gives the plugin an API ke
 ```bat
 run-docker.cmd                         :: WordPress http://localhost:8080/wp-admin (admin / admin)
                                        :: Turing    http://localhost:2700 (admin / dumont-dev)
-run-docker.cmd wp dumont queue run     :: any WP-CLI command
-run-docker.cmd wp dumont ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
+run-docker.cmd wp turing queue run     :: any WP-CLI command
+run-docker.cmd wp turing ai status     :: which of Turing's AI features the site can use (exits 1 if any is off)
 run-docker.cmd demo                    :: also the demo stores: Tarnfell http://localhost:38082, Recanto da Serra http://localhost:38083
 run-docker.cmd demo en                 :: only one of them (en or pt)
 run-docker.cmd demo reset pt           :: drop one store's WordPress and database only (en or pt)
@@ -371,7 +371,7 @@ demo` (or `demo en|pt|edu|edu-pt`, `demo reset en|pt|edu|edu-pt`) the demo sites
 
 WP-Cron's loopback cannot reach the site URL inside the container, so `DISABLE_WP_CRON` is on
 and a `cron` service runs due events every 15 seconds, as a host with a system cron does: a
-saved post reaches Turing without `wp dumont queue run`.
+saved post reaches Turing without `wp turing queue run`.
 
 Start the stack through `run-docker.cmd`, not a bare `docker compose up`: the script is what
 installs WordPress and provisions the SN site.
@@ -446,7 +446,7 @@ data Turing matches on. The lines that carry it hold a `phpcs:ignore` for that s
 
 ## Release
 
-1. Bump `Version:` and `VIGLET_DUMONT_VERSION` in `src/viglet-dumont.php`, `Stable tag:` in
+1. Bump `Version:` and `VIGLET_TURING_VERSION` in `src/viglet-turing.php`, `Stable tag:` in
    `src/readme.txt`, and add the changelog entry there.
 2. Push a tag `wordpress-v<version>`. The workflow
    [`wordpress-plugin.yml`](../.github/workflows/wordpress-plugin.yml) runs the checks, builds

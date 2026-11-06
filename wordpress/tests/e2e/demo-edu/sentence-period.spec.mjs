@@ -20,18 +20,18 @@ test( 'a month named in a sentence narrows the agenda to the debate that month',
 	}`;
 	await page.goto( `/agenda/?q=${ encodeURIComponent( sentence ) }` );
 
-	const block = page.locator( '.viglet-dumont-search' );
-	const chip = block.locator( '.viglet-dumont-search__chip--suggested' );
+	const block = page.locator( '.viglet-turing-search' );
+	const chip = block.locator( '.viglet-turing-search__chip--suggested' );
 	await expect( chip ).toHaveCount( 1 );
 	await expect( chip ).toContainText( `${ say().when }:` );
 	await chip.click();
 
 	await expect(
-		block.locator( '.viglet-dumont-search__summary' )
+		block.locator( '.viglet-turing-search__summary' )
 	).toHaveText( /result/ );
 	await expect(
 		block.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 	).toHaveText( [ titleOf( 'debate-car-free' ) ] );
 	await look( 'demo-edu-sentence-period' );

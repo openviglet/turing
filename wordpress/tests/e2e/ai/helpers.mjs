@@ -71,7 +71,7 @@ export function askChat( page, question ) {
 				'wp-script-module-data-@wordpress/interactivity'
 			)?.textContent || '{}'
 		);
-		const { url, site, locale } = data.config?.[ 'viglet-dumont' ] || {};
+		const { url, site, locale } = data.config?.[ 'viglet-turing' ] || {};
 		const started = window.performance.now();
 		const response = await window.fetch(
 			`${ url }/api/sn/${ encodeURIComponent(

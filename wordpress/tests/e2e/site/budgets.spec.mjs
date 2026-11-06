@@ -9,7 +9,7 @@ const suggestionMs = 500;
 // numbers carry none of Playwright's polling.
 test.beforeEach( async ( { page } ) => {
 	await page.addInitScript( () => {
-		const marks = ( window.__vigletDumontTiming = {} );
+		const marks = ( window.__vigletTuringTiming = {} );
 		document.addEventListener(
 			'input',
 			() => {
@@ -22,7 +22,7 @@ test.beforeEach( async ( { page } ) => {
 			const now = window.performance.now();
 			if (
 				! marks.results &&
-				document.querySelector( '.viglet-dumont-search__results li' )
+				document.querySelector( '.viglet-turing-search__results li' )
 			) {
 				marks.results = now;
 			}
@@ -30,7 +30,7 @@ test.beforeEach( async ( { page } ) => {
 				marks.typed &&
 				! marks.suggested &&
 				document.querySelector(
-					'.viglet-dumont-search__popup:not([hidden]) [role="option"]'
+					'.viglet-turing-search__popup:not([hidden]) [role="option"]'
 				)
 			) {
 				marks.suggested = now;
@@ -43,7 +43,7 @@ test.beforeEach( async ( { page } ) => {
 	} );
 } );
 
-const marks = ( page ) => page.evaluate( () => window.__vigletDumontTiming );
+const marks = ( page ) => page.evaluate( () => window.__vigletTuringTiming );
 
 test( `the first results show within ${ firstResultsMs } ms`, async ( {
 	page,
@@ -51,7 +51,7 @@ test( `the first results show within ${ firstResultsMs } ms`, async ( {
 }, testInfo ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	const { results } = await marks( page );
 	testInfo.annotations.push( {
@@ -66,21 +66,21 @@ test( `a suggestion shows within ${ suggestionMs } ms of typing`, async ( {
 	seed,
 }, testInfo ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }` );
-	const input = page.locator( '.viglet-dumont-search input[type="search"]' );
+	const input = page.locator( '.viglet-turing-search input[type="search"]' );
 	// Warm the path once: the first request pays for the connection, not the search.
 	await input.fill( 'wo' );
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+			.locator( '.viglet-turing-search__suggestions [role="option"]' )
 			.first()
 	).toBeVisible();
 	await input.fill( '' );
-	await expect( page.locator( '.viglet-dumont-search__popup' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-turing-search__popup' ) ).toBeHidden();
 
 	await input.fill( 'work' );
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+			.locator( '.viglet-turing-search__suggestions [role="option"]' )
 			.filter( { hasText: 'workshop' } )
 	).toBeVisible();
 	const { typed, suggested } = await marks( page );

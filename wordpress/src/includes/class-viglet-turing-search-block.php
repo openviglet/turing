@@ -1,13 +1,13 @@
 <?php
 /**
- * Viglet Dumont Search Block
+ * Viglet Turing Search Block
  *
  * The Turing search block's markup, in pieces (D185): the parent block draws them in its
  * default order, and its inner blocks (search box, filters, results, pages) each draw their
  * own, so a theme can reorder the parts or put its own blocks between them. Every piece
  * reads the one Interactivity store the parent declares.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Renders the pieces of the search block and keeps the id they share.
  */
-class Viglet_Dumont_Search_Block {
+class Viglet_Turing_Search_Block {
 
 	/** The inner blocks, each with the pieces it draws, in order. */
 	public const PARTS = array(
@@ -31,7 +31,7 @@ class Viglet_Dumont_Search_Block {
 	 * What starts the context key of each parent attribute its inner blocks read: a block
 	 * provides one attribute per key (`providesContext` in blocks/search/block.json).
 	 */
-	public const CONTEXT = 'viglet-dumont/search/';
+	public const CONTEXT = 'viglet-turing/search/';
 
 	/**
 	 * The id of the block being drawn, shared by its pieces.
@@ -46,7 +46,7 @@ class Viglet_Dumont_Search_Block {
 	 */
 	public static function id(): string {
 		if ( '' === self::$id ) {
-			self::$id = wp_unique_id( 'viglet-dumont-search-' );
+			self::$id = wp_unique_id( 'viglet-turing-search-' );
 		}
 
 		return self::$id;
@@ -118,7 +118,7 @@ class Viglet_Dumont_Search_Block {
 	 * @param array $attributes The search block's attributes.
 	 */
 	public static function whole_site_url( array $attributes ): string {
-		$target = ( new Viglet_Dumont_Native_Search() )->search_page();
+		$target = ( new Viglet_Turing_Native_Search() )->search_page();
 		$here   = untrailingslashit( (string) get_permalink() ) === untrailingslashit( $target['searchPage'] );
 		if ( $here && array() !== self::fixed_filters( $attributes['filters'] ?? array() ) ) {
 			return '';
@@ -142,7 +142,7 @@ class Viglet_Dumont_Search_Block {
 		while ( $tags->next_tag(
 			array(
 				'tag_name'   => 'A',
-				'class_name' => 'viglet-dumont-search__chip',
+				'class_name' => 'viglet-turing-search__chip',
 			)
 		) ) {
 			$args = wp_parse_args( (string) wp_parse_url( (string) $tags->get_attribute( 'href' ), PHP_URL_QUERY ) );
@@ -194,7 +194,7 @@ class Viglet_Dumont_Search_Block {
 	 * @return array{field: string, label: string}|null
 	 */
 	public static function price_field(): ?array {
-		foreach ( ( new Viglet_Dumont_Mapping( viglet_dumont_get_settings() ) )->all() as $type_mapping ) {
+		foreach ( ( new Viglet_Turing_Mapping( viglet_turing_get_settings() ) )->all() as $type_mapping ) {
 			foreach ( $type_mapping['fields'] as $field ) {
 				if ( 'woo:price' === $field['source'] ) {
 					return array(
@@ -245,12 +245,12 @@ class Viglet_Dumont_Search_Block {
 	 * @param array  $attributes The parent block's attributes.
 	 */
 	private static function piece( string $piece, array $attributes ): void {
-		$file = VIGLET_DUMONT_DIR . 'blocks/search/parts/' . sanitize_key( $piece ) . '.php';
+		$file = VIGLET_TURING_DIR . 'blocks/search/parts/' . sanitize_key( $piece ) . '.php';
 		if ( ! file_exists( $file ) ) {
 			return;
 		}
-		$viglet_dumont_id   = self::id();
-		$viglet_dumont_show = static fn ( string $part ): bool => (bool) ( $attributes[ $part ] ?? true );
+		$viglet_turing_id   = self::id();
+		$viglet_turing_show = static fn ( string $part ): bool => (bool) ( $attributes[ $part ] ?? true );
 
 		include $file;
 	}

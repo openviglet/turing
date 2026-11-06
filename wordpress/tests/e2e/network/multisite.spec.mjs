@@ -9,7 +9,7 @@ const [ main, second ] = JSON.parse( readFileSync( networkSeedFile, 'utf8' ) );
 const only = 'Only on the second site';
 
 const titles = ( page ) =>
-	page.locator( '.viglet-dumont-search__results li a' ).allTextContents();
+	page.locator( '.viglet-turing-search__results li a' ).allTextContents();
 
 test( 'the second site finds its own post and none of the main site’s', async ( {
 	page,
@@ -17,7 +17,7 @@ test( 'the second site finds its own post and none of the main site’s', async 
 } ) => {
 	await page.goto( `${ second.url }?page_id=${ second.searchPageId }&q=*` );
 	await expect(
-		page.locator( '.viglet-dumont-search__results li' ).first()
+		page.locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	const found = await titles( page );
 	await look( 'network-second-site' );
@@ -34,7 +34,7 @@ test( 'the main site finds its own posts and never the second site’s', async (
 	await page.goto(
 		`${ main.url }?page_id=${ main.searchPageId }&q=workshop`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		'4 results'
 	);
 
@@ -44,7 +44,7 @@ test( 'the main site finds its own posts and never the second site’s', async (
 			only
 		) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/results|No results/
 	);
 	await look( 'network-main-site' );

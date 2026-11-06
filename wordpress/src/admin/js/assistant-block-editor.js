@@ -73,7 +73,7 @@
 		);
 	}
 
-	wp.blocks.registerBlockType( 'viglet-dumont/assistant', {
+	wp.blocks.registerBlockType( 'viglet-turing/assistant', {
 		edit: Edit,
 		save: () => null,
 	} );

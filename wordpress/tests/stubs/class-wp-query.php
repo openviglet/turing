@@ -3,7 +3,7 @@
  * Core's WP_Query, reduced to what the plugin's `fields => ids` queries read: the ids a test
  * sets in WP_Query::$ids, narrowed by post__in. The arguments of the last query are kept.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a stand-in for a core class, shaped like core rather than like this plugin.

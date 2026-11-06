@@ -6,7 +6,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { demoLocale } from './curated.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 
 const sentences = [
 	{
@@ -54,11 +54,11 @@ for ( const sentence of sentences ) {
 			`/?pagename=search-gear&q=${ encodeURIComponent( sentence.query ) }`
 		);
 		const understood = block( page ).locator(
-			'.viglet-dumont-search__understood'
+			'.viglet-turing-search__understood'
 		);
 		if ( ! sentence.fq.length ) {
 			await expect(
-				block( page ).locator( '.viglet-dumont-search__summary' )
+				block( page ).locator( '.viglet-turing-search__summary' )
 			).not.toBeEmpty();
 			await expect( understood ).toBeHidden();
 			expect(
@@ -74,7 +74,7 @@ for ( const sentence of sentences ) {
 			expect.arrayContaining( sentence.fq )
 		);
 		await expect(
-			block( page ).locator( '.viglet-dumont-search__title a' ).first()
+			block( page ).locator( '.viglet-turing-search__title a' ).first()
 		).toBeVisible();
 	} );
 }
@@ -99,17 +99,17 @@ test( 'a sentence being read never shows its words as typed found nothing', asyn
 			'a waterproof jacket under $200'
 		) }`
 	);
-	const summary = block( page ).locator( '.viglet-dumont-search__summary' );
+	const summary = block( page ).locator( '.viglet-turing-search__summary' );
 	await expect( summary ).toHaveText( 'Reading your search…' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__empty' )
+		block( page ).locator( '.viglet-turing-search__empty' )
 	).toBeHidden();
 	release();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__understood' )
+		block( page ).locator( '.viglet-turing-search__understood' )
 	).toContainText( 'Price: ≤ 200' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__title a' ).first()
+		block( page ).locator( '.viglet-turing-search__title a' ).first()
 	).toBeVisible();
 	await expect( summary ).not.toHaveText( 'Reading your search…' );
 } );

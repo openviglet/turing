@@ -3,13 +3,13 @@
  * The Health page's last events: newest first, at most fifty, each stored as what happened
  * and translated when read (D180).
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Events;
+use Viglet_Turing_Events;
 
 final class EventsTest extends PluginTestCase {
 
@@ -24,7 +24,7 @@ final class EventsTest extends PluginTestCase {
 
 		Functions\when( 'get_option' )->alias(
 			function ( $name, $fallback = false ) {
-				return Viglet_Dumont_Events::OPTION === $name ? $this->stored : $fallback;
+				return Viglet_Turing_Events::OPTION === $name ? $this->stored : $fallback;
 			}
 		);
 		Functions\when( 'update_option' )->alias(
@@ -45,7 +45,7 @@ final class EventsTest extends PluginTestCase {
 		);
 		Functions\when( 'get_option' )->alias(
 			function ( $name, $fallback = false ) use ( $formats ) {
-				if ( Viglet_Dumont_Events::OPTION === $name ) {
+				if ( Viglet_Turing_Events::OPTION === $name ) {
 					return $this->stored;
 				}
 				return $formats[ $name ] ?? $fallback;
@@ -55,18 +55,18 @@ final class EventsTest extends PluginTestCase {
 	}
 
 	public function test_a_moment_reads_in_the_sites_formats_and_time_zone_not_the_browsers(): void {
-		Viglet_Dumont_Events::record( 'index', true );
+		Viglet_Turing_Events::record( 'index', true );
 		$this->stored[0]['at'] = 1792951215; // 2026-10-25 18:00:15 UTC.
 
-		$this->assertSame( '25/10/2026 15:00', Viglet_Dumont_Events::all()[0]['when'] );
-		$this->assertSame( '', Viglet_Dumont_Events::when( 0 ), 'never is said by the screen' );
+		$this->assertSame( '25/10/2026 15:00', Viglet_Turing_Events::all()[0]['when'] );
+		$this->assertSame( '', Viglet_Turing_Events::when( 0 ), 'never is said by the screen' );
 	}
 
 	public function test_the_newest_event_comes_first(): void {
-		Viglet_Dumont_Events::record( 'index', true, '', 1 );
-		Viglet_Dumont_Events::record( 'delete', false, 'HTTP 500', 2 );
+		Viglet_Turing_Events::record( 'index', true, '', 1 );
+		Viglet_Turing_Events::record( 'delete', false, 'HTTP 500', 2 );
 
-		$events = Viglet_Dumont_Events::all();
+		$events = Viglet_Turing_Events::all();
 
 		$this->assertSame( array( 'delete', 'index' ), array_column( $events, 'type' ) );
 		$this->assertFalse( $events[0]['ok'] );
@@ -75,26 +75,26 @@ final class EventsTest extends PluginTestCase {
 	}
 
 	public function test_only_the_last_fifty_are_kept(): void {
-		for ( $i = 1; $i <= Viglet_Dumont_Events::KEEP + 5; $i++ ) {
-			Viglet_Dumont_Events::record( 'index', true, '', $i );
+		for ( $i = 1; $i <= Viglet_Turing_Events::KEEP + 5; $i++ ) {
+			Viglet_Turing_Events::record( 'index', true, '', $i );
 		}
 
-		$events = Viglet_Dumont_Events::all();
+		$events = Viglet_Turing_Events::all();
 
-		$this->assertCount( Viglet_Dumont_Events::KEEP, $events );
-		$this->assertSame( Viglet_Dumont_Events::KEEP + 5, $events[0]['post_id'] );
+		$this->assertCount( Viglet_Turing_Events::KEEP, $events );
+		$this->assertSame( Viglet_Turing_Events::KEEP + 5, $events[0]['post_id'] );
 	}
 
 	public function test_an_event_written_in_english_reads_in_the_readers_language(): void {
-		Viglet_Dumont_Events::record( 'index', true, Viglet_Dumont_Events::note( 'bulk', array( 16, 0 ) ) );
-		Viglet_Dumont_Events::record( 'provision', true, Viglet_Dumont_Events::note( 'provisioned' ) );
+		Viglet_Turing_Events::record( 'index', true, Viglet_Turing_Events::note( 'bulk', array( 16, 0 ) ) );
+		Viglet_Turing_Events::record( 'provision', true, Viglet_Turing_Events::note( 'provisioned' ) );
 
-		$this->assertSame( 'Fields provisioned', Viglet_Dumont_Events::all()[0]['message'] );
+		$this->assertSame( 'Fields provisioned', Viglet_Turing_Events::all()[0]['message'] );
 
 		$this->locale = 'pt_BR';
 		$this->assertSame(
 			array( 'Campos provisionados', 'Em lote: 16 enviados, 0 com falha.' ),
-			array_column( Viglet_Dumont_Events::all(), 'message' )
+			array_column( Viglet_Turing_Events::all(), 'message' )
 		);
 		// What is stored is the note, never a sentence in somebody's language.
 		$this->assertSame( array( 'bulk', array( 16, 0 ) ), $this->stored[1]['message'] );
@@ -110,18 +110,18 @@ final class EventsTest extends PluginTestCase {
 				'post_id' => null,
 			),
 		);
-		Viglet_Dumont_Events::record( 'index', false, 'cURL error 7: Failed to connect', 12 );
+		Viglet_Turing_Events::record( 'index', false, 'cURL error 7: Failed to connect', 12 );
 
 		$this->locale = 'pt_BR';
 		$this->assertSame(
 			array( 'cURL error 7: Failed to connect', 'Bulk: 3 sent, 0 failed.' ),
-			array_column( Viglet_Dumont_Events::all(), 'message' )
+			array_column( Viglet_Turing_Events::all(), 'message' )
 		);
-		$this->assertSame( 12, Viglet_Dumont_Events::all()[0]['post_id'] );
+		$this->assertSame( 12, Viglet_Turing_Events::all()[0]['post_id'] );
 	}
 
 	public function test_a_note_short_of_arguments_still_reads(): void {
-		$this->assertSame( 'Import failed with HTTP 500: ', Viglet_Dumont_Events::text( array( 'import_failed', array( 500 ) ) ) );
-		$this->assertSame( 'unknown_key', Viglet_Dumont_Events::text( array( 'unknown_key', array() ) ) );
+		$this->assertSame( 'Import failed with HTTP 500: ', Viglet_Turing_Events::text( array( 'import_failed', array( 500 ) ) ) );
+		$this->assertSame( 'unknown_key', Viglet_Turing_Events::text( array( 'unknown_key', array() ) ) );
 	}
 }

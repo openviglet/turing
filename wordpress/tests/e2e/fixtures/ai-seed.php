@@ -6,7 +6,7 @@
  *
  * Prints JSON: { grant, meeting, bolsa, injection } post ids.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a test fixture run by WP-CLI, not plugin code.
@@ -32,8 +32,8 @@ foreach ( $posts as $key => list( $title, $content ) ) {
 
 // The reindex after this sends the manifest, and with it the site's GenAI (D186): the
 // answer row reads On with no console step.
-$settings                  = viglet_dumont_get_settings();
+$settings                  = viglet_turing_get_settings();
 $settings['generative_ai'] = 1;
-viglet_dumont_update_settings( $settings );
+viglet_turing_update_settings( $settings );
 
 echo wp_json_encode( $ids );

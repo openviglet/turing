@@ -1,17 +1,17 @@
 /* The Site assistant (D175): it takes its colours and type from the theme. */
-.viglet-dumont-assistant.is-floating {
+.viglet-turing-assistant.is-floating {
 	bottom: 1.25rem;
 	position: fixed;
 	right: 1.25rem;
 	z-index: 99990;
 }
 
-.viglet-dumont-assistant.is-floating .viglet-dumont-assistant__open {
+.viglet-turing-assistant.is-floating .viglet-turing-assistant__open {
 	border-radius: 999px;
 	box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
 }
 
-.viglet-dumont-assistant__dialog {
+.viglet-turing-assistant__dialog {
 	background: var(--wp--preset--color--base, Canvas);
 	border: 1px solid currentcolor;
 	border-radius: 8px;
@@ -25,34 +25,34 @@
 	width: 36rem;
 }
 
-.viglet-dumont-assistant__dialog[open] {
+.viglet-turing-assistant__dialog[open] {
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
 }
 
-.viglet-dumont-assistant__dialog::backdrop {
+.viglet-turing-assistant__dialog::backdrop {
 	background: rgb(0 0 0 / 40%);
 }
 
-.viglet-dumont-assistant__head {
+.viglet-turing-assistant__head {
 	align-items: center;
 	display: flex;
 	gap: 0.5rem;
 }
 
-.viglet-dumont-assistant__head h2 {
+.viglet-turing-assistant__head h2 {
 	flex: 1;
 	font-size: 1.25em;
 	margin: 0;
 }
 
-.viglet-dumont-assistant__close {
+.viglet-turing-assistant__close {
 	font-size: 1.5em;
 	line-height: 1;
 }
 
-.viglet-dumont-assistant__dialog button:not(.wp-element-button) {
+.viglet-turing-assistant__dialog button:not(.wp-element-button) {
 	background: none;
 	border: 1px solid currentcolor;
 	border-radius: 4px;
@@ -62,12 +62,12 @@
 	padding: 0.25rem 0.6rem;
 }
 
-.viglet-dumont-assistant__dialog button:disabled {
+.viglet-turing-assistant__dialog button:disabled {
 	cursor: default;
 	opacity: 0.5;
 }
 
-.viglet-dumont-assistant__generated {
+.viglet-turing-assistant__generated {
 	font-size: 0.875em;
 	margin: 0;
 	opacity: 0.8;
@@ -77,15 +77,15 @@
    the covers scroll with the content and hide the shade once that edge is reached. Where
    scrollbars are hidden (overlay scrollbars, a phone), a line cut at the bottom read as the
    end of the answer. */
-.viglet-dumont-assistant__log {
-	--viglet-dumont-assistant-bg: var(--wp--preset--color--base, Canvas);
+.viglet-turing-assistant__log {
+	--viglet-turing-assistant-bg: var(--wp--preset--color--base, Canvas);
 	background:
-		linear-gradient(var(--viglet-dumont-assistant-bg) 30%, transparent) center top,
-		linear-gradient(transparent, var(--viglet-dumont-assistant-bg) 70%) center bottom,
+		linear-gradient(var(--viglet-turing-assistant-bg) 30%, transparent) center top,
+		linear-gradient(transparent, var(--viglet-turing-assistant-bg) 70%) center bottom,
 		radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 35%), transparent) center top,
 		radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 35%), transparent) center bottom;
 	background-attachment: local, local, scroll, scroll;
-	background-color: var(--viglet-dumont-assistant-bg);
+	background-color: var(--viglet-turing-assistant-bg);
 	background-repeat: no-repeat;
 	background-size: 100% 3rem, 100% 3rem, 100% 1.75rem, 100% 1.75rem;
 	flex: 1;
@@ -93,7 +93,7 @@
 	overflow-y: auto;
 }
 
-.viglet-dumont-assistant__log > ol {
+.viglet-turing-assistant__log > ol {
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
@@ -102,30 +102,30 @@
 	padding: 0;
 }
 
-.viglet-dumont-assistant__message {
+.viglet-turing-assistant__message {
 	align-self: flex-start;
 	max-width: 90%;
 }
 
-.viglet-dumont-assistant__message.is-visitor {
+.viglet-turing-assistant__message.is-visitor {
 	align-self: flex-end;
 	font-weight: 600;
 }
 
 /* A message's Markdown, rendered as paragraphs and lists (D247). */
-.viglet-dumont-assistant__text {
+.viglet-turing-assistant__text {
 	margin: 0;
 }
 
-.viglet-dumont-assistant__text > :is(p, ul, ol) {
+.viglet-turing-assistant__text > :is(p, ul, ol) {
 	margin: 0 0 0.5rem;
 }
 
-.viglet-dumont-assistant__text > :last-child {
+.viglet-turing-assistant__text > :last-child {
 	margin-bottom: 0;
 }
 
-.viglet-dumont-assistant__sources {
+.viglet-turing-assistant__sources {
 	display: grid;
 	gap: 0.5rem;
 	list-style: none;
@@ -133,23 +133,23 @@
 	padding: 0;
 }
 
-.viglet-dumont-assistant__source a {
+.viglet-turing-assistant__source a {
 	border: 1px solid currentcolor;
 	border-radius: 6px;
 	display: block;
 	padding: 0.5rem 0.75rem;
 }
 
-.viglet-dumont-assistant__feedback {
+.viglet-turing-assistant__feedback {
 	font-size: 0.875em;
 	margin: 0.5rem 0 0;
 }
 
-.viglet-dumont-assistant__suggestions p {
+.viglet-turing-assistant__suggestions p {
 	margin: 0 0 0.25rem;
 }
 
-.viglet-dumont-assistant__suggestions ul {
+.viglet-turing-assistant__suggestions ul {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
@@ -158,27 +158,27 @@
 	padding: 0;
 }
 
-.viglet-dumont-assistant__form {
+.viglet-turing-assistant__form {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
 }
 
-.viglet-dumont-assistant__form label {
+.viglet-turing-assistant__form label {
 	flex-basis: 100%;
 }
 
-.viglet-dumont-assistant__form input {
+.viglet-turing-assistant__form input {
 	flex: 1 1 12rem;
 	font: inherit;
 	padding: 0.5rem 0.75rem;
 }
 
-.viglet-dumont-assistant__status {
+.viglet-turing-assistant__status {
 	margin: 0;
 	min-height: 1.5em;
 }
 
-.viglet-dumont-assistant__status:empty {
+.viglet-turing-assistant__status:empty {
 	display: none;
 }

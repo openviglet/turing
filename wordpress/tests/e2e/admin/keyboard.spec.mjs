@@ -2,7 +2,7 @@
 // with Enter or Space.
 import { expect, test } from '../fixtures.mjs';
 
-const settingsUrl = '/wp-admin/admin.php?page=viglet-dumont';
+const settingsUrl = '/wp-admin/admin.php?page=viglet-turing';
 
 test( 'Settings: each tab opens from the keyboard, and Test Connection runs', async ( {
 	page,
@@ -11,16 +11,16 @@ test( 'Settings: each tab opens from the keyboard, and Test Connection runs', as
 	await page.goto( settingsUrl );
 	for ( const tab of [ 'indexing', 'search', 'actions' ] ) {
 		await keyboard.tabTo(
-			page.locator( `.viglet-dumont-tab[data-tab="${ tab }"]` )
+			page.locator( `.viglet-turing-tab[data-tab="${ tab }"]` )
 		);
 		await page.keyboard.press( 'Enter' );
 		await expect( page.locator( `#panel-${ tab }` ) ).toBeVisible();
 	}
 
-	await keyboard.tabTo( page.locator( '#viglet-dumont-action-ping' ) );
+	await keyboard.tabTo( page.locator( '#viglet-turing-action-ping' ) );
 	await page.keyboard.press( 'Enter' );
 	await expect(
-		page.locator( '#viglet-dumont-action-ping-result' )
+		page.locator( '#viglet-turing-action-ping-result' )
 	).toContainText( 'Connection successful' );
 } );
 
@@ -28,20 +28,20 @@ test( 'Setup: save and test the connection from the keyboard', async ( {
 	page,
 	keyboard,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-setup' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-setup' );
 	await keyboard.tabTo(
 		page.getByRole( 'button', { name: 'Save and test the connection' } ),
 		{ max: 120 }
 	);
 	await page.keyboard.press( 'Enter' );
-	await expect( page.locator( '#viglet-dumont-setup li' ) ).toHaveCount( 5 );
+	await expect( page.locator( '#viglet-turing-setup li' ) ).toHaveCount( 5 );
 } );
 
 test( 'Fields: preview a document from the keyboard', async ( {
 	page,
 	keyboard,
 } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-fields' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-fields' );
 	const post = page.locator( '.components-card' ).filter( {
 		has: page.getByRole( 'heading', { name: 'post', exact: true } ),
 	} );
@@ -64,7 +64,7 @@ test( "the editor's Search panel: Reindex now from the keyboard", async ( {
 	if ( await guide.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
 		await page.keyboard.press( 'Escape' );
 	}
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	const reindex = panel.getByRole( 'button', { name: 'Reindex now' } );
 	await expect( reindex ).toBeVisible();
 	// The settings sidebar comes after the canvas, so this is the editor's longest Tab walk.

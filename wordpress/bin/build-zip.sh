@@ -18,10 +18,10 @@ if [ "${1:-}" = "--wporg" ]; then
     shift
 fi
 
-version=$(sed -n 's/^ \* Version:[[:space:]]*//p' src/viglet-dumont.php)
+version=$(sed -n 's/^ \* Version:[[:space:]]*//p' src/viglet-turing.php)
 stable=$(sed -n 's/^Stable tag:[[:space:]]*//p' src/readme.txt)
 if [ -z "$version" ]; then
-    echo "No Version: line in src/viglet-dumont.php" >&2
+    echo "No Version: line in src/viglet-turing.php" >&2
     exit 1
 fi
 if [ "$version" != "$stable" ]; then

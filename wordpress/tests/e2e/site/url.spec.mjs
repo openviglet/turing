@@ -3,14 +3,14 @@
 // search engines. Desktop only (playwright.config.mjs).
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
+	block( page ).locator( '.viglet-turing-search__summary' );
 const titles = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__title a' );
+	block( page ).locator( '.viglet-turing-search__title a' );
 const seats40 = ( page ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__facets label' )
+		.locator( '.viglet-turing-search__facets label' )
 		.filter( { hasText: '40' } )
 		.locator( 'input' );
 const sort = ( page ) => block( page ).getByLabel( 'Sort by' );
@@ -29,7 +29,7 @@ test( 'a reload keeps the filter, the sort and the page', async ( {
 	await page.waitForLoadState( 'networkidle' );
 	const first = await titles( page ).first().textContent();
 	await block( page )
-		.locator( '.viglet-dumont-search__pages button' )
+		.locator( '.viglet-turing-search__pages button' )
 		.nth( 1 )
 		.click();
 	await expect( page ).toHaveURL( /[?&]pg=2/ );
@@ -39,7 +39,7 @@ test( 'a reload keeps the filter, the sort and the page', async ( {
 	await page.reload();
 	await expect( sort( page ) ).toHaveValue( 'newest' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__pages button' ).nth( 1 )
+		block( page ).locator( '.viglet-turing-search__pages button' ).nth( 1 )
 	).toHaveAttribute( 'aria-current', 'true' );
 	await expect( titles( page ).first() ).toHaveText( second );
 } );
@@ -84,7 +84,7 @@ test( 'a shared link opens the same filtered search, titled and kept out of inde
 	await expect( summary( page ) ).toHaveText( '3 results' );
 	await expect( seats40( page ) ).toBeChecked();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__chip' )
+		block( page ).locator( '.viglet-turing-search__chip' )
 	).toContainText( 'Seats: 40' );
 	await expect( page ).toHaveTitle( /^workshop – / );
 	expect( await robots( page ) ).toContain( 'noindex' );

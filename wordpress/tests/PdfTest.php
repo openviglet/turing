@@ -2,14 +2,14 @@
 /**
  * The PDFs of the posts in search, as documents of their own (D309).
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_API_Client;
-use Viglet_Dumont_Pdf;
+use Viglet_Turing_API_Client;
+use Viglet_Turing_Pdf;
 use WP_Post;
 use ZipArchive;
 
@@ -73,8 +73,8 @@ final class PdfTest extends PluginTestCase {
 		parent::tearDown();
 	}
 
-	private function pdf( array $overrides = array( 'index_pdfs' => 1 ) ): Viglet_Dumont_Pdf {
-		return new Viglet_Dumont_Pdf( $this->settings( $overrides ) );
+	private function pdf( array $overrides = array( 'index_pdfs' => 1 ) ): Viglet_Turing_Pdf {
+		return new Viglet_Turing_Pdf( $this->settings( $overrides ) );
 	}
 
 	public function test_a_pdf_attached_to_a_post_in_search_is_in_search_and_nothing_else_is(): void {
@@ -86,7 +86,7 @@ final class PdfTest extends PluginTestCase {
 		$this->assertFalse( $this->pdf()->indexable( $this->posts[20] ), 'its post out of search, it is out too' );
 		$this->posts[10]->post_status = 'publish';
 
-		Functions\when( 'apply_filters' )->alias( static fn ( $hook, $value ) => 'viglet_dumont_pdf_max_bytes' === $hook ? 4 : $value );
+		Functions\when( 'apply_filters' )->alias( static fn ( $hook, $value ) => 'viglet_turing_pdf_max_bytes' === $hook ? 4 : $value );
 		$this->assertFalse( $this->pdf()->indexable( $this->posts[20] ), 'over the size cap' );
 	}
 
@@ -137,7 +137,7 @@ final class PdfTest extends PluginTestCase {
 			)
 		);
 
-		$this->assertFalse( ( new Viglet_Dumont_API_Client( $this->settings() ) )->import_files( array( array() ), array() )['success'] );
+		$this->assertFalse( ( new Viglet_Turing_API_Client( $this->settings() ) )->import_files( array( array() ), array() )['success'] );
 	}
 
 	/**
@@ -151,10 +151,10 @@ final class PdfTest extends PluginTestCase {
 		Functions\when( 'get_post_meta' )->justReturn( 'https://site.example.org/wp-content/uploads/regulations.pdf' );
 		Functions\when( 'attachment_url_to_postid' )->alias( static fn ( $url ) => str_starts_with( $url, 'https://site.example.org/' ) ? 20 : 0 );
 
-		$reference = Viglet_Dumont_Pdf::file_reference( $this->posts[10], 'paper' );
+		$reference = Viglet_Turing_Pdf::file_reference( $this->posts[10], 'paper' );
 		$this->assertSame( 'file://10-20.pdf', $reference );
 
-		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client = new Viglet_Turing_API_Client( $this->settings() );
 		$client->import( array( $client->build_create_item( array( 'paper_text' => $reference ) ) ) );
 		$this->assertStringEndsWith( '/api/sn/import/zip', $this->requests[0][0] );
 
@@ -163,7 +163,7 @@ final class PdfTest extends PluginTestCase {
 		$this->assertStringEndsWith( '/api/sn/import', $this->requests[1][0] );
 
 		Functions\when( 'get_post_meta' )->justReturn( 'https://elsewhere.example/paper.pdf' );
-		$this->assertNull( Viglet_Dumont_Pdf::file_reference( $this->posts[10], 'paper' ), "another host's file is never fetched" );
+		$this->assertNull( Viglet_Turing_Pdf::file_reference( $this->posts[10], 'paper' ), "another host's file is never fetched" );
 	}
 
 	public function test_a_deleted_pdf_leaves_search(): void {

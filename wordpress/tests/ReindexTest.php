@@ -3,14 +3,14 @@
  * Index All in the background (D331): WP-Cron sends it a few batches a run, a failed batch
  * waits and is tried again, and the PDFs and the sweep close a full one.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Operations;
-use Viglet_Dumont_Reindex;
+use Viglet_Turing_Operations;
+use Viglet_Turing_Reindex;
 use WP_Post;
 use WP_Query;
 
@@ -201,7 +201,7 @@ final class ReindexTest extends PluginTestCase {
 		$run = $this->reindex()->start();
 
 		$this->assertCount( 1, $this->kicks );
-		$this->assertStringContainsString( 'viglet-dumont/v1/reindex/step', $this->kicks[0][0] );
+		$this->assertStringContainsString( 'viglet-turing/v1/reindex/step', $this->kicks[0][0] );
 		$this->assertFalse( $this->kicks[0][1]['blocking'] );
 		$this->assertSame( 'run-token', $this->kicks[0][1]['body']['token'] );
 		$this->assertArrayNotHasKey( 'token', $run, 'the token never leaves the server' );
@@ -239,8 +239,8 @@ final class ReindexTest extends PluginTestCase {
 		parent::tearDown();
 	}
 
-	private function reindex( array $overrides = array() ): Viglet_Dumont_Reindex {
-		return new Viglet_Dumont_Reindex(
+	private function reindex( array $overrides = array() ): Viglet_Turing_Reindex {
+		return new Viglet_Turing_Reindex(
 			$this->settings(
 				$overrides + array(
 					'site_key'   => 'site-a',
@@ -285,9 +285,9 @@ final class ReindexTest extends PluginTestCase {
 	/**
 	 * Run WP-Cron until the reindex ends, each backoff let pass as the clock would.
 	 *
-	 * @param Viglet_Dumont_Reindex $reindex The reindex to drive.
+	 * @param Viglet_Turing_Reindex $reindex The reindex to drive.
 	 */
-	private function drive( Viglet_Dumont_Reindex $reindex ): void {
+	private function drive( Viglet_Turing_Reindex $reindex ): void {
 		$runs = 0;
 		while ( $runs < 20 && null !== $reindex->tick() ) {
 			++$runs;
@@ -297,8 +297,8 @@ final class ReindexTest extends PluginTestCase {
 
 	/** Let the run's backoff pass, as the clock would. */
 	private function wait_out_backoff(): void {
-		if ( isset( $this->options[ Viglet_Dumont_Reindex::OPTION ] ) ) {
-			$this->options[ Viglet_Dumont_Reindex::OPTION ]['next_at'] = time() - 1;
+		if ( isset( $this->options[ Viglet_Turing_Reindex::OPTION ] ) ) {
+			$this->options[ Viglet_Turing_Reindex::OPTION ]['next_at'] = time() - 1;
 		}
 	}
 
@@ -309,9 +309,9 @@ final class ReindexTest extends PluginTestCase {
 		$this->assertSame( 'posts', $run['phase'] );
 		$this->assertSame( 5, $run['total'] );
 		$this->assertSame( 0, $run['offset'] );
-		$this->assertSame( array( 1, 2, 3, 4, 5 ), $this->options[ Viglet_Dumont_Reindex::IDS_OPTION ] );
+		$this->assertSame( array( 1, 2, 3, 4, 5 ), $this->options[ Viglet_Turing_Reindex::IDS_OPTION ] );
 		$this->assertSame( array(), $this->requests );
-		$this->assertSame( Viglet_Dumont_Reindex::CRON_HOOK, $this->scheduled[0][1] );
+		$this->assertSame( Viglet_Turing_Reindex::CRON_HOOK, $this->scheduled[0][1] );
 		$this->assertSame( $run['id'], $this->reindex()->report()['running']['id'] );
 	}
 
@@ -321,14 +321,14 @@ final class ReindexTest extends PluginTestCase {
 		$second = $this->reindex()->start();
 
 		$this->assertInstanceOf( \WP_Error::class, $second );
-		$this->assertSame( 'viglet_dumont_reindex_running', $second->get_error_code() );
+		$this->assertSame( 'viglet_turing_reindex_running', $second->get_error_code() );
 	}
 
 	public function test_a_type_that_is_not_indexed_is_refused(): void {
 		$result = $this->reindex()->start( 'product' );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Reindex::OPTION, $this->options );
+		$this->assertArrayNotHasKey( Viglet_Turing_Reindex::OPTION, $this->options );
 	}
 
 	public function test_each_run_sends_a_few_batches_and_schedules_the_next(): void {
@@ -338,14 +338,14 @@ final class ReindexTest extends PluginTestCase {
 		$after = $this->reindex()->tick();
 
 		$this->assertSame( array( array( 'site-a:post:1' ), array( 'site-a:post:2' ), array( 'site-a:post:3' ) ), $this->batches() );
-		$this->assertSame( Viglet_Dumont_Reindex::STEPS_PER_RUN, $after['offset'] );
+		$this->assertSame( Viglet_Turing_Reindex::STEPS_PER_RUN, $after['offset'] );
 		$this->assertSame( 3, $after['sent'] );
 		$this->assertSame( 'running', $after['state'] );
 		$this->assertCount( 1, $this->scheduled );
 		$this->assertLessThanOrEqual( time(), $this->scheduled[0][0] );
 
 		$this->reindex()->tick();
-		$this->assertSame( 5, $this->options[ Viglet_Dumont_Reindex::OPTION ]['offset'] );
+		$this->assertSame( 5, $this->options[ Viglet_Turing_Reindex::OPTION ]['offset'] );
 	}
 
 	public function test_a_full_reindex_ends_with_the_pdfs_and_the_sweep(): void {
@@ -358,8 +358,8 @@ final class ReindexTest extends PluginTestCase {
 		$this->drive( $this->reindex() );
 
 		$this->assertSame( array( 'posts', 'pdfs', 'search' ), $this->calls() );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Reindex::OPTION, $this->options );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Reindex::IDS_OPTION, $this->options );
+		$this->assertArrayNotHasKey( Viglet_Turing_Reindex::OPTION, $this->options );
+		$this->assertArrayNotHasKey( Viglet_Turing_Reindex::IDS_OPTION, $this->options );
 		$last = $this->reindex()->report()['last'];
 		$this->assertSame( 'done', $last['state'] );
 		$this->assertSame( 5, $last['sent'] );
@@ -378,7 +378,7 @@ final class ReindexTest extends PluginTestCase {
 		$this->drive( $this->reindex( array( 'index_pdfs' => 0 ) ) );
 
 		$this->assertSame( array( 'posts' ), $this->calls() );
-		$this->assertSame( 'done', $this->options[ Viglet_Dumont_Reindex::LAST_OPTION ]['state'] );
+		$this->assertSame( 'done', $this->options[ Viglet_Turing_Reindex::LAST_OPTION ]['state'] );
 		$this->assertSame( 'post', WP_Query::$last_args['post_type'][0] );
 	}
 
@@ -395,8 +395,8 @@ final class ReindexTest extends PluginTestCase {
 		$this->assertSame( 0, $after['offset'] );
 		$this->assertSame( 1, $after['attempts'] );
 		$this->assertStringContainsString( '503', $after['error'] );
-		$this->assertGreaterThanOrEqual( $before + Viglet_Dumont_Reindex::BASE_DELAY, $after['next_at'] );
-		$this->assertSame( array( array( $after['next_at'], Viglet_Dumont_Reindex::CRON_HOOK ) ), $this->scheduled );
+		$this->assertGreaterThanOrEqual( $before + Viglet_Turing_Reindex::BASE_DELAY, $after['next_at'] );
+		$this->assertSame( array( array( $after['next_at'], Viglet_Turing_Reindex::CRON_HOOK ) ), $this->scheduled );
 
 		// A run before the backoff passed sends nothing.
 		$this->reindex()->tick();
@@ -412,13 +412,13 @@ final class ReindexTest extends PluginTestCase {
 	}
 
 	public function test_a_batch_that_keeps_failing_counts_as_failed_and_the_run_goes_on_without_sweeping(): void {
-		$this->statuses = array_fill( 0, Viglet_Dumont_Reindex::MAX_ATTEMPTS, 503 );
+		$this->statuses = array_fill( 0, Viglet_Turing_Reindex::MAX_ATTEMPTS, 503 );
 		$this->held     = array( 'site-a:post:9' );
 		$this->reindex( array( 'index_pdfs' => 0 ) )->start();
 
 		$this->drive( $this->reindex( array( 'index_pdfs' => 0 ) ) );
 
-		$last = $this->options[ Viglet_Dumont_Reindex::LAST_OPTION ];
+		$last = $this->options[ Viglet_Turing_Reindex::LAST_OPTION ];
 		$this->assertSame( 'failed', $last['state'] );
 		$this->assertSame( 1, $last['failed'] );
 		$this->assertSame( 4, $last['sent'] );
@@ -472,7 +472,7 @@ final class ReindexTest extends PluginTestCase {
 
 	public function test_a_run_already_holding_the_lock_is_left_alone(): void {
 		$this->reindex()->start();
-		$this->transients[ Viglet_Dumont_Reindex::LOCK ] = 1;
+		$this->transients[ Viglet_Turing_Reindex::LOCK ] = 1;
 
 		$this->reindex()->tick();
 
@@ -483,7 +483,7 @@ final class ReindexTest extends PluginTestCase {
 		$this->reindex()->start();
 		$this->reindex()->tick();
 
-		$status = ( new Viglet_Dumont_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->status();
+		$status = ( new Viglet_Turing_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->status();
 
 		$running = $status['reindex']['running'];
 		$this->assertSame( 3, $running['offset'] );
@@ -494,14 +494,14 @@ final class ReindexTest extends PluginTestCase {
 		$this->assertNull( $status['reindex']['last'] );
 
 		$this->reindex()->cancel();
-		$status = ( new Viglet_Dumont_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->status();
+		$status = ( new Viglet_Turing_Operations( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->status();
 		$this->assertNull( $status['reindex']['running'] );
 		$this->assertSame( 'cancelled', $status['reindex']['last']['state'] );
 	}
 
 	public function test_a_run_nothing_has_moved_for_a_while_is_said_to_be_stalled(): void {
 		$this->reindex()->start();
-		$this->options[ Viglet_Dumont_Reindex::OPTION ]['started_at'] = time() - Viglet_Dumont_Reindex::STALL_AFTER - 60;
+		$this->options[ Viglet_Turing_Reindex::OPTION ]['started_at'] = time() - Viglet_Turing_Reindex::STALL_AFTER - 60;
 
 		$this->assertTrue( $this->reindex()->report()['running']['stalled'] );
 	}

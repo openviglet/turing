@@ -70,16 +70,16 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 	} );
 
 	await page.goto( `/?page_id=${ pageId }` );
-	const block = page.locator( '.viglet-dumont-copilot' );
+	const block = page.locator( '.viglet-turing-copilot' );
 	await block
 		.getByLabel( 'What are you looking for?' )
 		.fill( 'a waterproof jacket' );
 	await block.getByRole( 'button', { name: 'Ask', exact: true } ).click();
 
 	await expect(
-		block.locator( '.viglet-dumont-copilot__answer' )
+		block.locator( '.viglet-turing-copilot__answer' )
 	).toHaveText( 'The Rain jacket is waterproof and on sale [1].' );
-	const items = block.locator( '.viglet-dumont-copilot__item' );
+	const items = block.locator( '.viglet-turing-copilot__item' );
 	await expect( items ).toHaveCount( 2 );
 	const item = items.filter( { hasText: 'Rain jacket' } );
 	// The shop's own price for it, the regular one struck through.
@@ -99,7 +99,7 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 	] );
 	await look( 'woo-copilot' );
 	await axe( 'the Ask the catalog block', {
-		include: '.viglet-dumont-copilot',
+		include: '.viglet-turing-copilot',
 	} );
 
 	await item
@@ -118,7 +118,7 @@ test( 'the copilot answers with products a click puts in the cart', async ( {
 	// A follow-up carries the conversation so far.
 	await block.getByLabel( 'What are you looking for?' ).fill( 'cheaper?' );
 	await block.getByRole( 'button', { name: 'Ask', exact: true } ).click();
-	await expect( block.locator( '.viglet-dumont-copilot__turn' ) ).toHaveCount(
+	await expect( block.locator( '.viglet-turing-copilot__turn' ) ).toHaveCount(
 		2
 	);
 	expect( asked[ 1 ].messages.map( ( m ) => m.role ) ).toEqual( [
@@ -137,5 +137,5 @@ test( 'without a language model for the copilot the block stays hidden', async (
 	);
 	await page.goto( `/?page_id=${ pageId }` );
 	await page.waitForLoadState( 'networkidle' );
-	await expect( page.locator( '.viglet-dumont-copilot' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-turing-copilot' ) ).toBeHidden();
 } );

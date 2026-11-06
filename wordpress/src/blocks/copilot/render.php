@@ -10,7 +10,7 @@
  * plan is off unless switched on, and what it stages, cites and reads availability from are
  * the block's own `stageTypes`, `guideTypes` and `availabilityField`.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  *
  * @var array $attributes The block's attributes.
  */
@@ -19,15 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$viglet_dumont_shop    = Viglet_Dumont_WooCommerce::active();
-$viglet_dumont_id      = wp_unique_id( 'viglet-dumont-copilot-' );
-$viglet_dumont_heading = '' !== (string) ( $attributes['heading'] ?? '' )
+$viglet_turing_shop    = Viglet_Turing_WooCommerce::active();
+$viglet_turing_id      = wp_unique_id( 'viglet-turing-copilot-' );
+$viglet_turing_heading = '' !== (string) ( $attributes['heading'] ?? '' )
 	? (string) $attributes['heading']
-	: ( $viglet_dumont_shop ? __( 'Ask the catalog', 'viglet-turing-search' ) : __( 'Ask this site', 'viglet-turing-search' ) );
-$viglet_dumont_kit     = isset( $attributes['kit'] ) ? (bool) $attributes['kit'] : $viglet_dumont_shop;
+	: ( $viglet_turing_shop ? __( 'Ask the catalog', 'viglet-turing-search' ) : __( 'Ask this site', 'viglet-turing-search' ) );
+$viglet_turing_kit     = isset( $attributes['kit'] ) ? (bool) $attributes['kit'] : $viglet_turing_shop;
 // The plan alone, for a page of its own: it opens on the plan and offers no question beside it,
 // which on a page about planning read as a second, unrelated tool.
-$viglet_dumont_plan_only = $viglet_dumont_kit && ! empty( $attributes['planOnly'] );
+$viglet_turing_plan_only = $viglet_turing_kit && ! empty( $attributes['planOnly'] );
 
 /**
  * A comma-separated attribute as a list of names, or the shop's default when it is blank.
@@ -37,28 +37,28 @@ $viglet_dumont_plan_only = $viglet_dumont_kit && ! empty( $attributes['planOnly'
  * @param bool     $shop     Whether WooCommerce is running.
  * @return string[]
  */
-$viglet_dumont_names        = static function ( $value, array $fallback, bool $shop ): array {
+$viglet_turing_names        = static function ( $value, array $fallback, bool $shop ): array {
 	$names = array_values( array_filter( array_map( 'sanitize_key', explode( ',', (string) $value ) ) ) );
 	return $names ? $names : ( $shop ? $fallback : array() );
 };
-$viglet_dumont_stage_types  = $viglet_dumont_names( $attributes['stageTypes'] ?? '', array( 'product' ), $viglet_dumont_shop );
-$viglet_dumont_guide_types  = $viglet_dumont_names( $attributes['guideTypes'] ?? '', array( 'post' ), $viglet_dumont_shop );
-$viglet_dumont_availability = sanitize_key( (string) ( $attributes['availabilityField'] ?? '' ) );
-if ( '' === $viglet_dumont_availability && $viglet_dumont_shop ) {
-	$viglet_dumont_availability = 'stock_status';
+$viglet_turing_stage_types  = $viglet_turing_names( $attributes['stageTypes'] ?? '', array( 'product' ), $viglet_turing_shop );
+$viglet_turing_guide_types  = $viglet_turing_names( $attributes['guideTypes'] ?? '', array( 'post' ), $viglet_turing_shop );
+$viglet_turing_availability = sanitize_key( (string) ( $attributes['availabilityField'] ?? '' ) );
+if ( '' === $viglet_turing_availability && $viglet_turing_shop ) {
+	$viglet_turing_availability = 'stock_status';
 }
 
 // On a product's page (or any indexed post's), the question is about it (D242): Turing pins
 // its document first, and the box says what "this" is.
-$viglet_dumont_indexer = new Viglet_Dumont_Indexer();
-$viglet_dumont_subject = $viglet_dumont_indexer->subject();
-$viglet_dumont_ask     = $viglet_dumont_subject
+$viglet_turing_indexer = new Viglet_Turing_Indexer();
+$viglet_turing_subject = $viglet_turing_indexer->subject();
+$viglet_turing_ask     = $viglet_turing_subject
 	/* translators: %s: the name of the product or post the page shows. */
-	? sprintf( __( 'Ask about %s', 'viglet-turing-search' ), get_the_title( $viglet_dumont_subject ) )
+	? sprintf( __( 'Ask about %s', 'viglet-turing-search' ), get_the_title( $viglet_turing_subject ) )
 	: __( 'What are you looking for?', 'viglet-turing-search' );
 
 // The words the block speaks in: a shop's catalog and kit, or this site and a plan.
-$viglet_dumont_copy = $viglet_dumont_shop
+$viglet_turing_copy = $viglet_turing_shop
 	? array(
 		'thinking'    => __( 'Looking through the catalog…', 'viglet-turing-search' ),
 		'failed'      => __( 'The catalog could not answer right now.', 'viglet-turing-search' ),
@@ -89,12 +89,12 @@ $viglet_dumont_copy = $viglet_dumont_shop
 	);
 
 wp_interactivity_state(
-	'viglet-dumont/copilot',
+	'viglet-turing/copilot',
 	array(
 		// What the plan stages, cites and reads availability from (D323).
-		'stageTypes'        => $viglet_dumont_stage_types,
-		'guideTypes'        => $viglet_dumont_guide_types,
-		'availabilityField' => $viglet_dumont_availability,
+		'stageTypes'        => $viglet_turing_stage_types,
+		'guideTypes'        => $viglet_turing_guide_types,
+		'availabilityField' => $viglet_turing_availability,
 		'available'         => false,
 		'question'          => '',
 		'turns'             => array(),
@@ -109,16 +109,16 @@ wp_interactivity_state(
 		'compareLabel'      => __( 'Compare %d products', 'viglet-turing-search' ),
 		'cartAdded'         => __( 'Added to your cart.', 'viglet-turing-search' ),
 		'cartFailed'        => __( 'It could not be added to the cart.', 'viglet-turing-search' ),
-		'thinking'          => $viglet_dumont_copy['thinking'],
-		'failed'            => $viglet_dumont_copy['failed'],
-		'nothing'           => $viglet_dumont_copy['nothing'],
+		'thinking'          => $viglet_turing_copy['thinking'],
+		'failed'            => $viglet_turing_copy['failed'],
+		'nothing'           => $viglet_turing_copy['nothing'],
 		// Turing refused with 429: the site's AI budget is spent until it resets (D332).
 		// A spent AI budget, with its reset when the site or the 429 says it (D336).
-		'paused'            => Viglet_Dumont_AI_Quota::visitor_line(),
-		'pausedUntil'       => Viglet_Dumont_AI_Quota::visitor_until(),
+		'paused'            => Viglet_Turing_AI_Quota::visitor_line(),
+		'pausedUntil'       => Viglet_Turing_AI_Quota::visitor_until(),
 		// Build my kit (D201).
-		'kitOffered'        => $viglet_dumont_kit,
-		'mode'              => $viglet_dumont_plan_only ? 'kit' : 'ask',
+		'kitOffered'        => $viglet_turing_kit,
+		'mode'              => $viglet_turing_plan_only ? 'kit' : 'ask',
 		'kit'               => array(
 			'shown'    => false,
 			'summary'  => '',
@@ -128,15 +128,15 @@ wp_interactivity_state(
 		),
 		'kitBusy'           => false,
 		'kitStatus'         => '',
-		'askLabel'          => $viglet_dumont_ask,
-		'documentId'        => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
+		'askLabel'          => $viglet_turing_ask,
+		'documentId'        => $viglet_turing_subject ? $viglet_turing_indexer->build_doc_id( $viglet_turing_subject->ID ) : '',
 		'askButton'         => __( 'Ask', 'viglet-turing-search' ),
 		'planLabel'         => __( 'Describe your plan', 'viglet-turing-search' ),
-		'planButton'        => $viglet_dumont_copy['planButton'],
-		'kitThinking'       => $viglet_dumont_copy['kitThinking'],
-		'kitNothing'        => $viglet_dumont_copy['kitNothing'],
-		'kitUnfilled'       => $viglet_dumont_copy['kitUnfilled'],
-		'includeFor'        => $viglet_dumont_copy['includeFor'],
+		'planButton'        => $viglet_turing_copy['planButton'],
+		'kitThinking'       => $viglet_turing_copy['kitThinking'],
+		'kitNothing'        => $viglet_turing_copy['kitNothing'],
+		'kitUnfilled'       => $viglet_turing_copy['kitUnfilled'],
+		'includeFor'        => $viglet_turing_copy['includeFor'],
 		/* translators: %d: how many products. */
 		'kitAdd'            => __( 'Add %d products to the cart', 'viglet-turing-search' ),
 		'kitAddOne'         => __( 'Add 1 product to the cart', 'viglet-turing-search' ),
@@ -148,38 +148,38 @@ wp_interactivity_state(
 );
 ?>
 <section
-	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-copilot' ) ) ); ?>
-	data-wp-interactive="viglet-dumont/copilot"
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-turing-copilot' ) ) ); ?>
+	data-wp-interactive="viglet-turing/copilot"
 	data-wp-init="callbacks.init"
-	aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"
+	aria-labelledby="<?php echo esc_attr( $viglet_turing_id ); ?>-heading"
 	hidden
 	data-wp-bind--hidden="!state.available"
 >
-	<h2 id="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"><?php echo esc_html( $viglet_dumont_heading ); ?></h2>
-	<?php if ( $viglet_dumont_kit && ! $viglet_dumont_plan_only ) : ?>
-	<div class="viglet-dumont-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-turing-search' ); ?>">
+	<h2 id="<?php echo esc_attr( $viglet_turing_id ); ?>-heading"><?php echo esc_html( $viglet_turing_heading ); ?></h2>
+	<?php if ( $viglet_turing_kit && ! $viglet_turing_plan_only ) : ?>
+	<div class="viglet-turing-copilot__modes" role="group" aria-label="<?php esc_attr_e( 'Mode', 'viglet-turing-search' ); ?>">
 		<button type="button" data-mode="ask" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.asking"><?php esc_html_e( 'Ask a question', 'viglet-turing-search' ); ?></button>
-		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php echo esc_html( $viglet_dumont_copy['planMode'] ); ?></button>
+		<button type="button" data-mode="kit" data-wp-on--click="actions.setMode" data-wp-bind--aria-pressed="state.planning"><?php echo esc_html( $viglet_turing_copy['planMode'] ); ?></button>
 	</div>
 	<?php endif; ?>
-	<ol class="viglet-dumont-copilot__turns" hidden data-wp-bind--hidden="state.planning">
+	<ol class="viglet-turing-copilot__turns" hidden data-wp-bind--hidden="state.planning">
 		<template data-wp-each--turn="state.turns" data-wp-each-key="context.turn.key">
-			<li class="viglet-dumont-copilot__turn">
-				<p class="viglet-dumont-copilot__question" data-wp-text="context.turn.question"></p>
-				<div class="viglet-dumont-copilot__answer" data-wp-watch="callbacks.renderAnswer"></div>
-				<ol class="viglet-dumont-copilot__items" hidden data-wp-bind--hidden="!context.turn.items.length">
+			<li class="viglet-turing-copilot__turn">
+				<p class="viglet-turing-copilot__question" data-wp-text="context.turn.question"></p>
+				<div class="viglet-turing-copilot__answer" data-wp-watch="callbacks.renderAnswer"></div>
+				<ol class="viglet-turing-copilot__items" hidden data-wp-bind--hidden="!context.turn.items.length">
 					<template data-wp-each--item="context.turn.items" data-wp-each-key="context.item.key">
-						<li class="viglet-dumont-copilot__item">
-							<span class="viglet-dumont-copilot__rank" data-wp-text="context.item.rank"></span>
+						<li class="viglet-turing-copilot__item">
+							<span class="viglet-turing-copilot__rank" data-wp-text="context.item.rank"></span>
 							<a data-wp-bind--href="context.item.url" data-wp-text="context.item.title"></a>
-							<span class="viglet-dumont-copilot__shop" hidden data-wp-bind--hidden="!context.item.price">
-								<span class="viglet-dumont-copilot__price">
+							<span class="viglet-turing-copilot__shop" hidden data-wp-bind--hidden="!context.item.price">
+								<span class="viglet-turing-copilot__price">
 									<del hidden data-wp-bind--hidden="!context.item.regular"><span class="screen-reader-text"><?php esc_html_e( 'Was', 'viglet-turing-search' ); ?></span> <span data-wp-text="context.item.regular"></span></del>
 									<strong data-wp-text="context.item.price"></strong>
 								</span>
 								<button type="button" class="wp-element-button" data-wp-on--click="actions.addToCart" data-wp-bind--disabled="context.item.adding" data-wp-bind--hidden="!context.item.buyable" data-wp-bind--aria-label="context.item.cartLabel"><?php esc_html_e( 'Add to cart', 'viglet-turing-search' ); ?></button>
 								<span role="status" data-wp-text="context.item.cartStatus"></span>
-								<label class="viglet-dumont-copilot__compare" hidden data-wp-bind--hidden="!state.canCompare">
+								<label class="viglet-turing-copilot__compare" hidden data-wp-bind--hidden="!state.canCompare">
 									<input type="checkbox" data-wp-bind--aria-label="context.item.compareFor" data-wp-bind--checked="state.compared" data-wp-bind--disabled="state.compareFull" data-wp-on--change="actions.toggleCompare" />
 									<?php esc_html_e( 'Compare', 'viglet-turing-search' ); ?>
 								</label>
@@ -193,38 +193,38 @@ wp_interactivity_state(
 	<?php
 	// Compare is for the products an answer cites; the plan alone cites none, and the bar it
 	// would show is the visitor's list from elsewhere, out of place above a plan.
-	if ( ! $viglet_dumont_plan_only ) :
+	if ( ! $viglet_turing_plan_only ) :
 		?>
-	<p class="viglet-dumont-copilot__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
+	<p class="viglet-turing-copilot__compare-bar" hidden data-wp-bind--hidden="!state.compareReady">
 		<a class="wp-element-button" data-wp-bind--href="state.compareUrl" data-wp-text="state.compareText"></a>
 	</p>
 	<?php endif; ?>
-	<?php if ( $viglet_dumont_kit ) : ?>
-	<div class="viglet-dumont-copilot__kit" hidden data-wp-bind--hidden="!state.kitShown">
-		<p class="viglet-dumont-copilot__kit-summary" data-wp-text="state.kit.summary"></p>
-		<ol class="viglet-dumont-copilot__stages">
+	<?php if ( $viglet_turing_kit ) : ?>
+	<div class="viglet-turing-copilot__kit" hidden data-wp-bind--hidden="!state.kitShown">
+		<p class="viglet-turing-copilot__kit-summary" data-wp-text="state.kit.summary"></p>
+		<ol class="viglet-turing-copilot__stages">
 			<template data-wp-each--stage="state.kit.stages" data-wp-each-key="context.stage.key">
-				<li class="viglet-dumont-copilot__stage">
+				<li class="viglet-turing-copilot__stage">
 					<h3 data-wp-text="context.stage.gap"></h3>
-					<p class="viglet-dumont-copilot__stage-reason" hidden data-wp-bind--hidden="!context.stage.reason" data-wp-text="context.stage.reason"></p>
-					<ul class="viglet-dumont-copilot__kit-items">
+					<p class="viglet-turing-copilot__stage-reason" hidden data-wp-bind--hidden="!context.stage.reason" data-wp-text="context.stage.reason"></p>
+					<ul class="viglet-turing-copilot__kit-items">
 						<template data-wp-each--product="context.stage.products" data-wp-each-key="context.product.key">
-							<li class="viglet-dumont-copilot__kit-item" data-wp-class--is-out="context.product.out">
+							<li class="viglet-turing-copilot__kit-item" data-wp-class--is-out="context.product.out">
 								<input type="checkbox" data-wp-bind--checked="context.product.included" data-wp-bind--disabled="context.product.out" data-wp-bind--aria-label="context.product.includeFor" data-wp-on--change="actions.toggleInclude" />
-								<span class="viglet-dumont-copilot__kit-name">
+								<span class="viglet-turing-copilot__kit-name">
 									<a data-wp-bind--href="context.product.url" data-wp-text="context.product.title"></a>
-									<span class="viglet-dumont-copilot__kit-reason" data-wp-text="context.product.reason"></span>
+									<span class="viglet-turing-copilot__kit-reason" data-wp-text="context.product.reason"></span>
 								</span>
 								<strong hidden data-wp-bind--hidden="!context.product.price" data-wp-text="context.product.price"></strong>
-								<span class="viglet-dumont-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php echo esc_html( $viglet_dumont_copy['out'] ); ?></span>
+								<span class="viglet-turing-copilot__out" hidden data-wp-bind--hidden="!context.product.out"><?php echo esc_html( $viglet_turing_copy['out'] ); ?></span>
 							</li>
 						</template>
 					</ul>
 				</li>
 			</template>
 		</ol>
-		<p class="viglet-dumont-copilot__unfilled" hidden data-wp-bind--hidden="!state.kit.unfilled" data-wp-text="state.kit.unfilled"></p>
-		<div class="viglet-dumont-copilot__guides" hidden data-wp-bind--hidden="!state.kit.guides.length">
+		<p class="viglet-turing-copilot__unfilled" hidden data-wp-bind--hidden="!state.kit.unfilled" data-wp-text="state.kit.unfilled"></p>
+		<div class="viglet-turing-copilot__guides" hidden data-wp-bind--hidden="!state.kit.guides.length">
 			<h3><?php esc_html_e( 'Guides for this plan', 'viglet-turing-search' ); ?></h3>
 			<ul>
 				<template data-wp-each--guide="state.kit.guides" data-wp-each-key="context.guide.key">
@@ -232,17 +232,17 @@ wp_interactivity_state(
 				</template>
 			</ul>
 		</div>
-		<p class="viglet-dumont-copilot__kit-cart" hidden data-wp-bind--hidden="!state.kitCanAdd">
+		<p class="viglet-turing-copilot__kit-cart" hidden data-wp-bind--hidden="!state.kitCanAdd">
 			<button type="button" class="wp-element-button" data-wp-on--click="actions.addKit" data-wp-bind--disabled="state.kitBusy" data-wp-text="state.kitAddText"></button>
 		</p>
-		<p class="viglet-dumont-copilot__kit-status" role="status" data-wp-text="state.kitStatus"></p>
+		<p class="viglet-turing-copilot__kit-status" role="status" data-wp-text="state.kitStatus"></p>
 	</div>
 	<?php endif; ?>
-	<form class="viglet-dumont-copilot__form" data-wp-on--submit="actions.ask">
-		<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>" data-wp-text="state.formLabel"><?php echo esc_html( $viglet_dumont_ask ); ?></label>
+	<form class="viglet-turing-copilot__form" data-wp-on--submit="actions.ask">
+		<label for="<?php echo esc_attr( $viglet_turing_id ); ?>" data-wp-text="state.formLabel"><?php echo esc_html( $viglet_turing_ask ); ?></label>
 		<input
 			type="text"
-			id="<?php echo esc_attr( $viglet_dumont_id ); ?>"
+			id="<?php echo esc_attr( $viglet_turing_id ); ?>"
 			autocomplete="off"
 			placeholder="<?php echo esc_attr( (string) ( $attributes['placeholder'] ?? '' ) ); ?>"
 			data-wp-bind--value="state.question"
@@ -250,5 +250,5 @@ wp_interactivity_state(
 		/>
 		<button type="submit" class="wp-element-button" data-wp-bind--disabled="state.busy" data-wp-text="state.formButton"><?php esc_html_e( 'Ask', 'viglet-turing-search' ); ?></button>
 	</form>
-	<p class="viglet-dumont-copilot__status" role="status" data-wp-text="state.status"></p>
+	<p class="viglet-turing-copilot__status" role="status" data-wp-text="state.status"></p>
 </section>

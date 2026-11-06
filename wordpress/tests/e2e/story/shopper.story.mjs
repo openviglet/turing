@@ -174,7 +174,7 @@ const dropSynonym = () =>
 		'eval',
 		`$term = json_decode( '${ ascii(
 			story().logged
-		) }' ); $t = new Viglet_Dumont_Tuning();` +
+		) }' ); $t = new Viglet_Turing_Tuning();` +
 			' foreach ( $t->all()["synonyms"] as $s ) { if ( in_array( $term, $s["terms"], true ) ) { $t->remove_synonym( $s["id"] ); } }',
 	] );
 
@@ -194,7 +194,7 @@ test.beforeAll( async ( { request } ) => {
 		);
 	}
 	// The chips as the log reads now, not as an earlier visit cached them.
-	demo( [ 'transient', 'delete', 'viglet_dumont_trending' ] );
+	demo( [ 'transient', 'delete', 'viglet_turing_trending' ] );
 } );
 
 test.afterAll( () => {
@@ -329,8 +329,8 @@ const search = ( page, q ) =>
 test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 	page,
 } ) => {
-	const block = page.locator( '.viglet-dumont-search' );
-	const titles = block.locator( '.viglet-dumont-search__title a' );
+	const block = page.locator( '.viglet-turing-search' );
+	const titles = block.locator( '.viglet-turing-search__title a' );
 	const say = story();
 	const { ui } = say;
 
@@ -589,10 +589,10 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		// frame goes back out as she presses Enter rather than pushing in on the answer.
 		release();
 		await expect(
-			block.locator( '.viglet-dumont-search__understood' )
+			block.locator( '.viglet-turing-search__understood' )
 		).toContainText( say.understood );
 		await expect( titles.first() ).toHaveText( say.needFound );
-		await answered( block.locator( '.viglet-dumont-search__answer-text' ) );
+		await answered( block.locator( '.viglet-turing-search__answer-text' ) );
 		// The chapter ends on its result: every search the story makes is one Ana talks about
 		// (D289). A typo searched as corrected is site/search.spec.mjs's to show.
 		await highlight();
@@ -602,7 +602,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		'3. Asks the Site assistant, and gets an answer with its sources',
 		async () => {
 			const open = page
-				.locator( '.viglet-dumont-assistant.is-floating' )
+				.locator( '.viglet-turing-assistant.is-floating' )
 				.getByRole( 'button' )
 				.first();
 			await reach( open );
@@ -619,18 +619,18 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			// on it cut the dialog's top: the whole dialog is shown at the full frame instead.
 			release();
 			const answer = dialog
-				.locator( '.viglet-dumont-assistant__message' )
+				.locator( '.viglet-turing-assistant__message' )
 				.nth( 1 );
 			await expect(
 				answer
-					.locator( '.viglet-dumont-assistant__feedback button' )
+					.locator( '.viglet-turing-assistant__feedback button' )
 					.first()
 			).toBeVisible( { timeout: 90_000 } );
 			await expect(
-				answer.locator( '.viglet-dumont-assistant__source a' )
+				answer.locator( '.viglet-turing-assistant__source a' )
 			).toContainText( [ say.cites ] );
 			await answered(
-				answer.locator( '.viglet-dumont-assistant__text' )
+				answer.locator( '.viglet-turing-assistant__text' )
 			);
 			await highlight();
 			await page.keyboard.press( 'Escape' );
@@ -644,14 +644,14 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		const [ facetLabel, category ] = say.compareIn;
 		// At a phone's width (D280) the filters are a drawer behind a button, opened as a
 		// shopper on a phone would and closed again once the category is chosen.
-		const drawer = block.locator( '.viglet-dumont-search__filters-toggle' );
+		const drawer = block.locator( '.viglet-turing-search__filters-toggle' );
 		const phone = await drawer.isVisible();
 		if ( phone ) {
 			await reach( drawer );
 			await drawer.click();
 		}
 		const facet = block
-			.locator( '.viglet-dumont-search__facet' )
+			.locator( '.viglet-turing-search__facet' )
 			.filter( {
 				has: page.locator( 'summary', { hasText: facetLabel } ),
 			} )
@@ -665,11 +665,11 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		}
 		await expect(
 			block
-				.locator( '.viglet-dumont-search__chip' )
+				.locator( '.viglet-turing-search__chip' )
 				.filter( { hasText: category } )
 		).toBeVisible();
 		const boxes = block
-			.locator( '.viglet-dumont-search__results' )
+			.locator( '.viglet-turing-search__results' )
 			.getByRole( 'checkbox', { name: ui.compareBox } );
 		await expect( boxes.nth( 2 ) ).toBeVisible();
 		const comparing = speak( 'chapter-4' );
@@ -678,15 +678,15 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await reach( boxes.nth( i ) );
 			await boxes.nth( i ).check();
 		}
-		const bar = block.locator( '.viglet-dumont-search__compare-bar' );
+		const bar = block.locator( '.viglet-turing-search__compare-bar' );
 		await expect( bar.getByRole( 'link' ) ).toHaveText( ui.compareBar );
 		await until( comparing - 1 );
 		await reach( bar.getByRole( 'link' ) );
 		await bar.getByRole( 'link' ).click();
 		await expect(
-			page.locator( '.viglet-dumont-compare__table thead th' )
+			page.locator( '.viglet-turing-compare__table thead th' )
 		).toHaveCount( 3 );
-		const summary = page.locator( '.viglet-dumont-compare__summary-text' );
+		const summary = page.locator( '.viglet-turing-compare__summary-text' );
 		await answered( summary );
 		// No push-in: Ana talks about the table under the summary, which a push-in on the
 		// summary left out of the frame.
@@ -694,8 +694,8 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await expect( summary ).not.toContainText( '&#' );
 	} );
 
-	const copilot = page.locator( '.viglet-dumont-copilot' );
-	const kit = copilot.locator( '.viglet-dumont-copilot__kit' );
+	const copilot = page.locator( '.viglet-turing-copilot' );
+	const kit = copilot.locator( '.viglet-turing-copilot__kit' );
 
 	await chapter( '5. Builds the kit and puts it in the cart', async () => {
 		// The kit has a page of its own, which opens on the plan: no search beside it, and the
@@ -716,17 +716,17 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		// The kit takes seconds to be written: the video cuts the wait.
 		await skipping( async () => {
 			await expect(
-				kit.locator( '.viglet-dumont-copilot__stage' ).first()
+				kit.locator( '.viglet-turing-copilot__stage' ).first()
 			).toBeVisible( { timeout: 90_000 } );
 			await answered(
-				kit.locator( '.viglet-dumont-copilot__kit-summary' )
+				kit.locator( '.viglet-turing-copilot__kit-summary' )
 			);
 			await expect(
-				kit.locator( '.viglet-dumont-copilot__kit-item' )
+				kit.locator( '.viglet-turing-copilot__kit-item' )
 			).not.toHaveCount( 0 );
 		} );
 		await kit.scrollIntoViewIfNeeded();
-		const add = kit.locator( '.viglet-dumont-copilot__kit-cart button' );
+		const add = kit.locator( '.viglet-turing-copilot__kit-cart button' );
 		await expect( add ).toBeEnabled();
 		// She talks about the kit as soon as it is there, while the list goes by, down to the
 		// cart button the click would otherwise jump to; it is pressed as she finishes.
@@ -737,7 +737,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		await until( telling );
 		await add.click();
 		await expect(
-			kit.locator( '.viglet-dumont-copilot__kit-status' )
+			kit.locator( '.viglet-turing-copilot__kit-status' )
 		).toContainText( ui.cartTotal );
 	} );
 
@@ -757,7 +757,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			const looking = speak( 'chapter-6' );
 			await expect(
 				page
-					.locator( '.wp-block-viglet-dumont-related' )
+					.locator( '.wp-block-viglet-turing-related' )
 					.getByRole( 'link' )
 			).not.toHaveCount( 0 );
 			await linger( 2.5 );
@@ -775,7 +775,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			// panel off: back to the full frame, and down until the whole panel shows.
 			release();
 			const answer = copilot
-				.locator( '.viglet-dumont-copilot__answer' )
+				.locator( '.viglet-turing-copilot__answer' )
 				.first();
 			await answered( answer );
 			// Down to the panel's end: its cited products and Compare are what the answer
@@ -834,7 +834,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 			await expect(
 				page
 					.locator( '.tarnfell-compare__turing' )
-					.locator( '.viglet-dumont-search__title a' )
+					.locator( '.viglet-turing-search__title a' )
 					.first()
 			).toBeVisible();
 			await until( speak( 'chapter-8' ) );
@@ -850,7 +850,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 					page.click( '#wp-submit' ),
 				] );
 				await page.goto(
-					'/wp-admin/admin.php?page=viglet-dumont-insights'
+					'/wp-admin/admin.php?page=viglet-turing-insights'
 				);
 				await expect( page.getByLabel( ui.period ) ).toBeVisible();
 			} );

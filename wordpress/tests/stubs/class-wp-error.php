@@ -2,7 +2,7 @@
 /**
  * The part of core's WP_Error the plugin reads.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a stand-in for a core class, shaped like core rather than like this plugin.

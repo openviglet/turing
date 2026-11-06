@@ -2,15 +2,15 @@
 /**
  * What the Search column and the editor panel say about a post.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Mapping;
-use Viglet_Dumont_Post_State;
-use Viglet_Dumont_Queue;
+use Viglet_Turing_Mapping;
+use Viglet_Turing_Post_State;
+use Viglet_Turing_Queue;
 use WP_Post;
 
 final class PostStateTest extends PluginTestCase {
@@ -108,7 +108,7 @@ final class PostStateTest extends PluginTestCase {
 			)
 		);
 
-		$assist = ( new Viglet_Dumont_Post_State( $this->settings() ) )->assist( $this->post );
+		$assist = ( new Viglet_Turing_Post_State( $this->settings() ) )->assist( $this->post );
 
 		$this->assertSame( 'similar', $assist['basis'] );
 		$this->assertSame(
@@ -148,7 +148,7 @@ final class PostStateTest extends PluginTestCase {
 			)
 		);
 
-		$assist = ( new Viglet_Dumont_Post_State( $this->settings() ) )->assist( $this->post );
+		$assist = ( new Viglet_Turing_Post_State( $this->settings() ) )->assist( $this->post );
 
 		$this->assertSame( 'title', $assist['basis'] );
 		$this->assertSame( 'https://site.example.org/?p=7', $assist['covered'][0]['url'] );
@@ -178,7 +178,7 @@ final class PostStateTest extends PluginTestCase {
 			)
 		);
 
-		$state = new Viglet_Dumont_Post_State( $this->settings() );
+		$state = new Viglet_Turing_Post_State( $this->settings() );
 		$draft = $state->draft_excerpt( $this->post );
 
 		$this->assertSame(
@@ -218,7 +218,7 @@ final class PostStateTest extends PluginTestCase {
 				),
 			)
 		);
-		$state = new Viglet_Dumont_Post_State( $this->settings() );
+		$state = new Viglet_Turing_Post_State( $this->settings() );
 
 		$empty = $state->draft_excerpt( $this->post );
 		$this->assertSame( '', $empty['excerpt'] );
@@ -236,11 +236,11 @@ final class PostStateTest extends PluginTestCase {
 	}
 
 	private function describe(): array {
-		return ( new Viglet_Dumont_Post_State( $this->settings() ) )->describe( $this->post );
+		return ( new Viglet_Turing_Post_State( $this->settings() ) )->describe( $this->post );
 	}
 
 	public function test_a_post_sent_without_error_reads_indexed_and_when(): void {
-		$this->meta[ Viglet_Dumont_Queue::STATE_META ] = array(
+		$this->meta[ Viglet_Turing_Queue::STATE_META ] = array(
 			'indexed_at' => time() - 120,
 			'error'      => '',
 		);
@@ -256,7 +256,7 @@ final class PostStateTest extends PluginTestCase {
 	}
 
 	public function test_a_waiting_job_reads_queued_with_its_last_error(): void {
-		$this->options[ Viglet_Dumont_Queue::OPTION ] = array(
+		$this->options[ Viglet_Turing_Queue::OPTION ] = array(
 			42 => array(
 				'action' => 'index',
 				'failed' => false,
@@ -271,7 +271,7 @@ final class PostStateTest extends PluginTestCase {
 	}
 
 	public function test_a_job_that_stopped_retrying_reads_failed(): void {
-		$this->options[ Viglet_Dumont_Queue::OPTION ] = array(
+		$this->options[ Viglet_Turing_Queue::OPTION ] = array(
 			42 => array(
 				'action' => 'index',
 				'failed' => true,
@@ -283,7 +283,7 @@ final class PostStateTest extends PluginTestCase {
 	}
 
 	public function test_an_excluded_post_reads_excluded(): void {
-		$this->meta[ Viglet_Dumont_Mapping::EXCLUDE_META ] = '1';
+		$this->meta[ Viglet_Turing_Mapping::EXCLUDE_META ] = '1';
 
 		$this->assertSame( 'excluded', $this->describe()['state'] );
 	}
@@ -330,7 +330,7 @@ final class PostStateTest extends PluginTestCase {
 			)
 		);
 
-		$fit = ( new Viglet_Dumont_Post_State( $this->settings() ) )->audience_fit( $this->post );
+		$fit = ( new Viglet_Turing_Post_State( $this->settings() ) )->audience_fit( $this->post );
 
 		$this->assertSame(
 			array(
@@ -359,6 +359,6 @@ final class PostStateTest extends PluginTestCase {
 	public function test_a_site_without_personas_offers_no_audience_fit(): void {
 		$this->turing( array( '/personas' => '[]' ) );
 
-		$this->assertSame( array(), ( new Viglet_Dumont_Post_State( $this->settings() ) )->personas() );
+		$this->assertSame( array(), ( new Viglet_Turing_Post_State( $this->settings() ) )->personas() );
 	}
 }

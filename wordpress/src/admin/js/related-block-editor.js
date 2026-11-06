@@ -150,7 +150,7 @@
 				Disabled,
 				null,
 				el( ServerSideRender, {
-					block: 'viglet-dumont/related',
+					block: 'viglet-turing/related',
 					attributes,
 					urlQueryArgs: Number.isInteger( postId )
 						? { post_id: postId }
@@ -168,7 +168,7 @@
 		);
 	}
 
-	wp.blocks.registerBlockType( 'viglet-dumont/related', {
+	wp.blocks.registerBlockType( 'viglet-turing/related', {
 		edit: Edit,
 		save: () => null,
 	} );

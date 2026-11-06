@@ -23,10 +23,10 @@ const ask = ( url, args ) => {
 };
 
 const sites = networkSites.map( ( url ) => ( {
-	key: ask( url, [ 'option', 'pluck', 'viglet_dumont_settings', 'api_key' ] ),
+	key: ask( url, [ 'option', 'pluck', 'viglet_turing_settings', 'api_key' ] ),
 	siteKey: ask( url, [
 		'eval',
-		'echo ( new Viglet_Dumont_Indexer() )->site_key();',
+		'echo ( new Viglet_Turing_Indexer() )->site_key();',
 	] ),
 } ) );
 const [ main, second ] = sites;

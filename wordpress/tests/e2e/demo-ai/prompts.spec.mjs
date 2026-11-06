@@ -20,7 +20,7 @@ test.describe.configure( { mode: 'serial' } );
 
 test.beforeEach( async ( { page } ) => {
 	await page.goto( '/showcase/' );
-	const assistant = page.locator( '.viglet-dumont-assistant' );
+	const assistant = page.locator( '.viglet-turing-assistant' );
 	const on = await assistant
 		.waitFor( { state: 'visible', timeout: 15_000 } )
 		.then( () => true )
@@ -44,19 +44,19 @@ async function ask( page, question ) {
 	const started = Date.now();
 	await dialog.locator( 'form button[type="submit"]' ).click();
 	const answer = dialog
-		.locator( '.viglet-dumont-assistant__message' )
+		.locator( '.viglet-turing-assistant__message' )
 		.nth( 1 );
 	await expect(
-		answer.locator( '.viglet-dumont-assistant__feedback button' ).first()
+		answer.locator( '.viglet-turing-assistant__feedback button' ).first()
 	).toBeVisible( { timeout: 90_000 } );
 	return {
 		text: (
 			await answer
-				.locator( '.viglet-dumont-assistant__text' )
+				.locator( '.viglet-turing-assistant__text' )
 				.textContent()
 		).trim(),
 		sources: await answer
-			.locator( '.viglet-dumont-assistant__source a' )
+			.locator( '.viglet-turing-assistant__source a' )
 			.allTextContents(),
 		ms: Date.now() - started,
 	};

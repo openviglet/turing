@@ -1,6 +1,6 @@
 /**
  * The instant-search overlay: Ctrl/⌘+K anywhere, or the theme's own Search block (its form
- * carries `data-viglet-dumont-overlay`, set in Viglet_Dumont_Native_Search), opens a dialog
+ * carries `data-viglet-turing-overlay`, set in Viglet_Turing_Native_Search), opens a dialog
  * that answers from Turing as the visitor types. Up and Down choose a result, Enter opens it
  * or, with none chosen, takes the query to the full search page; Escape closes and the focus
  * goes back where it came from.
@@ -27,7 +27,7 @@ import {
 	siteImage,
 	siteUrl,
 	trackResultClick,
-} from 'viglet-dumont/search';
+} from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
 const {
@@ -39,7 +39,7 @@ const {
 	popular = [],
 	answers = false,
 	explore = [],
-} = getConfig( 'viglet-dumont/overlay' );
+} = getConfig( 'viglet-turing/overlay' );
 
 // D311: results grouped by type, with images and a "See all" per type, recent searches before
 // anything is typed, and the whole screen on a phone.
@@ -49,7 +49,7 @@ const instantMs = 250;
 // How many results the overlay lists before "See all results".
 const shown = immersive ? 12 : 6;
 // The search block's recent searches, kept in this browser only (search-block.js).
-const recentKey = 'viglet-dumont-recent-searches';
+const recentKey = 'viglet-turing-recent-searches';
 const recentMax = 5;
 
 /**
@@ -141,7 +141,7 @@ const answerMs = 1200;
 function make( tag, className, attributes = {}, text = '' ) {
 	const element = document.createElement( tag );
 	if ( className ) {
-		element.className = `viglet-dumont-overlay__${ className }`;
+		element.className = `viglet-turing-overlay__${ className }`;
 	}
 	Object.entries( attributes ).forEach( ( [ name, value ] ) =>
 		element.setAttribute( name, value )
@@ -172,25 +172,25 @@ function fullSearchUrl( query, type = '' ) {
 function build() {
 	dialog = make( 'dialog', '', { 'aria-label': labels.title } );
 	dialog.className = immersive
-		? 'viglet-dumont-overlay viglet-dumont-overlay--immersive'
-		: 'viglet-dumont-overlay';
+		? 'viglet-turing-overlay viglet-turing-overlay--immersive'
+		: 'viglet-turing-overlay';
 
 	const form = make( 'form', 'form', { role: 'search' } );
 	const label = make(
 		'label',
 		'',
-		{ for: 'viglet-dumont-overlay-input' },
+		{ for: 'viglet-turing-overlay-input' },
 		labels.search
 	);
 	label.className = 'screen-reader-text';
 	input = make( 'input', 'input', {
-		id: 'viglet-dumont-overlay-input',
+		id: 'viglet-turing-overlay-input',
 		type: 'search',
 		role: 'combobox',
 		autocomplete: 'off',
 		'aria-autocomplete': 'list',
 		'aria-expanded': 'false',
-		'aria-controls': 'viglet-dumont-overlay-results',
+		'aria-controls': 'viglet-turing-overlay-results',
 		placeholder: labels.title,
 	} );
 	const close = make(
@@ -202,7 +202,7 @@ function build() {
 	form.append( label, input, close );
 
 	list = make( 'ul', 'results', {
-		id: 'viglet-dumont-overlay-results',
+		id: 'viglet-turing-overlay-results',
 		role: 'listbox',
 		'aria-label': labels.results,
 	} );
@@ -454,12 +454,12 @@ function grouped( entries, query ) {
  */
 function optionFor( result, i ) {
 	const option = make( 'li', 'all' === result.kind ? 'see-all' : 'result', {
-		id: `viglet-dumont-overlay-result-${ i }`,
+		id: `viglet-turing-overlay-result-${ i }`,
 		role: 'option',
 		'aria-selected': String( i === active ),
 	} );
 	if ( immersive && result.image ) {
-		option.classList.add( 'viglet-dumont-overlay__result--with-image' );
+		option.classList.add( 'viglet-turing-overlay__result--with-image' );
 		const image = make( 'img', 'image', { alt: '', loading: 'lazy' } );
 		image.src = result.image;
 		option.append( image );
@@ -520,7 +520,7 @@ function draw() {
 	if ( active >= 0 ) {
 		input.setAttribute(
 			'aria-activedescendant',
-			`viglet-dumont-overlay-result-${ active }`
+			`viglet-turing-overlay-result-${ active }`
 		);
 	} else {
 		input.removeAttribute( 'aria-activedescendant' );
@@ -660,7 +660,7 @@ document.addEventListener( 'keydown', ( event ) => {
 // overlay. Focus alone does not, or closing the overlay (which gives the focus back)
 // would open it again.
 document
-	.querySelectorAll( 'form[data-viglet-dumont-overlay]' )
+	.querySelectorAll( 'form[data-viglet-turing-overlay]' )
 	.forEach( ( form ) => {
 		const field = form.querySelector(
 			'input[type="search"], input[name="s"]'

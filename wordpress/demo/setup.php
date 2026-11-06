@@ -5,22 +5,22 @@
  * the theme's own search box. Idempotent. It runs on the demo's own WordPress (D219), never
  * on the browser tests' site.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
 
 // The Turing search block and its parts, in the page so the plugin finds it (has_block), with
 // popular searches under the box (D202), where the story's shopper arrives (D203).
-$search = '<!-- wp:viglet-dumont/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"applyFilters":true,"showTrending":true,"resultsLayout":"grid","align":"wide"} -->
-<!-- wp:viglet-dumont/search-box /-->
+$search = '<!-- wp:viglet-turing/search {"placeholder":"Search jackets, boots, tents…","showAnswer":true,"suggestFilters":true,"applyFilters":true,"showTrending":true,"resultsLayout":"grid","align":"wide"} -->
+<!-- wp:viglet-turing/search-box /-->
 
-<!-- wp:viglet-dumont/search-filters /-->
+<!-- wp:viglet-turing/search-filters /-->
 
-<!-- wp:viglet-dumont/search-results /-->
+<!-- wp:viglet-turing/search-results /-->
 
-<!-- wp:viglet-dumont/search-pages /-->
-<!-- /wp:viglet-dumont/search -->';
+<!-- wp:viglet-turing/search-pages /-->
+<!-- /wp:viglet-turing/search -->';
 
 $pages = array(
 	'home-demo'   => array( 'Home', '', '' ),
@@ -30,7 +30,7 @@ $pages = array(
 	// the search page's wide template; the default page squeezed them into its text width.
 	'compare-searches' => array( 'Compare searches', '<!-- wp:tarnfell/compare /-->', 'page-search' ),
 	// Products ticked in the results or the copilot, side by side (D200).
-	'compare-products' => array( 'Compare products', '<!-- wp:viglet-dumont/compare /-->', '' ),
+	'compare-products' => array( 'Compare products', '<!-- wp:viglet-turing/compare /-->', '' ),
 );
 
 // Named in the site's language (D223): seed/pt_BR.php carries the Portuguese.
@@ -50,8 +50,8 @@ $pages['showcase'] = array(
 			$heading( 'Search, with an answer' ),
 			$search,
 			// These two head themselves with the feature's name.
-			'<!-- wp:viglet-dumont/copilot /-->',
-			'<!-- wp:viglet-dumont/assistant /-->',
+			'<!-- wp:viglet-turing/copilot /-->',
+			'<!-- wp:viglet-turing/assistant /-->',
 		)
 	),
 	'',
@@ -77,7 +77,7 @@ $pages['plan-a-kit'] = array(
 			. $step( '2. See what it needs', 'Grouped by need, a place to sleep, something warm, safe footing, each with why it is there.' )
 			. $step( '3. Take it all at once', 'Swap any item, untick what you have, and put the whole kit in the cart with one click.' )
 			. '</div><!-- /wp:columns -->',
-			'<!-- wp:viglet-dumont/copilot ' . wp_json_encode(
+			'<!-- wp:viglet-turing/copilot ' . wp_json_encode(
 				array(
 					'heading'     => $names['Your plan'] ?? 'Your plan',
 					'placeholder' => $names['e.g. two days across the mountains in July, first time'] ?? 'e.g. two days across the mountains in July, first time',
@@ -109,17 +109,17 @@ foreach ( $pages as $slug => list( $title, $content, $template ) ) {
 }
 
 // The compare page names every curated search: indexed, it would be a result for each.
-update_post_meta( $ids['compare-searches'], '_viglet_dumont_exclude', '1' );
-update_post_meta( $ids['compare-products'], '_viglet_dumont_exclude', '1' );
+update_post_meta( $ids['compare-searches'], '_viglet_turing_exclude', '1' );
+update_post_meta( $ids['compare-products'], '_viglet_turing_exclude', '1' );
 // The home, the search page and the journal hold no text of their own: indexed, a page is one
 // more document Turing's kit can stage as a product (D203).
 foreach ( array( 'home-demo', 'search-gear', 'journal' ) as $chrome ) {
-	update_post_meta( $ids[ $chrome ], '_viglet_dumont_exclude', '1' );
+	update_post_meta( $ids[ $chrome ], '_viglet_turing_exclude', '1' );
 }
 // The showcase describes features, not gear: never a search result. Nor is the kit's page,
 // which the kit itself would otherwise stage as a product.
-update_post_meta( $ids['showcase'], '_viglet_dumont_exclude', '1' );
-update_post_meta( $ids['plan-a-kit'], '_viglet_dumont_exclude', '1' );
+update_post_meta( $ids['showcase'], '_viglet_turing_exclude', '1' );
+update_post_meta( $ids['plan-a-kit'], '_viglet_turing_exclude', '1' );
 
 // WordPress's own first post and page are no part of a shop, and in its search they would
 // read as a fresh install (D264).
@@ -138,7 +138,7 @@ update_option( 'blogname', $names['Tarnfell'] ?? 'Tarnfell' );
 update_option( 'blogdescription', $names['Gear for the high ground'] ?? 'Gear for the high ground' );
 
 // The hero's search box opens the instant search, and Enter goes to the page above.
-$settings                      = viglet_dumont_get_settings();
+$settings                      = viglet_turing_get_settings();
 $settings['search_enabled']    = 1;
 $settings['instant_overlay']   = 1;
 $settings['search_page']       = $ids['search-gear'];
@@ -161,6 +161,6 @@ if ( empty( $settings['trending_fallback'] ) ) {
 update_option( 'woocommerce_coming_soon', 'no' );
 // Checkout in test mode (D203): an offline payment, so an order is placed and nothing is charged.
 update_option( 'woocommerce_cheque_settings', array( 'enabled' => 'yes' ) + (array) get_option( 'woocommerce_cheque_settings', array() ) );
-viglet_dumont_update_settings( $settings );
+viglet_turing_update_settings( $settings );
 
 echo wp_json_encode( $ids ), "\n";

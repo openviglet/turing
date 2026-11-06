@@ -6,7 +6,7 @@
  * again by its key, the English slug below, kept in `_tarnfell_key`; its address follows its
  * title in the site's language (D266), and its photo is named by the key.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.

@@ -24,9 +24,9 @@ const ask = ( args ) => wp( args ).trim().split( /\r?\n/ ).pop().trim();
  * @param {string} action CREATE or DELETE.
  */
 const foreign = ( action ) => `
-$settings = viglet_dumont_get_settings();
-$indexer  = new Viglet_Dumont_Indexer( $settings );
-$result   = ( new Viglet_Dumont_API_Client( $settings ) )->import( array( array(
+$settings = viglet_turing_get_settings();
+$indexer  = new Viglet_Turing_Indexer( $settings );
+$result   = ( new Viglet_Turing_API_Client( $settings ) )->import( array( array(
 	'locale'         => $settings['locale'],
 	'turSNJobAction' => '${ action }',
 	'siteNames'      => array( $settings['site_name'] ),
@@ -46,10 +46,10 @@ $result   = ( new Viglet_Dumont_API_Client( $settings ) )->import( array( array(
 echo $result['success'] ? 'ok' : 'failed';
 `;
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const card = ( page ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__results li' )
+		.locator( '.viglet-turing-search__results li' )
 		.filter( { hasText: word } );
 
 test.describe( 'a type another source sent', () => {
@@ -68,7 +68,7 @@ test.describe( 'a type another source sent', () => {
 			ask( [ 'eval', foreign( 'DELETE' ) ] );
 		} catch {}
 		try {
-			wp( [ 'option', 'delete', 'viglet_dumont_foreign_types' ] );
+			wp( [ 'option', 'delete', 'viglet_turing_foreign_types' ] );
 		} catch {}
 	} );
 
@@ -88,7 +88,7 @@ test.describe( 'a type another source sent', () => {
 				() =>
 					ask( [
 						'eval',
-						`$found = ( new Viglet_Dumont_Mapping() )->discover_foreign( new Viglet_Dumont_API_Client() );
+						`$found = ( new Viglet_Turing_Mapping() )->discover_foreign( new Viglet_Turing_API_Client() );
 						$article = array_values( array_filter( is_array( $found ) ? $found : array(), fn ( $t ) => 'Article' === $t['type'] ) );
 						echo $article && in_array( 'defense_date', $article[0]['dates'], true ) ? 'listed' : 'missing';`,
 					] ),
@@ -100,7 +100,7 @@ test.describe( 'a type another source sent', () => {
 		expect(
 			ask( [
 				'eval',
-				`$saved = ( new Viglet_Dumont_Mapping() )->save_foreign( array( 'Article' => array( 'label' => 'Journal article', 'card_date' => 'defense_date' ) ) );
+				`$saved = ( new Viglet_Turing_Mapping() )->save_foreign( array( 'Article' => array( 'label' => 'Journal article', 'card_date' => 'defense_date' ) ) );
 				echo $saved['Article']['card_date'] ?? 'none';`,
 			] )
 		).toBe( 'defense_date' );
@@ -108,7 +108,7 @@ test.describe( 'a type another source sent', () => {
 		await page.goto( `/?page_id=${ seed.searchPageId }&q=${ word }` );
 		await expect( card( page ) ).toHaveCount( 1 );
 		await expect(
-			card( page ).locator( '.viglet-dumont-search__type' )
+			card( page ).locator( '.viglet-turing-search__type' )
 		).toHaveText( 'Journal article' );
 		await expect( card( page ).locator( 'time' ) ).toHaveAttribute(
 			'datetime',
@@ -123,7 +123,7 @@ test.describe( 'a type another source sent', () => {
 		await box.press( 'Enter' );
 		await expect( card( page ) ).toHaveCount( 1 );
 		await expect(
-			card( page ).locator( '.viglet-dumont-search__type' )
+			card( page ).locator( '.viglet-turing-search__type' )
 		).toHaveText( 'Journal article' );
 		await expect( card( page ).locator( 'time' ) ).toHaveAttribute(
 			'datetime',

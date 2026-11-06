@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Settings
+ * Viglet Turing Settings
  *
  * The plugin's settings: the stored option under the defaults, with the connection values a
  * deploy can set from outside WordPress laid over them.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,19 +20,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * a container configured from its environment needs no wp-admin step, and the API key
  * stays out of every database backup.
  */
-class Viglet_Dumont_Settings {
+class Viglet_Turing_Settings {
 
 	/** Each overridable setting and the constant or environment variable that sets it. */
 	public const OVERRIDES = array(
-		'server_url'       => 'VIGLET_DUMONT_TURING_URL',
-		'site_name'        => 'VIGLET_DUMONT_TURING_SITE',
-		'api_key'          => 'VIGLET_DUMONT_TURING_API_KEY',
-		'locale'           => 'VIGLET_DUMONT_TURING_LOCALE',
-		'site_key'         => 'VIGLET_DUMONT_SITE_KEY',
-		'public_url'       => 'VIGLET_DUMONT_PUBLIC_URL',
-		'search_url'       => 'VIGLET_DUMONT_SEARCH_URL',
+		'server_url'       => 'VIGLET_TURING_TURING_URL',
+		'site_name'        => 'VIGLET_TURING_TURING_SITE',
+		'api_key'          => 'VIGLET_TURING_TURING_API_KEY',
+		'locale'           => 'VIGLET_TURING_TURING_LOCALE',
+		'site_key'         => 'VIGLET_TURING_SITE_KEY',
+		'public_url'       => 'VIGLET_TURING_PUBLIC_URL',
+		'search_url'       => 'VIGLET_TURING_SEARCH_URL',
 		// The sibling sites this one also searches (D303), as search_sites() reads them.
-		'search_site_keys' => 'VIGLET_DUMONT_SEARCH_SITE_KEYS',
+		'search_site_keys' => 'VIGLET_TURING_SEARCH_SITE_KEYS',
 	);
 
 	/** The settings a fresh install starts from. */
@@ -119,7 +119,7 @@ class Viglet_Dumont_Settings {
 
 	/**
 	 * The sibling sites a search here also reads (D303), however they were written: the list
-	 * the option holds, or text from the Settings form or VIGLET_DUMONT_SEARCH_SITE_KEYS. Text
+	 * the option holds, or text from the Settings form or VIGLET_TURING_SEARCH_SITE_KEYS. Text
 	 * is a JSON list of {key, label, url}, or one site per line (or per comma), each written
 	 * `key | label | url` with the label and the URL optional.
 	 *
@@ -150,7 +150,7 @@ class Viglet_Dumont_Settings {
 			if ( ! is_array( $entry ) ) {
 				continue;
 			}
-			$key = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $entry['key'] ?? '' ) );
+			$key = Viglet_Turing_Indexer::sanitize_site_key( (string) ( $entry['key'] ?? '' ) );
 			if ( '' === $key || isset( $sites[ $key ] ) ) {
 				continue;
 			}
@@ -201,7 +201,7 @@ class Viglet_Dumont_Settings {
 	 * @param array $settings The settings to store.
 	 */
 	public static function update( array $settings ): bool {
-		return update_option( VIGLET_DUMONT_OPTION, self::without_overridden( $settings ) );
+		return update_option( VIGLET_TURING_OPTION, self::without_overridden( $settings ) );
 	}
 
 	/**
@@ -253,7 +253,7 @@ class Viglet_Dumont_Settings {
 	/**
 	 * The constant, or environment variable, that turns demo mode on (D238).
 	 */
-	public const DEMO = 'VIGLET_DUMONT_DEMO';
+	public const DEMO = 'VIGLET_TURING_DEMO';
 
 	/**
 	 * Demo mode (D238): a site whose wp-admin belongs to whoever opens it, such as a WordPress
@@ -294,7 +294,7 @@ class Viglet_Dumont_Settings {
 	 * The option as stored.
 	 */
 	private static function stored(): array {
-		$stored = get_option( VIGLET_DUMONT_OPTION, array() );
+		$stored = get_option( VIGLET_TURING_OPTION, array() );
 
 		return is_array( $stored ) ? $stored : array();
 	}

@@ -2,10 +2,10 @@
 // ticked in the search results open side by side, the rows where they differ marked.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const card = ( page, name ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__results li' )
+		.locator( '.viglet-turing-search__results li' )
 		.filter( { hasText: name } );
 const jackets = ( seed ) =>
 	`/?page_id=${ seed.searchPageId }&q=jacket&fq[]=type:product`;
@@ -17,7 +17,7 @@ test( 'two jackets ticked in the results compare side by side, their differences
 	axe,
 } ) => {
 	await page.goto( jackets( seed ) );
-	const bar = block( page ).locator( '.viglet-dumont-search__compare-bar' );
+	const bar = block( page ).locator( '.viglet-turing-search__compare-bar' );
 	await card( page, 'Rain jacket' )
 		.getByRole( 'checkbox', { name: 'Compare Rain jacket' } )
 		.check();
@@ -29,7 +29,7 @@ test( 'two jackets ticked in the results compare side by side, their differences
 	await expect( bar.getByRole( 'link' ) ).toHaveText( 'Compare 2 products' );
 
 	await bar.getByRole( 'link' ).click();
-	const table = page.locator( '.viglet-dumont-compare__table' );
+	const table = page.locator( '.viglet-turing-compare__table' );
 	await expect( table.locator( 'thead th' ) ).toHaveText( [
 		'Rain jacket',
 		'Wool jacket',
@@ -51,7 +51,7 @@ test( 'two jackets ticked in the results compare side by side, their differences
 	// Both in stock: the same, so not marked.
 	await expect( row( 'Availability' ) ).not.toHaveClass( /differs/ );
 	await look( 'woo-compare' );
-	await axe( 'the compare block', { include: '.viglet-dumont-compare' } );
+	await axe( 'the compare block', { include: '.viglet-turing-compare' } );
 
 	// The choice is kept for the tab: back in the results, both are still ticked.
 	await page.goBack();
@@ -90,10 +90,10 @@ test( 'one jacket ticked in the results and one in a product page’s Related co
 	await expect(
 		page.locator( '.wp-block-post-excerpt__excerpt' )
 	).toHaveText( /^A Red jacket for the field\.\s*$/ );
-	const related = page.locator( '.wp-block-viglet-dumont-related' );
+	const related = page.locator( '.wp-block-viglet-turing-related' );
 	const boxes = related.getByRole( 'checkbox', { name: /^Compare / } );
 	await expect( boxes.first() ).toBeVisible();
-	const bar = related.locator( '.viglet-dumont-related__compare-bar' );
+	const bar = related.locator( '.viglet-turing-related__compare-bar' );
 	await expect( bar ).toBeHidden();
 	const other = boxes.and(
 		related.locator( 'input:not([aria-label="Compare Wool jacket"])' )
@@ -107,7 +107,7 @@ test( 'one jacket ticked in the results and one in a product page’s Related co
 
 	await bar.getByRole( 'link' ).click();
 	await expect(
-		page.locator( '.viglet-dumont-compare__table thead th' )
+		page.locator( '.viglet-turing-compare__table thead th' )
 	).toHaveText( [ 'Wool jacket', name ] );
 } );
 
@@ -129,10 +129,10 @@ test( 'a page with the search block and Ask the catalog shows one Compare button
 		page.getByRole( 'link', { name: 'Compare 2 products' } )
 	).toHaveCount( 1 );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__compare-bar' )
+		block( page ).locator( '.viglet-turing-search__compare-bar' )
 	).toBeVisible();
 	await expect(
-		page.locator( '.viglet-dumont-copilot__compare-bar' )
+		page.locator( '.viglet-turing-copilot__compare-bar' )
 	).toBeHidden();
 } );
 
@@ -163,7 +163,7 @@ test( 'a product the copilot cites is ticked for the search results too', async 
 		} )
 	);
 	await page.goto( '/?pagename=ask-the-shop' );
-	const copilot = page.locator( '.viglet-dumont-copilot' );
+	const copilot = page.locator( '.viglet-turing-copilot' );
 	await copilot
 		.getByLabel( 'What are you looking for?' )
 		.fill( 'a waterproof jacket' );
@@ -173,7 +173,7 @@ test( 'a product the copilot cites is ticked for the search results too', async 
 		.check();
 	// One is not a comparison.
 	await expect(
-		copilot.locator( '.viglet-dumont-copilot__compare-bar' )
+		copilot.locator( '.viglet-turing-copilot__compare-bar' )
 	).toBeHidden();
 
 	await page.goto( jackets( seed ) );
@@ -186,7 +186,7 @@ test( 'the compare page without products says how to choose them', async ( {
 	page,
 } ) => {
 	await page.goto( '/?pagename=compare-products' );
-	await expect( page.locator( '.viglet-dumont-compare__empty' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-compare__empty' ) ).toHaveText(
 		/Tick Compare on two to four products/
 	);
 } );
@@ -220,13 +220,13 @@ test( 'a summary Turing wrote shows above the table, labelled as AI', async ( {
 		error: '',
 	} );
 	await compareJackets( page );
-	const summary = page.locator( '.viglet-dumont-compare__summary' );
+	const summary = page.locator( '.viglet-turing-compare__summary' );
 	await expect( summary ).toBeVisible();
 	await expect( summary ).toContainText(
 		'Summary written by AI from the table below'
 	);
 	await expect(
-		summary.locator( '.viglet-dumont-compare__summary-text' )
+		summary.locator( '.viglet-turing-compare__summary-text' )
 	).toHaveText(
 		'Both jackets are in stock; they differ in price and color.'
 	);
@@ -240,10 +240,10 @@ test( 'without a summary the table stands alone', async ( { page } ) => {
 	} );
 	await compareJackets( page );
 	await expect(
-		page.locator( '.viglet-dumont-compare__table' )
+		page.locator( '.viglet-turing-compare__table' )
 	).toBeVisible();
 	await page.waitForLoadState( 'networkidle' );
 	await expect(
-		page.locator( '.viglet-dumont-compare__summary' )
+		page.locator( '.viglet-turing-compare__summary' )
 	).toBeHidden();
 } );

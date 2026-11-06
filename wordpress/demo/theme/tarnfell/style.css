@@ -102,7 +102,7 @@ button {
 	font-family: inherit;
 }
 
-.viglet-dumont-search input[type="search"] {
+.viglet-turing-search input[type="search"] {
 	font-size: var(--wp--preset--font-size--medium);
 	padding-inline: 0.75rem;
 }
@@ -135,7 +135,7 @@ button {
 
 /* Build my kit's own page: the planner framed as the page's tool, in the lichen of the copilot
    on a product, with room for the kit it builds below the plan. */
-.viglet-dumont-copilot.tarnfell-plan {
+.viglet-turing-copilot.tarnfell-plan {
 	background: var(--wp--preset--color--lichen);
 	border-radius: 6px;
 	margin-top: var(--wp--preset--spacing--40);
@@ -151,7 +151,7 @@ body .woocommerce span.onsale {
 }
 
 /* The copilot sits in the product's side column: its heading is a section's, not the page's. */
-.wp-block-viglet-dumont-copilot h2 {
+.wp-block-viglet-turing-copilot h2 {
 	font-size: var(--wp--preset--font-size--large);
 	margin-block-start: 0;
 }

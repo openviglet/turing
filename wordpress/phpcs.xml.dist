@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Viglet Dumont for WordPress">
-    <description>WordPress Coding Standards for the Viglet Dumont plugin.</description>
+<ruleset name="Viglet Turing for WordPress">
+    <description>WordPress Coding Standards for the Viglet Turing plugin.</description>
 
     <file>src</file>
     <file>tests</file>
@@ -28,14 +28,14 @@
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="viglet_dumont"/>
-                <element value="Viglet_Dumont"/>
+                <element value="viglet_turing"/>
+                <element value="Viglet_Turing"/>
             </property>
         </properties>
     </rule>
 
-    <!-- Templates and views are included from inside a method (Viglet_Dumont_Search::render_template,
-         Viglet_Dumont_Admin::render_settings_page), so their variables are locals, never globals. -->
+    <!-- Templates and views are included from inside a method (Viglet_Turing_Search::render_template,
+         Viglet_Turing_Admin::render_settings_page), so their variables are locals, never globals. -->
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
         <exclude-pattern>src/templates/*</exclude-pattern>
         <exclude-pattern>src/admin/views/*</exclude-pattern>

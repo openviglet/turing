@@ -2,12 +2,12 @@
 /**
  * The search page reads Turing's response as Turing shapes it.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
-use Viglet_Dumont_Search;
+use Viglet_Turing_Search;
 
 final class SearchTest extends PluginTestCase {
 
@@ -60,7 +60,7 @@ final class SearchTest extends PluginTestCase {
 	}
 
 	private function parse( array $response ): array {
-		return ( new Viglet_Dumont_Search( $this->settings() ) )->parse_results(
+		return ( new Viglet_Turing_Search( $this->settings() ) )->parse_results(
 			$response,
 			array(
 				'per_page'     => 10,
@@ -108,11 +108,11 @@ final class SearchTest extends PluginTestCase {
 	 * share, an unscoped search listed their documents on this site's results page.
 	 */
 	public function test_the_results_page_searches_this_sites_scope_before_the_visitors_filters(): void {
-		$params = ( new Viglet_Dumont_Search( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->request_params( array( 'type:post' ), 'newest' );
+		$params = ( new Viglet_Turing_Search( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->request_params( array( 'type:post' ), 'newest' );
 
 		$this->assertSame( array( 'site_key:site-a', 'type:post' ), $params['fq[]'] );
 		$this->assertSame( 'newest', $params['sort'] );
-		$this->assertArrayNotHasKey( 'sort', ( new Viglet_Dumont_Search( $this->settings() ) )->request_params( array(), '' ) );
+		$this->assertArrayNotHasKey( 'sort', ( new Viglet_Turing_Search( $this->settings() ) )->request_params( array(), '' ) );
 	}
 
 	public function test_the_spelling_suggestion_is_the_corrected_text(): void {

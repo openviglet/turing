@@ -1,6 +1,6 @@
 <?php
 /**
- * Viglet Dumont Search Results Template
+ * Viglet Turing Search Results Template
  *
  * Variables available:
  * - $query        (string)  Search query
@@ -13,7 +13,7 @@
  * - $did_you_mean (string)  Spelling suggestion
  * - $error        (string)  Error message
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Extracted from the template data by Viglet_Dumont_Search::render_template().
+ * Extracted from the template data by Viglet_Turing_Search::render_template().
  *
  * @var string      $query
  * @var int         $page
@@ -34,10 +34,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 wp_enqueue_style(
-	'viglet-dumont-search',
-	VIGLET_DUMONT_URL . 'templates/css/search.css',
+	'viglet-turing-search',
+	VIGLET_TURING_URL . 'templates/css/search.css',
 	array(),
-	VIGLET_DUMONT_VERSION
+	VIGLET_TURING_VERSION
 );
 ?>
 
@@ -85,18 +85,18 @@ wp_enqueue_style(
 		<div class="vd-search__layout">
 			<?php if ( ! empty( $facets ) ) : ?>
 				<aside class="vd-search__sidebar">
-					<?php foreach ( $facets as $viglet_dumont_facet ) : ?>
-						<?php if ( ! empty( $viglet_dumont_facet['facetValues'] ) ) : ?>
+					<?php foreach ( $facets as $viglet_turing_facet ) : ?>
+						<?php if ( ! empty( $viglet_turing_facet['facetValues'] ) ) : ?>
 							<div class="vd-facet">
 								<h3 class="vd-facet__title">
-									<?php echo esc_html( $viglet_dumont_facet['label'] ?? $viglet_dumont_facet['name'] ?? '' ); ?>
+									<?php echo esc_html( $viglet_turing_facet['label'] ?? $viglet_turing_facet['name'] ?? '' ); ?>
 								</h3>
 								<ul class="vd-facet__list">
-									<?php foreach ( $viglet_dumont_facet['facetValues'] as $viglet_dumont_value ) : ?>
+									<?php foreach ( $viglet_turing_facet['facetValues'] as $viglet_turing_value ) : ?>
 										<li>
-											<a href="<?php echo esc_url( add_query_arg( 'fq[]', $viglet_dumont_value['link'] ?? '', false ) ); ?>">
-												<?php echo esc_html( $viglet_dumont_value['label'] ?? '' ); ?>
-												<span class="vd-facet__count"><?php echo esc_html( $viglet_dumont_value['count'] ?? 0 ); ?></span>
+											<a href="<?php echo esc_url( add_query_arg( 'fq[]', $viglet_turing_value['link'] ?? '', false ) ); ?>">
+												<?php echo esc_html( $viglet_turing_value['label'] ?? '' ); ?>
+												<span class="vd-facet__count"><?php echo esc_html( $viglet_turing_value['count'] ?? 0 ); ?></span>
 											</a>
 										</li>
 									<?php endforeach; ?>
@@ -113,52 +113,52 @@ wp_enqueue_style(
 						<p><?php esc_html_e( 'No results found. Try different keywords.', 'viglet-turing-search' ); ?></p>
 					</div>
 				<?php else : ?>
-					<?php foreach ( $results as $viglet_dumont_item ) : ?>
+					<?php foreach ( $results as $viglet_turing_item ) : ?>
 						<?php
-						$viglet_dumont_fields = $viglet_dumont_item['fields'] ?? array();
-						$viglet_dumont_title  = $viglet_dumont_fields['title'] ?? '';
-						$viglet_dumont_url    = $viglet_dumont_fields['url'] ?? '#';
-						$viglet_dumont_text   = '';
-						if ( ! empty( $viglet_dumont_item['highlighting'] ) ) {
-							$viglet_dumont_text = implode( ' ... ', $viglet_dumont_item['highlighting'] );
-						} elseif ( ! empty( $viglet_dumont_fields['abstract'] ) ) {
-							$viglet_dumont_text = $viglet_dumont_fields['abstract'];
-						} elseif ( ! empty( $viglet_dumont_fields['text'] ) ) {
-							$viglet_dumont_text = wp_trim_words( $viglet_dumont_fields['text'], 30 );
+						$viglet_turing_fields = $viglet_turing_item['fields'] ?? array();
+						$viglet_turing_title  = $viglet_turing_fields['title'] ?? '';
+						$viglet_turing_url    = $viglet_turing_fields['url'] ?? '#';
+						$viglet_turing_text   = '';
+						if ( ! empty( $viglet_turing_item['highlighting'] ) ) {
+							$viglet_turing_text = implode( ' ... ', $viglet_turing_item['highlighting'] );
+						} elseif ( ! empty( $viglet_turing_fields['abstract'] ) ) {
+							$viglet_turing_text = $viglet_turing_fields['abstract'];
+						} elseif ( ! empty( $viglet_turing_fields['text'] ) ) {
+							$viglet_turing_text = wp_trim_words( $viglet_turing_fields['text'], 30 );
 						}
-						$viglet_dumont_author = $viglet_dumont_fields['author'] ?? '';
-						$viglet_dumont_date   = $viglet_dumont_fields['publication_date'] ?? '';
-						$viglet_dumont_image  = $viglet_dumont_fields['image'] ?? '';
-						$viglet_dumont_type   = Viglet_Dumont_Mapping::document_type( $viglet_dumont_fields['type'] ?? '' );
+						$viglet_turing_author = $viglet_turing_fields['author'] ?? '';
+						$viglet_turing_date   = $viglet_turing_fields['publication_date'] ?? '';
+						$viglet_turing_image  = $viglet_turing_fields['image'] ?? '';
+						$viglet_turing_type   = Viglet_Turing_Mapping::document_type( $viglet_turing_fields['type'] ?? '' );
 						?>
 						<article class="vd-result">
-							<?php if ( $viglet_dumont_image ) : ?>
-								<div class="vd-result__image" style="<?php echo esc_attr( "background-image: url('" . esc_url( $viglet_dumont_image ) . "')" ); ?>">
-									<img src="<?php echo esc_url( $viglet_dumont_image ); ?>"
-										alt="<?php echo esc_attr( $viglet_dumont_title ); ?>"
+							<?php if ( $viglet_turing_image ) : ?>
+								<div class="vd-result__image" style="<?php echo esc_attr( "background-image: url('" . esc_url( $viglet_turing_image ) . "')" ); ?>">
+									<img src="<?php echo esc_url( $viglet_turing_image ); ?>"
+										alt="<?php echo esc_attr( $viglet_turing_title ); ?>"
 										loading="lazy" />
 								</div>
 							<?php endif; ?>
 							<div class="vd-result__content">
-								<?php if ( $viglet_dumont_type ) : ?>
-									<span class="vd-result__type"><?php echo esc_html( ucfirst( $viglet_dumont_type ) ); ?></span>
+								<?php if ( $viglet_turing_type ) : ?>
+									<span class="vd-result__type"><?php echo esc_html( ucfirst( $viglet_turing_type ) ); ?></span>
 								<?php endif; ?>
-								<?php if ( ! empty( $viglet_dumont_item['origin'] ) ) : ?>
-									<span class="vd-result__type vd-result__origin"><?php echo esc_html( $viglet_dumont_item['origin'] ); ?></span>
+								<?php if ( ! empty( $viglet_turing_item['origin'] ) ) : ?>
+									<span class="vd-result__type vd-result__origin"><?php echo esc_html( $viglet_turing_item['origin'] ); ?></span>
 								<?php endif; ?>
 								<h2 class="vd-result__title">
-									<a href="<?php echo esc_url( $viglet_dumont_url ); ?>"><?php echo esc_html( $viglet_dumont_title ); ?></a>
+									<a href="<?php echo esc_url( $viglet_turing_url ); ?>"><?php echo esc_html( $viglet_turing_title ); ?></a>
 								</h2>
-								<?php if ( $viglet_dumont_text ) : ?>
-									<p class="vd-result__excerpt"><?php echo wp_kses_post( $viglet_dumont_text ); ?></p>
+								<?php if ( $viglet_turing_text ) : ?>
+									<p class="vd-result__excerpt"><?php echo wp_kses_post( $viglet_turing_text ); ?></p>
 								<?php endif; ?>
 								<div class="vd-result__meta">
-									<?php if ( $viglet_dumont_author ) : ?>
-										<span class="vd-result__author"><?php echo esc_html( $viglet_dumont_author ); ?></span>
+									<?php if ( $viglet_turing_author ) : ?>
+										<span class="vd-result__author"><?php echo esc_html( $viglet_turing_author ); ?></span>
 									<?php endif; ?>
-									<?php if ( $viglet_dumont_date ) : ?>
-										<time class="vd-result__date" datetime="<?php echo esc_attr( $viglet_dumont_date ); ?>">
-											<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $viglet_dumont_date ) ) ); ?>
+									<?php if ( $viglet_turing_date ) : ?>
+										<time class="vd-result__date" datetime="<?php echo esc_attr( $viglet_turing_date ); ?>">
+											<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $viglet_turing_date ) ) ); ?>
 										</time>
 									<?php endif; ?>
 								</div>

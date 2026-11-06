@@ -36,7 +36,7 @@ test( "two jackets' summary names nothing the table does not", async ( {
 	await page.goto(
 		`/?pagename=compare-products&compare=${ ids.join( ',' ) }`
 	);
-	const text = page.locator( '.viglet-dumont-compare__summary-text' );
+	const text = page.locator( '.viglet-turing-compare__summary-text' );
 	await expect( text ).not.toBeEmpty( { timeout: 60000 } );
 	const summary = await text.textContent();
 	record(
@@ -48,7 +48,7 @@ test( "two jackets' summary names nothing the table does not", async ( {
 	await look( 'ai-compare' );
 
 	const table = await page
-		.locator( '.viglet-dumont-compare__table' )
+		.locator( '.viglet-turing-compare__table' )
 		.textContent();
 	for ( const figure of summary.match( /\d+(?:[.,]\d+)*/g ) || [] ) {
 		expect( table, `the summary's ${ figure }` ).toContain( figure );

@@ -1,6 +1,6 @@
 /**
  * The Turing search block in the browser: an Interactivity API store over the SDK's search
- * and autocomplete controllers (from `viglet-dumont/search`, already configured for this
+ * and autocomplete controllers (from `viglet-turing/search`, already configured for this
  * site). render.php prints the markup and the directives; this keeps the state they read.
  */
 import { getContext, getElement, store } from '@wordpress/interactivity';
@@ -36,7 +36,7 @@ import {
 	siteSelection,
 	siteUrl,
 	trackResultClick,
-} from 'viglet-dumont/search';
+} from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
 let search = null;
@@ -171,10 +171,10 @@ const facetValuesShown = 5;
 // How long typing must pause before the results follow it.
 const instantMs = 300;
 // Recent searches live in this browser only and are never sent anywhere.
-const recentKey = 'viglet-dumont-recent-searches';
+const recentKey = 'viglet-turing-recent-searches';
 const recentMax = 5;
 
-const { state, actions } = store( 'viglet-dumont/search', {
+const { state, actions } = store( 'viglet-turing/search', {
 	state: {
 		// Compare on a product's card (D200), over the list every block shares (D212).
 		get canCompare() {
@@ -531,7 +531,7 @@ const { state, actions } = store( 'viglet-dumont/search', {
 		closeDrawer() {
 			state.drawerOpen = false;
 			document
-				.querySelector( '.viglet-dumont-search__filters-toggle' )
+				.querySelector( '.viglet-turing-search__filters-toggle' )
 				?.focus();
 		},
 		drawerKeydown( event ) {

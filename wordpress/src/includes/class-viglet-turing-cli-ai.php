@@ -1,8 +1,8 @@
 <?php
 /**
- * Viglet Dumont WP-CLI commands: `wp dumont ai status`.
+ * Viglet Turing WP-CLI commands: `wp turing ai status`.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Which of Turing's AI features this site can use, for scripts and CI.
  */
-class Viglet_Dumont_CLI_AI {
+class Viglet_Turing_CLI_AI {
 
 	/**
 	 * One row per AI feature: on or off, and why when off. Exits non-zero when any is off,
@@ -29,14 +29,14 @@ class Viglet_Dumont_CLI_AI {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont ai status
-	 *     wp dumont ai status --format=json
+	 *     wp turing ai status
+	 *     wp turing ai status --format=json
 	 *
 	 * @param array $args       Positional arguments (none).
 	 * @param array $assoc_args `format`.
 	 */
 	public function status( array $args, array $assoc_args ): void {
-		$rows = viglet_dumont_ai_status();
+		$rows = viglet_turing_ai_status();
 
 		if ( 'json' === ( $assoc_args['format'] ?? 'table' ) ) {
 			WP_CLI::log( (string) wp_json_encode( $rows, JSON_PRETTY_PRINT ) );

@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "viglet-dumont/compare",
+	"name": "viglet-turing/compare",
 	"title": "Compare products",
 	"category": "widgets",
 	"icon": "columns",
@@ -21,8 +21,8 @@
 		"color": { "background": true, "text": true, "link": true },
 		"typography": { "fontSize": true, "lineHeight": true }
 	},
-	"editorScript": "viglet-dumont-compare-block-editor",
-	"style": "viglet-dumont-compare-block",
-	"viewScriptModule": "viglet-dumont/compare-block",
+	"editorScript": "viglet-turing-compare-block-editor",
+	"style": "viglet-turing-compare-block",
+	"viewScriptModule": "viglet-turing/compare-block",
 	"render": "file:./render.php"
 }

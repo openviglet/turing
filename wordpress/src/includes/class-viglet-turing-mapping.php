@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont Mapping
+ * Viglet Turing Mapping
  *
  * The per-post-type field mapping: which taxonomies, meta keys and core fields a post sends
  * beyond the fixed document, as which Turing field and type, and the manifest that tells
  * Turing about those fields so a facet needs no console step.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Reads the mapping, turns a post into typed values and provisions the fields.
  *
- * The stored shape (option `viglet_dumont_mapping`, also what the REST route exports and
+ * The stored shape (option `viglet_turing_mapping`, also what the REST route exports and
  * imports) is keyed by post type:
  *
  *     { "evento": { "exclude": false, "fields": [
@@ -34,17 +34,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * facet named `<field>_range`: a fixed set of periods for a date, and for a number the
  * `ranges` it lists, each `{label, from, to}` with either bound open.
  */
-class Viglet_Dumont_Mapping {
+class Viglet_Turing_Mapping {
 
 	/** The option the mapping lives in. */
-	public const OPTION = 'viglet_dumont_mapping';
+	public const OPTION = 'viglet_turing_mapping';
 
 	/**
 	 * The option holding how the search block shows a type no post type has (D327): a record
 	 * another source sent under this site key, as `dc:type`'s "Article". Keyed by that value,
 	 * each `{label, card_date, card_image}`. Display only: nothing about indexing reads it.
 	 */
-	public const FOREIGN_OPTION = 'viglet_dumont_foreign_types';
+	public const FOREIGN_OPTION = 'viglet_turing_foreign_types';
 
 	/** How many foreign types the option keeps. */
 	private const MAX_FOREIGN = 100;
@@ -56,10 +56,10 @@ class Viglet_Dumont_Mapping {
 	private const NOT_CARD_FIELDS = array( 'id', 'title', 'text', 'abstract', 'description', 'url', 'type', 'site', 'site_key', 'source_apps', 'score', 'publication_date', 'image', 'author', 'categories', 'section', 'tags' );
 
 	/** The option recording the last manifest sent: its hash, when, and the error if any. */
-	public const PROVISIONED_OPTION = 'viglet_dumont_provisioned';
+	public const PROVISIONED_OPTION = 'viglet_turing_provisioned';
 
 	/** The post meta that keeps one post out of the index. */
-	public const EXCLUDE_META = '_viglet_dumont_exclude';
+	public const EXCLUDE_META = '_viglet_turing_exclude';
 
 	/** The field types Turing's manifest accepts and the plugin knows how to convert to. */
 	public const TYPES = array( 'STRING', 'TEXT', 'INT', 'LONG', 'FLOAT', 'DOUBLE', 'DATE', 'BOOL' );
@@ -96,11 +96,11 @@ class Viglet_Dumont_Mapping {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
-	 * The mapping of every indexed post type, after the `viglet_dumont_mapping` filter.
+	 * The mapping of every indexed post type, after the `viglet_turing_mapping` filter.
 	 *
 	 * @return array<string, array{exclude: bool, fields: array<int, array>, card_date: string, card_image: string, expires: string}>
 	 */
@@ -113,7 +113,7 @@ class Viglet_Dumont_Mapping {
 		$stored  = is_array( $stored ) ? $stored : array();
 		$mapping = array();
 
-		foreach ( viglet_dumont_get_indexable_types() as $post_type ) {
+		foreach ( viglet_turing_get_indexable_types() as $post_type ) {
 			$mapping[ $post_type ] = isset( $stored[ $post_type ] )
 				? self::sanitize_type( $stored[ $post_type ] )
 				: $this->default_for( $post_type );
@@ -125,7 +125,7 @@ class Viglet_Dumont_Mapping {
 		 * @param array $mapping  The mapping, keyed by post type.
 		 * @param array $settings The plugin settings.
 		 */
-		$filtered = apply_filters( 'viglet_dumont_mapping', $mapping, $this->settings );
+		$filtered = apply_filters( 'viglet_turing_mapping', $mapping, $this->settings );
 
 		$this->resolved = array_map( array( self::class, 'sanitize_type' ), $filtered );
 
@@ -168,7 +168,7 @@ class Viglet_Dumont_Mapping {
 	 * @return array<int, string>
 	 */
 	private static function own_types(): array {
-		return array_merge( viglet_dumont_get_indexable_types(), array( Viglet_Dumont_Pdf::TYPE ) );
+		return array_merge( viglet_turing_get_indexable_types(), array( Viglet_Turing_Pdf::TYPE ) );
 	}
 
 	/**
@@ -242,14 +242,14 @@ class Viglet_Dumont_Mapping {
 	 * excludes this plugin's own (Turing T1233, D334): however many posts the site holds, only
 	 * the foreign documents are paged, up to the first 2000 of them.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client to search through.
+	 * @param Viglet_Turing_API_Client $client The client to search through.
 	 * @return array<int, array{type: string, count: int, dates: array<int, string>, texts: array<int, string>}>|WP_Error
 	 */
-	public function discover_foreign( Viglet_Dumont_API_Client $client ) {
+	public function discover_foreign( Viglet_Turing_API_Client $client ) {
 		// This site key's documents another source sent, and only those (D334): Turing
 		// excludes a value with a negative filter (T1233), so the plugin's own posts are never
 		// read to be skipped.
-		$own_filter = ( new Viglet_Dumont_Indexer( $this->settings ) )->own_filter();
+		$own_filter = ( new Viglet_Turing_Indexer( $this->settings ) )->own_filter();
 		$filters    = array( $own_filter, '-source_apps:' . $client->source_app() );
 		$first      = $client->search( '*', 1, 0, array( 'fq[]' => $filters ) );
 		if ( is_wp_error( $first ) ) {
@@ -454,7 +454,7 @@ class Viglet_Dumont_Mapping {
 		);
 		// The entity facets Turing fills (D310), declared as Turing creates them so a label and
 		// "offered" reach it; a mapped field cannot take their names.
-		$fields = array_merge( $fields, ( new Viglet_Dumont_Entities( $this->settings ) )->manifest_fields( $locale ) );
+		$fields = array_merge( $fields, ( new Viglet_Turing_Entities( $this->settings ) )->manifest_fields( $locale ) );
 		$custom = array();
 
 		foreach ( $this->all() as $type_mapping ) {
@@ -512,7 +512,7 @@ class Viglet_Dumont_Mapping {
 			// the people, organisations and places it names. Left out, Turing keeps its setting,
 			// so turning it off here sends `false` once, after a manifest that turned it on.
 			$last = get_option( self::PROVISIONED_OPTION, array() );
-			if ( Viglet_Dumont_Entities::extracts( $this->settings ) ) {
+			if ( Viglet_Turing_Entities::extracts( $this->settings ) ) {
 				$manifest['genAi'] = array( 'entityExtraction' => true );
 			} elseif ( is_array( $last ) && ! empty( $last['entities'] ) ) {
 				$manifest['genAi'] = array( 'entityExtraction' => false );
@@ -675,11 +675,11 @@ class Viglet_Dumont_Mapping {
 	 * a field's type would have to change) does not stop indexing: the documents still flow
 	 * with the site's current schema, and the error is kept for the admin to show.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client to send it through.
+	 * @param Viglet_Turing_API_Client $client The client to send it through.
 	 * @param bool                     $force  Send even when the same manifest went through.
 	 * @return array{sent: bool, success: bool, message: string}
 	 */
-	public function provision( Viglet_Dumont_API_Client $client, bool $force = false ): array {
+	public function provision( Viglet_Turing_API_Client $client, bool $force = false ): array {
 		$manifest = $this->manifest();
 		if ( empty( $manifest['fields'] ) ) {
 			return array(
@@ -700,7 +700,7 @@ class Viglet_Dumont_Mapping {
 		}
 
 		$result = $client->provision( $manifest );
-		Viglet_Dumont_Events::record( 'provision', $result['success'], $result['note'] );
+		Viglet_Turing_Events::record( 'provision', $result['success'], $result['note'] );
 		$sent = is_array( $manifest['genAi'] ?? null ) ? $manifest['genAi']['entityExtraction'] : null;
 		update_option(
 			self::PROVISIONED_OPTION,
@@ -726,10 +726,10 @@ class Viglet_Dumont_Mapping {
 	 * (Turing has it as declared), `pending` (the next send adds it) or `conflict` (Turing
 	 * holds it with another type or cardinality, so it is refused until renamed or migrated).
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @param Viglet_Turing_API_Client $client The client to plan through.
 	 * @return array<string, array{status: string, detail: string}>|WP_Error
 	 */
-	public function field_status( Viglet_Dumont_API_Client $client ) {
+	public function field_status( Viglet_Turing_API_Client $client ) {
 		$plan = $this->plan_status( $client );
 
 		return is_wp_error( $plan ) ? $plan : $plan['fields'];
@@ -739,10 +739,10 @@ class Viglet_Dumont_Mapping {
 	 * The manifest's plan, read once: where each field stands (as field_status() has it) and
 	 * whether the next send creates or changes the site's GenAI binding.
 	 *
-	 * @param Viglet_Dumont_API_Client $client The client to plan through.
+	 * @param Viglet_Turing_API_Client $client The client to plan through.
 	 * @return array{fields: array<string, array{status: string, detail: string}>, genai_to_change: bool}|WP_Error
 	 */
-	public function plan_status( Viglet_Dumont_API_Client $client ) {
+	public function plan_status( Viglet_Turing_API_Client $client ) {
 		$plan = $client->plan( $this->manifest() );
 		if ( is_wp_error( $plan ) ) {
 			return $plan;
@@ -834,8 +834,8 @@ class Viglet_Dumont_Mapping {
 			'source' => 'thumbnail',
 			'label'  => __( 'Featured image URL', 'viglet-turing-search' ),
 		);
-		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
-			$sources = array_merge( $sources, Viglet_Dumont_WooCommerce::sources() );
+		if ( Viglet_Turing_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Turing_WooCommerce::active() ) {
+			$sources = array_merge( $sources, Viglet_Turing_WooCommerce::sources() );
 		}
 
 		return $sources;
@@ -863,8 +863,8 @@ class Viglet_Dumont_Mapping {
 				'weight'      => null,
 			);
 		}
-		if ( Viglet_Dumont_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Dumont_WooCommerce::active() ) {
-			$fields = array_merge( $fields, Viglet_Dumont_WooCommerce::default_fields() );
+		if ( Viglet_Turing_WooCommerce::PRODUCT_TYPE === $post_type && Viglet_Turing_WooCommerce::active() ) {
+			$fields = array_merge( $fields, Viglet_Turing_WooCommerce::default_fields() );
 		}
 
 		return self::sanitize_type( array( 'fields' => $fields ) );
@@ -889,12 +889,12 @@ class Viglet_Dumont_Mapping {
 				return get_post_meta( $post->ID, $name, ! $multi );
 			case 'file':
 				// The PDF a meta names (D309): Turing reads its text out of the zip the import sends.
-				return Viglet_Dumont_Pdf::file_reference( $post, $name );
+				return Viglet_Turing_Pdf::file_reference( $post, $name );
 			case 'thumbnail':
 				$url = get_the_post_thumbnail_url( $post->ID, 'large' );
 				return is_string( $url ) ? $url : null;
 			case 'woo':
-				return Viglet_Dumont_WooCommerce::value( $post, $name );
+				return Viglet_Turing_WooCommerce::value( $post, $name );
 			case 'core':
 				$core = array(
 					'excerpt'    => $post->post_excerpt,
@@ -1016,7 +1016,7 @@ class Viglet_Dumont_Mapping {
 		$valid_source    = ( 'thumbnail' === $source )
 			|| ( in_array( $kind, array( 'taxonomy', 'meta', 'file' ), true ) && '' !== $name )
 			|| ( 'core' === $kind && in_array( $name, self::CORE_SOURCES, true ) )
-			|| ( 'woo' === $kind && isset( Viglet_Dumont_WooCommerce::FIELDS[ $name ] ) );
+			|| ( 'woo' === $kind && isset( Viglet_Turing_WooCommerce::FIELDS[ $name ] ) );
 
 		$target = preg_replace( '/[^A-Za-z0-9_]/', '', (string) ( $field['field'] ?? '' ) );
 		// A PDF's text is searched as text, never as one exact value (D309).

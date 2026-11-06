@@ -12,7 +12,7 @@ for ( const path of [ '/', '/?pagename=search-gear', '/journal/' ] ) {
 			route.fulfill( { json: { enabled: true } } )
 		);
 		await page.goto( path );
-		const corner = page.locator( '.viglet-dumont-assistant.is-floating' );
+		const corner = page.locator( '.viglet-turing-assistant.is-floating' );
 		await expect( corner ).toBeVisible();
 		await expect( corner.getByRole( 'button' ) ).toHaveAttribute(
 			'aria-haspopup',
@@ -28,7 +28,7 @@ test( 'with chat off in Turing, the corner stays empty', async ( { page } ) => {
 	await page.goto( '/' );
 	await page.waitForLoadState( 'networkidle' );
 	await expect(
-		page.locator( '.viglet-dumont-assistant.is-floating' )
+		page.locator( '.viglet-turing-assistant.is-floating' )
 	).toBeHidden();
 } );
 
@@ -54,17 +54,17 @@ test( 'on a product page the Site assistant asks about that product', async ( {
 		} );
 	} );
 	const ask = async () => {
-		const corner = page.locator( '.viglet-dumont-assistant.is-floating' );
-		await corner.locator( '.viglet-dumont-assistant__open' ).click();
+		const corner = page.locator( '.viglet-turing-assistant.is-floating' );
+		await corner.locator( '.viglet-turing-assistant__open' ).click();
 		await corner
 			.getByLabel( 'Your question' )
 			.fill( 'Will it keep me dry?' );
 		await corner.getByRole( 'button', { name: 'Send' } ).click();
 		await expect(
 			corner
-				.locator( '.viglet-dumont-assistant__message' )
+				.locator( '.viglet-turing-assistant__message' )
 				.last()
-				.locator( '.viglet-dumont-assistant__text' )
+				.locator( '.viglet-turing-assistant__text' )
 		).toHaveText( 'It is.' );
 	};
 

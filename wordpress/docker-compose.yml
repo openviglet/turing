@@ -5,7 +5,7 @@
 # drops them. The plugin reaches Turing as http://turing:2700; the console is on
 # http://localhost:2700 (admin / the TURING_ADMIN_PASSWORD below).
 
-name: viglet-dumont-wp
+name: viglet-turing-wp
 
 services:
   # Turing as trabalharei runs it for development: embedded H2, Lucene and Artemis, plain HTTP,
@@ -17,7 +17,7 @@ services:
       - "127.0.0.1:${TURING_PORT:-2700}:2700"
     environment:
       PORT: 2700
-      TURING_AI_CRYPTO_KEY: viglet-dumont-wp-dev-only
+      TURING_AI_CRYPTO_KEY: viglet-turing-wp-dev-only
       # Applied only while no password is stored: changing it later needs `run-docker.cmd reset`.
       TURING_ADMIN_PASSWORD: ${TURING_ADMIN_PASSWORD:-dumont-dev}
       TURING_KEYCLOAK: "false"
@@ -81,14 +81,14 @@ services:
       # The plugin's connection, from the environment as a container deploy sets it (D151):
       # read-only in the admin and never stored. The API key is minted on the first run and
       # stored in the option instead, since it does not exist before Turing does.
-      VIGLET_DUMONT_TURING_URL: http://turing:2700
-      VIGLET_DUMONT_TURING_SITE: ${SN_SITE:-Sample}
-      VIGLET_DUMONT_TURING_LOCALE: ${TURING_LOCALE:-en_US}
+      VIGLET_TURING_TURING_URL: http://turing:2700
+      VIGLET_TURING_TURING_SITE: ${SN_SITE:-Sample}
+      VIGLET_TURING_TURING_LOCALE: ${TURING_LOCALE:-en_US}
       # Browsers reach Turing on the host port, not on the compose network's name.
-      VIGLET_DUMONT_PUBLIC_URL: http://localhost:${TURING_PORT:-2700}
+      VIGLET_TURING_PUBLIC_URL: http://localhost:${TURING_PORT:-2700}
     volumes:
       - wp:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       # The demo storefront theme (D193), outside the plugin zip; active only after run-docker.cmd demo.
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
@@ -104,7 +104,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -120,7 +120,7 @@ services:
     environment: *wp-env
     volumes:
       - wp:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./tests/e2e/fixtures:/e2e:ro
       - ./demo:/demo:ro
@@ -157,10 +157,10 @@ services:
     environment: &wp-ms-env
       <<: *wp-env
       WORDPRESS_DB_HOST: db-ms
-      VIGLET_DUMONT_TURING_SITE: ${SN_MS_SITE:-Network}
+      VIGLET_TURING_TURING_SITE: ${SN_MS_SITE:-Network}
     volumes:
       - wp-ms:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -176,7 +176,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed --network 2>/dev/null && for u in $$(wp site list --field=url); do wp --url=$$u cron event run --due-now --quiet; done; sleep 15; done"]
     volumes:
       - wp-ms:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -188,7 +188,7 @@ services:
     environment: *wp-ms-env
     volumes:
       - wp-ms:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./tests/e2e/fixtures:/e2e:ro
       - ./demo:/demo:ro
@@ -228,14 +228,14 @@ services:
       # The demo's SN site, like its language below, is its plugin's own setting, which
       # run-docker demo writes from SN_DEMO_SITE (D274): read from here, a `docker compose run
       # cli-demo` started without SN_DEMO_SITE indexed into Demo. Empty is unset.
-      VIGLET_DUMONT_TURING_SITE: ""
+      VIGLET_TURING_TURING_SITE: ""
       # The demo's language (D217) is its plugin's own setting, which run-docker demo writes
       # from DEMO_LOCALE (D272). Read from here, a `docker compose run cli-demo` started
       # without DEMO_LOCALE indexed into en_US while the site searched pt_BR. Empty is unset.
-      VIGLET_DUMONT_TURING_LOCALE: ""
+      VIGLET_TURING_TURING_LOCALE: ""
     volumes:
       - wp-demo:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -250,7 +250,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp-demo:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -262,7 +262,7 @@ services:
     environment: *wp-demo-env
     volumes:
       - wp-demo:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./demo:/demo:ro
     extra_hosts:
@@ -299,7 +299,7 @@ services:
       WORDPRESS_DB_HOST: db-demo-pt
     volumes:
       - wp-demo-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -314,7 +314,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp-demo-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -326,7 +326,7 @@ services:
     environment: *wp-demo-pt-env
     volumes:
       - wp-demo-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./demo:/demo:ro
     extra_hosts:
@@ -365,7 +365,7 @@ services:
       WORDPRESS_DB_HOST: db-demo-edu
     volumes:
       - wp-demo-edu:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -380,7 +380,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp-demo-edu:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -392,7 +392,7 @@ services:
     environment: *wp-demo-edu-env
     volumes:
       - wp-demo-edu:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
       - ./demo:/demo:ro
     extra_hosts:
@@ -426,7 +426,7 @@ services:
       WORDPRESS_DB_HOST: db-demo-edu-pt
     volumes:
       - wp-demo-edu-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -441,7 +441,7 @@ services:
     entrypoint: ["sh", "-c", "while true; do wp core is-installed 2>/dev/null && wp cron event run --due-now --quiet; sleep 15; done"]
     volumes:
       - wp-demo-edu-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -453,7 +453,7 @@ services:
     environment: *wp-demo-edu-pt-env
     volumes:
       - wp-demo-edu-pt:/var/www/html
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/lumen:/var/www/html/wp-content/themes/lumen:ro
       - ./demo:/demo:ro
     extra_hosts:
@@ -492,9 +492,9 @@ services:
       <<: *wp-env
       WORDPRESS_DB_HOST: db-fresh
       # Empty is unset: every connection value comes from the Setup page.
-      VIGLET_DUMONT_TURING_URL: ""
-      VIGLET_DUMONT_TURING_SITE: ""
-      VIGLET_DUMONT_TURING_LOCALE: ""
+      VIGLET_TURING_TURING_URL: ""
+      VIGLET_TURING_TURING_SITE: ""
+      VIGLET_TURING_TURING_LOCALE: ""
     volumes:
       - wp-fresh:/var/www/html
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
@@ -523,7 +523,7 @@ services:
     volumes:
       - wp-fresh:/var/www/html
       # Under another folder name than the zip's (viglet-turing-search), only for the seed.
-      - ./src:/var/www/html/wp-content/plugins/viglet-dumont
+      - ./src:/var/www/html/wp-content/plugins/viglet-turing
       - ./demo/theme/tarnfell:/var/www/html/wp-content/themes/tarnfell:ro
       - ./demo:/demo:ro
     extra_hosts:

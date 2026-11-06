@@ -1,10 +1,10 @@
 <?php
 /**
  * What PHPStan needs to know of WooCommerce (D173): the few functions and classes the plugin
- * calls, always behind Viglet_Dumont_WooCommerce::active(). Not loaded by PHPUnit, whose
+ * calls, always behind Viglet_Turing_WooCommerce::active(). Not loaded by PHPUnit, whose
  * tests define them per case.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- signatures of a third-party API, not plugin code.

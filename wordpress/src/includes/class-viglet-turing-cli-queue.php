@@ -1,8 +1,8 @@
 <?php
 /**
- * Viglet Dumont WP-CLI commands
+ * Viglet Turing WP-CLI commands
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Drains the save queue from the command line, for hosts that disable WP-Cron.
  */
-class Viglet_Dumont_CLI_Queue {
+class Viglet_Turing_CLI_Queue {
 
 	/**
 	 * Send every queued job now, batch by batch, ignoring backoff.
@@ -27,14 +27,14 @@ class Viglet_Dumont_CLI_Queue {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont queue run
-	 *     wp dumont queue run --retry-failed
+	 *     wp turing queue run
+	 *     wp turing queue run --retry-failed
 	 *
 	 * @param array $args       Positional arguments (none).
 	 * @param array $assoc_args `retry-failed`.
 	 */
 	public function run( array $args, array $assoc_args ): void {
-		$queue = new Viglet_Dumont_Queue();
+		$queue = new Viglet_Turing_Queue();
 
 		if ( ! empty( $assoc_args['retry-failed'] ) ) {
 			/* translators: %d: how many failed jobs were put back in line. */
@@ -70,11 +70,11 @@ class Viglet_Dumont_CLI_Queue {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp dumont queue status
+	 *     wp turing queue status
 	 */
 	public function status(): void {
 		$rows = array();
-		foreach ( ( new Viglet_Dumont_Queue() )->jobs() as $post_id => $job ) {
+		foreach ( ( new Viglet_Turing_Queue() )->jobs() as $post_id => $job ) {
 			$rows[] = array(
 				'post'     => $post_id,
 				'action'   => $job['action'],

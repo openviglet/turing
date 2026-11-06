@@ -6,9 +6,9 @@ test( 'the post list has a Search column saying where each post stands', async (
 	look,
 } ) => {
 	await page.goto( '/wp-admin/edit.php' );
-	await expect( page.locator( 'th#viglet_dumont' ) ).toHaveText( 'Search' );
+	await expect( page.locator( 'th#viglet_turing' ) ).toHaveText( 'Search' );
 	await expect(
-		page.locator( '.viglet-dumont-state--indexed' ).first()
+		page.locator( '.viglet-turing-state--indexed' ).first()
 	).toContainText( 'Indexed' );
 	await look( 'posts-list' );
 } );
@@ -34,7 +34,7 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 		exact: true,
 	} );
 	await openPostSettings( page );
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	if (
 		! ( await panel
 			.getByText( 'Exclude from search' )
@@ -51,7 +51,7 @@ test( 'the block editor has a Search panel with the state, Exclude and Reindex n
 	await expect( panel.locator( 'strong' ) ).toContainText( 'Indexed' );
 	await look( 'editor-panel' );
 	await axe( "the editor's Search panel", {
-		include: '.viglet-dumont-search-panel',
+		include: '.viglet-turing-search-panel',
 	} );
 } );
 
@@ -68,7 +68,7 @@ test( 'a reindex Turing refuses shows Turing’s reason in the panel', async ( {
 	await page.route(
 		( url ) =>
 			decodeURIComponent( url.href ).includes(
-				'/viglet-dumont/v1/post/'
+				'/viglet-turing/v1/post/'
 			) && decodeURIComponent( url.href ).includes( '/reindex' ),
 		( route ) =>
 			route.fulfill( {
@@ -89,7 +89,7 @@ test( 'a reindex Turing refuses shows Turing’s reason in the panel', async ( {
 		await guide.click();
 	}
 	await openPostSettings( page );
-	const panel = page.locator( '.viglet-dumont-search-panel' );
+	const panel = page.locator( '.viglet-turing-search-panel' );
 	if (
 		! ( await panel
 			.getByText( 'Exclude from search' )

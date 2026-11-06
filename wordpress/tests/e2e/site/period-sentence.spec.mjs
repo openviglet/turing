@@ -53,14 +53,14 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	saved = ask( [
 		'option',
 		'get',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		'--format=json',
 	] );
 	wp( [
 		'eval',
-		`$m = get_option( 'viglet_dumont_mapping' );
+		`$m = get_option( 'viglet_turing_mapping' );
 		$m['post']['fields'][] = array( 'source' => 'meta:event_day', 'field' => 'event_day', 'type' => 'DATE', 'facet_label' => 'When', 'range' => true, 'periods' => 'agenda' );
-		update_option( 'viglet_dumont_mapping', $m );`,
+		update_option( 'viglet_turing_mapping', $m );`,
 	] );
 	wp( [
 		'post',
@@ -90,7 +90,7 @@ test.beforeAll( ( { seed }, testInfo ) => {
 		String( seed.relatedPostId ),
 		'--field=post_title',
 	] );
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test.afterAll( ( { seed }, testInfo ) => {
@@ -100,14 +100,14 @@ test.afterAll( ( { seed }, testInfo ) => {
 	wp( [
 		'option',
 		'update',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		saved,
 		'--format=json',
 	] );
 	for ( const id of [ seed.postId, seed.relatedPostId ] ) {
 		wp( [ 'post', 'meta', 'delete', String( id ), 'event_day' ] );
 	}
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test( 'a month named in a sentence filters the agenda to it, with no language model', async ( {
@@ -118,23 +118,23 @@ test( 'a month named in a sentence filters the agenda to it, with no language mo
 	await page.route( '**/nl-filters', ( route ) =>
 		route.fulfill( { json: { available: false } } )
 	);
-	const block = page.locator( '.viglet-dumont-search' );
+	const block = page.locator( '.viglet-turing-search' );
 	const sentence = `em ${ ptMonths[ nextMonth.getMonth() ] }`;
 	await page.goto(
 		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent( sentence ) }`
 	);
 
-	const chip = block.locator( '.viglet-dumont-search__chip--suggested' );
+	const chip = block.locator( '.viglet-turing-search__chip--suggested' );
 	await expect( chip ).toHaveCount( 1 );
 	await expect( chip ).toContainText( /When: \w{3} 1, \d{4} – / );
 	await chip.click();
 
 	await expect(
-		block.locator( '.viglet-dumont-search__summary' )
+		block.locator( '.viglet-turing-search__summary' )
 	).toHaveText( /result/ );
 	const titles = await block
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 		.allTextContents();
 	expect( titles ).toContain( inMonth );

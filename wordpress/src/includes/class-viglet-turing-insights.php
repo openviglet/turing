@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Insights
+ * Viglet Turing Insights
  *
  * What visitors search for, what they fail to find and what they open (D178), read from the
  * SN site's metrics in Turing with the stored key, for the Search insights screen.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * One period's searches, as Turing's metrics report them.
  */
-class Viglet_Dumont_Insights {
+class Viglet_Turing_Insights {
 
 	/** The periods Turing's metrics answer for. */
 	public const PERIODS = array( 'today', 'this-week', 'this-month', 'all-time' );
 
 	/** The transient the dashboard widget keeps its report in. */
-	public const WIDGET_CACHE = 'viglet_dumont_insights_widget';
+	public const WIDGET_CACHE = 'viglet_turing_insights_widget';
 
 	/** How many terms each table shows. */
 	private const ROWS = 20;
@@ -36,9 +36,9 @@ class Viglet_Dumont_Insights {
 	/**
 	 * The client the metrics are read through.
 	 *
-	 * @var Viglet_Dumont_API_Client
+	 * @var Viglet_Turing_API_Client
 	 */
-	private Viglet_Dumont_API_Client $client;
+	private Viglet_Turing_API_Client $client;
 
 	/**
 	 * Read over the given settings, or over the stored ones.
@@ -46,8 +46,8 @@ class Viglet_Dumont_Insights {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
-		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
+		$this->settings = $settings ?? viglet_turing_get_settings();
+		$this->client   = new Viglet_Turing_API_Client( $this->settings );
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Viglet_Dumont_Insights {
 	 */
 	public function report( string $period ) {
 		$period = in_array( $period, self::PERIODS, true ) ? $period : 'this-week';
-		$site   = ( new Viglet_Dumont_Tuning( $this->settings ) )->site_id();
+		$site   = ( new Viglet_Turing_Tuning( $this->settings ) )->site_id();
 		if ( is_wp_error( $site ) ) {
 			return $site;
 		}
@@ -139,7 +139,7 @@ class Viglet_Dumont_Insights {
 			'You summarize a website\'s search log for its owner in three to five short sentences: what visitors looked for most, what they searched for and did not find, and which one or two posts would be worth writing. Write in the language of the locale %s. Use only the searches listed; name searches as written, never invent numbers. Answer as plain text: no heading, no list, no markdown.',
 			$locale
 		);
-		$key    = 'viglet-dumont-insights-' . md5( $locale . "\n" . $data );
+		$key    = 'viglet-turing-insights-' . md5( $locale . "\n" . $data );
 
 		$result = $this->client->summary( $key, $data, $prompt, $again );
 		if ( is_wp_error( $result ) ) {
@@ -202,7 +202,7 @@ class Viglet_Dumont_Insights {
 		}
 		printf(
 			'<p><a href="%1$s">%2$s</a></p>',
-			esc_url( admin_url( 'admin.php?page=viglet-dumont-insights' ) ),
+			esc_url( admin_url( 'admin.php?page=viglet-turing-insights' ) ),
 			esc_html__( 'All search insights', 'viglet-turing-search' )
 		);
 	}

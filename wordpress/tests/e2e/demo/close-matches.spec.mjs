@@ -7,7 +7,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { demoLocale } from './curated.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 
 const sentences = [
 	{
@@ -45,17 +45,17 @@ for ( const sentence of sentences ) {
 			`/?pagename=search-gear&q=${ encodeURIComponent( sentence.query ) }`
 		);
 		await expect(
-			block( page ).locator( '.viglet-dumont-search__close-matches' )
+			block( page ).locator( '.viglet-turing-search__close-matches' )
 		).toContainText( sentence.notice );
 		await expect(
-			block( page ).locator( '.viglet-dumont-search__results' )
+			block( page ).locator( '.viglet-turing-search__results' )
 		).toContainText( sentence.finds );
 		// The box keeps the words as the shopper typed them, never the OR it searched.
 		await expect( page.locator( 'input[type="search"]' ) ).toHaveValue(
 			sentence.query
 		);
 		await expect(
-			block( page ).locator( '.viglet-dumont-search__empty' )
+			block( page ).locator( '.viglet-turing-search__empty' )
 		).toBeHidden();
 	} );
 }
@@ -68,9 +68,9 @@ test( 'a search that finds something as typed is no close match', async ( {
 		`/?pagename=search-gear&q=${ encodeURIComponent( 'Scafell' ) }`
 	);
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__results li' ).first()
+		block( page ).locator( '.viglet-turing-search__results li' ).first()
 	).toBeVisible();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__close-matches' )
+		block( page ).locator( '.viglet-turing-search__close-matches' )
 	).toBeHidden();
 } );

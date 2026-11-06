@@ -1,10 +1,10 @@
 <?php
 /**
- * Viglet Dumont Search
+ * Viglet Turing Search
  *
  * Handles search requests using the Turing search API.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Answers the site's search page from Turing.
  */
-class Viglet_Dumont_Search {
+class Viglet_Turing_Search {
 
 	/**
 	 * The client searches go through.
 	 *
-	 * @var Viglet_Dumont_API_Client
+	 * @var Viglet_Turing_API_Client
 	 */
-	private Viglet_Dumont_API_Client $client;
+	private Viglet_Turing_API_Client $client;
 
 	/**
 	 * The plugin settings this search was built with.
@@ -36,9 +36,9 @@ class Viglet_Dumont_Search {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 		// The results page a visitor waits on (D328).
-		$this->client = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
+		$this->client = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render();
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Viglet_Dumont_Search {
 		$fq   = isset( $_GET['fq'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_GET['fq'] ) ) : array();
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		$results = $this->client->for_scope( new Viglet_Dumont_Indexer( $this->settings ) )
+		$results = $this->client->for_scope( new Viglet_Turing_Indexer( $this->settings ) )
 			->search( $query, $page, $per_page, $this->request_params( $fq, $sort ) );
 
 		$data = array(
@@ -89,7 +89,7 @@ class Viglet_Dumont_Search {
 	 * @param string             $sort The sort the visitor picked; empty for relevance.
 	 */
 	public function request_params( array $fq, string $sort ): array {
-		$params = ( new Viglet_Dumont_Indexer( $this->settings ) )->scope_query( $fq );
+		$params = ( new Viglet_Turing_Indexer( $this->settings ) )->scope_query( $fq );
 		if ( '' !== $sort ) {
 			$params['sort'] = $sort;
 		}
@@ -107,7 +107,7 @@ class Viglet_Dumont_Search {
 	public function parse_results( array $response, array $data ): array {
 		// Only the documents sit under `results`; `queryContext` and `widget` are top-level.
 		if ( isset( $response['results']['document'] ) ) {
-			$indexer = new Viglet_Dumont_Indexer( $this->settings );
+			$indexer = new Viglet_Turing_Indexer( $this->settings );
 			// A sibling's document carries its site's label, for the card's origin badge (D303).
 			$data['results'] = array_map(
 				static function ( $document ) use ( $indexer ) {
@@ -128,7 +128,7 @@ class Viglet_Dumont_Search {
 
 		// The template reads `label` and `facetValues[]` of {label, count, link}, where `link`
 		// is the filter query a click adds; Turing names those `label.text` and `facets[]`.
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$sites   = array() !== $indexer->sibling_sites();
 		foreach ( (array) ( $response['widget']['facet'] ?? array() ) as $facet ) {
 			$site = 'site_key' === ( $facet['name'] ?? '' );
@@ -138,7 +138,7 @@ class Viglet_Dumont_Search {
 				continue;
 			}
 			if ( $site ) {
-				$facet = Viglet_Dumont_Native_Search::site_facet( (array) $facet, $indexer );
+				$facet = Viglet_Turing_Native_Search::site_facet( (array) $facet, $indexer );
 			}
 			$data['facets'][] = array(
 				'name'        => $facet['name'] ?? '',
@@ -170,7 +170,7 @@ class Viglet_Dumont_Search {
 	private function render_template( array $data ): void {
 		get_header();
 
-		$template = VIGLET_DUMONT_DIR . 'templates/search-results.php';
+		$template = VIGLET_TURING_DIR . 'templates/search-results.php';
 		if ( file_exists( $template ) ) {
 			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- the template reads each key as a variable of its own.
 			extract( $data, EXTR_SKIP );

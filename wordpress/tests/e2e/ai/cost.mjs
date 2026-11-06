@@ -26,7 +26,7 @@ export const budget = {
 export function setting( key ) {
 	return wp( [
 		'eval',
-		`echo viglet_dumont_get_settings()[ ${ JSON.stringify( key ) } ] ?? '';`,
+		`echo viglet_turing_get_settings()[ ${ JSON.stringify( key ) } ] ?? '';`,
 	] )
 		.trim()
 		.split( '\n' )

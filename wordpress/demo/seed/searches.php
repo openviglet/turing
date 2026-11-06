@@ -7,12 +7,12 @@
  *
  * Once per SN site: a second seed does not add to the counts.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
 
-$settings = viglet_dumont_get_settings();
+$settings = viglet_turing_get_settings();
 $flag     = 'tarnfell_searches_' . sanitize_key( (string) ( $settings['site_name'] ?? '' ) );
 if ( get_option( $flag ) ) {
 	WP_CLI::log( 'The search history is already there.' );
@@ -49,7 +49,7 @@ $searches = 'pt_BR' === get_locale()
 		'bothy bag'            => 2,
 	);
 
-$client = new Viglet_Dumont_API_Client( $settings );
+$client = new Viglet_Turing_API_Client( $settings );
 $total  = 0;
 foreach ( $searches as $query => $times ) {
 	for ( $i = 0; $i < $times; $i++ ) {

@@ -4,7 +4,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { setSetting, wp } from '../global-setup.mjs';
 
-const overlay = ( page ) => page.locator( 'dialog.viglet-dumont-overlay' );
+const overlay = ( page ) => page.locator( 'dialog.viglet-turing-overlay' );
 
 // The Explore row's stored links: a page on this site, another site, and one the overlay must
 // drop on the way out (its URL is no http(s) address nor a path on this site).
@@ -21,7 +21,7 @@ test.beforeAll( ( {}, testInfo ) => {
 	setSetting( 'overlay_layout', 'immersive' );
 	wp( [
 		'eval',
-		`$s = (array) get_option( 'viglet_dumont_settings', array() ); $s['overlay_explore'] = ${ explore }; update_option( 'viglet_dumont_settings', $s );`,
+		`$s = (array) get_option( 'viglet_turing_settings', array() ); $s['overlay_explore'] = ${ explore }; update_option( 'viglet_turing_settings', $s );`,
 	] );
 } );
 
@@ -49,7 +49,7 @@ test( 'it starts from recent searches, groups results by type and opens a type i
 	await page.goto( `/?page_id=${ seed.corePageId }` );
 	await page.evaluate( () =>
 		window.localStorage.setItem(
-			'viglet-dumont-recent-searches',
+			'viglet-turing-recent-searches',
 			JSON.stringify( [ 'workshop' ] )
 		)
 	);
@@ -70,11 +70,11 @@ test( 'it starts from recent searches, groups results by type and opens a type i
 	// The highlighted result in the preview pane, and Ctrl+Enter later opens the full page.
 	await page.keyboard.press( 'ArrowDown' );
 	await expect(
-		overlay( page ).locator( '.viglet-dumont-overlay__preview' )
+		overlay( page ).locator( '.viglet-turing-overlay__preview' )
 	).toContainText( 'Workshop on' );
 	await look( 'overlay-immersive' );
 	await axe( 'the immersive instant search', {
-		include: 'dialog.viglet-dumont-overlay',
+		include: 'dialog.viglet-turing-overlay',
 	} );
 
 	await posts.getByRole( 'option', { name: 'See all Posts' } ).click();
@@ -101,7 +101,7 @@ test( 'the Explore row offers the site’s links before anything is typed, reach
 		row.getByRole( 'link', { name: 'Partner library' } )
 	).toHaveAttribute( 'href', 'https://library.example.org/' );
 	await axe( 'the immersive instant search with its Explore row', {
-		include: 'dialog.viglet-dumont-overlay',
+		include: 'dialog.viglet-turing-overlay',
 	} );
 
 	// From the box, Tab passes the close button and lands on the first link.
@@ -136,6 +136,6 @@ test( 'on a phone it fills the screen and stays axe-clean', async ( {
 	const box = await overlay( page ).boundingBox();
 	expect( Math.round( box.width ) ).toBe( 390 );
 	await axe( 'the immersive instant search on a phone', {
-		include: 'dialog.viglet-dumont-overlay',
+		include: 'dialog.viglet-turing-overlay',
 	} );
 } );

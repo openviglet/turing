@@ -6,15 +6,15 @@
 // sort=oldest: Turing leaves equally relevant results in no fixed order.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const results = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__results li' );
+	block( page ).locator( '.viglet-turing-search__results li' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
-const inBlock = { include: '.viglet-dumont-search' };
+	block( page ).locator( '.viglet-turing-search__summary' );
+const inBlock = { include: '.viglet-turing-search' };
 const facet = ( page, label ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__facet' )
+		.locator( '.viglet-turing-search__facet' )
 		.filter( { has: page.locator( 'summary', { hasText: label } ) } );
 const seatsValue = ( page, value ) =>
 	facet( page, 'Seats' )
@@ -22,7 +22,7 @@ const seatsValue = ( page, value ) =>
 		.filter( { hasText: value } )
 		.locator( 'input' );
 const drawerToggle = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__filters-toggle' );
+	block( page ).locator( '.viglet-turing-search__filters-toggle' );
 
 // On a phone the facets wait in a drawer; elsewhere these do nothing.
 async function openFilters( page ) {
@@ -77,10 +77,10 @@ test( 'a facet narrows the results, shows as a removable filter, and removing it
 	await expect( seatsValue( page, '40' ) ).toBeChecked();
 	await expect( seatsValue( page, '20' ) ).not.toBeChecked();
 	await expect(
-		facet( page, 'Seats' ).locator( '.viglet-dumont-search__badge' )
+		facet( page, 'Seats' ).locator( '.viglet-turing-search__badge' )
 	).toHaveText( '1' );
 	await closeFilters( page );
-	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	const chip = block( page ).locator( '.viglet-turing-search__chip' );
 	await expect( chip ).toHaveCount( 1 );
 	await expect( chip ).toContainText( 'Seats: 40' );
 	await look( 'search-block-facet' );
@@ -118,7 +118,7 @@ test( 'a range facet narrows to a range and its chip names the range', async ( {
 			.locator( 'input' )
 	).toBeChecked();
 	await closeFilters( page );
-	const chip = block( page ).locator( '.viglet-dumont-search__chip' );
+	const chip = block( page ).locator( '.viglet-turing-search__chip' );
 	await expect( chip ).toHaveText( /Capacity: 30 or more/ );
 
 	await chip.click();
@@ -186,7 +186,7 @@ test( 'typing suggests, and picking a suggestion searches it', async ( {
 		.locator( 'input[type="search"]' )
 		.pressSequentially( 'work', { delay: 50 } );
 	const suggestion = block( page )
-		.locator( '.viglet-dumont-search__suggestions [role="option"]' )
+		.locator( '.viglet-turing-search__suggestions [role="option"]' )
 		.filter( { hasText: 'workshop' } );
 	await expect( suggestion ).toBeVisible();
 	await axe( 'search block suggesting', inBlock );
@@ -205,7 +205,7 @@ test( 'a misspelling that finds nothing shows the corrected results, and the sea
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=worskhop` );
 	const showing = block( page ).locator(
-		'.viglet-dumont-search__showing-for'
+		'.viglet-turing-search__showing-for'
 	);
 	await expect( showing ).toContainText( 'workshop' );
 	await expect( summary( page ) ).toHaveText( '4 results' );
@@ -218,7 +218,7 @@ test( 'a misspelling that finds nothing shows the corrected results, and the sea
 	await showing.locator( 'button' ).click();
 	await expect( showing ).toBeHidden();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__correction button' )
+		block( page ).locator( '.viglet-turing-search__correction button' )
 	).toHaveText( 'workshop' );
 	await expect( page.locator( 'input[type="search"]' ).first() ).toHaveValue(
 		'worskhop'
@@ -245,10 +245,10 @@ test( 'a misspelling whose correction finds nothing either stays as typed, with 
 	await expect( block( page ) ).toContainText( 'No results found' );
 	await expect( input ).toHaveValue( 'zzqqtyped' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__showing-for' )
+		block( page ).locator( '.viglet-turing-search__showing-for' )
 	).toBeHidden();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__correction' )
+		block( page ).locator( '.viglet-turing-search__correction' )
 	).toBeHidden();
 	await expect( page ).toHaveURL( /q=zzqqtyped/ );
 } );
@@ -261,7 +261,7 @@ test( 'everything spans pages, and the next page shows other results', async ( {
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=*` );
 	const pages = block( page ).locator(
-		'.viglet-dumont-search__pages button'
+		'.viglet-turing-search__pages button'
 	);
 	await expect( pages ).toHaveCount( 2 );
 	await expect( pages.first() ).toHaveAttribute( 'aria-current', 'true' );
@@ -280,7 +280,7 @@ test( 'a result is a card: type, date, address and the matched words marked', as
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
 	const first = results( page ).first();
-	await expect( first.locator( '.viglet-dumont-search__type' ) ).toHaveText(
+	await expect( first.locator( '.viglet-turing-search__type' ) ).toHaveText(
 		'Post'
 	);
 	await expect( first.locator( 'time' ) ).toHaveAttribute(
@@ -290,10 +290,10 @@ test( 'a result is a card: type, date, address and the matched words marked', as
 	// A result on this very site shows its path without the domain (D263); this site's plain
 	// permalinks (?p=) have none, so the crumb says nothing rather than localhost.
 	await expect(
-		first.locator( '.viglet-dumont-search__crumb' )
+		first.locator( '.viglet-turing-search__crumb' )
 	).not.toContainText( 'localhost' );
 	await expect(
-		first.locator( '.viglet-dumont-search__snippet mark' )
+		first.locator( '.viglet-turing-search__snippet mark' )
 	).toHaveText( 'Workshop' );
 } );
 
@@ -314,15 +314,15 @@ test( 'while a search runs the block shows placeholders and says it is busy', as
 	await box.fill( 'workshop' );
 	await box.press( 'Enter' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__skeleton' )
+		block( page ).locator( '.viglet-turing-search__skeleton' )
 	).toBeVisible();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__results' )
+		block( page ).locator( '.viglet-turing-search__results' )
 	).toHaveAttribute( 'aria-busy', 'true' );
 	await look( 'search-block-loading' );
 	await expect( summary( page ) ).toHaveText( '4 results' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__skeleton' )
+		block( page ).locator( '.viglet-turing-search__skeleton' )
 	).toBeHidden();
 } );
 
@@ -336,7 +336,7 @@ test( 'a search that finds nothing offers the latest posts', async ( {
 	await expect( summary( page ) ).toHaveText(
 		'No results found. Try different keywords.'
 	);
-	const empty = block( page ).locator( '.viglet-dumont-search__empty' );
+	const empty = block( page ).locator( '.viglet-turing-search__empty' );
 	await expect( empty ).toBeVisible();
 	await expect( empty.locator( 'li a' ) ).toHaveCount( 3 );
 	await look( 'search-block-empty' );
@@ -358,7 +358,7 @@ test( 'a failed search offers to try again and WordPress search', async ( {
 	await expect( summary( page ) ).toHaveText(
 		'Search is unavailable right now.'
 	);
-	const error = block( page ).locator( '.viglet-dumont-search__error' );
+	const error = block( page ).locator( '.viglet-turing-search__error' );
 	await expect( error ).toBeVisible();
 	await expect(
 		error.getByRole( 'link', { name: 'Search with WordPress instead' } )

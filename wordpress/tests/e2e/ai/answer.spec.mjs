@@ -5,7 +5,7 @@
 import { expect, test } from '../fixtures.mjs';
 import { ai, feature, record } from './helpers.mjs';
 
-const panel = ( page ) => page.locator( '.viglet-dumont-search__answer' );
+const panel = ( page ) => page.locator( '.viglet-turing-search__answer' );
 
 test.beforeEach( () => {
 	const answer = feature( 'answer' );
@@ -22,7 +22,7 @@ test( 'a question gets the cited answer, its source the post holding the fact', 
 	await page.goto(
 		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent( question ) }`
 	);
-	const text = panel( page ).locator( '.viglet-dumont-search__answer-text' );
+	const text = panel( page ).locator( '.viglet-turing-search__answer-text' );
 	await expect( text ).toHaveText( /14(th)? March|March 14/i );
 	record(
 		'answer panel: grant deadline',

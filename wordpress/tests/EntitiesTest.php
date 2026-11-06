@@ -4,17 +4,17 @@
  * manifest, the facets it declares and offers, the name variants sent to Turing's Thesaurus,
  * and the values the editor's Search panel shows.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_API_Client;
-use Viglet_Dumont_Entities;
-use Viglet_Dumont_Mapping;
-use Viglet_Dumont_Native_Search;
-use Viglet_Dumont_Post_State;
+use Viglet_Turing_API_Client;
+use Viglet_Turing_Entities;
+use Viglet_Turing_Mapping;
+use Viglet_Turing_Native_Search;
+use Viglet_Turing_Post_State;
 use WP_Post;
 
 final class EntitiesTest extends PluginTestCase {
@@ -82,22 +82,22 @@ final class EntitiesTest extends PluginTestCase {
 	}
 
 	public function test_the_manifest_asks_for_entities_only_when_opted_in_with_generative_ai(): void {
-		$off = ( new Viglet_Dumont_Mapping( $this->with( 1, 0 ) ) )->manifest();
+		$off = ( new Viglet_Turing_Mapping( $this->with( 1, 0 ) ) )->manifest();
 		$this->assertSame( '{}', wp_json_encode( $off['genAi'] ), 'not opted in: no entityExtraction' );
 		$this->assertArrayNotHasKey( 'entity_person', self::fields( $off ) );
 
-		$on = ( new Viglet_Dumont_Mapping( $this->with( 1, 1 ) ) )->manifest();
+		$on = ( new Viglet_Turing_Mapping( $this->with( 1, 1 ) ) )->manifest();
 		$this->assertSame( array( 'entityExtraction' => true ), $on['genAi'] );
 
 		// The names are found by the GenAI agent's LLM: without generative AI nothing is asked.
-		$alone = ( new Viglet_Dumont_Mapping( $this->with( 0, 1 ) ) )->manifest();
+		$alone = ( new Viglet_Turing_Mapping( $this->with( 0, 1 ) ) )->manifest();
 		$this->assertArrayNotHasKey( 'genAi', $alone );
 		$this->assertArrayNotHasKey( 'entity_person', self::fields( $alone ) );
-		$this->assertFalse( Viglet_Dumont_Entities::extracts( $this->with( 0, 1 ) ) );
+		$this->assertFalse( Viglet_Turing_Entities::extracts( $this->with( 0, 1 ) ) );
 	}
 
 	public function test_the_entity_fields_are_declared_as_turing_creates_them_with_their_labels(): void {
-		$this->options[ Viglet_Dumont_Entities::OPTION ] = array(
+		$this->options[ Viglet_Turing_Entities::OPTION ] = array(
 			'person' => array(
 				'label'   => 'Pessoas',
 				'offered' => true,
@@ -108,7 +108,7 @@ final class EntitiesTest extends PluginTestCase {
 			),
 		);
 
-		$fields = self::fields( ( new Viglet_Dumont_Mapping( $this->with( 1, 1 ) ) )->manifest() );
+		$fields = self::fields( ( new Viglet_Turing_Mapping( $this->with( 1, 1 ) ) )->manifest() );
 
 		$this->assertSame(
 			array(
@@ -127,7 +127,7 @@ final class EntitiesTest extends PluginTestCase {
 	}
 
 	public function test_a_mapped_field_cannot_take_an_entity_field_s_name(): void {
-		$this->options[ Viglet_Dumont_Mapping::OPTION ] = array(
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
 			'post' => array(
 				'fields' => array(
 					array(
@@ -139,30 +139,30 @@ final class EntitiesTest extends PluginTestCase {
 			),
 		);
 
-		$this->assertSame( array(), ( new Viglet_Dumont_Mapping( $this->with( 1, 1 ) ) )->all()['post']['fields'] );
+		$this->assertSame( array(), ( new Viglet_Turing_Mapping( $this->with( 1, 1 ) ) )->all()['post']['fields'] );
 	}
 
 	public function test_turning_it_off_sends_false_once_after_a_manifest_that_turned_it_on(): void {
-		$client                                = new Viglet_Dumont_API_Client( $this->with( 1, 1 ) );
+		$client                                = new Viglet_Turing_API_Client( $this->with( 1, 1 ) );
 		$this->bodies['POST /api/sn/manifest'] = '{}';
 
-		( new Viglet_Dumont_Mapping( $this->with( 1, 1 ) ) )->provision( $client );
-		$this->assertTrue( $this->options[ Viglet_Dumont_Mapping::PROVISIONED_OPTION ]['entities'] );
+		( new Viglet_Turing_Mapping( $this->with( 1, 1 ) ) )->provision( $client );
+		$this->assertTrue( $this->options[ Viglet_Turing_Mapping::PROVISIONED_OPTION ]['entities'] );
 
-		( new Viglet_Dumont_Mapping( $this->with( 1, 0 ) ) )->provision( $client );
+		( new Viglet_Turing_Mapping( $this->with( 1, 0 ) ) )->provision( $client );
 		$this->assertStringContainsString( '"genAi":{"entityExtraction":false}', $this->requests[1][1]['body'] );
-		$this->assertFalse( $this->options[ Viglet_Dumont_Mapping::PROVISIONED_OPTION ]['entities'] );
+		$this->assertFalse( $this->options[ Viglet_Turing_Mapping::PROVISIONED_OPTION ]['entities'] );
 
-		$this->assertSame( '{}', wp_json_encode( ( new Viglet_Dumont_Mapping( $this->with( 1, 0 ) ) )->manifest()['genAi'] ) );
+		$this->assertSame( '{}', wp_json_encode( ( new Viglet_Turing_Mapping( $this->with( 1, 0 ) ) )->manifest()['genAi'] ) );
 	}
 
 	public function test_the_offered_entity_facets_reach_the_public_config_with_their_labels(): void {
-		$this->options[ Viglet_Dumont_Entities::OPTION ] = array(
+		$this->options[ Viglet_Turing_Entities::OPTION ] = array(
 			'person'       => array( 'label' => 'Pessoas' ),
 			'organization' => array( 'offered' => false ),
 		);
 
-		$facets = array_column( ( new Viglet_Dumont_Native_Search( $this->with( 1, 1 ) ) )->public_config()['facets'], null, 'field' );
+		$facets = array_column( ( new Viglet_Turing_Native_Search( $this->with( 1, 1 ) ) )->public_config()['facets'], null, 'field' );
 
 		$this->assertSame(
 			array(
@@ -176,8 +176,8 @@ final class EntitiesTest extends PluginTestCase {
 		$this->assertSame( 'Places', $facets['entity_place']['label'] );
 		$this->assertArrayNotHasKey( 'entity_organization', $facets );
 
-		$off = ( new Viglet_Dumont_Native_Search( $this->with( 1, 0 ) ) )->public_config()['facets'];
-		$this->assertSame( array(), array_intersect( array_column( $off, 'field' ), Viglet_Dumont_Entities::FIELDS ) );
+		$off = ( new Viglet_Turing_Native_Search( $this->with( 1, 0 ) ) )->public_config()['facets'];
+		$this->assertSame( array(), array_intersect( array_column( $off, 'field' ), Viglet_Turing_Entities::FIELDS ) );
 	}
 
 	public function test_name_variants_are_read_from_lines_and_sanitized(): void {
@@ -202,11 +202,11 @@ final class EntitiesTest extends PluginTestCase {
 					'variants' => array( 'Aurora' ),
 				),
 			),
-			Viglet_Dumont_Entities::variants( $text )
+			Viglet_Turing_Entities::variants( $text )
 		);
 		$this->assertSame(
 			"Marta Vilar | Vilar, Marta; M. Vilar\nIlha do Norte\nFundação Aurora | Aurora",
-			Viglet_Dumont_Entities::variants_text( Viglet_Dumont_Entities::variants( $text ) )
+			Viglet_Turing_Entities::variants_text( Viglet_Turing_Entities::variants( $text ) )
 		);
 	}
 
@@ -223,9 +223,9 @@ final class EntitiesTest extends PluginTestCase {
 			'GET /api/sn/sn-1/microthesaurus'            => '[]',
 			'POST /api/sn/sn-1/microthesaurus'           => '{"id":"sel-1"}',
 		);
-		$variants     = Viglet_Dumont_Entities::variants( "Marta Vilar | Vilar, Marta\nIlha do Norte" );
+		$variants     = Viglet_Turing_Entities::variants( "Marta Vilar | Vilar, Marta\nIlha do Norte" );
 
-		$result = ( new Viglet_Dumont_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Dumont_API_Client( $this->with( 1, 1 ) ), $variants );
+		$result = ( new Viglet_Turing_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Turing_API_Client( $this->with( 1, 1 ) ), $variants );
 
 		$this->assertTrue( $result['success'], $result['message'] );
 		$sent = array();
@@ -262,7 +262,7 @@ final class EntitiesTest extends PluginTestCase {
 			'DELETE /api/kb/kb-1'                        => 'true',
 		);
 
-		$result = ( new Viglet_Dumont_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Dumont_API_Client( $this->with( 1, 1 ) ), array() );
+		$result = ( new Viglet_Turing_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Turing_API_Client( $this->with( 1, 1 ) ), array() );
 
 		$this->assertTrue( $result['success'], $result['message'] );
 		$deleted = array_map(
@@ -288,22 +288,22 @@ final class EntitiesTest extends PluginTestCase {
 				)
 		);
 
-		$result = ( new Viglet_Dumont_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Dumont_API_Client( $this->with( 1, 1 ) ), Viglet_Dumont_Entities::variants( 'Marta Vilar | M. Vilar' ) );
+		$result = ( new Viglet_Turing_Entities( $this->with( 1, 1 ) ) )->sync_variants( new Viglet_Turing_API_Client( $this->with( 1, 1 ) ), Viglet_Turing_Entities::variants( 'Marta Vilar | M. Vilar' ) );
 
 		$this->assertFalse( $result['success'] );
 		$this->assertStringContainsString( 'partition', $result['message'] );
 	}
 
 	public function test_saving_changed_variants_syncs_them_and_records_the_outcome(): void {
-		Functions\stubs( array( 'viglet_dumont_get_settings' => $this->with( 1, 1 ) ) );
+		Functions\stubs( array( 'viglet_turing_get_settings' => $this->with( 1, 1 ) ) );
 		$this->bodies = array( 'GET /api/sn' => '[]' );
 
-		Viglet_Dumont_Entities::on_settings_saved( array( 'name_variants' => array() ), array( 'name_variants' => array() ) );
+		Viglet_Turing_Entities::on_settings_saved( array( 'name_variants' => array() ), array( 'name_variants' => array() ) );
 		$this->assertSame( array(), $this->requests, 'unchanged: nothing is sent' );
 
-		Viglet_Dumont_Entities::on_settings_saved( array(), array( 'name_variants' => 'Marta Vilar | M. Vilar' ) );
-		$this->assertSame( 1, $this->options[ Viglet_Dumont_Entities::SYNC_OPTION ]['names'] );
-		$this->assertStringContainsString( 'Sample Site', $this->options[ Viglet_Dumont_Entities::SYNC_OPTION ]['error'], 'no such SN site' );
+		Viglet_Turing_Entities::on_settings_saved( array(), array( 'name_variants' => 'Marta Vilar | M. Vilar' ) );
+		$this->assertSame( 1, $this->options[ Viglet_Turing_Entities::SYNC_OPTION ]['names'] );
+		$this->assertStringContainsString( 'Sample Site', $this->options[ Viglet_Turing_Entities::SYNC_OPTION ]['error'], 'no such SN site' );
 	}
 
 	public function test_the_panel_state_carries_the_entities_turing_holds_for_the_post(): void {
@@ -329,7 +329,7 @@ final class EntitiesTest extends PluginTestCase {
 			'detail' => '',
 		);
 
-		$with = ( new Viglet_Dumont_Post_State( $this->with( 1, 1 ) ) )->with_entities( $post, $state );
+		$with = ( new Viglet_Turing_Post_State( $this->with( 1, 1 ) ) )->with_entities( $post, $state );
 
 		$this->assertStringContainsString( 'id=site-a%3Apost%3A42', $this->requests[0][0] );
 		$this->assertSame(
@@ -351,7 +351,7 @@ final class EntitiesTest extends PluginTestCase {
 		);
 
 		$this->requests = array();
-		$this->assertSame( $state, ( new Viglet_Dumont_Post_State( $this->with( 1, 0 ) ) )->with_entities( $post, $state ), 'not asked for: not read' );
+		$this->assertSame( $state, ( new Viglet_Turing_Post_State( $this->with( 1, 0 ) ) )->with_entities( $post, $state ), 'not asked for: not read' );
 		$this->assertSame( array(), $this->requests );
 	}
 }

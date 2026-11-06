@@ -19,7 +19,7 @@ const report = () =>
 	JSON.parse(
 		ask( [
 			'eval',
-			'echo wp_json_encode( ( new Viglet_Dumont_Reindex() )->report() );',
+			'echo wp_json_encode( ( new Viglet_Turing_Reindex() )->report() );',
 		] )
 	);
 
@@ -49,17 +49,17 @@ const reindexCard = ( page ) =>
  * @param {string}                          type `all`, `post` or `page`.
  */
 async function startFromSettings( page, type ) {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont#actions' );
-	await page.selectOption( '#viglet-dumont-index-type', type );
-	await page.click( '#viglet-dumont-index-all' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing#actions' );
+	await page.selectOption( '#viglet-turing-index-type', type );
+	await page.click( '#viglet-turing-index-all' );
 	const message = page.locator(
-		'#viglet-dumont-index-progress .viglet-dumont-progress__message'
+		'#viglet-turing-index-progress .viglet-turing-progress__message'
 	);
 	await expect( message ).toContainText( 'you can leave this page' );
 	await expect(
 		message.getByRole( 'link', { name: 'Search health' } )
-	).toHaveAttribute( 'href', /page=viglet-dumont-health/ );
-	await expect( page.locator( '#viglet-dumont-index-all' ) ).toBeDisabled();
+	).toHaveAttribute( 'href', /page=viglet-turing-health/ );
+	await expect( page.locator( '#viglet-turing-index-all' ) ).toBeDisabled();
 }
 
 test.describe( 'Index All in the background', () => {
@@ -69,11 +69,11 @@ test.describe( 'Index All in the background', () => {
 	let batchSize = null;
 
 	test.beforeAll( () => {
-		wp( [ 'eval', '( new Viglet_Dumont_Reindex() )->cancel();' ] );
+		wp( [ 'eval', '( new Viglet_Turing_Reindex() )->cancel();' ] );
 		batchSize = JSON.parse(
 			ask( [
 				'eval',
-				"$s = (array) get_option( 'viglet_dumont_settings', array() ); echo wp_json_encode( $s['batch_size'] ?? null );",
+				"$s = (array) get_option( 'viglet_turing_settings', array() ); echo wp_json_encode( $s['batch_size'] ?? null );",
 			] )
 		);
 		// One post a batch, so the run takes several WP-Cron passes and is seen half-way.
@@ -81,10 +81,10 @@ test.describe( 'Index All in the background', () => {
 	} );
 
 	test.afterAll( () => {
-		wp( [ 'eval', '( new Viglet_Dumont_Reindex() )->cancel();' ] );
+		wp( [ 'eval', '( new Viglet_Turing_Reindex() )->cancel();' ] );
 		setSetting( 'batch_size', batchSize );
 		// The site indexed as the specs found it.
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 	} );
 
 	test( 'goes on after the page that started it is left, and Health follows it to the end', async ( {
@@ -101,7 +101,7 @@ test.describe( 'Index All in the background', () => {
 		expect( total ).toBeGreaterThan( 3 );
 
 		cron();
-		await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+		await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 		const card = reindexCard( page );
 		await expect( card ).toContainText(
 			new RegExp( `\\d+ of ${ total } posts done, 0 failed` )
@@ -142,7 +142,7 @@ test.describe( 'Index All in the background', () => {
 		test.setTimeout( 120_000 );
 		await startFromSettings( page, 'post' );
 
-		await page.goto( '/wp-admin/admin.php?page=viglet-dumont-health' );
+		await page.goto( '/wp-admin/admin.php?page=viglet-turing-health' );
 		const card = reindexCard( page );
 		await card.getByRole( 'button', { name: 'Cancel reindex' } ).click();
 		await expect(
@@ -161,14 +161,14 @@ test.describe( 'Index All in the background', () => {
 		expect(
 			ask( [
 				'eval',
-				'var_export( wp_next_scheduled( Viglet_Dumont_Reindex::CRON_HOOK ) );',
+				'var_export( wp_next_scheduled( Viglet_Turing_Reindex::CRON_HOOK ) );',
 			] )
 		).toBe( 'false' );
 
 		// A Settings page opened now offers the button again.
-		await page.goto( '/wp-admin/admin.php?page=viglet-dumont#actions' );
+		await page.goto( '/wp-admin/admin.php?page=viglet-turing#actions' );
 		await expect(
-			page.locator( '#viglet-dumont-index-all' )
+			page.locator( '#viglet-turing-index-all' )
 		).toBeEnabled();
 	} );
 } );

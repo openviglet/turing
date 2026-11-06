@@ -2,9 +2,9 @@
 /**
  * The Site assistant block (D175), server side: a button that opens a chat with Turing over
  * this site's posts, driven by src/public/assistant.js. Hidden until Turing says chat is on.
- * Viglet_Dumont_Assistant renders it in a corner of every page too, with `floating`.
+ * Viglet_Turing_Assistant renders it in a corner of every page too, with `floating`.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  *
  * @var array $attributes The block's attributes.
  */
@@ -13,16 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$viglet_dumont_id          = wp_unique_id( 'viglet-dumont-assistant-' );
-$viglet_dumont_heading     = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask this site', 'viglet-turing-search' );
-$viglet_dumont_suggestions = ( new Viglet_Dumont_Assistant() )->suggestions( (string) ( $attributes['suggestions'] ?? '' ) );
+$viglet_turing_id          = wp_unique_id( 'viglet-turing-assistant-' );
+$viglet_turing_heading     = '' !== (string) ( $attributes['heading'] ?? '' ) ? (string) $attributes['heading'] : __( 'Ask this site', 'viglet-turing-search' );
+$viglet_turing_suggestions = ( new Viglet_Turing_Assistant() )->suggestions( (string) ( $attributes['suggestions'] ?? '' ) );
 // On a product's page (or any indexed post's), the question is about it (D242): Turing reads
 // its document first. The conversation lasts across pages, so each turn names its own page.
-$viglet_dumont_indexer = new Viglet_Dumont_Indexer();
-$viglet_dumont_subject = $viglet_dumont_indexer->subject();
+$viglet_turing_indexer = new Viglet_Turing_Indexer();
+$viglet_turing_subject = $viglet_turing_indexer->subject();
 
 wp_interactivity_state(
-	'viglet-dumont/assistant',
+	'viglet-turing/assistant',
 	array(
 		'available'  => false,
 		'question'   => '',
@@ -32,57 +32,57 @@ wp_interactivity_state(
 		'thinking'   => __( 'Reading this site’s posts…', 'viglet-turing-search' ),
 		'failed'     => __( 'The assistant could not answer right now. Try again in a moment.', 'viglet-turing-search' ),
 		// A spent AI budget, with its reset when the site knows it (D336).
-		'paused'     => Viglet_Dumont_AI_Quota::visitor_line(),
-		'documentId' => $viglet_dumont_subject ? $viglet_dumont_indexer->build_doc_id( $viglet_dumont_subject->ID ) : '',
+		'paused'     => Viglet_Turing_AI_Quota::visitor_line(),
+		'documentId' => $viglet_turing_subject ? $viglet_turing_indexer->build_doc_id( $viglet_turing_subject->ID ) : '',
 	)
 );
-$viglet_dumont_context = (string) wp_json_encode(
+$viglet_turing_context = (string) wp_json_encode(
 	array(
 		'suggestions' => array_map(
 			static fn ( string $text ) => array(
 				'key'  => $text,
 				'text' => $text,
 			),
-			$viglet_dumont_suggestions
+			$viglet_turing_suggestions
 		),
 	)
 );
 ?>
 <div
-	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-dumont-assistant' . ( empty( $attributes['floating'] ) ? '' : ' is-floating' ) ) ) ); ?>
-	data-wp-interactive="viglet-dumont/assistant"
-	data-wp-context="<?php echo esc_attr( $viglet_dumont_context ); ?>"
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-turing-assistant' . ( empty( $attributes['floating'] ) ? '' : ' is-floating' ) ) ) ); ?>
+	data-wp-interactive="viglet-turing/assistant"
+	data-wp-context="<?php echo esc_attr( $viglet_turing_context ); ?>"
 	data-wp-init="callbacks.init"
 	hidden
 	data-wp-bind--hidden="!state.available"
 >
-	<button type="button" class="wp-element-button viglet-dumont-assistant__open" aria-haspopup="dialog" data-wp-on--click="actions.open"><?php echo esc_html( $viglet_dumont_heading ); ?></button>
-	<dialog class="viglet-dumont-assistant__dialog" aria-labelledby="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading" data-wp-on--click="actions.backdrop">
-		<div class="viglet-dumont-assistant__head">
-			<h2 id="<?php echo esc_attr( $viglet_dumont_id ); ?>-heading"><?php echo esc_html( $viglet_dumont_heading ); ?></h2>
-			<button type="button" class="viglet-dumont-assistant__restart" data-wp-on--click="actions.restart" data-wp-bind--disabled="!state.messages.length"><?php esc_html_e( 'New conversation', 'viglet-turing-search' ); ?></button>
-			<button type="button" class="viglet-dumont-assistant__close" data-wp-on--click="actions.close" aria-label="<?php esc_attr_e( 'Close', 'viglet-turing-search' ); ?>">&times;</button>
+	<button type="button" class="wp-element-button viglet-turing-assistant__open" aria-haspopup="dialog" data-wp-on--click="actions.open"><?php echo esc_html( $viglet_turing_heading ); ?></button>
+	<dialog class="viglet-turing-assistant__dialog" aria-labelledby="<?php echo esc_attr( $viglet_turing_id ); ?>-heading" data-wp-on--click="actions.backdrop">
+		<div class="viglet-turing-assistant__head">
+			<h2 id="<?php echo esc_attr( $viglet_turing_id ); ?>-heading"><?php echo esc_html( $viglet_turing_heading ); ?></h2>
+			<button type="button" class="viglet-turing-assistant__restart" data-wp-on--click="actions.restart" data-wp-bind--disabled="!state.messages.length"><?php esc_html_e( 'New conversation', 'viglet-turing-search' ); ?></button>
+			<button type="button" class="viglet-turing-assistant__close" data-wp-on--click="actions.close" aria-label="<?php esc_attr_e( 'Close', 'viglet-turing-search' ); ?>">&times;</button>
 		</div>
-		<p class="viglet-dumont-assistant__generated"><?php esc_html_e( 'Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite.', 'viglet-turing-search' ); ?></p>
-		<div class="viglet-dumont-assistant__log" role="log" aria-label="<?php esc_attr_e( 'Conversation', 'viglet-turing-search' ); ?>" data-wp-bind--aria-busy="state.streaming"><ol>
+		<p class="viglet-turing-assistant__generated"><?php esc_html_e( 'Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite.', 'viglet-turing-search' ); ?></p>
+		<div class="viglet-turing-assistant__log" role="log" aria-label="<?php esc_attr_e( 'Conversation', 'viglet-turing-search' ); ?>" data-wp-bind--aria-busy="state.streaming"><ol>
 			<template data-wp-each--message="state.messages" data-wp-each-key="context.message.id">
-				<li class="viglet-dumont-assistant__message" data-wp-class--is-visitor="context.message.visitor">
-					<div class="viglet-dumont-assistant__text" data-wp-watch="callbacks.renderMessage"></div>
-					<ul class="viglet-dumont-assistant__sources" aria-label="<?php esc_attr_e( 'Posts it used', 'viglet-turing-search' ); ?>" hidden data-wp-bind--hidden="!context.message.sources.length">
+				<li class="viglet-turing-assistant__message" data-wp-class--is-visitor="context.message.visitor">
+					<div class="viglet-turing-assistant__text" data-wp-watch="callbacks.renderMessage"></div>
+					<ul class="viglet-turing-assistant__sources" aria-label="<?php esc_attr_e( 'Posts it used', 'viglet-turing-search' ); ?>" hidden data-wp-bind--hidden="!context.message.sources.length">
 						<template data-wp-each--source="context.message.sources" data-wp-each-key="context.source.url">
-							<li class="viglet-dumont-assistant__source"><a data-wp-bind--href="context.source.url" data-wp-text="context.source.title"></a></li>
+							<li class="viglet-turing-assistant__source"><a data-wp-bind--href="context.source.url" data-wp-text="context.source.title"></a></li>
 						</template>
 					</ul>
-					<p class="viglet-dumont-assistant__feedback" hidden data-wp-bind--hidden="!context.message.canRate">
+					<p class="viglet-turing-assistant__feedback" hidden data-wp-bind--hidden="!context.message.canRate">
 						<?php esc_html_e( 'Was this helpful?', 'viglet-turing-search' ); ?>
 						<button type="button" data-wp-on--click="actions.helpful"><?php esc_html_e( 'Yes', 'viglet-turing-search' ); ?></button>
 						<button type="button" data-wp-on--click="actions.notHelpful"><?php esc_html_e( 'No', 'viglet-turing-search' ); ?></button>
 					</p>
-					<p class="viglet-dumont-assistant__feedback" role="status" hidden data-wp-bind--hidden="!context.message.rated"><?php esc_html_e( 'Thank you.', 'viglet-turing-search' ); ?></p>
+					<p class="viglet-turing-assistant__feedback" role="status" hidden data-wp-bind--hidden="!context.message.rated"><?php esc_html_e( 'Thank you.', 'viglet-turing-search' ); ?></p>
 				</li>
 			</template>
 		</ol></div>
-		<div class="viglet-dumont-assistant__suggestions" hidden data-wp-bind--hidden="!state.suggesting">
+		<div class="viglet-turing-assistant__suggestions" hidden data-wp-bind--hidden="!state.suggesting">
 			<p><?php esc_html_e( 'Try asking', 'viglet-turing-search' ); ?></p>
 			<ul>
 				<template data-wp-each--suggestion="context.suggestions" data-wp-each-key="context.suggestion.key">
@@ -90,17 +90,17 @@ $viglet_dumont_context = (string) wp_json_encode(
 				</template>
 			</ul>
 		</div>
-		<form class="viglet-dumont-assistant__form" data-wp-on--submit="actions.ask">
-			<label for="<?php echo esc_attr( $viglet_dumont_id ); ?>"><?php esc_html_e( 'Your question', 'viglet-turing-search' ); ?></label>
+		<form class="viglet-turing-assistant__form" data-wp-on--submit="actions.ask">
+			<label for="<?php echo esc_attr( $viglet_turing_id ); ?>"><?php esc_html_e( 'Your question', 'viglet-turing-search' ); ?></label>
 			<input
 				type="text"
-				id="<?php echo esc_attr( $viglet_dumont_id ); ?>"
+				id="<?php echo esc_attr( $viglet_turing_id ); ?>"
 				autocomplete="off"
 				data-wp-bind--value="state.question"
 				data-wp-on--input="actions.type"
 			/>
 			<button type="submit" class="wp-element-button" data-wp-bind--disabled="state.streaming"><?php esc_html_e( 'Send', 'viglet-turing-search' ); ?></button>
 		</form>
-		<p class="viglet-dumont-assistant__status" role="status" data-wp-text="state.status"></p>
+		<p class="viglet-turing-assistant__status" role="status" data-wp-text="state.status"></p>
 	</dialog>
 </div>

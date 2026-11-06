@@ -43,7 +43,7 @@ const unescapedAllowed = {
 	// A block that wraps others prints $content, rendered and escaped by its inner blocks.
 	'src/blocks/search/render.php': 1,
 	// The assistant block's own render.php escapes it; kses would strip its dialog and directives.
-	'src/includes/class-viglet-dumont-assistant.php': 1,
+	'src/includes/class-viglet-turing-assistant.php': 1,
 };
 // Where load_plugin_textdomain() may stand: the loader the WordPress.org package leaves out.
 const textdomainAllowed = new Set( [
@@ -51,7 +51,7 @@ const textdomainAllowed = new Set( [
 ] );
 // Where an admin notice may be hooked (Guideline 11): the plugin's own screens only.
 const noticesAllowed = new Set( [
-	'src/includes/class-viglet-dumont-admin.php',
+	'src/includes/class-viglet-turing-admin.php',
 ] );
 
 const unescaped = {};
@@ -117,7 +117,7 @@ const packageAt = process.argv.includes( '--package' )
 	? process.argv[ process.argv.indexOf( '--package' ) + 1 ]
 	: null;
 if ( packageAt ) {
-	if ( ! existsSync( join( packageAt, 'viglet-dumont.php' ) ) ) {
+	if ( ! existsSync( join( packageAt, 'viglet-turing.php' ) ) ) {
 		find(
 			packageAt,
 			0,
@@ -162,7 +162,7 @@ if ( packageAt ) {
 		}
 		const readme = join( packageAt, 'readme.txt' );
 		const version = readFileSync(
-			join( packageAt, 'viglet-dumont.php' ),
+			join( packageAt, 'viglet-turing.php' ),
 			'utf8'
 		).match( /^\s*\*\s*Version:\s*(\S+)/m )?.[ 1 ];
 		const stable = existsSync( readme )

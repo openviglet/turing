@@ -2,13 +2,13 @@
 /**
  * Related content from Turing's similar-documents search (D177).
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Related;
+use Viglet_Turing_Related;
 use WP_Post;
 
 final class RelatedTest extends PluginTestCase {
@@ -70,8 +70,8 @@ final class RelatedTest extends PluginTestCase {
 		);
 	}
 
-	private function related(): Viglet_Dumont_Related {
-		return new Viglet_Dumont_Related( $this->settings( array( 'site_key' => 'site-a' ) ) );
+	private function related(): Viglet_Turing_Related {
+		return new Viglet_Turing_Related( $this->settings( array( 'site_key' => 'site-a' ) ) );
 	}
 
 	/** @return int[] The ids of the posts returned. */
@@ -99,7 +99,7 @@ final class RelatedTest extends PluginTestCase {
 	public function test_all_sites_adds_the_siblings_documents_and_nothing_else(): void {
 		Functions\when( 'wp_strip_all_tags' )->alias( static fn ( $text ) => strip_tags( $text ) );
 		$this->similar = array( 'site-b:post:4', 'site-a:post:1', 'site-c:post:9', 'site-a:post:6' );
-		$related       = new Viglet_Dumont_Related(
+		$related       = new Viglet_Turing_Related(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -206,7 +206,7 @@ final class RelatedTest extends PluginTestCase {
 	private function append( ?string $template ): string {
 		$GLOBALS['_wp_current_template_content'] = $template;
 		try {
-			return ( new Viglet_Dumont_Related( $this->settings( array( 'related_after' => array( 'post' ) ) ) ) )->append( '<p>Body</p>' );
+			return ( new Viglet_Turing_Related( $this->settings( array( 'related_after' => array( 'post' ) ) ) ) )->append( '<p>Body</p>' );
 		} finally {
 			unset( $GLOBALS['_wp_current_template_content'] );
 		}
@@ -239,7 +239,7 @@ final class RelatedTest extends PluginTestCase {
 			array(
 				'single' => array(
 					$this->block( 'core/post-content' ),
-					$this->block( 'core/group', array(), array( $this->block( 'viglet-dumont/related' ) ) ),
+					$this->block( 'core/group', array(), array( $this->block( 'viglet-turing/related' ) ) ),
 				),
 			)
 		);
@@ -251,7 +251,7 @@ final class RelatedTest extends PluginTestCase {
 		$this->viewing(
 			array(
 				'single'     => array( $this->block( 'core/template-part', array( 'slug' => 'after-post' ) ) ),
-				'after-post' => array( $this->block( 'viglet-dumont/related' ) ),
+				'after-post' => array( $this->block( 'viglet-turing/related' ) ),
 				'footer'     => array( $this->block( 'core/paragraph' ) ),
 				'loop'       => array( $this->block( 'core/template-part', array( 'slug' => 'loop' ) ) ),
 				'named'      => array(

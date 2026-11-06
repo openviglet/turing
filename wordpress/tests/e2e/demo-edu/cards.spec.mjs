@@ -12,7 +12,7 @@ import { ask, idOf, titleOf, titlesOn } from './school.mjs';
  */
 const card = ( page, title ) =>
 	page
-		.locator( '.viglet-dumont-search__result' )
+		.locator( '.viglet-turing-search__result' )
 		.filter( { hasText: title } )
 		.first();
 

@@ -54,7 +54,7 @@ test( 'switch the site', async ( {}, testInfo ) => {
 	}
 	if ( seed ) {
 		wp( [ 'eval-file', seed ] );
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 		// Turing commits within a few seconds; the variant's specs read what was just indexed.
 		await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 	}

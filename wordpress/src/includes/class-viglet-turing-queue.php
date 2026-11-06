@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Queue
+ * Viglet Turing Queue
  *
  * Sits between the editor and Turing: a save only records what the post needs, and a
- * WP-Cron worker (or `wp dumont queue run`) sends it in batches with retry and backoff.
+ * WP-Cron worker (or `wp turing queue run`) sends it in batches with retry and backoff.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,22 +20,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * queue is an option and not post meta; the per-post state of a post that still exists
  * (last indexed at, last error, attempts) is post meta.
  */
-class Viglet_Dumont_Queue {
+class Viglet_Turing_Queue {
 
 	/** The option the jobs live in. */
-	public const OPTION = 'viglet_dumont_queue';
+	public const OPTION = 'viglet_turing_queue';
 
 	/** The post meta that records how the post last fared. */
-	public const STATE_META = '_viglet_dumont_index_state';
+	public const STATE_META = '_viglet_turing_index_state';
 
 	/** The option recording the worker's last run that sent anything: when, sent, failed. */
-	public const LAST_RUN_OPTION = 'viglet_dumont_last_run';
+	public const LAST_RUN_OPTION = 'viglet_turing_last_run';
 
 	/** The WP-Cron hook the worker runs on. */
-	public const CRON_HOOK = 'viglet_dumont_process_queue';
+	public const CRON_HOOK = 'viglet_turing_process_queue';
 
 	/** The transient that keeps two workers from sending the same jobs. */
-	public const LOCK = 'viglet_dumont_queue_lock';
+	public const LOCK = 'viglet_turing_queue_lock';
 
 	/** After this many failed sends a job stops retrying on its own and waits for a replay. */
 	public const MAX_ATTEMPTS = 8;
@@ -68,7 +68,7 @@ class Viglet_Dumont_Queue {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Viglet_Dumont_Queue {
 	 */
 	public function enqueue( int $post_id, string $action ): void {
 		// Demo mode (D238) never writes to Turing, so nothing is queued to be written.
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return;
 		}
 		$jobs             = $this->jobs();
@@ -131,7 +131,7 @@ class Viglet_Dumont_Queue {
 	 */
 	public function process( bool $ignore_backoff = false ): array {
 		// Demo mode (D238): no job is ever queued, and none left from before is sent.
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return array(
 				'sent'      => 0,
 				'failed'    => 0,
@@ -154,7 +154,7 @@ class Viglet_Dumont_Queue {
 		try {
 			// Only stopped jobs left (D329): ask whether Turing is back, and if so replay them.
 			if ( empty( $this->due( $ignore_backoff ) ) && $this->counts()['failed'] > 0
-				&& ! empty( ( new Viglet_Dumont_API_Client( $this->settings ) )->ping()['success'] ) ) {
+				&& ! empty( ( new Viglet_Turing_API_Client( $this->settings ) )->ping()['success'] ) ) {
 				$this->replay_stopped();
 			}
 
@@ -167,7 +167,7 @@ class Viglet_Dumont_Queue {
 
 			// A mapping change reaches Turing before the documents that carry the new fields.
 			if ( ! empty( $items ) ) {
-				( new Viglet_Dumont_Indexer( $this->settings ) )->provision();
+				( new Viglet_Turing_Indexer( $this->settings ) )->provision();
 			}
 
 			$outcomes = $this->send( $items );
@@ -184,7 +184,7 @@ class Viglet_Dumont_Queue {
 
 			// A send that went through says Turing is back (D329): the edits stopped during the
 			// outage go back in line with no click.
-			if ( in_array( '', array_map( array( 'Viglet_Dumont_Events', 'text' ), $outcomes ), true ) ) {
+			if ( in_array( '', array_map( array( 'Viglet_Turing_Events', 'text' ), $outcomes ), true ) ) {
 				$this->replay_stopped();
 			}
 		} finally {
@@ -194,7 +194,7 @@ class Viglet_Dumont_Queue {
 		$remaining = $this->jobs();
 		$this->schedule_next( $remaining );
 
-		$errors = array_filter( array_map( array( 'Viglet_Dumont_Events', 'text' ), $outcomes ), static fn ( $error ) => '' !== $error );
+		$errors = array_filter( array_map( array( 'Viglet_Turing_Events', 'text' ), $outcomes ), static fn ( $error ) => '' !== $error );
 
 		// The health page's "last run": only a run that sent something, so an idle tick does not hide the last real one.
 		if ( ! empty( $outcomes ) ) {
@@ -276,7 +276,7 @@ class Viglet_Dumont_Queue {
 		if ( $replayed > 0 ) {
 			$this->save( $jobs );
 			$this->schedule( time() );
-			Viglet_Dumont_Events::record( 'replay', true, Viglet_Dumont_Events::note( 'replayed', array( $replayed ) ) );
+			Viglet_Turing_Events::record( 'replay', true, Viglet_Turing_Events::note( 'replayed', array( $replayed ) ) );
 		}
 
 		return $replayed;
@@ -312,7 +312,7 @@ class Viglet_Dumont_Queue {
 	 * @return array|null The item, or null when nothing is to be sent.
 	 */
 	private function build_item( int $post_id, string $action ): ?array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 
 		if ( 'index' === $action ) {
 			$post = get_post( $post_id );
@@ -343,7 +343,7 @@ class Viglet_Dumont_Queue {
 			return array();
 		}
 
-		$client = new Viglet_Dumont_API_Client( $this->settings );
+		$client = new Viglet_Turing_API_Client( $this->settings );
 		$result = $client->import( array_values( $items ) );
 		if ( $result['success'] ) {
 			return array_fill_keys( array_keys( $items ), '' );
@@ -370,14 +370,14 @@ class Viglet_Dumont_Queue {
 	 * @param array<int, string|array> $outcomes The error per post as a note, '' for success.
 	 */
 	private function settle_pdfs( array $items, array $outcomes ): void {
-		$pdf = new Viglet_Dumont_Pdf( $this->settings );
+		$pdf = new Viglet_Turing_Pdf( $this->settings );
 		if ( ! $pdf->enabled() ) {
 			return;
 		}
 		$sent    = array();
 		$removed = array();
 		foreach ( $items as $post_id => $item ) {
-			if ( '' !== Viglet_Dumont_Events::text( $outcomes[ $post_id ] ?? 'failed' ) ) {
+			if ( '' !== Viglet_Turing_Events::text( $outcomes[ $post_id ] ?? 'failed' ) ) {
 				continue;
 			}
 			$post = 'CREATE' === $item['turSNJobAction'] ? get_post( (int) $post_id ) : null;
@@ -407,14 +407,14 @@ class Viglet_Dumont_Queue {
 			$sent    = $batch[ $post_id ];
 			$current = $jobs[ $post_id ] ?? null;
 			$same    = null !== $current && $current['queued_at'] === $sent['queued_at'];
-			$error   = Viglet_Dumont_Events::text( $note );
+			$error   = Viglet_Turing_Events::text( $note );
 
 			if ( '' === $error ) {
 				if ( $same ) {
 					unset( $jobs[ $post_id ] );
 				}
 				$this->write_state( (int) $post_id, $sent['action'], '', 0, $now );
-				Viglet_Dumont_Events::record( $sent['action'], true, '', (int) $post_id );
+				Viglet_Turing_Events::record( $sent['action'], true, '', (int) $post_id );
 				continue;
 			}
 
@@ -431,7 +431,7 @@ class Viglet_Dumont_Queue {
 				);
 			}
 			$this->write_state( (int) $post_id, $sent['action'], $error, $attempts, null );
-			Viglet_Dumont_Events::record( $sent['action'], false, $note, (int) $post_id );
+			Viglet_Turing_Events::record( $sent['action'], false, $note, (int) $post_id );
 		}//end foreach
 
 		$this->save( $jobs );

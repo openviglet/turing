@@ -28,7 +28,7 @@ test( "the library finds a book by a sentence in its sample chapter's PDF", asyn
 	// The library is fixed to books: its chapter, a PDF, is not listed here.
 	await expect(
 		page.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__type'
+			'.viglet-turing-search__results .viglet-turing-search__type'
 		)
 	).not.toContainText( [ say().pdf ] );
 	await look( 'demo-edu-library' );
@@ -44,9 +44,9 @@ test( 'the whole search lists the sample chapter itself as a PDF', async ( {
 	);
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__result' )
+			.locator( '.viglet-turing-search__result' )
 			.filter( { hasText: chapter } )
-			.locator( '.viglet-dumont-search__type' )
+			.locator( '.viglet-turing-search__type' )
 	).toHaveText( say().pdf );
 } );
 

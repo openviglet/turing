@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Operations
+ * Viglet Turing Operations
  *
- * The bulk operations `wp dumont` and the REST namespace share: index a set of posts, reindex
+ * The bulk operations `wp turing` and the REST namespace share: index a set of posts, reindex
  * everything, sweep what Turing holds that WordPress no longer publishes, and report status.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Runs over the posts a filter selects, synchronously, batch by batch.
  */
-class Viglet_Dumont_Operations {
+class Viglet_Turing_Operations {
 
 	/**
 	 * The plugin settings these operations were built with.
@@ -27,16 +27,16 @@ class Viglet_Dumont_Operations {
 	/**
 	 * The indexer that builds and sends the documents.
 	 *
-	 * @var Viglet_Dumont_Indexer
+	 * @var Viglet_Turing_Indexer
 	 */
-	private Viglet_Dumont_Indexer $indexer;
+	private Viglet_Turing_Indexer $indexer;
 
 	/**
 	 * The client for the calls the indexer does not make.
 	 *
-	 * @var Viglet_Dumont_API_Client
+	 * @var Viglet_Turing_API_Client
 	 */
-	private Viglet_Dumont_API_Client $client;
+	private Viglet_Turing_API_Client $client;
 
 	/**
 	 * Build the operations over the given settings, or over the stored ones.
@@ -44,9 +44,9 @@ class Viglet_Dumont_Operations {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
-		$this->indexer  = new Viglet_Dumont_Indexer( $this->settings );
-		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
+		$this->settings = $settings ?? viglet_turing_get_settings();
+		$this->indexer  = new Viglet_Turing_Indexer( $this->settings );
+		$this->client   = new Viglet_Turing_API_Client( $this->settings );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Viglet_Dumont_Operations {
 	 */
 	public function find_post_ids( ?string $type = null, array $ids = array(), ?string $since = null ): array {
 		$args = array(
-			'post_type'      => null !== $type && '' !== $type ? array( $type ) : viglet_dumont_get_indexable_types(),
+			'post_type'      => null !== $type && '' !== $type ? array( $type ) : viglet_turing_get_indexable_types(),
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
@@ -114,10 +114,10 @@ class Viglet_Dumont_Operations {
 			}
 		}//end foreach
 
-		Viglet_Dumont_Events::record(
+		Viglet_Turing_Events::record(
 			'index',
 			empty( $errors ),
-			Viglet_Dumont_Events::note( 'bulk', array( $sent, count( $errors ) ) )
+			Viglet_Turing_Events::note( 'bulk', array( $sent, count( $errors ) ) )
 		);
 
 		return array(
@@ -177,7 +177,7 @@ class Viglet_Dumont_Operations {
 		if ( $result['success'] ) {
 			$outcome['sent'] = count( $post_ids );
 			// The PDFs the posts attach or link follow them in or out (D319).
-			( new Viglet_Dumont_Pdf( $this->settings ) )->settle( $kept, $removed, $send_pdfs );
+			( new Viglet_Turing_Pdf( $this->settings ) )->settle( $kept, $removed, $send_pdfs );
 			return $outcome;
 		}
 		if ( ! empty( $result['timed_out'] ) ) {
@@ -225,7 +225,7 @@ class Viglet_Dumont_Operations {
 		$published = array_flip( $this->find_post_ids() );
 		$prefix    = $this->indexer->site_key() . ':post:';
 		$orphans   = array();
-		$pdf       = new Viglet_Dumont_Pdf( $this->settings );
+		$pdf       = new Viglet_Turing_Pdf( $this->settings );
 
 		foreach ( $held as $doc_id ) {
 			if ( ! str_starts_with( $doc_id, $prefix ) ) {
@@ -276,7 +276,7 @@ class Viglet_Dumont_Operations {
 		foreach ( array_chunk( $orphans, $batch_size ) as $chunk ) {
 			$result = $this->client->deindex( array_map( array( $this->client, 'build_delete_item' ), $chunk ) );
 			if ( ! $result['success'] ) {
-				Viglet_Dumont_Events::record( 'sweep', false, $result['note'] );
+				Viglet_Turing_Events::record( 'sweep', false, $result['note'] );
 				return array(
 					'success' => false,
 					'orphans' => $orphans,
@@ -285,7 +285,7 @@ class Viglet_Dumont_Operations {
 			}
 		}
 
-		Viglet_Dumont_Events::record( 'sweep', true, Viglet_Dumont_Events::note( 'swept', array( count( $orphans ) ) ) );
+		Viglet_Turing_Events::record( 'sweep', true, Viglet_Turing_Events::note( 'swept', array( count( $orphans ) ) ) );
 
 		return array(
 			'success' => true,
@@ -305,7 +305,7 @@ class Viglet_Dumont_Operations {
 		// Each post records the PDFs it links on the way (D319); all of them are sent below.
 		$result = $this->index( $this->find_post_ids(), $progress, false );
 		// The PDFs of the posts in search (D309), once the posts that hold them are there.
-		$pdfs = ( new Viglet_Dumont_Pdf( $this->settings ) )->index_all();
+		$pdfs = ( new Viglet_Turing_Pdf( $this->settings ) )->index_all();
 		if ( ! $pdfs['success'] ) {
 			++$result['failed'];
 			$result['errors'][] = $pdfs['message'];
@@ -332,12 +332,12 @@ class Viglet_Dumont_Operations {
 	 * @return array{at: int, sent: int, failed: int, when: string}|null
 	 */
 	private function last_run(): ?array {
-		$run = get_option( Viglet_Dumont_Queue::LAST_RUN_OPTION, null );
+		$run = get_option( Viglet_Turing_Queue::LAST_RUN_OPTION, null );
 		if ( ! is_array( $run ) ) {
 			return null;
 		}
 
-		return $run + array( 'when' => Viglet_Dumont_Events::when( (int) ( $run['at'] ?? 0 ) ) );
+		return $run + array( 'when' => Viglet_Turing_Events::when( (int) ( $run['at'] ?? 0 ) ) );
 	}
 
 	/**
@@ -347,7 +347,7 @@ class Viglet_Dumont_Operations {
 	 */
 	public function status(): array {
 		$types = array();
-		foreach ( viglet_dumont_get_indexable_types() as $type ) {
+		foreach ( viglet_turing_get_indexable_types() as $type ) {
 			$types[ $type ] = array(
 				'published' => $this->count_indexable( $type ),
 				'indexed'   => $this->count_in_turing( $type ),
@@ -359,16 +359,16 @@ class Viglet_Dumont_Operations {
 			'site_name'   => $this->client->get_site_name(),
 			'site_key'    => $this->indexer->site_key(),
 			'types'       => $types,
-			'queue'       => ( new Viglet_Dumont_Queue( $this->settings ) )->counts(),
+			'queue'       => ( new Viglet_Turing_Queue( $this->settings ) )->counts(),
 			'last_run'    => $this->last_run(),
-			'events'      => Viglet_Dumont_Events::all(),
-			'sources'     => Viglet_Dumont_Settings::sources(),
-			'provisioned' => get_option( Viglet_Dumont_Mapping::PROVISIONED_OPTION, null ),
+			'events'      => Viglet_Turing_Events::all(),
+			'sources'     => Viglet_Turing_Settings::sources(),
+			'provisioned' => get_option( Viglet_Turing_Mapping::PROVISIONED_OPTION, null ),
 			'foreign'     => $this->count_foreign(),
 			// The Index All running in the background and the last one that ended (D331).
-			'reindex'     => ( new Viglet_Dumont_Reindex( $this->settings ) )->report(),
+			'reindex'     => ( new Viglet_Turing_Reindex( $this->settings ) )->report(),
 			// The site's AI budget in Turing, while it is known to be spent (D332).
-			'ai_quota'    => Viglet_Dumont_AI_Quota::report(),
+			'ai_quota'    => Viglet_Turing_AI_Quota::report(),
 		);
 	}
 

@@ -82,6 +82,6 @@ function tarnfell_ai_notice(): void {
 	if ( ! is_page( 'showcase' ) ) {
 		return;
 	}
-	wp_enqueue_script_module( 'tarnfell/ai-notice', get_theme_file_uri( 'assets/ai-notice.js' ), array( 'viglet-dumont/search' ), wp_get_theme()->get( 'Version' ) );
+	wp_enqueue_script_module( 'tarnfell/ai-notice', get_theme_file_uri( 'assets/ai-notice.js' ), array( 'viglet-turing/search' ), wp_get_theme()->get( 'Version' ) );
 }
 add_action( 'wp_enqueue_scripts', 'tarnfell_ai_notice' );

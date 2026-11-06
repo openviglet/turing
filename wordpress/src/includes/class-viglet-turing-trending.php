@@ -3,7 +3,7 @@
  * Popular searches under the search box (D202): the week's top searches in Turing's metrics,
  * each one checked to return results now, so no chip leads to an empty page.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Builds the chips the search block offers before a visitor types.
  */
-class Viglet_Dumont_Trending {
+class Viglet_Turing_Trending {
 
 	/** The most chips shown. */
 	public const MAX = 8;
@@ -22,16 +22,16 @@ class Viglet_Dumont_Trending {
 	public const MIN_SEARCHES = 3;
 
 	/** The chips, kept for an hour: each is a search, so they are not asked for per page view. */
-	public const CACHE = 'viglet_dumont_trending';
+	public const CACHE = 'viglet_turing_trending';
 
 	/**
 	 * The spellings that ask for one thing ("raincoat", "rain jacket", "rain jaket"), as lists
 	 * of lowercase searches, written once a day by group() and read by the chips (D213).
 	 */
-	public const GROUPS = 'viglet_dumont_trending_groups';
+	public const GROUPS = 'viglet_turing_trending_groups';
 
 	/** The daily WP-Cron job that writes self::GROUPS, on a site with generative AI. */
-	public const CRON_HOOK = 'viglet_dumont_group_trending';
+	public const CRON_HOOK = 'viglet_turing_group_trending';
 
 	/** The most searches sent to be grouped. */
 	private const MAX_GROUPED = 50;
@@ -52,7 +52,7 @@ class Viglet_Dumont_Trending {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Viglet_Dumont_Trending {
 			return $cached;
 		}
 
-		$report  = ( new Viglet_Dumont_Insights( $this->settings ) )->report( 'this-week' );
+		$report  = ( new Viglet_Turing_Insights( $this->settings ) )->report( 'this-week' );
 		$popular = array();
 		if ( ! is_wp_error( $report ) ) {
 			foreach ( $report['top'] as $term ) {
@@ -91,7 +91,7 @@ class Viglet_Dumont_Trending {
 	 */
 	public static function schedule(): void {
 		$next = wp_next_scheduled( self::CRON_HOOK );
-		$on   = Viglet_Dumont_Mapping::declares_generative_ai( viglet_dumont_get_settings() );
+		$on   = Viglet_Turing_Mapping::declares_generative_ai( viglet_turing_get_settings() );
 		if ( $on && ! $next ) {
 			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CRON_HOOK );
 		} elseif ( ! $on && $next ) {
@@ -105,11 +105,11 @@ class Viglet_Dumont_Trending {
 	 * last grouping; without generative AI there is none, and the chips match exact spellings.
 	 */
 	public function group(): void {
-		if ( ! Viglet_Dumont_Mapping::declares_generative_ai( $this->settings ) ) {
+		if ( ! Viglet_Turing_Mapping::declares_generative_ai( $this->settings ) ) {
 			delete_option( self::GROUPS );
 			return;
 		}
-		$report = ( new Viglet_Dumont_Insights( $this->settings ) )->report( 'this-week' );
+		$report = ( new Viglet_Turing_Insights( $this->settings ) )->report( 'this-week' );
 		if ( is_wp_error( $report ) ) {
 			return;
 		}
@@ -125,7 +125,7 @@ class Viglet_Dumont_Trending {
 		$groups = array();
 		if ( count( $terms ) >= 2 ) {
 			$data   = implode( "\n", $terms );
-			$result = ( new Viglet_Dumont_API_Client( $this->settings ) )->summary( 'viglet-dumont-trending-groups-' . md5( $data ), $data, self::GROUP_PROMPT );
+			$result = ( new Viglet_Turing_API_Client( $this->settings ) )->summary( 'viglet-turing-trending-groups-' . md5( $data ), $data, self::GROUP_PROMPT );
 			if ( is_wp_error( $result ) || empty( $result['success'] ) ) {
 				return;
 			}
@@ -173,7 +173,7 @@ class Viglet_Dumont_Trending {
 	 * @return array<string, int>
 	 */
 	private function groups(): array {
-		if ( ! Viglet_Dumont_Mapping::declares_generative_ai( $this->settings ) ) {
+		if ( ! Viglet_Turing_Mapping::declares_generative_ai( $this->settings ) ) {
 			return array();
 		}
 		$of = array();
@@ -195,8 +195,8 @@ class Viglet_Dumont_Trending {
 	 * @return string[]
 	 */
 	private function answered( array $queries ): array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
-		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
+		$client  = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render()->for_scope( $indexer );
 		$blocked = array_map( 'mb_strtolower', (array) ( $this->settings['trending_block'] ?? array() ) );
 		$groups  = $this->groups();
 		$chips   = array();

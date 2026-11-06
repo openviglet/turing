@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "viglet-dumont/assistant",
+	"name": "viglet-turing/assistant",
 	"title": "Site assistant",
 	"category": "widgets",
 	"icon": "format-chat",
@@ -29,8 +29,8 @@
 		"typography": { "fontSize": true, "lineHeight": true },
 		"interactivity": true
 	},
-	"editorScript": "viglet-dumont-assistant-block-editor",
-	"style": "viglet-dumont-assistant-block",
-	"viewScriptModule": "viglet-dumont/assistant-block",
+	"editorScript": "viglet-turing-assistant-block-editor",
+	"style": "viglet-turing-assistant-block",
+	"viewScriptModule": "viglet-turing/assistant-block",
 	"render": "file:./render.php"
 }

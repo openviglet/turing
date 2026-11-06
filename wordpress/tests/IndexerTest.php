@@ -2,13 +2,13 @@
 /**
  * The document a post becomes and the payloads that send or remove it.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Indexer;
+use Viglet_Turing_Indexer;
 use WP_Post;
 
 final class IndexerTest extends PluginTestCase {
@@ -49,7 +49,7 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	public function test_a_post_becomes_one_create_item_posted_to_import(): void {
-		( new Viglet_Dumont_Indexer( $this->settings() ) )->index_post( $this->post );
+		( new Viglet_Turing_Indexer( $this->settings() ) )->index_post( $this->post );
 
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'https://turing.example.org/api/sn/import', $this->requests[0][0] );
@@ -63,7 +63,7 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	public function test_the_document_carries_the_post_fields(): void {
-		( new Viglet_Dumont_Indexer( $this->settings() ) )->index_post( $this->post );
+		( new Viglet_Turing_Indexer( $this->settings() ) )->index_post( $this->post );
 
 		$attributes = $this->body()['snJobItems'][0]['attributes'];
 		$this->assertSame( 'site.example.org:post:42', $attributes['id'] );
@@ -92,7 +92,7 @@ final class IndexerTest extends PluginTestCase {
 			)
 		);
 
-		( new Viglet_Dumont_Indexer( $settings ) )->index_post( $this->post );
+		( new Viglet_Turing_Indexer( $settings ) )->index_post( $this->post );
 
 		$attributes = $this->body()['snJobItems'][0]['attributes'];
 		$this->assertArrayNotHasKey( 'categories', $attributes );
@@ -105,7 +105,7 @@ final class IndexerTest extends PluginTestCase {
 			static fn ( $id, $key ) => 'deadline' === $key ? '2026-11-30' : ''
 		);
 
-		( new Viglet_Dumont_Indexer( $this->settings( array( 'index_custom_fields' => 'deadline, salary' ) ) ) )
+		( new Viglet_Turing_Indexer( $this->settings( array( 'index_custom_fields' => 'deadline, salary' ) ) ) )
 			->index_post( $this->post );
 
 		$attributes = $this->body()['snJobItems'][0]['attributes'];
@@ -114,7 +114,7 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	public function test_deindexing_a_post_sends_one_delete_item_for_its_id(): void {
-		( new Viglet_Dumont_Indexer( $this->settings() ) )->deindex_post( 42 );
+		( new Viglet_Turing_Indexer( $this->settings() ) )->deindex_post( 42 );
 
 		$item = $this->body()['snJobItems'][0];
 		$this->assertSame( 'DELETE', $item['turSNJobAction'] );
@@ -128,7 +128,7 @@ final class IndexerTest extends PluginTestCase {
 	}
 
 	public function test_a_configured_site_key_starts_the_id(): void {
-		( new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'Example Projetos' ) ) ) )->deindex_post( 42 );
+		( new Viglet_Turing_Indexer( $this->settings( array( 'site_key' => 'Example Projetos' ) ) ) )->deindex_post( 42 );
 
 		$this->assertSame( 'example-projetos:post:42', $this->body()['snJobItems'][0]['attributes']['id'] );
 	}
@@ -136,7 +136,7 @@ final class IndexerTest extends PluginTestCase {
 	public function test_a_subdirectory_site_derives_its_key_from_host_and_path(): void {
 		Functions\when( 'home_url' )->justReturn( 'https://example.org:8080/projetos/' );
 
-		$this->assertSame( 'example.org-projetos', ( new Viglet_Dumont_Indexer( $this->settings() ) )->site_key() );
+		$this->assertSame( 'example.org-projetos', ( new Viglet_Turing_Indexer( $this->settings() ) )->site_key() );
 	}
 
 	/**
@@ -144,7 +144,7 @@ final class IndexerTest extends PluginTestCase {
 	 * site_key be alternatives (T1223) and the sibling keys join it.
 	 */
 	public function test_a_search_is_scoped_to_the_own_site_key(): void {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) );
+		$indexer = new Viglet_Turing_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) );
 
 		$this->assertSame( 'site_key:site-a', $indexer->own_filter() );
 		$this->assertSame( array( 'site_key:site-a' ), $indexer->scope_filters() );
@@ -157,7 +157,7 @@ final class IndexerTest extends PluginTestCase {
 	 * alternatives, while the filter every write and own-only read takes stays its own.
 	 */
 	public function test_the_scope_holds_the_siblings_as_alternatives_and_the_own_filter_does_not(): void {
-		$indexer = new Viglet_Dumont_Indexer(
+		$indexer = new Viglet_Turing_Indexer(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -187,7 +187,7 @@ final class IndexerTest extends PluginTestCase {
 	 * of scope is dropped, so a filter in the URL never widens a search past it.
 	 */
 	public function test_a_picked_site_narrows_the_scope_and_a_key_out_of_scope_is_dropped(): void {
-		$indexer = new Viglet_Dumont_Indexer(
+		$indexer = new Viglet_Turing_Indexer(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -218,7 +218,7 @@ final class IndexerTest extends PluginTestCase {
 	 * listed twice, adds nothing: the scope is the own key alone and has no operator.
 	 */
 	public function test_an_empty_or_own_or_repeated_sibling_adds_nothing(): void {
-		$indexer = new Viglet_Dumont_Indexer(
+		$indexer = new Viglet_Turing_Indexer(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -235,7 +235,7 @@ final class IndexerTest extends PluginTestCase {
 	/** Writes stay on the own key (D303): delete-all and the sweep's listing never name a sibling. */
 	public function test_delete_all_and_the_listing_touch_only_the_own_key_with_siblings_listed(): void {
 		Functions\when( 'get_transient' )->justReturn( false );
-		$indexer = new Viglet_Dumont_Indexer(
+		$indexer = new Viglet_Turing_Indexer(
 			$this->settings(
 				array(
 					'site_key'         => 'site-a',
@@ -262,7 +262,7 @@ final class IndexerTest extends PluginTestCase {
 	 * in one DELETE by fields (Turing T1112), and lists nothing first.
 	 */
 	public function test_delete_all_removes_only_this_site_keys_documents(): void {
-		$deleted = ( new Viglet_Dumont_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->delete_all();
+		$deleted = ( new Viglet_Turing_Indexer( $this->settings( array( 'site_key' => 'site-a' ) ) ) )->delete_all();
 
 		$this->assertTrue( $deleted );
 		$imports = array_keys( array_filter( $this->requests, static fn ( $r ) => str_ends_with( $r[0], '/api/sn/import' ) ) );
@@ -279,15 +279,15 @@ final class IndexerTest extends PluginTestCase {
 	public function test_delete_all_reports_a_failed_delete(): void {
 		$this->status = 500;
 
-		$this->assertFalse( ( new Viglet_Dumont_Indexer( $this->settings() ) )->delete_all() );
+		$this->assertFalse( ( new Viglet_Turing_Indexer( $this->settings() ) )->delete_all() );
 	}
 
 	public function test_a_legacy_id_keeps_the_pre_site_key_shape(): void {
 		Functions\when( 'is_multisite' )->justReturn( true );
 		Functions\when( 'get_current_blog_id' )->justReturn( 3 );
 
-		$method = new \ReflectionMethod( Viglet_Dumont_Indexer::class, 'legacy_doc_id' );
+		$method = new \ReflectionMethod( Viglet_Turing_Indexer::class, 'legacy_doc_id' );
 
-		$this->assertSame( '3-42', $method->invoke( new Viglet_Dumont_Indexer( $this->settings() ), 42 ) );
+		$this->assertSame( '3-42', $method->invoke( new Viglet_Turing_Indexer( $this->settings() ), 42 ) );
 	}
 }

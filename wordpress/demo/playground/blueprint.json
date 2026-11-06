@@ -19,11 +19,11 @@
 		{
 			"step": "defineWpConfigConsts",
 			"consts": {
-				"VIGLET_DUMONT_DEMO": "1",
-				"VIGLET_DUMONT_TURING_URL": "https://turing-demo.viglet.org",
-				"VIGLET_DUMONT_TURING_SITE": "tarnfell",
-				"VIGLET_DUMONT_SITE_KEY": "tarnfell",
-				"VIGLET_DUMONT_TURING_LOCALE": "en_US",
+				"VIGLET_TURING_DEMO": "1",
+				"VIGLET_TURING_TURING_URL": "https://turing-demo.viglet.org",
+				"VIGLET_TURING_TURING_SITE": "tarnfell",
+				"VIGLET_TURING_SITE_KEY": "tarnfell",
+				"VIGLET_TURING_TURING_LOCALE": "en_US",
 				"TARNFELL_TOUR": true
 			}
 		},

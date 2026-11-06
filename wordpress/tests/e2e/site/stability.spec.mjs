@@ -35,7 +35,7 @@ for ( const query of [
 		} );
 		await page.goto( `/?page_id=${ seed.searchPageId }&${ query }` );
 		await expect(
-			page.locator( '.viglet-dumont-search__summary' )
+			page.locator( '.viglet-turing-search__summary' )
 		).toHaveText( /results?$/ );
 		await page.waitForLoadState( 'networkidle' );
 		expect( await page.evaluate( () => window.shifted ) ).toBeLessThan(

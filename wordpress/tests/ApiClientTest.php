@@ -2,19 +2,19 @@
 /**
  * How the client talks to Turing: URLs, headers and the answers it reports.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
-use Viglet_Dumont_API_Client;
+use Viglet_Turing_API_Client;
 use WP_Error;
 use Brain\Monkey\Functions;
 
 final class ApiClientTest extends PluginTestCase {
 
 	public function test_requests_carry_the_api_key_header(): void {
-		( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array() );
+		( new Viglet_Turing_API_Client( $this->settings() ) )->import( array() );
 
 		$headers = $this->requests[0][1]['headers'];
 		$this->assertSame( 'secret', $headers['Key'] );
@@ -22,7 +22,7 @@ final class ApiClientTest extends PluginTestCase {
 	}
 
 	public function test_an_import_waits_two_seconds_a_document_and_never_under_thirty(): void {
-		$client = new Viglet_Dumont_API_Client( $this->settings() );
+		$client = new Viglet_Turing_API_Client( $this->settings() );
 
 		$client->import( array_fill( 0, 5, array() ) );
 		$client->import( array_fill( 0, 50, array() ) );
@@ -35,7 +35,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_an_import_turing_did_not_answer_in_time_is_timed_out_not_refused(): void {
 		Functions\when( 'wp_remote_request' )->justReturn( new WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 30001 milliseconds with 0 bytes received' ) );
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array( array() ) );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->import( array( array() ) );
 
 		$this->assertFalse( $result['success'] );
 		$this->assertTrue( $result['timed_out'] );
@@ -44,7 +44,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_a_connection_that_never_opened_is_not_timed_out(): void {
 		Functions\when( 'wp_remote_request' )->justReturn( new WP_Error( 'http_request_failed', 'cURL error 7: Failed to connect to localhost port 2700' ) );
 
-		$this->assertFalse( ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array( array() ) )['timed_out'] );
+		$this->assertFalse( ( new Viglet_Turing_API_Client( $this->settings() ) )->import( array( array() ) )['timed_out'] );
 	}
 
 	public function test_a_page_read_waits_seconds_and_a_failed_one_marks_turing_down_for_a_minute(): void {
@@ -64,17 +64,17 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->for_render()->search( 'books' );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->for_render()->search( 'books' );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 3, $this->requests[0][1]['timeout'] );
-		$this->assertSame( array( array( Viglet_Dumont_API_Client::DOWN_TRANSIENT, 60 ) ), $marks );
+		$this->assertSame( array( array( Viglet_Turing_API_Client::DOWN_TRANSIENT, 60 ) ), $marks );
 	}
 
 	public function test_while_turing_is_marked_down_a_page_read_does_not_call_it(): void {
 		Functions\when( 'get_transient' )->justReturn( time() );
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->for_render()->search( 'books' );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->for_render()->search( 'books' );
 
 		$this->assertSame( 'turing_down', $result->get_error_code() );
 		$this->assertSame( array(), $this->requests );
@@ -83,7 +83,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_an_admin_or_indexing_read_ignores_the_mark_and_waits_as_before(): void {
 		Functions\when( 'get_transient' )->justReturn( time() );
 
-		( new Viglet_Dumont_API_Client( $this->settings() ) )->search( 'books' );
+		( new Viglet_Turing_API_Client( $this->settings() ) )->search( 'books' );
 
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 30, $this->requests[0][1]['timeout'] );
@@ -108,13 +108,13 @@ final class ApiClientTest extends PluginTestCase {
 
 	protected function tearDown(): void {
 		unset( $_SERVER['SERVER_SOFTWARE'] );
-		putenv( 'VIGLET_DUMONT_DEMO' );
+		putenv( 'VIGLET_TURING_DEMO' );
 		parent::tearDown();
 	}
 
 	public function test_in_demo_mode_no_write_reaches_turing_and_each_says_why(): void {
-		putenv( 'VIGLET_DUMONT_DEMO=1' );
-		$client = new Viglet_Dumont_API_Client( $this->settings( array( 'api_key' => '' ) ) );
+		putenv( 'VIGLET_TURING_DEMO=1' );
+		$client = new Viglet_Turing_API_Client( $this->settings( array( 'api_key' => '' ) ) );
 
 		$results = array(
 			$client->import( array() ),
@@ -126,16 +126,16 @@ final class ApiClientTest extends PluginTestCase {
 		$this->assertSame( array(), $this->requests );
 		foreach ( $results as $result ) {
 			$this->assertFalse( $result['success'] );
-			$this->assertStringContainsString( 'Demo mode (VIGLET_DUMONT_DEMO) is on', $result['message'] );
+			$this->assertStringContainsString( 'Demo mode (VIGLET_TURING_DEMO) is on', $result['message'] );
 		}
 		$this->assertInstanceOf( WP_Error::class, $plan );
-		$this->assertSame( 'viglet_dumont_demo', $plan->get_error_code() );
+		$this->assertSame( 'viglet_turing_demo', $plan->get_error_code() );
 	}
 
 	public function test_in_demo_mode_a_search_still_goes_out_without_a_key(): void {
-		putenv( 'VIGLET_DUMONT_DEMO=1' );
+		putenv( 'VIGLET_TURING_DEMO=1' );
 
-		( new Viglet_Dumont_API_Client( $this->settings( array( 'api_key' => '' ) ) ) )->search( 'jacket', 1, 10 );
+		( new Viglet_Turing_API_Client( $this->settings( array( 'api_key' => '' ) ) ) )->search( 'jacket', 1, 10 );
 
 		$this->assertCount( 1, $this->requests );
 		$this->assertArrayNotHasKey( 'Key', $this->requests[0][1]['headers'] );
@@ -144,7 +144,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_in_playground_its_own_refusal_names_the_cause_and_the_address(): void {
 		$this->answer_400( "Playground could not serve the request.\n", true );
 
-		$ping = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ping();
+		$ping = ( new Viglet_Turing_API_Client( $this->settings() ) )->ping();
 
 		$this->assertFalse( $ping['success'] );
 		$this->assertStringContainsString( 'WordPress Playground could not reach Turing at https://turing.example.org.', $ping['message'] );
@@ -154,7 +154,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_outside_playground_the_same_answer_is_turing_s_http_400(): void {
 		$this->answer_400( 'Playground could not serve the request.', false );
 
-		$ping = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ping();
+		$ping = ( new Viglet_Turing_API_Client( $this->settings() ) )->ping();
 
 		$this->assertSame( 'Server returned HTTP 400', $ping['message'] );
 	}
@@ -162,19 +162,19 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_in_playground_a_400_from_turing_itself_is_left_as_it_came(): void {
 		$this->answer_400( '{"error":"bad query"}', true );
 
-		$ping = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ping();
+		$ping = ( new Viglet_Turing_API_Client( $this->settings() ) )->ping();
 
 		$this->assertSame( 'Server returned HTTP 400', $ping['message'] );
 	}
 
 	public function test_no_key_header_is_sent_without_an_api_key(): void {
-		( new Viglet_Dumont_API_Client( $this->settings( array( 'api_key' => '' ) ) ) )->import( array() );
+		( new Viglet_Turing_API_Client( $this->settings( array( 'api_key' => '' ) ) ) )->import( array() );
 
 		$this->assertArrayNotHasKey( 'Key', $this->requests[0][1]['headers'] );
 	}
 
 	public function test_the_site_name_is_encoded_into_the_search_path(): void {
-		( new Viglet_Dumont_API_Client( $this->settings() ) )->ping();
+		( new Viglet_Turing_API_Client( $this->settings() ) )->ping();
 
 		$this->assertStringStartsWith(
 			'https://turing.example.org/api/sn/Sample%20Site/search?',
@@ -183,7 +183,7 @@ final class ApiClientTest extends PluginTestCase {
 	}
 
 	public function test_filters_are_sent_as_a_repeated_fq_parameter(): void {
-		( new Viglet_Dumont_API_Client( $this->settings() ) )->search( 'x', 1, 10, array( 'fq[]' => array( 'site_key:a', 'type:post' ) ) );
+		( new Viglet_Turing_API_Client( $this->settings() ) )->search( 'x', 1, 10, array( 'fq[]' => array( 'site_key:a', 'type:post' ) ) );
 
 		$this->assertStringEndsWith( '&fq%5B%5D=site_key%3Aa&fq%5B%5D=type%3Apost', $this->requests[0][0] );
 	}
@@ -210,7 +210,7 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$rows = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features();
+		$rows = ( new Viglet_Turing_API_Client( $this->settings() ) )->ai_features();
 
 		$this->assertSame(
 			array(
@@ -260,7 +260,7 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$rows = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features();
+		$rows = ( new Viglet_Turing_API_Client( $this->settings() ) )->ai_features();
 
 		$this->assertSame(
 			array(
@@ -294,7 +294,7 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$answer = ( new Viglet_Dumont_API_Client( $this->settings() ) )->ai_features()[0];
+		$answer = ( new Viglet_Turing_API_Client( $this->settings() ) )->ai_features()[0];
 
 		$this->assertSame( 'answer', $answer['feature'] );
 		$this->assertFalse( $answer['on'], 'a 403 body is not an answer stream' );
@@ -310,15 +310,15 @@ final class ApiClientTest extends PluginTestCase {
 		);
 		$answer( 403, '{"error":"This API key is bound to a partition of a shared site, and this endpoint does not enforce partitions yet"}' );
 
-		$refused = ( new Viglet_Dumont_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
+		$refused = ( new Viglet_Turing_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
 
-		$this->assertTrue( Viglet_Dumont_API_Client::refused_by_partition( $refused ) );
+		$this->assertTrue( Viglet_Turing_API_Client::refused_by_partition( $refused ) );
 		$this->assertStringContainsString( 'does not enforce partitions yet', $refused->get_error_message() );
 
 		$answer( 500, '' );
-		$failed = ( new Viglet_Dumont_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
+		$failed = ( new Viglet_Turing_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
 
-		$this->assertFalse( Viglet_Dumont_API_Client::refused_by_partition( $failed ) );
+		$this->assertFalse( Viglet_Turing_API_Client::refused_by_partition( $failed ) );
 		$this->assertSame( 'Turing answered HTTP 500.', $failed->get_error_message() );
 	}
 
@@ -345,7 +345,7 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->provision( array( 'name' => 'new-site' ) );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->provision( array( 'name' => 'new-site' ) );
 
 		// D299: the Setup page's "Create the SN site" failed with that 400 on every new site.
 		$this->assertTrue( $result['success'] );
@@ -364,7 +364,7 @@ final class ApiClientTest extends PluginTestCase {
 			}
 		);
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->provision( array( 'name' => 'x' ) );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->provision( array( 'name' => 'x' ) );
 
 		$this->assertFalse( $result['success'] );
 		$this->assertCount( 1, $this->requests );
@@ -373,7 +373,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_an_import_answered_with_an_error_status_is_a_failure(): void {
 		$this->status = 422;
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->import( array() );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->import( array() );
 
 		$this->assertFalse( $result['success'] );
 		$this->assertStringContainsString( '422', $result['message'] );
@@ -382,7 +382,7 @@ final class ApiClientTest extends PluginTestCase {
 	public function test_an_unreachable_server_is_reported_rather_than_thrown(): void {
 		Functions\when( 'wp_remote_request' )->justReturn( new WP_Error( 'http_request_failed', 'timed out' ) );
 
-		$result = ( new Viglet_Dumont_API_Client( $this->settings() ) )->deindex( array() );
+		$result = ( new Viglet_Turing_API_Client( $this->settings() ) )->deindex( array() );
 
 		$this->assertSame(
 			array(

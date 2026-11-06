@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont Tuning
+ * Viglet Turing Tuning
  *
  * The Search tuning screen's half on the server (D172): synonyms and promoted results,
  * written to the SN site through Turing's console APIs with the stored key, so a WordPress
  * owner fixes a bad result without Turing's console.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Synonyms and spotlights the plugin made, beside the ones an operator made in the console.
  */
-class Viglet_Dumont_Tuning {
+class Viglet_Turing_Tuning {
 
 	/**
 	 * What every item the plugin makes is named with, so the screen tells its own from an
@@ -27,9 +27,9 @@ class Viglet_Dumont_Tuning {
 	/**
 	 * The client the console calls go through.
 	 *
-	 * @var Viglet_Dumont_API_Client
+	 * @var Viglet_Turing_API_Client
 	 */
-	private Viglet_Dumont_API_Client $client;
+	private Viglet_Turing_API_Client $client;
 
 	/**
 	 * The plugin settings.
@@ -44,8 +44,8 @@ class Viglet_Dumont_Tuning {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
-		$this->client   = new Viglet_Dumont_API_Client( $this->settings );
+		$this->settings = $settings ?? viglet_turing_get_settings();
+		$this->client   = new Viglet_Turing_API_Client( $this->settings );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Viglet_Dumont_Tuning {
 		}
 
 		/* translators: %s: the SN site's name. */
-		return new WP_Error( 'viglet_dumont_no_site', sprintf( __( 'Turing has no SN site named %s.', 'viglet-turing-search' ), $this->settings['site_name'] ) );
+		return new WP_Error( 'viglet_turing_no_site', sprintf( __( 'Turing has no SN site named %s.', 'viglet-turing-search' ), $this->settings['site_name'] ) );
 	}
 
 	/**
@@ -118,13 +118,13 @@ class Viglet_Dumont_Tuning {
 			'boosts'     => is_wp_error( $boosts ) ? null : $boosts,
 			// D190: a key bound to this site's partition cannot reach the ranking expressions,
 			// which apply to every site sharing the SN site, so boosts are off and say why.
-			'boosts_off' => Viglet_Dumont_API_Client::refused_by_partition( $boosts ) ? $boosts->get_error_message() : '',
+			'boosts_off' => Viglet_Turing_API_Client::refused_by_partition( $boosts ) ? $boosts->get_error_message() : '',
 			'types'      => array_map(
 				static fn ( string $type ) => array(
 					'name'  => $type,
 					'label' => (string) ( get_post_type_object( $type )->labels->name ?? $type ),
 				),
-				array_values( viglet_dumont_get_indexable_types() )
+				array_values( viglet_turing_get_indexable_types() )
 			),
 		);
 	}
@@ -138,7 +138,7 @@ class Viglet_Dumont_Tuning {
 	public function add_synonym( array $terms ) {
 		$terms = array_values( array_unique( array_filter( array_map( 'trim', $terms ) ) ) );
 		if ( count( $terms ) < 2 ) {
-			return new WP_Error( 'viglet_dumont_synonym', __( 'A synonym needs two words or more.', 'viglet-turing-search' ) );
+			return new WP_Error( 'viglet_turing_synonym', __( 'A synonym needs two words or more.', 'viglet-turing-search' ) );
 		}
 		$site = $this->site_id();
 		if ( is_wp_error( $site ) ) {
@@ -180,13 +180,13 @@ class Viglet_Dumont_Tuning {
 		$query = trim( $query );
 		$posts = array_slice( array_filter( array_map( 'get_post', array_map( 'intval', $post_ids ) ) ), 0, 3 );
 		if ( '' === $query || ! $posts ) {
-			return new WP_Error( 'viglet_dumont_spotlight', __( 'Name a search and at least one post.', 'viglet-turing-search' ) );
+			return new WP_Error( 'viglet_turing_spotlight', __( 'Name a search and at least one post.', 'viglet-turing-search' ) );
 		}
 		$site = $this->site_id();
 		if ( is_wp_error( $site ) ) {
 			return $site;
 		}
-		$indexer   = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer   = new Viglet_Turing_Indexer( $this->settings );
 		$documents = array();
 		foreach ( array_values( $posts ) as $i => $post ) {
 			$documents[] = array(
@@ -373,7 +373,7 @@ class Viglet_Dumont_Tuning {
 	 * @return array<int, array{title: string, url: string, featured: bool}>|WP_Error
 	 */
 	public function try_query( string $query ) {
-		$indexer  = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer  = new Viglet_Turing_Indexer( $this->settings );
 		$response = $this->client->search( '' === trim( $query ) ? '*' : $query, 1, 5, array( 'fq[]' => array( $indexer->own_filter() ) ) );
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -415,7 +415,7 @@ class Viglet_Dumont_Tuning {
 			return $item;
 		}
 		if ( ! $item || ! $this->is_ours( $item ) ) {
-			return new WP_Error( 'viglet_dumont_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Turing\'s console.', 'viglet-turing-search' ) );
+			return new WP_Error( 'viglet_turing_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Turing\'s console.', 'viglet-turing-search' ) );
 		}
 		$removed = $this->client->call( 'DELETE', "/api/sn/{$site}/{$kind}/" . rawurlencode( $id ) );
 		if ( is_wp_error( $removed ) ) {

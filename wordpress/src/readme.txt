@@ -17,7 +17,7 @@ Navigation site and replaces the WordPress search page with Turing's results.
 
 * Publishing, updating, unpublishing, trashing or deleting a post updates the index. The save
   only queues the post; WP-Cron sends the queue in batches, retries with backoff when Turing is
-  unreachable, and `wp dumont queue run` drains it on hosts that disable WP-Cron.
+  unreachable, and `wp turing queue run` drains it on hosts that disable WP-Cron.
 * A bulk action in the settings page indexes everything already published, batch by batch.
 * Posts, pages and the custom post types you choose are indexed, with categories, tags,
   approved comments and the custom fields you name.

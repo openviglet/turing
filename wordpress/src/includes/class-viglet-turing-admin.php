@@ -1,10 +1,10 @@
 <?php
 /**
- * Viglet Dumont Admin
+ * Viglet Turing Admin
  *
  * Admin settings page and AJAX handlers.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The settings page under wp-admin and the assets it loads.
  */
-class Viglet_Dumont_Admin {
+class Viglet_Turing_Admin {
 
 	/**
 	 * Hook the menu entry, the settings registration and the assets.
@@ -34,14 +34,14 @@ class Viglet_Dumont_Admin {
 	 * The queue replays them on its own once Turing answers again.
 	 */
 	public function stopped_notice(): void {
-		if ( ! current_user_can( 'manage_options' ) || Viglet_Dumont_Settings::demo() ) {
+		if ( ! current_user_can( 'manage_options' ) || Viglet_Turing_Settings::demo() ) {
 			return;
 		}
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $screen && str_contains( (string) $screen->id, 'viglet-dumont-health' ) ) {
+		if ( $screen && str_contains( (string) $screen->id, 'viglet-turing-health' ) ) {
 			return;
 		}
-		$failed = ( new Viglet_Dumont_Queue() )->counts()['failed'];
+		$failed = ( new Viglet_Turing_Queue() )->counts()['failed'];
 		if ( $failed < 1 ) {
 			return;
 		}
@@ -59,7 +59,7 @@ class Viglet_Dumont_Admin {
 					$failed
 				)
 			),
-			esc_url( admin_url( 'admin.php?page=viglet-dumont-health' ) ),
+			esc_url( admin_url( 'admin.php?page=viglet-turing-health' ) ),
 			esc_html__( 'Search health', 'viglet-turing-search' )
 		);
 	}
@@ -70,12 +70,12 @@ class Viglet_Dumont_Admin {
 	 */
 	public function demo_notice(): void {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! Viglet_Dumont_Settings::demo() || ! $screen || ! str_contains( (string) $screen->id, 'viglet-dumont' ) ) {
+		if ( ! Viglet_Turing_Settings::demo() || ! $screen || ! str_contains( (string) $screen->id, 'viglet-turing' ) ) {
 			return;
 		}
 		printf(
 			'<div class="notice notice-info"><p>%s</p></div>',
-			esc_html( Viglet_Dumont_API_Client::demo_refusal()->get_error_message() . ' ' . __( 'Search and the AI features work from the visitors\' browsers; Search tuning and Search insights are hidden.', 'viglet-turing-search' ) )
+			esc_html( Viglet_Turing_API_Client::demo_refusal()->get_error_message() . ' ' . __( 'Search and the AI features work from the visitors\' browsers; Search tuning and Search insights are hidden.', 'viglet-turing-search' ) )
 		);
 	}
 
@@ -84,13 +84,13 @@ class Viglet_Dumont_Admin {
 	 */
 	public function add_dashboard_widget(): void {
 		// Insights read Turing's metrics, which need the key demo mode never holds (D238).
-		if ( ! current_user_can( 'manage_options' ) || Viglet_Dumont_Settings::demo() ) {
+		if ( ! current_user_can( 'manage_options' ) || Viglet_Turing_Settings::demo() ) {
 			return;
 		}
 		wp_add_dashboard_widget(
-			'viglet_dumont_insights',
+			'viglet_turing_insights',
 			__( 'Site search this week', 'viglet-turing-search' ),
-			array( new Viglet_Dumont_Insights(), 'render_widget' )
+			array( new Viglet_Turing_Insights(), 'render_widget' )
 		);
 	}
 
@@ -102,61 +102,61 @@ class Viglet_Dumont_Admin {
 			__( 'Viglet Turing Search', 'viglet-turing-search' ),
 			__( 'Viglet Turing Search', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont',
+			'viglet-turing',
 			array( $this, 'render_settings_page' ),
 			'dashicons-search',
 			80
 		);
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Settings', 'viglet-turing-search' ),
 			__( 'Settings', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont',
+			'viglet-turing',
 			array( $this, 'render_settings_page' )
 		);
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Connect to Turing', 'viglet-turing-search' ),
 			__( 'Setup', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont-setup',
+			'viglet-turing-setup',
 			array( $this, 'render_setup_page' )
 		);
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Search fields', 'viglet-turing-search' ),
 			__( 'Fields', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont-fields',
+			'viglet-turing-fields',
 			array( $this, 'render_fields_page' )
 		);
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Search health', 'viglet-turing-search' ),
 			__( 'Health', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont-health',
+			'viglet-turing-health',
 			array( $this, 'render_health_page' )
 		);
 		// Tuning and Insights read and write through Turing's keyed endpoints: demo mode has none (D238).
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return;
 		}
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Search tuning', 'viglet-turing-search' ),
 			__( 'Tuning', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont-tuning',
+			'viglet-turing-tuning',
 			array( $this, 'render_tuning_page' )
 		);
 		add_submenu_page(
-			'viglet-dumont',
+			'viglet-turing',
 			__( 'Search insights', 'viglet-turing-search' ),
 			__( 'Insights', 'viglet-turing-search' ),
 			'manage_options',
-			'viglet-dumont-insights',
+			'viglet-turing-insights',
 			array( $this, 'render_insights_page' )
 		);
 	}
@@ -165,35 +165,35 @@ class Viglet_Dumont_Admin {
 	 * The Search insights page (D178): a mount point for the app in admin/build/insights.js.
 	 */
 	public function render_insights_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Search insights', 'viglet-turing-search' ) . '</h1><div id="viglet-dumont-insights"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search insights', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-insights"></div></div>';
 	}
 
 	/**
 	 * The Search tuning page: a mount point for the app in admin/build/tuning.js.
 	 */
 	public function render_tuning_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Search tuning', 'viglet-turing-search' ) . '</h1><div id="viglet-dumont-tuning"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search tuning', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-tuning"></div></div>';
 	}
 
 	/**
 	 * The Setup page: a mount point for the app in admin/build/setup.js.
 	 */
 	public function render_setup_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Connect to Turing', 'viglet-turing-search' ) . '</h1><div id="viglet-dumont-setup"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Connect to Turing', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-setup"></div></div>';
 	}
 
 	/**
 	 * The Fields page: a mount point for the app in admin/build/mapping.js.
 	 */
 	public function render_fields_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Search fields', 'viglet-turing-search' ) . '</h1><div id="viglet-dumont-mapping"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search fields', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-mapping"></div></div>';
 	}
 
 	/**
 	 * The Health page: a mount point for the app in admin/build/health.js.
 	 */
 	public function render_health_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Search health', 'viglet-turing-search' ) . '</h1><div id="viglet-dumont-health"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Search health', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-health"></div></div>';
 	}
 
 	/**
@@ -201,8 +201,8 @@ class Viglet_Dumont_Admin {
 	 */
 	public function register_settings(): void {
 		register_setting(
-			'viglet_dumont_settings_group',
-			VIGLET_DUMONT_OPTION,
+			'viglet_turing_settings_group',
+			VIGLET_TURING_OPTION,
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 			)
@@ -219,11 +219,11 @@ class Viglet_Dumont_Admin {
 
 		$sanitized['server_url'] = esc_url_raw( $input['server_url'] ?? 'http://localhost:2700' );
 		$sanitized['site_name']  = sanitize_text_field( $input['site_name'] ?? 'default' );
-		$sanitized['site_key']   = Viglet_Dumont_Indexer::sanitize_site_key( (string) ( $input['site_key'] ?? '' ) );
+		$sanitized['site_key']   = Viglet_Turing_Indexer::sanitize_site_key( (string) ( $input['site_key'] ?? '' ) );
 		// The sibling sites a search here also reads (D303), typed one per line.
-		$sanitized['search_site_keys'] = Viglet_Dumont_Settings::search_sites( $input['search_site_keys'] ?? '' );
+		$sanitized['search_site_keys'] = Viglet_Turing_Settings::search_sites( $input['search_site_keys'] ?? '' );
 		// The key is never printed back into the form, so an empty field means "keep the stored one".
-		$stored                  = get_option( VIGLET_DUMONT_OPTION, array() );
+		$stored                  = get_option( VIGLET_TURING_OPTION, array() );
 		$typed_key               = sanitize_text_field( $input['api_key'] ?? '' );
 		$sanitized['api_key']    = '' !== $typed_key ? $typed_key : (string) ( is_array( $stored ) ? ( $stored['api_key'] ?? '' ) : '' );
 		$sanitized['locale']     = sanitize_text_field( $input['locale'] ?? 'en_US' );
@@ -248,23 +248,23 @@ class Viglet_Dumont_Admin {
 		$sanitized['instant_overlay']     = ! empty( $input['instant_overlay'] ) ? 1 : 0;
 		$sanitized['overlay_layout']      = 'immersive' === ( $input['overlay_layout'] ?? '' ) ? 'immersive' : 'list';
 		$sanitized['overlay_answers']     = ! empty( $input['overlay_answers'] ) ? 1 : 0;
-		$sanitized['overlay_explore']     = Viglet_Dumont_Native_Search::sanitize_explore( $input['overlay_explore'] ?? '' );
+		$sanitized['overlay_explore']     = Viglet_Turing_Native_Search::sanitize_explore( $input['overlay_explore'] ?? '' );
 		$sanitized['search_page']         = max( 0, (int) ( $input['search_page'] ?? 0 ) );
-		$sanitized['search_url']          = Viglet_Dumont_Native_Search::sanitize_search_url( (string) ( $input['search_url'] ?? '' ) );
+		$sanitized['search_url']          = Viglet_Turing_Native_Search::sanitize_search_url( (string) ( $input['search_url'] ?? '' ) );
 		$sanitized['track_clicks']        = ! empty( $input['track_clicks'] ) ? 1 : 0;
 		$sanitized['analytics_ga']        = ! empty( $input['analytics_ga'] ) ? 1 : 0;
-		$sanitized['ga_measurement_id']   = Viglet_Dumont_Native_Search::sanitize_measurement_id( (string) ( $input['ga_measurement_id'] ?? '' ) );
+		$sanitized['ga_measurement_id']   = Viglet_Turing_Native_Search::sanitize_measurement_id( (string) ( $input['ga_measurement_id'] ?? '' ) );
 		$sanitized['related_after']       = array_values( array_intersect( (array) ( $input['related_after'] ?? array() ), get_post_types( array( 'public' => true ) ) ) );
 		$sanitized['generative_ai']       = ! empty( $input['generative_ai'] ) ? 1 : 0;
 		$sanitized['assistant_launcher']  = ! empty( $input['assistant_launcher'] ) ? 1 : 0;
 		$sanitized['entity_extraction']   = ! empty( $input['entity_extraction'] ) ? 1 : 0;
-		$sanitized['name_variants']       = Viglet_Dumont_Entities::variants( (string) ( $input['name_variants'] ?? '' ) );
-		$sanitized['trending_block']      = Viglet_Dumont_Trending::lines( (string) ( $input['trending_block'] ?? '' ) );
-		$sanitized['trending_fallback']   = Viglet_Dumont_Trending::lines( (string) ( $input['trending_fallback'] ?? '' ) );
+		$sanitized['name_variants']       = Viglet_Turing_Entities::variants( (string) ( $input['name_variants'] ?? '' ) );
+		$sanitized['trending_block']      = Viglet_Turing_Trending::lines( (string) ( $input['trending_block'] ?? '' ) );
+		$sanitized['trending_fallback']   = Viglet_Turing_Trending::lines( (string) ( $input['trending_fallback'] ?? '' ) );
 		// The chips follow the new lists at once, not after the hour they are kept.
-		delete_transient( Viglet_Dumont_Trending::CACHE );
+		delete_transient( Viglet_Turing_Trending::CACHE );
 
-		return Viglet_Dumont_Settings::without_overridden( $sanitized );
+		return Viglet_Turing_Settings::without_overridden( $sanitized );
 	}
 
 	/**
@@ -276,41 +276,41 @@ class Viglet_Dumont_Admin {
 		// By the page's slug: WordPress prefixes a submenu's hook with its parent menu's title,
 		// sanitized and translated, so the prefix changes with the plugin's name (D273).
 		$builds = array(
-			'viglet-dumont-health'   => 'health',
-			'viglet-dumont-fields'   => 'mapping',
-			'viglet-dumont-setup'    => 'setup',
-			'viglet-dumont-tuning'   => 'tuning',
-			'viglet-dumont-insights' => 'insights',
+			'viglet-turing-health'   => 'health',
+			'viglet-turing-fields'   => 'mapping',
+			'viglet-turing-setup'    => 'setup',
+			'viglet-turing-tuning'   => 'tuning',
+			'viglet-turing-insights' => 'insights',
 		);
-		$page   = preg_match( '/_page_(viglet-dumont-[a-z]+)$/', $hook, $match ) ? $match[1] : '';
+		$page   = preg_match( '/_page_(viglet-turing-[a-z]+)$/', $hook, $match ) ? $match[1] : '';
 		if ( isset( $builds[ $page ] ) ) {
 			$this->enqueue_build( $builds[ $page ] );
 			return;
 		}
-		if ( 'toplevel_page_viglet-dumont' !== $hook ) {
+		if ( 'toplevel_page_viglet-turing' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
-			'viglet-dumont-admin',
-			VIGLET_DUMONT_URL . 'admin/css/admin.css',
+			'viglet-turing-admin',
+			VIGLET_TURING_URL . 'admin/css/admin.css',
 			array(),
-			VIGLET_DUMONT_VERSION
+			VIGLET_TURING_VERSION
 		);
 
 		wp_enqueue_script(
-			'viglet-dumont-admin',
-			VIGLET_DUMONT_URL . 'admin/js/admin.js',
+			'viglet-turing-admin',
+			VIGLET_TURING_URL . 'admin/js/admin.js',
 			array( 'jquery' ),
-			VIGLET_DUMONT_VERSION,
+			VIGLET_TURING_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'viglet-dumont-admin',
-			'vigletDumont',
+			'viglet-turing-admin',
+			'vigletTuring',
 			array(
-				'restUrl' => rest_url( 'viglet-dumont/v1/' ),
+				'restUrl' => rest_url( 'viglet-turing/v1/' ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'strings' => array(
 					'indexing'        => __( 'Indexing...', 'viglet-turing-search' ),
@@ -331,7 +331,7 @@ class Viglet_Dumont_Admin {
 					/* translators: 1: posts sent, 2: posts that failed. */
 					'ended_cancelled' => __( 'The reindex was cancelled after %1$d posts sent.', 'viglet-turing-search' ),
 					'health'          => __( 'Search health', 'viglet-turing-search' ),
-					'health_url'      => admin_url( 'admin.php?page=viglet-dumont-health' ),
+					'health_url'      => admin_url( 'admin.php?page=viglet-turing-health' ),
 				),
 			)
 		);
@@ -344,7 +344,7 @@ class Viglet_Dumont_Admin {
 	 * @param string $entry The entry name, e.g. health.
 	 */
 	private function enqueue_build( string $entry ): void {
-		$asset_file = VIGLET_DUMONT_DIR . "admin/build/{$entry}.asset.php";
+		$asset_file = VIGLET_TURING_DIR . "admin/build/{$entry}.asset.php";
 		if ( ! file_exists( $asset_file ) ) {
 			add_action(
 				'admin_notices',
@@ -357,13 +357,13 @@ class Viglet_Dumont_Admin {
 
 		$asset = include $asset_file;
 		wp_enqueue_script(
-			"viglet-dumont-{$entry}",
-			VIGLET_DUMONT_URL . "admin/build/{$entry}.js",
+			"viglet-turing-{$entry}",
+			VIGLET_TURING_URL . "admin/build/{$entry}.js",
 			$asset['dependencies'],
 			$asset['version'],
 			true
 		);
-		wp_set_script_translations( "viglet-dumont-{$entry}", 'viglet-turing-search', VIGLET_DUMONT_DIR . 'languages' );
+		wp_set_script_translations( "viglet-turing-{$entry}", 'viglet-turing-search', VIGLET_TURING_DIR . 'languages' );
 		wp_enqueue_style( 'wp-components' );
 	}
 
@@ -371,7 +371,7 @@ class Viglet_Dumont_Admin {
 	 * Render the settings page.
 	 */
 	public function render_settings_page(): void {
-		$settings   = viglet_dumont_get_settings();
+		$settings   = viglet_turing_get_settings();
 		$post_types = get_post_types(
 			array(
 				'public'   => true,
@@ -380,8 +380,8 @@ class Viglet_Dumont_Admin {
 			'objects'
 		);
 
-		include VIGLET_DUMONT_DIR . 'admin/views/settings-page.php';
+		include VIGLET_TURING_DIR . 'admin/views/settings-page.php';
 	}
 }
 
-new Viglet_Dumont_Admin();
+new Viglet_Turing_Admin();

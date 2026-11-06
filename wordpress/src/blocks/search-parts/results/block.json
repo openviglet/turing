@@ -1,26 +1,26 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "viglet-dumont/search-results",
+	"name": "viglet-turing/search-results",
 	"title": "Search results",
 	"category": "widgets",
 	"icon": "list-view",
 	"description": "The Turing search block’s results: the count, the sort, the answer and the list.",
 	"textdomain": "viglet-turing-search",
 	"ancestor": [
-		"viglet-dumont/search"
+		"viglet-turing/search"
 	],
 	"usesContext": [
-		"viglet-dumont/search/placeholder",
-		"viglet-dumont/search/showFacets",
-		"viglet-dumont/search/showSort",
-		"viglet-dumont/search/showAnswer",
-		"viglet-dumont/search/suggestFilters", "viglet-dumont/search/applyFilters",
-		"viglet-dumont/search/showImage",
-		"viglet-dumont/search/showDate",
-		"viglet-dumont/search/showType",
-		"viglet-dumont/search/showSnippet",
-		"viglet-dumont/search/filters"
+		"viglet-turing/search/placeholder",
+		"viglet-turing/search/showFacets",
+		"viglet-turing/search/showSort",
+		"viglet-turing/search/showAnswer",
+		"viglet-turing/search/suggestFilters", "viglet-turing/search/applyFilters",
+		"viglet-turing/search/showImage",
+		"viglet-turing/search/showDate",
+		"viglet-turing/search/showType",
+		"viglet-turing/search/showSnippet",
+		"viglet-turing/search/filters"
 	],
 	"supports": {
 		"html": false,
@@ -30,6 +30,6 @@
 			"padding": true
 		}
 	},
-	"editorScript": "viglet-dumont-search-block-editor",
+	"editorScript": "viglet-turing-search-block-editor",
 	"render": "file:../render.php"
 }

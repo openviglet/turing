@@ -26,7 +26,7 @@ import {
 	shopProducts,
 	siteFilters,
 	siteUrl,
-} from 'viglet-dumont/search';
+} from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
 const client = createClient();
@@ -95,7 +95,7 @@ function tickFirstSellable( stages ) {
 	}
 }
 
-const { state } = store( 'viglet-dumont/copilot', {
+const { state } = store( 'viglet-turing/copilot', {
 	state: {
 		get asking() {
 			return 'kit' !== state.mode;

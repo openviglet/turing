@@ -7,14 +7,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T23:42:16+00:00\n"
+"POT-Creation-Date: 2026-11-06T19:38:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
 
 #: src/admin/views/settings-page.php:26
-#: src/includes/class-viglet-dumont-admin.php:102
-#: src/includes/class-viglet-dumont-admin.php:103
+#: src/includes/class-viglet-turing-admin.php:102
+#: src/includes/class-viglet-turing-admin.php:103
 msgid "Viglet Turing Search"
 msgstr ""
 
@@ -28,15 +28,15 @@ msgid "Connection"
 msgstr ""
 
 #: src/admin/views/settings-page.php:44
-#: src/includes/class-viglet-dumont-cli.php:97
+#: src/includes/class-viglet-turing-cli.php:97
 msgid "Indexing"
 msgstr ""
 
 #: src/admin/views/settings-page.php:48
 #: src/blocks/search/parts/box.php:22
 #: src/blocks/search/parts/box.php:48
-#: src/includes/class-viglet-dumont-native-search.php:268
-#: src/includes/class-viglet-dumont-post-state.php:110
+#: src/includes/class-viglet-turing-native-search.php:345
+#: src/includes/class-viglet-turing-post-state.php:110
 #: assets/admin/insights.js:165
 #: assets/admin/tuning.js:396
 #: src/admin/js/editor-panel.js:324
@@ -523,7 +523,7 @@ msgid "New conversation"
 msgstr ""
 
 #: src/blocks/assistant/render.php:64
-#: src/includes/class-viglet-dumont-native-search.php:269
+#: src/includes/class-viglet-turing-native-search.php:346
 msgid "Close"
 msgstr ""
 
@@ -731,7 +731,7 @@ msgid "It could not be added to the cart."
 msgstr ""
 
 #: src/blocks/copilot/render.php:133
-#: src/blocks/copilot/render.php:245
+#: src/blocks/copilot/render.php:251
 msgid "Ask"
 msgstr ""
 
@@ -785,7 +785,7 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: src/blocks/copilot/render.php:222
+#: src/blocks/copilot/render.php:228
 msgid "Guides for this plan"
 msgstr ""
 
@@ -909,7 +909,7 @@ msgid "Sort by"
 msgstr ""
 
 #: src/blocks/search/parts/trending.php:29
-#: src/includes/class-viglet-dumont-native-search.php:258
+#: src/includes/class-viglet-turing-native-search.php:335
 msgid "Popular searches"
 msgstr ""
 
@@ -964,18 +964,18 @@ msgid "Published"
 msgstr ""
 
 #: src/blocks/search/render.php:117
-#: src/includes/class-viglet-dumont-mapping.php:432
-#: src/includes/class-viglet-dumont-native-search.php:778
+#: src/includes/class-viglet-turing-mapping.php:432
+#: src/includes/class-viglet-turing-native-search.php:864
 msgid "Site"
 msgstr ""
 
 #. translators: %d: how many results Turing found.
 #: src/blocks/search/render.php:132
 #: src/blocks/search/render.php:134
-#: src/includes/class-viglet-dumont-native-search.php:275
-#: src/includes/class-viglet-dumont-native-search.php:277
-#: src/includes/class-viglet-dumont-native-search.php:682
-#: src/includes/class-viglet-dumont-native-search.php:921
+#: src/includes/class-viglet-turing-native-search.php:352
+#: src/includes/class-viglet-turing-native-search.php:354
+#: src/includes/class-viglet-turing-native-search.php:768
+#: src/includes/class-viglet-turing-native-search.php:1007
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -983,7 +983,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/blocks/search/render.php:136
-#: src/includes/class-viglet-dumont-native-search.php:279
+#: src/includes/class-viglet-turing-native-search.php:356
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr ""
@@ -993,268 +993,268 @@ msgid "Reading your search…"
 msgstr ""
 
 #: src/blocks/search/render.php:141
-#: src/includes/class-viglet-dumont-native-search.php:280
+#: src/includes/class-viglet-turing-native-search.php:357
 msgid "Search is unavailable right now."
 msgstr ""
 
 #. translators: %d: queued edits that stopped retrying.
-#: src/includes/class-viglet-dumont-admin.php:53
+#: src/includes/class-viglet-turing-admin.php:53
 #, php-format
 msgid "%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers."
 msgid_plural "%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/includes/class-viglet-dumont-admin.php:63
-#: src/includes/class-viglet-dumont-admin.php:136
-#: src/includes/class-viglet-dumont-admin.php:196
-#: src/includes/class-viglet-dumont-admin.php:333
+#: src/includes/class-viglet-turing-admin.php:63
+#: src/includes/class-viglet-turing-admin.php:136
+#: src/includes/class-viglet-turing-admin.php:196
+#: src/includes/class-viglet-turing-admin.php:333
 msgid "Search health"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:78
+#: src/includes/class-viglet-turing-admin.php:78
 msgid "Search and the AI features work from the visitors' browsers; Search tuning and Search insights are hidden."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:92
+#: src/includes/class-viglet-turing-admin.php:92
 msgid "Site search this week"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:112
-#: src/includes/class-viglet-dumont-admin.php:113
+#: src/includes/class-viglet-turing-admin.php:112
+#: src/includes/class-viglet-turing-admin.php:113
 msgid "Settings"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:120
-#: src/includes/class-viglet-dumont-admin.php:182
+#: src/includes/class-viglet-turing-admin.php:120
+#: src/includes/class-viglet-turing-admin.php:182
 msgid "Connect to Turing"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:121
+#: src/includes/class-viglet-turing-admin.php:121
 msgid "Setup"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:128
-#: src/includes/class-viglet-dumont-admin.php:189
+#: src/includes/class-viglet-turing-admin.php:128
+#: src/includes/class-viglet-turing-admin.php:189
 msgid "Search fields"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:129
+#: src/includes/class-viglet-turing-admin.php:129
 msgid "Fields"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:137
+#: src/includes/class-viglet-turing-admin.php:137
 msgid "Health"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:148
-#: src/includes/class-viglet-dumont-admin.php:175
+#: src/includes/class-viglet-turing-admin.php:148
+#: src/includes/class-viglet-turing-admin.php:175
 msgid "Search tuning"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:149
+#: src/includes/class-viglet-turing-admin.php:149
 msgid "Tuning"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:156
-#: src/includes/class-viglet-dumont-admin.php:168
+#: src/includes/class-viglet-turing-admin.php:156
+#: src/includes/class-viglet-turing-admin.php:168
 msgid "Search insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:157
+#: src/includes/class-viglet-turing-admin.php:157
 msgid "Insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:316
+#: src/includes/class-viglet-turing-admin.php:316
 msgid "Indexing..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:317
+#: src/includes/class-viglet-turing-admin.php:317
 msgid "Complete!"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:318
+#: src/includes/class-viglet-turing-admin.php:318
 msgid "Error"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:319
+#: src/includes/class-viglet-turing-admin.php:319
 msgid "Are you sure you want to delete all indexed content? This cannot be undone."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:320
+#: src/includes/class-viglet-turing-admin.php:320
 msgid "Deleting..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:321
+#: src/includes/class-viglet-turing-admin.php:321
 msgid "All indexed content has been deleted."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:322
+#: src/includes/class-viglet-turing-admin.php:322
 msgid "Testing connection..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:323
+#: src/includes/class-viglet-turing-admin.php:323
 msgid "Total"
 msgstr ""
 
 #. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:326
+#: src/includes/class-viglet-turing-admin.php:326
 #, php-format
 msgid "Running in the background, so you can leave this page: %1$d of %2$d posts done, %3$d failed."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:328
+#: src/includes/class-viglet-turing-admin.php:328
 #, php-format
 msgid "Indexing complete: %1$d posts sent."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:330
+#: src/includes/class-viglet-turing-admin.php:330
 #, php-format
 msgid "The reindex ended with failures: %1$d sent, %2$d failed. Search health shows the errors."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-admin.php:332
+#: src/includes/class-viglet-turing-admin.php:332
 #, php-format
 msgid "The reindex was cancelled after %1$d posts sent."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-admin.php:352
+#: src/includes/class-viglet-turing-admin.php:352
 msgid "The plugin's admin scripts are not built. Run npm ci && npm run build in the plugin's source folder, or install a release zip."
 msgstr ""
 
 #. translators: %s: when Turing's AI budget for this site resets, as the site writes a date and time.
-#: src/includes/class-viglet-dumont-ai-quota.php:164
+#: src/includes/class-viglet-turing-ai-quota.php:164
 #, php-format
 msgid "AI budget exhausted until %s."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-ai-quota.php:165
+#: src/includes/class-viglet-turing-ai-quota.php:165
 msgid "AI budget exhausted for now."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-ai-quota.php:179
+#: src/includes/class-viglet-turing-ai-quota.php:179
 msgid "Answers are paused for now; search still works."
 msgstr ""
 
 #. translators: %s: when the site's AI answers come back, as a date and time.
-#: src/includes/class-viglet-dumont-ai-quota.php:188
+#: src/includes/class-viglet-turing-ai-quota.php:188
 #, php-format
 msgid "Answers are paused until %s; search still works."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:173
+#: src/includes/class-viglet-turing-api-client.php:173
 msgid "Connection successful"
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:175
+#: src/includes/class-viglet-turing-api-client.php:175
 #, php-format
 msgid "Server returned HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:243
+#: src/includes/class-viglet-turing-api-client.php:243
 msgid "The files could not be packed for Turing."
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:460
+#: src/includes/class-viglet-turing-api-client.php:460
 #, php-format
 msgid "Turing could not plan the fields (HTTP %d)."
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:529
+#: src/includes/class-viglet-turing-api-client.php:529
 #, php-format
 msgid "Search failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:537
+#: src/includes/class-viglet-turing-api-client.php:537
 msgid "Invalid JSON response from server"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:603
+#: src/includes/class-viglet-turing-api-client.php:603
 msgid "Turing did not answer a moment ago; this page renders without it."
 msgstr ""
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-api-client.php:663
+#: src/includes/class-viglet-turing-api-client.php:663
 #, php-format
 msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
 msgstr ""
 
 #. translators: %s: the Turing address the plugin is set to.
-#: src/includes/class-viglet-dumont-api-client.php:698
+#: src/includes/class-viglet-turing-api-client.php:698
 #, php-format
 msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
 msgstr ""
 
 #. translators: %s: Turing's reason for refusing the request.
-#: src/includes/class-viglet-dumont-api-client.php:909
+#: src/includes/class-viglet-turing-api-client.php:909
 #, php-format
 msgid "Turing refused this site’s API key here: %s"
 msgstr ""
 
 #. translators: %d: the HTTP status Turing answered with.
-#: src/includes/class-viglet-dumont-api-client.php:913
+#: src/includes/class-viglet-turing-api-client.php:913
 #, php-format
 msgid "Turing answered HTTP %d."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1011
+#: src/includes/class-viglet-turing-api-client.php:1011
 msgid "Generative AI is off for this SN site in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1012
+#: src/includes/class-viglet-turing-api-client.php:1012
 msgid "The SN site has no AI agent in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1013
+#: src/includes/class-viglet-turing-api-client.php:1013
 msgid "The SN site’s AI agent is turned off in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1014
+#: src/includes/class-viglet-turing-api-client.php:1014
 msgid "The SN site’s AI agent does not answer from the site’s content."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1015
+#: src/includes/class-viglet-turing-api-client.php:1015
 msgid "The SN site’s AI agent has no language model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1016
+#: src/includes/class-viglet-turing-api-client.php:1016
 msgid "The SN site’s AI agent has no embedding model."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1017
+#: src/includes/class-viglet-turing-api-client.php:1017
 msgid "The SN site’s AI agent has no vector store."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1021
-#: src/includes/class-viglet-dumont-api-client.php:1109
+#: src/includes/class-viglet-turing-api-client.php:1021
+#: src/includes/class-viglet-turing-api-client.php:1109
 msgid "Turing has no catalog copilot set up."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1022
-#: src/includes/class-viglet-dumont-api-client.php:1104
+#: src/includes/class-viglet-turing-api-client.php:1022
+#: src/includes/class-viglet-turing-api-client.php:1104
 msgid "No language model is set up for it in Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-api-client.php:1044
+#: src/includes/class-viglet-turing-api-client.php:1044
 msgid "Turing did not answer."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-ai.php:49
+#: src/includes/class-viglet-turing-cli-ai.php:49
 msgid "yes"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-ai.php:49
+#: src/includes/class-viglet-turing-cli-ai.php:49
 msgid "no"
 msgstr ""
 
 #. translators: %d: how many AI features are off.
-#: src/includes/class-viglet-dumont-cli-ai.php:66
+#: src/includes/class-viglet-turing-cli-ai.php:66
 #, php-format
 msgid "%d AI feature is off."
 msgid_plural "%d AI features are off."
@@ -1262,681 +1262,681 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: how many failed jobs were put back in line.
-#: src/includes/class-viglet-dumont-cli-queue.php:41
+#: src/includes/class-viglet-turing-cli-queue.php:41
 #, php-format
 msgid "Replaying %d failed jobs."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-queue.php:48
+#: src/includes/class-viglet-turing-cli-queue.php:48
 msgid "Another worker is sending the queue; try again in a few minutes."
 msgstr ""
 
 #. translators: 1: jobs sent, 2: jobs still waiting, 3: jobs that stopped retrying.
-#: src/includes/class-viglet-dumont-cli-queue.php:55
+#: src/includes/class-viglet-turing-cli-queue.php:55
 #, php-format
 msgid "%1$d sent, %2$d waiting, %3$d stopped retrying."
 msgstr ""
 
 #. translators: 1: the post id, 2: why sending it failed.
-#: src/includes/class-viglet-dumont-cli-queue.php:60
-#: src/includes/class-viglet-dumont-cli.php:182
+#: src/includes/class-viglet-turing-cli-queue.php:60
+#: src/includes/class-viglet-turing-cli.php:182
 #, php-format
 msgid "Post %1$d: %2$s"
 msgstr ""
 
 #. translators: 1: how many jobs failed, 2: the queue summary.
-#: src/includes/class-viglet-dumont-cli-queue.php:63
+#: src/includes/class-viglet-turing-cli-queue.php:63
 #, php-format
 msgid "Stopped after %1$d failed. %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli-queue.php:89
+#: src/includes/class-viglet-turing-cli-queue.php:89
 msgid "The queue is empty."
 msgstr ""
 
 #. translators: 1: Turing's URL answer, 2: the SN site, 3: the site key.
-#: src/includes/class-viglet-dumont-cli.php:43
+#: src/includes/class-viglet-turing-cli.php:43
 #, php-format
 msgid "Connection: %1$s. SN site: %2$s. Site key: %3$s."
 msgstr ""
 
 #. translators: 1: jobs waiting, 2: jobs that stopped retrying.
-#: src/includes/class-viglet-dumont-cli.php:45
+#: src/includes/class-viglet-turing-cli.php:45
 #, php-format
 msgid "Queue: %1$d waiting, %2$d stopped retrying."
 msgstr ""
 
 #. translators: 1: the setting, 2: constant, env or option, 3: the constant's or variable's name.
-#: src/includes/class-viglet-dumont-cli.php:48
+#: src/includes/class-viglet-turing-cli.php:48
 #, php-format
 msgid "Setting %1$s comes from %2$s (%3$s)."
 msgstr ""
 
 #. translators: %s: why Turing refused the fields.
-#: src/includes/class-viglet-dumont-cli.php:52
+#: src/includes/class-viglet-turing-cli.php:52
 #, php-format
 msgid "Fields not provisioned: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-cli.php:111
+#: src/includes/class-viglet-turing-cli.php:111
 msgid "Reindexing"
 msgstr ""
 
 #. translators: %s: why the sweep did not run or failed.
-#: src/includes/class-viglet-dumont-cli.php:115
+#: src/includes/class-viglet-turing-cli.php:115
 #, php-format
 msgid "Sweep: %s"
 msgstr ""
 
 #. translators: %d: documents removed from Turing.
-#: src/includes/class-viglet-dumont-cli.php:118
+#: src/includes/class-viglet-turing-cli.php:118
 #, php-format
 msgid "Swept %d documents WordPress no longer publishes."
 msgstr ""
 
 #. translators: %d: documents that would be removed.
-#: src/includes/class-viglet-dumont-cli.php:153
+#: src/includes/class-viglet-turing-cli.php:153
 #, php-format
 msgid "%d documents would be removed."
 msgstr ""
 
 #. translators: %d: documents removed.
-#: src/includes/class-viglet-dumont-cli.php:155
+#: src/includes/class-viglet-turing-cli.php:155
 #, php-format
 msgid "%d documents removed."
 msgstr ""
 
 #. translators: %d: posts sent that Turing did not answer for in time.
-#: src/includes/class-viglet-dumont-cli.php:188
+#: src/includes/class-viglet-turing-cli.php:188
 #, php-format
-msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp dumont status shows what it holds."
+msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp turing status shows what it holds."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed.
-#: src/includes/class-viglet-dumont-cli.php:193
+#: src/includes/class-viglet-turing-cli.php:193
 #, php-format
 msgid "%1$d sent, %2$d not confirmed, %3$d failed."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-cli.php:196
+#: src/includes/class-viglet-turing-cli.php:196
 #, php-format
 msgid "%1$d sent, %2$d failed."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:69
-#: src/includes/class-viglet-dumont-search-block.php:174
-#: src/includes/class-viglet-dumont-woocommerce.php:106
-#: src/includes/class-viglet-dumont-woocommerce.php:138
+#: src/includes/class-viglet-turing-compare.php:69
+#: src/includes/class-viglet-turing-search-block.php:202
+#: src/includes/class-viglet-turing-woocommerce.php:106
+#: src/includes/class-viglet-turing-woocommerce.php:138
 msgid "Price"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:70
+#: src/includes/class-viglet-turing-compare.php:70
 msgid "Availability"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:71
+#: src/includes/class-viglet-turing-compare.php:71
 #: assets/admin/mapping.js:882
 msgid "Weight"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:72
+#: src/includes/class-viglet-turing-compare.php:72
 msgid "Dimensions"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:73
+#: src/includes/class-viglet-turing-compare.php:73
 msgid "Rating"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:118
+#: src/includes/class-viglet-turing-compare.php:118
 msgid "Two products or more are needed to compare."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:144
-#: src/includes/class-viglet-dumont-insights.php:155
+#: src/includes/class-viglet-turing-compare.php:144
+#: src/includes/class-viglet-turing-insights.php:155
 msgid "Turing wrote no summary."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-compare.php:150
+#: src/includes/class-viglet-turing-compare.php:150
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:49
+#: src/includes/class-viglet-turing-diagnostics.php:49
 msgid "The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:51
+#: src/includes/class-viglet-turing-diagnostics.php:51
 msgid "The URL is well formed."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:62
+#: src/includes/class-viglet-turing-diagnostics.php:62
 msgid "The server answers."
 msgstr ""
 
 #. translators: %d: the HTTP status the server answered with.
-#: src/includes/class-viglet-dumont-diagnostics.php:71
+#: src/includes/class-viglet-turing-diagnostics.php:71
 #, php-format
 msgid "The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:74
+#: src/includes/class-viglet-turing-diagnostics.php:74
 msgid "It is a Turing."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:82
+#: src/includes/class-viglet-turing-diagnostics.php:82
 msgid "No API key is set. Create one in Turing under API Tokens and paste it here."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:95
+#: src/includes/class-viglet-turing-diagnostics.php:95
 msgid "Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-diagnostics.php:99
+#: src/includes/class-viglet-turing-diagnostics.php:99
 msgid "Turing accepts the API key."
 msgstr ""
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-diagnostics.php:106
+#: src/includes/class-viglet-turing-diagnostics.php:106
 #, php-format
 msgid "The SN site %s exists."
 msgstr ""
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-diagnostics.php:111
+#: src/includes/class-viglet-turing-diagnostics.php:111
 #, php-format
 msgid "There is no SN site named %s in Turing yet. Create it from here, or check the name."
 msgstr ""
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
-#: src/includes/class-viglet-dumont-diagnostics.php:132
+#: src/includes/class-viglet-turing-diagnostics.php:132
 #, php-format
 msgid "Demo mode (%s): no API key is needed, and none is sent."
 msgstr ""
 
 #. translators: 1: the SN site's name, 2: what Turing answered.
-#: src/includes/class-viglet-dumont-diagnostics.php:144
+#: src/includes/class-viglet-turing-diagnostics.php:144
 #, php-format
 msgid "The SN site %1$s does not answer a search without a key (%2$s): in demo mode it has to exist and be PUBLIC."
 msgstr ""
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-diagnostics.php:153
+#: src/includes/class-viglet-turing-diagnostics.php:153
 #, php-format
 msgid "The SN site %s answers searches without a key."
 msgstr ""
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:174
+#: src/includes/class-viglet-turing-diagnostics.php:174
 #, php-format
 msgid "%s does not resolve (DNS): check the address for typos, or whether this server can see that network."
 msgstr ""
 
 #. translators: %s: the transport's own message.
-#: src/includes/class-viglet-dumont-diagnostics.php:178
+#: src/includes/class-viglet-turing-diagnostics.php:178
 #, php-format
 msgid "The secure connection failed (TLS): the certificate is invalid, expired or self-signed. Details: %s"
 msgstr ""
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:182
+#: src/includes/class-viglet-turing-diagnostics.php:182
 #, php-format
 msgid "%s did not answer in time: a firewall may be dropping the connection, or Turing is down."
 msgstr ""
 
 #. translators: %s: the host name.
-#: src/includes/class-viglet-dumont-diagnostics.php:186
+#: src/includes/class-viglet-turing-diagnostics.php:186
 #, php-format
 msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-entities.php:84
+#: src/includes/class-viglet-turing-entities.php:84
 #: assets/admin/mapping.js:671
 msgid "People"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-entities.php:85
+#: src/includes/class-viglet-turing-entities.php:85
 #: assets/admin/mapping.js:676
 msgid "Organisations"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-entities.php:86
+#: src/includes/class-viglet-turing-entities.php:86
 #: assets/admin/mapping.js:681
 msgid "Places"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-entities.php:533
+#: src/includes/class-viglet-turing-entities.php:533
 msgid "Turing did not create the thesaurus."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-entities.php:645
+#: src/includes/class-viglet-turing-entities.php:645
 msgid "Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Turing's Thesaurus."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:114
+#: src/includes/class-viglet-turing-events.php:114
 msgid "Documents imported successfully"
 msgstr ""
 
 #. translators: 1: the HTTP status code, 2: the response body.
-#: src/includes/class-viglet-dumont-events.php:117
+#: src/includes/class-viglet-turing-events.php:117
 #, php-format
 msgid "Import failed with HTTP %1$d: %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:120
+#: src/includes/class-viglet-turing-events.php:120
 msgid "Documents removed successfully"
 msgstr ""
 
 #. translators: %d: the HTTP status code Turing answered with.
-#: src/includes/class-viglet-dumont-events.php:123
+#: src/includes/class-viglet-turing-events.php:123
 #, php-format
 msgid "Deindex failed with HTTP %d"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:126
+#: src/includes/class-viglet-turing-events.php:126
 msgid "Fields provisioned"
 msgstr ""
 
 #. translators: %s: the fields whose type Turing would have to change.
-#: src/includes/class-viglet-dumont-events.php:129
+#: src/includes/class-viglet-turing-events.php:129
 #, php-format
 msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
 msgstr ""
 
 #. translators: 1: the HTTP status code, 2: Turing's error message.
-#: src/includes/class-viglet-dumont-events.php:133
+#: src/includes/class-viglet-turing-events.php:133
 #, php-format
 msgid "Provisioning failed with HTTP %1$d: %2$s"
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-events.php:137
+#: src/includes/class-viglet-turing-events.php:137
 #, php-format
 msgid "Bulk: %1$d sent, %2$d failed."
 msgstr ""
 
 #. translators: %d: documents removed from Turing.
-#: src/includes/class-viglet-dumont-events.php:141
+#: src/includes/class-viglet-turing-events.php:141
 #: assets/admin/health.js:148
 #, php-format,js-format
 msgid "%d documents WordPress no longer publishes removed."
 msgstr ""
 
 #. translators: 1: posts sent, 2: posts that failed.
-#: src/includes/class-viglet-dumont-events.php:145
+#: src/includes/class-viglet-turing-events.php:145
 #, php-format
 msgid "Reindex finished: %1$d sent, %2$d failed."
 msgstr ""
 
 #. translators: 1: posts done, 2: posts the reindex had to do.
-#: src/includes/class-viglet-dumont-events.php:149
+#: src/includes/class-viglet-turing-events.php:149
 #, php-format
 msgid "Reindex cancelled after %1$d of %2$d posts."
 msgstr ""
 
 #. translators: %d: queued edits that had stopped retrying and were sent again.
-#: src/includes/class-viglet-dumont-events.php:153
+#: src/includes/class-viglet-turing-events.php:153
 #, php-format
 msgid "Turing answered again: %d stopped edits put back in the queue."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-events.php:159
+#: src/includes/class-viglet-turing-events.php:159
 msgid "Turing answered an AI call again: the AI budget is no longer exhausted."
 msgstr ""
 
 #. translators: %d: how many documents were indexed.
-#: src/includes/class-viglet-dumont-indexer.php:291
+#: src/includes/class-viglet-turing-indexer.php:291
 #: assets/admin/setup.js:133
 #, php-format,js-format
 msgid "Indexing complete. %d documents indexed."
 msgstr ""
 
 #. translators: 1: documents indexed so far, 2: documents to index in all.
-#: src/includes/class-viglet-dumont-indexer.php:293
+#: src/includes/class-viglet-turing-indexer.php:293
 #, php-format
 msgid "Indexed %1$d of %2$d documents..."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:120
+#: src/includes/class-viglet-turing-insights.php:120
 msgid "There are no searches in this period to summarize."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:183
+#: src/includes/class-viglet-turing-insights.php:183
 #: assets/admin/insights.js:370
 msgid "Top searches"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:184
+#: src/includes/class-viglet-turing-insights.php:184
 #: assets/admin/insights.js:393
 msgid "Searches that found nothing"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:188
+#: src/includes/class-viglet-turing-insights.php:188
 msgid "Turing is not keeping search metrics, so no new searches are recorded."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:190
+#: src/includes/class-viglet-turing-insights.php:190
 msgid "No searches this week yet."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-insights.php:206
+#: src/includes/class-viglet-turing-insights.php:206
 msgid "All search insights"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:444
+#: src/includes/class-viglet-turing-mapping.php:444
 msgid "Author"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:614
+#: src/includes/class-viglet-turing-mapping.php:614
 msgid "Today"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:619
+#: src/includes/class-viglet-turing-mapping.php:619
 msgid "Next 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:624
+#: src/includes/class-viglet-turing-mapping.php:624
 msgid "This month"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:629
-#: src/includes/class-viglet-dumont-mapping.php:643
+#: src/includes/class-viglet-turing-mapping.php:629
+#: src/includes/class-viglet-turing-mapping.php:643
 msgid "Upcoming"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:634
+#: src/includes/class-viglet-turing-mapping.php:634
 msgid "Past"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:648
+#: src/includes/class-viglet-turing-mapping.php:648
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:653
+#: src/includes/class-viglet-turing-mapping.php:653
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:658
+#: src/includes/class-viglet-turing-mapping.php:658
 msgid "This year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:663
+#: src/includes/class-viglet-turing-mapping.php:663
 msgid "Before this year"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:688
+#: src/includes/class-viglet-turing-mapping.php:688
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:698
+#: src/includes/class-viglet-turing-mapping.php:698
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-dumont-mapping.php:769
+#: src/includes/class-viglet-turing-mapping.php:769
 #, php-format
 msgid "%1$s is %2$s in Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-dumont-mapping.php:798
+#: src/includes/class-viglet-turing-mapping.php:798
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:814
+#: src/includes/class-viglet-turing-mapping.php:814
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-dumont-mapping.php:822
+#: src/includes/class-viglet-turing-mapping.php:822
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-dumont-mapping.php:830
+#: src/includes/class-viglet-turing-mapping.php:830
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-mapping.php:835
+#: src/includes/class-viglet-turing-mapping.php:835
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:1144
+#: src/includes/class-viglet-turing-mapping.php:1144
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-dumont-mapping.php:1148
+#: src/includes/class-viglet-turing-mapping.php:1148
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-dumont-mapping.php:1152
+#: src/includes/class-viglet-turing-mapping.php:1152
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:239
+#: src/includes/class-viglet-turing-native-search.php:316
 msgid "PDF files"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:259
+#: src/includes/class-viglet-turing-native-search.php:336
 msgid "Explore"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:260
+#: src/includes/class-viglet-turing-native-search.php:337
 msgid "Answer"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:263
+#: src/includes/class-viglet-turing-native-search.php:340
 msgid "Preview"
 msgstr ""
 
 #. translators: %s: a type's name, e.g. "Events".
-#: src/includes/class-viglet-dumont-native-search.php:265
+#: src/includes/class-viglet-turing-native-search.php:342
 #, php-format
 msgid "See all %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:266
+#: src/includes/class-viglet-turing-native-search.php:343
 msgid "Recent searches"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:267
+#: src/includes/class-viglet-turing-native-search.php:344
 msgid "Search this site"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:270
+#: src/includes/class-viglet-turing-native-search.php:347
 msgid "Results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:271
+#: src/includes/class-viglet-turing-native-search.php:348
 msgid "Searching…"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:281
+#: src/includes/class-viglet-turing-native-search.php:358
 msgid "See all results"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:282
+#: src/includes/class-viglet-turing-native-search.php:359
 msgid "Enter: all results · Up and Down: choose one · Esc: close"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-native-search.php:283
+#: src/includes/class-viglet-turing-native-search.php:360
 msgid "Search (Ctrl+K)"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:264
+#: src/includes/class-viglet-turing-operations.php:264
 msgid "Turing could not be searched for this site's documents."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-operations.php:319
-#: src/includes/class-viglet-dumont-reindex.php:340
+#: src/includes/class-viglet-turing-operations.php:319
+#: src/includes/class-viglet-turing-reindex.php:340
 msgid "Skipped: the reindex had failures."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:63
+#: src/includes/class-viglet-turing-post-state.php:63
 msgid "Not published"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:68
+#: src/includes/class-viglet-turing-post-state.php:68
 msgid "Out of search: the date has passed"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:71
+#: src/includes/class-viglet-turing-post-state.php:71
 msgid "Excluded"
 msgstr ""
 
 #. translators: %s: the date the post leaves search.
-#: src/includes/class-viglet-dumont-post-state.php:75
+#: src/includes/class-viglet-turing-post-state.php:75
 #, php-format
 msgid "Leaves search on %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:82
-#: src/includes/class-viglet-dumont-post-state.php:90
+#: src/includes/class-viglet-turing-post-state.php:82
+#: src/includes/class-viglet-turing-post-state.php:90
 #: assets/admin/health.js:625
 #: src/admin/js/editor-panel.js:313
 msgid "Failed"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:84
+#: src/includes/class-viglet-turing-post-state.php:84
 msgid "Queued"
 msgstr ""
 
 #. translators: %s: how long ago, e.g. "2 mins".
-#: src/includes/class-viglet-dumont-post-state.php:96
+#: src/includes/class-viglet-turing-post-state.php:96
 #, php-format
 msgid "Indexed %s ago"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:101
+#: src/includes/class-viglet-turing-post-state.php:101
 msgid "Not indexed yet"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:260
+#: src/includes/class-viglet-turing-post-state.php:260
 msgid "Save some text first: the fit is judged on the saved post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:302
+#: src/includes/class-viglet-turing-post-state.php:302
 msgid "Too complex"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:303
+#: src/includes/class-viglet-turing-post-state.php:303
 msgid "Jargon"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:304
+#: src/includes/class-viglet-turing-post-state.php:304
 msgid "Tone"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:305
+#: src/includes/class-viglet-turing-post-state.php:305
 msgid "Missing context"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:319
-#: src/includes/class-viglet-dumont-post-state.php:381
-#: src/includes/class-viglet-dumont-post-state.php:451
-#: src/includes/class-viglet-dumont-post-state.php:465
+#: src/includes/class-viglet-turing-post-state.php:319
+#: src/includes/class-viglet-turing-post-state.php:381
+#: src/includes/class-viglet-turing-post-state.php:451
+#: src/includes/class-viglet-turing-post-state.php:465
 msgid "No such post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:339
+#: src/includes/class-viglet-turing-post-state.php:339
 msgid "Save some text first: the draft is written from the saved post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:363
+#: src/includes/class-viglet-turing-post-state.php:363
 msgid "Turing wrote no draft."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-post-state.php:521
+#: src/includes/class-viglet-turing-post-state.php:521
 msgid "Turing did not take the post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-reindex.php:101
+#: src/includes/class-viglet-turing-reindex.php:101
 msgid "A reindex is already running."
 msgstr ""
 
 #. translators: %s: the post type asked for.
-#: src/includes/class-viglet-dumont-reindex.php:107
+#: src/includes/class-viglet-turing-reindex.php:107
 #, php-format
 msgid "Posts of type %s are not indexed."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:145
+#: src/includes/class-viglet-turing-search-block.php:173
 msgid "Relevance"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:146
+#: src/includes/class-viglet-turing-search-block.php:174
 msgid "Newest"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-search-block.php:147
+#: src/includes/class-viglet-turing-search-block.php:175
 msgid "Oldest"
 msgstr ""
 
 #. translators: %s: the SN site's name.
-#: src/includes/class-viglet-dumont-tuning.php:68
+#: src/includes/class-viglet-turing-tuning.php:68
 #, php-format
 msgid "Turing has no SN site named %s."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:141
+#: src/includes/class-viglet-turing-tuning.php:141
 msgid "A synonym needs two words or more."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:183
+#: src/includes/class-viglet-turing-tuning.php:183
 msgid "Name a search and at least one post."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:294
+#: src/includes/class-viglet-turing-tuning.php:294
 msgid "newer first"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:297
+#: src/includes/class-viglet-turing-tuning.php:297
 msgid "sticky posts first"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-tuning.php:418
+#: src/includes/class-viglet-turing-tuning.php:418
 msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:107
+#: src/includes/class-viglet-turing-woocommerce.php:107
 msgid "Regular price"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:108
+#: src/includes/class-viglet-turing-woocommerce.php:108
 msgid "Sale price"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:109
+#: src/includes/class-viglet-turing-woocommerce.php:109
 msgid "Stock status"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:110
+#: src/includes/class-viglet-turing-woocommerce.php:110
 msgid "SKU"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:111
+#: src/includes/class-viglet-turing-woocommerce.php:111
 msgid "Average rating"
 msgstr ""
 
 #. translators: %s: a product field, e.g. Price.
-#: src/includes/class-viglet-dumont-woocommerce.php:118
+#: src/includes/class-viglet-turing-woocommerce.php:118
 #, php-format
 msgid "Product: %s"
 msgstr ""
 
-#: src/includes/class-viglet-dumont-woocommerce.php:157
+#: src/includes/class-viglet-turing-woocommerce.php:157
 msgid "Stock"
 msgstr ""
 
@@ -1962,51 +1962,51 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/viglet-dumont.php:102
+#: src/viglet-turing.php:103
 msgid "Answers with sources"
 msgstr ""
 
-#: src/viglet-dumont.php:103
+#: src/viglet-turing.php:104
 msgid "Chat"
 msgstr ""
 
-#: src/viglet-dumont.php:104
+#: src/viglet-turing.php:105
 msgid "Natural-language filters"
 msgstr ""
 
-#: src/viglet-dumont.php:105
+#: src/viglet-turing.php:106
 msgid "Copilot"
 msgstr ""
 
-#: src/viglet-dumont.php:109
+#: src/viglet-turing.php:110
 msgid "Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:110
+#: src/viglet-turing.php:111
 msgid "Site assistant block, or its launcher on every page"
 msgstr ""
 
-#: src/viglet-dumont.php:111
+#: src/viglet-turing.php:112
 msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr ""
 
-#: src/viglet-dumont.php:112
+#: src/viglet-turing.php:113
 msgid "Ask this site block"
 msgstr ""
 
-#: src/viglet-dumont.php:134
+#: src/viglet-turing.php:135
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr ""
 
-#: src/viglet-dumont.php:863
+#: src/viglet-turing.php:870
 msgid "Name the content to index: post_type is all, or one post type."
 msgstr ""
 
-#: src/viglet-dumont.php:1024
+#: src/viglet-turing.php:1031
 msgid "No published post of this type to preview."
 msgstr ""
 
-#: src/viglet-dumont.php:1049
+#: src/viglet-turing.php:1056
 msgid "The body needs a mapping object keyed by post type."
 msgstr ""
 
@@ -3003,43 +3003,43 @@ msgstr ""
 msgid "Build my kit only"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:87
+#: src/admin/js/copilot-block-editor.js:90
 msgid "Plan only"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:88
+#: src/admin/js/copilot-block-editor.js:91
 msgid "Opens on the plan, without Ask a question beside it: for a page of its own."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:101
+#: src/admin/js/copilot-block-editor.js:104
 msgid "What the plan uses"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:107
+#: src/admin/js/copilot-block-editor.js:110
 msgid "Types it proposes"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:111
+#: src/admin/js/copilot-block-editor.js:114
 msgid "Indexed types, comma-separated, e.g. course, event. Blank: products on a shop, any type elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:120
+#: src/admin/js/copilot-block-editor.js:123
 msgid "Types it cites as guides"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:124
+#: src/admin/js/copilot-block-editor.js:127
 msgid "Indexed types, comma-separated, e.g. page. Blank: posts on a shop, none elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:133
+#: src/admin/js/copilot-block-editor.js:136
 msgid "Availability field"
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:137
+#: src/admin/js/copilot-block-editor.js:140
 msgid "The indexed field that says whether an item can be taken, e.g. seats_left. Blank: stock_status on a shop, none elsewhere."
 msgstr ""
 
-#: src/admin/js/copilot-block-editor.js:150
+#: src/admin/js/copilot-block-editor.js:153
 msgid "Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
 msgstr ""
 

@@ -31,14 +31,14 @@ test.beforeAll( ( { seed }, testInfo ) => {
 	saved = ask( [
 		'option',
 		'get',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		'--format=json',
 	] );
 	wp( [
 		'eval',
-		`$m = get_option( 'viglet_dumont_mapping' );
+		`$m = get_option( 'viglet_turing_mapping' );
 		$m['post']['fields'][] = array( 'source' => 'meta:event_day', 'field' => 'event_day', 'type' => 'DATE', 'facet_label' => 'When', 'range' => true, 'periods' => 'agenda' );
-		update_option( 'viglet_dumont_mapping', $m );`,
+		update_option( 'viglet_turing_mapping', $m );`,
 	] );
 	wp( [
 		'post',
@@ -83,7 +83,7 @@ test.beforeAll( ( { seed }, testInfo ) => {
 		String( seed.relatedPostId ),
 		'--field=post_title',
 	] );
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test.afterAll( ( { seed }, testInfo ) => {
@@ -93,7 +93,7 @@ test.afterAll( ( { seed }, testInfo ) => {
 	wp( [
 		'option',
 		'update',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		saved,
 		'--format=json',
 	] );
@@ -104,7 +104,7 @@ test.afterAll( ( { seed }, testInfo ) => {
 	] ) {
 		wp( [ 'post', 'meta', 'delete', String( id ), 'event_day' ] );
 	}
-	wp( [ 'dumont', 'reindex' ] );
+	wp( [ 'turing', 'reindex' ] );
 } );
 
 test.beforeEach( ( {}, testInfo ) => {
@@ -124,12 +124,12 @@ async function under( page, seed, period ) {
 			`event_day_range:${ period }`
 		) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/result/
 	);
 	return page
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 		.allTextContents();
 }

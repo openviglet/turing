@@ -3,7 +3,7 @@
  * Turing field, of which type, and whether each is a facet. Shows where each field stands in
  * Turing and the document a real post produces.
  *
- * Reads and writes `viglet-dumont/v1/mapping`; saving also provisions the fields
+ * Reads and writes `viglet-turing/v1/mapping`; saving also provisions the fields
  * (`/provision`), and "Preview document" reads `/mapping/preview`.
  */
 import apiFetch from '@wordpress/api-fetch';
@@ -535,7 +535,7 @@ function ForeignTypes( { seen, value, onChange } ) {
 						'viglet-turing-search'
 					) }
 				</p>
-				<table className="widefat striped viglet-dumont-foreign-types">
+				<table className="widefat striped viglet-turing-foreign-types">
 					<thead>
 						<tr>
 							<th scope="col">
@@ -742,7 +742,7 @@ function EntityFacets( { value, extraction, status, onChange } ) {
 						</a>
 					</Notice>
 				) }
-				<table className="widefat striped viglet-dumont-entity-facets">
+				<table className="widefat striped viglet-turing-entity-facets">
 					<thead>
 						<tr>
 							<th scope="col">
@@ -826,7 +826,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 	const loadPreview = () => {
 		setPreviewError( '' );
 		apiFetch( {
-			path: `/viglet-dumont/v1/mapping/preview?post_type=${ encodeURIComponent( postType ) }`,
+			path: `/viglet-turing/v1/mapping/preview?post_type=${ encodeURIComponent( postType ) }`,
 		} )
 			.then( setPreview )
 			.catch( ( e ) => setPreviewError( e.message || String( e ) ) );
@@ -990,7 +990,7 @@ function Mapping() {
 	const [ saving, setSaving ] = useState( false );
 
 	const load = useCallback( () => {
-		apiFetch( { path: '/viglet-dumont/v1/mapping' } )
+		apiFetch( { path: '/viglet-turing/v1/mapping' } )
 			.then( ( result ) => {
 				setData( result );
 				setMapping( result.mapping );
@@ -1006,13 +1006,13 @@ function Mapping() {
 		setSaving( true );
 		setNotice( null );
 		apiFetch( {
-			path: '/viglet-dumont/v1/mapping',
+			path: '/viglet-turing/v1/mapping',
 			method: 'POST',
 			data: { mapping, foreign, entities },
 		} )
 			.then( () =>
 				apiFetch( {
-					path: '/viglet-dumont/v1/provision',
+					path: '/viglet-turing/v1/provision',
 					method: 'POST',
 				} ).then(
 					( r ) =>
@@ -1123,7 +1123,7 @@ function Mapping() {
 	);
 }
 
-const mount = document.getElementById( 'viglet-dumont-mapping' );
+const mount = document.getElementById( 'viglet-turing-mapping' );
 if ( mount ) {
 	createRoot( mount ).render( <Mapping /> );
 }

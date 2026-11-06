@@ -1,42 +1,42 @@
 /* The Ask the catalog block (D173): it takes its colours and type from the theme. */
 
 /* The directives toggle `hidden`; a display rule below must never override it. */
-.viglet-dumont-copilot [hidden] {
+.viglet-turing-copilot [hidden] {
 	display: none !important;
 }
-.viglet-dumont-copilot__turns,
-.viglet-dumont-copilot__items {
+.viglet-turing-copilot__turns,
+.viglet-turing-copilot__items {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-.viglet-dumont-copilot__turn {
+.viglet-turing-copilot__turn {
 	margin-bottom: 1.5rem;
 }
 
-.viglet-dumont-copilot__question {
+.viglet-turing-copilot__question {
 	font-weight: 600;
 	margin: 0 0 0.25rem;
 }
 
 /* The answer's Markdown, rendered as paragraphs and lists (D247). */
-.viglet-dumont-copilot__answer {
+.viglet-turing-copilot__answer {
 	margin: 0 0 0.75rem;
 }
 
-.viglet-dumont-copilot__answer > :is(p, ul, ol) {
+.viglet-turing-copilot__answer > :is(p, ul, ol) {
 	margin: 0 0 0.5rem;
 }
 
-.viglet-dumont-copilot__answer > :last-child {
+.viglet-turing-copilot__answer > :last-child {
 	margin-bottom: 0;
 }
 
 /* A cited product: its number, then under its title its price on a line of its own and its
    button and Compare. On one line they were placed by the width of what came before, so a
    struck-out price pushed one item's button past the next one's. */
-.viglet-dumont-copilot__item {
+.viglet-turing-copilot__item {
 	align-items: baseline;
 	display: grid;
 	gap: 0.25rem 0.75rem;
@@ -44,15 +44,15 @@
 	padding: 0.5rem 0;
 }
 
-.viglet-dumont-copilot__rank::before {
+.viglet-turing-copilot__rank::before {
 	content: "[";
 }
 
-.viglet-dumont-copilot__rank::after {
+.viglet-turing-copilot__rank::after {
 	content: "]";
 }
 
-.viglet-dumont-copilot__shop {
+.viglet-turing-copilot__shop {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
@@ -60,52 +60,52 @@
 	grid-column: 2;
 }
 
-.viglet-dumont-copilot__price {
+.viglet-turing-copilot__price {
 	display: flex;
 	flex-basis: 100%;
 	gap: 0.5rem;
 }
 
-.viglet-dumont-copilot__shop del {
+.viglet-turing-copilot__shop del {
 	opacity: 0.7;
 }
 
-.viglet-dumont-copilot__form {
+.viglet-turing-copilot__form {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
 }
 
-.viglet-dumont-copilot__form label {
+.viglet-turing-copilot__form label {
 	flex-basis: 100%;
 }
 
-.viglet-dumont-copilot__form input {
+.viglet-turing-copilot__form input {
 	flex: 1 1 16rem;
 	font: inherit;
 	padding: 0.5rem 0.75rem;
 }
 
 /* Compare on a cited product (D212), into the list the search cards use. */
-.viglet-dumont-copilot__compare {
+.viglet-turing-copilot__compare {
 	align-items: center;
 	display: inline-flex;
 	gap: 0.35rem;
 	font-size: 0.875em;
 }
 
-.viglet-dumont-copilot__compare-bar {
+.viglet-turing-copilot__compare-bar {
 	margin: 1rem 0;
 	text-align: right;
 }
 
 /* One Compare button per page (D302): a repeated bar is left out. */
-.viglet-dumont-copilot__compare-bar.viglet-dumont-compare-bar--repeat {
+.viglet-turing-copilot__compare-bar.viglet-turing-compare-bar--repeat {
 	display: none;
 }
 
 /* Build my kit (D201): a mode switch, then the plan's needs, each with its products. */
-.viglet-dumont-copilot__modes {
+.viglet-turing-copilot__modes {
 	display: inline-flex;
 	gap: 0;
 	margin: 0 0 1rem;
@@ -114,7 +114,7 @@
 	overflow: hidden;
 }
 
-.viglet-dumont-copilot__modes button {
+.viglet-turing-copilot__modes button {
 	background: transparent;
 	border: 0;
 	color: inherit;
@@ -123,63 +123,63 @@
 	padding: 0.35rem 1rem;
 }
 
-.viglet-dumont-copilot__modes button[aria-pressed="true"] {
+.viglet-turing-copilot__modes button[aria-pressed="true"] {
 	background: var(--wp--preset--color--contrast, #111);
 	color: var(--wp--preset--color--base, #fff);
 }
 
-.viglet-dumont-copilot__kit {
+.viglet-turing-copilot__kit {
 	margin-bottom: 1.5rem;
 }
 
-.viglet-dumont-copilot__kit-summary {
+.viglet-turing-copilot__kit-summary {
 	margin: 0 0 1rem;
 }
 
-.viglet-dumont-copilot__stages,
-.viglet-dumont-copilot__kit-items,
-.viglet-dumont-copilot__guides ul {
+.viglet-turing-copilot__stages,
+.viglet-turing-copilot__kit-items,
+.viglet-turing-copilot__guides ul {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-.viglet-dumont-copilot__stage {
+.viglet-turing-copilot__stage {
 	margin-bottom: 1.25rem;
 }
 
-.viglet-dumont-copilot__stage h3,
-.viglet-dumont-copilot__guides h3 {
+.viglet-turing-copilot__stage h3,
+.viglet-turing-copilot__guides h3 {
 	font-size: 1em;
 	margin: 0 0 0.25rem;
 }
 
-.viglet-dumont-copilot__stage-reason {
+.viglet-turing-copilot__stage-reason {
 	margin: 0 0 0.5rem;
 	opacity: 0.8;
 }
 
-.viglet-dumont-copilot__kit-item {
+.viglet-turing-copilot__kit-item {
 	align-items: center;
 	display: flex;
 	gap: 0.75rem;
 	padding: 0.4rem 0;
 }
 
-.viglet-dumont-copilot__kit-name {
+.viglet-turing-copilot__kit-name {
 	display: flex;
 	flex: 1 1 auto;
 	flex-direction: column;
 	min-width: 0;
 }
 
-.viglet-dumont-copilot__kit-reason {
+.viglet-turing-copilot__kit-reason {
 	font-size: 0.875em;
 	opacity: 0.75;
 }
 
 /* Said in words rather than faded: a faded name fails contrast and reads as disabled text. */
-.viglet-dumont-copilot__out {
+.viglet-turing-copilot__out {
 	border: 1px solid currentcolor;
 	border-radius: 999px;
 	font-size: 0.8125em;
@@ -187,15 +187,15 @@
 	white-space: nowrap;
 }
 
-.viglet-dumont-copilot__unfilled {
+.viglet-turing-copilot__unfilled {
 	font-style: italic;
 	margin: 0 0 1rem;
 }
 
-.viglet-dumont-copilot__guides {
+.viglet-turing-copilot__guides {
 	margin: 0 0 1rem;
 }
 
-.viglet-dumont-copilot__kit-cart {
+.viglet-turing-copilot__kit-cart {
 	margin: 1rem 0 0.5rem;
 }

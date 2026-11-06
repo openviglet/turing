@@ -3,7 +3,7 @@
 // click reported like a search result's; a page Turing finds nothing like gets no box.
 import { expect, test } from '../fixtures.mjs';
 
-const related = ( page ) => page.locator( '.wp-block-viglet-dumont-related' );
+const related = ( page ) => page.locator( '.wp-block-viglet-turing-related' );
 
 test( 'a workshop post is followed by the other workshops, drawn on the server', async ( {
 	page,
@@ -19,7 +19,7 @@ test( 'a workshop post is followed by the other workshops, drawn on the server',
 		box.getByRole( 'heading', { name: 'Related posts' } )
 	).toBeVisible();
 
-	const titles = box.locator( '.viglet-dumont-related__title' );
+	const titles = box.locator( '.viglet-turing-related__title' );
 	await expect( titles ).toHaveCount( 3 );
 	const shown = ( await titles.allTextContents() ).map( ( t ) => t.trim() );
 	expect( shown ).not.toContain( title );
@@ -29,15 +29,15 @@ test( 'a workshop post is followed by the other workshops, drawn on the server',
 	).toBeGreaterThanOrEqual( 2 );
 	await look( 'related' );
 	await axe( 'the related content block', {
-		include: '.wp-block-viglet-dumont-related',
+		include: '.wp-block-viglet-turing-related',
 	} );
 
 	// In the HTML itself, for crawlers and visitors without JavaScript.
 	const html = await (
 		await request.get( `/?p=${ seed.relatedPostId }` )
 	).text();
-	expect( html ).toContain( 'viglet-dumont-related__title' );
-	expect( html.match( /viglet-dumont-related__title/g ) ).toHaveLength( 3 );
+	expect( html ).toContain( 'viglet-turing-related__title' );
+	expect( html.match( /viglet-turing-related__title/g ) ).toHaveLength( 3 );
 } );
 
 test( 'opening a related post reports it to Turing with its rank', async ( {
@@ -45,7 +45,7 @@ test( 'opening a related post reports it to Turing with its rank', async ( {
 	seed,
 } ) => {
 	await page.goto( `/?p=${ seed.relatedPostId }` );
-	const links = related( page ).locator( '.viglet-dumont-related__title a' );
+	const links = related( page ).locator( '.viglet-turing-related__title a' );
 	await expect( links ).toHaveCount( 3 );
 
 	const sent = page.waitForRequest( /\/api\/sn\/[^/]+\/click$/ );
@@ -67,14 +67,14 @@ test( 'a template that places the block gets no second one after the content', a
 	await expect( page.getByText( 'About Workshop on blocks.' ) ).toBeVisible();
 	await expect( related( page ) ).toHaveCount( 1 );
 	await expect(
-		related( page ).locator( '.viglet-dumont-related__title' )
+		related( page ).locator( '.viglet-turing-related__title' )
 	).toHaveCount( 3 );
 
 	const html = await (
 		await request.get( `/?p=${ seed.templatedPostId }` )
 	).text();
 	expect(
-		html.match( /class="[^"]*wp-block-viglet-dumont-related[ "]/g )
+		html.match( /class="[^"]*wp-block-viglet-turing-related[ "]/g )
 	).toHaveLength( 1 );
 } );
 

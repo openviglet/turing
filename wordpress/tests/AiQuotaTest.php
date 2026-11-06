@@ -2,15 +2,15 @@
 /**
  * A spent AI budget (D332): what Turing's 429 records, when it is gone, and the visitor's report.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_AI_Quota;
-use Viglet_Dumont_API_Client;
-use Viglet_Dumont_Events;
+use Viglet_Turing_AI_Quota;
+use Viglet_Turing_API_Client;
+use Viglet_Turing_Events;
 
 final class AiQuotaTest extends PluginTestCase {
 
@@ -58,8 +58,8 @@ final class AiQuotaTest extends PluginTestCase {
 		);
 	}
 
-	private function client(): Viglet_Dumont_API_Client {
-		return new Viglet_Dumont_API_Client( $this->settings() );
+	private function client(): Viglet_Turing_API_Client {
+		return new Viglet_Turing_API_Client( $this->settings() );
 	}
 
 	/** Turing's answer to a call over the site's AI budget. */
@@ -86,27 +86,27 @@ final class AiQuotaTest extends PluginTestCase {
 
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot', array( 'messages' => array() ) );
 
-		$record = Viglet_Dumont_AI_Quota::current();
+		$record = Viglet_Turing_AI_Quota::current();
 		$this->assertSame( '2099-12-01T00:00:00Z', $record['resetsAt'] );
 		$this->assertSame( 'The monthly AI budget of this site is spent.', $record['detail'] );
-		$event = $this->options[ Viglet_Dumont_Events::OPTION ][0];
+		$event = $this->options[ Viglet_Turing_Events::OPTION ][0];
 		$this->assertSame( 'ai', $event['type'] );
 		$this->assertFalse( $event['ok'] );
 		$this->assertSame(
 			'AI budget exhausted until 2099-12-01 00:00. The monthly AI budget of this site is spent.',
-			Viglet_Dumont_Events::text( $event['message'] )
+			Viglet_Turing_Events::text( $event['message'] )
 		);
 	}
 
 	public function test_a_visitor_reads_when_answers_come_back_once_the_site_knows_it(): void {
 		// D336: every AI surface takes this line, so a controller with no error body still says the date.
-		$this->assertSame( 'Answers are paused for now; search still works.', Viglet_Dumont_AI_Quota::visitor_line() );
+		$this->assertSame( 'Answers are paused for now; search still works.', Viglet_Turing_AI_Quota::visitor_line() );
 
 		$this->exhausted();
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot', array( 'messages' => array() ) );
 
-		$this->assertSame( 'Answers are paused until 2099-12-01 00:00; search still works.', Viglet_Dumont_AI_Quota::visitor_line() );
-		$this->assertStringContainsString( '%s', Viglet_Dumont_AI_Quota::visitor_until() );
+		$this->assertSame( 'Answers are paused until 2099-12-01 00:00; search still works.', Viglet_Turing_AI_Quota::visitor_line() );
+		$this->assertStringContainsString( '%s', Viglet_Turing_AI_Quota::visitor_until() );
 	}
 
 	public function test_the_same_answer_again_writes_nothing(): void {
@@ -115,7 +115,7 @@ final class AiQuotaTest extends PluginTestCase {
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot' );
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot' );
 
-		$this->assertCount( 1, $this->options[ Viglet_Dumont_Events::OPTION ] );
+		$this->assertCount( 1, $this->options[ Viglet_Turing_Events::OPTION ] );
 	}
 
 	public function test_a_429_that_is_not_quota_exhausted_records_nothing(): void {
@@ -125,29 +125,29 @@ final class AiQuotaTest extends PluginTestCase {
 		$this->answer = array( 429, 'Too Many Requests' );
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/copilot' );
 
-		$this->assertNull( Viglet_Dumont_AI_Quota::current() );
-		$this->assertArrayNotHasKey( Viglet_Dumont_AI_Quota::OPTION, $this->options );
+		$this->assertNull( Viglet_Turing_AI_Quota::current() );
+		$this->assertArrayNotHasKey( Viglet_Turing_AI_Quota::OPTION, $this->options );
 	}
 
 	public function test_a_record_whose_reset_date_has_passed_is_gone(): void {
-		$this->options[ Viglet_Dumont_AI_Quota::OPTION ] = array(
+		$this->options[ Viglet_Turing_AI_Quota::OPTION ] = array(
 			'resetsAt' => '2020-01-01T00:00:00Z',
 			'detail'   => 'Spent.',
 			'seen_at'  => time() - 60,
 		);
 
-		$this->assertNull( Viglet_Dumont_AI_Quota::current() );
-		$this->assertNull( Viglet_Dumont_AI_Quota::report() );
+		$this->assertNull( Viglet_Turing_AI_Quota::current() );
+		$this->assertNull( Viglet_Turing_AI_Quota::report() );
 	}
 
 	public function test_a_record_with_no_reset_date_says_for_now_and_lasts_a_day(): void {
 		$this->exhausted( null );
 		$this->client()->call( 'POST', '/api/sn/Sample%20Site/nl-filters' );
 
-		$this->assertSame( 'AI budget exhausted for now.', Viglet_Dumont_AI_Quota::report()['message'] );
+		$this->assertSame( 'AI budget exhausted for now.', Viglet_Turing_AI_Quota::report()['message'] );
 
-		$this->options[ Viglet_Dumont_AI_Quota::OPTION ]['seen_at'] = time() - Viglet_Dumont_AI_Quota::UNDATED_SECONDS;
-		$this->assertNull( Viglet_Dumont_AI_Quota::current() );
+		$this->options[ Viglet_Turing_AI_Quota::OPTION ]['seen_at'] = time() - Viglet_Turing_AI_Quota::UNDATED_SECONDS;
+		$this->assertNull( Viglet_Turing_AI_Quota::current() );
 	}
 
 	public function test_an_ai_call_that_goes_through_clears_the_record_and_any_other_call_does_not(): void {
@@ -156,17 +156,17 @@ final class AiQuotaTest extends PluginTestCase {
 
 		$this->answer = array( 200, '{}' );
 		$this->client()->search( 'books' );
-		$this->assertNotNull( Viglet_Dumont_AI_Quota::current(), 'a search spends no AI budget' );
+		$this->assertNotNull( Viglet_Turing_AI_Quota::current(), 'a search spends no AI budget' );
 
 		$this->client()->summary( 'key', 'data', 'prompt' );
-		$this->assertNull( Viglet_Dumont_AI_Quota::current() );
-		$this->assertTrue( $this->options[ Viglet_Dumont_Events::OPTION ][0]['ok'] );
+		$this->assertNull( Viglet_Turing_AI_Quota::current() );
+		$this->assertTrue( $this->options[ Viglet_Turing_Events::OPTION ][0]['ok'] );
 	}
 
 	public function test_a_visitors_report_probes_turing_once_and_records_its_answer(): void {
 		$this->exhausted();
 
-		$result = Viglet_Dumont_AI_Quota::reported( $this->settings( array( 'site_key' => 'site-a' ) ) );
+		$result = Viglet_Turing_AI_Quota::reported( $this->settings( array( 'site_key' => 'site-a' ) ) );
 
 		$this->assertSame(
 			array(
@@ -185,10 +185,10 @@ final class AiQuotaTest extends PluginTestCase {
 			),
 			$this->body()
 		);
-		$this->assertSame( Viglet_Dumont_AI_Quota::THROTTLE_SECONDS, $this->transients[ Viglet_Dumont_AI_Quota::THROTTLE ][1] );
+		$this->assertSame( Viglet_Turing_AI_Quota::THROTTLE_SECONDS, $this->transients[ Viglet_Turing_AI_Quota::THROTTLE ][1] );
 
 		// With the record live, the next report asks Turing nothing.
-		Viglet_Dumont_AI_Quota::reported( $this->settings() );
+		Viglet_Turing_AI_Quota::reported( $this->settings() );
 		$this->assertCount( 1, $this->requests );
 	}
 
@@ -196,14 +196,14 @@ final class AiQuotaTest extends PluginTestCase {
 		// Turing answers the probe: the budget is not spent, whatever the visitor said.
 		$this->answer = array( 200, '{"available":true}' );
 
-		$first = Viglet_Dumont_AI_Quota::reported( $this->settings() );
+		$first = Viglet_Turing_AI_Quota::reported( $this->settings() );
 		$this->assertFalse( $first['paused'] );
 		$this->assertTrue( $first['probed'] );
-		$this->assertNull( Viglet_Dumont_AI_Quota::current() );
+		$this->assertNull( Viglet_Turing_AI_Quota::current() );
 
 		// Within ten minutes a report, real or not, does not reach Turing.
 		$this->exhausted();
-		$second = Viglet_Dumont_AI_Quota::reported( $this->settings() );
+		$second = Viglet_Turing_AI_Quota::reported( $this->settings() );
 		$this->assertSame(
 			array(
 				'paused' => false,

@@ -95,12 +95,12 @@ async function titlesFor( page, seed, words = sentence ) {
 	await page.goto(
 		`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( words ) }`
 	);
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/result/
 	);
 	return page
 		.locator(
-			'.viglet-dumont-search__results .viglet-dumont-search__title'
+			'.viglet-turing-search__results .viglet-turing-search__title'
 		)
 		.allTextContents();
 }
@@ -112,9 +112,9 @@ test( "a PDF's inner sentence finds it, and deleting the attachment removes it",
 	expect( await titlesFor( page, seed ) ).toContain( 'Enrolment rules' );
 	await expect(
 		page
-			.locator( '.viglet-dumont-search__result' )
+			.locator( '.viglet-turing-search__result' )
 			.filter( { hasText: 'Enrolment rules' } )
-			.locator( '.viglet-dumont-search__type' )
+			.locator( '.viglet-turing-search__type' )
 	).toHaveText( 'PDF' );
 
 	wp( [ 'post', 'delete', attachment, '--force' ] );
@@ -132,7 +132,7 @@ test( "a PDF a post's meta names puts its words in the post's own text", async (
 	const saved = ask( [
 		'option',
 		'get',
-		'viglet_dumont_mapping',
+		'viglet_turing_mapping',
 		'--format=json',
 	] );
 	const title = ask( [
@@ -144,24 +144,24 @@ test( "a PDF a post's meta names puts its words in the post's own text", async (
 	try {
 		wp( [
 			'eval',
-			`$m = get_option( 'viglet_dumont_mapping' );
+			`$m = get_option( 'viglet_turing_mapping' );
 			$m['post']['fields'][] = array( 'source' => 'file:paper', 'field' => 'paper_text', 'type' => 'TEXT' );
-			update_option( 'viglet_dumont_mapping', $m );`,
+			update_option( 'viglet_turing_mapping', $m );`,
 		] );
 		wp( [ 'post', 'meta', 'update', String( seed.postId ), 'paper', url ] );
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 
 		await page.waitForTimeout( 4000 );
 		await page.goto(
 			`/?page_id=${ seed.searchPageId }&q=${ encodeURIComponent( words ) }`
 		);
 		await expect(
-			page.locator( '.viglet-dumont-search__results li' ).first()
+			page.locator( '.viglet-turing-search__results li' ).first()
 		).toBeVisible();
 		expect(
 			await page
 				.locator(
-					'.viglet-dumont-search__results .viglet-dumont-search__title'
+					'.viglet-turing-search__results .viglet-turing-search__title'
 				)
 				.allTextContents()
 		).toContain( title );
@@ -169,13 +169,13 @@ test( "a PDF a post's meta names puts its words in the post's own text", async (
 		wp( [
 			'option',
 			'update',
-			'viglet_dumont_mapping',
+			'viglet_turing_mapping',
 			saved,
 			'--format=json',
 		] );
 		wp( [ 'post', 'meta', 'delete', String( seed.postId ), 'paper' ] );
 		wp( [ 'post', 'delete', paper, '--force' ] );
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 	}
 } );
 
@@ -187,10 +187,10 @@ test( "a PDF a post's meta names puts its words in the post's own text", async (
  */
 async function drainQueue( page ) {
 	try {
-		wp( [ 'dumont', 'queue', 'run' ] );
+		wp( [ 'turing', 'queue', 'run' ] );
 	} catch {
 		await page.waitForTimeout( 5000 );
-		wp( [ 'dumont', 'queue', 'run' ] );
+		wp( [ 'turing', 'queue', 'run' ] );
 	}
 }
 

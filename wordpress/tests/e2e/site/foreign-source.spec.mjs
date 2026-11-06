@@ -21,9 +21,9 @@ const ask = ( args ) => wp( args ).trim().split( /\r?\n/ ).pop().trim();
  * @param {string} action CREATE or DELETE.
  */
 const foreign = ( action ) => `
-$settings = viglet_dumont_get_settings();
-$indexer  = new Viglet_Dumont_Indexer( $settings );
-$result   = ( new Viglet_Dumont_API_Client( $settings ) )->import( array( array(
+$settings = viglet_turing_get_settings();
+$indexer  = new Viglet_Turing_Indexer( $settings );
+$result   = ( new Viglet_Turing_API_Client( $settings ) )->import( array( array(
 	'locale'         => $settings['locale'],
 	'turSNJobAction' => '${ action }',
 	'siteNames'      => array( $settings['site_name'] ),
@@ -43,7 +43,7 @@ echo $result['success'] ? 'ok' : 'failed';
 
 /** PHP that prints 1 when Turing holds the foreign document under this site key, else 0. */
 const held = `
-$indexer = new Viglet_Dumont_Indexer( viglet_dumont_get_settings() );
+$indexer = new Viglet_Turing_Indexer( viglet_turing_get_settings() );
 echo in_array( '${ foreignId }', $indexer->list_site_ids() ?? array(), true ) ? 1 : 0;
 `;
 
@@ -63,7 +63,7 @@ test.describe( 'another source under the site key', () => {
 			ask( [ 'eval', foreign( 'DELETE' ) ] );
 		} catch {}
 		// Delete All emptied the site: put its posts back for the specs after this one.
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 	} );
 
 	test( 'survives Index All, the sweep and Delete All, and Health counts it', async ( {}, testInfo ) => {
@@ -80,23 +80,23 @@ test.describe( 'another source under the site key', () => {
 			Number(
 				ask( [
 					'eval',
-					'echo ( new Viglet_Dumont_Operations() )->status()["foreign"];',
+					'echo ( new Viglet_Turing_Operations() )->status()["foreign"];',
 				] )
 			)
 		).toBeGreaterThanOrEqual( 1 );
 
 		// The sweep never names it, not even as a candidate.
-		expect( wp( [ 'dumont', 'sweep', '--dry-run' ] ) ).not.toContain(
+		expect( wp( [ 'turing', 'sweep', '--dry-run' ] ) ).not.toContain(
 			foreignId
 		);
 		// Index All ends with the sweep.
-		wp( [ 'dumont', 'reindex' ] );
+		wp( [ 'turing', 'reindex' ] );
 		expect( ask( [ 'eval', held ] ) ).toBe( '1' );
 
 		expect(
 			ask( [
 				'eval',
-				'echo ( new Viglet_Dumont_Indexer( viglet_dumont_get_settings() ) )->delete_all() ? "ok" : "failed";',
+				'echo ( new Viglet_Turing_Indexer( viglet_turing_get_settings() ) )->delete_all() ? "ok" : "failed";',
 			] )
 		).toBe( 'ok' );
 		// Delete All emptied the site's own posts; the foreign record is still there.
@@ -105,7 +105,7 @@ test.describe( 'another source under the site key', () => {
 				() =>
 					ask( [
 						'eval',
-						'echo count( ( new Viglet_Dumont_Indexer( viglet_dumont_get_settings() ) )->list_site_ids() ?? array() );',
+						'echo count( ( new Viglet_Turing_Indexer( viglet_turing_get_settings() ) )->list_site_ids() ?? array() );',
 					] ),
 				{ timeout: 60_000 }
 			)

@@ -4,19 +4,19 @@
 import { wp } from '../global-setup.mjs';
 import { expect, openPostSettings, test } from '../fixtures.mjs';
 
-const screen = '/wp-admin/admin.php?page=viglet-dumont-tuning';
+const screen = '/wp-admin/admin.php?page=viglet-turing-tuning';
 
 test.afterEach( () => {
 	wp( [
 		'eval',
-		'$t = new Viglet_Dumont_Tuning(); $all = $t->all();' +
+		'$t = new Viglet_Turing_Tuning(); $all = $t->all();' +
 			' foreach ( $all["synonyms"] as $s ) { if ( $s["ours"] ) { $t->remove_synonym( $s["id"] ); } }' +
 			' foreach ( $all["spotlights"] as $s ) { if ( $s["ours"] ) { $t->remove_spotlight( $s["id"] ); } }' +
 			' $t->set_boosts( false, false, array() );',
 	] );
 } );
 
-const summary = ( page ) => page.locator( '.viglet-dumont-search__summary' );
+const summary = ( page ) => page.locator( '.viglet-turing-search__summary' );
 
 test( 'a synonym added here makes the search find through it, until it is removed', async ( {
 	page,
@@ -55,7 +55,7 @@ test( 'a synonym added here makes the search find through it, until it is remove
 
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=talk` );
 	await expect( summary( page ) ).toHaveText( '2 results' );
-	await expect( page.locator( '.viglet-dumont-search__title a' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__title a' ) ).toHaveText(
 		[ /Lecture on/, /Lecture on/ ]
 	);
 
@@ -88,7 +88,7 @@ test( 'a post promoted for a search heads its results as featured', async ( {
 	] );
 
 	await page.goto( `/?page_id=${ seed.searchPageId }&q=workshop` );
-	const featured = page.locator( '.viglet-dumont-search__spotlights li' );
+	const featured = page.locator( '.viglet-turing-search__spotlights li' );
 	await expect( featured ).toHaveCount( 1 );
 	await expect( featured ).toContainText( 'Featured' );
 	await expect( featured.locator( 'a' ) ).toHaveText( 'Course on Docker' );
@@ -104,7 +104,7 @@ test( 'a post promoted for a search heads its results as featured', async ( {
 } );
 
 // The workshops are dated 1, 2, 6 and 10 January (seed.php), and relevance ties them.
-const workshops = ( page ) => page.locator( '.viglet-dumont-search__title a' );
+const workshops = ( page ) => page.locator( '.viglet-turing-search__title a' );
 
 test( 'boosts reorder the results: newer first, then sticky first, and off restores relevance', async ( {
 	page,
@@ -139,7 +139,7 @@ test( 'boosts reorder the results: newer first, then sticky first, and off resto
 	wp( [
 		'eval',
 		'$id = get_posts( array( "title" => "Workshop on facets", "fields" => "ids" ) )[0];' +
-			' stick_post( $id ); viglet_dumont_process_queue();',
+			' stick_post( $id ); viglet_turing_process_queue();',
 	] );
 	try {
 		await page.goto( screen );
@@ -154,7 +154,7 @@ test( 'boosts reorder the results: newer first, then sticky first, and off resto
 		wp( [
 			'eval',
 			'$id = get_posts( array( "title" => "Workshop on facets", "fields" => "ids" ) )[0];' +
-				' unstick_post( $id ); viglet_dumont_process_queue();',
+				' unstick_post( $id ); viglet_turing_process_queue();',
 		] );
 	}
 
@@ -211,7 +211,7 @@ test( 'the editor\'s "Promote for a search" opens the form with the post chosen'
 	);
 
 	await page.goto(
-		`/wp-admin/admin.php?page=viglet-dumont-tuning&promote=${ seed.postId }`
+		`/wp-admin/admin.php?page=viglet-turing-tuning&promote=${ seed.postId }`
 	);
 	const card = page
 		.locator( '.components-card' )

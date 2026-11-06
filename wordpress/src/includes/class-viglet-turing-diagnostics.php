@@ -1,11 +1,11 @@
 <?php
 /**
- * Viglet Dumont Diagnostics
+ * Viglet Turing Diagnostics
  *
  * The connection test the Setup page runs: each step checks one thing and, when it fails,
  * says which thing in words an editor can act on.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Runs the steps in order and stops at the first failure: a later step cannot be judged
  * when an earlier one failed (no key can be checked on a server that does not answer).
  */
-class Viglet_Dumont_Diagnostics {
+class Viglet_Turing_Diagnostics {
 
 	/**
 	 * The plugin settings under test.
@@ -31,7 +31,7 @@ class Viglet_Dumont_Diagnostics {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Viglet_Dumont_Diagnostics {
 			return $this->stop( $steps, 'reach', $this->explain_transport( $response, (string) $parts['host'] ) );
 		}
 		// WordPress Playground answers a request its browser could not make itself (D237).
-		$playground = Viglet_Dumont_API_Client::playground_refusal( $response, $url );
+		$playground = Viglet_Turing_API_Client::playground_refusal( $response, $url );
 		if ( $playground ) {
 			return $this->stop( $steps, 'reach', $playground->get_error_message() );
 		}
@@ -74,7 +74,7 @@ class Viglet_Dumont_Diagnostics {
 		$steps[] = $this->pass( 'turing', __( 'It is a Turing.', 'viglet-turing-search' ) );
 
 		// Demo mode (D238) holds no key: the SN site is checked the way visitors reach it.
-		if ( Viglet_Dumont_Settings::demo() ) {
+		if ( Viglet_Turing_Settings::demo() ) {
 			return $this->run_demo( $steps );
 		}
 
@@ -82,8 +82,8 @@ class Viglet_Dumont_Diagnostics {
 			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Turing under API Tokens and paste it here.', 'viglet-turing-search' ) );
 		}
 
-		$client  = new Viglet_Dumont_API_Client( $this->settings );
-		$mapping = new Viglet_Dumont_Mapping( $this->settings );
+		$client  = new Viglet_Turing_API_Client( $this->settings );
+		$mapping = new Viglet_Turing_Mapping( $this->settings );
 		$plan    = $client->plan( $mapping->manifest() );
 		if ( is_wp_error( $plan ) ) {
 			$message = $plan->get_error_message();
@@ -130,11 +130,11 @@ class Viglet_Dumont_Diagnostics {
 			sprintf(
 				/* translators: %s: the constant or environment variable that turns demo mode on. */
 				__( 'Demo mode (%s): no API key is needed, and none is sent.', 'viglet-turing-search' ),
-				Viglet_Dumont_Settings::DEMO
+				Viglet_Turing_Settings::DEMO
 			)
 		);
 
-		$ping = ( new Viglet_Dumont_API_Client( $this->settings ) )->ping();
+		$ping = ( new Viglet_Turing_API_Client( $this->settings ) )->ping();
 		if ( empty( $ping['success'] ) ) {
 			return $this->stop(
 				$steps,

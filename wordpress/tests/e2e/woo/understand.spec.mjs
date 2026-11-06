@@ -4,13 +4,13 @@
 // Turing's nl-filters is answered by a fixed reading so the suite needs no LLM.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
+	block( page ).locator( '.viglet-turing-search__summary' );
 const understood = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__understood' );
+	block( page ).locator( '.viglet-turing-search__understood' );
 const titles = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__title a' );
+	block( page ).locator( '.viglet-turing-search__title a' );
 const box = ( page ) => page.locator( 'input[type="search"]' );
 
 test( 'a price a sentence names filters with no language model, and Undo puts it back', async ( {
@@ -40,7 +40,7 @@ test( 'a price a sentence names filters with no language model, and Undo puts it
 	);
 	await look( 'woo-understood' );
 	await axe( 'the search block saying what it understood', {
-		include: '.viglet-dumont-search',
+		include: '.viglet-turing-search',
 	} );
 
 	// Undo is the search as typed: every word back as a keyword, which here finds nothing,
@@ -50,7 +50,7 @@ test( 'a price a sentence names filters with no language model, and Undo puts it
 	await expect( box( page ) ).toHaveValue( 'jacket under $100' );
 	await expect( understood( page ) ).toBeHidden();
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__close-matches' )
+		block( page ).locator( '.viglet-turing-search__close-matches' )
 	).toContainText( 'Showing close matches' );
 	expect( new URL( page.url() ).searchParams.getAll( 'fq[]' ) ).not.toContain(
 		'price:[* TO 100]'
@@ -138,7 +138,7 @@ test( 'a price Turing read but the block dropped leaves none of its words behind
 	await expect( box( page ) ).toHaveValue( 'jacket' );
 	await expect( summary( page ) ).toHaveText( '2 results' );
 	await expect(
-		block( page ).locator( '.viglet-dumont-search__close-matches' )
+		block( page ).locator( '.viglet-turing-search__close-matches' )
 	).toBeHidden();
 } );
 

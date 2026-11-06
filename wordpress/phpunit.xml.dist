@@ -7,7 +7,7 @@
          failOnWarning="true"
          failOnRisky="true">
     <testsuites>
-        <testsuite name="viglet-dumont">
+        <testsuite name="viglet-turing">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

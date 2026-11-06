@@ -21,7 +21,7 @@
  *
  * Prints JSON: { events, openings, books, pdfs, pages: { slug: id } }.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 // phpcs:disable -- a setup script run by WP-CLI, not plugin code.
@@ -228,7 +228,7 @@ foreach ( $news as list( $key, $title, $text ) ) {
 
 // The pages: a home, the agenda, the openings and the library (each a search block fixed to its
 // type, D306), the whole school's search page and the news. [slug => title, content]
-$block = static fn ( array $attributes ): string => '<!-- wp:viglet-dumont/search ' . wp_json_encode( $attributes + array( 'suggestFilters' => true, 'align' => 'wide' ) ) . ' /-->';
+$block = static fn ( array $attributes ): string => '<!-- wp:viglet-turing/search ' . wp_json_encode( $attributes + array( 'suggestFilters' => true, 'align' => 'wide' ) ) . ' /-->';
 $pages = array(
 	'home'     => array( array( 'Home', 'Início' ), '' ),
 	'agenda'   => array( array( 'Agenda', 'Agenda' ), $block( array( 'filters' => array( 'type:event' ), 'perPage' => 20, 'placeholder' => $say( array( 'Debates in November, concerts this month…', 'Debates em novembro, concertos este mês…' ) ) ) ) ),
@@ -249,7 +249,7 @@ foreach ( $pages as $slug => list( $title, $content ) ) {
 	);
 	$ids[ $slug ] = $found ? (int) wp_update_post( array( 'ID' => $found->ID ) + $args ) : (int) wp_insert_post( $args );
 	// The pages are the ways in, not content: never a result.
-	update_post_meta( $ids[ $slug ], '_viglet_dumont_exclude', '1' );
+	update_post_meta( $ids[ $slug ], '_viglet_turing_exclude', '1' );
 }
 
 foreach ( array( array( 'hello-world', 'post' ), array( 'sample-page', 'page' ) ) as list( $default, $kind ) ) {
@@ -266,20 +266,20 @@ update_option( 'blogname', $say( array( 'Lumen School', 'Escola Lumen' ) ) );
 update_option( 'blogdescription', $say( array( 'Learning in the open', 'Aprender às claras' ) ) );
 
 // The school's types in search, its PDFs too (D309), and the search on its own page.
-$settings                       = viglet_dumont_get_settings();
+$settings                       = viglet_turing_get_settings();
 $settings['index_custom_types'] = array( 'event', 'opening', 'book' );
 $settings['index_pdfs']         = 1;
 $settings['search_enabled']     = 1;
 $settings['instant_overlay']    = 1;
 $settings['search_page']        = $ids['search'];
 $settings['related_after']      = array();
-viglet_dumont_update_settings( $settings );
+viglet_turing_update_settings( $settings );
 
 // The fields: an event's day with the agenda's periods, its venue and poster; an opening's
 // closing day, after which it leaves search, and its kind; a book's author, shelf and the text
 // of its sample chapter.
 $label   = static fn ( array $both ): string => $say( $both );
-$mapping = get_option( 'viglet_dumont_mapping', array() );
+$mapping = get_option( 'viglet_turing_mapping', array() );
 $mapping['event'] = array(
 	'fields'     => array(
 		array( 'source' => 'meta:event_day', 'field' => 'event_day', 'type' => 'DATE', 'facet_label' => $label( array( 'When', 'Quando' ) ), 'range' => true, 'periods' => 'agenda' ),
@@ -304,10 +304,10 @@ $mapping['book'] = array(
 		array( 'source' => 'file:sample', 'field' => 'sample_text', 'type' => 'TEXT' ),
 	),
 );
-update_option( 'viglet_dumont_mapping', $mapping, false );
+update_option( 'viglet_turing_mapping', $mapping, false );
 
 // Words a family uses for the same thing.
-$tuning = new Viglet_Dumont_Tuning();
+$tuning = new Viglet_Turing_Tuning();
 $have   = $tuning->all();
 if ( ! is_wp_error( $have ) ) {
 	$kept    = array_map( static fn ( $row ) => implode( '|', $row['terms'] ), (array) $have['synonyms'] );

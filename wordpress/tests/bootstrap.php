@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap: the plugin's classes against Brain Monkey, with no WordPress install.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 define( 'ABSPATH', __DIR__ . '/' );

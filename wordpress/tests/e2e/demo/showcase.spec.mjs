@@ -39,9 +39,9 @@ test( 'the showcase holds every Turing block, each named and numbered by the tou
 	await expect(
 		page.getByRole( 'heading', { level: 2, name: say().heading } )
 	).toBeVisible();
-	await expect( page.locator( '.viglet-dumont-search__form' ) ).toBeVisible();
-	await expect( page.locator( '.viglet-dumont-copilot' ) ).toBeVisible();
-	await expect( page.locator( '.viglet-dumont-assistant' ) ).toBeVisible();
+	await expect( page.locator( '.viglet-turing-search__form' ) ).toBeVisible();
+	await expect( page.locator( '.viglet-turing-copilot' ) ).toBeVisible();
+	await expect( page.locator( '.viglet-turing-assistant' ) ).toBeVisible();
 
 	// Each marker carries its feature's chapter in the story (demo/story.md, D203): saying what
 	// she needs, asking, building the kit.
@@ -68,6 +68,6 @@ test( 'without a language model the showcase says the AI features are off', asyn
 	);
 	await page.goto( '/showcase/' );
 	await expect( page.locator( '.tarnfell-ai-off' ) ).toBeVisible();
-	await expect( page.locator( '.viglet-dumont-assistant' ) ).toBeHidden();
-	await expect( page.locator( '.viglet-dumont-copilot' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-turing-assistant' ) ).toBeHidden();
+	await expect( page.locator( '.viglet-turing-copilot' ) ).toBeHidden();
 } );

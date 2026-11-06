@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont Related
+ * Viglet Turing Related
  *
  * Related content from Turing's similar-documents search (D177): the posts Turing finds most
  * like the one being read, for the Related content block and for the automatic placement
  * after a post's content.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Asks Turing for a post's neighbours and keeps the ones that are this site's published posts.
  */
-class Viglet_Dumont_Related {
+class Viglet_Turing_Related {
 
 	/** How long one post's neighbours are kept before Turing is asked again: an hour. */
 	public const CACHE_TTL = 3600;
@@ -63,7 +63,7 @@ class Viglet_Dumont_Related {
 	 * @param array|null $settings The plugin settings; null reads them from the options table.
 	 */
 	public function __construct( ?array $settings = null ) {
-		$this->settings = $settings ?? viglet_dumont_get_settings();
+		$this->settings = $settings ?? viglet_turing_get_settings();
 	}
 
 	/**
@@ -87,13 +87,13 @@ class Viglet_Dumont_Related {
 	 */
 	public function append( string $content ): string {
 		$types = (array) ( $this->settings['related_after'] ?? array() );
-		if ( doing_filter( 'get_the_excerpt' ) || ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-dumont/related' ) || $this->template_holds_block() ) {
+		if ( doing_filter( 'get_the_excerpt' ) || ! is_singular( $types ) || ! in_the_loop() || ! is_main_query() || has_block( 'viglet-turing/related' ) || $this->template_holds_block() ) {
 			return $content;
 		}
 
 		return $content . render_block(
 			array(
-				'blockName'    => 'viglet-dumont/related',
+				'blockName'    => 'viglet-turing/related',
 				'attrs'        => array(),
 				'innerBlocks'  => array(),
 				'innerHTML'    => '',
@@ -128,7 +128,7 @@ class Viglet_Dumont_Related {
 	private function blocks_hold( array $blocks, array &$parts = array() ): bool {
 		foreach ( $blocks as $block ) {
 			$name = $block['blockName'] ?? '';
-			if ( 'viglet-dumont/related' === $name ) {
+			if ( 'viglet-turing/related' === $name ) {
 				return true;
 			}
 			if ( 'core/template-part' === $name && ! empty( $block['attrs']['slug'] ) ) {
@@ -183,7 +183,7 @@ class Viglet_Dumont_Related {
 			return array();
 		}
 
-		$all_sites = $all_sites && array() !== ( new Viglet_Dumont_Indexer( $this->settings ) )->sibling_sites();
+		$all_sites = $all_sites && array() !== ( new Viglet_Turing_Indexer( $this->settings ) )->sibling_sites();
 		$rows      = min( self::MAX_ROWS, $count * self::ROWS_PER_SHOWN );
 		$items     = array();
 		foreach ( $this->neighbours( $post_id, $mode, $rows, $all_sites ) as $neighbour ) {
@@ -227,22 +227,22 @@ class Viglet_Dumont_Related {
 	 * @return array<int, int|array{id: string, title: string, url: string, type: string, origin: string}>
 	 */
 	private function neighbours( int $post_id, string $mode, int $rows, bool $all_sites = false ): array {
-		$indexer = new Viglet_Dumont_Indexer( $this->settings );
+		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$scope   = $all_sites ? implode( ',', $indexer->scope_keys() ) : '';
-		$key     = 'viglet_dumont_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] . '|' . $scope );
+		$key     = 'viglet_turing_related_' . md5( $post_id . '|' . $mode . '|' . $rows . '|' . $this->settings['site_name'] . '|' . $this->settings['locale'] . '|' . $scope );
 		$cached  = get_transient( $key );
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
 
 		// A page read (D328): a hung Turing costs this view a few seconds, the next ones nothing.
-		$client  = ( new Viglet_Dumont_API_Client( $this->settings ) )->for_render();
+		$client  = ( new Viglet_Turing_API_Client( $this->settings ) )->for_render();
 		$similar = $all_sites
 			? $client->for_scope( $indexer )->similar( $indexer->build_doc_id( $post_id ), $rows, $mode, $indexer->scope_query() )
 			: $client->similar( $indexer->build_doc_id( $post_id ), $rows, $mode, array( $indexer->own_filter() ) );
 		// A site without embeddings may refuse a semantic question: ask by shared words. A
 		// Turing that did not answer at all is not asked again.
-		if ( is_wp_error( $similar ) && 'VECTOR' === $mode && ! get_transient( Viglet_Dumont_API_Client::DOWN_TRANSIENT ) ) {
+		if ( is_wp_error( $similar ) && 'VECTOR' === $mode && ! get_transient( Viglet_Turing_API_Client::DOWN_TRANSIENT ) ) {
 			return $this->neighbours( $post_id, 'MLT', $rows, $all_sites );
 		}
 		if ( is_wp_error( $similar ) ) {

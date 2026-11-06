@@ -1,12 +1,12 @@
 <?php
 /**
- * Viglet Dumont WooCommerce
+ * Viglet Turing WooCommerce
  *
  * A product's shop fields as mapping sources (D173): price, sale price, stock status, SKU and
  * rating, read through WooCommerce's own product object, plus the defaults a product type
  * gets and the stock changes that send a product again.
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WooCommerce products as a searchable catalog. Everything here is inert without WooCommerce.
  */
-class Viglet_Dumont_WooCommerce {
+class Viglet_Turing_WooCommerce {
 
 	/** The post type WooCommerce stores products in. */
 	public const PRODUCT_TYPE = 'product';
@@ -68,9 +68,9 @@ class Viglet_Dumont_WooCommerce {
 		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
 			return;
 		}
-		$settings = viglet_dumont_get_settings();
-		if ( $settings['auto_index'] && ( new Viglet_Dumont_Indexer( $settings ) )->should_index( $post ) ) {
-			( new Viglet_Dumont_Queue( $settings ) )->enqueue( $id, 'index' );
+		$settings = viglet_turing_get_settings();
+		if ( $settings['auto_index'] && ( new Viglet_Turing_Indexer( $settings ) )->should_index( $post ) ) {
+			( new Viglet_Turing_Queue( $settings ) )->enqueue( $id, 'index' );
 		}
 	}
 
@@ -92,7 +92,7 @@ class Viglet_Dumont_WooCommerce {
 			'nonce'       => wp_create_nonce( 'wc_store_api' ),
 			'cartUrl'     => function_exists( 'wc_get_cart_url' ) ? (string) wc_get_cart_url() : '',
 			// Where ticked products are compared (D200); empty, the cards offer no Compare.
-			'comparePage' => Viglet_Dumont_Compare::page_url(),
+			'comparePage' => Viglet_Turing_Compare::page_url(),
 		);
 	}
 

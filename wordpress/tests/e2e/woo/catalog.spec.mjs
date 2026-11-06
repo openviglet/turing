@@ -2,14 +2,14 @@
 // (fixtures/woo-seed.php): three jackets, filtered by a price range, by stock and by color.
 import { expect, test } from '../fixtures.mjs';
 
-const block = ( page ) => page.locator( '.viglet-dumont-search' );
+const block = ( page ) => page.locator( '.viglet-turing-search' );
 const summary = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__summary' );
+	block( page ).locator( '.viglet-turing-search__summary' );
 const results = ( page ) =>
-	block( page ).locator( '.viglet-dumont-search__results li' );
+	block( page ).locator( '.viglet-turing-search__results li' );
 const facet = ( page, label ) =>
 	block( page )
-		.locator( '.viglet-dumont-search__facet' )
+		.locator( '.viglet-turing-search__facet' )
 		.filter( { has: page.locator( 'summary', { hasText: label } ) } );
 const value = ( page, label, text ) =>
 	facet( page, label )
@@ -36,12 +36,12 @@ test( 'a price range narrows the jackets to the ones it holds', async ( {
 	] );
 	await look( 'woo-catalog' );
 	await axe( 'a shop in the search block', {
-		include: '.viglet-dumont-search',
+		include: '.viglet-turing-search',
 	} );
 
 	// The type badge reads WooCommerce's name for it, never Turing's highlight markup.
 	await expect(
-		results( page ).first().locator( '.viglet-dumont-search__type' )
+		results( page ).first().locator( '.viglet-turing-search__type' )
 	).toHaveText( 'Product' );
 
 	await value( page, 'Price', '50 – 100' ).click();
@@ -49,7 +49,7 @@ test( 'a price range narrows the jackets to the ones it holds', async ( {
 	await expect( results( page ) ).toContainText( 'Wool jacket' );
 	await expect(
 		block( page )
-			.locator( '.viglet-dumont-search__chip' )
+			.locator( '.viglet-turing-search__chip' )
 			.filter( { hasText: 'Price:' } )
 	).toHaveText( /Price: 50 – 100/ );
 } );
@@ -64,17 +64,17 @@ test( 'a product card shows its price and adds the product to the cart', async (
 	await page.goto( jackets( seed ) );
 	const rain = results( page ).filter( { hasText: 'Rain jacket' } );
 	// On sale: the regular price struck through before the price it sells at.
-	await expect( rain.locator( '.viglet-dumont-search__price' ) ).toHaveText(
+	await expect( rain.locator( '.viglet-turing-search__price' ) ).toHaveText(
 		/Was\s*\$199\.00\s*\$149\.90/
 	);
 	await look( 'woo-cards' );
-	await axe( 'product cards', { include: '.viglet-dumont-search__results' } );
+	await axe( 'product cards', { include: '.viglet-turing-search__results' } );
 
 	await rain
 		.getByRole( 'button', { name: 'Add to cart: Rain jacket' } )
 		.click();
 	await expect(
-		rain.locator( '.viglet-dumont-search__cart-status' )
+		rain.locator( '.viglet-turing-search__cart-status' )
 	).toHaveText( 'Added to your cart.' );
 	// The cart this visitor's session holds, as WooCommerce reads it.
 	const cart = await page.evaluate( async () =>
@@ -91,7 +91,7 @@ test( 'a product card shows its price and adds the product to the cart', async (
 		.getByRole( 'button', { name: 'Add to cart: Linen jacket' } )
 		.click();
 	await expect(
-		linen.locator( '.viglet-dumont-search__cart-status' )
+		linen.locator( '.viglet-turing-search__cart-status' )
 	).not.toHaveText( /Added|^$/ );
 } );
 
@@ -105,12 +105,12 @@ test( 'a product sold in colours adds the colour the shop can sell', async ( {
 	);
 	const hat = results( page ).filter( { hasText: 'Wool hat' } );
 	// The shop's price is filled in once the block has taken over the card it rendered.
-	await expect( hat.locator( '.viglet-dumont-search__price' ) ).toHaveText(
+	await expect( hat.locator( '.viglet-turing-search__price' ) ).toHaveText(
 		/\$25\.00/
 	);
 	await hat.getByRole( 'button', { name: 'Add to cart: Wool hat' } ).click();
 	await expect(
-		hat.locator( '.viglet-dumont-search__cart-status' )
+		hat.locator( '.viglet-turing-search__cart-status' )
 	).toHaveText( 'Added to your cart.' );
 	const cart = await page.evaluate( async () =>
 		( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()
@@ -140,7 +140,7 @@ test( 'a cart status shown before the block takes over its cards is still shown 
 	await wool
 		.getByRole( 'button', { name: 'Add to cart: Wool jacket' } )
 		.click();
-	const status = wool.locator( '.viglet-dumont-search__cart-status' );
+	const status = wool.locator( '.viglet-turing-search__cart-status' );
 	await expect( status ).toHaveText( 'Added to your cart.' );
 
 	const answered = page.waitForResponse( /\/api\/sn\/[^/]+\/search\/query/ );

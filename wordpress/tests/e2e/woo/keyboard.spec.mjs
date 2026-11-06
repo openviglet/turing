@@ -8,11 +8,11 @@ test( 'a shopper searches and adds a jacket to the cart without a mouse', async 
 	seed,
 } ) => {
 	await page.goto( `/?page_id=${ seed.searchPageId }` );
-	const box = page.locator( '.viglet-dumont-search' ).getByRole( 'combobox' );
+	const box = page.locator( '.viglet-turing-search' ).getByRole( 'combobox' );
 	await box.focus();
 	await page.keyboard.type( 'jacket' );
 	await page.keyboard.press( 'Enter' );
-	await expect( page.locator( '.viglet-dumont-search__summary' ) ).toHaveText(
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
 		/\d+ results?/
 	);
 
@@ -41,11 +41,11 @@ test( 'a shopper searches and adds a jacket to the cart without a mouse', async 
 
 	await page.keyboard.press( 'Enter' );
 	// By its title link: another result's text can name the Rain jacket too.
-	const rain = page.locator( '.viglet-dumont-search__results li' ).filter( {
+	const rain = page.locator( '.viglet-turing-search__results li' ).filter( {
 		has: page.getByRole( 'link', { name: 'Rain jacket', exact: true } ),
 	} );
 	await expect(
-		rain.locator( '.viglet-dumont-search__cart-status' )
+		rain.locator( '.viglet-turing-search__cart-status' )
 	).toHaveText( 'Added to your cart.' );
 	const cart = await page.evaluate( async () =>
 		( await window.fetch( '/?rest_route=/wc/store/v1/cart' ) ).json()

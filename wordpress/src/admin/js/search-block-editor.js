@@ -34,10 +34,10 @@
 
 	// The block's parts as inner blocks (D185), in the order the block draws them by default.
 	const parts = [
-		[ 'viglet-dumont/search-box', 'search' ],
-		[ 'viglet-dumont/search-filters', 'filter' ],
-		[ 'viglet-dumont/search-results', 'list-view' ],
-		[ 'viglet-dumont/search-pages', 'ellipsis' ],
+		[ 'viglet-turing/search-box', 'search' ],
+		[ 'viglet-turing/search-filters', 'filter' ],
+		[ 'viglet-turing/search-results', 'list-view' ],
+		[ 'viglet-turing/search-pages', 'ellipsis' ],
 	];
 
 	/**
@@ -297,7 +297,7 @@
 						Disabled,
 						null,
 						el( ServerSideRender, {
-							block: 'viglet-dumont/search',
+							block: 'viglet-turing/search',
 							attributes,
 							LoadingResponsePlaceholder: () =>
 								el( Placeholder, {
@@ -312,7 +312,7 @@
 		);
 	}
 
-	wp.blocks.registerBlockType( 'viglet-dumont/search', {
+	wp.blocks.registerBlockType( 'viglet-turing/search', {
 		edit: Edit,
 		// The parts, when arranged; a block without them saves nothing, as before.
 		save: () => el( InnerBlocks.Content ),

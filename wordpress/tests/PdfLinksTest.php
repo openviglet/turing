@@ -3,13 +3,13 @@
  * The PDFs a post links in its content, in search while a post in search holds them, and gone
  * with the last one (D319).
  *
- * @package Viglet_Dumont
+ * @package Viglet_Turing
  */
 
-namespace Viglet\Dumont\Tests;
+namespace Viglet\Turing\Tests;
 
 use Brain\Monkey\Functions;
-use Viglet_Dumont_Pdf;
+use Viglet_Turing_Pdf;
 use WP_Post;
 use ZipArchive;
 
@@ -146,8 +146,8 @@ final class PdfLinksTest extends PluginTestCase {
 		);
 	}
 
-	private function pdf(): Viglet_Dumont_Pdf {
-		return new Viglet_Dumont_Pdf( $this->settings( array( 'index_pdfs' => 1 ) ) );
+	private function pdf(): Viglet_Turing_Pdf {
+		return new Viglet_Turing_Pdf( $this->settings( array( 'index_pdfs' => 1 ) ) );
 	}
 
 	/** The ids the DELETE items among the sent requests name. */
@@ -173,7 +173,7 @@ final class PdfLinksTest extends PluginTestCase {
 
 		$this->pdf()->settle( array( $this->posts[11] ), array() );
 
-		$this->assertSame( array( 11 ), $this->meta[30][ Viglet_Dumont_Pdf::LINKED_META ] );
+		$this->assertSame( array( 11 ), $this->meta[30][ Viglet_Turing_Pdf::LINKED_META ] );
 		$this->assertTrue( $this->pdf()->indexable( $this->posts[30] ) );
 		$this->assertSame( 'Forms', $this->pdf()->document( $this->posts[30] )['section'], 'the linking post is its section' );
 		$this->assertStringEndsWith( '/api/sn/import/zip', $this->requests[0][0], 'sent as a zip with its file' );
@@ -205,8 +205,8 @@ final class PdfLinksTest extends PluginTestCase {
 		$this->pdf()->settle( array(), array( 10, 11 ) );
 
 		$this->assertEqualsCanonicalizing( array( 'site.example.org:post:20', 'site.example.org:post:30' ), $this->deleted(), 'the attached one and the linked one' );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Pdf::LINKED_META, $this->meta[30] ?? array() );
-		$this->assertArrayNotHasKey( Viglet_Dumont_Pdf::HELD_META, $this->meta[11] ?? array() );
+		$this->assertArrayNotHasKey( Viglet_Turing_Pdf::LINKED_META, $this->meta[30] ?? array() );
+		$this->assertArrayNotHasKey( Viglet_Turing_Pdf::HELD_META, $this->meta[11] ?? array() );
 	}
 
 	public function test_a_pdf_another_post_in_search_still_links_stays(): void {

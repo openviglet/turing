@@ -5,7 +5,7 @@ import { expect, test } from '../fixtures.mjs';
 import { setSetting } from '../global-setup.mjs';
 import { feature, record } from './helpers.mjs';
 
-const overlay = ( page ) => page.locator( 'dialog.viglet-dumont-overlay' );
+const overlay = ( page ) => page.locator( 'dialog.viglet-turing-overlay' );
 
 test.beforeAll( () => {
 	setSetting( 'overlay_layout', 'immersive' );
@@ -33,7 +33,7 @@ test( 'a question gets the answer on top, and the preview shows the highlighted 
 	const started = Date.now();
 	await page.keyboard.type( question );
 
-	const answer = overlay( page ).locator( '.viglet-dumont-overlay__answer' );
+	const answer = overlay( page ).locator( '.viglet-turing-overlay__answer' );
 	await expect( answer ).toHaveText( /14(th)? March|March 14/i, {
 		timeout: 60_000,
 	} );
@@ -46,7 +46,7 @@ test( 'a question gets the answer on top, and the preview shows the highlighted 
 
 	await page.keyboard.press( 'ArrowDown' );
 	await expect(
-		overlay( page ).locator( '.viglet-dumont-overlay__preview' )
+		overlay( page ).locator( '.viglet-turing-overlay__preview' )
 	).toBeVisible();
 	await look( 'ai-overlay-answer' );
 } );

@@ -4,7 +4,7 @@ import { expect, test } from '../fixtures.mjs';
 import { record } from './helpers.mjs';
 
 test( "the period's summary names its top search", async ( { page, look } ) => {
-	await page.goto( '/wp-admin/admin.php?page=viglet-dumont-insights' );
+	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	await page.getByLabel( 'Period' ).selectOption( 'this-month' );
 	const card = page.locator( '.components-card' ).filter( {
 		has: page.getByRole( 'heading', { name: 'Summary' } ),
@@ -12,7 +12,7 @@ test( "the period's summary names its top search", async ( { page, look } ) => {
 
 	const started = Date.now();
 	await card.getByRole( 'button', { name: 'Summarize this period' } ).click();
-	const summary = card.locator( '.viglet-dumont-insights__summary' );
+	const summary = card.locator( '.viglet-turing-insights__summary' );
 	await expect( summary ).toHaveText( /workshop/i, { timeout: 60000 } );
 	record(
 		'insights summary: last 30 days',

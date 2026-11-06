@@ -15,8 +15,8 @@ test.beforeAll( () => {
 			'--post_type=page',
 			'--post_status=publish',
 			'--post_title=Ask the assistant',
-			'--post_content=<!-- wp:viglet-dumont/assistant /-->',
-			'--meta_input={"_viglet_dumont_exclude":"1"}',
+			'--post_content=<!-- wp:viglet-turing/assistant /-->',
+			'--meta_input={"_viglet_turing_exclude":"1"}',
 			'--porcelain',
 		] ).trim()
 	);
@@ -36,7 +36,7 @@ test.afterAll( () => {
  * @return {Promise<{text: string, ms: number}>} The answer and how long it took.
  */
 async function ask( dialog, question ) {
-	const messages = dialog.locator( '.viglet-dumont-assistant__message' );
+	const messages = dialog.locator( '.viglet-turing-assistant__message' );
 	const before = await messages.count();
 	await dialog.getByLabel( 'Your question' ).fill( question );
 	const started = Date.now();
@@ -49,7 +49,7 @@ async function ask( dialog, question ) {
 	return {
 		text: (
 			await answer
-				.locator( '.viglet-dumont-assistant__text' )
+				.locator( '.viglet-turing-assistant__text' )
 				.textContent()
 		).trim(),
 		ms: Date.now() - started,

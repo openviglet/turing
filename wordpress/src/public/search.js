@@ -1,14 +1,14 @@
 /**
- * `viglet-dumont/search`: the Turing JS SDK, configured for this WordPress site.
+ * `viglet-turing/search`: the Turing JS SDK, configured for this WordPress site.
  *
  * A theme's own search blocks import this module instead of vendoring the SDK:
  *
- *     import { createSiteSearch } from 'viglet-dumont/search';
+ *     import { createSiteSearch } from 'viglet-turing/search';
  *     const search = createSiteSearch();
  *     search.subscribe( ( state ) => render( state.documents ) );
  *     await search.searchQuery( 'workshop' );
  *
- * The configuration comes from viglet_dumont_public_config() (Turing's public URL, the SN
+ * The configuration comes from viglet_turing_public_config() (Turing's public URL, the SN
  * site, the locale and this site's key); it never holds the API key. Searches are filtered
  * to this site's key, so a SN site shared with other sites returns only this one's posts.
  */
@@ -29,8 +29,8 @@ import { getConfig, store } from '@wordpress/interactivity';
 // eslint-disable-next-line import/no-unresolved
 export * from '@viglet/turing-sdk';
 
-/** viglet_dumont_public_config(): { url, site, locale, siteKey, home, aiPaused, facets, analytics }. */
-export const config = getConfig( 'viglet-dumont' );
+/** viglet_turing_public_config(): { url, site, locale, siteKey, home, aiPaused, facets, analytics }. */
+export const config = getConfig( 'viglet-turing' );
 
 /** The filter that keeps a search to this site's documents. */
 export const siteFilter = `site_key:${ config.siteKey }`;
@@ -196,7 +196,7 @@ export function cardOverride( fields, field ) {
 
 /**
  * A document's type as a badge, a label and a card's looks read it, as the server's
- * Viglet_Dumont_Mapping::document_type() does: the first value when Turing holds several (a
+ * Viglet_Turing_Mapping::document_type() does: the first value when Turing holds several (a
  * catalog record's `dc:type`, D327), without the highlight a type filter puts on it.
  *
  * @param {Object} fields The document's fields.
@@ -493,7 +493,7 @@ export function createSiteAutoComplete( debounceMs = 250 ) {
 /**
  * Whether this visitor may be counted: the site turned reporting on, and the visitor allows
  * statistics. A consent plugin speaking the WP Consent API decides that whenever it is
- * present; without one, the site does (the `viglet_dumont_tracking_consent` filter). Asked
+ * present; without one, the site does (the `viglet_turing_tracking_consent` filter). Asked
  * at every event, so a choice made on the page applies from the next one.
  */
 export function trackingAllowed() {
@@ -640,7 +640,7 @@ export function siteImage( image, url, documentId ) {
 		return image;
 	}
 	const here = new URL( config.home || '/', window.location.href );
-	here.searchParams.set( 'viglet_dumont_image', id );
+	here.searchParams.set( 'viglet_turing_image', id );
 	return here.href;
 }
 
@@ -875,9 +875,9 @@ export async function shopProducts( productIds ) {
 // The products ticked for comparison (D200), for this tab only. One list for every card that
 // offers Compare (search results, Related, the copilot: D212), so a choice made in one
 // counts in the others; it lives in a store of its own so each block's getters follow it.
-const compareKey = 'viglet-dumont-compare';
+const compareKey = 'viglet-turing-compare';
 const compareMax = 4;
-const compared = store( 'viglet-dumont/compare', {
+const compared = store( 'viglet-turing/compare', {
 	state: { ids: loadCompare() },
 } ).state;
 
@@ -961,14 +961,14 @@ export const compare = {
 // list, so where several share a page the first in reading order keeps its bar and the others
 // are marked as repeats, which each block's stylesheet hides.
 const compareBars =
-	'.viglet-dumont-search__compare-bar, .viglet-dumont-copilot__compare-bar, .viglet-dumont-related__compare-bar';
+	'.viglet-turing-search__compare-bar, .viglet-turing-copilot__compare-bar, .viglet-turing-related__compare-bar';
 
 /** Mark every compare bar after the first as a repeat. */
 function markRepeatedCompareBars() {
 	document
 		.querySelectorAll( compareBars )
 		.forEach( ( bar, n ) =>
-			bar.classList.toggle( 'viglet-dumont-compare-bar--repeat', n > 0 )
+			bar.classList.toggle( 'viglet-turing-compare-bar--repeat', n > 0 )
 		);
 }
 

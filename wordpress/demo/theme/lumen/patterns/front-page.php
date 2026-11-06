@@ -26,9 +26,9 @@ $lumen_tiles = array(
 <p class="has-mist-color has-text-color has-large-font-size"><?php esc_html_e( 'Ask the way you would ask at the front desk: what is on this week, which calls are still open, which book talks about the tides.', 'lumen' ); ?></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:viglet-dumont/search <?php echo wp_json_encode( array( 'placeholder' => __( 'Debates in November, the science fair…', 'lumen' ) ) ); ?> -->
-<!-- wp:viglet-dumont/search-box /-->
-<!-- /wp:viglet-dumont/search --></div>
+<!-- wp:viglet-turing/search <?php echo wp_json_encode( array( 'placeholder' => __( 'Debates in November, the science fair…', 'lumen' ) ) ); ?> -->
+<!-- wp:viglet-turing/search-box /-->
+<!-- /wp:viglet-turing/search --></div>
 <!-- /wp:group -->
 
 <!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|50"}}},"layout":{"type":"constrained","wideSize":"1160px"}} -->
