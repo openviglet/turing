@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
-## Block D.6 — Analytics & observability gaps
-
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
@@ -2428,28 +2426,6 @@ collections and searches them (Testcontainers SolrCloud IT).
 ## CLXXIX The quality gate stops at the package boundary
 
 ## CLXXX Analytics & observability gaps
-
-### CLXXX.1 Recording a search never fails it (GitHub #112) (T1244)
-
-**Where it came from.** GitHub issue #112 (2024): a search answered 500 with "Data too
-long for column 'sanatized_term'".
-
-**What happens today.** `TurSNSearchProcess.populateMetrics` saves the typed query into
-`TurSNSiteMetricAccess.term` and its folded key into `sanatizedTerm`, both
-`VARCHAR(255)` (Liquibase `v2026.1_update`, `v2026.2.7.0`), with no truncation. A pasted
-paragraph or a long natural-language question overflows them: MySQL/MariaDB and strict
-H2 refuse the insert, and the save runs inside the search, so the visitor gets an error
-instead of results.
-
-**What Turing should do.** Recording a search must never fail it. Cap `term` and
-`sanatizedTerm` to the column length on the entity (`setTerm` truncating on a code-point
-boundary, the folded key derived from the capped term), and keep the save from
-propagating: log and continue when the metric cannot be written. Widening the column is
-not enough by itself, since any length can be exceeded.
-
-**Done when:** a search with a 2,000-character query answers 200 on H2 and MariaDB, its
-metric row holds the first 255 characters, and a unit test covers the cap and a failing
-save.
 
 ### CLXXX.2 Clearing facets keeps the secondary ones (GitHub #120) (T1249)
 

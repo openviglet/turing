@@ -101,9 +101,10 @@ public class TurSNSiteMetricAccess implements Serializable {
 	private String partitionKey;
 
 	public void setTerm(String term) {
-		this.term = term;
+		// T1244 — capped to the column, so a long query never fails the search that logs it.
+		this.term = TurSNSiteMetricTerms.cap(term);
 		// T1179 — diacritics dropped, never a letter: a Cyrillic or CJK search keeps its key.
-		this.sanatizedTerm = TurSNSiteMetricTerms.fold(term);
+		this.sanatizedTerm = TurSNSiteMetricTerms.cap(TurSNSiteMetricTerms.fold(this.term));
 	}
 
 }

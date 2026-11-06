@@ -115,12 +115,13 @@ public class TurSNSiteMetricClick implements Serializable {
      * the contract of {@link TurSNSiteMetricAccess#setTerm(String)}.
      */
     public void setTerm(String term) {
-        this.term = term;
+        // T1244 — capped to the column, the same as a search's.
+        this.term = TurSNSiteMetricTerms.cap(term);
         if (term == null) {
             this.sanatizedTerm = null;
             return;
         }
         // T1179 — the same key as a search: diacritics dropped, never a letter.
-        this.sanatizedTerm = TurSNSiteMetricTerms.fold(term);
+        this.sanatizedTerm = TurSNSiteMetricTerms.cap(TurSNSiteMetricTerms.fold(this.term));
     }
 }

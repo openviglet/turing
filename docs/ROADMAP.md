@@ -26,10 +26,6 @@
 
 - 📋 **T1246** (deps: —) **Autocomplete never suggests the site's most searched terms, though the search log already counts them** — A popular query a visitor starts typing is not offered unless the documents spell it (GitHub #66). → §CLXXI.2
 
-## Block D.6 — Analytics & observability gaps
-
-- 📋 **T1244** (deps: —) **A search longer than 255 characters fails to save its metric row, and the search answers 500** — Recording a search can fail the search itself, so a pasted paragraph or a long question gets an error (GitHub #112). → §CLXXX.1
-
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
 - 📋 **T1249** (deps: —) **Clearing the facets also clears the secondary facets, so the visitor loses the tab they are on** — The clean-up link and clearAllFilters drop every facet filter, secondary ones included (GitHub #120). → §CLXXX.2

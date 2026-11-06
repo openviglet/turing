@@ -38,8 +38,30 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
  */
 public final class TurSNSiteMetricTerms {
 
+    /**
+     * T1244 — the length of the {@code term} and {@code sanatizedTerm} columns
+     * ({@code VARCHAR(255)}) of a search and a click.
+     */
+    public static final int MAX_TERM_LENGTH = 255;
+
     private TurSNSiteMetricTerms() {
         throw new IllegalStateException("Semantic Navigation metric terms utility class");
+    }
+
+    /**
+     * T1244 — {@code term} cut to {@link #MAX_TERM_LENGTH} chars, never splitting a
+     * surrogate pair, so a pasted paragraph is recorded by its start instead of
+     * overflowing the column and failing the search that logs it.
+     */
+    public static String cap(String term) {
+        if (term == null || term.length() <= MAX_TERM_LENGTH) {
+            return term;
+        }
+        int end = MAX_TERM_LENGTH;
+        if (Character.isHighSurrogate(term.charAt(end - 1))) {
+            end--;
+        }
+        return term.substring(0, end);
     }
 
     /** The grouping key of {@code term}: diacritics dropped, never a letter. */

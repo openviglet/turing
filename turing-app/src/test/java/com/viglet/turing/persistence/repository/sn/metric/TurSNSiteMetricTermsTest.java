@@ -34,6 +34,19 @@ class TurSNSiteMetricTermsTest {
         assertThat(TurSNSiteMetricTerms.fold(null)).isNull();
     }
 
+    /** T1244 — a term longer than the column is cut, never through a surrogate pair. */
+    @Test
+    void capCutsToTheColumnOnACodePointBoundary() {
+        assertThat(TurSNSiteMetricTerms.cap(null)).isNull();
+        assertThat(TurSNSiteMetricTerms.cap("short")).isEqualTo("short");
+        assertThat(TurSNSiteMetricTerms.cap("x".repeat(2000))).hasSize(TurSNSiteMetricTerms.MAX_TERM_LENGTH);
+
+        // An emoji (two chars) straddling position 255 is dropped whole.
+        String straddling = "x".repeat(254) + "😀" + "tail";
+        String capped = TurSNSiteMetricTerms.cap(straddling);
+        assertThat(capped).hasSize(254).isEqualTo("x".repeat(254));
+    }
+
     @Test
     void theMostTypedSpellingIsShown() {
         Map<String, String> typed = TurSNSiteMetricTerms.typedSpellings(List.of(

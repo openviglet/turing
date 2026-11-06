@@ -352,6 +352,43 @@ class TurSNSearchProcessTest {
                 verify(turSNSiteMetricAccessRepository).save(any());
         }
 
+        /** T1244 — a 2,000-character query is recorded by its first 255 characters. */
+        @Test
+        void testPopulateMetricsCapsALongQueryToTheColumn() {
+                String longQuery = "a".repeat(2000);
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ(longQuery);
+                TurSNSitePostParamsBean post = new TurSNSitePostParamsBean();
+                post.setPopulateMetrics(true);
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(searchParams, post), Locale.US,
+                                URI.create("http://localhost/search"), post);
+
+                process(true).populateMetrics(new TurSNSite(), context, 0);
+
+                verify(turSNSiteMetricAccessRepository).save(argThat(m -> m.getTerm().length() == 255
+                                && m.getSanatizedTerm().length() == 255));
+        }
+
+        /** T1244 — a metric row the database refuses never fails the search. */
+        @Test
+        void testPopulateMetricsSwallowsAFailingSave() {
+                TurSNSearchParams searchParams = new TurSNSearchParams();
+                searchParams.setQ("java");
+                TurSNSitePostParamsBean post = new TurSNSitePostParamsBean();
+                post.setPopulateMetrics(true);
+                TurSNSiteSearchContext context = new TurSNSiteSearchContext("site", new TurSNConfig(),
+                                new TurSEParameters(searchParams, post), Locale.US,
+                                URI.create("http://localhost/search?q=java"), post);
+                when(turSNSiteMetricAccessRepository.save(any()))
+                                .thenThrow(new org.springframework.dao.DataIntegrityViolationException(
+                                                "Data too long for column 'sanatized_term'"));
+
+                org.assertj.core.api.Assertions.assertThatCode(
+                                () -> process(true).populateMetrics(new TurSNSite(), context, 0))
+                                .doesNotThrowAnyException();
+        }
+
         @Test
         void testPopulateMetricsSkipsWhenDisabledOrWildcard() {
                 TurSNSearchProcess processDisabled = process(false);

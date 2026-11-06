@@ -25,8 +25,6 @@
 
 ## Block CN — Autocomplete and suggestions
 
-## Block D.6 — Analytics & observability gaps
-
 ## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)

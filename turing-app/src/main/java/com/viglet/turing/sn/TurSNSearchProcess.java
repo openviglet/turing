@@ -92,10 +92,13 @@ import com.viglet.turing.solr.TurSolrInstanceProcess;
 import com.viglet.turing.solr.TurSolrQueryBuilder;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Alexandre Oliveira
  * @since 0.3.6
  */
+@Slf4j
 @Component
 public class TurSNSearchProcess {
         public static final String GROUP = "group";
@@ -654,7 +657,15 @@ public class TurSNSearchProcess {
                                                                 .orElse(new HashSet<>()));
                                                 turSNSiteMetricAccess.setUserId(p.getUserId());
                                         });
-                        turSNSiteMetricAccessRepository.save(turSNSiteMetricAccess);
+                        // T1244 — recording a search never fails it: a metric row the
+                        // database refuses is logged and the visitor still gets results.
+                        try {
+                                turSNSiteMetricAccessRepository.save(turSNSiteMetricAccess);
+                        } catch (RuntimeException e) {
+                                log.warn("Search metric for site {} not recorded: {}",
+                                                turSNSite.getId(), e.getMessage());
+                                log.debug("Search metric save failure", e);
+                        }
                 }
         }
 
