@@ -1,5 +1,6 @@
 package com.viglet.turing.spring.security.auth;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -93,6 +94,64 @@ class TurAuthTokenHeaderFilterTest {
             var authentication = SecurityContextHolder.getContext().getAuthentication();
             assertSame(user, authentication.getPrincipal());
             assertTrue(authentication.getAuthorities().contains(new SimpleGrantedAuthority("SN_IMPORT")));
+            verify(chain).doFilter(request, response);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    /** T1245 — a Keycloak row spelled "Admin.User" still owns the key stamped "admin.user". */
+    @Test
+    void shouldFindTheCreatorWhatEverTheCaseOfItsRow() throws Exception {
+        SecurityContextHolder.clearContext();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+        TurDevToken token = mock(TurDevToken.class);
+        TurUser user = new TurUser();
+        user.setUsername("Admin.User");
+        when(request.getHeader("Key")).thenReturn("valid-token");
+        when(turDevTokenRepository.findByToken("valid-token")).thenReturn(Optional.of(token));
+        when(token.isUsable()).thenReturn(true);
+        when(token.getCreatedBy()).thenReturn("admin.user");
+        when(turUserRepository.findByUsername("admin.user")).thenReturn(null);
+        when(turUserRepository.findFirstByUsernameIgnoreCase("admin.user")).thenReturn(user);
+        doAnswer(invocation -> {
+            Set<GrantedAuthority> authorities = invocation.getArgument(1);
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            return null;
+        }).when(turAuthorityResolver).resolve(eq("Admin.User"), anySet());
+
+        try {
+            filter.doFilterInternal(request, response, chain);
+
+            var authentication = SecurityContextHolder.getContext().getAuthentication();
+            assertSame(user, authentication.getPrincipal());
+            assertTrue(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    /** T1245 — no local row at all: the key is still its creator, by name. */
+    @Test
+    void shouldResolveByTheCreatorsNameWhenNoLocalUserExists() throws Exception {
+        SecurityContextHolder.clearContext();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+        TurDevToken token = mock(TurDevToken.class);
+        when(request.getHeader("Key")).thenReturn("valid-token");
+        when(turDevTokenRepository.findByToken("valid-token")).thenReturn(Optional.of(token));
+        when(token.isUsable()).thenReturn(true);
+        when(token.getCreatedBy()).thenReturn("kc-admin");
+
+        try {
+            filter.doFilterInternal(request, response, chain);
+
+            verify(turAuthorityResolver).resolve(eq("kc-admin"), anySet());
+            var authentication = SecurityContextHolder.getContext().getAuthentication();
+            assertEquals("kc-admin", authentication.getName());
             verify(chain).doFilter(request, response);
         } finally {
             SecurityContextHolder.clearContext();

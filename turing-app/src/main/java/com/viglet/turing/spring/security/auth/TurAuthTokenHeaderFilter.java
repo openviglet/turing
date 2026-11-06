@@ -50,14 +50,20 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
         if (appId != null) {
             // T646 / §XXXVII.8 — reject disabled/expired tokens.
             turDevTokenRepository.findByToken(appId).filter(TurDevToken::isUsable).ifPresent(token -> {
-                TurUser turUser = turUserRepository.findByUsername(token.getCreatedBy());
+                String createdBy = token.getCreatedBy();
+                TurUser turUser = findCreator(createdBy);
+                // T1245 — the key is its creator even with no local row (a Keycloak user
+                // the console never mirrored): the creator's name still resolves its
+                // tenant memberships and the bootstrap admin, and names the principal.
+                String username = turUser != null ? turUser.getUsername() : createdBy;
                 // T1061 — resolve through TurAuthorityResolver, whose transaction keeps
                 // the lazy role → privileges collection loadable. Walking it here, with
                 // no session open on a key-only request, threw LazyInitializationException.
                 Set<GrantedAuthority> authorities = new HashSet<>();
-                turAuthorityResolver.resolve(turUser != null ? turUser.getUsername() : null, authorities);
+                turAuthorityResolver.resolve(username, authorities);
+                Object principal = turUser != null ? turUser : username;
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        turUser, null, authorities);
+                        principal, null, authorities);
                 // T1133 — a key bound to a partition of a shared site carries it.
                 TurApiKeyPartitionContext.bind(request, token);
                 // T1210 — and so does the authentication the session keeps, or a
@@ -69,5 +75,18 @@ public class TurAuthTokenHeaderFilter extends OncePerRequestFilter {
             });
         }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * T1245 — the key's creator as a local user. {@code createdBy} is stamped
+     * lower-cased by the auditor, while a Keycloak user's row keeps the case Keycloak
+     * or {@code turing.keycloak-admin-id} spells, so an exact match misses it.
+     */
+    private TurUser findCreator(String createdBy) {
+        if (createdBy == null) {
+            return null;
+        }
+        TurUser exact = turUserRepository.findByUsername(createdBy);
+        return exact != null ? exact : turUserRepository.findFirstByUsernameIgnoreCase(createdBy);
     }
 }

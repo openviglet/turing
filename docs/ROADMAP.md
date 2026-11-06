@@ -14,10 +14,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-## Block AN — Security hardening (post-audit, §XXXVII)
-
-- 🛠 **T1245** (deps: —) **An API key created under Keycloak authenticates with no user and no authorities, so admin endpoints refuse it** — The key's creator has no local user row under Keycloak, and a Key-only request carries no realm roles (GitHub #81). → §XXXVII.21
-
 ## Block CL — SN sites for research and memory archives
 
 ## Block CF — What the SN site manifest cannot declare

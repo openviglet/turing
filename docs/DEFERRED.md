@@ -13,8 +13,6 @@
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-## Block AN — Security hardening (post-audit, §XXXVII)
-
 ## Block CL — SN sites for research and memory archives
 
 - ⏸ **T1221** (deps: —) **Turing was never read end to end as an education and memory site uses it: pt_BR, OCR, images, audio, flows** — set aside (Needs the client's lab and cloud tenant.): A school client uses nearly every visitor feature at once; one analysis finds its gaps cheaper than production. → §CLXVII.2

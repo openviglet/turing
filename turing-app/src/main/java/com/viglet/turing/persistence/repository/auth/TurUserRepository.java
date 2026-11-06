@@ -31,6 +31,12 @@ import com.viglet.turing.persistence.model.auth.TurUser;
 
 public interface TurUserRepository extends JpaRepository<TurUser, String> {
 	TurUser findByUsername(String username);
+
+	/**
+	 * T1245 — the auditor stamps {@code createdBy} lower-cased, while a Keycloak user's
+	 * local row keeps the case Keycloak or {@code turing.keycloak-admin-id} spells.
+	 */
+	TurUser findFirstByUsernameIgnoreCase(String username);
 	Set<TurUser> findByTurGroupsIn(Collection<TurGroup> groups);
     void deleteByUsername(String username);
 }

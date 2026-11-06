@@ -17,14 +17,20 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.viglet.turing.persistence.model.auth.TurUser;
 import com.viglet.turing.persistence.model.dev.token.TurDevToken;
+import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
+import com.viglet.turing.persistence.repository.auth.TurUserRepository;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
@@ -58,6 +64,12 @@ class TurAuthTokenHeaderFilterIT extends AbstractTuringSpringIT {
     @Autowired
     private TurDevTokenRepository turDevTokenRepository;
 
+    @Autowired
+    private TurUserRepository turUserRepository;
+
+    @Autowired
+    private TurGroupRepository turGroupRepository;
+
     private HttpResponse<String> importWith(String key) throws Exception {
         HttpRequest.Builder builder = HttpRequest.newBuilder(
                 URI.create("http://localhost:" + port + "/api/sn/import"))
@@ -84,6 +96,57 @@ class TurAuthTokenHeaderFilterIT extends AbstractTuringSpringIT {
                 () -> "key-only import must authenticate; got " + response.statusCode()
                         + " body=" + response.body());
         assertEquals("true", response.body());
+    }
+
+    private HttpResponse<String> listSitesWith(String key) throws Exception {
+        return HttpClient.newHttpClient().send(HttpRequest.newBuilder(
+                URI.create("http://localhost:" + port + "/api/sn"))
+                .header(TurAuthTokenHeaderFilter.KEY, key).GET().build(), BodyHandlers.ofString());
+    }
+
+    private TurDevToken keyCreatedBy(String createdBy) {
+        TurDevToken token = new TurDevToken();
+        token.setTitle("T1245 key of " + createdBy);
+        token.setToken("t1245-" + UUID.randomUUID());
+        // The auditor stamps the creator from the session, lower-cased, as it does
+        // for a key created in the console.
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(createdBy, null, List.of()));
+        try {
+            return turDevTokenRepository.save(token);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    /**
+     * T1245 — a Keycloak admin's local row keeps Keycloak's case ("T1245.Admin") while
+     * the auditor stamps the key lower-cased: the key still reaches an admin endpoint.
+     */
+    @Test
+    void keyOfAMixedCaseAdminReachesAnAdminEndpoint() throws Exception {
+        String username = "T1245.Admin";
+        if (turUserRepository.findByUsername(username) == null) {
+            turUserRepository.save(TurUser.builder().username(username).realm("keycloak").enabled(1)
+                    .turGroups(List.of(turGroupRepository.findByName("Administrator"))).build());
+        }
+        TurDevToken token = keyCreatedBy(username);
+
+        HttpResponse<String> response = listSitesWith(token.getToken());
+
+        assertEquals(200, response.statusCode(),
+                () -> "an admin's key must list sites; got " + response.statusCode() + " body=" + response.body());
+    }
+
+    /** T1245 — a key whose creator has no local row and no rights is still refused. */
+    @Test
+    void keyOfANonAdminWithoutLocalUserIsRefused() throws Exception {
+        TurDevToken token = keyCreatedBy("t1245-nobody");
+
+        HttpResponse<String> response = listSitesWith(token.getToken());
+
+        assertEquals(403, response.statusCode(),
+                () -> "a non-admin key must not list sites; got " + response.statusCode());
     }
 
     @Test

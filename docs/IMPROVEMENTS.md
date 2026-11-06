@@ -29,8 +29,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AR — Live-demo search & chat quality (Lucene parity gaps, §XLI)
 
-## Block AN — Security hardening (post-audit, §XXXVII)
-
 ## Block CL — SN sites for research and memory archives
 
 ## Block CF — What the SN site manifest cannot declare
@@ -2106,30 +2104,6 @@ The standing concerns that outlived it, both learned the hard way:
 - **A defence that lives in another artifact is not a defence this repository has.**
   The encoded-slash allowance let a traversal reach the storage key, and the only thing
   stopping it was a containment check in `viglet-core-storage`.
-
-### XXXVII.21 API keys created under Keycloak (GitHub #81) (T1245)
-
-**Where it came from.** GitHub issue #81 (2024): an API key created while the console
-runs under Keycloak does not work.
-
-**What happens today.** `TurAuthTokenHeaderFilter` resolves a key's identity with
-`turUserRepository.findByUsername(token.getCreatedBy())` and its authorities through
-`TurAuthorityResolver.resolve(username, …)`. Under Keycloak the creator is the Keycloak
-`preferred_username` (`TurAuditorAwareImpl`), which usually has no local `TurUser` row,
-and a request carrying only the `Key` header has no realm roles. The key therefore
-authenticates with a `null` principal and no authorities, so the admin endpoints it
-reaches refuse it, while the same key created under local auth works.
-
-**What Turing should do.** Confirm with a test that builds the Keycloak case (a creator
-without a local user). Then give the key its own identity: authenticate it as the
-creator's username even without a local row, with the authorities resolved for that
-username (groups, tenant memberships, `turing.keycloak-admin-id`), or store the
-creator's resolved authorities on the token when it is created. Keep partitions (T1133)
-and `isUsable()` as they are.
-
-**Done when:** a key created by a Keycloak admin with no local user reaches an admin
-endpoint (`GET /api/sn`) with 200, and a key created by a non-admin is still refused
-there.
 
 ## LXXI The no-entity-caching rule is enforced only where it was first broken (Block AC)
 
