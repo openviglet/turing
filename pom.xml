@@ -555,6 +555,12 @@
                 <artifactId>solr-solrj</artifactId>
                 <version>10.1.0</version>
             </dependency>
+            <!-- T1247: a Solr instance reached through a ZooKeeper ensemble -->
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-solrj-zookeeper</artifactId>
+                <version>10.1.0</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>

@@ -60,6 +60,22 @@ so one node down does not stop search. Every node must hold the same cores, as t
 replicas of one another do. Creating and deleting cores and editing their schema go
 to the first node in the list.
 
+### SolrCloud through ZooKeeper
+
+For a SolrCloud cluster, point the instance at its ZooKeeper ensemble instead of a
+node, with the chroot if the cluster uses one:
+
+```text
+zk://zk-1:2181,zk-2:2181,zk-3:2181/solr
+```
+
+Turing reads the cluster state from ZooKeeper: which nodes are live and where each
+collection's replicas are, so requests follow the cluster as nodes join and leave.
+The site's indexes are created as collections (from the same configsets as cores),
+whatever `turing.solr.cloud` says, and admin calls such as creating a collection or
+editing its schema go to a live node read from ZooKeeper. Turing must be able to reach
+the addresses the Solr nodes register in ZooKeeper (their `SOLR_HOST` and port).
+
 ---
 
 ## Instance Detail Pages

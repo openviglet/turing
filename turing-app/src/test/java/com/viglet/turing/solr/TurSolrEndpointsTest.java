@@ -67,6 +67,22 @@ class TurSolrEndpointsTest {
     }
 
     @Test
+    void aZkEndpointIsAZooKeeperEnsembleWithItsChroot() {
+        TurSolrEndpoints endpoints = TurSolrEndpoints.parse(" zk://zk1:2181, zk2:2181/solr ");
+
+        assertThat(endpoints.isZooKeeper()).isTrue();
+        assertThat(endpoints.zkHosts()).containsExactly("zk1:2181", "zk2:2181");
+        assertThat(endpoints.zkChroot()).isEqualTo("/solr");
+        assertThat(endpoints.urls()).isEmpty();
+        assertThat(endpoints.isHttp()).as("SolrJ reaches it").isTrue();
+        assertThat(endpoints.key()).isEqualTo("zk://zk1:2181,zk2:2181/solr");
+        assertThat(TurSolrEndpoints.isZooKeeper("ZK://zk1:2181")).isTrue();
+        assertThat(TurSolrEndpoints.parse("zk://zk1:2181/").zkChroot()).isNull();
+        assertThat(TurSolrEndpoints.isZooKeeper("http://a:8983/solr")).isFalse();
+        assertThatThrownBy(endpoints::first).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     void oneNodeGetsItsOwnClientAndANodeListALoadBalancingOne() throws Exception {
         try (SolrClient single = TurSolrEndpoints.parse("http://a:8983/solr").createClient();
                 SolrClient list = TurSolrEndpoints.parse("http://a:8983/solr,http://b:8983/solr").createClient()) {

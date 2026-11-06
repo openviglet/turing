@@ -64,23 +64,24 @@ public class TurSolrInstanceProcess {
 
     private Optional<TurSolrInstance> getSolrClient(TurSEInstance turSEInstance, String core) {
         String endpoint = resolveEndpoint(turSEInstance);
-        // T1247 — one URL, or a node list served with load balancing and failover.
+        // T1247 — one URL, a node list served with load balancing and failover, or a
+        // ZooKeeper ensemble whose cluster state the client follows.
         TurSolrEndpoints endpoints = TurSolrEndpoints.parse(endpoint);
         if (endpoints == null || !endpoints.isHttp()) {
             log.debug("Skipping Solr client init for non-HTTP endpoint: {}", endpoint);
             return Optional.empty();
         }
-        SolrClient solrClient = clientCache.computeIfAbsent(String.join(",", endpoints.urls()), key -> {
-            log.info("Starting Solr connection pool for {}: {}",
-                    endpoints.isNodeList() ? "nodes" : "URL", key);
+        SolrClient solrClient = clientCache.computeIfAbsent(endpoints.key(), key -> {
+            log.info("Starting Solr connection pool for {}", key);
             return endpoints.createClient();
         });
 
         try {
-            TurSolrInstance solrInstance = new TurSolrInstance(solrClient, URI.create(endpoints.first()).toURL(),
-                    core);
+            // A ZooKeeper endpoint's raw-HTTP calls go to a live node of the cluster.
+            TurSolrInstance solrInstance = new TurSolrInstance(solrClient,
+                    URI.create(endpoints.baseUrl(solrClient)).toURL(), core);
             return Optional.of(solrInstance);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | IllegalStateException e) {
             log.error(e.getMessage(), e);
         }
 

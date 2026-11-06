@@ -2346,28 +2346,28 @@ A request means the same on every engine an SN site can run on: the filters it a
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
 
-### CLXXV.5 Solr connection modes (GitHub #95) (T1247)
+### CLXXV.6 Separate Solr query and update endpoints (T1247b)
 
-**Where it came from.** GitHub issue #95 (2024): reach Solr in the topologies customers
-run, not only through one URL.
+**Where it came from.** GitHub issue #95 (2024), the part T1247 left: some Solr
+deployments take updates on dedicated nodes (or a leader-only tier) and serve queries
+from read replicas, and want indexing kept off the query nodes.
 
-**What landed (node list).** `TurSolrEndpoints` parses the instance's `endpointUrl` as
-one URL or a comma/whitespace-separated node list and is the one place the SolrJ client
-is built (`createClient()`): one node gets an `HttpJdkSolrClient`, a list an
-`LBSolrClient` over it that skips a dead node and probes it every 30 s. Raw-HTTP admin
-calls (`TurSolrUtils`, the plugin's core and collection calls) go to `adminRoot()`, the
-first node. The console field takes text for Solr. `TurSolrNodeListFailoverIT` proves a
-dead first node does not stop indexing or search.
+**What happens today.** `TurSolrEndpoints` builds one SolrJ client per instance (a
+single node, a load-balanced node list, or a ZooKeeper cloud client) and every request,
+`TurSolrDocumentHandler`'s updates and `TurSolr`'s queries alike, goes through
+`TurSolrInstance.getSolrClient()`.
 
-**What is left.** A ZooKeeper ensemble mode (cluster state from ZK, `CloudSolrClient`
-from `solr-solrj-zookeeper`), and optional separate query and update endpoints. Both
-belong in `TurSolrEndpoints.createClient()`, plus an explicit mode on the instance (a
-`zk://host:2181,host2:2181/chroot` endpoint form avoids a schema change). Admin calls
-under ZK should read a live node from cluster state instead of the first URL.
+**What Turing should do.** Let a Solr endpoint name an update side and a query side, for
+example `query=http://r1:8983/solr,http://r2:8983/solr; update=http://w1:8983/solr`,
+each side parsed as T1247's forms (one URL or a node list). `TurSolrInstance` then
+carries two clients, `TurSolrDocumentHandler` and commits use the update client, and
+searches, facets, suggestions and the DSL use the query client. An endpoint without the
+split keeps one client for both, so nothing changes for existing instances. Under a
+ZooKeeper endpoint the cloud client already routes updates to leaders, so the split
+applies to HTTP nodes only.
 
-**Done when:** an instance pointed at a ZooKeeper ensemble creates its collections and
-searches them (Testcontainers SolrCloud IT), and an instance with a separate update
-endpoint indexes through it while searching through the query nodes.
+**Done when:** an IT with two Solr nodes shows documents indexed through the update side
+while searches are served by the query side.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

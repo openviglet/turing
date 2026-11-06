@@ -25,7 +25,7 @@
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
-- ⏳ **T1247** (deps: —) **A Solr instance is one HTTP endpoint: no ZooKeeper, no node list with failover, no separate query and update nodes** — The node-list half shipped; a ZooKeeper ensemble mode and separate query and update endpoints are still missing. → §CLXXV.5
+- 📋 **T1247b** (deps: —) **A Solr instance sends updates and queries to the same nodes; indexing cannot be kept off the query replicas** — Deployments that index on dedicated nodes and serve search from read replicas cannot say so to Turing (rest of GitHub #95). → §CLXXV.6
 
 ## Block AG — Bento UI: complete the interface migration (§XXXI)
 
@@ -53,15 +53,6 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
-
-## Done when — T1247
-
-- **An instance pointed at a ZooKeeper ensemble creates and searches its collections** A
-  Testcontainers SolrCloud IT (ZooKeeper plus Solr) creates a site's collection through
-  the instance and finds an indexed document.
-- **Separate update and query endpoints route indexing and search apart** An IT with two
-  nodes shows documents are sent to the update endpoint while searches go to the query
-  nodes.
 
 ## Non-goals (do NOT add as tasks)
 

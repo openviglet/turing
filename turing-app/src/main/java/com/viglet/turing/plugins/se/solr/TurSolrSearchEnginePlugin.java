@@ -151,7 +151,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
             configSet = "en";
         }
         String solrURL = getSolrUrl(seInstance);
-        if (turConfigProperties.getSolr().isCloud()) {
+        if (isCloud(seInstance)) {
             try {
                 TurSolrUtils.createCollection(solrURL, indexName,
                         resourceLoader.getResource(
@@ -170,7 +170,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     public void deleteIndex(TurSEInstance seInstance, String indexName) {
         seInstance = effective(seInstance);
         String solrUrl = getSolrUrl(seInstance);
-        if (turConfigProperties.getSolr().isCloud()) {
+        if (isCloud(seInstance)) {
             TurSolrUtils.deleteCollection(solrUrl, indexName);
         } else {
             TurSolrUtils.deleteCore(solrUrl, indexName);
@@ -185,7 +185,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     @Override
     public boolean indexExists(TurSEInstance seInstance, String indexName) {
         seInstance = effective(seInstance);
-        if (turConfigProperties.getSolr().isCloud()) {
+        if (isCloud(seInstance)) {
             return TurSolrUtils.collectionExists(seInstance, indexName);
         }
         return TurSolrUtils.coreExists(seInstance, indexName);
@@ -194,7 +194,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     @Override
     public List<TurSECoreInfo> listIndexes(TurSEInstance seInstance) {
         seInstance = effective(seInstance);
-        if (turConfigProperties.getSolr().isCloud()) {
+        if (isCloud(seInstance)) {
             return TurSolrUtils.listCollections(seInstance);
         }
         return TurSolrUtils.listCores(seInstance);
@@ -1154,6 +1154,15 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     // ---- Helpers ---------------------------------------------------------
+
+    /**
+     * Whether the instance's indexes are SolrCloud collections: the global
+     * {@code turing.solr.cloud}, or (T1247) an endpoint on a ZooKeeper ensemble.
+     */
+    private boolean isCloud(TurSEInstance seInstance) {
+        return turConfigProperties.getSolr().isCloud()
+                || (seInstance != null && TurSolrEndpoints.isZooKeeper(seInstance.getEndpointUrl()));
+    }
 
     private static String getSolrUrl(TurSEInstance seInstance) {
         // T1247 — a node list sends its admin calls to the first node.

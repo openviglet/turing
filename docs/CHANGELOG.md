@@ -1605,7 +1605,7 @@
 - **T1233** — fq[]=-field:value excludes the value on Solr, Lucene and Elasticsearch through one shared parser, always narrowing whatever fqOr or the operators say; Content AI answers 400 instead of matching nothing (design §CLXXV.2 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 - **T1242** — A Lucene search drops the locale's Snowball stop words, so uma barraca para 2 pessoas matches and highlights only content words; stop-word-only and quoted queries keep them (design §CLXXV.3 superseded: stop words are dropped on the query side only; dropping them from the index too would leave a stop-word-only query nothing to match, against its own test).
 - **T1243** — The field-ext save, field check and repair go through the site's engine plugin (new fieldSchema/hasFieldSchema): a Lucene site's PUT answers 200, and env-configured Solr is reached.
-- **T1247 (node list)** — A Solr endpoint can list several nodes, comma-separated: one client factory load-balances them and skips a node that stops answering (failover IT with the first node down).
+- **T1247** — A Solr endpoint can list several nodes (load-balanced, failover) or name a ZooKeeper ensemble (zk://, SolrCloud collections), all built by one factory; query/update split is T1247b (design §CLXXV.5 recorded in `turing-app/src/main/java/com/viglet/turing/solr/TurSolrEndpoints.java`).
 
 ## Block CH — Published container images track the shipped source
 

@@ -481,6 +481,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- T1247: the ZooKeeper cluster-state provider for a Solr instance on a zk:// endpoint -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj-zookeeper</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <!-- Native TLS for ZooKeeper over Netty, five platforms' worth; the plain
+                     ZooKeeper client does not load it. -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-tcnative-boringssl-static</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- Jackson 2.x (com.fasterxml) required by solr-solrj at runtime; version managed by Spring Boot BOM -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
