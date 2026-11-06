@@ -28,6 +28,12 @@ if [ "$version" != "$stable" ]; then
     echo "Plugin header says $version but readme.txt's Stable tag says $stable" >&2
     exit 1
 fi
+# The constant the code reports (T1255): the third place the version is written.
+constant=$(sed -n "s/^define( 'VIGLET_TURING_VERSION', '\([^']*\)' );/\1/p" src/viglet-turing.php)
+if [ "$version" != "$constant" ]; then
+    echo "Plugin header says $version but VIGLET_TURING_VERSION says $constant" >&2
+    exit 1
+fi
 if [ $# -gt 0 ] && [ "$1" != "$version" ]; then
     echo "Asked to release $1 but the plugin header says $version" >&2
     exit 1

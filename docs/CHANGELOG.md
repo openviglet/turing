@@ -1686,3 +1686,4 @@
 - **T1252** — The WordPress plugin lives in wordpress/ with its 267-commit history; its build copies the workspace SDK, and composer check, wp-scripts build and build-zip.sh pass here (design §CLXXXII.1 superseded: Dumont's copy stays until T1256 moves the Playground: its Pages deploy builds from it).
 - **T1253** — The plugin's classes, constants, options, hooks, REST namespace, blocks and `wp turing` command use the Viglet_Turing prefix; a one-time upgrade moves an old site's data.
 - **T1254** — The WordPress plugin's docs live at turing.viglet.org/docs/integrations/wordpress/ under the plugin's new names, linked from the sidebar, six Turing pages, the WordPress page and the demo tours.
+- **T1255 (workflow written, actionlint clean)** — wordpress-plugin.yml checks, tests and releases the plugin on manual dispatch, the e2e job against a Turing built from the branch; build-zip.sh checks all three version strings.

@@ -22,3 +22,5 @@
 - ⏸ **T1223** (deps: —) **The manifest cannot declare a field's filter values as alternatives: two fq values of site_key intersect to nothing** — set aside (Needs a viglet-core release.): A manifest field cannot yet declare facetItemType: VigletFieldSpec in viglet-core needs the field and a release first. → §CLXIX.1
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
+
+- ⏸ **T1255** (deps: T1252 ✅) **No workflow in this repository checks, tests or releases the WordPress plugin** — set aside (Needs a push and one dispatch on GitHub.): Dispatch wordpress-plugin.yml once on GitHub with every job on, and fix what a real runner finds. → §CLXXXII.4

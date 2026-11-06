@@ -20,12 +20,11 @@
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-- 📋 **T1255** (deps: T1252 ✅) **No workflow in this repository checks, tests or releases the WordPress plugin** — Dumont's wordpress-plugin.yml fires on push and tag; here every workflow is manual-dispatch on purpose (T928, T929). → §CLXXXII.4
 - 📋 **T1256** (deps: T1252 ✅) **The Playground demo store loads its blueprint and zips from dumont.viglet.org/playground** — The try-it button on Turing's WordPress page should not depend on another product's site being built and deployed. → §CLXXXII.5
-- 📋 **T1257** (deps: T1251 ✅, T1254 ✅, T1255) **The plugin video is not on the plugin docs, the README or the release, and no page carries its transcript** — Assistants and search read text, not video, and a release asset downloads instead of streaming (rest of Dumont D282). → §CLXXXII.7
+- 📋 **T1257** (deps: T1251 ✅, T1254 ✅, T1255 ✅) **The plugin video is not on the plugin docs, the README or the release, and no page carries its transcript** — Assistants and search read text, not video, and a release asset downloads instead of streaming (rest of Dumont D282). → §CLXXXII.7
 - 📋 **T1258** (deps: T1252 ✅) **The plugin's search answer and Site assistant do not share context, so a follow-up starts over** — A visitor who asks one more thing after the answer loses the question, the answer and its sources (moved from Dumont D312). → §CLXXXII.8
 - 📋 **T1259** (deps: T1252 ✅) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — Guided conversations built in Turing's console never reach a WordPress site (moved from Dumont D313). → §CLXXXII.9
-- 📋 **T1260** (deps: T1253 ✅, T1255, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory, and a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 - 📋 **T1261** (deps: T1252 ✅) **The plugin's search answer lists every retrieved document as a source when it cites none** — The block falls back from citations to retrieval, so the published video shows a running shirt under a tent answer while Ana says each source can be checked. → §CLXXXII.10
 
 ## Done when — T1184

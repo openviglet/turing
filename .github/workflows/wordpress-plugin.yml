@@ -1,0 +1,273 @@
+# The WordPress plugin's gate and release (T1255), ported from Dumont's wordpress-plugin.yml
+# when the plugin moved here (T1252).
+#
+# **On demand only**, like every workflow in this repository (T928, T929): Dumont's ran on
+# every push and tag; this one runs when dispatched. Each job has an input, all on by default
+# except the browser suite, which is the slow one.
+#
+# - check: PHPCS (WordPress Coding Standards), PHPStan and PHPUnit on the lowest PHP the
+#   plugin supports and on a current one.
+# - admin: the admin screens linted and built, the WordPress.org review's rules on the source,
+#   and every string translated to pt_BR.
+# - plugin-check: Plugin Check, the tool the WordPress.org review runs, on the package uploaded
+#   there (bin/build-zip.sh --wporg), not on the source tree. A warning fails it too.
+# - e2e: the browser suite against a real WordPress and a Turing built from the dispatched
+#   branch, which is the point of the move: a Turing change that breaks the plugin fails here,
+#   not after an image is published. `turing_image` runs it against another image instead.
+# - release: with `release_version` set, builds the zip (bin/build-zip.sh refuses a version
+#   the plugin header, VIGLET_TURING_VERSION and the readme's Stable tag disagree with), tags
+#   wordpress-v<version> on the dispatched commit and attaches the zip to that GitHub release.
+#   It runs only after check, admin and plugin-check passed in the same dispatch.
+#
+# The plugin's build copies the JS SDK from frontend/packages/sdk (bin/copy-sdk.mjs), so every
+# job that builds the plugin builds the SDK first.
+
+name: WordPress plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      check:
+        description: PHPCS, PHPStan and PHPUnit on PHP 8.1 and 8.5
+        type: boolean
+        default: true
+      admin:
+        description: Admin screens, the review's rules on the source, pt_BR translations
+        type: boolean
+        default: true
+      plugin_check:
+        description: Plugin Check on the WordPress.org package
+        type: boolean
+        default: true
+      e2e:
+        description: Browser suite against WordPress and a Turing built from this branch
+        type: boolean
+        default: false
+      turing_image:
+        description: Run the browser suite against this image instead of building one (blank = build)
+        type: string
+        default: ""
+      release_version:
+        description: Release this version (e.g. 1.0.1) as wordpress-v<version> (blank = no release)
+        type: string
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: wordpress
+
+jobs:
+  check:
+    if: inputs.check || inputs.release_version != ''
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.5"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dev tools
+        run: composer install --no-interaction --no-progress
+
+      - name: PHPCS, PHPStan and PHPUnit
+        run: composer check
+
+  admin:
+    if: inputs.admin || inputs.release_version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26.3.1
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Build the JS SDK the plugin ships
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile=false
+          pnpm --filter "@viglet/turing-sdk..." run build
+
+      - name: Install, lint and build the admin screens
+        run: |
+          npm ci
+          npm run lint:js
+          npm run build
+
+      # What the WordPress.org review reads and PHPCS skips: every Security silencer says why,
+      # unescaped output is limited to a known list, no textdomain loading, no stray notices.
+      - name: The review's rules on the source
+        run: node bin/wporg-check.mjs
+
+      # The committed .pot is what the source produces today (WP-CLI in Docker), and every
+      # string in it is translated to pt_BR.
+      - name: Every string translated to pt_BR
+        run: node bin/check-i18n.mjs
+
+  plugin-check:
+    if: inputs.plugin_check || inputs.release_version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26.3.1
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Build the JS SDK the plugin ships
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile=false
+          pnpm --filter "@viglet/turing-sdk..." run build
+
+      - name: Build the package
+        run: |
+          npm ci
+          npm run build
+          unzip -q "$(sh bin/build-zip.sh --wporg)" -d build/package
+
+      # The pre-review of 3 Nov 2026 found translations and load_plugin_textdomain() in a package
+      # Plugin Check had passed: this reads the package for them.
+      - name: The review's rules on the package
+        run: node bin/wporg-check.mjs --package build/package/viglet-turing-search
+
+      - uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: wordpress/build/package/viglet-turing-search
+          strict: true
+
+  # The browser suite (npm run test:e2e) against a real WordPress and Turing. The Turing it ran
+  # against is logged from /api/discovery. Baselines are per platform: a screenshot with no
+  # linux baseline yet is written, not failed, and uploaded with the artifacts to be reviewed
+  # and committed under tests/e2e/snapshots/linux/.
+  e2e:
+    if: inputs.e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      E2E_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v7
+
+      # The repository's Dockerfile clones the branch it is given, so this is the Turing of the
+      # dispatched branch; CACHE_BUST carries the commit into TURING_BUILD_COMMIT.
+      - name: Build Turing from this branch
+        if: inputs.turing_image == ''
+        working-directory: .
+        run: |
+          docker build --build-arg REPO_BRANCH="${GITHUB_REF_NAME}" \
+            --build-arg CACHE_BUST="${GITHUB_SHA}" -t turing:wordpress-e2e .
+
+      - name: The Turing image under test
+        env:
+          IMAGE: ${{ inputs.turing_image }}
+        run: echo "TURING_IMAGE=${IMAGE:-turing:wordpress-e2e}" >> "$GITHUB_ENV"
+
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26.3.1
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Build the JS SDK the plugin ships
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile=false
+          pnpm --filter "@viglet/turing-sdk..." run build
+
+      - name: Install, and the browser
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Start WordPress and Turing
+        run: sh bin/run-docker.sh
+
+      - name: The Turing under test
+        run: curl -sf "http://localhost:2700/api/discovery"
+
+      - name: Browser suite
+        run: npx playwright test --update-snapshots=missing
+
+      - name: Keep the screens, the report and any new baseline
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-artifacts
+          path: |
+            wordpress/tests/e2e/artifacts/
+            wordpress/tests/e2e/snapshots/linux/
+          if-no-files-found: ignore
+
+  release:
+    if: always() && inputs.release_version != '' && needs.check.result == 'success' && needs.admin.result == 'success' && needs.plugin-check.result == 'success'
+    needs: [check, admin, plugin-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ inputs.release_version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26.3.1
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Build the JS SDK the plugin ships
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile=false
+          pnpm --filter "@viglet/turing-sdk..." run build
+
+      - name: Build the admin screens
+        run: npm ci && npm run build
+
+      # build-zip.sh refuses a version the plugin's three version strings disagree with.
+      - name: Build the plugin zip
+        id: zip
+        run: echo "path=wordpress/$(sh bin/build-zip.sh "$VERSION")" >> "$GITHUB_OUTPUT"
+
+      - name: Tag the commit and attach the zip to its release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="wordpress-v${VERSION}"
+          gh release view "$TAG" >/dev/null 2>&1 \
+            || gh release create "$TAG" --target "$GITHUB_SHA" --title "WordPress plugin ${VERSION}" \
+              --notes "See wordpress/src/readme.txt for the changelog."
+          gh release upload "$TAG" "${{ steps.zip.outputs.path }}" --clobber
