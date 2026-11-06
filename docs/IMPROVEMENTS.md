@@ -37,6 +37,14 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CN — Autocomplete and suggestions
 
+## Block D.6 — Analytics & observability gaps
+
+## Block BH — SN result & facet rendering robustness for feed/crawl-indexed sites (§LVI)
+
+## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
+
+## Block AG — Bento UI: complete the interface migration (§XXXI)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -1478,6 +1486,25 @@ rest cheap:
 The read paths already use React Query hooks (`api/queries/*.queries.ts`), which
 the bento pages consume directly — no data-layer work per screen.
 
+### XXXI.15 Range only for date fields (GitHub #72) (T1248)
+
+**Where it came from.** GitHub issue #72 (2024): the field's Range option should only
+appear for a date field.
+
+**What happens today.** `components/sn/facet/sn.site.faceted.field.form.tsx` (used by
+the bento faceted-field page) always renders the **Range** select (`facetRange`:
+disabled, day, month, year), whatever the field's type. On a text or string field the
+option does nothing useful, and setting it confuses the facet.
+
+**What Turing should do.** Render the Range select only when the field's type is `DATE`,
+and save `DISABLED` for any other type, so a field whose type changes away from DATE
+does not keep a stale range. The backend should treat a range on a non-date field as
+disabled too, so an old row or an API write cannot turn it on.
+
+**Done when:** the faceted-field form shows Range for a DATE field and hides it for
+STRING, a vitest test covers both, and a non-date field with a stored range renders a
+plain facet.
+
 ## XXXIII. Evaluation platform — pluggable graders + datasets (Block AJ)
 
 ### XXXIII.0 The problem — eval is two hard-wired islands
@@ -2078,6 +2105,30 @@ The standing concerns that outlived it, both learned the hard way:
   The encoded-slash allowance let a traversal reach the storage key, and the only thing
   stopping it was a containment check in `viglet-core-storage`.
 
+### XXXVII.21 API keys created under Keycloak (GitHub #81) (T1245)
+
+**Where it came from.** GitHub issue #81 (2024): an API key created while the console
+runs under Keycloak does not work.
+
+**What happens today.** `TurAuthTokenHeaderFilter` resolves a key's identity with
+`turUserRepository.findByUsername(token.getCreatedBy())` and its authorities through
+`TurAuthorityResolver.resolve(username, …)`. Under Keycloak the creator is the Keycloak
+`preferred_username` (`TurAuditorAwareImpl`), which usually has no local `TurUser` row,
+and a request carrying only the `Key` header has no realm roles. The key therefore
+authenticates with a `null` principal and no authorities, so the admin endpoints it
+reaches refuse it, while the same key created under local auth works.
+
+**What Turing should do.** Confirm with a test that builds the Keycloak case (a creator
+without a local user). Then give the key its own identity: authenticate it as the
+creator's username even without a local row, with the authorities resolved for that
+username (groups, tenant memberships, `turing.keycloak-admin-id`), or store the
+creator's resolved authorities on the token when it is created. Keep partitions (T1133)
+and `isUsable()` as they are.
+
+**Done when:** a key created by a Keycloak admin with no local user reaches an admin
+endpoint (`GET /api/sn`) with 200, and a key created by a non-admin is still refused
+there.
+
 ## LXXI The no-entity-caching rule is enforced only where it was first broken (Block AC)
 
 _Fully shipped — Block AC (T898, T898b–T898e, T952, T953). See
@@ -2309,6 +2360,27 @@ with `fqItemOperator` sends it.
 
 ## CLXXI Autocomplete inside a filtered scope
 
+### CLXXI.2 Autocomplete from the most searched terms (GitHub #66) (T1246)
+
+**Where it came from.** GitHub issue #66 (MB, 2024): autocomplete should offer the terms
+visitors search most, not only terms found in the documents.
+
+**What happens today.** `TurSNAutoComplete` suggests completions from the index (Solr's
+suggester, the Lucene `*_ac` fields; T1226 scopes them to a filter). The search log
+already counts searches per folded term (`TurSNSiteMetricAccessRepository`, the
+console's Top Terms), but nothing feeds it to autocomplete.
+
+**What Turing should do.** An opt-in per site (`autocompleteTopTerms`, off by default)
+that mixes the most searched terms starting with the typed prefix into the suggestions:
+only terms whose searches found results (`numFound > 0`), from a recent window (90
+days), ranked by count and merged after the index suggestions without duplicates.
+Partitioned keys read only their partition's terms (T1133 already scopes the log). Cache
+the ranked list per site and locale.
+
+**Done when:** on a site with the flag on and 30 searches for `barraca iglu`, `GET
+/ac?q=barr` includes `barraca iglu`; with the flag off, or for a term whose searches
+found nothing, it does not.
+
 ## CLXXII Structured feeds refresh when the publisher says so
 
 ## CLXXIII Knowledge Base: microthesauri & index-time term expansion (§XL)
@@ -2321,6 +2393,28 @@ A request means the same on every engine an SN site can run on: the filters it a
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
 
+### CLXXV.5 Solr connection modes (GitHub #95) (T1247)
+
+**Where it came from.** GitHub issue #95 (2024): reach Solr in the topologies customers
+run, not only through one URL.
+
+**What happens today.** A Solr search-engine instance is one HTTP endpoint
+(`TurSEInstance.endpointUrl`, or the env-configured one through
+`TurSolrInstanceSource`); `turing.solr.cloud` switches core calls to the Collections API
+on that same node. There is no ZooKeeper connection, no list of nodes to balance or fail
+over across, and no way to send queries and updates to different nodes.
+
+**What Turing should do.** Let an instance declare its connection mode: a single node
+(today), a node list (load-balanced, with failover), or a ZooKeeper ensemble (cluster
+state from ZK), optionally with separate query and update endpoints. Build the SolrJ
+client from the mode in one factory, so `TurSolrUtils`, the plugin and the schema calls
+all use it, and show the mode in the console's search-engine form. Existing instances
+keep the single-node mode.
+
+**Done when:** an instance configured with two node URLs keeps answering searches when
+the first node is down, and an instance pointed at a ZooKeeper ensemble creates its
+collections and searches them (Testcontainers SolrCloud IT).
+
 ## CLXXVI SDK errors that carry Turing's own answer
 
 ## CLXXVII Every endpoint honours a request's filters and partition
@@ -2328,3 +2422,72 @@ engine shows and the shared seam that closes it for all of them.
 ## CLXXVIII The model catalog at models.viglet.org
 
 ## CLXXIX The quality gate stops at the package boundary
+
+## CLXXX Analytics & observability gaps
+
+### CLXXX.1 Recording a search never fails it (GitHub #112) (T1244)
+
+**Where it came from.** GitHub issue #112 (2024): a search answered 500 with "Data too
+long for column 'sanatized_term'".
+
+**What happens today.** `TurSNSearchProcess.populateMetrics` saves the typed query into
+`TurSNSiteMetricAccess.term` and its folded key into `sanatizedTerm`, both
+`VARCHAR(255)` (Liquibase `v2026.1_update`, `v2026.2.7.0`), with no truncation. A pasted
+paragraph or a long natural-language question overflows them: MySQL/MariaDB and strict
+H2 refuse the insert, and the save runs inside the search, so the visitor gets an error
+instead of results.
+
+**What Turing should do.** Recording a search must never fail it. Cap `term` and
+`sanatizedTerm` to the column length on the entity (`setTerm` truncating on a code-point
+boundary, the folded key derived from the capped term), and keep the save from
+propagating: log and continue when the metric cannot be written. Widening the column is
+not enough by itself, since any length can be exceeded.
+
+**Done when:** a search with a 2,000-character query answers 200 on H2 and MariaDB, its
+metric row holds the first 255 characters, and a unit test covers the cap and a failing
+save.
+
+### CLXXX.2 Clearing facets keeps the secondary ones (GitHub #120) (T1249)
+
+**Where it came from.** GitHub issue #120 (INS, 2025): a client wants the facets it
+marks secondary (rendered as tabs) to keep their selection when the visitor clears the
+primary facets.
+
+**What happens today.** A field can be a secondary facet
+(`TurSNSiteFieldExt.secondaryFacet`, rendered by
+`TurSNFacetRenderer.responseSecondaryFacet`), but the clear-all action ignores it:
+`TurSNSearchProcess` builds `cleanUpFacets` from every facet field in the filter query
+(`getFacetFieldsInFilterQuery`), and the SDKs' `clearAllFilters` send `fq: []`. Clearing
+the side filters also drops the tab the visitor is on.
+
+**What Turing should do.** Leave secondary-facet filters in place when clearing:
+`cleanUpFacets` removes only the primary facet fields, and the structured response
+exposes the same list so `clearAllFilters` in both SDKs keeps the secondary filters. The
+issue also asks for the secondary set to be chosen per request (a parameter); the
+per-field flag already exists, so start with it and add a request override only if a
+client still needs one, next to the request-level facet exclusion filed beside this
+line.
+
+**Done when:** with a secondary facet `type=post` and a primary `year=2024` selected,
+the clean-up link and `clearAllFilters` keep `type=post`, on Solr and Lucene.
+
+### CLXXX.3 A request can exclude facets (GitHub #103) (T1250)
+
+**Where it came from.** GitHub issue #103 (INS, 2024): hide a facet through a search
+parameter, so one page of a site can leave out a facet the rest of the site shows.
+
+**What happens today.** Which facets a response carries is site configuration only (the
+`facet` flag per field, the facet settings in the manifest). `TurSNSearchRequest`,
+`TurSNSearchParams` and `TurSNSitePostParamsBean` have no facet-selection field, so a
+page that must not show a facet hides it client-side, after the engine has already
+computed it.
+
+**What Turing should do.** An optional request field, `excludeFacets` (a list of field
+names), on the JSON search body and the GET (`exf[]`), that drops those facets from both
+the legacy and the structured response and skips computing them on the engine. Unknown
+names are ignored. It never adds a facet the site does not enable, and filters on an
+excluded field keep applying.
+
+**Done when:** a POST search with `excludeFacets: ["year"]` answers without the `year`
+facet but still honours `fq: ["year:2024"]`, on Solr, Lucene and Elasticsearch, and both
+SDKs send the field.
