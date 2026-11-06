@@ -45,6 +45,10 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AG — Bento UI: complete the interface migration (§XXXI)
 
+## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
+
+## Block CT — The WordPress plugin (Viglet Turing Search)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2491,3 +2495,151 @@ excluded field keep applying.
 **Done when:** a POST search with `excludeFacets: ["year"]` answers without the `year`
 facet but still honours `fq: ["year:2024"]`, on Solr, Lucene and Elasticsearch, and both
 SDKs send the field.
+
+## CLXXXI Public site & top-of-funnel conversion (turing.viglet.org)
+
+The marketing site at frontend/apps/site is where a visitor first meets Viglet Turing. A
+page that redirects elsewhere, or a product surface with no page, is a visitor sent to
+someone else's site.
+
+### CLXXXI.1 A WordPress page of Turing's own (T1251)
+
+frontend/apps/site/public/wordpress/index.html is a meta refresh to
+dumont.viglet.org/wordpress, and the YouTube video UVoQXGcd-aI closes on
+turing.viglet.org/wordpress. A /wordpress/ route replaces it, modelled on
+dumont-site/src/pages/wordpress.tsx: a dark hero with "Install the plugin" and "Try the
+demo store in your browser" (Playground), the eight-chapter shopper story
+(WORDPRESS_STORY and the chapter-1..8.webp stills), the "install it, point it at Turing,
+reindex" band and the shared CTA, in Turing's identity (the hero shell of aem.tsx). The
+video sits under the hero as a click-to-load youtube-nocookie facade over the existing
+thumbnail, so no third-party cookie loads before the click and the consent posture
+holds. JSON-LD carries BreadcrumbList, SoftwareApplication, VideoObject and FAQPage. A
+"beyond WordPress" section links Dumont for AEM, databases and files. The route is wired
+into App.tsx, entry-server.tsx, the Solutions dropdown, the footer, a landing card,
+sitemap.xml and llms.txt, and the site-content mentions of WordPress link to it. Done
+when the redirect file is gone and the prerendered page builds.
+
+## CLXXXII The WordPress plugin (Viglet Turing Search)
+
+The WordPress and WooCommerce plugin was built in the Dumont repository (wordpress/,
+Dumont Track S), but it never goes through Dumont. Its PHP API client sends content
+straight to Turing (/api/sn/import, /api/sn/manifest, /api/se, /api/sn/{site}/search),
+and its blocks run on @viglet/turing-sdk. The plugin therefore moves into this
+repository together with everything that ships it: the PHPUnit and Playwright suites,
+the four demo stores in docker-compose, the Playground blueprint, the video pipeline
+with its photo and narration provenance, the end-user docs and the release workflow.
+Dumont keeps one tile and a redirect. In this repository the plugin builds against the
+SDK from the same commit and is released with tags of the form wordpress-v*.
+
+### CLXXXII.1 The plugin moves in with its history (T1252)
+
+Dumont's wordpress/ directory (576 tracked files, 264 of them under demo/) is split out
+with git filter-repo --subdirectory-filter wordpress and merged as a top-level
+wordpress/ directory here, so blame and log survive the move. bin/copy-sdk.mjs reads
+frontend/packages/sdk/dist from this workspace instead of the npm package, so the plugin
+ships the SDK of its own commit. The plugin header's Plugin URI and readme.txt point at
+turing.viglet.org/wordpress/ and the Turing docs. Media provenance moves with the media:
+demo/seed/CREDITS.md, polyweave.toml and polyweave.purchases*.json. Done when composer
+test, the wp-scripts build and bin/build-zip.sh pass from this repository.
+
+### CLXXXII.2 Rename the Dumont prefix before the directory listing (T1253)
+
+The 28 classes in src/includes are class-viglet-dumont-*.php with Viglet_Dumont_*
+classes and VIGLET_DUMONT_* constants, and the plugin stores its settings in wp_options
+under the same prefix. Turing's product is not Dumont, and the slug viglet-turing-search
+already says so. The rename covers the classes, the file names, the constants, option
+and transient keys, hooks, REST namespaces, block names and the i18n strings that carry
+the old name. An upgrade routine copies any viglet_dumont_* option to its new key once,
+so the demo stores and early installs keep their settings. The PHPUnit stubs, phpstan
+and the Playwright suites move with it. Done when grep for viglet_dumont finds only the
+one-time upgrade routine.
+
+### CLXXXII.3 The plugin's docs move to turing-docs (T1254)
+
+dumont-site/docs/src/content/docs/connectors/wordpress.md (775 lines: how it works,
+install, connect to Turing, what gets indexed, several sites, WP-CLI, admin, search,
+Playground, local Docker) and wordpress-turing.md (the features tour) move into
+frontend/apps/docs/src/content/docs under an integrations/wordpress section, with the
+nine dumont-wordpress-*.png screenshots. They get sidebar entries in
+sidebar.generated.json and a row in COVERAGE.md. The six Turing pages that mention
+WordPress in passing (intro, integration, architecture-overview, javascript-sdk,
+rest-api, installation-guide) link to the new page. Done when pnpm --filter turing-docs
+build passes its link gate.
+
+### CLXXXII.4 Port the plugin workflow as manual dispatch (T1255)
+
+wordpress-plugin.yml in Dumont runs check (PHP 8.1 and 8.5), admin, plugin-check, e2e
+against ghcr.io/openviglet/turing:latest, and release on a wordpress-v* tag. Its port
+here is workflow_dispatch only, like the other fifteen workflows, with inputs for the
+jobs to run and, for release, the version. The e2e job runs against a Turing built from
+the same commit instead of the published image, which is the point of the move. Release
+builds the zip with bin/build-zip.sh, checks the three version strings, tags
+wordpress-v<version> and attaches the zip to a GitHub release. Done when a dispatch runs
+every job green.
+
+### CLXXXII.5 The Playground demo publishes with Turing's site (T1256)
+
+Dumont's publish-github-pages.yml runs bin/build-playground.sh into _site/playground/:
+blueprint.json, viglet-turing-search.zip, tarnfell.zip and tarnfell-demo.zip. The same
+step joins Turing's site publish, so the files land on turing.viglet.org/playground/,
+and demo/playground/blueprint.json points at those URLs. The blueprint keeps
+turing-demo.viglet.org and the tarnfell site as its backend. The WordPress page's "Try
+the demo store" button opens playground.wordpress.net with the new blueprint-url. Done
+when that link boots the Tarnfell store and its search answers.
+
+### CLXXXII.7 The video beyond the WordPress page, with its transcript (T1257)
+
+T1251 embeds the YouTube video UVoQXGcd-aI on the site's WordPress page. The rest of
+what Dumont's D282 asked for follows here. The plugin's docs page embeds the same video,
+with the narration from demo/narration/script.json as a transcript below it, on the docs
+page and on the site page alike. The plugin README carries story-30s.mp4 (under 1 MB) as
+an inline player, uploaded through GitHub's editor. The release job attaches story.mp4,
+story-30s.mp4 and the caption files to the plugin release, for anyone who wants the
+file. readme.txt links the video in its description, and its FAQ answers where the demo
+store is.
+
+### CLXXXII.8 From the search answer into the assistant and back (T1258)
+
+On a client's site the plugin's search answer and its Site assistant are separate. A
+visitor who reads the answer to "como funciona a biblioteca" and wants "and on
+Saturdays?" has to start over. The answer runs its own createAnswerController with its
+own conversation (search-block.js), while the assistant runs createChatController and
+cannot be opened with turns already in it. Nor does an assistant answer that cites many
+documents link to the results page. Nothing is missing in Turing:
+ConversationRequest.messages already becomes the chat's history, and the SDK chat
+controller takes initialMessages. The gap is the plugin's alone. Search to assistant:
+under the answer, "Continue in the assistant" opens the assistant, floating or the
+page's block, seeded through initialMessages with the query and the answer as the first
+exchange, through a small open-with-turns API. Assistant to search: when an answer cites
+more than three documents, or the visitor asks to see everything, a link opens the
+results page with the query and, where the citations share a type, that filter.
+
+### CLXXXII.9 Turing chat flows in the Site assistant (T1259)
+
+A client wants its site assistant to run guided conversations built as Turing chat
+flows. One is a tour through the school's history with choices. Another is an
+orientation flow ("I want to study / research / work here") that routes to the right
+pages. Turing already runs flows (genai/flow: forms with select fields, slots,
+flow-select; the /form-submit, /flow-select and /slots endpoints in TurSNSiteGenAiAPI).
+@viglet/turing-sdk exports postSiteFlowSelect, postSiteFormSubmit, fetchSiteChatSlots
+and the TurChat response types, and the chat controller has submitForm and resetFlow.
+The plugin's assistant (public/assistant.js) renders only streamed text, citations and
+the navigate tool. It should render what a flow sends: choices as buttons, with typed
+answers still accepted; forms as native labelled fields with validation, sent through
+submitForm only when the visitor submits; slot prompts with their label and allowed
+values; and a restart that calls resetFlow. The Playwright suite gains a flow case
+against the demo store.
+
+### CLXXXII.6 Releases deployed to the plugin directory (T1260)
+
+WordPress.org never reads GitHub. An approved plugin gets its own SVN repository at
+plugins.svn.wordpress.org/viglet-turing-search, and what it holds is the package, not
+the history, so this repository stays the source. The directory becomes one more target
+of the release. The release job of T1255 already builds the viglet-turing-search/ folder
+through bin/build-zip.sh, which refuses a version that disagrees with the plugin header
+or the readme's Stable tag. A step after it commits that folder to trunk/, copies it to
+tags/<version>, and sends the directory's banners, icon and screenshots to assets/ from
+a folder kept outside the package. 10up/action-wordpress-plugin-deploy does this from a
+subfolder through BUILD_DIR, and the SVN credentials live in repository secrets. The
+first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
+first, so the directory never sees the old option keys.

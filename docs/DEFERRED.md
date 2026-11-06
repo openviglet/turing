@@ -33,3 +33,7 @@
 
 ## Block AG — Bento UI: complete the interface migration (§XXXI)
 
+## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
+
+## Block CT — The WordPress plugin (Viglet Turing Search)
+

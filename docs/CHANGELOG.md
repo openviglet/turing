@@ -1669,3 +1669,6 @@
 ## Block CS — Schema changes through the manifest converge in one call
 
 - **T1241** — One manifest now creates a site and RECREATEs a template field (author made multi-valued) with 200: a migration deletes the ext's facet rows first, and the template keeps both sides of the association.
+
+## Block CT — The WordPress plugin (Viglet Turing Search)
+
