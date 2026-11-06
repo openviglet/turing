@@ -16,7 +16,7 @@
 
 ## Block AN — Security hardening (post-audit, §XXXVII)
 
-- 📋 **T1245** (deps: —) **An API key created under Keycloak authenticates with no user and no authorities, so admin endpoints refuse it** — The key's creator has no local user row under Keycloak, and a Key-only request carries no realm roles (GitHub #81). → §XXXVII.21
+- 🛠 **T1245** (deps: —) **An API key created under Keycloak authenticates with no user and no authorities, so admin endpoints refuse it** — The key's creator has no local user row under Keycloak, and a Key-only request carries no realm roles (GitHub #81). → §XXXVII.21
 
 ## Block CL — SN sites for research and memory archives
 
@@ -54,6 +54,7 @@
 - 📋 **T1258** (deps: T1252) **The plugin's search answer and Site assistant do not share context, so a follow-up starts over** — A visitor who asks one more thing after the answer loses the question, the answer and its sources (moved from Dumont D312). → §CLXXXII.8
 - 📋 **T1259** (deps: T1252) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — Guided conversations built in Turing's console never reach a WordPress site (moved from Dumont D313). → §CLXXXII.9
 - 📋 **T1260** (deps: T1253, T1255, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory, and a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1261** (deps: T1252) **The plugin's search answer lists every retrieved document as a source when it cites none** — The block falls back from citations to retrieval, so the published video shows a running shirt under a tent answer while Ana says each source can be checked. → §CLXXXII.10
 
 ## Done when — T1184
 

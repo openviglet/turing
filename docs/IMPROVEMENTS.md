@@ -2623,3 +2623,28 @@ a folder kept outside the package. 10up/action-wordpress-plugin-deploy does this
 subfolder through BUILD_DIR, and the SVN credentials live in repository secrets. The
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
+
+### CLXXXII.10 The answer's sources are the ones it cites (T1261)
+
+**Where it showed.** The pt-BR plugin video (https://youtu.be/UVoQXGcd-aI, chapter 2 at
+1:30) searches "uma barraca para duas pessoas" on the Recanto da Serra demo. The answer
+names the Glaramara tent and its price, with no footnote in its text, and lists eight
+sources under it, among them a running shirt, a waterproof-jacket guide and a bivvy. Ana
+says, over that frame, that every source can be opened to check the answer.
+
+**Why.** The search block fills its list with `s.citations.length ? s.citations :
+s.sources` (`src/public/search-block.js` in Dumont's `wordpress/`, before T1252 moves
+it). When the model cites nothing, the block shows every retrieved document as a source,
+and retrieval is wider than the answer. The block's own setting says the answer "shows
+only when Turing cites sources", so the fallback also breaks the promise the setting
+makes.
+
+**What to do.** Show only citations. An answer with no citation either shows no source
+list, or is not shown at all, as the setting text says; which of the two is the
+product's call. Then check why the answer to a plain product search came back with no
+citation: whether the prompt asks for footnotes on a short answer, and whether the
+citations event arrives after the block has drawn the list.
+
+**Done when** the same search on the demo store shows only sources the answer cites, a
+test covers an answer with no citations, and the story video's chapter 2 is recorded
+again with it.
