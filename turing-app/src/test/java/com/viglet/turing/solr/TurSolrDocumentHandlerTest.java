@@ -345,6 +345,20 @@ class TurSolrDocumentHandlerTest {
                 assertThat(updateRequest.getDeleteById()).contains("doc-123");
         }
 
+        /** T1247b — with an update side, a delete goes to its client and never to the query client. */
+        @Test
+        void testDeIndexingGoesThroughTheUpdateSide() throws MalformedURLException {
+                CapturingSolrClient query = new CapturingSolrClient();
+                CapturingSolrClient update = new CapturingSolrClient();
+                TurSolrInstance split = new TurSolrInstance(query, update,
+                                URI.create("http://localhost:8983/solr").toURL(), "core");
+
+                turSolrDocumentHandler.deIndexing(split, "doc-123");
+
+                assertThat(query.getLastRequest()).isNull();
+                assertThat(((UpdateRequest) update.getLastRequest()).getDeleteById()).contains("doc-123");
+        }
+
         @Test
         void testDeIndexingByTypeCallsDeleteByQuery() {
                 turSolrDocumentHandler.deIndexingByType(turSolrInstance, "article");

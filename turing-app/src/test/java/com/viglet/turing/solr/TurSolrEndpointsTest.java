@@ -82,6 +82,34 @@ class TurSolrEndpointsTest {
         assertThatThrownBy(endpoints::first).isInstanceOf(IllegalStateException.class);
     }
 
+    /** T1247b — a query side and an update side, each in any form. */
+    @Test
+    void querySideAndUpdateSideSplitSearchesFromIndexing() throws Exception {
+        String endpoint = "query=http://r1:8983/solr, http://r2:8983/solr; update=http://w1:8983/solr";
+        TurSolrEndpoints endpoints = TurSolrEndpoints.parse(endpoint);
+
+        assertThat(endpoints.urls()).containsExactly("http://r1:8983/solr", "http://r2:8983/solr");
+        assertThat(endpoints.hasUpdateSide()).isTrue();
+        assertThat(endpoints.update().urls()).containsExactly("http://w1:8983/solr");
+        assertThat(endpoints.key())
+                .isEqualTo("query=http://r1:8983/solr,http://r2:8983/solr; update=http://w1:8983/solr");
+        assertThat(TurSolrEndpoints.adminRoots(endpoint)).containsExactly("http://w1:8983", "http://r1:8983");
+        assertThat(TurSolrEndpoints.adminRoot(endpoint)).as("schema edits go to the update side")
+                .isEqualTo("http://w1:8983");
+        try (SolrClient query = endpoints.createClient(); SolrClient update = endpoints.createUpdateClient()) {
+            assertThat(query).isInstanceOf(LBSolrClient.class);
+            assertThat(update).isInstanceOf(HttpJdkSolrClient.class);
+        }
+    }
+
+    @Test
+    void aSplitNamingTheSameNodesTwiceIsNoSplit() {
+        assertThat(TurSolrEndpoints.parse("query=http://a:8983/solr; update=http://a:8983/solr/").hasUpdateSide())
+                .isFalse();
+        assertThat(TurSolrEndpoints.parse("update=http://w:8983/solr").urls()).containsExactly("http://w:8983/solr");
+        assertThat(TurSolrEndpoints.parse("http://a:8983/solr").createUpdateClient()).isNull();
+    }
+
     @Test
     void oneNodeGetsItsOwnClientAndANodeListALoadBalancingOne() throws Exception {
         try (SolrClient single = TurSolrEndpoints.parse("http://a:8983/solr").createClient();

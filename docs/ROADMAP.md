@@ -25,7 +25,7 @@
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 
-- 📋 **T1247b** (deps: —) **A Solr instance sends updates and queries to the same nodes; indexing cannot be kept off the query replicas** — Deployments that index on dedicated nodes and serve search from read replicas cannot say so to Turing (rest of GitHub #95). → §CLXXV.6
+- 📋 **T1262** (deps: —) **Solr standalone index and delete calls name no core, so the RAG BM25 and intent indexes stay empty on Solr** — The plugin's standalone writes post to the node's /solr/update, which answers 404, and the failure is only logged. → §CLXXV.7
 
 ## Block AG — Bento UI: complete the interface migration (§XXXI)
 

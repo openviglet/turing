@@ -76,6 +76,21 @@ whatever `turing.solr.cloud` says, and admin calls such as creating a collection
 editing its schema go to a live node read from ZooKeeper. Turing must be able to reach
 the addresses the Solr nodes register in ZooKeeper (their `SOLR_HOST` and port).
 
+### Separate query and update nodes
+
+When indexing runs on nodes of its own (a leader that read replicas follow, for
+example), give the endpoint a query side and an update side, separated by `;`:
+
+```text
+query=http://replica-1:8983/solr, http://replica-2:8983/solr; update=http://leader:8983/solr
+```
+
+Each side takes any of the forms above: one URL, a node list, or a `zk://` ensemble.
+Searches, facets and suggestions go to the query side; indexing, deletes and commits go
+to the update side. A new core is created on the first node of each side, and schema
+edits go to the update side, which the followers replicate from. An endpoint without
+`query=` and `update=` uses the same nodes for both.
+
 ---
 
 ## Instance Detail Pages

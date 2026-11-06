@@ -293,7 +293,7 @@
       "connectionSettings": "Connection Settings",
       "connectionSettingsDesc": "Vendor and endpoint configuration.",
       "endpointDesc": "Enter the full URL of the search engine.",
-      "endpointSolrDesc": "Enter the full URL of the Solr node. For several nodes holding the same cores, list their URLs separated by commas: requests are spread across them, and a node that stops answering is skipped until it comes back. For SolrCloud, enter its ZooKeeper ensemble instead: zk://zk1:2181,zk2:2181/solr.",
+      "endpointSolrDesc": "Enter the full URL of the Solr node. For several nodes holding the same cores, list their URLs separated by commas: requests are spread across them, and a node that stops answering is skipped until it comes back. For SolrCloud, enter its ZooKeeper ensemble instead: zk://zk1:2181,zk2:2181/solr. To index on separate nodes: query=<nodes>; update=<nodes>.",
       "endpointPlaceholder": "e.g. http://localhost:8983/solr",
       "titleRequired": "Title is required.",
       "vendorRequired": "Vendor is required.",

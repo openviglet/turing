@@ -1606,6 +1606,7 @@
 - **T1242** — A Lucene search drops the locale's Snowball stop words, so uma barraca para 2 pessoas matches and highlights only content words; stop-word-only and quoted queries keep them (design §CLXXV.3 superseded: stop words are dropped on the query side only; dropping them from the index too would leave a stop-word-only query nothing to match, against its own test).
 - **T1243** — The field-ext save, field check and repair go through the site's engine plugin (new fieldSchema/hasFieldSchema): a Lucene site's PUT answers 200, and env-configured Solr is reached.
 - **T1247** — A Solr endpoint can list several nodes (load-balanced, failover) or name a ZooKeeper ensemble (zk://, SolrCloud collections), all built by one factory; query/update split is T1247b (design §CLXXV.5 recorded in `turing-app/src/main/java/com/viglet/turing/solr/TurSolrEndpoints.java`).
+- **T1247b** — A Solr endpoint can name query=... ; update=... sides: indexing, deletes and commits go to the update nodes, searches to the query nodes, and a new core is created on both (design §CLXXV.6 recorded in `turing-app/src/main/java/com/viglet/turing/solr/TurSolrEndpoints.java`).
 
 ## Block CH — Published container images track the shipped source
 

@@ -36,6 +36,9 @@ import org.apache.solr.common.util.URLUtil;
  * so requests follow the cluster as it changes. Its indexes are collections.</li>
  * </ul>
  *
+ * <p>T1247b — {@code query=<nodes>; update=<nodes>} gives searches and indexing
+ * nodes of their own, each side in any of the forms above.
+ *
  * <p>Calls made over raw HTTP (core and collection admin, schema, the JSON DSL) go
  * to {@link #adminRoot(String)}: the first node of a list, a live node of a
  * ZooKeeper cluster.
@@ -43,13 +46,17 @@ import org.apache.solr.common.util.URLUtil;
  * @param urls the node URLs, in the order the endpoint lists them; empty for ZooKeeper
  * @param zkHosts the ZooKeeper ensemble's {@code host:port}s; empty for HTTP nodes
  * @param zkChroot the cluster's ZooKeeper chroot ({@code /solr}), or {@code null}
+ * @param update (T1247b) the nodes indexing goes to, or {@code null} when they are these
  * @author Alexandre Oliveira
  * @since 2026.3.8
  */
-public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String zkChroot) {
+public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String zkChroot,
+        TurSolrEndpoints update) {
 
     /** The scheme of a ZooKeeper-ensemble endpoint. */
     public static final String ZK_SCHEME = "zk://";
+    private static final String QUERY_SIDE = "query=";
+    private static final String UPDATE_SIDE = "update=";
     /** How often a node that stopped answering is probed to bring it back. */
     static final int ALIVE_CHECK_SECONDS = 30;
     private static final String SEPARATORS = "[,\\s]+";
@@ -64,14 +71,54 @@ public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String z
 
     /** HTTP nodes. */
     public TurSolrEndpoints(List<String> urls) {
-        this(urls, List.of(), null);
+        this(urls, List.of(), null, null);
     }
 
-    /** The nodes {@code endpoint} names, or {@code null} when it names none. */
+    /** These nodes for queries, and (T1247b) {@code update} for indexing. */
+    public TurSolrEndpoints withUpdate(TurSolrEndpoints update) {
+        return new TurSolrEndpoints(urls, zkHosts, zkChroot, update);
+    }
+
+    /**
+     * The nodes {@code endpoint} names, or {@code null} when it names none.
+     *
+     * <p>T1247b — {@code query=<nodes>; update=<nodes>} names a query side and an
+     * update side, each in any of the forms above: searches go to the query side,
+     * indexing and commits to the update side.
+     */
     public static TurSolrEndpoints parse(String endpoint) {
         if (endpoint == null) {
             return null;
         }
+        String trimmed = endpoint.trim();
+        if (startsWithIgnoreCase(trimmed, QUERY_SIDE) || startsWithIgnoreCase(trimmed, UPDATE_SIDE)) {
+            return parseSides(trimmed);
+        }
+        return parseSide(trimmed);
+    }
+
+    private static TurSolrEndpoints parseSides(String spec) {
+        TurSolrEndpoints query = null;
+        TurSolrEndpoints update = null;
+        for (String side : spec.split(";")) {
+            String trimmed = side.trim();
+            if (startsWithIgnoreCase(trimmed, QUERY_SIDE)) {
+                query = parseSide(trimmed.substring(QUERY_SIDE.length()));
+            } else if (startsWithIgnoreCase(trimmed, UPDATE_SIDE)) {
+                update = parseSide(trimmed.substring(UPDATE_SIDE.length()));
+            }
+        }
+        if (query == null) {
+            return update; // only an update side: it serves both
+        }
+        return update == null || update.key().equals(query.key()) ? query : query.withUpdate(update);
+    }
+
+    private static boolean startsWithIgnoreCase(String value, String prefix) {
+        return value.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    private static TurSolrEndpoints parseSide(String endpoint) {
         String trimmed = endpoint.trim();
         if (trimmed.regionMatches(true, 0, ZK_SCHEME, 0, ZK_SCHEME.length())) {
             return parseZooKeeper(trimmed.substring(ZK_SCHEME.length()));
@@ -91,7 +138,7 @@ public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String z
             chroot = null;
         }
         List<String> zkHosts = split(hosts).stream().distinct().toList();
-        return zkHosts.isEmpty() ? null : new TurSolrEndpoints(List.of(), zkHosts, chroot);
+        return zkHosts.isEmpty() ? null : new TurSolrEndpoints(List.of(), zkHosts, chroot, null);
     }
 
     private static List<String> split(String value) {
@@ -110,11 +157,29 @@ public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String z
      * cluster, read from its cluster state.
      */
     public static String adminRoot(String endpoint) {
+        List<String> roots = adminRoots(endpoint);
+        return roots.isEmpty() ? endpoint : roots.getFirst();
+    }
+
+    /**
+     * T1247b — the admin root of each side, update side first: schema edits go to the
+     * update side (the leader followers replicate from), and a core is created and
+     * deleted on both sides. One root where the endpoint does not split.
+     */
+    public static List<String> adminRoots(String endpoint) {
         TurSolrEndpoints endpoints = parse(endpoint);
         if (endpoints == null) {
-            return endpoint;
+            return List.of();
         }
-        return root(endpoints.isZooKeeper() ? endpoints.liveNode() : endpoints.first());
+        return java.util.stream.Stream.of(endpoints.update, endpoints.queryOnly())
+                .filter(java.util.Objects::nonNull)
+                .map(side -> root(side.isZooKeeper() ? side.liveNode() : side.first()))
+                .distinct()
+                .toList();
+    }
+
+    private TurSolrEndpoints queryOnly() {
+        return update == null ? this : new TurSolrEndpoints(urls, zkHosts, zkChroot, null);
     }
 
     private static String root(String node) {
@@ -128,9 +193,15 @@ public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String z
 
     /** The endpoint, normalized: what one pooled client is kept for. */
     public String key() {
-        return isZooKeeper()
+        String side = isZooKeeper()
                 ? ZK_SCHEME + String.join(",", zkHosts) + (zkChroot == null ? "" : zkChroot)
                 : String.join(",", urls);
+        return update == null ? side : QUERY_SIDE + side + "; " + UPDATE_SIDE + update.key();
+    }
+
+    /** Whether indexing goes to nodes of its own (T1247b). */
+    public boolean hasUpdateSide() {
+        return update != null;
     }
 
     /** Whether the endpoint is a ZooKeeper ensemble. */
@@ -164,8 +235,14 @@ public record TurSolrEndpoints(List<String> urls, List<String> zkHosts, String z
 
     /** Whether SolrJ can reach these nodes: HTTP(S) URLs, or a ZooKeeper ensemble. */
     public boolean isHttp() {
-        return isZooKeeper()
+        boolean side = isZooKeeper()
                 || urls.stream().allMatch(url -> url.startsWith("http://") || url.startsWith("https://"));
+        return side && (update == null || update.isHttp());
+    }
+
+    /** T1247b — the client indexing goes through, or {@code null} when it shares the query client. */
+    public SolrClient createUpdateClient() {
+        return update == null ? null : update.createClient();
     }
 
     /**

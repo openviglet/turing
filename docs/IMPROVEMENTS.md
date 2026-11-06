@@ -2346,28 +2346,28 @@ A request means the same on every engine an SN site can run on: the filters it a
 the facets it counts and the order it answers in. A line here names a difference one
 engine shows and the shared seam that closes it for all of them.
 
-### CLXXV.6 Separate Solr query and update endpoints (T1247b)
+### CLXXV.7 Solr standalone writes name their core (T1262)
 
-**Where it came from.** GitHub issue #95 (2024), the part T1247 left: some Solr
-deployments take updates on dedicated nodes (or a leader-only tier) and serve queries
-from read replicas, and want indexing kept off the query nodes.
+**Where it came from.** Found while shipping T1247b: routing every Solr write through
+the update client meant reading each write path.
 
-**What happens today.** `TurSolrEndpoints` builds one SolrJ client per instance (a
-single node, a load-balanced node list, or a ZooKeeper cloud client) and every request,
-`TurSolrDocumentHandler`'s updates and `TurSolr`'s queries alike, goes through
-`TurSolrInstance.getSolrClient()`.
+**What happens today.** `TurSolrSearchEnginePlugin.indexStandaloneDocument`,
+`indexStandaloneDocuments`, `deIndexStandalone` and `deIndexStandaloneByField` call
+`instance.getUpdateClient().add(doc)`, `add(batch)`, `deleteById(id)` and
+`deleteByQuery(q)` with no collection, although `initSolrInstance(seInstance,
+indexName)` carries the core in `instance.getCore()`. The client is built on the node's
+base URL (`http://host:8983/solr`), so SolrJ posts to `/solr/update`, Solr answers 404,
+and the catch logs a warning and returns `false`/`0`. On a Solr instance the RAG BM25
+index (`TurRagBm25Indexer`) and the chat-analytics intent index
+(`TurAnalyticsIntentIndexer`) therefore never receive a document. Nothing commits after
+the add either, so even a corrected add stays invisible until autoCommit.
 
-**What Turing should do.** Let a Solr endpoint name an update side and a query side, for
-example `query=http://r1:8983/solr,http://r2:8983/solr; update=http://w1:8983/solr`,
-each side parsed as T1247's forms (one URL or a node list). `TurSolrInstance` then
-carries two clients, `TurSolrDocumentHandler` and commits use the update client, and
-searches, facets, suggestions and the DSL use the query client. An endpoint without the
-split keeps one client for both, so nothing changes for existing instances. Under a
-ZooKeeper endpoint the cloud client already routes updates to leaders, so the split
-applies to HTTP nodes only.
+**What Turing should do.** Pass `instance.getCore()` to each call (`add(core, doc)`,
+`deleteById(core, id)`, ...) and commit within the configured `commitWithin`, as
+`TurSolrDocumentHandler` does.
 
-**Done when:** an IT with two Solr nodes shows documents indexed through the update side
-while searches are served by the query side.
+**Done when:** a Testcontainers Solr IT indexes a standalone document into a core, finds
+it, deletes it by id and by field, and finds nothing.
 
 ## CLXXVI SDK errors that carry Turing's own answer
 

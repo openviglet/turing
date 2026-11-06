@@ -506,7 +506,7 @@ public class TurSolr {
             return true;
         }
         try {
-            turSolrInstance.getSolrClient().commit(turSolrInstance.getCore());
+            turSolrInstance.getUpdateClient().commit(turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             log.error(e.getMessage());
         }

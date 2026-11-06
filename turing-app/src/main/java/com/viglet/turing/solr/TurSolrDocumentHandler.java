@@ -85,7 +85,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.add(solrDocs);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+            updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
             return solrDocs.size();
         } catch (SolrServerException | IOException e) {
             // Throw so the resilience layer (and the import service's per-doc
@@ -121,7 +121,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.deleteById(id);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+            updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             // Surface the failure instead of swallowing it — a logged-and-ignored error
             // here silently reports a de-index as successful while the document remains.
@@ -134,7 +134,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.deleteByQuery(TYPE + ":" + type);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+            updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             throw new TurSolrIndexException("Error de-indexing Solr documents type=" + type, e);
         }
@@ -154,7 +154,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.deleteByQuery(query);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+            updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             throw new TurSolrIndexException("Error de-indexing Solr documents " + fields, e);
         }
@@ -340,7 +340,7 @@ public class TurSolrDocumentHandler {
             UpdateRequest updateRequest = new UpdateRequest();
             updateRequest.add(document);
             updateRequest.setCommitWithin(commitWithin);
-            updateRequest.process(turSolrInstance.getSolrClient(), turSolrInstance.getCore());
+            updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
         } catch (SolrServerException | IOException e) {
             // Propagate instead of swallowing: a logged-and-ignored error here would
             // falsely report the document as "Indexed" while it was actually lost. Letting

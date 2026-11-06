@@ -75,10 +75,17 @@ public class TurSolrInstanceProcess {
             log.info("Starting Solr connection pool for {}", key);
             return endpoints.createClient();
         });
+        // T1247b — indexing on nodes of its own, when the endpoint names an update side.
+        SolrClient updateClient = endpoints.hasUpdateSide()
+                ? clientCache.computeIfAbsent(endpoints.key() + "#update", key -> {
+                    log.info("Starting Solr update connection pool for {}", endpoints.update().key());
+                    return endpoints.createUpdateClient();
+                })
+                : null;
 
         try {
             // A ZooKeeper endpoint's raw-HTTP calls go to a live node of the cluster.
-            TurSolrInstance solrInstance = new TurSolrInstance(solrClient,
+            TurSolrInstance solrInstance = new TurSolrInstance(solrClient, updateClient,
                     URI.create(endpoints.baseUrl(solrClient)).toURL(), core);
             return Optional.of(solrInstance);
         } catch (MalformedURLException | IllegalStateException e) {

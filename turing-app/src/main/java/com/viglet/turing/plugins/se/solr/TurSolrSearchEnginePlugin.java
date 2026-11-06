@@ -162,7 +162,10 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                 log.error("Failed to create Solr collection '{}': {}", indexName, e.getMessage(), e);
             }
         } else {
-            TurSolrUtils.createCore(solrURL, indexName, configSet);
+            // T1247b — a split endpoint gets the core on its update side and its query side.
+            for (String root : coreRoots(seInstance, solrURL)) {
+                TurSolrUtils.createCore(root, indexName, configSet);
+            }
         }
     }
 
@@ -173,7 +176,9 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         if (isCloud(seInstance)) {
             TurSolrUtils.deleteCollection(solrUrl, indexName);
         } else {
-            TurSolrUtils.deleteCore(solrUrl, indexName);
+            for (String root : coreRoots(seInstance, solrUrl)) {
+                TurSolrUtils.deleteCore(root, indexName);
+            }
         }
     }
 
@@ -378,7 +383,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         org.apache.solr.common.SolrInputDocument doc =
                                 new org.apache.solr.common.SolrInputDocument();
                         attributes.forEach(doc::addField);
-                        instance.getSolrClient().add(doc);
+                        instance.getUpdateClient().add(doc);
                         return true;
                     } catch (Exception e) {
                         log.warn("[Solr] standalone index '{}' failed: {}", indexName, e.getMessage());
@@ -406,7 +411,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         batch.add(doc);
                     }
                     try {
-                        instance.getSolrClient().add(batch);
+                        instance.getUpdateClient().add(batch);
                         return batch.size();
                     } catch (Exception e) {
                         log.warn("[Solr] standalone batch index '{}' failed: {}",
@@ -421,7 +426,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         return turSolrInstanceProcess.initSolrInstance(effective(seInstance), indexName)
                 .map(instance -> {
                     try {
-                        instance.getSolrClient().deleteById(id);
+                        instance.getUpdateClient().deleteById(id);
                         return true;
                     } catch (Exception e) {
                         log.warn("[Solr] standalone delete id='{}' from '{}' failed: {}",
@@ -440,7 +445,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                         // Field value is quoted so multi-token values
                         // (e.g. file paths with spaces) get matched as
                         // a phrase, not OR'd across tokens.
-                        instance.getSolrClient().deleteByQuery(
+                        instance.getUpdateClient().deleteByQuery(
                                 fieldName + ":\"" + fieldValue + "\"");
                         return true;
                     } catch (Exception e) {
@@ -1162,6 +1167,12 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     private boolean isCloud(TurSEInstance seInstance) {
         return turConfigProperties.getSolr().isCloud()
                 || (seInstance != null && TurSolrEndpoints.isZooKeeper(seInstance.getEndpointUrl()));
+    }
+
+    /** T1247b — every node a core lives on: both sides of a split endpoint, else {@code solrUrl}. */
+    private static List<String> coreRoots(TurSEInstance seInstance, String solrUrl) {
+        List<String> roots = TurSolrEndpoints.adminRoots(seInstance.getEndpointUrl());
+        return roots.size() > 1 ? roots : java.util.Collections.singletonList(solrUrl);
     }
 
     private static String getSolrUrl(TurSEInstance seInstance) {
