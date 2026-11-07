@@ -2460,3 +2460,18 @@ path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (
 per-site opt-in that would have emptied the citations was dropped: a client that wants
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
+
+### CLXXXII.13 WordPress installation artifact ownership (T1266)
+
+Found while updating viglet.org W58 after the owner confirmed the WordPress/WooCommerce
+plugin is supplied entirely by Turing. wordpress/README.md under Install and the
+Composer example still link github.com/openviglet/dumont/releases;
+frontend/apps/docs/src/content/docs/integrations/wordpress/index.md under Install
+repeats that destination and its example release URL. The plugin source, CLI,
+environment variables and public page now use Turing names and ownership. Correct
+installation prose and artifact links to the actual Turing distribution, verify the zip
+and versioned instructions, and check any migrated copies. Do not merely relabel a link
+that still downloads from Dumont. The consuming marketing site links the Turing
+WordPress page and docs, without hardcoding an unverified release asset; no plugin
+workaround was added. This is separate from T1260, which covers WordPress.org publishing
+after approval.

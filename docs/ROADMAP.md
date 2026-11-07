@@ -21,6 +21,7 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1266** (deps: —) **WordPress install docs still point to Dumont release artifacts** — Update the published install path after the plugin moved to Turing. → §CLXXXII.13
 
 ## Done when — T1184
 
