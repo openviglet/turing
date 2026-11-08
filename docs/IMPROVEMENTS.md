@@ -1413,14 +1413,18 @@ hardcoded dark surfaces, gradient text, grid and animated orbs; the hub uses neu
 surfaces and plain typographic metadata. Header product highlights also use pills.
 
 Adopt the hub typography roles, title scale, content gutters, spacing, button hierarchy,
-borders and focus treatment. Use released @viglet/viglet-design-system tokens/components
-where applicable and a thin compatible Astro mapping for documentation; inspect actual
-exports before designing an adapter. Preserve royal blue as the product accent. Replace
-decorative chips with plain eyebrow text, separators or ordinary navigation links. Keep
-genuine filter selections and status controls functional. Consolidate a reusable product
-hero for marketing subpages; documentation keeps its reading sidebar and article layout
-while sharing brand tokens. Avoid permanent dark heroes in light mode and remove
-decorative motion that competes with the product evidence.
+borders and focus treatment. Neither frontend/apps/site nor frontend/apps/docs depends
+on @viglet/viglet-design-system today, so adopting it is a new dependency; its Tailwind
+bundle is known to override the app's responsive utilities in the cascade, so prefer its
+CSS-variable tokens over the component bundle. Use released @viglet/viglet-design-system
+tokens/components where applicable and a thin compatible Astro mapping for
+documentation; inspect actual exports before designing an adapter. Preserve royal blue
+as the product accent. Replace decorative chips with plain eyebrow text, separators or
+ordinary navigation links. Keep genuine filter selections and status controls
+functional. Consolidate a reusable product hero for marketing subpages; documentation
+keeps its reading sidebar and article layout while sharing brand tokens. Avoid permanent
+dark heroes in light mode and remove decorative motion that competes with the product
+evidence.
 
 Acceptance: compare home, one solution page, a feature page, docs overview and article
 at 390/768/1440 pixels, light/dark and reduced motion. Preserve real demos, code
@@ -1441,10 +1445,12 @@ Portfolio by their actual job. Get started should reach an actionable supported 
 path with prerequisites and a first-success check; Documentation may keep the overview.
 Keep GitHub Source on openviglet/turing; label the development roadmap separately from
 user release notes. Use existing hub download/release pages and product documentation
-instead of adding another release ledger or installation authority. Replace
-retired-domain references with verified current destinations, preserving inbound routes
-and anchors. The return to viglet.org and product identity must remain discoverable in
-mobile menus and docs.
+instead of adding another release ledger or installation authority. The Dumont AEM URL
+is also hardcoded in public/llms.txt, public/aem-search.md and google-ads.md; the map
+feeds those too. Only docs.viglet.org/turing is redirected (T1163), so check whether the
+/dumont pages are still canonical first. Replace retired-domain references with verified
+current destinations, preserving inbound routes and anchors. The return to viglet.org
+and product identity must remain discoverable in mobile menus and docs.
 
 Acceptance: follow every primary CTA from home, a depth page and docs in a fresh
 browser, including narrow-screen menus and keyboard use; verify response status and
@@ -1477,19 +1483,22 @@ routes or promised conversion uplift; any outcome measurement needs later observ
 ### XXVII.9 Bounded claims and demonstrable product scope (T1272)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org.
-hero.tsx says any LLM and OUTCOMES includes Ship in days, not quarters. Features and
-metadata repeat any search engine although the site identifies specific supported
-engines. These are broader promises than the hub descriptor.
+hero.tsx says any LLM and OUTCOMES in site-content.ts includes Ship in days, not
+quarters. Features and metadata repeat any search engine although the site identifies
+specific supported engines. These are broader promises than the hub descriptor.
 
-Audit hero, outcomes, comparison, AEM, WordPress, FAQ, JSON-LD and llms output against
-current implementation and docs. Replace universal compatibility with supported
-providers or protocols and documented limitations; remove delivery-time promises unless
-a reproducible case supports them. Distinguish self-hosted storage from configured
-external model calls. Explain source ingestion by Viglet Dumont and the direct Viglet
-Turing WordPress plugin without implying either is mandatory for every source. Keep
-accurate citations, supported capabilities and working demonstrations. This is a claims
-correction, not new backend/provider work. Do not duplicate the existing T1184
-hosted-console task or T1093/T1095 measurement work.
+Audit hero, outcomes, comparison, AEM, WordPress, FAQ, JSON-LD and llms output, plus the
+security page, stats, cta, og.svg, entry-server.tsx descriptions, public/aem-search.md,
+the features/run meta and the docs deploy-operate page, against current implementation
+and docs. Replace universal compatibility with supported providers or protocols (named
+providers plus any OpenAI-compatible endpoint; Solr, Elasticsearch or embedded Lucene)
+and documented limitations; remove delivery-time promises unless a reproducible case
+supports them. Distinguish self-hosted storage from configured external model calls.
+Explain source ingestion by Viglet Dumont and the direct Viglet Turing WordPress plugin
+without implying either is mandatory for every source. Keep accurate citations,
+supported capabilities and working demonstrations. This is a claims correction, not new
+backend/provider work. Do not duplicate the existing T1184 hosted-console task or
+T1093/T1095 measurement work.
 
 Acceptance: compare the published wording, linked documentation and source capability;
 assert the corrected boundary in generated HTML and machine-readable text.
@@ -1502,16 +1511,19 @@ overflow or page errors. That is a healthy baseline, not a whole-site accessibil
 certification. Existing frontend/apps/site build checks do not assert the new cross-site
 brand contract.
 
-Extend existing tests rather than adding a parallel framework. Enumerate generated
-marketing routes and representative documentation templates; verify full product names
-with technical exceptions, title/canonical/OG/JSON-LD/llms consistency, internal anchors
-and the destination map. Add Playwright coverage at 390/768/1440 pixels, both themes,
-reduced motion, keyboard navigation, menu opening/closing and focus return. Inspect
-actual screenshots for clipping, readability and decorative chips; do not substitute a
-CSS-class assertion for visual review. Test consent fresh, denied and withdrawn without
-loosening it to simplify the layout, and preserve demo failure states. Separate
-deterministic build checks from retry-bounded external-link checks so network resets are
-reported as inconclusive, not product regressions.
+Extend existing tests rather than adding a parallel framework. The site has only node
+Vitest; Playwright is already pinned in turing-app and wordpress, so reuse that version.
+Run the browser checks as an input of the existing manually dispatched workflow, never a
+push or PR trigger. Enumerate generated marketing routes and representative
+documentation templates; verify full product names with technical exceptions,
+title/canonical/OG/JSON-LD/llms consistency, internal anchors and the destination map.
+Add Playwright coverage at 390/768/1440 pixels, both themes, reduced motion, keyboard
+navigation, menu opening/closing and focus return. Inspect actual screenshots for
+clipping, readability and decorative chips; do not substitute a CSS-class assertion for
+visual review. Test consent fresh, denied and withdrawn without loosening it to simplify
+the layout, and preserve demo failure states. Separate deterministic build checks from
+retry-bounded external-link checks so network resets are reported as inconclusive, not
+product regressions.
 
 Acceptance: run the existing site/docs build gates plus the new checks and retain
 representative screenshots and a route-result report. A later production smoke verifies
@@ -2546,7 +2558,9 @@ plugins.svn.wordpress.org/viglet-turing-search, and what it holds is the package
 the history, so this repository stays the source. The directory becomes one more target
 of the release. The release job of T1255 already builds the viglet-turing-search/ folder
 through bin/build-zip.sh, which refuses a version that disagrees with the plugin header
-or the readme's Stable tag. A step after it commits that folder to trunk/, copies it to
+or the readme's Stable tag. A step after it rebuilds with build-zip.sh --wporg
+<version>, the package plugin-check verifies (no bundled translations:
+translate.wordpress.org serves them), commits that folder to trunk/, copies it to
 tags/<version>, and sends the directory's banners, icon and screenshots to assets/ from
 a folder kept outside the package. 10up/action-wordpress-plugin-deploy does this from a
 subfolder through BUILD_DIR, and the SVN credentials live in repository secrets. The
