@@ -2460,18 +2460,3 @@ path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (
 per-site opt-in that would have emptied the citations was dropped: a client that wants
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
-
-### CLXXXII.14 README credits WordPress to Dumont (T1267)
-
-Found while shipping T1266. The repository's README.adoc, in its capability table, lists
-WordPress among the Connectors row "through Viglet Dumont", and its overview and diagram
-place WordPress with the sources Dumont reads. Since T1252 the WordPress plugin lives in
-this repository's wordpress/ folder and talks to Turing directly, with no Dumont process
-(the docs page says so), and Dumont's own tree has no WordPress connector any more. A
-reader of the project front page is sent to the wrong product for WordPress.
-
-Correct the Connectors row so WordPress points at the plugin (wordpress/ and the docs
-page integrations/wordpress), keeping AEM, databases, filesystem and web crawls under
-Dumont, and check the overview paragraph near the top and the Dumont row near the end
-for the same claim. Leave the diagram's sources alone unless it states Dumont reads
-WordPress. Product names stay "Viglet Turing" and "Viglet Dumont".

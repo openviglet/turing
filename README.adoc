@@ -68,10 +68,11 @@ Elasticsearch or an LLM.
 [TIP]
 ====
 **Getting content in.** Turing indexes whatever you post to its indexing API, so you
-can push documents straight from your own code. To pull content from Adobe AEM,
-WordPress, databases, filesystems and web crawls, run
-https://github.com/openviglet/dumont[**Viglet Dumont**], the Data Exchange Platform
-of the same family.
+can push documents straight from your own code. A WordPress site installs the
+link:wordpress/README.md[Viglet Turing Search plugin], which indexes it and answers its
+search with no other process. To pull content from Adobe AEM, databases, filesystems and
+web crawls, run https://github.com/openviglet/dumont[**Viglet Dumont**], the Data Exchange
+Platform of the same family.
 ====
 
 == Why Turing?
@@ -137,7 +138,7 @@ https://turing.viglet.org/compare/[turing.viglet.org/compare].
 | Push documents over REST/JSON, one at a time or in bulk, with a versioned field manifest (schema as code)
 
 | **Connectors**
-| Adobe AEM, WordPress, databases, filesystem and web crawls, through https://github.com/openviglet/dumont[Viglet Dumont]
+| Adobe AEM, databases, filesystem and web crawls, through https://github.com/openviglet/dumont[Viglet Dumont]; WordPress and WooCommerce through the link:wordpress/README.md[Viglet Turing Search plugin]
 
 | **File parsing**
 | Apache Tika extraction for PDF and Office files uploaded to Turing or attached in chat
@@ -160,12 +161,13 @@ own application.
     Content sources          Viglet Dumont            Viglet Turing               Your apps
   ┌─────────────────┐      ┌───────────────┐      ┌──────────────────────┐    ┌───────────────┐
   │ Adobe AEM       │      │  Connectors   │      │  Indexing API        │    │ Site search   │
-  │ WordPress       │─────▶│  Extraction   │─────▶│  Semantic Navigation │───▶│ RAG chat      │
-  │ Databases       │      │  Scheduling   │      │  Hybrid BM25 + kNN   │    │ Admin console │
-  │ Filesystem      │      │  Deltas       │      │  RAG · Agents · MCP  │    │ Your own app  │
-  │ Web crawl       │      └───────────────┘      └──────────┬───────────┘    │ REST /GraphQL │
+  │ Databases       │─────▶│  Extraction   │─────▶│  Semantic Navigation │───▶│ RAG chat      │
+  │ Filesystem      │      │  Scheduling   │      │  Hybrid BM25 + kNN   │    │ Admin console │
+  │ Web crawl       │      │  Deltas       │      │  RAG · Agents · MCP  │    │ Your own app  │
+  │                 │      └───────────────┘      └──────────┬───────────┘    │ REST /GraphQL │
   └─────────────────┘                                        │                └───────────────┘
                                                              │
+     WordPress ─── the Viglet Turing Search plugin ─────────┤
      Your own app ──────── POST /api/sn/import ─────────────┤
                            (skip Dumont entirely)            │
                                               ┌──────────────┴──────────────┐
@@ -328,7 +330,7 @@ Three open source products that work together, or each on its own:
 | Product | What it does
 
 | https://github.com/openviglet/dumont[**Viglet Dumont**] · Data Exchange Platform
-| Connects your sources (AEM, WordPress, databases, files, web) and delivers their content to Turing or any other search engine
+| Connects your sources (AEM, databases, files, web) and delivers their content to Turing or any other search engine
 
 | **Viglet Turing** · Enterprise Search
 | This repository: search, semantic navigation, RAG chat and AI agents over that content
