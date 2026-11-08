@@ -418,7 +418,7 @@
       "connectionDetails": "Conexão Dumont DEP",
       "dumontDepDesc": "Esta integração conecta a uma instância do Viglet Dumont Data Exchange Platform (DEP). Certifique-se de que o Dumont esteja em execução e acessível no endpoint abaixo.",
       "dumontEndpointLabel": "Endpoint do Dumont DEP",
-      "dumontEndpointDesc": "A URL onde a instância do Dumont DEP está em execução. A porta padrão é 30130.",
+      "dumontEndpointDesc": "A URL onde a instância do Dumont DEP está em execução. A porta padrão é 2720.",
       "nameRequired": "Dê um nome à sua integração.",
       "endpointRequired": "Digite a URL do endpoint do Dumont DEP.",
       "apiTokenLabel": "API Token",

@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 const urlBase = ROUTES.BENTO_INTEGRATION_INSTANCE
-const DEFAULT_ENDPOINT = "http://localhost:30130/"
+const DEFAULT_ENDPOINT = "http://localhost:2720/"
 
 interface Props {
   value: TurIntegrationInstance
