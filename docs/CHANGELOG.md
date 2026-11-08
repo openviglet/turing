@@ -1694,3 +1694,4 @@
 - **T1261 (only footnoted sources)** — The search answer lists only the sources its text cites by [n]; an answer that cites none stays hidden, as the block's setting says.
 - **T1264** — Chat and answer sources carry the document's type, and the assistant's link to all results filters to it when every listed post shares one.
 - **T1265 (trace says cited)** — The answer's trace event says whether its citations are what the answer's [n] markers name or the retrieval it fell back to; the citations themselves are unchanged.
+- **T1266** — The plugin README and the WordPress docs page send installs to the Viglet Turing releases (wordpress-v<version> tags) and say how to build the zip before a version is released.

@@ -11,8 +11,11 @@ playground.wordpress.net).
 
 ## Install
 
-Each release is a zip on the Dumont GitHub releases page, tagged `wordpress-v<version>`, holding
-one `viglet-turing-search/` folder, the slug it has in the WordPress.org plugin directory.
+Each release is a zip on the [Viglet Turing releases page](https://github.com/openviglet/turing/releases),
+tagged `wordpress-v<version>` (the tag says which releases are the plugin's, beside Turing's own
+`v<version>`), holding one `viglet-turing-search/` folder, the slug it has in the WordPress.org
+plugin directory. Before a version is released there, build the same zip from this folder with
+`sh bin/build-zip.sh` (it needs `zip`); [Release](#release) says how one is cut.
 
 **From wp-admin**: download `viglet-turing-search-<version>.zip` and upload it under
 Plugins > Add New > Upload Plugin.
@@ -33,7 +36,7 @@ directory:
                 "type": "wordpress-plugin",
                 "dist": {
                     "type": "zip",
-                    "url": "https://github.com/openviglet/dumont/releases/download/wordpress-v1.0.0/viglet-turing-search-1.0.0.zip"
+                    "url": "https://github.com/openviglet/turing/releases/download/wordpress-v1.0.0/viglet-turing-search-1.0.0.zip"
                 },
                 "require": { "composer/installers": "^2.0" }
             }
