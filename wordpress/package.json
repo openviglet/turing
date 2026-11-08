@@ -20,12 +20,7 @@
     "e2e:story:record": "playwright test -c playwright.story-record.config.mjs",
     "e2e:story:vertical": "playwright test -c playwright.story-vertical.config.mjs",
     "e2e:developer:record": "playwright test -c playwright.developer.config.mjs",
-    "demo:broll": "node bin/demo-broll.mjs",
-    "demo:photos": "node bin/demo-photos.mjs",
-    "story:narration": "node bin/story-narration.mjs",
-    "story:video": "node bin/story-video.mjs",
-    "transcript": "node bin/transcript.mjs",
-    "check:transcript": "node bin/transcript.mjs --check"
+    "demo:photos": "node bin/demo-photos.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

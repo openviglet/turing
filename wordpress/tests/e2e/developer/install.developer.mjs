@@ -8,11 +8,12 @@ import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import { narrationFor } from '../../../bin/narration-takes.mjs';
+import { narrationFor, recording } from '../marketing.mjs';
 
-// The walkthrough's narration (demo/narration/developer.json): how long each line runs, so the
-// recording paces the action to it. A line with no current take runs 0 s.
-const narration = narrationFor( 'developer' );
+// The walkthrough's narration (demo/narration/developer.json in the marketing repository, loaded
+// when a recording starts): how long each line runs, so the recording paces the action to it. A
+// line with no current take runs 0 s.
+let narration = null;
 const takeLength = ( name ) => {
 	const file = narration.takeFile( 'en', name );
 	const text = Object.fromEntries( narration.lines() )[ name ]?.en;
@@ -41,7 +42,8 @@ const snSite = process.env.SN_FRESH_SITE || 'tarnfell-shop';
 // Where the plugin reaches Turing from inside its container: the compose network's name. A
 // production site types its Turing's public address here.
 const connectURL = process.env.FRESH_TURING_URL || 'http://turing:2700';
-const out = join( 'tests', 'e2e', 'artifacts', 'developer' );
+// The recording goes to the marketing repository, which makes the video from it.
+const out = recording( 'developer' );
 const query = 'waterproof jacket';
 
 /**
@@ -151,6 +153,9 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 	page,
 } ) => {
 	const record = !! test.info().project.metadata?.record;
+	if ( record ) {
+		narration = await narrationFor( 'developer' );
+	}
 	const started = Date.now();
 	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];

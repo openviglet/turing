@@ -287,17 +287,14 @@ searches, a sentence turned into filters, the Site assistant, a comparison, Buil
 product page, a test-mode checkout, and the owner's Search insights. Nothing is replayed, and it
 leaves `story.webm` in `tests/e2e/artifacts/story/`. It plays in the language the demo speaks:
 English on Tarnfell, or pt_BR on Recanto da Serra with `DEMO_LOCALE=pt_BR` (D283: both stores run side by side).
-`npm run e2e:story:record` plays it again at 1920×1080 and a human pace, and
-`npm run story:video` (ffmpeg on the PATH) cuts it into the demo video,
-`tests/e2e/artifacts/video/story.mp4`, with a title card per chapter, and `story-30s.mp4`, the
-last seconds of each chapter for social posts; with `-- --language en` (or `pt-BR`) it carries
-that language alone and is named for it, `story.en.mp4` and `story-30s.en.mp4`. Both carry English and pt_BR captions, also
-written beside them as `.srt`. `-- --chapter <n>` cuts one chapter as a clip of its own instead,
-`story-chapter-<n>.<lang>.mp4`, under a minute (D279). `npm run e2e:story:vertical` records the
-story again at a phone's width, and `-- --vertical --chapter <n>` cuts that one as a 9:16 clip
-with its captions burned in (D280). `-- --project` also writes the video's timeline as a
-DaVinci Resolve project, `story.<lang>.project/`, so a cut can be changed by hand (D290). The videos are release assets, never
-committed, and the script refuses a recording older than the story.
+
+**The demo videos** are made in the marketing repository, `marketing/turing/wordpress` (its
+README is the guide), from recordings made here. `npm run e2e:story:record` plays the story
+again at 1920×1080 and a human pace, `npm run e2e:story:vertical` at a phone's width, and
+`npm run e2e:developer:record` records the developer walkthrough (D281). A recording is paced to
+the narration takes kept there and is written there, under `recordings/`, for its scripts to
+assemble; `tests/e2e/marketing.mjs` finds that repository beside this one, or
+`VIGLET_MARKETING_WORDPRESS` names it. The story as a test (`npm run e2e:story`) needs none of it.
 
 To look at one page in detail, logged in or not:
 

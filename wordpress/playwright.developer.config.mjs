@@ -2,7 +2,8 @@
 // (run-docker.cmd fresh), a WordPress the plugin was never installed on, it installs the release
 // zip in wp-admin, connects it on the Setup page, chooses what to index, runs the first index,
 // searches the storefront and opens the insights. 1920×1080 at a human pace, like the story. It
-// leaves walkthrough.webm and chapters.json in tests/e2e/artifacts/developer/.
+// leaves walkthrough.webm and chapters.json in the marketing repository's recordings/developer/,
+// which makes the video from them.
 //
 //   run-docker.cmd fresh reset && run-docker.cmd fresh && npm run e2e:developer:record
 //

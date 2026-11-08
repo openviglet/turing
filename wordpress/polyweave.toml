@@ -1,27 +1,13 @@
-# polyweave (github.com/alegauss/polyweave) speaks the demo video's narration (D246): one
-# take per chapter and language, bought from ElevenLabs inside the budget below and kept in
-# polyweave's ledger. `node bin/story-narration.mjs` drives it; the takes are committed
-# under demo/narration/, so building the video spends nothing.
+# polyweave (github.com/alegauss/polyweave) buys the demo store's photos (D265): one per
+# product and guide, bought by bin/demo-photos.mjs inside the budget below and kept in
+# polyweave's ledger. The demo video's narration, music and thumbnail moved to the marketing
+# repository (marketing/turing/wordpress) with their own polyweave project and ledger.
 
 [layers]
-on = ["sound", "picture"]
+on = ["picture"]
 
 [project]
 name = "viglet-turing-wordpress"
-
-[service.elevenlabs]
-base    = "https://api.elevenlabs.io"
-key_env = "ELEVENLABS_API_KEY"
-# A sound (the video's music bed) is about 20 credits a second: 30 s is ~600 credits,
-# about USD 0.10 on the Starter plan, held here at a conservative 0.20 a call.
-prices  = { "eleven_v3" = { per = "character", rate = 0.00003 }, "eleven_multilingual_v2" = { per = "character", rate = 0.00003 }, "eleven_text_to_sound_v2" = 0.20 }
-
-# The owner's ceiling for the narration (2026-10-31): the whole script is about 1,500
-# characters, a few cents.
-[budget.elevenlabs]
-amount  = 2.0
-unit    = "USD"
-expires = "2026-12-31"
 
 # The demo store's photos (D265): one per product and guide, bought by bin/demo-photos.mjs.
 [service.ideogram]

@@ -1,8 +1,0 @@
-{
-  "what": "The demo video's opening animation: the Viglet and Viglet Turing marks joining the WordPress mark, over 'Busca Inteligente para WordPress'.",
-  "source": "Generated with Google Gemini (Veo) for this project, 2026-11-05.",
-  "file": "demo/intro/intro.mp4",
-  "sha256": "ddf2d5e6c0b807c57a72e7238b9b8501b7dd7c1c62a3f6cb2c91a560b3316dfd",
-  "from": 3.45,
-  "why_from": "Its first 3.4 s show an invented rendering of the store, with garbled text and products and prices the catalog does not have; the video starts on the marks instead, and the real store follows in the recording."
-}

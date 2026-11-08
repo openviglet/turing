@@ -1,8 +1,9 @@
 // The story recorded for the demo video (D204): the same spec as `npm run e2e:story`, at
 // 1920×1080 and a human pace, with typing and the pointer visible. It leaves story.webm and
-// chapters.json in tests/e2e/artifacts/story/, which bin/story-video.mjs cuts and assembles.
+// chapters.json in the marketing repository's recordings/story/ (tests/e2e/marketing.mjs), where
+// its bin/story-video.mjs cuts and assembles them.
 //
-//   npm run e2e:story:record && npm run story:video
+//   npm run e2e:story:record      then, in marketing/turing/wordpress: npm run story:video
 import { defineConfig } from '@playwright/test';
 import story from './playwright.story.config.mjs';
 

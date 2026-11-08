@@ -6,14 +6,6 @@ build/
 tests/e2e/artifacts/
 tests/e2e/.auth/
 
-# The demo video's narration and music (D246): bought by `npm run story:narration`, never
-# committed. Their .prov.json records and polyweave's ledgers are.
-demo/narration/**/*.mp3
 # The demo store's photos (D265): bought by `npm run demo:photos`, never committed; the seed draws
 # its own pictures without them. Their .prov.json records are committed.
 demo/photos/**/*.png
-# The demo video's B-roll (D261): fetched from Pixabay by `npm run demo:broll`, several MB each.
-# Their .json records (source, author, licence) are committed.
-demo/broll/*.mp4
-# The demo video's opening animation (made with Gemini), 5.6 MB; intro.json is committed.
-demo/intro/*.mp4

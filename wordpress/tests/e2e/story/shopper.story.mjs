@@ -1,19 +1,25 @@
 // One shopper's story (D203): demo/story.md played chapter by chapter on the demo storefront,
 // each chapter a step of one test so the video follows a single visit. Turing is asked for
-// real, language model included; nothing is replayed. Leaves tests/e2e/artifacts/story/story.webm.
+// real, language model included; nothing is replayed. Leaves tests/e2e/artifacts/story/story.webm,
+// or, recorded for the video, the marketing repository's recordings/story/story.webm.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '../fixtures.mjs';
 import { wp } from '../global-setup.mjs';
 import { demoLocale } from '../demo/curated.mjs';
-import { current, lines, takeFile } from '../../../bin/narration-takes.mjs';
+import { narrationFor, recording } from '../marketing.mjs';
 import { demoCli } from '../../../playwright.config.mjs';
 
 const turingURL = process.env.TURING_URL || 'http://localhost:2700';
 // The phone-width recording (D280) keeps its own folder, so it never replaces the desktop one.
-const output = ( vertical ) =>
-	join( 'tests', 'e2e', 'artifacts', vertical ? 'story-vertical' : 'story' );
+// A recording goes to the marketing repository, which makes the video; a test run stays here.
+const output = ( vertical, record ) => {
+	const folder = vertical ? 'story-vertical' : 'story';
+	return record
+		? recording( folder )
+		: join( 'tests', 'e2e', 'artifacts', folder );
+};
 const demo = ( args ) => wp( args, demoCli );
 
 // What she searches for (demo/story.md) and the words the pages answer in, in each language
@@ -137,12 +143,16 @@ const words = {
 const story = () => words[ demoLocale() ];
 
 // How long each of Ana's lines runs, in the store's language (D261): the recording paces the
-// action to them. A line with no current take runs 0 s, and the action does not wait.
+// action to them. A line with no current take runs 0 s, and the action does not wait. The takes
+// are in the marketing repository (tests/e2e/marketing.mjs), loaded when a recording starts.
 const narrationLanguage = () => ( 'pt_BR' === demoLocale() ? 'pt-BR' : 'en' );
+let narration = null;
 const takeLength = ( name ) => {
-	const file = takeFile( narrationLanguage(), name );
-	const text = Object.fromEntries( lines() )[ name ]?.[ narrationLanguage() ];
-	if ( ! current( file, text ) ) {
+	const file = narration.takeFile( narrationLanguage(), name );
+	const text = Object.fromEntries( narration.lines() )[ name ]?.[
+		narrationLanguage()
+	];
+	if ( ! narration.current( file, text ) ) {
 		return 0;
 	}
 	return Number(
@@ -336,10 +346,13 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 
 	// Recorded for the video (playwright.story-record.config.mjs, D204): typing shows, the
 	// pointer is drawn, each chapter lingers on its result, and where each one starts and ends
-	// in story.webm goes to chapters.json for bin/story-video.mjs to cut. A chapter whose best
+	// in story.webm goes to chapters.json for the marketing repository's bin/story-video.mjs to cut. A chapter whose best
 	// moment is not its last calls `highlight()` there: the site's still and the short cut
 	// are taken at it, and a recording lingers on it.
 	const record = !! test.info().project.metadata?.record;
+	if ( record ) {
+		narration = await narrationFor( 'story' );
+	}
 	const started = Date.now();
 	const now = () => ( Date.now() - started ) / 1000;
 	const chapters = [];
@@ -902,7 +915,7 @@ test( 'a shopper goes from a vague need to a paid-for cart', async ( {
 		}
 	);
 
-	const out = output( !! test.info().project.metadata?.vertical );
+	const out = output( !! test.info().project.metadata?.vertical, record );
 	mkdirSync( out, { recursive: true } );
 	writeFileSync(
 		join( out, 'chapters.json' ),

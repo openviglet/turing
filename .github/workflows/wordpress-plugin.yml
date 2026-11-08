@@ -121,10 +121,6 @@ jobs:
       - name: Every string translated to pt_BR
         run: node bin/check-i18n.mjs
 
-      # T1257: the video's transcript on the docs and site pages is what the narration script says.
-      - name: The transcript matches the narration script
-        run: node bin/transcript.mjs --check
-
   plugin-check:
     if: inputs.plugin_check || inputs.release_version != ''
     runs-on: ubuntu-latest
