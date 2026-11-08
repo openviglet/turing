@@ -29,3 +29,6 @@
 - ⏸ **T1259** (deps: T1252 ✅) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — set aside (Needs a chat flow in the demo's Turing.): A Playwright flow case against the demo store, once its Turing has a chat flow. → §CLXXXII.9
 - ⏸ **T1261** (deps: T1252 ✅) **The plugin's search answer lists every retrieved document as a source when it cites none** — set aside (Needs the e2e stack and the video pipeline.): An e2e case for an answer with no [n] marker, then record the video's chapter 2 again. → §CLXXXII.10
 - ⏸ **T1265** (deps: —) **An answer with no [n] marker still sends every retrieved source as its citations** — set aside (Needs real answers from the demo's model.): Find why the demo's tent question is answered with no [n] marker, and make the prompt ask for one. → §CLXXXII.12
+
+## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
+

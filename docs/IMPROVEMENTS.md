@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -1382,6 +1384,139 @@ standalone, no SDK/backend dependency). Content lives in one place,
 `src/lib/site-content.ts`; sections are thin renderers in `src/components/sections/`.
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
+
+### XXVII.5 Full product names across the public site (T1268)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org.
+site-nav.tsx renders Why Turing; site-content.ts and the assistant use bare Turing and
+Dumont. The desktop logo already says Viglet Turing, but mobile hides its wordmark.
+
+Apply the owner decision in hub docs/STRATEGY.md section I.7 to frontend/apps/site/src,
+frontend/apps/docs, accessible labels, titles, descriptions, OG assets, JSON-LD,
+llms.txt and generated Markdown twins. Always use Viglet Turing, Viglet Dumont and
+Viglet Shio, including repeated mentions. Share typed product identity data rather than
+maintaining shorter display aliases. Keep stable slugs, package names, commands, code
+identifiers, filenames and historical release records intact; classify these exceptions
+explicitly. Ensure the product identity remains visible on small screens by changing
+layout rather than abbreviating. Category labels remain separate from names.
+
+Acceptance: scan rendered visitor text and machine-readable outputs, not only source
+literals; report each intentional technical exception. Review desktop and 390-pixel
+navigation, long headings, buttons and docs search results. No backend renames or
+technical API changes.
+
+### XXVII.6 A consistent visual contract with viglet.org (T1269)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org.
+frontend/apps/site/src/components/sections/hero.tsx uses a rounded metadata chip,
+hardcoded dark surfaces, gradient text, grid and animated orbs; the hub uses neutral
+surfaces and plain typographic metadata. Header product highlights also use pills.
+
+Adopt the hub typography roles, title scale, content gutters, spacing, button hierarchy,
+borders and focus treatment. Use released @viglet/viglet-design-system tokens/components
+where applicable and a thin compatible Astro mapping for documentation; inspect actual
+exports before designing an adapter. Preserve royal blue as the product accent. Replace
+decorative chips with plain eyebrow text, separators or ordinary navigation links. Keep
+genuine filter selections and status controls functional. Consolidate a reusable product
+hero for marketing subpages; documentation keeps its reading sidebar and article layout
+while sharing brand tokens. Avoid permanent dark heroes in light mode and remove
+decorative motion that competes with the product evidence.
+
+Acceptance: compare home, one solution page, a feature page, docs overview and article
+at 390/768/1440 pixels, light/dark and reduced motion. Preserve real demos, code
+examples, contrast, keyboard focus and original URLs. No framework migration or forced
+orange product branding.
+
+### XXVII.7 Navigation, installation and release destinations (T1270)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org.
+brand-links.ts sends Get started to /docs/ rather than installation, retains
+docs.viglet.org/dumont/connectors/aem, and site-content.ts retains an old
+docs.viglet.org blog URL. Release notes already correctly go to the hub and must stay
+there.
+
+Define one typed destination map used by marketing navigation, footer, CTAs and Astro
+overrides. Separate Try/Explore, Install, Documentation, Release notes, Source and
+Portfolio by their actual job. Get started should reach an actionable supported setup
+path with prerequisites and a first-success check; Documentation may keep the overview.
+Keep GitHub Source on openviglet/turing; label the development roadmap separately from
+user release notes. Use existing hub download/release pages and product documentation
+instead of adding another release ledger or installation authority. Replace
+retired-domain references with verified current destinations, preserving inbound routes
+and anchors. The return to viglet.org and product identity must remain discoverable in
+mobile menus and docs.
+
+Acceptance: follow every primary CTA from home, a depth page and docs in a fresh
+browser, including narrow-screen menus and keyboard use; verify response status and
+destination content rather than URL spelling alone. Check release-feed availability and
+no circular hub/product redirects. Do not deploy or rewrite historical published slugs.
+
+### XXVII.8 A focused home page with product-specific depth (T1271)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org. At
+390 CSS pixels the published home measured 20,392 pixels tall; landing.tsx mounts the
+hero search, full playground, SDK example and many further sections. A fresh SSO search
+returned one documentation result after waiting; a loading screenshot is not evidence of
+a broken demo.
+
+Lead with enterprise search and cited answers, one useful live demonstration, source
+integration and a clear setup path. Keep advanced agents and personas discoverable
+through depth pages; preserve the working playground and its loading/error handling.
+Preserve information by linking to its authoritative page instead of repeating the same
+inventory. Maintain existing anchor destinations with concise summaries when sections
+move. Align the short product descriptor with the hub but retain product-specific
+examples and technical depth. Give every retained section a decision it helps the
+visitor make.
+
+Acceptance: provide a before/after section map and walk a newcomer through what the
+product does, whom it serves, evidence and the next action without reading the whole
+page. Re-measure page length under the same viewport as supporting evidence, not as a
+conversion target. No invented testimonials, unsupported performance claims, deleted
+routes or promised conversion uplift; any outcome measurement needs later observation.
+
+### XXVII.9 Bounded claims and demonstrable product scope (T1272)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org.
+hero.tsx says any LLM and OUTCOMES includes Ship in days, not quarters. Features and
+metadata repeat any search engine although the site identifies specific supported
+engines. These are broader promises than the hub descriptor.
+
+Audit hero, outcomes, comparison, AEM, WordPress, FAQ, JSON-LD and llms output against
+current implementation and docs. Replace universal compatibility with supported
+providers or protocols and documented limitations; remove delivery-time promises unless
+a reproducible case supports them. Distinguish self-hosted storage from configured
+external model calls. Explain source ingestion by Viglet Dumont and the direct Viglet
+Turing WordPress plugin without implying either is mandatory for every source. Keep
+accurate citations, supported capabilities and working demonstrations. This is a claims
+correction, not new backend/provider work. Do not duplicate the existing T1184
+hosted-console task or T1093/T1095 measurement work.
+
+Acceptance: compare the published wording, linked documentation and source capability;
+assert the corrected boundary in generated HTML and machine-readable text.
+
+### XXVII.10 Rendered brand and journey regression coverage (T1273)
+
+Review of 2026-11-08: published pages and current source, compared with viglet.org. The
+sampled home and docs routes returned 200 at 1440/390 pixels without document-wide
+overflow or page errors. That is a healthy baseline, not a whole-site accessibility
+certification. Existing frontend/apps/site build checks do not assert the new cross-site
+brand contract.
+
+Extend existing tests rather than adding a parallel framework. Enumerate generated
+marketing routes and representative documentation templates; verify full product names
+with technical exceptions, title/canonical/OG/JSON-LD/llms consistency, internal anchors
+and the destination map. Add Playwright coverage at 390/768/1440 pixels, both themes,
+reduced motion, keyboard navigation, menu opening/closing and focus return. Inspect
+actual screenshots for clipping, readability and decorative chips; do not substitute a
+CSS-class assertion for visual review. Test consent fresh, denied and withdrawn without
+loosening it to simplify the layout, and preserve demo failure states. Separate
+deterministic build checks from retry-bounded external-link checks so network resets are
+reported as inconclusive, not product regressions.
+
+Acceptance: run the existing site/docs build gates plus the new checks and retain
+representative screenshots and a route-result report. A later production smoke verifies
+deployed output; local success alone never claims deployment. No performance-score or
+conversion guarantees.
 
 ## XXVIII. Provider coverage + cross-vendor capability exploitation (Block AD)
 

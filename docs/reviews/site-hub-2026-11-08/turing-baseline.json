@@ -1,0 +1,62 @@
+[
+  {
+    "name": "turing",
+    "route": "",
+    "width": 1440,
+    "status": 200,
+    "url": "https://turing.viglet.org/",
+    "title": "Viglet Turing \u00c2\u00b7 Agentic Enterprise Search",
+    "h1": [
+      "Enterprise search, cited RAG and AI agents over your own content."
+    ],
+    "overflow": false,
+    "height": 12123,
+    "font": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+    "errors": []
+  },
+  {
+    "name": "turing",
+    "route": "",
+    "width": 390,
+    "status": 200,
+    "url": "https://turing.viglet.org/",
+    "title": "Viglet Turing \u00c2\u00b7 Agentic Enterprise Search",
+    "h1": [
+      "Enterprise search, cited RAG and AI agents over your own content."
+    ],
+    "overflow": false,
+    "height": 20392,
+    "font": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+    "errors": []
+  },
+  {
+    "name": "turing",
+    "route": "docs/",
+    "width": 1440,
+    "status": 200,
+    "url": "https://turing.viglet.org/docs/",
+    "title": "Viglet Turing | Viglet Turing",
+    "h1": [
+      "Viglet Turing"
+    ],
+    "overflow": false,
+    "height": 3871,
+    "font": "\"Plus Jakarta Sans\", system-ui, sans-serif, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "errors": []
+  },
+  {
+    "name": "turing",
+    "route": "docs/getting-started/intro/",
+    "width": 390,
+    "status": 200,
+    "url": "https://turing.viglet.org/docs/getting-started/intro/",
+    "title": "What is Viglet Turing? | Viglet Turing",
+    "h1": [
+      "What is Viglet Turing?"
+    ],
+    "overflow": false,
+    "height": 9235,
+    "font": "\"Plus Jakarta Sans\", system-ui, sans-serif, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "errors": []
+  }
+]
