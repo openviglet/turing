@@ -23,24 +23,11 @@
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 - 📋 **T1274** (deps: —) **The WordPress plugin still shows the bare name in its block title and setup labels** — Rename the visible plugin strings to Viglet Turing so the admin UI and the docs that quote it follow the hub naming rule. → §CLXXXII.15
 
-## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
-
-- 📋 **T1273** (deps: T1268 ✅, T1269 ✅, T1270 ✅, T1271 ✅, T1272 ✅) **No acceptance check compares the product site with the revised hub contract** — Validate the rendered brand and journeys across routes, themes and small screens so future site changes cannot silently undo the alignment. → §XXVII.10
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
-
-## Done when — T1273
-
-- **Evidence and boundary are verified** Re-read the cited source and rendered routes,
-  satisfy the acceptance checks in the design, and preserve technical identifiers and
-  existing URLs.
-- **The hub contract survives the change** Review full names, relevant light/dark and
-  mobile layouts, and links to installation, documentation and the portfolio; retain the
-  product-specific behavior.
 
 ## Non-goals (do NOT add as tasks)
 

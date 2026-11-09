@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -1384,33 +1382,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 `src/lib/site-content.ts`; sections are thin renderers in `src/components/sections/`.
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
-
-### XXVII.10 Rendered brand and journey regression coverage (T1273)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org. The
-sampled home and docs routes returned 200 at 1440/390 pixels without document-wide
-overflow or page errors. That is a healthy baseline, not a whole-site accessibility
-certification. Existing frontend/apps/site build checks do not assert the new cross-site
-brand contract.
-
-Extend existing tests rather than adding a parallel framework. The site has only node
-Vitest; Playwright is already pinned in turing-app and wordpress, so reuse that version.
-Run the browser checks as an input of the existing manually dispatched workflow, never a
-push or PR trigger. Enumerate generated marketing routes and representative
-documentation templates; verify full product names with technical exceptions,
-title/canonical/OG/JSON-LD/llms consistency, internal anchors and the destination map.
-Add Playwright coverage at 390/768/1440 pixels, both themes, reduced motion, keyboard
-navigation, menu opening/closing and focus return. Inspect actual screenshots for
-clipping, readability and decorative chips; do not substitute a CSS-class assertion for
-visual review. Test consent fresh, denied and withdrawn without loosening it to simplify
-the layout, and preserve demo failure states. Separate deterministic build checks from
-retry-bounded external-link checks so network resets are reported as inconclusive, not
-product regressions.
-
-Acceptance: run the existing site/docs build gates plus the new checks and retain
-representative screenshots and a route-result report. A later production smoke verifies
-deployed output; local success alone never claims deployment. No performance-score or
-conversion guarantees.
 
 ## XXVIII. Provider coverage + cross-vendor capability exploitation (Block AD)
 

@@ -2,6 +2,15 @@ name: Publish GitHub Pages
 
 on:
   workflow_dispatch:
+    inputs:
+      # T1273: the browser half of the viglet.org hub contract (Playwright, in
+      # frontend/apps/site/e2e). The deterministic half always runs inside
+      # build:site (scripts/check-contract.mjs). Manual dispatch only, never a
+      # push or pull-request trigger.
+      browser_checks:
+        description: "Run the Playwright site/docs contract checks before deploying"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -55,6 +64,25 @@ jobs:
           # deployed widgets silently fall back to scripted/sample data.
           VITE_TURING_DEMO_URL: https://turing-demo.viglet.org
           VITE_TURING_DEMO_SITE: turing-docs
+
+      # Deterministic checks first: a failure there is a product regression and stops the
+      # deploy. External destinations follow with bounded retries; a network error or a bot
+      # wall is annotated "inconclusive" in the report rather than failing (e2e/external.spec.ts).
+      - name: Browser contract checks
+        if: ${{ inputs.browser_checks }}
+        working-directory: frontend/apps/site
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm run e2e
+          EXTERNAL_LINKS=1 pnpm run e2e:external
+
+      - name: Upload the browser check report and screenshots
+        if: ${{ always() && inputs.browser_checks }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-contract-report
+          path: frontend/apps/site/playwright-report
+          retention-days: 14
 
       - name: Package Marketplace examples
         working-directory: frontend

@@ -725,6 +725,9 @@
 - **T1272** — Site, llms.txt, aem-search.md, og.svg and docs name the supported LLM providers and engines, say data is stored on your infra (not never leaves), drop time-to-result rows and stale Azure.
   checked **Evidence and boundary are verified** Re-read the cited source and rendered routes, satisfy the acceptance checks in the design, and preserve technical identifiers and existing URLs.
   checked **The hub contract survives the change** Review full names, relevant light/dark and mobile layouts, and links to installation, documentation and the portfolio; retain the product-specific behavior.
+- **T1273** — build:site now gates on check-contract.mjs (names, identity, links, anchors); a 41-case Playwright suite and an external-link project run as a Pages input.
+  checked **Evidence and boundary are verified** Re-read the cited source and rendered routes, satisfy the acceptance checks in the design, and preserve technical identifiers and existing URLs.
+  checked **The hub contract survives the change** Review full names, relevant light/dark and mobile layouts, and links to installation, documentation and the portfolio; retain the product-specific behavior.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 
