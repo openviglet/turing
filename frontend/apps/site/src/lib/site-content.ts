@@ -1165,7 +1165,7 @@ export const COMPARE_MATRIX: CompareRow[] = [
 
 /**
  * T1096 — the comparison people search for is Coveo vs Lucidworks Fusion. Only
- * the objective, checkable rows of the docs.viglet.org post: licence and
+ * the objective, checkable rows of the viglet.org blog post: licence and
  * hosting model, pricing shape, where the data lives and the engine underneath.
  */
 export interface EnterpriseCompareRow {
@@ -1176,7 +1176,7 @@ export interface EnterpriseCompareRow {
 }
 
 export const COVEO_LUCIDWORKS_POST =
-  "https://docs.viglet.org/blog/turing-es-vs-coveo-lucidworks";
+  "https://www.viglet.org/blog/turing-es-vs-coveo-lucidworks/";
 
 export const COVEO_LUCIDWORKS_MATRIX: EnterpriseCompareRow[] = [
   { capability: "Model", coveo: "SaaS (fully managed)", lucidworks: "Licence + infrastructure (self-host or cloud)", turing: "Open source (Apache 2.0)" },

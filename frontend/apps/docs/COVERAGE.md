@@ -180,6 +180,7 @@ _Not a page: it sits outside `src/content/docs`, so Starlight never renders it. 
 | **Block S**: React SDK (hooks + headless UI) | [react-sdk](./src/content/docs/react-sdk.md) | ✅ |
 | **Block S**: vanilla `@viglet/turing-sdk` (zero-dep, EDS) | [javascript-sdk](./src/content/docs/javascript-sdk.md) | ✅ (T539) |
 | **E.7**: `@viglet/turing-cli` (`turing` command) | [cli](./src/content/docs/cli.md) | ✅ (T539, was 🧩 folded into developer-guide) |
+| **Block AB** (T1270): Quick start, the actionable setup the site's "Get started" opens: prerequisites, `turing init` + `turing dev`, a first-success check; site and docs footers from one typed destination map | [getting-started/quick-start](./src/content/docs/getting-started/quick-start.md) | ✅ |
 | **`@viglet/turing-flow-dsl`**: flows-as-typed-TS | [flow-dsl](./src/content/docs/flow-dsl.md) | ✅ (T539) |
 | **Block Y**: Atlas Store reference showcase | [showcase](./src/content/docs/showcase.md) | ✅ |
 | **Block Z**: client-side conversion analytics / GA4 bridge | [conversion-analytics](./src/content/docs/conversion-analytics.md) | ✅ |

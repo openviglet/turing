@@ -1,5 +1,6 @@
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
+import { DESTINATIONS, type DestinationKey } from "@/lib/destinations";
 import { reopenConsent } from "@/lib/analytics";
 import { withBase } from "@/lib/site-url";
 
@@ -20,23 +21,20 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "React SDK", href: LINKS.storybook },
     ],
   },
+  // T1270: one destination per job, labelled by that job (lib/destinations.ts).
   {
     heading: "Developers",
-    links: [
-      { label: "Documentation", href: LINKS.docs },
-      { label: "npm", href: LINKS.npm },
-      { label: "CLI", href: LINKS.cli },
-    ],
+    links: destinations(["getStarted", "docs", "download", "source", "npm", "cli"]),
   },
   {
     heading: "Open & transparent",
-    links: [
-      { label: "Roadmap", href: LINKS.roadmap },
-      { label: "Changelog", href: LINKS.changelog },
-      { label: "viglet.org", href: LINKS.viglet },
-    ],
+    links: destinations(["releaseNotes", "devRoadmap", "portfolio"]),
   },
 ];
+
+function destinations(keys: DestinationKey[]) {
+  return keys.map((key) => ({ label: DESTINATIONS[key].label, href: LINKS[key] }));
+}
 
 export function SiteFooter() {
   return (
@@ -77,7 +75,7 @@ export function SiteFooter() {
             © {new Date().getFullYear()} Viglet Turing · Apache 2.0 License
           </span>
           <span className="space-x-3">
-            <a href={LINKS.viglet} target="_blank" rel="noreferrer" className="hover:text-[#f2f4fb]">
+            <a href={LINKS.portfolio} target="_blank" rel="noreferrer" className="hover:text-[#f2f4fb]">
               viglet.org
             </a>
             <a href={LINKS.docs} className="hover:text-[#f2f4fb]">

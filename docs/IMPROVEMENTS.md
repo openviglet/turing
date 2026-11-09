@@ -1385,32 +1385,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
 
-### XXVII.7 Navigation, installation and release destinations (T1270)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org.
-brand-links.ts sends Get started to /docs/ rather than installation, retains
-docs.viglet.org/dumont/connectors/aem, and site-content.ts retains an old
-docs.viglet.org blog URL. Release notes already correctly go to the hub and must stay
-there.
-
-Define one typed destination map used by marketing navigation, footer, CTAs and Astro
-overrides. Separate Try/Explore, Install, Documentation, Release notes, Source and
-Portfolio by their actual job. Get started should reach an actionable supported setup
-path with prerequisites and a first-success check; Documentation may keep the overview.
-Keep GitHub Source on openviglet/turing; label the development roadmap separately from
-user release notes. Use existing hub download/release pages and product documentation
-instead of adding another release ledger or installation authority. The Dumont AEM URL
-is also hardcoded in public/llms.txt, public/aem-search.md and google-ads.md; the map
-feeds those too. Only docs.viglet.org/turing is redirected (T1163), so check whether the
-/dumont pages are still canonical first. Replace retired-domain references with verified
-current destinations, preserving inbound routes and anchors. The return to viglet.org
-and product identity must remain discoverable in mobile menus and docs.
-
-Acceptance: follow every primary CTA from home, a depth page and docs in a fresh
-browser, including narrow-screen menus and keyboard use; verify response status and
-destination content rather than URL spelling alone. Check release-feed availability and
-no circular hub/product redirects. Do not deploy or rewrite historical published slugs.
-
 ### XXVII.8 A focused home page with product-specific depth (T1271)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org. At

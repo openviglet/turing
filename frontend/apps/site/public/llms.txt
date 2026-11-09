@@ -5,7 +5,9 @@
 ## Documentation
 
 - [Viglet Turing Docs](https://turing.viglet.org/docs/): Official documentation
-- [AEM Connector Docs](https://docs.viglet.org/dumont/connectors/aem): Index Adobe Experience Manager content (AEM 6.5 + AEM as a Cloud Service) via the Viglet Dumont connector
+- [Quick start](https://turing.viglet.org/docs/getting-started/quick-start/): Run Viglet Turing locally with Docker: prerequisites, three commands and a first-success check
+- [Download](https://www.viglet.org/turing/download/) and [release notes](https://www.viglet.org/turing/release-notes/): Releases and what changed in each, on viglet.org
+- [AEM Connector Docs](https://dumont.viglet.org/docs/connectors/aem/): Index Adobe Experience Manager content (AEM 6.5 + AEM as a Cloud Service) via the Viglet Dumont connector
 
 ## Solutions
 

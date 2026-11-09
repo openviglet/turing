@@ -54,7 +54,7 @@ export function SecurityPage() {
           actions={
             <>
               <Button asChild size="lg">
-                <a href={`${LINKS.docs}category/deploy-operate`} target="_blank" rel="noreferrer">
+                <a href={`${LINKS.docs}deploy-operate/`}>
                   Deployment &amp; security docs <ArrowRight className="size-4" />
                 </a>
               </Button>

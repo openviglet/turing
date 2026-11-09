@@ -22,7 +22,7 @@ import { withBase } from "@/lib/site-url";
 // headline solution, but it is an ordinary link like the rest (T1269: the hub's
 // header has no highlighted pills).
 const NAV_LINKS = [
-  { label: "Try it live", href: withBase("/#playground") },
+  { label: "Try it live", href: LINKS.explore },
   { label: "Docs", href: LINKS.docs },
   { label: "AEM AI Search", href: withBase("/aem-search/") },
 ];
@@ -90,7 +90,7 @@ export function SiteNav() {
           {/* Fluid path back to the umbrella brand: keeps the product from
               feeling like a dead end and reinforces the Viglet portfolio. */}
           <a
-            href={LINKS.viglet}
+            href={LINKS.portfolio}
             className="hidden items-center gap-1 text-xs font-semibold whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
           >
             part of viglet.org
@@ -136,7 +136,7 @@ export function SiteNav() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button asChild size="sm" className="hidden sm:inline-flex">
-            <a href={LINKS.docs}>
+            <a href={LINKS.getStarted}>
               Get started
               <ArrowRight className="size-4" />
             </a>
@@ -161,7 +161,7 @@ export function SiteNav() {
         <nav className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
           <Container className="flex flex-col py-3">
             <Button asChild size="sm" className="mb-2 w-full sm:hidden">
-              <a href={LINKS.docs} onClick={closeMenu}>
+              <a href={LINKS.getStarted} onClick={closeMenu}>
                 Get started
                 <ArrowRight className="size-4" />
               </a>
@@ -194,7 +194,7 @@ export function SiteNav() {
               </div>
             ))}
             <a
-              href={LINKS.viglet}
+              href={LINKS.portfolio}
               onClick={closeMenu}
               className="mt-3 inline-flex w-fit items-center gap-1 px-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
             >

@@ -6,6 +6,16 @@
 import Default from "@astrojs/starlight/components/Footer.astro";
 import { SITE_ROOT } from "../../site.mjs";
 import mark from "../assets/turing-mark.svg";
+// T1270: the site's typed destination map, so the docs footer cannot drift
+// from the site's (pure data, no imports of its own).
+import { DESTINATIONS, destinationHref } from "../../../site/src/lib/destinations";
+
+type Key = keyof typeof DESTINATIONS;
+const destinations = (keys: Key[]) =>
+  keys.map((key) => ({
+    label: DESTINATIONS[key].label,
+    href: destinationHref(key, (path) => `${SITE_ROOT}${path}`),
+  }));
 
 const columns = [
   {
@@ -21,19 +31,11 @@ const columns = [
   },
   {
     heading: "Developers",
-    links: [
-      { label: "React SDK", href: `${SITE_ROOT}/react-sdk/` },
-      { label: "npm", href: "https://www.npmjs.com/package/@viglet/turing-react-sdk" },
-      { label: "CLI", href: "https://www.npmjs.com/package/@viglet/turing-cli" },
-    ],
+    links: destinations(["getStarted", "download", "source", "storybook", "npm", "cli"]),
   },
   {
     heading: "Open & transparent",
-    links: [
-      { label: "Roadmap", href: "https://github.com/openviglet/turing/blob/HEAD/docs/ROADMAP.md" },
-      { label: "Changelog", href: "https://www.viglet.org/turing/release-notes/" },
-      { label: "viglet.org", href: "https://www.viglet.org" },
-    ],
+    links: destinations(["releaseNotes", "devRoadmap", "portfolio"]),
   },
 ];
 const year = new Date().getFullYear();

@@ -87,7 +87,7 @@ ideal 4–6. **Todos os destinos abaixo são páginas/âncoras reais**: as ânco
 | Try Live on WKND | Search & ask Adobe's WKND site | Cited answers, real AEM content | `turing.viglet.org/aem-search/#demo` |
 | AEM Capability Matrix | vs an AEM-native AI add-on | See where the depth gap opens | `turing.viglet.org/aem-search/#matrix` |
 | Data Residency & Security | Self-hosted, your infrastructure | Every page and query stays yours | `turing.viglet.org/security` |
-| AEM Connector Docs | Index AEM 6.5 or Cloud Service | Powered by the Dumont connector | `docs.viglet.org/dumont/connectors/aem` |
+| AEM Connector Docs | Index AEM 6.5 or Cloud Service | Powered by the Dumont connector | `dumont.viglet.org/docs/connectors/aem/` |
 | Compare Alternatives | vs Algolia, Elasticsearch & RAG | An honest, side-by-side look | `turing.viglet.org/compare` |
 | Get Started | Self-host under Apache 2.0 | Connect your AEM tier fast | `turing.viglet.org/docs/` |
 
@@ -106,7 +106,7 @@ Sitelinks extras (páginas reais, para rotação/A-B):
 >
 > **URLs confirmadas no código** (`components/brand.tsx`):
 > `LINKS.docs = /docs/` ·
-> `LINKS.aemConnector = https://docs.viglet.org/dumont/connectors/aem`.
+> `LINKS.aemConnector = https://dumont.viglet.org/docs/connectors/aem/`.
 
 ### Âncoras disponíveis em /aem-search (adicionadas nesta rodada)
 
@@ -238,7 +238,7 @@ Rotas prerenderizadas (HTML estático) disponíveis hoje:
 - `/` (landing) · `/aem-search` · `/compare` · `/migrate` · `/persona` · `/security`
 - `/features/search` · `/features/ask` · `/features/automate` · `/features/run`
 
-Docs externas: `turing.viglet.org/docs/` · `docs.viglet.org/dumont/connectors/aem`.
+Docs externas: `turing.viglet.org/docs/` · `dumont.viglet.org/docs/connectors/aem/`.
 
 ## 11. Pendências / verificar antes de publicar
 

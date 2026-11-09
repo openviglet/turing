@@ -31,15 +31,15 @@ function LandingJsonLd() {
     "@graph": [
       {
         "@type": "Organization",
-        "@id": `${LINKS.viglet}/#organization`,
+        "@id": `${LINKS.portfolio}/#organization`,
         name: "Viglet",
-        url: LINKS.viglet,
+        url: LINKS.portfolio,
       },
       {
         "@type": "WebSite",
         name: "Viglet Turing",
         url: siteUrl("/"),
-        publisher: { "@id": `${LINKS.viglet}/#organization` },
+        publisher: { "@id": `${LINKS.portfolio}/#organization` },
       },
       {
         "@type": "SoftwareApplication",
@@ -62,7 +62,7 @@ function LandingJsonLd() {
         ],
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         license: "https://www.apache.org/licenses/LICENSE-2.0",
-        publisher: { "@id": `${LINKS.viglet}/#organization` },
+        publisher: { "@id": `${LINKS.portfolio}/#organization` },
       },
       {
         "@type": "SoftwareSourceCode",

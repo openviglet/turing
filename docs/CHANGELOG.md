@@ -716,6 +716,9 @@
 - **T1251** — turing.viglet.org/wordpress is a prerendered page of its own: hero with install and Playground demo, click-to-load nocookie video (pt-BR), the eight-chapter story, FAQ and JSON-LD, Dumont linked.
 - **T1268** — The docs app now says Viglet Turing/Dumont in prose, titles, headings and Mermaid labels too; anchors repointed, links green, plugin UI labels kept verbatim (T1274).
 - **T1269** — Site and docs read the hub's DS tokens.css (surfaces, text, borders, radius) and its Inter/Plus Jakarta roles, keep royal blue as the accent, and drop the docs header pills.
+- **T1270** — One typed destination map feeds site nav, hero, footers and docs footer; Get started opens a new Quick start, retired URLs use live canonicals, release notes stay on the hub.
+  checked **Evidence and boundary are verified** Re-read the cited source and rendered routes, satisfy the acceptance checks in the design, and preserve technical identifiers and existing URLs.
+  checked **The hub contract survives the change** Review full names, relevant light/dark and mobile layouts, and links to installation, documentation and the portfolio; retain the product-specific behavior.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 

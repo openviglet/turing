@@ -38,7 +38,7 @@ export function Hero() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <a href={LINKS.docs}>
+              <a href={LINKS.getStarted}>
                 Get started <ArrowRight className="size-4" />
               </a>
             </Button>
