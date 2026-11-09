@@ -1,10 +1,17 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* T1269: the viglet.org hub's tokens. Only the CSS variables, never the
+   design system's Tailwind bundle, which overrides the app's responsive
+   utilities in the cascade. Its dark ground follows the same `.dark` class. */
+@import "@viglet/viglet-design-system/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  /* T1269: the hub's two roles. Inter for UI and reading text; Plus Jakarta
+     Sans only for brand moments (h1 and the wordmark, via `font-brand`). */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-brand: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -30,47 +37,38 @@
   --color-ring: var(--ring);
 }
 
-/* Turing brand: blue (#4169E1 / #2563eb) → indigo (#4f46e5) on a neutral surface */
+/* T1269: surfaces, text, borders and radii are the hub's (`--vg-*`, which
+   switch under `.dark` themselves); only the accent is Turing's royal blue
+   (#4169E1), so the product stays recognisable inside the Viglet family. */
+:root,
+.dark {
+  --radius: var(--vg-radius-panel);
+  --background: var(--vg-background);
+  --foreground: var(--vg-foreground);
+  --card: var(--vg-card);
+  --card-foreground: var(--vg-card-foreground);
+  --popover: var(--vg-popover);
+  --popover-foreground: var(--vg-popover-foreground);
+  --secondary: var(--vg-secondary);
+  --secondary-foreground: var(--vg-secondary-foreground);
+  --muted: var(--vg-muted);
+  --muted-foreground: var(--vg-muted-foreground);
+  --accent: var(--vg-accent);
+  --accent-foreground: var(--vg-accent-foreground);
+  --destructive: var(--vg-destructive);
+  --border: var(--vg-border);
+  --input: var(--vg-input);
+}
+
 :root {
-  --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.16 0.02 265);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.02 265);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.02 265);
   --primary: oklch(0.55 0.22 264);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.97 0.005 265);
-  --secondary-foreground: oklch(0.25 0.03 265);
-  --muted: oklch(0.97 0.005 265);
-  --muted-foreground: oklch(0.52 0.02 265);
-  --accent: oklch(0.96 0.015 264);
-  --accent-foreground: oklch(0.3 0.06 264);
-  --destructive: oklch(0.58 0.24 27);
-  --border: oklch(0.92 0.008 265);
-  --input: oklch(0.92 0.008 265);
   --ring: oklch(0.6 0.18 264);
 }
 
 .dark {
-  --background: oklch(0.13 0.02 265);
-  --foreground: oklch(0.96 0.005 265);
-  --card: oklch(0.17 0.02 265);
-  --card-foreground: oklch(0.96 0.005 265);
-  --popover: oklch(0.17 0.02 265);
-  --popover-foreground: oklch(0.96 0.005 265);
   --primary: oklch(0.66 0.18 264);
   --primary-foreground: oklch(0.13 0.02 265);
-  --secondary: oklch(0.22 0.02 265);
-  --secondary-foreground: oklch(0.96 0.005 265);
-  --muted: oklch(0.22 0.02 265);
-  --muted-foreground: oklch(0.68 0.02 265);
-  --accent: oklch(0.26 0.04 264);
-  --accent-foreground: oklch(0.96 0.005 265);
-  --destructive: oklch(0.7 0.19 22);
-  --border: oklch(0.27 0.02 265);
-  --input: oklch(0.27 0.02 265);
   --ring: oklch(0.6 0.16 264);
 }
 
@@ -82,6 +80,9 @@
     scroll-behavior: smooth;
     /* Clear the sticky nav (h-16 = 4rem) so anchored sections aren't hidden. */
     scroll-padding-top: 4.5rem;
+  }
+  h1 {
+    font-family: var(--font-brand);
   }
   body {
     @apply bg-background text-foreground;

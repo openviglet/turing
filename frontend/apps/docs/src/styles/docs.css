@@ -1,48 +1,44 @@
 /*
- * T1162 — the docs area in the marketing site's look (frontend/apps/site/src/index.css):
- * the same oklch palette on Starlight's tokens, Plus Jakarta Sans and JetBrains Mono,
- * the 0.75rem radius, and the blue-600 -> indigo-600 gradient (blue-500 -> indigo-500
- * in dark mode). Starlight's scale runs from --sl-color-white (strongest text) to
- * --sl-color-black (the page), so the light theme inverts it.
+ * T1269 — a thin mapping of the viglet.org hub's tokens onto Starlight. The
+ * design system's tokens.css (loaded first, see astro.config.mjs customCss)
+ * defines `--vg-*` and switches them under `[data-theme="dark"]`, the attribute
+ * Starlight sets on <html>, so the surface, text and border slots below need no
+ * per-theme block. Starlight's scale runs from --sl-color-white (strongest
+ * text) to --sl-color-black (the page). The intermediate grays have no hub
+ * token and stay neutral literals per theme. Only the accent is Turing's royal
+ * blue. Inter for reading text, Plus Jakarta Sans for the brand and h1.
  */
 :root {
-  --sl-font: "Plus Jakarta Sans", system-ui, sans-serif;
+  --sl-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --sl-font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --turing-radius: 0.75rem;
-  --turing-gradient: linear-gradient(90deg, #3b82f6, #6366f1);
+  --turing-font-brand: "Plus Jakarta Sans", system-ui, sans-serif;
+  --turing-radius: var(--vg-radius-panel);
 
-  /* Dark, the site's .dark tokens. */
-  --sl-color-white: oklch(0.96 0.005 265);
-  --sl-color-gray-1: oklch(0.9 0.01 265);
-  --sl-color-gray-2: oklch(0.8 0.015 265);
-  --sl-color-gray-3: oklch(0.68 0.02 265);
-  --sl-color-gray-4: oklch(0.46 0.02 265);
-  --sl-color-gray-5: oklch(0.27 0.02 265);
-  --sl-color-gray-6: oklch(0.17 0.02 265);
-  --sl-color-black: oklch(0.13 0.02 265);
+  --sl-color-white: var(--vg-foreground);
+  --sl-color-gray-3: var(--vg-muted-foreground);
+  --sl-color-gray-5: var(--vg-border);
+  --sl-color-gray-6: var(--vg-card);
+  --sl-color-black: var(--vg-background);
+  --sl-color-bg-nav: var(--vg-background);
+
+  /* Dark */
+  --sl-color-gray-1: oklch(0.86 0 0);
+  --sl-color-gray-2: oklch(0.8 0 0);
+  --sl-color-gray-4: oklch(0.46 0 0);
   --sl-color-accent-low: oklch(0.26 0.06 264);
   --sl-color-accent: oklch(0.66 0.18 264);
   --sl-color-accent-high: oklch(0.86 0.08 264);
-  --sl-color-bg-nav: color-mix(in oklab, var(--sl-color-black) 85%, transparent);
 }
 
 :root[data-theme="light"] {
-  --turing-gradient: linear-gradient(90deg, #2563eb, #4f46e5);
-
-  /* Light, the site's :root tokens. */
-  --sl-color-white: oklch(0.16 0.02 265);
-  --sl-color-gray-1: oklch(0.25 0.03 265);
-  --sl-color-gray-2: oklch(0.36 0.03 265);
-  --sl-color-gray-3: oklch(0.52 0.02 265);
-  --sl-color-gray-4: oklch(0.7 0.015 265);
-  --sl-color-gray-5: oklch(0.92 0.008 265);
-  --sl-color-gray-6: oklch(0.97 0.005 265);
-  --sl-color-gray-7: oklch(0.985 0.003 265);
-  --sl-color-black: oklch(1 0 0);
+  --sl-color-gray-1: oklch(0.25 0 0);
+  --sl-color-gray-2: oklch(0.36 0 0);
+  --sl-color-gray-4: oklch(0.7 0 0);
+  --sl-color-gray-6: var(--vg-muted);
+  --sl-color-gray-7: oklch(0.985 0 0);
   --sl-color-accent-low: oklch(0.94 0.03 264);
   --sl-color-accent: oklch(0.55 0.22 264);
   --sl-color-accent-high: oklch(0.35 0.15 264);
-  --sl-color-bg-nav: color-mix(in oklab, var(--sl-color-black) 85%, transparent);
 }
 
 body {
@@ -59,6 +55,7 @@ header.header {
 /* The brand as the site draws it: the foreground colour, extra-bold, nav-sized. */
 .site-title {
   color: var(--sl-color-white);
+  font-family: var(--turing-font-brand);
   font-size: 1.05rem;
   font-weight: 800;
   gap: 0.5rem;
@@ -76,20 +73,18 @@ header.header {
   font-weight: 700;
 }
 
-/* Headings and the splash hero carry the brand gradient. */
+/* The page title in the hub's grammar: the brand face in the foreground
+   colour, no gradient text. */
 .hero h1,
 .content-panel h1#_top {
-  background: var(--turing-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  font-family: var(--turing-font-brand);
+  color: var(--sl-color-white);
 }
 
 .sl-link-button.primary {
-  background: var(--turing-gradient);
+  background: var(--sl-color-accent);
   border: none;
-  color: #fff;
+  color: var(--sl-color-black);
 }
 
 /* Cards, asides, code and tables on the site's radius. */

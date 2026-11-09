@@ -1385,32 +1385,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
 
-### XXVII.6 A consistent visual contract with viglet.org (T1269)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org.
-frontend/apps/site/src/components/sections/hero.tsx uses a rounded metadata chip,
-hardcoded dark surfaces, gradient text, grid and animated orbs; the hub uses neutral
-surfaces and plain typographic metadata. Header product highlights also use pills.
-
-Adopt the hub typography roles, title scale, content gutters, spacing, button hierarchy,
-borders and focus treatment. Neither frontend/apps/site nor frontend/apps/docs depends
-on @viglet/viglet-design-system today, so adopting it is a new dependency; its Tailwind
-bundle is known to override the app's responsive utilities in the cascade, so prefer its
-CSS-variable tokens over the component bundle. Use released @viglet/viglet-design-system
-tokens/components where applicable and a thin compatible Astro mapping for
-documentation; inspect actual exports before designing an adapter. Preserve royal blue
-as the product accent. Replace decorative chips with plain eyebrow text, separators or
-ordinary navigation links. Keep genuine filter selections and status controls
-functional. Consolidate a reusable product hero for marketing subpages; documentation
-keeps its reading sidebar and article layout while sharing brand tokens. Avoid permanent
-dark heroes in light mode and remove decorative motion that competes with the product
-evidence.
-
-Acceptance: compare home, one solution page, a feature page, docs overview and article
-at 390/768/1440 pixels, light/dark and reduced motion. Preserve real demos, code
-examples, contrast, keyboard focus and original URLs. No framework migration or forced
-orange product branding.
-
 ### XXVII.7 Navigation, installation and release destinations (T1270)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org.

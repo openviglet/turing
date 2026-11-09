@@ -10,14 +10,15 @@ import { SITE_ROOT } from "../../site.mjs";
 const links = [
   { label: "Home", href: `${SITE_ROOT}/` },
   { label: "Try it live", href: `${SITE_ROOT}/#playground` },
-  { label: "AEM AI Search", href: `${SITE_ROOT}/aem-search/`, highlight: true },
+  // T1269: an ordinary link, as on the site; the hub's header has no pills.
+  { label: "AEM AI Search", href: `${SITE_ROOT}/aem-search/` },
 ];
 ---
 
 <nav class="turing-nav" aria-label="Viglet Turing">
   {
     links.map((link) => (
-      <a href={link.href} class:list={["turing-nav-link", { "turing-nav-pill": link.highlight }]}>
+      <a href={link.href} class="turing-nav-link">
         {link.label}
       </a>
     ))
@@ -41,14 +42,6 @@ const links = [
   }
   .turing-nav-link:hover {
     color: var(--sl-color-white);
-  }
-  .turing-nav-pill {
-    color: var(--sl-color-accent);
-    background: color-mix(in oklab, var(--sl-color-accent) 12%, transparent);
-    border: 1px solid color-mix(in oklab, var(--sl-color-accent) 35%, transparent);
-    border-radius: 999px;
-    padding: 0.2rem 0.75rem;
-    font-weight: 700;
   }
   @media (min-width: 64rem) {
     .turing-nav {

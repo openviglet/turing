@@ -715,7 +715,7 @@
 - 🗑 **T481** — abandoned: social proof needs real named adopters, which is a business precondition rather than work a backlog can hold open
 - **T1251** — turing.viglet.org/wordpress is a prerendered page of its own: hero with install and Playground demo, click-to-load nocookie video (pt-BR), the eight-chapter story, FAQ and JSON-LD, Dumont linked.
 - **T1268** — The docs app now says Viglet Turing/Dumont in prose, titles, headings and Mermaid labels too; anchors repointed, links green, plugin UI labels kept verbatim (T1274).
-- **T1269 (marketing heroes)** — Home and all seven subpages share one neutral, theme-aware PageHero with plain eyebrows; dark bands, orbs, grid, gradient text and header pills are gone.
+- **T1269** — Site and docs read the hub's DS tokens.css (surfaces, text, borders, radius) and its Inter/Plus Jakarta roles, keep royal blue as the accent, and drop the docs header pills.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 

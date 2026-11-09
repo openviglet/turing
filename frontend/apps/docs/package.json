@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.8",
+    "@viglet/viglet-design-system": "^2026.3.25",
     "astro": "^7.4.5"
   }
 }

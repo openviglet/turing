@@ -14,7 +14,7 @@ export function Logo({
   size?: number;
 }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 font-extrabold", className)}>
+    <span className={cn("inline-flex items-center gap-2 font-brand font-extrabold", className)}>
       <VigletLogo identifier={PRODUCTS.turing.id} size={size} />
       {showWord && <span className="whitespace-nowrap">{PRODUCTS.turing.fullName}</span>}
     </span>
