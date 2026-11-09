@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, Check, Minus } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
+import { ArrowRight, Check, Minus } from "lucide-react";
 import { SiteNav } from "@/components/sections/site-nav";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { ContentFitDemo } from "@/components/sections/content-fit-demo";
@@ -108,32 +109,12 @@ export function PersonaPage() {
       <SiteNav />
       <main className="flex-1">
         {/* hero */}
-        <section className="relative isolate overflow-hidden bg-[#080b18] py-16 text-[#f2f4fb] lg:py-20">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10" />
-          <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
-          <Container>
-            <a
-              href={withBase("/")}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
-            >
-              <ArrowLeft className="size-4" /> Back to overview
-            </a>
-            <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-              Personas · brand voice for AI
-            </p>
-            <h1 className="mt-3 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
-              Your customer doesn't want to talk to an LLM. They want to talk to
-              your company.
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#aeb7d4]">
-              A generic AI voice is indistinguishable from the next ten companies
-              that asked the same model the same thing, and it quotes prices you
-              never approved. A Persona is the voice profile of your AI: define it
-              once in Viglet Turing, attach it to any agent, and every reply sounds
-              like your company. Swap the LLM or the tools and the voice stays.
-              Open source, Apache 2.0.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+        <PageHero
+          eyebrow={<>Personas · brand voice for AI</>}
+          title={<>Your customer doesn't want to talk to an LLM. They want to talk to your company.</>}
+          description={<>A generic AI voice is indistinguishable from the next ten companies that asked the same model the same thing, and it quotes prices you never approved. A Persona is the voice profile of your AI: define it once in Viglet Turing, attach it to any agent, and every reply sounds like your company. Swap the LLM or the tools and the voice stays. Open source, Apache 2.0.</>}
+          actions={
+            <>
               <Button asChild size="lg">
                 <a href={withBase("/#playground")}>
                   Try it live <ArrowRight className="size-4" />
@@ -143,15 +124,14 @@ export function PersonaPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
                 <a href={PERSONA_BOOK_URL} target="_blank" rel="noreferrer">
                   Read the Persona Book
                 </a>
               </Button>
-            </div>
-          </Container>
-        </section>
+            </>
+          }
+        />
 
         {/* live content-fit demo: the centerpiece proof */}
         <section className="py-16 lg:py-20">

@@ -327,7 +327,7 @@ function LiveSearchDemo({
     <div
       className={cn(
         "flex flex-col overflow-hidden bg-card text-card-foreground",
-        bare ? "h-full" : "rounded-2xl border border-white/10 shadow-2xl shadow-black/50"
+        bare ? "h-full" : "rounded-2xl border border-border shadow-xl"
       )}
     >
       {/* search input + autocomplete */}
@@ -688,7 +688,7 @@ function SampleSearchDemo({
     <div
       className={cn(
         "flex flex-col overflow-hidden bg-card text-card-foreground",
-        bare ? "h-full" : "rounded-2xl border border-white/10 shadow-2xl shadow-black/50"
+        bare ? "h-full" : "rounded-2xl border border-border shadow-xl"
       )}
     >
       <div className="flex items-center gap-2.5 border-b border-border px-4 py-3.5">

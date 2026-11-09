@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, ArrowUpRight, ChevronDown, Menu, Sparkles, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,12 +17,14 @@ import { withBase } from "@/lib/site-url";
 // Hrefs are root-anchored ("/#…") so they also work from the feature pages:
 // the browser navigates home and scrolls to the section.
 //
-// The bar stays uncluttered: two direct links ("Try it live", "Docs") flank two
-// grouped dropdowns. AEM is deliberately pulled OUT of the Solutions dropdown
-// and rendered as a highlighted top-level pill, because it's our headline solution.
+// The bar stays uncluttered: direct links flank two grouped dropdowns. AEM is
+// pulled OUT of the Solutions dropdown as a top-level link because it is the
+// headline solution, but it is an ordinary link like the rest (T1269: the hub's
+// header has no highlighted pills).
 const NAV_LINKS = [
   { label: "Try it live", href: withBase("/#playground") },
   { label: "Docs", href: LINKS.docs },
+  { label: "AEM AI Search", href: withBase("/aem-search/") },
 ];
 
 const NAV_GROUPS = [
@@ -89,7 +91,7 @@ export function SiteNav() {
               feeling like a dead end and reinforces the Viglet portfolio. */}
           <a
             href={LINKS.viglet}
-            className="hidden items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap text-muted-foreground transition-colors hover:border-border hover:text-foreground sm:inline-flex"
+            className="hidden items-center gap-1 text-xs font-semibold whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
           >
             part of viglet.org
             <ArrowUpRight className="size-3" />
@@ -105,14 +107,6 @@ export function SiteNav() {
               {item.label}
             </a>
           ))}
-          {/* Headline solution, pulled out of the dropdown and highlighted. */}
-          <a
-            href={withBase("/aem-search/")}
-            className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-bold whitespace-nowrap text-primary transition-colors hover:border-primary/50 hover:bg-primary/15"
-          >
-            <Sparkles className="size-3.5" />
-            AEM AI Search
-          </a>
           {NAV_GROUPS.map((group) => (
             <DropdownMenu key={group.label}>
               <DropdownMenuTrigger className="group flex items-center gap-1 text-sm font-semibold whitespace-nowrap text-muted-foreground outline-hidden transition-colors hover:text-foreground data-[state=open]:text-foreground">
@@ -182,14 +176,6 @@ export function SiteNav() {
                 {item.label}
               </a>
             ))}
-            <a
-              href={withBase("/aem-search/")}
-              onClick={closeMenu}
-              className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-2 py-2.5 text-sm font-bold text-primary transition-colors hover:bg-primary/15"
-            >
-              <Sparkles className="size-4" />
-              AEM AI Search
-            </a>
             {NAV_GROUPS.map((group) => (
               <div key={group.label} className="mt-2 border-t border-border/60 pt-2">
                 <p className="px-2 py-1 text-[0.7rem] font-bold tracking-wide text-muted-foreground/70 uppercase">

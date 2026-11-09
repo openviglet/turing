@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
+import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { SiteNav } from "@/components/sections/site-nav";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { Button } from "@/components/ui/button";
@@ -46,29 +47,12 @@ export function SecurityPage() {
       <SiteNav />
       <main className="flex-1">
         {/* hero */}
-        <section className="relative isolate overflow-hidden bg-[#080b18] py-16 text-[#f2f4fb] lg:py-20">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10" />
-          <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
-          <Container>
-            <a
-              href={withBase("/")}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
-            >
-              <ArrowLeft className="size-4" /> Back to overview
-            </a>
-            <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-              Data residency for regulated industries
-            </p>
-            <h1 className="mt-3 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
-              Self-hosted AI search and RAG: your content never leaves your network
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#aeb7d4]">
-              A search SaaS asks you to trust its compliance badges with your
-              content and your users' queries. Viglet Turing is self-hosted:
-              the data never leaves your infrastructure, so security inherits
-              the controls you already run. Open source, any LLM, your region.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+        <PageHero
+          eyebrow={<>Data residency for regulated industries</>}
+          title={<>Self-hosted AI search and RAG: your content never leaves your network</>}
+          description={<>A search SaaS asks you to trust its compliance badges with your content and your users' queries. Viglet Turing is self-hosted: the data never leaves your infrastructure, so security inherits the controls you already run. Open source, any LLM, your region.</>}
+          actions={
+            <>
               <Button asChild size="lg">
                 <a href={`${LINKS.docs}category/deploy-operate`} target="_blank" rel="noreferrer">
                   Deployment &amp; security docs <ArrowRight className="size-4" />
@@ -78,13 +62,12 @@ export function SecurityPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
                 <a href={withBase("/#self-host")}>Self-host in one command</a>
               </Button>
-            </div>
-          </Container>
-        </section>
+            </>
+          }
+        />
 
         {/* the core argument: SaaS trust vs self-hosted */}
         <section className="py-16 lg:py-20">

@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, Check, Minus } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
+import { ArrowRight, Check, Minus } from "lucide-react";
 import { SiteNav } from "@/components/sections/site-nav";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { CodeBlock } from "@/components/code-block";
@@ -105,31 +106,12 @@ export function AemPage() {
       <SiteNav />
       <main className="flex-1">
         {/* hero */}
-        <section className="relative isolate overflow-hidden bg-[#080b18] py-16 text-[#f2f4fb] lg:py-20">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10" />
-          <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
-          <Container>
-            <a
-              href={withBase("/")}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
-            >
-              <ArrowLeft className="size-4" /> Back to overview
-            </a>
-            <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-              Viglet Turing for Adobe Experience Manager
-            </p>
-            <h1 className="mt-3 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
-              AEM search with AI: a search engine and search component for AEM
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#aeb7d4]">
-              The AEM-native pitch is “Cloud-Service-native.” That's also its
-              limit. Viglet Turing gives AEM the same cited, streaming AI answers,
-              and more: it searches beyond AEM, adds agents,
-              tools, skills and MCP, runs on any LLM and any search engine, and
-              keeps every page and query in your own infrastructure. Open source,
-              Apache 2.0.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+        <PageHero
+          eyebrow={<>Viglet Turing for Adobe Experience Manager</>}
+          title={<>AEM search with AI: a search engine and search component for AEM</>}
+          description={<>The AEM-native pitch is “Cloud-Service-native.” That's also its limit. Viglet Turing gives AEM the same cited, streaming AI answers, and more: it searches beyond AEM, adds agents, tools, skills and MCP, runs on any LLM and any search engine, and keeps every page and query in your own infrastructure. Open source, Apache 2.0.</>}
+          actions={
+            <>
               <Button asChild size="lg">
                 <a href="#demo">
                   Try it live <ArrowRight className="size-4" />
@@ -139,15 +121,14 @@ export function AemPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
                 <a href={LINKS.aemConnector} target="_blank" rel="noreferrer">
                   AEM connector docs
                 </a>
               </Button>
-            </div>
-          </Container>
-        </section>
+            </>
+          }
+        />
 
         {/* live WKND demo: the centerpiece proof */}
         <section id="demo" className="scroll-mt-24 py-16 lg:py-20">

@@ -1,5 +1,6 @@
+import { PageHero } from "@/components/page-hero";
 import { useState, useSyncExternalStore } from "react";
-import { ArrowLeft, ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { SiteNav } from "@/components/sections/site-nav";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { Button } from "@/components/ui/button";
@@ -173,51 +174,30 @@ export function WordPressPage() {
       <SiteNav />
       <main className="flex-1">
         {/* hero */}
-        <section className="relative isolate overflow-hidden bg-[#080b18] py-16 text-[#f2f4fb] lg:py-20">
-          <div className="grid-bg pointer-events-none absolute inset-0 -z-10" />
-          <div className="animate-orb-a pointer-events-none absolute -top-40 -left-20 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,#4169E1,transparent_70%)] opacity-40 blur-[70px]" />
-          <Container className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            <div className="min-w-0">
-              <a
-                href={withBase("/")}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#aeb7d4] transition-colors hover:text-white"
+        <PageHero
+          eyebrow={<>Viglet Turing for WordPress and WooCommerce</>}
+          title={<>Search that understands what a shopper means, answered from your own catalog</>}
+          description={<>A WordPress plugin that indexes posts, pages and WooCommerce products into Viglet Turing, then puts search as you type, filters, cited answers, a shopping copilot and search insights on the site. Open source, Apache 2.0.</>}
+          actions={
+            <>
+              <Button asChild size="lg">
+                <a href={LINKS.wordpressDocs}>
+                  Install the plugin <ArrowRight className="size-4" />
+                </a>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
               >
-                <ArrowLeft className="size-4" /> Back to overview
-              </a>
-              <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-                Viglet Turing for WordPress and WooCommerce
-              </p>
-              <h1 className="mt-3 text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
-                Search that understands what a shopper means, answered from your own catalog
-              </h1>
-              <p className="mt-5 text-lg leading-relaxed text-[#aeb7d4]">
-                A WordPress plugin that indexes posts, pages and WooCommerce products into
-                Viglet Turing, then puts search as you type, filters, cited answers, a shopping
-                copilot and search insights on the site. Open source, Apache 2.0.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <a href={LINKS.wordpressDocs}>
-                    Install the plugin <ArrowRight className="size-4" />
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                >
-                  <a href={LINKS.wordpressDemo} target="_blank" rel="noreferrer">
-                    Try the demo store in your browser
-                  </a>
-                </Button>
-              </div>
-            </div>
-            <div className="min-w-0">
-              <VideoFacade />
-            </div>
-          </Container>
-        </section>
+                <a href={LINKS.wordpressDemo} target="_blank" rel="noreferrer">
+                  Try the demo store in your browser
+                </a>
+              </Button>
+            </>
+          }
+          aside={<VideoFacade />}
+        />
 
         {/* the shopper's story */}
         <section id="story" className="scroll-mt-24 py-16 lg:py-20">
