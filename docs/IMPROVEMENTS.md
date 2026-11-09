@@ -1385,29 +1385,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
 
-### XXVII.8 A focused home page with product-specific depth (T1271)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org. At
-390 CSS pixels the published home measured 20,392 pixels tall; landing.tsx mounts the
-hero search, full playground, SDK example and many further sections. A fresh SSO search
-returned one documentation result after waiting; a loading screenshot is not evidence of
-a broken demo.
-
-Lead with enterprise search and cited answers, one useful live demonstration, source
-integration and a clear setup path. Keep advanced agents and personas discoverable
-through depth pages; preserve the working playground and its loading/error handling.
-Preserve information by linking to its authoritative page instead of repeating the same
-inventory. Maintain existing anchor destinations with concise summaries when sections
-move. Align the short product descriptor with the hub but retain product-specific
-examples and technical depth. Give every retained section a decision it helps the
-visitor make.
-
-Acceptance: provide a before/after section map and walk a newcomer through what the
-product does, whom it serves, evidence and the next action without reading the whole
-page. Re-measure page length under the same viewport as supporting evidence, not as a
-conversion target. No invented testimonials, unsupported performance claims, deleted
-routes or promised conversion uplift; any outcome measurement needs later observation.
-
 ### XXVII.9 Bounded claims and demonstrable product scope (T1272)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org.

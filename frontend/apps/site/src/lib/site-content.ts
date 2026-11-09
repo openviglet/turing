@@ -1,7 +1,6 @@
 import {
   Bot,
   Boxes,
-  Clock,
   EyeOff,
   FlaskConical,
   Globe,
@@ -17,7 +16,6 @@ import {
   ServerCog,
   ShieldCheck,
   Sparkles,
-  TrendingDown,
   Users,
   Workflow,
   type LucideIcon,
@@ -208,34 +206,6 @@ export const WKND_SEARCH_DOCS: SearchDoc[] = [
   { title: "WKND Adventures & Travel", type: "Page", snippet: "Browse curated surf, ski, cycling and camping adventures around the world." },
 ];
 
-export interface Step {
-  title: string;
-  description: string;
-}
-
-export const STEPS: Step[] = [
-  {
-    title: "Ingest & index",
-    description:
-      "Connectors crawl AEM, WordPress, databases and files into Solr, Elasticsearch or Lucene with vector embeddings.",
-  },
-  {
-    title: "Retrieve",
-    description:
-      "Hybrid RRF retrieval and reranking pull the passages most relevant to the user's question, across locales.",
-  },
-  {
-    title: "Reason & act",
-    description:
-      "The agent calls tools, runs skills in a sandbox, queries MCP servers and runs a chat flow.",
-  },
-  {
-    title: "Respond",
-    description:
-      "A grounded answer streams back with citations, rich content and structured slots your UI can render.",
-  },
-];
-
 export interface Provider {
   name: string;
   color: string;
@@ -281,98 +251,6 @@ export const MARKETPLACE: LinkCard[] = [
       "A vinyl records catalog: browse albums by artist, genre, year and label with a retro template.",
     href: withBase("/marketplace/vinyl-records/"),
     tag: "Catalog · Retro",
-  },
-];
-
-export const RESOURCES: LinkCard[] = [
-  {
-    title: "WordPress & WooCommerce plugin",
-    description:
-      "Index posts, pages and WooCommerce products into Viglet Turing and add search as you type, cited answers and a shopping copilot to your store. Watch the demo, or try it in your browser.",
-    href: withBase("/wordpress/"),
-    tag: "WordPress",
-  },
-  {
-    title: "React SDK Storybook",
-    description:
-      "Interactive component docs: headless hooks and UI components with live examples for enterprise search.",
-    href: withBase("/react-sdk/"),
-    tag: "Storybook",
-  },
-  {
-    title: "@viglet/turing-react-sdk",
-    description:
-      "React 19 hooks & UI components. Headless architecture with full TypeScript support.",
-    href: "https://www.npmjs.com/package/@viglet/turing-react-sdk",
-    tag: "npm",
-  },
-  {
-    title: "@viglet/turing-sdk",
-    description:
-      "Vanilla JS, zero-dependency SDK: a framework-agnostic client and observable controllers for search, chat and autocomplete. Works in Adobe EDS blocks, a plain <script>, or any bundler.",
-    href: "https://www.npmjs.com/package/@viglet/turing-sdk",
-    tag: "Vanilla JS",
-  },
-  {
-    title: "@viglet/turing-cli",
-    description:
-      "Zero-dependency developer CLI: scaffold a project, run a local stack, deploy agents/flows/tools/skills, and run YAML eval suites.",
-    href: "https://www.npmjs.com/package/@viglet/turing-cli",
-    tag: "CLI",
-  },
-  {
-    title: "@viglet/turing-flow-dsl",
-    description:
-      "TypeScript DSL for chat flows. Write flows as typed source and transpile them to the editor's JSON wire format; enum typos (tone, guardrail, trigger) fail at compile time.",
-    href: "https://www.npmjs.com/package/@viglet/turing-flow-dsl",
-    tag: "DSL",
-  },
-  {
-    title: "Documentation",
-    description:
-      "Architecture guides, configuration reference, connector setup, API docs and deployment instructions.",
-    href: withBase("/docs/"),
-    tag: "Docs",
-  },
-];
-
-/* -------------------------------------------------------------------------- */
-/* Outcomes (sell results, not features): the buyer-facing benefit layer       */
-/* -------------------------------------------------------------------------- */
-
-export interface Outcome {
-  icon: LucideIcon;
-  iconClass: string;
-  /** The outcome (a business result), not the feature. */
-  title: string;
-  /** One line on how the platform delivers it. */
-  body: string;
-}
-
-export const OUTCOMES: Outcome[] = [
-  {
-    icon: MessageSquare,
-    iconClass: "from-[#059669] to-[#10b981]",
-    title: "Users get answers, not a list of links",
-    body: "Grounded, cited answers over your own content cut the time from question to answer. Every claim traces back to the exact source passage.",
-  },
-  {
-    icon: TrendingDown,
-    iconClass: "from-[#2563eb] to-[#4f46e5]",
-    title: "Fewer repetitive support tickets",
-    body: "A self-service assistant over your docs and knowledge base answers the questions your team answers again and again.",
-  },
-  {
-    icon: Clock,
-    iconClass: "from-[#d97706] to-[#f59e0b]",
-    title: "Ship in days, not quarters",
-    body: "Connectors, hybrid search, reranking, agents and SDKs come wired and tested. You configure a product instead of building a RAG stack from scratch.",
-  },
-  {
-    icon: ShieldCheck,
-    iconClass: "from-[#4f46e5] to-[#6366f1]",
-    title: "Answers you can defend",
-    body: "Inline citations, a relevance gate and an optional groundedness check keep a governed brand from shipping confident, wrong answers.",
   },
 ];
 

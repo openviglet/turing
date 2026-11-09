@@ -79,8 +79,8 @@ export function SelfHost() {
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild>
-              <a href={LINKS.docs}>
-                Deployment guide <ArrowRight className="size-4" />
+              <a href={LINKS.getStarted}>
+                Quick start <ArrowRight className="size-4" />
               </a>
             </Button>
             <Button asChild variant="outline">

@@ -719,6 +719,9 @@
 - **T1270** — One typed destination map feeds site nav, hero, footers and docs footer; Get started opens a new Quick start, retired URLs use live canonicals, release notes stay on the hub.
   checked **Evidence and boundary are verified** Re-read the cited source and rendered routes, satisfy the acceptance checks in the design, and preserve technical identifiers and existing URLs.
   checked **The hub contract survives the change** Review full names, relevant light/dark and mobile layouts, and links to installation, documentation and the portfolio; retain the product-specific behavior.
+- **T1271** — The home answers what, proof, who, evidence, why and how to start, then one Go deeper block keeps /#how, /#developers, /#native-tools, /#cli, /#marketplace; 390px height 20,575 to 12,337.
+  checked **Evidence and boundary are verified** Re-read the cited source and rendered routes, satisfy the acceptance checks in the design, and preserve technical identifiers and existing URLs.
+  checked **The hub contract survives the change** Review full names, relevant light/dark and mobile layouts, and links to installation, documentation and the portfolio; retain the product-specific behavior.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 
