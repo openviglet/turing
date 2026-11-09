@@ -82,7 +82,7 @@ are this site's documents only (its site key), and if Turing does not answer, Wo
 searches its database as before. The older plugin results page, with facets, stays
 available as "The plugin's results page" for classic themes.
 
-The **Turing search** block (`viglet-turing/search`) is a complete search UI for any page: a
+The **Viglet Turing search** block (`viglet-turing/search`) is a complete search UI for any page: a
 box with suggestions, "did you mean", facets from the mapping, results and pages, built with
 the Interactivity API on the SDK below and styled by the theme. It reads `?q=` (or `?s=`),
 so a page holding it can be the site's search page. A site with its own search blocks

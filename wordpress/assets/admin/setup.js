@@ -213,7 +213,10 @@ function Setup() {
 					) }
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ __( 'Turing URL', 'viglet-turing-search' ) }
+						label={ __(
+							'Viglet Turing URL',
+							'viglet-turing-search'
+						) }
 						help={ __(
 							'The address of your Turing, e.g. https://search.example.org.',
 							'viglet-turing-search'

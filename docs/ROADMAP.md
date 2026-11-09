@@ -21,7 +21,7 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1274** (deps: —) **The WordPress plugin still shows the bare name in its block title and setup labels** — Rename the visible plugin strings to Viglet Turing so the admin UI and the docs that quote it follow the hub naming rule. → §CLXXXII.15
+- 📋 **T1275** (deps: —) **Plugin messages, diagnostics and screen copy still say bare Turing inside sentences** — Finish the hub naming rule across the plugin's remaining visible strings, which T1274 left for being sentences rather than labels. → §CLXXXII.16
 
 ## Done when — T1184
 

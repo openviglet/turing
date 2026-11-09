@@ -226,7 +226,7 @@ Once every step passes, **Index everything now** runs the first index with a pro
 
 | Setting | Meaning |
 |---|---|
-| **Turing URL** | Viglet Turing as this server reaches it, e.g. `https://search.example.org` |
+| **Viglet Turing URL** | Viglet Turing as this server reaches it, e.g. `https://search.example.org` |
 | **API key** | A Viglet Turing API token (Viglet Turing console → API Tokens). It is never shown again after saving |
 | **SN site** | The Semantic Navigation site this WordPress publishes to and searches |
 | **Locale** | The language the content is indexed in, e.g. `pt_BR` |
@@ -306,7 +306,7 @@ custom fields can be added on the Settings page.
   date even when it runs for weeks. A number lists its own ranges, each with a label
   and a **From** and **To**; an empty bound is an open end, and an empty label is written
   from the bounds ("20 – 50", "Up to 20", "50 or more").
-- **Show on result cards** adds the field to each result in the **Turing search** block,
+- **Show on result cards** adds the field to each result in the **Viglet Turing search** block,
   as a "Label: value" line under the snippet, in the order of the fields. The label is the
   field's label, or its name when it has none. A `DATE` field is written in the site's date
   format, a multiple field's values are joined with commas, and a URL is never shown as
@@ -344,7 +344,7 @@ indexed and lists the people, organisations and places it names. Viglet Turing k
 when the text holds it, and writes it to one of three facet fields: `entity_person`,
 `entity_organization` and `entity_place`. The section of that name on the **Fields** screen
 gives each one its facet label (*People*, *Organisations*, *Places* by default) and an
-**Offered** box. The **Turing search** block then offers the ones you keep as facets beside
+**Offered** box. The **Viglet Turing search** block then offers the ones you keep as facets beside
 the others, under those labels, and its filter chips use them too.
 
 - It needs **Generative AI** on as well: the names are found by the language model of the
@@ -383,7 +383,7 @@ categories and tags, and each global attribute (`pa_color`, ...) as a facet. Tur
 stock changes from an order is sent again, although no post was saved, and so is a variable
 product when one of its variations changes.
 
-In the **Turing search** block a product's result shows its price in the shop's currency
+In the **Viglet Turing search** block a product's result shows its price in the shop's currency
 (the regular price struck through when it is on sale) and an **Add to cart** button. It
 adds one through WooCommerce's Store API without leaving the page, and says whether it
 worked, with WooCommerce's reason when it did not (out of stock, say). A variable product
@@ -498,7 +498,7 @@ library | The library
 the way the **Site key** is. A blank key, a key listed twice, or this site's own key is left out.
 A label defaults to the key, and an address other than `http` or `https` is dropped.
 
-With sites listed, every search here reads this site's key and theirs: the **Turing search**
+With sites listed, every search here reads this site's key and theirs: the **Viglet Turing search**
 block, the theme's search page, the plugin's results page, the instant search, the editor's
 preview and the check behind the popular-search chips. A result from another site:
 
@@ -596,7 +596,7 @@ reached, Viglet Turing refuses every AI call until the budget resets. While that
 - The **Ask this site** block says *Answers are paused until* and the reset date, *search
   still works*, rather than that the site could not answer. It reads the date from Viglet Turing's
   refusal (with `@viglet/turing-sdk` 2026.3.17 or later).
-- The **Turing search** block, the instant search's answer and the **Site assistant** show
+- The **Viglet Turing search** block, the instant search's answer and the **Site assistant** show
   the same line where the answer would be. They name the date once this site has seen the
   budget run out (the first refusal is reported to WordPress, which asks Viglet Turing itself), and
   say *for now* before that. Search and its results are unaffected.
@@ -699,11 +699,11 @@ A query of three words or more, or one that reads as a question, often finds not
 typed, because Viglet Turing requires every word. The instant search then searches again for any
 of its words and puts the best matches first, in both layouts, as the search block does.
 
-### The Turing search block
+### The Viglet Turing search block
 
-![The Turing search block](/docs/img/screenshots/wordpress-search-block.png)
+![The Viglet Turing search block](/docs/img/screenshots/wordpress-search-block.png)
 
-The **Turing search** block is a complete search UI for any page. It has a box with
+The **Viglet Turing search** block is a complete search UI for any page. It has a box with
 suggestions, "did you mean", the mapped facets, results and pages. It is built with the
 Interactivity API on Viglet Turing's JS SDK and takes its colours and type from the theme. It
 reads `?q=` (or `?s=`), so a page holding it can serve as the site's search page.
@@ -768,7 +768,7 @@ after moving to another page is about that page. This needs a Viglet Turing that
 (2026.3 builds after T1178); an older one answers from the whole catalog, as before.
 
 **From the search answer to the assistant and back.** When the page also has the Site
-assistant (its block, or its launcher on every page), the Turing search block's answer ends
+assistant (its block, or its launcher on every page), the Viglet Turing search block's answer ends
 with **Ask a follow-up in the assistant**. It opens the assistant with the search and its
 answer, sources included, as the conversation's first exchange, so "and on Saturdays?" is
 read as a follow-up instead of starting over. The other way, an assistant answer that cites

@@ -99,15 +99,15 @@ msgid "Optional. API key for authentication with the Turing server."
 msgstr "Opcional. Chave de API para autenticar no servidor Turing."
 
 #: src/admin/views/settings-page.php:147
-msgid "Public Turing URL"
-msgstr "URL pública do Turing"
+msgid "Public Viglet Turing URL"
+msgstr "URL pública do Viglet Turing"
 
 #: src/admin/views/settings-page.php:152
 msgid "Where visitors' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL."
 msgstr "Onde o navegador dos visitantes alcança o Turing, quando difere da URL do servidor que este servidor usa. Vazio usa a URL do servidor."
 
 #: src/admin/views/settings-page.php:158
-#: assets/admin/setup.js:259
+#: assets/admin/setup.js:262
 msgid "Locale"
 msgstr "Idioma"
 
@@ -209,16 +209,16 @@ msgid "Search Settings"
 msgstr "Configurações de busca"
 
 #: src/admin/views/settings-page.php:352
-msgid "Configure how Turing search replaces the default WordPress search."
-msgstr "Configure como a busca do Turing substitui a busca padrão do WordPress."
+msgid "Configure how Viglet Turing search replaces the default WordPress search."
+msgstr "Configure como a busca do Viglet Turing substitui a busca padrão do WordPress."
 
 #: src/admin/views/settings-page.php:362
 msgid "Replace WordPress search with Turing"
 msgstr "Substituir a busca do WordPress pelo Turing"
 
 #: src/admin/views/settings-page.php:363
-msgid "When enabled, all search queries will be handled by the Turing search engine."
-msgstr "Quando ativado, todas as buscas são atendidas pelo Turing."
+msgid "When enabled, all search queries will be handled by the Viglet Turing search engine."
+msgstr "Quando ativado, todas as buscas são atendidas pelo Viglet Turing."
 
 #: src/admin/views/settings-page.php:369
 msgid "Results page"
@@ -249,8 +249,8 @@ msgid "Indexing Actions"
 msgstr "Ações de indexação"
 
 #: src/admin/views/settings-page.php:626
-msgid "Manage your Turing search index."
-msgstr "Gerencie o seu índice de busca no Turing."
+msgid "Manage your Viglet Turing search index."
+msgstr "Gerencie o seu índice de busca no Viglet Turing."
 
 #: src/admin/views/settings-page.php:634
 msgid "Connection Status"
@@ -353,8 +353,8 @@ msgstr "Configurações"
 
 #: src/includes/class-viglet-turing-admin.php:120
 #: src/includes/class-viglet-turing-admin.php:182
-msgid "Connect to Turing"
-msgstr "Conectar ao Turing"
+msgid "Connect to Viglet Turing"
+msgstr "Conectar ao Viglet Turing"
 
 #: src/includes/class-viglet-turing-admin.php:121
 msgid "Setup"
@@ -570,8 +570,8 @@ msgid "%1$d sent, %2$d failed."
 msgstr "%1$d enviados, %2$d falharam."
 
 #: src/includes/class-viglet-turing-diagnostics.php:49
-msgid "The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
-msgstr "A URL do Turing precisa ser um endereço completo http:// ou https://, ex.: https://busca.exemplo.org."
+msgid "The Viglet Turing URL must be a full http:// or https:// address, e.g. https://search.example.org."
+msgstr "A URL do Viglet Turing precisa ser um endereço completo http:// ou https://, ex.: https://busca.exemplo.org."
 
 #: src/includes/class-viglet-turing-diagnostics.php:51
 msgid "The URL is well formed."
@@ -1020,12 +1020,12 @@ msgid "Turing"
 msgstr "Turing"
 
 #: assets/admin/setup.js:28
-#: assets/admin/setup.js:228
+#: assets/admin/setup.js:231
 msgid "API key"
 msgstr "Chave de API"
 
 #: assets/admin/setup.js:29
-#: assets/admin/setup.js:248
+#: assets/admin/setup.js:251
 msgid "SN site"
 msgstr "Site SN"
 
@@ -1044,62 +1044,62 @@ msgid "Set outside WordPress, read-only here: %s."
 msgstr "Definido fora do WordPress, somente leitura aqui: %s."
 
 #: assets/admin/setup.js:216
-msgid "Turing URL"
-msgstr "URL do Turing"
+msgid "Viglet Turing URL"
+msgstr "URL do Viglet Turing"
 
-#: assets/admin/setup.js:217
+#: assets/admin/setup.js:220
 msgid "The address of your Turing, e.g. https://search.example.org."
 msgstr "O endereço do seu Turing, ex.: https://busca.exemplo.org."
 
-#: assets/admin/setup.js:231
+#: assets/admin/setup.js:234
 msgid "A key is stored. Leave this empty to keep it."
 msgstr "Há uma chave salva. Deixe em branco para mantê-la."
 
-#: assets/admin/setup.js:235
+#: assets/admin/setup.js:238
 msgid "Create one in Turing under API Tokens."
 msgstr "Crie uma no Turing em API Tokens."
 
-#: assets/admin/setup.js:249
+#: assets/admin/setup.js:252
 msgid "The Semantic Navigation site this WordPress publishes to and searches."
 msgstr "O site de Semantic Navigation em que este WordPress publica e busca."
 
-#: assets/admin/setup.js:260
+#: assets/admin/setup.js:263
 msgid "The language the content is indexed in, e.g. pt_BR or en_US."
 msgstr "O idioma em que o conteúdo é indexado, ex.: pt_BR ou en_US."
 
-#: assets/admin/setup.js:270
+#: assets/admin/setup.js:273
 msgid "Site key"
 msgstr "Chave do site"
 
 #. translators: %s: the key derived from this site's address.
-#: assets/admin/setup.js:273
+#: assets/admin/setup.js:276
 #, js-format
 msgid "Keeps this site's documents apart when several sites share one SN site. Empty uses %s."
 msgstr "Separa os documentos deste site quando vários sites compartilham um site SN. Vazio usa %s."
 
-#: assets/admin/setup.js:289
+#: assets/admin/setup.js:292
 msgid "Save and test the connection"
 msgstr "Salvar e testar a conexão"
 
-#: assets/admin/setup.js:300
+#: assets/admin/setup.js:303
 msgid "2. Test"
 msgstr "2. Teste"
 
 #. translators: %s: the SN site's name.
-#: assets/admin/setup.js:313
+#: assets/admin/setup.js:316
 #, js-format
 msgid "Create the SN site %s"
 msgstr "Criar o site SN %s"
 
-#: assets/admin/setup.js:329
+#: assets/admin/setup.js:332
 msgid "3. First index"
 msgstr "3. Primeira indexação"
 
-#: assets/admin/setup.js:334
+#: assets/admin/setup.js:337
 msgid "Sends every published post of the indexed types now. New and edited posts are sent on their own after that."
 msgstr "Envia agora todos os posts publicados dos tipos indexados. Depois disso, posts novos e editados são enviados sozinhos."
 
-#: assets/admin/setup.js:345
+#: assets/admin/setup.js:348
 msgid "Index everything now"
 msgstr "Indexar tudo agora"
 
@@ -1133,13 +1133,13 @@ msgid "Show filters (facets)"
 msgstr "Mostrar filtros (facetas)"
 
 #: src/admin/js/search-block-editor.js:305
-msgid "Turing search"
-msgstr "Busca Turing"
+msgid "Viglet Turing search"
+msgstr "Busca Viglet Turing"
 
 #: src/blocks/search/block.json
 msgctxt "block title"
-msgid "Turing search"
-msgstr "Busca Turing"
+msgid "Viglet Turing search"
+msgstr "Busca Viglet Turing"
 
 #: src/blocks/search/block.json
 msgctxt "block description"
@@ -1249,12 +1249,12 @@ msgid "Full search page"
 msgstr "Página de busca completa"
 
 #: src/admin/views/settings-page.php:434
-msgid "Automatic: the page with the Turing search block"
-msgstr "Automática: a página com o bloco de busca do Turing"
+msgid "Automatic: the page with the Viglet Turing search block"
+msgstr "Automática: a página com o bloco de busca do Viglet Turing"
 
 #: src/admin/views/settings-page.php:439
-msgid "Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme's search page answers."
-msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Turing, responde a página de busca do tema."
+msgid "Where Enter in the instant search goes, with the query. Without a page holding the Viglet Turing search block, the theme's search page answers."
+msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma página com o bloco de busca do Viglet Turing, responde a página de busca do tema."
 
 #: src/includes/class-viglet-turing-native-search.php:343
 msgid "Search this site"
@@ -1857,8 +1857,8 @@ msgstr "Caixa de busca"
 
 #: src/blocks/search-parts/box/block.json
 msgctxt "block description"
-msgid "The Turing search block’s box: the field, its suggestions and “Did you mean”."
-msgstr "A caixa do bloco de busca do Turing: o campo, as sugestões e o “Você quis dizer”."
+msgid "The Viglet Turing search block’s box: the field, its suggestions and “Did you mean”."
+msgstr "A caixa do bloco de busca do Viglet Turing: o campo, as sugestões e o “Você quis dizer”."
 
 #: src/blocks/search-parts/filters/block.json
 msgctxt "block title"
@@ -1867,8 +1867,8 @@ msgstr "Filtros da busca"
 
 #: src/blocks/search-parts/filters/block.json
 msgctxt "block description"
-msgid "The Turing search block’s filters: the applied ones and the facets."
-msgstr "Os filtros do bloco de busca do Turing: os aplicados e as facetas."
+msgid "The Viglet Turing search block’s filters: the applied ones and the facets."
+msgstr "Os filtros do bloco de busca do Viglet Turing: os aplicados e as facetas."
 
 #: src/blocks/search-parts/pages/block.json
 msgctxt "block title"
@@ -1877,8 +1877,8 @@ msgstr "Páginas da busca"
 
 #: src/blocks/search-parts/pages/block.json
 msgctxt "block description"
-msgid "The Turing search block’s result pages."
-msgstr "As páginas de resultados do bloco de busca do Turing."
+msgid "The Viglet Turing search block’s result pages."
+msgstr "As páginas de resultados do bloco de busca do Viglet Turing."
 
 #: src/blocks/search-parts/results/block.json
 msgctxt "block title"
@@ -1887,8 +1887,8 @@ msgstr "Resultados da busca"
 
 #: src/blocks/search-parts/results/block.json
 msgctxt "block description"
-msgid "The Turing search block’s results: the count, the sort, the answer and the list."
-msgstr "Os resultados do bloco de busca do Turing: a contagem, a ordenação, a resposta e a lista."
+msgid "The Viglet Turing search block’s results: the count, the sort, the answer and the list."
+msgstr "Os resultados do bloco de busca do Viglet Turing: a contagem, a ordenação, a resposta e a lista."
 
 #: src/includes/class-viglet-turing-mapping.php:629
 #: src/includes/class-viglet-turing-mapping.php:643
@@ -2647,16 +2647,16 @@ msgid "question"
 msgstr "pergunta"
 
 #: src/viglet-turing.php:110
-msgid "Turing search block, with \"Answer questions from this site’s content\" on"
-msgstr "Bloco de busca do Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
+msgid "Viglet Turing search block, with \"Answer questions from this site’s content\" on"
+msgstr "Bloco de busca do Viglet Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
 
 #: src/viglet-turing.php:111
 msgid "Site assistant block, or its launcher on every page"
 msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 
 #: src/viglet-turing.php:112
-msgid "Turing search block, with \"Suggest the filters a sentence names\" on"
-msgstr "Bloco de busca do Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
+msgid "Viglet Turing search block, with \"Suggest the filters a sentence names\" on"
+msgstr "Bloco de busca do Viglet Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
 #: assets/admin/health.js:257
 msgid "Shown by"

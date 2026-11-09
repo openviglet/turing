@@ -30,8 +30,6 @@ const FOREIGN = ["react-sdk", "marketplace", "playground"];
  * text around the hit, so an exception never hides a different sentence.
  */
 const NAME_EXCEPTIONS = [
-  // The WordPress plugin's own UI labels, quoted verbatim by its docs (T1274 renames them).
-  [/Turing search block|Turing search\b|Turing URL/, "WordPress plugin UI label (T1274)"],
   // Code identifiers and log tags rendered as prose by a component.
   [/\[Turing\]/, "SDK log tag"],
 ];

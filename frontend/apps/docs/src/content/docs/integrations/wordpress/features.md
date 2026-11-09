@@ -12,12 +12,12 @@ generative ones against your Viglet Turing and names, for each, the block a visi
 
 | Feature | Where a visitor meets it | Needs a language model |
 |---|---|---|
-| Search as you type | **Turing search** block; the instant search (Ctrl+K and the theme's search box) | No |
-| Filters from the catalog | **Turing search** block: the facets your field mapping declares | No |
-| Popular searches | **Turing search** block, with "Show popular searches" on | No |
-| [People, organisations and places](/docs/integrations/wordpress/#fields-and-facets) | **Turing search** block: facets of the names each post holds, with "Find people, organisations and places in posts" on | Yes |
-| An answer with its sources | **Turing search** block, with "Answer questions from this site's content" on | Yes |
-| Filters a sentence names | **Turing search** block, with "Suggest the filters a sentence names" on | Yes |
+| Search as you type | **Viglet Turing search** block; the instant search (Ctrl+K and the theme's search box) | No |
+| Filters from the catalog | **Viglet Turing search** block: the facets your field mapping declares | No |
+| Popular searches | **Viglet Turing search** block, with "Show popular searches" on | No |
+| [People, organisations and places](/docs/integrations/wordpress/#fields-and-facets) | **Viglet Turing search** block: facets of the names each post holds, with "Find people, organisations and places in posts" on | Yes |
+| An answer with its sources | **Viglet Turing search** block, with "Answer questions from this site's content" on | Yes |
+| Filters a sentence names | **Viglet Turing search** block, with "Suggest the filters a sentence names" on | Yes |
 | Related content | **Related content** block, or after the content of chosen post types | No |
 | Ask the catalog | **Ask the catalog** block: answers with the items it cites; on WooCommerce, with price and Add to cart | Yes |
 | Site assistant | **Site assistant** block, or a button in the corner of every page | Yes (Viglet Turing's chat) |
@@ -31,7 +31,7 @@ off, so a page can hold it before Viglet Turing is set up.
 ![Search as you type, with its note from the tour](/docs/img/screenshots/wordpress-tour-search.png)
 
 Suggestions come from what the index holds, a misspelling is offered its correction, and
-synonyms set in Viglet Turing apply to every search. The search box is the **Turing search** block's,
+synonyms set in Viglet Turing apply to every search. The search box is the **Viglet Turing search** block's,
 or the instant search's.
 
 ## Filters from the catalog

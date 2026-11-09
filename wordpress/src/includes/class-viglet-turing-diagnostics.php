@@ -46,7 +46,7 @@ class Viglet_Turing_Diagnostics {
 
 		$parts = wp_parse_url( $url );
 		if ( empty( $parts['scheme'] ) || empty( $parts['host'] ) || ! in_array( $parts['scheme'], array( 'http', 'https' ), true ) ) {
-			return $this->stop( $steps, 'url', __( 'The Turing URL must be a full http:// or https:// address, e.g. https://search.example.org.', 'viglet-turing-search' ) );
+			return $this->stop( $steps, 'url', __( 'The Viglet Turing URL must be a full http:// or https:// address, e.g. https://search.example.org.', 'viglet-turing-search' ) );
 		}
 		$steps[] = $this->pass( 'url', __( 'The URL is well formed.', 'viglet-turing-search' ) );
 

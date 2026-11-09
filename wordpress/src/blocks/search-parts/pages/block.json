@@ -5,7 +5,7 @@
 	"title": "Search pages",
 	"category": "widgets",
 	"icon": "ellipsis",
-	"description": "The Turing search block’s result pages.",
+	"description": "The Viglet Turing search block’s result pages.",
 	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-turing/search"

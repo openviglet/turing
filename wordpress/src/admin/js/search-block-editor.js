@@ -303,7 +303,7 @@
 								el( Placeholder, {
 									icon: 'search',
 									label: __(
-										'Turing search',
+										'Viglet Turing search',
 										'viglet-turing-search'
 									),
 								} ),

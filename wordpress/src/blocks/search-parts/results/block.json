@@ -5,7 +5,7 @@
 	"title": "Search results",
 	"category": "widgets",
 	"icon": "list-view",
-	"description": "The Turing search block’s results: the count, the sort, the answer and the list.",
+	"description": "The Viglet Turing search block’s results: the count, the sort, the answer and the list.",
 	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-turing/search"

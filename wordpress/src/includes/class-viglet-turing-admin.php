@@ -117,7 +117,7 @@ class Viglet_Turing_Admin {
 		);
 		add_submenu_page(
 			'viglet-turing',
-			__( 'Connect to Turing', 'viglet-turing-search' ),
+			__( 'Connect to Viglet Turing', 'viglet-turing-search' ),
 			__( 'Setup', 'viglet-turing-search' ),
 			'manage_options',
 			'viglet-turing-setup',
@@ -179,7 +179,7 @@ class Viglet_Turing_Admin {
 	 * The Setup page: a mount point for the app in admin/build/setup.js.
 	 */
 	public function render_setup_page(): void {
-		echo '<div class="wrap"><h1>' . esc_html__( 'Connect to Turing', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-setup"></div></div>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Connect to Viglet Turing', 'viglet-turing-search' ) . '</h1><div id="viglet-turing-setup"></div></div>';
 	}
 
 	/**

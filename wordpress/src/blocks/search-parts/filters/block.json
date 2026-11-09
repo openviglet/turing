@@ -5,7 +5,7 @@
 	"title": "Search filters",
 	"category": "widgets",
 	"icon": "filter",
-	"description": "The Turing search block’s filters: the applied ones and the facets.",
+	"description": "The Viglet Turing search block’s filters: the applied ones and the facets.",
 	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-turing/search"

@@ -144,7 +144,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 
 						<div class="viglet-turing-field">
-							<label for="public_url"><?php esc_html_e( 'Public Turing URL', 'viglet-turing-search' ); ?></label>
+							<label for="public_url"><?php esc_html_e( 'Public Viglet Turing URL', 'viglet-turing-search' ); ?></label>
 							<input type="url" id="public_url"
 									name="<?php echo esc_attr( VIGLET_TURING_OPTION ); ?>[public_url]"
 									value="<?php echo esc_attr( $settings['public_url'] ); ?>"
@@ -349,7 +349,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="viglet-turing-card">
 					<div class="viglet-turing-card__header">
 						<h2><?php esc_html_e( 'Search Settings', 'viglet-turing-search' ); ?></h2>
-						<p><?php esc_html_e( 'Configure how Turing search replaces the default WordPress search.', 'viglet-turing-search' ); ?></p>
+						<p><?php esc_html_e( 'Configure how Viglet Turing search replaces the default WordPress search.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-turing-card__body">
 						<div class="viglet-turing-toggles">
@@ -360,7 +360,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
 									<?php esc_html_e( 'Replace WordPress search with Turing', 'viglet-turing-search' ); ?>
-									<small><?php esc_html_e( 'When enabled, all search queries will be handled by the Turing search engine.', 'viglet-turing-search' ); ?></small>
+									<small><?php esc_html_e( 'When enabled, all search queries will be handled by the Viglet Turing search engine.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 						</div>
@@ -431,12 +431,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 									'id'                => 'search_page',
 									'name'              => esc_attr( VIGLET_TURING_OPTION ) . '[search_page]',
 									'selected'          => (int) $settings['search_page'],
-									'show_option_none'  => esc_html__( 'Automatic: the page with the Turing search block', 'viglet-turing-search' ),
+									'show_option_none'  => esc_html__( 'Automatic: the page with the Viglet Turing search block', 'viglet-turing-search' ),
 									'option_none_value' => '0',
 								)
 							);
 							?>
-							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Turing search block, the theme\'s search page answers.', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Where Enter in the instant search goes, with the query. Without a page holding the Viglet Turing search block, the theme\'s search page answers.', 'viglet-turing-search' ); ?></p>
 						</div>
 
 						<div class="viglet-turing-field">
@@ -623,7 +623,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="viglet-turing-card">
 				<div class="viglet-turing-card__header">
 					<h2><?php esc_html_e( 'Indexing Actions', 'viglet-turing-search' ); ?></h2>
-					<p><?php esc_html_e( 'Manage your Turing search index.', 'viglet-turing-search' ); ?></p>
+					<p><?php esc_html_e( 'Manage your Viglet Turing search index.', 'viglet-turing-search' ); ?></p>
 				</div>
 				<div class="viglet-turing-card__body">
 

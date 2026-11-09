@@ -5,7 +5,7 @@
 	"title": "Search box",
 	"category": "widgets",
 	"icon": "search",
-	"description": "The Turing search block’s box: the field, its suggestions and “Did you mean”.",
+	"description": "The Viglet Turing search block’s box: the field, its suggestions and “Did you mean”.",
 	"textdomain": "viglet-turing-search",
 	"ancestor": [
 		"viglet-turing/search"

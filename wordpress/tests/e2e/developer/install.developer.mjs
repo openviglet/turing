@@ -258,8 +258,8 @@ test( 'a developer installs the plugin, connects it and indexes a shop', async (
 			const field = ( label ) =>
 				page.getByLabel( label, { exact: true } );
 			const connecting = speak( 'chapter-2' );
-			await focus( field( 'Turing URL' ) );
-			await type( field( 'Turing URL' ), connectURL );
+			await focus( field( 'Viglet Turing URL' ) );
+			await type( field( 'Viglet Turing URL' ), connectURL );
 			await type( field( 'API key' ), apiKey );
 			await type( field( 'SN site' ), snSite );
 			await type( field( 'Locale' ), 'en_US' );
