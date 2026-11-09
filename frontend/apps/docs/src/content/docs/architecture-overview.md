@@ -52,7 +52,7 @@ graph LR
 | **JS SDK / Java SDK** | Typed clients for search and indexing: available on npm and Maven Central |
 | **Viglet Dumont** | Separate application that runs connectors and sends documents to Viglet Turing via REST API |
 | **Keycloak** | Optional OAuth2 / OIDC provider for production SSO |
-| **LLM Providers** | Six supported vendors: Anthropic Claude, OpenAI, Azure OpenAI, Google Gemini, Gemini (OpenAI-compatible), Ollama |
+| **LLM Providers** | Supported vendors: Anthropic Claude, OpenAI, Google Gemini (native or OpenAI-compatible), Google Vertex AI, AWS Bedrock, Mistral, Cohere, Ollama and any OpenAI-compatible endpoint |
 
 ---
 
@@ -114,7 +114,7 @@ graph TB
 | **Search Engine Plugins** | `se` / `plugins/se` | Abstraction layer over Solr (recommended), Elasticsearch, and Lucene |
 | **GenAI / RAG** | `genai` | RAG over SN content and MinIO assets; LLM context building and invocation |
 | **Tool Calling** | `genai/tool` | 27 native tools: SN search (15), RAG/KB (4), web crawler (2), finance (2), weather (1), image search (1), datetime (1), code interpreter (1); plus MCP servers |
-| **LLM Providers** | `genai/provider/llm` | Pluggable provider factory: Anthropic, OpenAI, Azure OpenAI, Gemini, Gemini-OpenAI, Ollama |
+| **LLM Providers** | `genai/provider/llm` | Pluggable provider factory: Anthropic, OpenAI, OpenAI-compatible, Gemini, Gemini-OpenAI, Vertex AI, Bedrock, Mistral, Cohere, Ollama |
 | **AI Agents** | `agent` | Composition of LLM Instance + Tools + MCP Servers into deployable assistants |
 | **Indexing Pipeline** | `indexer` | Receives documents via Artemis, applies Merge Providers, writes to Solr and embedding stores |
 | **Message Queue** | `artemis` | Apache Artemis: async communication between Viglet Dumont and the indexing pipeline |
@@ -249,7 +249,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 | **Embedding Stores** | ChromaDB / PgVector / Milvus | Via Spring AI; one backend active per deployment |
 | **Asset Store** | MinIO | External service; configured in `application.yaml` (host, user, password); object storage for files managed via the admin console folder UI |
 | **Log Store** | MongoDB | Optional; custom Logback appender (`ch.qos.logback`) persists all application logs to MongoDB, accessible via the admin console |
-| **LLM Providers** | Anthropic Claude, OpenAI, Azure OpenAI, Google Gemini, Gemini (OpenAI-compatible), Ollama | Configured per site or globally; one active at a time |
+| **LLM Providers** | Anthropic Claude, OpenAI, Google Gemini (native or OpenAI-compatible), Google Vertex AI, AWS Bedrock, Mistral, Cohere, Ollama and any OpenAI-compatible endpoint | Configured per site or globally; one active at a time |
 | **Tool Calling** | 27 native tools across 7 categories + MCP (external servers) | Semantic Nav (15), RAG/KB (4), Web Crawler (2), Finance (2), Weather (1), Image Search (1), DateTime (1), Code Interpreter (1); MCP via HTTP or stdio |
 | **Identity Management** | Keycloak | OAuth2 / OpenID Connect; optional for deployments without SSO |
 | **Load Balancer** | Apache HTTP Server | Optional; required for high-availability cluster deployments |

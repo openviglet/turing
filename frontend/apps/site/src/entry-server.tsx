@@ -42,7 +42,7 @@ export const routes: PrerenderRoute[] = [
     path: "/aem-search/",
     title: "AEM Search Component & AI Search Engine for AEM | Viglet Turing",
     description:
-      "An AI search engine and search component for Adobe Experience Manager (AEM 6.5 + Cloud Service): cited, streaming answers, semantic + keyword search, agents, MCP, any LLM, self-hosted. Live demo on Adobe's WKND site.",
+      "An AI search engine and search component for Adobe Experience Manager (AEM 6.5 + Cloud Service): cited, streaming answers, semantic + keyword search, agents, MCP, your choice of LLM, self-hosted. Live demo on Adobe's WKND site.",
   },
   {
     path: "/persona/",
@@ -54,7 +54,7 @@ export const routes: PrerenderRoute[] = [
     path: "/security/",
     title: "Self-Hosted AI Search & RAG with Data Residency | Viglet Turing",
     description:
-      "Self-hosted AI search, RAG and agents for regulated industries: your content, embeddings and queries stay in your network and region. Data residency by construction, SSO, encrypted secrets, any LLM including fully local, Apache 2.0.",
+      "Self-hosted AI search, RAG and agents for regulated industries: your content, embeddings and queries stay in your network and region. Data residency by construction, SSO, encrypted secrets, your choice of LLM including fully local models, Apache 2.0.",
   },
   {
     path: "/wordpress/",

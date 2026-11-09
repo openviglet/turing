@@ -44,7 +44,7 @@ function LandingJsonLd() {
         operatingSystem: "Any (self-hosted, Docker, Java 21)",
         url: siteUrl("/"),
         description:
-          "Open-source enterprise search platform: hybrid keyword + semantic search, cited RAG answers, AI agents, tools, skills and MCP over your own content. Self-hosted with any LLM (including local models) and Apache Solr, Elasticsearch or embedded Lucene. Indexes Adobe Experience Manager (AEM), WordPress, databases and files via the Viglet Dumont connectors.",
+          "Open-source enterprise search platform: hybrid keyword + semantic search, cited RAG answers, AI agents, tools, skills and MCP over your own content. Self-hosted with a choice of LLM providers (including local models) and Apache Solr, Elasticsearch or embedded Lucene. Indexes Adobe Experience Manager (AEM), databases and files through Viglet Dumont connectors, and WordPress through its own plugin.",
         featureList: [
           "Hybrid keyword + semantic search with reciprocal rank fusion",
           "Retrieval-augmented generation (RAG) chat with inline citations",

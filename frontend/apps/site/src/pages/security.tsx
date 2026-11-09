@@ -36,7 +36,7 @@ function SecurityJsonLd() {
  * Turns the platform's strongest, most under-sold argument (the data never
  * leaves your infrastructure) into a dedicated sales asset. Answers the
  * enterprise buyer's SOC 2 / GDPR reflex with the honest self-hosted counter:
- * you don't have to trust our compliance because the data never leaves to begin
+ * you don't have to trust our compliance because the data is stored on your side to begin
  * with. Mirrors the Compare/Migrate/AEM shell (dark hero, dependency-free
  * routing via plain <a href> full loads).
  */
@@ -49,8 +49,8 @@ export function SecurityPage() {
         {/* hero */}
         <PageHero
           eyebrow={<>Data residency for regulated industries</>}
-          title={<>Self-hosted AI search and RAG: your content never leaves your network</>}
-          description={<>A search SaaS asks you to trust its compliance badges with your content and your users' queries. Viglet Turing is self-hosted: the data never leaves your infrastructure, so security inherits the controls you already run. Open source, any LLM, your region.</>}
+          title={<>Self-hosted AI search and RAG: your content stays on your own infrastructure</>}
+          description={<>A search SaaS asks you to trust its compliance badges with your content and your users' queries. Viglet Turing is self-hosted: the index and its data are stored on your infrastructure, so security inherits the controls you already run. Open source, your choice of LLM (local models included), your region.</>}
           actions={
             <>
               <Button asChild size="lg">

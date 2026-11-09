@@ -76,7 +76,6 @@ provides that layer while AEM stays your content source of truth.
 | Bring your own search engine | Solr · Elasticsearch · Lucene | No (Oak) | No (Oak) |
 | Open source (Apache 2.0) | Yes | No | No |
 | Where content & queries live | Your infra | Adobe cloud | Adobe cloud |
-| Time to first result | Minutes | 2–4 week engagement | Bundled |
 
 ## What it adds beyond an AEM-only add-on
 
@@ -84,10 +83,10 @@ provides that layer while AEM stays your content source of truth.
   WordPress, databases, file shares and any REST source into a single index.
 - **Agents, not just answers.** Tools, form-slot capture, sandboxed skills and
   human handoff let the search box act on a request, not only answer it.
-- **Any LLM, any engine.** OpenAI, Anthropic, Gemini, Mistral, Bedrock, Vertex AI, local Ollama
+- **Your choice of LLM and engine.** OpenAI, Anthropic, Gemini, Mistral, Bedrock, Vertex AI, local Ollama
   on Solr, Elasticsearch or Lucene; switch per agent.
 - **Your content stays in your infrastructure.** Self-hosted under Apache 2.0;
-  pages, embeddings and query logs never leave your network.
+  pages, embeddings and query logs are stored on your own infrastructure.
 - **MCP + native provider tools.** Expose AEM search as an MCP server; use each
   provider's server-side web search, code execution and computer use.
 - **Answers you can audit.** Pluggable reranker, relevance gate, groundedness

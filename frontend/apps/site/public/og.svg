@@ -45,7 +45,7 @@
   <text x="80" y="478" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="62" font-weight="800" fill="#f2f4fb">over your own content.</text>
 
   <!-- subline -->
-  <text x="80" y="548" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="26" font-weight="500" fill="#aeb7d4">Any LLM · your infrastructure · your data. The open alternative to Algolia.</text>
+  <text x="80" y="548" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="26" font-weight="500" fill="#aeb7d4">Your LLM · your infrastructure · your data. The open alternative to Algolia.</text>
 
   <!-- url -->
   <text x="80" y="596" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="500" fill="#6b7394">turing.viglet.org</text>

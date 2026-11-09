@@ -1,13 +1,14 @@
 ---
 title: "Deploy & Operate"
-description: "Self-host on your own infrastructure: install, configure any LLM provider, run multi-tenant, and observe cost, tokens and conversations."
+description: "Self-host on your own infrastructure: install, configure your LLM provider, run multi-tenant, and observe cost, tokens and conversations."
 tableOfContents: false
 ---
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
 Run Viglet Turing on **your own infrastructure** under Apache 2.0, no vendor lock-in for
-your data, your models or your search engine. Install it, point it at **any LLM
-provider** (OpenAI, Anthropic, Gemini, Azure OpenAI or local Ollama), and configure
+your data, your models or your search engine. Install it, point it at **a supported LLM
+provider** (OpenAI, Anthropic, Google Gemini or Vertex AI, AWS Bedrock, Mistral, Cohere, local
+Ollama or any OpenAI-compatible endpoint), and configure
 per-instance behavior; API keys are stored encrypted. Scale to multiple isolated
 **tenants** behind a single identity realm when you need to, or keep a single-tenant
 deployment simple.

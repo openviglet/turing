@@ -22,7 +22,7 @@ import { withBase } from "@/lib/site-url";
  * A sales page, not a runbook: the how-to lives in the docs. It leads with the
  * one thing that removes the objection ("switching is one command"), shows the
  * team keeps everything it has (concept map) and gains more (outcomes), and
- * closes on the differentiator: the data never leaves their infrastructure.
+ * closes on the differentiator: the data stays on their infrastructure.
  */
 export function MigratePage() {
   return (
@@ -178,7 +178,7 @@ export function MigratePage() {
                 <ShieldCheck className="size-6" />
               </span>
               <h2 className="mt-5 text-2xl font-extrabold tracking-tight">
-                And your data never leaves your network
+                And your data stays on your own infrastructure
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
                 A hosted SaaS keeps your index, and increasingly your users'

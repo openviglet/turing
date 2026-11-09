@@ -24,7 +24,7 @@ export function Hero() {
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
             AI search and grounded answers you can trace back to the source, on
-            any LLM, in your own infrastructure. An open, self-hosted alternative
+            the LLM you choose, with the index in your own infrastructure. An open, self-hosted alternative
             to Algolia, with AI built in.
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
@@ -50,7 +50,7 @@ export function Hero() {
           <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             {[
               "Your data stays in your infra",
-              "Any LLM provider",
+              "Choice of LLM provider",
               "Cited answers you can audit",
             ].map((item) => (
               <li key={item} className="inline-flex items-center gap-1.5">

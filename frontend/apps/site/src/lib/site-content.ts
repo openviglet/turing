@@ -69,10 +69,10 @@ export const PILLARS: Pillar[] = [
     icon: ServerCog,
     iconClass: "from-[#4f46e5] to-[#6366f1]",
     step: "Run it",
-    title: "Self-hosted, any LLM, your data",
+    title: "Self-hosted, your choice of LLM, your data",
     description:
-      "Open source under Apache 2.0. Bring any LLM (OpenAI, Anthropic, Gemini, Bedrock, Ollama and more), your own search engine and storage. Multi-tenant and observable, on your infrastructure.",
-    tags: ["Apache 2.0", "Self-host", "Multi-tenant", "Any LLM"],
+      "Open source under Apache 2.0. Pick the LLM per agent (OpenAI, Anthropic, Google Gemini, AWS Bedrock, local Ollama, any OpenAI-compatible endpoint and more), run on Solr, Elasticsearch or embedded Lucene, and keep your own storage. Multi-tenant and observable, on your infrastructure.",
+    tags: ["Apache 2.0", "Self-host", "Multi-tenant", "Pluggable LLMs"],
     slug: "run",
   },
 ];
@@ -151,9 +151,8 @@ export const COMPARISON: ComparisonRow[] = [
   { feature: "Cited answers you can audit", turing: "yes", saas: "partial", diy: "build it" },
   { feature: "AI agents, tools & skills built in", turing: "yes", saas: "partial", diy: "build it" },
   { feature: "Native provider tools (web search, code, computer use)", turing: "yes", saas: "no", diy: "build it" },
-  { feature: "Any LLM provider", turing: "yes", saas: "partial", diy: "yes" },
+  { feature: "Choice of LLM provider per agent", turing: "yes", saas: "partial", diy: "yes" },
   { feature: "Bring your own search engine", turing: "yes", saas: "no", diy: "partial" },
-  { feature: "Time to first result", turing: "minutes", saas: "minutes", diy: "weeks" },
 ];
 
 export interface SearchDoc {
@@ -287,9 +286,9 @@ export const AUDIENCES: Audience[] = [
     title: "Production AI search on your own infrastructure",
     body: "For regulated, content-heavy organizations that need control over their data.",
     points: [
-      "Your content and users' queries never leave your network",
+      "Your content, embeddings and query logs are stored on your own infrastructure",
       "Index Adobe Experience Manager (AEM 6.5 and AEM as a Cloud Service) pages, Content Fragments and DAM assets on publish, plus WordPress, databases and files",
-      "SSO, encrypted secrets, any LLM (including fully local)",
+      "SSO, encrypted secrets, your choice of LLM provider (including fully local models)",
       "Cited, auditable answers you can trace to the source",
     ],
     primary: { label: "AEM AI Search", href: withBase("/aem-search/") },
@@ -424,8 +423,8 @@ export const SECURITY_POINTS: SecurityPoint[] = [
   {
     icon: Server,
     iconClass: "from-[#1a3a9e] to-[#4169E1]",
-    title: "Your data never leaves your network",
-    body: "Viglet Turing is self-hosted. Indexed content, embeddings and query logs live on your own infrastructure. No SaaS tier collects them and no telemetry phones home.",
+    title: "Your data is stored on your own infrastructure",
+    body: "Viglet Turing is self-hosted. Indexed content, embeddings and query logs live on your own infrastructure. No SaaS tier collects them and no telemetry phones home. Prompts and retrieved passages go only to the model provider you configure, or nowhere with a local model.",
   },
   {
     icon: Globe,
@@ -551,7 +550,7 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
     slug: "search",
     eyebrow: "Search it",
     title: "Production enterprise search over your own content",
-    lede: "Faceted, multilingual, typo-tolerant search on the engine you already run (Apache Solr, Elasticsearch or an embedded Lucene index) behind one query API. No data leaves your infrastructure.",
+    lede: "Faceted, multilingual, typo-tolerant search on the engine you already run (Apache Solr, Elasticsearch or an embedded Lucene index) behind one query API. The index and the query logs stay on your infrastructure.",
     sections: [
       {
         title: "One query API, three engines",
@@ -658,7 +657,7 @@ function Assistant() {
     faq: [
       {
         q: "Where do the citations come from?",
-        a: "From your own retrieval, not from a model vendor's citation feature. Each passage the answer used carries its source, title, URL and score to the UI, so citations work the same with every LLM provider.",
+        a: "From your own retrieval, not from a model vendor's citation feature. Each passage the answer used carries its source, title, URL and score to the UI, so citations work the same with every supported LLM provider.",
       },
       {
         q: "What happens when the answer is not in my content?",
@@ -747,11 +746,11 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
   run: {
     slug: "run",
     eyebrow: "Run it",
-    title: "Self-hosted, any LLM, your data",
-    lede: "Open source under Apache 2.0. Bring any LLM provider, your own search engine and your own storage. Multi-tenant and observable, running on your own infrastructure.",
+    title: "Self-hosted, your choice of LLM, your data",
+    lede: "Open source under Apache 2.0. Choose the LLM provider per agent, run on Solr, Elasticsearch or embedded Lucene, and keep your own storage. Multi-tenant and observable, running on your own infrastructure.",
     sections: [
       {
-        title: "Bring any LLM",
+        title: "Bring your LLM provider",
         body: "OpenAI, Anthropic Claude, Google Gemini (native SDK or OpenAI-compatible), Mistral, Cohere, AWS Bedrock, Google Vertex AI, local Ollama models and any OpenAI-compatible endpoint, behind one pluggable provider interface. Switch providers per agent; API keys are stored encrypted.",
       },
       {
@@ -810,9 +809,9 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
       href: withBase("/security/"),
       body: "Why self-hosting removes the vendor boundary, and the questions regulated teams ask first.",
     },
-    metaTitle: "Self-Hosted, Any LLM, Open Source (Apache 2.0) | Viglet Turing",
+    metaTitle: "Self-Hosted, Your Choice of LLM, Open Source (Apache 2.0) | Viglet Turing",
     metaDescription:
-      "Self-host enterprise AI search on your own infrastructure: any LLM provider, any search engine, pluggable storage, multi-tenant, observable, with a CLI and SDKs. Open source under Apache 2.0.",
+      "Self-host enterprise AI search on your own infrastructure: OpenAI, Anthropic, Gemini, Bedrock, Ollama or any OpenAI-compatible LLM; Solr, Elasticsearch or embedded Lucene; pluggable storage, multi-tenant, observable, with a CLI and SDKs. Open source under Apache 2.0.",
   },
 };
 
@@ -912,7 +911,7 @@ export const MIGRATION_MAP: MigrationRow[] = [
     concept: "Hosting & data residency",
     algolia: "Fully hosted SaaS",
     elastic: "Elastic Cloud or self-managed",
-    turing: "Self-hosted: content & embeddings never leave your infra",
+    turing: "Self-hosted: content & embeddings stored on your infra",
   },
 ];
 
@@ -1038,7 +1037,6 @@ export const COMPARE_MATRIX: CompareRow[] = [
   { capability: "Bring your own search engine", turing: "yes", algolia: "no", coveo: "no", elastic: "n/a", diy: "partial" },
   { capability: "Pre-built enterprise connectors", turing: "yes", algolia: "partial", coveo: "yes", elastic: "yes", diy: "build it" },
   { capability: "Pricing model", turing: "free / self-host", algolia: "per-record + per-search", coveo: "enterprise subscription", elastic: "infra / Elastic Cloud", diy: "infra + build time" },
-  { capability: "Time to first result", turing: "minutes", algolia: "minutes", coveo: "days", elastic: "days", diy: "weeks" },
 ];
 
 /**
@@ -1116,7 +1114,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "A hand-built LangChain/LlamaIndex stack gives you total control and no product opinions. It suits a bespoke research pipeline, or a team that wants to own every layer.",
     turingFit:
-      "Viglet Turing is the batteries-included alternative: retrieval, reranking, citations, agents, tools, skills, MCP, streaming, analytics and admin UI are already wired and tested. You keep the pluggability (any LLM, any engine) without maintaining the plumbing.",
+      "Viglet Turing is the batteries-included alternative: retrieval, reranking, citations, agents, tools, skills, MCP, streaming, analytics and admin UI are already wired and tested. You keep the pluggability (your choice of LLM provider and search engine) without maintaining the plumbing.",
   },
 ];
 
@@ -1132,7 +1130,7 @@ export interface FaqItem {
 export const FAQ: FaqItem[] = [
   {
     q: "Is Viglet Turing really free and open source?",
-    a: "Yes. The platform is open source under the Apache 2.0 license: the backend, the frontend and the SDKs. There is no per-record or per-search billing. You run it on your own infrastructure and pay only for that infrastructure and any LLM provider you choose.",
+    a: "Yes. The platform is open source under the Apache 2.0 license: the backend, the frontend and the SDKs. There is no per-record or per-search billing. You run it on your own infrastructure and pay only for that infrastructure and the LLM provider you choose.",
   },
   {
     q: "Does my content or my users' queries leave my network?",
@@ -1144,15 +1142,15 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Am I locked into one LLM vendor?",
-    a: "No. Any LLM provider (OpenAI, Anthropic, Google Gemini, Mistral, Cohere, AWS Bedrock, Google Vertex AI, local Ollama and OpenAI-compatible endpoints) plugs in behind one interface, switchable per agent. API keys are stored encrypted, and reranking and embeddings are pluggable too.",
+    a: "No. The supported providers (OpenAI, Anthropic, Google Gemini, Mistral, Cohere, AWS Bedrock, Google Vertex AI, local Ollama and any OpenAI-compatible endpoint) plug in behind one interface, switchable per agent. API keys are stored encrypted, and reranking and embeddings are pluggable too.",
   },
   {
     q: "Isn't this just LangChain with a UI?",
     a: "No. Viglet Turing is a deployable product, not a framework you assemble. Retrieval, hybrid ranking, reranking, citations, groundedness checks, agents, tools, skills, MCP, streaming, connectors, analytics and an admin UI are already built, tested and wired together. You get the pluggability of a DIY stack without its maintenance.",
   },
   {
-    q: "How long until I get a real result?",
-    a: "Minutes for a first search. The CLI scaffolds a project and runs a local stack in one command, you provision fields from a manifest (or derive one from sample documents), bulk-index your records, and query through the REST API or the SDK.",
+    q: "What does it take to get a first result?",
+    a: "The CLI scaffolds a project and runs a local stack in one command, you provision fields from a manifest (or derive one from sample documents), bulk-index your records, and query through the REST API or the SDK.",
   },
   {
     q: "Can I trust the AI answers?",
@@ -1167,8 +1165,8 @@ export const FAQ: FaqItem[] = [
 /* -------------------------------------------------------------------------- */
 /* AEM solution page (/aem): "AI search for Adobe Experience Manager".         */
 /* Reframes the AEM-native AI-search pitch: Turing gives AEM the same cited    */
-/* AI answers, then goes deeper: cross-repository search, agents, any LLM,     */
-/* any engine, self-hosted data residency, open source. Honest & defensible:   */
+/* AI answers, then goes deeper: cross-repository search, agents, a choice of */
+/* LLM and engine, self-hosted data residency, open source. Honest & defensible:   */
 /* where the AEM-native add-on genuinely matches, we say so.                   */
 /* -------------------------------------------------------------------------- */
 
@@ -1213,7 +1211,6 @@ export const AEM_MATRIX: AemMatrixRow[] = [
   { capability: "Open source (Apache 2.0)", turing: "yes", aemAi: "no", adobe: "no" },
   { capability: "Where content & queries live", turing: "your infra", aemAi: "Adobe cloud", adobe: "Adobe cloud" },
   { capability: "Pricing model", turing: "free / self-host", aemAi: "license + consulting", adobe: "bundled w/ AEM" },
-  { capability: "Time to first result", turing: "minutes", aemAi: "2–4 week engagement", adobe: "bundled" },
 ];
 
 export interface AemStep {
@@ -1274,14 +1271,14 @@ export const AEM_DEPTH: AemDepth[] = [
   {
     icon: ServerCog,
     iconClass: "from-[#4f46e5] to-[#6366f1]",
-    title: "Any LLM, any engine",
+    title: "Your choice of LLM and engine",
     body: "OpenAI, Anthropic, Gemini, Mistral, Bedrock, Vertex AI and local Ollama, running on Solr, Elasticsearch or Lucene. Switch per agent, store keys encrypted, and tie nothing to a single vendor's cloud.",
   },
   {
     icon: ShieldCheck,
     iconClass: "from-[#059669] to-[#10b981]",
     title: "Your content stays in your infrastructure",
-    body: "A Cloud-Service-native add-on runs, and reasons over your content, inside Adobe's cloud. Viglet Turing is self-hosted under Apache 2.0: pages, embeddings and query logs never leave your network, and you can run fully local models to keep even the LLM in-house.",
+    body: "A Cloud-Service-native add-on runs, and reasons over your content, inside Adobe's cloud. Viglet Turing is self-hosted under Apache 2.0: pages, embeddings and query logs are stored on your own infrastructure; prompts reach only the model provider you configure, and a fully local model keeps even the LLM in-house.",
   },
   {
     icon: Workflow,
@@ -1349,7 +1346,7 @@ export const AEM_FAQ: AemFaqItem[] = [
   },
   {
     q: "How do I enable AI search in AEM?",
-    a: "Point the Viglet Turing AEM connector at your author or publish instance. It crawls pages and DAM assets (including PDFs) into a search index on Solr, Elasticsearch or embedded Lucene. Then drop the search + cited-chat UI into an AEM component, an Edge Delivery Services (EDS) block or your own SPA with the zero-dependency JavaScript SDK. It works with AEM 6.5 and AEM as a Cloud Service, needs no template changes, and first results come back in minutes.",
+    a: "Point the Viglet Turing AEM connector at your author or publish instance. It crawls pages and DAM assets (including PDFs) into a search index on Solr, Elasticsearch or embedded Lucene. Then drop the search + cited-chat UI into an AEM component, an Edge Delivery Services (EDS) block or your own SPA with the zero-dependency JavaScript SDK. It works with AEM 6.5 and AEM as a Cloud Service, and needs no template changes.",
   },
   {
     q: "Is there an AEM search component I can drop into a page?",
@@ -1373,7 +1370,7 @@ export const AEM_FAQ: AemFaqItem[] = [
   },
   {
     q: "Do I need a multi-week consulting engagement to install it?",
-    a: "No. It's open source with a zero-dependency CLI: scaffold a project, run a local stack and point the connector at AEM in one session. First searches come back in minutes, not after a 2–4 week paid implementation.",
+    a: "No. It's open source with a zero-dependency CLI: scaffold a project, run a local stack and point the connector at AEM in one session. No paid implementation project is required.",
   },
   {
     q: "Can I drop it into AEM pages or Edge Delivery Services?",

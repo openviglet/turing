@@ -5,7 +5,7 @@ import { Container } from "@/components/brand";
  */
 const FACTS: { value: string; label: string }[] = [
   { value: "Apache 2.0", label: "Open source, no license fee" },
-  { value: "Any LLM", label: "OpenAI · Anthropic · Gemini · Ollama" },
+  { value: "8 LLM providers", label: "Plus any OpenAI-compatible endpoint" },
   { value: "3 engines", label: "Solr · Elasticsearch · Lucene" },
   { value: "Agents + RAG", label: "Tools · Skills · MCP" },
 ];

@@ -56,7 +56,7 @@ const DEFAULT_SCRIPT: ChatScriptEntry[] = [
   {
     match: /self.?host|host|infra|data/i,
     answer:
-      "Yes. Viglet Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings never leave your network.\n\n```bash\ndocker compose up -d --wait\n```",
+      "Yes. Viglet Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings are stored on your own infrastructure.\n\n```bash\ndocker compose up -d --wait\n```",
     sources: ["Self-hosting guide", "Security & data residency"],
   },
   {

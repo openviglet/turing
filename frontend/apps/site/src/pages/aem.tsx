@@ -95,7 +95,7 @@ function AemJsonLd() {
  *
  * Reframes the AEM-native AI-search pitch (aem-ai-search.com): Turing gives AEM
  * the same cited, streaming AI answers, then goes deeper: cross-repository
- * search, agents/tools/skills/MCP, any LLM, any engine, self-hosted data
+ * search, agents/tools/skills/MCP, choice of LLM and engine, self-hosted data
  * residency and Apache 2.0. Mirrors the Compare/Migrate shell: dark hero,
  * dependency-free routing via plain <a href> full loads, FAQPage JSON-LD.
  */
@@ -109,7 +109,7 @@ export function AemPage() {
         <PageHero
           eyebrow={<>Viglet Turing for Adobe Experience Manager</>}
           title={<>AEM search with AI: a search engine and search component for AEM</>}
-          description={<>The AEM-native pitch is “Cloud-Service-native.” That's also its limit. Viglet Turing gives AEM the same cited, streaming AI answers, and more: it searches beyond AEM, adds agents, tools, skills and MCP, runs on any LLM and any search engine, and keeps every page and query in your own infrastructure. Open source, Apache 2.0.</>}
+          description={<>The AEM-native pitch is “Cloud-Service-native.” That's also its limit. Viglet Turing gives AEM the same cited, streaming AI answers, and more: it searches beyond AEM, adds agents, tools, skills and MCP, runs on the LLM provider you choose and on Solr, Elasticsearch or embedded Lucene, and keeps every page and query in your own infrastructure. Open source, Apache 2.0.</>}
           actions={
             <>
               <Button asChild size="lg">

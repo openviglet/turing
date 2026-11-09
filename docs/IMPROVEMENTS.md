@@ -1385,29 +1385,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
 
-### XXVII.9 Bounded claims and demonstrable product scope (T1272)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org.
-hero.tsx says any LLM and OUTCOMES in site-content.ts includes Ship in days, not
-quarters. Features and metadata repeat any search engine although the site identifies
-specific supported engines. These are broader promises than the hub descriptor.
-
-Audit hero, outcomes, comparison, AEM, WordPress, FAQ, JSON-LD and llms output, plus the
-security page, stats, cta, og.svg, entry-server.tsx descriptions, public/aem-search.md,
-the features/run meta and the docs deploy-operate page, against current implementation
-and docs. Replace universal compatibility with supported providers or protocols (named
-providers plus any OpenAI-compatible endpoint; Solr, Elasticsearch or embedded Lucene)
-and documented limitations; remove delivery-time promises unless a reproducible case
-supports them. Distinguish self-hosted storage from configured external model calls.
-Explain source ingestion by Viglet Dumont and the direct Viglet Turing WordPress plugin
-without implying either is mandatory for every source. Keep accurate citations,
-supported capabilities and working demonstrations. This is a claims correction, not new
-backend/provider work. Do not duplicate the existing T1184 hosted-console task or
-T1093/T1095 measurement work.
-
-Acceptance: compare the published wording, linked documentation and source capability;
-assert the corrected boundary in generated HTML and machine-readable text.
-
 ### XXVII.10 Rendered brand and journey regression coverage (T1273)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org. The

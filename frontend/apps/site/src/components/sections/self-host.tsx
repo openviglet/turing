@@ -7,8 +7,8 @@ import { withBase } from "@/lib/site-url";
 
 const POINTS = [
   "Prebuilt container image: nothing to clone, nothing to build",
-  "Your content and embeddings never leave your network. No SaaS tier, no telemetry",
-  "Point it at any LLM provider and your own Solr, Elasticsearch or embedded Lucene",
+  "Your content and embeddings are stored on your network. No SaaS tier, no telemetry",
+  "Point it at a supported LLM provider (or a local model) and your own Solr, Elasticsearch or embedded Lucene",
 ];
 
 function ComposeTerminal() {

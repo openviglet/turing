@@ -585,7 +585,7 @@ LLM providers, models, and GenAI behavior are managed through the **Administrati
 | Default Embedding Store | *(none)* | Global default embedding store instance |
 | Python Executable | *(auto-detected)* | Path to Python 3 for the Code Interpreter tool (also overridable via `turing.code-interpreter.python-executable` in YAML) |
 
-**Supported LLM providers:** OpenAI, Ollama, Anthropic (Claude), Google Gemini, Google Gemini (OpenAI-compatible), and Azure OpenAI.
+**Supported LLM providers:** Anthropic Claude, OpenAI, Google Gemini (native or OpenAI-compatible), Google Vertex AI, AWS Bedrock, Mistral, Cohere, Ollama and any OpenAI-compatible endpoint.
 
 LLM instances are created under **GenAI > LLM** in the admin console, where you configure the provider, API key, base URL, and model name.
 

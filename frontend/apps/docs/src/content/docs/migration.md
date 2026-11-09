@@ -2,7 +2,7 @@
 title: "Migrating from Algolia or Elasticsearch"
 description: "Move a search index from Algolia or Elasticsearch to Viglet Turing: a concept-mapping table, a three-step import path (schema as code, bulk index, swap the SDK), and self-hosted search where your data stays in your own infrastructure."
 ---
-Already running search on **Algolia** or **Elasticsearch**? Viglet Turing keeps the search depth you rely on (facets, typo tolerance, synonyms, relevance tuning) and adds RAG, cited chat and AI agents, while running entirely on **your own infrastructure**. Your documents, embeddings and query logs never leave your network, and there is no per-record or per-search billing.
+Already running search on **Algolia** or **Elasticsearch**? Viglet Turing keeps the search depth you rely on (facets, typo tolerance, synonyms, relevance tuning) and adds RAG, cited chat and AI agents, while running entirely on **your own infrastructure**. Your documents, embeddings and query logs are stored on your own infrastructure, and there is no per-record or per-search billing.
 
 This page maps the concepts you already know to their Viglet Turing equivalents, then walks the concrete import path. It's a migration, not a rewrite: most of what you built carries over.
 
@@ -183,7 +183,7 @@ The reason teams switch: a hosted SaaS keeps your index (and increasingly your u
 - **Bring your own LLM and search engine**: OpenAI, Anthropic, Gemini, Azure or local Ollama; Solr, Elasticsearch or embedded Lucene.
 - **No per-record or per-search billing**: cost scales with your infrastructure, not your traffic.
 
-See [Deploy & Operate](/docs/deploy-operate/) for installation, and [Self-hosted, any LLM](https://turing.viglet.org/features/run) for the platform overview.
+See [Deploy & Operate](/docs/deploy-operate/) for installation, and [Self-hosted, your choice of LLM](https://turing.viglet.org/features/run/) for the platform overview.
 
 ---
 
