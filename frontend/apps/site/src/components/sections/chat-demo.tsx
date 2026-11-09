@@ -34,12 +34,12 @@ interface DemoMsg {
 }
 
 const DEFAULT_GREETING =
-  "Hi! I'm the Turing assistant. Ask me anything about the platform.";
+  "Hi! I'm the Viglet Turing assistant. Ask me anything about the platform.";
 // T638: the "default voice" option has no entry in the persona list, so give
 // it its own one-line hint for the active-persona caption below the picker.
 const DEFAULT_PERSONA_HINT = "The agent's own voice, with no persona applied.";
 const DEFAULT_SUGGESTIONS = [
-  "Does Turing support self-hosting?",
+  "Does Viglet Turing support self-hosting?",
   "Which LLM providers work?",
   "What can the agents do?",
 ];
@@ -56,13 +56,13 @@ const DEFAULT_SCRIPT: ChatScriptEntry[] = [
   {
     match: /self.?host|host|infra|data/i,
     answer:
-      "Yes. Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings never leave your network.\n\n```bash\ndocker compose up -d --wait\n```",
+      "Yes. Viglet Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings never leave your network.\n\n```bash\ndocker compose up -d --wait\n```",
     sources: ["Self-hosting guide", "Security & data residency"],
   },
   {
     match: /llm|model|openai|anthropic|gemini|ollama|provider/i,
     answer:
-      "Turing is provider-agnostic: **OpenAI**, **Anthropic Claude**, **Google Gemini**, Mistral, AWS Bedrock, Google Vertex AI and local **Ollama** models all plug in; pick one per agent.",
+      "Viglet Turing is provider-agnostic: **OpenAI**, **Anthropic Claude**, **Google Gemini**, Mistral, AWS Bedrock, Google Vertex AI and local **Ollama** models all plug in; pick one per agent.",
     sources: ["LLM providers"],
   },
   {
@@ -74,7 +74,7 @@ const DEFAULT_SCRIPT: ChatScriptEntry[] = [
 ];
 const DEFAULT_FALLBACK = {
   answer:
-    "Turing unifies enterprise search, RAG and AI agents in one self-hosted platform. Ask about self-hosting, LLM providers, or agents & tools.",
+    "Viglet Turing unifies enterprise search, RAG and AI agents in one self-hosted platform. Ask about self-hosting, LLM providers, or agents & tools.",
   sources: ["Platform overview"],
 };
 
@@ -359,7 +359,7 @@ export function ChatDemo({
           <span className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-[#1a3a9e] to-[#4f46e5] text-[#FFDEAD]">
             <Sparkles className="size-3.5" />
           </span>
-          <span className="text-sm font-semibold">Turing assistant</span>
+          <span className="text-sm font-semibold">Viglet Turing assistant</span>
           <span className="ml-auto rounded border border-border px-1.5 py-0.5 font-mono text-[0.65rem] text-muted-foreground">
             {live ? "live" : "demo"}
           </span>
@@ -480,7 +480,7 @@ export function ChatDemo({
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about Turing…"
+          placeholder="Ask about Viglet Turing…"
           className="w-full bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground"
           aria-label="Ask the assistant"
         />

@@ -112,7 +112,7 @@ export function SecurityPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                How Turing keeps you in control
+                How Viglet Turing keeps you in control
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 What the software does, and what you can check in its source.
@@ -171,7 +171,7 @@ export function SecurityPage() {
                 What self-hosting means for your compliance
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Turing is software you run, not a service we operate, so it has
+                Viglet Turing is software you run, not a service we operate, so it has
                 no SOC 2 report of its own to hand you, and it doesn't need one.
                 Deployed inside your environment, it runs under the certifications,
                 network controls, logging and data-residency guarantees your

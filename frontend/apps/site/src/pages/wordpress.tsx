@@ -192,7 +192,7 @@ export function WordPressPage() {
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-[#aeb7d4]">
                 A WordPress plugin that indexes posts, pages and WooCommerce products into
-                Turing, then puts search as you type, filters, cited answers, a shopping
+                Viglet Turing, then puts search as you type, filters, cited answers, a shopping
                 copilot and search insights on the site. Open source, Apache 2.0.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
@@ -231,7 +231,7 @@ export function WordPressPage() {
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 Tarnfell is a demo outdoor shop: every product and guide is invented, and
-                everything else is the plugin and Turing running. Each picture is taken from
+                everything else is the plugin and Viglet Turing running. Each picture is taken from
                 the recorded story.
               </p>
             </div>
@@ -266,13 +266,13 @@ export function WordPressPage() {
               On your own store
             </p>
             <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Install it, point it at Turing, reindex
+              Install it, point it at Viglet Turing, reindex
             </h2>
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
               The plugin indexes posts, pages, custom post types and WooCommerce products,
               provisions their fields as facets, and keeps the index in step as content
               changes. The answers, the copilot and the assistant use the language model
-              configured in Turing, and stay hidden on a Turing that has none.
+              configured in Viglet Turing, and stay hidden on a Viglet Turing that has none.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg">
@@ -281,7 +281,7 @@ export function WordPressPage() {
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href={LINKS.docs}>Run Turing</a>
+                <a href={LINKS.docs}>Run Viglet Turing</a>
               </Button>
             </div>
           </Container>
@@ -311,7 +311,7 @@ export function WordPressPage() {
               <h2 className="text-2xl font-extrabold tracking-tight">Beyond WordPress</h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
                 Search more than one site? Viglet Dumont indexes Adobe Experience Manager,
-                databases, file shares and any REST source into the same Turing, so one
+                databases, file shares and any REST source into the same Viglet Turing, so one
                 answer can cite a product, a policy PDF and a page together.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">

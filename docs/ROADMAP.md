@@ -24,12 +24,12 @@
 
 ## Block AB — Public site & top-of-funnel conversion (`turing.viglet.org`, §XXVII)
 
-- 📋 **T1268** (deps: —) **Public product names still alternate between full names and abbreviations** — Apply the hub naming decision to visible copy and machine-readable output so each product remains the same identifiable entity. → §XXVII.5
-- 📋 **T1269** (deps: T1268) **Product pages retain decorative chips and hero styling absent from the revised hub** — Use the hub visual grammar across marketing and documentation while preserving the product accent and the function of each page. → §XXVII.6
-- 📋 **T1270** (deps: T1268) **Getting started and resource links do not express the same journey as the hub** — Give evaluation, installation, documentation and release history explicit destinations and a reliable route back to the portfolio. → §XXVII.7
-- 📋 **T1271** (deps: T1268) **The home page repeats technical detail before visitors can choose their next step** — Shorten the evaluation path and move depth into existing pages without removing evidence, stable URLs or useful technical documentation. → §XXVII.8
+- ⏳ **T1268** (deps: —) **Public product names still alternate between full names and abbreviations** — Apply the same full-name rule to the docs app (frontend/apps/docs pages, titles, search) with stable slugs and code identifiers kept. → §XXVII.5
+- 📋 **T1269** (deps: T1268 ⏳) **Product pages retain decorative chips and hero styling absent from the revised hub** — Use the hub visual grammar across marketing and documentation while preserving the product accent and the function of each page. → §XXVII.6
+- 📋 **T1270** (deps: T1268 ⏳) **Getting started and resource links do not express the same journey as the hub** — Give evaluation, installation, documentation and release history explicit destinations and a reliable route back to the portfolio. → §XXVII.7
+- 📋 **T1271** (deps: T1268 ⏳) **The home page repeats technical detail before visitors can choose their next step** — Shorten the evaluation path and move depth into existing pages without removing evidence, stable URLs or useful technical documentation. → §XXVII.8
 - 📋 **T1272** (deps: —) **The home presents broad provider and delivery-time claims without bounded evidence** — Make supported configurations and outcomes checkable so the product site follows the hub rule against invented or universal claims. → §XXVII.9
-- 📋 **T1273** (deps: T1268, T1269, T1270, T1271, T1272) **No acceptance check compares the product site with the revised hub contract** — Validate the rendered brand and journeys across routes, themes and small screens so future site changes cannot silently undo the alignment. → §XXVII.10
+- 📋 **T1273** (deps: T1268 ⏳, T1269, T1270, T1271, T1272) **No acceptance check compares the product site with the revised hub contract** — Validate the rendered brand and journeys across routes, themes and small screens so future site changes cannot silently undo the alignment. → §XXVII.10
 
 ## Done when — T1184
 

@@ -113,7 +113,7 @@ export const NATIVE_TOOLS: NativeTool[] = [
   {
     name: "URL / web fetch",
     description:
-      "The model pulls a URL or PDF named in the prompt directly in the provider's infrastructure, with no Turing crawler in the path.",
+      "The model pulls a URL or PDF named in the prompt directly in the provider's infrastructure, with no Viglet Turing crawler in the path.",
     providers: ["Anthropic", "Gemini"],
   },
   {
@@ -125,7 +125,7 @@ export const NATIVE_TOOLS: NativeTool[] = [
   {
     name: "File search",
     description:
-      "Retrieval over a provider-hosted vector store, available as a built-in tool next to Turing's own search.",
+      "Retrieval over a provider-hosted vector store, available as a built-in tool next to Viglet Turing's own search.",
     providers: ["OpenAI"],
   },
 ];
@@ -178,7 +178,7 @@ export const SEARCH_DOCS: SearchDoc[] = [
   { title: "Hybrid ranking (RRF) explained", type: "Docs", snippet: "Combine BM25 and vector scores with reciprocal rank fusion for relevance." },
   { title: "Importing a product catalog", type: "Guide", snippet: "Provision fields from a manifest and bulk-index a structured catalog." },
   { title: "Webhooks for human handoff", type: "Docs", snippet: "Forward a conversation to a human channel when a slot is captured." },
-  { title: "Self-host with Docker Compose", type: "Ops", snippet: "Run the full Turing stack locally with turing dev in one command." },
+  { title: "Self-host with Docker Compose", type: "Ops", snippet: "Run the full Viglet Turing stack locally with turing dev in one command." },
 ];
 
 /**
@@ -288,7 +288,7 @@ export const RESOURCES: LinkCard[] = [
   {
     title: "WordPress & WooCommerce plugin",
     description:
-      "Index posts, pages and WooCommerce products into Turing and add search as you type, cited answers and a shopping copilot to your store. Watch the demo, or try it in your browser.",
+      "Index posts, pages and WooCommerce products into Viglet Turing and add search as you type, cited answers and a shopping copilot to your store. Watch the demo, or try it in your browser.",
     href: withBase("/wordpress/"),
     tag: "WordPress",
   },
@@ -482,7 +482,7 @@ export const WORDPRESS_STORY: StoryChapter[] = [
   {
     title: "Backstage",
     feature: "What the owner sees",
-    body: "WordPress's own search finds nothing for “raincoat”; Turing finds the rain jackets through a synonym. Search insights list what was searched and what found nothing, and one click turns a miss into a synonym.",
+    body: "WordPress's own search finds nothing for “raincoat”; Viglet Turing finds the rain jackets through a synonym. Search insights list what was searched and what found nothing, and one click turns a miss into a synonym.",
     alt: "Search tuning in wp-admin with the synonym just added from Search insights.",
   },
 ];
@@ -510,8 +510,8 @@ export const WORDPRESS_VIDEOS: Record<WordPressVideoLang, { id: string | null; l
 
 export const WORDPRESS_FAQ: { q: string; a: string }[] = [
   {
-    q: "Does the plugin need Dumont?",
-    a: "No. The plugin talks to Turing directly: it indexes posts, pages, custom post types and WooCommerce products into a Turing site and searches it from WordPress. Dumont is the connector platform for the sources WordPress is not, such as AEM, databases and file shares.",
+    q: "Does the plugin need Viglet Dumont?",
+    a: "No. The plugin talks to Viglet Turing directly: it indexes posts, pages, custom post types and WooCommerce products into a Viglet Turing site and searches it from WordPress. Viglet Dumont is the connector platform for the sources WordPress is not, such as AEM, databases and file shares.",
   },
   {
     q: "What does it index?",
@@ -519,7 +519,7 @@ export const WORDPRESS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Do the answers need a language model?",
-    a: "The cited answers, the shopping copilot and the Site assistant use the language model configured in Turing, and stay hidden on a Turing that has none. Search as you type, filters, related products and search insights work without one.",
+    a: "The cited answers, the shopping copilot and the Site assistant use the language model configured in Viglet Turing, and stay hidden on a Viglet Turing that has none. Search as you type, filters, related products and search insights work without one.",
   },
   {
     q: "Can the model change a price?",
@@ -527,7 +527,7 @@ export const WORDPRESS_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can I try it without installing anything?",
-    a: "Yes. The demo store opens in WordPress Playground, in your browser, with the plugin installed and pointed at a Turing that holds the demo catalog.",
+    a: "Yes. The demo store opens in WordPress Playground, in your browser, with the plugin installed and pointed at a Viglet Turing that holds the demo catalog.",
   },
 ];
 
@@ -547,7 +547,7 @@ export const SECURITY_POINTS: SecurityPoint[] = [
     icon: Server,
     iconClass: "from-[#1a3a9e] to-[#4169E1]",
     title: "Your data never leaves your network",
-    body: "Turing is self-hosted. Indexed content, embeddings and query logs live on your own infrastructure. No SaaS tier collects them and no telemetry phones home.",
+    body: "Viglet Turing is self-hosted. Indexed content, embeddings and query logs live on your own infrastructure. No SaaS tier collects them and no telemetry phones home.",
   },
   {
     icon: Globe,
@@ -598,19 +598,19 @@ export const SECURITY_FAQ: SecurityFaqItem[] = [
   },
   {
     q: "Which LLM should a regulated industry use when data residency is required?",
-    a: "Turing is not an inference provider; it lets you pick one per agent. Keep prompts in-house with a local model through Ollama or any OpenAI-compatible endpoint you host, or use a cloud provider you can pin to a region, such as AWS Bedrock or Google Vertex AI. Switching providers does not change where your content and index live.",
+    a: "Viglet Turing is not an inference provider; it lets you pick one per agent. Keep prompts in-house with a local model through Ollama or any OpenAI-compatible endpoint you host, or use a cloud provider you can pin to a region, such as AWS Bedrock or Google Vertex AI. Switching providers does not change where your content and index live.",
   },
   {
     q: "Can I run RAG and AI search without sending content to a vendor's cloud?",
     a: "Yes. Connectors index your content into Solr, Elasticsearch or an embedded Lucene index on your own servers, and retrieval, ranking and citations happen there. With a local model, nothing in the answer path leaves your network.",
   },
   {
-    q: "Does Turing send telemetry or usage data back to Viglet?",
+    q: "Does Viglet Turing send telemetry or usage data back to Viglet?",
     a: "No. There is no telemetry and no phone-home. The code is Apache 2.0, so your security team can read it, pin a version and build it themselves.",
   },
   {
-    q: "Does Turing have SOC 2 or GDPR certification?",
-    a: "Turing is software you run, not a service we operate, so there is no hosted environment to certify. Deployed in your environment, it runs under the certifications, network controls and data-processing terms your infrastructure already carries.",
+    q: "Does Viglet Turing have SOC 2 or GDPR certification?",
+    a: "Viglet Turing is software you run, not a service we operate, so there is no hosted environment to certify. Deployed in your environment, it runs under the certifications, network controls and data-processing terms your infrastructure already carries.",
   },
 ];
 
@@ -685,11 +685,11 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
       },
       {
         title: "Schema as code",
-        body: "Describe a site's fields in a versioned manifest and POST it. Turing converges the live schema to match, with a diff planner that flags breaking changes before they run. No schema yet? Derive a draft from sample documents.",
+        body: "Describe a site's fields in a versioned manifest and POST it. Viglet Turing converges the live schema to match, with a diff planner that flags breaking changes before they run. No schema yet? Derive a draft from sample documents.",
       },
       {
         title: "Hybrid ranking that fuses keyword + vector",
-        body: "Opt into hybrid ranking and Turing reorders results with Reciprocal Rank Fusion over BM25 and per-site vector scores, so semantic matches rank well and exact matches still count.",
+        body: "Opt into hybrid ranking and Viglet Turing reorders results with Reciprocal Rank Fusion over BM25 and per-site vector scores, so semantic matches rank well and exact matches still count.",
       },
       {
         title: "Coverage you can see",
@@ -713,11 +713,11 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
     faq: [
       {
         q: "Do I need Solr or Elasticsearch to start?",
-        a: "No. A site can use the embedded Lucene index that runs inside Turing, so a single container is a working search stack. Move the site to Solr or Elasticsearch later; the query API and your front end stay the same.",
+        a: "No. A site can use the embedded Lucene index that runs inside Viglet Turing, so a single container is a working search stack. Move the site to Solr or Elasticsearch later; the query API and your front end stay the same.",
       },
       {
         q: "How does hybrid keyword and vector ranking work?",
-        a: "It is opt-in per site. With hybrid ranking on, Turing runs the keyword query and a vector query over the site's own embeddings, then merges the two lists with Reciprocal Rank Fusion. Sites that leave it off keep plain keyword ranking.",
+        a: "It is opt-in per site. With hybrid ranking on, Viglet Turing runs the keyword query and a vector query over the site's own embeddings, then merges the two lists with Reciprocal Rank Fusion. Sites that leave it off keep plain keyword ranking.",
       },
       {
         q: "Can I keep my synonyms when I move from Algolia?",
@@ -725,7 +725,7 @@ export const FEATURE_DETAILS: Record<string, FeatureDetail> = {
       },
       {
         q: "How do I define a site's fields?",
-        a: "Write them in a versioned manifest and POST it. Turing plans the change, shows what would break, and converges the live schema. With no schema yet, it can draft a manifest from sample documents for you to review.",
+        a: "Write them in a versioned manifest and POST it. Viglet Turing plans the change, shows what would break, and converges the live schema. With no schema yet, it can draft a manifest from sample documents for you to review.",
       },
     ],
     related: {
@@ -796,7 +796,7 @@ function Assistant() {
       },
     ],
     related: {
-      label: "Turing vs a DIY LangChain RAG stack",
+      label: "Viglet Turing vs a DIY LangChain RAG stack",
       href: withBase("/compare/"),
       body: "What you would otherwise build and run yourself, side by side with Algolia, Coveo and Elasticsearch.",
     },
@@ -813,15 +813,15 @@ function Assistant() {
     sections: [
       {
         title: "Your tools, your logic",
-        body: "Define custom tools in Groovy with helpers for HTTP calls, in-process Turing search and conversation slots. Tools hot-reload and can be tested from the admin without a restart.",
+        body: "Define custom tools in Groovy with helpers for HTTP calls, in-process Viglet Turing search and conversation slots. Tools hot-reload and can be tested from the admin without a restart.",
       },
       {
         title: "Anthropic-standard skills in a sandbox",
-        body: "Drop in a skill folder (SKILL.md + scripts) and Turing runs it in an isolated Docker sandbox with progressive disclosure. It is the same skill format Claude uses, executed against a per-conversation workspace.",
+        body: "Drop in a skill folder (SKILL.md + scripts) and Viglet Turing runs it in an isolated Docker sandbox with progressive disclosure. It is the same skill format Claude uses, executed against a per-conversation workspace.",
       },
       {
         title: "MCP in both directions",
-        body: "Connect agents to Model Context Protocol servers (with cross-vendor federation), and expose Turing's search as an MCP server so any MCP-aware client can query your content.",
+        body: "Connect agents to Model Context Protocol servers (with cross-vendor federation), and expose Viglet Turing's search as an MCP server so any MCP-aware client can query your content.",
       },
       {
         title: "Built-in code interpreter & chat flows",
@@ -844,8 +844,8 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
         a: "A tool is a function the agent calls, written in Groovy and run in-process. A skill is a folder (a SKILL.md plus scripts) that the agent discovers and runs in an isolated Docker sandbox, in the same format Claude uses.",
       },
       {
-        q: "Can an existing OpenAI app talk to a Turing agent?",
-        a: "Yes, through the OpenAI-compatible gateway once it is enabled. Point the app's base URL at Turing and ask for the model turing-agent:<id>; the agent answers with its own prompt, tools and grounding.",
+        q: "Can an existing OpenAI app talk to a Viglet Turing agent?",
+        a: "Yes, through the OpenAI-compatible gateway once it is enabled. Point the app's base URL at Viglet Turing and ask for the model turing-agent:<id>; the agent answers with its own prompt, tools and grounding.",
       },
       {
         q: "Can an agent keep our brand voice across LLM providers?",
@@ -878,7 +878,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
       },
       {
         title: "Bring your search engine & storage",
-        body: "Run on Apache Solr, Elasticsearch or embedded Lucene, and back assets with MinIO, the filesystem or nothing at all. Turing runs on the infrastructure you already operate.",
+        body: "Run on Apache Solr, Elasticsearch or embedded Lucene, and back assets with MinIO, the filesystem or nothing at all. Viglet Turing runs on the infrastructure you already operate.",
       },
       {
         title: "Multi-tenant by design",
@@ -886,7 +886,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
       },
       {
         title: "Observable & operable",
-        body: "Turing exposes Micrometer metrics, chat & conversion analytics, cache-hit gauges and per-tool latency percentiles.",
+        body: "Viglet Turing exposes Micrometer metrics, chat & conversion analytics, cache-hit gauges and per-tool latency percentiles.",
       },
       {
         title: "Measure the funnel in the analytics stack you already run",
@@ -911,7 +911,7 @@ npx @viglet/turing-cli deploy   # push agents, flows, tools & skills`,
     docs: { label: "Deployment & configuration docs", href: withBase("/docs/deploy-operate/") },
     faq: [
       {
-        q: "How do I run Turing on my own machine?",
+        q: "How do I run Viglet Turing on my own machine?",
         a: "One command: docker run -p 2700:2700 ghcr.io/openviglet/turing, then open the console on port 2700. A docker compose file in the repository brings up the full stack with Solr, MariaDB and monitoring.",
       },
       {
@@ -1098,7 +1098,7 @@ export interface MigrationCliFeature {
 export const MIGRATION_CLI_FEATURES: MigrationCliFeature[] = [
   {
     title: "Preview before you commit",
-    body: "--dry-run shows the schema Turing derived. Nothing is written until you're happy with it.",
+    body: "--dry-run shows the schema Viglet Turing derived. Nothing is written until you're happy with it.",
   },
   {
     title: "Prove parity, then cut over",
@@ -1206,7 +1206,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "Algolia is hard to beat for purely hosted, low-ops keyword search with best-in-class InstantSearch widgets, if sending your index to a vendor's cloud and per-record/per-search pricing are acceptable.",
     turingFit:
-      "Switch when data residency, per-record cost at scale, or wanting RAG, cited chat and agents in the same platform matter. Turing runs faceted, typo-tolerant search plus AI on your own infrastructure, under Apache 2.0.",
+      "Switch when data residency, per-record cost at scale, or wanting RAG, cited chat and agents in the same platform matter. Viglet Turing runs faceted, typo-tolerant search plus AI on your own infrastructure, under Apache 2.0.",
   },
   {
     name: "vs Coveo",
@@ -1214,7 +1214,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "Coveo is strong where a large organisation wants managed relevance: machine-learning ranking tuned on its own traffic, generative answers with citations, and a long list of ready connectors into Salesforce, ServiceNow, SharePoint and the big commerce platforms. It is sold and supported as an enterprise subscription.",
     turingFit:
-      "Switch when the content must stay in your own infrastructure, when you want to pick the LLM and the search engine yourself, or when an enterprise contract is out of proportion to the project. Turing gives you cited RAG, agents and faceted search, self-hosted under Apache 2.0.",
+      "Switch when the content must stay in your own infrastructure, when you want to pick the LLM and the search engine yourself, or when an enterprise contract is out of proportion to the project. Viglet Turing gives you cited RAG, agents and faceted search, self-hosted under Apache 2.0.",
   },
   {
     name: "vs Lucidworks Fusion",
@@ -1222,7 +1222,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "Fusion is built on Apache Solr and exposes powerful indexing and query pipelines with ML modules. It can run inside your own perimeter, which solves data residency, and suits a dedicated search team with budget for a licensed platform.",
     turingFit:
-      "Switch when you want the same self-hosting without a licence: Turing is Apache 2.0, runs on Solr, Elasticsearch or Lucene, and ships faceted search, semantic search, cited RAG and agents together instead of a separate AI tier.",
+      "Switch when you want the same self-hosting without a licence: Viglet Turing is Apache 2.0, runs on Solr, Elasticsearch or Lucene, and ships faceted search, semantic search, cited RAG and agents together instead of a separate AI tier.",
   },
   {
     name: "vs Elasticsearch",
@@ -1230,7 +1230,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "Elasticsearch (and OpenSearch) is a mature engine with deep aggregation, kNN and cluster tooling. If you have the team to operate it and build the application layer, it will take you far.",
     turingFit:
-      "Turing runs on Elasticsearch, one of its three supported engines, and adds the application layer you would otherwise build: schema-as-code, hybrid RRF, RAG, cited chat, agents, connectors and an SDK.",
+      "Viglet Turing runs on Elasticsearch, one of its three supported engines, and adds the application layer you would otherwise build: schema-as-code, hybrid RRF, RAG, cited chat, agents, connectors and an SDK.",
   },
   {
     name: "vs DIY RAG (LangChain + vector DB)",
@@ -1238,7 +1238,7 @@ export const COMPARE_VENDORS: CompareVendor[] = [
     shines:
       "A hand-built LangChain/LlamaIndex stack gives you total control and no product opinions. It suits a bespoke research pipeline, or a team that wants to own every layer.",
     turingFit:
-      "Turing is the batteries-included alternative: retrieval, reranking, citations, agents, tools, skills, MCP, streaming, analytics and admin UI are already wired and tested. You keep the pluggability (any LLM, any engine) without maintaining the plumbing.",
+      "Viglet Turing is the batteries-included alternative: retrieval, reranking, citations, agents, tools, skills, MCP, streaming, analytics and admin UI are already wired and tested. You keep the pluggability (any LLM, any engine) without maintaining the plumbing.",
   },
 ];
 
@@ -1258,11 +1258,11 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Does my content or my users' queries leave my network?",
-    a: "No. Turing is self-hosted: your documents, embeddings and query logs stay in your own infrastructure. The only data that leaves is what you explicitly send to an external LLM provider, and you can run fully local models (Ollama) to keep even that in-house.",
+    a: "No. Viglet Turing is self-hosted: your documents, embeddings and query logs stay in your own infrastructure. The only data that leaves is what you explicitly send to an external LLM provider, and you can run fully local models (Ollama) to keep even that in-house.",
   },
   {
     q: "Do I have to replace my search engine?",
-    a: "No. Turing runs on Apache Solr, Elasticsearch or an embedded Lucene index behind one query API. If you already operate Elasticsearch or Solr, Turing sits on top of it and adds the AI and application layer.",
+    a: "No. Viglet Turing runs on Apache Solr, Elasticsearch or an embedded Lucene index behind one query API. If you already operate Elasticsearch or Solr, Viglet Turing sits on top of it and adds the AI and application layer.",
   },
   {
     q: "Am I locked into one LLM vendor?",
@@ -1270,7 +1270,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Isn't this just LangChain with a UI?",
-    a: "No. Turing is a deployable product, not a framework you assemble. Retrieval, hybrid ranking, reranking, citations, groundedness checks, agents, tools, skills, MCP, streaming, connectors, analytics and an admin UI are already built, tested and wired together. You get the pluggability of a DIY stack without its maintenance.",
+    a: "No. Viglet Turing is a deployable product, not a framework you assemble. Retrieval, hybrid ranking, reranking, citations, groundedness checks, agents, tools, skills, MCP, streaming, connectors, analytics and an admin UI are already built, tested and wired together. You get the pluggability of a DIY stack without its maintenance.",
   },
   {
     q: "How long until I get a real result?",
@@ -1349,7 +1349,7 @@ export const AEM_STEPS: AemStep[] = [
   {
     step: "1",
     title: "Connect your AEM tier",
-    body: "Point the Turing AEM connector at your author or publish instance. It crawls pages, components and DAM assets into a Semantic Navigation site, extracting text from PDFs and Office files. Works with AEM 6.5+ and AEM as a Cloud Service; no code changes to your templates.",
+    body: "Point the Viglet Turing AEM connector at your author or publish instance. It crawls pages, components and DAM assets into a Semantic Navigation site, extracting text from PDFs and Office files. Works with AEM 6.5+ and AEM as a Cloud Service; no code changes to your templates.",
   },
   {
     step: "2",
@@ -1385,7 +1385,7 @@ export const AEM_DEPTH: AemDepth[] = [
     icon: Boxes,
     iconClass: "from-[#d97706] to-[#f59e0b]",
     title: "One index across every repository",
-    body: "AEM is rarely your only source. Turing federates AEM pages and DAM assets with WordPress, databases, file shares and any REST source into a single index, so one answer can cite a policy PDF, a product record and an AEM page together. An AEM-native tool stops at the AEM boundary.",
+    body: "AEM is rarely your only source. Viglet Turing federates AEM pages and DAM assets with WordPress, databases, file shares and any REST source into a single index, so one answer can cite a policy PDF, a product record and an AEM page together. An AEM-native tool stops at the AEM boundary.",
   },
   {
     icon: Bot,
@@ -1403,7 +1403,7 @@ export const AEM_DEPTH: AemDepth[] = [
     icon: ShieldCheck,
     iconClass: "from-[#059669] to-[#10b981]",
     title: "Your content stays in your infrastructure",
-    body: "A Cloud-Service-native add-on runs, and reasons over your content, inside Adobe's cloud. Turing is self-hosted under Apache 2.0: pages, embeddings and query logs never leave your network, and you can run fully local models to keep even the LLM in-house.",
+    body: "A Cloud-Service-native add-on runs, and reasons over your content, inside Adobe's cloud. Viglet Turing is self-hosted under Apache 2.0: pages, embeddings and query logs never leave your network, and you can run fully local models to keep even the LLM in-house.",
   },
   {
     icon: Workflow,
@@ -1471,23 +1471,23 @@ export const AEM_FAQ: AemFaqItem[] = [
   },
   {
     q: "How do I enable AI search in AEM?",
-    a: "Point the Turing AEM connector at your author or publish instance. It crawls pages and DAM assets (including PDFs) into a search index on Solr, Elasticsearch or embedded Lucene. Then drop the search + cited-chat UI into an AEM component, an Edge Delivery Services (EDS) block or your own SPA with the zero-dependency JavaScript SDK. It works with AEM 6.5 and AEM as a Cloud Service, needs no template changes, and first results come back in minutes.",
+    a: "Point the Viglet Turing AEM connector at your author or publish instance. It crawls pages and DAM assets (including PDFs) into a search index on Solr, Elasticsearch or embedded Lucene. Then drop the search + cited-chat UI into an AEM component, an Edge Delivery Services (EDS) block or your own SPA with the zero-dependency JavaScript SDK. It works with AEM 6.5 and AEM as a Cloud Service, needs no template changes, and first results come back in minutes.",
   },
   {
     q: "Is there an AEM search component I can drop into a page?",
-    a: "Yes. The search box, facets, autocomplete and cited AI chat mount into an AEM page component or an Edge Delivery Services block with the zero-dependency JavaScript SDK, or into a React SPA with the React SDK. The component calls Turing as its search engine for AEM, so results, ranking and answers come from your own index rather than Adobe's Query Builder.",
+    a: "Yes. The search box, facets, autocomplete and cited AI chat mount into an AEM page component or an Edge Delivery Services block with the zero-dependency JavaScript SDK, or into a React SPA with the React SDK. The component calls Viglet Turing as its search engine for AEM, so results, ranking and answers come from your own index rather than Adobe's Query Builder.",
   },
   {
     q: "Do I have to move off AEM?",
-    a: "No. Turing sits alongside AEM. Its connector indexes AEM 6.5+ and AEM as a Cloud Service (pages, components and DAM assets) without touching your templates or authoring workflow. AEM stays your content source of truth; Turing adds the AI search and agent layer on top.",
+    a: "No. Viglet Turing sits alongside AEM. Its connector indexes AEM 6.5+ and AEM as a Cloud Service (pages, components and DAM assets) without touching your templates or authoring workflow. AEM stays your content source of truth; Viglet Turing adds the AI search and agent layer on top.",
   },
   {
     q: "Isn't it limited to AEM content, like the AEM-native tools?",
-    a: "No. An AEM-native add-on stops at the AEM repository. Turing federates AEM with WordPress, databases, file shares and any REST source into one index, so a single cited answer can span your whole content estate, not just what lives in Oak.",
+    a: "No. An AEM-native add-on stops at the AEM repository. Viglet Turing federates AEM with WordPress, databases, file shares and any REST source into one index, so a single cited answer can span your whole content estate, not just what lives in Oak.",
   },
   {
     q: "Where do my content and my users' queries go?",
-    a: "Into your own infrastructure. Turing is self-hosted under Apache 2.0: indexed AEM content, embeddings and query logs stay on your hardware. A Cloud-Service-native add-on reasons over your content inside Adobe's cloud; Turing doesn't. Run local Ollama models and even the LLM stays in-house.",
+    a: "Into your own infrastructure. Viglet Turing is self-hosted under Apache 2.0: indexed AEM content, embeddings and query logs stay on your hardware. A Cloud-Service-native add-on reasons over your content inside Adobe's cloud; Viglet Turing doesn't. Run local Ollama models and even the LLM stays in-house.",
   },
   {
     q: "Which LLMs can it use? Only OpenAI and Anthropic?",
@@ -1527,7 +1527,7 @@ export interface PersonaMatrixRow {
 }
 
 export const PERSONA_COLUMNS = {
-  turing: "Turing Persona",
+  turing: "Viglet Turing Persona",
   prompt: "Prompt engineering",
   chatbot: "Off-the-shelf chatbot",
 } as const;
@@ -1630,7 +1630,7 @@ export const PERSONA_SURFACES: PersonaSurface[] = [
     icon: Mic,
     iconClass: "from-[#4f46e5] to-[#6366f1]",
     title: "Draft from a recording",
-    body: "Hand Turing five minutes of \"here's how our ideal rep sounds\" and it transcribes, classifies the style fields and writes a system instruction. You get a persona draft to review and save. Derive, never auto-apply.",
+    body: "Hand Viglet Turing five minutes of \"here's how our ideal rep sounds\" and it transcribes, classifies the style fields and writes a system instruction. You get a persona draft to review and save. Derive, never auto-apply.",
   },
 ];
 
@@ -1696,7 +1696,7 @@ export const PERSONA_FAQ: PersonaFaqItem[] = [
   },
   {
     q: "How do I keep prices and promotions up to date without engineering?",
-    a: "Point the persona at a Brand Context MCP server you control. On every conversation Turing calls it and injects the current facts as a 'brand facts' block, so marketing updates a promotion in their own panel and the next message reflects it, with no prompt edit and no redeploy. The same MCP feeds every persona at once.",
+    a: "Point the persona at a Brand Context MCP server you control. On every conversation Viglet Turing calls it and injects the current facts as a 'brand facts' block, so marketing updates a promotion in their own panel and the next message reflects it, with no prompt edit and no redeploy. The same MCP feeds every persona at once.",
   },
   {
     q: "Can a persona tell me whether my content fits its audience?",
@@ -1704,7 +1704,7 @@ export const PERSONA_FAQ: PersonaFaqItem[] = [
   },
   {
     q: "Is synthetic user research a replacement for talking to real users?",
-    a: "No, and Turing is explicit about it. Synthetic research interviews a cohort of personas to sharpen your questions, surface likely themes and pressure-test an idea before you spend a real participant's time. A 'good enough' saturation signal tells you when more interviews stop adding anything, and every study reads as a discovery aid. Always validate with real users before you act.",
+    a: "No, and Viglet Turing is explicit about it. Synthetic research interviews a cohort of personas to sharpen your questions, surface likely themes and pressure-test an idea before you spend a real participant's time. A 'good enough' saturation signal tells you when more interviews stop adding anything, and every study reads as a discovery aid. Always validate with real users before you act.",
   },
   {
     q: "Do I need to write code to use personas?",

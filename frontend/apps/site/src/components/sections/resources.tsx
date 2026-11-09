@@ -9,7 +9,7 @@ export function Resources() {
         <SectionHeader
           eyebrow="Ecosystem"
           title="SDKs, tools & documentation"
-          description="Everything you need to build, integrate and ship with Turing."
+          description="Everything you need to build, integrate and ship with Viglet Turing."
         />
         <LinkCards items={RESOURCES} />
       </Container>

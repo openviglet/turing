@@ -9,7 +9,7 @@ export function HowItWorks() {
       <Container>
         <SectionHeader
           eyebrow="The agent loop"
-          title="How Turing answers a question"
+          title="How Viglet Turing answers a question"
           description="Every conversation runs an agentic loop: retrieve, reason, act with tools, and respond with a grounded, cited answer."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

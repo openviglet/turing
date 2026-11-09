@@ -80,14 +80,14 @@ export function ComparePage() {
               <ArrowLeft className="size-4" /> Back to overview
             </a>
             <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-              How Turing compares
+              How Viglet Turing compares
             </p>
             <h1 className="mt-3 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
               Viglet Turing vs Algolia, Coveo, Lucidworks, Elasticsearch & DIY RAG
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#aeb7d4]">
               Where each alternative wins, and where a self-hosted, open-source
-              platform for search, RAG and agents fits instead. Turing runs on the
+              platform for search, RAG and agents fits instead. Viglet Turing runs on the
               engine you already operate, keeps your data in your infrastructure,
               and is Apache 2.0.
             </p>
@@ -118,7 +118,7 @@ export function ComparePage() {
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 A hosted SaaS locks your data in someone else's cloud. A raw
-                engine or a DIY stack is months of application glue. Turing gives
+                engine or a DIY stack is months of application glue. Viglet Turing gives
                 you production search and auditable AI in one deployable product.
               </p>
             </div>
@@ -193,7 +193,7 @@ export function ComparePage() {
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 Coveo is managed SaaS priced per query; Lucidworks Fusion is
                 licensed, Solr-based and runs in your perimeter. Here is where
-                each one stands, with Turing beside them.
+                each one stands, with Viglet Turing beside them.
               </p>
             </div>
             <TableScroll>
@@ -234,7 +234,7 @@ export function ComparePage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Where each alternative wins, and where Turing fits
+                Where each alternative wins, and where Viglet Turing fits
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 The fair version. Each of these is a strong tool; the question is
@@ -251,7 +251,7 @@ export function ComparePage() {
                   </p>
                   <p className="mt-1.5 text-sm leading-relaxed">{v.shines}</p>
                   <p className="mt-5 text-xs font-bold tracking-[0.08em] text-primary uppercase">
-                    Where Turing fits
+                    Where Viglet Turing fits
                   </p>
                   <p className="mt-1.5 text-sm leading-relaxed">{v.turingFit}</p>
                 </Card>

@@ -41,7 +41,7 @@ function SdkCode() {
           {"\n"}
           chat.<span className={fn}>subscribe</span>((s) ={">"} <span className={fn}>render</span>(s.messages));
           {"\n"}
-          chat.<span className={fn}>send</span>(<span className={str}>"Does Turing support self-hosting?"</span>);
+          chat.<span className={fn}>send</span>(<span className={str}>"Does Viglet Turing support self-hosting?"</span>);
         </code>
       </pre>
     </div>
@@ -61,7 +61,7 @@ export function LiveDemo() {
         <SectionHeader
           eyebrow="Built with the SDK"
           title="The playground runs on this code"
-          description="The live search and cited-chat playground above run on the product's own zero-dependency @viglet/turing-sdk, grounded in Turing's own documentation. Here's the exact code that drives them."
+          description="The live search and cited-chat playground above run on the product's own zero-dependency @viglet/turing-sdk, grounded in Viglet Turing's own documentation. Here's the exact code that drives them."
         />
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <SdkCode />

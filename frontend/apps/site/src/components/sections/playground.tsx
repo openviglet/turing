@@ -75,7 +75,7 @@ export function Playground() {
               live ? "bg-emerald-500 shadow-[0_0_6px] shadow-emerald-500" : "bg-muted-foreground/40"
             )}
           />
-          Turing docs · {live ? "live" : "sample"}
+          Viglet Turing docs · {live ? "live" : "sample"}
         </span>
 
         <button
@@ -127,7 +127,7 @@ export function Playground() {
         <SectionHeader
           eyebrow="Try it live"
           title="Search it, ask it, validate it, on the same content"
-          description="All three run on Turing's own zero-dependency SDK, over the exact same corpus (Turing's documentation). Search finds the page; the assistant answers with a cited RAG response. You can switch personas to hear the same answer through different eyes, or validate whether your own copy lands for a given reader. Try a result's “Ask about this”."
+          description="All three run on Viglet Turing's own zero-dependency SDK, over the exact same corpus (Viglet Turing's documentation). Search finds the page; the assistant answers with a cited RAG response. You can switch personas to hear the same answer through different eyes, or validate whether your own copy lands for a given reader. Try a result's “Ask about this”."
         />
         {expanded && (
           <div
@@ -142,7 +142,7 @@ export function Playground() {
             crawlers that read the raw HTML without running JavaScript. */}
         <div className="sr-only">
           <p>
-            Example: ask the assistant “Does Turing support self-hosting?”. Viglet Turing searches
+            Example: ask the assistant “Does Viglet Turing support self-hosting?”. Viglet Turing searches
             its own documentation, then answers with a
             retrieval-augmented (RAG) response that cites the documentation pages it used.
           </p>

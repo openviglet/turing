@@ -10,6 +10,7 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
+import { PRODUCTS } from "@/components/products";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
@@ -30,7 +31,7 @@ const NAV_GROUPS = [
     items: [
       { label: "Capabilities", href: withBase("/#features") },
       { label: "AI Personas", href: withBase("/persona/") },
-      { label: "Why Turing", href: withBase("/#why") },
+      { label: `Why ${PRODUCTS.turing.fullName}`, href: withBase("/#why") },
       { label: "Developers", href: withBase("/#developers") },
       { label: "Marketplace", href: withBase("/#marketplace") },
     ],
@@ -77,11 +78,12 @@ export function SiteNav() {
     >
       <Container className="flex h-16 items-center gap-4">
         <div className="flex shrink-0 items-center gap-2.5">
-          <a href={withBase("/")} className="text-base" aria-label="Viglet Turing home">
-            {/* Icon-only mark on mobile to leave room for the CTA + menu; full
-                wordmark from sm up. */}
+          <a href={withBase("/")} className="text-base" aria-label={`${PRODUCTS.turing.fullName} home`}>
+            {/* T1268: the full product name shows at every width (never an
+                icon-only or shortened mark). Below sm the layout makes the room
+                instead: a smaller mark, and "Get started" moves into the menu. */}
             <Logo className="hidden sm:inline-flex" />
-            <Logo showWord={false} className="sm:hidden" />
+            <Logo size={28} className="text-sm sm:hidden" />
           </a>
           {/* Fluid path back to the umbrella brand: keeps the product from
               feeling like a dead end and reinforces the Viglet portfolio. */}
@@ -139,7 +141,7 @@ export function SiteNav() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="hidden sm:inline-flex">
             <a href={LINKS.docs}>
               Get started
               <ArrowRight className="size-4" />
@@ -164,6 +166,12 @@ export function SiteNav() {
       {menuOpen && (
         <nav className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
           <Container className="flex flex-col py-3">
+            <Button asChild size="sm" className="mb-2 w-full sm:hidden">
+              <a href={LINKS.docs} onClick={closeMenu}>
+                Get started
+                <ArrowRight className="size-4" />
+              </a>
+            </Button>
             {NAV_LINKS.map((item) => (
               <a
                 key={item.label}

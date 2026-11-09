@@ -34,7 +34,7 @@ export const routes: PrerenderRoute[] = [
   },
   {
     path: "/compare/",
-    title: "Turing vs Algolia, Coveo, Lucidworks, Elasticsearch & DIY RAG | Viglet Turing",
+    title: "Viglet Turing vs Algolia, Coveo, Lucidworks, Elasticsearch & DIY RAG | Viglet Turing",
     description:
       "An honest comparison of Viglet Turing against Algolia, Coveo, Lucidworks Fusion, Elasticsearch and a DIY LangChain RAG stack: a capability matrix, Coveo vs Lucidworks at a glance, where each wins, and an FAQ. Self-hosted, open source.",
   },

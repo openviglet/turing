@@ -37,7 +37,7 @@ the tools, so you can change the LLM and keep the persona.
 
 ## Why not just write a good prompt?
 
-| Capability | Turing Persona | Prompt engineering | Off-the-shelf chatbot |
+| Capability | Viglet Turing Persona | Prompt engineering | Off-the-shelf chatbot |
 | --- | --- | --- | --- |
 | One brand voice, reused across every agent | Yes | Copy-paste | Partial |
 | Mandatory & forbidden vocabulary, enforced | Two layers | No | No |

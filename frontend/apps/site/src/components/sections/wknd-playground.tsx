@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 const SEARCH_PLACEHOLDER = "Search WKND…  (try “surf”, “ski”, “Bali”, “Yosemite”)";
 
 const CHAT_GREETING =
-  "Hi! Ask about WKND adventures, travel and magazine stories. Answers are grounded in the WKND content Turing indexed from AEM.";
+  "Hi! Ask about WKND adventures, travel and magazine stories. Answers are grounded in the WKND content Viglet Turing indexed from AEM.";
 
 const CHAT_SUGGESTIONS = [
   "Where can I go surfing?",
@@ -164,7 +164,7 @@ export function WkndPlayground() {
 
       {/* provenance note: the inner demo already shows "Built with …" */}
       <div className="border-t border-border px-4 py-2.5 text-xs text-muted-foreground">
-        Adobe WKND content · indexed from AEM via the Dumont connector
+        Adobe WKND content · indexed from AEM via the Viglet Dumont connector
       </div>
     </div>
   );

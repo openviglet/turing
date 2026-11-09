@@ -2,7 +2,7 @@
 
 > Viglet Turing adds cited, streaming AI answers plus faceted keyword + semantic
 > search to Adobe Experience Manager (AEM 6.5 and AEM as a Cloud Service),
-> indexed via the Dumont AEM connector. Self-hosted, open source (Apache 2.0).
+> indexed via the Viglet Dumont AEM connector. Self-hosted, open source (Apache 2.0).
 
 Page: https://turing.viglet.org/aem-search/
 
@@ -11,12 +11,12 @@ Page: https://turing.viglet.org/aem-search/
 AEM search is how people find content managed in Adobe Experience Manager:
 pages, components and DAM assets. Adobe's built-in Query Builder / Omnisearch
 covers basic keyword lookups; for typo-tolerant, faceted and AI-powered search
-(semantic results and cited answers) you add a dedicated search layer. Turing
+(semantic results and cited answers) you add a dedicated search layer. Viglet Turing
 provides that layer while AEM stays your content source of truth.
 
 ## How to add AI search to AEM (4 steps)
 
-1. **Connect your AEM tier.** Point the Turing AEM connector at your author or
+1. **Connect your AEM tier.** Point the Viglet Turing AEM connector at your author or
    publish instance. It crawls pages, components and DAM assets (extracting text
    from PDFs and Office files) into a Semantic Navigation site. Works with AEM
    6.5+ and AEM as a Cloud Service; no template changes.
@@ -58,7 +58,7 @@ provides that layer while AEM stays your content source of truth.
 </script>
 ```
 
-## How Turing compares (AEM search options)
+## How Viglet Turing compares (AEM search options)
 
 | Capability | Viglet Turing | AEM-native AI add-on | Adobe native search |
 | --- | --- | --- | --- |
@@ -102,5 +102,5 @@ resolve on the public WKND site (wknd.site).
 ## Links
 
 - AEM Search page: https://turing.viglet.org/aem-search/
-- AEM Connector docs (Dumont): https://docs.viglet.org/dumont/connectors/aem
+- AEM Connector docs (Viglet Dumont): https://docs.viglet.org/dumont/connectors/aem
 - Documentation: https://turing.viglet.org/docs/

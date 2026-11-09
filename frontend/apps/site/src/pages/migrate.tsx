@@ -40,7 +40,7 @@ export function MigratePage() {
               <ArrowLeft className="size-4" /> Back to overview
             </a>
             <p className="mt-6 text-xs font-extrabold tracking-[0.12em] text-[#7f8bbd] uppercase">
-              Migrate to Turing
+              Migrate to Viglet Turing
             </p>
             <h1 className="mt-3 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
               Switching from Algolia or Elasticsearch is one command
@@ -80,7 +80,7 @@ export function MigratePage() {
                   turing migrate
                 </code>{" "}
                 reads your Elasticsearch mappings or Algolia settings, turns them
-                into a Turing schema, and streams the records across in a single
+                into a Viglet Turing schema, and streams the records across in a single
                 step. And it's cautious by design:
               </p>
               <ul className="mt-6 space-y-4">
@@ -113,7 +113,7 @@ export function MigratePage() {
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 The concepts map almost one-to-one. Where a hosted feature is
-                paid, beta or vendor-locked, Turing ships the equivalent in the
+                paid, beta or vendor-locked, Viglet Turing ships the equivalent in the
                 box, on the search engine you already operate.
               </p>
             </div>
@@ -198,7 +198,7 @@ export function MigratePage() {
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
                 A hosted SaaS keeps your index, and increasingly your users'
-                queries, in someone else's cloud. Turing runs on your own
+                queries, in someone else's cloud. Viglet Turing runs on your own
                 hardware: documents, embeddings and query logs stay put.
               </p>
               <ul className="mx-auto mt-6 grid max-w-xl gap-2.5 text-left sm:grid-cols-2">

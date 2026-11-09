@@ -25,9 +25,9 @@ export function Comparison() {
     <section id="why" className="bg-muted/40 py-20">
       <Container>
         <SectionHeader
-          eyebrow="Why Turing"
+          eyebrow="Why Viglet Turing"
           title="The open-source way to do AI search"
-          description="A hosted SaaS locks your data in someone else's cloud. A DIY stack is months of glue code. Turing gives you both halves, self-hosted."
+          description="A hosted SaaS locks your data in someone else's cloud. A DIY stack is months of glue code. Viglet Turing gives you both halves, self-hosted."
         />
         <TableScroll fadeClassName="from-muted">
           <table className="w-full min-w-[640px] border-collapse text-sm">

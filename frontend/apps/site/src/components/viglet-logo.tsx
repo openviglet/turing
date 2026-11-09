@@ -13,12 +13,7 @@
  */
 
 import { withBase } from "@/lib/site-url";
-
-const PRODUCT_NAMES: Record<string, string> = {
-  dumont: "Viglet Dumont",
-  shio: "Viglet Shio",
-  turing: "Viglet Turing",
-};
+import { PRODUCTS, type ProductId } from "@/components/products";
 
 interface VigletLogoProps {
   readonly identifier: string;
@@ -29,7 +24,7 @@ interface VigletLogoProps {
 }
 
 export function VigletLogo({ identifier, size = 48, glow = false, className }: VigletLogoProps) {
-  const name = PRODUCT_NAMES[identifier];
+  const name = PRODUCTS[identifier as ProductId]?.fullName;
   if (!name) return null;
   const small = size < 56;
   const classes = [className, glow && !small ? "vg-cube-glow" : ""].filter(Boolean).join(" ");

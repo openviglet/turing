@@ -66,7 +66,7 @@ function AemJsonLd() {
         operatingSystem: "Any (self-hosted, Docker)",
         url: siteUrl("/aem-search/"),
         description:
-          "AI search for Adobe Experience Manager: cited, streaming answers plus faceted keyword + semantic search over AEM 6.5 and AEM as a Cloud Service, indexed via the Dumont connector. Self-hosted, open source (Apache 2.0).",
+          "AI search for Adobe Experience Manager: cited, streaming answers plus faceted keyword + semantic search over AEM 6.5 and AEM as a Cloud Service, indexed via the Viglet Dumont connector. Self-hosted, open source (Apache 2.0).",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         license: "https://www.apache.org/licenses/LICENSE-2.0",
       },
@@ -123,7 +123,7 @@ export function AemPage() {
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#aeb7d4]">
               The AEM-native pitch is “Cloud-Service-native.” That's also its
-              limit. Turing gives AEM the same cited, streaming AI answers,
+              limit. Viglet Turing gives AEM the same cited, streaming AI answers,
               and more: it searches beyond AEM, adds agents,
               tools, skills and MCP, runs on any LLM and any search engine, and
               keeps every page and query in your own infrastructure. Open source,
@@ -161,7 +161,7 @@ export function AemPage() {
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                 This is the Adobe WKND reference site, its pages and assets
-                indexed live via the Dumont AEM connector. Search it with facets
+                indexed live via the Viglet Dumont AEM connector. Search it with facets
                 and typo tolerance, or ask a question and get a grounded, cited
                 answer. Every result and citation links back to the public WKND
                 site. Same SDK, same corpus, two views.
@@ -182,7 +182,7 @@ export function AemPage() {
                 Sits alongside AEM, no re-platforming
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                AEM stays your content source of truth. Turing connects, indexes
+                AEM stays your content source of truth. Viglet Turing connects, indexes
                 into the engine you choose, and drops a cited-answer UI wherever
                 your users are.
               </p>
@@ -216,7 +216,7 @@ export function AemPage() {
                 Everything an AEM AI search does, and the parts it can't
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Turing matches a Cloud-Service-native add-on on the core
+                Viglet Turing matches a Cloud-Service-native add-on on the core
                 AI-answer story. The depth gap opens on everything around it.
               </p>
             </div>
@@ -278,7 +278,7 @@ export function AemPage() {
                 We have more depth
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Where an AEM-only add-on reaches its ceiling, Turing keeps going.
+                Where an AEM-only add-on reaches its ceiling, Viglet Turing keeps going.
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">

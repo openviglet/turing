@@ -714,6 +714,7 @@
 - 🗑 **T480** — abandoned: Viglet Cloud owns the hosted signup path in its own repo, so the site links to it instead of Turing building a second one
 - 🗑 **T481** — abandoned: social proof needs real named adopters, which is a business precondition rather than work a backlog can hold open
 - **T1251** — turing.viglet.org/wordpress is a prerendered page of its own: hero with install and Playground demo, click-to-load nocookie video (pt-BR), the eight-chapter story, FAQ and JSON-LD, Dumont linked.
+- **T1268 (marketing site)** — The marketing site, its JSON-LD, titles, llms.txt and Markdown twins say Viglet Turing/Dumont everywhere, from typed identity data, with the wordmark shown on mobile.
 
 ## Block AC — JPA caching strategy: decouple cache from entities
 

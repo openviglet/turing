@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { VigletLogo } from "@/components/viglet-logo";
+import { PRODUCTS } from "@/components/products";
 
 /** The Viglet Turing cube mark and wordmark. */
 export function Logo({
@@ -14,8 +15,8 @@ export function Logo({
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2 font-extrabold", className)}>
-      <VigletLogo identifier="turing" size={size} />
-      {showWord && <span>Viglet Turing</span>}
+      <VigletLogo identifier={PRODUCTS.turing.id} size={size} />
+      {showWord && <span className="whitespace-nowrap">{PRODUCTS.turing.fullName}</span>}
     </span>
   );
 }
