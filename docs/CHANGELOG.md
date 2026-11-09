@@ -1711,3 +1711,4 @@
 - **T1266** — The plugin README and the WordPress docs page send installs to the Viglet Turing releases (wordpress-v<version> tags) and say how to build the zip before a version is released.
 - **T1267** — The README's overview, capability table, diagram and product table send WordPress and WooCommerce to the Viglet Turing Search plugin, and keep AEM, databases, files and crawls under Viglet Dumont.
 - **T1274** — The plugin's block title, feature labels, URL fields and Connect page say Viglet Turing in English and pt_BR; docs quote them and the contract check needs no exception.
+- **T1275** — All 89 plugin strings with a bare name, plus the demo tours, now say Viglet Turing in English and pt_BR; the tours' docs anchor follows the renamed heading.

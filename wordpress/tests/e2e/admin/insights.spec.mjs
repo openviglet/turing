@@ -170,7 +170,9 @@ test( 'metrics turned off in Turing are said, not shown as a quiet period', asyn
 	await page.goto( '/wp-admin/admin.php?page=viglet-turing-insights' );
 	const notices = page.locator( '.components-notice' );
 	await expect(
-		notices.filter( { hasText: 'Turing is not keeping search metrics' } )
+		notices.filter( {
+			hasText: 'Viglet Turing is not keeping search metrics',
+		} )
 	).toBeVisible();
 	await expect(
 		notices.filter( { hasText: 'No searches in this period yet.' } )

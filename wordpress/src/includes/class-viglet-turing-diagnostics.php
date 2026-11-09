@@ -68,10 +68,10 @@ class Viglet_Turing_Diagnostics {
 				$steps,
 				'turing',
 				/* translators: %d: the HTTP status the server answered with. */
-				sprintf( __( 'The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way.', 'viglet-turing-search' ), $code )
+				sprintf( __( 'The server answered HTTP %d where Viglet Turing answers its discovery document: this URL is not a Viglet Turing, or a proxy is in the way.', 'viglet-turing-search' ), $code )
 			);
 		}
-		$steps[] = $this->pass( 'turing', __( 'It is a Turing.', 'viglet-turing-search' ) );
+		$steps[] = $this->pass( 'turing', __( 'It is a Viglet Turing.', 'viglet-turing-search' ) );
 
 		// Demo mode (D238) holds no key: the SN site is checked the way visitors reach it.
 		if ( Viglet_Turing_Settings::demo() ) {
@@ -79,7 +79,7 @@ class Viglet_Turing_Diagnostics {
 		}
 
 		if ( '' === (string) ( $this->settings['api_key'] ?? '' ) ) {
-			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Turing under API Tokens and paste it here.', 'viglet-turing-search' ) );
+			return $this->stop( $steps, 'key', __( 'No API key is set. Create one in Viglet Turing under API Tokens and paste it here.', 'viglet-turing-search' ) );
 		}
 
 		$client  = new Viglet_Turing_API_Client( $this->settings );
@@ -92,11 +92,11 @@ class Viglet_Turing_Diagnostics {
 				$steps,
 				'key',
 				$refused
-					? __( 'Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites.', 'viglet-turing-search' )
+					? __( 'Viglet Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites.', 'viglet-turing-search' )
 					: $message
 			);
 		}
-		$steps[] = $this->pass( 'key', __( 'Turing accepts the API key.', 'viglet-turing-search' ) );
+		$steps[] = $this->pass( 'key', __( 'Viglet Turing accepts the API key.', 'viglet-turing-search' ) );
 
 		$exists  = ! empty( $plan['siteExists'] );
 		$steps[] = $exists
@@ -108,7 +108,7 @@ class Viglet_Turing_Diagnostics {
 			: $this->fail(
 				'site',
 				/* translators: %s: the SN site's name. */
-				sprintf( __( 'There is no SN site named %s in Turing yet. Create it from here, or check the name.', 'viglet-turing-search' ), $this->settings['site_name'] )
+				sprintf( __( 'There is no SN site named %s in Viglet Turing yet. Create it from here, or check the name.', 'viglet-turing-search' ), $this->settings['site_name'] )
 			);
 
 		return array(
@@ -179,11 +179,11 @@ class Viglet_Turing_Diagnostics {
 		}
 		if ( preg_match( '/timed out|timeout/i', $message ) ) {
 			/* translators: %s: the host name. */
-			return sprintf( __( '%s did not answer in time: a firewall may be dropping the connection, or Turing is down.', 'viglet-turing-search' ), $host );
+			return sprintf( __( '%s did not answer in time: a firewall may be dropping the connection, or Viglet Turing is down.', 'viglet-turing-search' ), $host );
 		}
 		if ( preg_match( '/refused|Failed to connect/i', $message ) ) {
 			/* translators: %s: the host name. */
-			return sprintf( __( 'Nothing is listening at %s on that port: Turing is down, or the port is wrong.', 'viglet-turing-search' ), $host );
+			return sprintf( __( 'Nothing is listening at %s on that port: Viglet Turing is down, or the port is wrong.', 'viglet-turing-search' ), $host );
 		}
 
 		return $message;

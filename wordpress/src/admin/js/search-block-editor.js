@@ -162,7 +162,7 @@
 							'viglet-turing-search'
 						),
 						help: __(
-							'A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources.',
+							'A search that reads as a question gets Viglet Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Viglet Turing cites sources.',
 							'viglet-turing-search'
 						),
 						checked: attributes.showAnswer,

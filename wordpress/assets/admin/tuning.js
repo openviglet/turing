@@ -37,7 +37,10 @@ function RowAction( { item, onRemove, label } ) {
 	if ( ! item.ours ) {
 		return (
 			<span className="description">
-				{ __( 'Set in Turing’s console', 'viglet-turing-search' ) }
+				{ __(
+					'Set in Viglet Turing’s console',
+					'viglet-turing-search'
+				) }
 			</span>
 		);
 	}
@@ -619,7 +622,7 @@ function Boosts( { boosts, off, types, act } ) {
 				{ ! boosts && (
 					<Notice status="warning" isDismissible={ false }>
 						{ __(
-							'Turing did not say which boosts are set; saving replaces them.',
+							'Viglet Turing did not say which boosts are set; saving replaces them.',
 							'viglet-turing-search'
 						) }
 					</Notice>

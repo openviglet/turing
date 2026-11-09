@@ -25,14 +25,14 @@
 		{
 			selector: '.viglet-turing-search__form',
 			chapter: 2,
-			anchor: '#the-turing-search-block',
+			anchor: '#the-viglet-turing-search-block',
 			en: [
 				'Say when, in words',
-				'"Debates in November" or "this week" becomes a filter on the event\'s day, with or without a language model behind Turing.',
+				'"Debates in November" or "this week" becomes a filter on the event\'s day, with or without a language model behind Viglet Turing.',
 			],
 			pt: [
 				'Diga quando, em palavras',
-				'"Debates em novembro" ou "nesta semana" vira um filtro no dia do evento, com ou sem um modelo de linguagem no Turing.',
+				'"Debates em novembro" ou "nesta semana" vira um filtro no dia do evento, com ou sem um modelo de linguagem no Viglet Turing.',
 			],
 		},
 		{

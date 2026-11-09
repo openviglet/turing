@@ -240,7 +240,7 @@ class Viglet_Turing_API_Client {
 		}
 		$zip = self::zip( array( 'snJobItems' => $job_items ), $files );
 		if ( null === $zip ) {
-			return $this->outcome( false, __( 'The files could not be packed for Turing.', 'viglet-turing-search' ), 0 );
+			return $this->outcome( false, __( 'The files could not be packed for Viglet Turing.', 'viglet-turing-search' ), 0 );
 		}
 
 		$boundary = 'viglet-turing-' . md5( $zip );
@@ -457,7 +457,7 @@ class Viglet_Turing_API_Client {
 			return new WP_Error(
 				'plan_failed',
 				/* translators: %d: the HTTP status code Turing answered with. */
-				sprintf( __( 'Turing could not plan the fields (HTTP %d).', 'viglet-turing-search' ), $code )
+				sprintf( __( 'Viglet Turing could not plan the fields (HTTP %d).', 'viglet-turing-search' ), $code )
 			);
 		}
 
@@ -600,7 +600,7 @@ class Viglet_Turing_API_Client {
 	private function request( string $method, string $path, ?array $query = null, ?array $body = null, array $extra = array() ) {
 		// A page read while Turing is marked down does not wait for it again (D328).
 		if ( $this->render && get_transient( self::DOWN_TRANSIENT ) ) {
-			return new WP_Error( 'turing_down', __( 'Turing did not answer a moment ago; this page renders without it.', 'viglet-turing-search' ) );
+			return new WP_Error( 'turing_down', __( 'Viglet Turing did not answer a moment ago; this page renders without it.', 'viglet-turing-search' ) );
 		}
 		if ( $this->render ) {
 			$extra['timeout'] = self::render_timeout();
@@ -660,7 +660,7 @@ class Viglet_Turing_API_Client {
 			'viglet_turing_demo',
 			sprintf(
 				/* translators: %s: the constant or environment variable that turns demo mode on. */
-				__( 'Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-turing-search' ),
+				__( 'Demo mode (%s) is on: this site holds no Viglet Turing key and never writes to Viglet Turing, so nothing is indexed, removed or provisioned from here.', 'viglet-turing-search' ),
 				Viglet_Turing_Settings::DEMO
 			)
 		);
@@ -695,7 +695,7 @@ class Viglet_Turing_API_Client {
 			'viglet_turing_playground',
 			sprintf(
 				/* translators: %s: the Turing address the plugin is set to. */
-				__( 'WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-turing-search' ),
+				__( 'WordPress Playground could not reach Viglet Turing at %s. From Playground, Viglet Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in.', 'viglet-turing-search' ),
 				$server_url
 			)
 		);
@@ -906,11 +906,11 @@ class Viglet_Turing_API_Client {
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 		if ( 403 === $code && is_array( $body ) && is_string( $body['error'] ?? null ) && '' !== $body['error'] ) {
 			/* translators: %s: Turing's reason for refusing the request. */
-			return sprintf( __( 'Turing refused this site’s API key here: %s', 'viglet-turing-search' ), rtrim( $body['error'], '.' ) . '.' );
+			return sprintf( __( 'Viglet Turing refused this site’s API key here: %s', 'viglet-turing-search' ), rtrim( $body['error'], '.' ) . '.' );
 		}
 
 		/* translators: %d: the HTTP status Turing answered with. */
-		return sprintf( __( 'Turing answered HTTP %d.', 'viglet-turing-search' ), $code );
+		return sprintf( __( 'Viglet Turing answered HTTP %d.', 'viglet-turing-search' ), $code );
 	}
 
 	/**
@@ -1008,9 +1008,9 @@ class Viglet_Turing_API_Client {
 	 */
 	private static function ai_reason( string $feature, string $reason ): string {
 		$reasons = array(
-			'NO_GENAI'          => __( 'Generative AI is off for this SN site in Turing.', 'viglet-turing-search' ),
-			'NO_AGENT'          => __( 'The SN site has no AI agent in Turing.', 'viglet-turing-search' ),
-			'AGENT_DISABLED'    => __( 'The SN site’s AI agent is turned off in Turing.', 'viglet-turing-search' ),
+			'NO_GENAI'          => __( 'Generative AI is off for this SN site in Viglet Turing.', 'viglet-turing-search' ),
+			'NO_AGENT'          => __( 'The SN site has no AI agent in Viglet Turing.', 'viglet-turing-search' ),
+			'AGENT_DISABLED'    => __( 'The SN site’s AI agent is turned off in Viglet Turing.', 'viglet-turing-search' ),
 			'RAG_DISABLED'      => __( 'The SN site’s AI agent does not answer from the site’s content.', 'viglet-turing-search' ),
 			'MISSING_LLM'       => __( 'The SN site’s AI agent has no language model.', 'viglet-turing-search' ),
 			'MISSING_EMBEDDING' => __( 'The SN site’s AI agent has no embedding model.', 'viglet-turing-search' ),
@@ -1018,8 +1018,8 @@ class Viglet_Turing_API_Client {
 		);
 		if ( 'MISSING_DEFAULT_LLM' === $reason ) {
 			return 'copilot' === $feature
-				? __( 'Turing has no catalog copilot set up.', 'viglet-turing-search' )
-				: __( 'No language model is set up for it in Turing.', 'viglet-turing-search' );
+				? __( 'Viglet Turing has no catalog copilot set up.', 'viglet-turing-search' )
+				: __( 'No language model is set up for it in Viglet Turing.', 'viglet-turing-search' );
 		}
 
 		return $reasons[ $reason ] ?? $reason;
@@ -1041,7 +1041,7 @@ class Viglet_Turing_API_Client {
 			$decoded = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 			return is_array( $decoded ) ? $decoded : null;
 		};
-		$unreachable = __( 'Turing did not answer.', 'viglet-turing-search' );
+		$unreachable = __( 'Viglet Turing did not answer.', 'viglet-turing-search' );
 
 		$chat = $json( $this->request( 'GET', $site . '/chat/enabled' ) );
 
@@ -1101,12 +1101,12 @@ class Viglet_Turing_API_Client {
 			array(
 				'feature' => 'nl_filters',
 				'on'      => ! empty( $nl['available'] ),
-				'reason'  => null === $nl ? $unreachable : ( empty( $nl['available'] ) ? __( 'No language model is set up for it in Turing.', 'viglet-turing-search' ) : '' ),
+				'reason'  => null === $nl ? $unreachable : ( empty( $nl['available'] ) ? __( 'No language model is set up for it in Viglet Turing.', 'viglet-turing-search' ) : '' ),
 			),
 			array(
 				'feature' => 'copilot',
 				'on'      => ! empty( $copilot['available'] ),
-				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Turing has no catalog copilot set up.', 'viglet-turing-search' ) : '' ),
+				'reason'  => null === $copilot ? $unreachable : ( empty( $copilot['available'] ) ? __( 'Viglet Turing has no catalog copilot set up.', 'viglet-turing-search' ) : '' ),
 			),
 		);
 	}

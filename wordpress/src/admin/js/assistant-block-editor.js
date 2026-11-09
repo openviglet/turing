@@ -66,7 +66,7 @@
 					attributes.heading ||
 					__( 'Ask this site', 'viglet-turing-search' ),
 				instructions: __(
-					'A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site.',
+					'A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Viglet Turing’s chat is on for this site.',
 					'viglet-turing-search'
 				),
 			} )

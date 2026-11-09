@@ -44,7 +44,7 @@ test( 'Fields shows the seats facet in Turing and previews a document', async ( 
 	} );
 	await expect( post.locator( 'input[value="seats"]' ) ).toBeVisible();
 	await expect( post.locator( 'tbody tr' ).first() ).toContainText(
-		'In Turing'
+		'In Viglet Turing'
 	);
 
 	// A number field with ranges lists them, each editable, under its row.

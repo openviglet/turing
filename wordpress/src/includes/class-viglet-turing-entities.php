@@ -530,7 +530,7 @@ class Viglet_Turing_Entities {
 			return $made;
 		}
 
-		return '' !== (string) ( $made['id'] ?? '' ) ? (string) $made['id'] : new WP_Error( 'viglet_turing_thesaurus', __( 'Turing did not create the thesaurus.', 'viglet-turing-search' ) );
+		return '' !== (string) ( $made['id'] ?? '' ) ? (string) $made['id'] : new WP_Error( 'viglet_turing_thesaurus', __( 'Viglet Turing did not create the thesaurus.', 'viglet-turing-search' ) );
 	}
 
 	/**
@@ -642,7 +642,7 @@ class Viglet_Turing_Entities {
 		if ( is_array( $data ) && 403 === (int) ( $data['status'] ?? 0 ) ) {
 			return array(
 				'success' => false,
-				'message' => __( 'Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Turing\'s Thesaurus.', 'viglet-turing-search' ),
+				'message' => __( 'Viglet Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Viglet Turing\'s Thesaurus.', 'viglet-turing-search' ),
 			);
 		}
 

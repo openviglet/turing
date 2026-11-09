@@ -151,7 +151,7 @@
 				icon: 'format-chat',
 				label: attributes.heading || title,
 				instructions: __(
-					'Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it.',
+					'Visitors ask in plain words and Viglet Turing’s copilot answers from this site, citing its items. It shows only when Viglet Turing has a language model for it.',
 					'viglet-turing-search'
 				),
 			} )

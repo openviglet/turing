@@ -163,7 +163,7 @@ test( 'a site whose agent has personas scores the post for each, with the reason
 	const panel = await openPanel( page, seed );
 	const fit = panel.locator( '.viglet-turing-assist__fit' );
 	await expect(
-		fit.getByText( 'Judged by Turing against Grant applicant' )
+		fit.getByText( 'Judged by Viglet Turing against Grant applicant' )
 	).toBeVisible();
 	await fit.getByRole( 'button', { name: 'Check audience fit' } ).click();
 	await expect( fit.locator( 'li' ).first() ).toContainText(

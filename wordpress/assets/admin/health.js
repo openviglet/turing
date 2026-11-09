@@ -228,7 +228,7 @@ function AiFeatures( { quota } ) {
 			<CardBody>
 				<p>
 					{ __(
-						'Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off.',
+						'Which of Viglet Turing’s generative features this site can use. Blocks that need one stay hidden while it is off.',
 						'viglet-turing-search'
 					) }
 				</p>
@@ -450,7 +450,7 @@ function Health() {
 								</th>
 								<th scope="col">
 									{ __(
-										'Indexed in Turing',
+										'Indexed in Viglet Turing',
 										'viglet-turing-search'
 									) }
 								</th>

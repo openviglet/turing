@@ -126,7 +126,7 @@ class Viglet_Turing_Events {
 				return __( 'Fields provisioned', 'viglet-turing-search' );
 			case 'provision_breaking':
 				/* translators: %s: the fields whose type Turing would have to change. */
-				$format = __( 'Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Turing.', 'viglet-turing-search' );
+				$format = __( 'Viglet Turing kept the site\'s schema: a mapped field would change an existing field\'s type (%s). Rename the field or migrate it in Viglet Turing.', 'viglet-turing-search' );
 				break;
 			case 'provision_failed':
 				/* translators: 1: the HTTP status code, 2: Turing's error message. */
@@ -150,13 +150,13 @@ class Viglet_Turing_Events {
 				break;
 			case 'replayed':
 				/* translators: %d: queued edits that had stopped retrying and were sent again. */
-				$format = __( 'Turing answered again: %d stopped edits put back in the queue.', 'viglet-turing-search' );
+				$format = __( 'Viglet Turing answered again: %d stopped edits put back in the queue.', 'viglet-turing-search' );
 				break;
 			case 'quota':
 				// D332: Turing's reset date, as the site writes a moment, then Turing's own words.
 				return trim( Viglet_Turing_AI_Quota::line( Viglet_Turing_AI_Quota::until( (string) ( $args[0] ?? '' ) ) ) . ' ' . (string) ( $args[1] ?? '' ) );
 			case 'quota_back':
-				return __( 'Turing answered an AI call again: the AI budget is no longer exhausted.', 'viglet-turing-search' );
+				return __( 'Viglet Turing answered an AI call again: the AI budget is no longer exhausted.', 'viglet-turing-search' );
 			default:
 				return $key;
 		}//end switch

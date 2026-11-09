@@ -261,7 +261,7 @@ class Viglet_Turing_Operations {
 			return array(
 				'success' => false,
 				'orphans' => array(),
-				'message' => __( 'Turing could not be searched for this site\'s documents.', 'viglet-turing-search' ),
+				'message' => __( 'Viglet Turing could not be searched for this site\'s documents.', 'viglet-turing-search' ),
 			);
 		}
 		if ( $dry_run || empty( $orphans ) ) {

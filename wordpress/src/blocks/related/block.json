@@ -5,7 +5,7 @@
 	"title": "Related content",
 	"category": "widgets",
 	"icon": "networking",
-	"description": "The posts Turing finds most like the one being read, from its similar-documents search.",
+	"description": "The posts Viglet Turing finds most like the one being read, from its similar-documents search.",
 	"keywords": [ "related", "similar", "turing" ],
 	"textdomain": "viglet-turing-search",
 	"usesContext": [ "postId", "postType" ],

@@ -65,7 +65,7 @@ class Viglet_Turing_Tuning {
 		}
 
 		/* translators: %s: the SN site's name. */
-		return new WP_Error( 'viglet_turing_no_site', sprintf( __( 'Turing has no SN site named %s.', 'viglet-turing-search' ), $this->settings['site_name'] ) );
+		return new WP_Error( 'viglet_turing_no_site', sprintf( __( 'Viglet Turing has no SN site named %s.', 'viglet-turing-search' ), $this->settings['site_name'] ) );
 	}
 
 	/**
@@ -415,7 +415,7 @@ class Viglet_Turing_Tuning {
 			return $item;
 		}
 		if ( ! $item || ! $this->is_ours( $item ) ) {
-			return new WP_Error( 'viglet_turing_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Turing\'s console.', 'viglet-turing-search' ) );
+			return new WP_Error( 'viglet_turing_not_ours', __( 'Only what this plugin added can be removed here; change the rest in Viglet Turing\'s console.', 'viglet-turing-search' ) );
 		}
 		$removed = $this->client->call( 'DELETE', "/api/sn/{$site}/{$kind}/" . rawurlencode( $id ) );
 		if ( is_wp_error( $removed ) ) {

@@ -185,7 +185,7 @@ class Viglet_Turing_CLI {
 			WP_CLI::warning(
 				sprintf(
 					/* translators: %d: posts sent that Turing did not answer for in time. */
-					__( 'Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp turing status shows what it holds.', 'viglet-turing-search' ),
+					__( 'Viglet Turing did not answer in time for %d posts. They were sent and Viglet Turing may still be indexing them: wp turing status shows what it holds.', 'viglet-turing-search' ),
 					$result['unconfirmed']
 				)
 			);

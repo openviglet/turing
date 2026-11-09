@@ -141,7 +141,7 @@ class Viglet_Turing_Compare {
 		if ( empty( $result['success'] ) || '' === $summary ) {
 			return array(
 				'summary' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-turing-search' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Viglet Turing wrote no summary.', 'viglet-turing-search' ),
 			);
 		}
 		if ( ! self::grounded( $summary, $data ) ) {

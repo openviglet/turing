@@ -2462,24 +2462,3 @@ path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (
 per-site opt-in that would have emptied the citations was dropped: a client that wants
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
-
-### CLXXXII.16 Plugin message strings use the full product name (T1275)
-
-Found by T1274 (2026-11-09). T1274 renamed the plugin's labels (the block title, the two
-"search block, with ..." feature labels, the Viglet Turing URL fields and the Connect
-page) to the full product name, as the viglet.org hub's naming rule (hub
-docs/STRATEGY.md I.7) asks. About eighty other visible strings still say bare "Turing"
-inside sentences: the settings page descriptions (src/admin/views/settings-page.php),
-the connection diagnostics (class-viglet-turing-diagnostics.php), the API client's
-errors (class-viglet-turing-api-client.php), the mapping, tuning and insights screens
-(assets/admin/mapping.js, tuning.js, insights.js), the editor panel
-(src/admin/js/editor-panel.js), the setup step label "Turing" in assets/admin/setup.js,
-and the demo tour (demo/theme/tarnfell/assets/tour.js).
-
-Rename them the way T1274 did: one script that changes each msgid in the source, the .po
-and the .pot together with its pt_BR msgstr ("do Turing" becomes "do Viglet Turing"),
-then regenerate with WP-CLI in Docker as the plugin README's Translations section shows
-and run npm run check:i18n, npm run lint:js and composer check. Locate any e2e spec that
-matches one of these strings (grep tests/e2e) and update it in the same commit. Keep the
-text domain, option keys, WP-CLI command names (wp turing) and code comments as they
-are.

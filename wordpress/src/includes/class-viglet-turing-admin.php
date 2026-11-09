@@ -51,8 +51,8 @@ class Viglet_Turing_Admin {
 				sprintf(
 					/* translators: %d: queued edits that stopped retrying. */
 					_n(
-						'%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers.',
-						'%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers.',
+						'%d edit has not reached search: Viglet Turing did not answer, and it stopped retrying. It is sent again on its own once Viglet Turing answers.',
+						'%d edits have not reached search: Viglet Turing did not answer, and they stopped retrying. They are sent again on their own once Viglet Turing answers.',
 						$failed,
 						'viglet-turing-search'
 					),

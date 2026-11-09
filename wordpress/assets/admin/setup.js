@@ -24,7 +24,7 @@ import { __, sprintf } from '@wordpress/i18n';
 const STEP_LABEL = {
 	url: __( 'Address', 'viglet-turing-search' ),
 	reach: __( 'Network', 'viglet-turing-search' ),
-	turing: __( 'Turing', 'viglet-turing-search' ),
+	turing: __( 'Viglet Turing', 'viglet-turing-search' ),
 	key: __( 'API key', 'viglet-turing-search' ),
 	site: __( 'SN site', 'viglet-turing-search' ),
 };
@@ -218,7 +218,7 @@ function Setup() {
 							'viglet-turing-search'
 						) }
 						help={ __(
-							'The address of your Turing, e.g. https://search.example.org.',
+							'The address of your Viglet Turing, e.g. https://search.example.org.',
 							'viglet-turing-search'
 						) }
 						type="url"
@@ -236,7 +236,7 @@ function Setup() {
 										'viglet-turing-search'
 									)
 								: __(
-										'Create one in Turing under API Tokens.',
+										'Create one in Viglet Turing under API Tokens.',
 										'viglet-turing-search'
 									)
 						}

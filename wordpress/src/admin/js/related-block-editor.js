@@ -62,14 +62,14 @@
 					el( SelectControl, {
 						label: __( 'Alike by', 'viglet-turing-search' ),
 						help: __(
-							'Meaning needs a site with embeddings in Turing; without them, shared words are used.',
+							'Meaning needs a site with embeddings in Viglet Turing; without them, shared words are used.',
 							'viglet-turing-search'
 						),
 						value: attributes.mode,
 						options: [
 							{
 								label: __(
-									'Turing’s choice',
+									'Viglet Turing’s choice',
 									'viglet-turing-search'
 								),
 								value: '',

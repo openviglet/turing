@@ -98,7 +98,7 @@ final class DiagnosticsTest extends PluginTestCase {
 		}
 
 		$this->assertSame( 'reach', $step['step'] );
-		$this->assertStringContainsString( 'WordPress Playground could not reach Turing at http://localhost:2700.', $step['message'] );
+		$this->assertStringContainsString( 'WordPress Playground could not reach Viglet Turing at http://localhost:2700.', $step['message'] );
 	}
 
 	public function test_in_demo_mode_no_key_is_asked_for_and_the_site_is_checked_by_a_public_search(): void {

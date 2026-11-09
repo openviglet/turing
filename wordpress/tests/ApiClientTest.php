@@ -147,7 +147,7 @@ final class ApiClientTest extends PluginTestCase {
 		$ping = ( new Viglet_Turing_API_Client( $this->settings() ) )->ping();
 
 		$this->assertFalse( $ping['success'] );
-		$this->assertStringContainsString( 'WordPress Playground could not reach Turing at https://turing.example.org.', $ping['message'] );
+		$this->assertStringContainsString( 'WordPress Playground could not reach Viglet Turing at https://turing.example.org.', $ping['message'] );
 		$this->assertStringContainsString( 'such as localhost', $ping['message'] );
 	}
 
@@ -216,7 +216,7 @@ final class ApiClientTest extends PluginTestCase {
 			array(
 				'answer'     => array( false, 'AI is not enabled for site: Sample' ),
 				'chat'       => array( true, '' ),
-				'nl_filters' => array( false, 'No language model is set up for it in Turing.' ),
+				'nl_filters' => array( false, 'No language model is set up for it in Viglet Turing.' ),
 				'copilot'    => array( true, '' ),
 			),
 			array_combine(
@@ -264,9 +264,9 @@ final class ApiClientTest extends PluginTestCase {
 
 		$this->assertSame(
 			array(
-				'answer'     => array( false, 'Generative AI is off for this SN site in Turing.' ),
-				'chat'       => array( false, 'Generative AI is off for this SN site in Turing.' ),
-				'nl_filters' => array( false, 'No language model is set up for it in Turing.' ),
+				'answer'     => array( false, 'Generative AI is off for this SN site in Viglet Turing.' ),
+				'chat'       => array( false, 'Generative AI is off for this SN site in Viglet Turing.' ),
+				'nl_filters' => array( false, 'No language model is set up for it in Viglet Turing.' ),
 				'copilot'    => array( true, '' ),
 			),
 			array_combine(
@@ -319,7 +319,7 @@ final class ApiClientTest extends PluginTestCase {
 		$failed = ( new Viglet_Turing_API_Client( $this->settings() ) )->call( 'GET', '/api/sn/s1/ranking-expression' );
 
 		$this->assertFalse( Viglet_Turing_API_Client::refused_by_partition( $failed ) );
-		$this->assertSame( 'Turing answered HTTP 500.', $failed->get_error_message() );
+		$this->assertSame( 'Viglet Turing answered HTTP 500.', $failed->get_error_message() );
 	}
 
 	public function test_a_site_turing_cannot_create_without_an_engine_is_created_on_its_first_enabled_one(): void {

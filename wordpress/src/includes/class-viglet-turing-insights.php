@@ -152,7 +152,7 @@ class Viglet_Turing_Insights {
 		if ( empty( $result['success'] ) || '' === $summary ) {
 			return array(
 				'summary' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no summary.', 'viglet-turing-search' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Viglet Turing wrote no summary.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -185,7 +185,7 @@ class Viglet_Turing_Insights {
 			)
 		);
 		if ( ! empty( $report['metricsOff'] ) ) {
-			echo '<p>' . esc_html__( 'Turing is not keeping search metrics, so no new searches are recorded.', 'viglet-turing-search' ) . '</p>';
+			echo '<p>' . esc_html__( 'Viglet Turing is not keeping search metrics, so no new searches are recorded.', 'viglet-turing-search' ) . '</p>';
 		} elseif ( ! $lists ) {
 			echo '<p>' . esc_html__( 'No searches this week yet.', 'viglet-turing-search' ) . '</p>';
 		}

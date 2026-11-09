@@ -766,7 +766,7 @@ class Viglet_Turing_Mapping {
 				'status' => 'conflict',
 				'detail' => sprintf(
 					/* translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares. */
-					__( '%1$s is %2$s in Turing, %3$s here', 'viglet-turing-search' ),
+					__( '%1$s is %2$s in Viglet Turing, %3$s here', 'viglet-turing-search' ),
 					(string) ( $change['attribute'] ?? '' ),
 					(string) ( $change['liveValue'] ?? '' ),
 					(string) ( $change['manifestValue'] ?? '' )

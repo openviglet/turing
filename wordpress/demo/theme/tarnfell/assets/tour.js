@@ -27,14 +27,14 @@
 		{
 			selector: '.viglet-turing-search__form',
 			chapter: 2,
-			anchor: '#the-turing-search-block',
+			anchor: '#the-viglet-turing-search-block',
 			en: [
 				'Search as you type',
-				'Suggestions come from what the catalog holds, and a misspelling is offered its correction. Synonyms set in Turing make "raincoat" find rain jackets.',
+				'Suggestions come from what the catalog holds, and a misspelling is offered its correction. Synonyms set in Viglet Turing make "raincoat" find rain jackets.',
 			],
 			pt: [
 				'Busca enquanto digita',
-				'As sugestões vêm do que o catálogo tem, e um erro de digitação recebe a correção. Sinônimos definidos no Turing fazem "capa de chuva" achar jaquetas impermeáveis.',
+				'As sugestões vêm do que o catálogo tem, e um erro de digitação recebe a correção. Sinônimos definidos no Viglet Turing fazem "capa de chuva" achar jaquetas impermeáveis.',
 			],
 		},
 		{
@@ -43,11 +43,11 @@
 			anchor: '#fields-and-facets',
 			en: [
 				'Filters from the catalog',
-				'Category, price, colour and use are WooCommerce fields the plugin sends to Turing as facets, each with its count for this search.',
+				'Category, price, colour and use are WooCommerce fields the plugin sends to Viglet Turing as facets, each with its count for this search.',
 			],
 			pt: [
 				'Filtros vindos do catálogo',
-				'Categoria, preço, cor e uso são campos do WooCommerce que o plugin envia ao Turing como facetas, cada uma com sua contagem nesta busca.',
+				'Categoria, preço, cor e uso são campos do WooCommerce que o plugin envia ao Viglet Turing como facetas, cada uma com sua contagem nesta busca.',
 			],
 		},
 		{
@@ -56,24 +56,24 @@
 			anchor: '#search',
 			en: [
 				'An answer with its sources',
-				"A question gets an answer written by Turing from the shop's own guides and products, with the sources it read. No source, no answer.",
+				"A question gets an answer written by Viglet Turing from the shop's own guides and products, with the sources it read. No source, no answer.",
 			],
 			pt: [
 				'Uma resposta com as fontes',
-				'Uma pergunta recebe uma resposta escrita pelo Turing a partir dos guias e produtos da loja, com as fontes que leu. Sem fonte, sem resposta.',
+				'Uma pergunta recebe uma resposta escrita pelo Viglet Turing a partir dos guias e produtos da loja, com as fontes que leu. Sem fonte, sem resposta.',
 			],
 		},
 		{
 			selector: '.wp-block-viglet-turing-related',
 			chapter: 6,
-			anchor: '#the-turing-search-block',
+			anchor: '#the-viglet-turing-search-block',
 			en: [
 				'Related, by meaning',
-				'Turing finds the products and guides most like this one by what they say, not by a tag someone set.',
+				'Viglet Turing finds the products and guides most like this one by what they say, not by a tag someone set.',
 			],
 			pt: [
 				'Relacionados pelo sentido',
-				'O Turing encontra os produtos e guias mais parecidos com este pelo que dizem, não por uma etiqueta que alguém marcou.',
+				'O Viglet Turing encontra os produtos e guias mais parecidos com este pelo que dizem, não por uma etiqueta que alguém marcou.',
 			],
 		},
 		{
@@ -82,11 +82,11 @@
 			anchor: '#search',
 			en: [
 				'Ask the catalog',
-				'Describe a need in a sentence and Turing answers with in-stock products from this shop and why each fits; one click adds it to the cart.',
+				'Describe a need in a sentence and Viglet Turing answers with in-stock products from this shop and why each fits; one click adds it to the cart.',
 			],
 			pt: [
 				'Pergunte ao catálogo',
-				'Descreva uma necessidade numa frase e o Turing responde com produtos em estoque desta loja e por que cada um serve; um clique adiciona ao carrinho.',
+				'Descreva uma necessidade numa frase e o Viglet Turing responde com produtos em estoque desta loja e por que cada um serve; um clique adiciona ao carrinho.',
 			],
 		},
 		{
@@ -96,11 +96,11 @@
 			anchor: '#search',
 			en: [
 				'Ask this site',
-				"A conversation with Turing over the shop's guides and products: each answer lists what it read, and the conversation follows the visitor from page to page.",
+				"A conversation with Viglet Turing over the shop's guides and products: each answer lists what it read, and the conversation follows the visitor from page to page.",
 			],
 			pt: [
 				'Pergunte a este site',
-				'Uma conversa com o Turing sobre os guias e produtos da loja: cada resposta lista o que leu, e a conversa acompanha o visitante de página em página.',
+				'Uma conversa com o Viglet Turing sobre os guias e produtos da loja: cada resposta lista o que leu, e a conversa acompanha o visitante de página em página.',
 			],
 		},
 	];

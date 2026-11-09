@@ -92,7 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									value="<?php echo esc_attr( $settings['server_url'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_turing_locked( 'server_url' ) ); ?>
 									placeholder="http://localhost:2700" />
-							<p class="description"><?php esc_html_e( 'The full URL of your Turing server (e.g., http://localhost:2700).', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'The full URL of your Viglet Turing server (e.g., http://localhost:2700).', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_turing_env_note( 'server_url' ); ?>
 						</div>
 
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									value="<?php echo esc_attr( $settings['site_name'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_turing_locked( 'site_name' ) ); ?>
 									placeholder="default" />
-							<p class="description"><?php esc_html_e( 'The Turing Semantic Navigation site name to use for indexing and search.', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'The Viglet Turing Semantic Navigation site name to use for indexing and search.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_turing_env_note( 'site_name' ); ?>
 						</div>
 
@@ -139,7 +139,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									class="regular-text" <?php echo esc_attr( $viglet_turing_locked( 'api_key' ) ); ?>
 									placeholder="<?php echo '' !== (string) $settings['api_key'] ? esc_attr__( 'A key is stored', 'viglet-turing-search' ) : ''; ?>"
 									autocomplete="new-password" />
-							<p class="description"><?php esc_html_e( 'Optional. API key for authentication with the Turing server.', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Optional. API key for authentication with the Viglet Turing server.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_turing_env_note( 'api_key' ); ?>
 						</div>
 
@@ -149,7 +149,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									name="<?php echo esc_attr( VIGLET_TURING_OPTION ); ?>[public_url]"
 									value="<?php echo esc_attr( $settings['public_url'] ); ?>"
 									class="regular-text" <?php echo esc_attr( $viglet_turing_locked( 'public_url' ) ); ?> />
-							<p class="description"><?php esc_html_e( 'Where visitors\' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL.', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Where visitors\' browsers reach Viglet Turing, when it differs from the Server URL this server uses. Empty uses the Server URL.', 'viglet-turing-search' ); ?></p>
 							<?php $viglet_turing_env_note( 'public_url' ); ?>
 						</div>
 
@@ -206,7 +206,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="viglet-turing-card">
 					<div class="viglet-turing-card__header">
 						<h2><?php esc_html_e( 'Content Indexing', 'viglet-turing-search' ); ?></h2>
-						<p><?php esc_html_e( 'Choose which content types and metadata to index in Turing.', 'viglet-turing-search' ); ?></p>
+						<p><?php esc_html_e( 'Choose which content types and metadata to index in Viglet Turing.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-turing-card__body">
 						<h3><?php esc_html_e( 'Post Types', 'viglet-turing-search' ); ?></h3>
@@ -359,7 +359,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['search_enabled'], 1 ); ?> />
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
-									<?php esc_html_e( 'Replace WordPress search with Turing', 'viglet-turing-search' ); ?>
+									<?php esc_html_e( 'Replace WordPress search with Viglet Turing', 'viglet-turing-search' ); ?>
 									<small><?php esc_html_e( 'When enabled, all search queries will be handled by the Viglet Turing search engine.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
@@ -371,7 +371,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<option value="theme" <?php selected( $settings['search_mode'], 'theme' ); ?>><?php esc_html_e( 'The theme\'s own search page (block and classic themes)', 'viglet-turing-search' ); ?></option>
 								<option value="template" <?php selected( $settings['search_mode'], 'template' ); ?>><?php esc_html_e( 'The plugin\'s results page, with facets (classic themes)', 'viglet-turing-search' ); ?></option>
 							</select>
-							<p class="description"><?php esc_html_e( 'With the theme\'s page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead.', 'viglet-turing-search' ); ?></p>
+							<p class="description"><?php esc_html_e( 'With the theme\'s page, Viglet Turing ranks the results and the theme shows them with its own header, footer and styles. If Viglet Turing does not answer, WordPress search answers instead.', 'viglet-turing-search' ); ?></p>
 						</div>
 
 						<hr class="viglet-turing-separator" />
@@ -465,8 +465,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['track_clicks'], 1 ); ?> />
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
-									<?php esc_html_e( 'Report result clicks to Turing', 'viglet-turing-search' ); ?>
-									<small><?php esc_html_e( 'Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on.', 'viglet-turing-search' ); ?></small>
+									<?php esc_html_e( 'Report result clicks to Viglet Turing', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Viglet Turing counts which result was opened for each search, for its click-through rates. Viglet Turing records them only with search metrics turned on.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-turing-toggle">
@@ -495,7 +495,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="viglet-turing-card">
 					<div class="viglet-turing-card__header">
 						<h2><?php esc_html_e( 'Related Content', 'viglet-turing-search' ); ?></h2>
-						<p><?php esc_html_e( 'The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:', 'viglet-turing-search' ); ?></p>
+						<p><?php esc_html_e( 'The posts Viglet Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-turing-card__body">
 						<div class="viglet-turing-toggles">
@@ -544,7 +544,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="viglet-turing-card">
 					<div class="viglet-turing-card__header">
 						<h2><?php esc_html_e( 'Generative AI', 'viglet-turing-search' ); ?></h2>
-						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Turing\'s AI provider.', 'viglet-turing-search' ); ?></p>
+						<p><?php esc_html_e( 'Answers with sources and chat over this site\'s content, through Viglet Turing\'s Default AI Agent. Each answer is an LLM call billed to whoever runs Viglet Turing\'s AI provider.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-turing-card__body">
 						<div class="viglet-turing-toggles">
@@ -554,8 +554,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 										value="1" <?php checked( $settings['generative_ai'], 1 ); ?> />
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
-									<?php esc_html_e( 'Turn on generative AI for this site in Turing', 'viglet-turing-search' ); ?>
-									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing\'s setting as it is.', 'viglet-turing-search' ); ?></small>
+									<?php esc_html_e( 'Turn on generative AI for this site in Viglet Turing', 'viglet-turing-search' ); ?>
+									<small><?php esc_html_e( 'Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Viglet Turing\'s console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Viglet Turing\'s setting as it is.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-turing-toggle">
@@ -565,7 +565,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
 									<?php esc_html_e( 'Site assistant on every page', 'viglet-turing-search' ); ?>
-									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
+									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Viglet Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-turing-toggle">
@@ -576,7 +576,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
 									<?php esc_html_e( 'Find people, organisations and places in posts', 'viglet-turing-search' ); ?>
-									<small id="entity_extraction_help"><?php esc_html_e( 'Turing\'s language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed.', 'viglet-turing-search' ); ?></small>
+									<small id="entity_extraction_help"><?php esc_html_e( 'Viglet Turing\'s language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed.', 'viglet-turing-search' ); ?></small>
 									<?php if ( ! empty( $settings['entity_extraction'] ) && ! Viglet_Turing_Mapping::declares_generative_ai( $settings ) ) : ?>
 										<small class="viglet-turing-warning"><?php esc_html_e( 'Off until generative AI is turned on.', 'viglet-turing-search' ); ?></small>
 									<?php endif; ?>
@@ -590,7 +590,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									class="large-text"
 									placeholder="<?php echo esc_attr( 'Marta Vilar | Vilar, Marta; M. Vilar' ); ?>"
 									aria-describedby="name_variants_help"><?php echo esc_textarea( Viglet_Turing_Entities::variants_text( $settings['name_variants'] ?? array() ) ); ?></textarea>
-							<p class="description" id="name_variants_help"><?php esc_html_e( 'One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Turing\'s Thesaurus for this site; posts already indexed follow once reindexed.', 'viglet-turing-search' ); ?></p>
+							<p class="description" id="name_variants_help"><?php esc_html_e( 'One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Viglet Turing\'s Thesaurus for this site; posts already indexed follow once reindexed.', 'viglet-turing-search' ); ?></p>
 							<?php
 							$viglet_turing_sync = get_option( Viglet_Turing_Entities::SYNC_OPTION, array() );
 							if ( is_array( $viglet_turing_sync ) && ! empty( $viglet_turing_sync['at'] ) ) :
@@ -599,10 +599,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<?php
 									if ( '' !== (string) ( $viglet_turing_sync['error'] ?? '' ) ) {
 										/* translators: %s: why Turing did not take the name variants. */
-										echo esc_html( sprintf( __( 'Not saved to Turing: %s', 'viglet-turing-search' ), $viglet_turing_sync['error'] ) );
+										echo esc_html( sprintf( __( 'Not saved to Viglet Turing: %s', 'viglet-turing-search' ), $viglet_turing_sync['error'] ) );
 									} else {
 										/* translators: 1: how many names, 2: when they were saved. */
-										echo esc_html( sprintf( _n( '%1$d name saved to Turing %2$s ago.', '%1$d names saved to Turing %2$s ago.', (int) $viglet_turing_sync['names'], 'viglet-turing-search' ), (int) $viglet_turing_sync['names'], human_time_diff( (int) $viglet_turing_sync['at'] ) ) );
+										echo esc_html( sprintf( _n( '%1$d name saved to Viglet Turing %2$s ago.', '%1$d names saved to Viglet Turing %2$s ago.', (int) $viglet_turing_sync['names'], 'viglet-turing-search' ), (int) $viglet_turing_sync['names'], human_time_diff( (int) $viglet_turing_sync['at'] ) ) );
 									}
 									?>
 								</p>
@@ -632,7 +632,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="viglet-turing-action-row">
 							<div>
 								<h3><?php esc_html_e( 'Connection Status', 'viglet-turing-search' ); ?></h3>
-								<p><?php esc_html_e( 'Test the connection to your Turing server.', 'viglet-turing-search' ); ?></p>
+								<p><?php esc_html_e( 'Test the connection to your Viglet Turing server.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<button type="button" id="viglet-turing-action-ping" class="button button-secondary">
 								<span class="dashicons dashicons-migrate"></span>
@@ -649,7 +649,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="viglet-turing-action-row">
 							<div>
 								<h3><?php esc_html_e( 'Index All Content', 'viglet-turing-search' ); ?></h3>
-								<p><?php esc_html_e( 'Send all published content to the Turing index. This may take a while for large sites.', 'viglet-turing-search' ); ?></p>
+								<p><?php esc_html_e( 'Send all published content to the Viglet Turing index. This may take a while for large sites.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<div class="viglet-turing-action-buttons">
 								<label class="screen-reader-text" for="viglet-turing-index-type"><?php esc_html_e( 'Content to index', 'viglet-turing-search' ); ?></label>
@@ -680,7 +680,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="viglet-turing-action-row">
 							<div>
 								<h3><?php esc_html_e( 'Delete All Indexed Content', 'viglet-turing-search' ); ?></h3>
-								<p><?php esc_html_e( 'Remove all WordPress content from the Turing index. This does not affect your WordPress content.', 'viglet-turing-search' ); ?></p>
+								<p><?php esc_html_e( 'Remove all WordPress content from the Viglet Turing index. This does not affect your WordPress content.', 'viglet-turing-search' ); ?></p>
 							</div>
 							<button type="button" id="viglet-turing-delete-all" class="button button-link-delete">
 								<span class="dashicons dashicons-trash"></span>

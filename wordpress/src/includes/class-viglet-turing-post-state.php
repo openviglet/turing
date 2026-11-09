@@ -360,7 +360,7 @@ class Viglet_Turing_Post_State {
 		if ( empty( $result['success'] ) || '' === $excerpt ) {
 			return array(
 				'excerpt' => '',
-				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Turing wrote no draft.', 'viglet-turing-search' ),
+				'error'   => '' !== (string) ( $result['error'] ?? '' ) ? (string) $result['error'] : __( 'Viglet Turing wrote no draft.', 'viglet-turing-search' ),
 			);
 		}
 
@@ -518,7 +518,7 @@ class Viglet_Turing_Post_State {
 		if ( 0 !== $result['failed'] ) {
 			// Any client gets Turing's reason, not only the panel that reads `detail` (D330).
 			$reason          = Viglet_Turing_Events::text( $result['errors'][ $post_id ] ?? '' );
-			$body['message'] = '' !== $reason ? $reason : __( 'Turing did not take the post.', 'viglet-turing-search' );
+			$body['message'] = '' !== $reason ? $reason : __( 'Viglet Turing did not take the post.', 'viglet-turing-search' );
 		}
 
 		return new WP_REST_Response( $body, 0 === $result['failed'] ? 200 : 502 );

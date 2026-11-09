@@ -34,7 +34,7 @@ msgstr "Indexação"
 #: src/includes/class-viglet-turing-native-search.php:344
 #: src/includes/class-viglet-turing-post-state.php:110
 #: assets/admin/insights.js:165
-#: assets/admin/tuning.js:396
+#: assets/admin/tuning.js:399
 #: src/admin/js/editor-panel.js:324
 #: src/admin/js/search-block-editor.js:112
 msgid "Search"
@@ -42,9 +42,9 @@ msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:892
-#: assets/admin/tuning.js:273
-#: assets/admin/tuning.js:406
+#: assets/admin/mapping.js:901
+#: assets/admin/tuning.js:276
+#: assets/admin/tuning.js:409
 msgid "Actions"
 msgstr "Ações"
 
@@ -67,16 +67,16 @@ msgid "Server URL"
 msgstr "URL do servidor"
 
 #: src/admin/views/settings-page.php:95
-msgid "The full URL of your Turing server (e.g., http://localhost:2700)."
-msgstr "A URL completa do seu servidor Turing (ex.: http://localhost:2700)."
+msgid "The full URL of your Viglet Turing server (e.g., http://localhost:2700)."
+msgstr "A URL completa do seu servidor Viglet Turing (ex.: http://localhost:2700)."
 
 #: src/admin/views/settings-page.php:100
 msgid "Site Name"
 msgstr "Nome do site"
 
 #: src/admin/views/settings-page.php:106
-msgid "The Turing Semantic Navigation site name to use for indexing and search."
-msgstr "O nome do site de Semantic Navigation do Turing usado para indexar e buscar."
+msgid "The Viglet Turing Semantic Navigation site name to use for indexing and search."
+msgstr "O nome do site de Semantic Navigation do Viglet Turing usado para indexar e buscar."
 
 #: src/admin/views/settings-page.php:111
 msgid "Site Key"
@@ -95,16 +95,16 @@ msgid "A key is stored"
 msgstr "Há uma chave salva"
 
 #: src/admin/views/settings-page.php:142
-msgid "Optional. API key for authentication with the Turing server."
-msgstr "Opcional. Chave de API para autenticar no servidor Turing."
+msgid "Optional. API key for authentication with the Viglet Turing server."
+msgstr "Opcional. Chave de API para autenticar no servidor Viglet Turing."
 
 #: src/admin/views/settings-page.php:147
 msgid "Public Viglet Turing URL"
 msgstr "URL pública do Viglet Turing"
 
 #: src/admin/views/settings-page.php:152
-msgid "Where visitors' browsers reach Turing, when it differs from the Server URL this server uses. Empty uses the Server URL."
-msgstr "Onde o navegador dos visitantes alcança o Turing, quando difere da URL do servidor que este servidor usa. Vazio usa a URL do servidor."
+msgid "Where visitors' browsers reach Viglet Turing, when it differs from the Server URL this server uses. Empty uses the Server URL."
+msgstr "Onde o navegador dos visitantes alcança o Viglet Turing, quando difere da URL do servidor que este servidor usa. Vazio usa a URL do servidor."
 
 #: src/admin/views/settings-page.php:158
 #: assets/admin/setup.js:262
@@ -125,8 +125,8 @@ msgid "Content Indexing"
 msgstr "Indexação de conteúdo"
 
 #: src/admin/views/settings-page.php:209
-msgid "Choose which content types and metadata to index in Turing."
-msgstr "Escolha quais tipos de conteúdo e metadados indexar no Turing."
+msgid "Choose which content types and metadata to index in Viglet Turing."
+msgstr "Escolha quais tipos de conteúdo e metadados indexar no Viglet Turing."
 
 #: src/admin/views/settings-page.php:212
 msgid "Post Types"
@@ -213,8 +213,8 @@ msgid "Configure how Viglet Turing search replaces the default WordPress search.
 msgstr "Configure como a busca do Viglet Turing substitui a busca padrão do WordPress."
 
 #: src/admin/views/settings-page.php:362
-msgid "Replace WordPress search with Turing"
-msgstr "Substituir a busca do WordPress pelo Turing"
+msgid "Replace WordPress search with Viglet Turing"
+msgstr "Substituir a busca do WordPress pelo Viglet Turing"
 
 #: src/admin/views/settings-page.php:363
 msgid "When enabled, all search queries will be handled by the Viglet Turing search engine."
@@ -233,8 +233,8 @@ msgid "The plugin's results page, with facets (classic themes)"
 msgstr "A página de resultados do plugin, com facetas (temas clássicos)"
 
 #: src/admin/views/settings-page.php:374
-msgid "With the theme's page, Turing ranks the results and the theme shows them with its own header, footer and styles. If Turing does not answer, WordPress search answers instead."
-msgstr "Com a página do tema, o Turing ordena os resultados e o tema os mostra com o seu próprio cabeçalho, rodapé e estilos. Se o Turing não responder, a busca do WordPress responde no lugar."
+msgid "With the theme's page, Viglet Turing ranks the results and the theme shows them with its own header, footer and styles. If Viglet Turing does not answer, WordPress search answers instead."
+msgstr "Com a página do tema, o Viglet Turing ordena os resultados e o tema os mostra com o seu próprio cabeçalho, rodapé e estilos. Se o Viglet Turing não responder, a busca do WordPress responde no lugar."
 
 #: src/admin/views/settings-page.php:380
 msgid "Results Per Page"
@@ -257,16 +257,16 @@ msgid "Connection Status"
 msgstr "Status da conexão"
 
 #: src/admin/views/settings-page.php:635
-msgid "Test the connection to your Turing server."
-msgstr "Teste a conexão com o seu servidor Turing."
+msgid "Test the connection to your Viglet Turing server."
+msgstr "Teste a conexão com o seu servidor Viglet Turing."
 
 #: src/admin/views/settings-page.php:651
 msgid "Index All Content"
 msgstr "Indexar todo o conteúdo"
 
 #: src/admin/views/settings-page.php:652
-msgid "Send all published content to the Turing index. This may take a while for large sites."
-msgstr "Envia todo o conteúdo publicado para o índice do Turing. Em sites grandes, pode demorar."
+msgid "Send all published content to the Viglet Turing index. This may take a while for large sites."
+msgstr "Envia todo o conteúdo publicado para o índice do Viglet Turing. Em sites grandes, pode demorar."
 
 #: src/admin/views/settings-page.php:657
 msgid "All Content"
@@ -289,8 +289,8 @@ msgid "Delete All Indexed Content"
 msgstr "Excluir todo o conteúdo indexado"
 
 #: src/admin/views/settings-page.php:683
-msgid "Remove all WordPress content from the Turing index. This does not affect your WordPress content."
-msgstr "Remove do índice do Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
+msgid "Remove all WordPress content from the Viglet Turing index. This does not affect your WordPress content."
+msgstr "Remove do índice do Viglet Turing todo o conteúdo deste WordPress. O conteúdo no WordPress não é afetado."
 
 #: src/admin/views/settings-page.php:687
 msgid "Delete All"
@@ -443,8 +443,8 @@ msgstr "Campos enviados ao Turing"
 #. translators: %s: the fields whose type Turing would have to change.
 #: src/includes/class-viglet-turing-events.php:129
 #, php-format
-msgid "Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Turing."
-msgstr "O Turing manteve o esquema do site: um campo mapeado mudaria o tipo de um campo existente (%s). Renomeie o campo ou migre-o no Turing."
+msgid "Viglet Turing kept the site's schema: a mapped field would change an existing field's type (%s). Rename the field or migrate it in Viglet Turing."
+msgstr "O Viglet Turing manteve o esquema do site: um campo mapeado mudaria o tipo de um campo existente (%s). Renomeie o campo ou migre-o no Viglet Turing."
 
 #. translators: 1: the HTTP status code, 2: Turing's error message.
 #: src/includes/class-viglet-turing-events.php:133
@@ -455,8 +455,8 @@ msgstr "O envio dos campos falhou com HTTP %1$d: %2$s"
 #. translators: %d: the HTTP status code Turing answered with.
 #: src/includes/class-viglet-turing-api-client.php:460
 #, php-format
-msgid "Turing could not plan the fields (HTTP %d)."
-msgstr "O Turing não conseguiu planejar os campos (HTTP %d)."
+msgid "Viglet Turing could not plan the fields (HTTP %d)."
+msgstr "O Viglet Turing não conseguiu planejar os campos (HTTP %d)."
 
 #: src/includes/class-viglet-turing-events.php:120
 msgid "Documents removed successfully"
@@ -584,24 +584,24 @@ msgstr "O servidor responde."
 #. translators: %d: the HTTP status the server answered with.
 #: src/includes/class-viglet-turing-diagnostics.php:71
 #, php-format
-msgid "The server answered HTTP %d where Turing answers its discovery document: this URL is not a Turing, or a proxy is in the way."
-msgstr "O servidor respondeu HTTP %d onde o Turing responde o seu documento de descoberta: esta URL não é de um Turing, ou há um proxy no caminho."
+msgid "The server answered HTTP %d where Viglet Turing answers its discovery document: this URL is not a Viglet Turing, or a proxy is in the way."
+msgstr "O servidor respondeu HTTP %d onde o Viglet Turing responde o seu documento de descoberta: esta URL não é de um Viglet Turing, ou há um proxy no caminho."
 
 #: src/includes/class-viglet-turing-diagnostics.php:74
-msgid "It is a Turing."
-msgstr "É um Turing."
+msgid "It is a Viglet Turing."
+msgstr "É um Viglet Turing."
 
 #: src/includes/class-viglet-turing-diagnostics.php:82
-msgid "No API key is set. Create one in Turing under API Tokens and paste it here."
-msgstr "Nenhuma chave de API definida. Crie uma no Turing em API Tokens e cole aqui."
+msgid "No API key is set. Create one in Viglet Turing under API Tokens and paste it here."
+msgstr "Nenhuma chave de API definida. Crie uma no Viglet Turing em API Tokens e cole aqui."
 
 #: src/includes/class-viglet-turing-diagnostics.php:95
-msgid "Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
-msgstr "O Turing recusou a chave de API: ela está errada, expirou, ou o seu usuário não pode gerenciar sites SN."
+msgid "Viglet Turing refused the API key: it is wrong, expired, or its user cannot manage SN sites."
+msgstr "O Viglet Turing recusou a chave de API: ela está errada, expirou, ou o seu usuário não pode gerenciar sites SN."
 
 #: src/includes/class-viglet-turing-diagnostics.php:99
-msgid "Turing accepts the API key."
-msgstr "O Turing aceita a chave de API."
+msgid "Viglet Turing accepts the API key."
+msgstr "O Viglet Turing aceita a chave de API."
 
 #. translators: %s: the SN site's name.
 #: src/includes/class-viglet-turing-diagnostics.php:106
@@ -612,8 +612,8 @@ msgstr "O site SN %s existe."
 #. translators: %s: the SN site's name.
 #: src/includes/class-viglet-turing-diagnostics.php:111
 #, php-format
-msgid "There is no SN site named %s in Turing yet. Create it from here, or check the name."
-msgstr "Ainda não há site SN chamado %s no Turing. Crie-o daqui, ou confira o nome."
+msgid "There is no SN site named %s in Viglet Turing yet. Create it from here, or check the name."
+msgstr "Ainda não há site SN chamado %s no Viglet Turing. Crie-o daqui, ou confira o nome."
 
 #. translators: %s: the host name.
 #: src/includes/class-viglet-turing-diagnostics.php:174
@@ -630,14 +630,14 @@ msgstr "A conexão segura falhou (TLS): o certificado é inválido, expirou ou �
 #. translators: %s: the host name.
 #: src/includes/class-viglet-turing-diagnostics.php:182
 #, php-format
-msgid "%s did not answer in time: a firewall may be dropping the connection, or Turing is down."
-msgstr "%s não respondeu a tempo: um firewall pode estar descartando a conexão, ou o Turing está fora do ar."
+msgid "%s did not answer in time: a firewall may be dropping the connection, or Viglet Turing is down."
+msgstr "%s não respondeu a tempo: um firewall pode estar descartando a conexão, ou o Viglet Turing está fora do ar."
 
 #. translators: %s: the host name.
 #: src/includes/class-viglet-turing-diagnostics.php:186
 #, php-format
-msgid "Nothing is listening at %s on that port: Turing is down, or the port is wrong."
-msgstr "Nada responde em %s nessa porta: o Turing está fora do ar, ou a porta está errada."
+msgid "Nothing is listening at %s on that port: Viglet Turing is down, or the port is wrong."
+msgstr "Nada responde em %s nessa porta: o Viglet Turing está fora do ar, ou a porta está errada."
 
 #. translators: %d: how many documents were indexed.
 #: src/includes/class-viglet-turing-indexer.php:291
@@ -669,8 +669,8 @@ msgstr "Os campos já estão no Turing."
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
 #: src/includes/class-viglet-turing-mapping.php:769
 #, php-format
-msgid "%1$s is %2$s in Turing, %3$s here"
-msgstr "%1$s é %2$s no Turing, %3$s aqui"
+msgid "%1$s is %2$s in Viglet Turing, %3$s here"
+msgstr "%1$s é %2$s no Viglet Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
 #: src/includes/class-viglet-turing-mapping.php:798
@@ -701,8 +701,8 @@ msgid "Bulk: %1$d sent, %2$d failed."
 msgstr "Em lote: %1$d enviados, %2$d falharam."
 
 #: src/includes/class-viglet-turing-operations.php:264
-msgid "Turing could not be searched for this site's documents."
-msgstr "Não foi possível buscar no Turing os documentos deste site."
+msgid "Viglet Turing could not be searched for this site's documents."
+msgstr "Não foi possível buscar no Viglet Turing os documentos deste site."
 
 #. translators: %d: documents removed from Turing.
 #: src/includes/class-viglet-turing-events.php:141
@@ -827,8 +827,8 @@ msgid "Published in WordPress"
 msgstr "Publicados no WordPress"
 
 #: assets/admin/health.js:452
-msgid "Indexed in Turing"
-msgstr "Indexados no Turing"
+msgid "Indexed in Viglet Turing"
+msgstr "Indexados no Viglet Turing"
 
 #: assets/admin/health.js:467
 msgid "unknown"
@@ -907,10 +907,10 @@ msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:758
-#: assets/admin/mapping.js:885
-msgid "In Turing"
-msgstr "No Turing"
+#: assets/admin/mapping.js:764
+#: assets/admin/mapping.js:894
+msgid "In Viglet Turing"
+msgstr "No Viglet Turing"
 
 #: assets/admin/mapping.js:33
 msgid "Added on the next save"
@@ -921,91 +921,91 @@ msgid "Conflict"
 msgstr "Conflito"
 
 #: assets/admin/mapping.js:270
-#: assets/admin/mapping.js:864
+#: assets/admin/mapping.js:873
 msgid "Source"
 msgstr "Origem"
 
 #: assets/admin/mapping.js:280
-#: assets/admin/mapping.js:749
-#: assets/admin/mapping.js:867
-msgid "Turing field"
-msgstr "Campo no Turing"
+#: assets/admin/mapping.js:752
+#: assets/admin/mapping.js:876
+msgid "Viglet Turing field"
+msgstr "Campo no Viglet Turing"
 
 #: src/blocks/search/render.php:116
-#: assets/admin/mapping.js:289
-#: assets/admin/mapping.js:542
-#: assets/admin/mapping.js:873
+#: assets/admin/mapping.js:292
+#: assets/admin/mapping.js:545
+#: assets/admin/mapping.js:882
 msgid "Type"
 msgstr "Tipo"
 
-#: assets/admin/mapping.js:301
-#: assets/admin/mapping.js:876
+#: assets/admin/mapping.js:304
+#: assets/admin/mapping.js:885
 msgid "Multiple"
 msgstr "Múltiplo"
 
-#: assets/admin/mapping.js:318
-#: assets/admin/mapping.js:879
+#: assets/admin/mapping.js:321
+#: assets/admin/mapping.js:888
 msgid "Facet"
 msgstr "Faceta"
 
-#: assets/admin/mapping.js:337
-#: assets/admin/mapping.js:752
+#: assets/admin/mapping.js:340
+#: assets/admin/mapping.js:758
 msgid "Facet label"
 msgstr "Rótulo da faceta"
 
-#: assets/admin/mapping.js:352
+#: assets/admin/mapping.js:355
 msgid "Search weight"
 msgstr "Peso na busca"
 
-#: assets/admin/mapping.js:382
+#: assets/admin/mapping.js:385
 msgid "Remove field"
 msgstr "Remover campo"
 
-#: assets/admin/mapping.js:384
-#: assets/admin/tuning.js:51
+#: assets/admin/mapping.js:387
+#: assets/admin/tuning.js:54
 msgid "Remove"
 msgstr "Remover"
 
-#: assets/admin/mapping.js:841
+#: assets/admin/mapping.js:850
 msgid "Leave this type out of search"
 msgstr "Deixar este tipo fora da busca"
 
-#: assets/admin/mapping.js:854
+#: assets/admin/mapping.js:863
 msgid "Only the standard fields are sent for this type."
 msgstr "Este tipo envia apenas os campos padrão."
 
 #: src/includes/class-viglet-turing-compare.php:71
-#: assets/admin/mapping.js:882
+#: assets/admin/mapping.js:891
 msgid "Weight"
 msgstr "Peso"
 
-#: assets/admin/mapping.js:941
+#: assets/admin/mapping.js:950
 msgid "Add field"
 msgstr "Adicionar campo"
 
-#: assets/admin/mapping.js:944
+#: assets/admin/mapping.js:953
 msgid "Preview document"
 msgstr "Pré-visualizar documento"
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:957
+#: assets/admin/mapping.js:966
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr "O que \"%s\" envia, como está salvo (alterações não salvas não aparecem):"
 
-#: assets/admin/mapping.js:1048
-msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them."
-msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Turing; depois, rode uma reindexação para que os posts existentes os tenham."
+#: assets/admin/mapping.js:1057
+msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Viglet Turing; run a reindex afterwards so existing posts carry them."
+msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Viglet Turing; depois, rode uma reindexação para que os posts existentes os tenham."
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:1062
+#: assets/admin/mapping.js:1071
 #, js-format
-msgid "Turing did not say where the fields stand: %s"
-msgstr "O Turing não informou a situação dos campos: %s"
+msgid "Viglet Turing did not say where the fields stand: %s"
+msgstr "O Viglet Turing não informou a situação dos campos: %s"
 
-#: assets/admin/mapping.js:1119
-msgid "Save and send to Turing"
-msgstr "Salvar e enviar ao Turing"
+#: assets/admin/mapping.js:1128
+msgid "Save and send to Viglet Turing"
+msgstr "Salvar e enviar ao Viglet Turing"
 
 #: assets/admin/setup.js:25
 msgid "Address"
@@ -1016,8 +1016,8 @@ msgid "Network"
 msgstr "Rede"
 
 #: assets/admin/setup.js:27
-msgid "Turing"
-msgstr "Turing"
+msgid "Viglet Turing"
+msgstr "Viglet Turing"
 
 #: assets/admin/setup.js:28
 #: assets/admin/setup.js:231
@@ -1048,16 +1048,16 @@ msgid "Viglet Turing URL"
 msgstr "URL do Viglet Turing"
 
 #: assets/admin/setup.js:220
-msgid "The address of your Turing, e.g. https://search.example.org."
-msgstr "O endereço do seu Turing, ex.: https://busca.exemplo.org."
+msgid "The address of your Viglet Turing, e.g. https://search.example.org."
+msgstr "O endereço do seu Viglet Turing, ex.: https://busca.exemplo.org."
 
 #: assets/admin/setup.js:234
 msgid "A key is stored. Leave this empty to keep it."
 msgstr "Há uma chave salva. Deixe em branco para mantê-la."
 
 #: assets/admin/setup.js:238
-msgid "Create one in Turing under API Tokens."
-msgstr "Crie uma no Turing em API Tokens."
+msgid "Create one in Viglet Turing under API Tokens."
+msgstr "Crie uma no Viglet Turing em API Tokens."
 
 #: assets/admin/setup.js:252
 msgid "The Semantic Navigation site this WordPress publishes to and searches."
@@ -1143,8 +1143,8 @@ msgstr "Busca Viglet Turing"
 
 #: src/blocks/search/block.json
 msgctxt "block description"
-msgid "Search this site through Turing: a search box with suggestions, did-you-mean, facets, results and pages."
-msgstr "Busque neste site pelo Turing: caixa de busca com sugestões, \"você quis dizer\", facetas, resultados e páginas."
+msgid "Search this site through Viglet Turing: a search box with suggestions, did-you-mean, facets, results and pages."
+msgstr "Busque neste site pelo Viglet Turing: caixa de busca com sugestões, \"você quis dizer\", facetas, resultados e páginas."
 
 #: src/blocks/search/block.json
 msgctxt "block keyword"
@@ -1349,18 +1349,18 @@ msgid "Cards"
 msgstr "Cartões"
 
 #: src/includes/class-viglet-turing-api-client.php:1044
-msgid "Turing did not answer."
-msgstr "O Turing não respondeu."
+msgid "Viglet Turing did not answer."
+msgstr "O Viglet Turing não respondeu."
 
 #: src/includes/class-viglet-turing-api-client.php:1022
 #: src/includes/class-viglet-turing-api-client.php:1104
-msgid "No language model is set up for it in Turing."
-msgstr "Nenhum modelo de linguagem está configurado para isso no Turing."
+msgid "No language model is set up for it in Viglet Turing."
+msgstr "Nenhum modelo de linguagem está configurado para isso no Viglet Turing."
 
 #: src/includes/class-viglet-turing-api-client.php:1021
 #: src/includes/class-viglet-turing-api-client.php:1109
-msgid "Turing has no catalog copilot set up."
-msgstr "O Turing não tem copiloto de catálogo configurado."
+msgid "Viglet Turing has no catalog copilot set up."
+msgstr "O Viglet Turing não tem copiloto de catálogo configurado."
 
 #: src/includes/class-viglet-turing-cli-ai.php:49
 msgid "yes"
@@ -1395,8 +1395,8 @@ msgid "AI features"
 msgstr "Recursos de IA"
 
 #: assets/admin/health.js:230
-msgid "Which of Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
-msgstr "Quais recursos generativos do Turing este site pode usar. Os blocos que dependem de um ficam ocultos enquanto ele estiver desligado."
+msgid "Which of Viglet Turing’s generative features this site can use. Blocks that need one stay hidden while it is off."
+msgstr "Quais recursos generativos do Viglet Turing este site pode usar. Os blocos que dependem de um ficam ocultos enquanto ele estiver desligado."
 
 #: assets/admin/health.js:251
 msgid "Feature"
@@ -1460,14 +1460,14 @@ msgid "Answer questions from this site’s content"
 msgstr "Responder perguntas com o conteúdo deste site"
 
 #: src/admin/js/search-block-editor.js:164
-msgid "A search that reads as a question gets Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Turing cites sources."
-msgstr "Uma busca que parece uma pergunta recebe a resposta do Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Turing cita fontes."
+msgid "A search that reads as a question gets Viglet Turing’s answer, with its sources, above the results. Each one is an LLM call; it shows only when Viglet Turing cites sources."
+msgstr "Uma busca que parece uma pergunta recebe a resposta do Viglet Turing, com as fontes, acima dos resultados. Cada uma é uma chamada ao LLM; só aparece quando o Viglet Turing cita fontes."
 
 #. translators: %d: the HTTP status Turing answered with.
 #: src/includes/class-viglet-turing-api-client.php:913
 #, php-format
-msgid "Turing answered HTTP %d."
-msgstr "O Turing respondeu HTTP %d."
+msgid "Viglet Turing answered HTTP %d."
+msgstr "O Viglet Turing respondeu HTTP %d."
 
 #: src/admin/js/editor-panel.js:74
 msgid "Add a link to"
@@ -1498,8 +1498,8 @@ msgid "No related posts yet."
 msgstr "Ainda não há posts relacionados."
 
 #: src/admin/js/editor-panel.js:94
-msgid "Compared by title: once this post is indexed, Turing compares the whole text."
-msgstr "Comparado pelo título: depois que este post for indexado, o Turing compara o texto inteiro."
+msgid "Compared by title: once this post is indexed, Viglet Turing compares the whole text."
+msgstr "Comparado pelo título: depois que este post for indexado, o Viglet Turing compara o texto inteiro."
 
 #: src/admin/js/editor-panel.js:102
 msgid "Look again"
@@ -1526,8 +1526,8 @@ msgstr "Ajuste"
 #. translators: %s: the SN site's name.
 #: src/includes/class-viglet-turing-tuning.php:68
 #, php-format
-msgid "Turing has no SN site named %s."
-msgstr "O Turing não tem um site SN chamado %s."
+msgid "Viglet Turing has no SN site named %s."
+msgstr "O Viglet Turing não tem um site SN chamado %s."
 
 #: src/includes/class-viglet-turing-tuning.php:141
 msgid "A synonym needs two words or more."
@@ -1538,91 +1538,91 @@ msgid "Name a search and at least one post."
 msgstr "Informe uma busca e pelo menos um post."
 
 #: src/includes/class-viglet-turing-tuning.php:418
-msgid "Only what this plugin added can be removed here; change the rest in Turing's console."
-msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto no console do Turing."
+msgid "Only what this plugin added can be removed here; change the rest in Viglet Turing's console."
+msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto no console do Viglet Turing."
 
 #: assets/admin/tuning.js:40
-msgid "Set in Turing’s console"
-msgstr "Definido no console do Turing"
+msgid "Set in Viglet Turing’s console"
+msgstr "Definido no console do Viglet Turing"
 
-#: assets/admin/tuning.js:255
+#: assets/admin/tuning.js:258
 msgid "Synonyms"
 msgstr "Sinônimos"
 
-#: assets/admin/tuning.js:259
+#: assets/admin/tuning.js:262
 msgid "Words a visitor may type for the same thing. A search for any of them finds posts with the others."
 msgstr "Palavras que um visitante pode digitar para a mesma coisa. Uma busca por qualquer uma delas encontra posts com as outras."
 
-#: assets/admin/tuning.js:269
+#: assets/admin/tuning.js:272
 msgid "Words"
 msgstr "Palavras"
 
 #. translators: %s: the synonym's words.
-#: assets/admin/tuning.js:290
+#: assets/admin/tuning.js:293
 #, js-format
 msgid "Remove %s"
 msgstr "Remover %s"
 
-#: assets/admin/tuning.js:322
+#: assets/admin/tuning.js:325
 msgid "Words that mean the same, separated by commas"
 msgstr "Palavras com o mesmo sentido, separadas por vírgulas"
 
-#: assets/admin/tuning.js:331
+#: assets/admin/tuning.js:334
 msgid "Add synonym"
 msgstr "Adicionar sinônimo"
 
-#: assets/admin/tuning.js:382
+#: assets/admin/tuning.js:385
 msgid "Promoted results"
 msgstr "Resultados em destaque"
 
-#: assets/admin/tuning.js:386
+#: assets/admin/tuning.js:389
 msgid "Up to three posts shown first, as featured, when a visitor searches for these words."
 msgstr "Até três posts mostrados primeiro, em destaque, quando um visitante busca por estas palavras."
 
-#: assets/admin/tuning.js:399
-#: assets/admin/tuning.js:525
+#: assets/admin/tuning.js:402
+#: assets/admin/tuning.js:528
 msgid "Shown first"
 msgstr "Mostrados primeiro"
 
 #. translators: %s: the search the posts are promoted for.
-#: assets/admin/tuning.js:428
+#: assets/admin/tuning.js:431
 #, js-format
 msgid "Remove the promotion for %s"
 msgstr "Remover o destaque para %s"
 
-#: assets/admin/tuning.js:470
+#: assets/admin/tuning.js:473
 msgid "When visitors search for"
 msgstr "Quando os visitantes buscarem por"
 
-#: assets/admin/tuning.js:480
+#: assets/admin/tuning.js:483
 msgid "Find a post to show first"
 msgstr "Encontre um post para mostrar primeiro"
 
-#: assets/admin/tuning.js:489
+#: assets/admin/tuning.js:492
 msgid "Posts found"
 msgstr "Posts encontrados"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:510
+#: assets/admin/tuning.js:513
 #, js-format
 msgid "Show %s first"
 msgstr "Mostrar %s primeiro"
 
-#: assets/admin/tuning.js:517
+#: assets/admin/tuning.js:520
 msgid "Add"
 msgstr "Adicionar"
 
 #. translators: %s: a post's title.
-#: assets/admin/tuning.js:545
+#: assets/admin/tuning.js:548
 #, js-format
 msgid "Take %s out"
 msgstr "Tirar %s"
 
-#: assets/admin/tuning.js:552
+#: assets/admin/tuning.js:555
 msgid "Take out"
 msgstr "Tirar"
 
-#: assets/admin/tuning.js:567
+#: assets/admin/tuning.js:570
 msgid "Promote"
 msgstr "Destacar"
 
@@ -1634,57 +1634,57 @@ msgstr "mais recentes primeiro"
 msgid "sticky posts first"
 msgstr "posts fixos primeiro"
 
-#: assets/admin/tuning.js:79
+#: assets/admin/tuning.js:82
 msgid "No suggestions from recent searches."
 msgstr "Nenhuma sugestão das buscas recentes."
 
-#: assets/admin/tuning.js:87
+#: assets/admin/tuning.js:90
 msgid "Suggested synonyms"
 msgstr "Sinônimos sugeridos"
 
 #. translators: %s: the suggested words.
-#: assets/admin/tuning.js:114
+#: assets/admin/tuning.js:117
 #, js-format
 msgid "Accept %s"
 msgstr "Aceitar %s"
 
-#: assets/admin/tuning.js:118
+#: assets/admin/tuning.js:121
 msgid "Accept"
 msgstr "Aceitar"
 
-#: assets/admin/tuning.js:125
+#: assets/admin/tuning.js:128
 msgid "Suggest from recent searches"
 msgstr "Sugerir a partir das buscas recentes"
 
-#: assets/admin/tuning.js:170
+#: assets/admin/tuning.js:173
 msgid "No results."
 msgstr "Nenhum resultado."
 
-#: assets/admin/tuning.js:178
+#: assets/admin/tuning.js:181
 msgid "Featured:"
 msgstr "Destaque:"
 
-#: assets/admin/tuning.js:195
+#: assets/admin/tuning.js:198
 msgid "Try it"
 msgstr "Experimente"
 
-#: assets/admin/tuning.js:210
+#: assets/admin/tuning.js:213
 msgid "A search to watch"
 msgstr "Uma busca para acompanhar"
 
-#: assets/admin/tuning.js:214
+#: assets/admin/tuning.js:217
 msgid "Its first results, now and before your last change here."
 msgstr "Os primeiros resultados, agora e antes da sua última alteração aqui."
 
-#: assets/admin/tuning.js:223
+#: assets/admin/tuning.js:226
 msgid "Try"
 msgstr "Experimentar"
 
-#: assets/admin/tuning.js:232
+#: assets/admin/tuning.js:235
 msgid "Before"
 msgstr "Antes"
 
-#: assets/admin/tuning.js:234
+#: assets/admin/tuning.js:237
 msgid "Now"
 msgstr "Agora"
 
@@ -1701,12 +1701,12 @@ msgid "What the search block and the instant search report about the searches vi
 msgstr "O que o bloco de busca e a busca instantânea informam sobre as buscas dos visitantes. Os eventos levam a consulta, o resultado e a posição dele, nunca quem é o visitante. Com um plugin de consentimento compatível com a WP Consent API, nada é enviado até o visitante permitir estatísticas."
 
 #: src/admin/views/settings-page.php:468
-msgid "Report result clicks to Turing"
-msgstr "Informar ao Turing os cliques em resultados"
+msgid "Report result clicks to Viglet Turing"
+msgstr "Informar ao Viglet Turing os cliques em resultados"
 
 #: src/admin/views/settings-page.php:469
-msgid "Turing counts which result was opened for each search, for its click-through rates. Turing records them only with search metrics turned on."
-msgstr "O Turing conta qual resultado foi aberto em cada busca, para as taxas de cliques. O Turing só os registra com as métricas de busca ligadas."
+msgid "Viglet Turing counts which result was opened for each search, for its click-through rates. Viglet Turing records them only with search metrics turned on."
+msgstr "O Viglet Turing conta qual resultado foi aberto em cada busca, para as taxas de cliques. O Viglet Turing só os registra com as métricas de busca ligadas."
 
 #: src/admin/views/settings-page.php:478
 msgid "Send search events to Google Analytics"
@@ -1729,12 +1729,12 @@ msgid "Related Content"
 msgstr "Conteúdo relacionado"
 
 #: src/admin/views/settings-page.php:498
-msgid "The posts Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
-msgstr "Os posts que o Turing acha mais parecidos com o que está sendo lido. Adicione o bloco Conteúdo relacionado em qualquer lugar, ou faça-o seguir o conteúdo destes tipos de post:"
+msgid "The posts Viglet Turing finds most like the one being read. Add the Related content block anywhere, or have it follow the content of these post types:"
+msgstr "Os posts que o Viglet Turing acha mais parecidos com o que está sendo lido. Adicione o bloco Conteúdo relacionado em qualquer lugar, ou faça-o seguir o conteúdo destes tipos de post:"
 
 #: src/blocks/related/render.php:36
-msgid "Related posts appear here once this post is indexed and Turing finds posts like it."
-msgstr "Os posts relacionados aparecem aqui quando este post estiver indexado e o Turing encontrar posts parecidos."
+msgid "Related posts appear here once this post is indexed and Viglet Turing finds posts like it."
+msgstr "Os posts relacionados aparecem aqui quando este post estiver indexado e o Viglet Turing encontrar posts parecidos."
 
 #: src/blocks/related/render.php:44
 #: src/admin/js/related-block-editor.js:48
@@ -1761,12 +1761,12 @@ msgid "Alike by"
 msgstr "Parecidos por"
 
 #: src/admin/js/related-block-editor.js:64
-msgid "Meaning needs a site with embeddings in Turing; without them, shared words are used."
-msgstr "Significado exige um site com embeddings no Turing; sem eles, são usadas as palavras em comum."
+msgid "Meaning needs a site with embeddings in Viglet Turing; without them, shared words are used."
+msgstr "Significado exige um site com embeddings no Viglet Turing; sem eles, são usadas as palavras em comum."
 
 #: src/admin/js/related-block-editor.js:71
-msgid "Turing’s choice"
-msgstr "Escolha do Turing"
+msgid "Viglet Turing’s choice"
+msgstr "Escolha do Viglet Turing"
 
 #: src/admin/js/related-block-editor.js:78
 msgid "Shared words"
@@ -1795,8 +1795,8 @@ msgstr "Conteúdo relacionado"
 
 #: src/blocks/related/block.json
 msgctxt "block description"
-msgid "The posts Turing finds most like the one being read, from its similar-documents search."
-msgstr "Os posts que o Turing acha mais parecidos com o que está sendo lido, pela busca de documentos semelhantes."
+msgid "The posts Viglet Turing finds most like the one being read, from its similar-documents search."
+msgstr "Os posts que o Viglet Turing acha mais parecidos com o que está sendo lido, pela busca de documentos semelhantes."
 
 #: src/blocks/related/block.json
 msgctxt "block keyword"
@@ -1932,7 +1932,7 @@ msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
 
 #: assets/admin/mapping.js:72
-#: assets/admin/mapping.js:325
+#: assets/admin/mapping.js:328
 msgid "Ranges"
 msgstr "Faixas"
 
@@ -1942,8 +1942,8 @@ msgstr "Deixe um limite vazio para uma ponta aberta, e o rótulo vazio para nome
 
 #: assets/admin/mapping.js:83
 #: assets/admin/mapping.js:194
-#: assets/admin/mapping.js:341
-#: assets/admin/mapping.js:545
+#: assets/admin/mapping.js:344
+#: assets/admin/mapping.js:548
 msgid "Label"
 msgstr "Rótulo"
 
@@ -1992,8 +1992,8 @@ msgid "Save some text first: the draft is written from the saved post."
 msgstr "Salve algum texto antes: o rascunho é escrito a partir do post salvo."
 
 #: src/includes/class-viglet-turing-post-state.php:363
-msgid "Turing wrote no draft."
-msgstr "O Turing não escreveu nenhum rascunho."
+msgid "Viglet Turing wrote no draft."
+msgstr "O Viglet Turing não escreveu nenhum rascunho."
 
 #: src/admin/js/editor-panel.js:140
 msgid "Excerpt"
@@ -2016,8 +2016,8 @@ msgid "Draft an excerpt"
 msgstr "Rascunhar um resumo"
 
 #: src/admin/js/editor-panel.js:161
-msgid "Written by Turing’s language model from the saved post. Nothing changes until you use it and save."
-msgstr "Escrito pelo modelo de linguagem do Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
+msgid "Written by Viglet Turing’s language model from the saved post. Nothing changes until you use it and save."
+msgstr "Escrito pelo modelo de linguagem do Viglet Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
 #: src/includes/class-viglet-turing-compare.php:69
 #: src/includes/class-viglet-turing-search-block.php:202
@@ -2115,8 +2115,8 @@ msgid "Searches"
 msgstr "Buscas"
 
 #: assets/admin/insights.js:317
-msgid "What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out."
-msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Turing. Buscas feitas durante a digitação ficam de fora."
+msgid "What visitors searched for on this site, what found nothing and what they never opened, from Viglet Turing’s search metrics. Searches made while typing are left out."
+msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o que nunca abriram, a partir das métricas de busca do Viglet Turing. Buscas feitas durante a digitação ficam de fora."
 
 #: assets/admin/insights.js:324
 msgid "Period"
@@ -2243,77 +2243,77 @@ msgid "Generative AI"
 msgstr "IA generativa"
 
 #: src/admin/views/settings-page.php:547
-msgid "Answers with sources and chat over this site's content, through Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Turing's AI provider."
-msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de IA Padrão do Turing. Cada resposta é uma chamada a um LLM cobrada de quem opera o provedor de IA do Turing."
+msgid "Answers with sources and chat over this site's content, through Viglet Turing's Default AI Agent. Each answer is an LLM call billed to whoever runs Viglet Turing's AI provider."
+msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de IA Padrão do Viglet Turing. Cada resposta é uma chamada a um LLM cobrada de quem opera o provedor de IA do Viglet Turing."
 
 #: src/admin/views/settings-page.php:557
-msgid "Turn on generative AI for this site in Turing"
-msgstr "Ativar a IA generativa deste site no Turing"
+msgid "Turn on generative AI for this site in Viglet Turing"
+msgstr "Ativar a IA generativa deste site no Viglet Turing"
 
 #: src/viglet-turing.php:135
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
-#: assets/admin/tuning.js:596
-#: assets/admin/tuning.js:610
+#: assets/admin/tuning.js:599
+#: assets/admin/tuning.js:613
 msgid "Boosts"
 msgstr "Impulsos"
 
-#: assets/admin/tuning.js:614
+#: assets/admin/tuning.js:617
 msgid "Rank some posts higher among the results that match. A boost never adds a result, it only changes the order."
 msgstr "Coloque alguns posts mais acima entre os resultados encontrados. Um impulso nunca acrescenta um resultado, só muda a ordem."
 
-#: assets/admin/tuning.js:621
-msgid "Turing did not say which boosts are set; saving replaces them."
-msgstr "O Turing não informou quais impulsos estão definidos; salvar substitui todos."
+#: assets/admin/tuning.js:624
+msgid "Viglet Turing did not say which boosts are set; saving replaces them."
+msgstr "O Viglet Turing não informou quais impulsos estão definidos; salvar substitui todos."
 
-#: assets/admin/tuning.js:640
+#: assets/admin/tuning.js:643
 msgid "Newer first"
 msgstr "Mais recentes primeiro"
 
-#: assets/admin/tuning.js:644
+#: assets/admin/tuning.js:647
 msgid "Recently published posts rank higher."
 msgstr "Posts publicados recentemente ficam mais acima."
 
-#: assets/admin/tuning.js:653
+#: assets/admin/tuning.js:656
 msgid "Sticky posts first"
 msgstr "Posts fixos primeiro"
 
-#: assets/admin/tuning.js:657
+#: assets/admin/tuning.js:660
 msgid "Posts marked “Stick to the top of the blog” rank higher."
 msgstr "Posts marcados como “Fixar no topo do blog” ficam mais acima."
 
-#: assets/admin/tuning.js:666
+#: assets/admin/tuning.js:669
 msgid "By post type"
 msgstr "Por tipo de conteúdo"
 
-#: assets/admin/tuning.js:671
+#: assets/admin/tuning.js:674
 msgid "Up ranks a type’s posts higher; Down ranks every other type higher."
 msgstr "Acima coloca os posts do tipo mais acima; Abaixo coloca todos os outros tipos mais acima."
 
-#: assets/admin/tuning.js:688
+#: assets/admin/tuning.js:691
 msgid "Up"
 msgstr "Acima"
 
-#: assets/admin/tuning.js:695
+#: assets/admin/tuning.js:698
 msgid "Normal"
 msgstr "Normal"
 
-#: assets/admin/tuning.js:702
+#: assets/admin/tuning.js:705
 msgid "Down"
 msgstr "Abaixo"
 
-#: assets/admin/tuning.js:722
+#: assets/admin/tuning.js:725
 msgid "Save boosts"
 msgstr "Salvar impulsos"
 
 #: src/includes/class-viglet-turing-insights.php:188
-msgid "Turing is not keeping search metrics, so no new searches are recorded."
-msgstr "O Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
+msgid "Viglet Turing is not keeping search metrics, so no new searches are recorded."
+msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
 #: assets/admin/insights.js:337
-msgid "Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
-msgstr "O Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
+msgid "Viglet Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
+msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Viglet Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 
 #: src/includes/class-viglet-turing-insights.php:120
 msgid "There are no searches in this period to summarize."
@@ -2321,16 +2321,16 @@ msgstr "Não há buscas neste período para resumir."
 
 #: src/includes/class-viglet-turing-compare.php:144
 #: src/includes/class-viglet-turing-insights.php:155
-msgid "Turing wrote no summary."
-msgstr "O Turing não escreveu um resumo."
+msgid "Viglet Turing wrote no summary."
+msgstr "O Viglet Turing não escreveu um resumo."
 
 #: assets/admin/insights.js:98
 msgid "Summary"
 msgstr "Resumo"
 
 #: assets/admin/insights.js:116
-msgid "Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call."
-msgstr "O modelo de linguagem do Turing lê as buscas deste período e diz o que os visitantes procuraram e o que vale a pena escrever. Cada resumo é uma chamada a um LLM."
+msgid "Viglet Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call."
+msgstr "O modelo de linguagem do Viglet Turing lê as buscas deste período e diz o que os visitantes procuraram e o que vale a pena escrever. Cada resumo é uma chamada a um LLM."
 
 #: assets/admin/insights.js:129
 msgid "Write another"
@@ -2500,12 +2500,12 @@ msgid "Against the period before"
 msgstr "Em relação ao período anterior"
 
 #: src/admin/views/settings-page.php:558
-msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Turing's setting as it is."
-msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Turing como está."
+msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Viglet Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Viglet Turing's setting as it is."
+msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Viglet Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Viglet Turing como está."
 
-#: assets/admin/mapping.js:1072
-msgid "Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console."
-msgstr "Salvar também liga a IA generativa deste site no Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Turing."
+#: assets/admin/mapping.js:1081
+msgid "Saving also turns generative AI on for this site in Viglet Turing, answering through its Default AI Agent until an agent is chosen in Viglet Turing's console."
+msgstr "Salvar também liga a IA generativa deste site no Viglet Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Viglet Turing."
 
 #: src/includes/class-viglet-turing-post-state.php:260
 msgid "Save some text first: the fit is judged on the saved post."
@@ -2550,16 +2550,16 @@ msgstr "Avaliar para o público"
 #. translators: %s: the audience personas, comma separated.
 #: src/admin/js/editor-panel.js:240
 #, js-format
-msgid "Judged by Turing against %s, from the saved post."
-msgstr "Avaliado pelo Turing para %s, a partir do post salvo."
+msgid "Judged by Viglet Turing against %s, from the saved post."
+msgstr "Avaliado pelo Viglet Turing para %s, a partir do post salvo."
 
 #: src/admin/views/settings-page.php:567
 msgid "Site assistant on every page"
 msgstr "Assistente do site em todas as páginas"
 
 #: src/admin/views/settings-page.php:568
-msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
-msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
+msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Viglet Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
+msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
 
 #: src/blocks/assistant/render.php:17
 #: src/blocks/copilot/render.php:26
@@ -2623,8 +2623,8 @@ msgid "One per line. Left empty, the assistant suggests this week’s popular se
 msgstr "Uma por linha. Em branco, o assistente sugere as buscas populares da semana."
 
 #: src/admin/js/assistant-block-editor.js:68
-msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Turing’s chat is on for this site."
-msgstr "Um botão que abre um chat que responde a partir dos posts deste site, com os posts que usou. Ele só aparece enquanto o chat do Turing estiver ligado para este site."
+msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Viglet Turing’s chat is on for this site."
+msgstr "Um botão que abre um chat que responde a partir dos posts deste site, com os posts que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site."
 
 #: src/blocks/assistant/block.json
 msgctxt "block title"
@@ -2633,8 +2633,8 @@ msgstr "Assistente do site"
 
 #: src/blocks/assistant/block.json
 msgctxt "block description"
-msgid "A button that opens a conversation with Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used."
-msgstr "Um botão que abre uma conversa com o chat do Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir dos posts deste site, com os posts que ela usou."
+msgid "A button that opens a conversation with Viglet Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used."
+msgstr "Um botão que abre uma conversa com o chat do Viglet Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir dos posts deste site, com os posts que ela usou."
 
 #: src/blocks/assistant/block.json
 msgctxt "block keyword"
@@ -2761,8 +2761,8 @@ msgstr "“Jaqueta de chuva até R$ 400, azul” filtra por cor e preço de uma 
 #. translators: %s: the Turing address the plugin is set to.
 #: src/includes/class-viglet-turing-api-client.php:698
 #, php-format
-msgid "WordPress Playground could not reach Turing at %s. From Playground, Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
-msgstr "O WordPress Playground não conseguiu acessar o Turing em %s. No Playground, o Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
+msgid "WordPress Playground could not reach Viglet Turing at %s. From Playground, Viglet Turing has to be on a public address: one on a private address, such as localhost, cannot be reached from the browser Playground runs in."
+msgstr "O WordPress Playground não conseguiu acessar o Viglet Turing em %s. No Playground, o Viglet Turing precisa estar em um endereço público: um endereço privado, como localhost, não é acessível pelo navegador em que o Playground roda."
 
 #: src/includes/class-viglet-turing-admin.php:78
 msgid "Search and the AI features work from the visitors' browsers; Search tuning and Search insights are hidden."
@@ -2771,8 +2771,8 @@ msgstr "A busca e os recursos de IA funcionam pelos navegadores dos visitantes; 
 #. translators: %s: the constant or environment variable that turns demo mode on.
 #: src/includes/class-viglet-turing-api-client.php:663
 #, php-format
-msgid "Demo mode (%s) is on: this site holds no Turing key and never writes to Turing, so nothing is indexed, removed or provisioned from here."
-msgstr "O modo demo (%s) está ligado: este site não guarda chave do Turing e nunca escreve nele, então nada é indexado, removido ou provisionado daqui."
+msgid "Demo mode (%s) is on: this site holds no Viglet Turing key and never writes to Viglet Turing, so nothing is indexed, removed or provisioned from here."
+msgstr "O modo demo (%s) está ligado: este site não guarda chave do Viglet Turing e nunca escreve nele, então nada é indexado, removido ou provisionado daqui."
 
 #. translators: %s: the constant or environment variable that turns demo mode on.
 #: src/includes/class-viglet-turing-diagnostics.php:132
@@ -2813,8 +2813,8 @@ msgstr "Buscar por"
 #. translators: %d: posts sent that Turing did not answer for in time.
 #: src/includes/class-viglet-turing-cli.php:188
 #, php-format
-msgid "Turing did not answer in time for %d posts. They were sent and Turing may still be indexing them: wp turing status shows what it holds."
-msgstr "O Turing não respondeu a tempo para %d posts. Eles foram enviados e o Turing pode ainda estar indexando: wp turing status mostra o que ele tem."
+msgid "Viglet Turing did not answer in time for %d posts. They were sent and Viglet Turing may still be indexing them: wp turing status shows what it holds."
+msgstr "O Viglet Turing não respondeu a tempo para %d posts. Eles foram enviados e o Viglet Turing pode ainda estar indexando: wp turing status mostra o que ele tem."
 
 #. translators: 1: posts sent, 2: posts sent without an answer, 3: posts that failed.
 #: src/includes/class-viglet-turing-cli.php:193
@@ -2843,20 +2843,20 @@ msgstr "Para um site que indexa numa busca exibida por outro site: a busca insta
 #. translators: %s: Turing's reason for refusing the request.
 #: src/includes/class-viglet-turing-api-client.php:909
 #, php-format
-msgid "Turing refused this site’s API key here: %s"
-msgstr "O Turing recusou aqui a chave de API deste site: %s"
+msgid "Viglet Turing refused this site’s API key here: %s"
+msgstr "O Viglet Turing recusou aqui a chave de API deste site: %s"
 
 #: src/includes/class-viglet-turing-api-client.php:1011
-msgid "Generative AI is off for this SN site in Turing."
-msgstr "A IA generativa está desligada para este site SN no Turing."
+msgid "Generative AI is off for this SN site in Viglet Turing."
+msgstr "A IA generativa está desligada para este site SN no Viglet Turing."
 
 #: src/includes/class-viglet-turing-api-client.php:1012
-msgid "The SN site has no AI agent in Turing."
-msgstr "O site SN não tem agente de IA no Turing."
+msgid "The SN site has no AI agent in Viglet Turing."
+msgstr "O site SN não tem agente de IA no Viglet Turing."
 
 #: src/includes/class-viglet-turing-api-client.php:1013
-msgid "The SN site’s AI agent is turned off in Turing."
-msgstr "O agente de IA do site SN está desligado no Turing."
+msgid "The SN site’s AI agent is turned off in Viglet Turing."
+msgstr "O agente de IA do site SN está desligado no Viglet Turing."
 
 #: src/includes/class-viglet-turing-api-client.php:1014
 msgid "The SN site’s AI agent does not answer from the site’s content."
@@ -2874,26 +2874,26 @@ msgstr "O agente de IA do site SN não tem modelo de embedding."
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
-#: assets/admin/mapping.js:307
+#: assets/admin/mapping.js:310
 msgid "Show on result cards"
 msgstr "Mostrar nos cards de resultado"
 
-#: assets/admin/mapping.js:429
-#: assets/admin/mapping.js:548
+#: assets/admin/mapping.js:432
+#: assets/admin/mapping.js:551
 msgid "Date shown on cards"
 msgstr "Data mostrada nos cards"
 
-#: assets/admin/mapping.js:433
-#: assets/admin/mapping.js:618
+#: assets/admin/mapping.js:436
+#: assets/admin/mapping.js:621
 msgid "Publication date"
 msgstr "Data de publicação"
 
-#: assets/admin/mapping.js:445
-#: assets/admin/mapping.js:554
+#: assets/admin/mapping.js:448
+#: assets/admin/mapping.js:557
 msgid "Image on cards"
 msgstr "Imagem nos cards"
 
-#: assets/admin/mapping.js:449
+#: assets/admin/mapping.js:452
 msgid "Featured image"
 msgstr "Imagem destacada"
 
@@ -2961,15 +2961,15 @@ msgstr "Fora da busca: a data já passou"
 msgid "Leaves search on %s"
 msgstr "Sai da busca em %s"
 
-#: assets/admin/mapping.js:465
+#: assets/admin/mapping.js:468
 msgid "Leaves search on"
 msgstr "Sai da busca em"
 
-#: assets/admin/mapping.js:466
+#: assets/admin/mapping.js:469
 msgid "A post leaves search once this date has passed, and comes back if it moves forward."
 msgstr "Um post sai da busca quando esta data passa, e volta se ela for adiada."
 
-#: assets/admin/mapping.js:473
+#: assets/admin/mapping.js:476
 msgid "Never"
 msgstr "Nunca"
 
@@ -2982,8 +2982,8 @@ msgid "PDF"
 msgstr "PDF"
 
 #: src/includes/class-viglet-turing-api-client.php:243
-msgid "The files could not be packed for Turing."
-msgstr "Não foi possível empacotar os arquivos para o Turing."
+msgid "The files could not be packed for Viglet Turing."
+msgstr "Não foi possível empacotar os arquivos para o Viglet Turing."
 
 #. translators: %s: the meta key.
 #: src/includes/class-viglet-turing-mapping.php:822
@@ -3134,8 +3134,8 @@ msgid "The indexed field that says whether an item can be taken, e.g. seats_left
 msgstr "O campo indexado que diz se um item está disponível, por exemplo seats_left. Em branco: stock_status numa loja, nenhum nos demais sites."
 
 #: src/admin/js/copilot-block-editor.js:153
-msgid "Visitors ask in plain words and Turing’s copilot answers from this site, citing its items. It shows only when Turing has a language model for it."
-msgstr "Os visitantes perguntam com as próprias palavras e o copiloto do Turing responde com base neste site, citando seus itens. Ele só aparece quando o Turing tem um modelo de linguagem para isso."
+msgid "Visitors ask in plain words and Viglet Turing’s copilot answers from this site, citing its items. It shows only when Viglet Turing has a language model for it."
+msgstr "Os visitantes perguntam com as próprias palavras e o copiloto do Viglet Turing responde com base neste site, citando seus itens. Ele só aparece quando o Viglet Turing tem um modelo de linguagem para isso."
 
 #: src/blocks/copilot/block.json
 msgctxt "block title"
@@ -3144,8 +3144,8 @@ msgstr "Pergunte a este site"
 
 #: src/blocks/copilot/block.json
 msgctxt "block description"
-msgid "A conversation with Turing's copilot: a request in plain words answered from this site's content, with the items it cites. A described plan can be turned into the items it needs, grouped by need; on a WooCommerce shop those are products that go in the cart together."
-msgstr "Uma conversa com o copiloto do Turing: um pedido em linguagem comum respondido com o conteúdo deste site, com os itens que ele cita. Um plano descrito pode virar os itens de que precisa, agrupados por necessidade; numa loja WooCommerce, são produtos que vão juntos para o carrinho."
+msgid "A conversation with Viglet Turing's copilot: a request in plain words answered from this site's content, with the items it cites. A described plan can be turned into the items it needs, grouped by need; on a WooCommerce shop those are products that go in the cart together."
+msgstr "Uma conversa com o copiloto do Viglet Turing: um pedido em linguagem comum respondido com o conteúdo deste site, com os itens que ele cita. Um plano descrito pode virar os itens de que precisa, agrupados por necessidade; numa loja WooCommerce, são produtos que vão juntos para o carrinho."
 
 #: src/blocks/copilot/block.json
 msgctxt "block keyword"
@@ -3156,67 +3156,67 @@ msgstr "perguntar"
 msgid "Author"
 msgstr "Autor"
 
-#: assets/admin/mapping.js:528
+#: assets/admin/mapping.js:531
 msgid "Types from other sources"
 msgstr "Tipos de outras fontes"
 
-#: assets/admin/mapping.js:533
+#: assets/admin/mapping.js:536
 msgid "Documents another source sent under this site key, such as a catalog, carry types no post type has. Name each one as its result badge reads, and choose the fields its cards show as the date and the image. This changes how they show, never what is indexed."
 msgstr "Documentos que outra fonte enviou com a chave deste site, como um catálogo, trazem tipos que nenhum tipo de post tem. Dê a cada um o nome que o selo do resultado mostra e escolha os campos que os cards dele mostram como data e imagem. Isso muda como aparecem, nunca o que é indexado."
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:591
+#: assets/admin/mapping.js:594
 #, js-format
 msgid "Label for %s"
 msgstr "Rótulo de %s"
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:608
+#: assets/admin/mapping.js:611
 #, js-format
 msgid "Date shown on %s cards"
 msgstr "Data mostrada nos cards de %s"
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:635
+#: assets/admin/mapping.js:638
 #, js-format
 msgid "Image on %s cards"
 msgstr "Imagem nos cards de %s"
 
-#: assets/admin/mapping.js:645
+#: assets/admin/mapping.js:648
 msgid "Its image field"
 msgstr "O campo de imagem dele"
 
 #. translators: %d: how many documents of the type were read.
-#: assets/admin/mapping.js:575
+#: assets/admin/mapping.js:578
 #, js-format
 msgid "Documents read: %d"
 msgstr "Documentos lidos: %d"
 
 #: src/includes/class-viglet-turing-api-client.php:603
-msgid "Turing did not answer a moment ago; this page renders without it."
-msgstr "O Turing não respondeu há pouco; esta página é exibida sem ele."
+msgid "Viglet Turing did not answer a moment ago; this page renders without it."
+msgstr "O Viglet Turing não respondeu há pouco; esta página é exibida sem ele."
 
 #. translators: %d: queued edits that stopped retrying.
 #: src/includes/class-viglet-turing-admin.php:53
 #, php-format
-msgid "%d edit has not reached search: Turing did not answer, and it stopped retrying. It is sent again on its own once Turing answers."
-msgid_plural "%d edits have not reached search: Turing did not answer, and they stopped retrying. They are sent again on their own once Turing answers."
-msgstr[0] "%d edição não chegou à busca: o Turing não respondeu e ela parou de tentar. Ela é reenviada sozinha assim que o Turing responder."
-msgstr[1] "%d edições não chegaram à busca: o Turing não respondeu e elas pararam de tentar. Elas são reenviadas sozinhas assim que o Turing responder."
+msgid "%d edit has not reached search: Viglet Turing did not answer, and it stopped retrying. It is sent again on its own once Viglet Turing answers."
+msgid_plural "%d edits have not reached search: Viglet Turing did not answer, and they stopped retrying. They are sent again on their own once Viglet Turing answers."
+msgstr[0] "%d edição não chegou à busca: o Viglet Turing não respondeu e ela parou de tentar. Ela é reenviada sozinha assim que o Viglet Turing responder."
+msgstr[1] "%d edições não chegaram à busca: o Viglet Turing não respondeu e elas pararam de tentar. Elas são reenviadas sozinhas assim que o Viglet Turing responder."
 
 #. translators: %d: queued edits that had stopped retrying and were sent again.
 #: src/includes/class-viglet-turing-events.php:153
 #, php-format
-msgid "Turing answered again: %d stopped edits put back in the queue."
-msgstr "O Turing voltou a responder: %d edições paradas voltaram para a fila."
+msgid "Viglet Turing answered again: %d stopped edits put back in the queue."
+msgstr "O Viglet Turing voltou a responder: %d edições paradas voltaram para a fila."
 
 #: assets/admin/health.js:31
 msgid "Replayed"
 msgstr "Reenviado"
 
 #: src/includes/class-viglet-turing-post-state.php:521
-msgid "Turing did not take the post."
-msgstr "O Turing não aceitou o post."
+msgid "Viglet Turing did not take the post."
+msgstr "O Viglet Turing não aceitou o post."
 
 #. translators: 1: posts done, 2: posts to do in all, 3: posts that failed.
 #: src/includes/class-viglet-turing-admin.php:326
@@ -3362,8 +3362,8 @@ msgid "AI budget exhausted for now."
 msgstr "Orçamento de IA esgotado por enquanto."
 
 #: src/includes/class-viglet-turing-events.php:159
-msgid "Turing answered an AI call again: the AI budget is no longer exhausted."
-msgstr "O Turing voltou a responder a uma chamada de IA: o orçamento de IA não está mais esgotado."
+msgid "Viglet Turing answered an AI call again: the AI budget is no longer exhausted."
+msgstr "O Viglet Turing voltou a responder a uma chamada de IA: o orçamento de IA não está mais esgotado."
 
 #: assets/admin/health.js:33
 msgid "AI budget"
@@ -3390,8 +3390,8 @@ msgid "Find people, organisations and places in posts"
 msgstr "Encontrar pessoas, organizações e lugares nos posts"
 
 #: src/admin/views/settings-page.php:579
-msgid "Turing's language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed."
-msgstr "O modelo de linguagem do Turing lê cada post ao indexá-lo e lista as pessoas, organizações e lugares que ele cita, que o bloco de busca então oferece como facetas (dê os rótulos na tela Campos). Cada post indexado é uma chamada ao LLM. Exige a IA generativa, acima: com ela desligada, nada é pedido. Enviado com os campos; os posts indexados antes recebem os nomes quando forem reindexados."
+msgid "Viglet Turing's language model reads each post as it is indexed and lists the people, organisations and places it names, which the search block then offers as facets (label them on the Fields screen). Each post indexed is an LLM call. Needs generative AI, above: with it off, nothing is asked. Sent with the fields; posts indexed before get their names when they are reindexed."
+msgstr "O modelo de linguagem do Viglet Turing lê cada post ao indexá-lo e lista as pessoas, organizações e lugares que ele cita, que o bloco de busca então oferece como facetas (dê os rótulos na tela Campos). Cada post indexado é uma chamada ao LLM. Exige a IA generativa, acima: com ela desligada, nada é pedido. Enviado com os campos; os posts indexados antes recebem os nomes quando forem reindexados."
 
 #: src/admin/views/settings-page.php:581
 msgid "Off until generative AI is turned on."
@@ -3402,78 +3402,78 @@ msgid "Name variants"
 msgstr "Variantes de nomes"
 
 #: src/admin/views/settings-page.php:593
-msgid "One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Turing's Thesaurus for this site; posts already indexed follow once reindexed."
-msgstr "Um nome por linha: o nome a mostrar, uma |, e depois as outras formas como os posts o escrevem, separadas por ;. Um post que escreve uma variante é listado sob o nome. Salvo no Tesauro do Turing para este site; os posts já indexados acompanham quando forem reindexados."
+msgid "One name per line: the name to show, a |, then the other ways posts write it, separated by ;. A post that writes a variant is listed under the name. Saved to Viglet Turing's Thesaurus for this site; posts already indexed follow once reindexed."
+msgstr "Um nome por linha: o nome a mostrar, uma |, e depois as outras formas como os posts o escrevem, separadas por ;. Um post que escreve uma variante é listado sob o nome. Salvo no Tesauro do Viglet Turing para este site; os posts já indexados acompanham quando forem reindexados."
 
 #. translators: %s: why Turing did not take the name variants.
 #: src/admin/views/settings-page.php:602
 #, php-format
-msgid "Not saved to Turing: %s"
-msgstr "Não salvo no Turing: %s"
+msgid "Not saved to Viglet Turing: %s"
+msgstr "Não salvo no Viglet Turing: %s"
 
 #. translators: 1: how many names, 2: when they were saved.
 #: src/admin/views/settings-page.php:605
 #, php-format
-msgid "%1$d name saved to Turing %2$s ago."
-msgid_plural "%1$d names saved to Turing %2$s ago."
-msgstr[0] "%1$d nome salvo no Turing há %2$s."
-msgstr[1] "%1$d nomes salvos no Turing há %2$s."
+msgid "%1$d name saved to Viglet Turing %2$s ago."
+msgid_plural "%1$d names saved to Viglet Turing %2$s ago."
+msgstr[0] "%1$d nome salvo no Viglet Turing há %2$s."
+msgstr[1] "%1$d nomes salvos no Viglet Turing há %2$s."
 
 #: src/includes/class-viglet-turing-entities.php:84
-#: assets/admin/mapping.js:671
+#: assets/admin/mapping.js:674
 msgid "People"
 msgstr "Pessoas"
 
 #: src/includes/class-viglet-turing-entities.php:85
-#: assets/admin/mapping.js:676
+#: assets/admin/mapping.js:679
 msgid "Organisations"
 msgstr "Organizações"
 
 #: src/includes/class-viglet-turing-entities.php:86
-#: assets/admin/mapping.js:681
+#: assets/admin/mapping.js:684
 msgid "Places"
 msgstr "Lugares"
 
 #: src/includes/class-viglet-turing-entities.php:533
-msgid "Turing did not create the thesaurus."
-msgstr "O Turing não criou o tesauro."
+msgid "Viglet Turing did not create the thesaurus."
+msgstr "O Viglet Turing não criou o tesauro."
 
 #: src/includes/class-viglet-turing-entities.php:645
-msgid "Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Turing's Thesaurus."
-msgstr "O Turing recusou gravar as variantes de nomes (HTTP 403). Uma chave de API vinculada a uma partição de um site SN compartilhado não pode gravar no Tesauro; salve-as com uma chave que não seja, ou adicione-as no Tesauro do Turing."
+msgid "Viglet Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Viglet Turing's Thesaurus."
+msgstr "O Viglet Turing recusou gravar as variantes de nomes (HTTP 403). Uma chave de API vinculada a uma partição de um site SN compartilhado não pode gravar no Tesauro; salve-as com uma chave que não seja, ou adicione-as no Tesauro do Viglet Turing."
 
-#: assets/admin/mapping.js:709
+#: assets/admin/mapping.js:712
 msgid "Off: turn on \"Find people, organisations and places in posts\" under Settings › Generative AI. Until then nothing is found and these facets are not offered."
 msgstr "Desligado: ligue \"Encontrar pessoas, organizações e lugares nos posts\" em Configurações › IA generativa. Até lá nada é encontrado e estas facetas não são oferecidas."
 
-#: assets/admin/mapping.js:714
+#: assets/admin/mapping.js:717
 msgid "Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered."
 msgstr "Desligado: encontrar nomes exige a IA generativa, que está desligada em Configurações › IA generativa. Até que seja ligada, nada é encontrado e estas facetas não são oferecidas."
 
-#: assets/admin/mapping.js:724
+#: assets/admin/mapping.js:727
 msgid "People, organisations and places"
 msgstr "Pessoas, organizações e lugares"
 
-#: assets/admin/mapping.js:732
-msgid "Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
-msgstr "O modelo de linguagem do Turing encontra as pessoas, organizações e lugares que cada post cita ao indexá-lo, e mantém só os nomes que o texto contém. Dê a cada faceta o rótulo que o bloco de busca mostra e escolha quais ele oferece."
+#: assets/admin/mapping.js:735
+msgid "Viglet Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
+msgstr "O modelo de linguagem do Viglet Turing encontra as pessoas, organizações e lugares que cada post cita ao indexá-lo, e mantém só os nomes que o texto contém. Dê a cada faceta o rótulo que o bloco de busca mostra e escolha quais ele oferece."
 
-#: assets/admin/mapping.js:741
+#: assets/admin/mapping.js:744
 msgid "Open Settings"
 msgstr "Abrir Configurações"
 
-#: assets/admin/mapping.js:755
+#: assets/admin/mapping.js:761
 msgid "Offered"
 msgstr "Oferecida"
 
 #. translators: %s: the Turing field, e.g. entity_person.
-#: assets/admin/mapping.js:777
+#: assets/admin/mapping.js:786
 #, js-format
 msgid "Facet label for %s"
 msgstr "Rótulo da faceta de %s"
 
 #. translators: %s: a facet's label, e.g. People.
-#: assets/admin/mapping.js:793
+#: assets/admin/mapping.js:802
 #, js-format
 msgid "Offer %s"
 msgstr "Oferecer %s"
@@ -3483,12 +3483,12 @@ msgid "Names in this post"
 msgstr "Nomes neste post"
 
 #: src/admin/js/editor-panel.js:265
-msgid "Turing found no person, organisation or place in this post."
-msgstr "O Turing não encontrou pessoa, organização ou lugar neste post."
+msgid "Viglet Turing found no person, organisation or place in this post."
+msgstr "O Viglet Turing não encontrou pessoa, organização ou lugar neste post."
 
 #: src/admin/js/editor-panel.js:267
-msgid "Found by Turing’s language model when the post was indexed. To change them, change the text and reindex."
-msgstr "Encontrados pelo modelo de linguagem do Turing quando o post foi indexado. Para mudá-los, mude o texto e reindexe."
+msgid "Found by Viglet Turing’s language model when the post was indexed. To change them, change the text and reindex."
+msgstr "Encontrados pelo modelo de linguagem do Viglet Turing quando o post foi indexado. Para mudá-los, mude o texto e reindexe."
 
 #. translators: %s: when the site's AI answers come back, as a date and time.
 #: src/includes/class-viglet-turing-ai-quota.php:188

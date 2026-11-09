@@ -33,7 +33,7 @@ if ( ! $viglet_turing_posts ) {
 		printf(
 			'<p %s>%s</p>',
 			wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'viglet-turing-related__empty' ) ) ),
-			esc_html__( 'Related posts appear here once this post is indexed and Turing finds posts like it.', 'viglet-turing-search' )
+			esc_html__( 'Related posts appear here once this post is indexed and Viglet Turing finds posts like it.', 'viglet-turing-search' )
 		);
 	}
 	return;

@@ -91,7 +91,7 @@
                     : el('p', null, __('No related posts yet.', 'viglet-turing-search')),
                 'title' === result.basis
                     ? el('p', { className: 'viglet-turing-assist__note' },
-                        __('Compared by title: once this post is indexed, Turing compares the whole text.', 'viglet-turing-search'))
+                        __('Compared by title: once this post is indexed, Viglet Turing compares the whole text.', 'viglet-turing-search'))
                     : null
             ) : null,
             el(components.Button, {
@@ -158,7 +158,7 @@
                 onClick: function () { write(!!draft); }
             }, draft && draft.excerpt ? __('Draft another', 'viglet-turing-search') : __('Draft an excerpt', 'viglet-turing-search'))),
             el('p', { className: 'viglet-turing-assist__note' },
-                __('Written by Turing’s language model from the saved post. Nothing changes until you use it and save.', 'viglet-turing-search'))
+                __('Written by Viglet Turing’s language model from the saved post. Nothing changes until you use it and save.', 'viglet-turing-search'))
         );
     }
 
@@ -237,7 +237,7 @@
             el('p', { className: 'viglet-turing-assist__note' },
                 sprintf(
                     /* translators: %s: the audience personas, comma separated. */
-                    __('Judged by Turing against %s, from the saved post.', 'viglet-turing-search'),
+                    __('Judged by Viglet Turing against %s, from the saved post.', 'viglet-turing-search'),
                     personas.map(function (p) { return p.name; }).join(', ')
                 ))
         );
@@ -262,9 +262,9 @@
                             el('dd', { key: group.kind + '-d', 'data-kind': group.kind, style: { margin: '0 0 8px' } }, group.values.join(', '))
                         ];
                     }))
-                : el('p', null, __('Turing found no person, organisation or place in this post.', 'viglet-turing-search')),
+                : el('p', null, __('Viglet Turing found no person, organisation or place in this post.', 'viglet-turing-search')),
             el('p', { className: 'viglet-turing-assist__note' },
-                __('Found by Turing’s language model when the post was indexed. To change them, change the text and reindex.', 'viglet-turing-search'))
+                __('Found by Viglet Turing’s language model when the post was indexed. To change them, change the text and reindex.', 'viglet-turing-search'))
         );
     }
 

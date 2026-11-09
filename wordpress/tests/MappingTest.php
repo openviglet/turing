@@ -878,7 +878,7 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( 'provisioned', $status['site_key']['status'] );
 		$this->assertSame( 'pending', $status['seats']['status'] );
 		$this->assertSame( 'conflict', $status['area']['status'] );
-		$this->assertSame( 'type is TEXT in Turing, STRING here', $status['area']['detail'] );
+		$this->assertSame( 'type is TEXT in Viglet Turing, STRING here', $status['area']['detail'] );
 	}
 
 	public function test_the_manifest_turns_generative_ai_on_only_when_the_setting_does(): void {

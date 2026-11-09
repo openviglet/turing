@@ -114,7 +114,7 @@ function Summary( { period } ) {
 				{ ! answer?.summary && (
 					<p className="description">
 						{ __(
-							'Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call.',
+							'Viglet Turing’s language model reads this period’s searches and says what visitors looked for and what is worth writing. Each summary is an LLM call.',
 							'viglet-turing-search'
 						) }
 					</p>
@@ -315,7 +315,7 @@ function Insights() {
 		<Flex direction="column" gap={ 4 } style={ { maxWidth: 1000 } }>
 			<p>
 				{ __(
-					'What visitors searched for on this site, what found nothing and what they never opened, from Turing’s search metrics. Searches made while typing are left out.',
+					'What visitors searched for on this site, what found nothing and what they never opened, from Viglet Turing’s search metrics. Searches made while typing are left out.',
 					'viglet-turing-search'
 				) }
 			</p>
@@ -335,7 +335,7 @@ function Insights() {
 			{ report?.metricsOff && (
 				<Notice status="warning" isDismissible={ false }>
 					{ __(
-						'Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED).',
+						'Viglet Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED).',
 						'viglet-turing-search'
 					) }
 				</Notice>

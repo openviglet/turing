@@ -29,7 +29,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 
 const STATUS_LABEL = {
-	provisioned: __( 'In Turing', 'viglet-turing-search' ),
+	provisioned: __( 'In Viglet Turing', 'viglet-turing-search' ),
 	pending: __( 'Added on the next save', 'viglet-turing-search' ),
 	conflict: __( 'Conflict', 'viglet-turing-search' ),
 };
@@ -277,7 +277,10 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 					<TextControl
 						__nextHasNoMarginBottom
 						hideLabelFromVision
-						label={ __( 'Turing field', 'viglet-turing-search' ) }
+						label={ __(
+							'Viglet Turing field',
+							'viglet-turing-search'
+						) }
 						value={ field.field }
 						onChange={ set( 'field' ) }
 					/>
@@ -730,7 +733,7 @@ function EntityFacets( { value, extraction, status, onChange } ) {
 			<CardBody>
 				<p>
 					{ __(
-						"Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers.",
+						"Viglet Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers.",
 						'viglet-turing-search'
 					) }
 				</p>
@@ -746,7 +749,10 @@ function EntityFacets( { value, extraction, status, onChange } ) {
 					<thead>
 						<tr>
 							<th scope="col">
-								{ __( 'Turing field', 'viglet-turing-search' ) }
+								{ __(
+									'Viglet Turing field',
+									'viglet-turing-search'
+								) }
 							</th>
 							<th scope="col">
 								{ __( 'Facet label', 'viglet-turing-search' ) }
@@ -755,7 +761,10 @@ function EntityFacets( { value, extraction, status, onChange } ) {
 								{ __( 'Offered', 'viglet-turing-search' ) }
 							</th>
 							<th scope="col">
-								{ __( 'In Turing', 'viglet-turing-search' ) }
+								{ __(
+									'In Viglet Turing',
+									'viglet-turing-search'
+								) }
 							</th>
 						</tr>
 					</thead>
@@ -865,7 +874,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 								</th>
 								<th scope="col">
 									{ __(
-										'Turing field',
+										'Viglet Turing field',
 										'viglet-turing-search'
 									) }
 								</th>
@@ -883,7 +892,7 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 								</th>
 								<th scope="col">
 									{ __(
-										'In Turing',
+										'In Viglet Turing',
 										'viglet-turing-search'
 									) }
 								</th>
@@ -1046,7 +1055,7 @@ function Mapping() {
 		<Flex direction="column" gap={ 4 } style={ { maxWidth: 1200 } }>
 			<p>
 				{ __(
-					'Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Turing; run a reindex afterwards so existing posts carry them.',
+					'Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Viglet Turing; run a reindex afterwards so existing posts carry them.',
 					'viglet-turing-search'
 				) }
 			</p>
@@ -1060,7 +1069,7 @@ function Mapping() {
 					{ sprintf(
 						/* translators: %s: why Turing could not say where each field stands. */
 						__(
-							'Turing did not say where the fields stand: %s',
+							'Viglet Turing did not say where the fields stand: %s',
 							'viglet-turing-search'
 						),
 						data.status_error
@@ -1070,7 +1079,7 @@ function Mapping() {
 			{ data.genai_change && (
 				<Notice status="info" isDismissible={ false }>
 					{ __(
-						"Saving also turns generative AI on for this site in Turing, answering through its Default AI Agent until an agent is chosen in Turing's console.",
+						"Saving also turns generative AI on for this site in Viglet Turing, answering through its Default AI Agent until an agent is chosen in Viglet Turing's console.",
 						'viglet-turing-search'
 					) }
 				</Notice>
@@ -1116,7 +1125,10 @@ function Mapping() {
 					disabled={ saving }
 					onClick={ save }
 				>
-					{ __( 'Save and send to Turing', 'viglet-turing-search' ) }
+					{ __(
+						'Save and send to Viglet Turing',
+						'viglet-turing-search'
+					) }
 				</Button>
 			</Flex>
 		</Flex>
