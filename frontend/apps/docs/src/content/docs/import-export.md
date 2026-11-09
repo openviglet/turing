@@ -49,7 +49,7 @@ Instance references never carry an owning tenant. When [multi-tenancy](/docs/mul
 
 ## Seeding a fresh installation
 
-On the **first** startup against an empty database, Turing imports every `.zip` it finds in the `export/` directory of its working directory (alphabetical order). Use this to open a new environment with your sites, LLM instances, search engines and embedding stores already configured: no admin clicks, no API calls.
+On the **first** startup against an empty database, Viglet Turing imports every `.zip` it finds in the `export/` directory of its working directory (alphabetical order). Use this to open a new environment with your sites, LLM instances, search engines and embedding stores already configured: no admin clicks, no API calls.
 
 ```
 /app/export/           # in the Docker image
@@ -78,7 +78,7 @@ The official image ships `/app/export/defaults.zip` with two shared instances, b
 
 Both live under `/app/store`, which the image declares as a volume, and both are shared: with multi-tenancy enabled, every tenant can use them without configuring anything of their own.
 
-No LLM instance is seeded: an exported LLM carries its API key encrypted with the key of the installation that exported it. Set `OPENAI_API_KEY` or `GEMINI_API_KEY` instead and Turing provisions a default LLM at startup (see [LLM instances](/docs/llm-instances/)).
+No LLM instance is seeded: an exported LLM carries its API key encrypted with the key of the installation that exported it. Set `OPENAI_API_KEY` or `GEMINI_API_KEY` instead and Viglet Turing provisions a default LLM at startup (see [LLM instances](/docs/llm-instances/)).
 
 ### Seeding your own defaults
 
@@ -93,7 +93,7 @@ docker run -v ./my-defaults.zip:/app/export/my-defaults.zip \
 Export from a configured environment to produce the bundle: the archive an admin export gives you is exactly the format this reads.
 
 :::caution[One shot per database]
-Once every ZIP in `export/` has imported, Turing records an `EXPORT_AUTO_IMPORT` marker and never scans the directory again, so changing a bundle later has no effect on an existing database. Adding a ZIP still works if the directory was **absent or empty** at first startup, because nothing was recorded then.
+Once every ZIP in `export/` has imported, Viglet Turing records an `EXPORT_AUTO_IMPORT` marker and never scans the directory again, so changing a bundle later has no effect on an existing database. Adding a ZIP still works if the directory was **absent or empty** at first startup, because nothing was recorded then.
 :::
 
 ### When a seed ZIP fails
@@ -120,7 +120,7 @@ If your deployment runs more than one container, give them all the same encrypti
 
 ## Import
 
-The import page (`/admin/exchange/import`) accepts a ZIP file previously exported from Turing and recreates the site configurations in the target environment.
+The import page (`/admin/exchange/import`) accepts a ZIP file previously exported from Viglet Turing and recreates the site configurations in the target environment.
 
 ### Using the Admin Console
 
@@ -129,7 +129,7 @@ The import page (`/admin/exchange/import`) accepts a ZIP file previously exporte
 3. The upload progress is displayed in real time (percentage bar)
 4. On success, you are automatically redirected to the SN Sites listing after 2 seconds
 
-**Supported formats:** `.zip` files exported from Turing.
+**Supported formats:** `.zip` files exported from Viglet Turing.
 
 **UI states:**
 
@@ -158,7 +158,7 @@ curl -X POST "http://localhost:2700/api/import" \
 
 ### Synonyms
 
-An imported site gets the synonym rules its bundle carries, and Turing pushes them to the site's search engine once the import completes, as **Push to engine** does in the console. A site seeded from a bundle therefore answers synonym searches straight away, with no admin step.
+An imported site gets the synonym rules its bundle carries, and Viglet Turing pushes them to the site's search engine once the import completes, as **Push to engine** does in the console. A site seeded from a bundle therefore answers synonym searches straight away, with no admin step.
 
 A bundle exported before synonyms were included has no `turSNSiteSynonyms` entry. Re-importing such a bundle over an existing site keeps that site's current synonyms instead of removing them.
 
@@ -172,7 +172,7 @@ When a site names an agent that is neither in the bundle nor installed, the site
 
 ## Content Import (SN Job Items)
 
-In addition to site configuration import, Turing accepts **document-level indexing jobs** via the SN Import API. This is used by connectors and custom integrations to push content into the search index.
+In addition to site configuration import, Viglet Turing accepts **document-level indexing jobs** via the SN Import API. This is used by connectors and custom integrations to push content into the search index.
 
 ### JSON Import
 
@@ -211,7 +211,7 @@ curl -X POST "http://localhost:2700/api/sn/import" \
 POST /api/sn/import/zip
 ```
 
-Accepts a `multipart/form-data` ZIP file containing an `export.json` with job items. Document attributes can reference embedded files using the `file://` protocol, Turing extracts text from these files using Apache Tika before indexing.
+Accepts a `multipart/form-data` ZIP file containing an `export.json` with job items. Document attributes can reference embedded files using the `file://` protocol, Viglet Turing extracts text from these files using Apache Tika before indexing.
 
 ### Job Actions
 

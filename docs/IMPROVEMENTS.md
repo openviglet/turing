@@ -1385,26 +1385,6 @@ standalone, no SDK/backend dependency). Content lives in one place,
 Deploy: `pnpm build:site` → `apps/site/dist/*` copied to the Pages root by
 `publish-github-pages.yml`.
 
-### XXVII.5 Full product names across the public site (T1268)
-
-Review of 2026-11-08: published pages and current source, compared with viglet.org.
-site-nav.tsx renders Why Turing; site-content.ts and the assistant use bare Turing and
-Dumont. The desktop logo already says Viglet Turing, but mobile hides its wordmark.
-
-Apply the owner decision in hub docs/STRATEGY.md section I.7 to frontend/apps/site/src,
-frontend/apps/docs, accessible labels, titles, descriptions, OG assets, JSON-LD,
-llms.txt and generated Markdown twins. Always use Viglet Turing, Viglet Dumont and
-Viglet Shio, including repeated mentions. Share typed product identity data rather than
-maintaining shorter display aliases. Keep stable slugs, package names, commands, code
-identifiers, filenames and historical release records intact; classify these exceptions
-explicitly. Ensure the product identity remains visible on small screens by changing
-layout rather than abbreviating. Category labels remain separate from names.
-
-Acceptance: scan rendered visitor text and machine-readable outputs, not only source
-literals; report each intentional technical exception. Review desktop and 390-pixel
-navigation, long headings, buttons and docs search results. No backend renames or
-technical API changes.
-
 ### XXVII.6 A consistent visual contract with viglet.org (T1269)
 
 Review of 2026-11-08: published pages and current source, compared with viglet.org.
@@ -2609,3 +2589,22 @@ path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (
 per-site opt-in that would have emptied the citations was dropped: a client that wants
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
+
+### CLXXXII.15 WordPress plugin labels use the full product name (T1274)
+
+Found by T1268 (2026-11-09). The viglet.org hub's naming decision (hub docs/STRATEGY.md
+section I.7) says every visitor-facing product mention uses the full name. The plugin's
+admin menu already says Viglet Turing Search, but several strings it shows WordPress
+administrators still use the bare name: the block title "Turing search" (block.json and
+the two "Turing search block, with ..." feature labels in viglet-turing.php), the Setup
+field "Turing URL" (assets/admin/setup.js), and the submenu page title "Connect to
+Turing" (class-viglet-turing-admin.php).
+
+The end-user docs at frontend/apps/docs/src/content/docs/integrations/wordpress quote
+these labels verbatim, so T1268 kept "Turing search" and "Turing URL" there as
+intentional exceptions. Rename the msgids to Viglet Turing, update the pt_BR .po and the
+.pot (regenerate, do not hand-edit if the build has a make-pot step), the e2e locator
+field('Turing URL') in tests/e2e/developer/install.developer.mjs, the demo theme's l10n
+entry, and then the quoted labels in the WordPress docs pages in the same commit. Keep
+the text domain viglet-turing-search, block names, option keys and slugs: they are
+technical identifiers. Run the plugin gates in Docker as the plugin README shows.

@@ -1,17 +1,17 @@
 ---
-title: "Turing CLI"
+title: "Viglet Turing CLI"
 description: "@viglet/turing-cli, the `turing` command. Scaffold an agent project, run a full local stack, deploy agents/flows/tools/skills to any environment, tail live chat events, and run YAML eval suites in CI. Zero runtime dependencies."
 ---
 **`@viglet/turing-cli`** gives you the **`turing`** command, a developer CLI for building, deploying and testing Viglet Turing agents as **code in a Git repo** instead of clicking through the admin console. It's zero-dependency (compiled ESM, `tsc`-only) and needs a modern Node runtime (see the package's `engines`).
 
-**When you'd reach for it.** Use the CLI when you want an **agent-as-code workflow**: keep your agent definition, chat flows, custom tools, skills and regression tests in version control; boot a local Turing stack to iterate; and `deploy` the whole thing to `local` / `staging` / `production` from a script or CI pipeline. It pairs naturally with **[`@viglet/turing-flow-dsl`](/docs/flow-dsl/)** (author flows as typed TypeScript that compile to the `flows/*.chat-flow.json` the CLI deploys).
+**When you'd reach for it.** Use the CLI when you want an **agent-as-code workflow**: keep your agent definition, chat flows, custom tools, skills and regression tests in version control; boot a local Viglet Turing stack to iterate; and `deploy` the whole thing to `local` / `staging` / `production` from a script or CI pipeline. It pairs naturally with **[`@viglet/turing-flow-dsl`](/docs/flow-dsl/)** (author flows as typed TypeScript that compile to the `flows/*.chat-flow.json` the CLI deploys).
 
 > **The five commands at a glance:**
 >
 > | Command | What it does |
 > |---|---|
 > | `turing init <name>` | Scaffold a new agent project. |
-> | `turing dev` | Boot a local Turing stack via Docker Compose (`--watch` = hot redeploy). |
+> | `turing dev` | Boot a local Viglet Turing stack via Docker Compose (`--watch` = hot redeploy). |
 > | `turing deploy` | Push agent + flows + tools + skills to an environment. |
 > | `turing eval` | Run `*.eval.yaml` regression suites (exits non-zero on failure → CI-ready). |
 > | `turing logs` | Tail live chat events (SSE) for a conversation. |
@@ -117,7 +117,7 @@ turing init my-copilot --dir ./projects/ai --force
 
 ### `turing dev [--file <compose>] [--detach] [--watch]`
 
-Boot a local Turing stack via `docker compose up`. It resolves `docker-compose.yml` → `docker-compose.yaml` → `docker-compose.dev.yml` (first match wins).
+Boot a local Viglet Turing stack via `docker compose up`. It resolves `docker-compose.yml` → `docker-compose.yaml` → `docker-compose.dev.yml` (first match wins).
 
 - `--file <compose>`: use a specific compose file.
 - `--detach`, `-d`: run in the background.
@@ -195,7 +195,7 @@ turing eval record abc-123-def-456 --out evals/from-prod.eval.yaml
 
 #### `turing eval --dataset <id|name> [--stack <id|name>] [--min-score <n>]`
 
-Run a **stored** eval dataset against a **grader stack** on the server, instead of local YAML fixtures. This is the CLI face of `POST /api/eval/run`: the dataset ([reusable datasets](/docs/agent-eval/)) and the grader stack both live in the Turing instance and are referenced by **id or name**, so one dataset gates any number of pipelines without checking fixtures into each repo. Omit `--stack` to use the default stack (slot / outcome / node / rubric).
+Run a **stored** eval dataset against a **grader stack** on the server, instead of local YAML fixtures. This is the CLI face of `POST /api/eval/run`: the dataset ([reusable datasets](/docs/agent-eval/)) and the grader stack both live in the Viglet Turing instance and are referenced by **id or name**, so one dataset gates any number of pipelines without checking fixtures into each repo. Omit `--stack` to use the default stack (slot / outcome / node / rubric).
 
 The command replays every dataset row against the agent (`--agent` / `TURING_AGENT_ID`), scores it with the stack, prints a per-case summary, and **exits non-zero when the gate fails**. The gate passes when every case passes and (if you set `--min-score`) the aggregate score is at least that threshold (0–1).
 
@@ -217,8 +217,8 @@ turing logs --conversation abc-123-def-456 --slots
 
 ### `turing migrate elasticsearch|algolia … [connection flags]`
 
-Import a source search index into a Turing **SN site**, the automated "step 2" of
-[switching from Elasticsearch or Algolia](/docs/migration/). Turing reads the source
+Import a source search index into a Viglet Turing **SN site**, the automated "step 2" of
+[switching from Elasticsearch or Algolia](/docs/migration/). Viglet Turing reads the source
 schema, derives a [field manifest](/docs/manifest/), provisions the site, and imports
 every record. Add `--dry-run` to preview the derived schema without changing anything.
 
@@ -248,7 +248,7 @@ turing migrate algolia \
 | `--locale` · `--batch-size` · `--max-documents` · `--dry-run` | both | Tuning + preview. |
 
 Synonyms found on an Algolia index are reported so you can apply them in your target
-engine (Solr / Elasticsearch); native synonym management in Turing is on the roadmap.
+engine (Solr / Elasticsearch); native synonym management in Viglet Turing is on the roadmap.
 
 **Reshape fields on the way in**: a source schema is rarely 1:1 with what you want.
 `--overrides-file` points at a JSON array that renames, retypes, drops, or defaults
@@ -278,7 +278,7 @@ turing migrate compare \
 
 `--queries-file` is one query per line (blank lines and `#` comments ignored). The
 report gives, per query and in aggregate, the set overlap (Jaccard), how much of the
-source's top-N Turing reproduced (source recall), and how often the #1 result matches.
+source's top-N Viglet Turing reproduced (source recall), and how often the #1 result matches.
 
 ### `turing research`: define, run & fetch a study
 

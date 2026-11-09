@@ -79,7 +79,7 @@ function SearchPage() {
 
 ## TuringProvider
 
-The root context provider that makes Turing config and search state available to all hooks.
+The root context provider that makes Viglet Turing config and search state available to all hooks.
 
 ```tsx
 import { TuringProvider } from "@viglet/turing-react-sdk";
@@ -158,7 +158,7 @@ const {
 The hook is **POST-native** by default: it calls the
 [POST-native search endpoint](/docs/rest-api/#post-native-search) and asks for the
 link-free response, so `structured` is authoritative and every action above is a
-change to `request` rather than a Turing href to parse. That is what makes a
+change to `request` rather than a Viglet Turing href to parse. That is what makes a
 filter value containing `&`, `=`, `+`, `#`, `%` or a space safe.
 
 `data` (the legacy link-bearing body) is `null` in this mode. Pass
@@ -169,7 +169,7 @@ major**; the same applies to `onNavigate` on `TuringPagination`.
 
 ### useTuringAutoComplete
 
-Autocomplete hook that calls the Turing `/ac` endpoint with built-in debouncing.
+Autocomplete hook that calls the Viglet Turing `/ac` endpoint with built-in debouncing.
 
 ```tsx
 const {
@@ -285,7 +285,7 @@ const {
 
 ### useTuringSortOptions
 
-Fetches available sort options (built-in + custom from Turing admin console).
+Fetches available sort options (built-in + custom from Viglet Turing admin console).
 
 ```tsx
 const {

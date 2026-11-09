@@ -12,7 +12,7 @@ You're at the start of the [zero → first-agent learning path](/docs/getting-st
 
 ## Semantic Navigation Site
 
-The **Semantic Navigation Site** (or SN Site) is the central object in Turing. Everything revolves around it.
+The **Semantic Navigation Site** (or SN Site) is the central object in Viglet Turing. Everything revolves around it.
 
 Think of an SN Site as a configured search experience. It defines:
 
@@ -23,24 +23,24 @@ Think of an SN Site as a configured search experience. It defines:
 - **Advanced behaviors**: Spotlights for curated results, Targeting Rules for personalization, Merge Providers for combining content from multiple sources
 - **AI capabilities**: whether GenAI and RAG are enabled, and which language model to use
 
-A single Turing instance can host multiple SN Sites, each independently configured. For example, you could have one site for your public website, another for your internal knowledge base, and a third for your product documentation, all on the same server.
+A single Viglet Turing instance can host multiple SN Sites, each independently configured. For example, you could have one site for your public website, another for your internal knowledge base, and a third for your product documentation, all on the same server.
 
 ---
 
 ## Content Ingestion
 
-Content does not flow into Turing on its own. It needs connectors.
+Content does not flow into Viglet Turing on its own. It needs connectors.
 
 ### Viglet Dumont
 
-**Viglet Dumont** is a separate application that manages connectors, the components responsible for extracting content from its original source and sending it to Turing. Dumont and Turing are separate projects that work together: Dumont handles *getting* content, Turing handles *indexing and searching* it.
+**Viglet Dumont** is a separate application that manages connectors, the components responsible for extracting content from its original source and sending it to Viglet Turing. Viglet Dumont and Viglet Turing are separate projects that work together: Viglet Dumont handles *getting* content, Viglet Turing handles *indexing and searching* it.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
 graph TB
     SRC["📡 Content Sources\nCMS · Database · Files · Web"]
     DEP["🔌 Viglet Dumont\nConnectors"]
-    TES["🌐 Turing\nREST API"]
+    TES["🌐 Viglet Turing\nREST API"]
     IDX["🔎 Index\n(Search Engine)"]
 
     SRC --> DEP
@@ -60,18 +60,18 @@ graph TB
 
 ### How a connector works
 
-Each connector in Dumont:
+Each connector in Viglet Dumont:
 1. Connects to a content source (a website, a database table, a file folder, a CMS)
 2. Extracts documents according to its configuration (which pages to crawl, which SQL query to run, which folder to scan)
-3. Sends each document to the Turing REST API, targeting a specific SN Site
+3. Sends each document to the Viglet Turing REST API, targeting a specific SN Site
 
-Turing receives the document, validates it against the SN Site configuration, and creates an indexing job. The job processes the document and writes it to the configured search engine (Apache Solr, Elasticsearch, or Apache Lucene), making it immediately searchable. Apache Solr is the primary and default backend, but Turing also supports Elasticsearch and Lucene as alternative search engine backends.
+Viglet Turing receives the document, validates it against the SN Site configuration, and creates an indexing job. The job processes the document and writes it to the configured search engine (Apache Solr, Elasticsearch, or Apache Lucene), making it immediately searchable. Apache Solr is the primary and default backend, but Viglet Turing also supports Elasticsearch and Lucene as alternative search engine backends.
 
 ### What happens when two connectors index the same content
 
 Sometimes the same real-world document exists in two systems with complementary information. For example, your CMS has structured metadata (author, tags, content type) while your web crawler has the full rendered text of the same page. Neither connector alone gives you a complete document.
 
-**Merge Providers** solve this by instructing Turing to detect when two connectors have indexed the same document (using a shared field as a join key) and merge them into one enriched result. See [Semantic Navigation](/docs/semantic-navigation/#merge-providers) to learn how to configure this.
+**Merge Providers** solve this by instructing Viglet Turing to detect when two connectors have indexed the same document (using a shared field as a join key) and merge them into one enriched result. See [Semantic Navigation](/docs/semantic-navigation/#merge-providers) to learn how to configure this.
 
 ---
 
@@ -83,7 +83,7 @@ When a user searches on an SN Site, this is what happens, in simple terms:
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'actorBkg': '#dbeafe', 'actorBorder': '#4A90D9', 'actorTextColor': '#1a1a1a', 'activationBkgColor': '#ede9fe', 'activationBorderColor': '#9B6EC5', 'labelBoxBkgColor': '#fef3c7', 'labelBoxBorderColor': '#E8A838', 'labelTextColor': '#1a1a1a', 'noteBkgColor': '#dcfce7', 'noteBorderColor': '#50B86C', 'noteTextColor': '#1a1a1a', 'signalColor': '#333', 'signalTextColor': '#333'}}}%%
 sequenceDiagram
     participant U as User
-    participant API as Turing API
+    participant API as Viglet Turing API
     participant S as Search Engine
     participant SP as Spotlight Engine
 
@@ -97,10 +97,10 @@ sequenceDiagram
     API-->>U: Results · Facets · Spotlights · Locales
 ```
 
-1. The query arrives at the Turing API along with the user's profile attributes (if Targeting Rules are configured)
+1. The query arrives at the Viglet Turing API along with the user's profile attributes (if Targeting Rules are configured)
 2. **Targeting Rules** run first: they translate the user's profile attributes into additional filter queries (e.g., Solr `fq` parameters when using the default Solr backend), so only content relevant to that user is retrieved
-3. Turing executes the search engine query with those filters, facet counts, and result ranking applied together
-4. Results come back from the search engine already filtered; Turing maps fields and applies highlighting
+3. Viglet Turing executes the search engine query with those filters, facet counts, and result ranking applied together
+4. Results come back from the search engine already filtered; Viglet Turing maps fields and applies highlighting
 5. **Spotlights** are checked last: if the query matches a spotlight term, curated documents are injected at their configured positions in the response
 6. The final response (results, facets, spotlights, locales, spell check, and similar documents) goes back to the client
 
@@ -126,11 +126,11 @@ See [Targeting Rules](/docs/semantic-navigation/#targeting-rules) for a full exp
 
 ## Generative AI
 
-Turing integrates generative AI in two places: directly on **SN Sites** (search + summarization) and through standalone **AI Agents** (open-ended chat with tools).
+Viglet Turing integrates generative AI in two places: directly on **SN Sites** (search + summarization) and through standalone **AI Agents** (open-ended chat with tools).
 
 ### RAG on an SN Site
 
-When GenAI is enabled for an SN Site, indexed documents are also stored as **vector embeddings**, a mathematical representation of their meaning, not just their words. When a user asks a question, Turing:
+When GenAI is enabled for an SN Site, indexed documents are also stored as **vector embeddings**, a mathematical representation of their meaning, not just their words. When a user asks a question, Viglet Turing:
 
 1. Finds the most semantically relevant documents (not just keyword matches) using the vector embeddings
 2. Passes those documents as context to a language model
@@ -140,7 +140,7 @@ This is called **Retrieval-Augmented Generation (RAG)**. The LLM does not make t
 
 ### Knowledge Base
 
-Beyond SN Sites, Turing provides a **Knowledge Base**, a file and folder interface in the admin console (backed by MinIO) where you can upload documents directly. These files are also indexed as vector embeddings and become available to AI Agents as a searchable knowledge source, independent of any connector or SN Site.
+Beyond SN Sites, Viglet Turing provides a **Knowledge Base**, a file and folder interface in the admin console (backed by MinIO) where you can upload documents directly. These files are also indexed as vector embeddings and become available to AI Agents as a searchable knowledge source, independent of any connector or SN Site.
 
 The Knowledge Base is managed through the **[Assets](/docs/assets/)** page: drag-and-drop upload, folder navigation, inline preview, and batch AI training with real-time progress. Uploaded files are indexed automatically on upload and unindexed on deletion.
 
@@ -160,15 +160,15 @@ See [AI Agents](/docs/ai-agents/) for configuration, [Tool Calling](/docs/tool-c
 
 ## The Admin Console
 
-Everything described above (SN Sites, connectors, Spotlights, Targeting Rules, Merge Providers, AI Agents, MCP Servers, and the Knowledge Base) is configured and managed through the **Turing Admin Console**: a browser-based React application served by Turing itself.
+Everything described above (SN Sites, connectors, Spotlights, Targeting Rules, Merge Providers, AI Agents, MCP Servers, and the Knowledge Base) is configured and managed through the **Viglet Turing Admin Console**: a browser-based React application served by Viglet Turing itself.
 
 The admin console also exposes application logs (when MongoDB is configured), search metrics, and top search terms, giving you operational visibility without needing access to the server.
 
 ---
 
-## Consuming Turing from Your Application
+## Consuming Viglet Turing from Your Application
 
-Turing exposes its search, chat, and indexing capabilities through four integration options. Choose the one that best fits your technology stack.
+Viglet Turing exposes its search, chat, and indexing capabilities through four integration options. Choose the one that best fits your technology stack.
 
 ### REST API
 
@@ -182,7 +182,7 @@ Suitable for any language or platform that can make HTTP requests.
 
 ### GraphQL
 
-Turing also exposes a GraphQL endpoint for clients that prefer a graph-based query model. Useful when you want to request only specific fields or combine multiple queries in a single request.
+Viglet Turing also exposes a GraphQL endpoint for clients that prefer a graph-based query model. Useful when you want to request only specific fields or combine multiple queries in a single request.
 
 ```
 POST https://<your-host>/graphql
@@ -222,8 +222,8 @@ npm install @viglet/turing-sdk
 | Upload documents to the Knowledge Base | [Assets](/docs/assets/) |
 | Monitor LLM token consumption | [Token Usage](/docs/token-usage/) |
 | Authenticate via API Key | [Authentication](/docs/security-authentication/) |
-| Secure Turing with Keycloak | [Security & Keycloak](/docs/security-keycloak/) |
-| Install Turing | [Installation Guide](/docs/installation-guide/) |
+| Secure Viglet Turing with Keycloak | [Security & Keycloak](/docs/security-keycloak/) |
+| Install Viglet Turing | [Installation Guide](/docs/installation-guide/) |
 
 ---
 

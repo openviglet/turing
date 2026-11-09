@@ -19,7 +19,7 @@ An interactive GraphQL IDE is available in the admin console and at `/graphiql`.
 - **Query validation**: syntax and type errors are highlighted in real time
 - **Query history**: previously executed queries are saved locally
 
-The explorer synchronizes its theme (light/dark) with the Turing console.
+The explorer synchronizes its theme (light/dark) with the Viglet Turing console.
 
 ---
 
@@ -240,7 +240,7 @@ The GraphQL schema is **dynamically extended** at runtime with custom fields fro
 
 **How it works:**
 
-1. At startup, Turing reads all field extensions from every configured SN Site
+1. At startup, Viglet Turing reads all field extensions from every configured SN Site
 2. Fields with valid GraphQL names (matching `^[_A-Za-z]\w*$`, no `__` prefix) are collected
 3. Static fields (`id`, `title`, `text`, `url`, `date`, `description`, `image`) are excluded to avoid conflicts
 4. The schema is extended: `extend type SearchDocumentFields { category: JSON, author: JSON, ... }`

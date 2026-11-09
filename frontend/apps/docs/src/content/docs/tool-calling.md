@@ -240,9 +240,9 @@ Workers are **single-use** (one execution then exit, no cross-tenant state leak)
 
 ### Structured output & `sandbox:` URLs
 
-Beyond stdout/stderr, the interpreter can return a **structured result**, used by [Custom Tools](/docs/custom-tools/) via the Groovy `code.executePythonStructured(...)` / `code.executePythonJson(...)` bindings. It carries `stdout`, `stderr`, an `exitCode`, `timedOut`, `durationMs`, a rendered `markdown`, and a list of generated **files** (`name`, `url`, `image`, `sizeBytes`). Files (a chart PNG, a generated PDF) are addressed with Turing's **`sandbox:` URL scheme** (the OpenAI convention): clients resolve them to a real download URL, and the underlying `/api/v2/code-interpreter/{session}/{file}` URLs are **HMAC-signed and cookie-bound** so they can't be replayed across browsers. This retires the old "regex-parse the markdown for file links" approach.
+Beyond stdout/stderr, the interpreter can return a **structured result**, used by [Custom Tools](/docs/custom-tools/) via the Groovy `code.executePythonStructured(...)` / `code.executePythonJson(...)` bindings. It carries `stdout`, `stderr`, an `exitCode`, `timedOut`, `durationMs`, a rendered `markdown`, and a list of generated **files** (`name`, `url`, `image`, `sizeBytes`). Files (a chart PNG, a generated PDF) are addressed with Viglet Turing's **`sandbox:` URL scheme** (the OpenAI convention): clients resolve them to a real download URL, and the underlying `/api/v2/code-interpreter/{session}/{file}` URLs are **HMAC-signed and cookie-bound** so they can't be replayed across browsers. This retires the old "regex-parse the markdown for file links" approach.
 
-Agents can also declare extra Python dependencies (e.g. `reportlab matplotlib qrcode`) that Turing ensures are installed before running.
+Agents can also declare extra Python dependencies (e.g. `reportlab matplotlib qrcode`) that Viglet Turing ensures are installed before running.
 
 :::tip[Tool output feeding a slot]
 A Code Interpreter file can land in a **multi-modal slot**. Slot types `IMAGE` / `AUDIO` / `FILE` hold an artifact's storage URL, so a generated chart or document becomes a first-class value in a [Chat Flow](/docs/chat-flow/#slots-the-conversations-memory).
@@ -260,7 +260,7 @@ See [MCP Servers](/docs/mcp-servers/) for configuration details.
 
 ## Provider-native server tools
 
-The tools above are **Turing's own**, Turing runs them and feeds results back to the model. Separately, some vendors expose **server-side built-in tools** that run inside the provider's infrastructure (the model searches the web, executes code, or fetches a URL without Turing doing the work). These are selected through the [capability](/docs/capabilities/) gate, not the agent's tool list, and they coexist with Turing/MCP tools in one tool loop.
+The tools above are **Viglet Turing's own**, Viglet Turing runs them and feeds results back to the model. Separately, some vendors expose **server-side built-in tools** that run inside the provider's infrastructure (the model searches the web, executes code, or fetches a URL without Viglet Turing doing the work). These are selected through the [capability](/docs/capabilities/) gate, not the agent's tool list, and they coexist with Viglet Turing/MCP tools in one tool loop.
 
 | Function | OpenAI | Anthropic | Gemini |
 |---|---|---|---|
@@ -271,7 +271,7 @@ The tools above are **Turing's own**, Turing runs them and feeds results back to
 | Computer use | ✅ | ✅ | ✅ |
 | Remote MCP | ✅ | ✅ | n/a |
 
-Gemini's native primitives (Google Search grounding, URL Context, code execution, image generation, Computer Use, plus thinking budget, context caching, Batch, Files, full-context answering, and native video understanding) are documented in depth in [Generative AI → Gemini native primitives](/docs/genai-llm/#gemini-native-primitives-f16). For how server-native and Turing tools share one loop, and the two-level gate that controls them, see [Capabilities](/docs/capabilities/).
+Gemini's native primitives (Google Search grounding, URL Context, code execution, image generation, Computer Use, plus thinking budget, context caching, Batch, Files, full-context answering, and native video understanding) are documented in depth in [Generative AI → Gemini native primitives](/docs/genai-llm/#gemini-native-primitives-f16). For how server-native and Viglet Turing tools share one loop, and the two-level gate that controls them, see [Capabilities](/docs/capabilities/).
 
 ### Long and reasoning-heavy tool loops
 
@@ -286,7 +286,7 @@ Both are opt-in and fail-open. See [AI Agents → Reasoning, caching & backgroun
 
 ## Large results are offloaded automatically
 
-Some tools return a lot: a big search dump, a long catalog, a wide JSON array. Pasting all of that into the prompt every turn is wasteful. When a tool result exceeds `turing.genai.tool-result-offload.inline-max-chars` (default **4096**), Turing writes the full payload to the [Agent Workspace](/docs/agent-workspace/) and replaces the inline result with a short `workspace://…` reference. The model pulls the data back **only when it needs it**, via an always-present `workspace_read` tool.
+Some tools return a lot: a big search dump, a long catalog, a wide JSON array. Pasting all of that into the prompt every turn is wasteful. When a tool result exceeds `turing.genai.tool-result-offload.inline-max-chars` (default **4096**), Viglet Turing writes the full payload to the [Agent Workspace](/docs/agent-workspace/) and replaces the inline result with a short `workspace://…` reference. The model pulls the data back **only when it needs it**, via an always-present `workspace_read` tool.
 
 This applies uniformly to native, MCP, and [Custom](/docs/custom-tools/) tools, and is active only when a [storage backend](/docs/configuration-reference/#storage) is configured, so the default deployment behaves exactly as before. See [Agent Workspace → Auto-offload](/docs/agent-workspace/#2-auto-offload-of-large-tool-results) for details.
 

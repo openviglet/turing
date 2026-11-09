@@ -123,7 +123,7 @@ The **AI column** in the file table shows the indexing state of each file:
 
 ### Automatic Training on Upload
 
-When a file is uploaded, Turing dispatches an **asynchronous event** that indexes the file individually without any user action required. Similarly, when a file is deleted, its embeddings are automatically purged from the vector store.
+When a file is uploaded, Viglet Turing dispatches an **asynchronous event** that indexes the file individually without any user action required. Similarly, when a file is deleted, its embeddings are automatically purged from the vector store.
 
 ### Batch Training
 
@@ -134,7 +134,7 @@ To index all existing files at once (useful after enabling RAG on an existing in
 sequenceDiagram
     participant Admin
     participant UI as Assets UI
-    participant API as Turing
+    participant API as Viglet Turing
     participant MinIO
     participant Tika as Apache Tika
     participant VS as Vector Store
@@ -212,7 +212,7 @@ For details on configuring AI Agents and tools, see [AI Agents](/docs/ai-agents/
 
 ## Storage Configuration
 
-A storage backend must be configured before Assets becomes available. Turing supports two storage backends: **MinIO** (recommended for production) and **Filesystem** (for simple deployments). Set `turing.storage.type` to enable one.
+A storage backend must be configured before Assets becomes available. Viglet Turing supports two storage backends: **MinIO** (recommended for production) and **Filesystem** (for simple deployments). Set `turing.storage.type` to enable one.
 
 ### Option 1: MinIO (Recommended)
 
@@ -229,7 +229,7 @@ turing:
 
 The bucket (`turing-assets` by default) is **created automatically on startup** if it does not exist.
 
-With Docker Compose, add the MinIO service alongside Turing:
+With Docker Compose, add the MinIO service alongside Viglet Turing:
 
 ```yaml
 minio:

@@ -47,7 +47,7 @@ Transcription is a **selectable strategy** so you can match cost, privacy, and i
 
 ### Choosing a model
 
-Leave **Model** blank and each backend uses the right default: `gpt-transcribe` for the cloud path, `whisper-1` for a self-hosted OpenAI-compatible server (which is what such servers actually serve). Turing adapts the request shape to whichever model you name, so you never have to think about the wire format.
+Leave **Model** blank and each backend uses the right default: `gpt-transcribe` for the cloud path, `whisper-1` for a self-hosted OpenAI-compatible server (which is what such servers actually serve). Viglet Turing adapts the request shape to whichever model you name, so you never have to think about the wire format.
 
 | Model | Use it for | Notes |
 |---|---|---|
@@ -76,7 +76,7 @@ services:
       - "8000:8000"
 ```
 
-Then set the transcription **Endpoint** to `http://faster-whisper:8000/v1` (leave the API key blank, self-hosted servers usually need none; Turing omits the `Authorization` header when the key is blank). Only the URL differs from the cloud path, so it scales horizontally and can be GPU-backed.
+Then set the transcription **Endpoint** to `http://faster-whisper:8000/v1` (leave the API key blank, self-hosted servers usually need none; Viglet Turing omits the `Authorization` header when the key is blank). Only the URL differs from the cloud path, so it scales horizontally and can be GPU-backed.
 
 ---
 
@@ -87,7 +87,7 @@ Speech models guess. Give one your vocabulary and it stops guessing. Global Sett
 - **Context prompt**: free-form text describing the recording: the domain, who is speaking, the expected style. One or two sentences is plenty.
 - **Domain keywords**: a comma-separated list of terms that must come out spelled right: product names, model ids, SKUs, internal jargon. Capped at 100 terms; it is a hint, not a dictionary.
 
-Turing already curates exactly this vocabulary elsewhere: your **Thesaurus**. Turn on **Add Thesaurus terms** and the same terms the search engine expands at query time are handed to the transcriber, broadest descriptors first. Keywords you typed yourself always come first.
+Viglet Turing already curates exactly this vocabulary elsewhere: your **Thesaurus**. Turn on **Add Thesaurus terms** and the same terms the search engine expands at query time are handed to the transcriber, broadest descriptors first. Keywords you typed yourself always come first.
 
 :::tip
 The keyword hint is read by the `gpt-transcribe` family. The context prompt works more widely, including `whisper-1`.
@@ -97,7 +97,7 @@ The keyword hint is read by the `gpt-transcribe` family. The context prompt work
 
 ## Chunking: transcribing past the upload limit
 
-Every transcription backend has a per-request upload ceiling (cloud OpenAI caps at **25 MiB**). A recording over that limit used to fail outright. Turing now **chunks transparently**:
+Every transcription backend has a per-request upload ceiling (cloud OpenAI caps at **25 MiB**). A recording over that limit used to fail outright. Viglet Turing now **chunks transparently**:
 
 - Audio **at or under** the limit is sent as-is (no processing overhead).
 - Audio **over** the limit is split with `ffmpeg` into segments that each stay under the limit, re-encoded to compact 16 kHz mono, with cut points **snapped to silence** and a small **overlap** carried between chunks. Chunks transcribe in parallel (bounded) and the transcripts are stitched back together, de-duplicating the overlap window.
@@ -162,7 +162,7 @@ Three things to know:
 
 - **`transcript` is always authoritative.** `segments` annotates it; it never replaces it. Anything already reading `transcript` is unaffected whether diarization is on or off.
 - **A speaker label means "a distinct voice in this recording"**, not a person. Labels are assigned per request, so the same human gets no stable identity across two uploads.
-- **It applies to a recording that fits a single request.** A longer recording is split into chunks, and because labels are assigned per request there is no way to tell chunk 2's "A" from chunk 1's "B". Rather than guess, Turing returns the flat transcript with no segments. In practice a ~50-minute recording is still one chunk, so most interviews are covered.
+- **It applies to a recording that fits a single request.** A longer recording is split into chunks, and because labels are assigned per request there is no way to tell chunk 2's "A" from chunk 1's "B". Rather than guess, Viglet Turing returns the flat transcript with no segments. In practice a ~50-minute recording is still one chunk, so most interviews are covered.
 
 Needs a `gpt-transcribe` model: `whisper-1` ignores the setting (its segments are timing boundaries with no speaker). Diarization also takes precedence over the live partial transcript above, since the two response formats are mutually exclusive.
 

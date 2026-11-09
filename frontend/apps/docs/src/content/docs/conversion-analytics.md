@@ -1,10 +1,10 @@
 ---
 title: "Conversion Analytics (GA4 bridge)"
-description: "Measure lead conversion, abandonment, and which persona A/B variation was preferred, in the browser, in your own Google Analytics. A zero-dependency canonical event bus in the Turing SDK with pluggable sinks (GA4/GTM first), auto-detecting an existing gtag/dataLayer for zero-config Adobe EDS setups."
+description: "Measure lead conversion, abandonment, and which persona A/B variation was preferred, in the browser, in your own Google Analytics. A zero-dependency canonical event bus in the Viglet Turing SDK with pluggable sinks (GA4/GTM first), auto-detecting an existing gtag/dataLayer for zero-config Adobe EDS setups."
 ---
-> *Turing already measures the funnel server-side (outcome, experiment, persona). This is the other half: the **browser-owned** view, emitted at the lifecycle moments only the client can see (like a tab close) and delivered straight into your own GA4 next to acquisition source, campaign and audiences.*
+> *Viglet Turing already measures the funnel server-side (outcome, experiment, persona). This is the other half: the **browser-owned** view, emitted at the lifecycle moments only the client can see (like a tab close) and delivered straight into your own GA4 next to acquisition source, campaign and audiences.*
 
-Turing's [Chat Analytics](/docs/chat-analytics/) and [Experiments](/docs/experiments/) record conversion, abandonment and A/B outcomes **server-side**. But marketing teams run **GA4 in the browser**, where conversion lives next to media spend and audiences. Block Z adds a **client-side, marketing-owned** measurement layer that answers three concrete questions *in your GA*, not ours:
+Viglet Turing's [Chat Analytics](/docs/chat-analytics/) and [Experiments](/docs/experiments/) record conversion, abandonment and A/B outcomes **server-side**. But marketing teams run **GA4 in the browser**, where conversion lives next to media spend and audiences. Block Z adds a **client-side, marketing-owned** measurement layer that answers three concrete questions *in your GA*, not ours:
 
 1. **Lead conversion** in chat & semantic navigation.
 2. **Drop-off / abandonment**: and *where* the visitor gave up.
@@ -121,7 +121,7 @@ Both the search and chat controllers key off the same `TUR_SESSION` cookie, and 
 
 ## Non-goal
 
-Turing does **not** ship its own conversion dashboards here: GA4 (and any sink) owns visualization; the SDK only emits clean, canonical events.
+Viglet Turing does **not** ship its own conversion dashboards here: GA4 (and any sink) owns visualization; the SDK only emits clean, canonical events.
 
 ---
 

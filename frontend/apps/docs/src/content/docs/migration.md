@@ -4,13 +4,13 @@ description: "Move a search index from Algolia or Elasticsearch to Viglet Turing
 ---
 Already running search on **Algolia** or **Elasticsearch**? Viglet Turing keeps the search depth you rely on (facets, typo tolerance, synonyms, relevance tuning) and adds RAG, cited chat and AI agents, while running entirely on **your own infrastructure**. Your documents, embeddings and query logs never leave your network, and there is no per-record or per-search billing.
 
-This page maps the concepts you already know to their Turing equivalents, then walks the concrete import path. It's a migration, not a rewrite: most of what you built carries over.
+This page maps the concepts you already know to their Viglet Turing equivalents, then walks the concrete import path. It's a migration, not a rewrite: most of what you built carries over.
 
 ---
 
 ## Concept mapping
 
-The building blocks line up almost one-to-one. Where a hosted feature is paid, beta, or vendor-locked, Turing ships the equivalent in the box, running on the search engine you already operate (Apache Solr, Elasticsearch, or the embedded Lucene index).
+The building blocks line up almost one-to-one. Where a hosted feature is paid, beta, or vendor-locked, Viglet Turing ships the equivalent in the box, running on the search engine you already operate (Apache Solr, Elasticsearch, or the embedded Lucene index).
 
 | Concept | Algolia | Elasticsearch | Viglet Turing |
 |---|---|---|---|
@@ -34,7 +34,7 @@ The building blocks line up almost one-to-one. Where a hosted feature is paid, b
 ## The fast path: `turing migrate`
 
 The [`turing` CLI](/docs/cli/) automates schema translation **and** record import in a
-single command. Point it at your source index, Turing reads the mapping/settings,
+single command. Point it at your source index, Viglet Turing reads the mapping/settings,
 derives the [field manifest](/docs/manifest/), provisions the SN site, and imports
 every record for you. This is the recommended "step 1 + step 2".
 
@@ -64,7 +64,7 @@ configured LLM. `--se-instance` is only required when the target site doesn't ex
 yet. Any **synonyms** on an Algolia index are reported so you can apply them in your
 target engine's schema (Solr / Elasticsearch).
 
-A source schema is rarely 1:1 with what you want in Turing, so pass
+A source schema is rarely 1:1 with what you want in Viglet Turing, so pass
 `--overrides-file <path>`: a JSON array that **renames**, **retypes**, **drops**, or
 **defaults** fields on the way in (applied to both the schema and every record):
 
@@ -77,7 +77,7 @@ A source schema is rarely 1:1 with what you want in Turing, so pass
 ```
 
 **Verify relevance parity before cutover.** Run your top queries against both the old
-engine and Turing and diff the results, so you switch on evidence, not hope:
+engine and Viglet Turing and diff the results, so you switch on evidence, not hope:
 
 ```bash
 turing migrate compare --engine elasticsearch \
@@ -86,7 +86,7 @@ turing migrate compare --engine elasticsearch \
 ```
 
 The report shows, per query and in aggregate, the result-set overlap (Jaccard), how
-much of the source's top-N Turing reproduced, and how often the #1 result matches.
+much of the source's top-N Viglet Turing reproduced, and how often the #1 result matches.
 
 Then do only **step 3** below: swap the front-end client.
 
@@ -97,7 +97,7 @@ result is available over the REST API in three moves.
 
 ### 1. Describe the schema as code
 
-Turn your Algolia index settings or Elasticsearch mappings into a [field manifest](/docs/manifest/) and `POST` it once. Turing converges the live SN site to match (creating the site if it's missing and adding fields) and reports exactly what changed. Re-posting the same manifest is a no-op.
+Turn your Algolia index settings or Elasticsearch mappings into a [field manifest](/docs/manifest/) and `POST` it once. Viglet Turing converges the live SN site to match (creating the site if it's missing and adding fields) and reports exactly what changed. Re-posting the same manifest is a no-op.
 
 ```bash
 curl -X POST "http://localhost:2700/api/sn/manifest" \
@@ -144,7 +144,7 @@ curl -X POST "http://localhost:2700/api/sn/import" \
   }'
 ```
 
-Finish a batch with a `COMMIT` job item so the search engine flushes pending changes. If your records reference binary files, use the ZIP variant (`POST /api/sn/import/zip`), Turing extracts text with Apache Tika before indexing. See [Import & Export](/docs/import-export/#content-import-sn-job-items) for job actions and the full item structure.
+Finish a batch with a `COMMIT` job item so the search engine flushes pending changes. If your records reference binary files, use the ZIP variant (`POST /api/sn/import/zip`), Viglet Turing extracts text with Apache Tika before indexing. See [Import & Export](/docs/import-export/#content-import-sn-job-items) for job actions and the full item structure.
 
 :::tip[Skip the export entirely]
 If your content still lives in a source system (a CMS, a database, a file share), point a [connector](/docs/integration/) at it instead of re-exporting from Algolia/Elasticsearch, the connector crawls the source of truth and keeps the index in sync automatically.
@@ -152,7 +152,7 @@ If your content still lives in a source system (a CMS, a database, a file share)
 
 ### 3. Swap the front-end client
 
-Replace InstantSearch or the `elasticsearch-js` client with a Turing SDK. Both are headless (hooks and components for search, facets, autocomplete, and cited chat) so your UI now runs against your own host.
+Replace InstantSearch or the `elasticsearch-js` client with a Viglet Turing SDK. Both are headless (hooks and components for search, facets, autocomplete, and cited chat) so your UI now runs against your own host.
 
 ```tsx
 import { useTuringSearch } from "@viglet/turing-react-sdk";
@@ -176,7 +176,7 @@ curl -X POST "http://localhost:2700/api/sn/products/search" \
 
 ## Your data stays in your infrastructure
 
-The reason teams switch: a hosted SaaS keeps your index (and increasingly your users' queries) in someone else's cloud. Turing runs entirely on your own hardware.
+The reason teams switch: a hosted SaaS keeps your index (and increasingly your users' queries) in someone else's cloud. Viglet Turing runs entirely on your own hardware.
 
 - **Self-hosted under Apache 2.0**: no license fee, no vendor lock-in.
 - **Content, embeddings and query logs stay on-premises**: nothing leaves your network.

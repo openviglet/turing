@@ -51,7 +51,7 @@ When the model calls a client tool, the backend can't run it, so it **parks** th
 ```mermaid
 sequenceDiagram
     participant LLM
-    participant Backend as Turing backend
+    participant Backend as Viglet Turing backend
     participant UI as Browser (SDK)
     LLM->>Backend: tool call → getUserLocation(...)
     Backend->>Backend: park turn, keyed by (conversationId, callId)

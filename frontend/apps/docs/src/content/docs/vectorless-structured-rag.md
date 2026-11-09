@@ -3,7 +3,7 @@ title: "Vectorless (Structured-Data) RAG"
 description: "Answer questions over a structured catalog (products, prices, specs, a model registry) grounded and cited, using only an LLM and your search index. No embeddings, no vector store."
 ---
 **Talk to a structured catalog, grounded, cited, with no vector database.** Viglet
-Turing can answer questions over your product catalog, price list, spec sheet,
+Viglet Turing can answer questions over your product catalog, price list, spec sheet,
 or model registry using only a language model and your existing search index, no
 embeddings, no vector store, and no chunking pipeline to stand up.
 
@@ -19,7 +19,7 @@ See [What is RAG?](/docs/rag/) for that path.
 
 But when your knowledge is **structured** (rows with named fields such as `price`,
 `contextWindow`, `category`, `inStock`, `rating`) you do not need any of that.
-Turing parses the user's question into a search over your **declared field
+Viglet Turing parses the user's question into a search over your **declared field
 schema**, runs it against the search engine (Solr / Elasticsearch / Lucene) as
 ordinary field / facet / range queries, and the language model answers **strictly
 from the matched rows**, citing each claim as `[1]`, `[2]`, …
@@ -51,7 +51,7 @@ embedding model and a vector store you do not need.
 ## Vectorless disables embedding indexing entirely
 
 This is the key guarantee to be sure of when you pick the mode. When a site is set
-to **Vectorless (Structured)**, Turing **never generates embeddings for it**, on
+to **Vectorless (Structured)**, Viglet Turing **never generates embeddings for it**, on
 any path:
 
 - **No embedding at import / reindex.** Documents are indexed into the search
@@ -201,7 +201,7 @@ rather than streaming it token by token.
 Superlative and comparative questions are understood out of the box: "the
 **cheapest** embedding model", "which chat model scores **highest** on the
 intelligence index", "the model with the **biggest** context window", "chat models
-**sorted by** price". Turing recognises the ranking phrase and sorts the results by
+**sorted by** price". Viglet Turing recognises the ranking phrase and sorts the results by
 the matching **numeric** field in your declared schema (ascending for a minimum
 (cheapest / lowest / smallest / fastest) descending for a maximum, highest /
 largest / most / best), while still keeping any facet filter in the same question
@@ -210,7 +210,7 @@ largest / most / best), while still keeping any facet filter in the same questio
 This works generically for any catalog: the sort field is resolved from your
 fields' **names and descriptions**, so a clear description
 (`"Overall intelligence index"`, `"Input price per 1M tokens (USD)"`,
-`"Maximum context window in tokens"`) is what lets Turing map "most intelligent",
+`"Maximum context window in tokens"`) is what lets Viglet Turing map "most intelligent",
 "cheapest" or "biggest context" to the right field. Give each ranking field a
 descriptive `description` in its manifest and superlative questions just work.
 
@@ -226,7 +226,7 @@ contexto", "modelos **ordenados por** preco" and "el modelo **mas barato**" reso
 the same sorts their English equivalents do. Any other locale ranks with the
 English vocabulary, which is what every locale did before.
 
-#### Teaching Turing your catalog's own ranking words
+#### Teaching Viglet Turing your catalog's own ranking words
 
 If your catalog has a quality of its own ("the **torquiest** engine", "the
 **lightest** frame"), you can teach it, per site, under **Semantic Navigation →
@@ -259,7 +259,7 @@ parse is ignored at ranking time: a typo costs you the extra words, never the
 sort.
 
 Which is exactly why the field has a **Check vocabulary** button next to it. Type
-a question your users would ask, press it, and Turing answers with three things:
+a question your users would ask, press it, and Viglet Turing answers with three things:
 whether the bundle parsed, which words it added that the shipped vocabulary did
 not already have, and the sort your sample question actually resolves to. That
 last one is the answer you cannot get any other way: a bundle can parse, add a
@@ -270,7 +270,7 @@ before saving it.
 To add a whole language, or the same vocabulary to every site at once, point
 `turing.genai.copilot.ranking.lexicon-dir` at a directory of
 `lexicon-<language>.json` files in the same shape. Each is merged over the shipped
-bundle for that language, and a file for a language Turing does not ship (say
+bundle for that language, and a file for a language Viglet Turing does not ship (say
 `lexicon-fr.json`) adds it. Name its `stemmer` after the Snowball language
 (`French`, `Italian`, `German`, …) so inflections still collapse:
 
@@ -459,7 +459,7 @@ vector-RAG chat, fully skinnable via a `classNames` map. See the
 ## Over the OpenAI-compatible gateway (zero SDK)
 
 Any OpenAI-style client can get grounded, cited structured answers with **no
-Turing SDK** through the [Governed LLM Gateway](/docs/llm-gateway/), either a
+Viglet Turing SDK** through the [Governed LLM Gateway](/docs/llm-gateway/), either a
 `turing-copilot:<site>` model name or an `x-turing-copilot-site: <site>` header
 routes the request to the vectorless copilot. The cited rows come back as a
 plain-text **Sources** footer so the answer stays traceable over the OpenAI wire
@@ -484,7 +484,7 @@ default, it only activates when the whole index fits within a token budget and
 document cap, and otherwise falls back to the normal filtered retrieval. Answers
 stay cited and fail-open either way.
 
-As a catalog grows, Turing adapts before giving up on whole-catalog grounding: it
+As a catalog grows, Viglet Turing adapts before giving up on whole-catalog grounding: it
 first tries a full description-labelled row per document, and if that exceeds the
 budget it retries a **compact** projection (one lean line per row covering only
 your sortable and facet fields, no snippet or descriptions) which is roughly ten
@@ -507,7 +507,7 @@ turing:
 
 ## Indexing large catalogs (performance)
 
-A structured catalog can be big: hundreds or thousands of rows. Turing indexes a
+A structured catalog can be big: hundreds or thousands of rows. Viglet Turing indexes a
 catalog-scale import in a **single bulk pass** rather than one document at a time,
 so a large feed lands fast. This is automatic and needs no configuration: when a
 batch of records arrives, they are grouped and written to the search engine in one

@@ -2,9 +2,9 @@
 title: "Webhooks"
 description: "Push chat conversations to your CRM or automation tools. Fire a webhook automatically when a slot is filled, explicitly as a handoff channel, or deterministically from a flow node, with payload templates, encrypted credentials, and HMAC signing."
 ---
-> *A visitor finishes a lead-capture conversation. Their name, company, and email are sitting in slots. What you really want is for that lead to land in Salesforce, automatically, the moment it's complete, without anyone copy-pasting. **Webhooks** are how Turing reaches out to the rest of your stack.*
+> *A visitor finishes a lead-capture conversation. Their name, company, and email are sitting in slots. What you really want is for that lead to land in Salesforce, automatically, the moment it's complete, without anyone copy-pasting. **Webhooks** are how Viglet Turing reaches out to the rest of your stack.*
 
-A **webhook** in Viglet Turing is an admin-declared outbound HTTP call. When something interesting happens in a conversation (a slot gets filled, a visitor is handed off, a flow reaches a node) Turing `POST`s a JSON payload (the conversation's slots, optionally the transcript) to a URL you configure. The receiver is almost always a CRM (Salesforce, HubSpot, Pipedrive) or an automation platform (Zapier, Make, n8n), but it can be any HTTP endpoint you control.
+A **webhook** in Viglet Turing is an admin-declared outbound HTTP call. When something interesting happens in a conversation (a slot gets filled, a visitor is handed off, a flow reaches a node) Viglet Turing `POST`s a JSON payload (the conversation's slots, optionally the transcript) to a URL you configure. The receiver is almost always a CRM (Salesforce, HubSpot, Pipedrive) or an automation platform (Zapier, Make, n8n), but it can be any HTTP endpoint you control.
 
 Webhooks are **deployment-wide**, not per-agent: you define one `push-to-salesforce` webhook and every agent and flow can use it. Manage them in the console under **Chat Webhooks**.
 
@@ -52,7 +52,7 @@ In the console, open **Chat Webhooks → New** and fill in:
 
 ## The default payload
 
-When you don't supply a payload template, Turing sends a default **envelope**:
+When you don't supply a payload template, Viglet Turing sends a default **envelope**:
 
 ```json
 {
@@ -81,7 +81,7 @@ When you don't supply a payload template, Turing sends a default **envelope**:
 
 ## Payload templates
 
-If your receiver expects its own JSON shape (most CRMs do), provide a **payload template** and Turing will send that verbatim instead of the envelope. Use `{{slot}}` placeholders, they're substituted with the slot's value:
+If your receiver expects its own JSON shape (most CRMs do), provide a **payload template** and Viglet Turing will send that verbatim instead of the envelope. Use `{{slot}}` placeholders, they're substituted with the slot's value:
 
 ```json
 {
@@ -99,21 +99,21 @@ Placeholder values are **JSON-escaped** before substitution, so a slot containin
 
 ## Security
 
-Two independent, optional layers protect a webhook call. Both secrets are **write-only**: the admin form posts them in plaintext, Turing encrypts and stores them via `TurSecretCryptoService`, and reads never echo them back: the UI shows only a "configured" indicator. Submitting a blank value on update **keeps the stored secret** (so you can edit the URL without re-typing credentials).
+Two independent, optional layers protect a webhook call. Both secrets are **write-only**: the admin form posts them in plaintext, Viglet Turing encrypts and stores them via `TurSecretCryptoService`, and reads never echo them back: the UI shows only a "configured" indicator. Submitting a blank value on update **keeps the stored secret** (so you can edit the URL without re-typing credentials).
 
 ### Authentication header
 
-The **auth header** is a full `Authorization` value (e.g. `Bearer xyz`) attached to every call. If you also set a custom `Authorization` in **custom headers**, that one wins. If the stored credential can't be decrypted (e.g. after a key rotation), Turing sends the call *unauthenticated* rather than dropping it: the receiver is expected to reject it.
+The **auth header** is a full `Authorization` value (e.g. `Bearer xyz`) attached to every call. If you also set a custom `Authorization` in **custom headers**, that one wins. If the stored credential can't be decrypted (e.g. after a key rotation), Viglet Turing sends the call *unauthenticated* rather than dropping it: the receiver is expected to reject it.
 
 ### HMAC signing
 
-Set a **signing secret** and Turing adds a signature header (`X-Turing-Signature` by default, or whatever **signature header** name you choose) computed as:
+Set a **signing secret** and Viglet Turing adds a signature header (`X-Turing-Signature` by default, or whatever **signature header** name you choose) computed as:
 
 ```
 <signature header>: sha256=<hex of HMAC-SHA256(secret, raw request body)>
 ```
 
-The signature is computed over the **exact bytes** put on the wire, so your receiver can verify the call genuinely came from this Turing instance. Verify it like this (Node.js):
+The signature is computed over the **exact bytes** put on the wire, so your receiver can verify the call genuinely came from this Viglet Turing instance. Verify it like this (Node.js):
 
 ```js
 const expected = "sha256=" + crypto

@@ -12,11 +12,11 @@ When Keycloak is enabled (`turing.keycloak=true`), the **Users**, **Groups**, an
 
 ## Login
 
-When accessing Viglet Turing, a login page is displayed. The default username is `admin`. Turing never ships a default password: you choose it in one of two ways on the first startup.
+When accessing Viglet Turing, a login page is displayed. The default username is `admin`. Viglet Turing never ships a default password: you choose it in one of two ways on the first startup.
 
 ### Option 1: the `TURING_ADMIN_PASSWORD` environment variable
 
-Best for containers, unattended installs, and CI: the password is applied while the server boots, so the console goes straight to the login page. Set the variable before starting Turing for the first time:
+Best for containers, unattended installs, and CI: the password is applied while the server boots, so the console goes straight to the login page. Set the variable before starting Viglet Turing for the first time:
 
 **Windows**
 ```bat
@@ -28,7 +28,7 @@ set TURING_ADMIN_PASSWORD=your_password
 export TURING_ADMIN_PASSWORD=your_password
 ```
 
-The password must be at least **6 characters**: a shorter value is ignored (a warning is logged) and Turing falls back to Option 2.
+The password must be at least **6 characters**: a shorter value is ignored (a warning is logged) and Viglet Turing falls back to Option 2.
 
 :::note[Applied once, never overwritten]
 The variable is only applied while the `admin` password is still unset. Once a password exists (whether it came from this variable or from the setup screen), restarting with the variable still set changes nothing. To change the password afterwards, use the **Users** page in the console.
@@ -193,7 +193,7 @@ The Global Settings page (`/admin/settings`) is the central configuration panel 
 | Field | Description |
 |---|---|
 | Decimal Separator | Choose between period (`.`) and comma (`,`) for numeric display. Preview shows formatted examples (e.g., `1,500.75` vs `1.500,75`). |
-| Python Executable | Absolute path to the Python 3 binary used by the Code Interpreter tool. When left blank, Turing searches standard OS locations automatically. |
+| Python Executable | Absolute path to the Python 3 binary used by the Code Interpreter tool. When left blank, Viglet Turing searches standard OS locations automatically. |
 
 ### LLM Settings
 
@@ -226,7 +226,7 @@ The RAG Settings section is only visible if an embedding store is configured and
 
 ### Email Settings
 
-Used by Turing to send notifications and test email connectivity.
+Used by Viglet Turing to send notifications and test email connectivity.
 
 | Field | Description |
 |---|---|
@@ -241,7 +241,7 @@ Used by Turing to send notifications and test email connectivity.
 
 ## System Information
 
-The System Information page (`/admin/system-info`) is a diagnostic panel to monitor the health of the Turing instance. It contains two tabs.
+The System Information page (`/admin/system-info`) is a diagnostic panel to monitor the health of the Viglet Turing instance. It contains two tabs.
 
 ### Overview
 
@@ -249,7 +249,7 @@ The System Information page (`/admin/system-info`) is a diagnostic panel to moni
 
 | Item | Description |
 |---|---|
-| Version | Current Turing build version |
+| Version | Current Viglet Turing build version |
 | Java Version | JVM version in use |
 | Java Vendor | JVM vendor (e.g., Eclipse Adoptium) |
 | OS | Operating system name, version, and architecture |

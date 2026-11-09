@@ -5,9 +5,9 @@ tableOfContents: false
 ---
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
-Turn retrieval into action. Turing's configurable agents call **your tools** (custom
+Turn retrieval into action. Viglet Turing's configurable agents call **your tools** (custom
 Groovy with HTTP, search and slot helpers), run **Anthropic-standard skills** in an
-isolated Docker sandbox, and federate across **MCP servers**, while Turing can
+isolated Docker sandbox, and federate across **MCP servers**, while Viglet Turing can
 itself be exposed as an MCP server so any MCP-aware client can query your content.
 Each provider's own server-side tools (web search, code execution, computer use,
 image generation) are available too, opt-in per agent.
@@ -20,10 +20,10 @@ gate agent and prompt changes in CI before they ship.
 <CardGrid>
   <LinkCard title="AI Agents" description="AI Agents are purpose-built specialists you compose from an LLM, tools, and a persona. They are the conversion engine of Viglet Turing." href="/docs/ai-agents/" />
   <LinkCard title="Tool Calling" description="Native tool calling capabilities available to AI Agents in Viglet Turing, DSL-based search tools, RAG, web crawling, and more." href="/docs/tool-calling/" />
-  <LinkCard title="Capabilities" description="The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Turing's own tools surface in one taxonomy and run in one tool loop." href="/docs/capabilities/" />
+  <LinkCard title="Capabilities" description="The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Viglet Turing's own tools surface in one taxonomy and run in one tool loop." href="/docs/capabilities/" />
   <LinkCard title="Client Tools & Agent↔UI (AG-UI)" description="Live tool-call events, browser-executed client tools, the park/resume protocol, and generative UI in Viglet Turing: the agent↔UI surface." href="/docs/client-tools/" />
   <LinkCard title="Custom Tools" description="Build your own AI tools in Groovy and let your agents call them like first-class capabilities. Plus Vibe Coding: the AI helps you write the tool, describe it to the LLM, and shape its parameters." href="/docs/custom-tools/" />
-  <LinkCard title="MCP Servers" description="MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)." href="/docs/mcp-servers/" />
+  <LinkCard title="MCP Servers" description="MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Viglet Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)." href="/docs/mcp-servers/" />
   <LinkCard title="Run Anthropic-Compatible Agent Skills in Viglet Turing" description="Import, author and run Anthropic-compatible Agent Skills (a SKILL.md folder with scripts and references) in a Docker sandbox. Skills exported from Claude run unchanged in chat and search." href="/docs/skills/" />
   <LinkCard title="Agent Workspace" description="A per-conversation blob store that lets an agent build, keep, and hand back files (drafts, reports, charts, offloaded tool results) without bloating the prompt." href="/docs/agent-workspace/" />
   <LinkCard title="Chat Flow" description="Author conversational state machines visually. A rich node catalog (questions, slots, tools, routines, webhooks, approvals, sub-flows), three guardrail strategies, error edges, a typed slot store, and AI-assisted authoring (Vibe Coding) that lets you describe the flow in plain English and watch it draw itself." href="/docs/chat-flow/" />

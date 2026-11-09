@@ -245,7 +245,7 @@ spring:
 
 ### Message Queue (Apache Artemis)
 
-Apache Artemis runs **embedded inside Turing** by default: no separate installation is required. For high-availability or multi-node deployments, you can switch to an external Artemis broker.
+Apache Artemis runs **embedded inside Viglet Turing** by default: no separate installation is required. For high-availability or multi-node deployments, you can switch to an external Artemis broker.
 
 | Property | Default | Description |
 |---|---|---|
@@ -295,11 +295,11 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 <a id="turing-es-core"></a>
 
-### Turing Core
+### Viglet Turing Core
 
 | Property | Default | Description |
 |---|---|---|
-| `turing.url` | `http://localhost:2700` | Public base URL of this Turing instance |
+| `turing.url` | `http://localhost:2700` | Public base URL of this Viglet Turing instance |
 | `turing.allowedOrigins` | `http://localhost:4200, http://localhost:5173` | CORS allowed origins for the REST API and GraphQL. Add your frontend URL here. |
 | `turing.keycloak` | `false` | Set `true` to enable Keycloak OAuth2/OIDC. See [Security & Keycloak](/docs/security-keycloak/). |
 | `turing.tenancy.enabled` | `false` | Enable multi-tenant mode (one JVM, many isolated tenants). Default `false` = single-tenant, byte-for-byte legacy behavior. See [Multi-Tenancy](/docs/multi-tenancy/). |
@@ -307,7 +307,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 | `turing.permissions` | `true` | When `true`, users get only their real group/role authorities. When `false`, **any** authenticated principal is granted `ROLE_ADMIN` + all privileges (trusted single-user mode only, logs a `SECURITY` warning at startup). See [Security Hardening](/docs/security-hardening/#2-turingpermissions-defaults-to-true-authn--admin). |
 | `turing.admin.password` | *(blank → env `TURING_ADMIN_PASSWORD`)* | Seeds the local `admin` password at startup (minimum 6 characters) so a container/CI deploy skips the first-access setup screen. Applied only while the password is still unset: it never overwrites an existing one. See [Login](/docs/administration-guide/#login). |
 | `turing.ai.crypto.key` | *(blank → env `TURING_AI_CRYPTO_KEY`)* | AES/GCM key encrypting all stored provider credentials. **Required in production**, the app fails to start on the `production` profile with a blank or known-sample value. |
-| `turing.code-interpreter.python-executable` | *(auto-detected)* | Absolute path to the Python 3 binary used by the Code Interpreter GenAI tool. When blank, Turing searches standard OS locations automatically. |
+| `turing.code-interpreter.python-executable` | *(auto-detected)* | Absolute path to the Python 3 binary used by the Code Interpreter GenAI tool. When blank, Viglet Turing searches standard OS locations automatically. |
 
 :::caution[Set the crypto key in production]
 `turing.ai.crypto.key` encrypts every LLM provider API key + store credential in the database. Supply it via the `TURING_AI_CRYPTO_KEY` environment variable (`openssl rand -base64 48`). Under the `production` profile a blank or known-sample key makes startup **fail fast**. See [Security Hardening § crypto key](/docs/security-hardening/#1-ai-crypto-master-key-must-be-set-in-production).
@@ -317,7 +317,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 ### Model Catalog (`turing.model-catalog`)
 
-Turing enriches its LLM-instance model picker from a public, vendor-neutral [**model catalog**](https://models.viglet.org/) ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), pricing, context windows, capabilities, tiers and deprecations. The fetch is **remote-only** (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See [LLM Instances § Catalog-driven intelligence](/docs/llm-instances/#catalog-driven-intelligence).
+Viglet Turing enriches its LLM-instance model picker from a public, vendor-neutral [**model catalog**](https://models.viglet.org/) ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), pricing, context windows, capabilities, tiers and deprecations. The fetch is **remote-only** (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See [LLM Instances § Catalog-driven intelligence](/docs/llm-instances/#catalog-driven-intelligence).
 
 | Property | Default | Description |
 |---|---|---|
@@ -401,7 +401,7 @@ Guardrails for the agent-as-MCP-client path. See [MCP Servers](/docs/mcp-servers
 ### Adobe AEM Content AI (`turing.content-ai`)
 
 Settings for a Search Engine instance whose vendor is `CONTENTAI`, a **federated,
-read-only** backend that queries an Adobe AEM Content AI index instead of one Turing filled. See [Search Engine → Adobe AEM Content AI](/docs/search-engine/#content-ai)
+read-only** backend that queries an Adobe AEM Content AI index instead of one Viglet Turing filled. See [Search Engine → Adobe AEM Content AI](/docs/search-engine/#content-ai)
 for what the backend can and cannot do.
 
 The **endpoint URL is not here**: it is the Search Engine instance's own Endpoint
@@ -425,7 +425,7 @@ URL, so each instance can point at a different Adobe bucket.
 | `turing.content-ai.source-cache-seconds` | `300` | How long the list of your Adobe content sources is reused. It is read to check your configuration (see below), not to serve searches |
 | `turing.content-ai.include-chunks` | `false` | Ask Adobe for the matched passages alongside each document, and expose the best one to an agent as `hit.content` (see [Custom Tools → `turingSearch`](/docs/custom-tools/#turingsearch-what-a-hit-gives-you)). Off by default: it increases response size, and a script already reading `hit.content` will start seeing a passage |
 
-Two limits come from Adobe's API rather than from Turing, and you will see them:
+Two limits come from Adobe's API rather than from Viglet Turing, and you will see them:
 a page can hold **at most 50 results** (a larger row count is reduced to 50), and
 there is no way to jump to a page, hence `max-page-walk`.
 
@@ -456,7 +456,7 @@ long an entry may survive for a site that is never written again.
 
 ### Storage (Assets, Knowledge Base & Pages)
 
-Storage powers the [Assets](/docs/assets/) file manager, the RAG Knowledge Base, and [SPA Pages](/docs/spa-pages/). Disabled by default (`none`). Turing supports three pluggable storage backends:
+Storage powers the [Assets](/docs/assets/) file manager, the RAG Knowledge Base, and [SPA Pages](/docs/spa-pages/). Disabled by default (`none`). Viglet Turing supports three pluggable storage backends:
 
 | Type | Description |
 |------|-------------|
@@ -534,7 +534,7 @@ MongoDB is used to persist application logs, making them accessible from the adm
 | `logging.file.name` | `store/logs/turing.log` | Log file path |
 | `logging.logback.rollingpolicy.max-file-size` | `25MB` | Maximum size of each log file before rotation |
 | `logging.logback.rollingpolicy.max-history` | `10` | Number of rotated log files to keep |
-| `logging.level.com.viglet` | `INFO` | Log level for Turing application code |
+| `logging.level.com.viglet` | `INFO` | Log level for Viglet Turing application code |
 | `logging.level.org.springframework` | `INFO` | Log level for Spring framework |
 | `logging.level.dev.langchain4j` | `INFO` | Log level for LangChain4j (LLM library) |
 
@@ -651,9 +651,9 @@ The [Code Interpreter](/docs/tool-calling/) execution mode (`NATIVE` default / `
 | `turing.jms.routine.concurrency` | `1-2` | JMS listener concurrency for the [routine](/docs/routines/) worker (`scheduleAgent` jobs) |
 | `turing.jms.concurrency` | `1-1` | Default JMS listener concurrency (indexing queue) |
 
-### Turing as an MCP Server
+### Viglet Turing as an MCP Server
 
-The [MCP server](/docs/mcp-servers/#turing-as-an-mcp-server) is off by default. Enable and govern it with:
+The [MCP server](/docs/mcp-servers/#viglet-turing-as-an-mcp-server) is off by default. Enable and govern it with:
 
 | Property | Default | Purpose |
 |---|---|---|

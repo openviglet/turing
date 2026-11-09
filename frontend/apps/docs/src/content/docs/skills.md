@@ -6,15 +6,15 @@ sidebar:
 ---
 > *A Custom Tool teaches an agent one function. An MCP server connects it to one system. A **Skill** packages a whole capability (instructions, scripts, reference material, and the runtime to execute them) into one portable folder that runs the same way in Claude **and** in Viglet Turing.*
 
-A **Skill** is an [Anthropic-compatible](https://www.anthropic.com/news/skills) folder: a `SKILL.md` file at the root (with YAML frontmatter), optionally accompanied by `scripts/`, `references/`, and `assets/`. You author it like a mini project, store it in object storage, and Turing runs it inside a **Docker sandbox that is compatible with Anthropic's skill container**.
+A **Skill** is an [Anthropic-compatible](https://www.anthropic.com/news/skills) folder: a `SKILL.md` file at the root (with YAML frontmatter), optionally accompanied by `scripts/`, `references/`, and `assets/`. You author it like a mini project, store it in object storage, and Viglet Turing runs it inside a **Docker sandbox that is compatible with Anthropic's skill container**.
 
-The whole point is **portability**. The same folder you build in Turing runs unmodified in Claude, and any skill ZIP you export from Claude imports straight into Turing. Turing becomes an *entry and exit door* for the broader skills ecosystem, not a fork of it.
+The whole point is **portability**. The same folder you build in Viglet Turing runs unmodified in Claude, and any skill ZIP you export from Claude imports straight into Viglet Turing. Viglet Turing becomes an *entry and exit door* for the broader skills ecosystem, not a fork of it.
 
 Three things distinguish a Skill from the other ways of extending an agent:
 
 1. **It carries its own runtime.** Unlike a [Custom Tool](/docs/custom-tools/) (one Groovy function) or an [MCP server](/docs/mcp-servers/) (a remote tool surface), a Skill bundles *instructions + executable scripts + reference docs* and runs them in a real Linux container with `bash`, Python, and Node.
 2. **It activates progressively.** The LLM doesn't pay for the skill's full content up front. It sees only the name and description, then loads the body on demand, then runs commands in the sandbox, three levels, each more expensive than the last, opened only when needed.
-3. **It's portable across the ecosystem.** Import any Anthropic skill ZIP; export any Turing skill folder as an Anthropic-compatible ZIP. One ZIP can carry many skills, each an independent, separately activatable unit.
+3. **It's portable across the ecosystem.** Import any Anthropic skill ZIP; export any Viglet Turing skill folder as an Anthropic-compatible ZIP. One ZIP can carry many skills, each an independent, separately activatable unit.
 
 Manage skills in **Administration → Skills**.
 
@@ -47,7 +47,7 @@ brand-content-studio/
 
 ### `SKILL.md` frontmatter
 
-The frontmatter is YAML between `---` fences. Turing parses it (leniently, a malformed file never crashes the catalog) to build the thin index row:
+The frontmatter is YAML between `---` fences. Viglet Turing parses it (leniently, a malformed file never crashes the catalog) to build the thin index row:
 
 ```markdown
 ---
@@ -85,7 +85,7 @@ Below the frontmatter, the Markdown body is the skill's actual operating instruc
 
 ## How a Skill activates: progressive disclosure
 
-A skill can be large: thousands of words of instructions, plus scripts and reference docs. Loading all of that into every prompt would be wasteful. Instead, Turing exposes a skill in **three levels**, each opened only when the model decides it's worth it.
+A skill can be large: thousands of words of instructions, plus scripts and reference docs. Loading all of that into every prompt would be wasteful. Instead, Viglet Turing exposes a skill in **three levels**, each opened only when the model decides it's worth it.
 
 | Level | What the model sees | Cost | Opened by |
 |---|---|---|---|
@@ -129,14 +129,14 @@ Attach skills to an [AI Agent](/docs/ai-agents/) with the **Skills** toggle in t
 
 ### Why a skill always runs on the Default LLM
 
-A skill is **portable**: it should behave identically no matter which agent or site invokes it. So Turing runs every skill on the **Global Settings Default LLM**, *never* on the calling agent's own model. A skill authored against one model's behavior keeps that behavior everywhere.
+A skill is **portable**: it should behave identically no matter which agent or site invokes it. So Viglet Turing runs every skill on the **Global Settings Default LLM**, *never* on the calling agent's own model. A skill authored against one model's behavior keeps that behavior everywhere.
 
 ### The `run_skill` delegation
 
-A tool can't switch the model that's driving it. So Turing uses a **delegated sub-loop**:
+A tool can't switch the model that's driving it. So Viglet Turing uses a **delegated sub-loop**:
 
 1. The **parent turn** (running on the agent's own model) sees only the cheap level-1 block (each skill's name + description) plus a single `run_skill(skill, task)` tool.
-2. When the model calls `run_skill`, Turing spins up a **sub-conversation on the Default LLM**. That sub-loop gets the full activation harness (the `SKILL.md` system prompt, `load_skill`, and `skill_bash`) and runs to completion.
+2. When the model calls `run_skill`, Viglet Turing spins up a **sub-conversation on the Default LLM**. That sub-loop gets the full activation harness (the `SKILL.md` system prompt, `load_skill`, and `skill_bash`) and runs to completion.
 3. The sub-loop's result text is handed back to the parent turn as the tool result.
 
 The parent model orchestrates; the Default LLM executes the skill. Token usage for the sub-loop is recorded separately.
@@ -156,9 +156,9 @@ Under the hood this is an optional `selectedSkillId` on the chat request. A blan
 
 Skills work in [Semantic Navigation](/docs/semantic-navigation/) AI chat too, and you don't configure anything extra. SN AI chat shares the same execution path as agent chat, so the agent's `skillsEnabled` toggle activates skills in SN mode automatically, still on the Default LLM.
 
-There's one addition unique to the skill sub-loop: it's also given **Turing's own search tools**. The Semantic Navigation DSL toolset, `dsl_list_indices`, `dsl_get_mappings`, `dsl_search`, `dsl_get_document`, `dsl_suggest`, `dsl_get_shards` (the same surface the [DSL Query](/docs/dsl-query/) chat exposes), is available to the skill alongside `load_skill` and `skill_bash`. These run in-process (no container network); the model bridges their results into the sandbox `/workspace` via `skill_bash`.
+There's one addition unique to the skill sub-loop: it's also given **Viglet Turing's own search tools**. The Semantic Navigation DSL toolset, `dsl_list_indices`, `dsl_get_mappings`, `dsl_search`, `dsl_get_document`, `dsl_suggest`, `dsl_get_shards` (the same surface the [DSL Query](/docs/dsl-query/) chat exposes), is available to the skill alongside `load_skill` and `skill_bash`. These run in-process (no container network); the model bridges their results into the sandbox `/workspace` via `skill_bash`.
 
-This is the first place a skill can leverage Turing's *own* indexed data: search the enterprise content with standard tools, then process the results with the skill's scripts.
+This is the first place a skill can leverage Viglet Turing's *own* indexed data: search the enterprise content with standard tools, then process the results with the skill's scripts.
 
 ---
 
@@ -253,7 +253,7 @@ All three extend an agent, but they sit at different scales:
 | **Shape** | One Groovy function | A remote tool surface | A folder: instructions + scripts + references |
 | **Runtime** | Sandboxed JVM/Groovy | The MCP server's own process | A hardened Docker container (`bash`, Python, Node) |
 | **Best for** | A small, deterministic computation or API call | Connecting to a live external system | A multi-step capability with its own procedure and helper scripts |
-| **Portability** | Turing-specific | Protocol-portable | **Ecosystem-portable**: runs identically in Claude |
+| **Portability** | Viglet Turing-specific | Protocol-portable | **Ecosystem-portable**: runs identically in Claude |
 | **How the LLM uses it** | Picks the function by description | Picks an MCP tool by description | Activates progressively (metadata → instructions → execution) |
 
 Reach for a Skill when the work is a *whole capability* ("generate on-brand campaign assets", "produce a financial model from a CSV") that benefits from packaged instructions, bundled scripts, and a real execution environment, and that you might want to share with or import from the wider skills ecosystem.
@@ -269,7 +269,7 @@ Reach for a Skill when the work is a *whole capability* ("generate on-brand camp
 | [Tool Calling](/docs/tool-calling/) | Native tools and the Code Interpreter sandbox skills build on |
 | [AI Agents](/docs/ai-agents/) | Where the **Skills** toggle lives, and where skills are activated |
 | [Agent Workspace](/docs/agent-workspace/) | The `/workspace` mount: per-conversation file store skills write to |
-| [Semantic Navigation](/docs/semantic-navigation/) | Skills work in SN AI chat, with Turing's search tools added |
+| [Semantic Navigation](/docs/semantic-navigation/) | Skills work in SN AI chat, with Viglet Turing's search tools added |
 | [Configuration Reference](/docs/configuration-reference/#storage) | Storage and Code Interpreter settings skills depend on |
 
 ---

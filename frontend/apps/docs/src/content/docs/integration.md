@@ -4,7 +4,7 @@ description: "Manage content connectors that import and index content from exter
 ---
 The **Integration** page (`/admin/integration/instance`) manages connectors that import and index content from external sources (such as AEM, web crawlers, or other content repositories) into the Viglet Turing search engine. It is accessible from the **Enterprise Search** section of the sidebar.
 
-Each **Integration instance** represents a configured connection to a content connector application. The connector runs as a separate process (for example, Viglet Dumont) and communicates with Turing via REST. Turing acts as a proxy: the API path `/api/v2/integration/{integrationId}/**` forwards requests to the configured connector endpoint, with built-in SSRF protection.
+Each **Integration instance** represents a configured connection to a content connector application. The connector runs as a separate process (for example, Viglet Dumont) and communicates with Viglet Turing via REST. Viglet Turing acts as a proxy: the API path `/api/v2/integration/{integrationId}/**` forwards requests to the configured connector endpoint, with built-in SSRF protection.
 
 ---
 
@@ -37,7 +37,7 @@ The creation and edit form is divided into two sections.
 
 ## Integration Detail: Sections
 
-After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the [Turing AEM Connector](/docs/integration-aem/) overview and the full [Dumont AEM Connector](https://dumont.viglet.org/docs/connectors/aem/) documentation.
+After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the [Viglet Turing AEM Connector](/docs/integration-aem/) overview and the full [Viglet Dumont AEM Connector](https://dumont.viglet.org/docs/connectors/aem/) documentation.
 
 ---
 
@@ -76,7 +76,7 @@ Results are paginated and sortable.
 | `PREPARE_UNCHANGED` | No changes detected since last indexing |
 | `PREPARE_REINDEX` | Preparing a reindexation |
 | `PREPARE_FORCED_REINDEX` | Forced reindexation triggered |
-| `RECEIVED_AND_SENT_TO_TURING` | Document received by the connector and forwarded to Turing |
+| `RECEIVED_AND_SENT_TO_TURING` | Document received by the connector and forwarded to Viglet Turing |
 | `SENT_TO_QUEUE` | Document placed in the Artemis processing queue |
 | `RECEIVED_FROM_QUEUE` | Document consumed from the queue by the indexing pipeline |
 | `INDEXED` | Document successfully indexed in Solr |
@@ -103,7 +103,7 @@ The Indexing Stats section provides a table of completed bulk indexing operation
 
 ### Double Check
 
-The Double Check section validates the consistency between the connector's content and the Turing search index. It detects drift between what the connector knows about and what is actually indexed.
+The Double Check section validates the consistency between the connector's content and the Viglet Turing search index. It detects drift between what the connector knows about and what is actually indexed.
 
 - Select a **Source** to inspect
 - Results are shown in two views:
@@ -144,7 +144,7 @@ Displays live diagnostic information from the remote connector application.
 
 ## Architecture
 
-Turing acts as a transparent proxy to the connector. The API path `/api/v2/integration/{integrationId}/**` forwards all requests to the configured connector endpoint, including authentication headers. This design keeps the connector application decoupled: it does not need to be publicly accessible, only reachable from the Turing server.
+Viglet Turing acts as a transparent proxy to the connector. The API path `/api/v2/integration/{integrationId}/**` forwards all requests to the configured connector endpoint, including authentication headers. This design keeps the connector application decoupled: it does not need to be publicly accessible, only reachable from the Viglet Turing server.
 
 Built-in SSRF protection validates the endpoint before forwarding. Requests to private IP ranges, loopback addresses, or disallowed schemes are rejected.
 
@@ -158,9 +158,9 @@ Built-in SSRF protection validates the endpoint before forwarding. Requests to p
 | [Semantic Navigation](/docs/semantic-navigation/) | Configure the SN Sites that receive indexed content |
 | [Architecture Overview](/docs/architecture-overview/) | End-to-end indexing flow from connector to Solr |
 | [REST API Reference](/docs/rest-api/) | API endpoints for programmatic indexing |
-| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem) and how to deploy them |
+| [Viglet Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors (Web Crawler, AEM, Database, FileSystem) and how to deploy them |
 | [WordPress](/docs/integrations/wordpress/) | The Viglet Turing Search plugin: indexes a WordPress site and serves its search, with no connector process |
-| [Dumont: REST API](https://dumont.viglet.org/docs/rest-api/) | Connector-side API for triggering indexing, monitoring, and source management |
+| [Viglet Dumont: REST API](https://dumont.viglet.org/docs/rest-api/) | Connector-side API for triggering indexing, monitoring, and source management |
 
 ---
 

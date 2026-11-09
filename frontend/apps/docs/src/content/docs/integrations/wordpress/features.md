@@ -1,12 +1,12 @@
 ---
-title: "Turing on WordPress"
+title: "Viglet Turing on WordPress"
 description: What each Viglet Turing feature looks like on a WordPress site through the Viglet Turing Search plugin, which block shows it, and which ones need a language model.
 ---
 
 The [Viglet Turing Search plugin](/docs/integrations/wordpress/) brings Viglet Turing's search and generative
 features to a WordPress site as blocks. This page lists each feature, the block that shows it,
-and whether it needs a language model in Turing. **Health → AI features** in wp-admin checks the
-generative ones against your Turing and names, for each, the block a visitor meets it in.
+and whether it needs a language model in Viglet Turing. **Health → AI features** in wp-admin checks the
+generative ones against your Viglet Turing and names, for each, the block a visitor meets it in.
 
 ## The features
 
@@ -20,25 +20,25 @@ generative ones against your Turing and names, for each, the block a visitor mee
 | Filters a sentence names | **Turing search** block, with "Suggest the filters a sentence names" on | Yes |
 | Related content | **Related content** block, or after the content of chosen post types | No |
 | Ask the catalog | **Ask the catalog** block: answers with the items it cites; on WooCommerce, with price and Add to cart | Yes |
-| Site assistant | **Site assistant** block, or a button in the corner of every page | Yes (Turing's chat) |
+| Site assistant | **Site assistant** block, or a button in the corner of every page | Yes (Viglet Turing's chat) |
 | Compare products | **Compare products** block on WooCommerce: the table; its summary needs a language model | For the summary |
 
-A block whose feature needs a language model stays hidden while Turing reports that feature
-off, so a page can hold it before Turing is set up.
+A block whose feature needs a language model stays hidden while Viglet Turing reports that feature
+off, so a page can hold it before Viglet Turing is set up.
 
 ## Search as you type
 
 ![Search as you type, with its note from the tour](/docs/img/screenshots/wordpress-tour-search.png)
 
 Suggestions come from what the index holds, a misspelling is offered its correction, and
-synonyms set in Turing apply to every search. The search box is the **Turing search** block's,
+synonyms set in Viglet Turing apply to every search. The search box is the **Turing search** block's,
 or the instant search's.
 
 ## Filters from the catalog
 
 ![Filters from the catalog, with its note from the tour](/docs/img/screenshots/wordpress-tour-filters.png)
 
-The fields you mark as facets on the **Fields** screen are sent to Turing with each post, and
+The fields you mark as facets on the **Fields** screen are sent to Viglet Turing with each post, and
 the block shows them beside the results with a count for the current search. On WooCommerce,
 category, price and attributes are facets too.
 
@@ -46,7 +46,7 @@ category, price and attributes are facets too.
 
 ![Ask the catalog, with its note from the tour](/docs/img/screenshots/wordpress-tour-copilot.png)
 
-A visitor describes what they need in a sentence. Turing's catalog copilot answers from the
+A visitor describes what they need in a sentence. Viglet Turing's catalog copilot answers from the
 site's content and lists the items it cites. On a WooCommerce shop each cited product shows the
 shop's price, and **Add to cart** puts it in the cart; the copilot never adds anything by itself.
 
@@ -55,7 +55,7 @@ shop's price, and **Add to cart** puts it in the cart; the copilot never adds an
 ![The Site assistant, with its note from the tour](/docs/img/screenshots/wordpress-tour-assistant.png)
 
 A button opens a chat over the site's posts. Answers stream in, labelled as generated, with the
-posts they used as links and a **Was this helpful?** that reaches Turing. The conversation
+posts they used as links and a **Was this helpful?** that reaches Viglet Turing. The conversation
 lasts across the pages of the visitor's tab, so a cited post can be opened without losing it;
 **New conversation** starts again. The only action the assistant may take on the page is
 opening another page of the same site, or of a site it [also searches](/docs/integrations/wordpress/#searching-other-sites-too)
@@ -68,7 +68,7 @@ Generative AI → Site assistant on every page** for a button in the corner of e
 
 The plugin's Docker stack has a demo storefront, Tarnfell, with a **Showcase** page holding the
 search, the catalog copilot and the Site assistant. **How it works** in its footer (`?tour=1`)
-numbers each Turing feature on the page and opens a note on it:
+numbers each Viglet Turing feature on the page and opens a note on it:
 
 ```bat
 run-docker.cmd demo     :: the demo on http://localhost:38082, the showcase at /showcase/

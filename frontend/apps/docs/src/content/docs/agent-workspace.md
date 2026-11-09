@@ -14,9 +14,9 @@ Crucially, **workspace contents are not dumped into the prompt.** The agent work
 
 ## Why this is more than a scratchpad
 
-Other agent frameworks expose a "virtual filesystem" as an in-memory implementation detail. Turing's workspace is a thin façade over the same pluggable [Storage](/docs/configuration-reference/#storage) layer that powers [Assets](/docs/assets/), which buys it properties an in-memory scratchpad can't have:
+Other agent frameworks expose a "virtual filesystem" as an in-memory implementation detail. Viglet Turing's workspace is a thin façade over the same pluggable [Storage](/docs/configuration-reference/#storage) layer that powers [Assets](/docs/assets/), which buys it properties an in-memory scratchpad can't have:
 
-| Capability | In-memory scratchpad | Turing Agent Workspace |
+| Capability | In-memory scratchpad | Viglet Turing Agent Workspace |
 |---|---|---|
 | Storage backend | Process memory | **Pluggable**: None / Filesystem / MinIO / S3, per deployment |
 | Multi-tenant isolation | Implicit | **Path-isolated** by agent **and** conversation |
@@ -51,7 +51,7 @@ Every blob is written under a tenant-isolated path:
 ```
 
 - Two conversations of the **same agent** never see each other's files.
-- Two **agents** in the same Turing instance never see each other's files.
+- Two **agents** in the same Viglet Turing instance never see each other's files.
 - Keys may contain `/` to express folders (`reports/lead-export.csv`); path-traversal sequences (`..`, absolute paths) are rejected before any storage call.
 - A blob is served only through an **HMAC-signed URL** that binds the agent + conversation + key + expiry, so a leaked link can't be replayed for a different file or after it expires.
 
@@ -96,7 +96,7 @@ When a tool is exercised from the admin preview or a unit test (no live conversa
 
 ### 2. Auto-offload of large tool results
 
-When **any** tool (native, MCP, or Custom) returns a result larger than `turing.genai.tool-result-offload.inline-max-chars` (default **4096**), Turing automatically:
+When **any** tool (native, MCP, or Custom) returns a result larger than `turing.genai.tool-result-offload.inline-max-chars` (default **4096**), Viglet Turing automatically:
 
 1. writes the full payload to `tool-results/{toolName}-{timestamp}.json` in the workspace, and
 2. replaces the inline result the model sees with a short reference:

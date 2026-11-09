@@ -63,7 +63,7 @@ ollama pull nomic-embed-text
 
 ### Local Transformers (ONNX)
 
-Turing also supports running embedding models **locally, in-process** via ONNX Runtime, without an external LLM provider, API or key. This is useful for air-gapped deployments, custom/fine-tuned models, and zero-cost embeddings.
+Viglet Turing also supports running embedding models **locally, in-process** via ONNX Runtime, without an external LLM provider, API or key. This is useful for air-gapped deployments, custom/fine-tuned models, and zero-cost embeddings.
 
 | Setting | Description |
 |---|---|
@@ -76,11 +76,11 @@ The default recommended model is `all-MiniLM-L6-v2` (384-dimensional, ~80 MB), a
 
 ### HuggingFace.co
 
-The **HuggingFace.co** provider runs the *same* in-process ONNX runtime as Local Transformers, but instead of typing the `.onnx` and `tokenizer.json` URLs by hand, you **pick a model from a searchable list**. Choose it from the provider dropdown and search HuggingFace directly in the form: Turing lists sentence-transformers repos ranked by popularity and only offers ones it has **verified expose a loadable ONNX model + tokenizer** (an *ONNX verified* check appears next to each), showing the embedding **dimensions** and **download** count. Selecting a model stores just its **repo id** (e.g. `sentence-transformers/all-MiniLM-L6-v2`); Turing resolves the artifact URLs at load time, handling both repo layouts (ONNX at the root or under an `onnx/` subfolder).
+The **HuggingFace.co** provider runs the *same* in-process ONNX runtime as Local Transformers, but instead of typing the `.onnx` and `tokenizer.json` URLs by hand, you **pick a model from a searchable list**. Choose it from the provider dropdown and search HuggingFace directly in the form: Viglet Turing lists sentence-transformers repos ranked by popularity and only offers ones it has **verified expose a loadable ONNX model + tokenizer** (an *ONNX verified* check appears next to each), showing the embedding **dimensions** and **download** count. Selecting a model stores just its **repo id** (e.g. `sentence-transformers/all-MiniLM-L6-v2`); Viglet Turing resolves the artifact URLs at load time, handling both repo layouts (ONNX at the root or under an `onnx/` subfolder).
 
 When huggingface.co is unreachable (offline, rate-limited), the picker falls back to a **curated catalog** of known-good ONNX models, the source (*Live from huggingface.co* vs *From the curated catalog*) is badged at the bottom of the list. The picker stays **editable**, so a repo id not in the list can still be typed (private or brand-new models). This is the recommended way to use a local model: same zero-cost, key-free, in-process embeddings, without hunting for URLs.
 
-When you pick a model, Turing reads its **embedding dimension** from the repo's `config.json` and shows it inline. If that dimension differs from your current default embedding model's, a warning appears: changing the dimension means every already-embedded vector is invalid until you **re-index**, against a vector store whose field matches the new dimension. This surfaces the cost *before* you save.
+When you pick a model, Viglet Turing reads its **embedding dimension** from the repo's `config.json` and shows it inline. If that dimension differs from your current default embedding model's, a warning appears: changing the dimension means every already-embedded vector is invalid until you **re-index**, against a vector store whose field matches the new dimension. This surfaces the cost *before* you save.
 
 If the repo ships more than one ONNX artifact (a full-precision `model.onnx` plus quantized variants like `model_quantized.onnx`), an **ONNX Variant** selector appears. Quantized variants are smaller and faster to run at a small accuracy cost; leave it on *Default (recommended)* unless you specifically want to trade accuracy for size/latency. The chosen variant is remembered with the model.
 
@@ -90,7 +90,7 @@ This provider downloads and runs the model **locally**. It does *not* call Huggi
 
 #### Zero-config local RAG at startup
 
-A fresh install (notably the public demo) can provision a complete local retrieval backend automatically, with no admin step. When a global [Default AI Agent](/docs/ai-agents/) is configured and lacks an embedding model or a vector store, Turing fills in each missing piece, wires it onto the Default AI Agent (enabling RAG), then downloads the model and reindexes existing content into the store, so grounded chat works out of the box:
+A fresh install (notably the public demo) can provision a complete local retrieval backend automatically, with no admin step. When a global [Default AI Agent](/docs/ai-agents/) is configured and lacks an embedding model or a vector store, Viglet Turing fills in each missing piece, wires it onto the Default AI Agent (enabling RAG), then downloads the model and reindexes existing content into the store, so grounded chat works out of the box:
 
 - **Embedding model:** the global default embedding model when one is set; otherwise, when no embedding model exists at all, a new local ONNX model (`all-MiniLM-L6-v2`), registered as the global default.
 - **Vector store:** the global default store when one is set; otherwise an existing enabled [Lucene vector store](/docs/embedding-stores/) (such as the "Default Vector Store" a seed import brings); otherwise, when no store exists at all, a new embedded Lucene store, registered as the global default.
@@ -114,11 +114,11 @@ The step is **idempotent** and never overrides an existing setup: a Default AI A
 
 ## Advanced embedding capabilities
 
-Beyond plain text→vector, Turing exploits provider-specific embedding features. Each is **opt-in by model choice**: pick the right model on the right vendor and the capability engages; everything else keeps the classic per-chunk text path byte-for-byte.
+Beyond plain text→vector, Viglet Turing exploits provider-specific embedding features. Each is **opt-in by model choice**: pick the right model on the right vendor and the capability engages; everything else keeps the classic per-chunk text path byte-for-byte.
 
 ### Asymmetric task types (Gemini)
 
-`gemini-embedding-001` embeds a *document* and a *query* differently for a measured retrieval-quality win the OpenAI/Anthropic models can't match. Turing applies it automatically through the standard VectorStore convention (index-time calls use `RETRIEVAL_DOCUMENT`, query-time calls use `RETRIEVAL_QUERY`) with **zero caller changes**. An optional Matryoshka `outputDimensionality` provider option trades a smaller vector for lower storage/IO. Voyage and Bedrock embedding models apply the same asymmetric `document`/`query` distinction.
+`gemini-embedding-001` embeds a *document* and a *query* differently for a measured retrieval-quality win the OpenAI/Anthropic models can't match. Viglet Turing applies it automatically through the standard VectorStore convention (index-time calls use `RETRIEVAL_DOCUMENT`, query-time calls use `RETRIEVAL_QUERY`) with **zero caller changes**. An optional Matryoshka `outputDimensionality` provider option trades a smaller vector for lower storage/IO. Voyage and Bedrock embedding models apply the same asymmetric `document`/`query` distinction.
 
 ### Contextualized chunk embeddings (Voyage `voyage-context-3`)
 
@@ -142,7 +142,7 @@ For the embedded Lucene store, scalar quantization (`INT8` / `INT4` / `SEVEN_BIT
 
 ### Mistral OCR extraction bridge
 
-Not an embedding model itself, but it feeds the embedding pipeline: for scanned PDFs and image-only documents that Apache Tika reads poorly, Turing can call Mistral's OCR API (`mistral-ocr-latest`) to produce layout-aware Markdown before chunking and embedding. It runs **only** when a file is OCR-eligible *and* Tika produced no usable text, so ordinary documents spend no OCR credits. Opt-in via `turing.ocr.*`; disabled or keyless → inert (returns the Tika text), and any OCR error fails soft back to Tika.
+Not an embedding model itself, but it feeds the embedding pipeline: for scanned PDFs and image-only documents that Apache Tika reads poorly, Viglet Turing can call Mistral's OCR API (`mistral-ocr-latest`) to produce layout-aware Markdown before chunking and embedding. It runs **only** when a file is OCR-eligible *and* Tika produced no usable text, so ordinary documents spend no OCR credits. Opt-in via `turing.ocr.*`; disabled or keyless → inert (returns the Tika text), and any OCR error fails soft back to Tika.
 
 ---
 

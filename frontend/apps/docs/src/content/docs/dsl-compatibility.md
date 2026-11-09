@@ -264,7 +264,7 @@ For **full DSL compatibility**, use Elasticsearch as the search engine backend. 
 
 Content AI is a [federated, read-only index](/docs/search-engine/#content-ai) whose query
 language is Adobe's own: a filter DSL plus semantic and keyword queries, not Lucene
-syntax. So rather than approximate the whole Elasticsearch surface, Turing translates
+syntax. So rather than approximate the whole Elasticsearch surface, Viglet Turing translates
 a defined subset and **refuses the rest by name**, with `501 Not Implemented`:
 
 | Query / feature | Content AI | Notes |

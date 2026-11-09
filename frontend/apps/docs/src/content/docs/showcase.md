@@ -2,9 +2,9 @@
 title: "Reference showcase (Atlas Store)"
 description: "Atlas Store: the installable reference app that exercises the maximum surface of Viglet Turing, walked end-to-end (typed catalog, faceted + hybrid search, RAG chat, agent power, creative compositions, voice/memory/ops)."
 ---
-**Atlas Store** is the canonical reference application for Viglet Turing, the "see it all wired together" artifact. It's a commerce-catalog copilot whose single job is to **exercise the maximum surface of the platform**: a living demo, an SDK-vs-real-backend integration test, and the answer to *"what can Turing actually do?"*
+**Atlas Store** is the canonical reference application for Viglet Turing, the "see it all wired together" artifact. It's a commerce-catalog copilot whose single job is to **exercise the maximum surface of the platform**: a living demo, an SDK-vs-real-backend integration test, and the answer to *"what can Viglet Turing actually do?"*
 
-If you've read the feature pages one at a time, this is where they connect. Atlas Store is the through-line: a typed catalog feeds faceted + hybrid **search**, the same index grounds a RAG **chat**, the chat gains **agent power** (client tools, code interpreter, skills), and a handful of **creative compositions** only possible because Turing owns search *and* agents. This page walks that surface in the order a visitor experiences it, linking the deep page for each capability, making it a good map for the [learning path](/docs/getting-started/intro/).
+If you've read the feature pages one at a time, this is where they connect. Atlas Store is the through-line: a typed catalog feeds faceted + hybrid **search**, the same index grounds a RAG **chat**, the chat gains **agent power** (client tools, code interpreter, skills), and a handful of **creative compositions** only possible because Viglet Turing owns search *and* agents. This page walks that surface in the order a visitor experiences it, linking the deep page for each capability, making it a good map for the [learning path](/docs/getting-started/intro/).
 
 It lives in the monorepo at [`frontend/apps/showcase`](https://github.com/openviglet/turing/tree/main/frontend/apps/showcase) and **seeds its own data**: a deterministic ~200-product typed catalog (price as `CURRENCY`, rating as `FLOAT`, reviews as `INT`, on-sale as `BOOL`, release date as `DATE`, multi-valued color/material/tags) that stresses the [manifest](/docs/manifest/), hybrid ranking, and facets.
 
@@ -20,7 +20,7 @@ pnpm build:showcase
 cd frontend/apps/showcase && npm run zip   # → atlas-store.zip
 ```
 
-Import `atlas-store.zip` from the Turing admin (Marketplace / Pages import) to provision the SN site, index the catalog, and serve the SPA as a search template.
+Import `atlas-store.zip` from the Viglet Turing admin (Marketplace / Pages import) to provision the SN site, index the catalog, and serve the SPA as a search template.
 
 :::note[Two fidelities]
 The offline **Lucene seed** is search-only (no embeddings): chat and agent surfaces show honest *"configure GenAI"* notices rather than breaking. Import the bundle into a backend with an **embedding LLM + AI agent** configured and the chat, hybrid ranking, and agent features light up. Every agent-side feature is gated server-side; the client wiring is always present.
@@ -49,7 +49,7 @@ The copilot is a real [AI Agent](/docs/ai-agents/), so it can *act*, not just an
 
 ### 4. Creative compositions
 
-These pay off precisely because Turing owns **both** search and agents. They are **shipped, opt-in features (default off)**, each enabled per agent, demonstrated here wired together:
+These pay off precisely because Viglet Turing owns **both** search and agents. They are **shipped, opt-in features (default off)**, each enabled per agent, demonstrated here wired together:
 
 | Composition | What it does |
 |---|---|
@@ -59,7 +59,7 @@ These pay off precisely because Turing owns **both** search and agents. They are
 | **Ambient proactive copilot** | A toast offers help when an interaction signal crosses the agent's threshold (opt-in, throttled) |
 | **Agent→agent handoff** | A router agent delegates to a specialist via `delegate_to_agent`, visible for free in the tool-call activity |
 | **Skills that ship UI** | A skill folder can embed its own components, surfaced through the same generative-UI tool path |
-| **Embeddable action widget** | A mock third-party page embeds the agent via the zero-dep vanilla [`@viglet/turing-sdk`](/docs/react-sdk/), so the agent acts on *that* site's cart, Turing as an action layer over any website |
+| **Embeddable action widget** | A mock third-party page embeds the agent via the zero-dep vanilla [`@viglet/turing-sdk`](/docs/react-sdk/), so the agent acts on *that* site's cart, Viglet Turing as an action layer over any website |
 
 :::note[Opt-in and default-off]
 Each composition is gated by its own per-agent flag (`answerAsAppEnabled`, `coBrowseEnabled`, `proactiveEnabled`, `agentHandoffEnabled`, `userMemoryEnabled`, `actionWidgetEnabled`, …). They are real, tested capabilities, but **off by default**, so a stock deployment never changes until you opt one in. The showcase turns them on to demonstrate the full surface.
@@ -71,7 +71,7 @@ Each composition is gated by its own per-agent flag (`answerAsAppEnabled`, `coBr
 - **Search by image**: a hero affordance hands off to the copilot's multimodal vision upload.
 - **Cross-conversation memory**: a "brain" panel shows what Atlas remembers about the visitor (keyed on a stable visitor id), with a "Forget me" GDPR delete. → [Chat Memory](/docs/chat-memory/)
 - **Ops tour** (`/ops`): a guided map of [Chat Analytics](/docs/chat-analytics/) (sentiment trajectory, tool-latency p95, SSE channels), [agent eval](/docs/agent-eval/) + golden sets, self-tuning suggestions, and [cost governance](/docs/cost-governance/).
-- **MCP exposure**: `mcp/claude-desktop.json` bridges Claude Desktop to Turing's [MCP server](/docs/mcp-servers/), so the Atlas catalog is drivable from Claude Desktop.
+- **MCP exposure**: `mcp/claude-desktop.json` bridges Claude Desktop to Viglet Turing's [MCP server](/docs/mcp-servers/), so the Atlas catalog is drivable from Claude Desktop.
 
 An in-app **Guided Tour** narrates each capability with "try it" deep-links into the copilot.
 

@@ -30,7 +30,7 @@ turing:
 Three problems Chat Analytics solves that vanilla logging doesn't:
 
 1. **Aggregate analytics from semi-structured conversations.** A log file tells you *"the request happened"*. It doesn't tell you *"the customer asked about pricing, the agent answered well, and the customer left positive."* Analytics needs structure on top of raw logs.
-2. **Decoupled from chat hot path.** Recording analytics shouldn't slow down the chat. Turing emits session events asynchronously: the store doesn't block a single millisecond on the conversation.
+2. **Decoupled from chat hot path.** Recording analytics shouldn't slow down the chat. Viglet Turing emits session events asynchronously: the store doesn't block a single millisecond on the conversation.
 3. **Engine-agnostic dashboards.** Mongo and Redis are very different stores. The Grafana dashboards, the REST API, and the React drill-down don't know which one you're using. Swap with a config change.
 
 ---
@@ -282,7 +282,7 @@ Like the enricher, the retention worker is ShedLock-protected, only one node run
 All endpoints are read-only and live under `/api/system/chat-analytics`. Designed to be consumed by Grafana via the [Infinity datasource](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/): engine-agnostic JSON/HTTP.
 
 :::caution[Requires authentication]
-These endpoints expose session transcripts and other end-user chat content, so they require an **authenticated admin** (`ROLE_ADMIN` / `AI_AGENT_VIEW`): they are **not** anonymous. Configure your Grafana Infinity datasource with HTTP Basic auth using a Turing admin account (the shipped provisioning uses Basic auth with placeholder credentials, replace them). See [Security Hardening § chat-analytics](/docs/security-hardening/#3-chat-analytics-api-requires-authentication).
+These endpoints expose session transcripts and other end-user chat content, so they require an **authenticated admin** (`ROLE_ADMIN` / `AI_AGENT_VIEW`): they are **not** anonymous. Configure your Grafana Infinity datasource with HTTP Basic auth using a Viglet Turing admin account (the shipped provisioning uses Basic auth with placeholder credentials, replace them). See [Security Hardening § chat-analytics](/docs/security-hardening/#3-chat-analytics-api-requires-authentication).
 :::
 
 ### Health
@@ -344,7 +344,7 @@ The drill-down endpoints power the **Chat Analytics** page in the React console:
 
 ---
 
-## Grafana Dashboard: Turing Chat Insights
+## Grafana Dashboard: Viglet Turing Chat Insights
 
 Provisioned at `containers/grafana/dashboards/turing-chat-insights.json`. Fifteen panels organized in five rows. Engine-agnostic: calls the REST API via the Infinity datasource, so Mongo and Redis render identically.
 

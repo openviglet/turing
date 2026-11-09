@@ -208,7 +208,7 @@ The search response is a **self-describing navigational JSON**: every link a use
 2. **Document metadata navigation**: Each result's metadata values carry filter links (e.g., click a `type:article` tag to filter all articles)
 3. **Pagination**: Next/previous/specific page links are included; no offset calculation needed
 
-A Turing search UI can be built as a **pure rendering layer**: render results, facets, tags, pagination, and locale switchers directly from the response. Adding a new facet to the SN Site configuration propagates automatically, with no client code changes.
+A Viglet Turing search UI can be built as a **pure rendering layer**: render results, facets, tags, pagination, and locale switchers directly from the response. Adding a new facet to the SN Site configuration propagates automatically, with no client code changes.
 
 **Locale selection:**
 
@@ -616,7 +616,7 @@ curl -X POST "http://localhost:2700/api/sn/jobs/nl-filters" \
 }
 ```
 
-Pass `q` and `fq` to the search ([`POST /api/sn/{site}/search/query`](#post-native-search)) as they are. Turing checks every value against the values the site actually holds and spells it the way the site indexes it (`sao paulo` becomes `São Paulo`). A value the site does not hold is left out of `fq` and listed in `dropped` with the reason (`NOT_IN_SITE`, or `UNKNOWN_FIELD` for a field the site does not have).
+Pass `q` and `fq` to the search ([`POST /api/sn/{site}/search/query`](#post-native-search)) as they are. Viglet Turing checks every value against the values the site actually holds and spells it the way the site indexes it (`sao paulo` becomes `São Paulo`). A value the site does not hold is left out of `fq` and listed in `dropped` with the reason (`NOT_IN_SITE`, or `UNKNOWN_FIELD` for a field the site does not have).
 
 Relative dates are resolved against the server's date, in English and Portuguese: "last year", "this month", "last month", "the last 7 days", "since March", "since 2024" ("ano passado", "neste mês", "desde março", ...). "Last year" asked on 2026-10-24 becomes `[2025-01-01 TO 2025-12-31]`. A date range the text neither phrases that way nor dates with a year is a guess, so it is left out of `fq` and listed in `dropped` as `UNGROUNDED_DATE`.
 
@@ -680,7 +680,7 @@ See [Chat](/docs/chat/) for the full chat interface documentation.
 
 ### Deep-dive research
 
-A question whose answer is spread over many documents ("what has the school done on public health?") gets a sectioned overview instead of one paragraph. Turing plans 3 to 6 sub-questions, searches the site for each, and writes one section per sub-question the documents answer, each claim citing the source it comes from as `[n]`.
+A question whose answer is spread over many documents ("what has the school done on public health?") gets a sectioned overview instead of one paragraph. Viglet Turing plans 3 to 6 sub-questions, searches the site for each, and writes one section per sub-question the documents answer, each claim citing the source it comes from as `[n]`.
 
 ```
 POST http://localhost:2700/api/sn/{siteName}/research
@@ -1018,7 +1018,7 @@ For full details, see [Logging](/docs/logging/).
 
 ## GraphQL API
 
-Turing exposes a GraphQL endpoint that provides the same Semantic Navigation search capabilities as the REST API using GraphQL queries. The endpoint is **public** (no authentication required).
+Viglet Turing exposes a GraphQL endpoint that provides the same Semantic Navigation search capabilities as the REST API using GraphQL queries. The endpoint is **public** (no authentication required).
 
 ```
 POST http://localhost:2700/graphql

@@ -5,7 +5,7 @@ description: "Point any OpenAI-compatible client at Viglet Turing: virtual keys,
 The **Governed LLM Gateway** exposes an **OpenAI-compatible inbound API** so any
 existing app can point its `base_url` at **Viglet Turing** with *zero code
 change*, and, in doing so, transparently gain the governance and intelligence
-Turing already provides: virtual keys, per-key budgets and rate limits, spend
+Viglet Turing already provides: virtual keys, per-key budgets and rate limits, spend
 tracking, a semantic cache, guardrails, model-name routing into your agents and
 Semantic Navigation sites, and provider-native tools.
 
@@ -69,7 +69,7 @@ disable it immediately. All inbound spend is metered **per key** and shown in th
 
 ## Model-name routing
 
-The `model` string routes the request into the Turing stack:
+The `model` string routes the request into the Viglet Turing stack:
 
 | `model` value | Behaviour |
 | --- | --- |
@@ -87,7 +87,7 @@ The `cost` / `quality` / `ttft` strategies order the declared deployments by the
 instance's own settings for that call, on every provider; anything the request
 leaves out keeps the instance's value. They are applied best-effort, as in the
 OpenAI API: a reasoning model that rejects sampling parameters is retried
-without them. Turing-routed models (`turing-agent:`, `turing-sn:`, copilot)
+without them. Viglet Turing-routed models (`turing-agent:`, `turing-sn:`, copilot)
 answer with their own settings.
 
 ## JSON mode

@@ -134,7 +134,7 @@ Besides the parameters you declare, every script receives a set of pre-wired hel
 | `slots` | Read/write [chat-flow](/docs/chat-flow/) variables on the live conversation (drives dynamic UI cards) |
 | `http` | Generic HTTP client (`getJson`, `postJson`, `getBytes`) for external APIs |
 | `code` | Run Python in the [Code Interpreter](/docs/tool-calling/#code-interpreter-1-tool) sandbox and read back its output/files |
-| `turingSearch` | High-level access to the Turing search surfaces (semantic navigation, vector store) |
+| `turingSearch` | High-level access to the Viglet Turing search surfaces (semantic navigation, vector store) |
 | `agent` | Delegate to another [AI Agent](/docs/ai-agents/) and use its reply |
 
 ### `turingSearch`: what a hit gives you
@@ -154,7 +154,7 @@ matched chunk. `turingSearch.sn(...)` searches the site index; there `content` a
 only when the search engine returns passages of its own, which today means an
 [Adobe AEM Content AI](/docs/search-engine/#content-ai) index with
 `turing.content-ai.include-chunks` enabled. On Solr, Lucene and Elasticsearch the key
-is **absent**: Turing indexed that content itself, so the document's own `abstract`
+is **absent**: Viglet Turing indexed that content itself, so the document's own `abstract`
 and `text` fields are what you ground on:
 
 ```groovy

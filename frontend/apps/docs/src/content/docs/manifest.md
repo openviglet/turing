@@ -4,7 +4,7 @@ description: "Provision and evolve a Semantic Navigation site's field schema dec
 ---
 A **field manifest** is a single declarative document that describes a Semantic Navigation site and its field schema, the site name, its locales, and the ordered list of fields (each with a type, and whether it's a facet, mandatory, or multi-valued). You `POST` it once and Viglet Turing **converges** the live site to match it: it creates the site if missing, adds any new fields, and reports what changed. Re-posting the same manifest is a no-op.
 
-You'd reach for this when you want your search schema to live in version control next to your code instead of being clicked together by hand in the admin: "Liquibase for the SN field schema." It's the backbone of repeatable onboarding: a new environment, a new tenant, or a CI pipeline can stand up an identical, reviewed schema from one file. Around that core, Turing adds four things: a **planner** that diffs a manifest against the live site (so breaking changes can't slip through silently), **LLM-assisted derivation** that drafts a manifest from sample documents, **hybrid RRF ranking** for the public search, and **field-coverage** observability so you can see which fields are actually populated.
+You'd reach for this when you want your search schema to live in version control next to your code instead of being clicked together by hand in the admin: "Liquibase for the SN field schema." It's the backbone of repeatable onboarding: a new environment, a new tenant, or a CI pipeline can stand up an identical, reviewed schema from one file. Around that core, Viglet Turing adds four things: a **planner** that diffs a manifest against the live site (so breaking changes can't slip through silently), **LLM-assisted derivation** that drafts a manifest from sample documents, **hybrid RRF ranking** for the public search, and **field-coverage** observability so you can see which fields are actually populated.
 
 > This page is about the *structured-source indexing* line (Block R). For how documents get into the index in the first place, see [Search Engine](/docs/search-engine/); for how fields are searched and faceted, see [Semantic Navigation](/docs/semantic-navigation/).
 
@@ -93,7 +93,7 @@ Each item takes the same values as a custom facet item in the console:
 | `operator` | How the bounds apply, `BETWEEN_INCLUSIVE` when left out |
 | `position` | The bucket's order; by default, its place in the list |
 
-The facet's `field` must be declared in the same manifest or already exist on the site. Turing matches each declared facet to the live one by `field` and `name`: it creates a facet that is missing, replaces the labels and buckets of one that differs, and leaves an equal one alone, so re-posting the manifest changes nothing. A custom facet the manifest does not declare stays as the console left it. The response lists what changed in `customFacetsChanged`. An invalid bound, such as malformed date math, is refused with HTTP 400 before anything is written.
+The facet's `field` must be declared in the same manifest or already exist on the site. Viglet Turing matches each declared facet to the live one by `field` and `name`: it creates a facet that is missing, replaces the labels and buckets of one that differs, and leaves an equal one alone, so re-posting the manifest changes nothing. A custom facet the manifest does not declare stays as the console left it. The response lists what changed in `customFacetsChanged`. An invalid bound, such as malformed date math, is refused with HTTP 400 before anything is written.
 
 From Java, the `TurSNManifest` builder takes the same declaration:
 
@@ -157,7 +157,7 @@ POST /api/sn/manifest
 | `order` | `ASC` (default) or `DESC` |
 | `missing` | Where documents with no value in the field go: `FIRST` or `LAST`. Leave it out to keep the search engine's own placement |
 
-Levels apply in the order listed. The name must not be `relevance`, `newest` or `oldest`, which a search answers before looking for a custom sort. Turing matches each declared sort to the live one by `name`: it creates a sort that is missing, replaces the description and levels of one that differs, and leaves an equal one alone. A custom sort the manifest does not declare stays as the console left it. The response lists what changed in `customSortsChanged`, and the [plan](#dry-run-the-diff) in `customSortsToChange`.
+Levels apply in the order listed. The name must not be `relevance`, `newest` or `oldest`, which a search answers before looking for a custom sort. Viglet Turing matches each declared sort to the live one by `name`: it creates a sort that is missing, replaces the description and levels of one that differs, and leaves an equal one alone. A custom sort the manifest does not declare stays as the console left it. The response lists what changed in `customSortsChanged`, and the [plan](#dry-run-the-diff) in `customSortsToChange`.
 
 From Java:
 
@@ -177,7 +177,7 @@ Custom sorts, `missing` included, apply on Solr, Lucene and Elasticsearch sites.
 
 ### Generative AI
 
-A `genAi` block turns the site's generative AI on: chat, the [answer engine](/docs/answer/) and RAG retrieval. Turing creates the site's GenAI configuration if it has none.
+A `genAi` block turns the site's generative AI on: chat, the [answer engine](/docs/answer/) and RAG retrieval. Viglet Turing creates the site's GenAI configuration if it has none.
 
 ```json
 POST /api/sn/manifest
@@ -201,7 +201,7 @@ Before this release, leaving `agentId` out meant the same as `default`, so re-po
 
 #### Entities at import
 
-With `"entityExtraction": true`, every document indexed into the site is read by the LLM of the site's AI agent (or of the Default AI Agent), which names the people, organisations and places in its title, description and text. They are written to three facet fields that Turing creates on first use: `entity_person`, `entity_organization` and `entity_place`. Visitors can then browse by person or place without anyone listing them in a vocabulary first.
+With `"entityExtraction": true`, every document indexed into the site is read by the LLM of the site's AI agent (or of the Default AI Agent), which names the people, organisations and places in its title, description and text. They are written to three facet fields that Viglet Turing creates on first use: `entity_person`, `entity_organization` and `entity_place`. Visitors can then browse by person or place without anyone listing them in a vocabulary first.
 
 - Only names the document actually contains are kept: a name the model returns that is not in the text is dropped.
 - A name the site's [Thesaurus](/docs/thesaurus/) knows is written as its preferred term, so variants such as *Bosso, Bruno* and *Bruno Bosso* become one facet value.
@@ -237,7 +237,7 @@ Each key is optional, and one you leave out keeps the site's current setting. A 
 
 ## Schema-as-code: planner & migrations
 
-Additive changes (new field, new locale) are safe and silent. But changing an **existing** field's `type` or its `multiValued` flag is **breaking**: the search-engine field must be dropped and rebuilt, which means the source has to reindex. Turing refuses to do that implicitly.
+Additive changes (new field, new locale) are safe and silent. But changing an **existing** field's `type` or its `multiValued` flag is **breaking**: the search-engine field must be dropped and rebuilt, which means the source has to reindex. Viglet Turing refuses to do that implicitly.
 
 ### Dry-run the diff
 
@@ -255,7 +255,7 @@ Facet / mandatory / description tweaks are **not** breaking: they don't require 
 
 ### Declaring a migration
 
-If `plan` reports a breaking change and you provision anyway, `POST /api/sn/manifest` returns **HTTP 409** and mutates nothing. To apply the change, declare it explicitly in the manifest's `migrations` list as a `RECREATE` action for that field. On provision, Turing then drops the field across every locale core, deletes its rows, and recreates it from the new spec.
+If `plan` reports a breaking change and you provision anyway, `POST /api/sn/manifest` returns **HTTP 409** and mutates nothing. To apply the change, declare it explicitly in the manifest's `migrations` list as a `RECREATE` action for that field. On provision, Viglet Turing then drops the field across every locale core, deletes its rows, and recreates it from the new spec.
 
 A migration works in the same call that creates the site. A connector can create a site and change a field the site template seeds (for example making `author` multi-valued) with one manifest:
 
@@ -280,7 +280,7 @@ The `schemaVersion` field is an informational tag you bump as your schema evolve
 
 ## LLM-assisted derivation
 
-Hand-declaring fields for an unfamiliar source is tedious. **Derivation** flips it around: feed Turing a sample of the source's documents and it returns a **draft** manifest for you to review.
+Hand-declaring fields for an unfamiliar source is tedious. **Derivation** flips it around: feed Viglet Turing a sample of the source's documents and it returns a **draft** manifest for you to review.
 
 `POST /api/sn/manifest/derive` with the site identity plus a `documents` array (parsed JSON objects):
 
@@ -317,7 +317,7 @@ Field manifests define *what* is searchable; **hybrid ranking** improves *how we
 | `LEGACY` *(default)* | Pure lexical (BM25) ranking: unchanged |
 | `HYBRID_RRF` | Reorders the BM25 result page by fusing it with a vector pass (RRF, `k=60`) |
 
-Because public SN documents aren't embedded by the lexical engine, Turing maintains a parallel per-site vector collection (`sn_<siteId>`) using the default embedding model + store, side-writing embeddings as documents are indexed/de-indexed. At query time it reorders **only** the current BM25 page, and **only** when sorting by relevance on a non-wildcard, ungrouped query, so **facet counts and pagination stay BM25-derived** (the ranking changes, the result set doesn't). It is fully **fail-open**: no default embedding model/store, an embedding error, or a store outage silently degrades to legacy lexical order. Configure it on the SN site's **Generative AI** page ("Hybrid Ranking (Public Search)").
+Because public SN documents aren't embedded by the lexical engine, Viglet Turing maintains a parallel per-site vector collection (`sn_<siteId>`) using the default embedding model + store, side-writing embeddings as documents are indexed/de-indexed. At query time it reorders **only** the current BM25 page, and **only** when sorting by relevance on a non-wildcard, ungrouped query, so **facet counts and pagination stay BM25-derived** (the ranking changes, the result set doesn't). It is fully **fail-open**: no default embedding model/store, an embedding error, or a store outage silently degrades to legacy lexical order. Configure it on the SN site's **Generative AI** page ("Hybrid Ranking (Public Search)").
 
 Two settings on the same card tune the blend for the site:
 

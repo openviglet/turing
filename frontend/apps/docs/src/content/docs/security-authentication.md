@@ -16,7 +16,7 @@ This page covers **native authentication**. For social login with Google, GitHub
 
 ## Native Authentication (default)
 
-When Keycloak is not enabled, Turing uses its own user store:
+When Keycloak is not enabled, Viglet Turing uses its own user store:
 
 ### Admin Console
 
@@ -76,7 +76,7 @@ The login page automatically shows buttons only for configured providers. See [S
 
 ## Switching to Keycloak SSO
 
-For production environments with SSO requirements, Turing can delegate authentication to Keycloak via OAuth2 / OpenID Connect. Enable it with:
+For production environments with SSO requirements, Viglet Turing can delegate authentication to Keycloak via OAuth2 / OpenID Connect. Enable it with:
 
 ```bash
 -Dturing.keycloak=true

@@ -27,7 +27,7 @@ RAG eliminates these problems by giving the LLM access to your actual content at
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'actorBkg': '#dbeafe', 'actorBorder': '#4A90D9', 'actorTextColor': '#1a1a1a', 'activationBkgColor': '#ede9fe', 'activationBorderColor': '#9B6EC5', 'labelBoxBkgColor': '#fef3c7', 'labelBoxBorderColor': '#E8A838', 'labelTextColor': '#1a1a1a', 'loopTextColor': '#b07a1a', 'noteBkgColor': '#dcfce7', 'noteBorderColor': '#50B86C', 'noteTextColor': '#1a1a1a', 'signalColor': '#333', 'signalTextColor': '#333'}}}%%
 sequenceDiagram
     participant User
-    participant Turing as Turing
+    participant Turing as Viglet Turing
     participant EmbModel as Embedding Model
     participant VectorDB as Embedding Store
     participant LLM as LLM
@@ -65,7 +65,7 @@ sequenceDiagram
 
 ### Phase 3: Generation
 
-1. **Prompt construction**: Turing builds a prompt containing the user's question plus the retrieved document chunks as context
+1. **Prompt construction**: Viglet Turing builds a prompt containing the user's question plus the retrieved document chunks as context
 2. **LLM generation**: The LLM reads the context and generates an answer based on the real content
 3. **Streaming response**: The answer is streamed back to the user via SSE
 
@@ -77,7 +77,7 @@ sequenceDiagram
 
 The LLM is the "brain" that reads the retrieved context and generates a natural language response. It does the reasoning, summarization, and articulation, but it does **not** search or retrieve content on its own.
 
-In Turing, LLMs are configured as **[LLM Instances](/docs/llm-instances/)** across **11 vendor types**:
+In Viglet Turing, LLMs are configured as **[LLM Instances](/docs/llm-instances/)** across **11 vendor types**:
 
 | Provider | Example Models |
 |---|---|
@@ -104,7 +104,7 @@ The Embedding Model is a specialized neural network that converts text into nume
 
 The embedding model is used **twice**: once during indexing (to embed document chunks) and once at query time (to embed the user's question). Both must use the **same model**: otherwise the vectors are incompatible and similarity search fails.
 
-In Turing, embedding-capable providers include **OpenAI**, **Ollama**, **Gemini** (with asymmetric task types), **Voyage**, **Cohere**, **Mistral**, **Bedrock**, **Vertex AI**, and OpenAI-compatible endpoints. See [Embedding Models](/docs/embedding-models/) for provider details, model selection, and advanced modes (multimodal, contextualized chunks, Matryoshka).
+In Viglet Turing, embedding-capable providers include **OpenAI**, **Ollama**, **Gemini** (with asymmetric task types), **Voyage**, **Cohere**, **Mistral**, **Bedrock**, **Vertex AI**, and OpenAI-compatible endpoints. See [Embedding Models](/docs/embedding-models/) for provider details, model selection, and advanced modes (multimodal, contextualized chunks, Matryoshka).
 
 :::caution[Same model for indexing and querying]
 Changing the embedding model after documents have been indexed causes dimension mismatches and incorrect results. A full re-indexing is required after any model change.
@@ -114,7 +114,7 @@ Changing the embedding model after documents have been indexed causes dimension 
 
 The Embedding Store is a specialized database optimized for storing and querying high-dimensional vectors. Unlike a traditional database that matches exact values, an embedding store finds the **most similar** vectors using distance metrics (cosine similarity, dot product, or Euclidean distance).
 
-Turing supports four backends:
+Viglet Turing supports four backends:
 
 | Backend | Best for | How it works |
 |---|---|---|
@@ -136,9 +136,9 @@ Stored vectors:
 
 ---
 
-## RAG in Turing
+## RAG in Viglet Turing
 
-Turing supports two RAG sources that can be used independently or together:
+Viglet Turing supports two RAG sources that can be used independently or together:
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -195,7 +195,7 @@ Documents indexed before GenAI was enabled do not have embeddings. A full re-ind
 
 Here is the question that determines whether your AI feels alive: *when a user asks a question, does the agent answer from its training data, or does it search **your** content first?*
 
-Turing gives the agent the tools to do both, and the wiring is what makes them work together as one experience.
+Viglet Turing gives the agent the tools to do both, and the wiring is what makes them work together as one experience.
 
 ### The two retrieval surfaces
 
@@ -214,7 +214,7 @@ Here's the sequence when a user asks an SN-grounded agent: *"Which of our produc
 
 1. **Tool catalog presented to the LLM.** The agent has `search_site`, `find_similar_documents`, and `search_knowledge_base` attached. Their JSON schemas are part of the prompt; the model can pick any of them.
 2. **LLM picks `search_site`.** It's a domain question with a clear filter (cold storage). The model emits a tool call: `search_site(site="products", query="cold storage logistics", locale="en_US")`.
-3. **Solr handles the query.** Turing translates the tool arguments into a Solr query against the products SN Site, applies the configured facets, returns the top results with snippets.
+3. **Solr handles the query.** Viglet Turing translates the tool arguments into a Solr query against the products SN Site, applies the configured facets, returns the top results with snippets.
 4. **The model reads the snippets.** They're fed back as the tool's result. The model now has *real product names, real descriptions, real URLs*.
 5. **Possibly a second tool call.** If the snippets are thin, the model may chain `find_similar_documents(documentId="<one-of-the-results>")` to broaden the recommendation. Or `search_knowledge_base("cold storage compliance")` to pull policy context.
 6. **Final answer.** The model composes the response in the agent's voice (and its [Persona](/docs/personas/), if attached), with concrete product names and links, nothing hallucinated, everything grounded.
@@ -229,7 +229,7 @@ The [Chat](/docs/chat/) interface has a dedicated **Semantic Navigation** tab wh
 - The configured facets per site (so the model knows what filters it can apply),
 - A directive to **never answer outside the indexed content**.
 
-It's the Turing equivalent of *"talk to my site"*.
+It's the Viglet Turing equivalent of *"talk to my site"*.
 
 ### Designing an SN-backed agent
 
@@ -280,7 +280,7 @@ This makes ANN Search the canonical debugging surface. Reproduce the chat answer
 2. The chunks were right but the LLM ignored them → tighten the agent system prompt or persona,
 3. The chunks were right and the LLM used them but the user is asking something not covered → product gap, not a tech gap.
 
-The first two you fix in Turing. The third is a roadmap signal.
+The first two you fix in Viglet Turing. The third is a roadmap signal.
 
 :::note[ANN Search is RAG-only]
 The ANN page only works on SN Sites where **GenAI is enabled** (i.e., embeddings are being indexed). If a site shows *"ANN Search is not available for this site (RAG is disabled)"*, the site doesn't have RAG turned on. Enable it in **Semantic Navigation → [Site] → Generative AI** and re-index.
@@ -356,7 +356,7 @@ Query ──► Hybrid retrieval (BM25 + vector, RRF) ──► top-N candidates
 
 ### Pluggable reranker strategies
 
-Turing treats the reranking stage as a **selectable strategy**, so you can
+Viglet Turing treats the reranking stage as a **selectable strategy**, so you can
 match cost, latency, and precision to your deployment:
 
 | Strategy | What it is | When to use |
@@ -367,7 +367,7 @@ match cost, latency, and precision to your deployment:
 
 **Safe by design: it never makes retrieval worse.** Reranking is *fail-open*: if
 the chosen strategy errors, times out, isn't configured, or returns nothing
-usable, Turing silently falls back to the original retrieval order. Turning
+usable, Viglet Turing silently falls back to the original retrieval order. Turning
 reranking on can only help or be neutral: it can never degrade results below the
 no-rerank baseline.
 
@@ -394,7 +394,7 @@ dedicated **[Reranking](/docs/reranking/)** page.
 
 ## Advanced RAG capabilities
 
-The default pipeline above (embed, retrieve, rerank, generate) is the foundation. Turing layers several **opt-in** capabilities on top of it, each fail-safe: when off (the default) or on error, the pipeline behaves exactly as the baseline.
+The default pipeline above (embed, retrieve, rerank, generate) is the foundation. Viglet Turing layers several **opt-in** capabilities on top of it, each fail-safe: when off (the default) or on error, the pipeline behaves exactly as the baseline.
 
 ### Managed-RAG retrieval backends
 
@@ -402,7 +402,7 @@ For tenants standardized on a cloud RAG stack, the *retrieval* half can be deleg
 
 | Backend | What it is |
 |---|---|
-| **Built-in** *(default)* | Turing's own vector / hybrid index: unchanged |
+| **Built-in** *(default)* | Viglet Turing's own vector / hybrid index: unchanged |
 | **AWS Bedrock Knowledge Bases** | Delegates retrieval to a Bedrock KB (`Retrieve` API); each result becomes a citation source through the existing citation path |
 
 Configured as deploy-time infrastructure (`turing.retrieval.*`, like `turing.storage.*`); default `BUILT_IN` is byte-for-byte unchanged. Vertex AI Search / RAG Engine are future adapters on the same seam.
@@ -427,7 +427,7 @@ For high-stakes answers, a cheap model from a **different vendor** critiques the
 
 ## Provenance & citations
 
-RAG grounds an answer in real content; **citations** prove *which* content grounded *which sentence*. When the `citations` Request Option is enabled on a supporting vendor, Turing retrieves the top-K passages, attaches them to the question as citable source blocks, and decodes the model's per-sentence citations onto one provider-agnostic contract, streamed as a `citations` SSE event after the answer.
+RAG grounds an answer in real content; **citations** prove *which* content grounded *which sentence*. When the `citations` Request Option is enabled on a supporting vendor, Viglet Turing retrieves the top-K passages, attaches them to the question as citable source blocks, and decodes the model's per-sentence citations onto one provider-agnostic contract, streamed as a `citations` SSE event after the answer.
 
 | Vendor | How citations are produced |
 |---|---|
@@ -458,7 +458,7 @@ Imagine a company with an internal knowledge base containing HR policies, produc
 
 > **User:** "What is our vacation policy for remote employees?"
 >
-> **Turing retrieves:** Chunk from `hr-policies-2025.pdf` (page 12): *"Remote employees are entitled to 25 days of paid leave per year, plus 5 floating holidays. Requests must be submitted via the HR portal at least 14 days in advance..."*
+> **Viglet Turing retrieves:** Chunk from `hr-policies-2025.pdf` (page 12): *"Remote employees are entitled to 25 days of paid leave per year, plus 5 floating holidays. Requests must be submitted via the HR portal at least 14 days in advance..."*
 >
 > **LLM (with context):** "According to our HR policies, remote employees receive 25 days of paid leave per year plus 5 floating holidays. Leave requests must be submitted via the HR portal at least 14 days in advance." *(accurate, sourced from actual company data)*
 

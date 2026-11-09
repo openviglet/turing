@@ -1,10 +1,10 @@
 ---
 title: "Capabilities"
-description: "The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Turing's own tools surface in one taxonomy and run in one tool loop."
+description: "The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Viglet Turing's own tools surface in one taxonomy and run in one tool loop."
 ---
 A **capability** is anything a Large Language Model can *do beyond plain text generation*: search the web, run code, generate an image, return citations, or reason with a larger compute budget. Different vendors expose these as server-side primitives with different names and shapes; Viglet Turing collapses them into **one taxonomy** so the admin sees "web search" once, not "OpenAI `web_search` vs Anthropic `web_search_20250305` vs Gemini `google_search`."
 
-You'd reach for this page when you want an agent to use a **provider-native** feature (Claude's web search, OpenAI's hosted code interpreter, Gemini's Google Search grounding) rather than (or alongside) Turing's own [native tools](/docs/tool-calling/). The key idea to internalize: a native capability only fires when it is switched on in **two** places. Miss either gate and the request silently falls back to the standard Spring AI path, as if the capability didn't exist.
+You'd reach for this page when you want an agent to use a **provider-native** feature (Claude's web search, OpenAI's hosted code interpreter, Gemini's Google Search grounding) rather than (or alongside) Viglet Turing's own [native tools](/docs/tool-calling/). The key idea to internalize: a native capability only fires when it is switched on in **two** places. Miss either gate and the request silently falls back to the standard Spring AI path, as if the capability didn't exist.
 
 ---
 
@@ -15,7 +15,7 @@ A capability is gated **per LLM instance** *and* **per agent** on purpose:
 1. **The instance gate (admin/ops)** decides *whether this connection is even allowed* to use the feature: an operator question about cost, data residency, and contractual access. It lives in the `llm_instance_capability` matrix.
 2. **The agent gate (author)** decides *whether this particular assistant should* use it, a design question about what the agent is for. It lives in the agent's `nativeCapabilities` selection.
 
-At runtime Turing intersects the two sets: **what the agent asked for ∩ what the instance is allowed to do**. Only capabilities in that intersection are wired into the provider request.
+At runtime Viglet Turing intersects the two sets: **what the agent asked for ∩ what the instance is allowed to do**. Only capabilities in that intersection are wired into the provider request.
 
 ```mermaid
 flowchart LR
@@ -47,7 +47,7 @@ Every capability carries a **kind** that decides which UI surface it appears on.
 
 | Kind | What it is | Where it surfaces |
 |---|---|---|
-| **TOOL** | The model *invokes* it mid-turn (web search, code interpreter, image gen, plus Turing's own native tool groups). | The agent's **Tools & Capabilities** picker |
+| **TOOL** | The model *invokes* it mid-turn (web search, code interpreter, image gen, plus Viglet Turing's own native tool groups). | The agent's **Tools & Capabilities** picker |
 | **REQUEST_OPTION** | Changes *how* the call is made; never invocable (reasoning effort, citations, service tier, context caching…). | Agent **Request Options** settings toggles |
 | **PLATFORM** | Not per-agent at all (usage import, evals, distillation, nightly batch). | Their own admin screens |
 
@@ -121,14 +121,14 @@ Switching a request option on stores your choice; the *feature* engages when the
 
 ## The union tool loop
 
-When an agent mixes provider-native tools with Turing's own (DSL search, RAG, web crawler…) and MCP tools, they all run in **one** tool loop rather than competing. The resolver:
+When an agent mixes provider-native tools with Viglet Turing's own (DSL search, RAG, web crawler…) and MCP tools, they all run in **one** tool loop rather than competing. The resolver:
 
 - intersects the agent's selected capabilities with what the instance allows;
-- adds the agent's coexisting Turing/MCP/custom tools, **dropping** any Turing tool whose abstract `function` is already claimed by a selected provider-native pick (so you don't get both `search_images` and native `image_generation` fighting over the same function);
+- adds the agent's coexisting Viglet Turing/MCP/custom tools, **dropping** any Viglet Turing tool whose abstract `function` is already claimed by a selected provider-native pick (so you don't get both `search_images` and native `image_generation` fighting over the same function);
 - hands the combined set to the vendor's native chat path (OpenAI Responses `function` tools, Anthropic `tool_use`/`tool_result`).
 
 :::note[Legacy agents are untouched]
-An agent whose `nativeCapabilities` is **null** (never opened the picker) keeps the pre-capability behaviour exactly, all of the instance's enabled capabilities, zero Turing tools. The two-gate intersection only takes over once the picker writes a selection. Existing agents change nothing until you choose to.
+An agent whose `nativeCapabilities` is **null** (never opened the picker) keeps the pre-capability behaviour exactly, all of the instance's enabled capabilities, zero Viglet Turing tools. The two-gate intersection only takes over once the picker writes a selection. Existing agents change nothing until you choose to.
 :::
 
 ---
@@ -165,7 +165,7 @@ The instance form's free-text **Supported Capabilities** field (e.g. `RESPONSE_F
 | Page | Description |
 |---|---|
 | [LLM Instances](/docs/llm-instances/) | Where the instance capability matrix lives, plus the 11 vendors |
-| [Tool Calling](/docs/tool-calling/) | Turing's own native tools and how they coexist with provider tools |
+| [Tool Calling](/docs/tool-calling/) | Viglet Turing's own native tools and how they coexist with provider tools |
 | [AI Agents](/docs/ai-agents/) | Composing an agent from an LLM, tools, and capabilities |
 | [MCP Servers](/docs/mcp-servers/) | Remote tool servers (the `mcp` capability) |
 | [Generative AI & LLM Configuration](/docs/genai-llm/) | How capabilities fit the broader GenAI surface |

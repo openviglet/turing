@@ -27,7 +27,7 @@ Each is detailed below.
 
 ## 1. AI crypto master key must be set in production
 
-Turing encrypts every stored provider API key and object-store credential with
+Viglet Turing encrypts every stored provider API key and object-store credential with
 an AES/GCM master key read from `turing.ai.crypto.key`
 (env var **`TURING_AI_CRYPTO_KEY`**).
 
@@ -84,7 +84,7 @@ chat content. It now requires an authenticated admin (`ROLE_ADMIN` /
 `AI_AGENT_VIEW`).
 
 **What to do:** if you scrape it from Grafana via the Infinity datasource,
-configure HTTP Basic auth (a Turing admin account) on that datasource. The
+configure HTTP Basic auth (a Viglet Turing admin account) on that datasource. The
 shipped Grafana provisioning (`containers/grafana/.../prometheus.yml`) has been
 updated to use Basic auth with placeholder credentials: replace them with a
 real admin account. See [Chat Analytics](/docs/chat-analytics/).

@@ -118,7 +118,7 @@ So a `TECHNICAL`, verbosity-2 persona runs cooler and shorter (temperature 0.2, 
 
 ## Post-LLM Tone Validation
 
-The prompt-side guardrails (forbidden vocabulary in the system message) are necessary but not sufficient. LLMs occasionally drift, especially under tool-calling pressure or in long sessions. So Turing enforces forbidden terms **a second time, after the LLM responds**, before the response reaches the chat executor.
+The prompt-side guardrails (forbidden vocabulary in the system message) are necessary but not sufficient. LLMs occasionally drift, especially under tool-calling pressure or in long sessions. So Viglet Turing enforces forbidden terms **a second time, after the LLM responds**, before the response reaches the chat executor.
 
 `TurPersonaToneValidator` scans every assistant response for matches against the persona's forbidden list. Matches are **masked** (replaced with a neutral placeholder) rather than the entire response being blocked. Logs record the match so you know when your prompt isn't holding.
 
@@ -135,7 +135,7 @@ You don't need to choose. Both are on by default whenever a Persona is attached.
 
 ## The Few-Shot Store: Teach by Example
 
-The hardest part of a brand voice isn't the rules: it's the *feel*. You can describe FORMAL, but you can't fully describe *"the way Maria from sales answers a discount request"*. So Turing lets you point a Persona at a **vector store of past Q/A pairs**, and at every conversation it retrieves the most relevant ones to use as few-shot examples.
+The hardest part of a brand voice isn't the rules: it's the *feel*. You can describe FORMAL, but you can't fully describe *"the way Maria from sales answers a discount request"*. So Viglet Turing lets you point a Persona at a **vector store of past Q/A pairs**, and at every conversation it retrieves the most relevant ones to use as few-shot examples.
 
 **How to populate the store:**
 
@@ -146,7 +146,7 @@ The hardest part of a brand voice isn't the rules: it's the *feel*. You can desc
 **At chat time:**
 
 - The user's first message is embedded.
-- Turing retrieves the top similar Q/A pairs (default top 3, similarity ≥ 0.7).
+- Viglet Turing retrieves the top similar Q/A pairs (default top 3, similarity ≥ 0.7).
 - Pairs are injected before the user's message as `Example Q:` / `Example A:` blocks.
 - The LLM sees concrete examples of how your company answers similar questions.
 
@@ -167,7 +167,7 @@ If you bake those facts into the system prompt, two things happen:
 1. The prompt grows past the model's optimal range.
 2. Every time a price changes, marketing has to ask engineering to redeploy a prompt.
 
-The **Brand Context MCP** field solves this. It points the persona at an MCP server you control. At every conversation, Turing calls a single MCP tool (e.g., `get_brand_context`) and injects the JSON response into the system prompt as a *"Current brand facts:"* block.
+The **Brand Context MCP** field solves this. It points the persona at an MCP server you control. At every conversation, Viglet Turing calls a single MCP tool (e.g., `get_brand_context`) and injects the JSON response into the system prompt as a *"Current brand facts:"* block.
 
 You get:
 
@@ -306,11 +306,11 @@ For an **audience** persona (`AUDIENCE` or `BOTH`), the **Validate content** lau
 
 **Persona dialogue** runs an automatic, turn-by-turn conversation between **two or more** personas on a topic you choose. Because a dialogue is about peer speakers (none of which "owns" it) it's a **global** surface reached from the persona list (**Persona dialogue**), never scoped to a single persona. Like [Persona Match](#persona-match-nn-content-fit-projects), it is organized as **saved projects**: `/bento/persona/dialogue` is a mosaic of dialogue projects, each re-openable and re-runnable.
 
-Open (or create) a project, then configure it: a **topic**, a roster of **speaker personas** (two minimum, pick them in the shared persona grid; the number badge is the **speaking order**), an [LLM Instance](/docs/llm-instances/), and a **turn budget** (default **10**, capped at 40). Only `SPEAKER`/`BOTH` personas are selectable (an audience-only persona can't talk). Turing seeds the first persona with the topic, then goes **round-robin** (feeding each persona the previous speaker's reply) until the budget is spent. The transcript is **streamed live** (each turn appears the moment it's generated, colour-coded per speaker) **and persisted**, so re-opening a project shows its last conversation; re-running replaces it. To keep the conversation from stalling, **every persona is required to end each reply with a question** to the others. It's the quickest way to hear several brand voices play off each other, a live "voice diff". If a turn fails mid-way, the partial transcript is kept with a notice.
+Open (or create) a project, then configure it: a **topic**, a roster of **speaker personas** (two minimum, pick them in the shared persona grid; the number badge is the **speaking order**), an [LLM Instance](/docs/llm-instances/), and a **turn budget** (default **10**, capped at 40). Only `SPEAKER`/`BOTH` personas are selectable (an audience-only persona can't talk). Viglet Turing seeds the first persona with the topic, then goes **round-robin** (feeding each persona the previous speaker's reply) until the budget is spent. The transcript is **streamed live** (each turn appears the moment it's generated, colour-coded per speaker) **and persisted**, so re-opening a project shows its last conversation; re-running replaces it. To keep the conversation from stalling, **every persona is required to end each reply with a question** to the others. It's the quickest way to hear several brand voices play off each other, a live "voice diff". If a turn fails mid-way, the partial transcript is kept with a notice.
 
 ### Suggest the best-fit persona for content
 
-Content-fit answers "does this text fit *this* persona"; **Suggest persona** answers the inverse, "**which** audience persona is this content even *for*". Reached from the persona list, it opens a page where you paste a piece of content (optionally restricting the pool to a few personas), and Turing batches the [content-fit evaluator](#how-content-fit-is-scored) across **every enabled audience persona** and returns them **ranked best-fit first**. Each row shows the red/amber/green fit bar plus the same *fits*/*misfits* detail, with the top persona flagged as the best fit, degrading to the readability-only score when no default LLM is configured. It feeds editorial routing (who is this article for?) and A/B persona selection. `POST /api/persona/suggest`.
+Content-fit answers "does this text fit *this* persona"; **Suggest persona** answers the inverse, "**which** audience persona is this content even *for*". Reached from the persona list, it opens a page where you paste a piece of content (optionally restricting the pool to a few personas), and Viglet Turing batches the [content-fit evaluator](#how-content-fit-is-scored) across **every enabled audience persona** and returns them **ranked best-fit first**. Each row shows the red/amber/green fit bar plus the same *fits*/*misfits* detail, with the top persona flagged as the best fit, degrading to the readability-only score when no default LLM is configured. It feeds editorial routing (who is this article for?) and A/B persona selection. `POST /api/persona/suggest`.
 
 ---
 
@@ -353,11 +353,11 @@ The trend and drift views are computed from the stored scores alone: no LLM call
 
 Suggestions come from the project's LLM Instance (or the Global default) grounded on the matrix, the flagged phrases and the drift; anything naming a content or persona outside the project is discarded. With **no LLM configured** (or if the model's answer can't be read), you still get a **deterministic** list built from the rewrite suggestions the evaluator already grounded in verbatim phrases. Use **Regenerate** for a fresh set.
 
-**Adjustments stay advisory.** Nothing is written to a content or a persona automatically. For a **content** that is the end of it: Turing does not own the CMS the page lives in, so the edit is yours to make there.
+**Adjustments stay advisory.** Nothing is written to a content or a persona automatically. For a **content** that is the end of it: Viglet Turing does not own the CMS the page lives in, so the edit is yours to make there.
 
 #### Applying a persona adjustment
 
-A **persona**, though, is a Turing entity, so when a suggestion names a specific audience field that is set wrong, the card offers **Apply to this persona**: the suggestion is shown as a diff of the current value → the proposed one, with the reason, for each field it wants to change.
+A **persona**, though, is a Viglet Turing entity, so when a suggestion names a specific audience field that is set wrong, the card offers **Apply to this persona**: the suggestion is shown as a diff of the current value → the proposed one, with the reason, for each field it wants to change.
 
 You tick the fields you agree with and press **Apply**. Nothing is pre-ticked and there is no *accept all*:
 
@@ -376,7 +376,7 @@ Retention is bounded: each cell keeps its most recent points (24 by default, `tu
 
 By default a **URL** content is fetched with a plain HTTP request and parsed to text. That works for static pages, PDFs and server-rendered sites, but a **JavaScript-rendered page** (a React/Vue/Angular single-page app, many modern marketing sites) returns an almost-empty HTML shell, so no text is extracted and the content is marked **Failed** with *"No text could be extracted"*. The same applies to URL sources on a persona's [content-fit notebook](#audience-personas--content-fit).
 
-To handle those, Turing can render the page in a real headless browser first. Configure it under **Administration → Settings → Platform → Content Ingestion**:
+To handle those, Viglet Turing can render the page in a real headless browser first. Configure it under **Administration → Settings → Platform → Content Ingestion**:
 
 - **Fetch mode**
   - **Simple** (default): fast HTTP fetch only; no browser. JS-rendered pages come back empty.

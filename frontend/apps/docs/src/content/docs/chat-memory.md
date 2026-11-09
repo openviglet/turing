@@ -46,7 +46,7 @@ Chat memory reuses the same `turing.logging.engine` backend as server/indexing l
 
 Persistence alone gives the model a chronological FIFO of the last *N* turns. **Relevance retrieval** adds the most *on-topic* older turns back on top of that window.
 
-When enabled, on each turn Turing:
+When enabled, on each turn Viglet Turing:
 
 1. reads the persisted history,
 2. splits it into a **recent window** (the last `chatMemoryRecentN` turns, kept verbatim) and an **older pool** (everything before),

@@ -78,14 +78,14 @@ The returned client exposes low-level helpers (`get`, `post`, `del`, `request`, 
 
 ### CSRF & cross-origin
 
-The Turing backend uses Spring Security's `CookieCsrfTokenRepository`, which writes the `XSRF-TOKEN` cookie **HttpOnly** and surfaces the token in the `X-XSRF-TOKEN` response header. JavaScript can't read an HttpOnly cookie, so before any mutating request (`POST`/`PUT`/`DELETE`) the client **primes** the token with a best-effort `GET {baseURL}/csrf` and attaches it as `X-XSRF-TOKEN`.
+The Viglet Turing backend uses Spring Security's `CookieCsrfTokenRepository`, which writes the `XSRF-TOKEN` cookie **HttpOnly** and surfaces the token in the `X-XSRF-TOKEN` response header. JavaScript can't read an HttpOnly cookie, so before any mutating request (`POST`/`PUT`/`DELETE`) the client **primes** the token with a best-effort `GET {baseURL}/csrf` and attaches it as `X-XSRF-TOKEN`.
 
 - **Anonymous / public deployments** with CSRF disabled work **tokenless**: the priming call fails softly and requests go through.
 - **Different origins?** Enable CORS with credentials on the backend (`Access-Control-Allow-Credentials: true` + an explicit allowed origin). `credentials: "include"` (the default) sends the cookie.
 
 ### Errors
 
-A call that gets an error answer throws `TuringHttpError`, with the HTTP `status` and, when Turing explained the error in a JSON (problem details) body, that body on `problem`. A request that never completes throws `TuringTransportError` (`TuringTimeoutError` when it ran past `timeoutMs`). When the site's AI budget runs out, the AI calls answer 429 with a `type` ending in `quota-exhausted`, and `problem.resetsAt` says when answers come back:
+A call that gets an error answer throws `TuringHttpError`, with the HTTP `status` and, when Viglet Turing explained the error in a JSON (problem details) body, that body on `problem`. A request that never completes throws `TuringTransportError` (`TuringTimeoutError` when it ran past `timeoutMs`). When the site's AI budget runs out, the AI calls answer 429 with a `type` ending in `quota-exhausted`, and `problem.resetsAt` says when answers come back:
 
 ```ts
 import { TuringHttpError } from "@viglet/turing-sdk";
@@ -101,7 +101,7 @@ try {
 }
 ```
 
-`problem` carries every member Turing sent (`title`, `detail`, `used`, `limit`, `upgradeUrl`, and any other), and is `undefined` when the error body is not JSON. The React SDK throws the same error.
+`problem` carries every member Viglet Turing sent (`title`, `detail`, `used`, `limit`, `upgradeUrl`, and any other), and is `undefined` when the error body is not JSON. The React SDK throws the same error.
 
 The controllers catch the error and keep it as text on `error`, with the problem details beside it on `errorProblem`: the answer, chat, search, research, similar and slots controllers, and every React hook that returns an `error`. A streaming surface reads `resetsAt` from its own state:
 
@@ -394,7 +394,7 @@ Other functions include `fetchSearch` (whose `fqAnd`, `fqOr`, `fqOperator` and `
 
 ## Analytics & the Google Analytics bridge
 
-Turing measures the funnel **server-side** ([Chat Analytics](/docs/chat-analytics/), [Experiments](/docs/experiments/)). This SDK adds the **browser-owned** half (conversion, abandonment and "which persona A/B variant won") delivered into **your own GA4**, next to acquisition source and audiences. It's a zero-dependency canonical event bus with **pluggable sinks**; GA4 is the first adapter, not a dependency.
+Viglet Turing measures the funnel **server-side** ([Chat Analytics](/docs/chat-analytics/), [Experiments](/docs/experiments/)). This SDK adds the **browser-owned** half (conversion, abandonment and "which persona A/B variant won") delivered into **your own GA4**, next to acquisition source and audiences. It's a zero-dependency canonical event bus with **pluggable sinks**; GA4 is the first adapter, not a dependency.
 
 ```js
 import {
@@ -457,7 +457,7 @@ The `examples/eds/` folder in the repository ships ready-to-copy `turing-search`
 ## Related pages
 
 - **[React SDK](/docs/react-sdk/)**: the hook-based equivalent for React apps.
-- **[Turing CLI](/docs/cli/)**: scaffold, deploy and eval agent projects from the terminal.
+- **[Viglet Turing CLI](/docs/cli/)**: scaffold, deploy and eval agent projects from the terminal.
 - **[Flow DSL](/docs/flow-dsl/)**: author chat flows as typed TypeScript.
 - **[Client tools & agent↔UI](/docs/client-tools/)**: the frontend-tool protocol used by `registerClientTool`.
 - **[Conversion Analytics](/docs/conversion-analytics/)**: the GA4 bridge and event taxonomy.

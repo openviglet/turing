@@ -28,7 +28,7 @@ That instance is now selectable in every agent, site, and the Chat tab.
 
 For containerized and hands-off deployments (the public demo is the canonical case), Viglet Turing can create the first LLM instance for you at boot, straight from an environment variable, no admin visit required.
 
-**On startup, when all of these hold, Turing creates a GLOBAL OpenAI instance and sets it as the [Default LLM Instance](/docs/genai-llm/#global-settings):**
+**On startup, when all of these hold, Viglet Turing creates a GLOBAL OpenAI instance and sets it as the [Default LLM Instance](/docs/genai-llm/#global-settings):**
 
 - `OPENAI_API_KEY` is present and non-blank in the environment,
 - `turing.startup.default-llm.enabled` is not `false` (it defaults to **on**), and
@@ -82,7 +82,7 @@ The new key is registered with Viglet *before* it replaces the old one. If the r
 | Model alias | `TURING_VIGLETAI_MODELALIAS` | `viglet-fast` |
 
 :::note[Running out of the free credit]
-The managed credit is capped. When you reach the cap, Turing shows a banner naming what ran out and when it resets, with two ways forward: continue on a paid plan, or paste your own API key. See [Plans & quotas](/docs/multi-tenancy/#plans--quotas).
+The managed credit is capped. When you reach the cap, Viglet Turing shows a banner naming what ran out and when it resets, with two ways forward: continue on a paid plan, or paste your own API key. See [Plans & quotas](/docs/multi-tenancy/#plans--quotas).
 :::
 
 ---
@@ -164,7 +164,7 @@ Fine-tune how the model generates responses. Defaults are appropriate for most u
 
 ## Catalog-driven intelligence
 
-Turing consumes a public [**model catalog**](https://models.viglet.org/), an open, vendor-neutral project ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), that describes each well-known model, pricing, context window, max output, capabilities, modalities, benchmarks, performance, knowledge cutoff, tier and deprecation status. The instance form and pickers use that data so you configure models with the facts in front of you instead of from memory. The catalog URL is configurable via `turing.model-catalog.url`: see [Configuration Reference § Model Catalog](/docs/configuration-reference/#model-catalog).
+Viglet Turing consumes a public [**model catalog**](https://models.viglet.org/), an open, vendor-neutral project ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), that describes each well-known model, pricing, context window, max output, capabilities, modalities, benchmarks, performance, knowledge cutoff, tier and deprecation status. The instance form and pickers use that data so you configure models with the facts in front of you instead of from memory. The catalog URL is configurable via `turing.model-catalog.url`: see [Configuration Reference § Model Catalog](/docs/configuration-reference/#model-catalog).
 
 ### Enriched model picker
 

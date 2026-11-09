@@ -6,7 +6,7 @@ description: "High-level architecture, component diagram, indexing and search fl
 
 Viglet Turing is an open-source enterprise search platform that combines semantic navigation, generative AI, tool calling, and AI Agents. It allows organizations to index content from multiple sources, apply Retrieval-Augmented Generation (RAG) over that content, and expose rich search experiences through REST and GraphQL APIs.
 
-Content ingestion is handled by **Viglet Dumont**, a separate project that runs connectors independently and delivers indexed documents to Turing via an asynchronous message queue.
+Content ingestion is handled by **Viglet Dumont**, a separate project that runs connectors independently and delivers indexed documents to Viglet Turing via an asynchronous message queue.
 
 This document describes the system's components, internal modules, and the two core data flows: **indexing** and **search**.
 
@@ -14,7 +14,7 @@ This document describes the system's components, internal modules, and the two c
 
 ## High-Level Component Diagram
 
-![Turing: High-Level Architecture](/docs/img/diagrams/turing-architecture.svg)
+![Viglet Turing: High-Level Architecture](/docs/img/diagrams/turing-architecture.svg)
 
 The architecture is organized into **four layers**: Clients & External Services at the top, an API gateway in the middle, Core Modules for business logic, and Backends & Storage at the bottom. Each layer is detailed below.
 
@@ -32,7 +32,7 @@ graph LR
     end
 
     subgraph External [" 🔌 External Services "]
-        CON["📡 Dumont\nWebCrawler · DB · FS\nAEM"]
+        CON["📡 Viglet Dumont\nWebCrawler · DB · FS\nAEM"]
         KC["🔑 Keycloak\nOAuth2 / OIDC"]
         LLM["🧠 LLM Providers\nClaude · OpenAI\nAzure · Gemini · Ollama"]
     end
@@ -50,7 +50,7 @@ graph LR
 | Component | Description |
 |---|---|
 | **JS SDK / Java SDK** | Typed clients for search and indexing: available on npm and Maven Central |
-| **Dumont** | Separate application that runs connectors and sends documents to Turing via REST API |
+| **Viglet Dumont** | Separate application that runs connectors and sends documents to Viglet Turing via REST API |
 | **Keycloak** | Optional OAuth2 / OIDC provider for production SSO |
 | **LLM Providers** | Six supported vendors: Anthropic Claude, OpenAI, Azure OpenAI, Google Gemini, Gemini (OpenAI-compatible), Ollama |
 
@@ -117,7 +117,7 @@ graph TB
 | **LLM Providers** | `genai/provider/llm` | Pluggable provider factory: Anthropic, OpenAI, Azure OpenAI, Gemini, Gemini-OpenAI, Ollama |
 | **AI Agents** | `agent` | Composition of LLM Instance + Tools + MCP Servers into deployable assistants |
 | **Indexing Pipeline** | `indexer` | Receives documents via Artemis, applies Merge Providers, writes to Solr and embedding stores |
-| **Message Queue** | `artemis` | Apache Artemis: async communication between Dumont and the indexing pipeline |
+| **Message Queue** | `artemis` | Apache Artemis: async communication between Viglet Dumont and the indexing pipeline |
 | **OCR** | `ocr` | Text extraction from PDFs, Word documents, and images via Apache Tika |
 | **Persistence** | `persistence` | JPA entities, repositories, DTOs, and MapStruct mappers for all domain objects |
 
@@ -182,35 +182,35 @@ graph LR
 | **Prometheus** | Time-series scrape & store | `containers/prometheus/prometheus.yml` is the local-dev config |
 | **Grafana** | Dashboards over metrics + Chat Analytics | Provisioning under `containers/grafana/` |
 
-The Chat Analytics dashboard reads from Turing's REST API (engine-agnostic JSON over HTTP) via the **Infinity datasource**: independent of Prometheus. See [Observability](/docs/observability/) for full coverage.
+The Chat Analytics dashboard reads from Viglet Turing's REST API (engine-agnostic JSON over HTTP) via the **Infinity datasource**: independent of Prometheus. See [Observability](/docs/observability/) for full coverage.
 
 ---
 
 ## Indexing Flow
 
-Content ingestion is handled externally by **Viglet Dumont**. Each connector runs as an independent process and sends documents to Turing via its **REST API**. The API receives the request, validates it against the target Semantic Navigation Site configuration, and creates an indexing job that is queued internally via Apache Artemis for asynchronous processing.
+Content ingestion is handled externally by **Viglet Dumont**. Each connector runs as an independent process and sends documents to Viglet Turing via its **REST API**. The API receives the request, validates it against the target Semantic Navigation Site configuration, and creates an indexing job that is queued internally via Apache Artemis for asynchronous processing.
 
 The **Semantic Navigation Site** is the central configuration artifact that drives the entire indexing behavior: it defines which Solr instance to use, which fields the documents carry, how those fields are mapped and used (title, text, URL, date, image, facets, etc.), how search will behave, and which spotlights are configured. The indexing pipeline reads this configuration to know exactly what to do with each incoming document.
 
-![Turing, Indexing Flow](/docs/img/diagrams/turing-indexing-flow.svg)
+![Viglet Turing, Indexing Flow](/docs/img/diagrams/turing-indexing-flow.svg)
 
 ### Key indexing concepts
 
-**REST API as entry point:** Dumont connectors send documents to Turing via REST API, not by writing directly to Solr or the queue. The API is the single integration point: it validates the request, loads the target SN Site configuration, and enqueues an indexing job via Apache Artemis for asynchronous processing.
+**REST API as entry point:** Viglet Dumont connectors send documents to Viglet Turing via REST API, not by writing directly to Solr or the queue. The API is the single integration point: it validates the request, loads the target SN Site configuration, and enqueues an indexing job via Apache Artemis for asynchronous processing.
 
 **SN Site as the indexing blueprint:** Every indexing job is bound to a Semantic Navigation Site. The site configuration defines the complete indexing contract: which Solr collection to write to, which document fields exist and how they are typed, which fields become facets, how highlighting and autocomplete will work, and which spotlights are active. The pipeline reads this configuration at job execution time to determine field mappings, facet assignments, and spotlight handling.
 
 **Spotlight persistence:** When an incoming document matches a configured Spotlight (for example, its URL or ID matches a spotlight term) the pipeline indexes the document in Solr normally and also persists the spotlight content (title, description, URL, position) in the relational database. This ensures the spotlight data remains available for injection even if the document is later removed from the Solr index.
 
-**Viglet Dumont:** The connector system that feeds Turing. It runs as a separate application and manages its own connector lifecycle (schedules, credentials, field mappings). Connectors currently available in Dumont include WebCrawler (Nutch-based), Database, FileSystem and AEM. Refer to the Dumont documentation for connector configuration. A WordPress site is indexed by the [Viglet Turing Search plugin](/docs/integrations/wordpress/) instead, from inside WordPress.
+**Viglet Dumont:** The connector system that feeds Viglet Turing. It runs as a separate application and manages its own connector lifecycle (schedules, credentials, field mappings). Connectors currently available in Viglet Dumont include WebCrawler (Nutch-based), Database, FileSystem and AEM. Refer to the Viglet Dumont documentation for connector configuration. A WordPress site is indexed by the [Viglet Turing Search plugin](/docs/integrations/wordpress/) instead, from inside WordPress.
 
-**Merge Providers:** When two Dumont connectors independently index different representations of the same real-world document (for example, AEM indexing structured metadata from `model.json` and WebCrawler indexing the rendered HTML of the same page) the Merge Provider identifies them as the same document using a configured join key and merges their fields before writing to Solr. See [Semantic Navigation](/docs/semantic-navigation/) for a detailed explanation.
+**Merge Providers:** When two Viglet Dumont connectors independently index different representations of the same real-world document (for example, AEM indexing structured metadata from `model.json` and WebCrawler indexing the rendered HTML of the same page) the Merge Provider identifies them as the same document using a configured join key and merges their fields before writing to Solr. See [Semantic Navigation](/docs/semantic-navigation/) for a detailed explanation.
 
-**Embedding stores:** If Generative AI is enabled for an SN Site, a vector embedding is generated for each indexed document and written to the configured embedding store. Turing supports three embedding backends via Spring AI: **ChromaDB**, **PgVector** (PostgreSQL extension), and **Milvus**. Only one is active per deployment. The default embedding store and embedding model are defined globally in **Administration → Settings**.
+**Embedding stores:** If Generative AI is enabled for an SN Site, a vector embedding is generated for each indexed document and written to the configured embedding store. Viglet Turing supports three embedding backends via Spring AI: **ChromaDB**, **PgVector** (PostgreSQL extension), and **Milvus**. Only one is active per deployment. The default embedding store and embedding model are defined globally in **Administration → Settings**.
 
-**MinIO asset indexing:** Turing includes an **[Assets](/docs/assets/)** file manager in the admin console, backed by MinIO as the object storage layer. Files are uploaded via drag-and-drop, organized into folders, and automatically indexed as vector embeddings on upload (and unindexed on deletion). A batch "Train AI with Assets" operation processes all files using Apache Tika for text extraction, chunking at 1,024 characters, and storing embeddings in the active vector store.
+**MinIO asset indexing:** Viglet Turing includes an **[Assets](/docs/assets/)** file manager in the admin console, backed by MinIO as the object storage layer. Files are uploaded via drag-and-drop, organized into folders, and automatically indexed as vector embeddings on upload (and unindexed on deletion). A batch "Train AI with Assets" operation processes all files using Apache Tika for text extraction, chunking at 1,024 characters, and storing embeddings in the active vector store.
 
-**Application logs in MongoDB:** When MongoDB is configured, Turing ships with a custom Logback appender that extends `ch.qos.logback`. Every log entry generated by the application (including indexing events, search requests, errors, and system events) is persisted to MongoDB in addition to standard output. These logs are exposed in the admin console, giving administrators full visibility into application behavior without requiring access to the server file system or a separate log management tool.
+**Application logs in MongoDB:** When MongoDB is configured, Viglet Turing ships with a custom Logback appender that extends `ch.qos.logback`. Every log entry generated by the application (including indexing events, search requests, errors, and system events) is persisted to MongoDB in addition to standard output. These logs are exposed in the admin console, giving administrators full visibility into application behavior without requiring access to the server file system or a separate log management tool.
 
 ---
 
@@ -218,7 +218,7 @@ The **Semantic Navigation Site** is the central configuration artifact that driv
 
 The search flow is synchronous and request-driven. Every request goes through a structured pipeline before a response is returned to the client.
 
-![Turing: Search Flow](/docs/img/diagrams/turing-search-flow.svg)
+![Viglet Turing: Search Flow](/docs/img/diagrams/turing-search-flow.svg)
 
 ### Key search concepts
 
@@ -244,7 +244,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 | **Framework** | Spring Boot + Spring AI | Application container; Spring AI powers LLM and embedding integrations |
 | **Search Engine** | Apache Solr (recommended), Elasticsearch, Lucene | Solr is the primary production backend with the most complete feature set; Elasticsearch and Lucene are supported as alternatives |
 | **Solr Coordination** | Apache Zookeeper | Required for Solr in production (SolrCloud mode) |
-| **Message Broker** | Apache Artemis | Asynchronous indexing queue (embedded in Turing) |
+| **Message Broker** | Apache Artemis | Asynchronous indexing queue (embedded in Viglet Turing) |
 | **Database** | H2 / MariaDB / MySQL / PostgreSQL | H2 for development; MariaDB or MySQL recommended for production |
 | **Embedding Stores** | ChromaDB / PgVector / Milvus | Via Spring AI; one backend active per deployment |
 | **Asset Store** | MinIO | External service; configured in `application.yaml` (host, user, password); object storage for files managed via the admin console folder UI |
@@ -253,7 +253,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 | **Tool Calling** | 27 native tools across 7 categories + MCP (external servers) | Semantic Nav (15), RAG/KB (4), Web Crawler (2), Finance (2), Weather (1), Image Search (1), DateTime (1), Code Interpreter (1); MCP via HTTP or stdio |
 | **Identity Management** | Keycloak | OAuth2 / OpenID Connect; optional for deployments without SSO |
 | **Load Balancer** | Apache HTTP Server | Optional; required for high-availability cluster deployments |
-| **Connector System** | Viglet Dumont | Separate application; sends documents to Turing via REST API, which queues them internally to Artemis |
+| **Connector System** | Viglet Dumont | Separate application; sends documents to Viglet Turing via REST API, which queues them internally to Artemis |
 | **Build System** | Apache Maven | Multi-module project |
 | **Frontend** | React + TypeScript + shadcn/ui + Vite | Admin console (`turing-react`): includes SN configuration, [Assets](/docs/assets/) manager, [Chat](/docs/chat/) interface, [Token Usage](/docs/token-usage/) dashboard |
 | **Containerization** | Docker / Docker Compose | Available in `containers/` directory |
@@ -266,7 +266,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 
 ## Deployment Topologies
 
-Turing supports several deployment configurations. Each builds on the previous one: start with what you need and add components as requirements grow.
+Viglet Turing supports several deployment configurations. Each builds on the previous one: start with what you need and add components as requirements grow.
 
 ### Development
 
@@ -276,7 +276,7 @@ Minimal setup for local development and evaluation.
 Turing (H2 embedded) + Apache Solr
 ```
 
-Turing starts with an embedded H2 database. No external database is needed. Not suitable for production.
+Viglet Turing starts with an embedded H2 database. No external database is needed. Not suitable for production.
 
 ---
 
@@ -288,7 +288,7 @@ Recommended baseline for production environments.
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL
 ```
 
-Solr runs in SolrCloud mode coordinated by Zookeeper, enabling index replication and fault tolerance at the Solr layer. MariaDB or MySQL provides durable persistence for Turing configuration and metadata.
+Solr runs in SolrCloud mode coordinated by Zookeeper, enabling index replication and fault tolerance at the Solr layer. MariaDB or MySQL provides durable persistence for Viglet Turing configuration and metadata.
 
 ---
 
@@ -300,13 +300,13 @@ For environments that require integration with an identity provider or corporate
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL + Keycloak
 ```
 
-Keycloak handles authentication via OAuth2 / OpenID Connect. Users log in through Keycloak and receive tokens that are validated by Turing. See [Security & Keycloak](/docs/security-keycloak/) for configuration details.
+Keycloak handles authentication via OAuth2 / OpenID Connect. Users log in through Keycloak and receive tokens that are validated by Viglet Turing. See [Security & Keycloak](/docs/security-keycloak/) for configuration details.
 
 ---
 
 ### Production with Log UI
 
-For environments where administrators need visibility into application behavior directly from the Turing admin console, without access to server logs or external log tools.
+For environments where administrators need visibility into application behavior directly from the Viglet Turing admin console, without access to server logs or external log tools.
 
 ```
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL + MongoDB
@@ -331,7 +331,7 @@ Keycloak (optional)
 MongoDB (optional)
 ```
 
-Multiple Turing instances run behind Apache HTTP Server configured as a reverse proxy and load balancer. Solr runs as a multi-node SolrCloud cluster. The database should be configured with at least one replica for redundancy.
+Multiple Viglet Turing instances run behind Apache HTTP Server configured as a reverse proxy and load balancer. Solr runs as a multi-node SolrCloud cluster. The database should be configured with at least one replica for redundancy.
 
 ---
 
@@ -342,8 +342,8 @@ Multiple Turing instances run behind Apache HTTP Server configured as a reverse 
 | [Installation Guide](/docs/installation-guide/) | Setup with Docker, JAR, or build from source |
 | [Configuration Reference](/docs/configuration-reference/) | All application.yaml properties |
 | [Integration](/docs/integration/) | Manage content connectors in the admin console |
-| [Dumont: Architecture](https://dumont.viglet.org/docs/architecture/) | Connector-side architecture: pipeline engine, message queue, and indexing plugins |
-| [Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors and deployment types |
+| [Viglet Dumont: Architecture](https://dumont.viglet.org/docs/architecture/) | Connector-side architecture: pipeline engine, message queue, and indexing plugins |
+| [Viglet Dumont: Connectors](https://dumont.viglet.org/docs/connectors/overview/) | Available connectors and deployment types |
 
 ---
 

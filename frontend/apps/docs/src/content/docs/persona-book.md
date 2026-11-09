@@ -15,7 +15,7 @@ This is the long-form companion guide to Personas. For a concise, technical over
 ## How to read this book
 
 This document is a **complete guide** to everything a Persona can do in Viglet
-Turing. It was written to be read three ways:
+Viglet Turing. It was written to be read three ways:
 
 - **From start to finish**, like a book, if you want to understand deeply why the
   Persona exists and how it changes a company's day-to-day work.
@@ -28,7 +28,7 @@ Every feature is explained in three layers: **what it is**, **why it matters for
 the business**, and **how you use it in practice**, always with examples.
 
 > **Audience**: platform administrators, marketing, customer service, sales,
-> product, and UX research teams, plus developers who integrate Turing. No
+> product, and UX research teams, plus developers who integrate Viglet Turing. No
 > technical knowledge is needed for Parts I, II, and IX.
 
 ---
@@ -37,7 +37,7 @@ the business**, and **how you use it in practice**, always with examples.
 
 **Part I: Fundamentals**
 1. The problem: why the generic voice is expensive
-2. What a Persona is in Turing
+2. What a Persona is in Viglet Turing
 3. The Persona in the company's day-to-day: who gets what
 
 **Part II: Anatomy of a Persona**
@@ -120,7 +120,7 @@ A Persona is the cheapest, most repeatable way to make every AI Agent speak with
 > assistant that sounds like every other one. Every off-brand response is a
 > micro-erosion of the brand. The Persona turns that erosion into an asset.
 
-## 2. What a Persona is in Turing
+## 2. What a Persona is in Viglet Turing
 
 A **Persona** is the **voice profile** of your AI. It's the difference between an
 assistant that sounds like every other chatbot on the internet and one that
@@ -138,7 +138,7 @@ attached to:
 - pulls **brand facts in real time** from a brand server, so promotions and
   product names are never out of date.
 
-But the Persona in Turing is more than voice. It has evolved into something you
+But the Persona in Viglet Turing is more than voice. It has evolved into something you
 **operate directly**. Beyond giving an agent its voice, a Persona can:
 
 - represent a **target reader** (an audience) against whom you measure whether a
@@ -381,7 +381,7 @@ control**, instead of letting the AI improvise.
 | `SN_SITE` | Answers become grounded on an **indexed search site** (a Semantic Navigation site), the AI consults real content before answering |
 | `NOTEBOOK` | Answers are grounded on the **persona's own material** (the sources you attached to it) |
 
-In practice: before answering, Turing searches the chosen content for the most
+In practice: before answering, Viglet Turing searches the chosen content for the most
 relevant passages and hands them to the model in a separate, labeled block. That
 way, the AI answers from what's written there, not from guesses. It's a safe
 process: if the search fails for any reason, the conversation **continues
@@ -406,7 +406,7 @@ salesperson, answers a discount request"*.
 The solution is to teach **by example**, not just by description. The persona can
 have a **Few-shot Store**, a collection of model conversations, each with a
 typical customer question and the ideal answer, written in the persona's voice. At
-every new conversation, Turing looks in the store for the examples most similar to
+every new conversation, Viglet Turing looks in the store for the examples most similar to
 what the customer just asked and shows them to the AI as a reference, an instant
 before it answers. It's like handing the new employee a few dialogues from the
 top-performing employee and saying: *"answer roughly like this"*.
@@ -425,7 +425,7 @@ top-performing employee and saying: *"answer roughly like this"*.
    beats quantity: 20 well-written examples beat 200 mediocre ones.**
 3. Point that collection at the persona's **Few-shot Store** field.
 
-**During the conversation:** when the customer writes, Turing retrieves the 3 most
+**During the conversation:** when the customer writes, Viglet Turing retrieves the 3 most
 similar conversations from the store (by default) and places them before the AI as
 *"here's how we've answered questions like this"*. The AI then answers in the same
 style, adapting to the current case, without copying.
@@ -457,7 +457,7 @@ you "bake" those facts into the prompt, two bad things happen: the prompt grows
 too large, and every price change becomes a request for engineering to publish.
 
 The **Brand Context MCP** field (`brandContextMcpServer`) solves this. It points
-the persona at an MCP server you control. At every conversation, Turing calls an
+the persona at an MCP server you control. At every conversation, Viglet Turing calls an
 MCP tool (e.g., `get_brand_context`) and injects the response JSON as a *"Current
 brand facts:"* block.
 
@@ -563,7 +563,7 @@ audited**.
 
 The prompt's guardrails (forbidden vocabulary in the system message) are
 necessary but not sufficient. LLMs sometimes drift, under tool-calling pressure
-or in long sessions. That's why Turing enforces forbidden terms **a second time,
+or in long sessions. That's why Viglet Turing enforces forbidden terms **a second time,
 after the response**, before it reaches the user.
 
 `TurPersonaToneValidator` scans every assistant response against the forbidden
@@ -693,8 +693,8 @@ notebook**, a set of sources:
 | Source type | Where the text comes from |
 |---|---|
 | **Indexed document** | A page already indexed in a search site (Semantic Navigation) |
-| **File** | An uploaded file (PDF, DOC…), from which Turing extracts the text automatically |
-| **Link (URL)** | A web page, which Turing fetches safely and extracts the text from |
+| **File** | An uploaded file (PDF, DOC…), from which Viglet Turing extracts the text automatically |
+| **Link (URL)** | A web page, which Viglet Turing fetches safely and extracts the text from |
 
 Reading each source is fault-tolerant: each one shows its state (**pending**,
 **extracted**, or **failed**, with the option to retry) and the text is stored for
@@ -719,7 +719,7 @@ the text; and re-extract what failed.
 combines two signals, and keeps working even if you don't have an AI configured:
 
 1. **Readability (deterministic, no AI, in Portuguese, English, and Spanish).**
-   Turing computes, with recognized readability formulas, the average sentence
+   Viglet Turing computes, with recognized readability formulas, the average sentence
    length, syllables per word, the proportion of difficult words (discounting the
    terms the reader already knows), and passive-voice usage. All of this becomes a
    0-to-100 score compared to the reader's reading level. Because it doesn't
@@ -774,7 +774,7 @@ Content-fit answers *"does this text fit **this** persona?"*. **Suggest persona*
 answers the inverse: *"so **which** audience is this content actually for?"*.
 
 On the personas list (`/bento/persona/suggest`), you paste a piece of content
-(optionally limiting to a few personas) and Turing evaluates its fit against **all
+(optionally limiting to a few personas) and Viglet Turing evaluates its fit against **all
 active audience personas**, returning them **in order, from the best fit to the
 worst**. Each row shows the red/amber/green bar and the same *fits* / *doesn't
 fit* detail, with the best one flagged at the top.
@@ -785,7 +785,7 @@ similar personas.
 > **💡 Worked example, the news portal that discovered the right audience.** An
 > editor finished a dense piece on "tax reform and small-business tax regimes" and
 > didn't know which section to publish it in. They paste the text into **Suggest
-> persona**, without limiting the options. Turing evaluates it against every
+> persona**, without limiting the options. Viglet Turing evaluates it against every
 > audience persona and returns the order:
 > 1. `business-accountant`: **88 (green)** ← best fit, flagged at the top
 > 2. `solo-entrepreneur`: 61 (amber): understands the topic, but gets stuck on
@@ -813,7 +813,7 @@ A **project** brings together three things:
 - **Contents**: added **once per project** (not per persona), in three ways: a
   **link (URL)**, an **already-indexed document** (picked from a search site), or
   a **file** (PDF, DOC…) from which the text is extracted. Each content's text is
-  read and stored on add; when you re-run the analysis, Turing recognizes what
+  read and stored on add; when you re-run the analysis, Viglet Turing recognizes what
   hasn't changed and doesn't redo the work needlessly.
 - **Personas**: any set of your personas.
 - A **schedule** (`Manual` / `Daily` / `Weekly`) and, if you want, a specific AI
@@ -860,7 +860,7 @@ opens (or re-opens) a one-persona project and takes you to the project area.
 >   the user created an API key. A rewrite suggestion is attached.
 >
 > Because one article changed since last week, only its 3 cells were recomputed
-> (Turing recognized the other 117 hadn't changed). The **by persona** lens
+> (Viglet Turing recognized the other 117 hadn't changed). The **by persona** lens
 > exports a PDF that becomes the quarter's rewrite backlog.
 
 ---
@@ -883,7 +883,7 @@ When opening/creating a project, you configure:
 - an **LLM Instance**;
 - a **turn budget** (rounds; default **10**, with a generous practical limit).
 
-Turing seeds the first persona with the topic, then goes **round-robin** (feeding
+Viglet Turing seeds the first persona with the topic, then goes **round-robin** (feeding
 each persona the previous speaker's reply) until the budget runs out. The
 transcript is **streamed live** (each turn appears the moment it's generated,
 color-coded per speaker) **and persisted**, so re-opening a project shows the last
@@ -982,7 +982,7 @@ recognizes what has already been done and doesn't redo work needlessly.
 
 ## 27. The insights report: themes, the saturation signal, and change over time
 
-Once a study has run, Turing **synthesizes** the interviews (and caches the
+Once a study has run, Viglet Turing **synthesizes** the interviews (and caches the
 result) into an **insights report**:
 
 - An **executive summary**.
@@ -994,7 +994,7 @@ result) into an **insights report**:
   and **PDF export**.
 
 **The saturation signal** answers the honest question *"have I interviewed enough
-people?"*. As personas are interviewed in list order, Turing measures whether each
+people?"*. As personas are interviewed in list order, Viglet Turing measures whether each
 new participant still raises a **new** theme. When new themes stop appearing, it
 reports: *"sample adequate at N participants"*. It's a direct calculation (no AI),
 so it serves as a brake against overconfidence. A **theme-affinity map** shows
@@ -1011,7 +1011,7 @@ Match (Ch. 20).
 > themes ranked by relevance (*"fear of a fine for parking wrong"* at the top,
 > with the verbatim quote of whoever said it) and recommendations. But the most
 > valuable part is the **saturation signal**: from the 7th participant on, no
-> **new** theme appeared, Turing reports *"sample adequate at 7"*. The team saves
+> **new** theme appeared, Viglet Turing reports *"sample adequate at 7"*. The team saves
 > the remaining 5 and, better yet, gains an honest argument against the boss who
 > wanted "just 20 more personas to be sure". In the **by persona** view,
 > `anxious-anna` is alone on the "fear of a fine" theme, a sign that it's a niche
@@ -1022,7 +1022,7 @@ Match (Ch. 20).
 ## 28. Synthesize a cohort, assistant, and program
 
 - **Synthesize a cohort** (`/bento/persona/cohort`): don't have personas for the
-  cohort yet? Write a **one-paragraph summary** describing the audience and Turing
+  cohort yet? Write a **one-paragraph summary** describing the audience and Viglet Turing
   creates a **diverse** set of persona **drafts**, with well-spread OCEAN
   personalities. Nothing is saved automatically: you review each draft in a grid
   and **keep** it (opens the normal form to edit and save) or **discard** it.
@@ -1045,7 +1045,7 @@ Match (Ch. 20).
 >   just adjusts and saves.
 > - **Synthesize a cohort:** she has no "pet owner" personas. She writes *"dog and
 >   cat owners in major cities, middle income, varying levels of attachment"* and
->   asks for 8. Turing creates 8 **drafts** with varied personalities (from the
+>   asks for 8. Viglet Turing creates 8 **drafts** with varied personalities (from the
 >   super-devoted owner to the practical one). She **keeps** 6 and **discards** 2
 >, nothing was saved without review.
 > - **Program view:** she runs the 3 studies (telemedicine, pet daycare, vaccine
@@ -1183,7 +1183,7 @@ and shows progress live):
 
 1. **Transcribes** the audio (the transcription engine is chosen in settings
    (cloud OpenAI, a compatible server installed in your own environment, or an
-   engine embedded in Turing itself) and it splits large files into parts
+   engine embedded in Viglet Turing itself) and it splits large files into parts
    automatically).
 2. **Two LLM calls**: (a) classifies the constrained fields as strict JSON (tone,
    verbosity, style, vocabulary, and audience descriptors); (b) writes a
@@ -1243,7 +1243,7 @@ Transcription**.
 
 # Appendix A: API reference
 
-> This appendix is **for those integrating Turing by code**. If you only use the
+> This appendix is **for those integrating Viglet Turing by code**. If you only use the
 > administration screen, you can safely ignore it, nothing here is needed to
 > operate personas through the interface.
 

@@ -13,7 +13,7 @@ This is ideal for development environments, small teams, and scenarios where a f
 ```mermaid
 sequenceDiagram
     participant User
-    participant Turing
+    participant Turing as Viglet Turing
     participant OAuth2 Provider
 
     User->>Turing: Click "Sign in with Google"
@@ -25,7 +25,7 @@ sequenceDiagram
     Turing->>User: Create session, redirect to /admin
 ```
 
-When a user signs in via a social provider for the first time, Turing **automatically creates a local user** with the profile information from the provider (name, email, avatar). Subsequent logins update the profile data.
+When a user signs in via a social provider for the first time, Viglet Turing **automatically creates a local user** with the profile information from the provider (name, email, avatar). Subsequent logins update the profile data.
 
 ---
 
@@ -83,7 +83,7 @@ spring:
 ```
 
 :::note[GitHub specifics]
-- GitHub does not provide a separate first/last name, Turing splits the `name` attribute automatically.
+- GitHub does not provide a separate first/last name, Viglet Turing splits the `name` attribute automatically.
 - Email may be `null` if the user's GitHub email is private. The email field is hidden in the profile page when empty.
 - The username is the GitHub `login` handle.
 :::
@@ -161,7 +161,7 @@ For production with HTTPS: `https://turing.example.com/login/oauth2/code/google`
 When logged in via a social provider:
 
 - **Profile fields are read-only**: name, email, and username are managed by the provider
-- **Avatar can still be customized** in Turing
+- **Avatar can still be customized** in Viglet Turing
 - **Password section is hidden**: authentication is handled by the provider
 - **The provider name is displayed** on the profile page (e.g., "github", "google")
 
@@ -185,7 +185,7 @@ The Client ID is likely incorrect. Double-check the value in `application.yaml` 
 
 ### User profile shows empty name
 
-The provider attributes may use different field names. Turing handles Google (`given_name`, `family_name`), GitHub (`login`, `name`), and Microsoft (`given_name`, `family_name`) automatically. For other providers, the `name` attribute is split into first/last name.
+The provider attributes may use different field names. Viglet Turing handles Google (`given_name`, `family_name`), GitHub (`login`, `name`), and Microsoft (`given_name`, `family_name`) automatically. For other providers, the `name` attribute is split into first/last name.
 
 ### Email is empty (GitHub)
 

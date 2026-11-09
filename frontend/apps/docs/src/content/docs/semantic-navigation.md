@@ -4,7 +4,7 @@ description: "Configure and manage Semantic Navigation Sites: behavior, facets, 
 ---
 The **Semantic Navigation** page (`/admin/sn`) manages the search experiences that power every user-facing search in Viglet Turing. It is accessible from the **Enterprise Search** section of the sidebar.
 
-Each **Semantic Navigation Site** (SN Site) is a complete, independently configured search experience: it defines which content is indexed, which search engine backend is used, how results are presented, which AI features are enabled, and how the front-end should render the response. A single Turing instance can host multiple SN Sites.
+Each **Semantic Navigation Site** (SN Site) is a complete, independently configured search experience: it defines which content is indexed, which search engine backend is used, how results are presented, which AI features are enabled, and how the front-end should render the response. A single Viglet Turing instance can host multiple SN Sites.
 
 For a conceptual overview of what SN Sites are and how they relate to the rest of the system, see [Core Concepts](/docs/getting-started/core-concepts/).
 
@@ -53,7 +53,7 @@ The **Search Template** setting allows you to assign a deployed [SPA Page](/docs
 When no template is selected (or storage is disabled), the site uses the default built-in search interface.
 
 :::tip[Build with the React SDK]
-Use the [Turing React SDK](/docs/react-sdk/) (`@viglet/turing-react-sdk`) to build custom search SPAs with hooks for search, facets, pagination, and autocomplete. Deploy the built app via Pages and assign it as the Search Template, the SPA communicates with the Turing REST API on the same origin, so no CORS configuration is needed.
+Use the [Viglet Turing React SDK](/docs/react-sdk/) (`@viglet/turing-react-sdk`) to build custom search SPAs with hooks for search, facets, pagination, and autocomplete. Deploy the built app via Pages and assign it as the Search Template, the SPA communicates with the Viglet Turing REST API on the same origin, so no CORS configuration is needed.
 :::
 
 :::note[Storage required]
@@ -312,14 +312,14 @@ Clicking a field opens its detail form:
 | **Default Value** | Value used when a document is indexed without this field |
 | **Search weight** | How much a query match in this field counts, from 1 to 100 (empty means 1). Set `title` to 3 so a title match outranks the same word in the body. Works on Solr and the embedded Lucene engine |
 
-Saving a field (in the console, or `PUT /api/sn/{siteId}/field/ext/{fieldId}`) changes it in the site's own search engine: on Solr a changed **Type** or **Multi Valued** replaces the field in each locale's core, including a Solr configured through environment variables. Lucene and Elasticsearch hold no field schema, so there the change is Turing's configuration alone, and the field check reports every field correct.
+Saving a field (in the console, or `PUT /api/sn/{siteId}/field/ext/{fieldId}`) changes it in the site's own search engine: on Solr a changed **Type** or **Multi Valued** replaces the field in each locale's core, including a Solr configured through environment variables. Lucene and Elasticsearch hold no field schema, so there the change is Viglet Turing's configuration alone, and the field check reports every field correct.
 
 A title that holds a query of two words or more as an exact phrase is boosted on top of
 the search weight: the site's default title field is searched for the query as typed,
 without synonyms. A guide titled "How to choose a waterproof jacket" then ranks above
 products that match only a synonym such as "rain jacket". This works on the embedded
 Lucene engine, on Elasticsearch, and on Solr for a site whose title field is `title` and
-whose core was created from a Turing configset that carries the `title_phrase` field.
+whose core was created from a Viglet Turing configset that carries the `title_phrase` field.
 An older Solr core has no such field and searches as before until it is recreated and
 reindexed.
 
@@ -370,7 +370,7 @@ Each item in a Custom Facet is defined by an operator that generates its Solr fi
 
 **How it works**
 
-Once a Custom Facet is saved, Turing generates the facet items automatically on every search request. Each item appears in the `widget.facet` (or `widget.secondaryFacet`) section of the response with its pre-built filter link, exactly like a regular facet value. The front-end renders it without any special handling: Custom Facets are indistinguishable from regular facets in the response structure.
+Once a Custom Facet is saved, Viglet Turing generates the facet items automatically on every search request. Each item appears in the `widget.facet` (or `widget.secondaryFacet`) section of the response with its pre-built filter link, exactly like a regular facet value. The front-end renders it without any special handling: Custom Facets are indistinguishable from regular facets in the response structure.
 
 **Example: Price range facet**
 
@@ -413,7 +413,7 @@ Custom Facet items use concrete `BigDecimal` values (for numeric fields) or `Ins
 
 ### Merge Providers
 
-Merge Providers enable Turing to detect when two connectors have indexed the same real-world document and merge their fields into a single enriched Solr document.
+Merge Providers enable Viglet Turing to detect when two connectors have indexed the same real-world document and merge their fields into a single enriched Solr document.
 
 #### What they are
 
@@ -421,7 +421,7 @@ Merge Providers solve the problem of having two independent connectors that inde
 
 A classic example: an **AEM connector** indexes structured data from the CMS (`model.json`), capturing content metadata such as content type, author, tags, and structured fields. A **WebCrawler** indexes the same page as rendered HTML, capturing the full readable text. Both connectors run independently and neither has access to the data the other collects.
 
-Merge Providers instruct Turing to detect when both connectors have indexed the same document and merge their content into a single, enriched Solr document.
+Merge Providers instruct Viglet Turing to detect when both connectors have indexed the same document and merge their content into a single, enriched Solr document.
 
 #### How they work
 
@@ -575,7 +575,7 @@ Result: documents matching any of the conditions: `segment=premium`, `segment=go
 
 #### Solr filter query generation
 
-Turing converts the rule type into Solr `fq` clauses automatically.
+Viglet Turing converts the rule type into Solr `fq` clauses automatically.
 
 **AND logic** (each attribute group becomes a clause, all clauses joined with AND):
 
@@ -758,7 +758,7 @@ Spotlights operate in two modes:
 
 **Managed mode:** The spotlight references documents that exist in the Solr index. The system retrieves live metadata from the index at query time, so the result always reflects the current state of the document (updated title, description, etc.).
 
-**Unmanaged mode:** The spotlight stores its own raw content (title, description, URL, type) independently of the index. This is useful for pinning external URLs or content that is not indexed in Turing.
+**Unmanaged mode:** The spotlight stores its own raw content (title, description, URL, type) independently of the index. This is useful for pinning external URLs or content that is not indexed in Viglet Turing.
 
 ---
 
@@ -977,7 +977,7 @@ When the user filters by `category:electronics`, add brand and price facets:
 
 ### Top Search Terms
 
-Displays reports of the most frequently searched terms for this site. Turing records every search query and aggregates statistics across four time windows:
+Displays reports of the most frequently searched terms for this site. Viglet Turing records every search query and aggregates statistics across four time windows:
 
 | Report | Description |
 |---|---|
@@ -1079,7 +1079,7 @@ An editor for the prompt template sent to the LLM on each chat request. The temp
 
 Saving is blocked if either variable is missing from the template.
 
-**How it works:** When documents are indexed, Turing extracts title, summary, and body text and stores their embeddings in the configured vector store. When a user sends a chat request (`GET /api/sn/{siteName}/chat?q=...`), the system performs a similarity search, builds the prompt with the retrieved context, sends it to the LLM, and returns the generated response via Server-Sent Events (SSE). See [Chat](/docs/chat/) for the front-end experience.
+**How it works:** When documents are indexed, Viglet Turing extracts title, summary, and body text and stores their embeddings in the configured vector store. When a user sends a chat request (`GET /api/sn/{siteName}/chat?q=...`), the system performs a similarity search, builds the prompt with the retrieved context, sends it to the LLM, and returns the generated response via Server-Sent Events (SSE). See [Chat](/docs/chat/) for the front-end experience.
 
 ---
 
@@ -1087,7 +1087,7 @@ Saving is blocked if either variable is missing from the template.
 
 The AI chat experience for a site can also draw on [**Skills**](/docs/skills/): portable, Anthropic-compatible capabilities (a folder of instructions, scripts, and reference docs) that run in a hardened Docker sandbox. Semantic Navigation AI chat shares the same execution path as [AI Agent](/docs/ai-agents/) chat, so **enabling skills on an agent automatically makes them available in Semantic Navigation mode**: no SN-specific configuration is needed. Like everywhere else, a skill always runs on the Global Settings **Default LLM**, so it behaves identically regardless of which site invokes it.
 
-What makes the Semantic Navigation context special is that the skill's sandbox is also handed **Turing's own search tools**, the same Semantic Navigation DSL toolset the [DSL Query](/docs/dsl-query/) assistant uses:
+What makes the Semantic Navigation context special is that the skill's sandbox is also handed **Viglet Turing's own search tools**, the same Semantic Navigation DSL toolset the [DSL Query](/docs/dsl-query/) assistant uses:
 
 | Tool | Purpose |
 |---|---|
@@ -1120,7 +1120,7 @@ The full search response schema, including `pagination`, `queryContext`, `result
 | [Search Engine](/docs/search-engine/) | Manage the Solr/Elasticsearch/Lucene backends that SN Sites connect to |
 | [Assets](/docs/assets/) | Knowledge Base files for RAG: requires an embedding-capable LLM Instance |
 | [LLM Instances](/docs/llm-instances/) | Configure the language models used by the Generative AI tab |
-| [Skills](/docs/skills/) | Portable sandboxed capabilities: in SN mode they gain Turing's search tools |
+| [Skills](/docs/skills/) | Portable sandboxed capabilities: in SN mode they gain Viglet Turing's search tools |
 | [Chat](/docs/chat/) | Front-end chat interface for the Semantic Navigation tab |
 | [Architecture Overview](/docs/architecture-overview/) | How SN Sites fit into the overall system architecture |
 

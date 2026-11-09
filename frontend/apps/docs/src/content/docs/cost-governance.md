@@ -1,10 +1,10 @@
 ---
 title: "Cost Governance"
-description: "See and control your AI spend. Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending."
+description: "See and control your AI spend. Viglet Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending."
 ---
 > *AI spend is easy to lose track of: a chatty agent here, an expensive model there, a background summarizer running every night. **Cost Governance** turns that fog into a number: every turn carries its own USD cost, every agent can carry a budget, and one dashboard shows you where the money goes.*
 
-Cost Governance is Viglet Turing's **provider-agnostic** spend layer. It works on OpenAI, Anthropic, Gemini, Ollama, and embedded models alike, because it's built on the token usage Turing already records, not on any one vendor's billing API. Local and embedded models simply record **$0**.
+Cost Governance is Viglet Turing's **provider-agnostic** spend layer. It works on OpenAI, Anthropic, Gemini, Ollama, and embedded models alike, because it's built on the token usage Viglet Turing already records, not on any one vendor's billing API. Local and embedded models simply record **$0**.
 
 It has three parts: a **price table** you edit, a per-turn **cost capture** that freezes a USD amount on every LLM call, and a live **dashboard** plus a per-agent **budget gate**. Find it in the console under **AI Analytics → Cost Governance**.
 
@@ -12,7 +12,7 @@ It has three parts: a **price table** you edit, a per-turn **cost capture** that
 
 ## How cost is captured
 
-Every time Turing calls an LLM, it records the call in the always-on relational `llm_token_usage` table: input tokens, output tokens, vendor, model, the agent, and a **cost stage**. At record time it also computes and **freezes** the USD cost:
+Every time Viglet Turing calls an LLM, it records the call in the always-on relational `llm_token_usage` table: input tokens, output tokens, vendor, model, the agent, and a **cost stage**. At record time it also computes and **freezes** the USD cost:
 
 ```
 cost_usd = inputTokens  / 1,000,000 × inputPricePerMillion
@@ -67,7 +67,7 @@ The **Synthetic Research** study runner uses this: clicking **Run** shows a proj
 
 ### Right-sizing suggestions
 
-`GET /api/v2/llm/cost/rightsizing?windowDays=30` looks at each agent's real usage (its dominant model, average prompt/output sizes, monthly spend) and suggests a **cheaper same-vendor model that still fits** (big enough context for the observed turn, covering the current model's capabilities, not deprecated) with the **projected monthly savings**. Because Turing doesn't meter which capabilities a turn actually used, the suggestion conservatively preserves the current model's declared capabilities (it never proposes dropping one).
+`GET /api/v2/llm/cost/rightsizing?windowDays=30` looks at each agent's real usage (its dominant model, average prompt/output sizes, monthly spend) and suggests a **cheaper same-vendor model that still fits** (big enough context for the observed turn, covering the current model's capabilities, not deprecated) with the **projected monthly savings**. Because Viglet Turing doesn't meter which capabilities a turn actually used, the suggestion conservatively preserves the current model's declared capabilities (it never proposes dropping one).
 
 ### Consumer plan reference
 
@@ -95,7 +95,7 @@ Beyond *seeing* spend, each agent can *enforce* a soft budget. These are opt-in 
 |---|---|
 | `monthlyBudgetUsd` | When the agent's **month-to-date** spend reaches this cap, the next turn either downgrades or warns (see below). Blank/≤0 = gate off. |
 | `budgetDowngradeLlmId` | The cheaper LLM instance to switch to once over budget. If set and resolvable, over-budget turns run on it. |
-| `perTurnSoftCapUsd` | After a turn completes, if its cost exceeded this cap, Turing logs a warning, an operator signal that one turn was unusually expensive. |
+| `perTurnSoftCapUsd` | After a turn completes, if its cost exceeded this cap, Viglet Turing logs a warning, an operator signal that one turn was unusually expensive. |
 
 The flow:
 

@@ -1,15 +1,15 @@
 ---
 title: "MCP Servers"
-description: "MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)."
+description: "MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Viglet Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)."
 ---
 The **Model Context Protocol (MCP)** is an open standard that lets AI models call tools hosted on external servers, turning any API, database, or internal system into a capability that an AI Agent can use autonomously. If you are an administrator looking to extend your agents beyond the 27 built-in tools, MCP Servers let you connect to virtually any external service without writing custom code inside Viglet Turing.
 
-An **MCP Server** extends the capabilities of an AI Agent by connecting it to any external server that implements the **Model Context Protocol (MCP)**. This allows Turing agents to use tools defined completely outside the platform, a company-internal knowledge system, a proprietary data API, a database query interface, or any of the growing ecosystem of public MCP servers.
+An **MCP Server** extends the capabilities of an AI Agent by connecting it to any external server that implements the **Model Context Protocol (MCP)**. This allows Viglet Turing agents to use tools defined completely outside the platform, a company-internal knowledge system, a proprietary data API, a database query interface, or any of the growing ecosystem of public MCP servers.
 
 MCP Servers are configured in **Administration → MCP Servers** and then selected per [AI Agent](/docs/ai-agents/).
 
 :::tip[MCP works both ways]
-This first part of the page is about Turing as an MCP **client**, your agents calling *out* to external tool servers. Turing can also be an MCP **server**, exposing its own search/RAG/agent/analytics tools *in* to clients like Claude Desktop, Claude Code, or Cursor. Jump to [Turing as an MCP Server](#turing-as-an-mcp-server).
+This first part of the page is about Viglet Turing as an MCP **client**, your agents calling *out* to external tool servers. Viglet Turing can also be an MCP **server**, exposing its own search/RAG/agent/analytics tools *in* to clients like Claude Desktop, Claude Code, or Cursor. Jump to [Viglet Turing as an MCP Server](#viglet-turing-as-an-mcp-server).
 :::
 
 ---
@@ -19,7 +19,7 @@ This first part of the page is about Turing as an MCP **client**, your agents ca
 | Field | Description |
 |---|---|
 | **Name** | Display name for the MCP server: shown when selecting it in an AI Agent |
-| **Transport type** | `HTTP` or `stdio`: how Turing communicates with the server |
+| **Transport type** | `HTTP` or `stdio`: how Viglet Turing communicates with the server |
 | **Command** | For `stdio`: the executable to launch the MCP server process (e.g., `npx`) |
 | **Arguments** | For `stdio`: command-line arguments passed to the process (e.g., `@modelcontextprotocol/server-filesystem /data`) |
 | **URL** | For `HTTP`: the MCP server endpoint URL |
@@ -110,9 +110,9 @@ Once configured, MCP servers appear in the **MCP Servers** multi-select field of
 
 ---
 
-## Turing as an MCP Server
+## Viglet Turing as an MCP Server
 
-Everything above is Turing reaching *out*. The reverse is just as useful: Turing can **publish its own tools as an MCP server**, so an external AI client (**Claude Desktop**, **Claude Code**, **Cursor**, or OpenAI's Responses API) can search your indexes, ask grounded RAG questions, invoke your agents, and read your analytics, all over the standard `/mcp` Streamable HTTP endpoint.
+Everything above is Viglet Turing reaching *out*. The reverse is just as useful: Viglet Turing can **publish its own tools as an MCP server**, so an external AI client (**Claude Desktop**, **Claude Code**, **Cursor**, or OpenAI's Responses API) can search your indexes, ask grounded RAG questions, invoke your agents, and read your analytics, all over the standard `/mcp` Streamable HTTP endpoint.
 
 This is **off by default**. Enable it with:
 
@@ -172,7 +172,7 @@ The server also publishes MCP **resources** and **prompts** (not just tools), so
 | Page | Description |
 |---|---|
 | [AI Agents](/docs/ai-agents/) | Compose agents with native tools + MCP servers; `invoke_agent` exposes them over MCP |
-| [Tool Calling](/docs/tool-calling/) | The native tools built into Turing |
+| [Tool Calling](/docs/tool-calling/) | The native tools built into Viglet Turing |
 | [Semantic Navigation](/docs/semantic-navigation/) | The search surface the MCP read tools delegate to |
 | [Chat Analytics](/docs/chat-analytics/) | The data behind `search_metrics` / `content_gaps` |
 | [Chat](/docs/chat/) | Front-end chat interface where agents are used |

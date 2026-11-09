@@ -51,7 +51,7 @@ If anything goes wrong with the chosen strategy, you won't see an error: you'll 
 
 ## Strategies
 
-Turing treats reranking as a **selectable strategy** so you can match cost, latency, and precision to your deployment. All strategies share the same fail-open facade.
+Viglet Turing treats reranking as a **selectable strategy** so you can match cost, latency, and precision to your deployment. All strategies share the same fail-open facade.
 
 | Strategy | What it is | Auth | When to use |
 |---|---|---|---|
@@ -71,7 +71,7 @@ There is intentionally no `MISTRAL` strategy: Mistral exposes no managed rerank 
 
 ## Fail-open by design
 
-Reranking is wrapped in a single fail-open facade (`TurRagReranker`). If the chosen strategy **errors, times out, isn't configured, or returns nothing usable**, Turing silently falls back to the original retrieval order. A corrupt strategy value parses leniently back to `LLM` rather than throwing. The net effect: enabling reranking can only improve or be neutral: it can never degrade results below the no-rerank baseline.
+Reranking is wrapped in a single fail-open facade (`TurRagReranker`). If the chosen strategy **errors, times out, isn't configured, or returns nothing usable**, Viglet Turing silently falls back to the original retrieval order. A corrupt strategy value parses leniently back to `LLM` rather than throwing. The net effect: enabling reranking can only improve or be neutral: it can never degrade results below the no-rerank baseline.
 
 ```mermaid
 flowchart TD
@@ -108,7 +108,7 @@ All reranker settings live in Global Settings (`/api/system/global-settings`) an
 | `GLOBAL_RAG_SN_RERANK_CACHE_ENABLED` | `false` | all | Cache ordered rerank results |
 
 :::note[The API key is write-only]
-Like every secret in Turing, the rerank API key is encrypted, never returned by GET (which reports a `…ApiKeySet` boolean instead), and preserved if you leave it blank on edit. For Vertex AI, the encrypted key field holds the service-account JSON; with none set it falls back to Application Default Credentials. For Bedrock, IAM credentials follow the same chain as the [Bedrock LLM vendor](/docs/llm-instances/#authentication-by-vendor).
+Like every secret in Viglet Turing, the rerank API key is encrypted, never returned by GET (which reports a `…ApiKeySet` boolean instead), and preserved if you leave it blank on edit. For Vertex AI, the encrypted key field holds the service-account JSON; with none set it falls back to Application Default Credentials. For Bedrock, IAM credentials follow the same chain as the [Bedrock LLM vendor](/docs/llm-instances/#authentication-by-vendor).
 :::
 
 ---

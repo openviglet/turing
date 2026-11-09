@@ -200,7 +200,7 @@ export const flows = defineBundle([
 
 Three paths, easiest first:
 
-1. **CLI (recommended)**: put the compiled `*.chat-flow.json` in a project's `flows/` folder and run `turing deploy`. See **[Turing CLI](/docs/cli/)**.
+1. **CLI (recommended)**: put the compiled `*.chat-flow.json` in a project's `flows/` folder and run `turing deploy`. See **[Viglet Turing CLI](/docs/cli/)**.
 2. **`turing-flow-dsl deploy <dir>`**: the DSL's own deploy command uploads every `*.chat-flow.json` to a running instance (idempotent by name; `--mode bundle|single`, `--create-only`). Config resolves from a `turing` block in `package.json` → env vars (`TURING_URL`, `TURING_AGENT_ID`, `TURING_USERNAME`, `TURING_PASSWORD`) → flags → interactive password prompt.
 3. **Editor**: paste the JSON into the chat-flow editor's **Import JSON** button.
 
@@ -222,7 +222,7 @@ Three paths, easiest first:
 ## Related pages
 
 - **[Chat Flow](/docs/chat-flow/)**: the visual editor and the full node/slot/trigger semantics the DSL emits.
-- **[Turing CLI](/docs/cli/)**: the project workflow that deploys compiled flows.
+- **[Viglet Turing CLI](/docs/cli/)**: the project workflow that deploys compiled flows.
 - **[Routines](/docs/routines/)**: the async tasks a `scheduleAgent` node dispatches.
 - **[Human-in-the-loop](/docs/human-in-the-loop/)**: the `humanApproval` node.
 - **[Custom Tools](/docs/custom-tools/)**: the NATIVE/MCP tools a `functionCall` node invokes.

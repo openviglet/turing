@@ -19,7 +19,7 @@ SPA Pages requires a storage backend to be configured. See [Storage Configuratio
 flowchart LR
     A[Build your SPA] --> B[ZIP the dist/ folder]
     B --> C[Upload via Admin Console]
-    C --> D[Turing extracts & stores files]
+    C --> D[Viglet Turing extracts & stores files]
     D --> E["Served at /pages/my-site/"]
 ```
 
@@ -28,7 +28,7 @@ flowchart LR
 3. **Upload** the ZIP in the Admin Console under **Pages**
 4. **Access** the deployed app at `http://your-turing-url/pages/{siteName}/`
 
-Turing handles SPA routing automatically: if a requested file doesn't exist, it falls back to `index.html`, allowing client-side routers (React Router, Vue Router, etc.) to work correctly.
+Viglet Turing handles SPA routing automatically: if a requested file doesn't exist, it falls back to `index.html`, allowing client-side routers (React Router, Vue Router, etc.) to work correctly.
 
 ---
 
@@ -58,7 +58,7 @@ curl -X POST "http://localhost:2700/api/page?siteName=my-site" \
 
 ---
 
-## Turing Manifest
+## Viglet Turing Manifest
 
 You can include an optional `turing-manifest.json` file at the root of your ZIP to provide metadata about the deployment:
 
@@ -87,7 +87,7 @@ All fields are optional. When present, the manifest metadata is displayed on the
 | `description` | Short description |
 | `framework` | Frontend framework (React, Vue, Angular, etc.) |
 | `buildTool` | Build tool used (Vite, Webpack, etc.) |
-| `snSite` | Associated Turing Semantic Navigation site |
+| `snSite` | Associated Viglet Turing Semantic Navigation site |
 | `locale` | Default locale |
 | `repository` | Source code repository URL |
 | `buildDate` | ISO 8601 build timestamp |
@@ -120,7 +120,7 @@ Click the delete button on a site card and confirm the dialog. This removes all 
 
 ## Caching Behavior
 
-Turing applies different caching strategies depending on the file:
+Viglet Turing applies different caching strategies depending on the file:
 
 | File | Cache-Control | Reason |
 |------|---------------|--------|
@@ -131,16 +131,16 @@ This follows the standard SPA caching pattern: hashed asset filenames ensure cac
 
 ---
 
-## Use with Turing React SDK
+## Use with Viglet Turing React SDK
 
-SPA Pages is designed to work with the [Turing React SDK](/docs/react-sdk/). A typical workflow:
+SPA Pages is designed to work with the [Viglet Turing React SDK](/docs/react-sdk/). A typical workflow:
 
-1. Create a React app using the Turing React SDK (`@viglet/turing-react-sdk`)
+1. Create a React app using the Viglet Turing React SDK (`@viglet/turing-react-sdk`)
 2. Build the app (`npm run build`)
 3. Add a `turing-manifest.json` to the build output with the `snSite` field pointing to your Semantic Navigation site
 4. ZIP the build output and deploy via Pages
 
-The deployed app communicates with the Turing REST API on the same origin, so no CORS configuration is needed.
+The deployed app communicates with the Viglet Turing REST API on the same origin, so no CORS configuration is needed.
 
 ---
 

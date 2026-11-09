@@ -4,7 +4,7 @@ description: "Build with and contribute to Viglet Turing: setup, APIs, SDKs, and
 ---
 Whether you're **building a search experience** on top of Viglet Turing or **contributing to the project itself**, this guide has everything you need to get up and running quickly.
 
-Turing is a fully open-source enterprise search platform with semantic navigation and GenAI capabilities. The source code lives at [github.com/openviglet/turing](https://github.com/openviglet/turing) and all contributions are welcome.
+Viglet Turing is a fully open-source enterprise search platform with semantic navigation and GenAI capabilities. The source code lives at [github.com/openviglet/turing](https://github.com/openviglet/turing) and all contributions are welcome.
 
 ---
 
@@ -26,7 +26,7 @@ Understanding the stack helps you navigate the codebase and decide where to plug
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
 graph TD
-    A["💻 Your IDE"] -->|"mvn spring-boot:run"| B["☕ Turing Backend\nSpring Boot / Java 21"]
+    A["💻 Your IDE"] -->|"mvn spring-boot:run"| B["☕ Viglet Turing Backend\nSpring Boot / Java 21"]
     A -->|"npm run dev"| C["⚛️ React Admin Console\nlocalhost:5173"]
     B --> D["🔎 Apache Solr\nlocalhost:8983"]
     B --> E["📨 Apache Artemis\nMessage Queue"]
@@ -66,7 +66,7 @@ cd turing
 
 ### Start Services with Docker Compose
 
-Apache Solr is the only external service required to run Turing. Apache Artemis runs **embedded** inside the application and requires no separate installation. The easiest way to start Solr locally is with Docker Compose:
+Apache Solr is the only external service required to run Viglet Turing. Apache Artemis runs **embedded** inside the application and requires no separate installation. The easiest way to start Solr locally is with Docker Compose:
 
 ```shell
 docker-compose up -d
@@ -81,7 +81,7 @@ Wait for Solr to be fully ready before starting the backend. You can check at `h
 
 ---
 
-## Running Turing
+## Running Viglet Turing
 
 ### Backend (Spring Boot)
 
@@ -149,7 +149,7 @@ On first startup, set the admin password via the environment variable `TURING_AD
 
 ## Java SDK
 
-The Turing Java SDK lets you integrate semantic search into any JVM application.
+The Viglet Turing Java SDK lets you integrate semantic search into any JVM application.
 
 ### Run the Sample
 
@@ -184,11 +184,11 @@ mvn package
 
 ## Database Migrations with Liquibase
 
-Turing uses **[Liquibase](https://www.liquibase.org/)** (v5.0.2) for database schema management. All schema changes (tables, columns, indexes, foreign keys) are tracked as versioned changelogs and applied automatically on startup. This ensures every environment (dev, staging, production) runs the exact same schema, regardless of the database platform.
+Viglet Turing uses **[Liquibase](https://www.liquibase.org/)** (v5.0.2) for database schema management. All schema changes (tables, columns, indexes, foreign keys) are tracked as versioned changelogs and applied automatically on startup. This ensures every environment (dev, staging, production) runs the exact same schema, regardless of the database platform.
 
 ### How it works
 
-When Turing starts, Spring Boot runs Liquibase before the application context is fully initialized. Liquibase reads the master changelog, compares it against the `DATABASECHANGELOG` tracking table, and applies any pending changesets. This means:
+When Viglet Turing starts, Spring Boot runs Liquibase before the application context is fully initialized. Liquibase reads the master changelog, compares it against the `DATABASECHANGELOG` tracking table, and applies any pending changesets. This means:
 
 - **First startup**: all migrations run, creating the full schema from scratch
 - **Upgrades**: only new changesets (added since the last startup) are applied
@@ -315,7 +315,7 @@ Liquibase handles type mappings (e.g., `VARCHAR(255)` on MySQL vs `VARCHAR2(255)
 
 ## Code Quality
 
-Turing maintains high code quality standards. You can check the project health at any time:
+Viglet Turing maintains high code quality standards. You can check the project health at any time:
 
 | Tool | Link |
 |---|---|
@@ -326,7 +326,7 @@ Turing maintains high code quality standards. You can check the project health a
 
 ## Search Engine Plugin Architecture
 
-Turing uses a **plugin architecture** to support multiple search backends behind a unified interface. This abstraction allows the same application code to work with Apache Solr, Elasticsearch, or Lucene: the active plugin is resolved at runtime based on the vendor configured per Search Engine instance.
+Viglet Turing uses a **plugin architecture** to support multiple search backends behind a unified interface. This abstraction allows the same application code to work with Apache Solr, Elasticsearch, or Lucene: the active plugin is resolved at runtime based on the vendor configured per Search Engine instance.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -402,7 +402,7 @@ If a vendor is unrecognised or unavailable, `TurSearchEnginePluginFactory` falls
 
 ## REST API
 
-Turing exposes a REST API for integrating search and AI capabilities into any application. All endpoints use **JSON**. Authentication uses the `Key` header with an API Token created in **Administration → API Tokens**.
+Viglet Turing exposes a REST API for integrating search and AI capabilities into any application. All endpoints use **JSON**. Authentication uses the `Key` header with an API Token created in **Administration → API Tokens**.
 
 For the full endpoint reference (search, autocomplete, spell check, latest searches, GenAI chat, and token usage) see **[REST API Reference](/docs/rest-api/)**.
 
@@ -412,7 +412,7 @@ For interactive exploration, use the built-in Swagger UI at `http://localhost:27
 
 ## Contributing
 
-We'd love your help making Turing better. Here's how to get involved:
+We'd love your help making Viglet Turing better. Here's how to get involved:
 
 1. **Fork** the [openviglet/turing](https://github.com/openviglet/turing) repository.
 2. **Create a branch** for your feature or fix: `git checkout -b feature/my-improvement`

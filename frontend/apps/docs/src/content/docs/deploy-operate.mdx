@@ -5,14 +5,14 @@ tableOfContents: false
 ---
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
-Run Turing on **your own infrastructure** under Apache 2.0, no vendor lock-in for
+Run Viglet Turing on **your own infrastructure** under Apache 2.0, no vendor lock-in for
 your data, your models or your search engine. Install it, point it at **any LLM
 provider** (OpenAI, Anthropic, Gemini, Azure OpenAI or local Ollama), and configure
 per-instance behavior; API keys are stored encrypted. Scale to multiple isolated
 **tenants** behind a single identity realm when you need to, or keep a single-tenant
 deployment simple.
 
-Operating Turing in production is first-class: Micrometer metrics, conversation and
+Operating Viglet Turing in production is first-class: Micrometer metrics, conversation and
 chat analytics, cache-hit gauges, **token usage** accounting and **cost governance**
 give you the visibility to run it confidently. This section covers installation, the
 full configuration reference, provider and instance setup, assets, multi-tenancy,
@@ -30,6 +30,6 @@ administration, logging and observability.
   <LinkCard title="Logging" description="Monitor server activity, indexing pipeline, and AEM connector logs from the Viglet Turing admin console." href="/docs/logging/" />
   <LinkCard title="Chat Analytics" description="Turn thousands of chat conversations into the voice of your customer. Intent, goal achievement, sentiment trajectory, funnels, conversation replay, tool-latency p95, router-decision and SSE diagnostics: engine-agnostic, cluster-safe, AI-on-AI classified." href="/docs/chat-analytics/" />
   <LinkCard title="Token Usage" description="Monitor and analyse LLM token consumption in Viglet Turing." href="/docs/token-usage/" />
-  <LinkCard title="Cost Governance" description="See and control your AI spend. Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending." href="/docs/cost-governance/" />
+  <LinkCard title="Cost Governance" description="See and control your AI spend. Viglet Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending." href="/docs/cost-governance/" />
   <LinkCard title="Governed LLM Gateway" description="Point any OpenAI-compatible client at Viglet Turing: virtual keys, per-key budgets and rate limits, semantic cache, guardrails, model-name routing into agents and RAG, and native tools." href="/docs/llm-gateway/" />
 </CardGrid>

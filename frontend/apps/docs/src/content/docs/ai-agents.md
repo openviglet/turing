@@ -18,10 +18,10 @@ Configure agents in **Administration → AI Agents**.
 
 ## What "Agent" Actually Means
 
-The word "agent" is overloaded. In Turing, an Agent has two non-negotiable properties:
+The word "agent" is overloaded. In Viglet Turing, an Agent has two non-negotiable properties:
 
 1. **It's a composition, not a model.** You're not picking a model from a marketplace and renaming it. You're combining decisions (*which* LLM, *which* tools, *which* voice) into a single, deployable unit. Change any of the three, and you've changed the agent.
-2. **It can act, not just answer.** The defining feature of an agent over a plain chatbot is its ability to call tools: search a knowledge base, look up a stock quote, run a Python script, query an MCP server. The model doesn't just generate words; it *requests an action*, Turing executes it, and the model reasons over the result.
+2. **It can act, not just answer.** The defining feature of an agent over a plain chatbot is its ability to call tools: search a knowledge base, look up a stock quote, run a Python script, query an MCP server. The model doesn't just generate words; it *requests an action*, Viglet Turing executes it, and the model reasons over the result.
 
 Together, these mean an agent is a **business process expressed as a conversation**. A user asks; the agent searches your documentation, fetches their account data, summarizes the answer, and books a follow-up, in one exchange.
 
@@ -115,7 +115,7 @@ When a user sends a message, this loop runs end-to-end. Understanding it is the 
 
 ### Step 1: Prompt assembly
 
-Turing builds the prompt in this exact order:
+Viglet Turing builds the prompt in this exact order:
 
 1. **Persona system instruction** (if a persona is attached)
 2. **Style guidelines block**: derived from the persona's tone + verbosity + language style
@@ -140,7 +140,7 @@ This decision is the agent's "thinking step". Tool-capable models (Claude, GPT-4
 
 ### Step 3: Tool execution
 
-If the model requested a tool, Turing:
+If the model requested a tool, Viglet Turing:
 
 1. Validates the call (does the agent have access to that tool? are the arguments valid JSON?).
 2. Routes it to the correct executor: native tool implementation or MCP server.
@@ -273,7 +273,7 @@ The **System Prompt** page has a **Live Preview** that reverses the opaque assem
 - **Node picker & simulated values.** Preview any point in a conversation, not just the flow's entry: pick a flow node and supply the collected slot values, and the addendum's "Already collected" line and next-step hint reflect that real mid-conversation turn.
 - **Replay a real conversation.** Instead of *simulating* a turn, paste a **conversation id** into the "Replay a real conversation" box and the preview is rebuilt from that conversation's actual persisted state, its governing flow, cursor node, collected slots, and the persona the runtime really resolved (honouring any flow persona switch). The assembled prompt shown is exactly what the model would receive for that conversation's next turn, the ground truth for debugging a specific reply, not a synthesized turn. A **tool-call trace** below the article lists what the model actually called during that conversation (name, arguments digest, ok/error, duration), so you can read "what the prompt said" against "what the model did". (The conversation id is the value the SDK stores in the session cookie; find it on the conversation's inspector/export.)
 - **Whole message list.** Beyond the system message, a **Message list** section shows the full ordered set of messages the model receives: the assembled system message, the *history-prefix* turns the runtime prepends from memory (a compressed summary of older turns, plus the earlier turns most relevant to the current message), then the recent conversation window. Each prefix turn is labeled with its source, so you can see the entire input, not just the system prompt.
-- **Replay any *past* turn, verbatim.** Replaying a conversation (above) rebuilds the prompt from its *current* state: what the *next* turn would send. That is enough for most debugging, but by the time you inspect it the flow may have advanced, slots may have been overwritten, and memory may have been compacted, so it is not the exact prompt sent on an earlier turn. Enable **Prompt Capture (Replay)** on the agent's **Settings** tab and Turing saves the exact system message and whole-message list of every turn to object storage as it is sent. The replay bar then shows a **turn picker**: pick "Current state (reconstructed)" for the live rebuild, or any captured turn ("Turn N · timestamp") to load it **byte-for-byte**, the precise prompt the model received on that turn. Capture is off by default (it only writes when enabled), requires object storage to be configured, and is bounded automatically (a per-conversation turn limit, a per-entry size cap, and a retention window) so it can't grow without limit.
+- **Replay any *past* turn, verbatim.** Replaying a conversation (above) rebuilds the prompt from its *current* state: what the *next* turn would send. That is enough for most debugging, but by the time you inspect it the flow may have advanced, slots may have been overwritten, and memory may have been compacted, so it is not the exact prompt sent on an earlier turn. Enable **Prompt Capture (Replay)** on the agent's **Settings** tab and Viglet Turing saves the exact system message and whole-message list of every turn to object storage as it is sent. The replay bar then shows a **turn picker**: pick "Current state (reconstructed)" for the live rebuild, or any captured turn ("Turn N · timestamp") to load it **byte-for-byte**, the precise prompt the model received on that turn. Capture is off by default (it only writes when enabled), requires object storage to be configured, and is bounded automatically (a per-conversation turn limit, a per-entry size cap, and a retention window) so it can't grow without limit.
 
 All of these are read-only and never change the assembled prompt: the preview stays a faithful mirror of what the model receives.
 
@@ -293,13 +293,13 @@ Select which external MCP servers this agent can call. The list shows each serve
 
 ## Provider-native tools (OpenAI Responses)
 
-Turing's own tool catalog (the native tools above, plus MCP and Custom tools) works on **every** provider. Separately, when an agent runs on an OpenAI instance through the **Responses API path**, it can also use OpenAI's *server-side* built-in tools, the model runs them in OpenAI's cloud, not in Turing:
+Viglet Turing's own tool catalog (the native tools above, plus MCP and Custom tools) works on **every** provider. Separately, when an agent runs on an OpenAI instance through the **Responses API path**, it can also use OpenAI's *server-side* built-in tools, the model runs them in OpenAI's cloud, not in Viglet Turing:
 
 | Capability | Built-in tool |
 |---|---|
 | `openai-web-search` | Live web search |
 | `openai-file-search` | Search over OpenAI-hosted vector stores |
-| `openai-code-interpreter` | OpenAI's managed code sandbox (alongside Turing's own [Code Interpreter](/docs/tool-calling/)) |
+| `openai-code-interpreter` | OpenAI's managed code sandbox (alongside Viglet Turing's own [Code Interpreter](/docs/tool-calling/)) |
 | `openai-image-generation` | Inline image generation |
 | `openai-mcp` | A remote MCP connector run by OpenAI |
 
@@ -349,7 +349,7 @@ A completed conversation writes a **submission** (the collected slots + outcome,
 |---|---|
 | `RETAIN_FOREVER` (default) | Keep submissions indefinitely |
 | `RETAIN_DAYS` | Keep for `submissionRetentionDays`, then a daily cleanup job purges older ones |
-| `DELETE_AFTER_EXPORT` | Treat the conversation export as the system-of-record archive and purge Turing's copy right after export |
+| `DELETE_AFTER_EXPORT` | Treat the conversation export as the system-of-record archive and purge Viglet Turing's copy right after export |
 
 The default preserves today's behavior; the other two are opt-in per agent. `pii_*` slots are additionally encrypted/redacted regardless of this setting.
 

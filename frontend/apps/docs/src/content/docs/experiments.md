@@ -42,7 +42,7 @@ graph LR
 
 ## Measuring the winner: significance
 
-Eyeballing two conversion rates isn't enough, a 52% vs. 48% split might be noise. Turing runs a real **two-proportion z-test** with a **Wald confidence interval** so you know whether a difference is statistically meaningful.
+Eyeballing two conversion rates isn't enough, a 52% vs. 48% split might be noise. Viglet Turing runs a real **two-proportion z-test** with a **Wald confidence interval** so you know whether a difference is statistically meaningful.
 
 ```
 GET /api/system/chat-analytics/experiment/{experimentKey}/significance

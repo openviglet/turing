@@ -6,7 +6,7 @@ The **Search Engine** page (`/admin/se/instance`) manages the search backends th
 
 Each **Search Engine instance** is a configured connection to a search backend. Semantic Navigation Sites bind to a specific instance when their cores (collections) are created. Viglet Turing supports four backends via a plugin architecture: **Apache Solr** (recommended), **Apache Lucene** (embedded), **Elasticsearch**, and **Adobe AEM Content AI**.
 
-The first three are indexes Turing owns and writes to. Content AI is different: it queries an index **Adobe** owns and fills, so it is read-only (see [Adobe AEM Content AI](#content-ai) below before choosing it).
+The first three are indexes Viglet Turing owns and writes to. Content AI is different: it queries an index **Adobe** owns and fills, so it is read-only (see [Adobe AEM Content AI](#content-ai) below before choosing it).
 
 ---
 
@@ -69,11 +69,11 @@ node, with the chroot if the cluster uses one:
 zk://zk-1:2181,zk-2:2181,zk-3:2181/solr
 ```
 
-Turing reads the cluster state from ZooKeeper: which nodes are live and where each
+Viglet Turing reads the cluster state from ZooKeeper: which nodes are live and where each
 collection's replicas are, so requests follow the cluster as nodes join and leave.
 The site's indexes are created as collections (from the same configsets as cores),
 whatever `turing.solr.cloud` says, and admin calls such as creating a collection or
-editing its schema go to a live node read from ZooKeeper. Turing must be able to reach
+editing its schema go to a live node read from ZooKeeper. Viglet Turing must be able to reach
 the addresses the Solr nodes register in ZooKeeper (their `SOLR_HOST` and port).
 
 ### Separate query and update nodes
@@ -163,20 +163,20 @@ Live monitoring panel for the connected backend:
 ## Adobe AEM Content AI
 
 If you already run **Adobe AEM Content AI**, you are already paying for a vector index
-over your published AEM content. The `CONTENTAI` vendor lets Turing query that index
+over your published AEM content. The `CONTENTAI` vendor lets Viglet Turing query that index
 directly, so you do not embed the same content a second time. You keep the index you
-already pay for, and Turing adds the layer above it: multi-turn chat, AI agents,
+already pay for, and Viglet Turing adds the layer above it: multi-turn chat, AI agents,
 skills, facets, its own analytics, and every non-AEM source Content AI does not reach.
 
 ### What it can and cannot do
 
-Turing does not own this index: Adobe fills it, using Adobe's embedding model and
+Viglet Turing does not own this index: Adobe fills it, using Adobe's embedding model and
 the schema declared in Adobe's IndexConfig. So the backend is **read-only**, and that
 is deliberate rather than unfinished:
 
 | Works | Does not |
 |---|---|
-| Search, including semantic + keyword together | Indexing content from Turing or a connector |
+| Search, including semantic + keyword together | Indexing content from Viglet Turing or a connector |
 | Facets (from the source's filterable fields) | Creating, clearing or deleting a core |
 | Sorting and paging | Adding or changing fields in the schema |
 | Document count and live status | Deleting documents |
@@ -184,7 +184,7 @@ is deliberate rather than unfinished:
 A write attempt fails with a message saying so rather than silently doing nothing, so
 you cannot end up believing a document was published when it was not. **Do not point a
 connector at an SN Site backed by Content AI**. Publish that content in Adobe (AEM
-publish, or Content AI's own acquisition service) and let Turing query it.
+publish, or Content AI's own acquisition service) and let Viglet Turing query it.
 
 ### Setting one up
 
@@ -194,14 +194,14 @@ publish, or Content AI's own acquisition service) and let Turing query it.
 3. Set the credential and switch the backend on: `turing.content-ai.enabled` plus
    `turing.content-ai.token` (or `api-key`). See
    [Configuration Reference → Adobe AEM Content AI](/docs/configuration-reference/#content-ai).
-4. Tell Turing which Adobe content source each site queries:
+4. Tell Viglet Turing which Adobe content source each site queries:
    `turing.content-ai.sources.<site-name>`. Without a mapping, the site's core name is
    used as the source name.
 5. Bind an SN Site to the instance and search.
 
 ### What to expect
 
-- **Relevance is Adobe's.** The embedding model and the ranking are theirs, so Turing's own hybrid ranking and reranker settings do not apply. `hybrid`,
+- **Relevance is Adobe's.** The embedding model and the ranking are theirs, so Viglet Turing's own hybrid ranking and reranker settings do not apply. `hybrid`,
   `vector-boost` and `fulltext-boost` are the whole of the tuning available.
 - **Pages are shallower.** Adobe returns at most 50 results per page and offers no way
   to jump to a page, so deep pagination is bounded by `max-page-walk`; beyond it a page
@@ -215,7 +215,7 @@ publish, or Content AI's own acquisition service) and let Turing query it.
 ### "My Content AI site returns nothing"
 
 Adobe answers a query naming a source it does not have with **zero results**, the same
-answer as a source that exists and matched nothing. Turing therefore checks your
+answer as a source that exists and matched nothing. Viglet Turing therefore checks your
 configuration against Adobe rather than letting you guess:
 
 - **Instance detail → System Information** lists the content sources your Adobe tenant
@@ -224,7 +224,7 @@ configuration against Adobe rather than letting you guess:
 - **The first empty result** on a site logs a warning naming the source you asked for
   and the ones available, so the answer is in the log even if nobody opens the console.
 - **Cores (Collections)** lists the real source names, so you can copy one instead of
-  typing it. Document counts read `-1` there: Turing does not own these indexes, and
+  typing it. Document counts read `-1` there: Viglet Turing does not own these indexes, and
   a `0` would look like "this source is empty".
 
 Three more settings fail the same quiet way, and are reported in the same warning:
@@ -244,7 +244,7 @@ is the problem, not the source name.
 
 ### Grounding an AI answer on a Content AI site
 
-Adobe holds the embeddings, so Turing's own vector store is empty on such a site and
+Adobe holds the embeddings, so Viglet Turing's own vector store is empty on such a site and
 the **RAG chat** reports itself unavailable (correctly) rather than answering from
 nothing.
 
@@ -252,7 +252,7 @@ What does work is a [Custom Tool](/docs/custom-tools/) calling `turingSearch.sn(
 queries the Content AI index and, with `turing.content-ai.include-chunks` enabled, each
 hit's `content` is the **passage Adobe matched** rather than the whole AEM page. That is
 better grounding than a truncated page body, and it is the only sub-document grounding
-available on a federated site, since Turing cannot re-chunk an index it does not own.
+available on a federated site, since Viglet Turing cannot re-chunk an index it does not own.
 
 :::tip[The vectorless copilot works here]
 The [vectorless copilot](/docs/rag/) needs no embeddings: it turns prose into a grounded
@@ -266,7 +266,7 @@ subset of the query syntax on Content AI.
 
 ## Plugin Architecture
 
-Turing uses a plugin architecture to support multiple search backends behind a unified interface. The active plugin is resolved at runtime based on the vendor configured per instance. If a vendor is unrecognised, the factory falls back to Solr.
+Viglet Turing uses a plugin architecture to support multiple search backends behind a unified interface. The active plugin is resolved at runtime based on the vendor configured per instance. If a vendor is unrecognised, the factory falls back to Solr.
 
 Solr, Lucene and Elasticsearch read a Semantic Navigation search the same way: facet filters (`fq`, `fqAnd`, `fqOr`, `fqOperator`, `fqItemOperator`, custom facet selections) narrow the results, and `sort` takes `relevance`, `newest`, `oldest`, `field:asc|desc` or a [custom sort](/docs/semantic-navigation/#custom-sort) name. A site moved between them keeps its filters and sorts; how the free text is matched is each engine's own.
 
@@ -276,7 +276,7 @@ A search on **Lucene** also ignores the words of the site locale's language that
 
 Text whose accents are stored decomposed (Unicode NFD, a letter followed by a combining mark, as text pasted from macOS or exported by some content tools often is) is matched like its usual spelling: a title stored as `impermeável` in that form is found by `impermeável`, `impermeavel` and `jaqueta impermeável`, and its highlight marks the whole word. Reindex the site for this to reach documents already indexed. An Elasticsearch core does the same once it is created or recreated.
 
-On **Solr**, the configsets Turing ships (`en`, `es`, `pt`, `ca`) match the same way: an unaccented search finds the accented word in every language, and decomposed accents are recomposed. A core picks this up from the configset it was created from: on a standalone Solr, update the image (or copy the configset into `$SOLR_HOME/configsets`) and reload the core; on SolrCloud, recreate the collection, which Turing uploads the configset for. Then reindex the site.
+On **Solr**, the configsets Viglet Turing ships (`en`, `es`, `pt`, `ca`) match the same way: an unaccented search finds the accented word in every language, and decomposed accents are recomposed. A core picks this up from the configset it was created from: on a standalone Solr, update the image (or copy the configset into `$SOLR_HOME/configsets`) and reload the core; on SolrCloud, recreate the collection, which Viglet Turing uploads the configset for. Then reindex the site.
 
 On **Elasticsearch**, a core created for a site locale in one of those languages analyzes its text fields the same way (stemmed and accent-folded), and facet fields still match their exact value. Elasticsearch cannot change the analyzer of an existing index, so a core created before this keeps matching the exact word: delete and recreate the core, then reindex the site, to get plural matching.
 
@@ -305,7 +305,7 @@ Repository-level **caching** is enabled for search engine instances to avoid rep
 | [Architecture Overview](/docs/architecture-overview/) | Solr, Elasticsearch, and Lucene in the system architecture |
 | [Configuration Reference](/docs/configuration-reference/#solr) | Solr and Elasticsearch timeout settings in `application.yaml` |
 | [Configuration Reference → Adobe AEM Content AI](/docs/configuration-reference/#content-ai) | Credential, source mapping and query settings for the `CONTENTAI` vendor |
-| [AEM Connector](/docs/integration-aem/) | Indexing AEM content **into** Turing, the alternative to federating to Content AI |
+| [AEM Connector](/docs/integration-aem/) | Indexing AEM content **into** Viglet Turing, the alternative to federating to Content AI |
 
 ---
 

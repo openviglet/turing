@@ -16,7 +16,7 @@ A lightweight, open-source vector database ideal for development and small to me
 
 - Self-hosted, connects via its HTTP API
 - Zero infrastructure overhead for teams already running Python tooling
-- No special schema setup required, Turing manages the collections automatically
+- No special schema setup required, Viglet Turing manages the collections automatically
 - Multi-tenant and multi-database support
 
 Docker Compose quickstart:
@@ -68,7 +68,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 | **Distance Type** | n/a | `COSINE_DISTANCE`, `EUCLIDEAN_DISTANCE`, or `INNER_PRODUCT` |
 | **Index Type** | n/a | `HNSW` or `IVFFLAT` |
 
-**Table schema created by Turing:**
+**Table schema created by Viglet Turing:**
 
 ```sql
 CREATE TABLE IF NOT EXISTS "vector_store" (
@@ -100,7 +100,7 @@ A purpose-built, cloud-native vector database designed for high-scale similarity
 
 ### Lucene (embedded)
 
-An **Apache Lucene 10** KNN vector store that runs *inside* the Turing process: no external service, no container, no network hop. It is the zero-infrastructure choice: ideal for single-node deployments, demos, air-gapped installs, and the per-site `sn_<siteId>` collections used by [hybrid ranking](/docs/search-engine/). It is also the store that powers the multimodal (text→image) retrieval path.
+An **Apache Lucene 10** KNN vector store that runs *inside* the Viglet Turing process: no external service, no container, no network hop. It is the zero-infrastructure choice: ideal for single-node deployments, demos, air-gapped installs, and the per-site `sn_<siteId>` collections used by [hybrid ranking](/docs/search-engine/). It is also the store that powers the multimodal (text→image) retrieval path.
 
 - No service to run: vectors live in an on-disk Lucene index
 - One `IndexWriter` per directory; collections map to Lucene directories

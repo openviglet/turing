@@ -35,7 +35,7 @@ turing:
 
 The `@TenantId` discriminator column handles the bulk of isolation automatically: once a JPA entity carries it, Hibernate stamps the current tenant on writes and filters reads: application code never writes a tenant `WHERE` clause by hand.
 
-The harder problem is every path that **bypasses the ORM**. Turing closes each one with a dedicated, tenant-aware component:
+The harder problem is every path that **bypasses the ORM**. Viglet Turing closes each one with a dedicated, tenant-aware component:
 
 | Surface | How it's isolated |
 |---|---|
@@ -82,7 +82,7 @@ Multi-tenancy uses a **single Keycloak realm**. The tenant a request belongs to 
 
 A request for a **suspended** tenant, or from a user with **no active membership**, is rejected with **HTTP 403**. (Platform admins bypass this, see below.)
 
-On successful resolution, Turing grants per-membership authorities of the form `TENANT_<id>` and `TENANT_<id>_<ROLE>`, in both the OIDC and the session-login paths.
+On successful resolution, Viglet Turing grants per-membership authorities of the form `TENANT_<id>` and `TENANT_<id>_<ROLE>`, in both the OIDC and the session-login paths.
 
 ### Tenant management endpoints
 
@@ -161,7 +161,7 @@ A physical database row sweep, dropping external Solr/Elasticsearch cores, and K
 
 ## Adding a tenant-safe entity (for developers)
 
-If you extend Turing with a new persistent entity, decide which kind it is:
+If you extend Viglet Turing with a new persistent entity, decide which kind it is:
 
 1. **Tenant-owned content** (a tenant's own data, like a site or an agent): add a `@TenantId` discriminator column. Add it to the schema as nullable with a `DEFAULT` default value, backfill existing NULLs to `DEFAULT`, then flip it `NOT NULL` in a follow-up migration. Hibernate handles stamping and filtering from there.
 

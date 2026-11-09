@@ -8,11 +8,11 @@ For day-to-day authentication (native session-based login and REST API Key usage
 
 ---
 
-## Why Use Keycloak with Turing?
+## Why Use Keycloak with Viglet Turing?
 
-The primary reason to integrate Keycloak is to connect Turing to your organization's **existing Single Sign-On (SSO) infrastructure**. Instead of managing a separate set of credentials just for Turing, users sign in with the same corporate identity they already use for email, cloud tools, and internal applications, no additional password, no extra login step.
+The primary reason to integrate Keycloak is to connect Viglet Turing to your organization's **existing Single Sign-On (SSO) infrastructure**. Instead of managing a separate set of credentials just for Viglet Turing, users sign in with the same corporate identity they already use for email, cloud tools, and internal applications, no additional password, no extra login step.
 
-Keycloak acts as an **identity broker** between Turing and your identity provider. Turing never sees or stores user passwords: it receives a signed JWT token from Keycloak confirming who the user is and what roles they have.
+Keycloak acts as an **identity broker** between Viglet Turing and your identity provider. Viglet Turing never sees or stores user passwords: it receives a signed JWT token from Keycloak confirming who the user is and what roles they have.
 
 ### Supported Identity Providers
 
@@ -34,15 +34,15 @@ Because Keycloak supports the **SAML 2.0**, **OAuth 2.0**, and **OpenID Connect*
 
 ### What This Enables
 
-**Single Sign-On (SSO):** Users click "Sign in" on Turing, are redirected to their corporate login (e.g., Microsoft 365 login page), authenticate once, and are immediately signed in to Turing. If they're already signed in to another corporate application, they skip the login form entirely: the SSO session is shared.
+**Single Sign-On (SSO):** Users click "Sign in" on Viglet Turing, are redirected to their corporate login (e.g., Microsoft 365 login page), authenticate once, and are immediately signed in to Viglet Turing. If they're already signed in to another corporate application, they skip the login form entirely: the SSO session is shared.
 
-**Single Sign-Out:** Logging out of Turing triggers a Keycloak OIDC logout that propagates to the corporate IdP. The user is signed out of Turing and optionally out of all applications sharing the same SSO session.
+**Single Sign-Out:** Logging out of Viglet Turing triggers a Keycloak OIDC logout that propagates to the corporate IdP. The user is signed out of Viglet Turing and optionally out of all applications sharing the same SSO session.
 
-**Centralized User Management:** User accounts, groups, and roles are managed in Keycloak (or synchronized from the corporate directory). No need to create or maintain users in Turing manually: Keycloak provides the identity, roles, and group memberships via JWT claims.
+**Centralized User Management:** User accounts, groups, and roles are managed in Keycloak (or synchronized from the corporate directory). No need to create or maintain users in Viglet Turing manually: Keycloak provides the identity, roles, and group memberships via JWT claims.
 
-**Multi-Factor Authentication (MFA):** Keycloak supports TOTP (Google Authenticator, Microsoft Authenticator), WebAuthn/FIDO2 (hardware security keys, biometrics), SMS OTP, and email verification. MFA policies are configured in Keycloak and enforced transparently, Turing requires no changes.
+**Multi-Factor Authentication (MFA):** Keycloak supports TOTP (Google Authenticator, Microsoft Authenticator), WebAuthn/FIDO2 (hardware security keys, biometrics), SMS OTP, and email verification. MFA policies are configured in Keycloak and enforced transparently, Viglet Turing requires no changes.
 
-**Role-Based Access Control (RBAC):** Keycloak roles and realm roles are mapped to Turing permissions. Define roles like `turing-admin`, `turing-editor`, `turing-viewer` in Keycloak, assign them to users or groups, and Turing enforces access accordingly.
+**Role-Based Access Control (RBAC):** Keycloak roles and realm roles are mapped to Viglet Turing permissions. Define roles like `turing-admin`, `turing-editor`, `turing-viewer` in Keycloak, assign them to users or groups, and Viglet Turing enforces access accordingly.
 
 **Social Login:** For public-facing or partner-facing deployments, Keycloak can enable login via Google, GitHub, Facebook, Apple, Twitter, and other social providers alongside or instead of corporate identity.
 
@@ -54,18 +54,18 @@ Because Keycloak supports the **SAML 2.0**, **OAuth 2.0**, and **OpenID Connect*
 
 ### Architecture
 
-When `turing.keycloak=true` is set in the JVM properties, Turing delegates all authentication to Keycloak using the Authorization Code flow (OAuth2) and validates access tokens as JWTs (OpenID Connect). Keycloak can be dedicated to Turing or shared with other applications, in both cases, Turing registers as a **client** within a Keycloak **realm**.
+When `turing.keycloak=true` is set in the JVM properties, Viglet Turing delegates all authentication to Keycloak using the Authorization Code flow (OAuth2) and validates access tokens as JWTs (OpenID Connect). Keycloak can be dedicated to Viglet Turing or shared with other applications, in both cases, Viglet Turing registers as a **client** within a Keycloak **realm**.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'actorBkg': '#dbeafe', 'actorBorder': '#4A90D9', 'actorTextColor': '#1a1a1a', 'activationBkgColor': '#ede9fe', 'activationBorderColor': '#9B6EC5', 'labelBoxBkgColor': '#fef3c7', 'labelBoxBorderColor': '#E8A838', 'labelTextColor': '#1a1a1a', 'noteBkgColor': '#dcfce7', 'noteBorderColor': '#50B86C', 'noteTextColor': '#1a1a1a', 'signalColor': '#333', 'signalTextColor': '#333'}}}%%
 sequenceDiagram
     participant User as User / Browser
     participant Apache as Apache HTTPS Proxy
-    participant Turing as Turing
+    participant Turing as Viglet Turing
     participant KC as Keycloak
     participant IdP as Corporate IdP<br/>(Azure AD, Google, etc.)
 
-    User->>Apache: Access Turing
+    User->>Apache: Access Viglet Turing
     Apache->>Turing: Proxy request
     Turing-->>User: Redirect to Keycloak login
     User->>KC: Keycloak login page
@@ -73,7 +73,7 @@ sequenceDiagram
     User->>IdP: Authenticate (SSO / MFA)
     IdP-->>User: SAML / OIDC response
     User->>KC: Return with IdP token
-    KC-->>User: Issue JWT + redirect to Turing
+    KC-->>User: Issue JWT + redirect to Viglet Turing
     User->>Turing: Access with JWT
     Turing->>KC: Validate JWT
     KC-->>Turing: Token valid + user roles
@@ -82,9 +82,9 @@ sequenceDiagram
 
 ---
 
-## Full Production Setup: Turing + Keycloak + Apache HTTP
+## Full Production Setup: Viglet Turing + Keycloak + Apache HTTP
 
-The recommended production topology runs Keycloak and Turing on the same host, with Apache HTTP Server as the HTTPS reverse proxy in front. All three services are reachable through a single public hostname and port (443), with Apache routing by path prefix.
+The recommended production topology runs Keycloak and Viglet Turing on the same host, with Apache HTTP Server as the HTTPS reverse proxy in front. All three services are reachable through a single public hostname and port (443), with Apache routing by path prefix.
 
 ```
 Browser / Client
@@ -100,7 +100,7 @@ Apache HTTP Server (reverse proxy)
 
 ## Step 1: Database Setup
 
-Both Turing and Keycloak require their own databases. Create them before starting either service.
+Both Viglet Turing and Keycloak require their own databases. Create them before starting either service.
 
 ```sql
 -- Turing database and user
@@ -189,11 +189,11 @@ After starting Keycloak, open the admin console and perform the following setup:
 
 **Create a Realm**
 
-A realm is an isolated namespace for users, clients, and roles. Create a dedicated realm for Turing (e.g., `turing` or a name matching your organization). All subsequent configuration is done within this realm.
+A realm is an isolated namespace for users, clients, and roles. Create a dedicated realm for Viglet Turing (e.g., `turing` or a name matching your organization). All subsequent configuration is done within this realm.
 
 **Create a Client**
 
-Within the realm, create a new client for Turing:
+Within the realm, create a new client for Viglet Turing:
 
 | Field | Value |
 |---|---|
@@ -210,13 +210,13 @@ After saving, go to the **Credentials** tab and copy the generated **Client Secr
 
 **Configure Scopes**
 
-Ensure the client requests the following scopes: `openid`, `profile`, `roles`. These are needed for Turing to receive the user's identity and role information from the JWT.
+Ensure the client requests the following scopes: `openid`, `profile`, `roles`. These are needed for Viglet Turing to receive the user's identity and role information from the JWT.
 
 ---
 
-## Step 4: SSL Certificate for Turing
+## Step 4: SSL Certificate for Viglet Turing
 
-Turing can terminate HTTPS directly via its embedded Tomcat server. Generate a self-signed certificate (replace with a CA-signed certificate for production):
+Viglet Turing can terminate HTTPS directly via its embedded Tomcat server. Generate a self-signed certificate (replace with a CA-signed certificate for production):
 
 ```bash
 # Generate self-signed certificate and key
@@ -246,7 +246,7 @@ Place `turing.p12` in a secure path on the server (e.g., `/appl/viglet/turing/se
 
 **Import the Apache certificate into the Java truststore**
 
-Turing calls Keycloak over HTTPS to validate tokens. If Keycloak's certificate is self-signed, Turing will fail the SSL handshake unless you import the Apache (or Keycloak) certificate into the Java truststore:
+Viglet Turing calls Keycloak over HTTPS to validate tokens. If Keycloak's certificate is self-signed, Viglet Turing will fail the SSL handshake unless you import the Apache (or Keycloak) certificate into the Java truststore:
 
 ```bash
 keytool -import \
@@ -260,9 +260,9 @@ The default truststore password is `changeit`.
 
 ---
 
-## Step 5: Turing JVM Configuration
+## Step 5: Viglet Turing JVM Configuration
 
-All Turing configuration is passed via JVM system properties at startup. Set `JAVA_OPTS` before launching the JAR:
+All Viglet Turing configuration is passed via JVM system properties at startup. Set `JAVA_OPTS` before launching the JAR:
 
 ```bash
 JAVA_OPTS="\
@@ -311,7 +311,7 @@ java $JAVA_OPTS -jar viglet-turing.jar
 | `server.ssl.key-store-password` | Password for the keystore |
 | `server.ssl.keyStoreType` | Must be `PKCS12` |
 | `server.ssl.keyAlias` | Alias of the certificate entry inside the keystore |
-| `turing.url` | Public base URL of Turing (used for OAuth2 redirect URI construction and post-logout redirect) |
+| `turing.url` | Public base URL of Viglet Turing (used for OAuth2 redirect URI construction and post-logout redirect) |
 
 ---
 
@@ -379,11 +379,11 @@ make && make install
 
 **Key configuration notes:**
 
-`ProxyPreserveHost On`: passes the original `Host` header to the backend. Required for Keycloak and Turing to generate correct redirect URIs.
+`ProxyPreserveHost On`: passes the original `Host` header to the backend. Required for Keycloak and Viglet Turing to generate correct redirect URIs.
 
 `RequestHeader set X-Forwarded-Proto "https"`: tells backend services that the original request was HTTPS, even though the internal connection may be unencrypted (in configurations where backends do not use SSL).
 
-`SSLProxyCheckPeerName off`: disables hostname verification for the backend SSL connections. Required when using self-signed certificates on Keycloak and Turing. In production with CA-signed certificates, this should be set to `on`.
+`SSLProxyCheckPeerName off`: disables hostname verification for the backend SSL connections. Required when using self-signed certificates on Keycloak and Viglet Turing. In production with CA-signed certificates, this should be set to `on`.
 
 `/kc/` routes to Keycloak HTTPS because Keycloak was started with HTTPS. The path prefix matches the `--http-relative-path=/kc` configured in Step 2.
 
@@ -391,7 +391,7 @@ make && make install
 
 ## Logout flow
 
-When Keycloak is enabled, logging out of Turing triggers a full OIDC logout. After the local session is cleared, the user is redirected to Keycloak's logout endpoint:
+When Keycloak is enabled, logging out of Viglet Turing triggers a full OIDC logout. After the local session is cleared, the user is redirected to Keycloak's logout endpoint:
 
 ```
 https://<your-hostname>/kc/realms/<your-realm>/protocol/openid-connect/logout
@@ -399,7 +399,7 @@ https://<your-hostname>/kc/realms/<your-realm>/protocol/openid-connect/logout
   &post_logout_redirect_uri=https://<your-hostname>
 ```
 
-Keycloak invalidates the SSO session and redirects the user back to the Turing root URL.
+Keycloak invalidates the SSO session and redirects the user back to the Viglet Turing root URL.
 
 ---
 
@@ -408,7 +408,7 @@ Keycloak invalidates the SSO session and redirects the user back to the Turing r
 If your organization already runs a Keycloak instance, you do not need to install a dedicated one. Simply:
 
 1. Create a new realm (or use an existing realm, if your organization's policies allow it)
-2. Register Turing as a new client within that realm following the configuration in Step 3
+2. Register Viglet Turing as a new client within that realm following the configuration in Step 3
 3. Configure the JVM properties in Step 5 to point to the existing Keycloak's issuer URI
 
 The `issuer-uri` format is always `https://<keycloak-hostname>/kc/realms/<realm-name>`: adjust the path prefix if your existing Keycloak uses a different one (or no prefix).
@@ -421,7 +421,7 @@ Before going to production, verify the following:
 
 - [ ] Keycloak is only accessible via the Apache reverse proxy (port 8443 is not exposed externally)
 - [ ] Solr is only accessible via the reverse proxy or not exposed externally at all
-- [ ] Turing port (2700) is not exposed externally: all traffic goes through Apache
+- [ ] Viglet Turing port (2700) is not exposed externally: all traffic goes through Apache
 - [ ] All self-signed certificates are replaced with CA-signed certificates (or certificates from an internal PKI)
 - [ ] `SSLProxyCheckPeerName` is set to `on` if using CA-signed backend certificates
 - [ ] Keycloak admin credentials have been changed from defaults
@@ -439,7 +439,7 @@ Before going to production, verify the following:
 | [Authentication](/docs/security-authentication/) | Native session + API Key authentication (default mode) |
 | [REST API Reference](/docs/rest-api/) | API endpoints and authentication examples |
 | [Configuration Reference](/docs/configuration-reference/) | JVM properties and `application.yaml` settings |
-| [Installation Guide](/docs/installation-guide/) | Initial Turing installation and database setup |
+| [Installation Guide](/docs/installation-guide/) | Initial Viglet Turing installation and database setup |
 
 ---
 

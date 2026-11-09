@@ -4,7 +4,7 @@ description: "The Viglet Turing Chat interface is where AI Agents meet customers
 ---
 > *Every conversation is a chance to convert. The Chat interface is where Viglet Turing's reasoning, search, and brand voice meet your customer's question.*
 
-The **Chat** interface is the front door of every AI capability in Turing. It's organized into three modes, each tuned for a different shape of conversation:
+The **Chat** interface is the front door of every AI capability in Viglet Turing. It's organized into three modes, each tuned for a different shape of conversation:
 
 | Mode | When it shines | What grounds the answer |
 |---|---|---|
@@ -154,7 +154,7 @@ Skills are **per-agent**: enable them with the **Skills** toggle in the agent's 
 The agent doesn't load the whole skill up front. It works by **progressive disclosure** plus a delegated sub-loop:
 
 1. The agent's turn (running on the agent's own LLM) sees only each enabled skill's **name + description**, plus a single `run_skill(skill, task)` tool.
-2. When the model decides a skill fits, it calls `run_skill`. Turing spins up a **sub-conversation on the Global Settings Default LLM**, which reads the skill's full instructions (`load_skill`) and drives a `bash` session in the skill's sandbox (`skill_bash`).
+2. When the model decides a skill fits, it calls `run_skill`. Viglet Turing spins up a **sub-conversation on the Global Settings Default LLM**, which reads the skill's full instructions (`load_skill`) and drives a `bash` session in the skill's sandbox (`skill_bash`).
 3. The sub-loop's result text comes back to the agent's turn as the tool result, and the agent weaves it into its reply.
 
 :::note[A skill always runs on the Default LLM]

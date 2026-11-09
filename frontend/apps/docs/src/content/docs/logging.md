@@ -24,7 +24,7 @@ The logging landing page displays three cards, each linking to a dedicated log v
 
 ## Server Logging
 
-Displays general application logs captured from the Turing runtime.
+Displays general application logs captured from the Viglet Turing runtime.
 
 **Filters:**
 
@@ -83,7 +83,7 @@ Tracks every document through the indexing pipeline, from connector receipt to f
 | `PREPARE_UNCHANGED` | Clock | No changes detected since last indexing |
 | `PREPARE_REINDEX` | Refresh | Preparing a reindexation |
 | `PREPARE_FORCED_REINDEX` | Zap | Forced reindexation triggered |
-| `RECEIVED_AND_SENT_TO_TURING` | Send | Document received by the connector and forwarded to Turing |
+| `RECEIVED_AND_SENT_TO_TURING` | Send | Document received by the connector and forwarded to Viglet Turing |
 | `SENT_TO_QUEUE` | Arrow | Document placed in the Artemis processing queue |
 | `RECEIVED_FROM_QUEUE` | Database | Document consumed from the queue by the indexing pipeline |
 | `INDEXED` | Check | Document successfully indexed |

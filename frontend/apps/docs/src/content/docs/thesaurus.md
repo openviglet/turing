@@ -24,15 +24,15 @@ Thesaurus (a library, per tenant)
 - A **Thesaurus** is a reusable library scoped to your tenant. It holds one or more microthesauri.
 - A **Microthesaurus** is a single tree for one **language** + one **domain** (e.g. `EDUCATION`, `MEDICINE`). Locale matters: only microthesauri whose language matches a document's locale participate in that document's indexing.
 - A **Term** is a preferred concept. Its place in the tree is set by its **broader** term (its parent); **narrower** is just the other end of the same link. **Related** terms are associative ("see also") links that are *not* broader/narrower.
-- **Variations** are the surface forms Turing looks for in document text, spelling variants, singular/plural, and non-preferred synonyms. Recognising a variation still expands to the *preferred* term's concept path.
+- **Variations** are the surface forms Viglet Turing looks for in document text, spelling variants, singular/plural, and non-preferred synonyms. Recognising a variation still expands to the *preferred* term's concept path.
 
-The relation vocabulary follows the classic thesaurus standard: **BT** (broader), **NT** (narrower), **RT** (related), **U** (use) and **UF** (used-for). This is exactly what the **Turing Thesaurus Exchange** authority-file format carries, so a thesaurus round-trips through import and export intact.
+The relation vocabulary follows the classic thesaurus standard: **BT** (broader), **NT** (narrower), **RT** (related), **U** (use) and **UF** (used-for). This is exactly what the **Viglet Turing Thesaurus Exchange** authority-file format carries, so a thesaurus round-trips through import and export intact.
 
 ---
 
 ## What it does at index time
 
-When a site has selected one or more microthesauri, Turing adds a step to indexing for every document:
+When a site has selected one or more microthesauri, Viglet Turing adds a step to indexing for every document:
 
 1. **Recognise**: scan the document's title, description and body for any term's surface forms (preferred label, variations, and use/used-for synonyms), matching whole words with configurable case/accent sensitivity.
 2. **Expand**: for each recognised term, collect the labels on the path from the tree **root down to that term**, and *only* that path. A document about "pneumonia" is expanded with `Disease → Respiratory disease → Pneumonia`; it is **not** pulled into unrelated branches like "cancer".
@@ -64,17 +64,17 @@ Variation and relation counts show as small chips on each row, so the shape of t
 
 ### 2. Import from the seed library
 
-Turing ships a ready-made **Education** vocabulary in **Portuguese, English and Italian**. On the Thesaurus page, open **Seed library & import** and click **Import** on a seed to drop a fully-formed tree into your library, a rich starting point the engine alone can't produce. Seeds are *not* loaded automatically; you choose what to import.
+Viglet Turing ships a ready-made **Education** vocabulary in **Portuguese, English and Italian**. On the Thesaurus page, open **Seed library & import** and click **Import** on a seed to drop a fully-formed tree into your library, a rich starting point the engine alone can't produce. Seeds are *not* loaded automatically; you choose what to import.
 
 ### 3. Upload an authority file
 
-Already have a controlled vocabulary? Click **Upload XML** and select a **Turing Thesaurus Exchange authority file** (`.xml`). Turing maps `BT`/`NT` onto the hierarchy, `RT`/`U`/`UF` onto relations, and `variations` onto recognition surface forms. Reciprocal pairs and duplicate edges are de-duplicated, and the source term ids are preserved for round-tripping.
+Already have a controlled vocabulary? Click **Upload XML** and select a **Viglet Turing Thesaurus Exchange authority file** (`.xml`). Viglet Turing maps `BT`/`NT` onto the hierarchy, `RT`/`U`/`UF` onto relations, and `variations` onto recognition surface forms. Reciprocal pairs and duplicate edges are de-duplicated, and the source term ids are preserved for round-tripping.
 
 ### 4. Generate with AI
 
 Don't have a vocabulary yet? Let the default LLM draft one. In the **Generate with AI** section, enter a **domain**, a **language**, and optional free-text **guidance** (e.g. *"focus on higher education and distance learning"*), then click **Generate draft**.
 
-- Turing returns a **draft tree** rendered as an indented preview with related-term chips.
+- Viglet Turing returns a **draft tree** rendered as an indented preview with related-term chips.
 - **Nothing is saved automatically.** Review the draft, then click **Create microthesaurus** to persist it, or **Discard** and try a different prompt.
 - On accept, the draft is materialised through the same authority-file import path, so its hierarchy, relations and variations land exactly as a hand-built or imported tree would.
 
@@ -100,7 +100,7 @@ Re-index (or index new content) after enabling, so documents pick up the expansi
 
 ## Related-concept suggestions
 
-Beyond enriching the index, a thesaurus can power a **"related concepts"** surface at query time: the associative sibling of spell-check's "did you mean". When a query mentions a controlled-vocabulary term, Turing can suggest the terms **related** to it (via `RT` links), so a search UI can offer *"you may also be interested in…"* chips.
+Beyond enriching the index, a thesaurus can power a **"related concepts"** surface at query time: the associative sibling of spell-check's "did you mean". When a query mentions a controlled-vocabulary term, Viglet Turing can suggest the terms **related** to it (via `RT` links), so a search UI can offer *"you may also be interested in…"* chips.
 
 - **REST:** `GET /api/sn/{site}/{locale}/related-terms?q=…` returns, for each recognised term, its label and its related labels. It's read-only, never throws, and returns nothing for a site that hasn't opted in or a query that mentions no thesaurus term. Like search and spell-check it needs no login, so a browser can call it directly; a site in `API_KEY` mode needs its key, as for search.
 - **SDK:** both JavaScript SDKs wrap it. In React, [`useTuringRelatedTerms`](/docs/react-sdk/) mirrors `useTuringSpellCheck`, auto-lookup on the query, plus a `relatedLabels` convenience list:
@@ -126,7 +126,7 @@ The thesaurus library is managed under `/api/kb`; per-site selection lives under
 | `GET/PUT/DELETE /api/kb/{kbId}` | Show / update / delete a thesaurus |
 | `GET/POST /api/kb/{kbId}/microthesaurus` | List / create microthesauri in a thesaurus |
 | `PUT/DELETE /api/kb/{kbId}/microthesaurus/{id}` | Update / delete a microthesaurus |
-| `POST /api/kb/{kbId}/microthesaurus/import` | Import a Turing Thesaurus Exchange authority file (XML) |
+| `POST /api/kb/{kbId}/microthesaurus/import` | Import a Viglet Turing Thesaurus Exchange authority file (XML) |
 | `POST /api/kb/{kbId}/microthesaurus/generate` | Draft a hierarchy with the LLM (returns a draft, never persisted) |
 | `POST /api/kb/{kbId}/microthesaurus/from-draft` | Persist a reviewed generated draft |
 | `GET/POST/PUT/DELETE …/microthesaurus/{id}/term…` | Manage terms, variations and relations |

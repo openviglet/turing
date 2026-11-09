@@ -31,7 +31,7 @@ The embedding store and embedding model must be consistent across indexing and q
 
 An **LLM Instance** is a named, configured connection to an LLM provider. Multiple instances can coexist: different AI Agents, SN Sites, and the Chat interface can each use a different instance independently.
 
-Turing ships **11 vendor types**: OLLAMA, OPENAI, ANTHROPIC, GEMINI, GEMINI_OPENAI, OPENAI_COMPAT (any OpenAI-compatible endpoint), BEDROCK, VOYAGE, COHERE, MISTRAL, and VERTEX_AI.
+Viglet Turing ships **11 vendor types**: OLLAMA, OPENAI, ANTHROPIC, GEMINI, GEMINI_OPENAI, OPENAI_COMPAT (any OpenAI-compatible endpoint), BEDROCK, VOYAGE, COHERE, MISTRAL, and VERTEX_AI.
 
 | Vendor | Default Model | Embedding | Tool Calling |
 |---|---|:---:|:---:|
@@ -55,7 +55,7 @@ For the full UI reference (form sections, per-vendor authentication, provider op
 
 ## Embedding Stores & Models
 
-Turing delegates vector storage to one of three backends (ChromaDB, PgVector, Milvus) and uses an embedding model to generate and query vectors. The choice of backend and model affects both storage cost and similarity quality.
+Viglet Turing delegates vector storage to one of three backends (ChromaDB, PgVector, Milvus) and uses an embedding model to generate and query vectors. The choice of backend and model affects both storage cost and similarity quality.
 
 See [Embedding Stores](/docs/embedding-stores/) for backend comparison and [Embedding Models](/docs/embedding-models/) for provider support, model selection guidance, and configuration details.
 
@@ -63,13 +63,13 @@ See [Embedding Stores](/docs/embedding-stores/) for backend comparison and [Embe
 
 ## RAG Architecture
 
-Retrieval-Augmented Generation (RAG) grounds LLM responses in indexed content. Rather than relying on training data alone, Turing retrieves the most semantically relevant documents and injects them into the prompt before generation.
+Retrieval-Augmented Generation (RAG) grounds LLM responses in indexed content. Rather than relying on training data alone, Viglet Turing retrieves the most semantically relevant documents and injects them into the prompt before generation.
 
-Turing supports two RAG sources:
+Viglet Turing supports two RAG sources:
 
 ![RAG, Retrieval-Augmented Generation Flow](/docs/img/diagrams/turing-rag-flow.svg)
 
-By default, Turing retrieves the **top 10** most similar chunks with a similarity **threshold of 0.7**. Documents below the threshold are excluded from the context.
+By default, Viglet Turing retrieves the **top 10** most similar chunks with a similarity **threshold of 0.7**. Documents below the threshold are excluded from the context.
 
 ### Knowledge Base (Assets)
 
@@ -89,7 +89,7 @@ Documents indexed before GenAI was enabled do not have embeddings. A full re-ind
 
 ## Tool Calling
 
-Turing includes **27 native tools** across 7 categories that AI Agents can invoke autonomously: Semantic Navigation (15), RAG / Knowledge Base (4), Web Crawler (2), Finance (2), Weather (1), Image Search (1), DateTime (1), and Code Interpreter (1).
+Viglet Turing includes **27 native tools** across 7 categories that AI Agents can invoke autonomously: Semantic Navigation (15), RAG / Knowledge Base (4), Web Crawler (2), Finance (2), Weather (1), Image Search (1), DateTime (1), and Code Interpreter (1).
 
 See [Tool Calling](/docs/tool-calling/) for the full tool reference.
 
@@ -97,7 +97,7 @@ See [Tool Calling](/docs/tool-calling/) for the full tool reference.
 
 ## Gemini native primitives (F.16)
 
-Turing has **two** ways to reach Google Gemini, and the difference matters:
+Viglet Turing has **two** ways to reach Google Gemini, and the difference matters:
 
 | Vendor | Path | What you get |
 |---|---|---|
@@ -108,7 +108,7 @@ The native `gemini` branch engages **only when the instance's [capability matrix
 
 ### Server-side built-in tools
 
-These run **in Google's infrastructure**, not via a Turing crawler or sandbox. Each is a capability you select per agent (see the [Capabilities](/docs/capabilities/) TOOL matrix):
+These run **in Google's infrastructure**, not via a Viglet Turing crawler or sandbox. Each is a capability you select per agent (see the [Capabilities](/docs/capabilities/) TOOL matrix):
 
 | Primitive | What it does |
 |---|---|

@@ -82,7 +82,7 @@ Vibe Coding is especially powerful here because intents are usually authored *en
 
 ## Pre-loaded Intents
 
-Turing ships with four default intents:
+Viglet Turing ships with four default intents:
 
 | Intent | Icon | Actions |
 |---|---|---|

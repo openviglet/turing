@@ -4,7 +4,7 @@ description: "Regression-test your AI agents like code. Capture golden conversat
 ---
 > *You tweak a system prompt to fix one annoying behavior, and three conversations that used to work perfectly now fall apart. Without a safety net you find out from an angry customer. **Agent Evaluation** is that safety net: a golden set of conversations that must keep passing, checked automatically before a change ships.*
 
-Agent Evaluation brings **regression testing** to AI agents. You record a set of representative conversations (each with the slots it should collect and the outcome it should reach) and Turing replays them through the *real* chat engine whenever you ask, or as a gate before a flow can be published. If a change breaks one, you know immediately.
+Agent Evaluation brings **regression testing** to AI agents. You record a set of representative conversations (each with the slots it should collect and the outcome it should reach) and Viglet Turing replays them through the *real* chat engine whenever you ask, or as a gate before a flow can be published. If a change breaks one, you know immediately.
 
 It's the same instinct as unit tests for code, adapted to the non-determinism of LLMs: a deterministic diff catches structural breaks, and a bilingual LLM judge catches the fuzzy ones.
 
