@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,10 +158,12 @@ public class TurSNSiteSearchRuleAPI {
         target.setPosition(Optional.ofNullable(payload.getPosition()).orElse(0));
         target.setEnabled(Boolean.TRUE.equals(payload.getEnabled()) ? 1 : 0);
 
-        Set<TurSNSiteSearchRuleCondition> conditions = Optional.ofNullable(payload.getConditions())
-                .orElse(List.of())
-                .stream()
-                .map(this::toConditionEntity)
+        // The array order is what the console shows, so it is the source of truth
+        // for position; any position sent back by the client is ignored.
+        List<TurSNSiteSearchRuleConditionDto> conditionDtos = Optional.ofNullable(payload.getConditions())
+                .orElse(List.of());
+        Set<TurSNSiteSearchRuleCondition> conditions = IntStream.range(0, conditionDtos.size())
+                .mapToObj(index -> toConditionEntity(conditionDtos.get(index), index))
                 .collect(Collectors.toCollection(HashSet::new));
         target.setConditions(conditions);
 
@@ -172,7 +175,7 @@ public class TurSNSiteSearchRuleAPI {
         target.setActions(actions);
     }
 
-    private TurSNSiteSearchRuleCondition toConditionEntity(TurSNSiteSearchRuleConditionDto dto) {
+    private TurSNSiteSearchRuleCondition toConditionEntity(TurSNSiteSearchRuleConditionDto dto, int position) {
         TurSNSiteSearchRuleCondition condition = TurSNSiteSearchRuleCondition.builder().build();
         condition.setId(dto.getId());
         condition.setParameter(dto.getParameter());
@@ -181,6 +184,7 @@ public class TurSNSiteSearchRuleAPI {
         condition.setValue(dto.getValue());
         condition.setLogicOperator(Optional.ofNullable(dto.getLogicOperator())
                 .orElse(TurSNSiteSearchRuleLogicOperatorEnum.AND));
+        condition.setPosition(position);
         return condition;
     }
 
@@ -196,6 +200,7 @@ public class TurSNSiteSearchRuleAPI {
         List<TurSNSiteSearchRuleConditionDto> conditions = Optional.ofNullable(searchRule.getConditions())
                 .orElse(Set.of())
                 .stream()
+                .sorted(TurSNSiteSearchRuleCondition.POSITION_ORDER)
                 .map(condition -> {
                     TurSNSiteSearchRuleConditionDto dto = new TurSNSiteSearchRuleConditionDto();
                     dto.setId(condition.getId());
@@ -204,6 +209,7 @@ public class TurSNSiteSearchRuleAPI {
                     dto.setFieldName(condition.getFieldName());
                     dto.setValue(condition.getValue());
                     dto.setLogicOperator(condition.getLogicOperator());
+                    dto.setPosition(condition.getPosition());
                     return dto;
                 })
                 .toList();
@@ -246,6 +252,7 @@ public class TurSNSiteSearchRuleAPI {
         private String fieldName;
         private String value;
         private TurSNSiteSearchRuleLogicOperatorEnum logicOperator;
+        private Integer position;
     }
 
     @Setter

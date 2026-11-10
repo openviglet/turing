@@ -34,7 +34,8 @@ import com.viglet.turing.persistence.repository.sn.searchrule.TurSNSiteSearchRul
  * all match is applied (first-match semantics).
  * <p>
  * Conditions are grouped by parameter type. Within each group, conditions
- * are combined using the logicOperator (AND/OR). Between groups, AND is used.
+ * are combined left to right, in saved position order, using the
+ * logicOperator (AND/OR). Between groups, AND is used.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.4
@@ -72,8 +73,13 @@ public class TurSNSearchRuleEvaluator {
 
     private Map<TurSNSiteSearchRuleParameterEnum, List<TurSNSiteSearchRuleCondition>> groupByParameter(
             Set<TurSNSiteSearchRuleCondition> conditions) {
+        // The Set has no order of its own; mixing AND and OR in a group is only
+        // deterministic when every group is folded in the saved order.
+        List<TurSNSiteSearchRuleCondition> ordered = conditions.stream()
+                .sorted(TurSNSiteSearchRuleCondition.POSITION_ORDER)
+                .toList();
         Map<TurSNSiteSearchRuleParameterEnum, List<TurSNSiteSearchRuleCondition>> groups = new LinkedHashMap<>();
-        for (TurSNSiteSearchRuleCondition condition : conditions) {
+        for (TurSNSiteSearchRuleCondition condition : ordered) {
             groups.computeIfAbsent(condition.getParameter(), k -> new ArrayList<>()).add(condition);
         }
         return groups;

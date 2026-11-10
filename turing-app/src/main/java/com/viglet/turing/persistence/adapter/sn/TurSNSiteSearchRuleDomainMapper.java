@@ -17,6 +17,7 @@
 package com.viglet.turing.persistence.adapter.sn;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,11 +54,17 @@ public interface TurSNSiteSearchRuleDomainMapper {
 
     TurSNSiteSearchRuleActionDomain toActionDomain(TurSNSiteSearchRuleAction entity);
 
+    /** Iterates in the order the conditions are combined (see {@code POSITION_ORDER}). */
     default Set<TurSNSiteSearchRuleConditionDomain> conditionsToDomain(
             Set<TurSNSiteSearchRuleCondition> set) {
-        return set == null ? Set.of()
-                : Collections.unmodifiableSet(
-                        set.stream().map(this::toConditionDomain).collect(Collectors.toSet()));
+        if (set == null) {
+            return Set.of();
+        }
+        Set<TurSNSiteSearchRuleConditionDomain> ordered = set.stream()
+                .sorted(TurSNSiteSearchRuleCondition.POSITION_ORDER)
+                .map(this::toConditionDomain)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(ordered);
     }
 
     default Set<TurSNSiteSearchRuleActionDomain> actionsToDomain(

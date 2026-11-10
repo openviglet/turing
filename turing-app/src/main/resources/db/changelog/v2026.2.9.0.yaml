@@ -1,0 +1,31 @@
+databaseChangeLog:
+  # position column on sn_site_search_rule_condition. Conditions of a group are
+  # folded left to right with their AND/OR logic operator, so when a group mixes
+  # both the order changes the result. The collection is a Set and had no order
+  # column, so the order shown in the console was lost and each load of the rule
+  # could evaluate differently.
+  #
+  # Nullable on purpose: rules saved before this column keep NULL and are
+  # evaluated in a stable order by id. The ids are UUIDs, so that order is fixed
+  # but arbitrary; the console shows the same order, and saving the rule again
+  # writes the position of every condition.
+
+  - changeSet:
+      id: v2026.2.9.0-add-search-rule-condition-position
+      author: arthur-nascimento
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_search_rule_condition
+        - not:
+            - columnExists:
+                tableName: sn_site_search_rule_condition
+                columnName: position
+      changes:
+        - addColumn:
+            tableName: sn_site_search_rule_condition
+            columns:
+              - column:
+                  name: position
+                  type: INT
+                  remarks: "Zero-based order of the condition inside its rule. NULL = saved before ordering existed."

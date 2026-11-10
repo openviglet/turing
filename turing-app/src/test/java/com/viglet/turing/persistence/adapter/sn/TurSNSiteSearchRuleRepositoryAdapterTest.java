@@ -94,6 +94,31 @@ class TurSNSiteSearchRuleRepositoryAdapterTest {
                 argThat(s -> "site-1".equals(s.getId())), eq("r-1"));
     }
 
+    @Test
+    void findByIdProjectsConditionsInPositionOrder() {
+        TurSNSiteSearchRuleCondition third = buildCondition("c-1");
+        third.setPosition(2);
+        TurSNSiteSearchRuleCondition unpositioned = buildCondition("c-2");
+        TurSNSiteSearchRuleCondition first = buildCondition("c-3");
+        first.setPosition(0);
+        TurSNSiteSearchRuleCondition second = buildCondition("c-4");
+        second.setPosition(1);
+        TurSNSiteSearchRule entity = TurSNSiteSearchRule.builder()
+                .id("r-1")
+                .name("rule-1")
+                .turSNSite(stub("site-1"))
+                .conditions(new java.util.LinkedHashSet<>(List.of(third, unpositioned, first, second)))
+                .build();
+        when(turSNSiteSearchRuleRepository.findById("r-1")).thenReturn(Optional.of(entity));
+
+        TurSNSiteSearchRuleDomain domain = adapter.findById("r-1").orElseThrow();
+
+        assertThat(domain.conditions()).extracting(TurSNSiteSearchRuleConditionDomain::id)
+                .containsExactly("c-3", "c-4", "c-1", "c-2");
+        assertThat(domain.conditions()).extracting(TurSNSiteSearchRuleConditionDomain::position)
+                .containsExactly(0, 1, 2, null);
+    }
+
     private static TurSNSiteSearchRuleCondition buildCondition(String id) {
         return TurSNSiteSearchRuleCondition.builder()
                 .id(id)

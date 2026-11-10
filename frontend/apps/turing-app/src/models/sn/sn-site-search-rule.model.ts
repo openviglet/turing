@@ -10,6 +10,8 @@ export interface TurSNSiteSearchRuleCondition {
   fieldName?: string;
   value?: string;
   logicOperator: TurSNSiteSearchRuleLogicOperator;
+  /** Read-only: the server assigns it from the array order on save. */
+  position?: number;
 }
 
 export interface TurSNSiteSearchRuleAction {

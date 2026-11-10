@@ -25,6 +25,9 @@ import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRulePara
  * condition AND-ed (or, where the logic operator overrides, OR-ed) with the
  * other conditions to decide whether the rule's actions fire.
  *
+ * <p>{@code position} is the order the conditions are combined in (null on
+ * rules saved before it existed); the parent holds them in an unordered set.
+ *
  * @author Alexandre Oliveira
  * @since 2026.2.6
  */
@@ -34,5 +37,6 @@ public record TurSNSiteSearchRuleConditionDomain(
         TurSNSiteSearchRuleOperatorEnum operator,
         String fieldName,
         String value,
-        TurSNSiteSearchRuleLogicOperatorEnum logicOperator) {
+        TurSNSiteSearchRuleLogicOperatorEnum logicOperator,
+        Integer position) {
 }
