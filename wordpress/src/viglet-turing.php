@@ -36,6 +36,7 @@ require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-indexer.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-pdf.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-search.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-native-search.php';
+require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-kses.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-search-block.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-queue.php';
 require_once VIGLET_TURING_DIR . 'includes/class-viglet-turing-operations.php';
@@ -245,6 +246,8 @@ add_action( 'plugins_loaded', array( 'Viglet_Turing_Upgrade', 'maybe_run' ), 1 )
 add_action( 'update_option_' . VIGLET_TURING_OPTION, array( 'Viglet_Turing_Entities', 'on_settings_saved' ), 10, 2 );
 add_action( 'add_option_' . VIGLET_TURING_OPTION, static fn ( $option, $value ) => Viglet_Turing_Entities::on_settings_saved( array(), $value ), 10, 2 );
 add_filter( 'wp_robots', array( 'Viglet_Turing_Native_Search', 'robots' ) );
+// The block editor's preview asks the block renderer with context=edit (is_editor_preview()).
+add_filter( 'rest_request_before_callbacks', array( 'Viglet_Turing_Native_Search', 'note_rest_context' ), 10, 3 );
 // A result's picture by its post's id, for an index built by another WordPress (D239).
 add_action( 'template_redirect', array( 'Viglet_Turing_Native_Search', 'redirect_image' ), 0 );
 // The WP Consent API's handshake: this plugin asks for statistics consent before reporting.

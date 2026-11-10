@@ -205,10 +205,9 @@ $viglet_turing_classes = implode(
 >
 	<?php if ( $viglet_turing_parts ) : ?>
 		<?php
-		// The inner blocks (the parts, and any block a theme puts between them), each already
-		// rendered and escaped by its own render callback, as WordPress hands $content to every
-		// block that wraps others.
-		echo $viglet_turing_inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inner blocks, escaped by their own render callbacks; chips_to() only rewrites hrefs through the HTML API.
+		// The inner blocks (the parts, and any block a theme puts between them), escaped late
+		// with the allowlist that keeps the parts' form controls, templates and directives.
+		echo wp_kses( $viglet_turing_inner, Viglet_Turing_Kses::block_html() );
 		?>
 	<?php else : ?>
 		<?php

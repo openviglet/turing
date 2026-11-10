@@ -70,9 +70,8 @@ class Viglet_Turing_Assistant {
 		if ( ! $this->wanted() ) {
 			return;
 		}
-		// The block's render.php (blocks/assistant/render.php) escapes every value as it prints
-		// it; kses over the result would strip its dialog, its form and its data-wp-on-- directives.
-		echo render_block( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the block's render.php escapes every value.
+		// Escaped late, with the allowlist that keeps the block's dialog, form and directives.
+		$html = render_block(
 			array(
 				'blockName'    => self::BLOCK,
 				'attrs'        => array( 'floating' => true ),
@@ -81,6 +80,7 @@ class Viglet_Turing_Assistant {
 				'innerContent' => array(),
 			)
 		);
+		echo wp_kses( $html, Viglet_Turing_Kses::block_html() );
 	}
 
 	/**

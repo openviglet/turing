@@ -627,8 +627,31 @@ class Viglet_Turing_Native_Search {
 	 * asks the block renderer endpoint with `context=edit`), where its script does not run.
 	 */
 	public static function is_editor_preview(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a read-only look at the request.
-		return defined( 'REST_REQUEST' ) && REST_REQUEST && 'edit' === sanitize_key( wp_unslash( $_GET['context'] ?? '' ) );
+		return self::$rest_context_edit;
+	}
+
+	/**
+	 * Whether the REST request being served asked for `context=edit` (note_rest_context()).
+	 *
+	 * @var bool
+	 */
+	private static bool $rest_context_edit = false;
+
+	/**
+	 * Note the context of the REST request about to run its callback
+	 * (`rest_request_before_callbacks`), so is_editor_preview() reads it from the
+	 * WP_REST_Request WordPress validated rather than from the query string.
+	 *
+	 * @param mixed           $response The response so far, passed through unchanged.
+	 * @param array           $handler  The route's handler.
+	 * @param WP_REST_Request $request  The request.
+	 * @return mixed
+	 */
+	public static function note_rest_context( $response, $handler, $request ) {
+		unset( $handler );
+		self::$rest_context_edit = 'edit' === $request->get_param( 'context' );
+
+		return $response;
 	}
 
 	/** How many values a facet shows before "Show more", as search-block.js's facetValuesShown. */

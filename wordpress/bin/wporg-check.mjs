@@ -37,13 +37,33 @@ const phpFiles = ( dir ) =>
 		return name.endsWith( '.php' ) ? [ path ] : [];
 	} );
 
-// Output printed unescaped on purpose, each with the reason a reviewer gets. A new one fails here
-// until it is escaped, or added with its reason and said in the reply to the review.
-const unescapedAllowed = {
-	// A block that wraps others prints $content, rendered and escaped by its inner blocks.
+// Output printed unescaped on purpose. Empty since the review of 10 Nov 2026, which flagged
+// both silencers this map once allowed (the search block's $content, the assistant's
+// render_block()): a reason in a comment does not satisfy the reviewers, escaping late does.
+// Block HTML goes through wp_kses( $html, Viglet_Turing_Kses::block_html() ).
+const unescapedAllowed = {};
+// An echo of a bare variable, or of a call that is not an escaper: what the reviewers'
+// heuristic flags, silencer or not.
+const escapers =
+	/^(?:esc_[a-z_]+|wp_kses(?:_post|_data)?|absint|intval|wp_json_encode|wp_nonce_field|get_submit_button)$/;
+// Request input read straight from a superglobal, per file: each is one the reviewers ask a
+// nonce for. The ones below are public, read-only search parameters (q, s, sort, fq, pg,
+// scope, the compare ids, the image id) that a nonce would break on shareable and cached
+// URLs, and the reply to the review says so. A new read fails here until it is justified;
+// $_POST and $_REQUEST are never read (writes go through REST routes or the Settings API).
+const getReadsAllowed = {
+	'src/blocks/compare/render.php': 1,
 	'src/blocks/search/render.php': 1,
-	// The assistant block's own render.php escapes it; kses would strip its dialog and directives.
-	'src/includes/class-viglet-turing-assistant.php': 1,
+	'src/includes/class-viglet-turing-native-search.php': 5,
+	'src/includes/class-viglet-turing-search-block.php': 3,
+	'src/includes/class-viglet-turing-search.php': 3,
+};
+// REST routes open to anyone (`__return_true`), by file: each is a visitor's read, and the
+// reply to the review names it. A new public route fails here until it is justified.
+const publicRoutesAllowed = {
+	// public-config (the search block's settings), compare/summary (published products
+	// only, cached by Turing), ai-paused (a throttled probe of Turing's AI budget).
+	'src/viglet-turing.php': 3,
 };
 // Where load_plugin_textdomain() may stand: the loader the WordPress.org package leaves out.
 const textdomainAllowed = new Set( [
@@ -55,12 +75,42 @@ const noticesAllowed = new Set( [
 ] );
 
 const unescaped = {};
+const getReads = {};
+const publicRoutes = {};
 for ( const file of phpFiles( src ) ) {
 	const name = relative( root, file ).replace( /\\/g, '/' );
 	readFileSync( file, 'utf8' )
 		.split( '\n' )
 		.forEach( ( text, n ) => {
 			const line = n + 1;
+			const code = text.replace( /\/\/.*$/, '' );
+			const echoed = code.match(
+				/\becho\s+(\$[\w[\]'"-]+\s*;|([a-z_]\w*)\s*\()/i
+			);
+			if (
+				echoed &&
+				( ! echoed[ 2 ] || ! escapers.test( echoed[ 2 ] ) )
+			) {
+				find(
+					file,
+					line,
+					'echo of an unescaped value: escape it as it is printed (esc_html, esc_attr, esc_url, wp_kses)'
+				);
+			}
+			if ( /\$_(?:POST|REQUEST)\b/.test( code ) ) {
+				find(
+					file,
+					line,
+					'$_POST/$_REQUEST read: take the input through a REST route with a permission_callback, or the Settings API'
+				);
+			}
+			const reads = code.match( /\$_GET\b/g )?.length ?? 0;
+			if ( reads ) {
+				getReads[ name ] = ( getReads[ name ] ?? 0 ) + 1;
+			}
+			if ( /'permission_callback'\s*=>\s*'__return_true'/.test( code ) ) {
+				publicRoutes[ name ] = ( publicRoutes[ name ] ?? 0 ) + 1;
+			}
 			const silencer = text.match(
 				/phpcs:(?:ignore|disable)\b[^\n]*WordPress\.Security\.[\w.]+/
 			);
@@ -108,6 +158,28 @@ for ( const [ name, count ] of Object.entries( unescaped ) ) {
 			`${ count } unescaped output silencer(s), ${
 				unescapedAllowed[ name ] ?? 0
 			} allowed: escape the output (esc_html, esc_attr, esc_url, wp_kses_post)`
+		);
+	}
+}
+for ( const [ name, count ] of Object.entries( getReads ) ) {
+	if ( count > ( getReadsAllowed[ name ] ?? 0 ) ) {
+		find(
+			join( root, name ),
+			0,
+			`${ count } line(s) reading $_GET, ${
+				getReadsAllowed[ name ] ?? 0
+			} allowed: a state change needs a nonce and a capability check; a public read goes in getReadsAllowed with its reason, and in the reply to the review`
+		);
+	}
+}
+for ( const [ name, count ] of Object.entries( publicRoutes ) ) {
+	if ( count > ( publicRoutesAllowed[ name ] ?? 0 ) ) {
+		find(
+			join( root, name ),
+			0,
+			`${ count } public REST route(s), ${
+				publicRoutesAllowed[ name ] ?? 0
+			} allowed: give it a permission_callback with current_user_can(), or justify it in publicRoutesAllowed`
 		);
 	}
 }
