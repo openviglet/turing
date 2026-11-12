@@ -36,7 +36,7 @@ const PROPER_NOUNS = new Set([
   "Apache", "Tika", "Snowball", "Jlama", "ONNX", "Atlas", "Store", "Persona", "Book", "Thesaurus",
   "Groq", "DeepSeek", "Perplexity", "xAI", "Grok", "Voyage", "Jina", "Tavily", "Slack", "Teams",
   "Studio", "Code", "VS", "I", "Kotlin", "Swagger", "OpenAPI", "Redis", "Artemis", "Cloud", "SaaS",
-  "Social", "Login", "Facebook", "Apple", "Matryoshka",
+  "Social", "Login", "Facebook", "Apple", "Matryoshka", "Match", "Dialogue",
 ]);
 
 /**
@@ -118,7 +118,6 @@ const BASELINE = {
   "migration.md": ["frontmatter-description", "heading-sentence-case"],
   "multi-tenancy.md": ["frontmatter-description", "heading-sentence-case"],
   "observability.md": ["frontmatter-description", "heading-sentence-case"],
-  "persona-book.md": ["fence-language", "frontmatter-description", "heading-levels", "heading-sentence-case"],
   "personas.md": ["frontmatter-description", "heading-sentence-case", "internal-ids", "release-relative"],
   "rag.md": ["fence-language", "heading-sentence-case"],
   "react-sdk.md": ["heading-sentence-case"],

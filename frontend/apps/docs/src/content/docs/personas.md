@@ -482,11 +482,13 @@ Without a Persona, an Agent still works, but its voice is the LLM's default voic
 | `POST` | `/api/persona` | Create a persona |
 | `PUT` | `/api/persona/{id}` | Update a persona |
 | `DELETE` | `/api/persona/{id}` | Delete a persona |
+| `POST` | `/api/persona/chat` | The **Help me write** assistant: drafts persona fields from a conversation |
+| `POST` | `/api/persona/suggest` | Rank the active audience personas by fit to a piece of content |
 | `GET`/`POST`/`DELETE` | `/api/persona/{id}/source` | Manage the evaluation notebook (`/upload` multipart, `/{id}/extract` to re-extract) |
 | `POST` | `/api/persona/{id}/content-fit` | Run the audience-fit report (`?sourceId` for one source, else the whole notebook) |
 | `GET` | `/api/sn/{site}/personas` | The audience personas a site's anonymous content-fit accepts (`id`, `name`, `description`, ordered by name), for a client's persona picker. Same site API-key rules as content-fit; an empty list when the site has no agent. SDK: `fetchSitePersonas` |
 | `POST` | `/api/sn/{site}/persona/{id}/content-fit` | Anonymous content-fit as one of those personas (read-only; 12,000-character limit). SDK: `fetchPersonaContentFit` |
-| `POST` | `/api/persona/derive-from-audio` | Draft a `BOTH` persona from an audio recording (multipart; never auto-saved) |
+| `POST` | `/api/persona/derive-from-audio` | Draft a `BOTH` persona from an audio recording (multipart; never auto-saved). `POST .../jobs` runs it in the background, with status at `GET .../jobs/{jobId}` and progress over SSE at `.../jobs/{jobId}/stream` |
 | `POST` | `/api/v2/persona/{id}/chat` | Talk directly to a persona (SSE; JSON or multipart) |
 | `GET`/`POST`/`PUT`/`DELETE` | `/api/persona-match` | Persona Match **projects**: CRUD, `PUT .../{id}/personas`, contents (`POST .../{id}/sources`, `/sources/upload`, `/sources/{sourceId}/extract`), `GET .../{id}/matrix` and `.../report`, and the run: `POST .../{id}/run` or `.../run/stream` (SSE, live heatmap fill) |
 | `GET` | `/api/persona-match/{id}/trend` | Per-cell fit history across runs + the run-average series |
