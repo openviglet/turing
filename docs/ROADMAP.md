@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1278** (deps: —) **COVERAGE.md links vectorless-structured-rag#teaching-turing-…, but the heading slug is teaching-viglet-turing-…** — The Block CA row points at an anchor that no longer exists, and check-links never reads COVERAGE.md, so only the docs-sync report sees it. → §CLXXXIV.1
 - 📋 **T1279** (deps: —) **persona-book.md is 10.7k words grown by increments, with no single Diátaxis type a reader can follow** — The largest docs page; a reader cannot tell the tutorial from the reference, and it owes docs-style debt that only a rewrite pays. → §CLXXXIV.2
 - 📋 **T1280** (deps: —) **integrations/wordpress/index.md is 9.8k words: install tutorial, admin how-tos and WP-CLI reference on one page** — A WordPress admin looking for one setting reads the whole plugin history; the page needs splitting by Diátaxis type. → §CLXXXIV.2
 - 📋 **T1281** (deps: —) **semantic-navigation.md is 8.5k words with repeated headings ("What they are", "REST API") and Title Case throughout** — The core SN page is the one most readers land on, and its duplicate anchors make links to a section ambiguous. → §CLXXXIV.2

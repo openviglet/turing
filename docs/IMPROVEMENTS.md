@@ -2477,19 +2477,6 @@ into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
 
-### CLXXXIV.1 A COVERAGE.md anchor drifted from its heading (T1278)
-
-The docs-sync report (.claude/skills/turing-docs-sync/docs-sync-report.mjs) resolves
-every ./src/content/docs/<page>#anchor link in COVERAGE.md against the page's headings
-and its explicit <a id> anchors. One fails: the Block CA row links
-vectorless-structured-rag.md#teaching-turing-your-catalogs-own-ranking-words, but the
-heading reads "Teaching Viglet Turing your catalog's own ranking words", so its slug
-starts teaching-viglet-turing. The product-name pass renamed the heading and nothing
-re-read the matrix, because scripts/check-links.mjs reads only the built HTML and
-COVERAGE.md is not a page. Fix the row's anchor, or add an <a id> to the page if other
-links still use the old slug. Then re-run the report until its COVERAGE section reads
-zero.
-
 ### CLXXXIV.2 Rewrite the five largest docs pages (T1279)
 
 The five largest pages under frontend/apps/docs/src/content/docs grew one shipped
