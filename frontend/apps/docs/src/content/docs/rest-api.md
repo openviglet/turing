@@ -2,7 +2,8 @@
 title: "REST API Reference"
 description: "REST API endpoints for Semantic Navigation search, autocomplete, spell check, and more."
 ---
-Viglet Turing exposes a REST API for integrating search and AI capabilities into any application. All endpoints use **JSON**. Public endpoints (search, chat, autocomplete) require no authentication. Administrative endpoints require a `Key` header.
+This page is the reference for developers who call Viglet Turing over HTTP: every endpoint
+group, its parameters and its response, with an example for each. All endpoints use **JSON**. Public endpoints (search, chat, autocomplete) require no authentication. Administrative endpoints require a `Key` header.
 
 For authentication details, see [Authentication](/docs/security-authentication/). For the interactive API explorer, visit `http://localhost:2700/swagger-ui.html`.
 
@@ -12,7 +13,7 @@ For authentication details, see [Authentication](/docs/security-authentication/)
 
 Protected endpoints require an **API Token** in the `Key` request header:
 
-```
+```text
 Key: <YOUR_API_TOKEN>
 ```
 
@@ -45,7 +46,7 @@ The server then confines that key, whatever the request asks for:
 | `GET /api/sn/{site}/ac`, `POST /ac/query` | Suggestions are the site's terms that occur in the partition's documents, never another partition's |
 | `GET /api/sn/{site}/{locale}/spell-check` | No correction: the dictionary is built from the whole site |
 | `GET /api/sn/{site}/{locale}/related-terms` | As for any key: the thesaurus is site configuration |
-| `GET /api/sn/{siteId}/metrics/failed-searches`, `/content-gaps`, `/clicks` | Read from the partition's searches and clicks only. The search and click logs record the partition from this release on, so earlier searches are not counted |
+| `GET /api/sn/{siteId}/metrics/failed-searches`, `/content-gaps`, `/clicks` | Read from the partition's searches and clicks only. Searches and clicks logged before the logs carried the partition are not counted |
 | `POST /api/sn/import`, `/import/bulk` | Each document gets the partition value stamped on. A `CREATE` or `DELETE` whose id already belongs to another partition, or to a document stored without one, is refused with `403`, and so is a document that carries a different value. A [delete by field](/docs/import-export/#deleting-documents) gets the partition added, so it stays inside the partition; a delete by type is refused. |
 | `GET /api/sn`, `GET /api/sn/{siteId}` | Read-only, as for any key: the site's configuration is shared by every partition. Changing or deleting a site, and the site export, are refused |
 | `POST /api/sn/manifest/plan` | As for any key |
@@ -62,7 +63,7 @@ The server then confines that key, whatever the request asks for:
 
 A key without a partition, and a browser session, are not affected. A session the key opens keeps its partition, so a client that resends the session cookie without the key is confined the same way, and a request that sends a key is answered as that key even beside another key's session. The partition field must be a stored field, because the import reads it back from the stored document before it replaces or deletes one.
 
-### Public Endpoints (no authentication required)
+### Public endpoints (no authentication required)
 
 Certain endpoints are publicly accessible, allowing client applications to perform searches and chat without managing sessions:
 
@@ -106,7 +107,7 @@ Explore and test every endpoint interactively:
 
 The core search endpoint. Returns results, facets, spotlights, spell-check suggestions, and pagination.
 
-```
+```http
 GET  http://localhost:2700/api/sn/{siteName}/search
 POST http://localhost:2700/api/sn/{siteName}/search
 ```
@@ -134,7 +135,7 @@ curl "http://localhost:2700/api/sn/Sample/search?q=enterprise+search&p=1&_setloc
   -H "Accept: application/json"
 ```
 
-#### Search Response Structure
+#### Search response structure
 
 The search response is a **self-describing navigational JSON**: every link a user might follow (apply a filter, remove a filter, paginate, filter by metadata) is pre-built and ready to use. The front-end does not need to construct query strings or manage filter state.
 
@@ -212,17 +213,17 @@ A Viglet Turing search UI can be built as a **pure rendering layer**: render res
 
 **Locale selection:**
 
-```
+```http
 GET /api/sn/{siteName}/search?q=annual+report&_setlocale=pt_BR
 ```
 
 **Keeping a search out of the metrics:** a request sent with an API key or a signed-in session can add `populateMetrics=false`, so a probe, a test or a monitoring check never shows up in the site's search insights. An anonymous request is counted whatever it sends, so a visitor cannot hide searches. Autocomplete and the answer stream are never counted as searches.
 
-```
+```http
 GET /api/sn/{siteName}/search?q=annual+report&populateMetrics=false
 ```
 
-#### POST Body Parameters
+#### POST body parameters
 
 The POST endpoint accepts the same query parameters plus additional fields in the JSON body:
 
@@ -276,16 +277,15 @@ the impersonation fields (`userId`, the conditional targeting maps) and
 For public, client-side search there is a second, **anonymous** POST endpoint that
 takes a clean read-only JSON body:
 
-```
+```http
 POST http://localhost:2700/api/sn/{siteName}/search/query
 ```
 
 Use it when a filter value can contain a character that means something in a query
 string: `&`, `=`, `+`, `#`, `%` or a space. A JSON body has no query-string
 grammar, so a value like `section:RAG & Chat` cannot be mis-read as query
-structure. Nothing is deprecated: `GET /search` and its links stay, and are still
-the right choice for deep-linkable, bookmarkable, SEO-crawlable and no-JS search
-pages.
+structure. `GET /search` and its links remain the right choice for deep-linkable,
+bookmarkable, SEO-crawlable and no-JS search pages.
 
 | Field | Type | Description |
 |---|---|---|
@@ -393,7 +393,7 @@ site or the request produced them:
 
 `url` and `link` above are the **documents' own destinations**, the same kind of
 value `results[].fields.url` carries, not search actions. Every *navigation*
-that used to be a URL is a value to put on the next request:
+the `LINKS` response spells as a URL is a value to put on the next request:
 
 | Instead of following… | Do this |
 |---|---|
@@ -407,9 +407,8 @@ that used to be a URL is a value to put on the next request:
 
 An applied facet stays in `facets` whatever the site's facet item type. Its
 selected value has `selected: true` and the facet's `clearFilterQueries` names
-what to remove. The `LINKS` response keeps the older behaviour, where a site
-whose item type is not `OR` drops an applied facet and lists it under
-`widget.facetToRemove`.
+what to remove. In the `LINKS` response, a site whose item type is not `OR` drops an applied facet and
+lists it under `widget.facetToRemove`.
 
 Both JavaScript SDKs do this for you: see
 [`@viglet/turing-sdk`](/docs/javascript-sdk/) (`toggleFacet`, `clearFacet`,
@@ -442,7 +441,7 @@ search endpoint honours it too, handy for comparing the two shapes against one
 query, or for a server-rendered page that wants facet *data* without parsing
 links:
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/search?q=chat&responseFormat=STRUCTURED
 ```
 
@@ -455,7 +454,7 @@ regular link-bearing response, unchanged; an unrecognised value returns
 The same body works on the other two read endpoints, so a whole search surface can
 be POST-only:
 
-```
+```http
 POST http://localhost:2700/api/sn/{siteName}/ac/query
 POST http://localhost:2700/api/sn/{siteName}/search/list/query
 ```
@@ -470,11 +469,11 @@ curl -X POST "http://localhost:2700/api/sn/Sample/ac/query"   -H "Content-Type: 
 
 ---
 
-### Auto Complete
+### Autocomplete
 
 Returns suggestions for the given prefix. Ideal for search-as-you-type UIs.
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/ac
 ```
 
@@ -505,11 +504,11 @@ suggestions contains a query-string character.
 
 ---
 
-### Latest Searches
+### Latest searches
 
 Returns the most recent search terms for a given user: useful for personalised search history UIs.
 
-```
+```http
 POST http://localhost:2700/api/sn/{siteName}/search/latest
 ```
 
@@ -537,11 +536,11 @@ curl -X POST "http://localhost:2700/api/sn/Sample/search/latest?q=cloud&rows=5&_
 
 ---
 
-### Search Locales
+### Search locales
 
 Lists all configured locales for a Semantic Navigation Site.
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/search/locales
 ```
 
@@ -556,11 +555,11 @@ GET http://localhost:2700/api/sn/{siteName}/search/locales
 
 ---
 
-### Spell Check
+### Spell check
 
 Corrects a query against the site's indexed vocabulary.
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/{locale}/spell-check
 ```
 
@@ -582,7 +581,7 @@ curl "http://localhost:2700/api/sn/Sample/en_US/spell-check?q=entirprise"
 
 Turns a visitor's description into the `q` and `fq` of the site's own search, so a page can show the ranked, faceted results for "part-time job near the subway in Sao Paulo" instead of a chat answer.
 
-```
+```http
 POST http://localhost:2700/api/sn/{siteName}/nl-filters
 ```
 
@@ -630,11 +629,11 @@ Relative dates are resolved against the server's date, in English and Portuguese
 
 The call spends one LLM completion, so it is gated like the site chat: a site in API-key mode requires its key, and anonymous calls share the chat's rate limit. From the SDKs, call `postNlFilters` ([JavaScript SDK](/docs/javascript-sdk/#low-level-api-functions)).
 
-The site chat and the catalog copilot read list-style questions ("quais vagas em São Paulo?") through the same extraction, so their answers are narrowed by the same checked values. To receive those filters in the chat stream, send `"includeFilters": true` in the body of `POST /api/sn/{siteName}/chat/conversation`: a list-style question then streams one `filters` event, carrying the same JSON as above, before the answer. It is off by default, because a client that predates the event would show it as answer text.
+The site chat and the catalog copilot read list-style questions ("quais vagas em São Paulo?") through the same extraction, so their answers are narrowed by the same checked values. To receive those filters in the chat stream, send `"includeFilters": true` in the body of `POST /api/sn/{siteName}/chat/conversation`: a list-style question then streams one `filters` event, carrying the same JSON as above, before the answer. It is off by default, because a client that does not handle the event would show it as answer text.
 
 **Asking about one document.** `POST /api/sn/{site}/chat/conversation` and `POST /api/sn/{site}/copilot` both take an optional `documentId`, the indexed id of the document the question is about (the product on the page). That document leads the answer's context and is always among its sources; whatever the question retrieves stays in the context, as alternatives the answer names as such. It is never a filter, and an id the site does not hold is ignored. From the SDKs, pass `documentId` in the chat options, or in the request of `postCopilot`.
 
-**One site of a shared SN site.** When several sites index into one SN site, each document carries a field that names its site (for example `site_key`). `POST /api/sn/{site}/copilot`, `POST /api/sn/{site}/copilot/kit` and `POST /api/sn/{site}/nl-filters` take an optional `filters` body field, field to accepted values (`{"site_key": ["a"]}`, the same shape the chat's `filters` takes). Every read the call makes stays inside it: the documents the copilot cites and the kit stages, a pinned `documentId`, the hybrid reorder, and the values nl-filters checks against. Values of one field are alternatives, and all named fields must match. A call with no `filters` reads the whole site, as before. This narrows what an anonymous browser sees; it is not access control, which is what a [partitioned API key](#partitioned-keys-for-a-shared-site) gives a server. From the SDKs, pass `filters` in the request of `postCopilot` and `postCopilotKit`, or in the options of `postNlFilters`.
+**One site of a shared SN site.** When several sites index into one SN site, each document carries a field that names its site (for example `site_key`). `POST /api/sn/{site}/copilot`, `POST /api/sn/{site}/copilot/kit` and `POST /api/sn/{site}/nl-filters` take an optional `filters` body field, field to accepted values (`{"site_key": ["a"]}`, the same shape the chat's `filters` takes). Every read the call makes stays inside it: the documents the copilot cites and the kit stages, a pinned `documentId`, the hybrid reorder, and the values nl-filters checks against. Values of one field are alternatives, and all named fields must match. A call with no `filters` reads the whole site. This narrows what an anonymous browser sees; it is not access control, which is what a [partitioned API key](#partitioned-keys-for-a-shared-site) gives a server. From the SDKs, pass `filters` in the request of `postCopilot` and `postCopilotKit`, or in the options of `postNlFilters`.
 
 ---
 
@@ -644,11 +643,11 @@ The site chat and the catalog copilot read list-style questions ("quais vagas em
 Both chat endpoints return **Server-Sent Events (SSE)** streams: content is delivered progressively as the model generates it. Clients should consume the response as an event stream rather than waiting for a single JSON payload.
 :::
 
-### RAG Chat (SN Site)
+### RAG chat (SN site)
 
 Sends a question to the GenAI engine of a Semantic Navigation Site. Returns a streaming SSE response grounded in the site's indexed content.
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/chat?q={question}
 ```
 
@@ -659,11 +658,11 @@ curl "http://localhost:2700/api/sn/Sample/chat?q=What+are+the+main+features?" \
   -H "Key: <YOUR_API_TOKEN>"
 ```
 
-### AI Agent Chat
+### AI agent chat
 
 Sends a message to a specific AI Agent. Returns a streaming SSE response.
 
-```
+```http
 POST http://localhost:2700/api/v2/llm/agent/{agentId}/chat
 ```
 
@@ -682,7 +681,7 @@ See [Chat](/docs/chat/) for the full chat interface documentation.
 
 A question whose answer is spread over many documents ("what has the school done on public health?") gets a sectioned overview instead of one paragraph. Viglet Turing plans 3 to 6 sub-questions, searches the site for each, and writes one section per sub-question the documents answer, each claim citing the source it comes from as `[n]`.
 
-```
+```http
 POST http://localhost:2700/api/sn/{siteName}/research
 ```
 
@@ -730,7 +729,7 @@ await research.ask("What has the school done on public health?", { filters: { si
 
 Which AI features a site can use, read from its configuration. No model is called, so a page can ask before it shows an AI block. It needs no login; a site in `API_KEY` mode needs its key, as for search.
 
-```
+```http
 GET http://localhost:2700/api/sn/{siteName}/ai/capabilities
 ```
 
@@ -752,11 +751,11 @@ GET http://localhost:2700/api/sn/{siteName}/ai/capabilities
 
 ---
 
-## Token Usage API
+## Token usage API
 
 Returns token consumption statistics for a given month.
 
-```
+```http
 GET http://localhost:2700/api/v2/llm/token-usage?month=YYYY-MM
 ```
 
@@ -771,11 +770,11 @@ Authentication required. See [Token Usage](/docs/token-usage/) for details.
 
 ---
 
-## Search Insights API
+## Search insights API
 
 What visitors searched for and did not find. Both endpoints take the site's **id** and the same window, and need authentication (a `Key` header or a session).
 
-```
+```http
 GET /api/sn/{siteId}/metrics/failed-searches?from=&to=&period=&rows=
 GET /api/sn/{siteId}/metrics/content-gaps?from=&to=&period=&rows=
 ```
@@ -788,7 +787,7 @@ GET /api/sn/{siteId}/metrics/content-gaps?from=&to=&period=&rows=
 
 `failed-searches` lists the queries that returned nothing every time they ran. `content-gaps` lists the queries searched often whose average result count is under 3: what to write next. Both answer `{ from, to, terms: [{ term, searches, avgResults, lastSeen }], metricsEnabled }`, most searched first; terms searched equally often come back most recently searched first, so a new gap is not cut off by older ones. These are the same reports the MCP tools `top_failed_searches` and `content_gaps` read.
 
-Searches are counted together when they differ only by case, spacing or accents (`emergência` and `emergencia` are one term), and each term is shown in the spelling visitors typed most, accents included. Letters are never dropped, so a search in Cyrillic, Greek, Arabic or Japanese is listed as typed. Searches logged before this release still group by the older key, which deleted every letter outside basic Latin.
+Searches are counted together when they differ only by case, spacing or accents (`emergência` and `emergencia` are one term), and each term is shown in the spelling visitors typed most, accents included. Letters are never dropped, so a search in Cyrillic, Greek, Arabic or Japanese is listed as typed. Searches logged by an earlier version keep the grouping key they were logged with, which dropped every letter outside basic Latin.
 
 `metricsEnabled` is `false` when the server does not record searches (`turing.search.metrics.enabled` is off). An empty report then says nothing about the site's traffic, so show the user that metrics are off rather than an empty list.
 
@@ -805,7 +804,7 @@ From [`@viglet/turing-sdk`](/docs/javascript-sdk/): `fetchFailedSearches(client,
 
 The clicks your search page reports to `POST /api/sn/{site}/click` are read back here. The window and authentication are the same as above, plus an optional `locale` (`pt_BR` or `pt-BR`) that narrows both the searches and the clicks to one locale.
 
-```
+```http
 GET /api/sn/{siteId}/metrics/clicks?from=&to=&period=&locale=&rows=
 ```
 
@@ -835,7 +834,7 @@ From the vanilla SDK: `fetchClickThrough(client, siteId, { period: "this-month",
 
 Probes, tests and evaluation runs are logged like any visitor's search, so before a demo they can fill the insights above. Clear them:
 
-```
+```http
 DELETE /api/sn/{siteId}/metrics?before=
 ```
 
@@ -849,9 +848,9 @@ In the console, the **Top search terms** page has a **Clear metrics** button bes
 
 The Integration API provides a **reverse-proxy** endpoint that forwards requests to a configured external integration instance (e.g., an AEM connector or Web Crawler). All HTTP methods are supported. The proxy validates the target host and path to prevent SSRF attacks.
 
-### Proxy Endpoint
+### Proxy endpoint
 
-```
+```http
 GET|POST|PUT|DELETE  http://localhost:2700/api/v2/integration/{integrationId}/**
 ```
 
@@ -867,7 +866,7 @@ curl -X POST "http://localhost:2700/api/v2/integration/my-aem-instance/index" \
 
 This endpoint is **public** (no authentication required).
 
-### Integration Instance CRUD (Admin)
+### Integration instance CRUD (admin)
 
 Manage integration instances. Authentication required.
 
@@ -905,9 +904,9 @@ For full details, see [Assets](/docs/assets/).
 
 ---
 
-## AI Agent API
+## AI agent API
 
-### Agent Management
+### Agent management
 
 Manage AI Agents. Authentication required.
 
@@ -920,14 +919,14 @@ Manage AI Agents. Authentication required.
 | `PUT` | `/api/ai-agent/{id}` | Update an existing agent |
 | `DELETE` | `/api/ai-agent/{id}` | Delete an agent |
 
-### Agent Chat
+### Agent chat
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v2/ai-agent/{agentId}/chat` | Stream chat response (SSE). Request body: `{ llmInstanceId, messages[] }` |
 | `GET` | `/api/v2/ai-agent/{agentId}/chat/context-info` | Get LLM context window size. Query param: `llmInstanceId` |
 
-### Native Tools
+### Native tools
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -941,7 +940,7 @@ For full details, see [AI Agents](/docs/ai-agents/).
 
 The following endpoints manage SN Sites, fields, and spotlights. All require authentication via the `Key` header. For full details, explore the Swagger UI at `http://localhost:2700/swagger-ui.html`.
 
-### SN Site Management
+### SN site management
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -961,7 +960,7 @@ curl "http://localhost:2700/api/sn" \
   -H "Key: <YOUR_API_TOKEN>"
 ```
 
-### Field Management
+### Field management
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -971,7 +970,7 @@ curl "http://localhost:2700/api/sn" \
 | `PUT` | `/api/sn/{snSiteId}/field/{id}` | Update a field |
 | `DELETE` | `/api/sn/{snSiteId}/field/{id}` | Delete a field |
 
-### Spotlight Management
+### Spotlight management
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -981,7 +980,7 @@ curl "http://localhost:2700/api/sn" \
 | `PUT` | `/api/sn/{snSiteId}/spotlight/{id}` | Update a spotlight |
 | `DELETE` | `/api/sn/{snSiteId}/spotlight/{id}` | Delete a spotlight |
 
-### Intent Management
+### Intent management
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -994,7 +993,7 @@ curl "http://localhost:2700/api/sn" \
 
 For full details, see [Intent](/docs/intent/).
 
-### Import / Export
+### Import and export
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -1020,7 +1019,7 @@ For full details, see [Logging](/docs/logging/).
 
 Viglet Turing exposes a GraphQL endpoint that provides the same Semantic Navigation search capabilities as the REST API using GraphQL queries. The endpoint is **public** (no authentication required).
 
-```
+```http
 POST http://localhost:2700/graphql
 ```
 
@@ -1049,9 +1048,9 @@ For the full schema reference, query examples, dynamic fields, filter operators,
 
 Extracts text from documents via OCR. Two endpoints are available, one for file uploads and one for URLs. Both are **public** (no authentication required).
 
-### Extract Text from File
+### Extract text from a file
 
-```
+```http
 POST http://localhost:2700/api/ocr/file
 ```
 
@@ -1064,9 +1063,9 @@ curl -X POST "http://localhost:2700/api/ocr/file" \
   -F "file=@/path/to/document.pdf"
 ```
 
-### Extract Text from URL
+### Extract text from a URL
 
-```
+```http
 POST http://localhost:2700/api/ocr/url
 ```
 
@@ -1084,7 +1083,7 @@ Both endpoints return a JSON object containing the extracted text and file metad
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -121,7 +121,6 @@ const BASELINE = {
   "rag.md": ["fence-language", "heading-sentence-case"],
   "react-sdk.md": ["heading-sentence-case"],
   "reranking.md": ["fence-language", "frontmatter-description", "heading-sentence-case"],
-  "rest-api.md": ["fence-language", "heading-sentence-case", "release-relative"],
   "routines.md": ["frontmatter-description"],
   "search-engine.md": ["frontmatter-description", "heading-sentence-case"],
   "security-authentication.md": ["heading-sentence-case", "release-relative"],
