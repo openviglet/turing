@@ -626,7 +626,7 @@ Additional specialized queries for ranking features, distance-based scoring, rev
 
 ### Bucket aggregations
 
-#### `terms`
+#### `terms` aggregation
 
 Group documents by field values.
 
@@ -638,7 +638,7 @@ Group documents by field values.
 }
 ```
 
-#### `range`
+#### `range` aggregation
 
 Group documents by numeric or date ranges.
 

@@ -4,7 +4,7 @@ description: "Measure lead conversion, abandonment and preferred persona variant
 ---
 > *Viglet Turing already measures the funnel server-side (outcome, experiment, persona). This is the other half: the **browser-owned** view, emitted at the lifecycle moments only the client can see (like a tab close) and delivered straight into your own GA4 next to acquisition source, campaign and audiences.*
 
-Viglet Turing's [Chat Analytics](/docs/chat-analytics/) and [Experiments](/docs/experiments/) record conversion, abandonment and A/B outcomes **server-side**. But marketing teams run **GA4 in the browser**, where conversion lives next to media spend and audiences. Block Z adds a **client-side, marketing-owned** measurement layer that answers three concrete questions *in your GA*, not ours:
+Viglet Turing's [Chat Analytics](/docs/chat-analytics/) and [Experiments](/docs/experiments/) record conversion, abandonment and A/B outcomes **server-side**. But marketing teams run **GA4 in the browser**, where conversion lives next to media spend and audiences. The conversion bridge adds a **client-side, marketing-owned** measurement layer that answers three concrete questions *in your GA*, not ours:
 
 1. **Lead conversion** in chat & semantic navigation.
 2. **Drop-off / abandonment**: and *where* the visitor gave up.

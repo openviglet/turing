@@ -658,7 +658,7 @@ The [MCP server](/docs/mcp-servers/#viglet-turing-as-an-mcp-server) is off by de
 | Property | Default | Purpose |
 |---|---|---|
 | `spring.ai.mcp.server.enabled` | `false` | Master switch: when off, no MCP-server beans exist |
-| `turing.mcp-server.loopback-only` | `true` | Reject non-loopback `/mcp` requests (the T245 trust boundary) |
+| `turing.mcp-server.loopback-only` | `true` | Reject `/mcp` requests that do not come from the loopback interface |
 | `turing.mcp-server.require-auth` | `false` | Turn `/mcp` into an OAuth 2.1 JWT resource server (set with `spring.security.oauth2.resourceserver.jwt.*`); fails closed if no decoder |
 | `turing.mcp-server.write-enabled` | `false` | Register the write/ingestion tools (still require the `mcp:write` scope per call) |
 
@@ -668,7 +668,7 @@ The [Chat Analytics](/docs/chat-analytics/) enricher, retention, and in-flight s
 
 | Property | Default | Purpose |
 |---|---|---|
-| `turing.chat.analytics.node-visit-log.enabled` | `false` | Record the per-turn node path on each conversation, enabling the **path-aware funnel** (T237). Off = V1 funnel behavior |
+| `turing.chat.analytics.node-visit-log.enabled` | `false` | Record the per-turn node path on each conversation, enabling the **path-aware funnel**. Off: the funnel counts where conversations are parked and how many finished |
 
 ### Cost governance
 

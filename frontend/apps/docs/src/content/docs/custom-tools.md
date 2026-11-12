@@ -361,7 +361,7 @@ def data = new JsonSlurper().parseText(conn.inputStream.text)
 return [tier: data.tier, since: data.created_at, found: true]
 ```
 
-The agent is now grounded: it never quotes ENTERPRISE features to a STARTER customer.
+With the tool attached, the agent is grounded: it never quotes ENTERPRISE features to a STARTER customer.
 
 :::tip[Secrets in Groovy]
 Use `System.getenv('YOUR_TOKEN')` for secrets, not literal strings. The Groovy text is logged when the tool runs (for debugging), and the script may be exported with the agent definition. Pull tokens from the JVM environment so they don't show up in logs or exports.

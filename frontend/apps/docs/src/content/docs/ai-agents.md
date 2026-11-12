@@ -99,7 +99,7 @@ A persona is **optional**. An agent without one uses the LLM's default voice. Fo
 
 ## Default AI agent (global fallback)
 
-One agent can be marked as the global **Default AI Agent** in Global Settings. When a Semantic Navigation site's chat is invoked but the site has **no agent of its own**, chat resolves to this default agent (using its LLM, embedding model and vector store) instead of reporting chat as disabled. This is **fail-open and gated**: it only happens when a default agent is actually configured, with none set, a site without its own agent keeps chat disabled exactly as before.
+One agent can be marked as the global **Default AI Agent** in Global Settings. When a Semantic Navigation site's chat is invoked but the site has **no agent of its own**, chat resolves to this default agent (using its LLM, embedding model and vector store) instead of reporting chat as disabled. This is **fail-open and gated**: it only happens when a default agent is actually configured, with none set, a site without its own agent keeps chat disabled.
 
 This is what lets a search-only site (for example the zero-config public demo, whose seed is search-only) answer grounded chat without wiring a per-site agent. A site that *does* bind its own agent always uses that one; the default is only a fallback.
 

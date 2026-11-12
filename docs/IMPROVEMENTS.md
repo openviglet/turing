@@ -2477,22 +2477,6 @@ into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
 
-### CLXXXIV.3 Mechanical sweeps of the docs-style baseline (T1284)
-
-Most of the docs-style lint's baseline in frontend/apps/docs/scripts/docs-style.test.mjs
-can be paid without rewriting a page. The five largest pages were rewritten (T1279 to
-T1283) and their entries are paid, so each sweep works on the rest, one rule per task so
-each diff stays reviewable. Four sweeps cover the mechanical rules. Fences: give every
-fence its language (bash, json, yaml, properties, java, text). Descriptions: rewrite
-each frontmatter description to 70 to 160 characters that say what the reader can do on
-the page. Headings: convert to sentence case, adding real proper nouns to PROPER_NOUNS
-rather than baselining a page. Small rules: remove release-relative phrases ("is now",
-"as before"), internal T-ids and Block labels (they belong in COVERAGE.md), duplicate
-headings and skipped levels. When a renamed heading changes an anchor, keep the old one
-with an <a id> or update every link to it in the same change; the docs build and the
-docs-sync report both check this. Every sweep removes the BASELINE entries it paid in
-the same commit.
-
 ### CLXXXIV.4 What the code declares and no docs page names (T1288)
 
 The docs-sync reverse report (.claude/skills/turing-docs-sync/docs-sync-report.mjs)

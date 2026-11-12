@@ -20,7 +20,7 @@ The **Language Model** page lives at `/admin/llm/instance`, under the **Generati
 4. Leave the generation parameters at their defaults, make sure **Enabled** is on, and **Save**.
 5. Set this instance as the **Default LLM Instance** in **Administration → Settings** so features with no explicit override use it. See [Generative AI & LLM Configuration](/docs/genai-llm/#global-settings).
 
-That instance is now selectable in every agent, site, and the Chat tab.
+The instance is then selectable in every agent, site, and the Chat tab.
 
 ---
 
@@ -265,7 +265,7 @@ Not all vendors do everything. Chat, embeddings, tool calling, and managed reran
 | **Ollama** | ✅ | ✅ *(configurable model)* | ✅ | ❌ |
 | **Open AI** | ✅ | ✅ | ✅ | ❌ |
 | **Anthropic** | ✅ | ❌ | ✅ | ❌ |
-| **Gemini** | ✅ | ✅ *(native `embedContent`, T495)* | ✅ | ❌ |
+| **Gemini** | ✅ | ✅ *(native `embedContent`)* | ✅ | ❌ |
 | **Gemini (OpenAI Compatible)** | ✅ | ❌ | ✅ | ❌ |
 | **OpenAI-Compatible** | ✅ | ✅ *(if backing endpoint supports it)* | ✅ | ❌ |
 | **AWS Bedrock** | ✅ *(Converse)* | ✅ *(Titan / Cohere via `invokeModel`)* | ✅ | ✅ *(Bedrock Rerank)* |

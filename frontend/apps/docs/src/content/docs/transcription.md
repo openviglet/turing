@@ -56,7 +56,7 @@ Leave **Model** blank and each backend uses the right default: `gpt-transcribe` 
 | **`whisper-1`** | Timestamps, translation, subtitles. | Still fully supported and still the right pick when you need segment timestamps or a confidence score. The default for self-hosted servers. |
 
 :::note[Nothing breaks]
-If you already configured `whisper-1`, or left the model blank on a self-hosted server, your setup keeps behaving exactly as before. The new models are additive.
+If you already configured `whisper-1`, or left the model blank on a self-hosted server, your setup keeps using `whisper-1`. The other models are opt-in.
 :::
 
 :::note[Running fully locally]

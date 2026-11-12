@@ -147,7 +147,7 @@ Use agents when you want consistency across thousands of conversations, *"every 
 
 A [**Skill**](/docs/skills/) is a portable, Anthropic-compatible capability, a folder of instructions, scripts, and reference material that runs in a hardened Docker sandbox. When an agent has skills enabled, the conversation can hand off a whole task to one of them ("generate the campaign assets", "build the financial model") without you wiring a tool for it.
 
-Skills are **per-agent**: enable them with the **Skills** toggle in the agent's Settings tab (visible only when the feature is available). The native and MCP tools you select still work exactly as before: skills are an *additional* layer.
+Skills are **per-agent**: enable them with the **Skills** toggle in the agent's Settings tab (visible only when the feature is available). The native and MCP tools you select keep working: skills are an *additional* layer.
 
 ### How a skill runs inside a chat turn
 

@@ -6,7 +6,7 @@ A **field manifest** is a single declarative document that describes a Semantic 
 
 You'd reach for this when you want your search schema to live in version control next to your code instead of being clicked together by hand in the admin: "Liquibase for the SN field schema." It's the backbone of repeatable onboarding: a new environment, a new tenant, or a CI pipeline can stand up an identical, reviewed schema from one file. Around that core, Viglet Turing adds four things: a **planner** that diffs a manifest against the live site (so breaking changes can't slip through silently), **LLM-assisted derivation** that drafts a manifest from sample documents, **hybrid RRF ranking** for the public search, and **field-coverage** observability so you can see which fields are actually populated.
 
-> This page is about the *structured-source indexing* line (Block R). For how documents get into the index in the first place, see [Search Engine](/docs/search-engine/); for how fields are searched and faceted, see [Semantic Navigation](/docs/semantic-navigation/).
+> This page is about the *structured-source indexing* line. For how documents get into the index in the first place, see [Search Engine](/docs/search-engine/); for how fields are searched and faceted, see [Semantic Navigation](/docs/semantic-navigation/).
 
 ---
 
@@ -125,7 +125,7 @@ An event that runs over several days, such as an exhibition from 1 to 30 Novembe
 }
 ```
 
-With an end field, a bucket holds an event when the event starts by the bucket's end and ends on or after the bucket's start. A bucket with no start, such as *Past*, holds the events that have **ended** by its end, so an exhibition that is still running is not listed there. An event with no end date is read as the single day it starts. The end field must be another field of the same type as `field`. Leave `endField` out and the facet buckets `field` alone, as before. Solr, Lucene and Elasticsearch count the buckets and filter by them with the same rule. In Java, call `withEndField("endsAt")` on a `TurSNManifestCustomFacet`; in the console, pick it under **End field** on a date facet.
+With an end field, a bucket holds an event when the event starts by the bucket's end and ends on or after the bucket's start. A bucket with no start, such as *Past*, holds the events that have **ended** by its end, so an exhibition that is still running is not listed there. An event with no end date is read as the single day it starts. The end field must be another field of the same type as `field`. Leave `endField` out and the facet buckets `field` alone. Solr, Lucene and Elasticsearch count the buckets and filter by them with the same rule. In Java, call `withEndField("endsAt")` on a `TurSNManifestCustomFacet`; in the console, pick it under **End field** on a date facet.
 
 ### Custom sorts
 
@@ -335,7 +335,7 @@ Hybrid ranking reorders what the keyword search found, so a document that shares
 | **Semantic recall** *(off by default)* | On a hybrid ranking mode, adds up to 10 documents the vector search ranks above the similarity floor that the keyword page missed |
 | **Recall similarity floor** | The similarity (0 to 1) a document needs before it is added. Blank uses `0.6`. Raise it if unrelated documents appear |
 
-Recall runs only on the **first page** of a **relevance-sorted** query; later pages stay keyword-only. Active facet filters (`fq`, `fqAnd`, `fqOr`) still apply: a recalled document outside the filter is never added. On an Adobe AEM Content AI site, which cannot restrict a search to ids, filtered queries get no recall. Recalled documents are added to the result count and, on Solr, Lucene and Elasticsearch sites, to their facet buckets. Each recalled result carries `semanticRecall: true` in its ranking explanation. Turn it on in the same **Hybrid Ranking (Public Search)** card; it is disabled while the mode is `LEGACY`, and with it off a hybrid site ranks exactly as before.
+Recall runs only on the **first page** of a **relevance-sorted** query; later pages stay keyword-only. Active facet filters (`fq`, `fqAnd`, `fqOr`) still apply: a recalled document outside the filter is never added. On an Adobe AEM Content AI site, which cannot restrict a search to ids, filtered queries get no recall. Recalled documents are added to the result count and, on Solr, Lucene and Elasticsearch sites, to their facet buckets. Each recalled result carries `semanticRecall: true` in its ranking explanation. Turn it on in the same **Hybrid Ranking (Public Search)** card; it is disabled while the mode is `LEGACY`, and with it off a hybrid site ranks only what the keyword search found.
 
 > This is distinct from the RAG hybrid retrieval that powers the chat `search_knowledge_base` tool: different corpus, different surface. See [Reranking](/docs/reranking/) for that path.
 

@@ -497,6 +497,7 @@ One flow, two outcomes, no human intervention.
 | Sub-flow runs but never returns | The sub-flow has no End node, or there's a dangling edge before End | Open the sub-flow in the editor: Vibe Coding's auto-fix usually catches this; visual editing can introduce it |
 | Router picks the wrong flow | Two flows have overlapping trigger descriptions | Run the [trigger-conflict resolver](#trigger-conflict-resolver) and differentiate the flagged pair |
 | A `functionCall`/`scheduleAgent`/`webhook` step fails silently | No error edge wired | Set `continueOnFailure` and draw a `failure` edge (see [Error Handling](#error-handling-continueonfailure--error-edges)) |
+| State accumulates indefinitely | TTL housekeeping isn't running | Verify `turing.chat.flow.state.ttl-hours` and that the housekeeping `@Scheduled` is firing |
 
 ---
 
@@ -511,20 +512,10 @@ One flow, two outcomes, no human intervention.
 | [Tool Calling](/docs/tool-calling/) | The tools a `functionCall` node invokes |
 | [Chat Analytics](/docs/chat-analytics/) | Funnel, replay, and the slot-audit timeline |
 | [AI Agents](/docs/ai-agents/) | The agent a flow is attached to |
-| State accumulates indefinitely | TTL housekeeping isn't running | Verify `turing.chat.flow.state.ttl-hours` and that the housekeeping `@Scheduled` is firing |
-
----
-
-## Related pages
-
-| Page | Description |
-|---|---|
-| [AI Agents](/docs/ai-agents/) | The agents that flows are attached to |
 | [Custom Tools](/docs/custom-tools/) | Build your own Tool nodes with Groovy + Vibe Coding |
-| [Tool Calling](/docs/tool-calling/) | Native tools available as Tool nodes |
 | [MCP Servers](/docs/mcp-servers/) | External tools available as Tool nodes |
 | [Intent](/docs/intent/) | The lightweight cousin: prompt suggestions for the chat home screen |
-| [Chat Analytics](/docs/chat-analytics/) | Where flow outcomes show up |
+
 
 ---
 

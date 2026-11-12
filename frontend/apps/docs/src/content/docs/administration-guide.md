@@ -351,7 +351,7 @@ The User Account page (`/account`) allows the currently logged-in user to manage
 
 All administration endpoints require authentication via the `Key` header. For the full endpoint reference, see [REST API Reference](/docs/rest-api/).
 
-### Users
+### Users endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -364,7 +364,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/v2/user/{username}/avatar` | Update user avatar |
 | `PUT` | `/api/v2/user/{username}/password` | Change user password |
 
-### Groups
+### Groups endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -374,7 +374,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/v2/group/{id}` | Update a group |
 | `DELETE` | `/api/v2/group/{id}` | Delete a group |
 
-### Roles
+### Roles endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -385,7 +385,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `DELETE` | `/api/v2/role/{id}` | Delete a role |
 | `GET` | `/api/v2/privilege` | List all available privileges |
 
-### API tokens
+### API tokens endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -395,7 +395,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/dev/token/{id}` | Update token metadata |
 | `DELETE` | `/api/dev/token/{id}` | Delete a token |
 
-### Global settings
+### Global settings endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -403,7 +403,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/system/global-settings` | Update settings |
 | `POST` | `/api/system/global-settings/email/test` | Send test email |
 
-### System information
+### System information endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|

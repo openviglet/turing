@@ -40,7 +40,7 @@ curl -H "Key: <your-token>" https://your-host/api/sn/mysite/search?q=hello
 4. Copy the generated token immediately: it will not be shown again.
 
 :::caution[`?apiKey=` query parameter removed]
-Passing the token as a `?apiKey=` URL query parameter is **no longer supported**, a secret in the URL leaks into access logs, `Referer` headers and browser history. Always send it in the `Key` header. This affects the public Semantic Navigation endpoints on API-key-mode sites and the MCP server. Tokens also now support **expiry and revocation** (`enabled` flag / `expiresAt`); a disabled or expired token is rejected. See [Security Hardening](/docs/security-hardening/#4-developer-tokens-header-only-with-expiry--revocation).
+Passing the token as a `?apiKey=` URL query parameter is **no longer supported**, a secret in the URL leaks into access logs, `Referer` headers and browser history. Always send it in the `Key` header. This affects the public Semantic Navigation endpoints on API-key-mode sites and the MCP server. Tokens also support **expiry and revocation** (`enabled` flag / `expiresAt`); a disabled or expired token is rejected. See [Security Hardening](/docs/security-hardening/#4-developer-tokens-header-only-with-expiry--revocation).
 :::
 
 For the full endpoint reference, authentication examples, and the list of public endpoints that require no authentication, see [REST API Reference → Authentication](/docs/rest-api/#authentication).

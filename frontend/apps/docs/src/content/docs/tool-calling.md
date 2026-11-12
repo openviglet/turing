@@ -288,7 +288,7 @@ Both are opt-in and fail-open. See [AI Agents → Reasoning, caching & backgroun
 
 Some tools return a lot: a big search dump, a long catalog, a wide JSON array. Pasting all of that into the prompt every turn is wasteful. When a tool result exceeds `turing.genai.tool-result-offload.inline-max-chars` (default **4096**), Viglet Turing writes the full payload to the [Agent Workspace](/docs/agent-workspace/) and replaces the inline result with a short `workspace://…` reference. The model pulls the data back **only when it needs it**, via an always-present `workspace_read` tool.
 
-This applies uniformly to native, MCP, and [Custom](/docs/custom-tools/) tools, and is active only when a [storage backend](/docs/configuration-reference/#storage) is configured, so the default deployment behaves exactly as before. See [Agent Workspace → Auto-offload](/docs/agent-workspace/#2-auto-offload-of-large-tool-results) for details.
+This applies uniformly to native, MCP, and [Custom](/docs/custom-tools/) tools, and is active only when a [storage backend](/docs/configuration-reference/#storage) is configured, so a deployment without storage keeps every tool result in the conversation. See [Agent Workspace → Auto-offload](/docs/agent-workspace/#2-auto-offload-of-large-tool-results) for details.
 
 ---
 

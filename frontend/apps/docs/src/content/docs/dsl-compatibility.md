@@ -21,7 +21,7 @@ AI](#adobe-aem-content-ai-a-listed-subset) at the bottom of this page. The three
 columns below are Elasticsearch, Solr and Lucene.
 :::
 
-### Legend
+## Legend
 
 | Badge | Level | Description |
 |:---:|-------|-------------|

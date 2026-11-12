@@ -105,7 +105,7 @@ The four checks a case gets by default, **slots**, **outcome**, **node** (determ
 | **MODEL** | LLM-as-judge: semantic checks a diff can't express | Yes |
 | **HUMAN** | A human-in-the-loop review step (see [below](#human-review)) | No |
 
-**With no grader config, a set uses the legacy default stack** (slot-match + outcome + node + rubric) and scores exactly as before. When you *do* configure graders, you pick from the built-in library, each keyed by a stable `graderId` and driven by a small JSON `config`:
+**With no grader config, a set uses the legacy default stack** (slot-match + outcome + node + rubric) and scores slot match, outcome, node and rubric together. When you *do* configure graders, you pick from the built-in library, each keyed by a stable `graderId` and driven by a small JSON `config`:
 
 | `graderId` | Kind | Checks |
 |---|---|---|
@@ -197,7 +197,7 @@ Reviewers work an inbox, the **Review inbox** tab of the [Eval Studio](#eval-stu
 
 Two questions decide whether you can *trust* your reviewers and your LLM judge, and both are answered from a **Calibration & agreement** panel at the top of the Review inbox.
 
-**How much do reviewers agree?** Give a task more than one reviewer and the platform computes an agreement score. Set the required reviewer count on an open task, and it only reaches a verdict once that many people have decided: the verdict is then the **strict-majority pass** with the **mean score** (a single reviewer, the default, behaves exactly as before). Across all your multi-reviewer tasks the panel shows **Fleiss' kappa** (with the usual *slight / fair / moderate / substantial / almost-perfect* band): a low number means your rubric is ambiguous, not that people are careless.
+**How much do reviewers agree?** Give a task more than one reviewer and the platform computes an agreement score. Set the required reviewer count on an open task, and it only reaches a verdict once that many people have decided: the verdict is then the **strict-majority pass** with the **mean score** (with a single reviewer, the default, that reviewer's decision is the verdict). Across all your multi-reviewer tasks the panel shows **Fleiss' kappa** (with the usual *slight / fair / moderate / substantial / almost-perfect* band): a low number means your rubric is ambiguous, not that people are careless.
 
 **Can you trust the model judge?** Sample a run's **model-graded** cases into an **audit**: the panel's *Audit MODEL-graded run* control parks each sampled case as a review task carrying the model's original verdict. Reviewers re-judge them, and the panel reports **Cohen's kappa** between the LLM judge and the human consensus, a confusion breakdown (where the judge *over-passes* vs *over-fails*), and a plain-language hint for tuning the judge's rubric prompt. The hint is advice, never applied automatically.
 

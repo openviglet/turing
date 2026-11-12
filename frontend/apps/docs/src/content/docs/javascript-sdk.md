@@ -414,7 +414,7 @@ createChatController(client, { site: "my-site", analytics, goalSlots: ["email"] 
 
 The bus is **no-op when no `analytics` option is passed**, so existing embeds are byte-for-byte unchanged. Search → chat → lead is stitched into one funnel via the shared `TUR_SESSION` cookie. Full event taxonomy and the GA4 setup live in **[Conversion Analytics](/docs/conversion-analytics/)**. In React, use `useTuringAnalytics()`.
 
-#### Consent
+### Consent
 
 The search controller writes nothing when it is created. It asks `consent` before every event and before it writes the `TUR_SESSION` cookie, so you can pass the bus before the visitor has answered your consent banner:
 

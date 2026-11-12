@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1287** (deps: —) **Docs pages carry 25 release-relative phrases, 14 internal T-ids/Block labels, duplicate headings and skipped levels** — "Is now" and "T1233" only make sense to someone who read the changelog; a reader arriving today needs the present state. → §CLXXXIV.3
 - 📋 **T1288** (deps: —) **85 of 126 turing.* properties and 4 @ConfigurationProperties prefixes are named on no docs page** — configuration-reference.md implies it is the list of settings, so an operator cannot tell an undocumented knob from one that does not exist. → §CLXXXIV.4
 - 📋 **T1289** (deps: —) **The turing match CLI command is not documented on cli.md** — The CLI dispatches it and turing help lists it, but a user reading the docs cannot find what it does or which flags it takes. → §CLXXXIV.4
 - 📋 **T1290** (deps: —) **138 of 237 public /api/sn and /api/v2 endpoints are named on no docs page, with no verdict on which are public** — Without a per-family verdict the report's advisory list never shrinks, and a real gap in the public API docs hides among console-only routes. → §CLXXXIV.4

@@ -6,7 +6,7 @@ A **thesaurus** is a curated, hierarchical **controlled vocabulary**, the concep
 
 You'd reach for a thesaurus when embedding search and synonyms aren't enough on their own. Embeddings find text that is *semantically near*; [synonyms](/docs/synonyms/) rewrite the *query* so equivalent words match. Neither gives you a **curated, hierarchical, domain-controlled** vocabulary, the deliberate "these concepts nest under those" structure a librarian or subject-matter expert maintains. A thesaurus complements both: it works at **index time** on the *document*, so query time stays fast and simple.
 
-The thesaurus admin lives at **`/bento/thesaurus`**. Everything below is **opt-in per Semantic Navigation Site**, a site that selects no thesaurus indexes exactly as before.
+The thesaurus admin lives at **`/bento/thesaurus`**. Everything below is **opt-in per Semantic Navigation Site**, a site that selects no thesaurus indexes without one.
 
 ---
 
@@ -88,7 +88,7 @@ A thesaurus does nothing until a site opts in. Open a **Semantic Navigation Site
 
 1. **Select microthesauri**: add one or more from your library. Each selection has its own enable toggle. Only microthesauri whose language matches a document's locale expand that document.
 2. **Configure indexing:**
-   - **Enable expansion**: the master switch. Off ⇒ the site indexes exactly as before.
+   - **Enable expansion**: the master switch. Off: the site indexes without expansion.
    - **Field name**: the backing field (default `microthesaurus_terms`).
    - **Boost**: the query-time weight for recall (default `0.8`, deliberately below title/body).
    - **Include synonyms**: also recognise `use`/`used-for` non-preferred terms and expand them to the preferred concept.

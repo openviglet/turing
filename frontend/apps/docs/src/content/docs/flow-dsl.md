@@ -127,7 +127,7 @@ Build a node by adding an object to `nodes[]`, discriminated on `type`. The full
 |---|---|---|
 | `start` / `end` | Flow entry / exit | just `id` |
 | `aiQuestion` | Ask the visitor something; capture the answer | `aiInstruction`, `outputVariable`, `validationRule?`, `inlineOptions?`, `onJudgeReject?`, `toolsEnabled?` |
-| `formCapture` | Native multi-field form (T107) | `formFields[]` (name/label/type/required/options), or `aiInstruction` for the conversational fallback |
+| `formCapture` | Native multi-field form | `formFields[]` (name/label/type/required/options), or `aiInstruction` for the conversational fallback |
 | `condition` | Branch yes/no on an expression | `conditionExpression` (e.g. `area=='Sales'`); needs `yes`/`no` edges |
 | `switch` | Branch on a slot value | `switchVariable`, `switchOptions[]` |
 | `subFlow` | Descend into another flow in the bundle | `subFlowId` |
@@ -137,8 +137,8 @@ Build a node by adding an object to `nodes[]`, discriminated on `type`. The full
 | `persona` | Switch [persona](/docs/personas/) for downstream turns | `personaId` |
 | `slot` | Set or delete a slot | `slotName`, `slotOperation` (`SET`/`DELETE`), `slotValue` |
 | `writeSlot` | Write a slot (supports `{{slot}}` interpolation) | `slotName`, `slotValue` |
-| `humanApproval` | Park for a human decision (T119) | `humanApproval: { channel, target?, timeoutSeconds?, timeoutBehavior? }` |
-| `suspend` | Park the cursor until `POST …/chat/resume` (T121) | just `id`/`label` |
+| `humanApproval` | Park for a human decision | `humanApproval: { channel, target?, timeoutSeconds?, timeoutBehavior? }` |
+| `suspend` | Park the cursor until `POST …/chat/resume` | just `id`/`label` |
 
 `aiInstruction` and `slotValue` support `{{slotName}}` interpolation against captured slots. `continueOnFailure: true` routes failures to a `sourceHandle: "failure"` edge instead of aborting the turn: see [chat flow error handling](/docs/chat-flow/).
 

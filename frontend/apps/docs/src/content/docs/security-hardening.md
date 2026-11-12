@@ -11,7 +11,7 @@ which changes can break an existing deployment if you don't act.**
 :::caution[Breaking changes: read before upgrading]
 Four changes can break an existing deployment or integration if you don't act:
 
-1. **`TURING_AI_CRYPTO_KEY` is now required in production**: the app fails to
+1. **`TURING_AI_CRYPTO_KEY` is required in production**: the app fails to
    start on the `production` profile with a blank or known-sample key.
 2. **`turing.permissions` now defaults to `true`**: an authenticated principal
    is no longer automatically an admin.
@@ -56,7 +56,7 @@ key.
 
 Previously the shipped default was `turing.permissions: false`, which granted
 **`ROLE_ADMIN` and every privilege to any authenticated principal**, making all
-method-level authorization checks inert. The default is now **`true`**: users
+method-level authorization checks inert. The default is **`true`**: users
 get only their real, group-derived authorities.
 
 - The seeded `admin` user keeps full rights (it belongs to the `Administrator`
@@ -108,12 +108,12 @@ were hardened:
   spell-check) on API-key-mode sites and the MCP server key path. The SDKs
   already use the header.
 
-- **Tokens now support expiry and revocation.** A token carries an `enabled`
+- **Tokens support expiry and revocation.** A token carries an `enabled`
   flag (soft revoke without deleting the row) and an optional `expiresAt`; a
   disabled or expired token is rejected. Existing tokens default to
   enabled / never-expire.
 
-- The admin token API is now admin-only, and token values are shown **once on
+- The admin token API is admin-only, and token values are shown **once on
   creation**: they are never returned again by list/get.
 
 Additionally, the admin user list no longer returns password hashes
@@ -153,7 +153,7 @@ page/skill ZIPs.
 
 ## 6. Retrieved content is treated as untrusted (prompt-injection defense)
 
-In RAG chat, retrieved website content is now wrapped in an explicit
+In RAG chat, retrieved website content is wrapped in an explicit
 `<untrusted_website_content>` block with a standing instruction that everything
 inside is **data, not instructions**, so a crawled page or uploaded asset
 carrying "ignore previous instructions / call tool X" can no longer hijack the
@@ -194,7 +194,7 @@ reverse proxy, pair `loopback-only` with `require-auth`.
 
 ## 9. Actuator endpoints restricted
 
-`management.endpoints.web.exposure.include` is now `health,info,prometheus`
+`management.endpoints.web.exposure.include` defaults to `health,info,prometheus`
 (was `*`). `/actuator/env` and `/actuator/heapdump` (which could leak the
 crypto key, datasource credentials and provider keys) are **no longer exposed
 over HTTP**. Re-add a specific endpoint only if you need it (it will require

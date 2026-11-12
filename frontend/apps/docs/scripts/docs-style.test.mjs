@@ -71,27 +71,7 @@ const PUBLIC_DOCS = "https://turing.viglet.org/docs";
  * Today's offenders, page → rules. Shrinks only. Each rewrite removes its page's entry in the same
  * commit.
  */
-const BASELINE = {
-  "administration-guide.md": ["heading-unique"],
-  "agent-eval.md": ["release-relative"],
-  "ai-agents.md": ["release-relative"],
-  "chat-flow.md": ["heading-unique"],
-  "chat.md": ["release-relative"],
-  "configuration-reference.md": ["internal-ids"],
-  "conversion-analytics.md": ["internal-ids"],
-  "custom-tools.md": ["release-relative"],
-  "dsl-compatibility.md": ["heading-levels"],
-  "dsl-query.md": ["heading-unique"],
-  "flow-dsl.md": ["internal-ids"],
-  "javascript-sdk.md": ["heading-levels"],
-  "llm-instances.md": ["internal-ids", "release-relative"],
-  "manifest.md": ["internal-ids", "release-relative"],
-  "security-authentication.md": ["release-relative"],
-  "security-hardening.md": ["release-relative"],
-  "thesaurus.md": ["release-relative"],
-  "tool-calling.md": ["release-relative"],
-  "transcription.md": ["release-relative"],
-};
+const BASELINE = {};
 
 // ---------------------------------------------------------------------------------------------
 

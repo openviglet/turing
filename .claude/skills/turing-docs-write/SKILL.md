@@ -96,9 +96,8 @@ gate into `grep` and trusting the exit code of `grep`.
 
 ## Debt
 
-`BASELINE` in `frontend/apps/docs/scripts/docs-style.test.mjs` lists the pages that still
-break a style rule. When you rewrite a page, remove its entries in the same commit; the lint
-fails on an entry that is paid. A false positive is fixed in the lists at the top of that
-file, never by adding a page to `BASELINE`. The debt is filed in roadkeep Block **AE**
-(§CLXXXIV): rewrites of the five largest pages T1279 to T1283, rule-by-rule sweeps T1284 to
-T1287, code-to-docs gaps T1288 to T1290.
+`BASELINE` in `frontend/apps/docs/scripts/docs-style.test.mjs` is empty: every page passes
+every rule, so a new finding is something your change introduced. Fix the page. A false
+positive is fixed in the lists at the top of that file (or in the rule, as the hyphenated-word
+case was), never by adding a page to `BASELINE`. The open code-to-docs gaps are filed in
+roadkeep Block **AE** (§CLXXXIV.4).
