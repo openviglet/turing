@@ -2469,32 +2469,25 @@ the answer, and a marker-less answer on an opted-in site sends no citations.
 
 ### CLXXXIII.1 A filter-only plan answers zero hits on the model-catalog copilot (T1277)
 
-**Where it happened.** The model-catalog "Ask the catalog" widget on models.viglet.org,
-calling `POST https://turing-demo.viglet.org/api/sn/model-catalog/copilot` (vectorless
-SN site fed by the structured-feed ingester from `catalog.ndjson`). Found 2026-11-12;
-the Viglet Cloud regression monitor (`tests/regression`, api.spec.ts) has failed on the
-same questions on every run since at least 2026-11-10.
+**Where.** turing-demo, SN site `model-catalog` (vectorless, structured feed), called by
+the "Ask the catalog" widget on models.viglet.org. Seen 2026-11-12 on the server logs.
 
-**Request.** `{"messages":[{"role":"user","content":"Which models support
-vision?"}],"locale":"en_US"}`
+**Why it regressed.** The feed grew to 1206 models, and the log reads `stuff-all
+SKIPPED: index has 1001 rows > fetched 1000 (stuffAllMaxDocs=1000) -> FILTERED
+retrieval`. Under 1000 rows the copilot reasoned over the whole catalog; past it, every
+question takes the FILTERED path, which has two bugs.
 
-**What came back.** HTTP 200, `groundedQuerySummary: "capabilities=vision"`, `totalHits:
-0`, no citations, and the "no matching catalog results" fallback. "Which models are
-available from OpenAI?" plans `vendor=openai` and also gets 0. "Which chat model scores
-highest on the intelligence index?" (a sort, no filter) still answers correctly.
+**Bug 1, a residual text clause.** "Which models support vision?" plans `must: _text_
+"Which models support ?"` plus `filter capabilities=vision`, and gets 0. The filter
+alone (`/search?q=*&fq[]=capabilities:vision`) gives 595. The words left after the facet
+is lifted out are not content; a plan made only of filters must run as `q=*`.
 
-**What the index holds.** The same filter sent to the search API returns hundreds:
-`/api/sn/model-catalog/search?q=*&fq[]=capabilities:vision` gives 595, and
-`fq[]=vendor:openai` gives 95. So the plan is right and the data is there; the step
-that runs the plan loses it. Two measurements narrow it:
-- `q=models that support vision&fq[]=capabilities:vision` gives 0: a residual text
-  query ANDed with the filter empties the result.
-- `fq[]=capabilities:Vision` and `fq[]=vendor:OpenAI` give 0: facet matching on the
-  search API is case-sensitive again, the bug T802 fixed for the planner path.
+**Bug 2, a field the manifest does not declare.** "Which chat model scores highest on
+the intelligence index?" plans `filter type=chat`. The manifest declares `kind`, with
+`CHAT`. The planner must only filter on manifest fields, with values matched
+case-insensitively (`fq[]=vendor:OpenAI` gives 0, as T802 once fixed).
 
-**Workaround.** None. The widget shows the empty fallback.
+**Also.** `stuffAllMaxDocs` is a cliff: one row past it changes the answering mode.
 
-**What Turing should do.** A plan that is only filters runs as `q=*` plus those filters,
-with no residual text clause, and filter values match case-insensitively on every path.
-Add these two questions to the `model-catalog.nl-facet-eval.json` sample (T813) so the
-regression is caught in Turing CI, not on the demo.
+**Done when** both questions answer with citations on turing-demo, and they are in the
+`model-catalog.nl-facet-eval.json` sample so Turing CI catches the next regression.
