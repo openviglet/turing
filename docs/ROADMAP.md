@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1283** (deps: T1279 ✅) **personas.md is 6.8k words overlapping persona-book.md, with internal block labels in its prose** — Two persona pages explain the same objects differently; the rewrite decides which page owns which type and cross-links them. → §CLXXXIV.2
 - 📋 **T1284** (deps: —) **94 code fences on 32 docs pages name no language, so Starlight renders them unhighlighted** — The cheapest docs-style debt: a mechanical pass shrinks the baseline before the rewrites, and a reader gets highlighting and a copy label. → §CLXXXIV.3
 - 📋 **T1285** (deps: —) **39 docs pages have a frontmatter description outside 70 to 160 characters** — The description is the search-result and link-preview text; too short says nothing, too long gets cut mid-sentence. → §CLXXXIV.3
 - 📋 **T1286** (deps: —) **549 docs headings on 57 pages are Title Case instead of sentence case** — Mixed heading case is the most visible inconsistency between pages, and the largest single rule in the docs-style baseline. → §CLXXXIV.3

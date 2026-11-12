@@ -117,7 +117,6 @@ const BASELINE = {
   "migration.md": ["frontmatter-description", "heading-sentence-case"],
   "multi-tenancy.md": ["frontmatter-description", "heading-sentence-case"],
   "observability.md": ["frontmatter-description", "heading-sentence-case"],
-  "personas.md": ["frontmatter-description", "heading-sentence-case", "internal-ids", "release-relative"],
   "rag.md": ["fence-language", "heading-sentence-case"],
   "react-sdk.md": ["heading-sentence-case"],
   "reranking.md": ["fence-language", "frontmatter-description", "heading-sentence-case"],

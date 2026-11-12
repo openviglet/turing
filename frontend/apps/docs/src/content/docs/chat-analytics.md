@@ -405,7 +405,7 @@ See [Observability](/docs/observability/) for the full Grafana setup, including 
 The drill-down is pulled from the `/sessions/{id}/transcript` endpoint: one API call per session opened. Joins the analytics store with the chat-memory store on `conversationId`.
 
 :::tip[From investigation to product decision]
-The drill-down isn't just for QA: it's a feedback channel into your product. Open the sessions where `goalAchieved == NO` and `sentiment == FRUSTRATED`. Read the first user message. The patterns you'll find (*"users are looking for X but our agent doesn't know about X"*) are your roadmap. Conversely, sessions where `goalAchieved == YES` and `sentiment == POSITIVE` are gold for your [Persona few-shot store](/docs/personas/#the-few-shot-store-teach-by-example).
+The drill-down isn't just for QA: it's a feedback channel into your product. Open the sessions where `goalAchieved == NO` and `sentiment == FRUSTRATED`. Read the first user message. The patterns you'll find (*"users are looking for X but our agent doesn't know about X"*) are your roadmap. Conversely, sessions where `goalAchieved == YES` and `sentiment == POSITIVE` are gold for your [Persona few-shot store](/docs/personas/#the-few-shot-store).
 :::
 
 ---

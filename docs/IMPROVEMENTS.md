@@ -2477,38 +2477,21 @@ into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
 
-### CLXXXIV.2 Rewrite the five largest docs pages (T1279)
-
-The five largest pages under frontend/apps/docs/src/content/docs grew one shipped
-increment at a time: persona-book.md (10.7k words), integrations/wordpress/index.md
-(9.8k), semantic-navigation.md (8.5k), rest-api.md (7.9k) and personas.md (6.8k). Each
-mixes the four Diátaxis types (tutorial, how-to, reference, explanation) on one page,
-repeats headings, and carries most of the docs-style lint's debt. Each rewrite follows
-the turing-docs-write skill, which applies the shared docs-writing skill. First classify
-each section by type. Then split the page where one type would otherwise bury another,
-and give every split page a sidebar.generated.json entry, a card on its hub and a
-redirects.json row if a URL moves. Keep every anchor that COVERAGE.md or another page
-links to, or update those links in the same change. Remove the page's BASELINE entries
-in frontend/apps/docs/scripts/docs-style.test.mjs in the same commit; the lint fails on
-an entry that is paid. Done means: pnpm --filter turing-docs test and build both pass,
-the docs-sync report shows no new broken link, and the page passes the docs-writing
-reader's checklist. One task per page, largest first.
-
 ### CLXXXIV.3 Mechanical sweeps of the docs-style baseline (T1284)
 
 Most of the docs-style lint's baseline in frontend/apps/docs/scripts/docs-style.test.mjs
-can be paid without rewriting a page. A rewrite of the five largest pages (§CLXXXIV.2)
-pays their entries anyway, so each sweep skips those pages and works on the rest, one
-rule per task so each diff stays reviewable. Four sweeps cover the mechanical rules.
-Fences: give every fence its language (bash, json, yaml, properties, java, text).
-Descriptions: rewrite each frontmatter description to 70 to 160 characters that say what
-the reader can do on the page. Headings: convert to sentence case, adding real proper
-nouns to PROPER_NOUNS rather than baselining a page. Small rules: remove
-release-relative phrases ("is now", "as before"), internal T-ids and Block labels (they
-belong in COVERAGE.md), duplicate headings and skipped levels. When a renamed heading
-changes an anchor, keep the old one with an <a id> or update every link to it in the
-same change; the docs build and the docs-sync report both check this. Every sweep
-removes the BASELINE entries it paid in the same commit.
+can be paid without rewriting a page. The five largest pages were rewritten (T1279 to
+T1283) and their entries are paid, so each sweep works on the rest, one rule per task so
+each diff stays reviewable. Four sweeps cover the mechanical rules. Fences: give every
+fence its language (bash, json, yaml, properties, java, text). Descriptions: rewrite
+each frontmatter description to 70 to 160 characters that say what the reader can do on
+the page. Headings: convert to sentence case, adding real proper nouns to PROPER_NOUNS
+rather than baselining a page. Small rules: remove release-relative phrases ("is now",
+"as before"), internal T-ids and Block labels (they belong in COVERAGE.md), duplicate
+headings and skipped levels. When a renamed heading changes an anchor, keep the old one
+with an <a id> or update every link to it in the same change; the docs build and the
+docs-sync report both check this. Every sweep removes the BASELINE entries it paid in
+the same commit.
 
 ### CLXXXIV.4 What the code declares and no docs page names (T1288)
 

@@ -799,6 +799,7 @@
 - **T1280** — The WordPress plugin docs are five pages by type: install and connect, indexing, search, wp-admin and a reference with every PHP filter; inbound anchors moved, baseline entry paid.
 - **T1281** — semantic-navigation.md has one h2 per tab, sentence-case unique headings and labelled fences; targeting and search rules moved to their own pages with links, sidebar and hub cards.
 - **T1282** — rest-api.md opens for its reader, has sentence-case headings, labelled request blocks and present-tense prose; the per-endpoint behaviour notes stay as reference, and the baseline entry is paid.
+- **T1283** — personas.md is the persona reference (fields, values, defaults, actions, endpoints) and the Persona Book the explanation; no block labels, stale defaults corrected from code, anchors kept.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

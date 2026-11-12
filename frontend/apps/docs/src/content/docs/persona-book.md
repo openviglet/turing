@@ -451,7 +451,7 @@ precedence:
 3. the agent's default persona.
 
 `AUDIENCE` personas are never used as a voice. For the questions to ask when choosing an
-agent's persona, see [how to choose a persona for an agent](/docs/personas/#how-to-choose-a-persona-for-an-agent).
+agent's persona, see [how to choose a persona for an agent](/docs/personas/#choose-a-persona-for-an-agent).
 
 > **Worked example: one agent, two personas.** A university's "Student Center" agent
 > holds two personas: `formal-registrar` (the default) and `laid-back-senior`. Normally
