@@ -248,7 +248,8 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
    does and how to use it* — configuration keys, admin UI steps, API/SDK calls, examples.
    They are **not** a changelog or design-rationale dump. Keep the tense/voice of the
    surrounding page; match its structure (most pages have an intro, a config/reference
-   section, and examples). Never paste `IMPROVEMENTS.md` rationale verbatim.
+   section, and examples). Never paste `IMPROVEMENTS.md` rationale verbatim. Write it with
+   the `turing-docs-write` skill.
 4. **Update `COVERAGE.md` in the same pass.** Add or update the feature's row (page +
    anchor + ✅/🧩/🔒 status) so the matrix never drifts from what shipped. Confirm the
    "Orphans" section still reads **None**.
@@ -259,6 +260,7 @@ the docs. (`_documentation-update-plan.md` is retired — do not resurrect it;
 
 **The page ships in the task's own commit.** Code, what `ship` wrote, the end-user page
 and the `COVERAGE.md` row are one Turing commit — there is no second repo any more. Run
+`pnpm --filter turing-docs test` (the docs-style lint) and
 `pnpm --filter turing-docs build` before committing: it builds the area and its link
 gate fails on any broken internal link, anchor, image or redirect target. Links between
 pages are written with the base (`/docs/<slug>/`): Astro does not prefix hand-typed

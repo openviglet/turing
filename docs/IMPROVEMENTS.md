@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2464,3 +2466,89 @@ none drops them when `cited` is false). Done when the demo question returns a ma
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
+
+## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
+
+Block AE reopened for the debt that two instruments measure in frontend/apps/docs: the
+docs-style lint (frontend/apps/docs/scripts/docs-style.test.mjs, whose BASELINE only
+shrinks) and the turing-docs-sync reverse report
+(.claude/skills/turing-docs-sync/docs-sync-report.mjs). The subsections split that debt
+into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule sweeps,
+gaps between what the code declares and what the pages name, and running the lint where
+the docs ship.
+
+### CLXXXIV.1 A COVERAGE.md anchor drifted from its heading (T1278)
+
+The docs-sync report (.claude/skills/turing-docs-sync/docs-sync-report.mjs) resolves
+every ./src/content/docs/<page>#anchor link in COVERAGE.md against the page's headings
+and its explicit <a id> anchors. One fails: the Block CA row links
+vectorless-structured-rag.md#teaching-turing-your-catalogs-own-ranking-words, but the
+heading reads "Teaching Viglet Turing your catalog's own ranking words", so its slug
+starts teaching-viglet-turing. The product-name pass renamed the heading and nothing
+re-read the matrix, because scripts/check-links.mjs reads only the built HTML and
+COVERAGE.md is not a page. Fix the row's anchor, or add an <a id> to the page if other
+links still use the old slug. Then re-run the report until its COVERAGE section reads
+zero.
+
+### CLXXXIV.2 Rewrite the five largest docs pages (T1279)
+
+The five largest pages under frontend/apps/docs/src/content/docs grew one shipped
+increment at a time: persona-book.md (10.7k words), integrations/wordpress/index.md
+(9.8k), semantic-navigation.md (8.5k), rest-api.md (7.9k) and personas.md (6.8k). Each
+mixes the four Diátaxis types (tutorial, how-to, reference, explanation) on one page,
+repeats headings, and carries most of the docs-style lint's debt. Each rewrite follows
+the turing-docs-write skill, which applies the shared docs-writing skill. First classify
+each section by type. Then split the page where one type would otherwise bury another,
+and give every split page a sidebar.generated.json entry, a card on its hub and a
+redirects.json row if a URL moves. Keep every anchor that COVERAGE.md or another page
+links to, or update those links in the same change. Remove the page's BASELINE entries
+in frontend/apps/docs/scripts/docs-style.test.mjs in the same commit; the lint fails on
+an entry that is paid. Done means: pnpm --filter turing-docs test and build both pass,
+the docs-sync report shows no new broken link, and the page passes the docs-writing
+reader's checklist. One task per page, largest first.
+
+### CLXXXIV.3 Mechanical sweeps of the docs-style baseline (T1284)
+
+Most of the docs-style lint's baseline in frontend/apps/docs/scripts/docs-style.test.mjs
+can be paid without rewriting a page. A rewrite of the five largest pages (§CLXXXIV.2)
+pays their entries anyway, so each sweep skips those pages and works on the rest, one
+rule per task so each diff stays reviewable. Four sweeps cover the mechanical rules.
+Fences: give every fence its language (bash, json, yaml, properties, java, text).
+Descriptions: rewrite each frontmatter description to 70 to 160 characters that say what
+the reader can do on the page. Headings: convert to sentence case, adding real proper
+nouns to PROPER_NOUNS rather than baselining a page. Small rules: remove
+release-relative phrases ("is now", "as before"), internal T-ids and Block labels (they
+belong in COVERAGE.md), duplicate headings and skipped levels. When a renamed heading
+changes an anchor, keep the old one with an <a id> or update every link to it in the
+same change; the docs build and the docs-sync report both check this. Every sweep
+removes the BASELINE entries it paid in the same commit.
+
+### CLXXXIV.4 What the code declares and no docs page names (T1288)
+
+The docs-sync reverse report (.claude/skills/turing-docs-sync/docs-sync-report.mjs)
+reads turing-app and the CLI and lists what no page under frontend/apps/docs names. It
+finds three populations. First, 85 of 126 turing.* keys read through @Value, plus 4
+@ConfigurationProperties prefixes: turing.migration, turing.prompt.capture,
+turing.resilience and turing.viglet-ai. Second, the turing match CLI command, missing
+from cli.md. Third, 138 of 237 public endpoints under /api/sn and /api/v2, which the
+report marks advisory because many serve only the console. Each population needs a
+verdict per cluster, not per key. An operator-facing setting gets a
+configuration-reference.md row with its real default, read from the @Value default or
+application.yaml. An internal knob (cron expressions, cleanup delays, build metadata)
+gets one 🔒 COVERAGE.md row for its cluster. A public endpoint a developer would call
+gets a rest-api.md entry, or a row on the feature page that owns it. Prove each verdict
+with a grep or the handler line, write pages with turing-docs-write, and re-run the
+report: a task is done when its population's count in the report reflects only 🔒
+clusters.
+
+### CLXXXIV.5 The docs-style lint runs where the docs ship (T1291)
+
+The docs-style lint (frontend/apps/docs/scripts/docs-style.test.mjs) runs under pnpm
+--filter turing-docs test, root alias pnpm test:docs. The one workflow that publishes
+the docs, .github/workflows/publish-github-pages.yml, runs pnpm run build:site, which
+builds the area and its link gate, and never runs the lint. A page that breaks a style
+rule therefore ships whenever the session that wrote it skipped the local gate. Add a
+pnpm test:docs step before build:site. The workflow stays workflow_dispatch: CI in this
+repository is manual-dispatch on purpose (T928, T929), so this adds a step and no
+trigger. The step is cheap (node --test over Markdown, no install beyond the workspace)
+and fails with the page, line and rule.

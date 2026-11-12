@@ -8,6 +8,7 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/check-links.mjs",
     "preview": "astro preview",
+    "test": "node --test \"scripts/*.test.mjs\"",
     "redirects": "node scripts/redirect-map.mjs"
   },
   "dependencies": {

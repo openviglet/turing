@@ -17,6 +17,7 @@
     "build:sdk": "turbo run build --filter=@viglet/turing-sdk && node scripts/build-status.mjs",
     "build:cli": "turbo run build --filter=@viglet/turing-cli && node scripts/build-status.mjs",
     "test:cli": "pnpm --filter @viglet/turing-cli test",
+    "test:docs": "pnpm --filter turing-docs test",
     "build:app": "turbo run build --filter=turing-app && node scripts/build-status.mjs",
     "build:marketplace": "turbo run build --filter=\"./apps/marketplace/*\" && node scripts/build-status.mjs",
     "build:site": "turbo run build --filter=turing-site --filter=turing-docs && node scripts/build-status.mjs && node apps/site/scripts/check-contract.mjs",

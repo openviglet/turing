@@ -13,6 +13,8 @@
 > | ----- | ------------------ |
 > | `roadkeep` | **the write path for `docs/ROADMAP.md`/`CHANGELOG.md`/`IMPROVEMENTS.md`/`STRATEGY.md`**: adding, shipping, retiring, deferring or sectioning a task, and every query about the backlog |
 > | `turing-roadmap-docs` | the Turing rules `roadkeep` does not enforce: **where new work goes (reuse a block, don't mint a letter)**, one-task-one-commit + `/loop`, the next block letter, propagating a shipped user-facing task to the end-user docs in `frontend/apps/docs` (same commit) |
+> | `turing-docs-write` | writing, restructuring or reviewing a page in `frontend/apps/docs`: Diátaxis type, Starlight components, glossary, the docs-style lint and its baseline |
+> | `turing-docs-sync` | checking that `frontend/apps/docs` matches the code: the docs gates, the reverse code→docs report, COVERAGE link resolution, and what only a reader can judge |
 > | `turing-persistence` | writing JPA entities, `@Column` annotations, associations (LAZY rule), or Liquibase changelogs |
 > | `turing-integration-tests` | creating or debugging a `*IT.java` / `@SpringBootTest` / context-startup hang |
 > | `turing-frontend-testing` | adding or debugging a `*.test.tsx` (vitest + RTL) |
