@@ -1,6 +1,6 @@
 ---
 title: "Viglet Turing CLI"
-description: "@viglet/turing-cli, the `turing` command. Scaffold an agent project, run a full local stack, deploy agents/flows/tools/skills to any environment, tail live chat events, and run YAML eval suites in CI. Zero runtime dependencies."
+description: "The turing command line (@viglet/turing-cli): scaffold agent projects, run a local stack, deploy agents and flows, tail chat events, run evals."
 ---
 **`@viglet/turing-cli`** gives you the **`turing`** command, a developer CLI for building, deploying and testing Viglet Turing agents as **code in a Git repo** instead of clicking through the admin console. It's zero-dependency (compiled ESM, `tsc`-only) and needs a modern Node runtime (see the package's `engines`).
 

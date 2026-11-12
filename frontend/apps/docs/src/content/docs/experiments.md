@@ -1,6 +1,6 @@
 ---
 title: "Experiments (A/B Testing)"
-description: "A/B test your chat flows natively. Split traffic across variants by weight, measure the winner with a real significance test, let a multi-armed bandit shift traffic automatically, and auto-promote the champion, all declared on the flow itself."
+description: "A/B test chat flows: weighted variants, a significance test, a multi-armed bandit that shifts traffic, and automatic promotion of the winner."
 ---
 > *Is the friendlier welcome message actually converting better, or does it just feel better? "Ask for the email first" vs. "ask for it last", which one finishes more conversations? **Experiments** turn those hunches into measured decisions, built right into the chat flow.*
 

@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1285** (deps: —) **39 docs pages have a frontmatter description outside 70 to 160 characters** — The description is the search-result and link-preview text; too short says nothing, too long gets cut mid-sentence. → §CLXXXIV.3
 - 📋 **T1286** (deps: —) **549 docs headings on 57 pages are Title Case instead of sentence case** — Mixed heading case is the most visible inconsistency between pages, and the largest single rule in the docs-style baseline. → §CLXXXIV.3
 - 📋 **T1287** (deps: —) **Docs pages carry 25 release-relative phrases, 14 internal T-ids/Block labels, duplicate headings and skipped levels** — "Is now" and "T1233" only make sense to someone who read the changelog; a reader arriving today needs the present state. → §CLXXXIV.3
 - 📋 **T1288** (deps: —) **85 of 126 turing.* properties and 4 @ConfigurationProperties prefixes are named on no docs page** — configuration-reference.md implies it is the list of settings, so an operator cannot tell an undocumented knob from one that does not exist. → §CLXXXIV.4

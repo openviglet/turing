@@ -1,6 +1,6 @@
 ---
 title: "Search Engine"
-description: "Configure and manage Search Engine instances in Viglet Turing."
+description: "Configure the Solr, Elasticsearch or embedded Lucene search engine instances that Viglet Turing's Semantic Navigation sites run on."
 ---
 The **Search Engine** page (`/admin/se/instance`) manages the search backends that power Semantic Navigation Sites. It is accessible from the **Enterprise Search** section of the sidebar.
 

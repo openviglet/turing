@@ -1,6 +1,6 @@
 ---
 title: "Configure LLM Instances in Viglet Turing"
-description: "Connect Viglet Turing to OpenAI, Anthropic Claude, Gemini, Ollama and 7 other model providers: credentials per vendor, generation parameters, and which features each model supports."
+description: "Connect Viglet Turing to OpenAI, Anthropic, Gemini, Ollama and other providers: credentials, generation parameters and model features."
 sidebar:
   label: "LLM Instances"
 ---

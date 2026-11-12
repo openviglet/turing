@@ -1,6 +1,6 @@
 ---
 title: "MCP Servers"
-description: "MCP works both ways in Viglet Turing: connect AI Agents to external tool servers (client), and expose Viglet Turing's own search/RAG/agent/analytics tools to Claude Desktop, Claude Code, or Cursor (server)."
+description: "Connect AI agents to external MCP tool servers, and expose Viglet Turing's search, RAG and agent tools to Claude, Cursor and other clients."
 ---
 The **Model Context Protocol (MCP)** is an open standard that lets AI models call tools hosted on external servers, turning any API, database, or internal system into a capability that an AI Agent can use autonomously. If you are an administrator looking to extend your agents beyond the 27 built-in tools, MCP Servers let you connect to virtually any external service without writing custom code inside Viglet Turing.
 

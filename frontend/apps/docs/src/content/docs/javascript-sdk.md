@@ -1,6 +1,6 @@
 ---
 title: "JavaScript SDK (vanilla)"
-description: "@viglet/turing-sdk, a zero-dependency, framework-agnostic JavaScript client for Viglet Turing. Observable controllers for search, chat, autocomplete, slots and analytics; built for Adobe EDS, plain <script>, Astro, WordPress or any bundler."
+description: "@viglet/turing-sdk: a zero-dependency JavaScript client with observable controllers for search, chat, autocomplete, slots and analytics."
 ---
 **`@viglet/turing-sdk`** is a **zero-dependency**, framework-agnostic JavaScript client for the Viglet Turing API. No React, no axios, just native `fetch`, `TextDecoder`, `EventSource` and `crypto.randomUUID`. It ships as a self-contained ESM bundle (`dist/turing-sdk.js`) plus a UMD build and TypeScript types.
 

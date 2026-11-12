@@ -1,6 +1,6 @@
 ---
 title: "Routines"
-description: "Run long work asynchronously inside a conversation. A routine is a named async job fired by a chat-flow scheduleAgent node: it runs on a queue while the chat turn returns instantly, then writes its result into a slot to resume the flow."
+description: "Run long work as async routines inside a conversation: a chat flow starts the job, the turn returns at once, and the result fills a slot."
 ---
 > *Some steps take a while. Generating a proposal PDF, calling a slow third-party API, signing a document, none of those finish inside the few hundred milliseconds a chat turn should take. A **routine** lets the conversation kick off that work, tell the visitor "working on it…", and pick the conversation back up the moment the result is ready.*
 

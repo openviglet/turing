@@ -1,6 +1,6 @@
 ---
 title: "Custom Tools"
-description: "Build your own AI tools in Groovy and let your agents call them like first-class capabilities. Plus Vibe Coding: the AI helps you write the tool, describe it to the LLM, and shape its parameters."
+description: "Build AI tools in Groovy that agents call like built-in ones, with AI help to write the code, its description and its parameters."
 ---
 > *The 27 native tools cover most of what an agent needs to do. The 28th (and the 29th, and the 50th) is whatever your business actually does. **Custom Tools** is how you teach an agent to do it.*
 

@@ -1,6 +1,6 @@
 ---
 title: "Flow DSL"
-description: "@viglet/turing-flow-dsl: author Viglet Turing chat flows as typed TypeScript source, then transpile to the editor's JSON wire format. TypeScript catches enum typos (tone, guardrail, trigger) at compile time. Zero-dependency."
+description: "Write chat flows as typed TypeScript with @viglet/turing-flow-dsl and transpile them to the editor's JSON, catching enum typos at compile time."
 ---
 **`@viglet/turing-flow-dsl`** lets you author Viglet Turing [chat flows](/docs/chat-flow/) as **typed TypeScript source** instead of drawing them in the visual editor. You write a flow as a plain object, and the DSL **transpiles** it to the exact JSON wire format the editor imports: `{ graph: { nodes, edges }, name, slots, personas, … }`. Because it's typed, the TypeScript compiler catches enum typos (a misspelled `tone`, `guardrailMethod`, `triggerMode` or an unknown node `type`) at **build time**, before the flow ever reaches a running instance. Zero runtime dependencies.
 

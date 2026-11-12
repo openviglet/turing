@@ -1,6 +1,6 @@
 ---
 title: "Chat Analytics"
-description: "Turn thousands of chat conversations into the voice of your customer. Intent, goal achievement, sentiment trajectory, funnels, conversation replay, tool-latency p95, router-decision and SSE diagnostics: engine-agnostic, cluster-safe, AI-on-AI classified."
+description: "Turn chat conversations into customer insight: intent, goal achievement, sentiment, funnels, replay, tool latency and router diagnostics."
 ---
 > *Every conversation your AI just had is a customer telling you what they want, what frustrated them, and whether you delivered. Chat Analytics is how you actually listen.*
 

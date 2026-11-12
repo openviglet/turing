@@ -1,6 +1,6 @@
 ---
 title: "Run Anthropic-Compatible Agent Skills in Viglet Turing"
-description: "Import, author and run Anthropic-compatible Agent Skills (a SKILL.md folder with scripts and references) in a Docker sandbox. Skills exported from Claude run unchanged in chat and search."
+description: "Import, write and run Anthropic-compatible Agent Skills in a Docker sandbox; skills exported from Claude run unchanged in chat and search."
 sidebar:
   label: "Skills"
 ---

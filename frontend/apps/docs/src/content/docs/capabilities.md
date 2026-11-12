@@ -1,6 +1,6 @@
 ---
 title: "Capabilities"
-description: "The capability registry and two-level gate in Viglet Turing: how provider-native server tools, request options, and Viglet Turing's own tools surface in one taxonomy and run in one tool loop."
+description: "How provider-native tools, request options and Viglet Turing's own tools share one capability registry, one two-level gate and one tool loop."
 ---
 A **capability** is anything a Large Language Model can *do beyond plain text generation*: search the web, run code, generate an image, return citations, or reason with a larger compute budget. Different vendors expose these as server-side primitives with different names and shapes; Viglet Turing collapses them into **one taxonomy** so the admin sees "web search" once, not "OpenAI `web_search` vs Anthropic `web_search_20250305` vs Gemini `google_search`."
 

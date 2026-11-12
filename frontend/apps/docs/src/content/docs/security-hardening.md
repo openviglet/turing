@@ -1,6 +1,6 @@
 ---
 title: "Security Hardening & Upgrade Notes"
-description: "Post-audit security hardening in Viglet Turing, the new production defaults, required environment variables, abuse controls, and breaking changes operators and integrators need to know."
+description: "Viglet Turing's production security defaults, required environment variables, abuse controls and the breaking changes operators must know."
 ---
 A full-surface security review of Viglet Turing produced a round of
 hardening changes to the production defaults, the anonymous public surface, and

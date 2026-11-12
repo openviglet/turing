@@ -1,6 +1,6 @@
 ---
 title: "Agent Evaluation (CI)"
-description: "Regression-test your AI agents like code. Capture golden conversations with expected slots and outcomes, replay them through the real engine, score them with a deterministic diff plus an LLM judge, and block a flow from publishing when it regresses."
+description: "Regression-test AI agents like code: replay golden conversations, score them with a diff and an LLM judge, and block a regressing flow."
 ---
 > *You tweak a system prompt to fix one annoying behavior, and three conversations that used to work perfectly now fall apart. Without a safety net you find out from an angry customer. **Agent Evaluation** is that safety net: a golden set of conversations that must keep passing, checked automatically before a change ships.*
 

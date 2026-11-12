@@ -1,6 +1,6 @@
 ---
 title: "Viglet Turing on WordPress"
-description: What each Viglet Turing feature looks like on a WordPress site through the Viglet Turing Search plugin, which block shows it, and which ones need a language model.
+description: "Each Viglet Turing feature on a WordPress site: which plugin block shows it and whether it needs a language model."
 ---
 
 The [Viglet Turing Search plugin](/docs/integrations/wordpress/) brings Viglet Turing's search and generative

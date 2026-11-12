@@ -1,6 +1,6 @@
 ---
 title: "Chat"
-description: "The Viglet Turing Chat interface is where AI Agents meet customers. Direct LLM, Semantic Navigation grounded chat, and agent-per-tab, each tuned for a different conversion moment."
+description: "The Viglet Turing chat interface: direct LLM chat, chat grounded on a Semantic Navigation site, and one AI agent per tab."
 ---
 > *Every conversation is a chance to convert. The Chat interface is where Viglet Turing's reasoning, search, and brand voice meet your customer's question.*
 

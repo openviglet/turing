@@ -1,6 +1,6 @@
 ---
 title: "Reference showcase (Atlas Store)"
-description: "Atlas Store: the installable reference app that exercises the maximum surface of Viglet Turing, walked end-to-end (typed catalog, faceted + hybrid search, RAG chat, agent power, creative compositions, voice/memory/ops)."
+description: "Atlas Store, the reference app that exercises Viglet Turing end to end: typed catalog, faceted and hybrid search, RAG chat, agents and more."
 ---
 **Atlas Store** is the canonical reference application for Viglet Turing, the "see it all wired together" artifact. It's a commerce-catalog copilot whose single job is to **exercise the maximum surface of the platform**: a living demo, an SDK-vs-real-backend integration test, and the answer to *"what can Viglet Turing actually do?"*
 

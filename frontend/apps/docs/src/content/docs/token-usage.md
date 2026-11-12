@@ -1,6 +1,6 @@
 ---
 title: "Token Usage"
-description: "Monitor and analyse LLM token consumption in Viglet Turing."
+description: "Track how many LLM tokens Viglet Turing consumes, by model, day and month, to spot heavy usage before the bill arrives."
 ---
 If you are an administrator responsible for monitoring AI spend, this page is for you. Token Usage helps you track how much each LLM model is costing your organization by showing consumption broken down by model, day, and month, so you can identify heavy usage patterns, set budgets, and avoid unexpected bills.
 

@@ -1,6 +1,6 @@
 ---
 title: "Answer Engine"
-description: "The /answer lens in Viglet Turing: a streaming, grounded, cited answer over a Semantic Navigation site's knowledge base, with freshness re-checks, interaction signals and shareable permalinks."
+description: "The /answer lens: a streaming, grounded and cited answer over an SN site's content, with freshness checks, feedback signals and permalinks."
 ---
 The **answer engine** turns a search query into a written answer, grounded in the documents of a Semantic Navigation site and carrying `[n]` citations back to them. It is a *lens* on the same index your search results come from, not a separate product: same site, same fields, same filters.
 

@@ -1,6 +1,6 @@
 ---
 title: "Vectorless (Structured-Data) RAG"
-description: "Answer questions over a structured catalog (products, prices, specs, a model registry) grounded and cited, using only an LLM and your search index. No embeddings, no vector store."
+description: "Answer questions over a structured catalog, grounded and cited, with only an LLM and your search index: no embeddings and no vector store."
 ---
 **Talk to a structured catalog, grounded, cited, with no vector database.** Viglet
 Viglet Turing can answer questions over your product catalog, price list, spec sheet,

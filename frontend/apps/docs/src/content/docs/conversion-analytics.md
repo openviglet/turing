@@ -1,6 +1,6 @@
 ---
 title: "Conversion Analytics (GA4 bridge)"
-description: "Measure lead conversion, abandonment, and which persona A/B variation was preferred, in the browser, in your own Google Analytics. A zero-dependency canonical event bus in the Viglet Turing SDK with pluggable sinks (GA4/GTM first), auto-detecting an existing gtag/dataLayer for zero-config Adobe EDS setups."
+description: "Measure lead conversion, abandonment and preferred persona variants in your own Google Analytics with the SDK's event bus and GA4 or GTM sinks."
 ---
 > *Viglet Turing already measures the funnel server-side (outcome, experiment, persona). This is the other half: the **browser-owned** view, emitted at the lifecycle moments only the client can see (like a tab close) and delivered straight into your own GA4 next to acquisition source, campaign and audiences.*
 

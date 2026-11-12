@@ -1,6 +1,6 @@
 ---
 title: "Observability: Prometheus & Grafana"
-description: "The metrics, dashboards, and traces that turn Viglet Turing from a black box into a glass box. Prometheus scrapes Spring Boot Actuator, Grafana renders the story, and you sleep through the night."
+description: "Monitor Viglet Turing with Prometheus and Grafana: the Spring Boot Actuator metrics, the dashboards and the traces."
 ---
 > *You can't fix what you can't see. And in production, "I'll add some logs and check tomorrow" is what tomorrow's incident is built on.*
 

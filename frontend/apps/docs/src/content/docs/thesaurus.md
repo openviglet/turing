@@ -1,6 +1,6 @@
 ---
 title: "Thesaurus"
-description: "Enrich indexing with a curated, hierarchical controlled vocabulary: Viglet Turing recognises the terms a document mentions and expands it with their broader concepts at index time, adding recall, a concept-facet browse, and related-concept suggestions. Includes a seed library, XML import, and AI-assisted generation."
+description: "Expand documents at index time with a hierarchical controlled vocabulary: broader concepts, a concept facet and related-concept suggestions."
 ---
 A **thesaurus** is a curated, hierarchical **controlled vocabulary**, the concepts of a domain, arranged from broad to narrow, with the synonyms and spelling variants people actually type. In **Viglet Turing** a thesaurus enriches your index with structure the search engine can't infer on its own: at **index time**, every document is expanded with the *broader concepts* of each term it mentions, written to a dedicated field. A page about **pneumonia** is silently tagged with **respiratory disease** and **disease** too, so a search for the broad term still finds the specific page, and visitors can browse by concept.
 

@@ -1,6 +1,6 @@
 ---
 title: "Transcribe Audio to Text with OpenAI or a Self-Hosted Whisper Server"
-description: "Set up speech-to-text in Viglet Turing with OpenAI or a self-hosted OpenAI-compatible server, split recordings past the upload limit, and transcribe multi-hour audio as async jobs."
+description: "Set up speech-to-text with OpenAI or a self-hosted Whisper-compatible server, split long recordings and transcribe hours of audio as jobs."
 sidebar:
   label: "Transcription"
 ---

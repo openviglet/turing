@@ -1,6 +1,6 @@
 ---
 title: "Migrating from Algolia or Elasticsearch"
-description: "Move a search index from Algolia or Elasticsearch to Viglet Turing: a concept-mapping table, a three-step import path (schema as code, bulk index, swap the SDK), and self-hosted search where your data stays in your own infrastructure."
+description: "Move a search index from Algolia or Elasticsearch to Viglet Turing: concept mapping, schema as code, bulk indexing and swapping the SDK."
 ---
 Already running search on **Algolia** or **Elasticsearch**? Viglet Turing keeps the search depth you rely on (facets, typo tolerance, synonyms, relevance tuning) and adds RAG, cited chat and AI agents, while running entirely on **your own infrastructure**. Your documents, embeddings and query logs are stored on your own infrastructure, and there is no per-record or per-search billing.
 

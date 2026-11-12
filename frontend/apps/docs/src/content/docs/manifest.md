@@ -1,6 +1,6 @@
 ---
 title: "Field Manifest & Schema-as-Code"
-description: "Provision and evolve a Semantic Navigation site's field schema declaratively in Viglet Turing: idempotent manifests, planner/migrations, LLM-assisted derivation, hybrid ranking, and field-coverage observability."
+description: "Provision and evolve an SN site's field schema as code: idempotent manifests, migration plans, LLM-drafted manifests and field coverage."
 ---
 A **field manifest** is a single declarative document that describes a Semantic Navigation site and its field schema, the site name, its locales, and the ordered list of fields (each with a type, and whether it's a facet, mandatory, or multi-valued). You `POST` it once and Viglet Turing **converges** the live site to match it: it creates the site if missing, adds any new fields, and reports what changed. Re-posting the same manifest is a no-op.
 

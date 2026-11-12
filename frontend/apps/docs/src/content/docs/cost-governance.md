@@ -1,6 +1,6 @@
 ---
 title: "Cost Governance"
-description: "See and control your AI spend. Viglet Turing freezes a USD cost on every turn from an editable price table, rolls it up into a live dashboard by agent / model / stage, and lets each agent enforce a soft monthly budget that downgrades to a cheaper model instead of overspending."
+description: "See and control AI spend: a USD cost on every turn, a live dashboard by agent, model and stage, and per-agent monthly budgets."
 ---
 > *AI spend is easy to lose track of: a chatty agent here, an expensive model there, a background summarizer running every night. **Cost Governance** turns that fog into a number: every turn carries its own USD cost, every agent can carry a budget, and one dashboard shows you where the money goes.*
 

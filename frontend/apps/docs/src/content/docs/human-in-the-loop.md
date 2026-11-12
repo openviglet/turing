@@ -1,6 +1,6 @@
 ---
 title: "Human-in-the-Loop"
-description: "Put a person in the conversation when it matters. Pause a flow for an explicit human approval over email / Slack / webhook, or watch a live conversation as a spectator and take the wheel mid-chat as a co-pilot."
+description: "Put a person in the conversation: pause a flow for approval by email, Slack or webhook, or watch a live chat and take over mid-conversation."
 ---
 > *Most of the time you want the AI to just handle it. But some moments need a human: approving a refund, signing off on a contract clause, or quietly stepping into a conversation that's going sideways. **Human-in-the-loop (HITL)** gives you both, an asynchronous approval checkpoint baked into the flow, and a live spectator + co-pilot console for real-time intervention.*
 

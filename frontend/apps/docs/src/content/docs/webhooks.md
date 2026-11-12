@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-description: "Push chat conversations to your CRM or automation tools. Fire a webhook automatically when a slot is filled, explicitly as a handoff channel, or deterministically from a flow node, with payload templates, encrypted credentials, and HMAC signing."
+description: "Push chat conversations to a CRM or automation tool: webhooks fired on a slot, as a handoff or from a flow node, with templates and HMAC signing."
 ---
 > *A visitor finishes a lead-capture conversation. Their name, company, and email are sitting in slots. What you really want is for that lead to land in Salesforce, automatically, the moment it's complete, without anyone copy-pasting. **Webhooks** are how Viglet Turing reaches out to the rest of your stack.*
 

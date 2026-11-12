@@ -1,6 +1,6 @@
 ---
 title: "Multi-Tenancy"
-description: "Run one Viglet Turing JVM that serves many fully isolated tenants: discriminator-column data isolation, a single Keycloak realm with a tenant claim, tenant-owned infrastructure, plan quotas, and tenant lifecycle."
+description: "Serve many isolated tenants from one Viglet Turing: column-level data isolation, one Keycloak realm with a tenant claim, quotas and lifecycle."
 ---
 Viglet Turing can run as a **single JVM process that serves many isolated tenants** (a SaaS / shared-platform deployment), or as a classic **single-tenant install**. The same binary does both: the behavior is controlled by one flag.
 

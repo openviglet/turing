@@ -1,6 +1,6 @@
 ---
 title: "Reranking"
-description: "The reranking stage in Viglet Turing: a selectable, fail-open second pass (LLM, cross-encoder, Cohere, Voyage, Bedrock, Vertex AI) that sharpens retrieved context before generation."
+description: "A fail-open second pass that reorders retrieved context before generation, with an LLM, a cross-encoder, Cohere, Voyage, Bedrock or Vertex AI."
 ---
 **Reranking** is a second, more discerning relevance pass that runs *after* retrieval and *before* the answer is generated. Vector similarity is fast but coarse: it's a good first guess at relevance, not a final verdict. The top-K chunks it returns often include near-duplicates, tangential matches, or passages that *mention* the query terms without *answering* the question. A reranker re-scores those candidates against the question and keeps only the highest-precision few, so the model sees **fewer, better** chunks instead of more, noisier ones.
 

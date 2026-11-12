@@ -1,6 +1,6 @@
 ---
 title: "Installation Guide"
-description: "Viglet Turing Installation Guide"
+description: "Install Viglet Turing with Docker, the JAR or from source: Java, hardware, database, Keycloak and Solr requirements and configuration."
 ---
 Viglet Turing ([https://www.viglet.org/turing/](https://www.viglet.org/turing/)) is an open source enterprise search platform ([https://github.com/openviglet](https://github.com/openviglet)) with Semantic Navigation and Generative AI as its main features. All content is indexed in Apache Solr as the primary search engine.
 

@@ -1,6 +1,6 @@
 ---
 title: "SPA Pages"
-description: "Deploy and host Single Page Applications directly in Viglet Turing."
+description: "Upload a built single-page application (React, Vue, Angular) as a ZIP and serve it from Viglet Turing with client-side routing."
 ---
 SPA Pages allows you to deploy and host compiled Single Page Applications (React, Vue, Angular, etc.) directly inside Viglet Turing. Upload a ZIP file containing your built app and it is served at a dedicated URL with proper client-side routing support.
 

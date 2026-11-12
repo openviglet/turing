@@ -801,6 +801,7 @@
 - **T1282** — rest-api.md opens for its reader, has sentence-case headings, labelled request blocks and present-tense prose; the per-endpoint behaviour notes stay as reference, and the baseline entry is paid.
 - **T1283** — personas.md is the persona reference (fields, values, defaults, actions, endpoints) and the Persona Book the explanation; no block labels, stale defaults corrected from code, anchors kept.
 - **T1284** — Every docs code fence names a language (http, bash, text) and no page is listed for fence-language in the docs-style baseline any more.
+- **T1285** — Every docs page has a 70 to 160 character description saying what the reader can do there, and frontmatter-description is gone from the docs-style baseline.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

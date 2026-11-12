@@ -1,6 +1,6 @@
 ---
 title: "Chat Flow"
-description: "Author conversational state machines visually. A rich node catalog (questions, slots, tools, routines, webhooks, approvals, sub-flows), three guardrail strategies, error edges, a typed slot store, and AI-assisted authoring (Vibe Coding) that lets you describe the flow in plain English and watch it draw itself."
+description: "Design conversations visually as state machines: questions, slots, tools, webhooks, approvals, sub-flows, guardrails and AI-assisted authoring."
 ---
 > *Sometimes a conversation needs to go somewhere specific. A demo qualification has six questions in a precise order. An onboarding wizard has a checklist that can't be skipped. A support escalation collects four pieces of information before opening a ticket. **Chat Flow** is how you draw those journeys, visually, declaratively, and in five minutes.*
 
