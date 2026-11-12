@@ -100,7 +100,8 @@ for (const src of javaFiles) {
   if (!/@RestController/.test(src)) continue;
   const base = /@RequestMapping\(\s*(?:value\s*=\s*|path\s*=\s*)?\{?\s*"([^"]*)"/.exec(src)?.[1] ?? "";
   for (const [, verb, path] of src.matchAll(/@(Get|Post|Put|Patch|Delete)Mapping\(\s*(?:value\s*=\s*|path\s*=\s*)?\{?\s*"([^"]*)"/g)) {
-    const full = (base + path).replace(/\/+/g, "/");
+    // Spring joins "/api/x" and "y" as "/api/x/y": a method path without a leading slash still nests.
+    const full = (path && !path.startsWith("/") ? `${base}/${path}` : base + path).replace(/\/+/g, "/");
     if (/^\/api\/(sn|v2)\//.test(full)) endpoints.add(`${verb.toUpperCase()} ${full}`);
   }
   if (/@(Get|Post)Mapping\s*$/m.test(src) && /^\/api\/(sn|v2)\//.test(base)) endpoints.add(`* ${base}`);

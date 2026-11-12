@@ -806,6 +806,7 @@
 - **T1287** — No docs page has release-relative phrases, T-ids or Block labels, duplicate headings or skipped levels, and the docs-style baseline is empty: every page passes every rule.
 - **T1288** — configuration-reference.md documents every operator-facing turing.* key and all 13 prefixes with code defaults, fixes the log store keys, and COVERAGE marks the 14 timing knobs internal.
 - **T1289** — cli.md documents turing match list, run and drift with every flag, the exit-code gate and the fit-bar fallback; the docs-sync report names all 10 CLI commands.
+- **T1290** — rest-api.md lists every public chat, slot, memory, share, v2 search and migration endpoint; COVERAGE marks the console-only families internal; the report's path join is fixed.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

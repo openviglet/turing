@@ -32,3 +32,5 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
+## Block S — SDK / client parity (vanilla + React)
+

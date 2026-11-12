@@ -37,6 +37,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
+## Block S — SDK / client parity (vanilla + React)
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2477,24 +2479,6 @@ into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
 
-### CLXXXIV.4 What the code declares and no docs page names (T1288)
-
-The docs-sync reverse report (.claude/skills/turing-docs-sync/docs-sync-report.mjs)
-reads turing-app and the CLI and lists what no page under frontend/apps/docs names. It
-finds three populations. First, 85 of 126 turing.* keys read through @Value, plus 4
-@ConfigurationProperties prefixes: turing.migration, turing.prompt.capture,
-turing.resilience and turing.viglet-ai. Second, the turing match CLI command, missing
-from cli.md. Third, 138 of 237 public endpoints under /api/sn and /api/v2, which the
-report marks advisory because many serve only the console. Each population needs a
-verdict per cluster, not per key. An operator-facing setting gets a
-configuration-reference.md row with its real default, read from the @Value default or
-application.yaml. An internal knob (cron expressions, cleanup delays, build metadata)
-gets one 🔒 COVERAGE.md row for its cluster. A public endpoint a developer would call
-gets a rest-api.md entry, or a row on the feature page that owns it. Prove each verdict
-with a grep or the handler line, write pages with turing-docs-write, and re-run the
-report: a task is done when its population's count in the report reflects only 🔒
-clusters.
-
 ### CLXXXIV.5 The docs-style lint runs where the docs ship (T1291)
 
 The docs-style lint (frontend/apps/docs/scripts/docs-style.test.mjs) runs under pnpm
@@ -2506,3 +2490,20 @@ pnpm test:docs step before build:site. The workflow stays workflow_dispatch: CI 
 repository is manual-dispatch on purpose (T928, T929), so this adds a step and no
 trigger. The step is cheap (node --test over Markdown, no install beyond the workspace)
 and fails with the page, line and rule.
+
+## CLXXXV The chat resume endpoint repeats its /chat segment (T1292)
+
+TurSNSiteGenAiAPI is mapped at /api/sn/{siteName}/chat and declares resumeChat with
+@PostMapping("/chat/resume"), so Spring serves it at
+/api/sn/{siteName}/chat/chat/resume. Every client calls the single-chat path: the React
+SDK's resume call and useTuringResume post to /sn/{site}/chat/resume, the flow-dsl types
+document POST /api/sn/{site}/genai/chat/resume, and flow-dsl.md writes POST
+…/chat/resume. A conversation parked at a suspend node therefore cannot be resumed from
+the SDK. Found while documenting the public chat endpoints (T1290), whose rest-api.md
+row records the path the server answers today.
+
+Fix the mapping to @PostMapping("/resume") so the server answers
+/api/sn/{siteName}/chat/resume, and keep the old path answering as an alias for one
+release so a client written against it does not break. Correct the flow-dsl comment,
+then change the rest-api.md row to the single path. Add a MockMvc test that posts to
+/api/sn/{site}/chat/resume and gets past routing, and one for the alias.

@@ -467,6 +467,13 @@ apply to them.
 curl -X POST "http://localhost:2700/api/sn/Sample/ac/query"   -H "Content-Type: application/json"   -d '{ "q": "enter", "locale": "en_US", "rows": 10 }'
 ```
 
+### Version 2 search path
+
+`/api/v2/sn/{siteName}/search` answers search requests (`GET` and `POST`) as the endpoint
+above does, with `GET /api/v2/sn/{siteName}/search/list`,
+`GET /api/v2/sn/{siteName}/search/locales` and `POST /api/v2/sn/{siteName}/search/latest`
+beside it. A locale left out defaults to the site's first one.
+
 ---
 
 ### Autocomplete
@@ -749,6 +756,37 @@ GET http://localhost:2700/api/sn/{siteName}/ai/capabilities
 
 `similarByVector` is the one answer that looks past configuration: when the site is set up for RAG but its vector store holds none of its content, it reports `NOT_EMBEDDED`. That happens when the content was indexed before generative AI was turned on; **reindex the site** to fix it. Chat stays enabled meanwhile, but it will not find the content. The check lists one stored chunk per locale, never calls a model, and is cached for a minute; a store that cannot list chunks reports the site as ready. From [`@viglet/turing-sdk`](/docs/javascript-sdk/): `fetchAiCapabilities(client, site)`.
 
+### Chat flows, slots and memory
+
+The endpoints a chat front end calls besides the chat stream itself. They are public, like
+the chat, and take the conversation id the chat stream returned (`conversationId`, in the
+body or as a query parameter). See [chat flow](/docs/chat-flow/) for the flows that fill
+slots.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/sn/{siteName}/chat/slots` | The slots captured in the conversation, as one flat JSON map |
+| `POST` | `/api/sn/{siteName}/chat/slots` | Write slot values into the conversation |
+| `GET` | `/api/sn/{siteName}/chat/slots/stream` | SSE stream of the full slot map after every slot write |
+| `GET` | `/api/sn/{siteName}/chat/slots/stream/delta` | The same stream as one snapshot, then `added`, `updated` and `removed` deltas |
+| `GET` | `/api/sn/{siteName}/chat/state` | The active flow, its current node, guardrail method and experiment variant; no LLM call |
+| `DELETE` | `/api/sn/{siteName}/chat/conversation-state` | Clear every flow state of the conversation, for a **New chat** button |
+| `POST` | `/api/sn/{siteName}/chat/form-submit` | Submit the fields of a `formCapture` form step; each value goes to its slot and the flow moves on |
+| `POST` | `/api/sn/{siteName}/chat/chat/resume` | Resume a conversation parked at a `suspend` node, optionally with `slotUpdates` applied first |
+| `POST` | `/api/sn/{siteName}/chat/slot-extract` | Upload a document (PDF, DOCX, TXT, RTF, HTML) and let the agent's LLM fill the requested slots from it |
+| `POST` | `/api/sn/{siteName}/chat/slot-extract-multi` | The same across several documents at once, for slots that need all of them |
+| `POST` | `/api/sn/{siteName}/chat/slot-upload` | Store an image, audio clip or file and write its URL into an `IMAGE`, `AUDIO` or `FILE` slot |
+| `POST` | `/api/sn/{siteName}/chat/handoff` | Build a deep link (WhatsApp, email, SMS) that carries the conversation to a person, and set the `handoff_status` slot |
+| `GET` | `/api/sn/{siteName}/chat/share/og` | An Open Graph share card built from the query parameters, redirecting people to `dest` |
+| `GET` | `/api/sn/{siteName}/chat/intents` | The agent's enabled [intents](/docs/intent/), for quick-prompt chips; empty when there are none |
+| `GET` | `/api/sn/{siteName}/chat/proactive/stream` | SSE stream of proactive suggestions, for agents with proactive mode on; empty otherwise |
+| `GET` | `/api/sn/{siteName}/chat/workspace/stream` | SSE stream of the conversation's [workspace](/docs/agent-workspace/) files, one event per change |
+| `GET` | `/api/sn/{siteName}/user-memory?userId=` | What the assistant remembers about a visitor across conversations |
+| `POST` | `/api/sn/{siteName}/user-memory` | Remember a fact: `{ "userId", "key", "value" }` |
+| `DELETE` | `/api/sn/{siteName}/user-memory/{id}?userId=` | Forget one fact; without `{id}`, forget everything about the visitor |
+| `GET` | `/api/sn/{siteName}/answer/share/{shareId}` | A shared [answer](/docs/answer/) |
+| `GET` | `/api/sn/{siteName}/answer/share/{shareId}/og` | The Open Graph card for a shared answer |
+
 ---
 
 ## Token usage API
@@ -992,6 +1030,16 @@ curl "http://localhost:2700/api/sn" \
 | `DELETE` | `/api/intent/{id}` | Delete an intent |
 
 For full details, see [Intent](/docs/intent/).
+
+### Search-index migration
+
+The endpoints behind [`turing migrate`](/docs/cli/). See [migrating from Algolia or Elasticsearch](/docs/migration/).
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/sn/migrate/elasticsearch` | Derive the field manifest from an Elasticsearch index, provision the SN site and import every document; `dryRun` returns the manifest only |
+| `POST` | `/api/sn/migrate/algolia` | The same from an Algolia index |
+| `POST` | `/api/sn/migrate/compare` | Run a list of queries against the source and the SN site and compare the results |
 
 ### Import and export
 

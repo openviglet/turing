@@ -99,5 +99,4 @@ gate into `grep` and trusting the exit code of `grep`.
 `BASELINE` in `frontend/apps/docs/scripts/docs-style.test.mjs` is empty: every page passes
 every rule, so a new finding is something your change introduced. Fix the page. A false
 positive is fixed in the lists at the top of that file (or in the rule, as the hyphenated-word
-case was), never by adding a page to `BASELINE`. The open code-to-docs gaps are filed in
-roadkeep Block **AE** (§CLXXXIV.4).
+case was), never by adding a page to `BASELINE`.
