@@ -298,6 +298,36 @@ turing research rollup <studyId> <studyId> # cross-study program rollup (PRISMA)
 
 The customer-facing embed SDKs (`@viglet/turing-sdk`, `@viglet/turing-react-sdk`) stay focused on search & chat, running studies is an admin/research capability, so it lives here in the CLI.
 
+### `turing match`: gate CI on content fit
+
+Run a [Persona Match](/docs/personas/#persona-match) project from CI and fail the build
+when content no longer fits its personas. Subcommands take the same connection flags.
+
+```bash
+turing match list                                        # Persona Match projects on the instance
+turing match run <project> [--min-fit <n>] [--fail-on-drop] [--force]
+turing match drift <project>                             # how fit moved between the last two runs
+```
+
+`<project>` is a project id or its name, matched without regard to case.
+
+- **`list`**: each project's id, name, schedule, fit threshold, content and persona counts,
+  and last run.
+- **`run <project>`**: runs the analysis, printing progress, then checks every content and
+  persona pair. **Exits non-zero** when a pair scores below the bar and lists those pairs. A
+  project with no contents or no personas also exits non-zero.
+  - `--min-fit <n>`: the bar. Without it, the project's own fit threshold applies, so CI
+    and the console agree.
+  - `--fail-on-drop`: also fail when a pair scored lower than in the previous run.
+  - `--force`: recompute every cell and skip cached LLM verdicts, instead of reusing cells
+    whose content has not changed.
+- **`drift <project>`**: prints the drift report without starting a run.
+
+:::caution
+LLM-scored fit varies by a point or two between runs, so set `--min-fit` with some
+headroom rather than at the exact score you expect.
+:::
+
 ### `turing version` · `turing help`
 
 `turing version` (or `--version`/`-v`) prints the version; `turing help` (or `--help`/`-h`, or no args) prints usage.

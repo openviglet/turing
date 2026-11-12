@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1289** (deps: —) **The turing match CLI command is not documented on cli.md** — The CLI dispatches it and turing help lists it, but a user reading the docs cannot find what it does or which flags it takes. → §CLXXXIV.4
 - 📋 **T1290** (deps: —) **138 of 237 public /api/sn and /api/v2 endpoints are named on no docs page, with no verdict on which are public** — Without a per-family verdict the report's advisory list never shrinks, and a real gap in the public API docs hides among console-only routes. → §CLXXXIV.4
 - 📋 **T1291** (deps: —) **The Pages deploy builds the docs but never runs the docs-style lint, so a regression ships if nobody ran it locally** — publish-github-pages.yml runs build:site (links) but not pnpm test:docs, so the docs-style baseline holds only when a session remembers it. → §CLXXXIV.5
 
