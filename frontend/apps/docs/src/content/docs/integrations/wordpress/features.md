@@ -15,7 +15,7 @@ generative ones against your Viglet Turing and names, for each, the block a visi
 | Search as you type | **Viglet Turing search** block; the instant search (Ctrl+K and the theme's search box) | No |
 | Filters from the catalog | **Viglet Turing search** block: the facets your field mapping declares | No |
 | Popular searches | **Viglet Turing search** block, with "Show popular searches" on | No |
-| [People, organisations and places](/docs/integrations/wordpress/#fields-and-facets) | **Viglet Turing search** block: facets of the names each post holds, with "Find people, organisations and places in posts" on | Yes |
+| [People, organisations and places](/docs/integrations/wordpress/indexing/#fields-and-facets) | **Viglet Turing search** block: facets of the names each post holds, with "Find people, organisations and places in posts" on | Yes |
 | An answer with its sources | **Viglet Turing search** block, with "Answer questions from this site's content" on | Yes |
 | Filters a sentence names | **Viglet Turing search** block, with "Suggest the filters a sentence names" on | Yes |
 | Related content | **Related content** block, or after the content of chosen post types | No |
@@ -58,7 +58,7 @@ A button opens a chat over the site's posts. Answers stream in, labelled as gene
 posts they used as links and a **Was this helpful?** that reaches Viglet Turing. The conversation
 lasts across the pages of the visitor's tab, so a cited post can be opened without losing it;
 **New conversation** starts again. The only action the assistant may take on the page is
-opening another page of the same site, or of a site it [also searches](/docs/integrations/wordpress/#searching-other-sites-too)
+opening another page of the same site, or of a site it [also searches](/docs/integrations/wordpress/indexing/#searching-other-sites-too)
 whose address the setting gives.
 
 Place the **Site assistant** block where you want it, or turn on **Settings → Search →

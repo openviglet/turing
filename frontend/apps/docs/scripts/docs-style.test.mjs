@@ -107,7 +107,6 @@ const BASELINE = {
   "integration-aem.md": ["heading-sentence-case"],
   "integration.md": ["heading-sentence-case"],
   "integrations/wordpress/features.md": ["frontmatter-description"],
-  "integrations/wordpress/index.md": ["frontmatter-description", "heading-sentence-case", "internal-ids", "release-relative"],
   "intent.md": ["heading-sentence-case"],
   "javascript-sdk.md": ["frontmatter-description", "heading-levels", "heading-sentence-case"],
   "llm-gateway.md": ["frontmatter-description"],
@@ -194,7 +193,11 @@ function parse(text) {
       prose[i] = "";
     }
   }
-  const body = prose.join("\n").replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n]/g, " "));
+  // A generated video transcript quotes what was said, so its words are not the page's prose.
+  const body = prose
+    .join("\n")
+    .replace(/<!-- transcript:start[\s\S]*?<!-- transcript:end -->/g, (c) => c.replace(/[^\n]/g, " "))
+    .replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n]/g, " "));
   // `raw` keeps inline code: a heading made of code (`turing migrate`) still has an anchor.
   const raw = body.split("\n");
   return {

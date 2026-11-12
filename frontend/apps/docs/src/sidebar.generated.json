@@ -78,6 +78,18 @@
                 "slug": "integrations/wordpress"
               },
               {
+                "slug": "integrations/wordpress/indexing"
+              },
+              {
+                "slug": "integrations/wordpress/search"
+              },
+              {
+                "slug": "integrations/wordpress/admin"
+              },
+              {
+                "slug": "integrations/wordpress/reference"
+              },
+              {
                 "slug": "integrations/wordpress/features"
               }
             ]

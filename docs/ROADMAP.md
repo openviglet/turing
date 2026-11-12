@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1280** (deps: —) **integrations/wordpress/index.md is 9.8k words: install tutorial, admin how-tos and WP-CLI reference on one page** — A WordPress admin looking for one setting reads the whole plugin history; the page needs splitting by Diátaxis type. → §CLXXXIV.2
 - 📋 **T1281** (deps: —) **semantic-navigation.md is 8.5k words with repeated headings ("What they are", "REST API") and Title Case throughout** — The core SN page is the one most readers land on, and its duplicate anchors make links to a section ambiguous. → §CLXXXIV.2
 - 📋 **T1282** (deps: —) **rest-api.md is 7.9k words: endpoint reference interleaved with feature explanations and release-relative prose** — A developer cannot scan it as a reference; the explanations belong on feature pages and the endpoints in one consistent table shape. → §CLXXXIV.2
 - 📋 **T1283** (deps: T1279 ✅) **personas.md is 6.8k words overlapping persona-book.md, with internal block labels in its prose** — Two persona pages explain the same objects differently; the rewrite decides which page owns which type and cross-links them. → §CLXXXIV.2

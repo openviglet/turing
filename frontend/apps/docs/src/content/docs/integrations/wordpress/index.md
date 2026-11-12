@@ -1,6 +1,6 @@
 ---
 title: "WordPress"
-description: A WordPress plugin that indexes posts, pages and custom post types into Viglet Turing, provisions their fields as facets, and serves the site's search from Viglet Turing.
+description: "Install the Viglet Turing Search plugin for WordPress, connect it to an SN site, and see how it indexes your posts and serves search."
 ---
 
 **Viglet Turing Search** (`viglet-turing-search`) is a **PHP plugin installed inside
@@ -13,6 +13,17 @@ Web Crawler connectors, it needs no [Viglet Dumont](https://dumont.viglet.org/) 
 :::
 
 Requires **WordPress 6.6** and **PHP 8.1** or later.
+
+This page is for the WordPress administrator setting the plugin up: what it does, how to
+install it and connect it, and how to try it first. The rest of the plugin's documentation:
+
+| Page | What it covers |
+|---|---|
+| [What the plugin indexes](/docs/integrations/wordpress/indexing/) | Fields and facets, exclusions, PDF files, several sites in one SN site |
+| [Search on your site](/docs/integrations/wordpress/search/) | The theme's search, the instant search, the search and Ask this site blocks, the SDK for themes |
+| [Manage the plugin in wp-admin](/docs/integrations/wordpress/admin/) | Health, the post list and editor panel, Insights, an exhausted AI budget |
+| [Plugin reference](/docs/integrations/wordpress/reference/) | WP-CLI commands, REST routes, constants and filters |
+| [Viglet Turing on WordPress](/docs/integrations/wordpress/features/) | Each feature, the block that shows it, and whether it needs a language model |
 
 ---
 
@@ -150,7 +161,7 @@ graph LR
   and waits for **Retry** on Search health. A post Viglet Turing refuses is retried on its own, so
   one bad post does not block the rest of its batch.
 - **Each post records its state**: when it was last indexed, its last error and its
-  failed attempts. The post lists and the block editor show it (see [Admin](#admin)).
+  failed attempts. The post lists and the block editor show it (see [the post list and the editor](/docs/integrations/wordpress/admin/#the-post-list-and-the-editor)).
 - **Index All runs in the background.** The button under **Settings → Actions**, and
   **Index everything now** on **Setup**, only start the reindex; WP-Cron sends it a few
   batches at a time, so you can close the page as soon as it starts. A batch Viglet Turing does
@@ -163,11 +174,10 @@ graph LR
   `viglet-turing/v1/reindex/step`, signed with a token only the running reindex knows), so
   a started reindex finishes on a site nobody visits. Where the server cannot reach its own
   address, such as a container behind a mapped port, point the request at one it can with
-  the `viglet_turing_reindex_step_url` filter, as `cron_request` does for WP-Cron. While
+  the `viglet_turing_reindex_step_url` [filter](/docs/integrations/wordpress/reference/#filters), as `cron_request` does for WP-Cron. While
   **Search health** is open it also takes a step whenever the reindex has sat idle for 15
   seconds, which covers a host that blocks those requests. A batch waiting out a retry
   after Viglet Turing failed resumes on the next WP-Cron run or the next step from Search health.
-
 ---
 
 ## Install
@@ -204,7 +214,6 @@ release zip as a package, and `composer/installers` puts it in the plugins direc
 **With WP-CLI**: `wp plugin install <zip URL> --activate`.
 
 Then open **Viglet Turing Search → Setup**.
-
 ---
 
 ## Connect to Viglet Turing
@@ -230,7 +239,7 @@ Once every step passes, **Index everything now** runs the first index with a pro
 | **API key** | A Viglet Turing API token (Viglet Turing console → API Tokens). It is never shown again after saving |
 | **SN site** | The Semantic Navigation site this WordPress publishes to and searches |
 | **Locale** | The language the content is indexed in, e.g. `pt_BR` |
-| **Site key** | Starts every document id; see [Several sites, one SN site](#several-sites-one-sn-site) |
+| **Site key** | Starts every document id; see [Several sites, one SN site](/docs/integrations/wordpress/indexing/#several-sites-one-sn-site) |
 
 In [WordPress Playground](https://wordpress.org/playground/), WordPress runs in the
 visitor's browser and so do its requests to Viglet Turing: the blueprint needs
@@ -256,7 +265,7 @@ A value set either way wins over the settings page, shows there read-only, and i
 | `VIGLET_TURING_SITE_KEY` | Site key |
 | `VIGLET_TURING_PUBLIC_URL` | Viglet Turing as visitors' browsers reach it, when that differs |
 | `VIGLET_TURING_SEARCH_URL` | A results page on another site that this site's searches go to |
-| `VIGLET_TURING_SEARCH_SITE_KEYS` | The other sites this site [also searches](#searching-other-sites-too): `key \| label \| address` entries separated by commas or new lines, or a JSON list of `{key, label, url}` |
+| `VIGLET_TURING_SEARCH_SITE_KEYS` | The other sites this site [also searches](/docs/integrations/wordpress/indexing/#searching-other-sites-too): `key \| label \| address` entries separated by commas or new lines, or a JSON list of `{key, label, url}` |
 
 `wp turing status` prints where each value came from.
 
@@ -270,579 +279,6 @@ because their Viglet Turing endpoints need a key. Search, chat, the copilot and 
 from the visitors' browsers against a **PUBLIC** SN site whose index is built elsewhere, and
 the connection check confirms that site with a search sent without a key. It cannot be
 turned off from wp-admin.
-
----
-
-## What gets indexed
-
-Every post sends a fixed document: `id`, `title`, `text` (the rendered body without
-markup, shortcodes or hidden UI text), `abstract`, `url`, `type`, `author`,
-`publication_date`, `modification_date`, `site`, `image`, `site_key`, `source_apps`, plus
-`categories` / `section` and `tags` when those options are on. Approved comments and named
-custom fields can be added on the Settings page.
-
-### Fields and facets
-
-![The Fields page](/docs/img/screenshots/wordpress-fields.png)
-
-**Viglet Turing Search → Fields** maps, per post type, what else becomes its own Viglet Turing field:
-
-- **Source**: a taxonomy, a meta key the posts actually carry, a post field (excerpt,
-  slug, menu order, parent) or the featured image URL.
-- **Type**: `STRING`, `TEXT`, `INT`, `LONG`, `FLOAT`, `DOUBLE`, `DATE` or `BOOL`. A value
-  that does not convert is left out, never guessed. Dates are read as `Ymd` (ACF), a Unix
-  timestamp, or any date `strtotime` reads.
-- **Multiple**, **Facet** with its label, and a **Weight** (1 to 100) for ranking.
-- **Ranges**, on a `DATE` or number field: a range facet as well, provisioned as a Viglet Turing
-  custom facet named `<field>_range`. A date picks its **Periods**: **Past**, for
-  publication dates (upcoming, last 7 days, last 30 days, this year, before this year);
-  **Agenda**, for dates still to come (today, next 7 days, this month, upcoming, past); or
-  **My own**, up to eight, each bound in Viglet Turing's date math (`NOW/DAY`, `NOW/DAY+7DAYS`,
-  `2026-12-01`). Viglet Turing's date math has no weeks, so an agenda offers the next 7 days rather
-  than the calendar week. Viglet Turing includes a range's end, and a day-only date is stored at
-  midnight UTC, so each agenda period ends a second before the next one starts: an event
-  today is never under **Past**, and one tomorrow is never under **Today**. A period of your
-  own that should end where another starts needs the same `-1SECOND`. A period buckets the one field, so an event is placed by its start
-  date even when it runs for weeks. A number lists its own ranges, each with a label
-  and a **From** and **To**; an empty bound is an open end, and an empty label is written
-  from the bounds ("20 – 50", "Up to 20", "50 or more").
-- **Show on result cards** adds the field to each result in the **Viglet Turing search** block,
-  as a "Label: value" line under the snippet, in the order of the fields. The label is the
-  field's label, or its name when it has none. A `DATE` field is written in the site's date
-  format, a multiple field's values are joined with commas, and a URL is never shown as
-  text. An event, say, can show the day it happens beside the day it was posted.
-- **Date shown on cards** and **Image on cards**, per post type: the card's date can be one
-  of the type's `DATE` fields instead of the publication date, and its image one of its
-  text fields (an image URL) instead of the featured image. An event's card then shows the
-  day it happens. A date with no time of day is shown as that day in every time zone. The
-  instant search shows the same date, and the first card field, under each result.
-- **Leave this type out of search** switches a whole post type off.
-- **Types from other sources** lists the types of documents another source sent under the
-  site key, such as a catalog's `Article` or `Thesis`, which no post type has. Each one
-  gets a **Label** (its badge on result cards), a **Date shown on cards** from the date
-  fields its documents carry (`defense_date`, say) and an **Image on cards** from their
-  text fields. This changes how they look, never what is indexed. A record with several
-  types, `["Article", "Thesis"]`, is shown as its first. The section appears once Viglet Turing
-  holds such a document. The screen asks Viglet Turing for the other sources' documents only,
-  leaving the plugin's own posts out with a negative filter, so however many posts the site
-  has, the first 2,000 records from other sources are what it reads. This needs a Viglet Turing that
-  honours a negative filter (2026.3 builds after T1233); an older one also returns the posts,
-  which the screen skips.
-
-**In Viglet Turing** says where each field stands: *In Viglet Turing*, *Added on the next save*, or
-*Conflict* when Viglet Turing already holds the field with another type. **Preview document**
-shows the JSON the newest post of the type sends. **Save and send to Viglet Turing** stores the
-mapping and provisions the fields through Viglet Turing's manifest API, so facets need no console
-step. Run a reindex afterwards so existing posts carry the new fields.
-
-With nothing configured, every public custom taxonomy is mapped as a facet.
-
-**People, organisations and places.** Names live in a post's text, not in its fields, so no
-mapping can reach them. Turn on **Settings → Search → Generative AI → Find people,
-organisations and places in posts** and Viglet Turing's language model reads each post as it is
-indexed and lists the people, organisations and places it names. Viglet Turing keeps a name only
-when the text holds it, and writes it to one of three facet fields: `entity_person`,
-`entity_organization` and `entity_place`. The section of that name on the **Fields** screen
-gives each one its facet label (*People*, *Organisations*, *Places* by default) and an
-**Offered** box. The **Viglet Turing search** block then offers the ones you keep as facets beside
-the others, under those labels, and its filter chips use them too.
-
-- It needs **Generative AI** on as well: the names are found by the language model of the
-  site's AI agent in Viglet Turing (its Default AI Agent, unless one was chosen in Viglet Turing's console).
-  With generative AI off, nothing is asked and the facets are not offered. The Fields section
-  says which setting is missing.
-- Each post indexed is a call to the language model, counted in the site's AI spend in Viglet Turing.
-  Viglet Turing keeps what it found in memory by text, so a post re-sent unchanged is not read again
-  while Viglet Turing still holds it.
-- The setting goes to Viglet Turing with the fields: on the next indexing run, or when the Fields
-  screen is saved. Posts indexed before get their names once they are reindexed. Turning it
-  off here tells Viglet Turing to stop, as long as generative AI is still on.
-- If the model fails, the post is indexed without names.
-
-**Name variants** (same Settings card) folds the ways a name is written into one facet value.
-Write one name per line, the name to show first and then its variants after a `|`, separated
-by `;`:
-
-```text
-Marta Vilar | Vilar, Marta; M. Vilar
-Fundação Aurora | Aurora
-```
-
-Saving sends them to Viglet Turing's Thesaurus, in a thesaurus of the plugin's own named after the site
-key, selected for the SN site. A post that writes *Vilar, Marta* is then listed under *Marta
-Vilar*. Settings shows how many names were saved, or why Viglet Turing refused them. An API key bound to
-a partition of a shared SN site cannot write the Thesaurus, so on such a key add the names in
-Viglet Turing's Thesaurus instead. Posts already indexed follow once reindexed.
-
-**WooCommerce.** With WooCommerce active and `product` among the indexed types, a product
-offers its shop fields as sources: **Product: Price**, **Regular price**, **Sale price**,
-**Stock status**, **SKU** and **Average rating**. With nothing configured a product sends
-its price, its stock as a **Stock** facet (in the shop's words, "In stock"), its product
-categories and tags, and each global attribute (`pa_color`, ...) as a facet. Turn on
-**Ranges** for the price to filter by "Up to 50", "50 – 100" and so on. A product whose
-stock changes from an order is sent again, although no post was saved, and so is a variable
-product when one of its variations changes.
-
-In the **Viglet Turing search** block a product's result shows its price in the shop's currency
-(the regular price struck through when it is on sale) and an **Add to cart** button. It
-adds one through WooCommerce's Store API without leaving the page, and says whether it
-worked, with WooCommerce's reason when it did not (out of stock, say). A variable product
-(one sold in colours or sizes) is indexed once, with its variations' values as facet values,
-and **Add to cart** here, in the catalog copilot and in a kit puts in its first variation the
-shop can sell.
-
-The same mapping is readable and writable as JSON at `viglet-turing/v1/mapping`. A theme
-can map in code with the `viglet_turing_mapping` filter, and change a document just before
-it is sent with `viglet_turing_document`. `viglet_turing_result_card` changes a result card
-the search block draws on the server, before its script runs (`$card`, `$document`). The
-script redraws a card from the mapping alone, so use the filter only for what Fields can't
-set, or the card changes once the page loads.
-
-### Excluding content
-
-A post is left out when its type is off, when its ID is in **Exclude Posts/Pages**
-(Settings), or when **Exclude from search** is on in its editor panel
-(`_viglet_turing_exclude` meta).
-
-A post can also leave search on a date: in **Fields**, **Leaves search on** picks one of
-the type's `DATE` fields (a job opening's last day to apply, say). Once that date has passed
-the post is taken out of search, at that moment, with no one saving it. A date with no time
-of day lasts to the end of that day. Move the date forward and save, and the post is back.
-The editor panel says when a post leaves search, and **Out of search: the date has passed**
-afterwards. `wp turing sweep` applies the same rule.
-
-For a rule no field can express, the `viglet_turing_should_index` filter (`$index`,
-`$post`) has the last word on whether a post is in search.
-
-### PDF files
-
-With **PDF files attached to them** on (Settings → Content), each PDF in the media library
-that a post in search attaches or links is a document of its own, found by the words
-inside it. A link counts when the post's content points at the PDF's address in this
-site's uploads, so a form uploaded once and linked from several pages is found even though
-no page attached it. The plugin sends the file with the document, and Viglet Turing reads its
-text. A PDF shows as **PDF** in the type badge and facet, with its post as its section. It
-is sent when uploaded or edited, when a post in search first attaches or links it, and on
-**Index All**. It is removed when the attachment is deleted, and when no post in search
-holds it any more: the last post that attaches or links it is unpublished, excluded,
-deleted or past its **Leaves search on** date, or stops linking it. A PDF another post in
-search still links stays. Only this site's own uploads are sent, up to 20 MB each (the
-`viglet_turing_pdf_max_bytes` filter changes the cap); a link to a file on another host is
-never followed.
-
-A post can also carry a PDF's words in its own document. In **Fields**, the source **Text
-of the PDF in meta: `<key>`** reads the PDF a meta names, by this site's upload address or
-by attachment ID, into a `TEXT` field of the post. A search for a sentence in the paper
-then finds the post itself. This works whether or not **PDF files attached to them** is on,
-and a file on another host is never fetched.
-
----
-
-## Several sites, one SN site
-
-Document ids are `<site key>:post:<post ID>`, and every document carries a `site_key`
-field, provisioned as a facet. Several WordPress sites (or the blogs of a multisite
-network) can therefore publish into one SN site for a unified search, without replacing
-each other's documents. The key defaults to the site's host and path
-(`example.org-projetos`); set it in Setup or with `VIGLET_TURING_SITE_KEY`.
-
-**Delete All** and `wp turing sweep` remove only this key's documents, and only the ones the
-plugin sent. A Viglet Dumont connector given the same site key, such as a catalog of theses that
-should come up in the site's search, keeps its documents through Index All, the sweep and
-Delete All. **Search health** says how many documents under the key came from another source.
-Their types get a label, a card date and a card image under **Fields → Types from other
-sources**.
-
-A post and an archive record use the same field for the author, the date and the snippet:
-Viglet Turing's own `author`, `publication_date` and `abstract`, which the
-[catalog connector](https://dumont.viglet.org/docs/connectors/catalog/) sends for OAI-PMH and DSpace records
-too. So a thesis and a post by the same person share one author facet value, and both show
-a date and a snippet on their cards. The plugin declares `author` with several values, for a
-thesis's co-authors. A site provisioned by an older version, where `author` held one value,
-is converted the next time the fields are sent to Viglet Turing (Viglet Turing recreates the field), so
-run **Index All** afterwards.
-
-### A key per site
-
-A plain API key reaches every document in the SN site, so one site's key could read or
-delete another's. Instead, give each site its own key bound to its site key. In the Viglet Turing
-console, under **Administration → API Tokens**, set **Partition of a shared site** to the
-field `site_key` and this site's key as the value. Then paste the token into this site's
-Setup. Viglet Turing then keeps the key inside the site's own documents. Some things are shared by
-every site of the SN site, so this key cannot change them:
-
-| What | With a key bound to the site |
-|---|---|
-| Fields | Saving fields that would change the SN site's schema is refused, and the Fields screen and Health show Viglet Turing's reason. Add or change fields with a key that has no partition |
-| Boosts | Off. The Search tuning screen says why |
-| Synonyms | Listed, but adding or removing one is refused, because every site shares the synonyms |
-| Promoted results | Each site sees, adds and removes only its own, and they show only in its own searches |
-
-Health's AI features check works with either key. On a multisite network, don't set
-`VIGLET_TURING_TURING_API_KEY`: a constant applies to every blog and overrides each blog's
-own key.
-
-### Searching other sites too
-
-Each site searches only its own key by default. To have a site also find what other sites
-publish into the same SN site, list them in **Settings → Connection → Also search these
-sites**, one per line: the other site's key, then optionally a label and its address,
-separated by `|`:
-
-```text
-second-site | Second site | https://second.example.org/
-library | The library
-```
-
-`VIGLET_TURING_SEARCH_SITE_KEYS` sets the same list from outside WordPress. Keys are cleaned up
-the way the **Site key** is. A blank key, a key listed twice, or this site's own key is left out.
-A label defaults to the key, and an address other than `http` or `https` is dropped.
-
-With sites listed, every search here reads this site's key and theirs: the **Viglet Turing search**
-block, the theme's search page, the plugin's results page, the instant search, the editor's
-preview and the check behind the popular-search chips. A result from another site:
-
-- links to that site's own address, never to a page here;
-- carries its site's label: as a badge on the block's cards and the results page, and in the
-  instant search's line under the title. On the theme's search page it uses the theme's
-  markup, so it shows as the theme shows any post, without a badge;
-- adds a **Site** facet to the block and the results page, one value per site by its label,
-  so a visitor can narrow to one site and back.
-
-The generative features (**Ask the catalog**, **Build my kit**, the **Site assistant** and
-the filters read from a sentence) send every listed key, so they cite those sites' documents
-too. The assistant may open a page on a listed site only when its address is given.
-
-The **Related content** block stays on this site's posts unless its **Include the sites this
-one also searches** setting is on. With it on, the other sites' documents appear with their
-title, their site's label and a link to their own site, asked of Viglet Turing inside the same
-scope the search uses, so the nearest posts across those sites come first. This needs a
-Viglet Turing whose similar-documents search reads the site keys as alternatives (2026.3 builds
-after T1235). The automatic placement after content keeps the default.
-
-The list is one-way: a site you list does not find this one's documents unless it lists this
-site too. Writing never reaches another site's documents. Index All, the sweep, **Delete All**,
-the counts on **Search health**, **Search tuning** and **Already covered?** in the editor all
-work on this site's key alone.
-
-A [key bound to the site](#a-key-per-site) reads only its own site's documents, so searches
-across sites are sent without the key, the way a visitor's browser sends them. Search in Viglet Turing
-is public, so this exposes nothing new.
-
-:::note[Two values in one facet]
-Viglet Turing combines two values of one field as alternatives only when the request asks for that,
-and the request can ask it only for every field at once (`fqi.op=OR`). So while other sites are
-listed, two values a visitor picks in the same facet also become alternatives (either one)
-rather than both. Filters on different facets still all apply.
-:::
-
-### A site whose search lives on another site
-
-A site that indexes into the shared SN site but has no results page of its own can send
-its searches to another site's page. In **Settings → Search**, set **Results page on
-another site** to that page's address (or set `VIGLET_TURING_SEARCH_URL`). Then Enter in
-the instant search, a search block with no results part and the theme's search box all
-open that page with the query, as `?q=`, or as `?s=` when the address you set ends in
-`?s=`. This site's own search results page is no longer replaced, because it is not
-where results are shown. The address must be `https`, and it can't be this site's own
-address.
-
-:::tip[Upgrading from an earlier version]
-Ids used to be `wp-<ID>`. Run **Index All** (or `wp turing reindex`) once after upgrading:
-it indexes every post under its new id and removes the copy under the old one.
-:::
-
----
-
-## WP-CLI
-
-| Command | What it does |
-|---|---|
-| `wp turing status` | Connection, SN site, site key, published versus indexed documents per type, the queue, and where each setting came from |
-| `wp turing index [--type=<type>] [--ids=<ids>] [--since=<date>]` | Indexes now, synchronously, with a progress bar; exits non-zero when a batch fails. `--ids` also removes the listed posts that are not published |
-| `wp turing reindex` | Provisions the fields, indexes every published post, then sweeps. Runs in the terminal, synchronously, unlike Index All in wp-admin |
-| `wp turing sweep [--dry-run]` | Removes from Viglet Turing this site key's documents that WordPress no longer publishes, e.g. posts deleted while the plugin was off |
-| `wp turing queue run [--retry-failed]` | Sends the queue now, ignoring backoff, and names each post that failed |
-| `wp turing queue status` | Lists the waiting and failed jobs with their last error |
-| `wp turing ai status [--format=json]` | Which of Viglet Turing's AI features the site can use, and why each one that is off is off; exits non-zero when any is off. While the site's AI budget is spent it warns *AI budget exhausted until* and the reset date |
-
-The same operations answer over REST under `viglet-turing/v1/`: `status`, `index`,
-`sweep`, `queue/run` and `queue/retry`. `POST reindex` starts Index All in the background
-(`type` is `all` or one post type), `GET reindex` reads its progress and
-`POST reindex/cancel` stops it.
-
----
-
-## Admin
-
-| Screen | What it is for |
-|---|---|
-| **Setup** | The connection and its step-by-step test, the SN site, the first index |
-| **Fields** | The per-type field mapping, its state in Viglet Turing, a document preview |
-| **Health** | Published versus indexed per type, the running reindex and the last one, the queue, its last run, the last 50 events |
-| **Settings** | Post types, categories, tags, comments, custom fields, exclusions, batch size, search |
-
-![The Health page](/docs/img/screenshots/wordpress-health.png)
-
-**Health** has **Retry failed** and **Send queue now**, and lists every send, removal,
-provisioning, sweep and reindex with its error when it failed. While a reindex runs, its
-card shows how many posts are done of how many, how many failed, a batch waiting to be
-tried again and **Cancel reindex**, and it updates every few seconds. Cancelling keeps what
-was already sent.
-
-**When the AI budget runs out.** Viglet Turing can cap what a site spends on AI. Once the cap is
-reached, Viglet Turing refuses every AI call until the budget resets. While that lasts:
-
-- The **Ask this site** block says *Answers are paused until* and the reset date, *search
-  still works*, rather than that the site could not answer. It reads the date from Viglet Turing's
-  refusal (with `@viglet/turing-sdk` 2026.3.17 or later).
-- The **Viglet Turing search** block, the instant search's answer and the **Site assistant** show
-  the same line where the answer would be. They name the date once this site has seen the
-  budget run out (the first refusal is reported to WordPress, which asks Viglet Turing itself), and
-  say *for now* before that. Search and its results are unaffected.
-- A sentence whose filters cannot be read is searched as typed.
-- **Health**'s **AI features** card shows *AI budget exhausted until* and the reset date
-  (or *for now* when Viglet Turing names none), with Viglet Turing's own explanation, and **Check AI
-  features** marks the features that are on as **Paused**. The moment the budget ran out and
-  the moment it came back are listed among the events.
-
-A visitor's browser sees only that Viglet Turing refused, never when the budget resets. So it tells
-WordPress, and WordPress asks Viglet Turing once to read the reset date. It does that at most once
-every ten minutes whatever the visitors send, so a forged report cannot make Health say the
-budget is spent. The line goes away when the reset date passes, or as soon as an AI call
-WordPress makes goes through again. A **Check AI features** asks Viglet Turing again first, so a
-budget raised in Viglet Turing shows at once.
-
-The post lists gain a **Search** column: *Indexed 2 mins ago*, *Queued*, *Failed* (the
-error shows on hover), *Excluded* or *Not published*. The block editor has a **Search**
-panel with the same state, **Exclude from search** and **Reindex now**. A reindex Viglet Turing
-refuses shows Viglet Turing's own reason under the state, so a refused document reads differently
-from Viglet Turing being down.
-
-With **Find people, organisations and places in posts** on, the panel's **Names in this post**
-lists, under each facet's label, the names Viglet Turing holds for the indexed post. It only shows
-them: Viglet Turing has no way to keep one name off one post, so to change them, change the text and
-reindex.
-
-The same panel's **Assist** section helps while writing, and changes nothing on its own:
-
-- **Find related posts** lists what may already cover the post (*Already covered?*) and
-  posts to link to (*Link ideas*), from Viglet Turing's similar-documents and duplicate searches.
-  A draft not yet indexed is compared by its title. **Add a link** puts a paragraph with
-  the link after the selected block.
-- **Draft an excerpt** asks Viglet Turing's language model, from WordPress's server with the
-  stored API key, for a one- or two-sentence excerpt of the saved post, in the site's
-  language. **Use this excerpt** fills the excerpt field; the post changes only when you
-  save it. **Draft another** asks again. Viglet Turing needs a default language model for it.
-
-![The Search column in the post list](/docs/img/screenshots/wordpress-posts.png)
-
-**Viglet Turing Search → Insights** shows what visitors searched for in the last 24 hours, 7 days,
-30 days or all time, read from Viglet Turing's search metrics with the stored API key: the top
-searches with their clicks and click-through, the searches that found nothing (with when
-they were last made), and the ones that found results nobody opened. Each of those last
-two offers **Write about this**, a new draft titled with the search, and a search that
-found nothing also offers **Add a synonym**, which opens **Tuning** with it typed in.
-Searches the block makes while the visitor is still typing are left out. The dashboard's
-**Site search this week** widget shows the week's five top searches and five that found
-nothing.
-
-The admin ships in English and Brazilian Portuguese.
-
----
-
-## Search
-
-**Replace WordPress search with Viglet Turing** (Settings → Search) is off on a fresh install.
-With it on, the results page is the **theme's own**: Viglet Turing answers WordPress's main search
-query and the theme's search template renders the results, so a block theme keeps its
-header, footer and styles. Only this site key's documents come back. If Viglet Turing does not
-answer, WordPress searches its database as before. The plugin's older results page (with
-facets, for classic themes) remains available as **Results page → The plugin's results
-page**.
-
-**When Viglet Turing is down.** A page a visitor is waiting on (the theme's search, the search
-block's first page, Related, popular searches, the plugin's results page) waits at most
-three seconds for Viglet Turing. When it gets no answer at all, it renders without it and marks
-Viglet Turing down for a minute, so the pages after it do not wait: the theme's search falls back
-to WordPress's own at once, and Related shows nothing. An HTTP error from Viglet Turing does not
-set the mark. Admin screens, Index All and the queue keep their longer waits. The
-`viglet_turing_render_timeout` filter changes the three seconds.
-
-### The instant search
-
-With **Instant search from anywhere** on, Ctrl+K (⌘K on a Mac) and the theme's own search
-box open a search that answers as the visitor types, and Enter takes the query to the full
-search page. **Instant search layout** picks how it looks:
-
-- **A list of titles**: the first six results, each with its date and address.
-- **Immersive**: up to twelve results grouped by type ("Posts", "Pages", "PDF files"), each
-  with its image, date and first card field, and a **See all** per type that opens the
-  results page filtered to that type. Before anything is typed it lists this browser's
-  recent searches and the site's popular ones. On a desktop the highlighted result shows
-  beside the list, with its image, snippet and card fields. Ctrl+Enter (⌘+Enter) opens the
-  full results page whatever is highlighted. On a phone it fills the screen.
-
-  **Explore links** adds a row of the site's own links to that empty state, below the
-  recent and popular searches, and Tab reaches them. Write one `Label | URL` per line, at
-  most eight, for example `Events | /events/`. The URL must be a full `http://` or
-  `https://` address or a path on this site that starts with `/`. A line with any other URL,
-  or with no label, is dropped when the settings are saved. The row hides once the visitor
-  types.
-
-  With **Answer questions on top of the immersive layout** on, a question that rests for a
-  moment gets Viglet Turing's answer above the results. Each answer is an LLM call, so it is off
-  by default, and it needs the site's answers working in Viglet Turing (Health shows whether they
-  are).
-
-A query of three words or more, or one that reads as a question, often finds nothing as
-typed, because Viglet Turing requires every word. The instant search then searches again for any
-of its words and puts the best matches first, in both layouts, as the search block does.
-
-### The Viglet Turing search block
-
-![The Viglet Turing search block](/docs/img/screenshots/wordpress-search-block.png)
-
-The **Viglet Turing search** block is a complete search UI for any page. It has a box with
-suggestions, "did you mean", the mapped facets, results and pages. It is built with the
-Interactivity API on Viglet Turing's JS SDK and takes its colours and type from the theme. It
-reads `?q=` (or `?s=`), so a page holding it can serve as the site's search page.
-
-**Always filter by** scopes a block to one section of the site: a box on the events page
-set to `type:event` searches only events, and one set to a mapped facet's value
-(`publisher:sociology`) only what carries it. Each filter is `field:value`. Every search
-the block makes stays inside them, the first page drawn on the server included, and so do
-the terms it suggests as the visitor types: a box set to `type:event` never offers a word
-only posts hold. Scoped suggestions need a Viglet Turing that answers a filtered autocomplete with
-terms (2026.3 builds after T1226); an older one answers it with document titles. Visitors
-never see them as a filter they can remove. Under the box a line names the scope ("In
-Events") with a **Search the whole site** link to the site's search page, keeping the query.
-A scoped block with only a search box takes its scope to the search page, where the same
-line shows. A scoped block shows no popular searches, since they may find nothing inside it.
-
-With **Suggest the filters a sentence names** on, a search that reads as a sentence ("posts
-about php from last year") also asks Viglet Turing's natural-language filters which filters it
-names. The ones Viglet Turing checked against the site, on a mapped facet or on the post type or
-publication date, show as chips under the box; a click applies one and takes the words it
-was read from out of the query. Nothing is applied without a click. Each sentence is an LLM
-call, and with no language model in Viglet Turing nothing is offered.
-
-With **Apply them instead of suggesting** on as well, the filters are applied straight away
-and a line under the box says what was read: "Understood: Color: Red, Price: ≤ 200", with
-**Undo** to put the search back as it was typed. On a WooCommerce shop a price the sentence
-names ("under $400", "até R$ 400", "entre 100 e 300 reais", "over $50") is read by the block
-itself and filters the shop's price field, so it works even with no language model in
-Viglet Turing. Only an amount marked as money counts: "under 2 kg" is left alone. A size works
-the same way ("size M", "tamanho 42") on a facet whose field or name says size, and only
-when that value is one the site's products have: "size XXXL" sets nothing.
-
-A period is read the same way, on a date field that has a period facet (an agenda's first):
-"em novembro", "in March 2027", "next week", "semana que vem", "amanhã", "this month". A
-month with no year is the next one to come on an agenda and the last one gone on past dates.
-"May" and "March" need "in", "em" or a year beside them, since both are also verbs. So
-"debates em novembro" on an agenda filters the event dates to November with no language
-model, and searches "debates".
-
-A site with its own search blocks turns the block off:
-
-```php
-add_filter( 'viglet_turing_register_blocks', '__return_false' );
-```
-
-### The Ask this site block
-
-The **Ask this site** block is a conversation with Viglet Turing's copilot. It speaks as the site
-does: on a WooCommerce shop it is headed **Ask the catalog** and offers a kit of products;
-anywhere else it is headed **Ask this site**, names no catalog, and offers a plan only when
-switched on. A visitor
-asks in plain words, and the answer comes from this site's content and cites the items it
-used. On a WooCommerce shop each cited product shows the shop's price and an **Add to cart**
-button; the copilot never puts anything in the cart by itself. The block appears only when
-Viglet Turing has a language model for the copilot.
-
-On a product's page (or any indexed post's), the box reads **Ask about** and the product's
-name, and the question goes to Viglet Turing with that product's document: Viglet Turing answers about it
-first and always cites it, with other products only as alternatives. The Site assistant does
-the same: a question asked in it on a product's page is about that product, and one asked
-after moving to another page is about that page. This needs a Viglet Turing that takes the document
-(2026.3 builds after T1178); an older one answers from the whole catalog, as before.
-
-**From the search answer to the assistant and back.** When the page also has the Site
-assistant (its block, or its launcher on every page), the Viglet Turing search block's answer ends
-with **Ask a follow-up in the assistant**. It opens the assistant with the search and its
-answer, sources included, as the conversation's first exchange, so "and on Saturdays?" is
-read as a follow-up instead of starting over. The other way, an assistant answer that cites
-more than three posts ends with **See every result for this question**, which opens the
-site's results page for that question, filtered to the posts' type when they all share one
-(all products, say). The type comes from Viglet Turing with each source (2026.3 builds after T1264,
-for a site that indexes a `type` field); without it the page opens unfiltered.
-
-**Guided conversations.** A [chat flow](/docs/chat-flow/) built for the SN site's chat runs
-in the Site assistant as it does in Viglet Turing: the choices a step offers show as buttons (typing
-an answer still works), and a form step shows its fields as a labelled form, sent only when
-the visitor submits it; the browser checks required fields and email, phone, number and date
-fields first. **New conversation** also clears the flow's place on Viglet Turing, so the next
-question starts it from the beginning.
-
-**Build my kit.** With **Offer Build my kit** on (the default, in the block's settings), the
-block has a second mode, **Plan a kit**. The visitor describes a plan ("two days crossing the
-mountains in July, first time") and Viglet Turing answers with the needs the plan implies, each
-with the products it found for it and a one-line reason drawn from the product's own
-attributes:
-
-- Prices come from WooCommerce, and so does stock: a product the shop cannot sell is marked
-  **Out of stock** and left out of the cart, whatever the index says.
-- A need the catalog has nothing for is named ("Nothing in the catalog yet for: shelter")
-  rather than filled with something unrelated.
-- Journal posts that cover the plan are listed as **Guides for this plan**.
-- A need's products are alternatives: the first one the shop can sell starts ticked, and the
-  visitor can tick another or untick it. **Add N products to the cart** puts the ticked ones
-  in the cart at once, and the confirmation shows the cart's total as WooCommerce computes it.
-
-The kit needs a Viglet Turing that has the kit call (`POST /api/sn/{site}/copilot/kit`), which
-2026.3.6 does not, and the **Stock** field mapped, which a WooCommerce site has by default.
-
-**A plan on a site that is not a shop.** Turn on **Offer a plan** in the block's settings
-and say, under **What the plan uses**, what it works with:
-
-| Setting | What it takes | Blank means |
-|---|---|---|
-| Types it proposes | Indexed types, comma-separated, e.g. `course, event` | Products on a shop; any type elsewhere |
-| Types it cites as guides | Indexed types, e.g. `page` | Posts on a shop; none elsewhere |
-| Availability field | An indexed field saying whether an item can be taken, e.g. `seats_left` | `stock_status` on a shop; none elsewhere |
-
-The mode is then **Make a plan** and its button **Build my plan**. A school that stages
-`event` gets the events a plan needs, grouped by need, as links; there is no cart, and an
-item Viglet Turing marks unavailable reads **Unavailable**.
-
-### Building your own search on the SDK
-
-The plugin registers [`@viglet/turing-sdk`](https://www.npmjs.com/package/@viglet/turing-sdk)
-as WordPress script modules, so a theme imports it instead of bundling a copy:
-
-- `@viglet/turing-sdk`: the SDK as published;
-- `viglet-turing/search`: the SDK already configured for this site, with searches filtered
-  to its site key.
-
-```js
-// A theme module registered with 'viglet-turing/search' as a dependency.
-import { createSiteSearch, createSiteAutoComplete, config } from 'viglet-turing/search';
-
-const search = createSiteSearch();      // search-only; { controller: { chat: true } } adds answers
-search.subscribe( ( state ) => render( state ) );
-await search.searchQuery( 'workshop' );
-```
-
-The configuration it reads is public and holds no key: Viglet Turing's public URL, the SN site,
-the locale, the site key and the mapped facets. PHP reads it with
-`viglet_turing_public_config()`, and anything else with
-`GET /wp-json/viglet-turing/v1/public-config`.
-
-:::caution[CORS]
-Browser search calls Viglet Turing directly, so Viglet Turing must allow the WordPress site's origin:
-add it to Viglet Turing's allowed origins (`TURING_ALLOWEDORIGINS` in a container). When browsers
-reach Viglet Turing at another address than the server does, set `VIGLET_TURING_PUBLIC_URL`.
-:::
 
 ---
 
