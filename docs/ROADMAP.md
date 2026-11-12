@@ -22,10 +22,6 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
-## Block S — SDK / client parity (vanilla + React)
-
-- 📋 **T1292** (deps: —) **The SN chat resume endpoint answers at /chat/chat/resume, but the React SDK posts to /chat/resume and gets a 404** — A conversation parked at a suspend node cannot be resumed from the SDK, because the method mapping repeats the class's /chat segment. → §CLXXXV
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

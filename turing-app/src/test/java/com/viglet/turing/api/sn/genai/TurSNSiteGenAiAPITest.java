@@ -80,6 +80,12 @@ class TurSNSiteGenAiAPITest {
     @Mock
     private com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver;
 
+    // T1292 — the resume endpoint's collaborators.
+    @Mock
+    private com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService;
+    @Mock
+    private com.viglet.turing.genai.flow.TurConversationLock conversationLock;
+
     @InjectMocks
     private TurSNSiteGenAiAPI api;
 
@@ -319,5 +325,38 @@ class TurSNSiteGenAiAPITest {
                 .param("q", "hello"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Couldn't find site name."));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void stubResume(int resumed) {
+        when(conversationLock.runExclusive(eq("conv-1"), any(java.util.function.Supplier.class)))
+                .thenAnswer(inv -> ((java.util.function.Supplier<Object>) inv.getArgument(1)).get());
+        when(chatFlowEngineService.resumeSuspendedFlow(eq("conv-1"), any(), any()))
+                .thenReturn(new com.viglet.turing.genai.flow.TurChatFlowEngineService.ResumeResult(resumed, false));
+    }
+
+    @Test
+    void resumeAnswersAtTheSingleChatPathTheSdkCalls() throws Exception {
+        stubResume(1);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/sn/sample/chat/resume")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"conversationId\":\"conv-1\",\"slotUpdates\":{\"approved\":\"yes\"}}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resumed").value(1))
+                .andExpect(jsonPath("$.wasParked").value(true));
+        verify(chatFlowEngineService).resumeSuspendedFlow(eq("conv-1"),
+                eq(java.util.Map.of("approved", "yes")), any());
+    }
+
+    @Test
+    void resumeStillAnswersAtTheDoubledAliasPath() throws Exception {
+        stubResume(1);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/sn/sample/chat/chat/resume")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"conversationId\":\"conv-1\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resumed").value(1));
     }
 }

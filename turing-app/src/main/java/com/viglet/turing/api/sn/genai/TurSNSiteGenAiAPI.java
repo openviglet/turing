@@ -542,9 +542,14 @@ public class TurSNSiteGenAiAPI {
 	 * BEFORE the engine walks past the suspend node so downstream
 	 * condition / switch nodes branch on the freshest values.
 	 *
+	 * <p>Served at {@code /api/sn/{siteName}/chat/resume}, the path every client
+	 * calls (T1292). The doubled {@code /chat/chat/resume} the method was first
+	 * mapped at stays as an alias for one release, so a client written against
+	 * it does not break.
+	 *
 	 * @since 2026.3.1
 	 */
-	@PostMapping("/chat/resume")
+	@PostMapping({ "/resume", "/chat/resume" })
 	public ChatResumeResponse resumeChat(@PathVariable String siteName,
 			@RequestBody ChatResumeRequest body) {
 		if (body == null || body.conversationId() == null || body.conversationId().isBlank()) {

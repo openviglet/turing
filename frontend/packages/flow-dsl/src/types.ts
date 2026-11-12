@@ -276,7 +276,7 @@ export interface ScheduleAgentNode extends NodeBase {
 /**
  * T121 — parks the flow cursor indefinitely. The engine stops walking on
  * this node; an external system / human-approval click / scheduled job
- * must call {@code POST /api/sn/{site}/genai/chat/resume} to pop it and
+ * must call {@code POST /api/sn/{site}/chat/resume} to pop it and
  * advance. Reads only {@link NodeBase#label} (surfaced as the parked
  * reason); no other fields.
  */

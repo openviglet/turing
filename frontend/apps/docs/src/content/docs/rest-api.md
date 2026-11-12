@@ -772,7 +772,7 @@ slots.
 | `GET` | `/api/sn/{siteName}/chat/state` | The active flow, its current node, guardrail method and experiment variant; no LLM call |
 | `DELETE` | `/api/sn/{siteName}/chat/conversation-state` | Clear every flow state of the conversation, for a **New chat** button |
 | `POST` | `/api/sn/{siteName}/chat/form-submit` | Submit the fields of a `formCapture` form step; each value goes to its slot and the flow moves on |
-| `POST` | `/api/sn/{siteName}/chat/chat/resume` | Resume a conversation parked at a `suspend` node, optionally with `slotUpdates` applied first |
+| `POST` | `/api/sn/{siteName}/chat/resume` | Resume a conversation parked at a `suspend` node, optionally with `slotUpdates` applied first |
 | `POST` | `/api/sn/{siteName}/chat/slot-extract` | Upload a document (PDF, DOCX, TXT, RTF, HTML) and let the agent's LLM fill the requested slots from it |
 | `POST` | `/api/sn/{siteName}/chat/slot-extract-multi` | The same across several documents at once, for slots that need all of them |
 | `POST` | `/api/sn/{siteName}/chat/slot-upload` | Store an image, audio clip or file and write its URL into an `IMAGE`, `AUDIO` or `FILE` slot |

@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block S — SDK / client parity (vanilla + React)
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2476,20 +2474,3 @@ shrinks) and the turing-docs-sync reverse report
 into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule sweeps,
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
-
-## CLXXXV The chat resume endpoint repeats its /chat segment (T1292)
-
-TurSNSiteGenAiAPI is mapped at /api/sn/{siteName}/chat and declares resumeChat with
-@PostMapping("/chat/resume"), so Spring serves it at
-/api/sn/{siteName}/chat/chat/resume. Every client calls the single-chat path: the React
-SDK's resume call and useTuringResume post to /sn/{site}/chat/resume, the flow-dsl types
-document POST /api/sn/{site}/genai/chat/resume, and flow-dsl.md writes POST
-…/chat/resume. A conversation parked at a suspend node therefore cannot be resumed from
-the SDK. Found while documenting the public chat endpoints (T1290), whose rest-api.md
-row records the path the server answers today.
-
-Fix the mapping to @PostMapping("/resume") so the server answers
-/api/sn/{siteName}/chat/resume, and keep the old path answering as an alias for one
-release so a client written against it does not break. Correct the flow-dsl comment,
-then change the rest-api.md row to the single path. Add a MockMvc test that posts to
-/api/sn/{site}/chat/resume and gets past routing, and one for the alias.
