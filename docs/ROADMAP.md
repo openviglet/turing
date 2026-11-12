@@ -22,10 +22,6 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
-## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
-
-- 📋 **T1291** (deps: —) **The Pages deploy builds the docs but never runs the docs-style lint, so a regression ships if nobody ran it locally** — publish-github-pages.yml runs build:site (links) but not pnpm test:docs, so the docs-style baseline holds only when a session remembers it. → §CLXXXIV.5
-
 ## Block S — SDK / client parity (vanilla + React)
 
 - 📋 **T1292** (deps: —) **The SN chat resume endpoint answers at /chat/chat/resume, but the React SDK posts to /chat/resume and gets a 404** — A conversation parked at a suspend node cannot be resumed from the SDK, because the method mapping repeats the class's /chat segment. → §CLXXXV

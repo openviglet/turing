@@ -47,6 +47,12 @@ jobs:
         working-directory: frontend
         run: pnpm install --frozen-lockfile=false
 
+      # The docs-style lint (frontend/apps/docs/scripts/docs-style.test.mjs): a page that
+      # breaks a style rule fails here, with its page, line and rule, before anything ships.
+      - name: Lint the docs pages
+        working-directory: frontend
+        run: pnpm test:docs
+
       - name: Build Storybook
         working-directory: frontend
         run: pnpm run build-storybook:react-sdk

@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
-
 ## Block S — SDK / client parity (vanilla + React)
 
 ## Table of contents
@@ -2478,18 +2476,6 @@ shrinks) and the turing-docs-sync reverse report
 into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule sweeps,
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
-
-### CLXXXIV.5 The docs-style lint runs where the docs ship (T1291)
-
-The docs-style lint (frontend/apps/docs/scripts/docs-style.test.mjs) runs under pnpm
---filter turing-docs test, root alias pnpm test:docs. The one workflow that publishes
-the docs, .github/workflows/publish-github-pages.yml, runs pnpm run build:site, which
-builds the area and its link gate, and never runs the lint. A page that breaks a style
-rule therefore ships whenever the session that wrote it skipped the local gate. Add a
-pnpm test:docs step before build:site. The workflow stays workflow_dispatch: CI in this
-repository is manual-dispatch on purpose (T928, T929), so this adds a step and no
-trigger. The step is cheap (node --test over Markdown, no install beyond the workspace)
-and fails with the page, line and rule.
 
 ## CLXXXV The chat resume endpoint repeats its /chat segment (T1292)
 
