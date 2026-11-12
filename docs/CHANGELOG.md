@@ -1713,3 +1713,6 @@
 - **T1274** — The plugin's block title, feature labels, URL fields and Connect page say Viglet Turing in English and pt_BR; docs quote them and the contract check needs no exception.
 - **T1275** — All 89 plugin strings with a bare name, plus the demo tours, now say Viglet Turing in English and pt_BR; the tours' docs anchor follows the renamed heading.
 - **T1276** — Block HTML is escaped late through a wp_kses allowlist that keeps directives and form controls; wporg-check now fails on escaping silencers, raw echoes, new $_GET reads and public routes.
+
+## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
+
