@@ -14,17 +14,17 @@ This page covers **native authentication**. For social login with Google, GitHub
 
 ---
 
-## Native Authentication (default)
+## Native authentication (default)
 
 When Keycloak is not enabled, Viglet Turing uses its own user store:
 
-### Admin Console
+### Admin console
 
 Users log in via a form at `http://localhost:2700/login` and receive a **Java HTTP session**. Sessions are maintained server-side and expire after inactivity. No special configuration is required: this mode works out of the box.
 
 Users, groups, and roles are managed in **Administration → Users**, **Groups**, and **Roles**.
 
-### REST API: API Key
+### REST API: API key
 
 All REST API requests authenticate via an **API Key** passed in the **`Key` request header** (never a query parameter, see the note below). API Tokens are created in **Administration → API Tokens**.
 
@@ -86,7 +86,7 @@ See [Security & Keycloak](/docs/security-keycloak/) for the full 6-step producti
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

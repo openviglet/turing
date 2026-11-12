@@ -392,7 +392,7 @@ Other functions include `fetchSearch` (whose `fqAnd`, `fqOr`, `fqOperator` and `
 
 ---
 
-## Analytics & the Google Analytics bridge
+## Analytics & the Google analytics bridge
 
 Viglet Turing measures the funnel **server-side** ([Chat Analytics](/docs/chat-analytics/), [Experiments](/docs/experiments/)). This SDK adds the **browser-owned** half (conversion, abandonment and "which persona A/B variant won") delivered into **your own GA4**, next to acquisition source and audiences. It's a zero-dependency canonical event bus with **pluggable sinks**; GA4 is the first adapter, not a dependency.
 

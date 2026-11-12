@@ -10,7 +10,7 @@ POST http://localhost:2700/graphql
 
 ---
 
-## GraphiQL Explorer
+## GraphiQL explorer
 
 An interactive GraphQL IDE is available in the admin console and at `/graphiql`. It provides:
 
@@ -67,7 +67,7 @@ query {
 
 ---
 
-## Site Name Enum
+## Site name enum
 
 Site names are exposed as a **dynamic GraphQL enum** (`TurSNSiteName`) that is generated at runtime from the configured sites in the database.
 
@@ -105,7 +105,7 @@ The enum always includes `UNKNOWN` as the first value. Use the `siteNames` query
 | `locale` | `String` | n/a | Override locale (takes precedence over the top-level `locale` argument) |
 | `fl` | `[String]` | n/a | Field list: restrict which document fields are returned |
 
-### Filter Operators
+### Filter operators
 
 The `fqOp` and `fqiOp` parameters control how multiple filter queries are combined:
 
@@ -119,7 +119,7 @@ Invalid operator values fall back to `NONE`.
 
 ---
 
-## Response Schema
+## Response schema
 
 ### SiteSearchResult
 
@@ -218,9 +218,9 @@ The top-level response object:
 
 ---
 
-## Document Fields
+## Document fields
 
-### Static Fields
+### Static fields
 
 Every document exposes these standard fields in `SearchDocumentFields`:
 
@@ -234,7 +234,7 @@ Every document exposes these standard fields in `SearchDocumentFields`:
 | `description` | `String` | Short description or summary |
 | `image` | `String` | Image URL |
 
-### Dynamic Fields
+### Dynamic fields
 
 The GraphQL schema is **dynamically extended** at runtime with custom fields from your SN Site configuration. If your site defines fields like `category`, `author`, or `department`, they appear as additional fields on `SearchDocumentFields` with the `JSON` scalar type.
 
@@ -257,7 +257,7 @@ searchParams: { q: "report", fl: ["title", "url", "category"] }
 
 ---
 
-## Locale Resolution
+## Locale resolution
 
 The locale for a search is resolved with the following precedence:
 
@@ -271,7 +271,7 @@ If the resolved locale is not configured on the target SN Site, the search falls
 
 ## Examples
 
-### Basic Search
+### Basic search
 
 ```graphql
 query BasicSearch {
@@ -304,7 +304,7 @@ query BasicSearch {
 }
 ```
 
-### Advanced Search with Filters and Facets
+### Advanced search with filters and facets
 
 ```graphql
 query AdvancedSearch {
@@ -337,7 +337,7 @@ query AdvancedSearch {
 }
 ```
 
-### Grouped Search
+### Grouped search
 
 ```graphql
 query GroupedSearch {
@@ -366,7 +366,7 @@ query GroupedSearch {
 }
 ```
 
-### Search with OR Filters
+### Search with OR filters
 
 ```graphql
 query OrFilterSearch {
@@ -389,7 +389,7 @@ query OrFilterSearch {
 }
 ```
 
-### Minimal Search
+### Minimal search
 
 ```graphql
 query SimpleSearch {
@@ -407,7 +407,7 @@ query SimpleSearch {
 }
 ```
 
-### cURL Example
+### cURL example
 
 ```bash
 curl -X POST "http://localhost:2700/graphql" \
@@ -448,7 +448,7 @@ For the full configuration reference, see [Configuration Reference → GraphQL](
 
 ---
 
-## Error Handling
+## Error handling
 
 | Scenario | Behavior |
 |---|---|
@@ -462,7 +462,7 @@ GraphQL validation errors (missing required fields, wrong types) are returned as
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

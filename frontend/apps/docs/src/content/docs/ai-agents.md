@@ -16,7 +16,7 @@ Configure agents in **Administration → AI Agents**.
 
 ---
 
-## What "Agent" Actually Means
+## What "agent" actually means
 
 The word "agent" is overloaded. In Viglet Turing, an Agent has two non-negotiable properties:
 
@@ -27,7 +27,7 @@ Together, these mean an agent is a **business process expressed as a conversatio
 
 ---
 
-## Composition: The Four Layers
+## Composition: The four layers
 
 An AI Agent is built from four layers. Get all four right and the agent feels like a senior team member; get any one wrong and it feels like a generic chatbot.
 
@@ -97,7 +97,7 @@ A persona is **optional**. An agent without one uses the LLM's default voice. Fo
 
 ---
 
-## Default AI Agent (global fallback)
+## Default AI agent (global fallback)
 
 One agent can be marked as the global **Default AI Agent** in Global Settings. When a Semantic Navigation site's chat is invoked but the site has **no agent of its own**, chat resolves to this default agent (using its LLM, embedding model and vector store) instead of reporting chat as disabled. This is **fail-open and gated**: it only happens when a default agent is actually configured, with none set, a site without its own agent keeps chat disabled exactly as before.
 
@@ -107,7 +107,7 @@ Indexing follows the same rule: content imported into a site with no agent of it
 
 ---
 
-## How an Agent Actually Runs
+## How an agent actually runs
 
 When a user sends a message, this loop runs end-to-end. Understanding it is the difference between debugging "the AI gave a weird answer" in five minutes vs. five hours.
 
@@ -170,11 +170,11 @@ A **chat session event** is recorded by `TurChatAnalyticsService` (turn count, t
 
 ---
 
-## Composing Agents Around the Funnel
+## Composing agents around the funnel
 
 The biggest leverage in agent design is **funnel mapping**: build one agent per stage, not one agent for everything. Each agent gets a tighter system prompt, a more focused tool list, and a persona that fits the moment.
 
-### The Discovery Agent
+### The discovery agent
 
 For visitors who arrived from a marketing campaign and don't yet know what they want.
 
@@ -189,7 +189,7 @@ For visitors who arrived from a marketing campaign and don't yet know what they 
 
 **Conversion target:** **discovery → demo booking.**
 
-### The Solutions Engineer Agent
+### The solutions engineer agent
 
 For technical evaluators in active comparison.
 
@@ -204,7 +204,7 @@ For technical evaluators in active comparison.
 
 **Conversion target:** **evaluation → technical buy-in.**
 
-### The Onboarding Coach Agent
+### The onboarding coach agent
 
 For customers who just signed up.
 
@@ -219,7 +219,7 @@ For customers who just signed up.
 
 **Conversion target:** **signup → activation milestone.**
 
-### The Internal IT Agent
+### The internal IT agent
 
 For employees, on-premises, behind your firewall.
 
@@ -236,7 +236,7 @@ For employees, on-premises, behind your firewall.
 
 ---
 
-## Configuration Form
+## Configuration form
 
 The agent form is split into four tabs.
 
@@ -262,7 +262,7 @@ If the system prompt is left blank, the agent uses the built-in default:
 This is fine for prototypes. For any customer-facing agent, write a real system prompt.
 :::
 
-### Live Preview & prompt diagnostics
+### Live preview & prompt diagnostics
 
 The **System Prompt** page has a **Live Preview** that reverses the opaque assembled system message into labeled, color-coded segments (persona, agent prompt, MCP instructions, the active chat-flow addendum) rendered as one flowing article so you can read exactly what the model receives, top to bottom. It's also a diagnostic surface for *optimizing the turn*, what the model receives, what it costs, and what is wasted:
 
@@ -285,7 +285,7 @@ Select one or more LLM Instances. The list shows each instance's title, descript
 
 Select which of the **27 native tools** are available. Tools are grouped by category: each group has a select-all checkbox for quick configuration.
 
-### MCP Servers
+### MCP servers
 
 Select which external MCP servers this agent can call. The list shows each server's title, description, and connection type.
 
@@ -355,7 +355,7 @@ The default preserves today's behavior; the other two are opt-in per agent. `pii
 
 ---
 
-## Memory & Workspace
+## Memory & workspace
 
 Beyond the four composition layers, an agent has two optional runtime capabilities that make long, multi-step conversations work. Both are off by default and configured on the agent's **Settings** tab.
 
@@ -368,7 +368,7 @@ The two interlock: memory compression stores its summaries *in* the workspace. N
 
 ## REST API
 
-### Agent Management
+### Agent management
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -379,14 +379,14 @@ The two interlock: memory compression stores its summaries *in* the workspace. N
 | `PUT` | `/api/ai-agent/{id}` | Update an existing agent |
 | `DELETE` | `/api/ai-agent/{id}` | Delete an agent |
 
-### Agent Chat
+### Agent chat
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v2/ai-agent/{agentId}/chat` | Stream chat response (SSE). Body: `{ llmInstanceId, messages[] }` |
 | `GET` | `/api/v2/ai-agent/{agentId}/chat/context-info` | Context window size for the chosen LLM. Query: `llmInstanceId` |
 
-### Native Tools
+### Native tools
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -394,7 +394,7 @@ The two interlock: memory compression stores its summaries *in* the workspace. N
 
 ---
 
-## Diagnosing a Misbehaving Agent
+## Diagnosing a misbehaving agent
 
 | Symptom | Likely cause | Where to look |
 |---|---|---|
@@ -407,7 +407,7 @@ The two interlock: memory compression stores its summaries *in* the workspace. N
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -8,13 +8,13 @@ For day-to-day authentication (native session-based login and REST API Key usage
 
 ---
 
-## Why Use Keycloak with Viglet Turing?
+## Why use Keycloak with Viglet Turing?
 
 The primary reason to integrate Keycloak is to connect Viglet Turing to your organization's **existing Single Sign-On (SSO) infrastructure**. Instead of managing a separate set of credentials just for Viglet Turing, users sign in with the same corporate identity they already use for email, cloud tools, and internal applications, no additional password, no extra login step.
 
 Keycloak acts as an **identity broker** between Viglet Turing and your identity provider. Viglet Turing never sees or stores user passwords: it receives a signed JWT token from Keycloak confirming who the user is and what roles they have.
 
-### Supported Identity Providers
+### Supported identity providers
 
 Because Keycloak supports the **SAML 2.0**, **OAuth 2.0**, and **OpenID Connect** standards, it can federate identity from virtually any enterprise identity provider:
 
@@ -32,7 +32,7 @@ Because Keycloak supports the **SAML 2.0**, **OAuth 2.0**, and **OpenID Connect*
 | **Any SAML 2.0 IdP** | SAML 2.0 | Shibboleth, SimpleSAMLphp, custom SAML providers |
 | **Any OIDC provider** | OIDC | Any standards-compliant OpenID Connect provider |
 
-### What This Enables
+### What this enables
 
 **Single Sign-On (SSO):** Users click "Sign in" on Viglet Turing, are redirected to their corporate login (e.g., Microsoft 365 login page), authenticate once, and are immediately signed in to Viglet Turing. If they're already signed in to another corporate application, they skip the login form entirely: the SSO session is shared.
 
@@ -82,7 +82,7 @@ sequenceDiagram
 
 ---
 
-## Full Production Setup: Viglet Turing + Keycloak + Apache HTTP
+## Full production setup: Viglet Turing + Keycloak + Apache HTTP
 
 The recommended production topology runs Keycloak and Viglet Turing on the same host, with Apache HTTP Server as the HTTPS reverse proxy in front. All three services are reachable through a single public hostname and port (443), with Apache routing by path prefix.
 
@@ -98,7 +98,7 @@ Apache HTTP Server (reverse proxy)
 
 ---
 
-## Step 1: Database Setup
+## Step 1: Database setup
 
 Both Viglet Turing and Keycloak require their own databases. Create them before starting either service.
 
@@ -122,7 +122,7 @@ Replace all placeholder passwords (`<turing-db-password>`, `<keycloak-db-passwor
 
 ---
 
-## Step 2: Keycloak Installation and Build
+## Step 2: Keycloak installation and build
 
 Download and extract the Keycloak distribution. Before starting Keycloak for the first time, run the build step to configure the HTTP relative path. This is required when Keycloak runs behind a reverse proxy at a path prefix (e.g., `/kc/`).
 
@@ -183,7 +183,7 @@ systemctl start keycloak
 
 ---
 
-## Step 3: Keycloak Realm and Client Configuration
+## Step 3: Keycloak realm and client configuration
 
 After starting Keycloak, open the admin console and perform the following setup:
 
@@ -214,7 +214,7 @@ Ensure the client requests the following scopes: `openid`, `profile`, `roles`. T
 
 ---
 
-## Step 4: SSL Certificate for Viglet Turing
+## Step 4: SSL certificate for Viglet Turing
 
 Viglet Turing can terminate HTTPS directly via its embedded Tomcat server. Generate a self-signed certificate (replace with a CA-signed certificate for production):
 
@@ -260,7 +260,7 @@ The default truststore password is `changeit`.
 
 ---
 
-## Step 5: Viglet Turing JVM Configuration
+## Step 5: Viglet Turing JVM configuration
 
 All Viglet Turing configuration is passed via JVM system properties at startup. Set `JAVA_OPTS` before launching the JAR:
 
@@ -315,7 +315,7 @@ java $JAVA_OPTS -jar viglet-turing.jar
 
 ---
 
-## Step 6: Apache HTTP Server as Reverse Proxy
+## Step 6: Apache HTTP server as reverse proxy
 
 Build Apache HTTP Server with the required modules, or install a distribution package that includes `mod_ssl`, `mod_proxy`, and `mod_proxy_http`.
 
@@ -403,7 +403,7 @@ Keycloak invalidates the SSO session and redirects the user back to the Viglet T
 
 ---
 
-## Using an Existing Keycloak Instance
+## Using an existing Keycloak instance
 
 If your organization already runs a Keycloak instance, you do not need to install a dedicated one. Simply:
 
@@ -415,7 +415,7 @@ The `issuer-uri` format is always `https://<keycloak-hostname>/kc/realms/<realm-
 
 ---
 
-## Security Checklist
+## Security checklist
 
 Before going to production, verify the following:
 
@@ -432,7 +432,7 @@ Before going to production, verify the following:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

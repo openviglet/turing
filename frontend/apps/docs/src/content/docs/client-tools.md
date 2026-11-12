@@ -113,7 +113,7 @@ const handlers = useGenerativeUI({
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -16,7 +16,7 @@ Token Usage shows **counts**: how many tokens each model consumed. To see those 
 
 ---
 
-## Period Selector
+## Period selector
 
 At the top of the page, a month navigator lets you move forward and backward through calendar months. All cards and tables update instantly when the period changes.
 
@@ -26,7 +26,7 @@ At the top of the page, a month navigator lets you move forward and backward thr
 
 ---
 
-## Summary Cards
+## Summary cards
 
 Four cards provide an at-a-glance snapshot of the selected month:
 
@@ -59,7 +59,7 @@ Use this table to compare token consumption across different providers and model
 
 ---
 
-## Daily Breakdown
+## Daily breakdown
 
 A day-by-day table showing consumption per model across the selected month:
 
@@ -78,7 +78,7 @@ Days with no LLM activity do not appear in the table. This breakdown helps spot 
 
 ---
 
-## How Token Recording Works
+## How token recording works
 
 Viglet Turing records token usage automatically on every LLM call: no extra configuration is needed.
 
@@ -118,13 +118,13 @@ The same `llm_token_usage` row also carries a frozen **`cost_usd`** plus the ori
 
 ---
 
-## API Endpoint
+## API endpoint
 
 Token usage data is also available via the REST API. See [REST API Reference → Token Usage API](/docs/rest-api/#token-usage-api) for endpoint details and examples.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

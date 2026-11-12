@@ -187,7 +187,7 @@ See [Deploy & Operate](/docs/deploy-operate/) for installation, and [Self-hosted
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

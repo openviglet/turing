@@ -105,7 +105,7 @@ Unlike `answer`, `freshness` and `signal`, the share endpoints require authentic
 
 ---
 
-## Related Pages
+## Related pages
 
 - [Semantic Navigation](/docs/semantic-navigation/): the sites, fields and facets this answers over
 - [RAG](/docs/rag/): retrieval, grounding and citation behaviour

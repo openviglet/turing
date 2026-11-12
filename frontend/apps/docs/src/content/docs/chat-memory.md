@@ -126,7 +126,7 @@ Each layer is independent and opt-in: persistence with neither retrieval nor com
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -113,7 +113,7 @@ Like every secret in Viglet Turing, the rerank API key is encrypted, never retur
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -61,7 +61,7 @@ Every blob is written under a tenant-isolated path:
 
 The workspace is written and read by four features. The first is for tool authors; the rest are automatic.
 
-### 1. Custom Tools: the `workspace` binding
+### 1. Custom tools: the `workspace` binding
 
 A [Custom Tool](/docs/custom-tools/) Groovy script receives a pre-scoped `workspace` object bound to the active agent + conversation. Use it to persist an artifact and hand the user a download link:
 
@@ -155,7 +155,7 @@ Signed URLs are the only way to read a blob from outside the chat runtime; an un
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

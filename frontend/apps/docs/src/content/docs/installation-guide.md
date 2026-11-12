@@ -22,7 +22,7 @@ During installation, Viglet Turing reads the JAVA_HOME and PATH variables to ins
   - Create an environment variable called JAVA_HOME.
   - Provide the JAVA bin path in the PATH variable.
 
-## Viglet Turing Requirements
+## Viglet Turing requirements
 
 The information below describes the resource modes available to run Viglet Turing.
 
@@ -32,7 +32,7 @@ Use a screen resolution of at least 1024 x 768 for optimum clarity.
 
 This section describes the minimum and suggested features for systems on which you can configure Viglet Turing.
 
-### Hardware Requirements
+### Hardware requirements
 
 | Minimum | Recommended |
 |---------|-------------|
@@ -43,15 +43,15 @@ In addition, the following is required:
 - 1GB of disk space for software.
 - A compatible version of a database.
 
-## Installing and Configuring Databases
+## Installing and configuring databases
 
 Viglet Turing supports multiple database platforms, each with specific unique requirements to maximize effectiveness with Viglet Turing. The following sections describe these requirements.
 
-### Viglet Turing Database Table Requirements
+### Viglet Turing database table requirements
 
 Viglet Turing uses multiple tables in multiple databases (also called database schemas by some vendors such as Oracle). You must create new databases / schemas that will contain the sets of tables described below.
 
-### Oracle Database Requirements
+### Oracle database requirements
 
 This section describes configuration requirements for an existing database.
 
@@ -61,7 +61,7 @@ To set up an Oracle database:
 2. Create a database schema to contain the Viglet Turing system tables.
 3. Configure the Viglet Turing admin user for the database. For Oracle, the database user with the grant of the CONNECT and RESOURCE roles. Make sure the user has UNLIMITED TABLESPACE and CREATE VIEW privileges.
 
-### Microsoft SQL Server Database Requirements
+### Microsoft SQL server database requirements
 
 This section discusses the steps required to configure Microsoft SQL Server for your Viglet Turing databases.
 
@@ -72,7 +72,7 @@ When creating the Viglet Turing database, use the following options:
 - Set authentication mode to mixed mode.
 - Viglet Turing system user cannot be sa.
 
-#### Configuring the SQL Server Database and Schemas
+#### Configuring the SQL server database and schemas
 
 :::note
 The database and usernames provided are examples only.
@@ -117,14 +117,14 @@ GO
 
 6. Click OK.
 
-### PostgreSQL Database Requirements
+### PostgreSQL database requirements
 
 This section discusses the steps required to configure PostgreSQL for your Viglet Turing databases:
 
 - Installing and configuring the PostgreSQL Database
 - Configuring the Viglet Turing user, database, and schema
 
-#### Installing and configuring the PostgreSQL Database
+#### Installing and configuring the PostgreSQL database
 
 This section describes the steps required to install and configure a PostgreSQL database for your Viglet Turing environment. You will also need to configure the Viglet Turing user, database and schemas.
 
@@ -197,7 +197,7 @@ ALTER SCHEMA turing OWNER TO turing;
 ALTER USER turing SET SEARCH_PATH = turing;
 ```
 
-## Viglet Turing Utils
+## Viglet Turing utils
 
 First you need install Viglet Turing Utils, that contains sample configurations and script to facilitate the use of Viglet Turing, so go to [https://www.viglet.org/turing/download/](https://www.viglet.org/turing/download/) and click on "Integration > Utils" link to download it.
 
@@ -212,7 +212,7 @@ unzip turing-utils.zip -d /appl/viglet/turing/utils
 
 For production deployments that require SSO, Keycloak integrates with Viglet Turing via OAuth2 / OpenID Connect. Full setup instructions (including database creation, keystore generation, Keycloak configuration, realm and client setup, JVM properties, and Apache reverse proxy configuration) are covered in the [Security & Keycloak](/docs/security-keycloak/) guide.
 
-## Solr Configuration
+## Solr configuration
 
 You need to configure Solr to be able to store Semantic Navigation data.
 
@@ -227,7 +227,7 @@ Start the Solr service after the collection is created.
 
 ## Installing Viglet Turing
 
-### Viglet Turing Download
+### Viglet Turing download
 
 #### Option 1: Docker (fastest)
 
@@ -282,7 +282,7 @@ spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
 ```
 
-#### Oracle Database
+#### Oracle database
 
 ```properties
 spring.datasource.url=jdbc:oracle:thin:@localhost:1521/turing
@@ -309,7 +309,7 @@ java -Xmx1g -Xms1g -jar viglet-turing.jar \
   --spring.config.additional-location=file:/appl/viglet/turing/server/viglet-turing.properties
 ```
 
-### Creating Viglet Turing Service on Linux
+### Creating Viglet Turing service on Linux
 
 As root, create a `/etc/systemd/system/turing.service` file with the following lines:
 
@@ -371,15 +371,15 @@ First Time Configuration ...
 Configuration finished.
 ```
 
-### Accessing the Viglet Turing Console
+### Accessing the Viglet Turing console
 
 Viglet Turing provides remote access to administration, configuration, and management through its Web application interfaces. Once setup is complete, the Console become browser-accessible through the following URL: `http://<host>:<port>/console` where `<host>:<port>` is the listening host and port for the Viglet Turing. The default port is **2700**.
 
 The default username is **admin**. Set its password either via the `TURING_ADMIN_PASSWORD` environment variable before the first startup, or in the first-access setup screen the console shows when that variable is not set: see the [Administration Guide](/docs/administration-guide/#login) for details.
 
-## Appendix A: Installation Modes
+## Appendix A: Installation modes
 
-### Viglet Turing Server
+### Viglet Turing server
 
 #### Simple
 
@@ -425,7 +425,7 @@ Viglet Turing and its dependencies deployed via Kubernetes manifests (available 
 
 **Target Audience:** Cloud deployments requiring horizontal scaling and infrastructure-as-code.
 
-#### Manual Installation
+#### Manual installation
 
 Each service installed individually following this guide:
 
@@ -464,7 +464,7 @@ The commands above build Viglet Turing from source for local development. For de
 If you have problems with permissions on directories, run `chmod -R 777 volumes`
 :::
 
-### Docker Commands
+### Docker commands
 
 #### Viglet Turing
 
@@ -500,7 +500,7 @@ docker exec -it turing-nginx /bin/bash
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

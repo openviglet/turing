@@ -10,7 +10,7 @@ The Logging console requires `turing.mongodb.enabled: true`. Logs are stored in 
 
 ---
 
-## Log Categories
+## Log categories
 
 The logging landing page displays three cards, each linking to a dedicated log viewer:
 
@@ -22,7 +22,7 @@ The logging landing page displays three cards, each linking to a dedicated log v
 
 ---
 
-## Server Logging
+## Server logging
 
 Displays general application logs captured from the Viglet Turing runtime.
 
@@ -48,7 +48,7 @@ Displays general application logs captured from the Viglet Turing runtime.
 
 ---
 
-## Indexing Logging
+## Indexing logging
 
 Tracks every document through the indexing pipeline, from connector receipt to final index commit. This is the primary troubleshooting view for content indexing issues.
 
@@ -75,7 +75,7 @@ Tracks every document through the indexing pipeline, from connector receipt to f
 | Locale | Language code badge |
 | Sites | Target SN Sites displayed as colored badges |
 
-### Indexing Status Values
+### Indexing status values
 
 | Status | Icon | Description |
 |---|---|---|
@@ -94,7 +94,7 @@ Tracks every document through the indexing pipeline, from connector receipt to f
 
 ---
 
-## AEM Logging
+## AEM logging
 
 Displays logs specific to the Adobe Experience Manager integration. The filter and column layout is identical to [Server Logging](#server-logging): level, date range, and text search are available.
 
@@ -102,11 +102,11 @@ Use this view to diagnose AEM authentication failures, content retrieval errors,
 
 ---
 
-## Common Features
+## Common features
 
 All three log viewers share the following capabilities.
 
-### Auto-Refresh
+### Auto-refresh
 
 A dropdown in the page header configures automatic data refresh:
 
@@ -130,7 +130,7 @@ The last sync timestamp is displayed next to the refresh indicator.
 | Rows per page | Configurable: 10, 20, 30, 40, 50, or 100 rows |
 | Sort order | Ascending or descending by date |
 
-### Syntax Highlighting
+### Syntax highlighting
 
 Log messages are rendered with syntax highlighting for:
 
@@ -147,7 +147,7 @@ Log messages are rendered with syntax highlighting for:
 
 The logging data is available via REST endpoints. Authentication required.
 
-### Server Logs
+### Server logs
 
 ```http
 GET /api/logging
@@ -170,7 +170,7 @@ curl "http://localhost:2700/api/logging?level=ERROR&pageSize=50&sort=desc" \
   -H "Key: <YOUR_API_TOKEN>"
 ```
 
-### Indexing Logs
+### Indexing logs
 
 ```http
 GET /api/logging/indexing
@@ -195,7 +195,7 @@ curl "http://localhost:2700/api/logging/indexing?status=INDEXED&resultStatus=ERR
   -H "Key: <YOUR_API_TOKEN>"
 ```
 
-### AEM Logs
+### AEM logs
 
 ```http
 GET /api/logging/aem
@@ -203,7 +203,7 @@ GET /api/logging/aem
 
 Same parameters as [Server Logs](#server-logs).
 
-### Response Structure
+### Response structure
 
 All three endpoints return a paginated response:
 
@@ -258,7 +258,7 @@ logging:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

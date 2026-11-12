@@ -802,6 +802,7 @@
 - **T1283** — personas.md is the persona reference (fields, values, defaults, actions, endpoints) and the Persona Book the explanation; no block labels, stale defaults corrected from code, anchors kept.
 - **T1284** — Every docs code fence names a language (http, bash, text) and no page is listed for fence-language in the docs-style baseline any more.
 - **T1285** — Every docs page has a 70 to 160 character description saying what the reader can do there, and frontmatter-description is gone from the docs-style baseline.
+- **T1286** — All docs headings are sentence case (455 converted, anchors unchanged); the lint judges hyphenated words part by part, real proper nouns joined its list, and the rule left the baseline.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

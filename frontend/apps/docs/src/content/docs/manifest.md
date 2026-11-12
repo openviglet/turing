@@ -375,7 +375,7 @@ A near-empty field is a signal: either the source isn't sending it (a connector 
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -160,7 +160,7 @@ The instance form's free-text **Supported Capabilities** field (e.g. `RESPONSE_F
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -8,7 +8,7 @@ Viglet Turing is a fully open-source enterprise search platform with semantic na
 
 ---
 
-## Tech Stack
+## Tech stack
 
 Understanding the stack helps you navigate the codebase and decide where to plug in.
 
@@ -45,7 +45,7 @@ graph TD
 
 ---
 
-## Setting Up Your Dev Environment
+## Setting up your dev environment
 
 ### Prerequisites
 
@@ -57,7 +57,7 @@ Before you begin, make sure you have these installed:
 - [Git](https://git-scm.com/downloads)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) (for running Solr and other external services locally)
 
-### Clone the Repository
+### Clone the repository
 
 ```shell
 git clone https://github.com/openviglet/turing.git
@@ -100,7 +100,7 @@ mvn spring-boot:run -pl turing-app -Dskip.npm
 
 The backend starts at **`http://localhost:2700`**.
 
-### Frontend: React Admin Console
+### Frontend: React admin console
 
 For active frontend development, run the React dev server separately. First start the backend in headless mode:
 
@@ -118,7 +118,7 @@ npm run dev
 
 The Vite dev server starts at **`http://localhost:5173`** with hot-reload enabled.
 
-### Production Build
+### Production build
 
 ```shell
 cd turing
@@ -151,7 +151,7 @@ On first startup, set the admin password via the environment variable `TURING_AD
 
 The Viglet Turing Java SDK lets you integrate semantic search into any JVM application.
 
-### Run the Sample
+### Run the sample
 
 ```shell
 cd turing-java-sdk
@@ -159,7 +159,7 @@ mvn package
 java -cp build/libs/turing-java-sdk-all.jar com.viglet.turing.client.sn.sample.TurSNClientSample
 ```
 
-### Add to Your Project via Maven Central
+### Add to your project via Maven central
 
 Add to your `pom.xml`:
 
@@ -182,7 +182,7 @@ mvn package
 
 ---
 
-## Database Migrations with Liquibase
+## Database migrations with Liquibase
 
 Viglet Turing uses **[Liquibase](https://www.liquibase.org/)** (v5.0.2) for database schema management. All schema changes (tables, columns, indexes, foreign keys) are tracked as versioned changelogs and applied automatically on startup. This ensures every environment (dev, staging, production) runs the exact same schema, regardless of the database platform.
 
@@ -313,7 +313,7 @@ Liquibase handles type mappings (e.g., `VARCHAR(255)` on MySQL vs `VARCHAR2(255)
 
 ---
 
-## Code Quality
+## Code quality
 
 Viglet Turing maintains high code quality standards. You can check the project health at any time:
 
@@ -324,7 +324,7 @@ Viglet Turing maintains high code quality standards. You can check the project h
 
 ---
 
-## Search Engine Plugin Architecture
+## Search engine plugin architecture
 
 Viglet Turing uses a **plugin architecture** to support multiple search backends behind a unified interface. This abstraction allows the same application code to work with Apache Solr, Elasticsearch, or Lucene: the active plugin is resolved at runtime based on the vendor configured per Search Engine instance.
 
@@ -427,7 +427,7 @@ Check the open [GitHub Issues](https://github.com/openviglet/turing/issues) for 
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

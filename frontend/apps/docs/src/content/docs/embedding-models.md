@@ -15,7 +15,7 @@ The embedding model must remain consistent across both phases. Changing the mode
 
 ---
 
-## Supported Providers
+## Supported providers
 
 Embedding model support depends on the LLM vendor configured in the [LLM Instance](/docs/llm-instances/). Not all vendors provide an embedding API.
 
@@ -45,7 +45,7 @@ Connects to the OpenAI API (default: `https://api.openai.com/v1`) using your API
 | `text-embedding-3-large` | 3,072 | Higher quality, larger storage footprint |
 | `text-embedding-ada-002` | 1,536 | Legacy model: use `3-small` for new deployments |
 
-### Ollama (Local)
+### Ollama (local)
 
 Runs embedding models locally via [Ollama](https://ollama.com). No API key required for local deployments: ideal for air-gapped environments or development.
 
@@ -61,7 +61,7 @@ Pull a model before using it:
 ollama pull nomic-embed-text
 ```
 
-### Local Transformers (ONNX)
+### Local transformers (ONNX)
 
 Viglet Turing also supports running embedding models **locally, in-process** via ONNX Runtime, without an external LLM provider, API or key. This is useful for air-gapped deployments, custom/fine-tuned models, and zero-cost embeddings.
 
@@ -146,11 +146,11 @@ Not an embedding model itself, but it feeds the embedding pipeline: for scanned 
 
 ---
 
-## Create / Edit Form
+## Create / edit form
 
 Navigate to **Generative AI → Embedding Models** to manage embedding model configurations.
 
-### General Information
+### General information
 
 | Field | Required | Description |
 |---|---|---|
@@ -169,7 +169,7 @@ The **Provider Type** dropdown selects one of three modes, and the model field a
 
 The model field is no longer free-text for the LLM and HuggingFace paths, fat-fingering `text-embedding-3-smal` is caught by the picker, while an unlisted id can still be typed when needed.
 
-### Local Transformers Options
+### Local transformers options
 
 These fields appear only when **Transformers (Local)** is selected as the provider type:
 
@@ -213,7 +213,7 @@ For most deployments, a mid-sized model such as `text-embedding-3-small` (OpenAI
 
 ---
 
-## Global Configuration
+## Global configuration
 
 Set the default embedding model in **Administration → Settings**:
 
@@ -242,7 +242,7 @@ Embedding models are managed via the REST API at `/api/embedding-model`.
 
 ---
 
-## Per-Site Override
+## Per-site override
 
 Each Semantic Navigation Site can override the global embedding model in its **Generative AI** tab. This allows different sites to use different models, for example, a multilingual site might use a model optimized for cross-language embeddings while a technical site uses a domain-specific model.
 
@@ -256,7 +256,7 @@ The site-level configuration includes:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

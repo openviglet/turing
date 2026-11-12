@@ -25,7 +25,7 @@ A **breadcrumb** at the top of the left panel shows the current folder path and 
 
 ---
 
-## File Table
+## File table
 
 The file listing displays the following columns:
 
@@ -40,9 +40,9 @@ The file listing displays the following columns:
 
 ---
 
-## File Management
+## File management
 
-### Upload Files
+### Upload files
 
 Files are uploaded to the **current folder** via a file picker dialog (click **Upload Files**). Multiple files can be selected in one operation. Uploads are sent to:
 
@@ -52,7 +52,7 @@ POST /api/asset
 
 After upload, an **asynchronous event automatically triggers individual AI indexing** for each uploaded file: no manual training step is needed for new uploads.
 
-### Create Folder
+### Create folder
 
 A dialog prompts for a folder name. Folders can be nested to any depth and are navigated via the breadcrumb.
 
@@ -70,7 +70,7 @@ Renaming files or folders is not currently supported. To rename a file, download
 
 ---
 
-## Supported File Formats for Training
+## Supported file formats for training
 
 Apache Tika is the text-extraction engine used during AI Training. It supports a broad range of document types:
 
@@ -88,7 +88,7 @@ Files that Tika cannot extract text from (e.g. binary executables, ZIP archives 
 
 ---
 
-## Preview Panel
+## Preview panel
 
 Selecting a file opens an inline preview in the right panel without leaving the page. Supported formats:
 
@@ -110,22 +110,22 @@ The panel footer displays the file size, content type, modification date, and fi
 
 ---
 
-## AI Training (RAG)
+## AI training (RAG)
 
 The AI training features are only available when `ragEnabled=true` **and** an embedding model and embedding store are configured in **Administration → Global Settings → RAG Settings**.
 
-### Training Status per File
+### Training status per file
 
 The **AI column** in the file table shows the indexing state of each file:
 
 - ✅ **Checkmark**: file has been indexed; hover to see the training timestamp
 - *(empty)*: file has not yet been indexed
 
-### Automatic Training on Upload
+### Automatic training on upload
 
 When a file is uploaded, Viglet Turing dispatches an **asynchronous event** that indexes the file individually without any user action required. Similarly, when a file is deleted, its embeddings are automatically purged from the vector store.
 
-### Batch Training
+### Batch training
 
 To index all existing files at once (useful after enabling RAG on an existing installation, or after changing the embedding model) use the **"Train AI with Assets"** button.
 
@@ -174,7 +174,7 @@ X / Y files processed, Z errors
 If you change the Default Embedding Model in **Administration → Global Settings → RAG Settings**, all existing embeddings become invalid. Run "Train AI with Assets" again to re-index all files with the new model.
 :::
 
-### Embedding Metadata
+### Embedding metadata
 
 Each chunk stored in the vector store carries the following metadata:
 
@@ -189,13 +189,13 @@ Each chunk stored in the vector store carries the following metadata:
 
 This metadata is used by AI Agents when returning search results, so the LLM can cite the source file and provide context about where the information came from.
 
-### Text Extraction Limits
+### Text extraction limits
 
 There is **no hard file size limit** for uploads: MinIO accepts files of any size. However, during AI Training the extracted text is **truncated to 100,000 characters** before chunking. For very large documents this means only the first portion of the content is indexed. The truncation limit is a fixed internal constant.
 
 ---
 
-## How AI Agents Use the Knowledge Base
+## How AI agents use the Knowledge Base
 
 Once files are indexed, AI Agents can query the knowledge base via four built-in tools:
 
@@ -210,11 +210,11 @@ For details on configuring AI Agents and tools, see [AI Agents](/docs/ai-agents/
 
 ---
 
-## Storage Configuration
+## Storage configuration
 
 A storage backend must be configured before Assets becomes available. Viglet Turing supports two storage backends: **MinIO** (recommended for production) and **Filesystem** (for simple deployments). Set `turing.storage.type` to enable one.
 
-### Option 1: MinIO (Recommended)
+### Option 1: MinIO (recommended)
 
 ```yaml
 turing:
@@ -269,7 +269,7 @@ For the full property reference, see [Configuration Reference: Storage](/docs/co
 
 ---
 
-## REST API Reference
+## REST API reference
 
 All endpoints are under `/api/asset` and require authentication.
 
@@ -288,7 +288,7 @@ All endpoints are under `/api/asset` and require authentication.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

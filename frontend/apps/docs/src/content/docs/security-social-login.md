@@ -8,7 +8,7 @@ This is ideal for development environments, small teams, and scenarios where a f
 
 ---
 
-## How It Works
+## How it works
 
 ```mermaid
 sequenceDiagram
@@ -114,7 +114,7 @@ spring:
 
 ---
 
-## Multiple Providers
+## Multiple providers
 
 You can configure any combination of providers simultaneously. The login page **automatically shows only the buttons for configured providers**:
 
@@ -142,7 +142,7 @@ If only GitHub is configured, only the GitHub button appears. If none are config
 
 ---
 
-## Redirect URIs Reference
+## Redirect URIs reference
 
 | Provider | Redirect URI |
 |---|---|
@@ -156,7 +156,7 @@ For production with HTTPS: `https://turing.example.com/login/oauth2/code/google`
 
 ---
 
-## User Profile Behavior
+## User profile behavior
 
 When logged in via a social provider:
 
@@ -167,7 +167,7 @@ When logged in via a social provider:
 
 ---
 
-## Configuration Properties
+## Configuration properties
 
 | Property | Default | Description |
 |---|---|---|
@@ -197,7 +197,7 @@ The default success URL is `/admin`. If using a different frontend path, ensure 
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

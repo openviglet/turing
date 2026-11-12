@@ -125,7 +125,7 @@ Viglet Turing does **not** ship its own conversion dashboards here: GA4 (and any
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

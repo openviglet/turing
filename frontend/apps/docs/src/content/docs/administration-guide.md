@@ -117,7 +117,7 @@ The Roles page (`/admin/roles`) defines permissions that are assigned to groups.
 | Name | Unique role identifier (required) |
 | Description | What this role permits |
 
-### Privilege Matrix
+### Privilege matrix
 
 Each role has a **privilege matrix**, an interactive table where you toggle individual permissions per resource category. The matrix is organized into two sections:
 
@@ -154,7 +154,7 @@ The `ROLE_ADMIN` role has full access to all resources regardless of the privile
 
 ---
 
-## API Tokens
+## API tokens
 
 The API Tokens page (`/admin/tokens`) manages tokens used to authenticate REST API requests. Every token is passed in the `Key` request header.
 
@@ -184,7 +184,7 @@ curl "http://localhost:2700/api/sn/Sample/search?q=cloud&_setlocale=en_US" \
 
 ---
 
-## Global Settings
+## Global settings
 
 The Global Settings page (`/admin/settings`) is the central configuration panel for defaults and external service integrations. Divided into four sections.
 
@@ -195,7 +195,7 @@ The Global Settings page (`/admin/settings`) is the central configuration panel 
 | Decimal Separator | Choose between period (`.`) and comma (`,`) for numeric display. Preview shows formatted examples (e.g., `1,500.75` vs `1.500,75`). |
 | Python Executable | Absolute path to the Python 3 binary used by the Code Interpreter tool. When left blank, Viglet Turing searches standard OS locations automatically. |
 
-### LLM Settings
+### LLM settings
 
 | Field | Description |
 |---|---|
@@ -208,7 +208,7 @@ The Global Settings page (`/admin/settings`) is the central configuration panel 
 Caching LLM responses improves performance but may return stale answers if the underlying content changes frequently. Tune the duration to match your content update cadence.
 :::
 
-### RAG Settings
+### RAG settings
 
 | Field | Description |
 |---|---|
@@ -224,7 +224,7 @@ Changing the Default Embedding Model invalidates all existing embeddings. All in
 The RAG Settings section is only visible if an embedding store is configured and available. If MinIO is not configured, the Knowledge Base and related RAG options will not appear.
 :::
 
-### Email Settings
+### Email settings
 
 Used by Viglet Turing to send notifications and test email connectivity.
 
@@ -239,7 +239,7 @@ Used by Viglet Turing to send notifications and test email connectivity.
 
 ---
 
-## System Information
+## System information
 
 The System Information page (`/admin/system-info`) is a diagnostic panel to monitor the health of the Viglet Turing instance. It contains two tabs.
 
@@ -316,7 +316,7 @@ The System Information page (`/admin/system-info`) is a diagnostic panel to moni
 | Version | MinIO server version |
 | Endpoint | MinIO server URL |
 
-### System Variables
+### System variables
 
 A searchable table of all JVM system properties active at runtime. The search input filters properties by name or value in real time. A counter shows the number of visible entries out of the total.
 
@@ -324,7 +324,7 @@ Useful for verifying configuration overrides, checking classpath entries, or con
 
 ---
 
-## User Account
+## User account
 
 The User Account page (`/account`) allows the currently logged-in user to manage their own profile without requiring admin privileges.
 
@@ -385,7 +385,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `DELETE` | `/api/v2/role/{id}` | Delete a role |
 | `GET` | `/api/v2/privilege` | List all available privileges |
 
-### API Tokens
+### API tokens
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -395,7 +395,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/dev/token/{id}` | Update token metadata |
 | `DELETE` | `/api/dev/token/{id}` | Delete a token |
 
-### Global Settings
+### Global settings
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -403,7 +403,7 @@ All administration endpoints require authentication via the `Key` header. For th
 | `PUT` | `/api/system/global-settings` | Update settings |
 | `POST` | `/api/system/global-settings/email/test` | Send test email |
 
-### System Information
+### System information
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -412,7 +412,7 @@ All administration endpoints require authentication via the `Key` header. For th
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

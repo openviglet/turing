@@ -12,7 +12,7 @@ SPA Pages requires a storage backend to be configured. See [Storage Configuratio
 
 ---
 
-## How It Works
+## How it works
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px'}}}%%
@@ -32,9 +32,9 @@ Viglet Turing handles SPA routing automatically: if a requested file doesn't exi
 
 ---
 
-## Deploying a Site
+## Deploying a site
 
-### Upload via Admin Console
+### Upload via admin console
 
 1. Navigate to **Enterprise Search > Pages** in the sidebar
 2. Click **Upload SPA Site**
@@ -58,7 +58,7 @@ curl -X POST "http://localhost:2700/api/page?siteName=my-site" \
 
 ---
 
-## Viglet Turing Manifest
+## Viglet Turing manifest
 
 You can include an optional `turing-manifest.json` file at the root of your ZIP to provide metadata about the deployment:
 
@@ -94,9 +94,9 @@ All fields are optional. When present, the manifest metadata is displayed on the
 
 ---
 
-## Site Management
+## Site management
 
-### Listing Sites
+### Listing sites
 
 The Pages admin page displays a card grid of all deployed sites. Each card shows:
 
@@ -104,7 +104,7 @@ The Pages admin page displays a card grid of all deployed sites. Each card shows
 - **Preview link**: opens the deployed site in a new tab
 - **Delete button**: removes the site and all its files
 
-### Deleting a Site
+### Deleting a site
 
 Click the delete button on a site card and confirm the dialog. This removes all files under the site's storage prefix.
 
@@ -118,7 +118,7 @@ Click the delete button on a site card and confirm the dialog. This removes all 
 
 ---
 
-## Caching Behavior
+## Caching behavior
 
 Viglet Turing applies different caching strategies depending on the file:
 
@@ -144,7 +144,7 @@ The deployed app communicates with the Viglet Turing REST API on the same origin
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |------|-------------|

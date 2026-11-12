@@ -45,9 +45,9 @@ cannot express:
 
 ---
 
-## Quick Start
+## Quick start
 
-### Simple Match Query
+### Simple Match query
 
 ```bash
 curl -X POST "http://localhost:2700/api/sn/mySite/_search?locale=en" \
@@ -59,7 +59,7 @@ curl -X POST "http://localhost:2700/api/sn/mySite/_search?locale=en" \
   }'
 ```
 
-### Bool Query with Filters and Pagination
+### Bool query with filters and pagination
 
 ```bash
 curl -X POST "http://localhost:2700/api/sn/mySite/_search?locale=en" \
@@ -90,7 +90,7 @@ curl -X POST "http://localhost:2700/api/sn/mySite/_search?locale=en" \
   }'
 ```
 
-### Response Format
+### Response format
 
 ```json
 {
@@ -121,9 +121,9 @@ curl -X POST "http://localhost:2700/api/sn/mySite/_search?locale=en" \
 
 ---
 
-## Supported Queries
+## Supported queries
 
-### Full-text Queries
+### Full-text queries
 
 #### `match`
 
@@ -218,7 +218,7 @@ Simple query string syntax (no exceptions on parse errors).
 }
 ```
 
-### Term-level Queries
+### Term-level queries
 
 #### `term`
 
@@ -309,7 +309,7 @@ Match specific document IDs.
 { "query": { "ids": { "values": ["doc1", "doc2", "doc3"] } } }
 ```
 
-### Compound Queries
+### Compound queries
 
 #### `bool`
 
@@ -433,7 +433,7 @@ Pin specific documents to the top of results.
 }
 ```
 
-### Nested & Join Queries
+### Nested & join queries
 
 #### `nested`
 
@@ -484,7 +484,7 @@ Find child documents by parent document criteria.
 }
 ```
 
-### Geo Queries
+### Geo queries
 
 #### `geo_distance`
 
@@ -535,7 +535,7 @@ Filter by geographic shape.
 }
 ```
 
-### Vector Search
+### Vector search
 
 #### `knn`
 
@@ -556,7 +556,7 @@ K-nearest neighbors vector search (semantic search).
 }
 ```
 
-### Span Queries
+### Span queries
 
 #### `span_term`, `span_near`, `span_or`, `span_not`, `span_first`
 
@@ -577,7 +577,7 @@ Low-level positional queries for advanced use cases.
 }
 ```
 
-### Specialized Queries
+### Specialized queries
 
 #### `more_like_this`
 
@@ -624,7 +624,7 @@ Additional specialized queries for ranking features, distance-based scoring, rev
 
 ## Aggregations
 
-### Bucket Aggregations
+### Bucket aggregations
 
 #### `terms`
 
@@ -739,7 +739,7 @@ Paginated aggregations for large cardinality fields.
 
 Advanced bucket aggregations for sampling, matrix analysis, and adaptive histograms.
 
-### Metric Aggregations
+### Metric aggregations
 
 #### `avg`, `sum`, `min`, `max`
 
@@ -846,7 +846,7 @@ Nest aggregations within bucket aggregations for multi-dimensional analysis.
 
 ---
 
-## Request Features
+## Request features
 
 ### Pagination
 
@@ -872,7 +872,7 @@ Nest aggregations within bucket aggregations for multi-dimensional analysis.
 { "sort": [{ "date": "desc" }, { "title": "asc" }, "_score"] }
 ```
 
-### Source Filtering
+### Source filtering
 
 ```json
 { "_source": ["title", "url", "date"] }
@@ -894,7 +894,7 @@ Nest aggregations within bucket aggregations for multi-dimensional analysis.
 }
 ```
 
-### Post Filter
+### Post filter
 
 Filter hits without affecting aggregations.
 
@@ -926,7 +926,7 @@ Re-score top N results with a secondary query.
 }
 ```
 
-### Collapse (Field Collapsing)
+### Collapse (field collapsing)
 
 Deduplicate results by a field.
 
@@ -959,7 +959,7 @@ Term, phrase, and completion suggestions.
 }
 ```
 
-### Additional Features
+### Additional features
 
 | Feature | Example |
 |---------|---------|
@@ -999,7 +999,7 @@ graph TB
 
 The engine is resolved automatically from the SN site's Search Engine instance configuration. The same JSON request body works across all three engines.
 
-### How it Works
+### How it works
 
 1. **Request** arrives at the `_search` endpoint
 2. **TurDslSearchService** resolves the site and its engine type via `TurSearchEnginePluginFactory`
@@ -1011,7 +1011,7 @@ The engine is resolved automatically from the SN site's Search Engine instance c
 
 ---
 
-## Related Pages
+## Related pages
 
 - [DSL Compatibility Matrix](/docs/dsl-compatibility/): which DSL features each engine supports
 - [Search Engine Configuration](/docs/search-engine/): Solr / Elasticsearch / Lucene backends

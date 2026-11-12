@@ -14,7 +14,7 @@ This first part of the page is about Viglet Turing as an MCP **client**, your ag
 
 ---
 
-## Configuration Form
+## Configuration form
 
 | Field | Description |
 |---|---|
@@ -27,7 +27,7 @@ This first part of the page is about Viglet Turing as an MCP **client**, your ag
 
 ---
 
-## Transport Types
+## Transport types
 
 ### stdio
 
@@ -61,7 +61,7 @@ See [Security Hardening § MCP client guards](/docs/security-hardening/#8-mcp-cl
 
 ---
 
-## Execution Modes
+## Execution modes
 
 ### Synchronous
 
@@ -75,7 +75,7 @@ Dispatches the tool call without blocking. Useful for long-running operations or
 
 ---
 
-## MCP Server Examples
+## MCP server examples
 
 **Internal ticketing system (stdio):**
 ```text
@@ -104,13 +104,13 @@ Mode:      Asynchronous
 
 ---
 
-## Assigning MCP Servers to Agents
+## Assigning MCP servers to agents
 
 Once configured, MCP servers appear in the **MCP Servers** multi-select field of the [AI Agent](/docs/ai-agents/) configuration form. Each agent independently selects which MCP servers it can use. The tools exposed by each selected MCP server become available to the LLM during that agent's conversations.
 
 ---
 
-## Viglet Turing as an MCP Server
+## Viglet Turing as an MCP server
 
 Everything above is Viglet Turing reaching *out*. The reverse is just as useful: Viglet Turing can **publish its own tools as an MCP server**, so an external AI client (**Claude Desktop**, **Claude Code**, **Cursor**, or OpenAI's Responses API) can search your indexes, ask grounded RAG questions, invoke your agents, and read your analytics, all over the standard `/mcp` Streamable HTTP endpoint.
 
@@ -167,7 +167,7 @@ The server also publishes MCP **resources** and **prompts** (not just tools), so
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

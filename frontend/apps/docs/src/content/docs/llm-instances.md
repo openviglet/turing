@@ -87,17 +87,17 @@ The managed credit is capped. When you reach the cap, Viglet Turing shows a bann
 
 ---
 
-## Instance Listing
+## Instance listing
 
 The page displays all configured instances as a grid of cards (title and description). Use the **"New language model instance"** button to create a new one. The vendor dropdown is populated from `/api/llm/vendor`: the list is database-driven, not hard-coded, so the vendors you see are exactly the ones seeded into your install.
 
 ---
 
-## Create / Edit Form
+## Create / edit form
 
 The form is organized into **5 colour-coded sections** for quick visual orientation.
 
-### 1. General Information (blue)
+### 1. General information (blue)
 
 | Field | Required | Description |
 |---|---|---|
@@ -105,7 +105,7 @@ The form is organized into **5 colour-coded sections** for quick visual orientat
 | **Vendor** | ✅ | Select the LLM provider. Selecting a vendor applies sensible defaults to Endpoint URL, Model Name, and generation parameters automatically. |
 | **Description** | | Free-text notes about this instance's purpose |
 
-### 2. Model Settings (purple)
+### 2. Model settings (purple)
 
 | Field | Required | Description |
 |---|---|---|
@@ -132,7 +132,7 @@ At least one model is required to save. Selecting a vendor (or changing it) rese
 The extra models are recorded on the instance (as a comma-separated `modelNames` list) and surfaced where multi-model selection is useful, for example the [Governed LLM Gateway](/docs/llm-gateway/) model picker. They do **not** change which model a given feature calls: that is always the **default** (`modelName`).
 :::
 
-### 4. Generation Parameters (emerald)
+### 4. Generation parameters (emerald)
 
 Fine-tune how the model generates responses. Defaults are appropriate for most use cases.
 
@@ -142,7 +142,7 @@ Fine-tune how the model generates responses. Defaults are appropriate for most u
 | **Top P** | Nucleus sampling: restricts token selection to the top P probability mass | Applies to all chat vendors |
 | **Seed** | Fixed seed for reproducible outputs | Defaulted for **OLLAMA** and **OPENAI** |
 
-### 5. Advanced Options (amber)
+### 5. Advanced options (amber)
 
 | Field | Description |
 |---|---|
@@ -187,13 +187,13 @@ The **LLM instance list** surfaces two catalog-driven banners:
 
 You can also receive the change feed by **email**: set `turing.model-catalog.change-feed.email-enabled=true` and a daily job emails the recipient configured in Global Settings a digest whenever a change affects a model you use (deduped so an unchanged feed is never re-sent). The in-UI banner is always on regardless of the email setting.
 
-### Model Advisor: "find me a model"
+### Model advisor: "find me a model"
 
 The **Find a model** launcher on the instance list opens the **Model Advisor** (`/bento/llm/advisor`). Describe what you need, required capabilities (tools / vision / reasoning), a minimum context window, a maximum input price, a minimum intelligence index, and a minimum tier, and it returns a **ranked shortlist** of catalog models that satisfy every constraint (ranked by intelligence, then price, then context). Each result has a **Create instance** button that one-click-creates a draft LLM instance for that vendor + model and drops you on its edit page to add credentials.
 
 ---
 
-## Supported Vendors
+## Supported vendors
 
 Viglet Turing ships **11 vendor types**, resolved by plugin identifier through `TurGenAiLlmProviderFactory`. The canonical set is `LlmProviderType.KNOWN`, seeded into the `llm_vendor` table by `TurLLMVendorOnStartup`. When a vendor is selected in the form, the Endpoint URL, Model Name, and generation defaults are pre-filled as shown below.
 
@@ -235,7 +235,7 @@ The native **Gemini** vendor uses the Google GenAI SDK addressed by API key (no 
 
 ---
 
-## Provider Options
+## Provider options
 
 Each vendor exposes additional fields in the **Provider Options (Visual)** section, rendered dynamically when that vendor is selected. Anything not surfaced as a visual field (notably the cloud-IAM credentials above) goes in **Provider Options (JSON)** and is preserved as-is on save.
 
@@ -256,7 +256,7 @@ For **Ollama**, max-tokens is persisted as `numPredict` on the entity; every oth
 
 ---
 
-## Capabilities by Vendor
+## Capabilities by vendor
 
 Not all vendors do everything. Chat, embeddings, tool calling, and managed reranking are independent capabilities: pick an instance whose vendor supports what the feature needs.
 
@@ -296,7 +296,7 @@ API Keys are handled with care at every layer:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

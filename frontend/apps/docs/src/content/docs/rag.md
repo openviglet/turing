@@ -8,7 +8,7 @@ The core idea is simple: **before the LLM generates a response, the system retri
 
 ---
 
-## The Problem RAG Solves
+## The problem RAG solves
 
 Large Language Models are trained on vast amounts of text, but they have critical limitations:
 
@@ -21,7 +21,7 @@ RAG eliminates these problems by giving the LLM access to your actual content at
 
 ---
 
-## How RAG Works: Step by Step
+## How RAG works: Step by step
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'actorBkg': '#dbeafe', 'actorBorder': '#4A90D9', 'actorTextColor': '#1a1a1a', 'activationBkgColor': '#ede9fe', 'activationBorderColor': '#9B6EC5', 'labelBoxBkgColor': '#fef3c7', 'labelBoxBorderColor': '#E8A838', 'labelTextColor': '#1a1a1a', 'loopTextColor': '#b07a1a', 'noteBkgColor': '#dcfce7', 'noteBorderColor': '#50B86C', 'noteTextColor': '#1a1a1a', 'signalColor': '#333', 'signalTextColor': '#333'}}}%%
@@ -71,9 +71,9 @@ sequenceDiagram
 
 ---
 
-## The Three Components
+## The three components
 
-### LLM (Large Language Model)
+### LLM (large language Model)
 
 The LLM is the "brain" that reads the retrieved context and generates a natural language response. It does the reasoning, summarization, and articulation, but it does **not** search or retrieve content on its own.
 
@@ -110,7 +110,7 @@ In Viglet Turing, embedding-capable providers include **OpenAI**, **Ollama**, **
 Changing the embedding model after documents have been indexed causes dimension mismatches and incorrect results. A full re-indexing is required after any model change.
 :::
 
-### Embedding Store (Vector Database)
+### Embedding Store (vector database)
 
 The Embedding Store is a specialized database optimized for storing and querying high-dimensional vectors. Unlike a traditional database that matches exact values, an embedding store finds the **most similar** vectors using distance metrics (cosine similarity, dot product, or Euclidean distance).
 
@@ -171,13 +171,13 @@ graph TD
     style Sources fill:#4A90D920,stroke:#4A90D9,stroke-width:2px,color:#1a1a1a,font-weight:700
 ```
 
-### Knowledge Base (Assets)
+### Knowledge Base (assets)
 
 Files uploaded to **[Assets](/docs/assets/)** are stored in the configured object/file store (MinIO, filesystem, or disabled), extracted with Apache Tika (supporting PDF, DOCX, XLSX, PPTX, HTML, TXT, and more), truncated to 100,000 characters, split into 1,024-character chunks, embedded, and stored in the active embedding store.
 
 The Knowledge Base is queried by the `search_knowledge_base` tool: available in the Chat interface and configurable per AI Agent.
 
-### Semantic Navigation Sites
+### Semantic Navigation sites
 
 When **GenAI** is enabled for an SN Site, indexed documents are also embedded alongside their Solr representation. This allows the SN Site chat and AI Agents to retrieve relevant content via semantic similarity.
 
@@ -191,7 +191,7 @@ Documents indexed before GenAI was enabled do not have embeddings. A full re-ind
 
 ---
 
-## AI Agents + Semantic Navigation: The Full Loop
+## AI agents + Semantic Navigation: The full loop
 
 Here is the question that determines whether your AI feels alive: *when a user asks a question, does the agent answer from its training data, or does it search **your** content first?*
 
@@ -241,7 +241,7 @@ A few patterns that work well:
 
 ---
 
-## The ANN Search Page: See Your Vectors
+## The ANN search page: See your vectors
 
 There's one question RAG operators always end up asking: *"Did the embedding store actually receive what I think it did?"*
 
@@ -444,7 +444,7 @@ Provenance becomes *auditable over time*. When citation drift is enabled (`turin
 
 ---
 
-## Practical Example
+## Practical example
 
 Imagine a company with an internal knowledge base containing HR policies, product documentation, and engineering guides.
 
@@ -464,7 +464,7 @@ Imagine a company with an internal knowledge base containing HR policies, produc
 
 ---
 
-## Key Configuration
+## Key configuration
 
 | Setting | Where | Default | Impact |
 |---|---|---|---|
@@ -480,7 +480,7 @@ Imagine a company with an internal knowledge base containing HR policies, produc
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

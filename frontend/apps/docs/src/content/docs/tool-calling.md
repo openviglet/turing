@@ -8,7 +8,7 @@ Viglet Turing includes native tools organized into categories, plus support for 
 
 ---
 
-## DSL Search: 6 tools
+## DSL search: 6 tools
 
 These tools provide **Elasticsearch-compatible Query DSL** access to any Semantic Navigation Site. Inspired by the [Elasticsearch MCP Server](https://github.com/elastic/mcp-server-elasticsearch), they allow the LLM to build and execute full DSL queries, aggregations, and analytics, automatically translated to the site's configured search engine (Elasticsearch, Solr, or Lucene).
 
@@ -104,7 +104,7 @@ These tools enable the LLM to query the **Knowledge Base**, files indexed from M
 
 ---
 
-## Web Crawler: 2 tools
+## Web crawler: 2 tools
 
 | Tool | Description |
 |---|---|
@@ -144,7 +144,7 @@ These tools enable the LLM to query the **Knowledge Base**, files indexed from M
 
 ---
 
-## Image Search: 1 tool
+## Image search: 1 tool
 
 | Tool | Description |
 |---|---|
@@ -168,7 +168,7 @@ These tools enable the LLM to query the **Knowledge Base**, files indexed from M
 
 ---
 
-## Code Interpreter: 1 tool
+## Code interpreter: 1 tool
 
 | Tool | Description |
 |---|---|
@@ -250,7 +250,7 @@ A Code Interpreter file can land in a **multi-modal slot**. Slot types `IMAGE` /
 
 ---
 
-## External Tools via MCP Servers
+## External tools via MCP servers
 
 Beyond the native tools, AI Agents can access tools from any external server implementing the **Model Context Protocol (MCP)**. This covers company-internal systems, proprietary data APIs, and the growing ecosystem of public MCP servers.
 
@@ -271,7 +271,7 @@ The tools above are **Viglet Turing's own**, Viglet Turing runs them and feeds r
 | Computer use | ✅ | ✅ | ✅ |
 | Remote MCP | ✅ | ✅ | n/a |
 
-Gemini's native primitives (Google Search grounding, URL Context, code execution, image generation, Computer Use, plus thinking budget, context caching, Batch, Files, full-context answering, and native video understanding) are documented in depth in [Generative AI → Gemini native primitives](/docs/genai-llm/#gemini-native-primitives-f16). For how server-native and Viglet Turing tools share one loop, and the two-level gate that controls them, see [Capabilities](/docs/capabilities/).
+Gemini's native primitives (Google Search grounding, URL Context, code execution, image generation, Computer Use, plus thinking budget, context caching, Batch, Files, full-context answering, and native video understanding) are documented in depth in [Generative AI → Gemini native primitives](/docs/genai-llm/#gemini-native-primitives). For how server-native and Viglet Turing tools share one loop, and the two-level gate that controls them, see [Capabilities](/docs/capabilities/).
 
 ### Long and reasoning-heavy tool loops
 
@@ -292,7 +292,7 @@ This applies uniformly to native, MCP, and [Custom](/docs/custom-tools/) tools, 
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

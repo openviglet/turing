@@ -36,7 +36,7 @@ The Viglet Turing admin console provides the UI for managing these settings unde
 
 ---
 
-## Monitoring & Diagnostics
+## Monitoring & diagnostics
 
 The following features are available in the Viglet Turing admin console for each AEM integration instance (see [Integration](/docs/integration/) for details):
 
@@ -50,7 +50,7 @@ The following features are available in the Viglet Turing admin console for each
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

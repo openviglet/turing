@@ -20,7 +20,7 @@ The Chat interface is only available when at least one LLM Instance is configure
 
 ---
 
-## The Big Picture
+## The big picture
 
 The chat surface looks the same across modes, but each mode reaches a different backend and uses a different prompt strategy.
 
@@ -46,7 +46,7 @@ The chat surface looks the same across modes, but each mode reaches a different 
 
 ---
 
-## Mode 1: Chat (Direct LLM)
+## Mode 1: Chat (direct LLM)
 
 A general-purpose conversation with the selected LLM. Use this when the question doesn't depend on your enterprise content, the user wants the model itself, sometimes augmented with a few opt-in tools.
 
@@ -57,7 +57,7 @@ A general-purpose conversation with the selected LLM. Use this when the question
 - *"What's the weather in Lisbon next Tuesday?"*
 - *"Find me an image of a Saturn V launch."*
 
-### File Attachments
+### File attachments
 
 Drag-and-drop, or click the paperclip. Two paths, depending on the file:
 
@@ -72,7 +72,7 @@ Attached files appear as badges on the message they're sent with. Multiple files
 
 Every response streams in real time over **Server-Sent Events (SSE)**. The user sees tokens arrive as the model produces them, no spinner, no wait. Perceived latency drops by roughly half compared to wait-then-show.
 
-### Tools You Can Enable
+### Tools you can enable
 
 In direct LLM mode, the user toggles tools per conversation. The LLM decides when to invoke them.
 
@@ -123,7 +123,7 @@ Any **MCP Servers** configured globally are also available here, extending the t
 
 ---
 
-## Mode 3: AI Agents
+## Mode 3: AI agents
 
 Each [AI Agent](/docs/ai-agents/) configured and enabled in **Administration → AI Agents** appears as its own tab in Chat. The visitor picks the specialist that fits their need.
 
@@ -143,7 +143,7 @@ Use agents when you want consistency across thousands of conversations, *"every 
 
 ---
 
-## Skills in Chat
+## Skills in chat
 
 A [**Skill**](/docs/skills/) is a portable, Anthropic-compatible capability, a folder of instructions, scripts, and reference material that runs in a hardened Docker sandbox. When an agent has skills enabled, the conversation can hand off a whole task to one of them ("generate the campaign assets", "build the financial model") without you wiring a tool for it.
 
@@ -178,7 +178,7 @@ Skills need a [storage backend](/docs/configuration-reference/#storage), the [Co
 
 ---
 
-## Picking a Mode for the Job
+## Picking a mode for the job
 
 If you take one thing away from this page, take this:
 
@@ -193,7 +193,7 @@ You don't have to pick one mode and stick with it. Most deployments use all thre
 
 ---
 
-## How a Message Travels End-to-End
+## How a message travels end-to-end
 
 What actually happens between *the user pressing Enter* and *the response appearing*?
 
@@ -212,7 +212,7 @@ If observability is enabled (Prometheus scraping `/actuator/prometheus`), every 
 
 ---
 
-## Rich Content Rendering
+## Rich Content rendering
 
 Chat responses are rendered with full media-type awareness:
 
@@ -228,7 +228,7 @@ Code blocks pick up the chat's dark/light theme automatically, no flash on switc
 
 ---
 
-## Session History
+## Session history
 
 Sessions are stored in the **browser's IndexedDB**. They never leave the user's machine.
 
@@ -257,7 +257,7 @@ The IndexedDB **session history** is a *user convenience*: it's how a single use
 
 ---
 
-## Context Window Management
+## Context window management
 
 A context bar at the bottom of the input shows token usage in real time:
 
@@ -267,7 +267,7 @@ A context bar at the bottom of the input shows token usage in real time:
 
 Tokens are estimated client-side at **~4 characters per token** (`Math.ceil(text.length / 4)`), counting the full message history. The bar's fill and color reflect how close you are to the model's context window.
 
-### Resolving the Context Window Size
+### Resolving the Context window size
 
 When the front-end first loads a session, it figures out the model's window via a three-tier fallback:
 
@@ -275,7 +275,7 @@ When the front-end first loads a session, it figures out the model's window via 
 2. **LLM Instance configuration**: the `contextWindow` field set on the instance.
 3. **Default**: 128,000 tokens, used when neither of the above is available.
 
-### Progress Bar Colours
+### Progress bar colours
 
 | Usage | Colour | Meaning |
 |---|---|---|
@@ -300,7 +300,7 @@ When the bar turns **yellow**, compact proactively. By the time it's red, the mo
 
 ---
 
-## Files & Attachments Reference
+## Files & attachments reference
 
 | Capability | Detail |
 |---|---|
@@ -312,7 +312,7 @@ When the bar turns **yellow**, compact proactively. By the time it's red, the mo
 
 ---
 
-## API Endpoints
+## API endpoints
 
 | Method | Endpoint | Mode |
 |---|---|---|
@@ -323,7 +323,7 @@ When the bar turns **yellow**, compact proactively. By the time it's red, the mo
 
 See [REST API Reference → GenAI API](/docs/rest-api/#genai-api) for request/response shapes and examples.
 
-### Per-call options on Direct LLM chat
+### Per-call options on direct LLM chat
 
 Besides `messages`, a Direct LLM request can override the instance's own
 settings for that call. Any field left out keeps the instance's value.
@@ -350,7 +350,7 @@ prose.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

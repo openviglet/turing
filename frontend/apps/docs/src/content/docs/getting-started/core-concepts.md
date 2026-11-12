@@ -10,7 +10,7 @@ You're at the start of the [zero → first-agent learning path](/docs/getting-st
 
 ---
 
-## Semantic Navigation Site
+## Semantic Navigation site
 
 The **Semantic Navigation Site** (or SN Site) is the central object in Viglet Turing. Everything revolves around it.
 
@@ -27,7 +27,7 @@ A single Viglet Turing instance can host multiple SN Sites, each independently c
 
 ---
 
-## Content Ingestion
+## Content ingestion
 
 Content does not flow into Viglet Turing on its own. It needs connectors.
 
@@ -116,7 +116,7 @@ A Spotlight is a curated result pinned to a specific search term. When someone s
 
 Spotlights are configured per SN Site and managed through the admin console. See [Spotlights](/docs/semantic-navigation/#spotlights) for details.
 
-### Targeting Rules
+### Targeting rules
 
 Targeting Rules let you show different results to different users from the same index. A document tagged as `audience: internal` only appears for users whose profile includes that attribute. Users without a matching profile always see untagged content.
 
@@ -128,7 +128,7 @@ See [Targeting Rules](/docs/targeting-rules/) for a full explanation.
 
 Viglet Turing integrates generative AI in two places: directly on **SN Sites** (search + summarization) and through standalone **AI Agents** (open-ended chat with tools).
 
-### RAG on an SN Site
+### RAG on an SN site
 
 When GenAI is enabled for an SN Site, indexed documents are also stored as **vector embeddings**, a mathematical representation of their meaning, not just their words. When a user asks a question, Viglet Turing:
 
@@ -144,7 +144,7 @@ Beyond SN Sites, Viglet Turing provides a **Knowledge Base**, a file and folder 
 
 The Knowledge Base is managed through the **[Assets](/docs/assets/)** page: drag-and-drop upload, folder navigation, inline preview, and batch AI training with real-time progress. Uploaded files are indexed automatically on upload and unindexed on deletion.
 
-### AI Agents
+### AI agents
 
 An **AI Agent** is a named assistant that you compose from three ingredients:
 
@@ -158,7 +158,7 @@ See [AI Agents](/docs/ai-agents/) for configuration, [Tool Calling](/docs/tool-c
 
 ---
 
-## The Admin Console
+## The admin console
 
 Everything described above (SN Sites, connectors, Spotlights, Targeting Rules, Merge Providers, AI Agents, MCP Servers, and the Knowledge Base) is configured and managed through the **Viglet Turing Admin Console**: a browser-based React application served by Viglet Turing itself.
 
@@ -166,7 +166,7 @@ The admin console also exposes application logs (when MongoDB is configured), se
 
 ---
 
-## Consuming Viglet Turing from Your Application
+## Consuming Viglet Turing from your application
 
 Viglet Turing exposes its search, chat, and indexing capabilities through four integration options. Choose the one that best fits your technology stack.
 

@@ -10,22 +10,22 @@ The first three are indexes Viglet Turing owns and writes to. Content AI is diff
 
 ---
 
-## Instance Listing
+## Instance listing
 
 The page displays all configured instances as a grid of cards (title and description). Use the **"New"** button to add an instance. When no instances exist, a blank state guides you to create the first one.
 
 ---
 
-## Create / Edit Form
+## Create / edit form
 
-### General Information
+### General information
 
 | Field | Required | Description |
 |---|---|---|
 | **Title** | ✅ | Display name for this instance: shown in SN Site dropdowns |
 | **Description** | | Free-text notes about this instance |
 
-### Connection Settings
+### Connection settings
 
 | Field | Required | Description |
 |---|---|---|
@@ -93,7 +93,7 @@ edits go to the update side, which the followers replicate from. An endpoint wit
 
 ---
 
-## Instance Detail Pages
+## Instance detail pages
 
 After creating an instance, its detail page exposes three navigation sections.
 
@@ -103,11 +103,11 @@ Editing form for all fields listed above, plus a **Delete instance** button. An 
 
 ---
 
-### Cores (Collections)
+### Cores (collections)
 
 Manages the search indices (called **cores** in Solr terminology) within this search engine instance. Each Semantic Navigation Site locale maps to one core.
 
-#### Core Listing
+#### Core listing
 
 The list shows all cores found in the connected backend:
 
@@ -119,14 +119,14 @@ The list shows all cores found in the connected backend:
 
 Cores are grouped by locale pattern: `{base}_{lang}_{COUNTRY}` (e.g., `product-docs_pt_BR`). A **search/filter** field at the top narrows the list by core name.
 
-#### Core Actions
+#### Core actions
 
 | Action | Description |
 |---|---|
 | **Delete core** | Permanently removes the core and all its indexed data. **Blocked** if the core is in use by any SN Site, the UI shows which sites and locales are preventing deletion. |
 | **Clear documents** | Erases all indexed documents from the core without removing the core itself. Useful for a clean re-index without reconfiguring site associations. |
 
-#### Create a New Core
+#### Create a new core
 
 | Field | Required | Description |
 |---|---|---|
@@ -142,7 +142,7 @@ Use the `{site-name}_{lang}_{COUNTRY}` pattern consistently. This makes it easy 
 
 ---
 
-### System Information
+### System information
 
 Live monitoring panel for the connected backend:
 
@@ -264,7 +264,7 @@ subset of the query syntax on Content AI.
 
 ---
 
-## Plugin Architecture
+## Plugin architecture
 
 Viglet Turing uses a plugin architecture to support multiple search backends behind a unified interface. The active plugin is resolved at runtime based on the vendor configured per instance. If a vendor is unrecognised, the factory falls back to Solr.
 
@@ -295,7 +295,7 @@ Repository-level **caching** is enabled for search engine instances to avoid rep
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

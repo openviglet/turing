@@ -36,7 +36,8 @@ const PROPER_NOUNS = new Set([
   "Apache", "Tika", "Snowball", "Jlama", "ONNX", "Atlas", "Store", "Persona", "Book", "Thesaurus",
   "Groq", "DeepSeek", "Perplexity", "xAI", "Grok", "Voyage", "Jina", "Tavily", "Slack", "Teams",
   "Studio", "Code", "VS", "I", "Kotlin", "Swagger", "OpenAPI", "Redis", "Artemis", "Cloud", "SaaS",
-  "Social", "Login", "Facebook", "Apple", "Matryoshka", "Match", "Dialogue",
+  "Social", "Login", "Facebook", "Apple", "Matryoshka", "Match", "Dialogue", "Thompson", "Entra",
+  "Knowledge", "Base", "A", "B", "OAuth", "OAuth2", "Responses",
 ]);
 
 /**
@@ -71,61 +72,24 @@ const PUBLIC_DOCS = "https://turing.viglet.org/docs";
  * commit.
  */
 const BASELINE = {
-  "administration-guide.md": ["heading-sentence-case", "heading-unique"],
-  "agent-eval.md": ["heading-sentence-case", "release-relative"],
-  "agent-workspace.md": ["heading-sentence-case"],
-  "ai-agents.md": ["heading-sentence-case", "release-relative"],
-  "answer.md": ["heading-sentence-case"],
-  "architecture-overview.md": ["heading-sentence-case"],
-  "assets.md": ["heading-sentence-case"],
-  "capabilities.md": ["heading-sentence-case"],
-  "chat-analytics.md": ["heading-sentence-case"],
-  "chat-flow.md": ["heading-sentence-case", "heading-unique"],
-  "chat-memory.md": ["heading-sentence-case"],
-  "chat.md": ["heading-sentence-case", "release-relative"],
-  "client-tools.md": ["heading-sentence-case"],
-  "configuration-reference.md": ["heading-sentence-case", "internal-ids"],
-  "conversion-analytics.md": ["heading-sentence-case", "internal-ids"],
-  "custom-tools.md": ["heading-sentence-case", "release-relative"],
-  "developer-guide.md": ["heading-sentence-case"],
-  "dsl-compatibility.md": ["heading-levels", "heading-sentence-case"],
-  "dsl-query.md": ["heading-sentence-case", "heading-unique"],
-  "embedding-models.md": ["heading-sentence-case"],
-  "embedding-stores.md": ["heading-sentence-case"],
-  "experiments.md": ["heading-sentence-case"],
+  "administration-guide.md": ["heading-unique"],
+  "agent-eval.md": ["release-relative"],
+  "ai-agents.md": ["release-relative"],
+  "chat-flow.md": ["heading-unique"],
+  "chat.md": ["release-relative"],
+  "configuration-reference.md": ["internal-ids"],
+  "conversion-analytics.md": ["internal-ids"],
+  "custom-tools.md": ["release-relative"],
+  "dsl-compatibility.md": ["heading-levels"],
+  "dsl-query.md": ["heading-unique"],
   "flow-dsl.md": ["internal-ids"],
-  "genai-llm.md": ["heading-sentence-case"],
-  "getting-started/core-concepts.md": ["heading-sentence-case"],
-  "getting-started/intro.md": ["heading-sentence-case"],
-  "graphql.md": ["heading-sentence-case"],
-  "import-export.md": ["heading-sentence-case"],
-  "index.mdx": ["heading-sentence-case"],
-  "installation-guide.md": ["heading-sentence-case"],
-  "integration-aem.md": ["heading-sentence-case"],
-  "integration.md": ["heading-sentence-case"],
-  "intent.md": ["heading-sentence-case"],
-  "javascript-sdk.md": ["heading-levels", "heading-sentence-case"],
-  "llm-instances.md": ["heading-sentence-case", "internal-ids", "release-relative"],
-  "logging.md": ["heading-sentence-case"],
-  "manifest.md": ["heading-sentence-case", "internal-ids", "release-relative"],
-  "mcp-servers.md": ["heading-sentence-case"],
-  "migration.md": ["heading-sentence-case"],
-  "multi-tenancy.md": ["heading-sentence-case"],
-  "observability.md": ["heading-sentence-case"],
-  "rag.md": ["heading-sentence-case"],
-  "react-sdk.md": ["heading-sentence-case"],
-  "reranking.md": ["heading-sentence-case"],
-  "search-engine.md": ["heading-sentence-case"],
-  "security-authentication.md": ["heading-sentence-case", "release-relative"],
+  "javascript-sdk.md": ["heading-levels"],
+  "llm-instances.md": ["internal-ids", "release-relative"],
+  "manifest.md": ["internal-ids", "release-relative"],
+  "security-authentication.md": ["release-relative"],
   "security-hardening.md": ["release-relative"],
-  "security-keycloak.md": ["heading-sentence-case"],
-  "security-social-login.md": ["heading-sentence-case"],
-  "showcase.md": ["heading-sentence-case"],
-  "skills.md": ["heading-sentence-case"],
-  "spa-pages.md": ["heading-sentence-case"],
   "thesaurus.md": ["release-relative"],
-  "token-usage.md": ["heading-sentence-case"],
-  "tool-calling.md": ["heading-sentence-case", "release-relative"],
+  "tool-calling.md": ["release-relative"],
   "transcription.md": ["release-relative"],
 };
 
@@ -210,9 +174,13 @@ function isSentenceCase(heading) {
     const bare = word.replace(/[^\p{L}\p{N}.'-]/gu, "").replace(/[.:,;!?]+$/, "");
     const first = sentenceStart;
     sentenceStart = /[:.?!]$/.test(word);
-    if (first || !bare || !/^\p{Lu}/u.test(bare)) continue;
-    if (PROPER_NOUNS.has(bare) || /^\p{Lu}[\p{Lu}\p{N}]+s?$/u.test(bare) || /\p{Ll}\p{Lu}/u.test(bare)) continue;
-    return false;
+    // A hyphenated word is judged part by part: "AI-on-AI" and "SN-backed" are sentence case.
+    const parts = bare.split("-").filter(Boolean);
+    for (const [i, part] of parts.entries()) {
+      if ((first && i === 0) || !/^\p{Lu}/u.test(part)) continue;
+      if (PROPER_NOUNS.has(part) || /^\p{Lu}[\p{Lu}\p{N}]+s?$/u.test(part) || /\p{Ll}\p{Lu}/u.test(part)) continue;
+      return false;
+    }
   }
   return true;
 }

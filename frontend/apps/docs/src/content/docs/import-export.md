@@ -10,13 +10,13 @@ Viglet Turing supports exporting and importing **Semantic Navigation site config
 
 Export creates a ZIP archive containing a complete snapshot of one or all SN Sites, including field definitions, facet settings, spotlights, synonyms, ranking expressions, merge providers, locale configuration, and GenAI settings.
 
-### Export a Single Site
+### Export a single site
 
 ```http
 GET /api/sn/{id}/export
 ```
 
-### Export All Sites
+### Export all sites
 
 ```http
 GET /api/sn/export
@@ -32,7 +32,7 @@ curl "http://localhost:2700/api/sn/export" \
   -o turing-sites-export.zip
 ```
 
-### Export Contents
+### Export contents
 
 The `export.json` inside the ZIP archive contains:
 
@@ -122,7 +122,7 @@ If your deployment runs more than one container, give them all the same encrypti
 
 The import page (`/admin/exchange/import`) accepts a ZIP file previously exported from Viglet Turing and recreates the site configurations in the target environment.
 
-### Using the Admin Console
+### Using the admin console
 
 1. Navigate to **Import** in the sidebar
 2. **Drag and drop** a ZIP file onto the upload area, or click to browse
@@ -170,11 +170,11 @@ When a site names an agent that is neither in the bundle nor installed, the site
 
 ---
 
-## Content Import (SN Job Items)
+## Content import (SN job items)
 
 In addition to site configuration import, Viglet Turing accepts **document-level indexing jobs** via the SN Import API. This is used by connectors and custom integrations to push content into the search index.
 
-### JSON Import
+### JSON import
 
 ```http
 POST /api/sn/import
@@ -205,7 +205,7 @@ curl -X POST "http://localhost:2700/api/sn/import" \
   }'
 ```
 
-### ZIP Import (with file attachments)
+### ZIP import (with file attachments)
 
 ```http
 POST /api/sn/import/zip
@@ -213,7 +213,7 @@ POST /api/sn/import/zip
 
 Accepts a `multipart/form-data` ZIP file containing an `export.json` with job items. Document attributes can reference embedded files using the `file://` protocol, Viglet Turing extracts text from these files using Apache Tika before indexing.
 
-### Job Actions
+### Job actions
 
 | Action | Description |
 |---|---|
@@ -246,7 +246,7 @@ A delete by field is how a connector that shares an SN site with others removes 
 
 It works on Solr, Lucene and Elasticsearch sites. Field names are letters, digits, `_`, `.` and `-`, with one value each. A `DELETE` that names nothing, and one with `"id": "*"` (which used to answer `200` and delete nothing), are refused with `400`. With a [partitioned key](/docs/rest-api/#partitioned-keys), a delete by field stays inside the key's partition: naming only the partition field deletes all of the key's documents. From the Java SDK, `TurSNJobUtils.deleteItemsByFields(server, Map.of("site_key", "a.example.org"))`.
 
-### Job Item Structure
+### Job item structure
 
 | Field | Type | Description |
 |---|---|---|
@@ -259,7 +259,7 @@ It works on Solr, Lucene and Elasticsearch sites. Field names are letters, digit
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

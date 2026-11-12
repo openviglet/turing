@@ -30,7 +30,7 @@ When any of these is missing, the feature is a complete no-op: prompts and agent
 
 ---
 
-## Anatomy of a Skill
+## Anatomy of a skill
 
 A Skill is just a folder. The only required file is `SKILL.md` at the root; everything else is optional and addressed by the instructions inside it.
 
@@ -83,7 +83,7 @@ Below the frontmatter, the Markdown body is the skill's actual operating instruc
 
 ---
 
-## How a Skill activates: progressive disclosure
+## How a skill activates: progressive disclosure
 
 A skill can be large: thousands of words of instructions, plus scripts and reference docs. Loading all of that into every prompt would be wasteful. Instead, Viglet Turing exposes a skill in **three levels**, each opened only when the model decides it's worth it.
 
@@ -104,7 +104,7 @@ Both tools are **constrained to the offered set** for that turn: the model can't
 
 ---
 
-## The sandbox: where a Skill runs
+## The sandbox: where a skill runs
 
 A skill executes in a Docker sandbox built to be compatible with Anthropic's skill container. Two paths are mounted into every session:
 
@@ -123,11 +123,11 @@ Idle session directories are reaped by modification time, so an active conversat
 
 ---
 
-## Using Skills in Chat
+## Using skills in chat
 
 Attach skills to an [AI Agent](/docs/ai-agents/) with the **Skills** toggle in the agent settings (`skillsEnabled`, shown only when the feature is available). Once enabled, every enabled skill in the catalog is offered to that agent's conversations via progressive disclosure.
 
-### Why a skill always runs on the Default LLM
+### Why a skill always runs on the default LLM
 
 A skill is **portable**: it should behave identically no matter which agent or site invokes it. So Viglet Turing runs every skill on the **Global Settings Default LLM**, *never* on the calling agent's own model. A skill authored against one model's behavior keeps that behavior everywhere.
 
@@ -152,7 +152,7 @@ Under the hood this is an optional `selectedSkillId` on the chat request. A blan
 
 ---
 
-## Using Skills in Semantic Navigation
+## Using skills in Semantic Navigation
 
 Skills work in [Semantic Navigation](/docs/semantic-navigation/) AI chat too, and you don't configure anything extra. SN AI chat shares the same execution path as agent chat, so the agent's `skillsEnabled` toggle activates skills in SN mode automatically, still on the Default LLM.
 
@@ -162,7 +162,7 @@ This is the first place a skill can leverage Viglet Turing's *own* indexed data:
 
 ---
 
-## Authoring Skills: the mini editor
+## Authoring skills: the mini editor
 
 Skills are authored in a built-in **mini-VS-Code** editor at **Administration → Skills** (`/admin/skill`). The list page shows skills by name; click one to open the editor.
 
@@ -244,7 +244,7 @@ Leaving it blank keeps the legacy behavior (all enabled skills offered). See the
 
 ---
 
-## Skills vs. Custom Tools vs. MCP
+## Skills vs. Custom tools vs. MCP
 
 All three extend an agent, but they sit at different scales:
 
@@ -260,7 +260,7 @@ Reach for a Skill when the work is a *whole capability* ("generate on-brand camp
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

@@ -16,7 +16,7 @@ Index content from multiple sources and expose a unified, faceted search experie
 ### Ask questions, get answers
 Enable generative AI on your search site and let users ask questions in natural language. Viglet Turing retrieves the most relevant documents and uses an LLM to generate a grounded, accurate response, not a hallucination.
 
-### Build AI Agents
+### Build AI agents
 Compose AI Agents that combine a language model with a curated set of tools: search your content, browse the web, run code, query financial data, call external systems via MCP, and more. Each agent appears as a chat tab ready to assist users.
 
 ### Connect any content source

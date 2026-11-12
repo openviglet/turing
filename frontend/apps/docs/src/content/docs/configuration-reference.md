@@ -10,7 +10,7 @@ To override a property at runtime without editing the file, use the environment 
 
 ---
 
-## Full Default Configuration
+## Full default configuration
 
 ```yaml
 spring:
@@ -197,7 +197,7 @@ logging:
 
 ---
 
-## Property Reference
+## Property reference
 
 ### Server
 
@@ -215,7 +215,7 @@ logging:
 
 ---
 
-### Database (Spring Datasource)
+### Database (Spring datasource)
 
 The default database is **H2** (embedded, file-based): suitable for development and simple deployments. For production, replace with MariaDB, MySQL, or PostgreSQL.
 
@@ -243,7 +243,7 @@ spring:
 
 ---
 
-### Message Queue (Apache Artemis)
+### Message queue (Apache Artemis)
 
 Apache Artemis runs **embedded inside Viglet Turing** by default: no separate installation is required. For high-availability or multi-node deployments, you can switch to an external Artemis broker.
 
@@ -265,7 +265,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 ---
 
-### File Uploads
+### File uploads
 
 | Property | Default | Description |
 |---|---|---|
@@ -285,7 +285,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 ---
 
-### Async / Timeout
+### Async / timeout
 
 | Property | Default | Description |
 |---|---|---|
@@ -295,7 +295,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 <a id="turing-es-core"></a>
 
-### Viglet Turing Core
+### Viglet Turing core
 
 | Property | Default | Description |
 |---|---|---|
@@ -315,7 +315,7 @@ To use an external Artemis broker (e.g., for multi-node deployments), set `sprin
 
 <a id="model-catalog"></a>
 
-### Model Catalog (`turing.model-catalog`)
+### Model catalog (`turing.model-catalog`)
 
 Viglet Turing enriches its LLM-instance model picker from a public, vendor-neutral [**model catalog**](https://models.viglet.org/) ([openviglet/model-catalog](https://github.com/openviglet/model-catalog)), pricing, context windows, capabilities, tiers and deprecations. The fetch is **remote-only** (no bundled copy), best-effort, runs off the boot path on a TTL, and never blocks startup; until the first successful fetch the picker falls back to live vendor listing only. See [LLM Instances § Catalog-driven intelligence](/docs/llm-instances/#catalog-driven-intelligence).
 
@@ -335,7 +335,7 @@ The catalog moved from `openviglet.github.io/model-catalog` to `models.viglet.or
 
 <a id="abuse-controls-turingabuse"></a>
 
-### Abuse Controls (`turing.abuse`)
+### Abuse controls (`turing.abuse`)
 
 In-process protection for the anonymous public chat/search surface (all on by default except the hard cost cap). See [Security Hardening § abuse controls](/docs/security-hardening/#5-abuse-controls-on-the-anonymous-chatsearch-surface).
 
@@ -355,7 +355,7 @@ In-process protection for the anonymous public chat/search surface (all on by de
 
 <a id="guest-console"></a>
 
-### Guest Console (`turing.guest-console`)
+### Guest console (`turing.guest-console`)
 
 A read-only admin console for a demo host, so an evaluator can see it without an account. The login page then shows **Explore the console as a guest**, which signs the browser in as the guest user. The guest browses every screen and saves nothing: every request that would change something answers `403`, and the users, groups, API tokens, gateway keys and exports stay hidden. Search and chat on a site's public pages work as they do for any visitor, under the same [abuse controls](#abuse-controls-turingabuse). Local authentication only.
 
@@ -366,7 +366,7 @@ A read-only admin console for a demo host, so an evaluator can see it without an
 
 <a id="mcp-client-guards"></a>
 
-### MCP Client Guards (`turing.mcp-client`)
+### MCP client guards (`turing.mcp-client`)
 
 Guardrails for the agent-as-MCP-client path. See [MCP Servers](/docs/mcp-servers/) and [Security Hardening § MCP](/docs/security-hardening/#8-mcp-client-guards).
 
@@ -436,7 +436,7 @@ Never commit the token to `application.yaml`. Pass it as the environment variabl
 
 ---
 
-### Search Cache
+### Search cache
 
 | Property | Default | Description |
 |---|---|---|
@@ -454,7 +454,7 @@ long an entry may survive for a site that is never written again.
 
 <a id="storage"></a>
 
-### Storage (Assets, Knowledge Base & Pages)
+### Storage (assets, Knowledge Base & pages)
 
 Storage powers the [Assets](/docs/assets/) file manager, the RAG Knowledge Base, and [SPA Pages](/docs/spa-pages/). Disabled by default (`none`). Viglet Turing supports three pluggable storage backends:
 
@@ -470,7 +470,7 @@ Storage powers the [Assets](/docs/assets/) file manager, the RAG Knowledge Base,
 |---|---|---|
 | `turing.storage.type` | `none` | Storage backend: `none`, `minio`, or `filesystem` |
 
-#### MinIO Backend
+#### MinIO backend
 
 | Property | Default | Description |
 |---|---|---|
@@ -479,7 +479,7 @@ Storage powers the [Assets](/docs/assets/) file manager, the RAG Knowledge Base,
 | `turing.storage.minio.secret-key` | *(env `TURING_STORAGE_MINIO_SECRET_KEY`)* | MinIO secret key. Set via env for any real deployment. |
 | `turing.storage.minio.bucket` | `turing-assets` | Bucket name: created automatically on startup if it does not exist |
 
-#### Filesystem Backend
+#### Filesystem backend
 
 | Property | Default | Description |
 |---|---|---|
@@ -491,7 +491,7 @@ The filesystem backend includes **path traversal protection**: all paths are res
 The **Assets** and **Pages** sections only appear in the sidebar when `turing.storage.type` is set to `minio` or `filesystem`.
 :::
 
-#### Agent Workspace & tool-result offload
+#### Agent workspace & tool-result offload
 
 The same storage backend also powers the per-conversation [Agent Workspace](/docs/agent-workspace/). When storage is `none` the workspace is inert and the offload feature below stays off: the default deployment is unchanged.
 
@@ -502,7 +502,7 @@ The same storage backend also powers the per-conversation [Agent Workspace](/doc
 
 ---
 
-### MongoDB (Application Logs)
+### MongoDB (application logs)
 
 MongoDB is used to persist application logs, making them accessible from the admin console. Disabled by default.
 
@@ -518,7 +518,7 @@ MongoDB is used to persist application logs, making them accessible from the adm
 
 ---
 
-### API Documentation (SpringDoc)
+### API documentation (SpringDoc)
 
 | Property | Default | Description |
 |---|---|---|
@@ -570,7 +570,7 @@ For full Keycloak setup instructions, see [Security & Keycloak](/docs/security-k
 
 ---
 
-### GenAI / LLM (Database Settings)
+### GenAI / LLM (database settings)
 
 LLM providers, models, and GenAI behavior are managed through the **Administration Console** and stored in the database, not in `application.yaml`. The following settings are available via **Settings > Global Settings** in the admin UI:
 
@@ -593,7 +593,7 @@ LLM instances are created under **GenAI > LLM** in the admin console, where you 
 
 <a id="rag-reranker-database-settings"></a>
 
-### RAG Reranker (Database Settings)
+### RAG reranker (database settings)
 
 The Semantic Navigation RAG path can run an optional **reranking** pass that re-orders retrieved chunks by relevance before they reach the model (see [Reranking](/docs/rag/#reranking-sharper-context-before-generation)). It is off by default; the reranker stage is a **pluggable strategy** and **fails open** (any error or missing configuration falls back to the original retrieval order). Configure it under **Settings > Global Settings** in the admin UI:
 
@@ -610,7 +610,7 @@ The Semantic Navigation RAG path can run an optional **reranking** pass that re-
 
 ---
 
-### Embedding Store (Database Settings)
+### Embedding Store (database settings)
 
 Embedding store instances are configured through the **Administration Console** under **GenAI > Embedding Store**. Each instance specifies a vendor, connection URL, credentials, and optional provider-specific options via a JSON field.
 
@@ -626,7 +626,7 @@ Provider options are passed as a JSON object in the **Provider Options** field w
 
 ---
 
-### Code Interpreter (Execution Mode)
+### Code interpreter (execution mode)
 
 The [Code Interpreter](/docs/tool-calling/) execution mode (`NATIVE` default / `DOCKER`) is chosen in **Console → Global Settings → Code Interpreter**. The YAML below tunes each mode (all under `turing.code-interpreter`):
 
@@ -644,14 +644,14 @@ The [Code Interpreter](/docs/tool-calling/) execution mode (`NATIVE` default / `
 | `turing.code-interpreter.warm-pool.enabled` | `false` | Pre-warmed interpreter pool (NATIVE only) |
 | `turing.code-interpreter.warm-pool.size` | `2` | interpreters kept ready |
 
-### Routines (Async Queue)
+### Routines (async queue)
 
 | Property | Default | Purpose |
 |---|---|---|
 | `turing.jms.routine.concurrency` | `1-2` | JMS listener concurrency for the [routine](/docs/routines/) worker (`scheduleAgent` jobs) |
 | `turing.jms.concurrency` | `1-1` | Default JMS listener concurrency (indexing queue) |
 
-### Viglet Turing as an MCP Server
+### Viglet Turing as an MCP server
 
 The [MCP server](/docs/mcp-servers/#viglet-turing-as-an-mcp-server) is off by default. Enable and govern it with:
 
@@ -662,7 +662,7 @@ The [MCP server](/docs/mcp-servers/#viglet-turing-as-an-mcp-server) is off by de
 | `turing.mcp-server.require-auth` | `false` | Turn `/mcp` into an OAuth 2.1 JWT resource server (set with `spring.security.oauth2.resourceserver.jwt.*`); fails closed if no decoder |
 | `turing.mcp-server.write-enabled` | `false` | Register the write/ingestion tools (still require the `mcp:write` scope per call) |
 
-### Chat Analytics
+### Chat analytics
 
 The [Chat Analytics](/docs/chat-analytics/) enricher, retention, and in-flight settings are documented in full on that page. One additional flag worth noting here:
 
@@ -670,13 +670,13 @@ The [Chat Analytics](/docs/chat-analytics/) enricher, retention, and in-flight s
 |---|---|---|
 | `turing.chat.analytics.node-visit-log.enabled` | `false` | Record the per-turn node path on each conversation, enabling the **path-aware funnel** (T237). Off = V1 funnel behavior |
 
-### Cost Governance
+### Cost governance
 
 [Cost Governance](/docs/cost-governance/) is configured through data, not YAML: the **price table** (`tur_llm_price`, seeded for OpenAI/Anthropic/Gemini, editable in the console) and the **per-agent budget fields** (`monthlyBudgetUsd`, `perTurnSoftCapUsd`, `budgetDowngradeLlmId`) on the agent Settings form.
 
 ---
 
-## Common Production Overrides
+## Common production overrides
 
 A minimal production override file (`application-production.yaml`) covering the most important changes:
 
@@ -715,7 +715,7 @@ server:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

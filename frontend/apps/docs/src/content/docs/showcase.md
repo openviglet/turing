@@ -97,7 +97,7 @@ A full feature-by-feature reconciliation against the design matrix (âœ… live / ð
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

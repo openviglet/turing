@@ -16,7 +16,7 @@ You don't have to write a single PromQL query to get value. The default dashboar
 
 ---
 
-## The Stack at a Glance
+## The stack at a glance
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -61,11 +61,11 @@ Observability is **optional**. Viglet Turing runs perfectly without Prometheus o
 
 ---
 
-## What Gets Measured
+## What gets measured
 
 Stable metric names are the contract between Viglet Turing and your dashboards. They're documented in `TurMeterNames.java` and treated as a public API: they don't change between minor versions without a migration note.
 
-### LLM Calls
+### LLM calls
 
 Every call to a language model (chat, streaming, embedding) flows through `TurLlmObservation`. Both the AI Agent loop and the Chat Analytics enricher use it.
 
@@ -90,7 +90,7 @@ Every call to a search engine plugin (Solr, Elasticsearch, Lucene) is observed.
 
 The split between `turing.search.calls` and `turing.search.pipeline` is deliberate: the first is the *backend* engine call (mostly Solr time); the second is everything Viglet Turing does *around* the call (snapshot lookup, result mapping, facet processing, widget assembly). When latency spikes, you'll know whether to blame the engine or the orchestration.
 
-### Chat Analytics
+### Chat analytics
 
 The AI-on-AI pipeline emits its own observability so you can see whether it's keeping up.
 
@@ -109,9 +109,9 @@ The metrics above watch the *pipeline's health*. The **conversation analytics th
 
 ---
 
-## How to Bring the Stack Up
+## How to bring the stack up
 
-### Local Development
+### Local development
 
 ```bash
 cd containers
@@ -155,11 +155,11 @@ Grafana provisioning files in `containers/grafana/provisioning/datasources/` sho
 
 ---
 
-## The Pre-Built Dashboards
+## The pre-built dashboards
 
 Four dashboards ship in `containers/grafana/dashboards/`. Each tells a different story.
 
-### 1. `turing-search`: Operational Search Health
+### 1. `turing-search`: Operational search health
 
 The on-call dashboard. If pages are loading slowly, this is where you go.
 
@@ -171,7 +171,7 @@ The on-call dashboard. If pages are loading slowly, this is where you go.
 
 A high `snapshot.build` time with low `search.response` time means *"Solr is fast, but we're rebuilding a snapshot too often"*: increase TTL or pre-warm.
 
-### 2. `turing-search-insights`: Product Search Quality
+### 2. `turing-search-insights`: Product search quality
 
 The PM dashboard. Used to understand what users are looking for.
 
@@ -180,17 +180,17 @@ The PM dashboard. Used to understand what users are looking for.
 - **CTR per term** (click-through rate from results)
 - **Result-position click distribution**: are users clicking position 1, or scrolling to find what they want?
 
-### 3. `turing-search-term-detail`: Drill-Down
+### 3. `turing-search-term-detail`: Drill-down
 
 Linked from the term-list dashboard. Pick a term, see the full picture: query volume, click-through rate, top clicked documents, time-of-day distribution.
 
-### 4. `turing-chat-insights`: Chat Analytics
+### 4. `turing-chat-insights`: Chat analytics
 
 The full Chat Analytics dashboard. Reads from `/api/system/chat-analytics/**` via the Infinity datasource (engine-agnostic). See [Chat Analytics](/docs/chat-analytics/) for the panel-by-panel breakdown.
 
 ---
 
-## Useful Queries
+## Useful queries
 
 ### "Are we healthy right now?"
 
@@ -237,7 +237,7 @@ rate(turing_chat_analytics_enrich_cycle_seconds_count{status!="success"}[15m])
 
 If this rises, the enricher is being skipped (LLM offline) or erroring. Cross-reference with `turing.chat.analytics.classifications{outcome="error"}`.
 
-### "How much are the AI Agents costing me, per provider?"
+### "How much are the AI agents costing me, per provider?"
 
 ```promql
 # Output tokens per second, last 1h, by provider
@@ -261,7 +261,7 @@ A monotonically rising line = leak. The hourly sweep should keep this stable.
 
 ---
 
-## Tracing (Optional)
+## Tracing (optional)
 
 Micrometer's Observation API produces both metrics **and** spans. If you wire an OpenTelemetry exporter (Jaeger, Tempo, Honeycomb, Datadog) every observation becomes a trace span automatically.
 
@@ -283,7 +283,7 @@ When tracing is on, every LLM call, search, and snapshot lookup gets a span with
 
 ---
 
-## When to Add Custom Metrics
+## When to add custom metrics
 
 The shipped metrics cover the common operational questions. You might want to add custom ones when:
 
@@ -327,7 +327,7 @@ Add the metric name to `TurMeterNames.java` so it's part of the public observabi
 
 ---
 
-## Where Logs Fit
+## Where logs fit
 
 Metrics tell you *something is wrong*. Logs tell you *what is wrong*.
 
@@ -343,7 +343,7 @@ Metrics + logs + traces is the classic three-pillar observability story. Viglet 
 
 ---
 
-## Common Operational Patterns
+## Common operational patterns
 
 ### Latency spike, no error spike
 
@@ -374,7 +374,7 @@ Look at `turing.chat.analytics.classifications{outcome}` over time:
 
 ---
 
-## Configuration Reference
+## Configuration reference
 
 ```yaml
 # Spring Boot Actuator: Prometheus endpoint
@@ -399,7 +399,7 @@ The Actuator endpoint is exposed unauthenticated by default in dev. In productio
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

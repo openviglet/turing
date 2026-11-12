@@ -12,7 +12,7 @@ This document describes the system's components, internal modules, and the two c
 
 ---
 
-## High-Level Component Diagram
+## High-level component diagram
 
 ![Viglet Turing: High-Level Architecture](/docs/img/diagrams/turing-architecture.svg)
 
@@ -20,7 +20,7 @@ The architecture is organized into **four layers**: Clients & External Services 
 
 ---
 
-### Clients & External Services
+### Clients & external Services
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -56,7 +56,7 @@ graph LR
 
 ---
 
-### API Layer
+### API layer
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -83,7 +83,7 @@ graph LR
 
 ---
 
-### Core Modules
+### Core modules
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -123,7 +123,7 @@ graph TB
 
 ---
 
-### Backends & Storage
+### Backends & storage
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '13px', 'primaryColor': '#fff', 'primaryBorderColor': '#c0c0c0', 'lineColor': '#888', 'textColor': '#333'}}}%%
@@ -154,7 +154,7 @@ graph LR
 
 ---
 
-### Observability Layer
+### Observability layer
 
 Independent of all the above, an optional observability layer instruments every LLM call, search, snapshot lookup, and chat-analytics enrichment cycle. **Spring Boot Actuator** exposes `/actuator/prometheus`; **Prometheus** scrapes it; **Grafana** renders four pre-built dashboards (search health, search insights, search-term detail, chat insights).
 
@@ -186,7 +186,7 @@ The Chat Analytics dashboard reads from Viglet Turing's REST API (engine-agnosti
 
 ---
 
-## Indexing Flow
+## Indexing flow
 
 Content ingestion is handled externally by **Viglet Dumont**. Each connector runs as an independent process and sends documents to Viglet Turing via its **REST API**. The API receives the request, validates it against the target Semantic Navigation Site configuration, and creates an indexing job that is queued internally via Apache Artemis for asynchronous processing.
 
@@ -214,7 +214,7 @@ The **Semantic Navigation Site** is the central configuration artifact that driv
 
 ---
 
-## Search Flow
+## Search flow
 
 The search flow is synchronous and request-driven. Every request goes through a structured pipeline before a response is returned to the client.
 
@@ -236,7 +236,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 
 ---
 
-## Technology Stack
+## Technology stack
 
 | Layer | Technology | Notes |
 |---|---|---|
@@ -264,7 +264,7 @@ The search flow is synchronous and request-driven. Every request goes through a 
 
 ---
 
-## Deployment Topologies
+## Deployment topologies
 
 Viglet Turing supports several deployment configurations. Each builds on the previous one: start with what you need and add components as requirements grow.
 
@@ -280,7 +280,7 @@ Viglet Turing starts with an embedded H2 database. No external database is neede
 
 ---
 
-### Simple Production
+### Simple production
 
 Recommended baseline for production environments.
 
@@ -292,7 +292,7 @@ Solr runs in SolrCloud mode coordinated by Zookeeper, enabling index replication
 
 ---
 
-### Production with Security (SSO)
+### Production with security (SSO)
 
 For environments that require integration with an identity provider or corporate SSO.
 
@@ -304,7 +304,7 @@ Keycloak handles authentication via OAuth2 / OpenID Connect. Users log in throug
 
 ---
 
-### Production with Log UI
+### Production with log UI
 
 For environments where administrators need visibility into application behavior directly from the Viglet Turing admin console, without access to server logs or external log tools.
 
@@ -316,7 +316,7 @@ When MongoDB is configured, a custom Logback appender persists every log entry g
 
 ---
 
-### High Availability
+### High availability
 
 For environments requiring horizontal scaling and zero-downtime deployments.
 
@@ -335,7 +335,7 @@ Multiple Viglet Turing instances run behind Apache HTTP Server configured as a r
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

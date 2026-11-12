@@ -25,7 +25,7 @@ turing:
 
 ---
 
-## Why It Exists
+## Why it exists
 
 Three problems Chat Analytics solves that vanilla logging doesn't:
 
@@ -83,7 +83,7 @@ The chat hot path only ever talks to `TurChatAnalyticsService`. Everything else 
 
 ---
 
-## What Gets Recorded
+## What gets recorded
 
 Every chat session produces one row, identified by `conversationId`. The row is upserted twice:
 
@@ -125,7 +125,7 @@ The next set are populated *later* by the AI-on-AI enricher:
 
 ---
 
-## The AI-on-AI Classifier
+## The AI-on-AI classifier
 
 The classifier is a small service that does one thing: take a transcript, ask the default LLM to label it, parse the response.
 
@@ -160,7 +160,7 @@ The LLM call itself flows through the standard `TurLlmObservation`, so the enric
 
 ---
 
-## The Enricher: Cluster-Safe, Backpressure-Aware
+## The enricher: Cluster-safe, backpressure-aware
 
 The enricher runs as a `@Scheduled` Spring service, gated by ShedLock so a multi-node deployment doesn't process the same session four times. Defaults:
 
@@ -186,7 +186,7 @@ If the enricher is *not* keeping up, the cycle's `elapsedMs` will keep growing, 
 
 ---
 
-## Storage Backends
+## Storage backends
 
 You pick **one** backend per deployment. They expose the same interface; switching between them is a config change.
 
@@ -237,7 +237,7 @@ A no-op store is wired in. Calls compile and run, but write nothing and return e
 
 ---
 
-## The In-Flight Map and Why It Has a Sweep
+## The in-flight map and why it has a sweep
 
 `TurChatAnalyticsService` keeps a `ConcurrentHashMap` of *currently active* sessions. Each entry holds the start timestamp + cumulative turn/token counters. Entries are removed when `recordSessionEnd(...)` fires.
 
@@ -344,7 +344,7 @@ The drill-down endpoints power the **Chat Analytics** page in the React console:
 
 ---
 
-## Grafana Dashboard: Viglet Turing Chat Insights
+## Grafana dashboard: Viglet Turing chat insights
 
 Provisioned at `containers/grafana/dashboards/turing-chat-insights.json`. Fifteen panels organized in five rows. Engine-agnostic: calls the REST API via the Infinity datasource, so Mongo and Redis render identically.
 
@@ -390,7 +390,7 @@ See [Observability](/docs/observability/) for the full Grafana setup, including 
 
 ---
 
-## The Investigation View (React Console)
+## The investigation view (React console)
 
 `Console → Chat Analytics` is where individual conversations come to life. The page is two halves:
 
@@ -410,7 +410,7 @@ The drill-down isn't just for QA: it's a feedback channel into your product. Ope
 
 ---
 
-## Beyond the Basics: Funnels, Replay & Live Diagnostics
+## Beyond the basics: Funnels, replay & live diagnostics
 
 The session row and the Grafana dashboard tell you *what* happened in aggregate. These newer surfaces tell you *where* and *why*: they live in the **Chat Analytics** console page alongside the drill-down.
 
@@ -444,7 +444,7 @@ Not strictly analytics, but adjacent: when two flows on the same agent have **ov
 
 ---
 
-## How to Read the Data
+## How to read the data
 
 The dashboard is full of numbers. Here's how to turn them into actions.
 
@@ -472,7 +472,7 @@ To make the enricher cheaper:
 
 ---
 
-## Configuration Reference
+## Configuration reference
 
 ```yaml
 turing:
@@ -501,7 +501,7 @@ turing:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

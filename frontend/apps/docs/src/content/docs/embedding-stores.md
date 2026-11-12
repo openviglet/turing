@@ -8,7 +8,7 @@ Viglet Turing supports four backends: three external services via Spring AI (**C
 
 ---
 
-## Supported Backends
+## Supported backends
 
 ### ChromaDB
 
@@ -127,7 +127,7 @@ The store raises Lucene's advertised 1024-dim cap to **4096**, so 1536-/3072-dim
 
 ---
 
-## Store Comparison
+## Store comparison
 
 | Feature | ChromaDB | PgVector | Milvus | Lucene (embedded) |
 |---|:---:|:---:|:---:|:---:|
@@ -143,11 +143,11 @@ The store raises Lucene's advertised 1024-dim cap to **4096**, so 1536-/3072-dim
 
 ---
 
-## Create / Edit Form
+## Create / edit form
 
 Navigate to **Generative AI → Embedding Stores** to manage store instances.
 
-### General Information
+### General information
 
 | Field | Required | Description |
 |---|---|---|
@@ -163,7 +163,7 @@ Navigate to **Generative AI → Embedding Stores** to manage store instances.
 | **Collection Name** | | Name of the collection or table (vendor-specific default applied) |
 | **Credential** | | Authentication token or password: stored encrypted. Leave blank when editing to keep the existing value. |
 
-### Provider Options
+### Provider options
 
 Each vendor exposes additional configuration fields in the **Provider Options** section. These fields appear dynamically when a vendor is selected. A raw JSON editor is also available for advanced configurations.
 
@@ -184,7 +184,7 @@ Each vendor exposes additional configuration fields in the **Provider Options** 
 
 ---
 
-## Collection Management
+## Collection management
 
 Each store instance provides a **Collections** page where you can view and manage vector collections.
 
@@ -211,7 +211,7 @@ Clearing or deleting a collection permanently removes all stored embeddings. A f
 
 ---
 
-## System Information
+## System information
 
 The **System Info** endpoint returns backend-specific metadata for monitoring and diagnostics:
 
@@ -228,7 +228,7 @@ The **System Info** endpoint returns backend-specific metadata for monitoring an
 
 Store instances are managed via the REST API at `/api/store`.
 
-### Store Instance Endpoints
+### Store instance endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -239,7 +239,7 @@ Store instances are managed via the REST API at `/api/store`.
 | `PUT` | `/api/store/{id}` | Update an existing store instance |
 | `DELETE` | `/api/store/{id}` | Delete a store instance |
 
-### Collection Endpoints
+### Collection endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -248,13 +248,13 @@ Store instances are managed via the REST API at `/api/store`.
 | `DELETE` | `/api/store/{id}/collections/{name}` | Delete a collection |
 | `DELETE` | `/api/store/{id}/collections/{name}/clear` | Clear all embeddings from a collection |
 
-### System Info Endpoint
+### System info endpoint
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/store/{id}/system-info` | Get store backend version and status |
 
-### Store Vendor Endpoints
+### Store vendor endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -263,7 +263,7 @@ Store instances are managed via the REST API at `/api/store`.
 
 ---
 
-## Global Configuration
+## Global configuration
 
 Set the default embedding store in **Administration → Settings**:
 
@@ -286,7 +286,7 @@ Credentials are handled with care at every layer:
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

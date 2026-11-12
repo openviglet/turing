@@ -35,7 +35,7 @@ columns below are Elasticsearch, Solr and Lucene.
 
 ## Queries (40 types)
 
-### Full-text Queries
+### Full-text queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -49,7 +49,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `simple_query_string` | <N/> | <T/> | <T/> |
 | `match_all` | <N/> | <T/> | <T/> |
 
-### Term-level Queries
+### Term-level queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -64,7 +64,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `fuzzy` | <N/> | <T/> | <T/> |
 | `ids` | <N/> | <T/> | <T/> |
 
-### Compound Queries
+### Compound queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -76,7 +76,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `script_score` | <N/> | <F/> | <F/> |
 | `pinned` | <N/> | <T/> | <T/> |
 
-### Nested & Join Queries
+### Nested & join queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -84,7 +84,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `has_child` | <N/> | <F/> | <F/> |
 | `has_parent` | <N/> | <F/> | <F/> |
 
-### Geo Queries
+### Geo queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -92,13 +92,13 @@ columns below are Elasticsearch, Solr and Lucene.
 | `geo_bounding_box` | <N/> | <T/> | <F/> |
 | `geo_shape` | <N/> | <F/> | <F/> |
 
-### Vector Search
+### Vector search
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
 | `knn` | <N/> | <T/> | <N/> |
 
-### Span Queries
+### Span queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -108,7 +108,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `span_not` | <N/> | <T/> | <T/> |
 | `span_first` | <N/> | <F/> | <F/> |
 
-### Specialized Queries
+### Specialized queries
 
 | Query | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -123,7 +123,7 @@ columns below are Elasticsearch, Solr and Lucene.
 
 ## Aggregations (35 types)
 
-### Bucket Aggregations
+### Bucket aggregations
 
 | Aggregation | ES | Solr | Lucene |
 |-------------|:---:|:---:|:---:|
@@ -146,7 +146,7 @@ columns below are Elasticsearch, Solr and Lucene.
 | `geo_distance` | <N/> | <X/> | <X/> |
 | `variable_width_histogram` | <N/> | <X/> | <X/> |
 
-### Metric Aggregations
+### Metric aggregations
 
 | Aggregation | ES | Solr | Lucene |
 |-------------|:---:|:---:|:---:|
@@ -174,7 +174,7 @@ columns below are Elasticsearch, Solr and Lucene.
 
 ---
 
-## Request Features (29 fields)
+## Request features (29 fields)
 
 | Feature | ES | Solr | Lucene |
 |---------|:---:|:---:|:---:|
@@ -207,7 +207,7 @@ columns below are Elasticsearch, Solr and Lucene.
 
 ---
 
-## Response Fields
+## Response fields
 
 | Field | ES | Solr | Lucene |
 |-------|:---:|:---:|:---:|
@@ -232,7 +232,7 @@ columns below are Elasticsearch, Solr and Lucene.
 
 ---
 
-## Coverage Summary
+## Coverage summary
 
 | Category | Total | ES | Solr | Lucene |
 |----------|:-----:|:---:|:---:|:---:|
@@ -247,7 +247,7 @@ For **full DSL compatibility**, use Elasticsearch as the search engine backend. 
 
 ---
 
-## Engine Selection Guide
+## Engine selection guide
 
 | Use Case | Recommended |
 |----------|:---:|
@@ -293,7 +293,7 @@ it runs entirely through this API.
 
 ---
 
-## Related Pages
+## Related pages
 
 - [DSL Query API](/docs/dsl-query/): the query syntax this matrix describes
 - [Search Engine](/docs/search-engine/): configure the Solr / Elasticsearch / Lucene backend

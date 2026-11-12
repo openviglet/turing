@@ -39,7 +39,7 @@ the hooks never installs `react-markdown`.
 
 ---
 
-## Quick Start
+## Quick start
 
 ```tsx
 import { TuringProvider, useTuringSearch } from "@viglet/turing-react-sdk";
@@ -103,7 +103,7 @@ import { TuringProvider } from "@viglet/turing-react-sdk";
 }
 ```
 
-### URL Sync Mode
+### URL sync mode
 
 When `urlSync` is provided, the URL becomes the single source of truth. Changes to the URL trigger automatic searches, and searches update the URL automatically.
 
@@ -387,7 +387,7 @@ await send("Quais são remotas?");
 await send("E no Rio?", { filters: { uf: ["RJ"] } }); // this turn only
 ```
 
-## UI Components
+## UI components
 
 All components are **unstyled** (headless). You control the look via render props and CSS.
 
@@ -528,7 +528,7 @@ Renders pagination items with navigation actions.
 
 ---
 
-## Data Types
+## Data types
 
 ### ResolvedDocument
 
@@ -562,7 +562,7 @@ Documents returned by hooks have default fields already mapped:
 
 ---
 
-## Full Example: Search Page with Facets
+## Full example: Search page with facets
 
 ```tsx
 import {
@@ -649,7 +649,7 @@ function SearchPage() {
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

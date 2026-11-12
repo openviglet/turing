@@ -16,7 +16,7 @@ Configure flows in **Administration → AI Agents → \<your agent\> → Chat Fl
 
 ---
 
-## When You Need a Chat Flow
+## When you need a chat flow
 
 A free-form agent works beautifully when the conversation is open-ended. *"Help me find a product"* or *"explain this concept"* don't need scripted scaffolding: the LLM and your tools are enough.
 
@@ -34,7 +34,7 @@ Without a flow, you'd write a 1,500-token system prompt full of *"first ask this
 
 ---
 
-## The Core Block Types
+## The core block types
 
 A Chat Flow graph starts from a small set of **core node types** you'll use in almost every flow. Beyond them is a richer [node catalog](#the-full-node-catalog) for slots, deterministic tool calls, async routines, webhooks, and human approval, covered right after.
 
@@ -109,7 +109,7 @@ Use Tool nodes when a step needs a deterministic action *between questions*. Exa
 
 The result of the tool call lands in a flow variable and the conversation continues.
 
-### 5. Sub Flow
+### 5. Sub flow
 
 The composition primitive. A Sub Flow node points at *another* Chat Flow on the same agent and runs it inline. When the sub-flow reaches its End node, control returns to the parent flow's next node.
 
@@ -127,7 +127,7 @@ Terminator. Like Start, exactly one per flow. When the runtime reaches End, it m
 
 ---
 
-## The Full Node Catalog
+## The full node catalog
 
 The five core types cover collection and branching. These additional node types turn a flow into a small automation engine, writing slots deterministically, calling tools and routines, reaching out over webhooks, and pausing for a human.
 
@@ -167,7 +167,7 @@ A value that fails validation is rejected and the user is re-prompted, the slot 
 
 ---
 
-## Error Handling: `continueOnFailure` & Error Edges
+## Error handling: `continueOnFailure` & error edges
 
 By default, when a `functionCall`, `scheduleAgent`, or `webhook` node fails (a tool throws, a routine times out, a webhook can't be delivered), the engine logs it and advances on the normal edge. When that's not safe, opt into explicit error routing:
 
@@ -178,7 +178,7 @@ On failure the engine routes down the `failure` edge instead of advancing silent
 
 ---
 
-## Advanced Question Behavior
+## Advanced question behavior
 
 Two policies make Question/`formCapture` nodes more robust under a guardrail.
 
@@ -198,7 +198,7 @@ When the judge *does* reject an answer, the node's `onJudgeReject` field decides
 
 ---
 
-## Slots: The Conversation's Memory
+## Slots: The conversation's memory
 
 Every value a flow collects lives in a **slot**, a named, conversation-scoped variable the agent treats as globally addressable across flows. Slots are more than a key-value bag; they come with streaming, auditing, privacy, and multi-modal support.
 
@@ -215,7 +215,7 @@ These endpoints power the [Chat Analytics](/docs/chat-analytics/) replay timelin
 
 ---
 
-## Guardrails: Three Strategies, Three Levels of Strictness
+## Guardrails: Three strategies, three levels of strictness
 
 The same flow graph can be enforced **three different ways** at runtime. You pick per-flow which strategy fits the conversation. There is no "best": there is a tradeoff between strictness, latency, and token cost.
 
@@ -289,7 +289,7 @@ Start with `HEURISTIC`. Run it for a week. Read 20 sessions in [Chat Analytics](
 
 ---
 
-## Trigger Modes: Auto-Routing or Manual
+## Trigger modes: Auto-routing or manual
 
 A flow doesn't run unless something *picks* it. Two ways:
 
@@ -333,7 +333,7 @@ Flows (and even individual nodes) can be **A/B tested**: split traffic across va
 
 ---
 
-## Per-Conversation State
+## Per-conversation state
 
 Every running flow has a `TurChatFlowState` row identified by `(conversationId, flowId)`. It tracks:
 
@@ -356,7 +356,7 @@ A common pattern: a [webhook](/docs/webhooks/) fires on the completing slot and 
 
 ---
 
-## Vibe Coding: Author Your Flow With AI
+## Vibe coding: Author your flow with AI
 
 Building a flow visually is fast. Building it by *describing it* is faster.
 
@@ -395,7 +395,7 @@ The same Vibe Coding pattern is available for [Intents](/docs/intent/) and [Cust
 
 ---
 
-## A Real Example: Demo Qualification
+## A real example: Demo qualification
 
 Let's walk one flow end-to-end. Goal: qualify an inbound prospect, route hot leads to a calendar booking, route cold leads to a nurture sequence.
 
@@ -449,7 +449,7 @@ The Vibe Coding endpoint follows the standard [AI Authoring](/docs/ai-agents/) s
 
 ---
 
-## Configuration & Tuning
+## Configuration & tuning
 
 The flow engine has a few knobs:
 
@@ -462,7 +462,7 @@ State is per-conversation, abandoning a conversation leaves a state row that's p
 
 ---
 
-## Common Patterns
+## Common patterns
 
 ### Funnel-as-flow
 
@@ -500,7 +500,7 @@ One flow, two outcomes, no human intervention.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|
@@ -515,7 +515,7 @@ One flow, two outcomes, no human intervention.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

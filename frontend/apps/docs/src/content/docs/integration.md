@@ -8,13 +8,13 @@ Each **Integration instance** represents a configured connection to a content co
 
 ---
 
-## Instance Listing
+## Instance listing
 
 The listing page shows all configured Integration instances as a grid of cards, each displaying the integration's title and description. A button at the top of the page opens the creation form.
 
 ---
 
-## Creating or Editing an Integration
+## Creating or editing an integration
 
 The creation and edit form is divided into two sections.
 
@@ -35,7 +35,7 @@ The creation and edit form is divided into two sections.
 
 ---
 
-## Integration Detail: Sections
+## Integration detail: Sections
 
 After an integration is created, its detail page provides navigation to several sections. The sections below are common to all connector types. For AEM-specific configuration, see the [Viglet Turing AEM Connector](/docs/integration-aem/) overview and the full [Viglet Dumont AEM Connector](https://dumont.viglet.org/docs/connectors/aem/) documentation.
 
@@ -68,7 +68,7 @@ The Monitoring section is a real-time dashboard for tracking the indexing pipeli
 
 Results are paginated and sortable.
 
-#### Indexing Status Values
+#### Indexing status values
 
 | Status | Meaning |
 |---|---|
@@ -86,7 +86,7 @@ Results are paginated and sortable.
 
 ---
 
-### Indexing Stats
+### Indexing stats
 
 The Indexing Stats section provides a table of completed bulk indexing operations for this integration.
 
@@ -101,7 +101,7 @@ The Indexing Stats section provides a table of completed bulk indexing operation
 
 ---
 
-### Double Check
+### Double check
 
 The Double Check section validates the consistency between the connector's content and the Viglet Turing search index. It detects drift between what the connector knows about and what is actually indexed.
 
@@ -115,7 +115,7 @@ Use Double Check after a partial failure, a forced reindex, or when users report
 
 ---
 
-### System Information
+### System information
 
 Displays live diagnostic information from the remote connector application.
 
@@ -150,7 +150,7 @@ Built-in SSRF protection validates the endpoint before forwarding. Requests to p
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

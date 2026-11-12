@@ -12,7 +12,7 @@ Think of intents as the *hook* on the home screen of every conversation. The cus
 
 ---
 
-## Intent Listing
+## Intent listing
 
 The listing page shows all configured intents as a grid of cards. Each card displays:
 
@@ -24,11 +24,11 @@ A **New Intent** button at the top opens the creation form. Clicking an existing
 
 ---
 
-## Creating or Editing an Intent
+## Creating or editing an intent
 
 The intent form is divided into three sections.
 
-### General Information
+### General information
 
 | Field | Max Length | Description |
 |---|---|---|
@@ -59,7 +59,7 @@ The label is what the user clicks. The prompt is what the LLM receives. They don
 
 ---
 
-## Vibe Coding: Author Intents With AI
+## Vibe coding: Author intents with AI
 
 Writing 4 categories × 6 actions × 2 languages = 48 prompts is exactly the kind of work the AI is best at. The Intent form has a **Vibe Coding** mode: you describe what you want; the assistant drafts the entire intent.
 
@@ -80,7 +80,7 @@ Vibe Coding is especially powerful here because intents are usually authored *en
 
 ---
 
-## Pre-loaded Intents
+## Pre-loaded intents
 
 Viglet Turing ships with four default intents:
 
@@ -108,7 +108,7 @@ All endpoints require authentication via the `Key` header.
 | `PUT` | `/api/intent/{id}` | Update an intent |
 | `DELETE` | `/api/intent/{id}` | Delete an intent and all its actions |
 
-### Request / Response Body
+### Request / response body
 
 ```json
 {
@@ -181,7 +181,7 @@ All permissions also require the `ROLE_ADMIN` role.
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|

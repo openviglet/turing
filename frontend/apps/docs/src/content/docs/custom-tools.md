@@ -16,7 +16,7 @@ Configure tools in **Administration → Custom Tools**.
 
 ---
 
-## When You Need a Custom Tool
+## When you need a custom tool
 
 Some questions don't have a native tool, an MCP server, or a stock answer:
 
@@ -32,7 +32,7 @@ A Custom Tool sits between *"too small for an MCP"* and *"too big for a prompt i
 
 ---
 
-## Anatomy of a Custom Tool
+## Anatomy of a custom tool
 
 Every tool is a small bundle of seven decisions. Get the first three right and the LLM uses your tool well; get the script right and the tool *works*.
 
@@ -53,7 +53,7 @@ Two quiet but important fields back the Vibe Coding experience:
 
 ---
 
-## The Groovy Sandbox
+## The Groovy sandbox
 
 Custom Tools run in a Groovy script context: full Java/Groovy semantics, with one strong constraint: **the script returns a single value**, declared in `Return Type`.
 
@@ -187,7 +187,7 @@ The workspace requires a [storage backend](/docs/configuration-reference/#storag
 
 ---
 
-## Vibe Coding: Let the AI Author the Tool
+## Vibe coding: Let the AI author the tool
 
 Writing a tool from scratch (even a trivial one) usually means writing four things: the LLM description, the parameter list, the script, and a quick test. The Vibe Coding chat does all four for you, then hands you a draft to review.
 
@@ -218,11 +218,11 @@ The LLM Description is the single field that determines whether agents actually 
 
 ---
 
-## Integrating Custom Tools
+## Integrating custom tools
 
 A Custom Tool is just an entry in the catalog until you wire it somewhere. Three places it can run:
 
-### In an AI Agent
+### In an AI agent
 
 Open an [AI Agent](/docs/ai-agents/), navigate to the Tools tab. Custom Tools appear in their own group at the bottom (after the eight native categories). Check the ones this agent should have access to.
 
@@ -236,7 +236,7 @@ The same agent can mix:
 
 The LLM doesn't distinguish: they all look like callable functions in the same catalog.
 
-### In a Chat Flow
+### In a chat flow
 
 A [Chat Flow](/docs/chat-flow/) Tool node accepts `native`, `mcp`, or `custom` as its tool source. With `custom`, you point the node at one of your Custom Tools and pass arguments either statically (hard-coded values) or from collected flow variables.
 
@@ -245,15 +245,15 @@ Use this pattern when:
 - A flow needs to look up data deterministically *between questions* (not when the LLM thinks it's a good time).
 - You want auditability: the submission record will show that the tool ran with these inputs and got that result.
 
-### In the Direct LLM Chat
+### In the direct LLM chat
 
 The direct [Chat](/docs/chat/) mode (no agent) doesn't expose Custom Tools by default, that mode is for *general-purpose assistance with optional toolboxes*. If you need a Custom Tool in direct chat, attach it to a thin "default agent" instead. This keeps the catalog manageable.
 
 ---
 
-## Three Real Custom Tools
+## Three real custom tools
 
-### 1. Lead-Scoring Tool
+### 1. Lead-scoring tool
 
 **Use case:** A sales agent collects company size + role + timeline and needs to score the lead.
 
@@ -284,7 +284,7 @@ return [score: total, tier: tier]
 
 Wire this into the demo-qualification [Chat Flow](/docs/chat-flow/) right before End. The submission record now has the score; downstream automation routes accordingly.
 
-### 2. Holiday-Aware Working Days Calculator
+### 2. Holiday-aware working days calculator
 
 **Use case:** A support agent estimates SLA timing.
 
@@ -330,7 +330,7 @@ return days
 
 The agent doesn't have to know about your country's calendar; the tool handles it.
 
-### 3. Internal API Wrapper
+### 3. Internal API wrapper
 
 **Use case:** Your support agent needs to look up a customer's tier from your internal API.
 
@@ -369,7 +369,7 @@ Use `System.getenv('YOUR_TOKEN')` for secrets, not literal strings. The Groovy t
 
 ---
 
-## How the LLM Sees Your Tool
+## How the LLM sees your tool
 
 When an agent runs, the system builds a tool catalog the LLM uses to pick. Each Custom Tool produces a JSON-Schema function definition like this:
 
@@ -430,7 +430,7 @@ All require `ROLE_ADMIN`. In production, restrict authoring to a small group: Gr
 
 ---
 
-## Testing & Iteration
+## Testing & iteration
 
 The fastest dev loop:
 
@@ -446,7 +446,7 @@ For deeper diagnostics, [Observability](/docs/observability/) shows tool latency
 
 ---
 
-## Common Patterns
+## Common patterns
 
 ### One tool, multiple agents
 
@@ -460,7 +460,7 @@ If you already have an MCP server, you usually don't need a Custom Tool that cal
 
 A Groovy script reads top-to-bottom. When your finance team disputes how the lead score is computed, they can read the script. A custom tool can become *the* source of truth for a piece of business logic: readable, versionable, and callable.
 
-### Composability with Chat Flow
+### Composability with chat flow
 
 A complex business process is often: collect inputs → compute → call external system → format response. **Chat Flow** does the collection and the orchestration; **Custom Tools** do the compute and the external calls; **Native tools or MCP** do the formatting (e.g., open a ticket). The three together replace what would otherwise be a custom microservice.
 
@@ -478,7 +478,7 @@ A complex business process is often: collect inputs → compute → call externa
 
 ---
 
-## Related Pages
+## Related pages
 
 | Page | Description |
 |---|---|
