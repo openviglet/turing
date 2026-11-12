@@ -261,7 +261,7 @@ The IndexedDB **session history** is a *user convenience*: it's how a single use
 
 A context bar at the bottom of the input shows token usage in real time:
 
-```
+```text
 2.5k / 128k  ████████░░░░░░░░░░░░
 ```
 

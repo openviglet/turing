@@ -20,7 +20,7 @@ Token Usage shows **counts**: how many tokens each model consumed. To see those 
 
 At the top of the page, a month navigator lets you move forward and backward through calendar months. All cards and tables update instantly when the period changes.
 
-```
+```text
 ◀  January 2025  ▶
 ```
 

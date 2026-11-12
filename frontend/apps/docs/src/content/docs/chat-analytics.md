@@ -131,7 +131,7 @@ The classifier is a small service that does one thing: take a transcript, ask th
 
 The system prompt is fixed and structured:
 
-```
+```text
 You are an analyst that classifies a chat conversation between a user and an AI agent.
 Read the transcript and infer:
   - the user's INTENT (one of: SUPPORT, ONBOARDING, EXPLORATION, COMPLAINT,
@@ -269,7 +269,7 @@ turing:
 
 A daily log line tells you how many were removed:
 
-```
+```text
 [ChatRetention] removed 142 session(s) older than 2026-01-08T03:17:00Z (90 days)
 ```
 

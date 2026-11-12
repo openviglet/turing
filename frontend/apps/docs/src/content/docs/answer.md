@@ -12,7 +12,7 @@ It is deliberately a **separate endpoint from search**. The client fires the che
 
 ## The request
 
-```
+```http
 GET /api/sn/{siteName}/answer?q=how+do+i+rotate+a+key
 Accept: text/event-stream
 ```

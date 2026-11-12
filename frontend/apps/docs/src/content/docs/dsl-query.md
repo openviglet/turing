@@ -8,7 +8,7 @@ You'd reach for this over the simpler [`/search` REST endpoint](/docs/rest-api/)
 
 ## Endpoint
 
-```
+```http
 POST /api/sn/{siteName}/_search?locale=en
 GET  /api/sn/{siteName}/_search?locale=en
 ```

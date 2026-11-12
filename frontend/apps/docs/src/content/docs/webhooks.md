@@ -109,7 +109,7 @@ The **auth header** is a full `Authorization` value (e.g. `Bearer xyz`) attached
 
 Set a **signing secret** and Viglet Turing adds a signature header (`X-Turing-Signature` by default, or whatever **signature header** name you choose) computed as:
 
-```
+```text
 <signature header>: sha256=<hex of HMAC-SHA256(secret, raw request body)>
 ```
 

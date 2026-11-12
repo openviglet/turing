@@ -272,7 +272,7 @@ Viglet Turing supports several deployment configurations. Each builds on the pre
 
 Minimal setup for local development and evaluation.
 
-```
+```text
 Turing (H2 embedded) + Apache Solr
 ```
 
@@ -284,7 +284,7 @@ Viglet Turing starts with an embedded H2 database. No external database is neede
 
 Recommended baseline for production environments.
 
-```
+```text
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL
 ```
 
@@ -296,7 +296,7 @@ Solr runs in SolrCloud mode coordinated by Zookeeper, enabling index replication
 
 For environments that require integration with an identity provider or corporate SSO.
 
-```
+```text
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL + Keycloak
 ```
 
@@ -308,7 +308,7 @@ Keycloak handles authentication via OAuth2 / OpenID Connect. Users log in throug
 
 For environments where administrators need visibility into application behavior directly from the Viglet Turing admin console, without access to server logs or external log tools.
 
-```
+```text
 Turing + Apache Solr + Zookeeper + MariaDB / MySQL + MongoDB
 ```
 
@@ -320,7 +320,7 @@ When MongoDB is configured, a custom Logback appender persists every log entry g
 
 For environments requiring horizontal scaling and zero-downtime deployments.
 
-```
+```text
 Apache HTTP Server (load balancer)
     └── Turing node 1
     └── Turing node 2

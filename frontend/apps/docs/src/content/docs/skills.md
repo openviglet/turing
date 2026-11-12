@@ -34,7 +34,7 @@ When any of these is missing, the feature is a complete no-op: prompts and agent
 
 A Skill is just a folder. The only required file is `SKILL.md` at the root; everything else is optional and addressed by the instructions inside it.
 
-```
+```text
 brand-content-studio/
 ├── SKILL.md              ← required: frontmatter + instructions
 ├── references/           ← reference docs the model reads on demand

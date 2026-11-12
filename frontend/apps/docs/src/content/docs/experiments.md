@@ -44,7 +44,7 @@ graph LR
 
 Eyeballing two conversion rates isn't enough, a 52% vs. 48% split might be noise. Viglet Turing runs a real **two-proportion z-test** with a **Wald confidence interval** so you know whether a difference is statistically meaningful.
 
-```
+```http
 GET /api/system/chat-analytics/experiment/{experimentKey}/significance
       ?successMetric=GOAL_ACHIEVED   # the metric to compare arms on
       &alpha=0.05                    # significance threshold (default 0.05)
@@ -67,7 +67,7 @@ The toggle is per-flow (not per-experiment-key) so a single edit on any arm flip
 
 Significance tells you *whether* a variant won; promotion *acts* on it. The champion-challenger flow pins the winner to `trafficWeight = 100` and archives the losers (`trafficWeight = 0` + closes their assignment window).
 
-```
+```http
 POST /api/system/chat-analytics/experiment/{experimentKey}/promote
       ?successMetric=GOAL_ACHIEVED&alpha=0.05&dryRun=false
 ```
@@ -88,7 +88,7 @@ You don't always want to clone an entire flow to test one sentence. A single **n
 
 During QA or a sales demo you need to *see* a specific arm regardless of the hash. Append `?_ab_variant=<label>` to the chat URL and the engine hard-pins that arm, bypassing the deterministic hash, Thompson sampling, **and** the scheduled experiment window. A blank value or a label that doesn't match any arm falls back to normal assignment.
 
-```
+```text
 https://your-site/sn/{site}/chat?_ab_variant=friendly
 ```
 
@@ -98,7 +98,7 @@ https://your-site/sn/{site}/chat?_ab_variant=friendly
 
 A variant can win overall but lose on mobile. The [Chat Analytics scorecard](/docs/chat-analytics/#rest-api) accepts cohort filters so you can ask *"does `friendly` win **on mobile / in pt-BR / in America/Sao_Paulo**?"*:
 
-```
+```http
 GET /api/system/chat-analytics/scorecard
       ?dimension=variantLabel&deviceType=mobile&locale=pt-BR
 ```
@@ -111,7 +111,7 @@ The scorecard supports four dimensions overall (**agent**, **persona**, **experi
 
 When a flow has a non-blank `experimentKey`, the engine emits one structured **variant trace** line per turn:
 
-```
+```text
 [A/B Trace] experimentKey:variantLabel:nodeId:userMessage
 ```
 

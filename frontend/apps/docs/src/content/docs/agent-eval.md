@@ -54,7 +54,7 @@ A case captures both the **structural** expectations (slots, outcome, node, chec
 
 Replays each case through the real engine, scores it, and persists a report:
 
-```
+```http
 POST /api/ai-agent/{agentId}/eval/run
 ```
 
@@ -67,7 +67,7 @@ For each case the runner:
 
 Fetch the latest report and check whether evals are even configured:
 
-```
+```http
 GET /api/ai-agent/{agentId}/eval/report      # last run, per-case results
 GET /api/ai-agent/{agentId}/eval/available    # is an eval set configured for this agent?
 ```
@@ -78,7 +78,7 @@ GET /api/ai-agent/{agentId}/eval/available    # is an eval set configured for th
 
 The point of all this is to **stop a regression from shipping**. The gate turns the latest report into a status, surfaced in the flow editor's **Lint** sidebar (the eval-gate panel, run button + findings):
 
-```
+```http
 GET /api/ai-agent/{agentId}/eval/gate
 ```
 

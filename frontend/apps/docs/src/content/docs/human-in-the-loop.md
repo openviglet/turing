@@ -87,7 +87,7 @@ A header is driven by `GET /{conversationId}/state`, the active flow, current no
 
 Toggle `?manual=true` and the operator can **take the wheel** for a turn:
 
-```
+```http
 POST /api/chat/sessions/{conversationId}/manual-turn
 ```
 

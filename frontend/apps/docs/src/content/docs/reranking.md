@@ -12,7 +12,7 @@ The single most important property to know up front: **reranking is fail-open.**
 
 ## Where reranking sits in the pipeline
 
-```
+```text
 Query ──► Hybrid retrieval (BM25 + vector, fused by RRF) ──► top-N candidates
                                                                │
                                                                ▼

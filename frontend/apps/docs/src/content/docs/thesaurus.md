@@ -12,7 +12,7 @@ The thesaurus admin lives at **`/bento/thesaurus`**. Everything below is **opt-i
 
 ## How it's organised
 
-```
+```text
 Thesaurus (a library, per tenant)
 └─ Microthesaurus  (one tree = one language + one domain, e.g. "Education · pt")
    └─ Term  (a preferred concept, "Pneumonia")

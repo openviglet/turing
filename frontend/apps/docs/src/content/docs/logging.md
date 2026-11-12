@@ -149,7 +149,7 @@ The logging data is available via REST endpoints. Authentication required.
 
 ### Server Logs
 
-```
+```http
 GET /api/logging
 ```
 
@@ -172,7 +172,7 @@ curl "http://localhost:2700/api/logging?level=ERROR&pageSize=50&sort=desc" \
 
 ### Indexing Logs
 
-```
+```http
 GET /api/logging/indexing
 ```
 
@@ -197,7 +197,7 @@ curl "http://localhost:2700/api/logging/indexing?status=INDEXED&resultStatus=ERR
 
 ### AEM Logs
 
-```
+```http
 GET /api/logging/aem
 ```
 

@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1284** (deps: —) **94 code fences on 32 docs pages name no language, so Starlight renders them unhighlighted** — The cheapest docs-style debt: a mechanical pass shrinks the baseline before the rewrites, and a reader gets highlighting and a copy label. → §CLXXXIV.3
 - 📋 **T1285** (deps: —) **39 docs pages have a frontmatter description outside 70 to 160 characters** — The description is the search-result and link-preview text; too short says nothing, too long gets cut mid-sentence. → §CLXXXIV.3
 - 📋 **T1286** (deps: —) **549 docs headings on 57 pages are Title Case instead of sentence case** — Mixed heading case is the most visible inconsistency between pages, and the largest single rule in the docs-style baseline. → §CLXXXIV.3
 - 📋 **T1287** (deps: —) **Docs pages carry 25 release-relative phrases, 14 internal T-ids/Block labels, duplicate headings and skipped levels** — "Is now" and "T1233" only make sense to someone who read the changelog; a reader arriving today needs the present state. → §CLXXXIV.3

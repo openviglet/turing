@@ -14,7 +14,7 @@ It has three parts: a **price table** you edit, a per-turn **cost capture** that
 
 Every time Viglet Turing calls an LLM, it records the call in the always-on relational `llm_token_usage` table: input tokens, output tokens, vendor, model, the agent, and a **cost stage**. At record time it also computes and **freezes** the USD cost:
 
-```
+```text
 cost_usd = inputTokens  / 1,000,000 × inputPricePerMillion
          + outputTokens / 1,000,000 × outputPricePerMillion
 ```

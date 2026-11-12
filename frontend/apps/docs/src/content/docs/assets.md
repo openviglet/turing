@@ -46,7 +46,7 @@ The file listing displays the following columns:
 
 Files are uploaded to the **current folder** via a file picker dialog (click **Upload Files**). Multiple files can be selected in one operation. Uploads are sent to:
 
-```
+```http
 POST /api/asset
 ```
 
@@ -164,7 +164,7 @@ sequenceDiagram
 
 **Progress monitoring**, while the batch is running, the UI polls every **3 seconds** and displays:
 
-```
+```text
 X / Y files processed, Z errors
 ```
 

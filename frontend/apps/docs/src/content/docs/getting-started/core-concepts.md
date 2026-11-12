@@ -174,7 +174,7 @@ Viglet Turing exposes its search, chat, and indexing capabilities through four i
 
 The primary integration method. All search, indexing, and administration operations are available as HTTP endpoints. The search response is a self-describing JSON object with pre-built navigation links, no URL construction needed on the client side.
 
-```
+```http
 GET https://<your-host>/api/sn/{siteName}/search?q=your+query
 ```
 
@@ -184,7 +184,7 @@ Suitable for any language or platform that can make HTTP requests.
 
 Viglet Turing also exposes a GraphQL endpoint for clients that prefer a graph-based query model. Useful when you want to request only specific fields or combine multiple queries in a single request.
 
-```
+```http
 POST https://<your-host>/graphql
 ```
 

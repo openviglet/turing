@@ -12,13 +12,13 @@ Export creates a ZIP archive containing a complete snapshot of one or all SN Sit
 
 ### Export a Single Site
 
-```
+```http
 GET /api/sn/{id}/export
 ```
 
 ### Export All Sites
 
-```
+```http
 GET /api/sn/export
 ```
 
@@ -51,7 +51,7 @@ Instance references never carry an owning tenant. When [multi-tenancy](/docs/mul
 
 On the **first** startup against an empty database, Viglet Turing imports every `.zip` it finds in the `export/` directory of its working directory (alphabetical order). Use this to open a new environment with your sites, LLM instances, search engines and embedding stores already configured: no admin clicks, no API calls.
 
-```
+```text
 /app/export/           # in the Docker image
   defaults.zip
   my-sites.zip
@@ -104,7 +104,7 @@ Archives that did import are recorded individually and are **not** imported a se
 
 The startup log says which is which:
 
-```
+```text
 Successfully auto-imported 'defaults.zip'.
 Failed to auto-import 'my-sites.zip': Missing required export.json in ZIP
 Auto-import from 'export' incomplete: 1 of 2 ZIP file(s) failed. The successful
@@ -142,7 +142,7 @@ The import page (`/admin/exchange/import`) accepts a ZIP file previously exporte
 
 ### Using the REST API
 
-```
+```http
 POST /api/import
 ```
 
@@ -176,7 +176,7 @@ In addition to site configuration import, Viglet Turing accepts **document-level
 
 ### JSON Import
 
-```
+```http
 POST /api/sn/import
 ```
 
@@ -207,7 +207,7 @@ curl -X POST "http://localhost:2700/api/sn/import" \
 
 ### ZIP Import (with file attachments)
 
-```
+```http
 POST /api/sn/import/zip
 ```
 

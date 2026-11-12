@@ -800,6 +800,7 @@
 - **T1281** — semantic-navigation.md has one h2 per tab, sentence-case unique headings and labelled fences; targeting and search rules moved to their own pages with links, sidebar and hub cards.
 - **T1282** — rest-api.md opens for its reader, has sentence-case headings, labelled request blocks and present-tense prose; the per-endpoint behaviour notes stay as reference, and the baseline entry is paid.
 - **T1283** — personas.md is the persona reference (fields, values, defaults, actions, endpoints) and the Persona Book the explanation; no block labels, stale defaults corrected from code, anchors kept.
+- **T1284** — Every docs code fence names a language (http, bash, text) and no page is listed for fence-language in the docs-style baseline any more.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

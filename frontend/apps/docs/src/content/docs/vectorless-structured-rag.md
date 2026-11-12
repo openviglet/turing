@@ -26,7 +26,7 @@ from the matched rows**, citing each claim as `[1]`, `[2]`, …
 
 This is **Vectorless (Structured-Data) RAG**, and it needs only a **default LLM**.
 
-```
+```text
 question ──▶ NL→filter over your declared schema ──▶ structured search (no embeddings)
                                                         │
               cited answer  ◀── LLM (grounded, [n]) ◀──┘
@@ -584,7 +584,7 @@ turing:
         batch-size: 500  # documents per direct chunk
 ```
 
-```
+```http
 POST /api/sn/import/bulk      # same TurSNJobItems body as POST /api/sn/import
 ```
 

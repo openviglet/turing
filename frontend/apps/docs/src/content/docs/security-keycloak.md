@@ -86,7 +86,7 @@ sequenceDiagram
 
 The recommended production topology runs Keycloak and Viglet Turing on the same host, with Apache HTTP Server as the HTTPS reverse proxy in front. All three services are reachable through a single public hostname and port (443), with Apache routing by path prefix.
 
-```
+```text
 Browser / Client
       │  HTTPS :443
       ▼
@@ -393,7 +393,7 @@ make && make install
 
 When Keycloak is enabled, logging out of Viglet Turing triggers a full OIDC logout. After the local session is cleared, the user is redirected to Keycloak's logout endpoint:
 
-```
+```text
 https://<your-hostname>/kc/realms/<your-realm>/protocol/openid-connect/logout
   ?client_id=turing-app
   &post_logout_redirect_uri=https://<your-hostname>

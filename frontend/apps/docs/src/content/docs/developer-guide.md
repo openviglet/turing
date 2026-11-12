@@ -210,7 +210,7 @@ spring:
 
 All changelogs are in **YAML format** under `turing-app/src/main/resources/db/changelog/`:
 
-```
+```text
 db/changelog/
 ├── db.changelog-master.yaml          ← master file, includes all others
 ├── v2025.3_baseline.yaml             ← initial schema (full baseline)

@@ -44,7 +44,7 @@ Use stdio when the MCP server is installed locally (via npm, pip, or a system bi
 
 Connects to a **remote MCP server** over HTTP. This mode supports both public MCP services and internally hosted servers accessible over the network.
 
-```
+```text
 https://mcp.example.com/api/tools
 ```
 
@@ -78,7 +78,7 @@ Dispatches the tool call without blocking. Useful for long-running operations or
 ## MCP Server Examples
 
 **Internal ticketing system (stdio):**
-```
+```text
 Name:      JIRA Internal
 Transport: stdio
 Command:   node
@@ -87,7 +87,7 @@ Mode:      Synchronous
 ```
 
 **Company knowledge API (HTTP):**
-```
+```text
 Name:      Internal Knowledge Base API
 Transport: HTTP
 URL:       https://internal-api.example.com/mcp
@@ -95,7 +95,7 @@ Mode:      Synchronous
 ```
 
 **Public MCP service (HTTP):**
-```
+```text
 Name:      Brave Search
 Transport: HTTP
 URL:       https://api.search.brave.com/mcp
@@ -155,7 +155,7 @@ Beyond the endpoint gate, each call is checked by a per-tool **scope policy** (d
 
 To point a client at your server without hand-writing JSON, fetch a ready-made config:
 
-```
+```http
 GET /api/v2/mcp/client-config
 ```
 

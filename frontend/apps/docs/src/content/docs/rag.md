@@ -125,7 +125,7 @@ Viglet Turing supports four backends:
 
 **What happens inside the embedding store:**
 
-```
+```text
 Query vector: [0.82, -0.15, 0.44, ...]
 
 Stored vectors:
@@ -344,7 +344,7 @@ vector) fuses and orders the candidates, an optional reranker re-scores the top
 candidates against the question and keeps only the highest-precision few for the
 prompt, fewer, better chunks instead of more, noisier ones.
 
-```
+```text
 Query ──► Hybrid retrieval (BM25 + vector, RRF) ──► top-N candidates
                                                         │
                                                         ▼

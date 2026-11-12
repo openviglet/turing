@@ -355,7 +355,7 @@ systemctl status turing.service
 
 When Viglet Turing is started for the first time, it will perform initial setup.
 
-```
+```text
 $ java -jar viglet-turing.jar
   _____            _               ___  ___
  |_   _|_  _  _ _ (_) _ _   __ _  | __|/ __|

@@ -16,7 +16,7 @@ The design goal is that everything here is **opt-in**: with no `turing.transcrip
 
 Transcription rides a single pluggable seam (`TurTranscriptionProvider`) so every caller (persona-from-audio, AUDIO slots, async jobs) inherits the same backend choice, chunking, and metrics for free. You choose the backend once; the rest of the platform follows.
 
-```
+```text
 Audio ──► Chunker (splits past the per-request limit) ──► Provider ──► Transcript
                                                             │
                                         OPENAI · OPENAI_COMPATIBLE · NONE

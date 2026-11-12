@@ -46,7 +46,7 @@ See [Configuration Reference → Storage](/docs/configuration-reference/#storage
 
 Every blob is written under a tenant-isolated path:
 
-```
+```text
 {storage-root}/tenants/{agentId}/{conversationId}/workspace/{key}
 ```
 
@@ -128,7 +128,7 @@ The [React SDK](/docs/react-sdk/) ships this ready to use:
 - `subscribeWorkspaceSse(...)` / the `useTuringWorkspace<T>` hook consume the stream,
 - `TuringWorkspacePanel` renders the artifact list with download links.
 
-```
+```http
 GET /api/v2/chat/workspace/stream?conversationId={id}&agentId={id}
 ```
 

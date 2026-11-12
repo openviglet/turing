@@ -313,7 +313,7 @@ Users (or the front-end) can explicitly start a flow by name. This bypasses the 
 
 The **flow chooser** endpoint pins a specific flow for a conversation by UUID or case-insensitive name, deep-link friendly (`?flow=in-company`):
 
-```
+```http
 POST /api/sn/{siteName}/chat/flow-select   { "conversationId": "...", "flow": "in-company" }
 ```
 
@@ -321,7 +321,7 @@ POST /api/sn/{siteName}/chat/flow-select   { "conversationId": "...", "flow": "i
 
 When two flows on the same agent have **overlapping trigger descriptions**, the router can't reliably tell them apart and routing becomes a coin-flip. The editor surfaces this: a service runs a Jaccard similarity over the analyzer-stemmed trigger descriptions and flags `HIGH` / `WARNING` conflict pairs.
 
-```
+```http
 GET /api/ai-agent/{agentId}/chat-flow/trigger-conflicts
 ```
 
@@ -348,7 +348,7 @@ The state is updated **after** the assistant replies, so if the conversation cra
 
 When the End node is reached, the engine writes a **`TurChatFlowSubmission`** row: the full graph traversal, all collected variables, and the outcome. This is your audit log. You can list submissions by flow:
 
-```
+```http
 GET /api/ai-agent/{agentId}/chat-flow/{flowId}/submissions
 ```
 
@@ -401,7 +401,7 @@ Let's walk one flow end-to-end. Goal: qualify an inbound prospect, route hot lea
 
 ### Graph (described)
 
-```
+```text
 Start
   → Question: company name        → output: company_name
   → Question: user's role         → output: role

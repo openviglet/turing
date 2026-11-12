@@ -4,7 +4,7 @@ description: "Query Semantic Navigation sites using the Viglet Turing GraphQL en
 ---
 Viglet Turing exposes a GraphQL endpoint that provides the same Semantic Navigation search capabilities as the REST API but using GraphQL queries. The endpoint is **public**, no authentication required.
 
-```
+```http
 POST http://localhost:2700/graphql
 ```
 

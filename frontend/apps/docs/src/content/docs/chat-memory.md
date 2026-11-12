@@ -107,7 +107,7 @@ Compression requires both `chatMemoryEnabled` and a storage backend (the summary
 
 For a long, opted-in conversation, the history the model receives is assembled in this order:
 
-```
+```text
 [ memory summary of turns 1–N ]        ← compression (low-signal background)
 [ earlier turn #… ] (BM25 matches)     ← relevance retrieval (high-signal recovery)
 … recent window (last chatMemoryRecentN turns, verbatim) …
