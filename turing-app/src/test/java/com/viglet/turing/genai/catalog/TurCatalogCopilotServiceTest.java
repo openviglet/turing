@@ -519,6 +519,56 @@ class TurCatalogCopilotServiceTest {
         assertThat(service.retrieve("catalog", "en", "data masters", filter).totalHits()).isEqualTo(2L);
     }
 
+    /** T1277 — the words a parse leaves beside its filter are dropped when they find nothing. */
+    @Test
+    void aFilterOnlyQuestionRunsItsFiltersAloneWhenTheLeftoverWordsFindNothing() {
+        TurSNSite site = new TurSNSite();
+        site.setName("catalog");
+        when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.of(site));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("capabilities", TurSEFieldType.STRING, true)));
+        when(parser.isAvailable()).thenReturn(true);
+        when(parser.parse(any())).thenReturn(MAPPER.readValue("""
+                {"query":{"bool":{
+                  "must":[{"match":{"_text_":"Which models support ?"}}],
+                  "filter":[{"term":{"capabilities":"vision"}}]}}}""", TurDslQueryRequest.class));
+        when(hybridRankingService.isEnabled(site)).thenReturn(false);
+        ArgumentCaptor<TurDslQueryRequest> sent = ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        when(dslSearchService.search(eq("catalog"), eq("en"), sent.capture()))
+                .thenAnswer(inv -> ((TurDslQuery.Bool) ((TurDslQueryRequest) inv.getArgument(2)).query())
+                        .must().isEmpty() ? Optional.of(twoHitResponse()) : Optional.empty());
+
+        TurCatalogCopilotService.Retrieval retrieval =
+                service.retrieve("catalog", "en", "Which models support vision?");
+
+        assertThat(retrieval.totalHits()).isEqualTo(2L);
+        assertThat(retrieval.citations()).hasSize(2);
+        assertThat(retrieval.groundedSummary()).isEqualTo("capabilities=vision");
+        TurDslQuery.Bool last = (TurDslQuery.Bool) sent.getValue().query();
+        assertThat(last.must()).isEmpty();
+        assertThat(last.filter()).containsExactly(new TurDslQuery.Term("capabilities", "vision"));
+    }
+
+    /** T1277 — a plan with no free text, or nothing but free text, is never relaxed. */
+    @Test
+    void onlyFreeTextBesideAFilterIsDropped() {
+        TurDslQueryRequest textOnly = MAPPER.readValue("""
+                {"query":{"bool":{"must":[{"match":{"_text_":"vision"}}]}}}""", TurDslQueryRequest.class);
+        TurDslQueryRequest filterOnly = MAPPER.readValue("""
+                {"query":{"bool":{"filter":[{"term":{"kind":"CHAT"}}]}}}""", TurDslQueryRequest.class);
+        TurDslQueryRequest fieldMatch = MAPPER.readValue("""
+                {"query":{"bool":{"must":[{"match":{"title":"gpt"}},{"match":{"_text_":"which"}}]}}}""",
+                TurDslQueryRequest.class);
+
+        assertThat(com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies.withoutFreeText(textOnly))
+                .isEmpty();
+        assertThat(com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies.withoutFreeText(filterOnly))
+                .isEmpty();
+        assertThat(com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies.withoutFreeText(fieldMatch))
+                .get().satisfies(r -> assertThat(((TurDslQuery.Bool) r.query()).must())
+                        .containsExactly(new TurDslQuery.Match("title", "gpt", null)));
+    }
+
     private static boolean isFiltered(TurDslQueryRequest r) {
         return r.query() instanceof TurDslQuery.Bool b && b.filter() != null && !b.filter().isEmpty()
                 && b.filter().getFirst() instanceof TurDslQuery.Term t && "modality".equals(t.field());

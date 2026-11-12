@@ -1716,3 +1716,4 @@
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 
+- **T1277** — A filter-only copilot question whose leftover words find nothing runs its filters alone, and an NL filter value on a field that cannot hold it moves to the one facet that does.

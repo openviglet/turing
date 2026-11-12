@@ -616,7 +616,7 @@ curl -X POST "http://localhost:2700/api/sn/jobs/nl-filters" \
 }
 ```
 
-Pass `q` and `fq` to the search ([`POST /api/sn/{site}/search/query`](#post-native-search)) as they are. Viglet Turing checks every value against the values the site actually holds and spells it the way the site indexes it (`sao paulo` becomes `São Paulo`). A value the site does not hold is left out of `fq` and listed in `dropped` with the reason (`NOT_IN_SITE`, or `UNKNOWN_FIELD` for a field the site does not have).
+Pass `q` and `fq` to the search ([`POST /api/sn/{site}/search/query`](#post-native-search)) as they are. Viglet Turing checks every value against the values the site actually holds and spells it the way the site indexes it (`sao paulo` becomes `São Paulo`). A value the site does not hold is left out of `fq` and listed in `dropped` with the reason (`NOT_IN_SITE`, or `UNKNOWN_FIELD` for a field the site does not have). Before a value is dropped, Viglet Turing looks for it in the site's other facet fields: when exactly one of them holds it, the filter moves there (`type:chat` becomes `kind:CHAT` on a site that declares `kind`). The same move applies to a value on a string field that is not a facet, which could not be checked otherwise.
 
 Relative dates are resolved against the server's date, in English and Portuguese: "last year", "this month", "last month", "the last 7 days", "since March", "since 2024" ("ano passado", "neste mês", "desde março", ...). "Last year" asked on 2026-10-24 becomes `[2025-01-01 TO 2025-12-31]`. A date range the text neither phrases that way nor dates with a year is a guess, so it is left out of `fq` and listed in `dropped` as `UNGROUNDED_DATE`.
 

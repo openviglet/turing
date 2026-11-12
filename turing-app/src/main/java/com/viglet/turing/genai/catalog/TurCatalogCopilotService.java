@@ -499,6 +499,17 @@ public class TurCatalogCopilotService {
         Optional<TurDslSearchResponse> responseOpt =
                 dslSearchService.search(siteName, searchLocale, plan.request());
 
+        // T1277 — the words a parse leaves beside its filters ("Which models support ?"
+        // once capabilities=vision is lifted out) are not content: when filters and
+        // words together find nothing, the filters run alone, as q=*.
+        if (totalHitsOf(responseOpt) == 0) {
+            Optional<Relaxed> relaxed = filtersAlone(siteName, searchLocale, plan);
+            if (relaxed.isPresent()) {
+                plan = relaxed.get().plan();
+                responseOpt = relaxed.get().response();
+            }
+        }
+
         // T820 / §LIX.3 — second chance: a strategy may escalate once, having seen how
         // many hits its plan actually produced (HYBRID rescues an empty/degenerate one).
         Optional<TurCopilotQueryPlan> escalated =
@@ -611,6 +622,30 @@ public class TurCatalogCopilotService {
             log.warn("[CatalogCopilot] fan-out sub-query '{}' failed: {}", subQuery, e.getMessage());
             return List.of();
         }
+    }
+
+    /**
+     * T1277 — {@code plan} without its free-text clauses, and what it finds, when
+     * the filters alone find something; empty when there is no free text to drop or
+     * the filters find nothing either.
+     */
+    private Optional<Relaxed> filtersAlone(String siteName, String searchLocale, TurCopilotQueryPlan plan) {
+        Optional<TurDslQueryRequest> request = TurCopilotQueryBodies.withoutFreeText(plan.request());
+        if (request.isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<TurDslSearchResponse> response = dslSearchService.search(siteName, searchLocale, request.get());
+        if (totalHitsOf(response) == 0) {
+            return Optional.empty();
+        }
+        TurCopilotQueryPlan relaxed = new TurCopilotQueryPlan(request.get(), plan.strategy(), plan.llmPasses(),
+                plan.notes() + " → free text dropped (zero hits with it)");
+        logPlan(siteName, relaxed);
+        return Optional.of(new Relaxed(relaxed, response));
+    }
+
+    /** A plan and the response it found. */
+    private record Relaxed(TurCopilotQueryPlan plan, Optional<TurDslSearchResponse> response) {
     }
 
     /** T823 / §LX.2 + T818 — one INFO line per executed plan (strategy, cost, query). */

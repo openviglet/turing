@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2466,28 +2464,3 @@ none drops them when `cited` is false). Done when the demo question returns a ma
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
-
-### CLXXXIII.1 A filter-only plan answers zero hits on the model-catalog copilot (T1277)
-
-**Where.** turing-demo, SN site `model-catalog` (vectorless, structured feed), called by
-the "Ask the catalog" widget on models.viglet.org. Seen 2026-11-12 on the server logs.
-
-**Why it regressed.** The feed grew to 1206 models, and the log reads `stuff-all
-SKIPPED: index has 1001 rows > fetched 1000 (stuffAllMaxDocs=1000) -> FILTERED
-retrieval`. Under 1000 rows the copilot reasoned over the whole catalog; past it, every
-question takes the FILTERED path, which has two bugs.
-
-**Bug 1, a residual text clause.** "Which models support vision?" plans `must: _text_
-"Which models support ?"` plus `filter capabilities=vision`, and gets 0. The filter
-alone (`/search?q=*&fq[]=capabilities:vision`) gives 595. The words left after the facet
-is lifted out are not content; a plan made only of filters must run as `q=*`.
-
-**Bug 2, a field the manifest does not declare.** "Which chat model scores highest on
-the intelligence index?" plans `filter type=chat`. The manifest declares `kind`, with
-`CHAT`. The planner must only filter on manifest fields, with values matched
-case-insensitively (`fq[]=vendor:OpenAI` gives 0, as T802 once fixed).
-
-**Also.** `stuffAllMaxDocs` is a cliff: one row past it changes the answering mode.
-
-**Done when** both questions answer with citations on turing-demo, and they are in the
-`model-catalog.nl-facet-eval.json` sample so Turing CI catches the next regression.

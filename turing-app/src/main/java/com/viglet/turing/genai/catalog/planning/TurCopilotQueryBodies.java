@@ -11,6 +11,7 @@ package com.viglet.turing.genai.catalog.planning;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.dsl.TurDslQuery;
@@ -103,6 +104,52 @@ public final class TurCopilotQueryBodies {
         List<TurDslQuery> must = r.query() != null ? List.of(r.query()) : List.of();
         return copyWith(r, new TurDslQuery.Bool(must, List.of(), List.of(), List.of(filter), null),
                 r.size(), r.sort());
+    }
+
+    /**
+     * T1277 — {@code r} without its free-text clauses: a {@code bool} whose
+     * {@code must}/{@code should} hold a match on the full text ({@code _text_})
+     * beside at least one filter keeps the filters, the exclusions and every other
+     * clause, and loses the words. The words a parse leaves once the facet is lifted
+     * out ("Which models support ?") are not content, so a plan made of filters runs
+     * as {@code q=*}. Empty when there is no free text to drop or nothing would be
+     * left to narrow by.
+     */
+    public static Optional<TurDslQueryRequest> withoutFreeText(TurDslQueryRequest r) {
+        if (r == null || !(r.query() instanceof TurDslQuery.Bool bool)) {
+            return Optional.empty();
+        }
+        List<TurDslQuery> must = nonFreeText(bool.must());
+        List<TurDslQuery> should = nonFreeText(bool.should());
+        List<TurDslQuery> filter = bool.filter() == null ? List.of() : bool.filter();
+        boolean dropped = must.size() != size(bool.must()) || should.size() != size(bool.should());
+        if (!dropped || (filter.isEmpty() && must.isEmpty())) {
+            return Optional.empty();
+        }
+        TurDslQuery.Bool rest = new TurDslQuery.Bool(must, should,
+                bool.mustNot() == null ? List.of() : bool.mustNot(), filter,
+                should.isEmpty() ? null : bool.minimumShouldMatch());
+        return Optional.of(copyWith(r, rest, r.size(), r.sort()));
+    }
+
+    private static List<TurDslQuery> nonFreeText(List<TurDslQuery> clauses) {
+        if (clauses == null) {
+            return List.of();
+        }
+        return clauses.stream().filter(clause -> !isFreeText(clause)).toList();
+    }
+
+    private static boolean isFreeText(TurDslQuery clause) {
+        return switch (clause) {
+            case TurDslQuery.Match match -> match.field() == null || TurSNFieldName.DEFAULT.equals(match.field());
+            case TurDslQuery.MatchPhrase phrase ->
+                phrase.field() == null || TurSNFieldName.DEFAULT.equals(phrase.field());
+            case null, default -> false;
+        };
+    }
+
+    private static int size(List<TurDslQuery> clauses) {
+        return clauses == null ? 0 : clauses.size();
     }
 
     /** Field-for-field copy of {@code r} with the query, size and sort replaced. */

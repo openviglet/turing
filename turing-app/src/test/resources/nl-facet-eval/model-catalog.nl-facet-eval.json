@@ -7,6 +7,7 @@
     { "name": "kind", "type": "STRING", "facet": true, "description": "chat | embedding | image | audio" },
     { "name": "vendor", "type": "STRING", "facet": true, "description": "Provider (openai, anthropic, google, mistral, ...)" },
     { "name": "modality", "type": "STRING", "facet": true, "description": "Supported input modalities (text, vision, audio)" },
+    { "name": "capabilities", "type": "STRING", "facet": true, "description": "What the model can do (vision, tools, reasoning, ...)" },
     { "name": "benchmarks_intelligenceIndex", "type": "FLOAT", "facet": false, "description": "Overall intelligence index — the single headline quality metric" },
     { "name": "benchmarks_scores_math_value", "type": "FLOAT", "facet": false, "description": "Math domain sub-score only, NOT the overall intelligence index" },
     { "name": "pricing_inputPer1M", "type": "DOUBLE", "facet": false, "description": "Input price per 1M tokens (USD)" },
@@ -59,6 +60,13 @@
       "expect": {
         "filters": [ { "field": "kind", "value": "chat" } ],
         "sort": { "field": "pricing_inputPer1M", "order": "asc" }
+      }
+    },
+    {
+      "name": "which models support vision (filter only, no words left to search)",
+      "query": "Which models support vision?",
+      "expect": {
+        "filters": [ { "field": "capabilities", "value": "vision" } ]
       }
     },
     {

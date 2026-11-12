@@ -165,10 +165,11 @@ public class TurSNNLFilterService {
             Map<String, TurNLFacetField> schema, TurDslQueryRequest parsed) {
         Parse flat = flatten(parsed == null ? null : parsed.query());
         List<TurSNNLFilters.Dropped> dropped = new ArrayList<>();
-        Map<String, Set<String>> siteValues = siteValues(siteName, searchLocale,
-                termFieldsToGround(flat, schema));
+        Map<String, Set<String>> siteValues = new LinkedHashMap<>(siteValues(siteName, searchLocale,
+                termFieldsToGround(flat, schema)));
+        Map<String, List<String>> terms = rehome(siteName, searchLocale, flat.terms(), schema, siteValues);
         List<TurSNNLFilters.Filter> filters = new ArrayList<>();
-        flat.terms().forEach((field, values) -> termFilter(field, values, schema, siteValues, text, dropped)
+        terms.forEach((field, values) -> termFilter(field, values, schema, siteValues, text, dropped)
                 .ifPresent(filters::add));
         flat.ranges().forEach((field, range) -> rangeFilter(field, range, schema, text, dropped)
                 .ifPresent(filters::add));
@@ -313,6 +314,73 @@ public class TurSNNLFilterService {
                 .filter(field -> schema.containsKey(field) && schema.get(field).facet()
                         && !schema.get(field).numeric())
                 .toList();
+    }
+
+    /**
+     * T1277 — each value the parse put on a field that cannot hold it, moved to the
+     * one facet field that does: the model wrote {@code type=chat} where the site
+     * declares {@code kind} and holds {@code CHAT}. A value is homeless when its
+     * field is not in the schema, when its facet field was read and holds no such
+     * value, or when its field is a string field with no value list to check it
+     * against. The facet fields not read yet are read once, and only when a value
+     * is homeless; a value no facet holds, or more than one does, stays where the
+     * parse put it and is grounded (or dropped) there as before.
+     */
+    private Map<String, List<String>> rehome(String siteName, String locale, Map<String, List<String>> terms,
+            Map<String, TurNLFacetField> schema, Map<String, Set<String>> siteValues) {
+        boolean anyHomeless = terms.entrySet().stream()
+                .anyMatch(e -> e.getValue().stream().anyMatch(v -> homeless(e.getKey(), v, schema, siteValues)));
+        if (!anyHomeless) {
+            return terms;
+        }
+        List<String> facets = schema.values().stream()
+                .filter(field -> field.facet() && !field.numeric())
+                .map(TurNLFacetField::name)
+                .toList();
+        siteValues.putAll(siteValues(siteName, locale,
+                facets.stream().filter(field -> !siteValues.containsKey(field)).toList()));
+        Map<String, List<String>> rehomed = new LinkedHashMap<>();
+        terms.forEach((field, values) -> values.forEach(value -> {
+            String target = homeless(field, value, schema, siteValues)
+                    ? holder(field, value, facets, siteValues).orElse(field)
+                    : field;
+            if (!target.equals(field)) {
+                log.debug("[T1277] Moved '{}' from field '{}' to '{}', the facet that holds it", value, field,
+                        target);
+            }
+            List<String> moved = rehomed.computeIfAbsent(target, k -> new ArrayList<>());
+            if (!moved.contains(value)) {
+                moved.add(value);
+            }
+        }));
+        return rehomed;
+    }
+
+    private static boolean homeless(String field, String value, Map<String, TurNLFacetField> schema,
+            Map<String, Set<String>> siteValues) {
+        TurNLFacetField declared = schema.get(field);
+        if (declared == null) {
+            return true;
+        }
+        if (declared.numeric() || declared.type() == TurSEFieldType.TEXT
+                || declared.type() == TurSEFieldType.DATE) {
+            return false;
+        }
+        if (declared.facet()) {
+            Set<String> held = siteValues.get(field);
+            return held != null && canonical(value, held) == null;
+        }
+        return true;
+    }
+
+    /** The one facet field, other than {@code field}, that holds {@code value}. */
+    private static Optional<String> holder(String field, String value, List<String> facets,
+            Map<String, Set<String>> siteValues) {
+        List<String> holders = facets.stream()
+                .filter(facet -> !facet.equals(field) && siteValues.containsKey(facet)
+                        && canonical(value, siteValues.get(facet)) != null)
+                .toList();
+        return holders.size() == 1 ? Optional.of(holders.get(0)) : Optional.empty();
     }
 
     // ── Back to a query ─────────────────────────────────────────────────────

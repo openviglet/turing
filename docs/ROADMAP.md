@@ -22,10 +22,6 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
-## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
-
-- 📋 **T1277** (deps: —) **The copilot answers zero hits for a filter-only question, though the same filter alone matches hundreds of documents** — Which models support vision plans capabilities=vision and gets the empty fallback, while search finds 595; T802 fixed this shape before. → §CLXXXIII.1
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

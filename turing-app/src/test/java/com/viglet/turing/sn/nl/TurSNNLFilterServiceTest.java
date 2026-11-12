@@ -471,6 +471,63 @@ class TurSNNLFilterServiceTest {
         verify(dslSearchService, never()).search(any(), any(), any());
     }
 
+    private void modelCatalog() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("type", TurSEFieldType.STRING, false),
+                field("kind", TurSEFieldType.STRING, true),
+                field("capabilities", TurSEFieldType.STRING, true)));
+    }
+
+    @Test
+    @DisplayName("T1277 - a value on a field that cannot hold it moves to the one facet that does")
+    void aValueMovesToTheFacetThatHoldsIt() {
+        modelCatalog();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"term":{"type":"chat"}}]}}}""");
+        // type is no facet, so nothing is read until the value turns out homeless;
+        // then kind (f0) and capabilities (f1) are read in one search.
+        siteHolds(Map.of("f0", List.of("CHAT", "EMBEDDING"), "f1", List.of("vision", "tools")));
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "Which chat model scores highest?");
+
+        assertThat(result.fq()).containsExactly("kind:CHAT");
+        assertThat(result.filters().get(0).grounded()).isTrue();
+        assertThat(result.filters().get(0).sourceWords()).containsExactly("chat");
+        assertThat(result.dropped()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1277 - a field the site does not declare loses its value to the facet that holds it")
+    void anUnknownFieldsValueMovesToItsFacet() {
+        modelCatalog();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"term":{"modality":"Vision"}}]}}}""");
+        siteHolds(Map.of("f0", List.of("CHAT"), "f1", List.of("vision", "tools")));
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "Which models support vision?");
+
+        assertThat(result.fq()).containsExactly("capabilities:vision");
+        assertThat(result.dropped()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1277 - a value no facet holds, or two facets hold, stays where the parse put it")
+    void anAmbiguousOrUnheldValueStays() {
+        modelCatalog();
+        parserAnswers("""
+                {"query":{"bool":{"filter":[{"term":{"type":"chat"}},{"term":{"modality":"audio"}}]}}}""");
+        siteHolds(Map.of("f0", List.of("CHAT"), "f1", List.of("chat")));
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "chat models with audio");
+
+        assertThat(result.fq()).containsExactly("type:chat");
+        assertThat(result.filters().get(0).grounded()).isFalse();
+        assertThat(result.dropped()).containsExactly(
+                new TurSNNLFilters.Dropped("modality", "audio", TurSNNLFilterService.UNKNOWN_FIELD));
+    }
+
     @Test
     @DisplayName("Grounded filters go back to a query: terms, ranges as numbers, text fields as matches, exclusions kept")
     void groundedFiltersGoBackToAQuery() {

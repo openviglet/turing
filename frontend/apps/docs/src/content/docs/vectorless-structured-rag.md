@@ -168,6 +168,15 @@ guide as a link, without asking another system which is which.
 Multi-turn is supported: pass the running conversation and the latest user turn
 drives retrieval.
 
+**Questions that are only a filter.** "Which models support vision?" names one facet
+value and nothing else to search for. Once `capabilities = vision` is taken out of the
+question, the words left over ("Which models support") describe no product. When those
+words and the filter together match nothing, the copilot runs the filter alone, so the
+answer covers every document that has the value. A value the question names on the wrong
+field (the model writes `type = chat` where your catalog declares `kind` and holds `CHAT`)
+is moved to the one facet field that holds it. A value that more than one facet holds
+stays where the model put it.
+
 **Asking about one document.** On a product page the shopper's question is about the
 product in front of them. Send its indexed id as `documentId` (for example
 `"documentId": "jacket-42"`): the copilot fetches that document, puts it first in the
