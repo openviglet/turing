@@ -502,19 +502,25 @@ The same storage backend also powers the per-conversation [Agent Workspace](/doc
 
 ---
 
-### MongoDB (application logs)
+### Log store (MongoDB or Redis)
 
-MongoDB is used to persist application logs, making them accessible from the admin console. Disabled by default.
+Application logs, chat memory and chat analytics can be kept in MongoDB or Redis, which
+makes them browsable from the admin console. Off by default.
 
 | Property | Default | Description |
 |---|---|---|
-| `turing.mongodb.enabled` | `false` | Set `true` to enable MongoDB log persistence |
+| `turing.logging.engine` | `none` | Where logs, chat memory and chat analytics go: `none`, `mongodb` or `redis` |
+| `turing.mongodb.enabled` | `false` | Connect to MongoDB |
 | `turing.mongodb.uri` | `mongodb://localhost:27017` | MongoDB connection URI |
-| `turing.mongodb.logging.database` | `turingLog` | Database name for logs |
-| `turing.mongodb.logging.collection.server` | `server` | Collection for general server logs |
-| `turing.mongodb.logging.collection.aem` | `aem` | Collection for AEM-specific logs |
-| `turing.mongodb.logging.collection.indexing` | `indexing` | Collection for indexing pipeline logs |
-| `turing.mongodb.logging.purge.days` | `30` | Automatically delete log entries older than this many days |
+| `turing.redis.enabled` | `false` | Connect to Redis |
+| `turing.redis.uri` | `redis://localhost:6379/0` | Redis connection URI |
+| `turing.logging.database` | `turingLog` | Database name for the log store |
+| `turing.logging.collection.server` | `server` | Collection for general server logs |
+| `turing.logging.collection.aem` | `aem` | Collection for AEM connector logs |
+| `turing.logging.collection.indexing` | `indexing` | Collection for indexing pipeline logs |
+| `turing.logging.collection.chat` | `chat` | Collection for chat memory |
+| `turing.logging.collection.chat-analytics` | `chat_analytics` | Collection for chat analytics events |
+| `turing.logging.purge.days` | `30` | The nightly purge deletes server, AEM and indexing log entries older than this |
 
 ---
 
@@ -643,6 +649,22 @@ The [Code Interpreter](/docs/tool-calling/) execution mode (`NATIVE` default / `
 | `turing.code-interpreter.native.limits.cpu-seconds` | `35` | NATIVE CPU-time cap |
 | `turing.code-interpreter.warm-pool.enabled` | `false` | Pre-warmed interpreter pool (NATIVE only) |
 | `turing.code-interpreter.warm-pool.size` | `2` | interpreters kept ready |
+| `turing.code-interpreter.max-concurrent` | *(CPU count)* | Executions that may run at once; lower it on a memory-constrained host |
+| `turing.code-interpreter.acquire-timeout-ms` | `2000` | How long a call waits for a free slot before answering that the interpreter is busy |
+| `turing.code-interpreter.native.limits.limiter` | `auto` | NATIVE limiter backend: `auto`, `prlimit`, `systemd-run` or `none` |
+| `turing.code-interpreter.docker.executable` | `docker` | Docker CLI used for DOCKER mode and the skill sandbox |
+| `turing.code-interpreter.docker.probe-timeout-seconds` | `8` | Timeout of the check that Docker is available |
+| `turing.code-interpreter.docker.seccomp-profile` | *(Docker's default)* | Host path to a stricter seccomp profile JSON; ignored under gVisor |
+| `turing.code-interpreter.cleanup.enabled` | `true` | Delete old interpreter session directories |
+| `turing.code-interpreter.cleanup.session-ttl-hours` | `24` | Age after which a session directory is deleted |
+| `turing.code-interpreter.skill.timeout-seconds` | `120` | Time limit for one [skill](/docs/skills/) sandbox command |
+| `turing.code-interpreter.skill.cleanup.enabled` | `true` | Remove idle skill sandboxes |
+| `turing.code-interpreter.skill.cleanup.idle-ttl-hours` | `24` | Idle time after which a skill sandbox is removed |
+| `turing.code-interpreter.url-signing.enabled` | `true` | Sign the `sandbox:` file URLs an execution returns |
+| `turing.code-interpreter.url-signing.ttl-seconds` | `3600` | How long a signed file URL stays valid |
+| `turing.code-interpreter.url-signing.cookie-bound` | `true` | Also require the conversation's `TUR_CI_CONV` cookie; turn off when a cross-origin embed blocks the cookie |
+| `turing.workspace.url-signing.enabled` | `true` | Sign [agent workspace](/docs/agent-workspace/) file URLs |
+| `turing.workspace.url-signing.ttl-seconds` | `3600` | How long a signed workspace URL stays valid |
 
 ### Routines (async queue)
 
@@ -664,15 +686,141 @@ The [MCP server](/docs/mcp-servers/#viglet-turing-as-an-mcp-server) is off by de
 
 ### Chat analytics
 
-The [Chat Analytics](/docs/chat-analytics/) enricher, retention, and in-flight settings are documented in full on that page. One additional flag worth noting here:
+The [Chat Analytics](/docs/chat-analytics/) enricher, retention, and in-flight settings are documented in full on that page. The settings below are read at startup:
 
 | Property | Default | Purpose |
 |---|---|---|
+| `turing.chat.analytics.classifier.mode` | `auto` | Intent classifier: `auto` (LLM, then search-engine MLT, then Lucene), `llm`, `se-mlt` or `lucene` |
+| `turing.chat.analytics.classifier.se-instance-id` | *(empty)* | Search engine instance the `se-mlt` classifier indexes intents in |
+| `turing.chat.analytics.inflight.idle-timeout-min` | `30` | Minutes after which an open conversation with no end event is dropped from the in-memory counters |
 | `turing.chat.analytics.node-visit-log.enabled` | `false` | Record the per-turn node path on each conversation, enabling the **path-aware funnel**. Off: the funnel counts where conversations are parked and how many finished |
 
 ### Cost governance
 
 [Cost Governance](/docs/cost-governance/) is configured through data, not YAML: the **price table** (`tur_llm_price`, seeded for OpenAI/Anthropic/Gemini, editable in the console) and the **per-agent budget fields** (`monthlyBudgetUsd`, `perTurnSoftCapUsd`, `budgetDowngradeLlmId`) on the agent Settings form.
+
+### Safety (`turing.safety`)
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.safety.moderation.enabled` | `false` | Check user queries with OpenAI moderation before they reach the LLM or the index; fails open |
+| `turing.safety.moderation.model` | `omni-moderation-latest` | Moderation model |
+| `turing.safety.moderation.chunk-min-chars` | `512` | Crawled document chunks at least this long are moderated too |
+| `turing.safety.identifier.enabled` | `true` | Send a hashed end-user id as `safety_identifier` on OpenAI calls, so abuse is contained per user |
+| `turing.safety.identifier.salt` | *(empty)* | Salt mixed into that hash |
+
+### Resilience (`turing.resilience`)
+
+Retries, circuit breakers and time limits around calls to LLM providers (`llm`) and search
+engines (`search-engine`). Each group has `defaults` and per-type `overrides` (for example
+`openai`, `ollama`, `gemini`, `solr`, `lucene`), each with `retry`, `circuit-breaker` and
+`time-limiter` blocks.
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.resilience.enabled` | `true` | Global switch |
+| `turing.resilience.<group>.enabled` | `true` | Switch for `llm` or `search-engine` |
+| `turing.resilience.llm.defaults.retry.max-attempts` | `3` | Attempts per LLM call, with `wait-duration` `1s` doubling |
+| `turing.resilience.llm.defaults.time-limiter.timeout-duration` | `60s` | LLM call timeout (`openai` `90s`, `ollama` `300s`) |
+| `turing.resilience.llm.defaults.circuit-breaker.failure-rate-threshold` | `50` | Failure percentage that opens the circuit (over `sliding-window-size` `20`, after `minimum-number-of-calls` `10`, open for `30s`) |
+| `turing.resilience.search-engine.defaults.retry.max-attempts` | `3` | Attempts per search engine call, with `wait-duration` `500ms` doubling |
+| `turing.resilience.search-engine.defaults.time-limiter.timeout-duration` | `30s` | Search engine call timeout (`lucene` `10s`) |
+
+### Indexing
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.sn.import.bulk-direct.enabled` | `false` | Write a vectorless site's bulk reindex straight to the search engine instead of through the indexing queue |
+| `turing.sn.import.bulk-direct.batch-size` | `500` | Documents per direct batch |
+| `turing.sn.snapshot.cache.ttl` | `24h` | Longest an SN site configuration snapshot stays cached before the backstop sweep clears it |
+| `turing.genai.structured-feed.enabled` | `false` | Run the scheduled [structured-feed ingester](/docs/vectorless-structured-rag/) |
+| `turing.genai.structured-feed.interval-ms` | `3600000` | Time between feed pulls |
+
+### Embedding model downloads
+
+Local ONNX embedding models are downloaded from Hugging Face and cached.
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.genai.embedding.huggingface.base-url` | `https://huggingface.co` | Hugging Face endpoint, or a mirror |
+| `turing.genai.embedding.huggingface.candidate-limit` | `30` | Candidate models fetched when searching for a model |
+| `turing.genai.embedding.huggingface.result-limit` | `15` | Models with ONNX weights returned by a search |
+| `turing.genai.embedding.download.timeout-seconds` | `180` | Timeout of one model download |
+| `turing.genai.embedding.download.max-attempts` | `4` | Download attempts |
+| `turing.genai.embedding.download.initial-backoff-millis` | `750` | Wait before the first retry, doubling after each |
+| `turing.genai.embedding.local.djl-cache-dir` | *(under `store/`)* | Model and engine cache directory |
+
+### Prompt assembly and capture
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.prompt.assembly.stable-first-ordering` | `false` | Put every stable prompt segment before the per-turn ones, so a provider's prompt cache can reuse the prefix; changes what the model sees |
+| `turing.prompt.capture.max-turns-per-conversation` | `50` | Captured turns kept per conversation, for agents with prompt capture on |
+| `turing.prompt.capture.max-bytes-per-entry` | `262144` | A larger capture is skipped |
+| `turing.prompt.capture.retention-days` | `30` | Captures older than this are deleted |
+| `turing.prompt.capture.cleanup-cron` | `0 40 3 * * *` | When that deletion runs |
+
+### Vendor usage import (`turing.usage`)
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.usage.anthropic.enabled` | `false` | Import Anthropic's reported usage and cost every night |
+| `turing.usage.anthropic.admin-api-key` | *(empty)* | Anthropic Admin API key; the import does nothing without one |
+| `turing.usage.anthropic.base-url` | `https://api.anthropic.com` | Anthropic API endpoint |
+| `turing.usage.anthropic.lookback-days` | `2` | Days re-imported each night, so figures that settle late are corrected |
+| `turing.usage.import-cron` | `0 40 3 * * *` | When the import runs |
+
+### Search-index migration (`turing.migration`)
+
+Used when [migrating from Algolia or Elasticsearch](/docs/migration/).
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.migration.batch-size` | `500` | Documents pushed per import batch |
+| `turing.migration.timeout-seconds` | `30` | Timeout of each call to the source engine |
+| `turing.migration.max-documents` | `0` | Cap on documents per run; `0` imports the whole index |
+| `turing.migration.es-scroll-keep-alive` | `1m` | Elasticsearch scroll keep-alive between pages |
+| `turing.migration.sample-size` | `20` | Documents sampled to detect multi-valued fields |
+
+### Viglet AI managed credit (`turing.viglet-ai`)
+
+Settings of the `viglet` [LLM provider](/docs/llm-instances/). Change them only for a staging
+environment.
+
+| Property | Default | Description |
+|---|---|---|
+| `turing.viglet-ai.base-url` | `https://llm.viglet.cloud/v1` | Managed endpoint |
+| `turing.viglet-ai.model-alias` | `viglet-fast` | Model alias the endpoint serves |
+| `turing.viglet-ai.pairing-base-url` | `https://llm.viglet.cloud/pair` | Device pairing endpoint |
+| `turing.viglet-ai.upgrade-base-url` | `https://viglet.cloud/upgrade` | Where a quota refusal points; blank hides the link |
+| `turing.viglet-ai.upgrade-signing-secret` | *(empty)* | Key that signs the upgrade link; blank uses the pairing credential |
+| `turing.viglet-ai.upgrade-ttl-seconds` | `3600` | How long an upgrade link stays valid (at least 60) |
+| `turing.viglet-ai.assertion-ttl-seconds` | `120` | How long a per-call install assertion stays valid (at least 30) |
+
+### Scheduled jobs
+
+Spring cron expressions, with seconds first.
+
+| Property | Default | Job |
+|---|---|---|
+| `turing.batch.poll-cron` | `0 */5 * * * *` | Polls LLM batch jobs |
+| `turing.batch.summarization.cron` | `0 30 3 * * *` | Nightly batch summarization |
+| `turing.chat.champion.promote.cron` | `0 47 3 * * *` | Promotes winning [experiment](/docs/experiments/) variants |
+| `turing.chat.pii.cleanup.cron` | `0 23 * * * *` | Deletes expired PII slot values |
+| `turing.chat.submission.cleanup.cron` | `0 41 3 * * *` | Applies chat flow submission retention |
+| `turing.distillation.poll-cron` | `0 */15 * * * *` | Polls distillation jobs |
+| `turing.distillation.overnight-cron` | `0 20 3 * * *` | Overnight improvement run |
+| `turing.genai.citation-drift.cron` | `0 23 4 * * *` | Citation drift scan |
+| `turing.genai.human-approval.sweep-cron` | `0 */1 * * * *` | Times out [human approvals](/docs/human-in-the-loop/) |
+| `turing.genai.online-eval.cron` | `0 30 3 * * *` | Online [evaluation](/docs/agent-eval/) |
+| `turing.persona-match.schedule.enabled` | `true` | Runs scheduled [Persona Match](/docs/personas/#persona-match) projects |
+| `turing.persona-match.schedule.daily-cron` | `0 30 3 * * *` | Daily Persona Match projects |
+| `turing.persona-match.schedule.weekly-cron` | `0 0 4 * * SUN` | Weekly Persona Match projects |
+| `turing.research.schedule.enabled` | `true` | Runs scheduled [synthetic research](/docs/personas/#synthetic-user-research) studies |
+| `turing.research.schedule.daily-cron` | `0 45 3 * * *` | Daily studies |
+| `turing.research.schedule.weekly-cron` | `0 15 4 * * SUN` | Weekly studies |
+| `turing.self-tuning.cron` | `0 0 2 * * *` | Self-tuning run |
+| `turing.tenancy.deprovision.cron` | `0 25 3 * * *` | Removes deprovisioned [tenants](/docs/multi-tenancy/) |
 
 ---
 

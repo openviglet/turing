@@ -5,7 +5,7 @@ description: "Monitor server activity, indexing pipeline, and AEM connector logs
 The **Logging** console (`/admin/logging/instance`) provides centralized visibility into Viglet Turing operations. It is accessible from the sidebar and requires MongoDB to be enabled.
 
 :::note[MongoDB required]
-The Logging console requires `turing.mongodb.enabled: true`. Logs are stored in MongoDB collections and automatically purged after the configured retention period. See [Configuration Reference](/docs/configuration-reference/#mongodb-application-logs) for setup details.
+The Logging console requires `turing.mongodb.enabled: true`. Logs are stored in MongoDB collections and automatically purged after the configured retention period. See [Configuration Reference](/docs/configuration-reference/#log-store-mongodb-or-redis) for setup details.
 :::
 
 ---

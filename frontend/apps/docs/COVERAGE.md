@@ -205,6 +205,7 @@ These shipped blocks are engineering, repository, or marketing concerns with no 
 | Block | Why no page |
 |---|---|
 | **A, B, C**: test scaffolding, harness inversion, post-refactor capabilities | Internal engineering (chat-flow engine internals) |
+| Internal `turing.*` timing knobs: `*.initial-delay-ms`, `*.interval-ms`, `*.fixed-delay-ms` and `*.sweep-ms` of background jobs (code interpreter and skill sandbox cleanup, model catalog refresh, price sync, deprecation scan and change-feed email, structured feed, client tools), and `turing.build.commit` | Start-up delays and polling intervals of internal jobs, and build metadata the discovery endpoint reports; an operator never needs to change them. Every operator-facing `turing.*` setting is on [configuration-reference](./src/content/docs/configuration-reference.md) |
 | **CF** T1152: each embedded chunk of a document imported for several sites is tagged with the site it was written for | Internal vector-store metadata; no setting changes and chat already isolates sites by collection |
 | **CG** T1107-T1111: engine conformance IT, container ITs on Docker 29, Solr configset currency fields, core creation on Solr 10, exclusive-start Solr ranges | Test infrastructure and engine bug fixes with no new setting; the behaviour they restore is the one the search-engine and manifest pages already describe |
 | **D.1/D.2/D.5/D.7/D.8/D.11**, **E.1/E.5/E.8/E.9**, **H.1/H.2** | Internal engine/DX/SDK-migration work; user-facing slices surface on the pages above |
