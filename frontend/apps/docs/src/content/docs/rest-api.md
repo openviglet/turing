@@ -243,7 +243,7 @@ The POST endpoint accepts the same query parameters plus additional fields in th
 | `fieldList` | `string[]` | Restrict which fields are returned |
 | `disableAutoComplete` | `boolean` | Disable autocomplete suggestions (default: `false`) |
 | `populateMetrics` | `boolean` | Enable search metrics recording (default: `true`) |
-| `targetingRules` | `string[]` | Targeting rules: see [Targeting Rules](/docs/semantic-navigation/#targeting-rules) |
+| `targetingRules` | `string[]` | Targeting rules: see [Targeting Rules](/docs/targeting-rules/) |
 | `targetingRulesWithCondition` | `map` | Targeting rules with conditions |
 | `targetingRulesWithConditionAND` | `map` | Targeting rules with AND conditions |
 | `targetingRulesWithConditionOR` | `map` | Targeting rules with OR conditions |
@@ -261,7 +261,7 @@ curl -X POST "http://localhost:2700/api/sn/Sample/search" \
   }'
 ```
 
-For the full Targeting Rules reference (rule types, Solr query generation, fallback clause, and practical examples) see [Semantic Navigation → Targeting Rules](/docs/semantic-navigation/#targeting-rules).
+For the full Targeting Rules reference (rule types, Solr query generation, fallback clause, and practical examples) see [Targeting rules](/docs/targeting-rules/).
 
 ---
 

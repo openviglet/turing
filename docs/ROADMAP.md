@@ -24,7 +24,6 @@
 
 ## Block AE — Documentation parity & didactic refresh, post-T410 (§XXIX)
 
-- 📋 **T1281** (deps: —) **semantic-navigation.md is 8.5k words with repeated headings ("What they are", "REST API") and Title Case throughout** — The core SN page is the one most readers land on, and its duplicate anchors make links to a section ambiguous. → §CLXXXIV.2
 - 📋 **T1282** (deps: —) **rest-api.md is 7.9k words: endpoint reference interleaved with feature explanations and release-relative prose** — A developer cannot scan it as a reference; the explanations belong on feature pages and the endpoints in one consistent table shape. → §CLXXXIV.2
 - 📋 **T1283** (deps: T1279 ✅) **personas.md is 6.8k words overlapping persona-book.md, with internal block labels in its prose** — Two persona pages explain the same objects differently; the rewrite decides which page owns which type and cross-links them. → §CLXXXIV.2
 - 📋 **T1284** (deps: —) **94 code fences on 32 docs pages name no language, so Starlight renders them unhighlighted** — The cheapest docs-style debt: a mechanical pass shrinks the baseline before the rewrites, and a reader gets highlighting and a copy label. → §CLXXXIV.3

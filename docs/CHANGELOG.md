@@ -797,6 +797,7 @@
 - **T1278** — The COVERAGE.md Block CA row now links #teaching-viglet-turing-your-catalogs-own-ranking-words, and the docs-sync report counts zero unresolved COVERAGE links.
 - **T1279** — persona-book.md reads as one explanation page: sentence-case h2/h3 sections, no class names or history, stale audio engine fixed, API rows moved to personas.md, baseline entry paid.
 - **T1280** — The WordPress plugin docs are five pages by type: install and connect, indexing, search, wp-admin and a reference with every PHP filter; inbound anchors moved, baseline entry paid.
+- **T1281** — semantic-navigation.md has one h2 per tab, sentence-case unique headings and labelled fences; targeting and search rules moved to their own pages with links, sidebar and hub cards.
 
 ## Block AF — Domain layer: bounded completion, stop-criteria & enforcement (§XXX)
 

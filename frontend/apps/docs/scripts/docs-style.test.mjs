@@ -128,7 +128,6 @@ const BASELINE = {
   "security-hardening.md": ["frontmatter-description", "release-relative"],
   "security-keycloak.md": ["fence-language", "heading-sentence-case"],
   "security-social-login.md": ["heading-sentence-case"],
-  "semantic-navigation.md": ["fence-language", "heading-sentence-case", "heading-unique", "release-relative"],
   "showcase.md": ["frontmatter-description", "heading-sentence-case"],
   "skills.md": ["fence-language", "frontmatter-description", "heading-sentence-case"],
   "spa-pages.md": ["frontmatter-description", "heading-sentence-case"],

@@ -20,7 +20,7 @@ _Not a page: it sits outside `src/content/docs`, so Starlight never renders it. 
 | Block / feature | Page | Status |
 |---|---|---|
 | Search engine (Solr / ES / Lucene), cores | [search-engine](./src/content/docs/search-engine.md) | ✅ |
-| Semantic Navigation sites, facets, spotlights, targeting | [semantic-navigation](./src/content/docs/semantic-navigation.md) | ✅ |
+| Semantic Navigation sites, facets, spotlights, targeting, search rules | [semantic-navigation](./src/content/docs/semantic-navigation.md) · [targeting-rules](./src/content/docs/targeting-rules.md) · [search-rules](./src/content/docs/search-rules.md) | ✅ |
 | **Block R**: field manifest, schema-as-code, derivation, hybrid ranking, field coverage | [manifest](./src/content/docs/manifest.md) | ✅ |
 | **Block CE** (T1103): semantic recall on a hybrid SN site, adding the vector hits the keyword page missed to the first page, inside the request's filters; (T1105) recalled documents counted in their facet buckets, a per-site vector weight and the fields the site embeds | [manifest § Hybrid ranking for public search](./src/content/docs/manifest.md#hybrid-ranking-for-public-search) · [manifest § Semantic recall](./src/content/docs/manifest.md#semantic-recall) | 🧩 |
 | **Block CG** (T1106): Elasticsearch reads facet filters and custom sorts like Solr and Lucene | [search-engine § Plugin Architecture](./src/content/docs/search-engine.md#plugin-architecture) · [manifest § Custom sorts](./src/content/docs/manifest.md#custom-sorts) | 🧩 |

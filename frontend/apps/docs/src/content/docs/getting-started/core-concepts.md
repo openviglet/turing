@@ -120,7 +120,7 @@ Spotlights are configured per SN Site and managed through the admin console. See
 
 Targeting Rules let you show different results to different users from the same index. A document tagged as `audience: internal` only appears for users whose profile includes that attribute. Users without a matching profile always see untagged content.
 
-See [Targeting Rules](/docs/semantic-navigation/#targeting-rules) for a full explanation.
+See [Targeting Rules](/docs/targeting-rules/) for a full explanation.
 
 ---
 
