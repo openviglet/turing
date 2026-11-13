@@ -22,6 +22,14 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
+## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
+
+- 📋 **T1293** (deps: —) **A cheapest-embedding question plans no type filter or price sort, so the copilot says the catalog has no prices** — Pricing fields are indexed on every model, yet the public catalog demo refuses one of its own golden questions. → §CLXXXIII.2
+
+## Block CW — Chat retrieval recalls what the site's search finds
+
+- 📋 **T1294** (deps: —) **SN chat retrieval keeps one off-topic page while the site's search ranks the matching documents first** — On the demo, Tell me about surf camps gets San Diego Surf Spots and a refusal while search returns nine Bali Surf Camp hits. → §CLXXXVI.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

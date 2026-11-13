@@ -35,6 +35,10 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
+
+## Block CW — Chat retrieval recalls what the site's search finds
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2465,6 +2469,35 @@ the answer, and a marker-less answer on an opted-in site sends no citations.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
+### CLXXXIII.2 Ranking by a numeric field: lowest price, highest context (T1293)
+
+Met by the Viglet Cloud regression monitor (`tests/regression`), on the model-catalog
+"Ask the catalog" golden question, still after T1277 (`turing:2026.3-snapshot`,
+sha-f860190).
+
+Call: `POST https://turing-demo.viglet.org/api/sn/model-catalog/copilot`
+`{"messages":[{"role":"user","content":"Which embedding model has the lowest
+price?"}],"locale":"en-US"}`
+
+What came back: `groundedQuerySummary` empty (no filter, no sort), `totalHits` 1206, 8
+citations, and the answer "The catalog results do not provide any information about the
+prices of embedding models."
+
+What the index holds: `kind` is a facet with `EMBEDDING` among its values, and model
+documents carry `pricing_inputPer1M`, `pricing_outputPer1M` and `pricing_currency` (e.g.
+`gpt-4o-mini-tts` has `pricing_inputPer1M: 2.5`). So the plan should be `kind=EMBEDDING`
+sorted by `pricing_inputPer1M` ascending; instead the copilot reads neither the type nor
+the price ranking, the stuff-all/retrieved page holds eight arbitrary models, and the
+model answers that no prices exist.
+
+Expected: a "lowest/cheapest/highest <field>" question over a numeric schema field
+becomes a sort on that field, and "embedding model" becomes the `kind` filter, the same
+way "capabilities=vision" is read today; or the projection sent to the LLM keeps the
+pricing fields so the model can rank them.
+
+Workaround: none. Until 2026-11-13 the monitor counted this refusal as grounded (its
+pattern missed "do not"); Cloud C214 fixed that, so it now fails.
+
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
 
 Block AE reopened for the debt that two instruments measure in frontend/apps/docs: the
@@ -2474,3 +2507,32 @@ shrinks) and the turing-docs-sync reverse report
 into a drifted COVERAGE anchor, rewrites of the five largest pages, rule-by-rule sweeps,
 gaps between what the code declares and what the pages name, and running the lint where
 the docs ship.
+
+## CLXXXVI Chat retrieval recalls what the site's search finds
+
+### CLXXXVI.1 Chat recall below the site's own search (T1294)
+
+Met by the Viglet Cloud regression monitor (`tests/regression`, `api.spec.ts`), which
+has failed on this question in most scheduled runs since 2026-11-01 (it passed through
+10-31).
+
+Call: `postChatConversation(client, 'wknd-publish', [{role:'user', content:'Tell me
+about surf camps'}], 'en-US')` against `https://turing-demo.viglet.org/api`
+(`/api/sn/wknd-publish/chat/conversation`).
+
+What came back: one source, "San Diego Surf Spots"
+(`/us/en/magazine/san-diego-surf.html`), and the answer "The retrieved content does not
+contain information about surf camps."
+
+What the site holds: `GET /api/sn/wknd-publish/search?q=surf camps&_setlocale=en_US`
+returns 9 hits, the first three titled "Bali Surf Camp". So the documents are indexed
+and lexical search ranks them first; the conversation's retrieval leaves them out and
+keeps a single page about surf spots.
+
+Expected: the conversation's sources include the Bali Surf Camp pages the search returns
+for the same words, and the answer describes them. Retrieval for chat should not recall
+less than the site's own search does for the question's terms; where vector recall
+misses, hybrid or a lexical fallback should bring the search hits in.
+
+Workaround: none. The monitor keeps the question and fails on it. Observed on
+`turing:2026.3.8` and on `2026.3-snapshot` (sha-f860190).
