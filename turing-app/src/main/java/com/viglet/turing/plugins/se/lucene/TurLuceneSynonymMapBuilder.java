@@ -52,6 +52,42 @@ public final class TurLuceneSynonymMapBuilder {
     }
 
     public static TurLuceneSynonymMap build(List<TurSESynonymRule> rules) {
+        return build(rules, null);
+    }
+
+    /**
+     * T1304 — as {@link #build(List)}, for a core in {@code locale}'s language: a
+     * multi-word key is added also without that language's stop words, the way the
+     * query analyzer hands it to the synonym filter (stop words dropped first), so
+     * "fundação escola de sociologia e política" fires on the words a search keeps.
+     * The outputs stay as written: the index keeps stop words, and a phrase must line
+     * up with them. The query builder keeps the words typed as a way in of their own
+     * (synonyms only add), so a key that fires never costs the page holding the words.
+     */
+    public static TurLuceneSynonymMap build(List<TurSESynonymRule> rules, Locale locale) {
+        org.apache.lucene.analysis.CharArraySet stopWords = locale == null
+                ? org.apache.lucene.analysis.CharArraySet.EMPTY_SET
+                : com.viglet.turing.lucene.TurLuceneFoldingAnalyzer.stopWordsFor(locale);
+        return buildMap(rules, stopWords);
+    }
+
+    /** One rule, and its key without stop words when that differs and is still several words. */
+    private static void add(SynonymMap.Builder builder, String from, String to,
+            org.apache.lucene.analysis.CharArraySet stopWords) {
+        builder.add(charsRef(from), charsRef(to), true);
+        if (stopWords.isEmpty() || !from.contains(" ")) {
+            return;
+        }
+        String kept = java.util.Arrays.stream(from.split("\\s+"))
+                .filter(word -> !stopWords.contains(word))
+                .collect(java.util.stream.Collectors.joining(" "));
+        if (!kept.isEmpty() && !kept.equals(from) && !kept.equals(to)) {
+            builder.add(charsRef(kept), charsRef(to), true);
+        }
+    }
+
+    private static TurLuceneSynonymMap buildMap(List<TurSESynonymRule> rules,
+            org.apache.lucene.analysis.CharArraySet stopWords) {
         SynonymMap.Builder builder = new SynonymMap.Builder(true);
         Set<TurSNSynonymType> unsupported = EnumSet.noneOf(TurSNSynonymType.class);
         List<String> warnings = new ArrayList<>();
@@ -63,10 +99,10 @@ public final class TurLuceneSynonymMapBuilder {
                     continue;
                 }
                 boolean contributed = switch (rule.type()) {
-                    case REGULAR -> addRegular(builder, rule.terms());
-                    case ONE_WAY -> addDirectional(builder, rule.input(), rule.terms());
+                    case REGULAR -> addRegular(builder, rule.terms(), stopWords);
+                    case ONE_WAY -> addDirectional(builder, rule.input(), rule.terms(), stopWords);
                     case ALTERNATIVE_CORRECTION_1, ALTERNATIVE_CORRECTION_2 ->
-                            addCorrection(builder, warnings, rule);
+                            addCorrection(builder, warnings, rule, stopWords);
                     case PLACEHOLDER -> {
                         unsupported.add(TurSNSynonymType.PLACEHOLDER);
                         warnings.add("Placeholder synonym '" + safe(rule.input())
@@ -92,7 +128,8 @@ public final class TurLuceneSynonymMapBuilder {
         return new TurLuceneSynonymMap(map, applied, unsupported, warnings);
     }
 
-    private static boolean addRegular(SynonymMap.Builder builder, List<String> terms) {
+    private static boolean addRegular(SynonymMap.Builder builder, List<String> terms,
+            org.apache.lucene.analysis.CharArraySet stopWords) {
         List<String> clean = clean(terms);
         if (clean.size() < 2) {
             return false;
@@ -101,14 +138,15 @@ public final class TurLuceneSynonymMapBuilder {
         for (String from : clean) {
             for (String to : clean) {
                 if (!from.equals(to)) {
-                    builder.add(charsRef(from), charsRef(to), true);
+                    add(builder, from, to, stopWords);
                 }
             }
         }
         return true;
     }
 
-    private static boolean addDirectional(SynonymMap.Builder builder, String input, List<String> terms) {
+    private static boolean addDirectional(SynonymMap.Builder builder, String input, List<String> terms,
+            org.apache.lucene.analysis.CharArraySet stopWords) {
         String key = input == null ? null : input.trim().toLowerCase(Locale.ROOT);
         List<String> clean = clean(terms);
         if (key == null || key.isEmpty() || clean.isEmpty()) {
@@ -117,7 +155,7 @@ public final class TurLuceneSynonymMapBuilder {
         boolean any = false;
         for (String to : clean) {
             if (!to.equals(key)) {
-                builder.add(charsRef(key), charsRef(to), true);
+                add(builder, key, to, stopWords);
                 any = true;
             }
         }
@@ -125,8 +163,8 @@ public final class TurLuceneSynonymMapBuilder {
     }
 
     private static boolean addCorrection(SynonymMap.Builder builder, List<String> warnings,
-            TurSESynonymRule rule) {
-        boolean contributed = addDirectional(builder, rule.input(), rule.terms());
+            TurSESynonymRule rule, org.apache.lucene.analysis.CharArraySet stopWords) {
+        boolean contributed = addDirectional(builder, rule.input(), rule.terms(), stopWords);
         if (contributed) {
             warnings.add("Correction '" + safe(rule.input())
                     + "' degraded to a one-way synonym (Lucene has no per-rule typo budget).");

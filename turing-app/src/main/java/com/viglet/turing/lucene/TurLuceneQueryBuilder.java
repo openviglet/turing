@@ -589,9 +589,27 @@ public class TurLuceneQueryBuilder {
             if (relaxedMatch) {
                 termCentric = withHalfTheWordsRequired(termCentric);
             }
-            Query main = analyzer instanceof TurLuceneSynonymAnalyzer
-                    ? withMultiWordSynonyms(termCentric, queryStr, textFields, analyzer, weights)
-                    : termCentric;
+            Query main = termCentric;
+            if (analyzer instanceof TurLuceneSynonymAnalyzer) {
+                // T1304 — synonyms only add: the words parsed without them stay a way in.
+                // A multi-word key that fires turns the words typed into one path of the
+                // graph, which Lucene builds as a phrase without the gaps the stop words
+                // left, so the page holding the full name would stop matching it.
+                MultiFieldQueryParser plainParser = weights.isEmpty()
+                        ? new MultiFieldQueryParser(textFields, TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords))
+                        : new MultiFieldQueryParser(textFields, TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords),
+                                weights);
+                plainParser.setDefaultOperator(parser.getDefaultOperator());
+                Query plain = plainParser.parse(queryStr);
+                if (relaxedMatch) {
+                    plain = withHalfTheWordsRequired(plain);
+                }
+                main = new BooleanQuery.Builder()
+                        .add(withMultiWordSynonyms(termCentric, queryStr, textFields, analyzer, weights),
+                                BooleanClause.Occur.SHOULD)
+                        .add(plain, BooleanClause.Occur.SHOULD)
+                        .build();
+            }
             return phrasesOnPositionalFieldsOnly(main, positionalFields(turSNSite));
         } catch (ParseException e) {
             log.warn("Failed to parse Lucene query '{}', falling back to MatchAllDocsQuery: {}", queryStr,

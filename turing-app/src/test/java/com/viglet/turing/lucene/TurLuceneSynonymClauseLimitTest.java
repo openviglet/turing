@@ -126,6 +126,22 @@ class TurLuceneSynonymClauseLimitTest {
         assertThat(search("fundação escola sociologia política paulista")).contains("acronym");
     }
 
+    /**
+     * T1304 — built for the core's language, the full name expands to the acronym too,
+     * and still finds its own page: synonyms only add.
+     */
+    @Test
+    void theFullNameAndTheAcronymEachFindBothPages() throws Exception {
+        TurLuceneSynonymRegistry registry = new TurLuceneSynonymRegistry();
+        registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
+                new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
+                        List.of("fespsp", "fundação escola de sociologia e política"))), PT_BR).map());
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+
+        assertThat(search("fundação escola de sociologia e política")).contains("acronym", "fullname");
+        assertThat(search("fespsp")).contains("acronym", "fullname");
+    }
+
     /** T1304 — the synonym-free query a clause-limit retry runs leaves the group out. */
     @Test
     void aQueryBuiltWithoutSynonymsDoesNotExpand() throws Exception {

@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CX — Synonyms that mix single words and phrases
-
 ## Block CY — Filters from a sentence say what visitors say
 
 ## Block CZ — Backend modules with verified boundaries
@@ -2506,30 +2504,6 @@ the docs ship.
 ## CLXXXVI Chat retrieval recalls what the site's search finds
 
 ## CLXXXVII Synonyms that mix single words and phrases
-
-### CLXXXVII.2 Synonym keys analysed as the query is (T1304)
-
-Found while shipping T1297; the clause-limit half shipped as the first part of T1304.
-
-What is left, on the Lucene engine: a multi-word synonym key holding a stop word never
-fires from the phrase side. `TurLuceneSynonymAnalyzer` drops stop words before
-`SynonymGraphFilter`, which matches consecutive tokens, so the key `fundação escola de
-sociologia e política` never meets the tokens a search keeps, and a search for the full
-name never finds the pages that carry only the acronym.
-
-Tried and reverted (2026-11-19): adding each key a second time without the language's
-stop words (`TurLuceneSynonymMapBuilder.build(rules, locale)`). The key then fires, but
-Lucene's query parser does not split on whitespace, so the words typed become one of the
-graph's side paths, and `analyzeGraphPhrase` builds that path as a phrase without the
-position gaps the stop words left: `"fundacao escola sociologia politica"`, which no
-longer matches the page titled "Fundação Escola de Sociologia e Política". The full name
-lost its own page to gain the acronym's.
-
-What would work: build the typed-words path of a fired key as the plain words, not a
-phrase (an override of `analyzeGraphPhrase` in Turing's parser that keeps the original
-path's position increments), or keep the stop-word-free key one-way to the acronym and
-add the original words as a separate SHOULD clause. Either needs a test that both pages
-come back for the full name and for the acronym.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 

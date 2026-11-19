@@ -306,7 +306,8 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             Locale locale, List<TurSESynonymRule> rules) {
         // Embedded, single-JVM: "apply" = swap the query-time SynonymMap the query
         // analyzer consults for this core. No reindex — the next query expands.
-        TurLuceneSynonymMap built = TurLuceneSynonymMapBuilder.build(rules);
+        // T1304 — built for the core's language, so a phrase key fires without its stop words.
+        TurLuceneSynonymMap built = TurLuceneSynonymMapBuilder.build(rules, locale);
         synonymRegistry.put(indexName, built.map());
         return new TurSESynonymApplyResult(true, built.appliedRules(),
                 built.unsupportedTypes(), built.warnings());

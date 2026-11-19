@@ -1747,7 +1747,7 @@
 ## Block CX — Synonyms that mix single words and phrases
 
 - **T1297** — On Lucene the tail words of a multi-word synonym expansion get no stem or folded variants, so an acronym grouped with its full name searches within the clause limit and finds both.
-- **T1304 (clause-limit net)** — A Lucene search past the clause limit retries without the site's synonyms instead of failing, and the words typed inside a fired multi-word key get no variants past the first.
+- **T1304** — On Lucene a multi-word key also fires without its stop words, and the main query keeps the words typed as a way in of their own, so the full name and the acronym each find both pages.
 
 ## Block CY — Filters from a sentence say what visitors say
 

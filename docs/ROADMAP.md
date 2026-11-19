@@ -23,10 +23,6 @@
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 - 📋 **T1329** (deps: —) **Personal-data masking of search terms is one switch for the whole deployment, not per site** — A bookstore that wants its ISBN searches visible can only turn masking off for every site on the same Turing. → §CLXXXII.21
 
-## Block CX — Synonyms that mix single words and phrases
-
-- ⏳ **T1304** (deps: —) **On Lucene, a multi-word synonym with a stop word never fires from the phrase, and TooManyClauses still reaches clients** — A multi-word key holding a stop word still never fires from the phrase side; dropping the stop words from the key broke the full name's own match. → §CLXXXVII.2
-
 ## Block CY — Filters from a sentence say what visitors say
 
 - 📋 **T1330** (deps: —) **Filters from a sentence resolve today in the JVM's zone, not the site's, so tomorrow shifts a day near midnight** — On a UTC-3 site, amanhã asked at 22h already lands on the day after, and the Agenda answers for the wrong day. → §CLXXXVIII.3
@@ -63,12 +59,6 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
-
-## Done when — T1304
-
-- **The full name and the acronym each find both pages on Lucene** A test with the group
-  fespsp / "fundação escola de sociologia e política" searches each side and finds the
-  page holding only the acronym and the page holding only the full name.
 
 ## Non-goals (do NOT add as tasks)
 
