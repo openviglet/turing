@@ -233,6 +233,10 @@ POST /api/sn/manifest
 
 Each key is optional, and one you leave out keeps the site's current setting. A manifest without `facets` does not touch them. The response says `facetSettingsChanged: true` when a setting changed, and the [plan](#dry-run-the-diff) says `facetSettingsToChange`. From Java, `.facets(TurSNManifestFacets.multiSelect())` or `.facets(TurSNManifestFacets.drillDown().withItemsPerFacet(20))`.
 
+### Time zone
+
+`timeZone` is the site's IANA time zone (`"timeZone": "America/Sao_Paulo"`), or an offset such as `-03:00`. Filters read from a sentence resolve "today" and "tomorrow" in it. A manifest without `timeZone` leaves the site's as it is, and a name that is not a time zone is refused with HTTP 400 before anything changes. From Java, `.timeZone("America/Sao_Paulo")`. The WordPress plugin sends the zone under **Settings → General**.
+
 ---
 
 ## Schema-as-code: planner & migrations

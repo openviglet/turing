@@ -40,6 +40,10 @@ import com.viglet.core.manifest.VigletFieldSpec;
  * {@code facet} and {@code mandatory} cannot say "not declared", so converging them
  * by default would switch off a facet someone turned on in the console.
  *
+ * <p>T1330 — {@code timeZone}: the site's IANA time zone ({@code America/Sao_Paulo}),
+ * which "today" and "tomorrow" in filters read from a sentence are resolved in.
+ * Absent, the site keeps the zone it has.
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
@@ -47,7 +51,17 @@ public record TurSNManifestRequest(String name, String description, String seIns
         String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
         List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
         List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
-        Boolean convergeFields) {
+        Boolean convergeFields, String timeZone) {
+
+    /** The request as it was before {@link #timeZone}, kept for existing callers. */
+    public TurSNManifestRequest(String name, String description, String seInstanceId,
+            String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
+            List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
+            List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
+            Boolean convergeFields) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations,
+                customFacets, customSorts, genAi, facets, convergeFields, null);
+    }
 
     /** The request as it was before {@link #convergeFields}, kept for existing callers. */
     public TurSNManifestRequest(String name, String description, String seInstanceId,
@@ -55,7 +69,7 @@ public record TurSNManifestRequest(String name, String description, String seIns
             List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
             List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations,
-                customFacets, customSorts, genAi, facets, null);
+                customFacets, customSorts, genAi, facets, null, null);
     }
 
     /** T1296 — whether existing fields converge to what the manifest declares. */
@@ -85,7 +99,7 @@ public record TurSNManifestRequest(String name, String description, String seIns
     public static TurSNManifestRequest of(VigletFieldManifest manifest) {
         return new TurSNManifestRequest(manifest.name(), manifest.description(),
                 manifest.seInstanceId(), manifest.schemaVersion(), manifest.locales(),
-                manifest.fields(), manifest.migrations(), null, null, null, null, null);
+                manifest.fields(), manifest.migrations(), null, null, null, null, null, null);
     }
 
     public List<TurSNManifestCustomSort> customSortsOrEmpty() {

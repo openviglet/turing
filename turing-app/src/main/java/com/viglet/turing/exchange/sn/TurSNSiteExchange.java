@@ -57,6 +57,7 @@ public class TurSNSiteExchange {
 	private Integer relaxNoResults;
 	private Integer autocompleteTopTerms;
 	private Integer metricsMaskPersonalData;
+	private String timeZone;
 	private Integer exactMatch;
 	private boolean facet;
 	private Integer itemsPerFacet;
@@ -119,6 +120,7 @@ public class TurSNSiteExchange {
 		this.setRelaxNoResults(turSNSite.getRelaxNoResults());
 		this.setAutocompleteTopTerms(turSNSite.getAutocompleteTopTerms());
 		this.setMetricsMaskPersonalData(turSNSite.getMetricsMaskPersonalData());
+		this.setTimeZone(turSNSite.getTimeZone());
 		this.setExactMatch(turSNSite.getExactMatch());
 		this.setFacetType(turSNSite.getFacetType());
 		this.setFacetItemType(turSNSite.getFacetItemType());

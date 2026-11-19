@@ -229,6 +229,27 @@ class TurSNNLFilterServiceTest {
     }
 
     @Test
+    @DisplayName("T1330 - 'amanhã' at 23:30 in São Paulo is the 20th there, already the 21st in UTC")
+    void tomorrowIsTheSitesTomorrow() {
+        siteWithADateField();
+        service.setClockForTest(java.time.Clock.fixed(java.time.Instant.parse("2026-11-20T02:30:00Z"),
+                java.time.ZoneOffset.UTC));
+        String model = """
+                {"query":{"bool":{
+                  "filter":[{"range":{"publication_date":{"gte":"2026-11-21","lte":"2026-11-21"}}}],
+                  "must":[{"match":{"_text_":"palestras"}}]}}}""";
+        parserAnswers(model);
+        assertThat(service.parse("vagas", "pt_BR", "palestras amanhã").fq())
+                .as("no zone: the server's (UTC) tomorrow")
+                .containsExactly("publication_date:[2026-11-21 TO 2026-11-21]");
+
+        site.setTimeZone("America/Sao_Paulo");
+        assertThat(service.parse("vagas", "pt_BR", "palestras amanhã").fq())
+                .as("the site's tomorrow")
+                .containsExactly("publication_date:[2026-11-20 TO 2026-11-20]");
+    }
+
+    @Test
     @DisplayName("T1117 - 'last year' is resolved against today, whatever range the model guessed")
     void lastYearIsResolvedAgainstToday() {
         siteWithADateField();

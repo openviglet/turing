@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CY — Filters from a sentence say what visitors say
-
 ## Block CZ — Backend modules with verified boundaries
 
 ## Table of contents
@@ -2484,30 +2482,6 @@ the docs ship.
 ## CLXXXVII Synonyms that mix single words and phrases
 
 ## CLXXXVIII Filters from a sentence say what visitors say
-
-### CLXXXVIII.3 A site's time zone for relative dates (T1330)
-
-Found while shipping T1299. Filters from a sentence resolve "today", "tomorrow", "this
-weekend" and a month against `LocalDate.now(clock)` in `TurSNNLFilterService`, and the
-clock is `Clock.systemDefaultZone()`: the JVM's zone, UTC in the Docker image. On a
-UTC-3 site, "amanhã" asked at 22h local on the 19th is already the 20th in UTC, so it
-resolves to the 21st; "hoje" and "este fim de semana" shift the same way near midnight.
-
-`TurSNSite` has no time zone. The WordPress plugin knows the site's (`wp_timezone()`,
-T1295 reads meta dates in it) but cannot pass it.
-
-Fix: a nullable `timeZone` on the SN site (an IANA id; null keeps the JVM zone), a
-Liquibase changeset with a `columnExists` precondition, the console field next to the
-site's locales, the manifest key so a connector declares it, and `dateRangeFilter`
-resolving against `LocalDate.now(clock.withZone(site zone))`. The WordPress plugin sends
-`wp_timezone_string()` in its manifest.
-
-The Agenda/Past direction for a bare month (a Past facet reading "em outubro" as last
-October) needs the NL schema to carry custom facets; that is a separate step, noted here
-so it is not mistaken for part of this one.
-
-Tests: "amanhã" at 23:30 on 2026-11-19 in America/Sao_Paulo resolves to the 20th; a site
-with no zone keeps today's behaviour.
 
 ## CLXXXIX Backend modules with verified boundaries
 

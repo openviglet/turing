@@ -150,6 +150,14 @@ kept, so `boletim 20231234` is still counted as a search for a report card.
 The choice applies to searches, clicks, shared answers and answer feedback alike, from the
 moment it is saved; terms stored before keep how they were stored.
 
+### Time zone
+
+**Time zone** (in the same section) is the site's IANA time zone, such as
+`America/Sao_Paulo`. Filters read from a visitor's sentence resolve "today", "tomorrow",
+"this weekend" and the months in it, so "palestras amanhã" asked at 23:30 in São Paulo
+filters on the next day there, not on the day after in UTC. Empty, the server's time zone
+is used. A connector can set it from its manifest's `timeZone`.
+
 ### Facets
 
 | Setting | Description |

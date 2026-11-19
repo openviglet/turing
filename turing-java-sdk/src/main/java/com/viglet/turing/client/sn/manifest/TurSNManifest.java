@@ -61,6 +61,9 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
  *                      description and facet labels to what this manifest declares
  *                      (T1296); {@code null} keeps them, which is what a manifest
  *                      that does not state every one of them wants
+ * @param timeZone      the site's IANA time zone ({@code America/Sao_Paulo}), which
+ *                      "today" and "tomorrow" in filters read from a sentence are
+ *                      resolved in (T1330); {@code null} keeps the site's
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -69,7 +72,16 @@ public record TurSNManifest(String name, String description, String seInstanceId
         String schemaVersion, List<String> locales, List<TurSNJobAttributeSpec> fields,
         List<TurSNManifestMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
         List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
-        Boolean convergeFields) {
+        Boolean convergeFields, String timeZone) {
+
+    /** The constructor this record had before {@link #timeZone}, kept for existing callers. */
+    public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
+            List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
+            List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts,
+            TurSNManifestGenAi genAi, TurSNManifestFacets facets, Boolean convergeFields) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
+                customSorts, genAi, facets, convergeFields, null);
+    }
 
     /** The constructor this record had before {@link #convergeFields}, kept for existing callers. */
     public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
@@ -77,7 +89,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
             List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts,
             TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
-                customSorts, genAi, facets, null);
+                customSorts, genAi, facets, null, null);
     }
 
     /** The constructor this record had before {@link #facets}, kept for existing callers. */
@@ -150,6 +162,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
         private TurSNManifestGenAi genAi;
         private TurSNManifestFacets facets;
         private Boolean convergeFields;
+        private String timeZone;
 
         public Builder name(String name) {
             this.name = name;
@@ -255,6 +268,12 @@ public record TurSNManifest(String name, String description, String seInstanceId
             return this;
         }
 
+        /** The site's IANA time zone (T1330), e.g. {@code timeZone("America/Sao_Paulo")}. */
+        public Builder timeZone(String timeZone) {
+            this.timeZone = timeZone;
+            return this;
+        }
+
         public TurSNManifest build() {
             // An empty migrations list and a null one mean the same thing to the
             // server ("nothing is authorised"); null keeps the payload honest
@@ -264,7 +283,8 @@ public record TurSNManifest(String name, String description, String seInstanceId
                     List.copyOf(locales), List.copyOf(fields),
                     migrations.isEmpty() ? null : List.copyOf(migrations),
                     customFacets.isEmpty() ? null : List.copyOf(customFacets),
-                    customSorts.isEmpty() ? null : List.copyOf(customSorts), genAi, facets, convergeFields);
+                    customSorts.isEmpty() ? null : List.copyOf(customSorts), genAi, facets, convergeFields,
+                    timeZone);
         }
     }
 }

@@ -340,6 +340,10 @@ public class TurSNSiteImport {
 		}
 		// T1329 — null on purpose means "follow the deployment", so it is copied as is.
 		turSNSite.setMetricsMaskPersonalData(turSNSiteExchange.getMetricsMaskPersonalData());
+		// T1330 — an unknown zone in an export is left out rather than failing the import.
+		if (com.viglet.turing.sn.nl.TurSiteTimeZone.of(turSNSiteExchange.getTimeZone()).isPresent()) {
+			turSNSite.setTimeZone(turSNSiteExchange.getTimeZone());
+		}
 		turSNSite.setExactMatch(turSNSiteExchange.getExactMatch());
 		turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
 		turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());

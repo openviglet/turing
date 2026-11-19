@@ -120,6 +120,7 @@ public class TurSNSiteManifestService {
         turSNManifestCustomSortConverger.validate(site, manifest, request.customSortsOrEmpty());
         turSNManifestGenAiConverger.validate(request.genAi());
         turSNManifestFacetsConverger.validate(request.facets());
+        com.viglet.turing.sn.nl.TurSiteTimeZone.validated(request.timeZone());
         return new TurSNManifestPlan(diff,
                 turSNManifestCustomFacetConverger.plan(site, manifest, request.customFacetsOrEmpty()),
                 turSNManifestCustomSortConverger.plan(site, request.customSortsOrEmpty()),
@@ -168,6 +169,7 @@ public class TurSNSiteManifestService {
         turSNManifestCustomSortConverger.validate(liveSite, manifest, customSorts);
         turSNManifestGenAiConverger.validate(request.genAi());
         turSNManifestFacetsConverger.validate(request.facets());
+        String timeZone = com.viglet.turing.sn.nl.TurSiteTimeZone.validated(request.timeZone());
 
         List<Locale> locales = parseLocales(manifest.locales());
         List<String> localesCreated = new ArrayList<>();
@@ -210,7 +212,12 @@ public class TurSNSiteManifestService {
         List<String> customSortsChanged = turSNManifestCustomSortConverger.converge(site, customSorts);
         boolean genAiChanged = turSNManifestGenAiConverger.converge(site, request.genAi());
         boolean facetSettingsChanged = turSNManifestFacetsConverger.converge(site, request.facets());
-        if (facetSettingsChanged) {
+        // T1330 — a declared time zone converges; an absent one leaves the site's.
+        boolean timeZoneChanged = timeZone != null && !timeZone.equals(site.getTimeZone());
+        if (timeZoneChanged) {
+            site.setTimeZone(timeZone);
+        }
+        if (facetSettingsChanged || timeZoneChanged) {
             turSNSiteRepository.save(site);
         }
 

@@ -172,7 +172,9 @@ public class TurSNNLFilterService {
         org.apache.lucene.analysis.CharArraySet stopWords = stopWords(searchLocale);
         terms.forEach((field, values) -> termFilter(field, values, schema, siteValues, text, dropped, stopWords)
                 .ifPresent(filters::add));
-        flat.ranges().forEach((field, range) -> rangeFilter(field, range, schema, text, dropped)
+        // T1330 — "today" is the site's today, in its own time zone when it names one.
+        java.time.ZoneId zone = flat.ranges().isEmpty() ? clock.getZone() : siteZone(siteName);
+        flat.ranges().forEach((field, range) -> rangeFilter(field, range, schema, text, dropped, zone)
                 .ifPresent(filters::add));
 
         String q = StringUtils.hasText(flat.freeText()) ? flat.freeText().trim() : leftover(text, filters);
@@ -521,8 +523,24 @@ public class TurSNNLFilterService {
         return spelledInText ? LITERAL : INFERRED;
     }
 
+    /** T1330 — the site's time zone, or the clock's when the site names none. */
+    private java.time.ZoneId siteZone(String siteName) {
+        if (!StringUtils.hasText(siteName)) {
+            return clock.getZone();
+        }
+        try {
+            return turSNSiteRepository.findByNameIgnoreCase(siteName)
+                    .flatMap(site -> TurSiteTimeZone.of(site.getTimeZone()))
+                    .orElse(clock.getZone());
+        } catch (RuntimeException e) {
+            log.debug("[T1330] time zone of site '{}' not read: {}", siteName, e.getMessage());
+            return clock.getZone();
+        }
+    }
+
     private Optional<TurSNNLFilters.Filter> rangeFilter(String field, String[] range,
-            Map<String, TurNLFacetField> schema, String text, List<TurSNNLFilters.Dropped> dropped) {
+            Map<String, TurNLFacetField> schema, String text, List<TurSNNLFilters.Dropped> dropped,
+            java.time.ZoneId zone) {
         if (!schema.containsKey(field)) {
             dropped.add(new TurSNNLFilters.Dropped(field, "[" + range[0] + " TO " + range[1] + "]",
                     UNKNOWN_FIELD));
@@ -532,7 +550,7 @@ public class TurSNNLFilterService {
             return Optional.empty();
         }
         if (schema.get(field).type() == TurSEFieldType.DATE) {
-            return dateRangeFilter(field, range, text, dropped);
+            return dateRangeFilter(field, range, text, dropped, zone);
         }
         // T1211 — the bound's span: the amount as the text formats it, with its currency and bound phrase
         List<TurSNNLRangeSpan.Span> spans = new ArrayList<>();
@@ -555,8 +573,9 @@ public class TurSNNLFilterService {
      * rather than sent as a filter that hides what the visitor asked for.
      */
     private Optional<TurSNNLFilters.Filter> dateRangeFilter(String field, String[] range, String text,
-            List<TurSNNLFilters.Dropped> dropped) {
-        Optional<TurRelativeDateRange> relative = TurRelativeDateRange.resolve(text, LocalDate.now(clock));
+            List<TurSNNLFilters.Dropped> dropped, java.time.ZoneId zone) {
+        Optional<TurRelativeDateRange> relative = TurRelativeDateRange.resolve(text,
+                LocalDate.now(clock.withZone(zone)));
         if (relative.isPresent()) {
             return Optional.of(relativeFilter(field, range, relative.get()));
         }

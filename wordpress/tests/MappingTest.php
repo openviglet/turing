@@ -656,6 +656,8 @@ final class MappingTest extends PluginTestCase {
 				),
 				// Turing T1296: a field turned off or relabelled converges, not only a new one.
 				'convergeFields' => true,
+				// Turing T1330: the site's own days, for "hoje" and "amanhã".
+				'timeZone'       => 'UTC',
 			),
 			$this->mapping()->manifest()
 		);

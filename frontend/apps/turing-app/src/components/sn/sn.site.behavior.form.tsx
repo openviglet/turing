@@ -317,6 +317,37 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew, baseRoute = 
               </FormItemTwoColumns>
             )}
           />
+          <FormField
+            control={form.control}
+            name="timeZone"
+            render={({ field }) => (
+              <FormItemTwoColumns>
+                <FormItemTwoColumns.Left>
+                  <FormItemTwoColumns.Label>{t("forms.snBehavior.timeZone")}</FormItemTwoColumns.Label>
+                  <FormItemTwoColumns.Description>
+                    {t("forms.snBehavior.timeZoneDesc")}
+                  </FormItemTwoColumns.Description>
+                </FormItemTwoColumns.Left>
+                <FormItemTwoColumns.Right>
+                  <FormControl>
+                    <Input
+                      className="max-w-xs font-mono text-sm"
+                      list="tur-time-zones"
+                      placeholder="America/Sao_Paulo"
+                      type="text"
+                      value={field.value ?? ""}
+                      onChange={(event) => field.onChange(event.target.value.trim() || null)}
+                    />
+                  </FormControl>
+                  <datalist id="tur-time-zones">
+                    {Intl.supportedValuesOf("timeZone").map((zone) => (
+                      <option key={zone} value={zone} />
+                    ))}
+                  </datalist>
+                </FormItemTwoColumns.Right>
+              </FormItemTwoColumns>
+            )}
+          />
         </SNFormSection>
 
         {/* Facets */}

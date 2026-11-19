@@ -40,6 +40,8 @@ export type TurSNSite = {
   autocompleteTopTerms?: number;
   /** T1329 — 1 masks personal data in stored search terms, 0 keeps it, null follows the deployment. */
   metricsMaskPersonalData?: number | null;
+  /** T1330 — IANA time zone that "today" and "tomorrow" in sentence filters mean; null is the server's. */
+  timeZone?: string | null;
   exactMatch: number;
   turSNSiteGenAi: TurSNSiteGenAi;
   icon?: string | null;

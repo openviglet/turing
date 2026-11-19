@@ -470,6 +470,8 @@
       "maskPersonalDataDefault": "Como o servidor está configurado",
       "maskPersonalDataOn": "Ocultar",
       "maskPersonalDataOff": "Manter como digitado",
+      "timeZone": "Fuso horário",
+      "timeZoneDesc": "O que \"hoje\", \"amanhã\" e \"este fim de semana\" significam quando os filtros são lidos da frase do visitante. Deixe vazio para usar o fuso do servidor.",
       "facets": "Facetas",
       "facetsDesc": "Opções de filtragem e configurações de navegação facetada.",
       "enableFacets": "Habilitar Facetas",

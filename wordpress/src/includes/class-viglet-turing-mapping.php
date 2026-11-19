@@ -442,7 +442,7 @@ class Viglet_Turing_Mapping {
 	 * `site_key` is always declared: delete-all filters on it, and with several sites in one SN
 	 * site it is the facet that tells them apart.
 	 *
-	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, convergeFields: bool, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
+	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, convergeFields: bool, timeZone: string, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
 	 */
 	public function manifest(): array {
 		$locale = $this->settings['locale'] ?? 'en_US';
@@ -527,6 +527,9 @@ class Viglet_Turing_Mapping {
 			// turned from facet on to off, or relabelled, changes on Turing too, not only when
 			// first created. Fields the mapping leaves out keep what the console gave them.
 			'convergeFields' => true,
+			// Turing T1330: "hoje" and "amanhã" in filters read from a sentence are the site's
+			// days, in the time zone under Settings > General.
+			'timeZone'       => wp_timezone()->getName(),
 		);
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;

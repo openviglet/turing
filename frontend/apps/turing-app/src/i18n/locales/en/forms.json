@@ -470,6 +470,8 @@
       "maskPersonalDataDefault": "As the server is configured",
       "maskPersonalDataOn": "Hide",
       "maskPersonalDataOff": "Keep as typed",
+      "timeZone": "Time zone",
+      "timeZoneDesc": "What \"today\", \"tomorrow\" and \"this weekend\" mean when filters are read from a visitor's sentence. Leave empty to use the server's time zone.",
       "facets": "Facets",
       "facetsDesc": "Filtering options and faceted navigation settings.",
       "enableFacets": "Enable Facets",

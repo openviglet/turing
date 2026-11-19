@@ -407,8 +407,8 @@ class TurSNSiteSearchSnapshotServiceTest {
             declared.set(original, sampleFor(declared.getType(), declared.getName(), nth));
             scalars.add(declared);
         }
-        // T1329 — metricsMaskPersonalData is the 35th.
-        assertThat(scalars).as("the site must still have scalars to copy").hasSize(35);
+        // T1329 — metricsMaskPersonalData is the 35th; T1330 — timeZone the 36th.
+        assertThat(scalars).as("the site must still have scalars to copy").hasSize(36);
 
         TurSNSite rebuilt = TurSNSiteSearchSiteView.from(original, "solr").toEntity();
 

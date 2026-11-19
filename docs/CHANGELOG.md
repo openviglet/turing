@@ -1754,6 +1754,7 @@
 
 - **T1299** — Filters from a sentence resolve a month after a preposition, tomorrow, this weekend, next week, next month and the next N days, in English, Portuguese and Spanish; a bare month name stays a name.
 - **T1300** — Filters from a sentence ground a short name to the one facet value holding all its content words (Casarão to Casarão FESPSP) at confidence 0.6; a name two values share stays dropped (design §CLXXXVIII.2 superseded: dropped keeps NOT_IN_SITE for both none and several rather than a new reason, since the JS SDK types reason as a closed union).
+- **T1330** — An SN site has a time zone (console, manifest timeZone, export) that filters read from a sentence resolve today and tomorrow in; the Java SDK and the WordPress plugin send it.
 
 ## Block CZ — Backend modules with verified boundaries
 

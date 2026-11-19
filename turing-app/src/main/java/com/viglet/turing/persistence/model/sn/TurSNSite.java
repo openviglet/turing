@@ -146,6 +146,14 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@Column(name = "metricsMaskPersonalData")
 	private Integer metricsMaskPersonalData;
 
+	/**
+	 * T1330 — the site's time zone, an IANA id ({@code America/Sao_Paulo}): what
+	 * "today", "tomorrow" and "this weekend" mean in filters read from a sentence.
+	 * {@code null} keeps the server's zone.
+	 */
+	@Column(name = "timeZone", length = 64)
+	private String timeZone;
+
 	@Column
 	private Integer exactMatch = 0;
 

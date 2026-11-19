@@ -350,6 +350,28 @@ class TurSNSiteManifestServiceTest {
         assertEquals(java.util.Map.of(), service.planRequest(keep).fieldsToChange());
     }
 
+    /** T1330 — a declared time zone converges; an unknown one is refused before anything changes. */
+    @Test
+    void aDeclaredTimeZoneConvergesAndAnUnknownOneIsRefused() {
+        TurSNSite existing = new TurSNSite();
+        existing.setName("agenda");
+        TurSNManifestRequest request = new TurSNManifestRequest("agenda", null, null, null, null,
+                List.of(field("start")), null, null, null, null, null, null, "America/Sao_Paulo");
+        when(turSNSiteRepository.findByNameIgnoreCase("agenda")).thenReturn(Optional.of(existing));
+        when(turSNSiteRepository.findByIdWithGenAi(any())).thenReturn(Optional.of(existing));
+        when(turSNManifestPlanner.diff(any(VigletFieldManifest.class), eq(existing))).thenReturn(cleanDiff());
+
+        service.provisionRequest(request);
+
+        assertEquals("America/Sao_Paulo", existing.getTimeZone());
+        verify(turSNSiteRepository).save(existing);
+
+        TurSNManifestRequest unknown = new TurSNManifestRequest("agenda", null, null, null, null,
+                List.of(field("start")), null, null, null, null, null, null, "Mars/Olympus");
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service.provisionRequest(unknown));
+    }
+
     @Test
     void planRequestNamesTheCustomSortsToChange() {
         TurSNManifestRequest request = new TurSNManifestRequest("jobs", null, "se1", null, null,

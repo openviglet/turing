@@ -170,6 +170,7 @@ public class TurSNSiteAPI {
             turSNSiteEdit.setRelaxNoResults(turSNSite.getRelaxNoResults());
             turSNSiteEdit.setAutocompleteTopTerms(turSNSite.getAutocompleteTopTerms());
             turSNSiteEdit.setMetricsMaskPersonalData(turSNSite.getMetricsMaskPersonalData());
+            turSNSiteEdit.setTimeZone(com.viglet.turing.sn.nl.TurSiteTimeZone.validated(turSNSite.getTimeZone()));
             turSNSiteEdit.setExactMatchField(turSNSite.getExactMatchField());
             turSNSiteEdit.setDefaultField(turSNSite.getDefaultField());
             turSNSiteEdit.setDefaultTitleField(turSNSite.getDefaultTitleField());
