@@ -29,7 +29,7 @@
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 
-- 📋 **T1294** (deps: —) **SN chat retrieval keeps one off-topic page while the site's search ranks the matching documents first** — On the demo, Tell me about surf camps gets San Diego Surf Spots and a refusal while search returns nine Bali Surf Camp hits. → §CLXXXVI.1
+- 📋 **T1302** (deps: —) **The single-turn SN chat and the non-streaming conversation still retrieve vector-only, without the site's lexical hits** — GET /chat?q= keeps the T1294 gap: one off-topic page and a refusal where the site's own search finds the answer. → §CLXXXVI.2
 
 ## Block CX — Synonyms that mix single words and phrases
 

@@ -2605,33 +2605,26 @@ the docs ship.
 
 ## CLXXXVI Chat retrieval recalls what the site's search finds
 
-### CLXXXVI.1 Chat recall below the site's own search (T1294)
+### CLXXXVI.2 Lexical recall on every SN chat surface (T1302)
 
-Met by the Viglet Cloud regression monitor (`tests/regression`, `api.spec.ts`), failing
-on this question in most runs since 2026-11-01, on `turing:2026.3.8` and
-`2026.3-snapshot` (sha-f860190).
+Found while shipping T1294. The conversation and `/answer` paths now top a thin vector
+pass up with the site's own lexical search (`TurSNGenAi.withLexicalRecall`), which needs
+the request locale to run the site's search. Two other callers of `retrieveDocuments`
+pass none, so they stay vector-only and keep the T1294 gap:
 
-`/api/sn/wknd-publish/chat/conversation` with "Tell me about surf camps" returns one
-source, "San Diego Surf Spots", and "The retrieved content does not contain information
-about surf camps." `GET /api/sn/wknd-publish/search?q=surf camps` returns 9 hits, the
-first three "Bali Surf Camp".
+- the single-turn chat, `GET /api/sn/{site}/chat?q=` (`TurSNSiteGenAiAPI` resolves the
+  locale with `resolveIndexedLocale`, then calls `TurSNGenAi.assistant(context, q)`,
+  which drops it before `getTurChatMessage`);
+- the non-streaming conversation in `TurSNGenAi` that builds a `TurChatMessage` from
+  `retrieveDocuments(context, standaloneQuery(...), filters)`.
 
-Validated against the code (2026-11-19): chat retrieval is vector-only.
-`TurSNGenAi.retrieveDocuments` -> `similaritySearch` (topK 10 chunks, 0.4 floor) has no
-lexical leg and no lexical fallback; its only retry drops an auto-extracted filter. Ten
-chunks of one page then collapse to one source in `TurRagSource.dedupeByDocument`.
-T383's `TurSNHybridRankingService` is never called here. `/answer` goes through the same
-`assistantConversationStreaming`, so it has the same gap, and the Javadoc of
-`TurSNAnswerService` that says it "inherits hybrid ranking" is wrong.
+Fix: carry the locale those callers already hold into `retrieveDocuments` (an
+`assistant(context, q, locale)` overload, the old signature delegating with `null`), so
+every SN chat surface recalls what the site's search finds. No new mechanism: the same
+`withLexicalRecall`, thresholds and fail-open.
 
-Fix, at `retrieveDocuments` (one seam for chat and `/answer`): fuse the site's lexical
-search hits with the vector hits by reciprocal rank, or at least fall back to lexical
-when vector recall yields fewer distinct documents than a minimum. Count documents, not
-chunks, before deciding recall is enough.
-
-Edge cases the tests carry: a lexical hit needs its chunk text before it enters the
-prompt; partition confinement (T1133) and STRICT_RAG with the refusal gate still hold;
-the standalone-query rewrite feeds both legs. Correct the `TurSNAnswerService` Javadoc.
+Test: the single-turn chat with a one-document vector pass and three lexical hits
+answers from all of them; with no locale it stays vector-only.
 
 ## CLXXXVII Synonyms that mix single words and phrases
 

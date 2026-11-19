@@ -146,6 +146,15 @@ public class TurSNGenAi {
     private final com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
     private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
     private final com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService;
+    private final com.viglet.turing.sn.dsl.TurDslSearchService dslSearchService;
+
+    /**
+     * T1294 — below this many distinct documents the vector pass is thin, and the
+     * site's own lexical search tops it up.
+     */
+    static final int MIN_DISTINCT_DOCUMENTS = 3;
+    /** T1294 — how many of the site's lexical hits a thin vector pass is topped up with. */
+    static final int LEXICAL_RECALL_HITS = 5;
 
     /** T1127 — the cost stages of the SN calls this class makes outside the agent executor. */
     static final String STAGE_SN_CHAT = "sn.chat";
@@ -230,6 +239,27 @@ public class TurSNGenAi {
                 moderationService, fullContextService, nlFilterService, tokenUsageService, null);
     }
 
+    /** The constructor before T1294, kept for callers that build this class by hand. */
+    public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
+            TurGenAiContextFactory turGenAiContextFactory,
+            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurRagContextBuilder turRagContextBuilder,
+            TurRagFacetExtractor facetExtractor,
+            TurAgentChatExecutor agentChatExecutor,
+            com.viglet.turing.system.TurGlobalSettingsService globalSettingsService,
+            com.viglet.turing.genai.rag.TurRagReranker ragReranker,
+            com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService,
+            com.viglet.turing.genai.safety.TurModerationService moderationService,
+            TurSNFullContextService fullContextService,
+            com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
+            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService,
+            com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService) {
+        this(turSNSearchProcess, turGenAiContextFactory, turSNSiteLocaleRepository, turRagContextBuilder,
+                facetExtractor, agentChatExecutor, globalSettingsService, ragReranker, chatFlowEngineService,
+                moderationService, fullContextService, nlFilterService, tokenUsageService, promptCaptureService,
+                null);
+    }
+
     /**
      * @param nlFilterService      T1085 — the shared NL filter extractor; {@code @Lazy}
      *                             because it reaches the search engines, which this
@@ -238,6 +268,10 @@ public class TurSNGenAi {
      *                             the agent executor in the cost ledger
      * @param promptCaptureService T1157 — records the query a rewritten follow-up
      *                             searched, for the Live Preview
+     * @param dslSearchService     T1294 — the site's lexical search, which tops up a
+     *                             thin vector pass; {@code @Lazy} for the same reason
+     *                             as {@code nlFilterService}, and {@code null} keeps
+     *                             retrieval vector-only
      */
     @org.springframework.beans.factory.annotation.Autowired
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
@@ -253,7 +287,9 @@ public class TurSNGenAi {
             TurSNFullContextService fullContextService,
             @org.springframework.context.annotation.Lazy com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
             com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService,
-            com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService) {
+            com.viglet.turing.genai.capture.TurPromptCaptureService promptCaptureService,
+            @org.springframework.context.annotation.Lazy com.viglet.turing.sn.dsl.TurDslSearchService dslSearchService) {
+        this.dslSearchService = dslSearchService;
         this.tokenUsageService = tokenUsageService;
         this.promptCaptureService = promptCaptureService;
         this.turSNSearchProcess = turSNSearchProcess;
@@ -361,7 +397,7 @@ public class TurSNGenAi {
                 : siteNlFilters(request, filters, searchQuery);
         Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
                 retrieveDocuments(context, searchQuery, filters,
-                        nlFilters == null ? null : retrievalFilters(nlFilters)));
+                        nlFilters == null ? null : retrievalFilters(nlFilters), locale));
         List<Document> relevantDocuments = pinned.documents();
 
         // T329 — deterministic "not in this site" refusal. When the relevance
@@ -815,18 +851,21 @@ public class TurSNGenAi {
     private List<Document> retrieveDocuments(TurGenAiContext context,
             String latestUserQuery,
             java.util.Map<String, List<String>> filters) {
-        return retrieveDocuments(context, latestUserQuery, filters, null);
+        return retrieveDocuments(context, latestUserQuery, filters, null, null);
     }
 
     /**
      * @param preExtracted T1085 — filters already read from the question by the
      *                     shared extractor; {@code null} lets a list-style question
      *                     fall back to the vector-metadata extractor
+     * @param locale       T1294 — the locale the site's lexical search runs in when
+     *                     the vector pass is thin; {@code null} keeps it vector-only
      */
     private List<Document> retrieveDocuments(TurGenAiContext context,
             String latestUserQuery,
             java.util.Map<String, List<String>> filters,
-            java.util.Map<String, List<String>> preExtracted) {
+            java.util.Map<String, List<String>> preExtracted,
+            Locale locale) {
         // T500 — full-context (retrieval-free) answering: only on the unfiltered
         // conversational path (an explicit facet filter is a deliberate narrowing
         // we must respect). When the site opted in and the whole corpus fits the
@@ -866,6 +905,12 @@ public class TurSNGenAi {
             relevantDocuments = similaritySearch(context, latestUserQuery, null);
         }
 
+        // T1294 — the vector pass can keep one off-topic page (ten chunks of it
+        // collapse to one source) while the site's own search ranks the matching
+        // documents first; a thin pass is topped up with those, never replaced.
+        relevantDocuments = withLexicalRecall(context, latestUserQuery, locale,
+                resolved.filters(), relevantDocuments);
+
         // T328 — optional LLM reranker: narrow the candidate pool to the
         // highest-precision top-k before stuffing. Opt-in (default off);
         // fail-open (returns retrieval order on any error).
@@ -878,6 +923,108 @@ public class TurSNGenAi {
             relevantDocuments = reranked;
         }
         return relevantDocuments;
+    }
+
+    /**
+     * T1294 — tops a thin vector pass up with the site's own lexical search. When the
+     * vector chunks name fewer than {@link #MIN_DISTINCT_DOCUMENTS} documents, the
+     * site's first {@link #LEXICAL_RECALL_HITS} lexical hits are read, their chunks
+     * fetched from the vector store by {@link #SOURCE_ID} (under the same filters and
+     * partition, so a lexical hit never escapes them), and both document rankings are
+     * fused by reciprocal rank. Each document keeps its own chunks, at most
+     * {@link #PINNED_CHUNKS} for one the vector pass missed. Fail-open: no lexical
+     * search, no locale, no site name or any error returns {@code vectorHits}.
+     */
+    List<Document> withLexicalRecall(TurGenAiContext context, String query, Locale locale,
+            java.util.Map<String, List<String>> filters, List<Document> vectorHits) {
+        if (dslSearchService == null || locale == null || !StringUtils.hasText(context.getSiteName())
+                || !StringUtils.hasText(query) || distinctSources(vectorHits).size() >= MIN_DISTINCT_DOCUMENTS) {
+            return vectorHits;
+        }
+        try {
+            List<String> lexicalIds = lexicalIds(context.getSiteName(), locale, query);
+            if (lexicalIds.isEmpty()) {
+                return vectorHits;
+            }
+            java.util.Map<String, List<String>> byId = new java.util.LinkedHashMap<>();
+            if (filters != null) {
+                byId.putAll(filters);
+            }
+            byId.put(SOURCE_ID, lexicalIds);
+            List<Document> lexicalChunks = context.getVectorStore().similaritySearch(SearchRequest.builder()
+                    .query(query)
+                    .topK(lexicalIds.size() * PINNED_CHUNKS)
+                    .similarityThreshold(0.0)
+                    .filterExpression(TurRagFilters.buildFilterExpression(confined(context, byId)))
+                    .build());
+            if (lexicalChunks == null || lexicalChunks.isEmpty()) {
+                return vectorHits;
+            }
+            List<Document> merged = fuseByDocument(vectorHits, lexicalIds, lexicalChunks);
+            log.info("RAG chat vector pass named {} document(s) for '{}'; topped up from the site's search to {}",
+                    distinctSources(vectorHits).size(), query, distinctSources(merged).size());
+            return merged;
+        } catch (RuntimeException e) {
+            log.warn("RAG chat lexical recall failed for '{}' (vector-only): {}", query, e.getMessage());
+            return vectorHits;
+        }
+    }
+
+    /** T1294 — the ids of the site's first lexical hits for {@code query}, in rank order. */
+    private List<String> lexicalIds(String siteName, Locale locale, String query) {
+        return dslSearchService.search(siteName, locale.toString(),
+                com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies.freeText(query,
+                        LEXICAL_RECALL_HITS))
+                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse::hits)
+                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse.Hits::hits)
+                .orElse(List.of()).stream()
+                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse.Hit::id)
+                .filter(StringUtils::hasText)
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * T1294 — the vector chunks and the lexical documents' chunks, ordered by the
+     * reciprocal-rank fusion of the two document rankings. A document the vector
+     * pass found keeps its vector chunks; one only the lexical search found brings
+     * at most {@link #PINNED_CHUNKS} of its own.
+     */
+    static List<Document> fuseByDocument(List<Document> vectorHits, List<String> lexicalIds,
+            List<Document> lexicalChunks) {
+        java.util.Map<String, List<Document>> chunks = new java.util.LinkedHashMap<>();
+        for (Document chunk : vectorHits) {
+            chunks.computeIfAbsent(sourceOf(chunk), k -> new ArrayList<>()).add(chunk);
+        }
+        List<String> vectorOrder = new ArrayList<>(chunks.keySet());
+        java.util.Map<String, List<Document>> lexicalBySource = new java.util.LinkedHashMap<>();
+        for (Document chunk : lexicalChunks) {
+            List<Document> own = lexicalBySource.computeIfAbsent(sourceOf(chunk), k -> new ArrayList<>());
+            if (own.size() < PINNED_CHUNKS) {
+                own.add(chunk);
+            }
+        }
+        lexicalBySource.forEach(chunks::putIfAbsent);
+        List<String> lexicalOrder = lexicalIds.stream().filter(chunks::containsKey).toList();
+        List<String> fused = com.viglet.turing.genai.rag.TurRagRrf.fuseKeyed(
+                List.of(vectorOrder, lexicalOrder), id -> id, chunks.size());
+        List<Document> merged = new ArrayList<>();
+        fused.forEach(id -> merged.addAll(chunks.get(id)));
+        return merged;
+    }
+
+    private static java.util.Set<String> distinctSources(List<Document> documents) {
+        java.util.Set<String> sources = new java.util.LinkedHashSet<>();
+        if (documents != null) {
+            documents.forEach(d -> sources.add(sourceOf(d)));
+        }
+        return sources;
+    }
+
+    /** The document a chunk belongs to: its {@link #SOURCE_ID}, else the chunk's own id. */
+    private static String sourceOf(Document chunk) {
+        Object source = chunk.getMetadata() == null ? null : chunk.getMetadata().get(SOURCE_ID);
+        return source != null ? String.valueOf(source) : String.valueOf(chunk.getId());
     }
 
     /**

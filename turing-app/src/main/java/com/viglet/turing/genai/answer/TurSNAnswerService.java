@@ -42,7 +42,7 @@ import reactor.core.publisher.Flux;
  * T833 / §LXII.2 — the answer-first streaming service behind
  * {@code GET /api/sn/{siteName}/answer}. It composes the platform's existing
  * retrieve → rerank → synthesis pipeline (the same one the public SN chat runs,
- * so it inherits hybrid ranking, the rerank seam, the site's
+ * so it inherits its vector retrieval with the T1294 lexical top-up, the rerank seam, the site's
  * {@code TurSNKnowledgeBaseMode} and the {@code sources[]}-before-tokens ordering)
  * into a single-shot grounded answer, and re-frames the internal chat stream into
  * the dedicated answer SSE contract via {@link TurAnswerStreamFramer}.

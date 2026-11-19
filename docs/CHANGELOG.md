@@ -1736,6 +1736,8 @@
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 
+- **T1294** — SN chat and /answer top a thin vector pass (under 3 documents) up with the site's first 5 lexical hits, their chunks fetched under the same filters and partition and fused by rank.
+
 ## Block CX — Synonyms that mix single words and phrases
 
 ## Block CY — Filters from a sentence say what visitors say
