@@ -2311,33 +2311,36 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
 
-### CLXIX.4 Facet and facet name converge on existing fields (T1296)
+### CLXIX.4 Non-breaking field attributes converge on existing fields (T1296)
 
-Met in fespsp-institucional (FI132) with the WordPress plugin. The plugin's mapping
-first declared the event start date as `{ "name": "evento_inicio", "type": "DATE",
-"facet": true, "facetName": { "pt_BR": "Quando" } }` plus a `evento_inicio_range` custom
-facet. Changed to `"facet": false`, `wp turing reindex` sent the manifest again (`POST
-/api/sn/manifest`), and the search response still carries two "Quando" facets: the raw
-date facet, one bucket per timestamp, and the range.
+Met in fespsp-institucional (FI132): a mapping first declared `evento_inicio` as
+`"facet": true, "facetName": { "pt_BR": "Quando" }`, then `"facet": false`; `wp turing
+reindex` sent the manifest again and search still returns the raw date facet beside the
+range facet.
 
-Cause: `TurSNSiteManifestService.applyFieldChanges` calls
-`turSNFieldProvisioner.ensureField`, which only creates a missing field. For a field
-that exists, the manifest converges nothing but `searchWeight` (`applySearchWeights`)
-and the breaking type or cardinality changes the planner forces a migration for. `facet`
-and `facetName` are not breaking, so they are skipped silently, and the provision log
-counts the field as "skipped".
+Validated against the code (2026-11-19). `TurSNFieldProvisioner.ensureField` returns as
+soon as the field exists and `applyFieldChanges` files it under `fieldsSkipped`; only
+`searchWeight` converges (`applySearchWeights`). `TurSNManifestPlanner.breakingChange`
+knows type and multiValued, and its Javadoc calls facet, mandatory and description
+changes non-breaking, yet nothing applies them. The gap is wider than facet:
+`description`, `mandatory` -> `required`, `facet`, `facetName` and the per-locale
+`facetLocales` rows all stick at their first value.
 
-What it costs: a mapping is schema as code, but the first value it declares for facet on
-or off, and for a facet's label, sticks. Fixing either needs the console, or `down -v`.
-The plugin's Fields screen says it provisioned and the visitor still sees the old facet.
+Fix: converge those five in place on an existing field, the way `searchWeight` is, and
+report them as changed. Two traps:
+- `facet` and `mandatory` are primitive booleans in `VigletFieldSpec` (viglet-core), so a
+  manifest that omits them reads as false and would switch off a facet turned on in the
+  console. Converge only what the manifest declares: a nullable `Boolean` in viglet-core,
+  or a Turing-side "declared" signal as `customFacets` already sits on
+  `TurSNManifestRequest`.
+- the diff has no "changed, not breaking" bucket; add one to `TurSNManifestPlan` so the
+  provision result and the dry-run plan show it.
 
-What Turing should do: converge `facet` and each locale's `facetName` on an existing
-field the way `searchWeight` is converged (non-breaking, applied in place), report them
-in the provision result as changed rather than skipped, and invalidate the site's facet
-cache. A test that provisions a field faceted, then not, then relabelled, covers it.
+No cache work: `TurSNSiteSnapshotEvictionListener` evicts on save. Attributes the spec
+cannot express (hl, facetRange, facetSort, ...) are out of scope here.
 
-Workaround in the project: none. The lab is disposable, so `down -v` recreates the
-field.
+Tests: provision faceted, then not, then relabelled per locale, then a manifest omitting
+`facet`, which leaves it as it was.
 
 ## CLXX People, themes and places extracted at import, as facets
 
@@ -2502,120 +2505,122 @@ the answer, and a marker-less answer on an opted-in site sends no citations.
 ### CLXXXII.17 Wall-clock meta dates read in the site timezone (T1295)
 
 Met in fespsp-institucional (FI132), mapping the `evento` and `vaga` post types of a
-site whose timezone is America/Sao_Paulo (UTC-3).
+site in America/Sao_Paulo (UTC-3). The site stores wall-clock dates in post meta, as
+WordPress does for anything shown in local time: `fespsp_evento_inicio` =
+`2026-11-20T19:00`, mapped `{ "source": "meta:...", "type": "DATE" }`.
 
-The site stores wall-clock dates in post meta, the way WordPress itself does for
-anything it shows in local time: `fespsp_evento_inicio` = `2026-11-20T19:00`
-(Y-m-d\TH:i, a 19h event) and `fespsp_vaga_ate` = `2026-11-20` (applications close at
-the end of that day). Both are mapped as `{ "source": "meta:...", "type": "DATE" }`.
+Validated against the code (2026-11-19). `Viglet_Turing_Mapping::convert_date()`
+(class-viglet-turing-mapping.php) sends anything that is not eight digits or a timestamp
+to `strtotime()`, and WordPress runs PHP in UTC, so `2026-11-20T19:00` is indexed as
+19:00Z, 16h locally: the card and the Agenda periods show and bucket it 3 hours off, and
+a 22h event moves to the next day. Core dates are fine (`publication_date` and
+`modification_date` are sent from GMT).
 
-`Viglet_Turing_Mapping::convert_date()` (src/includes/class-viglet-turing-mapping.php)
-passes anything that is not eight digits or a timestamp to `strtotime()`, and WordPress
-runs PHP with the default timezone set to UTC. So `2026-11-20T19:00` is indexed as
-`2026-11-20T19:00:00Z`, which is 16h in São Paulo, and `2026-11-20` as midnight UTC, 21h
-on the 19th locally. The `Ymd` branch also builds its date in UTC on purpose.
+Not affected: a date-only `expires`. `expiry()` already moves exactly-midnight-UTC to
+the end of that day in `wp_timezone()`. Its sibling is: an `expires` with a time of day
+is read as UTC there too and schedules the cron at the wrong moment.
 
-What that breaks:
-- the card and the Agenda periods (today, next 7 days) show and bucket the event 3 hours
-  off; a 22h event moves to the next day in UTC-3 sites' "today";
-- `expires` takes a job opening out of search the evening before its last day.
+Fix: one helper used by `convert_date()` and `expiry()` that reads a date-time with no
+offset in `wp_timezone()` (a `DateTimeImmutable` converted to UTC) and keeps offsets and
+timestamps. The `Ymd` and date-only shapes stay at midnight UTC: `card_day()`,
+`card_values()`, `formatCardDate` and `expiry()` read midnight UTC as "a date with no
+time". A bug fix, so no flag; the changelog says a reindex rewrites stored values.
 
-What the plugin should do: read a date with no offset in `wp_timezone()` (a
-`DateTimeImmutable` in that zone, converted to UTC), keep offsets and timestamps as they
-are, and read a date-only `expires` as the end of that local day. Test both shapes under
-America/Sao_Paulo.
-
-Workaround in the project: none. FI132 maps the fields as they are and waits on this
-line.
+Tests under America/Sao_Paulo: a date-time, a date-only, an offset, a timestamp, an
+`expires` with a time, and 21:00 local (which lands on 00:00Z and today reads as
+date-only).
 
 ### CLXXXII.18 Personal data out of search metrics (T1298)
 
-Met in fespsp-institucional (FI155), a school site whose students type their enrolment
-number (RA) and CPF into the search box. Lab on `ghcr.io/openviglet/turing:2026.3.8`
-with `TURING_SEARCH_METRICS_ENABLED=true` and the WordPress plugin from `latest`.
+Met in fespsp-institucional (FI155), a school site whose students type their RA and CPF
+into search, on `turing:2026.3.8` with search metrics on. `20231234`, `123.456.789-09`
+and `aluno@fespsp.org.br` searched 15 times each: Popular searches hide them, Search
+insights lists them first, verbatim, and Turing stores them.
 
-Searched 15 times each through the plugin (`Viglet_Turing_API_Client::search`):
-`20231234` (an RA), `123.456.789-09` (a CPF), `aluno@fespsp.org.br`.
+Validated against the code (2026-11-19).
 
-- Popular searches (`Viglet_Turing_Trending::chips()`) leave all three out:
-  `presentable()` drops e-mails, runs of 7+ digits and long text. Correct.
-- Search insights (`Viglet_Turing_Insights::report('all-time')`, the wp-admin screen) list
-  them first, verbatim: `123.456.789-09(15) | 20231234(15) | aluno@fespsp.org.br(15) |
-  biblioteca(13) ...`. So does Turing's own top-terms metric, where they are stored.
+Plugin: `Viglet_Turing_Insights::terms()` only drops empty and `*` terms, for the top,
+failed and unopened lists and the dashboard widget, and `summary()` sends those raw
+terms to the LLM. `Viglet_Turing_Trending::presentable()` cannot be reused as it is: it
+also drops anything over 40 characters and digit runs like `2026/11/20`, which would
+hide real searches from Insights.
 
-What it costs: the site cannot tell visitors that searches are logged anonymously, which
-is what its privacy text needs to say under LGPD, and every editor who opens Search
-insights sees students' personal numbers.
+Turing: `TurSNSearchProcess` stores the raw query through
+`TurSNSiteMetricAccess.setTerm` (length cap and accent folding only). Raw query text is
+also written by `TurSNSiteClickAPI` (click term), `TurAnswerShareService` and
+`TurAnswerSignalService`. No content-pattern masking exists anywhere;
+`TurPiiSlotService` works by slot name, not content.
 
-What should happen, in two places:
-1. The plugin's Insights report applies the same `presentable()` test to every term list
-   (top, failed, unopened), counting the dropped ones as "personal data, hidden".
-2. Turing does not store such a term in search metrics at all: mask it at ingestion (an
-   e-mail, a run of 7+ digits, a CPF or CNPJ pattern) with a per-site switch, so a site
-   that never shows the data also never holds it.
+Fix, two parts in one task:
+1. Turing: one masker (an e-mail, a CPF or CNPJ shape, a run of 7+ digits) applied in
+   `setTerm` and the click, share and signal writes, so a masked term is never stored;
+   on by default for new installs, a per-site switch to turn it off.
+2. Plugin: extract a personal-data-only predicate from `presentable()`, shared by
+   Trending and Insights, applied to every term list and to the LLM summary input, with
+   the hidden ones counted as "personal data, hidden" (covers Turing versions before
+   part 1).
 
-Workaround in the project: none. FI155's privacy paragraph waits on this line.
+Tests: the three terms above, plus a date and a 45-character query that stay visible.
 
-### CLXXXII.19 Footnotes from the default answer on every provider (T1301)
+### CLXXXII.19 Numbered sources and a citation instruction on every answer (T1301)
 
-Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, the
-LLM the boot creates from `OPENAI_API_KEY` (`gpt-4o-mini`), default agent, SN site
-`fespsp`, pt_BR, the WordPress plugin from `latest`.
+Met in fespsp-institucional (FI170) on `turing:2026.3.8`, the boot's `gpt-4o-mini`,
+default agent, site `fespsp`, pt_BR. `GET /api/sn/fespsp/answer?q=O que é a Cátedra
+Celso Furtado?`: a correct answer with no `[n]` marker, `trace` `cited:false`, and a
+`citations` event with all 8 retrieved documents, unrelated books included. The search
+block (`search-block.js`, T1261) then shows no source; the Site assistant
+(`assistant.js`, `sourcesOf`) lists all eight.
 
-`GET /api/sn/fespsp/answer?q=O que é a Cátedra Celso Furtado?&locale=pt_BR`: a correct
-answer with **no `[n]` marker** in its text; `trace` says `cited:false`; the `citations`
-event carries all 8 retrieved documents, ranks 1–8, among them "Livro sem capa
-cadastrada" and "Saúde pública e territórios" (score 0.71) beside the two right pages
-(0.75). "Onde fica o Casarão da FESPSP?": the same, 0 markers, 6 citations.
+Validated against the code (2026-11-19): the cause is not the provider. On the path
+`/answer` and SN chat share (`TurSNGenAi.assistantConversationStreaming`), no prompt
+asks for markers (`DEFAULT_BEHAVIOR_PROMPT`, `STRICT_RAG_GUARD`, `buildSystemPrompt`),
+and the context is not numbered: `Pinned.information()` joins chunk texts with blank
+lines. A model can only cite `[n]` by accident or under a custom agent prompt.
+`TurAnswerCitationNumberer.renumberByMarkers` then falls back to every retrieved
+document, which T1265 flags as `cited:false`.
 
-What a visitor then sees, by surface (both in `wordpress/src/public`):
-- the search block's answer (`search-block.js`, T1261) keeps only footnoted sources, so it
-  shows **no source at all**, though the answer came from two pages;
-- the Site assistant (`assistant.js`, `sourcesOf`) falls back to the retrieval and lists
-  **all eight**, unrelated books included.
+Fix in `TurSNGenAi`, one seam for both paths:
+- label each source `[n]` in the context, in the order of the `sources` event (today the
+  pinned document is placed first in the context but not in `relevantDocuments`);
+- append the citation instruction always, after a custom agent prompt too, the way
+  `STRICT_RAG_GUARD` is appended.
+Turing attributing sentences itself is a later, separate step.
 
-Neither is right, and the cause is upstream: with an OpenAI model the default answer
-prompt does not get `[n]` footnotes written, and T1265 chose to flag that rather than
-change the citations.
+Plugin: both surfaces read the trace's `cited` flag, not their own marker parse: cited
+lists the footnoted sources, not cited lists none (the block's setting) in both.
 
-What should happen: the answer's generation asks for and enforces `[n]` markers on every
-provider (or, failing that, Turing attributes sentences to sources itself), so `cited`
-is true with the default agent; and the two plugin surfaces agree on one rule for an
-answer with no markers. A test on the OpenAI provider asserting at least one marker for
-a question one page answers.
-
-Workaround in the project: none; FI148 (the assistant) waits on this line.
+Tests: the context numbering matches the `sources` order with a pinned document; an IT
+on the OpenAI provider (`-Pllm-it`) asserting at least one marker for a one-page
+question.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
-### CLXXXIII.2 Ranking by a numeric field: lowest price, highest context (T1293)
+### CLXXXIII.2 Ranking by a numeric field survives to the page the copilot reads (T1293)
 
-Met by the Viglet Cloud regression monitor (`tests/regression`), on the model-catalog
-"Ask the catalog" golden question, still after T1277 (`turing:2026.3-snapshot`,
-sha-f860190).
+Met by the Viglet Cloud regression monitor (`tests/regression`, C214) on the
+model-catalog "Ask the catalog" golden question, after T1277 (sha-f860190): `POST
+/api/sn/model-catalog/copilot` with "Which embedding model has the lowest price?" came
+back with an empty `groundedQuerySummary`, 1206 hits, 8 citations, and "The catalog
+results do not provide any information about the prices of embedding models."
 
-Call: `POST https://turing-demo.viglet.org/api/sn/model-catalog/copilot`
-`{"messages":[{"role":"user","content":"Which embedding model has the lowest
-price?"}],"locale":"en-US"}`
+Validated against the code (2026-11-19): superlative to sort already exists.
+`TurDeterministicCopilotQueryPlanner.plan` calls `TurNLRankingPlanner.detect`
+("lowest"/"cheapest" are asc words, "cheapest" maps to price/pricing, and
+`pricing_inputPer1M` splits and stems to match), and LLM_ASSISTED sites sort through
+`TurCopilotPlanCompiler.resolveSort`. So the gap is not a missing feature. The likely
+causes, all in `TurCatalogCopilotService`:
+- `summarize`/`collectClauses` print term, range and match clauses and never the sort,
+  so an empty summary cannot tell "no sort" from "sorted";
+- `applyHybridRanking` re-fuses the sorted page on a HYBRID_RRF site and ignores
+  `request.sort()`, so the cheapest models leave the page the LLM reads;
+- `TurNLRankingPlanner.resolveField` keeps the first of two tied fields
+  (`pricing_inputPer1M`, `pricing_outputPer1M`), in schema order.
 
-What came back: `groundedQuerySummary` empty (no filter, no sort), `totalHits` 1206, 8
-citations, and the answer "The catalog results do not provide any information about the
-prices of embedding models."
-
-What the index holds: `kind` is a facet with `EMBEDDING` among its values, and model
-documents carry `pricing_inputPer1M`, `pricing_outputPer1M` and `pricing_currency` (e.g.
-`gpt-4o-mini-tts` has `pricing_inputPer1M: 2.5`). So the plan should be `kind=EMBEDDING`
-sorted by `pricing_inputPer1M` ascending; instead the copilot reads neither the type nor
-the price ranking, the stuff-all/retrieved page holds eight arbitrary models, and the
-model answers that no prices exist.
-
-Expected: a "lowest/cheapest/highest <field>" question over a numeric schema field
-becomes a sort on that field, and "embedding model" becomes the `kind` filter, the same
-way "capabilities=vision" is read today; or the projection sent to the LLM keeps the
-pricing fields so the model can rank them.
-
-Workaround: none. Until 2026-11-13 the monitor counted this refusal as grounded (its
-pattern missed "do not"); Cloud C214 fixed that, so it now fails.
+Fix: the summary states the sort; a plan that carries a sort keeps its order through
+hybrid ranking; on a tie the field named by the question's words (input over output by
+default) wins. Reproduce first with an IT over a catalog of typed models and numeric
+prices, asserting `kind=EMBEDDING` and an ascending price sort reach the page; if a step
+not listed here drops the filter, fix that instead.
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
 
@@ -2631,121 +2636,119 @@ the docs ship.
 
 ### CLXXXVI.1 Chat recall below the site's own search (T1294)
 
-Met by the Viglet Cloud regression monitor (`tests/regression`, `api.spec.ts`), which
-has failed on this question in most scheduled runs since 2026-11-01 (it passed through
-10-31).
+Met by the Viglet Cloud regression monitor (`tests/regression`, `api.spec.ts`), failing
+on this question in most runs since 2026-11-01, on `turing:2026.3.8` and
+`2026.3-snapshot` (sha-f860190).
 
-Call: `postChatConversation(client, 'wknd-publish', [{role:'user', content:'Tell me
-about surf camps'}], 'en-US')` against `https://turing-demo.viglet.org/api`
-(`/api/sn/wknd-publish/chat/conversation`).
+`/api/sn/wknd-publish/chat/conversation` with "Tell me about surf camps" returns one
+source, "San Diego Surf Spots", and "The retrieved content does not contain information
+about surf camps." `GET /api/sn/wknd-publish/search?q=surf camps` returns 9 hits, the
+first three "Bali Surf Camp".
 
-What came back: one source, "San Diego Surf Spots"
-(`/us/en/magazine/san-diego-surf.html`), and the answer "The retrieved content does not
-contain information about surf camps."
+Validated against the code (2026-11-19): chat retrieval is vector-only.
+`TurSNGenAi.retrieveDocuments` -> `similaritySearch` (topK 10 chunks, 0.4 floor) has no
+lexical leg and no lexical fallback; its only retry drops an auto-extracted filter. Ten
+chunks of one page then collapse to one source in `TurRagSource.dedupeByDocument`.
+T383's `TurSNHybridRankingService` is never called here. `/answer` goes through the same
+`assistantConversationStreaming`, so it has the same gap, and the Javadoc of
+`TurSNAnswerService` that says it "inherits hybrid ranking" is wrong.
 
-What the site holds: `GET /api/sn/wknd-publish/search?q=surf camps&_setlocale=en_US`
-returns 9 hits, the first three titled "Bali Surf Camp". So the documents are indexed
-and lexical search ranks them first; the conversation's retrieval leaves them out and
-keeps a single page about surf spots.
+Fix, at `retrieveDocuments` (one seam for chat and `/answer`): fuse the site's lexical
+search hits with the vector hits by reciprocal rank, or at least fall back to lexical
+when vector recall yields fewer distinct documents than a minimum. Count documents, not
+chunks, before deciding recall is enough.
 
-Expected: the conversation's sources include the Bali Surf Camp pages the search returns
-for the same words, and the answer describes them. Retrieval for chat should not recall
-less than the site's own search does for the question's terms; where vector recall
-misses, hybrid or a lexical fallback should bring the search hits in.
-
-Workaround: none. The monitor keeps the question and fails on it. Observed on
-`turing:2026.3.8` and on `2026.3-snapshot` (sha-f860190).
+Edge cases the tests carry: a lexical hit needs its chunk text before it enters the
+prompt; partition confinement (T1133) and STRICT_RAG with the refusal gate still hold;
+the standalone-query rewrite feeds both legs. Correct the `TurSNAnswerService` Javadoc.
 
 ## CLXXXVII Synonyms that mix single words and phrases
 
 ### CLXXXVII.1 Single word beside a multi-word synonym (T1297)
 
-Met in fespsp-institucional (FI140), on `ghcr.io/openviglet/turing:2026.3.8` (which
-holds T1066 and T1091), Lucene engine, SN site `fespsp`, locale pt_BR.
+Met in fespsp-institucional (FI140) on `turing:2026.3.8` (T1066 and T1091 in), Lucene,
+site `fespsp`, pt_BR. With the group `["fespsp", "fundação escola de sociologia e
+política"]`, `q=fespsp` finds 0 documents (18 without it); the phrase finds 19 either
+way; single-word groups work.
 
-The synonym group `["fespsp", "fundação escola de sociologia e política"]` was created
-through the WordPress plugin (`Viglet_Turing_Tuning::add_synonym`, which posts
-`/api/sn/{id}/synonym` and applies them). Then, `GET /api/sn/fespsp/search?q=<q>`:
+Validated against the code (2026-11-19). The filed hypothesis is wrong: `fespsp` stays a
+SHOULD clause beside the phrase, and `phrasesOnPositionalFieldsOnly` makes the phrase a
+single term on STRING fields. The cause is clause explosion.
+`TurLuceneSynonymAnalyzer.createComponents` runs `KeywordRepeat`, two Portuguese
+stemmers and `ASCIIFoldingFilter` after `SynonymGraphFilter`, so each word of the
+expansion carries 2 to 5 stacked variants, and `analyzeGraphBoolean` enumerates every
+path: one six-word expansion is about 180 PhraseQueries per field, times the text
+fields, times two parses (term-centric and per-field). A script over the project's own
+analyzer throws `IndexSearcher.TooManyClauses` at 16 text fields for `fespsp` alone, and
+at 6 for `fespsp vestibular`. Neither `TurLuceneResultProcessor` nor
+`TurSNSearchProcess` catches it, so the client shows an error as no results.
 
-| query | with the group | without it |
-|---|---|---|
-| `fespsp` | 0 documents | 18 |
-| `fundação escola de sociologia e política` | 19 | 19 |
+Also: the rule key keeps "de" and "e" while the stop filter runs before the synonym
+filter, so the phrase -> word direction never fires.
 
-So the multi-word side expands, but the single word on the other side of the same group
-finds nothing at all, though 18 titles contain it ("Feira de Extensão FESPSP"). A
-single-word group on the same site (`pós`, `pós-graduação`, `especialização`) works.
+Fix in `TurLuceneSynonymAnalyzer`/`TurLuceneSynonymMapBuilder`: normalise rule outputs
+(stop, stem, fold) when the map is built instead of stacking variants after the graph,
+or build one MultiPhraseQuery per path; and catch `TooManyClauses` and retry without
+synonyms, logged. Lucene only: Solr and Elasticsearch push rules to the engine.
 
-Expected: `fespsp` finds what it found before, plus what the phrase finds. T1066
-promised expansion in both directions and T1091 that a multi-word expansion answers;
-this is the case neither covers, where the query is the single word and the expansion is
-the phrase.
-
-Probably the expanded query for the single word becomes a phrase query over every field,
-and on STRING/keyword fields the phrase matches nothing while the original term is
-dropped. A test: a group of one word and a five-word phrase, searched by the word, on
-Lucene, over a document holding only the word.
-
-Workaround in the project: the group is left out of `docker/turing/afinacao.json` until
-this ships; only single-word groups are versioned.
+Tests: a one-word/six-word group over 16 text fields searched by the word, by the word
+plus another word, and by the phrase.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 
 ### CLXXXVIII.1 Month names and future phrases in sentence filters (T1299)
 
-Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, SN
-site `fespsp`, pt_BR, an event type whose `evento_inicio` is a DATE with an Agenda range
-facet.
+Met in fespsp-institucional (FI170) on `turing:2026.3.8`, site `fespsp`, pt_BR, an event
+type whose `evento_inicio` is a DATE with an Agenda range facet. `POST
+/api/sn/fespsp/nl-filters` with "palestras em novembro" returns `q: palestras`, no
+filter, and drops `evento_inicio:[2026-11-01 TO 2026-11-30]` as `UNGROUNDED_DATE`.
 
-`POST /api/sn/fespsp/nl-filters` with `{"text": "palestras em novembro", "locale":
-"pt_BR", "filters": {"site_key": ["institucional"]}}` (what the WordPress plugin sends)
-answers:
+Validated against the code (2026-11-19). `TurSNNLFilterService.dateRangeFilter` keeps a
+range only if `TurRelativeDateRange.resolve` reads the text or `TurSNNLRangeSpan.dated`
+finds the bound or its year in it. `TurRelativeDateRange` knows, in en and pt only: last
+N days/weeks/months, since a month or year, last/this year, last/this month, last week.
+No future phrase, and a month name only after "since/desde". The copilot planners and SN
+chat call the same service, so the fix reaches them too.
 
-    "q": "palestras", "filters": [],
-    "dropped": [{"field": "evento_inicio", "value": "[2026-11-01 TO 2026-11-30]",
-                 "reason": "UNGROUNDED_DATE"}]
+Fix, in `TurRelativeDateRange`:
+- a month name after a preposition ("em/no/de novembro", "in November"): this year's
+  month if it has not ended, else next year's; a bare "Maio" with no preposition is a
+  name, not a date;
+- future phrases: tomorrow, this weekend, next week, next month, the next N
+  days/weeks/months;
+- English, Portuguese and Spanish (`TurSNNLRangeSpan` already lists es words), reusing
+  the month tables.
 
-The model read the month right, and `TurSNNLFilterService.dateRangeFilter` dropped it:
-`TurRelativeDateRange` resolves only past or current phrases (last month, this month,
-last week, the last N days, since a month) and a range the text dates by year. A month
-named without a year, and every future phrase, is treated as a guess.
+"Today" is the JVM zone (`Clock.systemDefaultZone()`); `TurSNSite` has no time zone, so
+this task keeps the JVM zone and the clock injectable. A per-site zone, and a direction
+read from Agenda/Past custom facets (the NL schema does not carry custom facets), are
+follow-ups, not part of this line.
 
-On an events calendar those are most of the questions: "em novembro", "em dezembro",
-"amanhã", "este fim de semana", "na próxima semana", "no mês que vem", "nos próximos 15
-dias". Dropping them makes the search ignore the one word the visitor cared about.
-
-What Turing should resolve, against today in the site's time zone:
-- a bare month name: this year's month if it has not ended, else next year's (for a
-  field whose facet is an Agenda; past-looking for a Past one);
-- future phrases in English and Portuguese: tomorrow, this weekend, next week, next
-  month, the next N days/weeks/months.
-
-A test per phrase, with a fixed clock on 2026-11-19.
-
-Workaround in the project: none; the lab records the miss in docs/spike-turing.md.
+Tests per phrase with a fixed clock on 2026-11-19, plus "dezembro", "outubro" (next
+year), "novembro de 2025" and "Maio" as a name.
 
 ### CLXXXVIII.2 Grounding a short name to the facet value that holds it (T1300)
 
-Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, SN
-site `fespsp`, pt_BR. The site's facet values are what editors typed: `evento_local`
-holds "Casarão FESPSP", `editora` holds "Editora Sociologia e Política".
+Met in fespsp-institucional (FI170) on `turing:2026.3.8`, site `fespsp`, pt_BR. Facet
+values are what editors typed: `evento_local` holds "Casarão FESPSP", `editora` "Editora
+Sociologia e Política". `POST /api/sn/fespsp/nl-filters`: "eventos no Casarão FESPSP"
+grounds; "eventos no Casarão" drops `evento_local:Casarão` as NOT_IN_SITE; "livros da
+Editora Sociologia e Política" drops `editora:Sociologia e Política`.
 
-`POST /api/sn/fespsp/nl-filters`, `filters: {"site_key": ["institucional"]}`:
+Validated against the code (2026-11-19). `TurSNNLFilterService.termFilter` drops a value
+when `canonical(value, held)` is null, and `canonical` is whole-value equality, accent-
+and case-folded. Confidence is three constants, `LITERAL` 1.0, `INFERRED` 0.6,
+`UNCHECKED` 0.3, not an enum. The copilot planners and SN chat share this grounding.
 
-| text | result |
-|---|---|
-| eventos no Casarão FESPSP | grounded, `fq: evento_local:Casarão FESPSP` |
-| eventos no Casarão | dropped `{"field":"evento_local","value":"Casarão","reason":"NOT_IN_SITE"}` |
-| livros da Editora Sociologia e Política | dropped `{"field":"editora","value":"Sociologia e Política","reason":"NOT_IN_SITE"}` |
+Fix: a separate token-subset match, used by `termFilter` only when `canonical` finds
+nothing: the value's content words (stopwords out, `TurSEStopWord` for the locale),
+folded, all present as whole tokens in exactly one held value of that field. That value
+is grounded with `INFERRED`; none or several keep NOT_IN_SITE, and `Dropped` says which
+("no value" vs "several values"). Do not loosen `canonical` itself: T1277 re-homing
+(`homeless`, `holder`) relies on it, and loosening it would move values between fields.
 
-The model found the right field each time, and the grounding refused it because the
-value is not an exact facet value. Visitors say the short name ("o Casarão", "a
-Sociologia e Política"); the long one is how the editor filed it.
+Scale: grounding reads at most 1000 buckets per field (`GROUNDING_BUCKETS`), so the scan
+is cheap; a value past bucket 1000 stays unreachable, as for exact matches today.
 
-What Turing should do: when the model's value is not a facet value, ground it to the
-facet value that contains all its words (accent- and case-folded) if exactly one does,
-with `confidence` below LITERAL; keep NOT_IN_SITE when none or several do, and say which
-in `dropped`. A test with the two cases above.
-
-Workaround in the project: none. Renaming facet values to what visitors say would fight
-the editors' own labels.
+Tests: the two cases above; "Sociologia" matching two values (dropped, several); "e
+Política" not matching on the stopword; "Casa" not matching "Casarão" (whole tokens).

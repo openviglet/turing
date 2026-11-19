@@ -18,18 +18,18 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1296** (deps: —) **The SN manifest never changes facet or facetName on a field that exists: a field once faceted stays faceted** — A mapping turned from facet on to off, or relabelled, reports provisioned while visitors keep the old facet until someone fixes it in the console. → §CLXIX.4
+- 📋 **T1296** (deps: —) **The SN manifest never converges facet, facetName, description or mandatory on a field that exists** — A mapping turned from facet on to off, or relabelled, reports provisioned while visitors keep the old facet until someone fixes it in the console. → §CLXIX.4
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1295** (deps: —) **A DATE meta with no timezone is indexed as UTC, not in the site's timezone, so local dates shift by the offset** — On a UTC-3 site a 19h event shows at 16h and falls into the wrong Agenda day, and an opening leaves search the evening before its last day. → §CLXXXII.17
+- 📋 **T1295** (deps: —) **A DATE meta with no timezone is indexed as UTC, not in the site's timezone, so local dates shift by the offset** — On a UTC-3 site a 19h event shows at 16h and falls into the wrong Agenda day, and an expires with a time unpublishes 3 hours off. → §CLXXXII.17
 - 📋 **T1298** (deps: —) **Search insights list searches holding an e-mail, CPF or student number verbatim, and Turing stores them** — A site cannot tell visitors its search log is anonymous, and every editor opening Search insights sees students' personal numbers. → §CLXXXII.18
-- 📋 **T1301** (deps: —) **With an OpenAI model the answer writes no [n] footnotes: the search block shows no source, the assistant lists every hit** — A visitor either gets an answer with no source or one citing unrelated pages, which is the trust a site's AI answer cannot lose. → §CLXXXII.19
+- 📋 **T1301** (deps: —) **The answer's context is not numbered and no prompt asks for [n], so answers carry no footnotes on any provider** — A visitor either gets an answer with no source or one citing unrelated pages, which is the trust a site's AI answer cannot lose. → §CLXXXII.19
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 
-- 📋 **T1293** (deps: —) **A cheapest-embedding question plans no type filter or price sort, so the copilot says the catalog has no prices** — Pricing fields are indexed on every model, yet the public catalog demo refuses one of its own golden questions. → §CLXXXIII.2
+- 📋 **T1293** (deps: —) **The copilot's price sort never shows in its summary and hybrid ranking reorders the sorted page, so cheapest is refused** — Pricing fields are indexed on every model, yet the public catalog demo refuses one of its own golden questions. → §CLXXXIII.2
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 
@@ -37,7 +37,7 @@
 
 ## Block CX — Synonyms that mix single words and phrases
 
-- 📋 **T1297** (deps: —) **On Lucene, a synonym group pairing one word with a phrase makes a search for the word find nothing** — A site that adds its acronym as a synonym of its full name loses every result for the acronym, the word visitors type most. → §CLXXXVII.1
+- 📋 **T1297** (deps: —) **On Lucene, a synonym group of one word and a phrase blows the word's query past the clause limit, so it finds nothing** — A site that adds its acronym as a synonym of its full name loses every result for the acronym, the word visitors type most. → §CLXXXVII.1
 
 ## Block CY — Filters from a sentence say what visitors say
 
