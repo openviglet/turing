@@ -122,7 +122,9 @@ public class TurSNSiteClickAPI {
         TurSNSiteMetricClick click = new TurSNSiteMetricClick();
         click.setAccessDate(Instant.now());
         click.setTurSNSite(siteOpt.get());
-        click.setTerm(StringUtils.defaultIfBlank(request.term(), ""));
+        // T1298 / T1329 — personal data masked by the site's own setting.
+        click.setTerm(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(
+                StringUtils.defaultIfBlank(request.term(), ""), siteOpt.get().getMetricsMaskPersonalData()));
         click.setDocumentId(request.documentId());
         click.setPosition(Math.max(0, request.position()));
         click.setUserId(StringUtils.trimToNull(request.userId()));

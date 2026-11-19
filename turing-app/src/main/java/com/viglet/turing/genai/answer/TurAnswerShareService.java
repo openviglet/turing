@@ -39,11 +39,25 @@ public class TurAnswerShareService {
 
     private final TurAnswerShareRepository repository;
     private final TurChatShareOgService shareOgService;
+    private final com.viglet.turing.persistence.repository.sn.TurSNSiteRepository siteRepository;
 
+    /** The constructor before T1329, kept for callers that build this class by hand. */
     public TurAnswerShareService(TurAnswerShareRepository repository,
             TurChatShareOgService shareOgService) {
+        this(repository, shareOgService, null);
+    }
+
+    /**
+     * @param siteRepository T1329 — reads the site's own masking setting; {@code null}
+     *                       follows the deployment's property
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    public TurAnswerShareService(TurAnswerShareRepository repository,
+            TurChatShareOgService shareOgService,
+            com.viglet.turing.persistence.repository.sn.TurSNSiteRepository siteRepository) {
         this.repository = repository;
         this.shareOgService = shareOgService;
+        this.siteRepository = siteRepository;
     }
 
     /**
@@ -63,9 +77,13 @@ public class TurAnswerShareService {
             String sourcesJson, String citationsJson, Instant answeredAt) {
         TurAnswerShare share = new TurAnswerShare();
         share.setSiteName(siteName);
-        // T1298 — a shared answer's question keeps no personal data either.
-        share.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query),
-                QUERY_MAX));
+        // T1298 / T1329 — a shared answer's question keeps no personal data either.
+        Integer siteSetting = siteRepository == null || siteName == null ? null
+                : siteRepository.findByNameIgnoreCase(siteName)
+                        .map(com.viglet.turing.persistence.model.sn.TurSNSite::getMetricsMaskPersonalData)
+                        .orElse(null);
+        share.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query,
+                siteSetting), QUERY_MAX));
         share.setFiltersJson(filtersJson);
         share.setAnswerText(answerText);
         share.setSourcesJson(sourcesJson);

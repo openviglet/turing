@@ -137,6 +137,15 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@Column(name = "autocompleteTopTerms")
 	private Integer autocompleteTopTerms = 0;
 
+	/**
+	 * T1329 — whether personal data (an e-mail, a CPF or CNPJ, a long digit run) is
+	 * masked in this site's stored search terms: {@code 1} masks, {@code 0} keeps the
+	 * term as typed (a bookstore's ISBN searches), {@code null} follows
+	 * {@code turing.search.metrics.mask-personal-data}.
+	 */
+	@Column(name = "metricsMaskPersonalData")
+	private Integer metricsMaskPersonalData;
+
 	@Column
 	private Integer exactMatch = 0;
 

@@ -74,7 +74,9 @@ public class TurAnswerSignalService {
         if (signal == null || siteName == null || siteName.isBlank()) {
             return Optional.empty();
         }
-        String agentId = resolveAgentId(siteName);
+        Optional<TurSNSite> site = turSNSearchProcess.getSNSite(siteName);
+        String agentId = site.map(s -> turDefaultAgentResolver.resolveEffectiveAgent(s.getTurSNSiteGenAi()))
+                .map(TurAIAgent::getId).orElse(null);
         if (agentId == null) {
             log.debug("[AnswerSignal] no effective agent for site '{}' — dropping {} signal",
                     siteName, signal);
@@ -84,9 +86,9 @@ public class TurAnswerSignalService {
         event.setAgentId(agentId);
         event.setSiteName(siteName);
         event.setConversationId(conversationId);
-        // T1298 — nor does an answer signal's.
-        event.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query),
-                QUERY_MAX));
+        // T1298 / T1329 — nor does an answer signal's, by the site's own setting.
+        event.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query,
+                site.get().getMetricsMaskPersonalData()), QUERY_MAX));
         event.setSignal(signal);
         event.setRelevanceMiss(signal.isRelevanceMiss());
         try {
@@ -99,16 +101,6 @@ public class TurAnswerSignalService {
                     signal, siteName, e.getMessage());
             return Optional.empty();
         }
-    }
-
-    /** Resolves the effective agent id for a site, or {@code null} when none applies. */
-    private String resolveAgentId(String siteName) {
-        Optional<TurSNSite> site = turSNSearchProcess.getSNSite(siteName);
-        if (site.isEmpty()) {
-            return null;
-        }
-        TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(site.get().getTurSNSiteGenAi());
-        return agent == null ? null : agent.getId();
     }
 
     private static String truncate(String value, int max) {

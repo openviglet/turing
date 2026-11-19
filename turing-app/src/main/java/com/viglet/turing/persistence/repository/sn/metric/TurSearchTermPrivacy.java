@@ -22,7 +22,8 @@ import java.util.regex.Pattern;
  * query is written, so the search log never holds the data and every report built
  * on it, Search insights included, shows none. On by default; a deployment whose
  * visitors search by long codes it wants to see (an ISBN, an EAN, a SKU) turns it
- * off with {@code turing.search.metrics.mask-personal-data=false}.
+ * off with {@code turing.search.metrics.mask-personal-data=false}, and (T1329) a
+ * site overrides that with its own {@code metricsMaskPersonalData}.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.8
@@ -61,7 +62,17 @@ public final class TurSearchTermPrivacy {
 
     /** {@code term} with its personal data masked, or as it is when masking is off. */
     public static String mask(String term) {
-        if (!enabled || term == null || term.isEmpty()) {
+        return mask(term, null);
+    }
+
+    /**
+     * T1329 — as {@link #mask(String)}, with the site's own setting
+     * ({@code metricsMaskPersonalData}) deciding: {@code 1} masks, {@code 0} keeps the
+     * term as typed, {@code null} follows the deployment's property.
+     */
+    public static String mask(String term, Integer siteSetting) {
+        boolean on = siteSetting == null ? enabled : siteSetting == 1;
+        if (!on || term == null || term.isEmpty()) {
             return term;
         }
         // Every caller stores at most a few thousand characters; bounding the input

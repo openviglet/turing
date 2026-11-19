@@ -288,6 +288,35 @@ export const SNSiteBehaviorForm: React.FC<Props> = ({ value, isNew, baseRoute = 
               </FormItemTwoColumns>
             )}
           />
+          <FormField
+            control={form.control}
+            name="metricsMaskPersonalData"
+            render={({ field }) => (
+              <FormItemTwoColumns>
+                <FormItemTwoColumns.Left>
+                  <FormItemTwoColumns.Label>{t("forms.snBehavior.maskPersonalData")}</FormItemTwoColumns.Label>
+                  <FormItemTwoColumns.Description>
+                    {t("forms.snBehavior.maskPersonalDataDesc")}
+                  </FormItemTwoColumns.Description>
+                </FormItemTwoColumns.Left>
+                <FormItemTwoColumns.Right>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === "DEFAULT" ? null : Number(value))}
+                    value={field.value == null ? "DEFAULT" : String(field.value)}
+                  >
+                    <SelectTrigger className="max-w-xs w-full">
+                      <SelectValue placeholder={t("forms.snBehavior.select")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DEFAULT">{t("forms.snBehavior.maskPersonalDataDefault")}</SelectItem>
+                      <SelectItem value="1">{t("forms.snBehavior.maskPersonalDataOn")}</SelectItem>
+                      <SelectItem value="0">{t("forms.snBehavior.maskPersonalDataOff")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItemTwoColumns.Right>
+              </FormItemTwoColumns>
+            )}
+          />
         </SNFormSection>
 
         {/* Facets */}

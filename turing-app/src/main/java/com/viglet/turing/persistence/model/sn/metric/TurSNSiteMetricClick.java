@@ -115,9 +115,8 @@ public class TurSNSiteMetricClick implements Serializable {
      * the contract of {@link TurSNSiteMetricAccess#setTerm(String)}.
      */
     public void setTerm(String term) {
-        // T1244 — capped to the column, the same as a search's. T1298 — and masked the same.
-        this.term = TurSNSiteMetricTerms.cap(
-                com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(term));
+        // T1244 — capped to the column, the same as a search's; masked by its writer (T1298).
+        this.term = TurSNSiteMetricTerms.cap(term);
         if (term == null) {
             this.sanatizedTerm = null;
             return;

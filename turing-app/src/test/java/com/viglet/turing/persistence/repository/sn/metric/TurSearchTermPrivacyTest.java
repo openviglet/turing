@@ -57,15 +57,31 @@ class TurSearchTermPrivacyTest {
         assertThat(TurSearchTermPrivacy.mask("9788535914849")).isEqualTo("9788535914849");
     }
 
+    /**
+     * T1329 — a site's own setting wins over the deployment's: two sites on one Turing,
+     * a school masking and a bookstore keeping its ISBNs, and a site with no setting
+     * following the property.
+     */
     @Test
-    void aSearchAndAClickStoreTheMaskedTerm() {
+    void aSitesOwnSettingDecides() {
+        assertThat(TurSearchTermPrivacy.mask("9788535914849", 0)).isEqualTo("9788535914849");
+        assertThat(TurSearchTermPrivacy.mask("20231234", 1)).isEqualTo("***");
+        assertThat(TurSearchTermPrivacy.mask("20231234", null)).isEqualTo("***");
+
+        TurSearchTermPrivacy.setEnabled(false);
+        assertThat(TurSearchTermPrivacy.mask("20231234", null)).isEqualTo("20231234");
+        assertThat(TurSearchTermPrivacy.mask("20231234", 1)).isEqualTo("***");
+    }
+
+    @Test
+    void aSearchAndAClickStoreTheTermTheirWriterGives() {
         TurSNSiteMetricAccess access = new TurSNSiteMetricAccess();
-        access.setTerm("123.456.789-09");
+        access.setTerm(TurSearchTermPrivacy.mask("123.456.789-09", null));
         assertThat(access.getTerm()).isEqualTo("***");
         assertThat(access.getSanatizedTerm()).isEqualTo("***");
 
         TurSNSiteMetricClick click = new TurSNSiteMetricClick();
-        click.setTerm("aluno@fespsp.org.br horários");
+        click.setTerm(TurSearchTermPrivacy.mask("aluno@fespsp.org.br horários", null));
         assertThat(click.getTerm()).isEqualTo("*** horários");
     }
 }

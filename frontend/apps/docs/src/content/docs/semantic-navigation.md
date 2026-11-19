@@ -133,6 +133,23 @@ document spells that phrase.
 - The list is read from the search metrics, so it needs `turing.search.metrics.enabled=true`
   (see [Top Search Terms](#top-search-terms)), and it is refreshed every few minutes.
 
+### Personal data in search metrics
+
+Visitors sometimes type an e-mail address, a CPF or an enrolment number into the search
+box. **Hide personal data in search metrics** (in the same section) decides whether such
+a search is stored with that data replaced by `***`: the e-mail, the CPF or CNPJ, and any
+run of seven or more digits that is not a date. What the visitor searched for around it is
+kept, so `boletim 20231234` is still counted as a search for a report card.
+
+| Choice | What is stored |
+|---|---|
+| **As the server is configured** *(default)* | What `turing.search.metrics.mask-personal-data` says, on unless the server turned it off |
+| **Hide** | The term with its personal data masked |
+| **Keep as typed** | The term as the visitor typed it: for a site whose visitors search by codes you want to see, such as ISBNs or SKUs |
+
+The choice applies to searches, clicks, shared answers and answer feedback alike, from the
+moment it is saved; terms stored before keep how they were stored.
+
 ### Facets
 
 | Setting | Description |

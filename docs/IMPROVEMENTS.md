@@ -2467,28 +2467,6 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
-### CLXXXII.21 Per-site masking of personal data in search terms (T1329)
-
-Found while shipping T1298. Personal data in search terms is masked before it is stored
-(`TurSearchTermPrivacy`, applied in the search and click metric setters and the answer
-share and signal writes), switched by one deployment-wide property,
-`turing.search.metrics.mask-personal-data` (default on).
-
-One switch for every site is wrong where sites differ: a school site wants an 8-digit
-enrolment number masked, a bookstore on the same Turing wants its ISBN and EAN searches
-visible in Search insights. Today the bookstore can only turn masking off for everyone.
-
-Fix: a per-site setting on the SN site (`metricsMaskPersonalData`, nullable: null
-follows the property), a Liquibase changeset adding the column (lowercase portable type,
-a `columnExists` precondition), the console toggle in the site's search settings, and
-`facets`-style manifest support so a connector can declare it. The setters cannot read a
-site's setting, so the masking moves from the entity setters to the writers that know
-the site (`TurSNSearchProcess`, `TurSNSiteClickAPI`, the answer share and signal
-services), keeping `TurSearchTermPrivacy.mask` as the one rule.
-
-Tests: two sites on one Turing, one masking and one not, each storing its own way; a
-site with no setting follows the property.
-
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report

@@ -21,7 +21,6 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1329** (deps: —) **Personal-data masking of search terms is one switch for the whole deployment, not per site** — A bookstore that wants its ISBN searches visible can only turn masking off for every site on the same Turing. → §CLXXXII.21
 
 ## Block CY — Filters from a sentence say what visitors say
 

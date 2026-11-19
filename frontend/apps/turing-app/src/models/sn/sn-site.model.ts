@@ -38,6 +38,8 @@ export type TurSNSite = {
   relaxNoResults?: number;
   /** T1246 — 1 adds the most searched terms (that found results) to autocomplete. */
   autocompleteTopTerms?: number;
+  /** T1329 — 1 masks personal data in stored search terms, 0 keeps it, null follows the deployment. */
+  metricsMaskPersonalData?: number | null;
   exactMatch: number;
   turSNSiteGenAi: TurSNSiteGenAi;
   icon?: string | null;

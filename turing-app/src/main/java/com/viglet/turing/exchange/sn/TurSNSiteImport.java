@@ -338,6 +338,8 @@ public class TurSNSiteImport {
 		if (turSNSiteExchange.getAutocompleteTopTerms() != null) {
 			turSNSite.setAutocompleteTopTerms(turSNSiteExchange.getAutocompleteTopTerms());
 		}
+		// T1329 — null on purpose means "follow the deployment", so it is copied as is.
+		turSNSite.setMetricsMaskPersonalData(turSNSiteExchange.getMetricsMaskPersonalData());
 		turSNSite.setExactMatch(turSNSiteExchange.getExactMatch());
 		turSNSite.setFacet(boolToInteger(turSNSiteExchange.isFacet()));
 		turSNSite.setItemsPerFacet(turSNSiteExchange.getItemsPerFacet());
