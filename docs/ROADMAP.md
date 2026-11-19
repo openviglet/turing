@@ -27,10 +27,6 @@
 - 📋 **T1298** (deps: —) **Search insights list searches holding an e-mail, CPF or student number verbatim, and Turing stores them** — A site cannot tell visitors its search log is anonymous, and every editor opening Search insights sees students' personal numbers. → §CLXXXII.18
 - 📋 **T1301** (deps: —) **The answer's context is not numbered and no prompt asks for [n], so answers carry no footnotes on any provider** — A visitor either gets an answer with no source or one citing unrelated pages, which is the trust a site's AI answer cannot lose. → §CLXXXII.19
 
-## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
-
-- 📋 **T1293** (deps: —) **The copilot's price sort never shows in its summary and hybrid ranking reorders the sorted page, so cheapest is refused** — Pricing fields are indexed on every model, yet the public catalog demo refuses one of its own golden questions. → §CLXXXIII.2
-
 ## Block CW — Chat retrieval recalls what the site's search finds
 
 - 📋 **T1294** (deps: —) **SN chat retrieval keeps one off-topic page while the site's search ranks the matching documents first** — On the demo, Tell me about surf camps gets San Diego Surf Spots and a refusal while search returns nine Bali Surf Camp hits. → §CLXXXVI.1

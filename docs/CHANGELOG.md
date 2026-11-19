@@ -1732,6 +1732,7 @@
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 
 - **T1277** — A filter-only copilot question whose leftover words find nothing runs its filters alone, and an NL filter value on a field that cannot hold it moves to the one facet that does.
+- **T1293** — A copilot plan that sorts keeps its order on hybrid sites, and groundedQuerySummary names the sort (kind=EMBEDDING, sort pricing_inputPer1M asc) (design §CLXXXIII.2 superseded: the tie-break between pricing_inputPer1M and pricing_outputPer1M was left in schema order: a preference for input is catalog vocabulary, which T811 keeps out of the planner).
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 

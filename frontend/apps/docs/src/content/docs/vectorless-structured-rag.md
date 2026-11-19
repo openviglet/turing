@@ -223,6 +223,11 @@ fields' **names and descriptions**, so a clear description
 "cheapest" or "biggest context" to the right field. Give each ranking field a
 descriptive `description` in its manifest and superlative questions just work.
 
+The response's `groundedQuerySummary` names the sort beside the filters
+(`kind=EMBEDDING, sort pricing_inputPer1M asc`), so you can tell a ranked answer from
+an unranked one. On a site with hybrid ranking, a sorted question keeps the order it
+asked for: the cheapest results are not re-ranked by relevance.
+
 Matching is done with a language analyzer rather than a word list, so inflections
 collapse on their own: a field named `pricing_inputPer1M` is reached by "price",
 "prices" or "priced" without any of them being configured.

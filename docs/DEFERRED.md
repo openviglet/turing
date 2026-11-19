@@ -30,8 +30,6 @@
 - ⏸ **T1261** (deps: T1252 ✅) **The plugin's search answer lists every retrieved document as a source when it cites none** — set aside (Needs the e2e stack and the video pipeline.): An e2e case for an answer with no [n] marker, then record the video's chapter 2 again. → §CLXXXII.10
 - ⏸ **T1265** (deps: —) **An answer with no [n] marker still sends every retrieved source as its citations** — set aside (Needs real answers from the demo's model.): Find why the demo's tent question is answered with no [n] marker, and make the prompt ask for one. → §CLXXXII.12
 
-## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
-
 ## Block CW — Chat retrieval recalls what the site's search finds
 
 ## Block CX — Synonyms that mix single words and phrases

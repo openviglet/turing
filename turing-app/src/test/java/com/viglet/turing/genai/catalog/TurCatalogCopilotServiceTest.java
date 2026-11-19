@@ -399,8 +399,7 @@ class TurCatalogCopilotServiceTest {
                         "Math domain sub-score only, NOT the overall index")));
         // No parser stub: since T815 the analyzer strips "most intelligent" as ranking
         // vocabulary, leaving nothing to facet — the plan is sort-only match_all and
-        // costs no LLM parse.
-        when(hybridRankingService.isEnabled(site)).thenReturn(false);
+        // costs no LLM parse. A sorted plan never consults hybrid ranking (T1293).
         when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
                 .thenReturn(Optional.of(scoredResponse()));
 
@@ -482,6 +481,59 @@ class TurCatalogCopilotServiceTest {
         assertThat(executed.sort()).isNotNull().hasSize(1);
         assertThat(executed.sort().getFirst()).isEqualTo(Map.of("pricing_inputPer1M", "asc"));
         assertThat(executed.size()).isNotNull();
+    }
+
+    /**
+     * T1293 — "Which embedding model has the lowest price?" on a hybrid site: the plan
+     * carries kind=EMBEDDING and a price sort, the summary says both, and hybrid fusion
+     * leaves the sorted page in price order instead of re-ranking it by relevance.
+     */
+    @Test
+    void aSortedPlanKeepsItsOrderOnAHybridSiteAndTheSummaryNamesTheSort() {
+        TurSNSite site = new TurSNSite();
+        site.setName("catalog");
+        ChatModel chatModel = modelReturning("The cheapest embedding model is [1], then [2].");
+        when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
+        when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.of(site));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("kind", TurSEFieldType.STRING, true),
+                fieldWithDescription("pricing_inputPer1M", TurSEFieldType.DOUBLE,
+                        "Input price per 1M tokens (USD)")));
+        when(parser.isAvailable()).thenReturn(true);
+        ArgumentCaptor<TurNLFacetParser.ParseRequest> parsed =
+                ArgumentCaptor.forClass(TurNLFacetParser.ParseRequest.class);
+        when(parser.parse(parsed.capture())).thenReturn(MAPPER.readValue("""
+                {"query":{"bool":{"filter":[{"term":{"kind":"EMBEDDING"}}]}}}""",
+                TurDslQueryRequest.class));
+        lenient().when(hybridRankingService.isEnabled(site)).thenReturn(true);
+        ArgumentCaptor<TurDslQueryRequest> sent = ArgumentCaptor.forClass(TurDslQueryRequest.class);
+        when(dslSearchService.search(eq("catalog"), eq("en"), sent.capture()))
+                .thenReturn(Optional.of(twoHitResponse()));
+
+        TurCatalogCopilotResult result = service.answer("catalog", "en",
+                List.of(new ChatTurn("user", "Which embedding model has the lowest price?")));
+
+        assertThat(parsed.getValue().query()).containsIgnoringCase("embedding")
+                .doesNotContainIgnoringCase("lowest");
+        assertThat(sent.getValue().sort()).containsExactly(Map.of("pricing_inputPer1M", "asc"));
+        assertThat(result.groundedQuerySummary())
+                .isEqualTo("kind=EMBEDDING, sort pricing_inputPer1M asc");
+        verify(hybridRankingService, never()).fuse(any(), any(), anyString(), any());
+        assertThat(result.citations()).extracting(TurCatalogCitation::id).containsExactly("d1", "d2");
+    }
+
+    /** T1293 — every sort shape the DSL takes is summarised; relevance is not a ranking. */
+    @Test
+    void theSummaryRendersEachSortShape() {
+        TurDslQueryRequest request = MAPPER.readValue("""
+                {"query":{"bool":{"filter":[{"term":{"kind":"CHAT"}}]}},
+                 "sort":["_score","releaseDate",{"price":{"order":"asc"}},{"contextWindow":"desc"}]}""",
+                TurDslQueryRequest.class);
+
+        assertThat(TurCatalogCopilotService.summarize(request))
+                .isEqualTo("kind=CHAT, sort releaseDate, sort price asc, sort contextWindow desc");
+        assertThat(TurCatalogCopilotService.summarize(MAPPER.readValue("""
+                {"sort":[{"price":"asc"}]}""", TurDslQueryRequest.class))).isEqualTo("sort price asc");
     }
 
     /** T1171 — a grounded filter narrows the planned query and never empties it. */

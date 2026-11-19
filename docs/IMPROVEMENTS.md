@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
-
 ## Block CW — Chat retrieval recalls what the site's search finds
 
 ## Block CX — Synonyms that mix single words and phrases
@@ -2594,33 +2592,6 @@ on the OpenAI provider (`-Pllm-it`) asserting at least one marker for a one-page
 question.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
-
-### CLXXXIII.2 Ranking by a numeric field survives to the page the copilot reads (T1293)
-
-Met by the Viglet Cloud regression monitor (`tests/regression`, C214) on the
-model-catalog "Ask the catalog" golden question, after T1277 (sha-f860190): `POST
-/api/sn/model-catalog/copilot` with "Which embedding model has the lowest price?" came
-back with an empty `groundedQuerySummary`, 1206 hits, 8 citations, and "The catalog
-results do not provide any information about the prices of embedding models."
-
-Validated against the code (2026-11-19): superlative to sort already exists.
-`TurDeterministicCopilotQueryPlanner.plan` calls `TurNLRankingPlanner.detect`
-("lowest"/"cheapest" are asc words, "cheapest" maps to price/pricing, and
-`pricing_inputPer1M` splits and stems to match), and LLM_ASSISTED sites sort through
-`TurCopilotPlanCompiler.resolveSort`. So the gap is not a missing feature. The likely
-causes, all in `TurCatalogCopilotService`:
-- `summarize`/`collectClauses` print term, range and match clauses and never the sort,
-  so an empty summary cannot tell "no sort" from "sorted";
-- `applyHybridRanking` re-fuses the sorted page on a HYBRID_RRF site and ignores
-  `request.sort()`, so the cheapest models leave the page the LLM reads;
-- `TurNLRankingPlanner.resolveField` keeps the first of two tied fields
-  (`pricing_inputPer1M`, `pricing_outputPer1M`), in schema order.
-
-Fix: the summary states the sort; a plan that carries a sort keeps its order through
-hybrid ranking; on a tie the field named by the question's words (input over output by
-default) wins. Reproduce first with an IT over a catalog of typed models and numeric
-prices, asserting `kind=EMBEDDING` and an ascending price sort reach the page; if a step
-not listed here drops the filter, fix that instead.
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
 

@@ -552,7 +552,12 @@ public class TurCatalogCopilotService {
         log.info("[CatalogCopilot] site '{}' FILTERED returned {} hits (filters: {})",
                 siteName, totalHits, blankToNone(summarize(request)));
 
-        List<TurDslSearchResponse.Hit> ordered = applyHybridRanking(site, searchLocale, query, hits);
+        // T1293 — a plan that sorts ("lowest price") already put its page in the order
+        // the question asked for; hybrid fusion re-ranks by relevance and would push the
+        // cheapest documents off the page the LLM reads.
+        List<TurDslSearchResponse.Hit> ordered = hasSort(request)
+                ? hits
+                : applyHybridRanking(site, searchLocale, query, hits);
 
         Projection projection = project(ordered, MAX_RESULTS, fieldDescriptions(schema));
         return new Retrieval(projection.citations(), projection.contextBlocks(),
@@ -1016,14 +1021,46 @@ public class TurCatalogCopilotService {
                 || TurSNFieldName.ID.equals(key);
     }
 
-    /** Renders the grounded query's filter clauses into a short human summary. */
+    /**
+     * Renders the grounded query's filter clauses into a short human summary, followed
+     * by its sort (T1293), so a summary with no filter still tells "sorted" from "not
+     * planned at all".
+     */
     static String summarize(TurDslQueryRequest request) {
-        if (request == null || request.query() == null) {
+        if (request == null) {
             return "";
         }
         List<String> parts = new ArrayList<>();
-        collectClauses(request.query(), parts);
+        if (request.query() != null) {
+            collectClauses(request.query(), parts);
+        }
+        if (request.sort() != null) {
+            request.sort().forEach(entry -> appendSort(entry, parts));
+        }
         return String.join(", ", parts);
+    }
+
+    private static boolean hasSort(TurDslQueryRequest request) {
+        return request != null && request.sort() != null && !request.sort().isEmpty();
+    }
+
+    /**
+     * One sort entry as the DSL accepts it: a bare field name, {@code {field: order}}
+     * or {@code {field: {order: ...}}}. {@code _score} is relevance, not a ranking the
+     * question asked for, so it is left out.
+     */
+    private static void appendSort(Object entry, List<String> parts) {
+        if (entry instanceof String field && !"_score".equals(field)) {
+            parts.add("sort " + field);
+        } else if (entry instanceof Map<?, ?> map) {
+            map.forEach((field, spec) -> {
+                if ("_score".equals(String.valueOf(field))) {
+                    return;
+                }
+                Object order = spec instanceof Map<?, ?> options ? options.get("order") : spec;
+                parts.add(order != null ? "sort " + field + " " + order : "sort " + field);
+            });
+        }
     }
 
     private static void collectClauses(TurDslQuery query, List<String> parts) {
