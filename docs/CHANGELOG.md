@@ -1735,3 +1735,5 @@
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 
+## Block CX — Synonyms that mix single words and phrases
+

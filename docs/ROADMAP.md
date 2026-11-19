@@ -33,6 +33,10 @@
 
 - 📋 **T1294** (deps: —) **SN chat retrieval keeps one off-topic page while the site's search ranks the matching documents first** — On the demo, Tell me about surf camps gets San Diego Surf Spots and a refusal while search returns nine Bali Surf Camp hits. → §CLXXXVI.1
 
+## Block CX — Synonyms that mix single words and phrases
+
+- 📋 **T1297** (deps: —) **On Lucene, a synonym group pairing one word with a phrase makes a search for the word find nothing** — A site that adds its acronym as a synonym of its full name loses every result for the acronym, the word visitors type most. → §CLXXXVII.1
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

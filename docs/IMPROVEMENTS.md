@@ -39,6 +39,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 
+## Block CX — Synonyms that mix single words and phrases
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2593,3 +2595,36 @@ misses, hybrid or a lexical fallback should bring the search hits in.
 
 Workaround: none. The monitor keeps the question and fails on it. Observed on
 `turing:2026.3.8` and on `2026.3-snapshot` (sha-f860190).
+
+## CLXXXVII Synonyms that mix single words and phrases
+
+### CLXXXVII.1 Single word beside a multi-word synonym (T1297)
+
+Met in fespsp-institucional (FI140), on `ghcr.io/openviglet/turing:2026.3.8` (which
+holds T1066 and T1091), Lucene engine, SN site `fespsp`, locale pt_BR.
+
+The synonym group `["fespsp", "fundação escola de sociologia e política"]` was created
+through the WordPress plugin (`Viglet_Turing_Tuning::add_synonym`, which posts
+`/api/sn/{id}/synonym` and applies them). Then, `GET /api/sn/fespsp/search?q=<q>`:
+
+| query | with the group | without it |
+|---|---|---|
+| `fespsp` | 0 documents | 18 |
+| `fundação escola de sociologia e política` | 19 | 19 |
+
+So the multi-word side expands, but the single word on the other side of the same group
+finds nothing at all, though 18 titles contain it ("Feira de Extensão FESPSP"). A
+single-word group on the same site (`pós`, `pós-graduação`, `especialização`) works.
+
+Expected: `fespsp` finds what it found before, plus what the phrase finds. T1066
+promised expansion in both directions and T1091 that a multi-word expansion answers;
+this is the case neither covers, where the query is the single word and the expansion is
+the phrase.
+
+Probably the expanded query for the single word becomes a phrase query over every field,
+and on STRING/keyword fields the phrase matches nothing while the original term is
+dropped. A test: a group of one word and a five-word phrase, searched by the word, on
+Lucene, over a document holding only the word.
+
+Workaround in the project: the group is left out of `docker/turing/afinacao.json` until
+this ships; only single-word groups are versioned.
