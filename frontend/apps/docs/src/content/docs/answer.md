@@ -50,6 +50,8 @@ The response is `text/event-stream`. Each frame carries a named event; a client 
 
 The `[n]` markers inside the `token` text refer to the entries of the `sources` event, and `citations` states that mapping explicitly, so a client never has to parse the prose to build its footnotes.
 
+The markers come from the model being told to write them, on every provider: each passage of the retrieved content reaches the model after its source's number (`[1]`, `[2]`, in the order of the `sources` event, two passages of one page under one number), and the prompt asks for that number after every sentence that uses it. The instruction follows the agent's system prompt, a custom one included, so changing the prompt does not turn citations off. The SN chat conversation endpoint gets the same numbering, so its answers carry markers too.
+
 An answer written without any `[n]` marker still gets a `citations` event: the top retrieved sources, numbered in order. `trace.cited` tells the two apart. It is `true` when `citations` lists what the answer's markers name, and `false` when the answer named nothing and `citations` is the retrieval it fell back to. A client that promises "only the sources the answer cites" (the WordPress plugin's answer panel does) shows no source list when `cited` is `false`.
 
 ### When you get an `error` instead

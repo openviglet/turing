@@ -98,7 +98,28 @@ function navigate( args ) {
 }
 
 /**
- * The posts an answer used, each once: the cited ones, else what retrieval found.
+ * The [n] footnotes an answer's text names (Turing T1301 numbers its sources so).
+ *
+ * @param {string} text The answer.
+ * @return {Set<number>} The numbers cited.
+ */
+function footnotesIn( text ) {
+	const used = new Set();
+	for ( const match of String( text || '' ).matchAll(
+		/\[(\d+(?:\s*,\s*\d+)*)\]/g
+	) ) {
+		for ( const number of match[ 1 ].split( ',' ) ) {
+			used.add( Number( number.trim() ) );
+		}
+	}
+	return used;
+}
+
+/**
+ * The posts an answer used, each once: its citations, else the sources its [n] footnotes
+ * name (the n-th source the stream sent). An answer that cites nothing lists nothing, the
+ * rule the search block's answer follows (T1261): retrieval is wider than the answer, and
+ * listing all of it put unrelated posts under it (Turing T1301).
  *
  * @param {Object} message A ChatMessage.
  */
@@ -113,7 +134,11 @@ function sourcesOf( message ) {
 			( s ) => s.sourceId === c.sourceId
 		)?.type,
 	} ) );
-	return ( cited.length ? cited : message.sources || [] )
+	const used = footnotesIn( message.content );
+	const footnoted = ( message.sources || [] ).filter( ( s, i ) =>
+		used.has( Number( s.rank ?? i + 1 ) )
+	);
+	return ( cited.length ? cited : footnoted )
 		.filter( ( s ) => s.url && ! seen.has( s.url ) && seen.add( s.url ) )
 		.map( ( s ) => ( {
 			url: siteUrl( s.url, s.sourceId ),

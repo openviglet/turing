@@ -976,6 +976,37 @@ class TurSNGenAiTest {
         assertTrue(request.getValue().getFilterExpression().toString().contains("jacket-42"));
     }
 
+    /**
+     * T1301 — the passages are numbered as the sources event numbers their documents:
+     * the pinned document first, two chunks of one document under one number.
+     */
+    @Test
+    void passagesAreNumberedByTheSourceTheVisitorSees() {
+        Document jacket = new Document("Catbells jacket.", Map.of(TurSNGenAi.SOURCE_ID, "jacket-42"));
+        Document fleece = new Document("Grid fleece.", Map.of(TurSNGenAi.SOURCE_ID, "fleece-7"));
+        Document jacketAgain = new Document("Taped seams.", Map.of(TurSNGenAi.SOURCE_ID, "jacket-42"));
+
+        assertEquals(List.of("[1] Catbells jacket.", "[2] Grid fleece.", "[1] Taped seams."),
+                TurSNGenAi.Pinned.labelled(List.of(jacket, fleece, jacketAgain)));
+        List<com.viglet.turing.genai.rag.TurRagSource> sources = com.viglet.turing.genai.rag.TurRagSource
+                .dedupeByDocument(List.of(jacket, fleece, jacketAgain).stream()
+                        .map(com.viglet.turing.genai.rag.TurRagSource::fromDocument).toList());
+        assertEquals(List.of("jacket-42", "fleece-7"),
+                sources.stream().map(com.viglet.turing.genai.rag.TurRagSource::sourceId).toList());
+    }
+
+    /** T1301 — the streaming path asks for markers, after a custom agent prompt too. */
+    @Test
+    void theCitationInstructionFollowsEvenACustomPrompt() {
+        String cited = turSNGenAi.buildSystemPrompt("You are Ana, the library's assistant.", "[1] Opens at 8.",
+                false, true);
+        assertTrue(cited.startsWith("You are Ana"));
+        assertTrue(cited.contains(TurSNGenAi.CITATION_INSTRUCTION.strip()));
+        assertTrue(cited.indexOf("Citing sources") < cited.indexOf("<untrusted_website_content>"));
+        assertFalse(turSNGenAi.buildSystemPrompt(null, "Opens at 8.", false).contains("Citing sources"));
+        assertFalse(turSNGenAi.buildSystemPrompt(null, "", false, true).contains("Citing sources"));
+    }
+
     @Test
     void anUnknownOrMissingPinLeavesTheRetrievalAsIs() {
         VectorStore vectorStore = mock(VectorStore.class);
@@ -985,7 +1016,8 @@ class TurSNGenAiTest {
 
         TurSNGenAi.Pinned unknown = turSNGenAi.pinDocument(context, "q", "nowhere", List.of(fleece));
         assertEquals(List.of(fleece), unknown.documents());
-        assertEquals("Grid fleece, sky.", unknown.information());
+        // T1301 — each passage carries its source's number.
+        assertEquals("[1] Grid fleece, sky.", unknown.information());
 
         TurSNGenAi.Pinned none = turSNGenAi.pinDocument(context, "q", null, List.of(fleece));
         assertEquals(0, none.pinnedCount());

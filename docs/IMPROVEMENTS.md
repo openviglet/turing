@@ -2471,37 +2471,6 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
-### CLXXXII.19 Numbered sources and a citation instruction on every answer (T1301)
-
-Met in fespsp-institucional (FI170) on `turing:2026.3.8`, the boot's `gpt-4o-mini`,
-default agent, site `fespsp`, pt_BR. `GET /api/sn/fespsp/answer?q=O que é a Cátedra
-Celso Furtado?`: a correct answer with no `[n]` marker, `trace` `cited:false`, and a
-`citations` event with all 8 retrieved documents, unrelated books included. The search
-block (`search-block.js`, T1261) then shows no source; the Site assistant
-(`assistant.js`, `sourcesOf`) lists all eight.
-
-Validated against the code (2026-11-19): the cause is not the provider. On the path
-`/answer` and SN chat share (`TurSNGenAi.assistantConversationStreaming`), no prompt
-asks for markers (`DEFAULT_BEHAVIOR_PROMPT`, `STRICT_RAG_GUARD`, `buildSystemPrompt`),
-and the context is not numbered: `Pinned.information()` joins chunk texts with blank
-lines. A model can only cite `[n]` by accident or under a custom agent prompt.
-`TurAnswerCitationNumberer.renumberByMarkers` then falls back to every retrieved
-document, which T1265 flags as `cited:false`.
-
-Fix in `TurSNGenAi`, one seam for both paths:
-- label each source `[n]` in the context, in the order of the `sources` event (today the
-  pinned document is placed first in the context but not in `relevantDocuments`);
-- append the citation instruction always, after a custom agent prompt too, the way
-  `STRICT_RAG_GUARD` is appended.
-Turing attributing sentences itself is a later, separate step.
-
-Plugin: both surfaces read the trace's `cited` flag, not their own marker parse: cited
-lists the footnoted sources, not cited lists none (the block's setting) in both.
-
-Tests: the context numbering matches the `sources` order with a pinned document; an IT
-on the OpenAI provider (`-Pllm-it`) asserting at least one marker for a one-page
-question.
-
 ### CLXXXII.20 Midnight UTC is a day only when the stored date was one (T1303)
 
 Found while shipping T1295. Since T1295 a wall-clock date-time is indexed in the site's

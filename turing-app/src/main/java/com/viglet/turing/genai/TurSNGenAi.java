@@ -441,8 +441,9 @@ public class TurSNGenAi {
         }
 
         String information = pinned.information();
+        // T1301 — this path sends a sources event, so the answer cites by [n].
         String augmentedSystemPrompt = buildSystemPrompt(
-                context.getSystemPrompt(), information, isStrictRag(context));
+                context.getSystemPrompt(), information, isStrictRag(context), true);
 
         var mapped = history.stream()
                 .map(m -> new TurAgentChatExecutor.ChatMessageItem(
@@ -797,15 +798,36 @@ public class TurSNGenAi {
      */
     record Pinned(List<Document> documents, int pinnedCount) {
 
+        /**
+         * T1301 — each chunk's text after its source's number in brackets, the number
+         * the {@code sources} event gives that document: documents counted from 1 in
+         * first-seen order, keyed by URL, else source id, as
+         * {@link com.viglet.turing.genai.rag.TurRagSource#dedupeByDocument} keys them,
+         * so an answer's {@code [n]} names the source the visitor sees as n.
+         */
+        static List<String> labelled(List<Document> documents) {
+            Map<String, Integer> numbers = new java.util.HashMap<>();
+            List<String> labelled = new ArrayList<>(documents.size());
+            for (Document document : documents) {
+                com.viglet.turing.genai.rag.TurRagSource source =
+                        com.viglet.turing.genai.rag.TurRagSource.fromDocument(document);
+                String key = StringUtils.hasText(source.url()) ? source.url()
+                        : StringUtils.hasText(source.sourceId()) ? source.sourceId()
+                        : "\0anon-" + labelled.size();
+                int number = numbers.computeIfAbsent(key, k -> numbers.size() + 1);
+                labelled.add("[" + number + "] " + document.getText());
+            }
+            return labelled;
+        }
+
         String information() {
-            String all = documents.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
+            List<String> labelled = labelled(documents);
+            String all = String.join("\n\n", labelled);
             if (pinnedCount == 0) {
                 return all;
             }
-            String about = documents.subList(0, pinnedCount).stream().map(Document::getText)
-                    .collect(Collectors.joining("\n\n"));
-            String others = documents.subList(pinnedCount, documents.size()).stream().map(Document::getText)
-                    .collect(Collectors.joining("\n\n"));
+            String about = String.join("\n\n", labelled.subList(0, pinnedCount));
+            String others = String.join("\n\n", labelled.subList(pinnedCount, labelled.size()));
             return "THE VISITOR IS ASKING ABOUT THIS DOCUMENT; answer about it first:\n\n" + about
                     + (others.isEmpty() ? ""
                             : "\n\nOTHER DOCUMENTS; mention them only as alternatives, and say so:\n\n" + others);
@@ -1275,6 +1297,16 @@ public class TurSNGenAi {
      * {@link #UNTRUSTED_CONTEXT_GUARD} (T647), independent of the mode.
      */
     String buildSystemPrompt(String configuredPrompt, String information, boolean strictRag) {
+        return buildSystemPrompt(configuredPrompt, information, strictRag, false);
+    }
+
+    /**
+     * T1301 — with {@code cite}, the {@link #CITATION_INSTRUCTION} is appended after
+     * the configured prompt, a custom agent prompt included, the way
+     * {@link #STRICT_RAG_GUARD} cannot be removed by one: the context's passages are
+     * numbered, and only a path that sends a {@code sources} event asks for markers.
+     */
+    String buildSystemPrompt(String configuredPrompt, String information, boolean strictRag, boolean cite) {
         String behavior = (configuredPrompt == null || configuredPrompt.isBlank())
                 ? DEFAULT_BEHAVIOR_PROMPT
                 : configuredPrompt;
@@ -1282,11 +1314,23 @@ public class TurSNGenAi {
             behavior = STRICT_RAG_GUARD + "\n\n" + behavior;
         }
         if (!information.isBlank()) {
+            if (cite) {
+                behavior = behavior + CITATION_INSTRUCTION;
+            }
             behavior = behavior + UNTRUSTED_CONTEXT_GUARD
                     + "\n\n<untrusted_website_content>\n" + information + "\n</untrusted_website_content>";
         }
         return behavior;
     }
+
+    /** T1301 — what makes an answer carry the footnotes its sources are listed under. */
+    static final String CITATION_INSTRUCTION = """
+
+
+            Citing sources: each passage of the website content below starts with its source's \
+            number in square brackets, such as [1]. After every sentence that uses a passage, \
+            write that number in square brackets, for example "The library opens at 8 am [2]." \
+            Use only the numbers that appear in the content, and cite each claim.""";
 
     /**
      * True when the resolved context runs an agent in strict retrieval-grounded

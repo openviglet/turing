@@ -90,7 +90,8 @@ async function turing( page, answers ) {
 
 const grantAnswer = ( seed ) => [
 	{ content: 'Applications close on ' },
-	{ content: '14 March 2026.' },
+	// Turing T1301: the answer cites its source by [n], and only a cited source is listed.
+	{ content: '14 March 2026 [1].' },
 	{
 		type: 'sources',
 		content: JSON.stringify( [
@@ -143,7 +144,7 @@ test( 'a question gets a streamed answer, the post it used and a follow-up in co
 	const log = dialog.getByRole( 'log', { name: 'Conversation' } );
 	await expect(
 		log.locator( '.viglet-turing-assistant__message' ).nth( 1 )
-	).toContainText( 'Applications close on 14 March 2026.' );
+	).toContainText( 'Applications close on 14 March 2026' );
 	const source = log.getByRole( 'link', { name: 'Research grant 2026' } );
 	await expect( source ).toHaveAttribute( 'href', `/?p=${ seed.postId }` );
 	await expect(
@@ -288,5 +289,5 @@ test( 'with the setting on, every page has the assistant in a corner, and keeps 
 		.click();
 	await expect(
 		page.getByRole( 'dialog', { name: 'Ask this site' } ).getByRole( 'log' )
-	).toContainText( 'Applications close on 14 March 2026.' );
+	).toContainText( 'Applications close on 14 March 2026' );
 } );
