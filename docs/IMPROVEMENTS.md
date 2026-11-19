@@ -41,6 +41,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CY — Filters from a sentence say what visitors say
 
+## Block CZ — Backend modules with verified boundaries
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2679,3 +2681,234 @@ is cheap; a value past bucket 1000 stays unreachable, as for exact matches today
 
 Tests: the two cases above; "Sociologia" matching two values (dropped, several); "e
 Política" not matching on the stopword; "Casa" not matching "Casarão" (whole tokens).
+
+## CLXXXIX Backend modules with verified boundaries
+
+The backend is one Maven module whose top-level packages mix layers (api, persistence,
+service) with subsystems (genai, sn), and nothing checks which may depend on which.
+Cycles between genai, sn, api and persistence already exist. This block turns turing-app
+into a modular monolith verified by Spring Modulith: one module per subsystem, its
+entities and tables owned inside it, cross-module references by id and by event, and a
+build that fails on a boundary violation. Compatibility is waived for packages, JPA
+mappings, table names and the Liquibase history, so the schema is reset to one baseline
+per module; REST paths, the SDK contract and the exchange format stay. Later work on
+module boundaries files here.
+
+### CLXXXIX.1 Module map and the compatibility ruling (T1305)
+
+turing-app is 1,878 classes under top-level packages that mix layers (api 228,
+persistence 430, service 105) with features (genai 646, sn 155). Import counts show real
+cycles: genai and api (74/13), genai and sn (28/8), persistence back into sn and genai
+(21/7, through entity listeners and enums), api and sn, service and genai. Nothing stops
+them growing.
+
+ADR 0005 fixes the target: a modular monolith verified by Spring Modulith, one module
+per subsystem (sn, searchengine, llm, agent, rag, persona, eval, transcription, batch,
+kb, chat, storage, tenant, auth, system, exchange, mcp, observability) plus a small
+shared kernel. It also rules that compatibility is waived: package names, JPA mappings,
+table names and the Liquibase history may break, and an upgrade from 2026.2 goes through
+export and import. Domain records and ports (ADR 0001) move into the module that owns
+them, and ADR 0001 is amended to say so. REST paths, the SDK contract and the exchange
+format are not part of the waiver.
+
+### CLXXXIX.2 A non-failing module report (T1306)
+
+Add the Spring Modulith BOM (the 2.x line that targets Spring Boot 4) and
+spring-modulith-starter-test. One unit test builds ApplicationModules from the
+application class, prints the modules and the violations, and records the count as a
+baseline without failing. Every later task in the block reports the count it removed, so
+progress is measured, not asserted.
+
+### CLXXXIX.3 A shared kernel for cross-module types (T1307)
+
+genai imports TurNotFoundException, TurConflictException, TurProviderException,
+TurQuotaExhaustedException and TurUnsupportedEngineException from api.exception, which
+makes api a dependency of the module api itself calls. These types, and the few value
+types every module shares, move to a shared kernel declared as a Spring Modulith shared
+module. The kernel stays small: a type earns a place only when three or more modules
+need it.
+
+### CLXXXIX.4 Controllers move into their modules (T1308)
+
+api holds controllers for every subsystem and also services: genai calls
+api.sn.search.TurSNSiteSearchService and api.sn.job.TurSNImportAPI. Each controller
+moves into a web package inside its module, and each service that other modules call
+moves into that module's application layer behind its named interface. Afterwards
+nothing imports a controller and the top-level api package is gone. Request paths do not
+change.
+
+### CLXXXIX.5 Splitting genai into modules (T1309)
+
+genai is a third of the backend: nativeapi, provider, catalog and gateway (llm); agent,
+tool, flow and skill (agent); rag; persona and research (persona); eval; transcription;
+batch. Each becomes a top-level module with its own internal packages. The split moves
+packages and fixes imports first, so the module report shows where the real cross-module
+calls are before any of them is redesigned.
+
+### CLXXXIX.6 One searchengine module (T1310)
+
+plugins, se, solr, lucene, elasticsearch and contentai together implement
+TurSearchEnginePlugin. They become one searchengine module whose named interface is the
+plugin contract and its factory; the Solr, Lucene, Elasticsearch and Content AI
+implementations become internal. sn and genai depend only on the interface, which the
+turing-search-lucene skill already names as the seam. The embedded Lucene vector store
+stays with rag.
+
+### CLXXXIX.7 Dissolving service and onstartup (T1311)
+
+service holds chatanalytics, chatslots, chatmemory, usermemory and chatflow (a chat
+module), storage and asset (a storage module), keycloak and auth (an auth module), llm
+and git. onstartup seeds data for many modules from one place. Each part moves into the
+module it serves, and each seeder moves into the module whose tables it writes, keeping
+the per-id seeding rule rather than a fresh-install check.
+
+### CLXXXIX.8 SN persistence moves into sn (T1312)
+
+persistence.model.sn, the SN repositories, DTOs and mappers move into the sn module as
+internal packages. Other modules stop calling SN repositories: they call the sn named
+interface for reads and listen to its events for changes. The searchengine and genai
+calls that read SN sites directly are the ones the module report lists; each is
+replaced, not exempted.
+
+### CLXXXIX.9 GenAI persistence moves into its modules (T1313)
+
+LLM instance, model, agent, flow, skill, tool, eval, batch and distillation entities,
+with their repositories, DTOs and mappers, move into the modules the genai split
+created. Enums such as TurBatchKind, TurBatchState, TurChatFeedbackRating and
+TurDistillationState move with the module that owns them, which ends persistence
+importing genai types.
+
+### CLXXXIX.10 Emptying the persistence package (T1314)
+
+What remains in persistence (chat, thesaurus, tenant, system, auth, persona, research,
+metrics) moves to its module. When persistence.model, repository, dto, mapper and
+adapter are empty the package is deleted, and the domain records and ports under domain
+move into their modules too. No module then shares an entity class with another.
+
+### CLXXXIX.11 Cross-module references by id (T1315)
+
+JPA associations cross the new module lines: agents to SN sites, SN GenAI settings to
+LLM instances, personas to models, and more. Loading one aggregate pulls another
+module's graph and its lazy-loading rules. Each cross-module @ManyToOne, @OneToMany or
+@ManyToMany becomes an id column (or a join table of ids) resolved through the owning
+module's named interface, and deletes that used to cascade across modules become events
+the other module handles. Associations inside one module stay, under the FetchType.LAZY
+rule. The schema change is carried by the Liquibase reset, not by migrations.
+
+### CLXXXIX.12 Cache eviction through module events (T1316)
+
+TurSNSite, TurAIAgent, TurSNSiteFieldExt, TurSNSiteCustomFacet, TurSNSiteLocale,
+TurSNSiteGenAi and others name TurSNSiteSnapshotEvictionListener,
+TurSNSearchCacheEvictionListener, TurChatFlowRouterEvictionListener and
+TurPersonaStaticPromptEvictionListener in @EntityListeners. The owning module instead
+publishes a change event (site, agent, persona, flow changed) from its service, and the
+cache owners listen. Eviction stays synchronous after commit
+(@TransactionalEventListener AFTER_COMMIT), not the asynchronous
+@ApplicationModuleListener, so a read right after a write never sees the stale snapshot.
+TurAssetEventListener and TurDomainEventLogger move to the same pattern.
+
+### CLXXXIX.13 One table-naming rule (T1317)
+
+Today ai_agent, chat_flow and agent_suggestion sit beside tur_agent_eval_case and
+tur_agent_eval_set. Each @Table and join table is renamed to <module>_<entity> in
+snake_case, and the rule is added to the turing-persistence skill with a convention test
+that fails on a table name outside it. Column names keep the literal camelCase mapping
+the skill already documents, so only table names change.
+
+### CLXXXIX.14 One tenant-scoping mechanism (T1318)
+
+16 entities use Hibernate @TenantId; others carry a plain tenantId column (the BYO-infra
+scoping) and 54 carry none. Some of those are global on purpose (the T372 GLOBAL
+read-only rows, the model catalog). The task lists every entity with a ruling, puts the
+tenant column on every tenant-scoped one through one mechanism, documents the global set
+in ADR 0005, and adds a convention test that fails on an entity with neither a tenant
+column nor a place in the global list.
+
+### CLXXXIX.15 Audit columns and optimistic locking (T1319)
+
+Two admins saving the same agent or SN site today overwrite each other silently, because
+no entity carries @Version. Dates are recorded ad hoc in about 20 entities and through
+Spring Data auditing in one. A TurBaseEntity mapped superclass carries the id,
+createdAt, modifiedAt, createdBy, modifiedBy and version; entities extend it, the
+console turns an OptimisticLockException into a 409 that says the record changed, and
+the domain records keep the version so a save sends it back.
+
+### CLXXXIX.16 Portable large-text columns (T1320)
+
+@Lob on a String maps to clob on H2, text through an oid on some PostgreSQL setups and
+longtext on MySQL, which is why the turing-persistence skill already forbids clob in
+changelogs. Each of the 29 fields is mapped to an explicit long-text type, and a binary
+@Lob becomes a reference to the storage module where one already exists. A convention
+test fails on a new @Lob.
+
+### CLXXXIX.17 The Liquibase reset (T1321)
+
+db/changelog holds 205 files with every change since the project began, including
+changesets for tables and columns that no longer exist, and no module owns its part. It
+is replaced by one squashed baseline per module (db/changelog/<module>/), generated from
+the final entity model after the association, naming, tenant, audit and large-text
+tasks, written in portable lowercase types under the turing-persistence rules and
+checked against H2, MySQL and PostgreSQL. The old tree is deleted, which also drops
+orphan tables no entity maps. A fresh install creates the schema from the baselines
+only. An existing 2026.2 database is not migrated: the release notes and the upgrade
+page say to export with the exchange module and import into a fresh 2026.3 install, and
+a startup check refuses a database that still carries the old DATABASECHANGELOG rows,
+with a message naming that path. Changesets added after the baseline follow the usual
+never-edit rule again.
+
+### CLXXXIX.18 Declared module interfaces (T1322)
+
+Each module gets a package-info.java with @ApplicationModule naming its displayName and
+allowedDependencies, and the types other modules may use carry @NamedInterface or live
+in the module's base package. Everything else is internal by package. The allowed
+dependencies come from ADR 0005; one the code needs and the ADR does not list is a
+design question answered in the ADR first.
+
+### CLXXXIX.19 Module verification as a gate (T1323)
+
+The report test becomes ApplicationModules.verify() in mvn test, so a cycle, a call into
+another module's internal package or an undeclared dependency fails the build. The test
+has no exemption list: a violation is fixed or ADR 0005 is changed.
+
+### CLXXXIX.20 Durable module events (T1324)
+
+Asynchronous cross-module listeners (indexing after a site change, analytics,
+notifications) lose their event if the node dies between commit and delivery.
+spring-modulith-starter-jpa stores each publication in an event_publication table. The
+table is created by a changeset in the baseline (Modulith schema initialization stays
+off), carries the tenant id under Block J rules, and incomplete publications are
+republished by one node at a time under a ShedLock-guarded @Scheduled job, so a cluster
+does not deliver twice. Completed publications are purged on a schedule. The synchronous
+cache-eviction listeners stay outside the registry.
+
+### CLXXXIX.21 Module slice integration tests (T1325)
+
+Integration tests extend AbstractTuringSpringIT and boot the whole application. For
+modules with few dependencies (kb, transcription, storage, exchange, mcp),
+@ApplicationModuleTest boots the module and its declared dependencies only, with the JMX
+and Artemis settings the turing-integration-tests skill requires, and the skill gains a
+section on when a slice is enough. A slice that cannot start without an undeclared bean
+shows a dependency the module map does not list.
+
+### CLXXXIX.22 Generated module diagrams (T1326)
+
+Documenter writes C4 component diagrams and module canvases from the verified model. A
+test generates them into the build, and an architecture page for contributors embeds the
+output. It is internal documentation, not the end-user site, so COVERAGE.md gets a
+deliberately-internal row for the block.
+
+### CLXXXIX.23 Per-module tracing (T1327)
+
+spring-modulith-observability wraps calls that enter a module through its named
+interface in Micrometer observations. With the existing tracing setup, a slow chat
+request shows how much time went to llm, rag, sn and searchengine instead of one
+undivided span.
+
+### CLXXXIX.24 Conventions follow the module layout (T1328)
+
+agents.md (key paths, project structure), the turing-persistence, turing-domain-layer,
+turing-search-lucene and turing-integration-tests skills describe api, persistence and
+service as top-level packages. They are rewritten for the module layout. Hand-written
+checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
+are removed; rules it does not cover (annotation-free records, cache annotations, bulk
+writes, the new naming, tenant and @Lob tests) stay.
