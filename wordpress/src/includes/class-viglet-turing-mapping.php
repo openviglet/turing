@@ -356,6 +356,7 @@ class Viglet_Turing_Mapping {
 		if ( '' === $field ) {
 			return null;
 		}
+		$raw   = $this->raw_value( $post, $field );
 		$value = $this->values( $post )[ $field ] ?? null;
 		$value = is_array( $value ) ? reset( $value ) : $value;
 		$at    = is_string( $value ) ? strtotime( $value ) : false;
@@ -363,8 +364,10 @@ class Viglet_Turing_Mapping {
 			return null;
 		}
 		// A day with no time of day ("the last day to apply") lasts to the end of that day where
-		// the site is, not to its first minute in UTC.
-		if ( 0 === $at % 86400 ) {
+		// the site is, not to its first minute in UTC. The stored shape says which it is: a time
+		// that converts to exactly midnight UTC (21h in UTC-3) is still a time.
+		$date_only = null !== $raw ? self::is_date_only( $raw ) : 0 === $at % 86400;
+		if ( $date_only ) {
 			return ( new DateTimeImmutable( gmdate( 'Y-m-d', $at ), wp_timezone() ) )->modify( '+1 day' )->getTimestamp();
 		}
 
@@ -409,6 +412,27 @@ class Viglet_Turing_Mapping {
 		}
 
 		return $values;
+	}
+
+	/**
+	 * The first raw value a mapped field reads from a post, as stored, or null when the type
+	 * maps no such field or it holds no string.
+	 *
+	 * @param WP_Post $post  The post.
+	 * @param string  $field The mapped field's name.
+	 */
+	private function raw_value( WP_Post $post, string $field ): ?string {
+		foreach ( $this->all()[ $post->post_type ]['fields'] ?? array() as $mapped ) {
+			if ( $mapped['field'] !== $field ) {
+				continue;
+			}
+			$raw = $this->read( $post, $mapped['source'], $mapped['multi'] );
+			$raw = is_array( $raw ) ? reset( $raw ) : $raw;
+
+			return is_string( $raw ) || is_int( $raw ) ? (string) $raw : null;
+		}
+
+		return null;
 	}
 
 	/**
@@ -944,23 +968,56 @@ class Viglet_Turing_Mapping {
 	/**
 	 * A date as Turing reads it (UTC, ISO 8601), from the shapes WordPress meta holds it in.
 	 *
-	 * Eight digits are a `Ymd` date (how ACF stores a date picker), other digits a Unix
-	 * timestamp, anything else what strtotime() reads.
-	 *
 	 * @param string $value The raw date.
 	 */
 	private static function convert_date( string $value ): ?string {
-		$value = trim( $value );
-		if ( preg_match( '/^\d{8}$/', $value ) ) {
-			$date      = DateTimeImmutable::createFromFormat( '!Ymd', $value, new DateTimeZone( 'UTC' ) );
-			$timestamp = $date ? $date->getTimestamp() : false;
-		} elseif ( ctype_digit( $value ) ) {
-			$timestamp = (int) $value;
-		} else {
-			$timestamp = strtotime( $value );
-		}
+		$timestamp = self::timestamp( $value );
 
 		return false === $timestamp ? null : gmdate( 'Y-m-d\TH:i:s\Z', $timestamp );
+	}
+
+	/**
+	 * The moment a stored date names (T1295).
+	 *
+	 * Eight digits are a `Ymd` date (how ACF stores a date picker) and a `Y-m-d` is a date
+	 * too: both stay at midnight UTC, which the cards and expiry() read as "a day with no
+	 * time". Other digits are a Unix timestamp, and a date-time that carries its offset keeps
+	 * it. A date-time with no offset (`2026-11-20T19:00`, how a site keeps the time it shows)
+	 * is the site's wall clock, read in wp_timezone(): PHP runs WordPress in UTC, so
+	 * strtotime() alone would put a 19h event at 16h on a UTC-3 site. Anything else is what
+	 * strtotime() reads.
+	 *
+	 * @param string $value The raw date.
+	 * @return int|false
+	 */
+	private static function timestamp( string $value ) {
+		$value = trim( $value );
+		if ( preg_match( '/^\d{8}$/', $value ) ) {
+			$date = DateTimeImmutable::createFromFormat( '!Ymd', $value, new DateTimeZone( 'UTC' ) );
+
+			return $date ? $date->getTimestamp() : false;
+		}
+		if ( ctype_digit( $value ) ) {
+			return (int) $value;
+		}
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/', $value ) ) {
+			try {
+				return ( new DateTimeImmutable( $value, wp_timezone() ) )->getTimestamp();
+			} catch ( Exception $e ) {
+				return false;
+			}
+		}
+
+		return strtotime( $value );
+	}
+
+	/**
+	 * Whether a stored date names a day and no time of day: `Ymd` or `Y-m-d`.
+	 *
+	 * @param string $value The raw date.
+	 */
+	private static function is_date_only( string $value ): bool {
+		return 1 === preg_match( '/^(\d{8}|\d{4}-\d{2}-\d{2})$/', trim( $value ) );
 	}
 
 	/**

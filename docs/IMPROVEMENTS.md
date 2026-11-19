@@ -2500,34 +2500,6 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
-### CLXXXII.17 Wall-clock meta dates read in the site timezone (T1295)
-
-Met in fespsp-institucional (FI132), mapping the `evento` and `vaga` post types of a
-site in America/Sao_Paulo (UTC-3). The site stores wall-clock dates in post meta, as
-WordPress does for anything shown in local time: `fespsp_evento_inicio` =
-`2026-11-20T19:00`, mapped `{ "source": "meta:...", "type": "DATE" }`.
-
-Validated against the code (2026-11-19). `Viglet_Turing_Mapping::convert_date()`
-(class-viglet-turing-mapping.php) sends anything that is not eight digits or a timestamp
-to `strtotime()`, and WordPress runs PHP in UTC, so `2026-11-20T19:00` is indexed as
-19:00Z, 16h locally: the card and the Agenda periods show and bucket it 3 hours off, and
-a 22h event moves to the next day. Core dates are fine (`publication_date` and
-`modification_date` are sent from GMT).
-
-Not affected: a date-only `expires`. `expiry()` already moves exactly-midnight-UTC to
-the end of that day in `wp_timezone()`. Its sibling is: an `expires` with a time of day
-is read as UTC there too and schedules the cron at the wrong moment.
-
-Fix: one helper used by `convert_date()` and `expiry()` that reads a date-time with no
-offset in `wp_timezone()` (a `DateTimeImmutable` converted to UTC) and keeps offsets and
-timestamps. The `Ymd` and date-only shapes stay at midnight UTC: `card_day()`,
-`card_values()`, `formatCardDate` and `expiry()` read midnight UTC as "a date with no
-time". A bug fix, so no flag; the changelog says a reindex rewrites stored values.
-
-Tests under America/Sao_Paulo: a date-time, a date-only, an offset, a timestamp, an
-`expires` with a time, and 21:00 local (which lands on 00:00Z and today reads as
-date-only).
-
 ### CLXXXII.18 Personal data out of search metrics (T1298)
 
 Met in fespsp-institucional (FI155), a school site whose students type their RA and CPF
@@ -2590,6 +2562,31 @@ lists the footnoted sources, not cited lists none (the block's setting) in both.
 Tests: the context numbering matches the `sources` order with a pinned document; an IT
 on the OpenAI provider (`-Pllm-it`) asserting at least one marker for a one-page
 question.
+
+### CLXXXII.20 Midnight UTC is a day only when the stored date was one (T1303)
+
+Found while shipping T1295. Since T1295 a wall-clock date-time is indexed in the site's
+time zone, so a 21h event on a UTC-3 site is stored as `2026-11-21T00:00:00Z`. The
+plugin reads exactly-midnight-UTC as "a day with no time of day" in four places:
+`card_day()` and `card_values()` (class-viglet-turing-native-search.php), and
+`formatCardDate` (src/public/search.js). `expiry()` no longer does; T1295 made it read
+the stored shape instead.
+
+What a visitor sees: the 21h event's card shows the date alone, without "21:00", and on
+the day after (the 21st, the UTC date), since a date-only value is shown as that UTC day
+in every time zone.
+
+Fix: tell "a date" from "a time that lands on midnight UTC" at indexing, not by the
+value. Either index date-only values with a marker the cards can read (a sibling
+`<field>_allday` flag, or keeping date-only values as `Y-m-d` strings if Viglet Turing's
+DATE field accepts them), or have the card read the site time zone and treat midnight
+UTC as a time unless it is also local midnight. The second needs no reindex and no
+schema change: a date-only value is midnight UTC and, on a UTC-3 site, 21h local, so
+"midnight UTC and not local midnight" is still ambiguous there. Check which the cards
+can carry before choosing.
+
+Tests: a 21h event in America/Sao_Paulo shows "20/11 21:00" on the native card and in
+the instant search; a date-only opening still shows the day alone.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 

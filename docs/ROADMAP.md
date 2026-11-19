@@ -23,9 +23,9 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1295** (deps: —) **A DATE meta with no timezone is indexed as UTC, not in the site's timezone, so local dates shift by the offset** — On a UTC-3 site a 19h event shows at 16h and falls into the wrong Agenda day, and an expires with a time unpublishes 3 hours off. → §CLXXXII.17
 - 📋 **T1298** (deps: —) **Search insights list searches holding an e-mail, CPF or student number verbatim, and Turing stores them** — A site cannot tell visitors its search log is anonymous, and every editor opening Search insights sees students' personal numbers. → §CLXXXII.18
 - 📋 **T1301** (deps: —) **The answer's context is not numbered and no prompt asks for [n], so answers carry no footnotes on any provider** — A visitor either gets an answer with no source or one citing unrelated pages, which is the trust a site's AI answer cannot lose. → §CLXXXII.19
+- 📋 **T1303** (deps: —) **A card shows an event whose local time lands on midnight UTC as a date with no time, on the wrong day** — A 21h event on a UTC-3 site reads as an all-day event on the next day in the cards and the instant search. → §CLXXXII.20
 
 ## Block CW — Chat retrieval recalls what the site's search finds
 

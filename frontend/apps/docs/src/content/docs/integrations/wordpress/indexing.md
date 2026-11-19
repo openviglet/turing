@@ -26,7 +26,10 @@ custom fields can be added on the Settings page.
   slug, menu order, parent) or the featured image URL.
 - **Type**: `STRING`, `TEXT`, `INT`, `LONG`, `FLOAT`, `DOUBLE`, `DATE` or `BOOL`. A value
   that does not convert is left out, never guessed. Dates are read as `Ymd` (ACF), a Unix
-  timestamp, or any date `strtotime` reads.
+  timestamp, or any date `strtotime` reads. A date and time with no offset
+  (`2026-11-20T19:00`) is the site's own clock, read in the time zone under **Settings →
+  General**, so a 19h event stays at 19h; a date with an offset keeps it. A site that
+  indexed such dates with an earlier plugin gets the right hour on its next reindex.
 - **Multiple**, **Facet** with its label, and a **Weight** (1 to 100) for ranking.
 - **Ranges**, on a `DATE` or number field: a range facet as well, provisioned as a Viglet Turing
   custom facet named `<field>_range`. A date picks its **Periods**: **Past**, for
@@ -142,7 +145,8 @@ A post is left out when its type is off, when its ID is in **Exclude Posts/Pages
 A post can also leave search on a date: in **Fields**, **Leaves search on** picks one of
 the type's `DATE` fields (a job opening's last day to apply, say). Once that date has passed
 the post is taken out of search, at that moment, with no one saving it. A date with no time
-of day lasts to the end of that day. Move the date forward and save, and the post is back.
+of day lasts to the end of that day; one with a time leaves at that time on the site's
+clock. Move the date forward and save, and the post is back.
 The editor panel says when a post leaves search, and **Out of search: the date has passed**
 afterwards. `wp turing sweep` applies the same rule.
 

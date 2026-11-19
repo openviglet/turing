@@ -493,6 +493,66 @@ final class MappingTest extends PluginTestCase {
 		$this->assertFalse( $indexer->should_index( $this->post ) );
 	}
 
+	/**
+	 * T1295: a date-time with no offset is the site's wall clock; a date stays a day, and
+	 * offsets and timestamps keep the moment they name.
+	 */
+	public function test_a_wall_clock_date_is_read_in_the_site_timezone(): void {
+		Functions\when( 'wp_timezone' )->justReturn( new \DateTimeZone( 'America/Sao_Paulo' ) );
+		$this->store(
+			array(
+				array(
+					'source' => 'meta:start',
+					'field'  => 'start',
+					'type'   => 'DATE',
+				),
+			)
+		);
+		$shapes = array(
+			'2026-11-20T19:00'          => '2026-11-20T22:00:00Z',
+			'2026-11-20 19:00:30'       => '2026-11-20T22:00:30Z',
+			'2026-11-20T21:00'          => '2026-11-21T00:00:00Z',
+			'2026-11-20'                => '2026-11-20T00:00:00Z',
+			'20261120'                  => '2026-11-20T00:00:00Z',
+			'2026-11-20T19:00:00-05:00' => '2026-11-21T00:00:00Z',
+			'2026-11-20T19:00:00Z'      => '2026-11-20T19:00:00Z',
+			'1795464000'                => gmdate( 'Y-m-d\TH:i:s\Z', 1795464000 ),
+		);
+		foreach ( $shapes as $stored => $indexed ) {
+			$this->meta = array( 'start' => $stored );
+			$this->assertSame( array( 'start' => $indexed ), $this->mapping()->values( $this->post ), $stored );
+		}
+	}
+
+	/**
+	 * T1295: an expiry with a time leaves at that local time; one at 21h in UTC-3 (exactly
+	 * midnight UTC) is still a time, not a day lasting until the next one ends.
+	 */
+	public function test_an_expiry_with_a_time_leaves_at_that_local_time(): void {
+		Functions\when( 'wp_timezone' )->justReturn( new \DateTimeZone( 'America/Sao_Paulo' ) );
+		$this->options[ Viglet_Turing_Mapping::OPTION ] = array(
+			'evento' => array(
+				'fields'  => array(
+					array(
+						'source' => 'meta:prazo',
+						'field'  => 'deadline',
+						'type'   => 'DATE',
+					),
+				),
+				'expires' => 'deadline',
+			),
+		);
+
+		$this->meta['prazo'] = '2026-11-20T18:00';
+		$this->assertSame( strtotime( '2026-11-20T21:00:00Z' ), $this->mapping()->expiry( $this->post ) );
+
+		$this->meta['prazo'] = '2026-11-20T21:00';
+		$this->assertSame( strtotime( '2026-11-21T00:00:00Z' ), $this->mapping()->expiry( $this->post ) );
+
+		$this->meta['prazo'] = '2026-11-20';
+		$this->assertSame( strtotime( '2026-11-21T03:00:00Z' ), $this->mapping()->expiry( $this->post ), 'the last day lasts to its local end' );
+	}
+
 	public function test_with_nothing_stored_a_public_custom_taxonomy_is_a_facet(): void {
 		Functions\when( 'get_object_taxonomies' )->justReturn(
 			array(
