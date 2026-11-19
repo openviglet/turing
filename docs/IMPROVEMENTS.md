@@ -2495,14 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.2 A non-failing module report (T1306)
-
-Add the Spring Modulith BOM (the 2.x line that targets Spring Boot 4) and
-spring-modulith-starter-test. One unit test builds ApplicationModules from the
-application class, prints the modules and the violations, and records the count as a
-baseline without failing. Every later task in the block reports the count it removed, so
-progress is measured, not asserted.
-
 ### CLXXXIX.3 A shared kernel for cross-module types (T1307)
 
 genai imports TurNotFoundException, TurConflictException, TurProviderException,

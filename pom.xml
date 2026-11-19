@@ -43,6 +43,8 @@
         <!-- viglet-core is now an external project (github.com/openviglet/viglet-core),
              published to GitHub Packages and versioned independently from Turing. -->
         <viglet-core.version>2026.3.13</viglet-core.version>
+        <!-- T1306 / ADR 0005 — the Spring Modulith line that pairs with Spring Boot 4.1. -->
+        <spring-modulith.version>2.1.3</spring-modulith.version>
         <maven.deploy.skip>true</maven.deploy.skip>
         <gpg.keyname>30AA85DC937DA16691466FE2A0CCF43371503F2D</gpg.keyname>
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
@@ -353,6 +355,14 @@
                 <groupId>com.viglet.core</groupId>
                 <artifactId>viglet-core-bom</artifactId>
                 <version>${viglet-core.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- T1306 / ADR 0005 — module verification for the modular monolith. -->
+            <dependency>
+                <groupId>org.springframework.modulith</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
