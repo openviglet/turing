@@ -64,6 +64,12 @@
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
 
+## Done when — T1304
+
+- **The full name and the acronym each find both pages on Lucene** A test with the group
+  fespsp / "fundação escola de sociologia e política" searches each side and finds the
+  page holding only the acronym and the page holding only the full name.
+
 ## Non-goals (do NOT add as tasks)
 
 Binding constraints — see [IMPROVEMENTS.md](IMPROVEMENTS.md) §I.6 (What NOT to
