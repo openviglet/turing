@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.plugins.se.TurSESynonymApplyResult;
+import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.tenant.TurTenantScheduledFanOut;
 
 import lombok.extern.slf4j.Slf4j;

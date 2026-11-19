@@ -38,7 +38,7 @@ class TurRagSearchToolServiceTest {
     @Mock
     private com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository ragBm25CoreRepository;
     @Mock
-    private com.viglet.turing.plugins.se.TurSearchEnginePluginFactory searchEnginePluginFactory;
+    private com.viglet.turing.searchengine.TurSearchEnginePluginFactory searchEnginePluginFactory;
     @Mock
     private com.viglet.turing.genai.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver;
 
@@ -738,12 +738,12 @@ class TurRagSearchToolServiceTest {
                 org.springframework.ai.vectorstore.SearchRequest.class))).thenReturn(List.of(vecDoc));
 
         // BM25 hits: the shared doc + one BM25-exclusive doc.
-        var plugin = org.mockito.Mockito.mock(com.viglet.turing.plugins.se.TurSearchEnginePlugin.class);
+        var plugin = org.mockito.Mockito.mock(com.viglet.turing.searchengine.TurSearchEnginePlugin.class);
         when(searchEnginePluginFactory.getPluginForInstance(seInstance)).thenReturn(plugin);
         when(plugin.retrieveStandalone(seInstance, "rag_store_pt-BR", "query", 5)).thenReturn(List.of(
-                new com.viglet.turing.plugins.se.TurSEStandaloneHit("vec-shared", "BM25 text",
+                new com.viglet.turing.searchengine.TurSEStandaloneHit("vec-shared", "BM25 text",
                         java.util.Map.of("objectName", "shared.pdf", "contentType", "application/pdf"), 5.0),
-                new com.viglet.turing.plugins.se.TurSEStandaloneHit("bm-only", "Keyword-only text",
+                new com.viglet.turing.searchengine.TurSEStandaloneHit("bm-only", "Keyword-only text",
                         java.util.Map.of("objectName", "kw.txt", "contentType", "text/plain"), 3.0)));
 
         var toolContext = new org.springframework.ai.chat.model.ToolContext(java.util.Map.of(
@@ -804,7 +804,7 @@ class TurRagSearchToolServiceTest {
         when(mockVectorStore.similaritySearch(org.mockito.ArgumentMatchers.any(
                 org.springframework.ai.vectorstore.SearchRequest.class))).thenReturn(List.of(doc));
 
-        var plugin = org.mockito.Mockito.mock(com.viglet.turing.plugins.se.TurSearchEnginePlugin.class);
+        var plugin = org.mockito.Mockito.mock(com.viglet.turing.searchengine.TurSearchEnginePlugin.class);
         when(searchEnginePluginFactory.getPluginForInstance(seInstance)).thenReturn(plugin);
         when(plugin.retrieveStandalone(seInstance, "rag_store_pt-BR", "query", 5))
                 .thenThrow(new RuntimeException("Connection refused"));

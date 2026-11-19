@@ -16,7 +16,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchQueryContextBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.se.result.TurSEResults;
+import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**
  * Unit tests for {@link TurSNQueryContextBuilder}, covering page bound

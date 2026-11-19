@@ -45,7 +45,7 @@ public class TurSearchObservation {
 
     /**
      * Wraps a search engine plugin call (any IO-bound method on
-     * {@link com.viglet.turing.plugins.se.TurSearchEnginePlugin}) in a single
+     * {@link com.viglet.turing.searchengine.TurSearchEnginePlugin}) in a single
      * Observation.
      */
     public <T> T observeCall(String engine, String operation, Supplier<T> supplier) {

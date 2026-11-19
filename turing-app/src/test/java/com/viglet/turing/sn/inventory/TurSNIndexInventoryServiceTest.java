@@ -38,10 +38,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.plugins.se.TurSEInventoryEntry;
-import com.viglet.turing.plugins.se.TurSEInventoryPage;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSEInventoryEntry;
+import com.viglet.turing.searchengine.TurSEInventoryPage;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 /**
  * T1029 / §XX.16 — the audit loop's Turing half. What matters here is that the

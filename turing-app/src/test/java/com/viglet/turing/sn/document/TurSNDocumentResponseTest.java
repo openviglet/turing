@@ -32,9 +32,9 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
-import com.viglet.turing.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.solr.TurSolrInstance;
 
 /**
  * Unit tests for {@link TurSNDocumentResponse}, exercising both the full

@@ -27,7 +27,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchPaginationBean;
 import com.viglet.turing.commons.sn.pagination.TurSNPaginationType;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.se.result.TurSEGenericResults;
+import com.viglet.turing.searchengine.result.TurSEGenericResults;
 
 /**
  * Builds the list of {@link TurSNSiteSearchPaginationBean} entries for a search

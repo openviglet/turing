@@ -39,11 +39,11 @@ import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.se.facet.TurSEFacetResult;
-import com.viglet.turing.se.facet.TurSEFacetResultAttr;
-import com.viglet.turing.se.result.TurSEResults;
-import com.viglet.turing.solr.TurSolrQueryBuilder;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.facet.TurSEFacetResult;
+import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
+import com.viglet.turing.searchengine.result.TurSEResults;
+import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 
 /**
  * Unit tests for {@link TurSNFacetRenderer}, focused on the visibility rules

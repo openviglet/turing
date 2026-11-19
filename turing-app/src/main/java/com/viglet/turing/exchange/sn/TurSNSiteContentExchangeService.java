@@ -47,8 +47,8 @@ import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 

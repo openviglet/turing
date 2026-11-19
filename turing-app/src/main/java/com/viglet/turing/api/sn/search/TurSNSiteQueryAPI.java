@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.solr.TurSolr;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

@@ -29,7 +29,7 @@ import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
 import com.viglet.turing.persistence.repository.sn.synonym.TurSNSynonymRepository;
-import com.viglet.turing.plugins.se.TurSESynonymRule;
+import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**
  * T662 / §XXXIX (Block AP) — CRUD + batch + search over the engine-agnostic

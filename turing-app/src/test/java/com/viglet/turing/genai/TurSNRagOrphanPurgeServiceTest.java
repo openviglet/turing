@@ -29,8 +29,8 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 /**
  * T1158 — the orphan purge removes only the chunks of documents the engine no

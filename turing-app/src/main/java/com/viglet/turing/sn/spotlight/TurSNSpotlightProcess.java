@@ -62,11 +62,11 @@ import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
-import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.solr.TurSolr;
-import com.viglet.turing.solr.TurSolrInstance;
-import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.searchengine.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.solr.TurSolrUtils;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;

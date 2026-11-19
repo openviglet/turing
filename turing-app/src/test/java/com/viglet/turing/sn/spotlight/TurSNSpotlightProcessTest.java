@@ -60,7 +60,7 @@ import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
-import com.viglet.turing.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
 
 /**

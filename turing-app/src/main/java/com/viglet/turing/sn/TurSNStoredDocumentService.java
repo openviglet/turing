@@ -24,7 +24,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 

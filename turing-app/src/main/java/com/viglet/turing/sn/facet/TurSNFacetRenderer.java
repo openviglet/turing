@@ -41,12 +41,12 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtFacetDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.se.facet.TurSEFacetResult;
-import com.viglet.turing.se.result.TurSEResults;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.facet.TurSEFacetResult;
+import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.solr.TurSolrQueryBuilder;
+import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 
 /**
  * Builds the facet beans returned in a search response — main facets, secondary

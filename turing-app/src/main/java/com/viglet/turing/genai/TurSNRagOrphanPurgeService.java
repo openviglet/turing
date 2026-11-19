@@ -33,8 +33,8 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.genai.provider.store.TurStoreChunkPage;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.extern.slf4j.Slf4j;
 

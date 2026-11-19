@@ -38,10 +38,10 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
 import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.se.result.TurSEResult;
-import com.viglet.turing.solr.TurSolr;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
-import com.viglet.turing.solr.TurSolrUtils;
+import com.viglet.turing.searchengine.result.TurSEResult;
+import com.viglet.turing.searchengine.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.solr.TurSolrUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

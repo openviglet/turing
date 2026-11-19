@@ -1,7 +1,7 @@
 package com.viglet.turing.sn.dsl;
 
-import com.viglet.turing.solr.TurSolr;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;

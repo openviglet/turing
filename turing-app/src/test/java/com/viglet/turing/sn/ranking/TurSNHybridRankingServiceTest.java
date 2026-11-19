@@ -45,7 +45,7 @@ import com.viglet.turing.genai.rag.rerank.TurRagRerankStrategyType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 import com.viglet.turing.system.TurGlobalSettingsService;
 

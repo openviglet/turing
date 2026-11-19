@@ -62,20 +62,20 @@ import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.se.facet.TurSEFacetResult;
-import com.viglet.turing.se.facet.TurSEFacetResultAttr;
-import com.viglet.turing.se.result.TurSEGroup;
-import com.viglet.turing.se.result.TurSEResult;
-import com.viglet.turing.se.result.TurSEResults;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.facet.TurSEFacetResult;
+import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
+import com.viglet.turing.searchengine.result.TurSEGroup;
+import com.viglet.turing.searchengine.result.TurSEResult;
+import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.facet.TurSNFacetDefinitionFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
-import com.viglet.turing.solr.TurSolrInstance;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
-import com.viglet.turing.solr.TurSolrQueryBuilder;
+import com.viglet.turing.searchengine.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 
 /**
  * Unit tests for TurSNSearchProcess. Site configuration now flows through the

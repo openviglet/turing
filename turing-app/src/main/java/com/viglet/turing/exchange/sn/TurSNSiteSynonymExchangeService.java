@@ -29,7 +29,7 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
 import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
 import com.viglet.turing.persistence.repository.sn.synonym.TurSNSynonymRepository;
-import com.viglet.turing.plugins.se.TurSESynonymApplyResult;
+import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 
 import lombok.extern.slf4j.Slf4j;

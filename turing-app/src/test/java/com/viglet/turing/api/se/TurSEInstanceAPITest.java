@@ -37,14 +37,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.persistence.mapper.se.TurSEInstanceMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.se.result.TurSEResults;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.solr.TurSolr;
-import com.viglet.turing.solr.TurSolrInstance;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
-import com.viglet.turing.solr.bean.TurSECoreInfo;
-import com.viglet.turing.solr.source.TurSolrInstanceSource;
+import com.viglet.turing.searchengine.result.TurSEResults;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.solr.TurSolr;
+import com.viglet.turing.searchengine.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 /**

@@ -22,8 +22,8 @@ import org.apache.lucene.store.Directory;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
-import com.viglet.turing.lucene.TurLucenePerFieldAnalyzer;
+import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
+import com.viglet.turing.searchengine.lucene.TurLucenePerFieldAnalyzer;
 
 /**
  * T1170 — the copilot's DSL path analyzes text in the site locale's language, as

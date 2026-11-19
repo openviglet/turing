@@ -35,8 +35,8 @@ import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 /**
  * Unit tests for {@link TurRagBm25Indexer}. Pure-Mockito; no SE wire-up.

@@ -30,9 +30,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
-import com.viglet.turing.plugins.se.TurSEStandaloneHit;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSEStandaloneHit;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 /**
  * T28 / §III.5 Phase B — pins the SE-backed MLT classifier strategy.

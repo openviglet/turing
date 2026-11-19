@@ -42,7 +42,7 @@ import com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;

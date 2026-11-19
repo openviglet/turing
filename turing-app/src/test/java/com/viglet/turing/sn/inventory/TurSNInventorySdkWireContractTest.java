@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.client.sn.inventory.TurSNInventoryEntry;
 import com.viglet.turing.client.sn.inventory.TurSNInventoryPage;
-import com.viglet.turing.plugins.se.TurSEInventoryEntry;
+import com.viglet.turing.searchengine.TurSEInventoryEntry;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;

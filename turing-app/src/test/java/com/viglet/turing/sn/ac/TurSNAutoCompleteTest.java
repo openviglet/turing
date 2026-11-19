@@ -52,10 +52,10 @@ import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.se.TurSEStopWord;
-import com.viglet.turing.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSEStopWord;
+import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 
 import jakarta.servlet.http.HttpServletRequest;
 

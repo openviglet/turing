@@ -40,8 +40,8 @@ import org.springframework.http.HttpStatus;
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 /**
  * T1046 / §XX.23 — how a DSL query picks its executor.

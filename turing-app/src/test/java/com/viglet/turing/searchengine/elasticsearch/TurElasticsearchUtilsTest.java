@@ -1,0 +1,105 @@
+package com.viglet.turing.searchengine.elasticsearch;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for TurElasticsearchUtils.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.1.14
+ */
+class TurElasticsearchUtilsTest {
+
+    @Test
+    void constructorShouldThrowIllegalStateException() {
+        var constructor = TurElasticsearchUtils.class.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+        var ex = assertThrows(java.lang.reflect.InvocationTargetException.class,
+                constructor::newInstance);
+        assertInstanceOf(IllegalStateException.class, ex.getCause());
+        assertEquals("Elasticsearch Utility class", ex.getCause().getMessage());
+    }
+
+    /** T1173 — the stemming analyzer is declared only for a language with a stemmer. */
+    @Test
+    void textAnalysisSettingsNameTheLanguagesStemmer() {
+        assertNull(TurElasticsearchUtils.textAnalysisSettings(null));
+        String pt = TurElasticsearchUtils.textAnalysisSettings("Portuguese");
+        assertTrue(pt.contains("\"language\":\"Portuguese\""));
+        assertTrue(pt.contains("\"" + TurElasticsearchUtils.TEXT_ANALYZER + "\""));
+        assertTrue(pt.contains("\"preserve_original\":true"));
+        // T1196 — the light stem runs before the Snowball one in Portuguese only.
+        assertTrue(pt.contains("\"lowercase\",\"keyword_repeat\",\"turing_light\",\"remove_duplicates\","
+                + "\"keyword_repeat\",\"turing_stem\""));
+        assertTrue(!TurElasticsearchUtils.textAnalysisSettings("English").contains("\"turing_light\",\""));
+    }
+
+    /** T1217 — the analyzer recomposes decomposed accents before the tokenizer. */
+    @Test
+    void textAnalysisSettingsRecomposeDecomposedAccents() throws Exception {
+        String pt = TurElasticsearchUtils.textAnalysisSettings("Portuguese");
+        assertTrue(pt.contains("\"char_filter\":[\"turing_nfc\"]"));
+        var settings = new tools.jackson.databind.ObjectMapper().readTree(pt);
+        var mappings = settings.at("/analysis/char_filter/turing_nfc/mappings");
+        assertEquals(com.viglet.turing.searchengine.lucene.TurLuceneNfcCharFilter.PAIRS.size(), mappings.size());
+        boolean hasAcuteA = false;
+        for (var rule : mappings) {
+            hasAcuteA |= rule.asString().equals("á=>á");
+        }
+        assertTrue(hasAcuteA, "a + combining acute must map to á");
+    }
+
+    @Test
+    void createIndexShouldNotThrowForUnreachableEndpoint() {
+        assertDoesNotThrow(() ->
+                TurElasticsearchUtils.createIndex("http://localhost:19200", "test-index"));
+    }
+
+    @Test
+    void createIndexWithFieldTypesShouldNotThrowForUnreachableEndpoint() {
+        assertDoesNotThrow(() ->
+                TurElasticsearchUtils.createIndex("http://localhost:19200", "test-index",
+                        java.util.Map.of(
+                                "title", com.viglet.turing.commons.se.field.TurSEFieldType.TEXT,
+                                "name", com.viglet.turing.commons.se.field.TurSEFieldType.STRING,
+                                "count", com.viglet.turing.commons.se.field.TurSEFieldType.INT,
+                                "active", com.viglet.turing.commons.se.field.TurSEFieldType.BOOL,
+                                "created", com.viglet.turing.commons.se.field.TurSEFieldType.DATE,
+                                "total", com.viglet.turing.commons.se.field.TurSEFieldType.LONG,
+                                "score", com.viglet.turing.commons.se.field.TurSEFieldType.FLOAT,
+                                "amount", com.viglet.turing.commons.se.field.TurSEFieldType.DOUBLE,
+                                "price", com.viglet.turing.commons.se.field.TurSEFieldType.CURRENCY,
+                                "tags", com.viglet.turing.commons.se.field.TurSEFieldType.ARRAY
+                        )));
+    }
+
+    @Test
+    void deleteIndexShouldNotThrowForUnreachableEndpoint() {
+        assertDoesNotThrow(() ->
+                TurElasticsearchUtils.deleteIndex("http://localhost:19200", "test-index"));
+    }
+
+    @Test
+    void listIndexesShouldReturnEmptyListForUnreachableEndpoint() {
+        var result = TurElasticsearchUtils.listIndexes("http://localhost:19200");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void createIndexShouldLowercaseIndexName() {
+        // This should not throw even with an unreachable endpoint;
+        // the important thing is that it processes the name.
+        assertDoesNotThrow(() ->
+                TurElasticsearchUtils.createIndex("http://localhost:19200", "MY-INDEX"));
+    }
+
+    @Test
+    void createIndexWithEmptyFieldTypesShouldNotThrow() {
+        assertDoesNotThrow(() ->
+                TurElasticsearchUtils.createIndex("http://localhost:19200", "test-idx",
+                        java.util.Collections.emptyMap()));
+    }
+}

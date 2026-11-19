@@ -36,7 +36,7 @@ import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
 import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymSupportDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.plugins.se.TurSESynonymApplyResult;
+import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 import com.viglet.turing.sn.synonym.TurSNSynonymImportService;
 import com.viglet.turing.sn.synonym.TurSNSynonymService;

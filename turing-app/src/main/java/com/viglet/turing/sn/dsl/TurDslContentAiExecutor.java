@@ -28,14 +28,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
-import com.viglet.turing.contentai.TurContentAiClient;
-import com.viglet.turing.contentai.TurContentAiQueryBuilder;
+import com.viglet.turing.searchengine.contentai.TurContentAiClient;
+import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.plugins.se.contentai.TurContentAiSearchEnginePlugin;
+import com.viglet.turing.searchengine.contentai.TurContentAiSearchEnginePlugin;
 import com.viglet.turing.properties.TurContentAiProperty;
 
 import lombok.extern.slf4j.Slf4j;

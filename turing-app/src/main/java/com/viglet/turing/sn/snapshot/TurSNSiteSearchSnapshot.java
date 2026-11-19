@@ -147,7 +147,7 @@ public record TurSNSiteSearchSnapshot(
      *
      * <p>Six of the eight consumers want the {@code language} and nothing else. The
      * other two — the similar-documents and duplicate-clustering paths — resolve one
-     * of these and hand it to {@link com.viglet.turing.plugins.se.TurSearchEnginePlugin},
+     * of these and hand it to {@link com.viglet.turing.searchengine.TurSearchEnginePlugin},
      * whose surface is typed on the entity, so they rebuild a transient
      * {@code TurSNSiteLocale} at that boundary. The plugin interface does the same
      * thing itself in {@code createStandaloneIndex}, so this is its own idiom rather

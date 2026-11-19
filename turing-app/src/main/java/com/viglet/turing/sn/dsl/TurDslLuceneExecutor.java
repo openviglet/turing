@@ -1,8 +1,8 @@
 package com.viglet.turing.sn.dsl;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.lucene.TurLuceneFoldingAnalyzer;
-import com.viglet.turing.lucene.TurLuceneInstanceProcess;
+import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
+import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchPaginationBean;
 import com.viglet.turing.commons.sn.pagination.TurSNPaginationType;
-import com.viglet.turing.se.result.TurSEGenericResults;
+import com.viglet.turing.searchengine.result.TurSEGenericResults;
 
 /**
  * Unit tests for {@link TurSNPaginationBuilder}, covering first/previous/next/

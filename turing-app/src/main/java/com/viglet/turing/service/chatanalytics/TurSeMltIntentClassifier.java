@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
-import com.viglet.turing.plugins.se.TurSEStandaloneHit;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSEStandaloneHit;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -18,7 +18,7 @@ package com.viglet.turing.sn.inventory;
 
 import java.util.List;
 
-import com.viglet.turing.plugins.se.TurSEInventoryEntry;
+import com.viglet.turing.searchengine.TurSEInventoryEntry;
 
 /**
  * T1029 / §XX.16 — one page of the answer to "what does the index hold for this

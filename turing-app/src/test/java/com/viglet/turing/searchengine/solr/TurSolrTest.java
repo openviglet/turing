@@ -1,0 +1,714 @@
+/*
+ * Copyright (C) 2016-2025 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package com.viglet.turing.searchengine.solr;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.Map;
+
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
+import org.apache.solr.client.solrj.request.SolrQuery;
+import org.apache.solr.client.solrj.response.GroupCommand;
+import org.apache.solr.client.solrj.response.GroupResponse;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.commons.sn.TurSNConfig;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.searchengine.result.TurSEResult;
+import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.tr.TurSNTargetingRules;
+
+/**
+ * Unit tests for TurSolr.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.1.10
+ */
+@ExtendWith(MockitoExtension.class)
+class TurSolrTest {
+
+    @Mock
+    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+
+    @Mock
+    private TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+
+    @Mock
+    private TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+
+    @Mock
+    private TurSNTargetingRules turSNTargetingRules;
+
+    @Mock
+    private TurSNSiteFieldService turSNSiteFieldService;
+
+    @Mock
+    private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+
+    @Mock
+    private TurSNRankingConditionRepository turSNRankingConditionRepository;
+
+    @Mock
+    private TurSNSiteRepository turSNSiteRepository;
+
+    @Mock
+    private TurSNFieldProcess turSNFieldProcess;
+
+    @Mock
+    private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
+
+    @Mock
+    private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
+
+    @Mock
+    private com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService snapshotService;
+
+    @Mock
+    private HttpJdkSolrClient httpJdkSolrClient;
+
+    @Mock
+    private SolrClient solrClient;
+
+    private TurSolrInstance turSolrInstance;
+
+    @BeforeEach
+    void setUp() throws MalformedURLException {
+        turSolrInstance = new TurSolrInstance(httpJdkSolrClient, URI.create("http://localhost:8983/solr").toURL(),
+                "core");
+        turSolrInstance.setSolrClient(solrClient);
+    }
+
+    @Test
+    void testAddAWildcardInQuery() {
+        SolrQuery query = new SolrQuery().setQuery("test");
+
+        TurSolr.addAWildcardInQuery(query);
+
+        assertThat(query.getQuery()).isEqualTo("test*");
+    }
+
+    @Test
+    void testEnabledWildcardNoResults() {
+        TurSNSite turSNSite = mock(TurSNSite.class);
+        when(turSNSite.getWildcardNoResults()).thenReturn(1);
+
+        assertThat(TurSolr.enabledWildcardNoResults(turSNSite)).isTrue();
+
+        when(turSNSite.getWildcardNoResults()).thenReturn(null);
+        assertThat(TurSolr.enabledWildcardNoResults(turSNSite)).isFalse();
+    }
+
+    @Test
+    void testNoResultsIsDecidedByNumFoundNotByEmptyPage() {
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList pagePastTheEnd = new SolrDocumentList();
+        pagePastTheEnd.setNumFound(12);
+        when(response.getResults()).thenReturn(pagePastTheEnd);
+
+        assertThat(TurSolr.noResults(response)).isFalse();
+
+        SolrDocumentList nothingMatched = new SolrDocumentList();
+        nothingMatched.setNumFound(0);
+        when(response.getResults()).thenReturn(nothingMatched);
+
+        assertThat(TurSolr.noResults(response)).isTrue();
+    }
+
+    @Test
+    void testNoResultGroupsIsDecidedByMatchesNotByEmptyPage() {
+        GroupCommand groupCommand = mock(GroupCommand.class);
+        GroupResponse groupResponse = mock(GroupResponse.class);
+        when(groupResponse.getValues()).thenReturn(java.util.List.of(groupCommand));
+        QueryResponse response = mock(QueryResponse.class);
+        when(response.getGroupResponse()).thenReturn(groupResponse);
+
+        when(groupCommand.getMatches()).thenReturn(12);
+        assertThat(TurSolr.noResultGroups(response)).isFalse();
+
+        when(groupCommand.getMatches()).thenReturn(0);
+        assertThat(TurSolr.noResultGroups(response)).isTrue();
+    }
+
+    @Test
+    void testIsNotQueryExpressionReturnsTrueForSimpleQuery() {
+        SolrQuery query = new SolrQuery().setQuery("simple");
+
+        assertThat(TurSolr.isNotQueryExpression(query)).isTrue();
+    }
+
+    @Test
+    void testCreateTurSEResultFromDocument() {
+        SolrDocument document = new SolrDocument();
+        document.addField("id", "100");
+        document.addField("title", "Sample");
+
+        TurSEResult result = TurSolr.createTurSEResultFromDocument(document);
+
+        assertThat(result.getFields())
+                .containsEntry("id", "100")
+                .containsEntry("title", "Sample");
+    }
+
+    @Test
+    void testCommitSkippedWhenDisabled() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        turSolr.commit(turSolrInstance);
+
+        verify(solrClient, never()).commit("core");
+    }
+
+    @Test
+    void testCommitInvokedWhenEnabled() throws Exception {
+        TurSolr turSolr = buildTurSolr(true);
+
+        turSolr.commit(turSolrInstance);
+
+        verify(solrClient, times(1)).commit("core");
+    }
+
+    @Test
+    void testCommitReturnsTrueWhenCommitThrows() throws Exception {
+        TurSolr turSolr = buildTurSolr(true);
+        org.mockito.Mockito.doThrow(new SolrServerException("fail")).when(solrClient).commit("core");
+
+        boolean result = turSolr.commit(turSolrInstance);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testExecuteSolrQueryReturnsEmptyOnException() throws Exception {
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenThrow(new SolrServerException("error"));
+
+        var result = TurSolr.executeSolrQuery(turSolrInstance, new SolrQuery().setQuery("test"));
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testGetDocumentTotalReturnsNumFound() throws Exception {
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(42);
+        when(response.getResults()).thenReturn(docs);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSolr turSolr = buildTurSolr(false);
+
+        assertThat(turSolr.getDocumentTotal(turSolrInstance)).isEqualTo(42L);
+    }
+
+    @Test
+    void testSolrResultAndReturnsResults() throws Exception {
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        SolrDocument document = new SolrDocument();
+        document.addField("id", "1");
+        docs.add(document);
+        when(response.getResults()).thenReturn(docs);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSolr turSolr = buildTurSolr(false);
+        SolrDocumentList result = turSolr.solrResultAnd(turSolrInstance, Map.of("id", "1"));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getFieldValue("id")).isEqualTo("1");
+    }
+
+    @Test
+    void testSpellCheckTermCorrectedAndDefault() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        QueryResponse correctedResponse = mock(QueryResponse.class);
+        SpellCheckResponse correctedSpell = mock(SpellCheckResponse.class);
+        when(correctedSpell.getCollatedResult()).thenReturn("hello");
+        when(correctedResponse.getSpellCheckResponse()).thenReturn(correctedSpell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(correctedResponse);
+
+        var corrected = turSolr.spellCheckTerm(turSolrInstance, "helo");
+        assertThat(corrected.isCorrected()).isTrue();
+        assertThat(corrected.getCorrectedText()).isEqualTo("hello");
+
+        QueryResponse defaultResponse = mock(QueryResponse.class);
+        SpellCheckResponse defaultSpell = mock(SpellCheckResponse.class);
+        when(defaultSpell.getCollatedResult()).thenReturn("");
+        when(defaultResponse.getSpellCheckResponse()).thenReturn(defaultSpell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(defaultResponse);
+
+        var notCorrected = turSolr.spellCheckTerm(turSolrInstance, "helo");
+        assertThat(notCorrected.isCorrected()).isFalse();
+    }
+
+    @Test
+    void testSpellCheckTermNeverChangesPriceOrCase() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        SpellCheckResponse spell = mock(SpellCheckResponse.class);
+        when(spell.getCollatedResult()).thenReturn("uma barraca para duas pessoas até r$ 2.100");
+        when(response.getSpellCheckResponse()).thenReturn(spell);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        var result = turSolr.spellCheckTerm(turSolrInstance, "uma barraca para duas pessoas até R$ 2.200");
+
+        assertThat(result.isCorrected()).isFalse();
+    }
+
+    @Test
+    void testFirstRowPositionFromCurrentPage() {
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setP(3);
+        searchParams.setRows(10);
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        assertThat(TurSolr.firstRowPositionFromCurrentPage(parameters)).isEqualTo(20);
+    }
+
+    @Test
+    void testRetrieveSolrAppliesSortAndFilterQueries() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("java");
+        searchParams.setRows(10);
+        searchParams.setP(1);
+        searchParams.setSort("newest");
+        searchParams.setFq(java.util.List.of("type:article"));
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(1);
+        SolrDocument doc = new SolrDocument();
+        doc.addField("id", "10");
+        docs.add(doc);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getElapsedTime()).thenReturn(11L);
+        when(response.getQTime()).thenReturn(7);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        var results = turSolr.retrieveSolr(turSolrInstance, parameters, "publishedDate");
+
+        assertThat(results.getResults()).hasSize(1);
+        assertThat(results.getResults().getFirst().getFields()).containsEntry("id", "10");
+
+        ArgumentCaptor<SolrQuery> queryCaptor = ArgumentCaptor.forClass(SolrQuery.class);
+        verify(solrClient, times(2)).query(eq("core"), queryCaptor.capture());
+        SolrQuery executed = queryCaptor.getAllValues().stream()
+                .filter(q -> q.get("qt") == null)
+                .findFirst()
+                .orElse(queryCaptor.getAllValues().getFirst());
+        assertThat(executed.getSortField()).contains("publishedDate desc");
+        assertThat(executed.getFilterQueries()).containsExactly("type:article");
+    }
+
+    @Test
+    void testFindByIdBuildsResultFromDocument() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        TurSNSite site = new TurSNSite();
+        site.setHl(1);
+        site.setHlPre("<em>");
+        site.setHlPost("</em>");
+
+        TurSNSiteFieldExt hlField = TurSNSiteFieldExt.builder().name("title")
+                .type(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT).build();
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
+                .thenReturn(java.util.List.of(hlField));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
+                .thenReturn(java.util.List.of(hlField));
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
+                .thenReturn(java.util.List.of());
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        SolrDocument doc = new SolrDocument();
+        doc.addField("id", "abc");
+        doc.addField("title", "plain");
+        docs.add(doc);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getHighlighting()).thenReturn(java.util.Map.of("abc", java.util.Map.of("title",
+                java.util.List.of("<em>highlighted</em>"))));
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenReturn(response);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("abc");
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
+                new TurSNConfig(), parameters, java.util.Locale.US, URI.create("http://localhost/search"));
+
+        TurSEResult result = turSolr.findById(turSolrInstance, site, "abc", context);
+
+        assertThat(result.getFields()).containsEntry("id", "abc");
+        assertThat(result.getFields()).containsEntry("title", "<em>highlighted</em>");
+    }
+
+    @Test
+    void testAutoCompleteReturnsNullWhenQueryFails() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        when(solrClient.query(eq("core"), any(SolrQuery.class))).thenThrow(new SolrServerException("error"));
+
+        assertThat(turSolr.autoComplete(turSolrInstance, "te")).isNull();
+    }
+
+    @Test
+    void testGetDocumentTotalReturnsZeroOnException() throws Exception {
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenThrow(new RuntimeException("connection failed"));
+
+        TurSolr turSolr = buildTurSolr(false);
+
+        assertThat(turSolr.getDocumentTotal(turSolrInstance)).isZero();
+    }
+
+    @Test
+    void testSolrResultAndReturnsEmptyListOnException() throws Exception {
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenThrow(new SolrServerException("error"));
+
+        TurSolr turSolr = buildTurSolr(false);
+        SolrDocumentList result = turSolr.solrResultAnd(turSolrInstance, Map.of("id", "1"));
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testAutoCompleteReturnsResponseWhenSuccessful() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        SpellCheckResponse spellCheckResponse = mock(SpellCheckResponse.class);
+        when(response.getSpellCheckResponse()).thenReturn(spellCheckResponse);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        assertThat(turSolr.autoComplete(turSolrInstance, "te")).isEqualTo(spellCheckResponse);
+    }
+
+    @Test
+    void testSpellCheckTermReturnsDefaultWhenNullSpellCheckResponse() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        when(response.getSpellCheckResponse()).thenReturn(null);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        var result = turSolr.spellCheckTerm(turSolrInstance, "test");
+        assertThat(result.isCorrected()).isFalse();
+    }
+
+    @Test
+    void testSpellCheckTermReturnsDefaultWhenQueryFails() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenThrow(new SolrServerException("error"));
+
+        var result = turSolr.spellCheckTerm(turSolrInstance, "test");
+        assertThat(result.isCorrected()).isFalse();
+    }
+
+    @Test
+    void testSpellCheckTermRemovesQuotesFromInput() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        SpellCheckResponse spellCheck = mock(SpellCheckResponse.class);
+        when(spellCheck.getCollatedResult()).thenReturn("corrected");
+        when(response.getSpellCheckResponse()).thenReturn(spellCheck);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        var result = turSolr.spellCheckTerm(turSolrInstance, "\"test\"");
+        assertThat(result.isCorrected()).isTrue();
+        assertThat(result.getCorrectedText()).isEqualTo("corrected");
+    }
+
+    @Test
+    void testSpellCheckTermEscapesColonToAvoidUndefinedField() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        QueryResponse response = mock(QueryResponse.class);
+        when(response.getSpellCheckResponse()).thenReturn(null);
+        ArgumentCaptor<SolrQuery> queryCaptor = ArgumentCaptor.forClass(SolrQuery.class);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), queryCaptor.capture()))
+                .thenReturn(response);
+
+        turSolr.spellCheckTerm(turSolrInstance, "remuneração: Planejamento Empresarial");
+
+        // The colon must be escaped so the /tur_spell lucene parser does not read
+        // "remuneração" as a field name (which fails with "undefined field").
+        assertThat(queryCaptor.getValue().getQuery())
+                .isEqualTo("remuneração\\: Planejamento Empresarial");
+    }
+
+    @Test
+    void testIsNotQueryExpressionReturnsTrueForNormalText() {
+        assertThat(TurSolr.isNotQueryExpression(new SolrQuery().setQuery("hello world"))).isTrue();
+    }
+
+    @Test
+    void testEnabledWildcardNoResultsReturnsFalseForZero() {
+        TurSNSite site = mock(TurSNSite.class);
+        when(site.getWildcardNoResults()).thenReturn(0);
+        assertThat(TurSolr.enabledWildcardNoResults(site)).isFalse();
+    }
+
+    @Test
+    void testCreateTurSEResultFromEmptyDocument() {
+        SolrDocument doc = new SolrDocument();
+        TurSEResult result = TurSolr.createTurSEResultFromDocument(doc);
+        assertThat(result.getFields()).isEmpty();
+    }
+
+    @Test
+    void testFirstRowPositionFromCurrentPageForPage1() {
+        TurSNSearchParams params = new TurSNSearchParams();
+        params.setP(1);
+        params.setRows(10);
+        TurSEParameters seParams = new TurSEParameters(params);
+        assertThat(TurSolr.firstRowPositionFromCurrentPage(seParams)).isZero();
+    }
+
+    @Test
+    void testFirstRowPositionFromCurrentPageForPage5() {
+        TurSNSearchParams params = new TurSNSearchParams();
+        params.setP(5);
+        params.setRows(20);
+        TurSEParameters seParams = new TurSEParameters(params);
+        assertThat(TurSolr.firstRowPositionFromCurrentPage(seParams)).isEqualTo(80);
+    }
+
+    @Test
+    void testDslQueryReturnsResponseBody() throws Exception {
+        // dslQuery uses RestTemplate which would need a real server, so we just verify it doesn't crash
+        // with a mock instance - this is a coverage-focused test
+        TurSolr turSolr = buildTurSolr(false);
+        TurSolrInstance mockInstance = mock(TurSolrInstance.class);
+        when(mockInstance.getSolrUrl()).thenReturn(java.net.URI.create("http://localhost:8983/solr/core").toURL());
+
+        // dslQuery will throw because no real server, but we test the method exists and is callable
+        org.junit.jupiter.api.Assertions.assertThrows(Exception.class,
+                () -> turSolr.dslQuery(mockInstance, "{\"query\":\"*:*\"}"));
+    }
+
+    @Test
+    void testRetrieveSolrWithOldestSort() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("java");
+        searchParams.setRows(10);
+        searchParams.setP(1);
+        searchParams.setSort("oldest");
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(0);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getElapsedTime()).thenReturn(5L);
+        when(response.getQTime()).thenReturn(3);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        turSolr.retrieveSolr(turSolrInstance, parameters, "publishedDate");
+
+        org.mockito.ArgumentCaptor<SolrQuery> queryCaptor = org.mockito.ArgumentCaptor.forClass(SolrQuery.class);
+        verify(solrClient, times(2)).query(org.mockito.ArgumentMatchers.eq("core"), queryCaptor.capture());
+        SolrQuery executed = queryCaptor.getAllValues().stream()
+                .filter(q -> q.get("qt") == null)
+                .findFirst()
+                .orElse(queryCaptor.getAllValues().getFirst());
+        assertThat(executed.getSortField()).contains("publishedDate asc");
+    }
+
+    @Test
+    void testRetrieveSolrWithNoSort() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("java");
+        searchParams.setRows(5);
+        searchParams.setP(2);
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        docs.setNumFound(10);
+        SolrDocument doc = new SolrDocument();
+        doc.addField("id", "1");
+        docs.add(doc);
+        when(response.getResults()).thenReturn(docs);
+        when(response.getElapsedTime()).thenReturn(5L);
+        when(response.getQTime()).thenReturn(3);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        var results = turSolr.retrieveSolr(turSolrInstance, parameters, "date");
+
+        assertThat(results.getResults()).hasSize(1);
+        assertThat(results.getNumFound()).isEqualTo(10);
+    }
+
+    @Test
+    void testRetrieveSolrReturnsEmptyOnException() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("test");
+        searchParams.setRows(10);
+        searchParams.setP(1);
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenThrow(new SolrServerException("error"));
+
+        var results = turSolr.retrieveSolr(turSolrInstance, parameters, "date");
+        assertThat(results.getResults()).isNull();
+    }
+
+    @Test
+    void testCommitReturnsTrueOnIOException() throws Exception {
+        TurSolr turSolr = buildTurSolr(true);
+        org.mockito.Mockito.doThrow(new java.io.IOException("io fail")).when(solrClient).commit("core");
+
+        boolean result = turSolr.commit(turSolrInstance);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testFindByIdReturnsEmptyResultWhenNoDocuments() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        TurSNSite site = new TurSNSite();
+        site.setHl(0);
+
+        QueryResponse response = mock(QueryResponse.class);
+        SolrDocumentList docs = new SolrDocumentList();
+        when(response.getResults()).thenReturn(docs);
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenReturn(response);
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("abc");
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
+                new TurSNConfig(), parameters, java.util.Locale.US, java.net.URI.create("http://localhost/search"));
+
+        TurSEResult result = turSolr.findById(turSolrInstance, site, "nonexistent", context);
+        assertThat(result).isNotNull();
+        assertThat(result.getFields()).isNull();
+    }
+
+    @Test
+    void testFindByIdReturnsEmptyResultWhenQueryFails() throws Exception {
+        TurSolr turSolr = buildTurSolr(false);
+        TurSNSite site = new TurSNSite();
+        site.setHl(0);
+
+        when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
+                .thenThrow(new SolrServerException("error"));
+
+        TurSNSearchParams searchParams = new TurSNSearchParams();
+        searchParams.setQ("abc");
+        TurSEParameters parameters = new TurSEParameters(searchParams);
+        TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
+                new TurSNConfig(), parameters, java.util.Locale.US, java.net.URI.create("http://localhost/search"));
+
+        TurSEResult result = turSolr.findById(turSolrInstance, site, "abc", context);
+        assertThat(result).isNotNull();
+        assertThat(result.getFields()).isNull();
+    }
+
+    @Test
+    void testIndexingDelegatesToHandler() {
+        TurSolr turSolr = buildTurSolr(false);
+        // This tests that the delegation to turSolrDocumentHandler works;
+        // the actual indexing is tested in TurSolrDocumentHandlerTest
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> turSolr.indexing(turSolrInstance, new TurSNSite(), new java.util.HashMap<>()));
+    }
+
+    @Test
+    void testDeIndexingDelegatesToHandler() {
+        TurSolr turSolr = buildTurSolr(false);
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> turSolr.deIndexing(turSolrInstance, "id1"));
+    }
+
+    @Test
+    void testDeIndexingByTypeDelegatesToHandler() {
+        TurSolr turSolr = buildTurSolr(false);
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> turSolr.deIndexingByType(turSolrInstance, "article"));
+    }
+
+    @Test
+    void testAddAWildcardInQueryWithTrailingSpaces() {
+        SolrQuery query = new SolrQuery().setQuery("  hello  ");
+        TurSolr.addAWildcardInQuery(query);
+        assertThat(query.getQuery()).isEqualTo("hello*");
+    }
+
+    private TurSolr buildTurSolr(boolean commitEnabled) {
+        return new TurSolr(commitEnabled, 500,
+                turSNSiteFieldExtRepository,
+                turSNSiteCustomFacetRepository,
+                turSNSiteCustomSortRepository,
+                turSNTargetingRules,
+                turSNSiteFieldService,
+                turSNRankingExpressionRepository,
+                turSNRankingConditionRepository,
+                turSNSiteRepository,
+                turSNFieldProcess,
+                turDecimalFieldNormalizer,
+                turSNSearchRuleEvaluator,
+                snapshotService,
+                new com.viglet.turing.observability.TurSearchPipelineObservation(null));
+    }
+}

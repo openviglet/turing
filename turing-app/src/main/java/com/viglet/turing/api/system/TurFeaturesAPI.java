@@ -4,7 +4,7 @@ import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.service.git.TurGitServerService;
 import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.solr.source.TurSolrInstanceSource;
+import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.tenant.TurPlatformAdminService;
 import com.viglet.turing.tenant.TurTenantContext;

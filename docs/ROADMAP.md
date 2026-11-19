@@ -26,7 +26,7 @@
 
 - 📋 **T1308** (deps: T1307 ✅) **Controllers and services of every subsystem share the api package, so genai calls into it** — Each controller moves into the module it serves and services such as TurSNSiteSearchService leave api, so web adapters depend inward and nothing depends on them. → §CLXXXIX.4
 - 📋 **T1309** (deps: T1306 ✅) **genai is one 646-class package mixing providers, agents, personas, eval and transcription** — Splitting it into llm, agent, rag, persona, eval, transcription and batch modules gives each a boundary the verifier can hold, instead of one package that depends on everything. → §CLXXXIX.5
-- 📋 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — One searchengine module exposing TurSearchEnginePlugin as its named interface keeps sn and genai off the engine internals they reach into today. → §CLXXXIX.6
+- ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 130 calls still reach engine internals, from api.se, the SN queue and query APIs, sn search, autocomplete, spotlights, facets and the four sn.dsl executors. → §CLXXXIX.6
 - 📋 **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — Chat analytics, slots and memory form a chat module, storage and assets another, and each seeder moves into the module whose data it writes. → §CLXXXIX.7
 - 📋 **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — Moving them into the sn module as internal packages makes sn the only writer of its tables, with other modules reading through its named interface or its events. → §CLXXXIX.8
 - 📋 **T1313** (deps: T1309) **LLM, agent and flow entities sit in persistence, apart from the genai modules that own them** — Moving entities, repositories, DTOs, mappers and enums into the new genai modules ends persistence importing genai types such as TurBatchKind. → §CLXXXIX.9
@@ -38,7 +38,7 @@
 - 📋 **T1319** (deps: T1314) **No entity has @Version and only one records created and modified dates through auditing** — A mapped superclass with audit dates and an optimistic-lock version stops silent concurrent overwrites and replaces 20 hand-rolled date fields. → §CLXXXIX.15
 - 📋 **T1320** (deps: T1314) **29 @Lob fields leave each large-text column's type to the database dialect** — Mapping large text to the portable longtext column the persistence rules require, and binary data to storage, gives the same schema on H2, MySQL, PostgreSQL and SQL Server. → §CLXXXIX.16
 - 📋 **T1321** (deps: T1315, T1317, T1318, T1319, T1320) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history, and a 2026.2 install upgrades by export and import instead of by migration. → §CLXXXIX.17
-- 📋 **T1322** (deps: T1308, T1310, T1311, T1315) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
+- 📋 **T1322** (deps: T1308, T1310 ⏳, T1311, T1315) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
 - 📋 **T1323** (deps: T1322, T1316) **The module report never fails the build, so a new cycle merges unnoticed** — Once the moves land, the module verification runs in the unit suite and fails on any cycle or any access to another module's internal package. → §CLXXXIX.19
 - 📋 **T1324** (deps: T1316, T1321) **A module event lost to a crash between commit and listener is never delivered** — The JPA event publication registry, its table in the Liquibase baseline, tenant-aware and republished by one node under ShedLock, makes cross-module listeners at-least-once. → §CLXXXIX.20
 - 📋 **T1325** (deps: T1323) **Every integration test boots the whole context, even for one module's behaviour** — Module slice tests boot one module with its declared dependencies, so module ITs start faster and fail when a hidden dependency appears. → §CLXXXIX.21
@@ -51,6 +51,13 @@
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
+
+## Done when — T1310
+
+- **No module outside searchengine imports an engine's internal package**
+  TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
+  violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
+  into the module with the DSL types or call the plugin.
 
 ## Non-goals (do NOT add as tasks)
 

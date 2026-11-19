@@ -66,7 +66,7 @@ import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightR
 import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import java.util.ArrayList;
 import java.util.List;

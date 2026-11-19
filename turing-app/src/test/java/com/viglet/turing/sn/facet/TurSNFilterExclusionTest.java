@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.contentai.TurContentAiQueryBuilder;
+import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.properties.TurContentAiProperty;
 

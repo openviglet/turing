@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.lucene.TurLuceneFilterQueries;
+import com.viglet.turing.searchengine.lucene.TurLuceneFilterQueries;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
 

@@ -47,8 +47,8 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.se.result.TurSEResult;
-import com.viglet.turing.solr.TurSolrField;
+import com.viglet.turing.searchengine.result.TurSEResult;
+import com.viglet.turing.searchengine.solr.TurSolrField;
 
 import jakarta.servlet.http.HttpServletRequest;
 

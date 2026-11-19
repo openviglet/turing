@@ -577,7 +577,7 @@ turing:
             - java.net.SocketTimeoutException
             - java.net.http.HttpTimeoutException
             - org.apache.solr.client.solrj.SolrServerException
-            - com.viglet.turing.solr.TurSolrDocumentHandler$TurSolrBatchIndexException
+            - com.viglet.turing.searchengine.solr.TurSolrDocumentHandler$TurSolrBatchIndexException
         circuit-breaker:
           failure-rate-threshold: 50
           slow-call-duration-threshold: 5s

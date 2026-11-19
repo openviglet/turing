@@ -36,9 +36,9 @@ import com.viglet.turing.commons.sn.bean.TurSNDuplicateClusterMember;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.plugins.se.TurSearchEnginePlugin;
-import com.viglet.turing.plugins.se.TurSearchEnginePluginFactory;
-import com.viglet.turing.se.result.TurSEResult;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
 import com.viglet.turing.sn.ranking.TurSNScoredNeighbor;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
@@ -227,11 +227,11 @@ class TurSNDuplicateClusteringServiceTest {
         when(hybridRankingService.findScoredNeighbors(any(), any(), eq(TurSNDuplicateClusteringService.MAX_MEMBERS),
                 anyDouble())).thenReturn(List.of(new TurSNScoredNeighbor("page-1", 0.99),
                         new TurSNScoredNeighbor("post-2", 0.98), new TurSNScoredNeighbor("post-3", 0.97)));
-        com.viglet.turing.se.result.TurSEResults admitted = com.viglet.turing.se.result.TurSEResults.builder()
+        com.viglet.turing.searchengine.result.TurSEResults admitted = com.viglet.turing.searchengine.result.TurSEResults.builder()
                 .results(List.of(
-                        com.viglet.turing.se.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-2"))
+                        com.viglet.turing.searchengine.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-2"))
                                 .build(),
-                        com.viglet.turing.se.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-3"))
+                        com.viglet.turing.searchengine.result.TurSEResult.builder().fields(Map.of(TurSNFieldName.ID, "post-3"))
                                 .build()))
                 .build();
         when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(admitted));
