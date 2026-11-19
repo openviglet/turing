@@ -2526,6 +2526,34 @@ America/Sao_Paulo.
 Workaround in the project: none. FI132 maps the fields as they are and waits on this
 line.
 
+### CLXXXII.18 Personal data out of search metrics (T1298)
+
+Met in fespsp-institucional (FI155), a school site whose students type their enrolment
+number (RA) and CPF into the search box. Lab on `ghcr.io/openviglet/turing:2026.3.8`
+with `TURING_SEARCH_METRICS_ENABLED=true` and the WordPress plugin from `latest`.
+
+Searched 15 times each through the plugin (`Viglet_Turing_API_Client::search`):
+`20231234` (an RA), `123.456.789-09` (a CPF), `aluno@fespsp.org.br`.
+
+- Popular searches (`Viglet_Turing_Trending::chips()`) leave all three out:
+  `presentable()` drops e-mails, runs of 7+ digits and long text. Correct.
+- Search insights (`Viglet_Turing_Insights::report('all-time')`, the wp-admin screen) list
+  them first, verbatim: `123.456.789-09(15) | 20231234(15) | aluno@fespsp.org.br(15) |
+  biblioteca(13) ...`. So does Turing's own top-terms metric, where they are stored.
+
+What it costs: the site cannot tell visitors that searches are logged anonymously, which
+is what its privacy text needs to say under LGPD, and every editor who opens Search
+insights sees students' personal numbers.
+
+What should happen, in two places:
+1. The plugin's Insights report applies the same `presentable()` test to every term list
+   (top, failed, unopened), counting the dropped ones as "personal data, hidden".
+2. Turing does not store such a term in search metrics at all: mask it at ingestion (an
+   e-mail, a run of 7+ digits, a CPF or CNPJ pattern) with a per-site switch, so a site
+   that never shows the data also never holds it.
+
+Workaround in the project: none. FI155's privacy paragraph waits on this line.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ### CLXXXIII.2 Ranking by a numeric field: lowest price, highest context (T1293)
