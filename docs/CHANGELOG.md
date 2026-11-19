@@ -1758,3 +1758,4 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
+- **T1305** — ADR 0005 fixes the module map (17 modules plus a shared kernel, today's packages mapped to each), the dependency direction, and the ruling that internals and the Liquibase history may break while REST, SDKs and the exchange format may not (design §CLXXXIX.1 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).

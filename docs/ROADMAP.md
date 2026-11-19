@@ -24,8 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 📋 **T1305** (deps: —) **No decision fixes the backend's module map or what may break to reach it** — Spring Modulith needs a target module per subsystem and a ruling that packages, JPA mappings and the Liquibase history may break, recorded before any code moves. → §CLXXXIX.1
-- 📋 **T1306** (deps: T1305) **Nothing reports which packages depend on which, so cycles grow unseen** — Adding the Spring Modulith 2.x BOM and a test that prints the application modules and their violations without failing gives the baseline every later move is measured against. → §CLXXXIX.2
+- 📋 **T1306** (deps: T1305 ✅) **Nothing reports which packages depend on which, so cycles grow unseen** — Adding the Spring Modulith 2.x BOM and a test that prints the application modules and their violations without failing gives the baseline every later move is measured against. → §CLXXXIX.2
 - 📋 **T1307** (deps: T1306) **genai imports API exceptions from the controllers package, a cycle with api** — TurNotFoundException and its siblings move to a shared kernel module both sides may depend on, so no module reaches into api for a type. → §CLXXXIX.3
 - 📋 **T1308** (deps: T1307) **Controllers and services of every subsystem share the api package, so genai calls into it** — Each controller moves into the module it serves and services such as TurSNSiteSearchService leave api, so web adapters depend inward and nothing depends on them. → §CLXXXIX.4
 - 📋 **T1309** (deps: T1306) **genai is one 646-class package mixing providers, agents, personas, eval and transcription** — Splitting it into llm, agent, rag, persona, eval, transcription and batch modules gives each a boundary the verifier can hold, instead of one package that depends on everything. → §CLXXXIX.5

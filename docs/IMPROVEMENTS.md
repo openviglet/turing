@@ -2495,23 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.1 Module map and the compatibility ruling (T1305)
-
-turing-app is 1,878 classes under top-level packages that mix layers (api 228,
-persistence 430, service 105) with features (genai 646, sn 155). Import counts show real
-cycles: genai and api (74/13), genai and sn (28/8), persistence back into sn and genai
-(21/7, through entity listeners and enums), api and sn, service and genai. Nothing stops
-them growing.
-
-ADR 0005 fixes the target: a modular monolith verified by Spring Modulith, one module
-per subsystem (sn, searchengine, llm, agent, rag, persona, eval, transcription, batch,
-kb, chat, storage, tenant, auth, system, exchange, mcp, observability) plus a small
-shared kernel. It also rules that compatibility is waived: package names, JPA mappings,
-table names and the Liquibase history may break, and an upgrade from 2026.2 goes through
-export and import. Domain records and ports (ADR 0001) move into the module that owns
-them, and ADR 0001 is amended to say so. REST paths, the SDK contract and the exchange
-format are not part of the waiver.
-
 ### CLXXXIX.2 A non-failing module report (T1306)
 
 Add the Spring Modulith BOM (the 2.x line that targets Spring Boot 4) and

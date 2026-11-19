@@ -1,6 +1,9 @@
 # ADR 0001: Domain layer (ports & adapters): bounded completion, not 100%
 
-- **Status:** Accepted (2026-07-02)
+- **Status:** Accepted (2026-07-02); amended by ADR 0005 (2026-11-19): the `*Domain`
+  records and `*RepositoryPort` interfaces stay bounded as ruled here, but each moves
+  out of the top-level `domain` package into the module that owns its data, where the
+  ports become that module's named interface for reads.
 - **Deciders:** Alexandre Oliveira
 - **Task:** T541 (Block AF) · **Supersedes:** the implicit "read-only pilot, more
   slices later" stance that lived only in class Javadoc and "scaffolding only"
