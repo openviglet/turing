@@ -1741,6 +1741,7 @@
 ## Block CW — Chat retrieval recalls what the site's search finds
 
 - **T1294** — SN chat and /answer top a thin vector pass (under 3 documents) up with the site's first 5 lexical hits, their chunks fetched under the same filters and partition and fused by rank.
+- **T1302** — The single-turn SN chat passes its locale to retrieval, so a thin vector pass takes the site's lexical hits as the conversation and /answer do; the non-streaming conversation gained a locale overload.
 
 ## Block CX — Synonyms that mix single words and phrases
 

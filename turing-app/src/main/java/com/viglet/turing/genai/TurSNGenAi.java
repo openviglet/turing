@@ -307,6 +307,14 @@ public class TurSNGenAi {
     }
 
     public TurChatMessage assistant(TurGenAiContext context, String q) {
+        return assistant(context, q, null);
+    }
+
+    /**
+     * @param locale T1302 — the request's locale, which lets a thin vector pass be
+     *               topped up with the site's own search; {@code null} keeps it vector-only
+     */
+    public TurChatMessage assistant(TurGenAiContext context, String q, Locale locale) {
         if (!context.isEnabled()) {
             log.warn("RAG chat (single-turn) context disabled — check LLM, embedding model and store configuration");
             return TurChatMessage.builder().text(AI_CONFIGURATION_IS_NOT_ENABLED).enabled(false).build();
@@ -314,11 +322,11 @@ public class TurSNGenAi {
         int tokenCounter = new StringTokenizer(q).countTokens();
         log.debug("RAG chat (single-turn) assistant query='{}' tokenCount={}", q, tokenCounter);
         if (tokenCounter > 1) {
-            return getTurChatMessage(context, q);
+            return getTurChatMessage(context, q, locale);
         } else if (tokenCounter == 1 && !q.contains("*")) {
             String rewritten = "what is %s?".formatted(q);
             log.debug("RAG chat (single-turn) rewriting single-token query to '{}'", rewritten);
-            return getTurChatMessage(context, rewritten);
+            return getTurChatMessage(context, rewritten, locale);
         } else {
             log.debug("RAG chat (single-turn) skipping (wildcard or empty) — no retrieval performed");
             return TurChatMessage.builder().text(null).enabled(true).build();
@@ -1128,6 +1136,15 @@ public class TurSNGenAi {
 
     public TurChatMessage assistantConversation(TurGenAiContext context, List<ConversationMessage> history,
             java.util.Map<String, List<String>> filters) {
+        return assistantConversation(context, history, filters, null);
+    }
+
+    /**
+     * @param locale T1302 — the request's locale, which lets a thin vector pass be
+     *               topped up with the site's own search; {@code null} keeps it vector-only
+     */
+    public TurChatMessage assistantConversation(TurGenAiContext context, List<ConversationMessage> history,
+            java.util.Map<String, List<String>> filters, Locale locale) {
         if (!context.isEnabled()) {
             log.warn("RAG chat context disabled — check LLM, embedding model and store configuration");
             return TurChatMessage.builder().text(AI_CONFIGURATION_IS_NOT_ENABLED).enabled(false).build();
@@ -1151,7 +1168,7 @@ public class TurSNGenAi {
         // config-driven relevance gate on the filtered path, and runs the
         // optional reranker. Returns chunks with metadata intact.
         List<Document> relevantDocuments = retrieveDocuments(context,
-                standaloneQuery(context, history, latestUserQuery), filters);
+                standaloneQuery(context, history, latestUserQuery), filters, null, locale);
         logRetrievedDocuments(relevantDocuments, context.getVectorStore().getClass().getSimpleName());
         String information = relevantDocuments.stream()
                 .map(Document::getText)
@@ -1442,13 +1459,14 @@ public class TurSNGenAi {
     public record ConversationMessage(String role, String content) {
     }
 
-    private TurChatMessage getTurChatMessage(TurGenAiContext context, String q) {
+    private TurChatMessage getTurChatMessage(TurGenAiContext context, String q, Locale locale) {
         // T707 — the single-turn path now shares the same retrieval pipeline as
         // the conversational path (full-context, intent-gated auto-extraction,
         // fallback-on-empty and optional rerank) instead of a private
         // similaritySearch. Passing null filters keeps its historical behavior
         // for plain lookups while inheriting the reliability fixes.
-        List<Document> relevantDocuments = retrieveDocuments(context, q, null);
+        // T1302 — and the lexical top-up, given the request's locale.
+        List<Document> relevantDocuments = retrieveDocuments(context, q, null, null, locale);
         logRetrievedDocuments(relevantDocuments, context.getVectorStore().getClass().getSimpleName());
 
         String information = relevantDocuments.stream()

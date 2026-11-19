@@ -756,7 +756,7 @@ Saving is blocked if either variable is missing from the template.
 
 **How it works:** When documents are indexed, Viglet Turing extracts title, summary, and body text and stores their embeddings in the configured vector store. When a user sends a chat request (`GET /api/sn/{siteName}/chat?q=...`), the system performs a similarity search, builds the prompt with the retrieved context, sends it to the LLM, and returns the generated response via Server-Sent Events (SSE). See [Chat](/docs/chat/) for the front-end experience.
 
-On the conversation and answer endpoints, when the similarity search finds fewer than three documents, the site's own keyword search fills the gap: its first five hits join the context, each with up to three of its chunks, under the same filters. A question whose words the site's search matches is answered from those pages even when the vectors missed them.
+On the chat, conversation and answer endpoints, when the similarity search finds fewer than three documents, the site's own keyword search fills the gap: its first five hits join the context, each with up to three of its chunks, under the same filters. A question whose words the site's search matches is answered from those pages even when the vectors missed them.
 
 ---
 

@@ -24,10 +24,6 @@
 - 📋 **T1303** (deps: —) **A card shows an event whose local time lands on midnight UTC as a date with no time, on the wrong day** — A 21h event on a UTC-3 site reads as an all-day event on the next day in the cards and the instant search. → §CLXXXII.20
 - 📋 **T1329** (deps: —) **Personal-data masking of search terms is one switch for the whole deployment, not per site** — A bookstore that wants its ISBN searches visible can only turn masking off for every site on the same Turing. → §CLXXXII.21
 
-## Block CW — Chat retrieval recalls what the site's search finds
-
-- 📋 **T1302** (deps: —) **The single-turn SN chat and the non-streaming conversation still retrieve vector-only, without the site's lexical hits** — GET /chat?q= keeps the T1294 gap: one off-topic page and a refusal where the site's own search finds the answer. → §CLXXXVI.2
-
 ## Block CX — Synonyms that mix single words and phrases
 
 - 📋 **T1304** (deps: —) **On Lucene, a multi-word synonym with a stop word never fires from the phrase, and TooManyClauses still reaches clients** — A search for a full name never finds the pages that carry only its acronym, and an oversized query errors instead of answering. → §CLXXXVII.2

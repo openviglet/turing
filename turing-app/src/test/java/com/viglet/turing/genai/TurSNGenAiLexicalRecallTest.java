@@ -126,6 +126,30 @@ class TurSNGenAiLexicalRecallTest {
                 .extracting(Document::getId).containsExactly("b1-a");
     }
 
+    /** T1302 — the single-turn chat answers from the site's search hits too, given its locale. */
+    @Test
+    void theSingleTurnChatTakesTheSitesHitsGivenItsLocale() {
+        org.springframework.ai.chat.model.ChatModel chatModel = mock(org.springframework.ai.chat.model.ChatModel.class);
+        when(chatModel.call(any(org.springframework.ai.chat.prompt.Prompt.class))).thenReturn(
+                new org.springframework.ai.chat.model.ChatResponse(List.of(new org.springframework.ai.chat.model.Generation(
+                        new org.springframework.ai.chat.messages.AssistantMessage("Bali has surf camps.")))));
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore)
+                .chatModel(chatModel).siteName("wknd").build();
+        when(vectorStore.similaritySearch(any(SearchRequest.class)))
+                .thenReturn(List.of(chunk("sd-1", "san-diego")))
+                .thenReturn(List.of(chunk("b1-a", "bali-1")));
+        when(dslSearchService.search(eq("wknd"), eq("en_US"), any())).thenReturn(Optional.of(hits("bali-1")));
+        TurSNGenAi chat = new TurSNGenAi(null, null, null, null, null, null,
+                mock(com.viglet.turing.system.TurGlobalSettingsService.class), null, null, null,
+                new TurSNFullContextService(), null, null, null, dslSearchService);
+
+        assertThat(chat.assistant(context, "surf camps in Bali", EN).getText()).isEqualTo("Bali has surf camps.");
+        ArgumentCaptor<org.springframework.ai.chat.prompt.Prompt> prompt =
+                ArgumentCaptor.forClass(org.springframework.ai.chat.prompt.Prompt.class);
+        verify(chatModel).call(prompt.capture());
+        assertThat(prompt.getValue().getInstructions().getFirst().getText()).contains("text of b1-a");
+    }
+
     @Test
     void fusionCapsALexicalDocumentAtThreeChunks() {
         List<Document> lexical = new ArrayList<>();

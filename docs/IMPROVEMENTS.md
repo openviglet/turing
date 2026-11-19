@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CW — Chat retrieval recalls what the site's search finds
-
 ## Block CX — Synonyms that mix single words and phrases
 
 ## Block CY — Filters from a sentence say what visitors say
@@ -2531,27 +2529,6 @@ gaps between what the code declares and what the pages name, and running the lin
 the docs ship.
 
 ## CLXXXVI Chat retrieval recalls what the site's search finds
-
-### CLXXXVI.2 Lexical recall on every SN chat surface (T1302)
-
-Found while shipping T1294. The conversation and `/answer` paths now top a thin vector
-pass up with the site's own lexical search (`TurSNGenAi.withLexicalRecall`), which needs
-the request locale to run the site's search. Two other callers of `retrieveDocuments`
-pass none, so they stay vector-only and keep the T1294 gap:
-
-- the single-turn chat, `GET /api/sn/{site}/chat?q=` (`TurSNSiteGenAiAPI` resolves the
-  locale with `resolveIndexedLocale`, then calls `TurSNGenAi.assistant(context, q)`,
-  which drops it before `getTurChatMessage`);
-- the non-streaming conversation in `TurSNGenAi` that builds a `TurChatMessage` from
-  `retrieveDocuments(context, standaloneQuery(...), filters)`.
-
-Fix: carry the locale those callers already hold into `retrieveDocuments` (an
-`assistant(context, q, locale)` overload, the old signature delegating with `null`), so
-every SN chat surface recalls what the site's search finds. No new mechanism: the same
-`withLexicalRecall`, thresholds and fail-open.
-
-Test: the single-turn chat with a one-document vector pass and three lexical hits
-answers from all of them; with no locale it stays vector-only.
 
 ## CLXXXVII Synonyms that mix single words and phrases
 

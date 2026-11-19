@@ -294,7 +294,8 @@ public class TurSNSiteGenAiAPI {
 						siteName, locale, collectionName);
 				TurGenAiContext turGenAiContext = turGenAiContextFactory
 						.build(turSNSiteGenAI, collectionName, site.getName());
-				return turGenAi.assistant(turGenAiContext, q);
+				// T1302 — the locale lets a thin vector pass take the site's search hits too.
+				return turGenAi.assistant(turGenAiContext, q, locale);
 			}).orElseGet(() -> {
 				log.warn("RAG chat (single-turn) skipped: SN Site '{}' not found", siteName);
 				return TurChatMessage.builder().text("Couldn't find site name.").build();
