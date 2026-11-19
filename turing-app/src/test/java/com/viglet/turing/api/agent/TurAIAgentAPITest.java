@@ -206,7 +206,7 @@ class TurAIAgentAPITest {
      */
     @Test
     void testTurAIAgentAddRefusedAtThePlanLimit() throws Exception {
-        org.mockito.Mockito.doThrow(new com.viglet.turing.api.exception.TurQuotaExhaustedException(
+        org.mockito.Mockito.doThrow(new com.viglet.turing.shared.exception.TurQuotaExhaustedException(
                 org.springframework.http.HttpStatus.PAYMENT_REQUIRED, "agents", 3L, 3L, null, null,
                 "Plan limit reached for 'agents': 3 of 3 used."))
                 .when(turTenantQuotaService).checkCanCreateAgent();

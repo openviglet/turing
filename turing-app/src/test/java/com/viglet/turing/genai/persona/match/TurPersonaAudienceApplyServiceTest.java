@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.ConfirmedField;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.Request;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.Response;

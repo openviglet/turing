@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.kb.TurThesaurusTermService;
 import com.viglet.turing.persistence.dto.kb.TurThesaurusTermDto;
 import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;

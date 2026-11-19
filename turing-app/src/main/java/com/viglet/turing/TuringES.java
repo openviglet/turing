@@ -36,6 +36,9 @@ import tools.jackson.datatype.hibernate7.Hibernate7Module;
 @EnableCaching
 @EnableScheduling
 @org.springframework.scheduling.annotation.EnableAsync
+// ADR 0005 — a modular monolith: each direct sub-package a module, `shared` the kernel
+// every module may use (T1307).
+@org.springframework.modulith.Modulithic(sharedModules = "shared")
 public class TuringES {
     public static final String UTF_8 = "UTF-8";
 

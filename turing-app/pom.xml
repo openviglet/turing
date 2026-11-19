@@ -384,6 +384,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <!-- T1307 / ADR 0005 — the module annotations (@Modulithic, @ApplicationModule,
+             @NamedInterface) the application declares its modules with. -->
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-api</artifactId>
+        </dependency>
         <!-- T1306 / ADR 0005 — Spring Modulith's module model and verification. -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>

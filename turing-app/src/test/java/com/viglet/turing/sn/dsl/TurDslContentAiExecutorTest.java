@@ -45,7 +45,7 @@ import org.springframework.http.HttpStatus;
 
 import com.sun.net.httpserver.HttpServer;
 import com.viglet.testsupport.contentai.TurContentAiSpecValidator;
-import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.contentai.TurContentAiClient;
 import com.viglet.turing.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.se.TurSEInstance;

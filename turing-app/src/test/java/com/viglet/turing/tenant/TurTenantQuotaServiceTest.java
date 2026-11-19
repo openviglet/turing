@@ -29,7 +29,7 @@ import com.viglet.core.tenancy.VigletQuotaService;
 import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantStatus;
 import com.viglet.core.tenancy.VigletTenantStore;
-import com.viglet.turing.api.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 import com.viglet.turing.genai.vigletai.TurVigletUpgradeTargetService;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;

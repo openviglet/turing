@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletQuotaService;
 import com.viglet.core.tenancy.VigletTenantContext;
-import com.viglet.turing.api.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 import com.viglet.turing.genai.vigletai.TurVigletUpgradeTargetService;
 
 /**

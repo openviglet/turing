@@ -27,10 +27,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
-import com.viglet.turing.api.exception.TurApiException;
-import com.viglet.turing.api.exception.TurNotFoundException;
-import com.viglet.turing.api.exception.TurPayloadTooLargeException;
-import com.viglet.turing.api.exception.TurValidationException;
+import com.viglet.turing.shared.exception.TurApiException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurPayloadTooLargeException;
+import com.viglet.turing.shared.exception.TurValidationException;
 import com.viglet.turing.api.sn.genai.TurSNSitePersonaContentFitAPI.ContentFitRequest;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.persona.fit.TurContentFitMisfit;

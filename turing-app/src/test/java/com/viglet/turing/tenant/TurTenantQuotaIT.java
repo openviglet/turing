@@ -24,7 +24,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.viglet.turing.api.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.tenant.TurTenant;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;

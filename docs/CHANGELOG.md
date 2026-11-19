@@ -1760,3 +1760,4 @@
 
 - **T1305** — ADR 0005 fixes the module map (17 modules plus a shared kernel, today's packages mapped to each), the dependency direction, and the ruling that internals and the Liquibase history may break while REST, SDKs and the exchange format may not (design §CLXXXIX.1 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1306** — Spring Modulith 2.1.3 is on the build and TurModuleReportTest writes the module report without failing: 33 modules, 27,039 violations (99 cycles), the baseline each later move is measured against.
+- **T1307** — The 11 API exception types moved to com.viglet.turing.shared.exception, an open shared module declared with @Modulithic, so no module reaches into api for one; violations 27,039 to 27,018.

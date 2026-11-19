@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.viglet.turing.api.exception.TurProviderException;
+import com.viglet.turing.shared.exception.TurProviderException;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

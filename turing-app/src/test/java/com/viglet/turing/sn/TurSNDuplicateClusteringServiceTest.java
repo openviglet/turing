@@ -190,7 +190,7 @@ class TurSNDuplicateClusteringServiceTest {
 
         org.assertj.core.api.Assertions.assertThatThrownBy(
                 () -> service.findCluster(SITE, SEED, 0.92, 10, Locale.ENGLISH, PARTITION))
-                .isInstanceOf(com.viglet.turing.api.exception.TurForbiddenException.class)
+                .isInstanceOf(com.viglet.turing.shared.exception.TurForbiddenException.class)
                 .hasMessageContaining("reindex");
     }
 

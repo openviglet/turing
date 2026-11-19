@@ -2495,15 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.3 A shared kernel for cross-module types (T1307)
-
-genai imports TurNotFoundException, TurConflictException, TurProviderException,
-TurQuotaExhaustedException and TurUnsupportedEngineException from api.exception, which
-makes api a dependency of the module api itself calls. These types, and the few value
-types every module shares, move to a shared kernel declared as a Spring Modulith shared
-module. The kernel stays small: a type earns a place only when three or more modules
-need it.
-
 ### CLXXXIX.4 Controllers move into their modules (T1308)
 
 api holds controllers for every subsystem and also services: genai calls

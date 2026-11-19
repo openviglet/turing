@@ -16,6 +16,11 @@
  */
 package com.viglet.turing.api.exception;
 
+import com.viglet.turing.shared.exception.TurApiException;
+import com.viglet.turing.shared.exception.TurErrorTypes;
+import com.viglet.turing.shared.exception.TurProviderException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;

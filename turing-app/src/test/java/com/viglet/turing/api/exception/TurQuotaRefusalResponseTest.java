@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.api.exception;
 
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

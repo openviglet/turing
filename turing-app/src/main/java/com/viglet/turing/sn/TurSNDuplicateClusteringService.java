@@ -109,7 +109,7 @@ public class TurSNDuplicateClusteringService {
      * bound to {@code partition}: a seed outside the partition is treated as
      * absent, and only the partition's documents can join the cluster.
      *
-     * @throws com.viglet.turing.api.exception.TurForbiddenException when the site's
+     * @throws com.viglet.turing.shared.exception.TurForbiddenException when the site's
      *         vectors were written before they carried the partition, until reindexed
      */
     public TurSNDuplicateCluster findCluster(String siteName, String id, double threshold,
@@ -167,7 +167,7 @@ public class TurSNDuplicateClusteringService {
         List<TurSNScoredNeighbor> neighbors = partition == null
                 ? hybridRankingService.findScoredNeighbors(site, seedDoc, candidates, minSimilarity)
                 : hybridRankingService.findScoredNeighbors(site, seedDoc, candidates, minSimilarity, partition)
-                        .orElseThrow(() -> new com.viglet.turing.api.exception.TurForbiddenException(
+                        .orElseThrow(() -> new com.viglet.turing.shared.exception.TurForbiddenException(
                                 "This site's vectors hold nothing for this API key's partition yet: an "
                                         + "administrator has to reindex the site"));
         if (filtered && !neighbors.isEmpty()) {

@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.ObjectProvider;
 
-import com.viglet.turing.api.exception.TurConflictException;
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurConflictException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.feed.TurStructuredFeedIngestService.IngestResult;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;

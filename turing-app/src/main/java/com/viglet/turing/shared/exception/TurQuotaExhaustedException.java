@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.api.exception;
+package com.viglet.turing.shared.exception;
 
 import java.time.OffsetDateTime;
 

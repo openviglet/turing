@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.domain.llm.LlmInstanceUpdatedEvent;
 import com.viglet.turing.domain.llm.LlmProviderType;
 import com.viglet.turing.genai.provider.llm.TurLlmModelDiscoveryService;

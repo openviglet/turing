@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.persona.dialogue.TurDialogueEvent;
 import com.viglet.turing.genai.persona.dialogue.TurPersonaDialogueProjectService;
 import com.viglet.turing.genai.persona.dialogue.dto.TurPersonaDialogueProjectDto;

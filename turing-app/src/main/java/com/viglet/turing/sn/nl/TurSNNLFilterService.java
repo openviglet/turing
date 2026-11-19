@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
 import com.viglet.turing.persistence.model.sn.TurSNSite;

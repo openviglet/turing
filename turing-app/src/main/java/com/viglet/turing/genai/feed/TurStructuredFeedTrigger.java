@@ -30,8 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.api.exception.TurConflictException;
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurConflictException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.feed.TurStructuredFeedIngestService.IngestResult;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;

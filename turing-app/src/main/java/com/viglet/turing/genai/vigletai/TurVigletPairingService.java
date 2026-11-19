@@ -24,7 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 
-import com.viglet.turing.api.exception.TurProviderException;
+import com.viglet.turing.shared.exception.TurProviderException;
 import com.viglet.turing.genai.provider.llm.TurVigletLlmProvider;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;

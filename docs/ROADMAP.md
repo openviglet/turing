@@ -24,8 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 📋 **T1307** (deps: T1306 ✅) **genai imports API exceptions from the controllers package, a cycle with api** — TurNotFoundException and its siblings move to a shared kernel module both sides may depend on, so no module reaches into api for a type. → §CLXXXIX.3
-- 📋 **T1308** (deps: T1307) **Controllers and services of every subsystem share the api package, so genai calls into it** — Each controller moves into the module it serves and services such as TurSNSiteSearchService leave api, so web adapters depend inward and nothing depends on them. → §CLXXXIX.4
+- 📋 **T1308** (deps: T1307 ✅) **Controllers and services of every subsystem share the api package, so genai calls into it** — Each controller moves into the module it serves and services such as TurSNSiteSearchService leave api, so web adapters depend inward and nothing depends on them. → §CLXXXIX.4
 - 📋 **T1309** (deps: T1306 ✅) **genai is one 646-class package mixing providers, agents, personas, eval and transcription** — Splitting it into llm, agent, rag, persona, eval, transcription and batch modules gives each a boundary the verifier can hold, instead of one package that depends on everything. → §CLXXXIX.5
 - 📋 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — One searchengine module exposing TurSearchEnginePlugin as its named interface keeps sn and genai off the engine internals they reach into today. → §CLXXXIX.6
 - 📋 **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — Chat analytics, slots and memory form a chat module, storage and assets another, and each seeder moves into the module whose data it writes. → §CLXXXIX.7

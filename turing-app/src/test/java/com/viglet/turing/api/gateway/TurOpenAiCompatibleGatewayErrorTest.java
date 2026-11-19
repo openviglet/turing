@@ -21,7 +21,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.openai.core.http.Headers;
 import com.openai.errors.RateLimitException;
 import com.openai.models.ErrorObject;
-import com.viglet.turing.api.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 import com.viglet.turing.genai.gateway.TurOpenAiWire.ErrorEnvelope;
 
 /**

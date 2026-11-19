@@ -33,7 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNChatDisabledReason;
 import com.viglet.turing.genai.TurSNChatRouteResolver;

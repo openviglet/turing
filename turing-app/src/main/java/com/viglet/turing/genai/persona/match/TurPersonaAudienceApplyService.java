@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.AppliedField;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.ConfirmedField;
 import com.viglet.turing.genai.persona.match.dto.TurPersonaAudienceApplyDto.Request;

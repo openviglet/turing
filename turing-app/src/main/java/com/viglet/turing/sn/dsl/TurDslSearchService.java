@@ -1,6 +1,6 @@
 package com.viglet.turing.sn.dsl;
 
-import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;

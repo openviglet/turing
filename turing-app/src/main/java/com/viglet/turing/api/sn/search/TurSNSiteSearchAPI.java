@@ -58,7 +58,7 @@ import com.viglet.turing.sn.TurSNDuplicateClusteringService;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNSimilarDocumentsService;
 import com.viglet.turing.sn.TurSNStoredDocumentService;
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.sn.TurSNSimilarMode;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 

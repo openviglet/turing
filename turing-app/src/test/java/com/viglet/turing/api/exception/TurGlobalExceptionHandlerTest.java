@@ -5,6 +5,13 @@
  */
 package com.viglet.turing.api.exception;
 
+import com.viglet.turing.shared.exception.TurConflictException;
+import com.viglet.turing.shared.exception.TurForbiddenException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurProviderException;
+import com.viglet.turing.shared.exception.TurStorageException;
+import com.viglet.turing.shared.exception.TurValidationException;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;

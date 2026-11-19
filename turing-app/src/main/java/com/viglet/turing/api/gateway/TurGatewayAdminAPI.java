@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.distillation.TurOpenAiDistillationService;
 import com.viglet.turing.genai.distillation.TurOpenAiDistillationService.DistillResult;
 import com.viglet.turing.genai.gateway.TurGatewayKeyService;

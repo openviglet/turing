@@ -14,7 +14,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.api.exception;
+package com.viglet.turing.shared.exception;
 
 import org.springframework.http.HttpStatus;
 

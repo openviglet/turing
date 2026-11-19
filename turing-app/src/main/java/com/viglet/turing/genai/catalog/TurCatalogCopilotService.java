@@ -28,7 +28,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryBodies;
 import com.viglet.turing.genai.catalog.planning.TurCopilotQueryPlan;

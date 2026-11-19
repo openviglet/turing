@@ -37,7 +37,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 
-import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.plugins.se.TurSearchEnginePlugin;

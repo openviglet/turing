@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.TurDefaultAgentResolver;
 import com.viglet.turing.genai.TurSNChatDisabledReason;
 import com.viglet.turing.genai.TurSNChatRouteResolver;

@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.api.sn.bean.TurSNSiteMetricsTopTermsBean;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 import com.viglet.turing.sn.insights.TurSNSiteMetricsResetService;

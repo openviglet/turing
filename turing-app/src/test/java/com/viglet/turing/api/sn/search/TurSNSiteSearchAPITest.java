@@ -111,7 +111,7 @@ class TurSNSiteSearchAPITest {
         TurSNSiteSearchAPI api = apiWithStoredDocuments(storedDocuments);
 
         assertThatThrownBy(() -> api.turSNSiteStoredDocuments("vagas", List.of("missing"), null))
-                .isInstanceOf(com.viglet.turing.api.exception.TurNotFoundException.class)
+                .isInstanceOf(com.viglet.turing.shared.exception.TurNotFoundException.class)
                 .hasMessageContaining("missing");
     }
 

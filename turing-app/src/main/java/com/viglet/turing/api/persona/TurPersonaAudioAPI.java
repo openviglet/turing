@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.authoring.persona.TurPersonaAudioDeriveService;
 import com.viglet.turing.genai.authoring.persona.TurPersonaAudioDeriveService.DraftResult;
 import com.viglet.turing.genai.authoring.persona.TurPersonaAudioJobEventBus;

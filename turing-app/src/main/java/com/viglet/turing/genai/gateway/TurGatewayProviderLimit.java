@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.openai.errors.OpenAIServiceException;
-import com.viglet.turing.api.exception.TurQuotaExhaustedException;
+import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 
 /**
  * T1092 — a provider's (or the tenant's) quota or rate limit, read out of a

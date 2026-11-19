@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.api.exception.TurNotFoundException;
+import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.genai.persona.fit.TurPersonaVerdictHealth;
 import com.viglet.turing.genai.persona.match.TurPersonaAudienceApplyService;
 import com.viglet.turing.genai.persona.match.TurPersonaMatchAdjustmentService;

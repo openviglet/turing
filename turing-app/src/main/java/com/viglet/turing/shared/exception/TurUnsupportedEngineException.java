@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0.
  */
-package com.viglet.turing.api.exception;
+package com.viglet.turing.shared.exception;
 
 import java.util.Collection;
 

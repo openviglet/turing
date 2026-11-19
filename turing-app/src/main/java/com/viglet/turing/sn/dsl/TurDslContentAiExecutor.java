@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.api.exception.TurUnsupportedEngineException;
+import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.contentai.TurContentAiClient;
 import com.viglet.turing.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
