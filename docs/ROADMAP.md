@@ -38,6 +38,11 @@
 
 - 📋 **T1297** (deps: —) **On Lucene, a synonym group pairing one word with a phrase makes a search for the word find nothing** — A site that adds its acronym as a synonym of its full name loses every result for the acronym, the word visitors type most. → §CLXXXVII.1
 
+## Block CY — Filters from a sentence say what visitors say
+
+- 📋 **T1299** (deps: —) **Filters from a sentence drop a bare month and every future phrase: "em novembro" and "semana que vem" filter nothing** — On an events calendar the date is the word the visitor cared about, and the search silently ignores it. → §CLXXXVIII.1
+- 📋 **T1300** (deps: —) **Filters from a sentence drop a value that is part of a facet value: "Casarão" never matches "Casarão FESPSP"** — Visitors say the short name and editors file the long one, so the filter the model found right is thrown away. → §CLXXXVIII.2
+
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

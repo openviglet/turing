@@ -41,6 +41,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CX — Synonyms that mix single words and phrases
 
+## Block CY — Filters from a sentence say what visitors say
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2656,3 +2658,64 @@ Lucene, over a document holding only the word.
 
 Workaround in the project: the group is left out of `docker/turing/afinacao.json` until
 this ships; only single-word groups are versioned.
+
+## CLXXXVIII Filters from a sentence say what visitors say
+
+### CLXXXVIII.1 Month names and future phrases in sentence filters (T1299)
+
+Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, SN
+site `fespsp`, pt_BR, an event type whose `evento_inicio` is a DATE with an Agenda range
+facet.
+
+`POST /api/sn/fespsp/nl-filters` with `{"text": "palestras em novembro", "locale":
+"pt_BR", "filters": {"site_key": ["institucional"]}}` (what the WordPress plugin sends)
+answers:
+
+    "q": "palestras", "filters": [],
+    "dropped": [{"field": "evento_inicio", "value": "[2026-11-01 TO 2026-11-30]",
+                 "reason": "UNGROUNDED_DATE"}]
+
+The model read the month right, and `TurSNNLFilterService.dateRangeFilter` dropped it:
+`TurRelativeDateRange` resolves only past or current phrases (last month, this month,
+last week, the last N days, since a month) and a range the text dates by year. A month
+named without a year, and every future phrase, is treated as a guess.
+
+On an events calendar those are most of the questions: "em novembro", "em dezembro",
+"amanhã", "este fim de semana", "na próxima semana", "no mês que vem", "nos próximos 15
+dias". Dropping them makes the search ignore the one word the visitor cared about.
+
+What Turing should resolve, against today in the site's time zone:
+- a bare month name: this year's month if it has not ended, else next year's (for a
+  field whose facet is an Agenda; past-looking for a Past one);
+- future phrases in English and Portuguese: tomorrow, this weekend, next week, next
+  month, the next N days/weeks/months.
+
+A test per phrase, with a fixed clock on 2026-11-19.
+
+Workaround in the project: none; the lab records the miss in docs/spike-turing.md.
+
+### CLXXXVIII.2 Grounding a short name to the facet value that holds it (T1300)
+
+Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, SN
+site `fespsp`, pt_BR. The site's facet values are what editors typed: `evento_local`
+holds "Casarão FESPSP", `editora` holds "Editora Sociologia e Política".
+
+`POST /api/sn/fespsp/nl-filters`, `filters: {"site_key": ["institucional"]}`:
+
+| text | result |
+|---|---|
+| eventos no Casarão FESPSP | grounded, `fq: evento_local:Casarão FESPSP` |
+| eventos no Casarão | dropped `{"field":"evento_local","value":"Casarão","reason":"NOT_IN_SITE"}` |
+| livros da Editora Sociologia e Política | dropped `{"field":"editora","value":"Sociologia e Política","reason":"NOT_IN_SITE"}` |
+
+The model found the right field each time, and the grounding refused it because the
+value is not an exact facet value. Visitors say the short name ("o Casarão", "a
+Sociologia e Política"); the long one is how the editor filed it.
+
+What Turing should do: when the model's value is not a facet value, ground it to the
+facet value that contains all its words (accent- and case-folded) if exactly one does,
+with `confidence` below LITERAL; keep NOT_IN_SITE when none or several do, and say which
+in `dropped`. A test with the two cases above.
+
+Workaround in the project: none. Renaming facet values to what visitors say would fight
+the editors' own labels.

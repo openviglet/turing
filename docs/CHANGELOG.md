@@ -1737,3 +1737,5 @@
 
 ## Block CX — Synonyms that mix single words and phrases
 
+## Block CY — Filters from a sentence say what visitors say
+
