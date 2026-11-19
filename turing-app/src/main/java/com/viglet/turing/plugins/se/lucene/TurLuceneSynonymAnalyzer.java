@@ -25,7 +25,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.miscellaneous.ConditionalTokenFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
+import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
 import org.apache.lucene.analysis.synonym.SynonymMap;
 
@@ -78,10 +82,58 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
         tokens = TurLuceneFoldingAnalyzer.stop(tokens, stopWords);
         tokens = new SynonymGraphFilter(tokens, synonymMap, true);
         // T1170 — stemmed after the synonyms, so a rule keyed on a plural still fires.
-        tokens = TurLuceneFoldingAnalyzer.stem(tokens, stemmer);
         // T1080 — folded after the synonyms, so a rule keyed on an accented word
         // still fires, and its output matches the folded index too.
-        tokens = TurLuceneFoldingAnalyzer.fold(tokens);
+        tokens = new VariantsExceptPhraseTail(tokens, stemmer);
         return new TokenStreamComponents(source, tokens);
+    }
+
+    /**
+     * T1297 — the stem and folded variants for every token except the second and later
+     * words of a multi-word synonym output. Those variants stack at each word of the
+     * expansion, and the query parser turns every path through the graph into its own
+     * phrase: six words with two to five variants each is hundreds of phrases per
+     * field, past {@code IndexSearcher}'s clause limit, and the search failed. The index
+     * keeps every original word beside its variants, so the expansion as written still
+     * matches; the first word keeps its variants, so paths grow by a handful, not a
+     * power. The words typed and single-word synonyms are stemmed and folded as before.
+     *
+     * <p>{@link SynonymGraphFilter} emits a multi-word output's first word, then the
+     * word typed spanning the whole phrase ({@code positionLength > 1}), then the
+     * output's other words, one position each. A synonym token at a position inside
+     * such a span, after its start, is a tail word.
+     */
+    static final class VariantsExceptPhraseTail extends ConditionalTokenFilter {
+
+        private final TypeAttribute type = addAttribute(TypeAttribute.class);
+        private final PositionIncrementAttribute increment = addAttribute(PositionIncrementAttribute.class);
+        private final PositionLengthAttribute length = addAttribute(PositionLengthAttribute.class);
+        private int position = -1;
+        private int spanStart = -1;
+        private int spanEnd = -1;
+
+        VariantsExceptPhraseTail(TokenStream input, String stemmer) {
+            super(input, in -> TurLuceneFoldingAnalyzer.fold(TurLuceneFoldingAnalyzer.stem(in, stemmer)));
+        }
+
+        @Override
+        protected boolean shouldFilter() {
+            position += increment.getPositionIncrement();
+            if (length.getPositionLength() > 1 && position + length.getPositionLength() - 1 > spanEnd) {
+                spanStart = position;
+                spanEnd = position + length.getPositionLength() - 1;
+            }
+            boolean tail = SynonymGraphFilter.TYPE_SYNONYM.equals(type.type())
+                    && position > spanStart && position <= spanEnd;
+            return !tail;
+        }
+
+        @Override
+        public void reset() throws java.io.IOException {
+            super.reset();
+            position = -1;
+            spanStart = -1;
+            spanEnd = -1;
+        }
     }
 }

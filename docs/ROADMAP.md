@@ -31,7 +31,7 @@
 
 ## Block CX — Synonyms that mix single words and phrases
 
-- 📋 **T1297** (deps: —) **On Lucene, a synonym group of one word and a phrase blows the word's query past the clause limit, so it finds nothing** — A site that adds its acronym as a synonym of its full name loses every result for the acronym, the word visitors type most. → §CLXXXVII.1
+- 📋 **T1304** (deps: —) **On Lucene, a multi-word synonym with a stop word never fires from the phrase, and TooManyClauses still reaches clients** — A search for a full name never finds the pages that carry only its acronym, and an oversized query errors instead of answering. → §CLXXXVII.2
 
 ## Block CY — Filters from a sentence say what visitors say
 

@@ -2594,35 +2594,32 @@ answers from all of them; with no locale it stays vector-only.
 
 ## CLXXXVII Synonyms that mix single words and phrases
 
-### CLXXXVII.1 Single word beside a multi-word synonym (T1297)
+### CLXXXVII.2 Synonym keys analysed as the query is, and a clause-limit net (T1304)
 
-Met in fespsp-institucional (FI140) on `turing:2026.3.8` (T1066 and T1091 in), Lucene,
-site `fespsp`, pt_BR. With the group `["fespsp", "fundação escola de sociologia e
-política"]`, `q=fespsp` finds 0 documents (18 without it); the phrase finds 19 either
-way; single-word groups work.
+Found while shipping T1297, on the Lucene engine.
 
-Validated against the code (2026-11-19). The filed hypothesis is wrong: `fespsp` stays a
-SHOULD clause beside the phrase, and `phrasesOnPositionalFieldsOnly` makes the phrase a
-single term on STRING fields. The cause is clause explosion.
-`TurLuceneSynonymAnalyzer.createComponents` runs `KeywordRepeat`, two Portuguese
-stemmers and `ASCIIFoldingFilter` after `SynonymGraphFilter`, so each word of the
-expansion carries 2 to 5 stacked variants, and `analyzeGraphBoolean` enumerates every
-path: one six-word expansion is about 180 PhraseQueries per field, times the text
-fields, times two parses (term-centric and per-field). A script over the project's own
-analyzer throws `IndexSearcher.TooManyClauses` at 16 text fields for `fespsp` alone, and
-at 6 for `fespsp vestibular`. Neither `TurLuceneResultProcessor` nor
-`TurSNSearchProcess` catches it, so the client shows an error as no results.
+The rule key of a multi-word synonym keeps its stop words, but the query analyzer drops
+them before the synonym filter (`TurLuceneSynonymAnalyzer`: stop, then
+`SynonymGraphFilter`). `SynonymGraphFilter` matches consecutive tokens, so the key
+`fundação escola de sociologia e política` never fires once `de` and `e` are gone: a
+search for the full name never expands to the acronym, though the group is REGULAR.
+T1242's comment ("a rule spelled with a stop word fires with it skipped") does not hold.
+The phrase still finds the pages that spell it out, so what is lost is the pages that
+carry only the acronym.
 
-Also: the rule key keeps "de" and "e" while the stop filter runs before the synonym
-filter, so the phrase -> word direction never fires.
+Fix: build the map's keys the way the query reaches them. `TurLuceneSynonymMapBuilder`
+does not know the locale; pass it (the registry builds one map per core, and a core has
+one language), and add each multi-word key also with the language's stop words removed.
+Outputs stay as written, since the index keeps stop words and the phrase must line up
+with them.
 
-Fix in `TurLuceneSynonymAnalyzer`/`TurLuceneSynonymMapBuilder`: normalise rule outputs
-(stop, stem, fold) when the map is built instead of stacking variants after the graph,
-or build one MultiPhraseQuery per path; and catch `TooManyClauses` and retry without
-synonyms, logged. Lucene only: Solr and Elasticsearch push rules to the engine.
+Second, a safety net the design asked for: an `IndexSearcher.TooManyClauses` from any
+query is not caught by `TurLuceneResultProcessor` or `TurSNSearchProcess`, so a client
+sees an error where a search for fewer words would have answered. Catch it at the Lucene
+search, log the query's size, and retry once with the site's synonyms off.
 
-Tests: a one-word/six-word group over 16 text fields searched by the word, by the word
-plus another word, and by the phrase.
+Tests: `fundação escola de sociologia e política` finds a page holding only `FESPSP`; a
+query forced past the clause limit answers with the synonym-free results.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 
