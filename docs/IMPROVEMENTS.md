@@ -2307,6 +2307,34 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
 
+### CLXIX.4 Facet and facet name converge on existing fields (T1296)
+
+Met in fespsp-institucional (FI132) with the WordPress plugin. The plugin's mapping
+first declared the event start date as `{ "name": "evento_inicio", "type": "DATE",
+"facet": true, "facetName": { "pt_BR": "Quando" } }` plus a `evento_inicio_range` custom
+facet. Changed to `"facet": false`, `wp turing reindex` sent the manifest again (`POST
+/api/sn/manifest`), and the search response still carries two "Quando" facets: the raw
+date facet, one bucket per timestamp, and the range.
+
+Cause: `TurSNSiteManifestService.applyFieldChanges` calls
+`turSNFieldProvisioner.ensureField`, which only creates a missing field. For a field
+that exists, the manifest converges nothing but `searchWeight` (`applySearchWeights`)
+and the breaking type or cardinality changes the planner forces a migration for. `facet`
+and `facetName` are not breaking, so they are skipped silently, and the provision log
+counts the field as "skipped".
+
+What it costs: a mapping is schema as code, but the first value it declares for facet on
+or off, and for a facet's label, sticks. Fixing either needs the console, or `down -v`.
+The plugin's Fields screen says it provisioned and the visitor still sees the old facet.
+
+What Turing should do: converge `facet` and each locale's `facetName` on an existing
+field the way `searchWeight` is converged (non-breaking, applied in place), report them
+in the provision result as changed rather than skipped, and invalidate the site's facet
+cache. A test that provisions a field faceted, then not, then relabelled, covers it.
+
+Workaround in the project: none. The lab is disposable, so `down -v` recreates the
+field.
+
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope
