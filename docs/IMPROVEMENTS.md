@@ -2467,6 +2467,35 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
+### CLXXXII.17 Wall-clock meta dates read in the site timezone (T1295)
+
+Met in fespsp-institucional (FI132), mapping the `evento` and `vaga` post types of a
+site whose timezone is America/Sao_Paulo (UTC-3).
+
+The site stores wall-clock dates in post meta, the way WordPress itself does for
+anything it shows in local time: `fespsp_evento_inicio` = `2026-11-20T19:00`
+(Y-m-d\TH:i, a 19h event) and `fespsp_vaga_ate` = `2026-11-20` (applications close at
+the end of that day). Both are mapped as `{ "source": "meta:...", "type": "DATE" }`.
+
+`Viglet_Turing_Mapping::convert_date()` (src/includes/class-viglet-turing-mapping.php)
+passes anything that is not eight digits or a timestamp to `strtotime()`, and WordPress
+runs PHP with the default timezone set to UTC. So `2026-11-20T19:00` is indexed as
+`2026-11-20T19:00:00Z`, which is 16h in São Paulo, and `2026-11-20` as midnight UTC, 21h
+on the 19th locally. The `Ymd` branch also builds its date in UTC on purpose.
+
+What that breaks:
+- the card and the Agenda periods (today, next 7 days) show and bucket the event 3 hours
+  off; a 22h event moves to the next day in UTC-3 sites' "today";
+- `expires` takes a job opening out of search the evening before its last day.
+
+What the plugin should do: read a date with no offset in `wp_timezone()` (a
+`DateTimeImmutable` in that zone, converted to UTC), keep offsets and timestamps as they
+are, and read a date-only `expires` as the end of that local day. Test both shapes under
+America/Sao_Paulo.
+
+Workaround in the project: none. FI132 maps the fields as they are and waits on this
+line.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ### CLXXXIII.2 Ranking by a numeric field: lowest price, highest context (T1293)
