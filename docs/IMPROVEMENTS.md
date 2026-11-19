@@ -2556,6 +2556,36 @@ What should happen, in two places:
 
 Workaround in the project: none. FI155's privacy paragraph waits on this line.
 
+### CLXXXII.19 Footnotes from the default answer on every provider (T1301)
+
+Met in fespsp-institucional (FI170), lab on `ghcr.io/openviglet/turing:2026.3.8`, the
+LLM the boot creates from `OPENAI_API_KEY` (`gpt-4o-mini`), default agent, SN site
+`fespsp`, pt_BR, the WordPress plugin from `latest`.
+
+`GET /api/sn/fespsp/answer?q=O que é a Cátedra Celso Furtado?&locale=pt_BR`: a correct
+answer with **no `[n]` marker** in its text; `trace` says `cited:false`; the `citations`
+event carries all 8 retrieved documents, ranks 1–8, among them "Livro sem capa
+cadastrada" and "Saúde pública e territórios" (score 0.71) beside the two right pages
+(0.75). "Onde fica o Casarão da FESPSP?": the same, 0 markers, 6 citations.
+
+What a visitor then sees, by surface (both in `wordpress/src/public`):
+- the search block's answer (`search-block.js`, T1261) keeps only footnoted sources, so it
+  shows **no source at all**, though the answer came from two pages;
+- the Site assistant (`assistant.js`, `sourcesOf`) falls back to the retrieval and lists
+  **all eight**, unrelated books included.
+
+Neither is right, and the cause is upstream: with an OpenAI model the default answer
+prompt does not get `[n]` footnotes written, and T1265 chose to flag that rather than
+change the citations.
+
+What should happen: the answer's generation asks for and enforces `[n]` markers on every
+provider (or, failing that, Turing attributes sentences to sources itself), so `cited`
+is true with the default agent; and the two plugin surfaces agree on one rule for an
+answer with no markers. A test on the OpenAI provider asserting at least one marker for
+a question one page answers.
+
+Workaround in the project: none; FI148 (the assistant) waits on this line.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ### CLXXXIII.2 Ranking by a numeric field: lowest price, highest context (T1293)
