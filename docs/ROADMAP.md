@@ -18,8 +18,6 @@
 
 ## Block CF — What the SN site manifest cannot declare
 
-- 📋 **T1296** (deps: —) **The SN manifest never converges facet, facetName, description or mandatory on a field that exists** — A mapping turned from facet on to off, or relabelled, reports provisioned while visitors keep the old facet until someone fixes it in the console. → §CLXIX.4
-
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6

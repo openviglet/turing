@@ -24,6 +24,7 @@ package com.viglet.turing.sn.manifest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -123,7 +124,28 @@ public class TurSNSiteManifestService {
                 turSNManifestCustomFacetConverger.plan(site, manifest, request.customFacetsOrEmpty()),
                 turSNManifestCustomSortConverger.plan(site, request.customSortsOrEmpty()),
                 turSNManifestGenAiConverger.plan(site, request.genAi()),
-                turSNManifestFacetsConverger.plan(site, request.facets()));
+                turSNManifestFacetsConverger.plan(site, request.facets()),
+                request.convergesFields() ? fieldsToChange(site, manifest) : Map.of());
+    }
+
+    /**
+     * T1296 — each existing field whose non-breaking attributes differ from what the
+     * manifest declares, with the attributes that would change. Fields to add or
+     * migrate are the diff's, not these.
+     */
+    private Map<String, List<String>> fieldsToChange(TurSNSite site, VigletFieldManifest manifest) {
+        Map<String, List<String>> changes = new java.util.LinkedHashMap<>();
+        if (site == null || manifest.fields() == null) {
+            return changes;
+        }
+        for (VigletFieldSpec field : manifest.fields()) {
+            List<String> differences = turSNFieldProvisioner.fieldDifferences(site,
+                    TurSNManifestMapper.toJobSpec(field));
+            if (!differences.isEmpty()) {
+                changes.put(field.name(), differences);
+            }
+        }
+        return changes;
     }
 
     @Transactional
@@ -180,7 +202,9 @@ public class TurSNSiteManifestService {
 
         List<String> fieldsCreated = new ArrayList<>();
         List<String> fieldsSkipped = new ArrayList<>();
-        applyFieldChanges(site, manifest, fieldsMigrated, fieldsCreated, fieldsSkipped);
+        List<String> fieldsChanged = new ArrayList<>();
+        applyFieldChanges(site, manifest, fieldsMigrated, fieldsCreated,
+                request.convergesFields() ? fieldsChanged : null, fieldsSkipped);
         applySearchWeights(site, manifest);
         List<String> customFacetsChanged = turSNManifestCustomFacetConverger.converge(site, customFacets);
         List<String> customSortsChanged = turSNManifestCustomSortConverger.converge(site, customSorts);
@@ -195,16 +219,16 @@ public class TurSNSiteManifestService {
                 : SnSiteIndexInvalidatedEvent.updated(site.getId(), site.getName()));
 
         log.info("[T386] Provisioned site '{}' (created={}, schemaVersion={}): {} field(s) added, "
-                        + "{} migrated, {} skipped, {} locale(s) added, {} custom facet(s) and "
+                        + "{} migrated, {} changed, {} skipped, {} locale(s) added, {} custom facet(s) and "
                         + "{} custom sort(s) changed, GenAI changed={}, facets changed={}",
                 site.getName(), siteCreated, manifest.schemaVersion(), fieldsCreated.size(),
-                fieldsMigrated.size(), fieldsSkipped.size(), localesCreated.size(),
+                fieldsMigrated.size(), fieldsChanged.size(), fieldsSkipped.size(), localesCreated.size(),
                 customFacetsChanged.size(), customSortsChanged.size(), genAiChanged, facetSettingsChanged);
 
         return new TurSNManifestProvisionResult(new VigletManifestResult(site.getId(), site.getName(),
                 siteCreated, fieldsCreated, fieldsSkipped, fieldsMigrated, localesCreated,
                 manifest.schemaVersion()), customFacetsChanged, customSortsChanged, genAiChanged,
-                facetSettingsChanged);
+                facetSettingsChanged, fieldsChanged);
     }
 
     private static VigletFieldManifest requireManifest(TurSNManifestRequest request) {
@@ -233,10 +257,14 @@ public class TurSNSiteManifestService {
 
     /**
      * Converges every manifest field not already handled by a migration,
-     * partitioning the outcomes into {@code fieldsCreated} / {@code fieldsSkipped}.
+     * partitioning the outcomes into {@code fieldsCreated} / {@code fieldsChanged} /
+     * {@code fieldsSkipped}. T1296 — with {@code fieldsChanged} given (the request's
+     * {@code convergeFields}), an existing field's non-breaking attributes converge
+     * in place; {@code null} keeps the field as it is.
      */
     private void applyFieldChanges(TurSNSite site, VigletFieldManifest manifest,
-            List<String> fieldsMigrated, List<String> fieldsCreated, List<String> fieldsSkipped) {
+            List<String> fieldsMigrated, List<String> fieldsCreated, List<String> fieldsChanged,
+            List<String> fieldsSkipped) {
         if (manifest.fields() == null) {
             return;
         }
@@ -244,8 +272,11 @@ public class TurSNSiteManifestService {
             if (fieldsMigrated.contains(field.name())) {
                 continue; // already converged by the migration above
             }
-            if (turSNFieldProvisioner.ensureField(site, TurSNManifestMapper.toJobSpec(field))) {
+            TurSNJobAttributeSpec spec = TurSNManifestMapper.toJobSpec(field);
+            if (turSNFieldProvisioner.ensureField(site, spec)) {
                 fieldsCreated.add(field.name());
+            } else if (fieldsChanged != null && turSNFieldProvisioner.convergeField(site, spec)) {
+                fieldsChanged.add(field.name());
             } else {
                 fieldsSkipped.add(field.name());
             }

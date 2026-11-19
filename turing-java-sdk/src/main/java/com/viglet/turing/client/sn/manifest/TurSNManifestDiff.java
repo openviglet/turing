@@ -16,6 +16,7 @@
 package com.viglet.turing.client.sn.manifest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * T1030 / §XX.17 — the plan a manifest would apply against the live schema: the
@@ -41,6 +42,10 @@ import java.util.List;
  * @param facetSettingsToChange whether provisioning would change the site's facet
  *                        behaviour (T1135); {@code null} from a server that
  *                        predates it
+ * @param fieldsToChange  existing fields a {@link TurSNManifest#convergeFields()
+ *                        convergeFields} manifest would change in place, each with
+ *                        the attributes that differ (T1296); {@code null} from a
+ *                        server that predates it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -48,7 +53,16 @@ import java.util.List;
 public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
         List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
         List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange,
-        Boolean genAiToChange, Boolean facetSettingsToChange) {
+        Boolean genAiToChange, Boolean facetSettingsToChange, Map<String, List<String>> fieldsToChange) {
+
+    /** The constructor this record had before {@link #fieldsToChange}, kept for existing callers. */
+    public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
+            List<TurSNManifestFieldChange> breakingChanges, List<String> fieldsUnchanged,
+            List<String> localesToAdd, List<String> customFacetsToChange, List<String> customSortsToChange,
+            Boolean genAiToChange, Boolean facetSettingsToChange) {
+        this(schemaVersion, siteExists, fieldsToAdd, breakingChanges, fieldsUnchanged, localesToAdd,
+                customFacetsToChange, customSortsToChange, genAiToChange, facetSettingsToChange, null);
+    }
 
     /** The constructor this record had before {@link #facetSettingsToChange}, kept for existing callers. */
     public TurSNManifestDiff(String schemaVersion, boolean siteExists, List<String> fieldsToAdd,
@@ -103,7 +117,7 @@ public record TurSNManifestDiff(String schemaVersion, boolean siteExists, List<S
         return siteExists && isEmpty(fieldsToAdd) && isEmpty(localesToAdd)
                 && isEmpty(customFacetsToChange) && isEmpty(customSortsToChange)
                 && !Boolean.TRUE.equals(genAiToChange) && !Boolean.TRUE.equals(facetSettingsToChange)
-                && !hasBreakingChanges();
+                && (fieldsToChange == null || fieldsToChange.isEmpty()) && !hasBreakingChanges();
     }
 
     private static boolean isEmpty(List<String> values) {

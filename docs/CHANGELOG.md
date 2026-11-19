@@ -1625,6 +1625,7 @@
 - **T1224** — A custom facet's endField buckets an event's start-to-end span by overlap, an open-start bucket holding only what ended, on Solr, Lucene and Elasticsearch, from the manifest, Java SDK and console (design §CLXIX.2 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
 - 🗑 **T1230** — superseded by T1232: Filed under the manifest block; it is engine parity, so it moved to Block CG unchanged except the drill-down case.
 - **T1263** — An SN site export now carries its synonym rules; import restores them, pushes them to the engine after commit, and an older export keeps the site's own.
+- **T1296** — A manifest with convergeFields converges an existing field's facet, mandatory, description and facet labels in place, reported as fieldsChanged and fieldsToChange; the Java SDK and the WordPress plugin send it (design §CLXIX.4 superseded: nullable booleans in viglet-core were not needed: an opt-in convergeFields on the Turing request says the manifest is the whole truth, keeping the old behaviour by default).
 
 ## Block CG — Search-engine plugin parity (Solr, Lucene, Elasticsearch)
 

@@ -162,4 +162,61 @@ class TurSNFieldProvisionerTest {
         verify(turSNSiteFieldExtRepository, never()).save(any());
         verify(turSNSiteLocaleRepository, never()).findByTurSNSite(any());
     }
+
+    /** T1296 — a field once faceted is turned off, then relabelled, in place. */
+    @Test
+    void convergeFieldTurnsTheFacetOffAndRelabelsIt() {
+        TurSNSite site = site();
+        TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("evento_inicio").facet(1).required(0)
+                .description("Start").facetName("When").build();
+        com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet ptBr =
+                new com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet();
+        ptBr.setLocale(java.util.Locale.of("pt", "BR"));
+        ptBr.setLabel("Quando");
+        ptBr.setTurSNSiteFieldExt(ext);
+        ext.getFacetLocales().add(ptBr);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, "evento_inicio")).thenReturn(List.of(ext));
+        when(turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(ext))
+                .thenAnswer(inv -> new java.util.HashSet<>(ext.getFacetLocales()));
+
+        TurSNJobAttributeSpec off = TurSNJobAttributeSpec.builder().name("evento_inicio")
+                .type(TurSEFieldType.DATE).facet(false).facetName(Map.of("pt_BR", "Quando")).build();
+        assertEquals(List.of("facet"), provisioner.fieldDifferences(site, off));
+        assertTrue(provisioner.convergeField(site, off));
+        assertEquals(0, ext.getFacet());
+        assertEquals("Start", ext.getDescription(), "a description the spec leaves out is kept");
+        assertEquals("When", ext.getFacetName(), "a default label the spec leaves out is kept");
+
+        TurSNJobAttributeSpec relabelled = TurSNJobAttributeSpec.builder().name("evento_inicio")
+                .type(TurSEFieldType.DATE).facet(false).description("Event start")
+                .facetName(Map.of("pt_BR", "Data", "default", "Date")).build();
+        assertEquals(List.of("description", "facetName", "facetLocales"),
+                provisioner.fieldDifferences(site, relabelled));
+        assertTrue(provisioner.convergeField(site, relabelled));
+        assertEquals("Event start", ext.getDescription());
+        assertEquals("Date", ext.getFacetName());
+        verify(turSNSiteFieldExtFacetRepository).deleteAll(any());
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<java.util.Collection<com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet>> saved =
+                ArgumentCaptor.forClass(java.util.Collection.class);
+        verify(turSNSiteFieldExtFacetRepository, org.mockito.Mockito.atLeastOnce()).saveAll(saved.capture());
+        assertEquals("Data", saved.getValue().iterator().next().getLabel());
+        assertEquals(List.of("Data"), ext.getFacetLocales().stream().map(
+                com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet::getLabel).toList());
+    }
+
+    /** T1296 — a field that already matches changes nothing and is saved by nobody. */
+    @Test
+    void convergeFieldLeavesAMatchingFieldAlone() {
+        TurSNSite site = site();
+        TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("area").facet(1).required(1).build();
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, "area")).thenReturn(List.of(ext));
+
+        TurSNJobAttributeSpec same = TurSNJobAttributeSpec.builder().name("area").type(TurSEFieldType.STRING)
+                .facet(true).mandatory(true).build();
+
+        assertEquals(List.of(), provisioner.fieldDifferences(site, same));
+        assertFalse(provisioner.convergeField(site, same));
+        verify(turSNSiteFieldExtRepository, never()).save(any());
+    }
 }

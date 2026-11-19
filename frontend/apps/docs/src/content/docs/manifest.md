@@ -250,8 +250,15 @@ Additive changes (new field, new locale) are safe and silent. But changing an **
 | `fieldsUnchanged` | Already match the manifest |
 | `breakingChanges` | A `type` or `multiValued` change on an existing field, requires a declared migration |
 | `customFacetsToChange` | [Custom facets](#custom-facets) that provisioning would create or rewrite |
+| `fieldsToChange` | With `convergeFields`, each existing field whose facet, mandatory, description or facet labels would change, with the attributes that differ |
 
-Facet / mandatory / description tweaks are **not** breaking: they don't require a reindex, so the planner applies them without ceremony. Neither is a `searchWeight` change: it changes ranking at query time, not the schema.
+Facet / mandatory / description tweaks are **not** breaking: they don't require a reindex. Neither is a `searchWeight` change: it changes ranking at query time, not the schema. Whether provisioning applies them to a field that already exists depends on `convergeFields`, below.
+
+### Converging an existing field
+
+By default a field that already exists keeps its `facet`, `mandatory`, `description` and facet labels: only its `searchWeight` follows the manifest. That protects a facet someone switched on in the console, since a manifest cannot leave `facet` unsaid (an omitted `facet` reads as `false`).
+
+Send `"convergeFields": true` when the manifest is the whole truth for the fields it declares, as a connector's mapping usually is. Each provision then applies those attributes in place: a field turned from facet on to off stops being a facet, and a relabelled facet shows its new name, with no reindex. A `description` or a `facetName` the manifest leaves out is kept; a `facetName` it carries replaces the field's per-locale labels. Fields the manifest does not declare are never touched. The provision result lists the fields it changed in `fieldsChanged`, and they no longer appear in `fieldsSkipped`.
 
 ### Declaring a migration
 

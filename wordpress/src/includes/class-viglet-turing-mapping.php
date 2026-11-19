@@ -442,7 +442,7 @@ class Viglet_Turing_Mapping {
 	 * `site_key` is always declared: delete-all filters on it, and with several sites in one SN
 	 * site it is the facet that tells them apart.
 	 *
-	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
+	 * @return array{name: string, locales: array<int, string>, fields: array<int, array>, migrations: array<int, array>, convergeFields: bool, customFacets?: array<int, array>, genAi?: stdClass|array{entityExtraction: bool}}
 	 */
 	public function manifest(): array {
 		$locale = $this->settings['locale'] ?? 'en_US';
@@ -511,18 +511,22 @@ class Viglet_Turing_Mapping {
 		}//end foreach
 
 		$manifest = array(
-			'name'       => $this->settings['site_name'],
-			'locales'    => array( $locale ),
-			'fields'     => array_values( $fields ),
+			'name'           => $this->settings['site_name'],
+			'locales'        => array( $locale ),
+			'fields'         => array_values( $fields ),
 			// A site whose `author` an older plugin left single-valued takes it to several
 			// values once (D326); Turing recreates the field only while it differs, so on every
 			// later provisioning this changes nothing.
-			'migrations' => array(
+			'migrations'     => array(
 				array(
 					'field'  => 'author',
 					'action' => 'RECREATE',
 				),
 			),
+			// The mapping is the whole truth for the fields it declares (Turing T1296): a field
+			// turned from facet on to off, or relabelled, changes on Turing too, not only when
+			// first created. Fields the mapping leaves out keep what the console gave them.
+			'convergeFields' => true,
 		);
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;

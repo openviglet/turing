@@ -103,6 +103,106 @@ public class TurSNFieldProvisioner {
     }
 
     /**
+     * T1296 — the non-breaking attributes of an existing field that differ from
+     * {@code spec}: {@code facet}, {@code required}, {@code description} and the facet
+     * labels. Read-only, for the dry-run plan. The booleans are compared as declared
+     * (a spec that omits them says {@code false}); {@code description} and the labels
+     * only when the spec carries them. Empty when the field does not exist.
+     */
+    public List<String> fieldDifferences(TurSNSite turSNSite, TurSNJobAttributeSpec spec) {
+        Set<String> differences = new java.util.LinkedHashSet<>();
+        turSNSiteFieldExtRepository.findByTurSNSiteAndName(turSNSite, spec.getName())
+                .forEach(ext -> differences.addAll(differences(ext, spec)));
+        return List.copyOf(differences);
+    }
+
+    /**
+     * T1296 — converges the non-breaking attributes of an existing field onto
+     * {@code spec} in place (see {@link #fieldDifferences}): the facet switch, the
+     * required flag, the description, the default facet label when the spec names
+     * one, and the per-locale labels, which become exactly the spec's when it carries
+     * any. Saving the ext evicts the site's search snapshot.
+     *
+     * @return whether anything changed
+     */
+    public boolean convergeField(TurSNSite turSNSite, TurSNJobAttributeSpec spec) {
+        boolean changed = false;
+        for (TurSNSiteFieldExt ext : turSNSiteFieldExtRepository.findByTurSNSiteAndName(turSNSite, spec.getName())) {
+            List<String> differences = differences(ext, spec);
+            if (differences.isEmpty()) {
+                continue;
+            }
+            ext.setFacet(spec.isFacet() ? 1 : 0);
+            ext.setRequired(spec.isMandatory() ? 1 : 0);
+            if (spec.getDescription() != null) {
+                ext.setDescription(spec.getDescription());
+            }
+            Map<String, String> facetName = spec.getFacetName();
+            if (facetName != null && facetName.containsKey(DEFAULT)) {
+                ext.setFacetName(facetName.get(DEFAULT));
+            }
+            turSNSiteFieldExtRepository.save(ext);
+            if (differences.contains("facetLocales")) {
+                replaceFacetLocales(ext, facetName);
+            }
+            changed = true;
+        }
+        return changed;
+    }
+
+    private List<String> differences(TurSNSiteFieldExt ext, TurSNJobAttributeSpec spec) {
+        List<String> differences = new java.util.ArrayList<>();
+        if (ext.getFacet() != (spec.isFacet() ? 1 : 0)) {
+            differences.add("facet");
+        }
+        if (ext.getRequired() != (spec.isMandatory() ? 1 : 0)) {
+            differences.add("mandatory");
+        }
+        if (spec.getDescription() != null && !spec.getDescription().equals(ext.getDescription())) {
+            differences.add("description");
+        }
+        Map<String, String> facetName = spec.getFacetName();
+        if (facetName != null) {
+            if (facetName.containsKey(DEFAULT)
+                    && !java.util.Objects.equals(facetName.get(DEFAULT), ext.getFacetName())) {
+                differences.add("facetName");
+            }
+            if (!localeLabels(facetName).equals(liveLocaleLabels(ext))) {
+                differences.add("facetLocales");
+            }
+        }
+        return differences;
+    }
+
+    /** The declared per-locale labels, keyed by the locale's canonical spelling. */
+    private static Map<String, String> localeLabels(Map<String, String> facetName) {
+        Map<String, String> labels = new java.util.TreeMap<>();
+        facetName.forEach((key, value) -> {
+            if (!DEFAULT.equals(key)) {
+                labels.put(LocaleUtils.toLocale(key).toString(), value);
+            }
+        });
+        return labels;
+    }
+
+    private Map<String, String> liveLocaleLabels(TurSNSiteFieldExt ext) {
+        Map<String, String> labels = new java.util.TreeMap<>();
+        turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(ext).forEach(row -> labels
+                .put(row.getLocale() == null ? "" : row.getLocale().toString(), row.getLabel()));
+        return labels;
+    }
+
+    /** The ext's per-locale label rows replaced by the declared ones. */
+    private void replaceFacetLocales(TurSNSiteFieldExt ext, Map<String, String> facetName) {
+        Set<TurSNSiteFieldExtFacet> live = turSNSiteFieldExtFacetRepository.findByTurSNSiteFieldExt(ext);
+        ext.getFacetLocales().removeAll(live);
+        turSNSiteFieldExtFacetRepository.deleteAll(live);
+        TurSNJobAttributeSpec labels = new TurSNJobAttributeSpec();
+        labels.setFacetName(facetName);
+        saveFacetLocales(labels, ext);
+    }
+
+    /**
      * Applies a declared breaking migration (T386 / §XX.6): drops the live
      * field — its {@code TurSNSiteFieldExt}/{@code TurSNSiteField} rows and its
      * search-engine schema definition in every locale core — then recreates it

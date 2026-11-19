@@ -611,9 +611,9 @@ final class MappingTest extends PluginTestCase {
 
 		$this->assertSame(
 			array(
-				'name'       => 'Sample Site',
-				'locales'    => array( 'pt_BR' ),
-				'fields'     => array(
+				'name'           => 'Sample Site',
+				'locales'        => array( 'pt_BR' ),
+				'fields'         => array(
 					array(
 						'name'        => 'site_key',
 						'type'        => 'STRING',
@@ -647,12 +647,14 @@ final class MappingTest extends PluginTestCase {
 						'searchWeight' => 5.0,
 					),
 				),
-				'migrations' => array(
+				'migrations'     => array(
 					array(
 						'field'  => 'author',
 						'action' => 'RECREATE',
 					),
 				),
+				// Turing T1296: a field turned off or relabelled converges, not only a new one.
+				'convergeFields' => true,
 			),
 			$this->mapping()->manifest()
 		);

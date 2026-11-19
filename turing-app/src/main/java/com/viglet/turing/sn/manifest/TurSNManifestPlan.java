@@ -22,6 +22,7 @@
 package com.viglet.turing.sn.manifest;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.viglet.core.manifest.VigletManifestDiff;
@@ -38,7 +39,17 @@ import com.viglet.core.manifest.VigletManifestDiff;
  */
 public record TurSNManifestPlan(@JsonUnwrapped VigletManifestDiff diff,
         List<String> customFacetsToChange, List<String> customSortsToChange,
-        boolean genAiToChange, boolean facetSettingsToChange) {
+        boolean genAiToChange, boolean facetSettingsToChange, Map<String, List<String>> fieldsToChange) {
+
+    /**
+     * The plan as it was before {@link #fieldsToChange} (T1296: each existing field a
+     * {@code convergeFields} manifest would change in place, with the attributes that
+     * differ), kept for existing callers.
+     */
+    public TurSNManifestPlan(VigletManifestDiff diff, List<String> customFacetsToChange,
+            List<String> customSortsToChange, boolean genAiToChange, boolean facetSettingsToChange) {
+        this(diff, customFacetsToChange, customSortsToChange, genAiToChange, facetSettingsToChange, Map.of());
+    }
 
     /** The plan as it was before {@link #facetSettingsToChange}, kept for existing callers. */
     public TurSNManifestPlan(VigletManifestDiff diff, List<String> customFacetsToChange,
@@ -60,7 +71,8 @@ public record TurSNManifestPlan(@JsonUnwrapped VigletManifestDiff diff,
     public boolean changesAnything() {
         return !diff.siteExists() || notEmpty(diff.fieldsToAdd()) || diff.hasBreakingChanges()
                 || notEmpty(diff.localesToAdd()) || notEmpty(customFacetsToChange)
-                || notEmpty(customSortsToChange) || genAiToChange || facetSettingsToChange;
+                || notEmpty(customSortsToChange) || genAiToChange || facetSettingsToChange
+                || (fieldsToChange != null && !fieldsToChange.isEmpty());
     }
 
     private static boolean notEmpty(List<?> list) {

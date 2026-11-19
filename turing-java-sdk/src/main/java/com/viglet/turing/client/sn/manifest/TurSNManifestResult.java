@@ -40,6 +40,10 @@ import java.util.List;
  *                       binding (T1116); {@code null} from a server that predates it
  * @param facetSettingsChanged whether this call changed the site's facet behaviour
  *                       (T1135); {@code null} from a server that predates it
+ * @param fieldsChanged  existing fields whose facet, mandatory, description or facet
+ *                       labels a {@link TurSNManifest#convergeFields() convergeFields}
+ *                       manifest changed in place (T1296); {@code null} from a server
+ *                       that predates it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -47,7 +51,17 @@ import java.util.List;
 public record TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
         List<String> fieldsCreated, List<String> fieldsSkipped, List<String> fieldsMigrated,
         List<String> localesCreated, String schemaVersion, List<String> customFacetsChanged,
-        List<String> customSortsChanged, Boolean genAiChanged, Boolean facetSettingsChanged) {
+        List<String> customSortsChanged, Boolean genAiChanged, Boolean facetSettingsChanged,
+        List<String> fieldsChanged) {
+
+    /** The constructor this record had before {@link #fieldsChanged}, kept for existing callers. */
+    public TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
+            List<String> fieldsCreated, List<String> fieldsSkipped, List<String> fieldsMigrated,
+            List<String> localesCreated, String schemaVersion, List<String> customFacetsChanged,
+            List<String> customSortsChanged, Boolean genAiChanged, Boolean facetSettingsChanged) {
+        this(siteId, siteName, siteCreated, fieldsCreated, fieldsSkipped, fieldsMigrated, localesCreated,
+                schemaVersion, customFacetsChanged, customSortsChanged, genAiChanged, facetSettingsChanged, null);
+    }
 
     /** The constructor this record had before {@link #facetSettingsChanged}, kept for existing callers. */
     public TurSNManifestResult(String siteId, String siteName, boolean siteCreated,
@@ -90,7 +104,8 @@ public record TurSNManifestResult(String siteId, String siteName, boolean siteCr
     public boolean isNoOp() {
         return !siteCreated && isEmpty(fieldsCreated) && isEmpty(fieldsMigrated)
                 && isEmpty(localesCreated) && isEmpty(customFacetsChanged) && isEmpty(customSortsChanged)
-                && !Boolean.TRUE.equals(genAiChanged) && !Boolean.TRUE.equals(facetSettingsChanged);
+                && !Boolean.TRUE.equals(genAiChanged) && !Boolean.TRUE.equals(facetSettingsChanged)
+                && isEmpty(fieldsChanged);
     }
 
     private static boolean isEmpty(List<String> values) {

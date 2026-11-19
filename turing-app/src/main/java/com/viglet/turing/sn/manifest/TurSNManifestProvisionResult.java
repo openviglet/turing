@@ -31,24 +31,32 @@ import com.viglet.core.manifest.VigletManifestResult;
  * {@link VigletManifestResult}, flattened into the same JSON object it always
  * was, plus the custom facets and (T1104) custom sorts this call created or
  * changed, (T1116) whether it created or changed the GenAI binding and (T1135)
- * whether it changed the site's facet behaviour.
+ * whether it changed the site's facet behaviour, and (T1296) the existing fields a
+ * {@code convergeFields} manifest changed in place, which {@code fieldsSkipped}
+ * no longer lists.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestProvisionResult(@JsonUnwrapped VigletManifestResult result,
         List<String> customFacetsChanged, List<String> customSortsChanged, boolean genAiChanged,
-        boolean facetSettingsChanged) {
+        boolean facetSettingsChanged, List<String> fieldsChanged) {
+
+    /** The result as it was before {@link #fieldsChanged}, kept for existing callers. */
+    public TurSNManifestProvisionResult(VigletManifestResult result, List<String> customFacetsChanged,
+            List<String> customSortsChanged, boolean genAiChanged, boolean facetSettingsChanged) {
+        this(result, customFacetsChanged, customSortsChanged, genAiChanged, facetSettingsChanged, List.of());
+    }
 
     /** The result as it was before {@link #facetSettingsChanged}, kept for existing callers. */
     public TurSNManifestProvisionResult(VigletManifestResult result, List<String> customFacetsChanged,
             List<String> customSortsChanged, boolean genAiChanged) {
-        this(result, customFacetsChanged, customSortsChanged, genAiChanged, false);
+        this(result, customFacetsChanged, customSortsChanged, genAiChanged, false, List.of());
     }
 
     /** The result as it was before {@link #genAiChanged}, kept for existing callers. */
     public TurSNManifestProvisionResult(VigletManifestResult result, List<String> customFacetsChanged,
             List<String> customSortsChanged) {
-        this(result, customFacetsChanged, customSortsChanged, false, false);
+        this(result, customFacetsChanged, customSortsChanged, false, false, List.of());
     }
 }

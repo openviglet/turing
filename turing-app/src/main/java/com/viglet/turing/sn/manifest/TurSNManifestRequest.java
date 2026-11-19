@@ -33,13 +33,35 @@ import com.viglet.core.manifest.VigletFieldSpec;
  * {@code customFacets}, (T1104) {@code customSorts}, (T1116) {@code genAi} and
  * (T1135) {@code facets}. A manifest without them is the same JSON it always was.
  *
+ * <p>T1296 — {@code convergeFields}: {@code true} makes the manifest the whole truth
+ * for the fields it declares, so an existing field's {@code facet},
+ * {@code mandatory}, {@code description} and facet labels are converged to it
+ * instead of kept. Off (absent), an existing field keeps them, as it always has:
+ * {@code facet} and {@code mandatory} cannot say "not declared", so converging them
+ * by default would switch off a facet someone turned on in the console.
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public record TurSNManifestRequest(String name, String description, String seInstanceId,
         String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
         List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
-        List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
+        List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
+        Boolean convergeFields) {
+
+    /** The request as it was before {@link #convergeFields}, kept for existing callers. */
+    public TurSNManifestRequest(String name, String description, String seInstanceId,
+            String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
+            List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
+            List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations,
+                customFacets, customSorts, genAi, facets, null);
+    }
+
+    /** T1296 — whether existing fields converge to what the manifest declares. */
+    public boolean convergesFields() {
+        return Boolean.TRUE.equals(convergeFields);
+    }
 
     /** The request as it was before {@link #facets}, kept for existing callers. */
     public TurSNManifestRequest(String name, String description, String seInstanceId,
@@ -63,7 +85,7 @@ public record TurSNManifestRequest(String name, String description, String seIns
     public static TurSNManifestRequest of(VigletFieldManifest manifest) {
         return new TurSNManifestRequest(manifest.name(), manifest.description(),
                 manifest.seInstanceId(), manifest.schemaVersion(), manifest.locales(),
-                manifest.fields(), manifest.migrations(), null, null, null, null);
+                manifest.fields(), manifest.migrations(), null, null, null, null, null);
     }
 
     public List<TurSNManifestCustomSort> customSortsOrEmpty() {

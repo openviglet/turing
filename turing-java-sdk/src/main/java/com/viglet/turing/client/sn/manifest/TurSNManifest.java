@@ -57,6 +57,10 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
  *                      leaves the site's GenAI as it is
  * @param facets        the site's facet behaviour to converge (T1135);
  *                      {@code null} leaves the site's facets as they are
+ * @param convergeFields {@code true} converges an existing field's facet, mandatory,
+ *                      description and facet labels to what this manifest declares
+ *                      (T1296); {@code null} keeps them, which is what a manifest
+ *                      that does not state every one of them wants
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -64,7 +68,17 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 public record TurSNManifest(String name, String description, String seInstanceId,
         String schemaVersion, List<String> locales, List<TurSNJobAttributeSpec> fields,
         List<TurSNManifestMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
-        List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
+        List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
+        Boolean convergeFields) {
+
+    /** The constructor this record had before {@link #convergeFields}, kept for existing callers. */
+    public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
+            List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
+            List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts,
+            TurSNManifestGenAi genAi, TurSNManifestFacets facets) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
+                customSorts, genAi, facets, null);
+    }
 
     /** The constructor this record had before {@link #facets}, kept for existing callers. */
     public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
@@ -72,7 +86,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
             List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts,
             TurSNManifestGenAi genAi) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
-                customSorts, genAi, null);
+                customSorts, genAi, null, null);
     }
 
     /** The constructor this record had before {@link #genAi}, kept for existing callers. */
@@ -80,14 +94,14 @@ public record TurSNManifest(String name, String description, String seInstanceId
             List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
             List<TurSNManifestCustomFacet> customFacets, List<TurSNManifestCustomSort> customSorts) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets,
-                customSorts, null, null);
+                customSorts, null, null, null);
     }
 
     /** The constructor this record had before {@link #customFacets}, kept for existing callers. */
     public TurSNManifest(String name, String description, String seInstanceId, String schemaVersion,
             List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, null, null, null,
-                null);
+                null, null);
     }
 
     /** The constructor this record had before {@link #customSorts}, kept for existing callers. */
@@ -95,7 +109,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
             List<String> locales, List<TurSNJobAttributeSpec> fields, List<TurSNManifestMigration> migrations,
             List<TurSNManifestCustomFacet> customFacets) {
         this(name, description, seInstanceId, schemaVersion, locales, fields, migrations, customFacets, null,
-                null, null);
+                null, null, null);
     }
 
     public static Builder builder() {
@@ -135,6 +149,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
         private final List<TurSNManifestCustomSort> customSorts = new ArrayList<>();
         private TurSNManifestGenAi genAi;
         private TurSNManifestFacets facets;
+        private Boolean convergeFields;
 
         public Builder name(String name) {
             this.name = name;
@@ -231,6 +246,15 @@ public record TurSNManifest(String name, String description, String seInstanceId
             return this;
         }
 
+        /**
+         * Makes this manifest the whole truth for its fields (T1296): an existing
+         * field's facet, mandatory, description and facet labels converge to it.
+         */
+        public Builder convergeFields(boolean convergeFields) {
+            this.convergeFields = convergeFields ? Boolean.TRUE : null;
+            return this;
+        }
+
         public TurSNManifest build() {
             // An empty migrations list and a null one mean the same thing to the
             // server ("nothing is authorised"); null keeps the payload honest
@@ -240,7 +264,7 @@ public record TurSNManifest(String name, String description, String seInstanceId
                     List.copyOf(locales), List.copyOf(fields),
                     migrations.isEmpty() ? null : List.copyOf(migrations),
                     customFacets.isEmpty() ? null : List.copyOf(customFacets),
-                    customSorts.isEmpty() ? null : List.copyOf(customSorts), genAi, facets);
+                    customSorts.isEmpty() ? null : List.copyOf(customSorts), genAi, facets, convergeFields);
         }
     }
 }

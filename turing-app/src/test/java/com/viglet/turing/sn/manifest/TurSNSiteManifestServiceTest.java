@@ -319,6 +319,37 @@ class TurSNSiteManifestServiceTest {
         order.verify(turSNManifestCustomSortConverger).converge(existing, request.customSorts());
     }
 
+    /** T1296 — an existing field converges only when the manifest says it is the whole truth. */
+    @Test
+    void anExistingFieldConvergesOnlyWhenTheRequestAsks() {
+        TurSNSite existing = new TurSNSite();
+        existing.setName("jobs");
+        TurSNManifestRequest keep = new TurSNManifestRequest("jobs", null, null, null, null,
+                List.of(field("expiresAt")), null, null, null, null, null);
+        TurSNManifestRequest converge = new TurSNManifestRequest("jobs", null, null, null, null,
+                List.of(field("expiresAt")), null, null, null, null, null, true);
+        when(turSNSiteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(existing));
+        when(turSNSiteRepository.findByIdWithGenAi(any())).thenReturn(Optional.of(existing));
+        when(turSNManifestPlanner.diff(any(VigletFieldManifest.class), eq(existing))).thenReturn(cleanDiff());
+        when(turSNFieldProvisioner.ensureField(eq(existing), named("expiresAt"))).thenReturn(false);
+
+        TurSNManifestProvisionResult kept = service.provisionRequest(keep);
+        assertEquals(List.of("expiresAt"), kept.result().fieldsSkipped());
+        assertEquals(List.of(), kept.fieldsChanged());
+        verify(turSNFieldProvisioner, never()).convergeField(any(), any());
+
+        when(turSNFieldProvisioner.convergeField(eq(existing), named("expiresAt"))).thenReturn(true);
+        TurSNManifestProvisionResult changed = service.provisionRequest(converge);
+        assertEquals(List.of("expiresAt"), changed.fieldsChanged());
+        assertTrue(changed.result().fieldsSkipped().isEmpty());
+
+        when(turSNManifestPlanner.diff(any(VigletFieldManifest.class))).thenReturn(cleanDiff());
+        when(turSNFieldProvisioner.fieldDifferences(eq(existing), named("expiresAt")))
+                .thenReturn(List.of("facet"));
+        assertEquals(java.util.Map.of("expiresAt", List.of("facet")), service.planRequest(converge).fieldsToChange());
+        assertEquals(java.util.Map.of(), service.planRequest(keep).fieldsToChange());
+    }
+
     @Test
     void planRequestNamesTheCustomSortsToChange() {
         TurSNManifestRequest request = new TurSNManifestRequest("jobs", null, "se1", null, null,

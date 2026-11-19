@@ -2309,37 +2309,6 @@ the site's (default AND), so the keys intersect to nothing. The ways out fail:
 another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
 with `fqItemOperator` sends it.
 
-### CLXIX.4 Non-breaking field attributes converge on existing fields (T1296)
-
-Met in fespsp-institucional (FI132): a mapping first declared `evento_inicio` as
-`"facet": true, "facetName": { "pt_BR": "Quando" }`, then `"facet": false`; `wp turing
-reindex` sent the manifest again and search still returns the raw date facet beside the
-range facet.
-
-Validated against the code (2026-11-19). `TurSNFieldProvisioner.ensureField` returns as
-soon as the field exists and `applyFieldChanges` files it under `fieldsSkipped`; only
-`searchWeight` converges (`applySearchWeights`). `TurSNManifestPlanner.breakingChange`
-knows type and multiValued, and its Javadoc calls facet, mandatory and description
-changes non-breaking, yet nothing applies them. The gap is wider than facet:
-`description`, `mandatory` -> `required`, `facet`, `facetName` and the per-locale
-`facetLocales` rows all stick at their first value.
-
-Fix: converge those five in place on an existing field, the way `searchWeight` is, and
-report them as changed. Two traps:
-- `facet` and `mandatory` are primitive booleans in `VigletFieldSpec` (viglet-core), so a
-  manifest that omits them reads as false and would switch off a facet turned on in the
-  console. Converge only what the manifest declares: a nullable `Boolean` in viglet-core,
-  or a Turing-side "declared" signal as `customFacets` already sits on
-  `TurSNManifestRequest`.
-- the diff has no "changed, not breaking" bucket; add one to `TurSNManifestPlan` so the
-  provision result and the dry-run plan show it.
-
-No cache work: `TurSNSiteSnapshotEvictionListener` evicts on save. Attributes the spec
-cannot express (hl, facetRange, facetSort, ...) are out of scope here.
-
-Tests: provision faceted, then not, then relabelled per locale, then a manifest omitting
-`facet`, which leaves it as it was.
-
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope
