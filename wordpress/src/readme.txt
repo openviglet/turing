@@ -76,6 +76,9 @@ sent to the plugin's authors.
   rank. The Site assistant keeps a TUR_SESSION cookie so its conversation continues.
 * With "Send search events to Google Analytics" on, search events go to the Google Analytics
   tag the site already loads, not to a new one.
+* Click reports and search events are both off by default, and even when turned on nothing is
+  sent until the visitor allows statistics through a consent plugin that supports the WP
+  Consent API. Without such a plugin, nothing is sent.
 
 The terms of use and privacy notice that apply are those of whoever runs your Turing server. For
 a server you run yourself, that is you. Turing's source and documentation:

@@ -193,6 +193,8 @@ final class RelatedTest extends PluginTestCase {
 			static fn ( $id ) => isset( $parts[ $id ] ) ? (object) array( 'content' => $parts[ $id ] ) : null
 		);
 		Functions\when( 'render_block' )->justReturn( '<related/>' );
+		Functions\when( 'wp_kses_allowed_html' )->justReturn( array( 'section' => array() ) );
+		Functions\when( 'wp_kses' )->returnArg();
 	}
 
 	private function block( string $name, array $attrs = array(), array $inner = array() ): array {
@@ -217,6 +219,21 @@ final class RelatedTest extends PluginTestCase {
 
 		$this->assertSame( '<p>Body</p><related/>', $this->append( null ), 'no block template' );
 		$this->assertSame( '<p>Body</p><related/>', $this->append( 'single' ) );
+	}
+
+	public function test_the_appended_block_is_escaped_through_the_block_allowlist(): void {
+		$this->viewing( array( 'single' => array( $this->block( 'core/post-content' ) ) ) );
+		$seen = array();
+		Functions\when( 'wp_kses' )->alias(
+			static function ( string $html, array $allowed ) use ( &$seen ): string {
+				$seen[] = $allowed;
+				return '<escaped>' . $html . '</escaped>';
+			}
+		);
+
+		$this->assertSame( '<p>Body</p><escaped><related/></escaped>', $this->append( 'single' ) );
+		$this->assertCount( 1, $seen );
+		$this->assertTrue( isset( $seen[0]['img']['srcset'], $seen[0]['section']['class'] ), 'the plugin allowlist, thumbnails included' );
 	}
 
 	public function test_an_excerpt_built_from_the_content_gets_no_box(): void {

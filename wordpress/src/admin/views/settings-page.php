@@ -455,7 +455,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="viglet-turing-card">
 					<div class="viglet-turing-card__header">
 						<h2><?php esc_html_e( 'Search Analytics', 'viglet-turing-search' ); ?></h2>
-						<p><?php esc_html_e( 'What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. With a consent plugin that supports the WP Consent API, nothing is sent until the visitor allows statistics.', 'viglet-turing-search' ); ?></p>
+						<p><?php esc_html_e( 'What the search block and the instant search report about the searches visitors make. Events carry the query, the result and its rank, never who the visitor is. Nothing is sent until the visitor allows statistics through a consent plugin that supports the WP Consent API.', 'viglet-turing-search' ); ?></p>
 					</div>
 					<div class="viglet-turing-card__body">
 						<div class="viglet-turing-toggles">

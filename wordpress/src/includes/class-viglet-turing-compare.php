@@ -23,7 +23,9 @@ class Viglet_Turing_Compare {
 
 	/**
 	 * The products a request asks to compare: published, purchasable-or-not products only,
-	 * each once, at most self::MAX, in the order asked.
+	 * each once, at most self::MAX, in the order asked. A password-protected product counts
+	 * only for a visitor who has entered its password, so neither the table nor the public
+	 * summary route reveals one.
 	 *
 	 * @param string $ids Comma-separated post ids, as the query argument carries them.
 	 * @return int[]
@@ -32,7 +34,7 @@ class Viglet_Turing_Compare {
 		$found = array();
 		foreach ( explode( ',', $ids ) as $id ) {
 			$id = absint( $id );
-			if ( $id && ! in_array( $id, $found, true ) && 'product' === get_post_type( $id ) && 'publish' === get_post_status( $id ) ) {
+			if ( $id && ! in_array( $id, $found, true ) && 'product' === get_post_type( $id ) && 'publish' === get_post_status( $id ) && ! post_password_required( $id ) ) {
 				$found[] = $id;
 			}
 			if ( count( $found ) >= self::MAX ) {

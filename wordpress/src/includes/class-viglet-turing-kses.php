@@ -113,6 +113,15 @@ class Viglet_Turing_Kses {
 		),
 		'template' => array(),
 		'dialog'   => array( 'open' => true ),
+		// Core's attachment image tag (a Related card's thumbnail): srcset and sizes are not
+		// in the post allowlist, which would strip them.
+		'img'      => array(
+			'srcset'        => true,
+			'sizes'         => true,
+			'decoding'      => true,
+			'fetchpriority' => true,
+		),
+		'time'     => array( 'datetime' => true ),
 	);
 
 	/**

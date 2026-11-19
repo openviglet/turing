@@ -1334,9 +1334,9 @@ class Viglet_Turing_Native_Search {
 	 *
 	 * Events carry the query, a document id and a rank: nothing about the visitor, and no
 	 * cookie of the plugin's is set. Even so, nothing is sent before the visitor allows statistics. A consent
-	 * plugin speaking the WP Consent API answers that in the browser; without one the
-	 * `viglet_turing_tracking_consent` filter does, and turning reporting on counts as the
-	 * site's answer unless the filter says otherwise.
+	 * plugin speaking the WP Consent API answers that in the browser. Without one nothing is
+	 * sent, unless the site states through the `viglet_turing_tracking_consent` filter that it
+	 * gathers that consent some other way.
 	 *
 	 * @return array{clicks: bool, ga: bool, measurementId: string, requireConsent: bool}|null
 	 */
@@ -1350,10 +1350,12 @@ class Viglet_Turing_Native_Search {
 		/**
 		 * Filters whether visitors count as consenting to statistics when no consent plugin
 		 * speaks the WP Consent API. Ignored when one does: the visitor's choice decides.
+		 * Off by default: nothing is sent until a consent plugin is installed, or the site
+		 * returns true here because it obtains the visitor's consent by other means.
 		 *
-		 * @param bool $consent False to send nothing until a consent plugin is installed.
+		 * @param bool $consent True only when the site already has the visitor's consent.
 		 */
-		$consent = (bool) apply_filters( 'viglet_turing_tracking_consent', true );
+		$consent = (bool) apply_filters( 'viglet_turing_tracking_consent', false );
 
 		return array(
 			'clicks'         => $clicks,

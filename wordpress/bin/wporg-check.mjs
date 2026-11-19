@@ -62,7 +62,8 @@ const getReadsAllowed = {
 // reply to the review names it. A new public route fails here until it is justified.
 const publicRoutesAllowed = {
 	// public-config (the search block's settings), compare/summary (published products
-	// only, cached by Turing), ai-paused (a throttled probe of Turing's AI budget).
+	// only, a password-protected one only once its password is entered: the review of 19 Nov
+	// 2026; cached by Turing), ai-paused (a throttled probe of Turing's AI budget).
 	'src/viglet-turing.php': 3,
 };
 // Where load_plugin_textdomain() may stand: the loader the WordPress.org package leaves out.
@@ -95,6 +96,27 @@ for ( const file of phpFiles( src ) ) {
 					file,
 					line,
 					'echo of an unescaped value: escape it as it is printed (esc_html, esc_attr, esc_url, wp_kses)'
+				);
+			}
+			// The review of 19 Nov 2026: a filter callback returned render_block() joined to
+			// the content, unescaped. Hold the block in a variable and return it through wp_kses().
+			if ( /(?:\.|\breturn)\s*render_block\s*\(/.test( code ) ) {
+				find(
+					file,
+					line,
+					'render_block() returned or joined unescaped: pass it through wp_kses( $html, Viglet_Turing_Kses::block_html() )'
+				);
+			}
+			// The same review (Guidelines 7 and 9): tracking must be off until the visitor opts in.
+			if (
+				/apply_filters\(\s*'viglet_turing_tracking_consent'\s*,\s*true\b/.test(
+					code
+				)
+			) {
+				find(
+					file,
+					line,
+					'visitors counted as consenting by default: the tracking-consent filter must default to false'
 				);
 			}
 			if ( /\$_(?:POST|REQUEST)\b/.test( code ) ) {

@@ -53,7 +53,7 @@ Every filter the plugin applies, alphabetically.
 | `viglet_turing_render_timeout` | `$seconds` | 3 | How long a page waits for Viglet Turing before rendering without it |
 | `viglet_turing_result_card` | `$card`, `$document` | | A result card the search block draws on the server |
 | `viglet_turing_should_index` | `$index`, `$post` | | Whether a post is in search; it has the last word |
-| `viglet_turing_tracking_consent` | `$consent` | `true` | Whether search events are sent when no WP Consent API plugin is installed; with one, the visitor's choice decides |
+| `viglet_turing_tracking_consent` | `$consent` | `false` | Whether search events are sent when no WP Consent API plugin is installed. Off by default, so nothing is sent; return `true` only when the site gathers the visitor's consent another way. With a consent plugin, the visitor's choice decides |
 
 ## Related pages
 

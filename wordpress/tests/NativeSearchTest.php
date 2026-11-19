@@ -478,19 +478,19 @@ final class NativeSearchTest extends PluginTestCase {
 				)
 			)
 		);
-		// Without a consent plugin, turning reporting on is the site's answer.
+		// Without a consent plugin, nothing is sent: every visitor must say yes first.
 		$this->assertSame(
 			array(
 				'clicks'         => true,
 				'ga'             => true,
 				'measurementId'  => 'G-ABC123',
-				'requireConsent' => false,
+				'requireConsent' => true,
 			),
 			$both->analytics()
 		);
 
-		Filters\expectApplied( 'viglet_turing_tracking_consent' )->andReturn( false );
-		$this->assertTrue( $both->analytics()['requireConsent'], 'the filter can make every visitor say yes first' );
+		Filters\expectApplied( 'viglet_turing_tracking_consent' )->andReturn( true );
+		$this->assertFalse( $both->analytics()['requireConsent'], 'a site that gathers consent itself opts in through the filter' );
 
 		$clicks = new Viglet_Turing_Native_Search(
 			$this->settings(

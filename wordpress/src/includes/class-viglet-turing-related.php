@@ -91,7 +91,7 @@ class Viglet_Turing_Related {
 			return $content;
 		}
 
-		return $content . render_block(
+		$block = render_block(
 			array(
 				'blockName'    => 'viglet-turing/related',
 				'attrs'        => array(),
@@ -100,6 +100,9 @@ class Viglet_Turing_Related {
 				'innerContent' => array(),
 			)
 		);
+
+		// Escaped as it joins the content, through the allowlist every block of the plugin uses.
+		return $content . wp_kses( $block, Viglet_Turing_Kses::block_html() );
 	}
 
 	/**

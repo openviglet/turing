@@ -164,8 +164,8 @@ Two opt-in settings under Search, both off on a fresh install:
 
 Events carry no visitor data, and the plugin sets no cookie. With a consent plugin that
 speaks the WP Consent API, nothing is sent until the visitor allows `statistics`. Without
-one, the site decides: `add_filter( 'viglet_turing_tracking_consent', '__return_false' );`
-sends nothing at all. A theme's own blocks report the same way: through
+one, nothing is sent at all. A site that gathers consent some other way says so with
+`add_filter( 'viglet_turing_tracking_consent', '__return_true' );`. A theme's own blocks report the same way: through
 `createSiteSearch( { track: true } )` and `trackResultClick( click, controller )` from
 `viglet-turing/search`, or, searching without a tracked controller, `trackSearch()`.
 

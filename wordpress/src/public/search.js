@@ -493,7 +493,8 @@ export function createSiteAutoComplete( debounceMs = 250 ) {
 /**
  * Whether this visitor may be counted: the site turned reporting on, and the visitor allows
  * statistics. A consent plugin speaking the WP Consent API decides that whenever it is
- * present; without one, the site does (the `viglet_turing_tracking_consent` filter). Asked
+ * present; without one, nothing is sent unless the site opted in (the
+ * `viglet_turing_tracking_consent` filter, off by default). Asked
  * at every event, so a choice made on the page applies from the next one.
  */
 export function trackingAllowed() {

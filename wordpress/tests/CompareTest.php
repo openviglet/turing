@@ -16,13 +16,15 @@ final class CompareTest extends PluginTestCase {
 	public function test_only_published_products_each_once_and_at_most_four_in_the_order_asked(): void {
 		Functions\stubs(
 			array(
-				'absint'          => static fn ( $n ) => abs( (int) $n ),
-				'get_post_type'   => static fn ( $id ) => 9 === $id ? 'page' : 'product',
-				'get_post_status' => static fn ( $id ) => 7 === $id ? 'draft' : 'publish',
+				'absint'                 => static fn ( $n ) => abs( (int) $n ),
+				'get_post_type'          => static fn ( $id ) => 9 === $id ? 'page' : 'product',
+				'get_post_status'        => static fn ( $id ) => 7 === $id ? 'draft' : 'publish',
+				// 5 is password-protected and this visitor has not entered its password.
+				'post_password_required' => static fn ( $id ) => 5 === $id,
 			)
 		);
 
-		$this->assertSame( array( 3, 12, 15, 18 ), Viglet_Turing_Compare::ids( '3, 3,9,x,7,12,15,18,21' ) );
+		$this->assertSame( array( 3, 12, 15, 18 ), Viglet_Turing_Compare::ids( '3, 3,9,x,7,5,12,15,18,21' ) );
 		$this->assertSame( array(), Viglet_Turing_Compare::ids( '' ) );
 	}
 
