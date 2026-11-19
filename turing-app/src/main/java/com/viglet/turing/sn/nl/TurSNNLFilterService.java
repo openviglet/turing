@@ -169,7 +169,8 @@ public class TurSNNLFilterService {
                 termFieldsToGround(flat, schema)));
         Map<String, List<String>> terms = rehome(siteName, searchLocale, flat.terms(), schema, siteValues);
         List<TurSNNLFilters.Filter> filters = new ArrayList<>();
-        terms.forEach((field, values) -> termFilter(field, values, schema, siteValues, text, dropped)
+        org.apache.lucene.analysis.CharArraySet stopWords = stopWords(searchLocale);
+        terms.forEach((field, values) -> termFilter(field, values, schema, siteValues, text, dropped, stopWords)
                 .ifPresent(filters::add));
         flat.ranges().forEach((field, range) -> rangeFilter(field, range, schema, text, dropped)
                 .ifPresent(filters::add));
@@ -477,7 +478,7 @@ public class TurSNNLFilterService {
 
     private static Optional<TurSNNLFilters.Filter> termFilter(String field, List<String> proposed,
             Map<String, TurNLFacetField> schema, Map<String, Set<String>> siteValues, String text,
-            List<TurSNNLFilters.Dropped> dropped) {
+            List<TurSNNLFilters.Dropped> dropped, org.apache.lucene.analysis.CharArraySet stopWords) {
         if (!schema.containsKey(field)) {
             proposed.forEach(v -> dropped.add(new TurSNNLFilters.Dropped(field, v, UNKNOWN_FIELD)));
             return Optional.empty();
@@ -489,6 +490,13 @@ public class TurSNNLFilterService {
         double confidence = LITERAL;
         for (String value : proposed) {
             String canonical = grounded ? canonical(value, held) : value;
+            boolean partial = false;
+            if (canonical == null) {
+                // T1300 — the short name a visitor says ("Casarão") for the value an
+                // editor filed ("Casarão FESPSP"), when exactly one value holds it.
+                canonical = containing(value, held, stopWords);
+                partial = canonical != null;
+            }
             if (canonical == null) {
                 dropped.add(new TurSNNLFilters.Dropped(field, value, NOT_IN_SITE));
                 continue;
@@ -496,9 +504,10 @@ public class TurSNNLFilterService {
             if (!values.contains(canonical)) {
                 values.add(canonical);
             }
-            Optional<String> words = sourceWords(text, canonical).or(() -> sourceWords(text, value));
+            String filed = canonical;
+            Optional<String> words = sourceWords(text, filed).or(() -> sourceWords(text, value));
             words.ifPresent(sourceWords::add);
-            confidence = Math.min(confidence, valueConfidence(grounded, words.isPresent()));
+            confidence = Math.min(confidence, partial ? INFERRED : valueConfidence(grounded, words.isPresent()));
         }
         return values.isEmpty() ? Optional.empty()
                 : Optional.of(new TurSNNLFilters.Filter(field, values, null, null, sourceWords, confidence,
@@ -592,6 +601,48 @@ public class TurSNNLFilterService {
         }
         String wanted = normalize(value);
         return held.stream().filter(candidate -> normalize(candidate).equals(wanted)).findFirst().orElse(null);
+    }
+
+    /**
+     * T1300 — the one value of {@code held} whose words include every content word of
+     * {@code value}, compared without case or accents and as whole words; stop words
+     * ("e", "de") never count. {@code null} when none or several do, so a short name
+     * two values share ("Sociologia") is still not guessed. Kept apart from
+     * {@link #canonical}, whose exact match T1277's re-homing depends on.
+     */
+    static String containing(String value, Set<String> held,
+            org.apache.lucene.analysis.CharArraySet stopWords) {
+        if (held == null || !StringUtils.hasText(value)) {
+            return null;
+        }
+        List<String> wanted = words(value).stream().filter(word -> !stopWords.contains(word)).toList();
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String found = null;
+        for (String candidate : held) {
+            if (words(candidate).containsAll(wanted)) {
+                if (found != null) {
+                    return null;
+                }
+                found = candidate;
+            }
+        }
+        return found;
+    }
+
+    /** The folded words of {@code value}. */
+    private static List<String> words(String value) {
+        return java.util.Arrays.stream(normalize(value).split("[^\\p{L}\\p{N}]+"))
+                .filter(word -> !word.isEmpty()).toList();
+    }
+
+    /** The stop words of the request's language; none when it names no language. */
+    private static org.apache.lucene.analysis.CharArraySet stopWords(String locale) {
+        if (!StringUtils.hasText(locale)) {
+            return org.apache.lucene.analysis.CharArraySet.EMPTY_SET;
+        }
+        return com.viglet.turing.sn.TurSNQueryRelaxer.stopWords(Locale.forLanguageTag(locale.replace('_', '-')));
     }
 
     // ── Source words and the leftover query ─────────────────────────────────

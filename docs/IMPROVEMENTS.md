@@ -2615,32 +2615,6 @@ query forced past the clause limit answers with the synonym-free results.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 
-### CLXXXVIII.2 Grounding a short name to the facet value that holds it (T1300)
-
-Met in fespsp-institucional (FI170) on `turing:2026.3.8`, site `fespsp`, pt_BR. Facet
-values are what editors typed: `evento_local` holds "Casarão FESPSP", `editora` "Editora
-Sociologia e Política". `POST /api/sn/fespsp/nl-filters`: "eventos no Casarão FESPSP"
-grounds; "eventos no Casarão" drops `evento_local:Casarão` as NOT_IN_SITE; "livros da
-Editora Sociologia e Política" drops `editora:Sociologia e Política`.
-
-Validated against the code (2026-11-19). `TurSNNLFilterService.termFilter` drops a value
-when `canonical(value, held)` is null, and `canonical` is whole-value equality, accent-
-and case-folded. Confidence is three constants, `LITERAL` 1.0, `INFERRED` 0.6,
-`UNCHECKED` 0.3, not an enum. The copilot planners and SN chat share this grounding.
-
-Fix: a separate token-subset match, used by `termFilter` only when `canonical` finds
-nothing: the value's content words (stopwords out, `TurSEStopWord` for the locale),
-folded, all present as whole tokens in exactly one held value of that field. That value
-is grounded with `INFERRED`; none or several keep NOT_IN_SITE, and `Dropped` says which
-("no value" vs "several values"). Do not loosen `canonical` itself: T1277 re-homing
-(`homeless`, `holder`) relies on it, and loosening it would move values between fields.
-
-Scale: grounding reads at most 1000 buckets per field (`GROUNDING_BUCKETS`), so the scan
-is cheap; a value past bucket 1000 stays unreachable, as for exact matches today.
-
-Tests: the two cases above; "Sociologia" matching two values (dropped, several); "e
-Política" not matching on the stopword; "Casa" not matching "Casarão" (whole tokens).
-
 ### CLXXXVIII.3 A site's time zone for relative dates (T1330)
 
 Found while shipping T1299. Filters from a sentence resolve "today", "tomorrow", "this

@@ -35,7 +35,6 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
-- 📋 **T1300** (deps: —) **Filters from a sentence drop a value that is part of a facet value: "Casarão" never matches "Casarão FESPSP"** — Visitors say the short name and editors file the long one, so the filter the model found right is thrown away. → §CLXXXVIII.2
 - 📋 **T1330** (deps: —) **Filters from a sentence resolve today in the JVM's zone, not the site's, so tomorrow shifts a day near midnight** — On a UTC-3 site, amanhã asked at 22h already lands on the day after, and the Agenda answers for the wrong day. → §CLXXXVIII.3
 
 ## Block CZ — Backend modules with verified boundaries
