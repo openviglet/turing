@@ -38,6 +38,51 @@ final class InsightsTest extends PluginTestCase {
 		);
 	}
 
+	/**
+	 * Turing T1298: an e-mail, a CPF and a student number are never listed, whether Turing stored
+	 * them as typed or masked; a date and a long search are.
+	 */
+	public function test_searches_holding_personal_data_are_hidden_and_counted(): void {
+		$row = static fn ( string $term, int $searches ) => array(
+			'term'     => $term,
+			'searches' => $searches,
+			'clicks'   => 0,
+			'ctr'      => 0,
+		);
+		$this->turing(
+			array(
+				'/metrics/clicks'          => array(
+					'terms'        => array(
+						$row( '123.456.789-09', 15 ),
+						$row( '20231234', 15 ),
+						$row( 'aluno@fespsp.org.br', 15 ),
+						$row( 'biblioteca', 13 ),
+						$row( 'agenda 2026/11/20', 4 ),
+						$row( 'como faço a rematrícula do segundo semestre de 2026', 2 ),
+					),
+					'neverClicked' => array( $row( 'boletim ***', 3 ) ),
+				),
+				'/metrics/failed-searches' => array( 'terms' => array( $row( '(11) 98765-4321', 1 ) ) ),
+				'/api/sn'                  => array(
+					array(
+						'id'   => 'site-uuid',
+						'name' => 'Sample Site',
+					),
+				),
+			)
+		);
+
+		$report = ( new Viglet_Turing_Insights( $this->settings() ) )->report( 'all-time' );
+
+		$this->assertSame(
+			array( 'biblioteca', 'agenda 2026/11/20', 'como faço a rematrícula do segundo semestre de 2026' ),
+			array_column( $report['top'], 'term' )
+		);
+		$this->assertSame( array(), $report['unopened'] );
+		$this->assertSame( array(), $report['failed'] );
+		$this->assertSame( 5, $report['personalHidden'] );
+	}
+
 	public function test_a_period_reads_clicks_and_failures_without_the_typed_prefixes(): void {
 		$this->turing(
 			array(

@@ -16,7 +16,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { createRoot, useEffect, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 const PERIODS = [
 	{ value: 'today', label: __( 'Last 24 hours', 'viglet-turing-search' ) },
@@ -337,6 +337,20 @@ function Insights() {
 					{ __(
 						'Viglet Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED).',
 						'viglet-turing-search'
+					) }
+				</Notice>
+			) }
+			{ report?.personalHidden > 0 && (
+				<Notice status="info" isDismissible={ false }>
+					{ sprintf(
+						/* translators: %d: how many searches were left out. */
+						_n(
+							'%d search holding personal data (an e-mail, a CPF or a long number) is hidden.',
+							'%d searches holding personal data (an e-mail, a CPF or a long number) are hidden.',
+							report.personalHidden,
+							'viglet-turing-search'
+						),
+						report.personalHidden
 					) }
 				</Notice>
 			) }

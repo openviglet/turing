@@ -89,6 +89,13 @@ Searches the block makes while the visitor is still typing are left out. The das
 **Site search this week** widget shows the week's five top searches and five that found
 nothing.
 
+A search holding personal data (an e-mail address, a CPF or CNPJ, or a run of seven or
+more digits such as an enrolment or phone number) is never listed, on the screen, in the
+widget or in the summary the language model writes; the screen says how many were
+hidden. Viglet Turing itself stores such searches with the data replaced by `***`
+(`turing.search.metrics.mask-personal-data`, on by default), so the search log holds none
+of it and a site can tell visitors its searches are logged anonymously. Dates stay visible.
+
 The admin ships in English and Brazilian Portuguese.
 
 ## Related pages

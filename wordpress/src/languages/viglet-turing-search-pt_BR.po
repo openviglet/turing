@@ -653,44 +653,44 @@ msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
 
 #: src/blocks/search/render.php:119
-#: src/includes/class-viglet-turing-mapping.php:432
-#: src/includes/class-viglet-turing-native-search.php:863
+#: src/includes/class-viglet-turing-mapping.php:456
+#: src/includes/class-viglet-turing-native-search.php:886
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-turing-mapping.php:688
+#: src/includes/class-viglet-turing-mapping.php:716
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-turing-mapping.php:698
+#: src/includes/class-viglet-turing-mapping.php:726
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-turing-mapping.php:769
+#: src/includes/class-viglet-turing-mapping.php:797
 #, php-format
 msgid "%1$s is %2$s in Viglet Turing, %3$s here"
 msgstr "%1$s é %2$s no Viglet Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-turing-mapping.php:798
+#: src/includes/class-viglet-turing-mapping.php:826
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:814
+#: src/includes/class-viglet-turing-mapping.php:842
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-turing-mapping.php:830
+#: src/includes/class-viglet-turing-mapping.php:858
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-turing-mapping.php:835
+#: src/includes/class-viglet-turing-mapping.php:863
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -774,11 +774,11 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Próxima"
 
-#: src/viglet-turing.php:1031
+#: src/viglet-turing.php:1034
 msgid "No published post of this type to preview."
 msgstr "Não há post publicado deste tipo para pré-visualizar."
 
-#: src/viglet-turing.php:1056
+#: src/viglet-turing.php:1059
 msgid "The body needs a mapping object keyed by post type."
 msgstr "O corpo precisa de um objeto mapping com uma chave por tipo de post."
 
@@ -1378,15 +1378,15 @@ msgid_plural "%d AI features are off."
 msgstr[0] "%d recurso de IA está desligado."
 msgstr[1] "%d recursos de IA estão desligados."
 
-#: src/viglet-turing.php:103
+#: src/viglet-turing.php:104
 msgid "Answers with sources"
 msgstr "Respostas com fontes"
 
-#: src/viglet-turing.php:104
+#: src/viglet-turing.php:105
 msgid "Chat"
 msgstr "Chat"
 
-#: src/viglet-turing.php:105
+#: src/viglet-turing.php:106
 msgid "Natural-language filters"
 msgstr "Filtros em linguagem natural"
 
@@ -1822,8 +1822,8 @@ msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma.
 #: src/blocks/search/render.php:136
 #: src/includes/class-viglet-turing-native-search.php:351
 #: src/includes/class-viglet-turing-native-search.php:353
-#: src/includes/class-viglet-turing-native-search.php:767
-#: src/includes/class-viglet-turing-native-search.php:1006
+#: src/includes/class-viglet-turing-native-search.php:790
+#: src/includes/class-viglet-turing-native-search.php:1029
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -1890,43 +1890,43 @@ msgctxt "block description"
 msgid "The Viglet Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Viglet Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-turing-mapping.php:629
-#: src/includes/class-viglet-turing-mapping.php:643
+#: src/includes/class-viglet-turing-mapping.php:657
+#: src/includes/class-viglet-turing-mapping.php:671
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-turing-mapping.php:648
+#: src/includes/class-viglet-turing-mapping.php:676
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:653
+#: src/includes/class-viglet-turing-mapping.php:681
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:658
+#: src/includes/class-viglet-turing-mapping.php:686
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-turing-mapping.php:663
+#: src/includes/class-viglet-turing-mapping.php:691
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1144
+#: src/includes/class-viglet-turing-mapping.php:1205
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-turing-mapping.php:1148
+#: src/includes/class-viglet-turing-mapping.php:1209
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1152
+#: src/includes/class-viglet-turing-mapping.php:1213
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -2122,51 +2122,51 @@ msgstr "O que os visitantes buscaram neste site, o que não encontrou nada e o q
 msgid "Period"
 msgstr "Período"
 
-#: assets/admin/insights.js:348
+#: assets/admin/insights.js:362
 msgid "No searches in this period yet. They appear here once visitors use the site’s search."
 msgstr "Ainda não há buscas neste período. Elas aparecem aqui quando os visitantes usam a busca do site."
 
 #. translators: 1: how many searches, 2: how many clicks, 3: the share of searches that led to a click.
-#: assets/admin/insights.js:359
+#: assets/admin/insights.js:373
 #, js-format
 msgid "%1$s searches, %2$s clicks, %3$s click-through."
 msgstr "%1$s buscas, %2$s cliques, %3$s de taxa de clique."
 
-#: src/includes/class-viglet-turing-insights.php:183
-#: assets/admin/insights.js:370
+#: src/includes/class-viglet-turing-insights.php:188
+#: assets/admin/insights.js:384
 msgid "Top searches"
 msgstr "Buscas mais feitas"
 
-#: assets/admin/insights.js:371
+#: assets/admin/insights.js:385
 msgid "No searches in this period."
 msgstr "Nenhuma busca neste período."
 
-#: assets/admin/insights.js:379
+#: assets/admin/insights.js:393
 msgid "Clicks"
 msgstr "Cliques"
 
-#: assets/admin/insights.js:383
+#: assets/admin/insights.js:397
 msgid "Click-through"
 msgstr "Taxa de clique"
 
-#: src/includes/class-viglet-turing-insights.php:184
-#: assets/admin/insights.js:393
+#: src/includes/class-viglet-turing-insights.php:189
+#: assets/admin/insights.js:407
 msgid "Searches that found nothing"
 msgstr "Buscas que não encontraram nada"
 
-#: assets/admin/insights.js:397
+#: assets/admin/insights.js:411
 msgid "Every search found something."
 msgstr "Toda busca encontrou algo."
 
-#: assets/admin/insights.js:405
+#: assets/admin/insights.js:419
 msgid "Last searched"
 msgstr "Última busca"
 
-#: assets/admin/insights.js:421
+#: assets/admin/insights.js:435
 msgid "Found, but never opened"
 msgstr "Encontradas, mas nunca abertas"
 
-#: assets/admin/insights.js:425
+#: assets/admin/insights.js:439
 msgid "Every search that found results led to a click."
 msgstr "Toda busca com resultados levou a um clique."
 
@@ -2174,11 +2174,11 @@ msgstr "Toda busca com resultados levou a um clique."
 msgid "Site search this week"
 msgstr "Busca do site nesta semana"
 
-#: src/includes/class-viglet-turing-insights.php:190
+#: src/includes/class-viglet-turing-insights.php:195
 msgid "No searches this week yet."
 msgstr "Ainda não há buscas nesta semana."
 
-#: src/includes/class-viglet-turing-insights.php:206
+#: src/includes/class-viglet-turing-insights.php:211
 msgid "All search insights"
 msgstr "Todos os insights de busca"
 
@@ -2250,7 +2250,7 @@ msgstr "Respostas com fontes e chat sobre o conteúdo deste site, pelo Agente de
 msgid "Turn on generative AI for this site in Viglet Turing"
 msgstr "Ativar a IA generativa deste site no Viglet Turing"
 
-#: src/viglet-turing.php:135
+#: src/viglet-turing.php:136
 msgid "Turn on Generative AI under Settings › Search, then save the fields on the Fields screen."
 msgstr "Ative a IA generativa em Configurações › Busca e depois salve os campos na tela Campos."
 
@@ -2307,7 +2307,7 @@ msgstr "Abaixo"
 msgid "Save boosts"
 msgstr "Salvar impulsos"
 
-#: src/includes/class-viglet-turing-insights.php:188
+#: src/includes/class-viglet-turing-insights.php:193
 msgid "Viglet Turing is not keeping search metrics, so no new searches are recorded."
 msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma busca nova é registrada."
 
@@ -2315,12 +2315,12 @@ msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma 
 msgid "Viglet Turing is not keeping search metrics, so no new searches or clicks are recorded. Its administrator turns them on with turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma busca ou clique novo é registrado. O administrador do Viglet Turing as ativa com turing.search.metrics.enabled (TURING_SEARCH_METRICS_ENABLED)."
 
-#: src/includes/class-viglet-turing-insights.php:120
+#: src/includes/class-viglet-turing-insights.php:125
 msgid "There are no searches in this period to summarize."
 msgstr "Não há buscas neste período para resumir."
 
 #: src/includes/class-viglet-turing-compare.php:144
-#: src/includes/class-viglet-turing-insights.php:155
+#: src/includes/class-viglet-turing-insights.php:160
 msgid "Viglet Turing wrote no summary."
 msgstr "O Viglet Turing não escreveu um resumo."
 
@@ -2646,15 +2646,15 @@ msgctxt "block keyword"
 msgid "question"
 msgstr "pergunta"
 
-#: src/viglet-turing.php:110
+#: src/viglet-turing.php:111
 msgid "Viglet Turing search block, with \"Answer questions from this site’s content\" on"
 msgstr "Bloco de busca do Viglet Turing, com \"Responder perguntas com o conteúdo deste site\" ligado"
 
-#: src/viglet-turing.php:111
+#: src/viglet-turing.php:112
 msgid "Site assistant block, or its launcher on every page"
 msgstr "Bloco Assistente do site, ou o botão dele em todas as páginas"
 
-#: src/viglet-turing.php:112
+#: src/viglet-turing.php:113
 msgid "Viglet Turing search block, with \"Suggest the filters a sentence names\" on"
 msgstr "Bloco de busca do Viglet Turing, com \"Sugerir os filtros que uma frase cita\" ligado"
 
@@ -2915,19 +2915,19 @@ msgstr "Em %s"
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
 
-#: src/includes/class-viglet-turing-mapping.php:614
+#: src/includes/class-viglet-turing-mapping.php:642
 msgid "Today"
 msgstr "Hoje"
 
-#: src/includes/class-viglet-turing-mapping.php:619
+#: src/includes/class-viglet-turing-mapping.php:647
 msgid "Next 7 days"
 msgstr "Próximos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:624
+#: src/includes/class-viglet-turing-mapping.php:652
 msgid "This month"
 msgstr "Este mês"
 
-#: src/includes/class-viglet-turing-mapping.php:634
+#: src/includes/class-viglet-turing-mapping.php:662
 msgid "Past"
 msgstr "Passados"
 
@@ -2986,7 +2986,7 @@ msgid "The files could not be packed for Viglet Turing."
 msgstr "Não foi possível empacotar os arquivos para o Viglet Turing."
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:822
+#: src/includes/class-viglet-turing-mapping.php:850
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr "Texto do PDF no meta: %s"
@@ -3085,11 +3085,11 @@ msgstr "Manter %s no plano"
 msgid "Unavailable"
 msgstr "Indisponível"
 
-#: src/viglet-turing.php:106
+#: src/viglet-turing.php:107
 msgid "Copilot"
 msgstr "Copiloto"
 
-#: src/viglet-turing.php:113
+#: src/viglet-turing.php:114
 msgid "Ask this site block"
 msgstr "Bloco Pergunte a este site"
 
@@ -3152,7 +3152,7 @@ msgctxt "block keyword"
 msgid "ask"
 msgstr "perguntar"
 
-#: src/includes/class-viglet-turing-mapping.php:444
+#: src/includes/class-viglet-turing-mapping.php:468
 msgid "Author"
 msgstr "Autor"
 
@@ -3264,7 +3264,7 @@ msgstr "Uma reindexação já está rodando."
 msgid "Posts of type %s are not indexed."
 msgstr "Posts do tipo %s não são indexados."
 
-#: src/viglet-turing.php:870
+#: src/viglet-turing.php:873
 msgid "Name the content to index: post_type is all, or one post type."
 msgstr "Diga o que indexar: post_type é all, ou um tipo de post."
 
@@ -3535,3 +3535,11 @@ msgstr "Escolha uma opção"
 #: src/blocks/assistant/render.php:83
 msgid "Choices"
 msgstr "Opções"
+
+#. translators: %d: how many searches were left out.
+#: assets/admin/insights.js:347
+#, js-format
+msgid "%d search holding personal data (an e-mail, a CPF or a long number) is hidden."
+msgid_plural "%d searches holding personal data (an e-mail, a CPF or a long number) are hidden."
+msgstr[0] "%d busca com dado pessoal (um e-mail, um CPF ou um número longo) está oculta."
+msgstr[1] "%d buscas com dado pessoal (um e-mail, um CPF ou um número longo) estão ocultas."

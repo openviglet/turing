@@ -263,6 +263,34 @@ class Viglet_Turing_Trending {
 			&& mb_strlen( $query ) <= 40
 			&& ! str_contains( $query, '*' )
 			&& ! preg_match( '/\S+@\S+/', $query )
-			&& ! preg_match( '/\d[\d.\-\s\/]{5,}\d/', $query );
+			&& ! preg_match( '/\d[\d.\-\s\/]{5,}\d/', $query )
+			&& ! self::personal( $query );
+	}
+
+	/**
+	 * Whether a search holds personal data (Turing T1298): an e-mail address, a CPF or CNPJ, a
+	 * run of seven or more digits that is not a date (an enrolment, phone or document number),
+	 * or the `***` Viglet Turing stores in its place. Only that: a long search or a date is a
+	 * search an editor should see, which is what tells this from presentable().
+	 *
+	 * @param string $query A search, as visitors typed it or Turing stored it.
+	 */
+	public static function personal( string $query ): bool {
+		if ( str_contains( $query, '***' ) || preg_match( '/\S+@\S+\.\S+/', $query ) ) {
+			return true;
+		}
+		if ( preg_match( '/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b|\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/', $query ) ) {
+			return true;
+		}
+		if ( ! preg_match_all( '/\d(?:[.\-\/ ]?\d){6,}/', $query, $runs ) ) {
+			return false;
+		}
+		foreach ( $runs[0] as $run ) {
+			if ( ! preg_match( '/^(\d{4}([.\/-])\d{1,2}\2\d{1,2}|\d{1,2}([.\/-])\d{1,2}\3\d{4})$/', $run ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

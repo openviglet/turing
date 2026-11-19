@@ -63,7 +63,9 @@ public class TurAnswerShareService {
             String sourcesJson, String citationsJson, Instant answeredAt) {
         TurAnswerShare share = new TurAnswerShare();
         share.setSiteName(siteName);
-        share.setQuery(truncate(query, QUERY_MAX));
+        // T1298 — a shared answer's question keeps no personal data either.
+        share.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query),
+                QUERY_MAX));
         share.setFiltersJson(filtersJson);
         share.setAnswerText(answerText);
         share.setSourcesJson(sourcesJson);

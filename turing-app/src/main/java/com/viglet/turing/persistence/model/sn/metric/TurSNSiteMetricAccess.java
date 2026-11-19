@@ -102,7 +102,9 @@ public class TurSNSiteMetricAccess implements Serializable {
 
 	public void setTerm(String term) {
 		// T1244 — capped to the column, so a long query never fails the search that logs it.
-		this.term = TurSNSiteMetricTerms.cap(term);
+		// T1298 — personal data masked first, so it is never stored.
+		this.term = TurSNSiteMetricTerms.cap(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy
+				.mask(term));
 		// T1179 — diacritics dropped, never a letter: a Cyrillic or CJK search keeps its key.
 		this.sanatizedTerm = TurSNSiteMetricTerms.cap(TurSNSiteMetricTerms.fold(this.term));
 	}

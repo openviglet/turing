@@ -2471,38 +2471,6 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
-### CLXXXII.18 Personal data out of search metrics (T1298)
-
-Met in fespsp-institucional (FI155), a school site whose students type their RA and CPF
-into search, on `turing:2026.3.8` with search metrics on. `20231234`, `123.456.789-09`
-and `aluno@fespsp.org.br` searched 15 times each: Popular searches hide them, Search
-insights lists them first, verbatim, and Turing stores them.
-
-Validated against the code (2026-11-19).
-
-Plugin: `Viglet_Turing_Insights::terms()` only drops empty and `*` terms, for the top,
-failed and unopened lists and the dashboard widget, and `summary()` sends those raw
-terms to the LLM. `Viglet_Turing_Trending::presentable()` cannot be reused as it is: it
-also drops anything over 40 characters and digit runs like `2026/11/20`, which would
-hide real searches from Insights.
-
-Turing: `TurSNSearchProcess` stores the raw query through
-`TurSNSiteMetricAccess.setTerm` (length cap and accent folding only). Raw query text is
-also written by `TurSNSiteClickAPI` (click term), `TurAnswerShareService` and
-`TurAnswerSignalService`. No content-pattern masking exists anywhere;
-`TurPiiSlotService` works by slot name, not content.
-
-Fix, two parts in one task:
-1. Turing: one masker (an e-mail, a CPF or CNPJ shape, a run of 7+ digits) applied in
-   `setTerm` and the click, share and signal writes, so a masked term is never stored;
-   on by default for new installs, a per-site switch to turn it off.
-2. Plugin: extract a personal-data-only predicate from `presentable()`, shared by
-   Trending and Insights, applied to every term list and to the LLM summary input, with
-   the hidden ones counted as "personal data, hidden" (covers Turing versions before
-   part 1).
-
-Tests: the three terms above, plus a date and a 45-character query that stay visible.
-
 ### CLXXXII.19 Numbered sources and a citation instruction on every answer (T1301)
 
 Met in fespsp-institucional (FI170) on `turing:2026.3.8`, the boot's `gpt-4o-mini`,
@@ -2558,6 +2526,28 @@ can carry before choosing.
 
 Tests: a 21h event in America/Sao_Paulo shows "20/11 21:00" on the native card and in
 the instant search; a date-only opening still shows the day alone.
+
+### CLXXXII.21 Per-site masking of personal data in search terms (T1329)
+
+Found while shipping T1298. Personal data in search terms is masked before it is stored
+(`TurSearchTermPrivacy`, applied in the search and click metric setters and the answer
+share and signal writes), switched by one deployment-wide property,
+`turing.search.metrics.mask-personal-data` (default on).
+
+One switch for every site is wrong where sites differ: a school site wants an 8-digit
+enrolment number masked, a bookstore on the same Turing wants its ISBN and EAN searches
+visible in Search insights. Today the bookstore can only turn masking off for everyone.
+
+Fix: a per-site setting on the SN site (`metricsMaskPersonalData`, nullable: null
+follows the property), a Liquibase changeset adding the column (lowercase portable type,
+a `columnExists` precondition), the console toggle in the site's search settings, and
+`facets`-style manifest support so a connector can declare it. The setters cannot read a
+site's setting, so the masking moves from the entity setters to the writers that know
+the site (`TurSNSearchProcess`, `TurSNSiteClickAPI`, the answer share and signal
+services), keeping `TurSearchTermPrivacy.mask` as the one rule.
+
+Tests: two sites on one Turing, one masking and one not, each storing its own way; a
+site with no setting follows the property.
 
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 

@@ -60,7 +60,7 @@ class Viglet_Turing_Insights {
 	 * shown terms' own, so typing does not skew the click-through rate either.
 	 *
 	 * @param string $period One of self::PERIODS.
-	 * @return array{period: string, searches: int, clicks: int, ctr: float, top: array, failed: array, unopened: array, metricsOff: bool}|WP_Error
+	 * @return array{period: string, searches: int, clicks: int, ctr: float, top: array, failed: array, unopened: array, personalHidden: int, metricsOff: bool}|WP_Error
 	 */
 	public function report( string $period ) {
 		$period = in_array( $period, self::PERIODS, true ) ? $period : 'this-week';
@@ -79,21 +79,26 @@ class Viglet_Turing_Insights {
 			return $failed;
 		}
 
-		$top      = $this->with_trend( self::terms( (array) ( $clicks['terms'] ?? array() ) ), $site, $clicks );
+		$hidden   = 0;
+		$top      = $this->with_trend( self::terms( (array) ( $clicks['terms'] ?? array() ), $hidden ), $site, $clicks );
 		$searches = (int) array_sum( array_column( $top, 'searches' ) );
 		$clicked  = (int) array_sum( array_column( $top, 'clicks' ) );
+		$failures = self::terms( (array) ( $failed['terms'] ?? array() ), $hidden );
+		$unopened = self::terms( (array) ( $clicks['neverClicked'] ?? array() ), $hidden );
 
 		return array(
-			'period'     => $period,
-			'searches'   => $searches,
-			'clicks'     => $clicked,
-			'ctr'        => $searches > 0 ? round( $clicked / $searches, 4 ) : 0.0,
-			'top'        => $top,
-			'failed'     => self::terms( (array) ( $failed['terms'] ?? array() ) ),
-			'unopened'   => self::terms( (array) ( $clicks['neverClicked'] ?? array() ) ),
+			'period'         => $period,
+			'searches'       => $searches,
+			'clicks'         => $clicked,
+			'ctr'            => $searches > 0 ? round( $clicked / $searches, 4 ) : 0.0,
+			'top'            => $top,
+			'failed'         => $failures,
+			'unopened'       => $unopened,
+			// Turing T1298: searches holding personal data are never listed, only counted.
+			'personalHidden' => $hidden,
 			// An empty period with metrics off is not a quiet site: Turing kept nothing. The report
 			// says so since Turing 2026.3.6 (D215); an older one is asked with a probe click.
-			'metricsOff' => false === ( is_bool( $clicks['metricsEnabled'] ?? null ) ? $clicks['metricsEnabled'] : $this->client->metrics_enabled() ),
+			'metricsOff'     => false === ( is_bool( $clicks['metricsEnabled'] ?? null ) ? $clicks['metricsEnabled'] : $this->client->metrics_enabled() ),
 		);
 	}
 
@@ -241,16 +246,23 @@ class Viglet_Turing_Insights {
 	}
 
 	/**
-	 * Turing's rows for one table: typed prefixes left out, the rest in a shape the screen
-	 * reads, at most self::ROWS.
+	 * Turing's rows for one table: typed prefixes left out, a search holding personal data
+	 * left out and counted (Turing T1298), the rest in a shape the screen reads, at most
+	 * self::ROWS. So neither the screen, the dashboard widget nor the summary's language
+	 * model ever reads an e-mail, a CPF or a student number, whichever Turing stored them.
 	 *
-	 * @param array $rows The report's terms.
+	 * @param array $rows   The report's terms.
+	 * @param int   $hidden Incremented by each search left out as personal data.
 	 * @return array<int, array{term: string, searches: int, clicks: int, ctr: float, lastSeen: string}>
 	 */
-	private static function terms( array $rows ): array {
+	private static function terms( array $rows, int &$hidden = 0 ): array {
 		$terms = array();
 		foreach ( $rows as $row ) {
 			$term = trim( (string) ( $row['term'] ?? '' ) );
+			if ( '' !== $term && Viglet_Turing_Trending::personal( $term ) ) {
+				++$hidden;
+				continue;
+			}
 			if ( '' === $term || str_ends_with( $term, '*' ) ) {
 				continue;
 			}

@@ -441,6 +441,7 @@ Never commit the token to `application.yaml`. Pass it as the environment variabl
 | Property | Default | Description |
 |---|---|---|
 | `turing.search.metrics.enabled` | `true` | Record search metrics (query terms, result counts, timestamps) |
+| `turing.search.metrics.mask-personal-data` | `true` | Replace e-mail addresses, CPF/CNPJ numbers and runs of seven or more digits (dates excepted) with `***` before a search, a click or an answer's question is stored, so the search log keeps no personal data. Set `false` on a site whose visitors search by long codes (ISBN, EAN, SKU) you want to see in Search insights |
 | `turing.search.cache.enabled` | `false` | Enable server-side search result caching |
 | `turing.search.cache.ttl` | `24h` | Interval of the **backstop** sweep that clears the cache. Unit-bearing: `24h`, `PT1H`, `30m` (a bare number is milliseconds) |
 | `turing.search.cache.ttl.seconds` | *(none)* | **Deprecated**: despite its name the value was *milliseconds*, so `3600` meant a sweep every 3.6 seconds. Still honoured (as milliseconds) with a startup warning; use `turing.search.cache.ttl` |

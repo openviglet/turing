@@ -168,6 +168,12 @@
       "description": "Enable or disable collection of search performance metrics."
     },
     {
+      "name": "turing.search.metrics.mask-personal-data",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Mask e-mail addresses, CPF/CNPJ numbers and runs of seven or more digits in search terms before the search log stores them. Turn off to keep long codes (ISBN, EAN, SKU) visible in Search insights."
+    },
+    {
       "name": "turing.solr.cloud",
       "type": "java.lang.Boolean",
       "description": "Enable SolrCloud mode for distributed search across multiple nodes."
