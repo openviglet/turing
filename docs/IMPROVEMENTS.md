@@ -2507,32 +2507,29 @@ the docs ship.
 
 ## CLXXXVII Synonyms that mix single words and phrases
 
-### CLXXXVII.2 Synonym keys analysed as the query is, and a clause-limit net (T1304)
+### CLXXXVII.2 Synonym keys analysed as the query is (T1304)
 
-Found while shipping T1297, on the Lucene engine.
+Found while shipping T1297; the clause-limit half shipped as the first part of T1304.
 
-The rule key of a multi-word synonym keeps its stop words, but the query analyzer drops
-them before the synonym filter (`TurLuceneSynonymAnalyzer`: stop, then
-`SynonymGraphFilter`). `SynonymGraphFilter` matches consecutive tokens, so the key
-`fundação escola de sociologia e política` never fires once `de` and `e` are gone: a
-search for the full name never expands to the acronym, though the group is REGULAR.
-T1242's comment ("a rule spelled with a stop word fires with it skipped") does not hold.
-The phrase still finds the pages that spell it out, so what is lost is the pages that
-carry only the acronym.
+What is left, on the Lucene engine: a multi-word synonym key holding a stop word never
+fires from the phrase side. `TurLuceneSynonymAnalyzer` drops stop words before
+`SynonymGraphFilter`, which matches consecutive tokens, so the key `fundação escola de
+sociologia e política` never meets the tokens a search keeps, and a search for the full
+name never finds the pages that carry only the acronym.
 
-Fix: build the map's keys the way the query reaches them. `TurLuceneSynonymMapBuilder`
-does not know the locale; pass it (the registry builds one map per core, and a core has
-one language), and add each multi-word key also with the language's stop words removed.
-Outputs stay as written, since the index keeps stop words and the phrase must line up
-with them.
+Tried and reverted (2026-11-19): adding each key a second time without the language's
+stop words (`TurLuceneSynonymMapBuilder.build(rules, locale)`). The key then fires, but
+Lucene's query parser does not split on whitespace, so the words typed become one of the
+graph's side paths, and `analyzeGraphPhrase` builds that path as a phrase without the
+position gaps the stop words left: `"fundacao escola sociologia politica"`, which no
+longer matches the page titled "Fundação Escola de Sociologia e Política". The full name
+lost its own page to gain the acronym's.
 
-Second, a safety net the design asked for: an `IndexSearcher.TooManyClauses` from any
-query is not caught by `TurLuceneResultProcessor` or `TurSNSearchProcess`, so a client
-sees an error where a search for fewer words would have answered. Catch it at the Lucene
-search, log the query's size, and retry once with the site's synonyms off.
-
-Tests: `fundação escola de sociologia e política` finds a page holding only `FESPSP`; a
-query forced past the clause limit answers with the synonym-free results.
+What would work: build the typed-words path of a fired key as the plain words, not a
+phrase (an override of `analyzeGraphPhrase` in Turing's parser that keeps the original
+path's position increments), or keep the stop-word-free key one-way to the acronym and
+add the original words as a separate SHOULD clause. Either needs a test that both pages
+come back for the full name and for the acronym.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 

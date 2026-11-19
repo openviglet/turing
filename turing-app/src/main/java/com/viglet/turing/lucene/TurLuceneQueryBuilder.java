@@ -139,10 +139,19 @@ public class TurLuceneQueryBuilder {
      * query-time synonym map (when one is registered for that locale's core).
      */
     public Query buildQuery(TurSNSite turSNSite, TurSEParameters params, Locale locale) {
+        return buildQuery(turSNSite, params, locale, true);
+    }
+
+    /**
+     * T1304 — as {@link #buildQuery(TurSNSite, TurSEParameters, Locale)}, with the
+     * site's synonyms left out when {@code synonyms} is {@code false}: the retry for
+     * a query whose expansion went past the clause limit.
+     */
+    public Query buildQuery(TurSNSite turSNSite, TurSEParameters params, Locale locale, boolean synonyms) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
         // Main user query
-        Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale, params.isRelaxedMatch());
+        Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale, params.isRelaxedMatch(), synonyms);
         builder.add(mainQuery, BooleanClause.Occur.MUST);
         // T1177 — the title holding the query as typed, as a phrase, ranks first.
         titlePhraseBoost(params.getQuery(), turSNSite, locale)
@@ -546,7 +555,8 @@ public class TurLuceneQueryBuilder {
     // Internals
     // -------------------------------------------------------------------------
 
-    private Query buildMainQuery(String queryStr, TurSNSite turSNSite, Locale locale, boolean relaxedMatch) {
+    private Query buildMainQuery(String queryStr, TurSNSite turSNSite, Locale locale, boolean relaxedMatch,
+            boolean synonyms) {
         if (!StringUtils.hasText(queryStr) || queryStr.equals("*") || queryStr.equals("*:*")) {
             return new FieldExistsQuery(TurLuceneConstants.ID);
         }
@@ -555,8 +565,10 @@ public class TurLuceneQueryBuilder {
         // T1242 — a query made only of stop words keeps them, or it would search for
         // nothing; so does a quoted phrase, which asks for its words as typed (and a
         // dropped word would leave a hole the synonym graph cannot carry).
-        Analyzer analyzer = queryAnalyzer(turSNSite, locale, queryStr.indexOf('"') >= 0
-                || com.viglet.turing.sn.TurSNQueryRelaxer.onlyStopWords(queryStr, locale));
+        boolean keepStopWords = queryStr.indexOf('"') >= 0
+                || com.viglet.turing.sn.TurSNQueryRelaxer.onlyStopWords(queryStr, locale);
+        Analyzer analyzer = synonyms ? queryAnalyzer(turSNSite, locale, keepStopWords)
+                : TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords);
         try {
             if (textFields.length == 0) {
                 // Fallback: search the id field

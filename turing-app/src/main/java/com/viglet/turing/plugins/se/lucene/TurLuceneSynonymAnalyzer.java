@@ -105,7 +105,6 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
      */
     static final class VariantsExceptPhraseTail extends ConditionalTokenFilter {
 
-        private final TypeAttribute type = addAttribute(TypeAttribute.class);
         private final PositionIncrementAttribute increment = addAttribute(PositionIncrementAttribute.class);
         private final PositionLengthAttribute length = addAttribute(PositionLengthAttribute.class);
         private int position = -1;
@@ -123,8 +122,10 @@ public class TurLuceneSynonymAnalyzer extends Analyzer {
                 spanStart = position;
                 spanEnd = position + length.getPositionLength() - 1;
             }
-            boolean tail = SynonymGraphFilter.TYPE_SYNONYM.equals(type.type())
-                    && position > spanStart && position <= spanEnd;
+            // T1304 — the words typed inside a phrase key's span too: once the key
+            // fires ("fundação escola sociologia política" -> fespsp) they sit on a
+            // side path of the graph, and their variants multiply the same way.
+            boolean tail = position > spanStart && position <= spanEnd;
             return !tail;
         }
 

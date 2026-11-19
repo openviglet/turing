@@ -89,10 +89,24 @@ public class TurLucene {
                             : turLuceneQueryBuilder.getHLFields(turSNSite);
             var sort = turLuceneQueryBuilder.buildSort(turSNSite, params);
 
-            TurSEResults results = turLuceneResultProcessor.getResults(
-                    new TurLuceneSearch(instance, turSNSite, query, params),
-                    turLuceneQueryBuilder.getFacetFields(turSNSite, params),
-                    hlFields, sort, startTime);
+            TurSEResults results;
+            try {
+                results = turLuceneResultProcessor.getResults(
+                        new TurLuceneSearch(instance, turSNSite, query, params),
+                        turLuceneQueryBuilder.getFacetFields(turSNSite, params),
+                        hlFields, sort, startTime);
+            } catch (org.apache.lucene.search.IndexSearcher.TooManyClauses e) {
+                // T1304 — a synonym expansion past the clause limit answers as the words
+                // typed would, rather than failing the search.
+                log.warn("[Lucene] query '{}' on site '{}' went past the clause limit ({}); "
+                        + "searching again without the site's synonyms", params.getQuery(),
+                        turSNSite.getName(), e.getMessage());
+                query = turLuceneQueryBuilder.buildQuery(turSNSite, params, context.getLocale(), false);
+                results = turLuceneResultProcessor.getResults(
+                        new TurLuceneSearch(instance, turSNSite, query, params),
+                        turLuceneQueryBuilder.getFacetFields(turSNSite, params),
+                        hlFields, sort, startTime);
+            }
 
             // Wildcard fallback when the query matched nothing and the site allows it. Decided by
             // the total hits, not by the page being empty: a page past the end of the pagination

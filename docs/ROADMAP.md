@@ -25,7 +25,7 @@
 
 ## Block CX — Synonyms that mix single words and phrases
 
-- 📋 **T1304** (deps: —) **On Lucene, a multi-word synonym with a stop word never fires from the phrase, and TooManyClauses still reaches clients** — A search for a full name never finds the pages that carry only its acronym, and an oversized query errors instead of answering. → §CLXXXVII.2
+- ⏳ **T1304** (deps: —) **On Lucene, a multi-word synonym with a stop word never fires from the phrase, and TooManyClauses still reaches clients** — A multi-word key holding a stop word still never fires from the phrase side; dropping the stop words from the key broke the full name's own match. → §CLXXXVII.2
 
 ## Block CY — Filters from a sentence say what visitors say
 

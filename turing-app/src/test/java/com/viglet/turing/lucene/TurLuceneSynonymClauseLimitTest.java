@@ -89,7 +89,7 @@ class TurLuceneSynonymClauseLimitTest {
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setLanguage(PT_BR);
         locale.setCore("fespsp_pt");
-        when(localeRepository.findByTurSNSite(any())).thenReturn(List.of(locale));
+        org.mockito.Mockito.lenient().when(localeRepository.findByTurSNSite(any())).thenReturn(List.of(locale));
     }
 
     private static String field(int i) {
@@ -109,6 +109,31 @@ class TurLuceneSynonymClauseLimitTest {
     @Test
     void theFullNameFindsItsPages() throws Exception {
         assertThat(search("fundação escola de sociologia e política")).contains("fullname");
+    }
+
+    /**
+     * T1304 — a long key without stop words fires and keeps within the clause limit:
+     * the words typed inside its span get no variants either, past the first.
+     */
+    @Test
+    void aLongKeyThatFiresStaysWithinTheClauseLimit() throws Exception {
+        TurLuceneSynonymRegistry registry = new TurLuceneSynonymRegistry();
+        registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
+                new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
+                        List.of("fespsp", "fundação escola sociologia política paulista")))).map());
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+
+        assertThat(search("fundação escola sociologia política paulista")).contains("acronym");
+    }
+
+    /** T1304 — the synonym-free query a clause-limit retry runs leaves the group out. */
+    @Test
+    void aQueryBuiltWithoutSynonymsDoesNotExpand() throws Exception {
+        TurSNSearchParams params = new TurSNSearchParams();
+        params.setQ("fespsp");
+        Query plain = queryBuilder.buildQuery(site, new TurSEParameters(params, new TurSNSitePostParamsBean()),
+                PT_BR, false);
+        assertThat(plain.toString()).doesNotContain("sociologia");
     }
 
     @Test
