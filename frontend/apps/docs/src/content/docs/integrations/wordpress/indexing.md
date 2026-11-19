@@ -29,7 +29,10 @@ custom fields can be added on the Settings page.
   timestamp, or any date `strtotime` reads. A date and time with no offset
   (`2026-11-20T19:00`) is the site's own clock, read in the time zone under **Settings →
   General**, so a 19h event stays at 19h; a date with an offset keeps it. A site that
-  indexed such dates with an earlier plugin gets the right hour on its next reindex.
+  indexed such dates with an earlier plugin gets the right hour on its next reindex. A date
+  with no time is stored at midnight UTC and shown as that day everywhere; a time that lands
+  exactly on midnight UTC (21h on a UTC-3 site) is stored one second later, so cards still
+  read it as a time on the right day.
 - **Multiple**, **Facet** with its label, and a **Weight** (1 to 100) for ranking.
 - **Ranges**, on a `DATE` or number field: a range facet as well, provisioned as a Viglet Turing
   custom facet named `<field>_range`. A date picks its **Periods**: **Past**, for

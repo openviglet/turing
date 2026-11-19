@@ -511,10 +511,11 @@ final class MappingTest extends PluginTestCase {
 		$shapes = array(
 			'2026-11-20T19:00'          => '2026-11-20T22:00:00Z',
 			'2026-11-20 19:00:30'       => '2026-11-20T22:00:30Z',
-			'2026-11-20T21:00'          => '2026-11-21T00:00:00Z',
+			// T1303: a time on exactly midnight UTC is stored a second later, so it is not a day.
+			'2026-11-20T21:00'          => '2026-11-21T00:00:01Z',
 			'2026-11-20'                => '2026-11-20T00:00:00Z',
 			'20261120'                  => '2026-11-20T00:00:00Z',
-			'2026-11-20T19:00:00-05:00' => '2026-11-21T00:00:00Z',
+			'2026-11-20T19:00:00-05:00' => '2026-11-21T00:00:01Z',
 			'2026-11-20T19:00:00Z'      => '2026-11-20T19:00:00Z',
 			'1795464000'                => gmdate( 'Y-m-d\TH:i:s\Z', 1795464000 ),
 		);
@@ -547,7 +548,7 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( strtotime( '2026-11-20T21:00:00Z' ), $this->mapping()->expiry( $this->post ) );
 
 		$this->meta['prazo'] = '2026-11-20T21:00';
-		$this->assertSame( strtotime( '2026-11-21T00:00:00Z' ), $this->mapping()->expiry( $this->post ) );
+		$this->assertSame( strtotime( '2026-11-21T00:00:01Z' ), $this->mapping()->expiry( $this->post ) );
 
 		$this->meta['prazo'] = '2026-11-20';
 		$this->assertSame( strtotime( '2026-11-21T03:00:00Z' ), $this->mapping()->expiry( $this->post ), 'the last day lasts to its local end' );

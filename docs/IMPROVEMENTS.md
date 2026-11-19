@@ -2469,31 +2469,6 @@ per-site opt-in that would have emptied the citations was dropped: a client that
 none drops them when `cited` is false). Done when the demo question returns a marker in
 the answer, and a marker-less answer on an opted-in site sends no citations.
 
-### CLXXXII.20 Midnight UTC is a day only when the stored date was one (T1303)
-
-Found while shipping T1295. Since T1295 a wall-clock date-time is indexed in the site's
-time zone, so a 21h event on a UTC-3 site is stored as `2026-11-21T00:00:00Z`. The
-plugin reads exactly-midnight-UTC as "a day with no time of day" in four places:
-`card_day()` and `card_values()` (class-viglet-turing-native-search.php), and
-`formatCardDate` (src/public/search.js). `expiry()` no longer does; T1295 made it read
-the stored shape instead.
-
-What a visitor sees: the 21h event's card shows the date alone, without "21:00", and on
-the day after (the 21st, the UTC date), since a date-only value is shown as that UTC day
-in every time zone.
-
-Fix: tell "a date" from "a time that lands on midnight UTC" at indexing, not by the
-value. Either index date-only values with a marker the cards can read (a sibling
-`<field>_allday` flag, or keeping date-only values as `Y-m-d` strings if Viglet Turing's
-DATE field accepts them), or have the card read the site time zone and treat midnight
-UTC as a time unless it is also local midnight. The second needs no reindex and no
-schema change: a date-only value is midnight UTC and, on a UTC-3 site, 21h local, so
-"midnight UTC and not local midnight" is still ambiguous there. Check which the cards
-can carry before choosing.
-
-Tests: a 21h event in America/Sao_Paulo shows "20/11 21:00" on the native card and in
-the instant search; a date-only opening still shows the day alone.
-
 ### CLXXXII.21 Per-site masking of personal data in search terms (T1329)
 
 Found while shipping T1298. Personal data in search terms is masked before it is stored

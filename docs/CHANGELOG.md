@@ -1732,6 +1732,7 @@
 - **T1295** — The WordPress plugin reads a mapped date-time with no offset in the site's time zone, and an expires with a time leaves search at that local time; date-only values, offsets and timestamps keep their reading.
 - **T1298** — Turing masks e-mails, CPF/CNPJ and long digit runs in search, click and answer terms before storing them (turing.search.metrics.mask-personal-data, on); the plugin's Insights hides and counts such searches (design §CLXXXII.18 superseded: the per-site switch became one deployment property for now, with the per-site setting filed as T1329).
 - **T1301** — SN chat and /answer number each passage by its source and always ask for [n] markers, after a custom prompt too; the plugin's assistant lists only the sources the answer cites, as the search block does (design §CLXXXII.19 superseded: the -Pllm-it check against a real OpenAI model was not run; the numbering and the instruction are covered by unit tests, and the e2e fixture now cites by [1]).
+- **T1303** — The plugin stores a time that lands exactly on midnight UTC one second later, so cards, the instant search and expiry read it as a time on its local day, never as an all-day date (design §CLXXXII.20 superseded: neither option it weighed was needed: no all-day marker and no card-side zone guess, one second at indexing keeps midnight UTC meaning a day).
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

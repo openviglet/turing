@@ -976,8 +976,17 @@ class Viglet_Turing_Mapping {
 	 */
 	private static function convert_date( string $value ): ?string {
 		$timestamp = self::timestamp( $value );
+		if ( false === $timestamp ) {
+			return null;
+		}
+		// Turing T1303: midnight UTC means "a day with no time of day" to the cards, the
+		// instant search and expiry(). A time that lands exactly there (21h on a UTC-3 site) is
+		// stored a second later, so it still reads as a time; the cards show minutes.
+		if ( 0 === $timestamp % 86400 && ! self::is_date_only( $value ) ) {
+			++$timestamp;
+		}
 
-		return false === $timestamp ? null : gmdate( 'Y-m-d\TH:i:s\Z', $timestamp );
+		return gmdate( 'Y-m-d\TH:i:s\Z', $timestamp );
 	}
 
 	/**
