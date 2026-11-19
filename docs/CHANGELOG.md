@@ -1747,5 +1747,7 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
+- **T1299** — Filters from a sentence resolve a month after a preposition, tomorrow, this weekend, next week, next month and the next N days, in English, Portuguese and Spanish; a bare month name stays a name.
+
 ## Block CZ — Backend modules with verified boundaries
 

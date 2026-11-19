@@ -62,6 +62,25 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
     private static final Pattern SINCE_MONTH = word("(?:since|desde)\\s+(?:de\\s+)?(" + MONTH_NAMES + ")");
     private static final Pattern SINCE_YEAR = word("(?:since|desde)\\s+((?:19|20)\\d{2})");
 
+    // T1299 — what is still to come, as an events calendar is asked: English,
+    // Portuguese and Spanish.
+    private static final Pattern NEXT_N = word("(?:next|proximos|proximas|(?:los|las)\\s+proximos|(?:los|las)"
+            + "\\s+proximas)\\s+(\\d{1,3})\\s+(days?|weeks?|months?|dias|semanas|meses)");
+    private static final Pattern TOMORROW = word("tomorrow|amanha|manana");
+    private static final Pattern THIS_WEEKEND = word("this weekend|(?:neste|este|esse|nesse|no|o)\\s+fim de semana"
+            + "|(?:este|el)\\s+fin de semana");
+    private static final Pattern NEXT_WEEK = word("next week|(?:na\\s+)?semana que vem|(?:na\\s+)?proxima semana"
+            + "|(?:la\\s+)?semana que viene|(?:la\\s+)?proxima semana");
+    private static final Pattern NEXT_MONTH = word("next month|(?:no\\s+)?mes que vem|(?:no\\s+)?proximo mes"
+            + "|(?:el\\s+)?mes que viene|(?:el\\s+)?proximo mes");
+    /**
+     * A month named after a preposition ("em novembro", "in November", "en marzo"),
+     * with an optional year. Without the preposition a month's name is as often a
+     * name ("Maio", "Augusto"), so a bare one is not a date.
+     */
+    private static final Pattern IN_MONTH = word("(?:in|em|no|de|en|durante|para)\\s+(" + MONTH_NAMES
+            + ")(?:\\s+(?:de\\s+|of\\s+)?((?:19|20)\\d{2}))?");
+
     /** The first relative range {@code text} spells, resolved against {@code today}. */
     public static Optional<TurRelativeDateRange> resolve(String text, LocalDate today) {
         if (text == null || text.isBlank() || today == null) {
@@ -76,6 +95,18 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
                     : unit.startsWith("week") || unit.startsWith("semana") ? today.minusWeeks(n)
                     : today.minusMonths(n);
             return Optional.of(of(folded, m, start, today));
+        }
+        if ((m = NEXT_N.matcher(folded.text())).find()) {
+            int n = Integer.parseInt(m.group(1));
+            String unit = m.group(2);
+            LocalDate end = unit.startsWith("day") || unit.startsWith("dia") ? today.plusDays(n)
+                    : unit.startsWith("week") || unit.startsWith("semana") ? today.plusWeeks(n)
+                    : today.plusMonths(n);
+            return Optional.of(of(folded, m, today, end));
+        }
+        Optional<TurRelativeDateRange> future = future(folded, today);
+        if (future.isPresent()) {
+            return future;
         }
         if ((m = SINCE_MONTH.matcher(folded.text())).find()) {
             int month = MONTHS.get(m.group(1));
@@ -103,6 +134,40 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
         if ((m = LAST_WEEK.matcher(folded.text())).find()) {
             return Optional.of(of(folded, m, today.minusWeeks(1), today));
         }
+        if ((m = IN_MONTH.matcher(folded.text())).find()) {
+            int month = MONTHS.get(m.group(1));
+            int year = m.group(2) != null ? Integer.parseInt(m.group(2))
+                    : month >= today.getMonthValue() ? today.getYear() : today.getYear() + 1;
+            LocalDate first = LocalDate.of(year, month, 1);
+            return Optional.of(of(folded, m, first, first.with(TemporalAdjusters.lastDayOfMonth())));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * T1299 — tomorrow, this weekend, next week and next month. A weekend asked on a
+     * Saturday or Sunday is the one under way; next week is Monday to Sunday.
+     */
+    private static Optional<TurRelativeDateRange> future(Folded folded, LocalDate today) {
+        Matcher m;
+        if ((m = NEXT_MONTH.matcher(folded.text())).find()) {
+            LocalDate next = today.plusMonths(1);
+            return Optional.of(of(folded, m, next.withDayOfMonth(1), next.with(TemporalAdjusters.lastDayOfMonth())));
+        }
+        if ((m = NEXT_WEEK.matcher(folded.text())).find()) {
+            LocalDate monday = today.with(TemporalAdjusters.next(java.time.DayOfWeek.MONDAY));
+            return Optional.of(of(folded, m, monday, monday.plusDays(6)));
+        }
+        if ((m = THIS_WEEKEND.matcher(folded.text())).find()) {
+            LocalDate saturday = today.getDayOfWeek() == java.time.DayOfWeek.SUNDAY ? today
+                    : today.with(TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SATURDAY));
+            LocalDate sunday = today.with(TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SUNDAY));
+            return Optional.of(of(folded, m, saturday, sunday));
+        }
+        if ((m = TOMORROW.matcher(folded.text())).find()) {
+            LocalDate tomorrow = today.plusDays(1);
+            return Optional.of(of(folded, m, tomorrow, tomorrow));
+        }
         return Optional.empty();
     }
 
@@ -120,10 +185,15 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
                 "september", "october", "november", "december" };
         String[] pt = { "janeiro", "fevereiro", "marco", "abril", "maio", "junho", "julho", "agosto",
                 "setembro", "outubro", "novembro", "dezembro" };
+        // T1299 — Spanish, which the range spans already read.
+        String[] es = { "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
+                "septiembre", "octubre", "noviembre", "diciembre" };
         for (int i = 0; i < 12; i++) {
             months.put(en[i], i + 1);
             months.put(pt[i], i + 1);
+            months.put(es[i], i + 1);
         }
+        months.put("setiembre", 9);
         return months;
     }
 

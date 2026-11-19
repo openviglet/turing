@@ -2615,37 +2615,6 @@ query forced past the clause limit answers with the synonym-free results.
 
 ## CLXXXVIII Filters from a sentence say what visitors say
 
-### CLXXXVIII.1 Month names and future phrases in sentence filters (T1299)
-
-Met in fespsp-institucional (FI170) on `turing:2026.3.8`, site `fespsp`, pt_BR, an event
-type whose `evento_inicio` is a DATE with an Agenda range facet. `POST
-/api/sn/fespsp/nl-filters` with "palestras em novembro" returns `q: palestras`, no
-filter, and drops `evento_inicio:[2026-11-01 TO 2026-11-30]` as `UNGROUNDED_DATE`.
-
-Validated against the code (2026-11-19). `TurSNNLFilterService.dateRangeFilter` keeps a
-range only if `TurRelativeDateRange.resolve` reads the text or `TurSNNLRangeSpan.dated`
-finds the bound or its year in it. `TurRelativeDateRange` knows, in en and pt only: last
-N days/weeks/months, since a month or year, last/this year, last/this month, last week.
-No future phrase, and a month name only after "since/desde". The copilot planners and SN
-chat call the same service, so the fix reaches them too.
-
-Fix, in `TurRelativeDateRange`:
-- a month name after a preposition ("em/no/de novembro", "in November"): this year's
-  month if it has not ended, else next year's; a bare "Maio" with no preposition is a
-  name, not a date;
-- future phrases: tomorrow, this weekend, next week, next month, the next N
-  days/weeks/months;
-- English, Portuguese and Spanish (`TurSNNLRangeSpan` already lists es words), reusing
-  the month tables.
-
-"Today" is the JVM zone (`Clock.systemDefaultZone()`); `TurSNSite` has no time zone, so
-this task keeps the JVM zone and the clock injectable. A per-site zone, and a direction
-read from Agenda/Past custom facets (the NL schema does not carry custom facets), are
-follow-ups, not part of this line.
-
-Tests per phrase with a fixed clock on 2026-11-19, plus "dezembro", "outubro" (next
-year), "novembro de 2025" and "Maio" as a name.
-
 ### CLXXXVIII.2 Grounding a short name to the facet value that holds it (T1300)
 
 Met in fespsp-institucional (FI170) on `turing:2026.3.8`, site `fespsp`, pt_BR. Facet
@@ -2671,6 +2640,30 @@ is cheap; a value past bucket 1000 stays unreachable, as for exact matches today
 
 Tests: the two cases above; "Sociologia" matching two values (dropped, several); "e
 Política" not matching on the stopword; "Casa" not matching "Casarão" (whole tokens).
+
+### CLXXXVIII.3 A site's time zone for relative dates (T1330)
+
+Found while shipping T1299. Filters from a sentence resolve "today", "tomorrow", "this
+weekend" and a month against `LocalDate.now(clock)` in `TurSNNLFilterService`, and the
+clock is `Clock.systemDefaultZone()`: the JVM's zone, UTC in the Docker image. On a
+UTC-3 site, "amanhã" asked at 22h local on the 19th is already the 20th in UTC, so it
+resolves to the 21st; "hoje" and "este fim de semana" shift the same way near midnight.
+
+`TurSNSite` has no time zone. The WordPress plugin knows the site's (`wp_timezone()`,
+T1295 reads meta dates in it) but cannot pass it.
+
+Fix: a nullable `timeZone` on the SN site (an IANA id; null keeps the JVM zone), a
+Liquibase changeset with a `columnExists` precondition, the console field next to the
+site's locales, the manifest key so a connector declares it, and `dateRangeFilter`
+resolving against `LocalDate.now(clock.withZone(site zone))`. The WordPress plugin sends
+`wp_timezone_string()` in its manifest.
+
+The Agenda/Past direction for a bare month (a Past facet reading "em outubro" as last
+October) needs the NL schema to carry custom facets; that is a separate step, noted here
+so it is not mistaken for part of this one.
+
+Tests: "amanhã" at 23:30 on 2026-11-19 in America/Sao_Paulo resolves to the 20th; a site
+with no zone keeps today's behaviour.
 
 ## CLXXXIX Backend modules with verified boundaries
 

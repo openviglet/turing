@@ -71,6 +71,52 @@ class TurRelativeDateRangeTest {
         });
     }
 
+    /** T1299 — a Thursday, the day an events calendar asked for November. */
+    private static final LocalDate NOV_19 = LocalDate.of(2026, 11, 19);
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', value = {
+            "palestras em novembro        | em novembro         | 2026-11-01 | 2026-11-30",
+            "eventos de dezembro          | de dezembro         | 2026-12-01 | 2026-12-31",
+            "cursos em outubro            | em outubro          | 2027-10-01 | 2027-10-31",
+            "talks in March               | in March            | 2027-03-01 | 2027-03-31",
+            "charlas en marzo             | en marzo            | 2027-03-01 | 2027-03-31",
+            "eventos de novembro de 2025  | de novembro de 2025 | 2025-11-01 | 2025-11-30",
+            "o que tem amanhã             | amanhã              | 2026-11-20 | 2026-11-20",
+            "events tomorrow              | tomorrow            | 2026-11-20 | 2026-11-20",
+            "shows este fim de semana     | este fim de semana  | 2026-11-21 | 2026-11-22",
+            "eventos na semana que vem    | na semana que vem   | 2026-11-23 | 2026-11-29",
+            "palestras na próxima semana  | na próxima semana   | 2026-11-23 | 2026-11-29",
+            "next week                    | next week           | 2026-11-23 | 2026-11-29",
+            "cursos no mês que vem        | no mês que vem      | 2026-12-01 | 2026-12-31",
+            "el mes que viene             | el mes que viene    | 2026-12-01 | 2026-12-31",
+            "nos próximos 15 dias         | próximos 15 dias    | 2026-11-19 | 2026-12-04",
+            "the next 2 weeks             | next 2 weeks        | 2026-11-19 | 2026-12-03",
+            "palestra do professor Maio   | NONE                | -          | -",
+            "o livro Agosto               | NONE                | -          | -",
+    })
+    void resolvesMonthsAndWhatIsToCome(String text, String phrase, String start, String end) {
+        var resolved = TurRelativeDateRange.resolve(text, NOV_19);
+        if ("NONE".equals(phrase)) {
+            assertThat(resolved).isEmpty();
+            return;
+        }
+        assertThat(resolved).hasValueSatisfying(range -> {
+            assertThat(range.phrase()).isEqualTo(phrase);
+            assertThat(range.start()).isEqualTo(LocalDate.parse(start));
+            assertThat(range.end()).isEqualTo(LocalDate.parse(end));
+        });
+    }
+
+    @Test
+    void aWeekendAskedOnASundayIsThatSunday() {
+        assertThat(TurRelativeDateRange.resolve("this weekend", LocalDate.of(2026, 11, 22)))
+                .hasValueSatisfying(range -> {
+                    assertThat(range.start()).isEqualTo(LocalDate.of(2026, 11, 22));
+                    assertThat(range.end()).isEqualTo(LocalDate.of(2026, 11, 22));
+                });
+    }
+
     @Test
     void textWithoutARelativeDateResolvesToNothing() {
         assertThat(TurRelativeDateRange.resolve("posts about php", TODAY)).isEmpty();
