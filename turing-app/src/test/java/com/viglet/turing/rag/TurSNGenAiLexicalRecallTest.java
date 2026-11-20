@@ -33,7 +33,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.sn.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 
 /**

@@ -133,11 +133,11 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * The link-bearing GET search. Since T856 / Â§LXV.1 it also honours the
+         * The link-bearing GET search. Since T856 / §LXV.1 it also honours the
          * {@code responseFormat} flag: {@code LINKS} (the default, and what every
          * existing caller sends by omission) keeps the response byte-identical,
          * while {@code responseFormat=STRUCTURED} returns the link-free shape over
-         * this transport too â€” which is what Â§XLV.5 promised when it chose a
+         * this transport too — which is what §XLV.5 promised when it chose a
          * request field over {@code Accept} negotiation. T857 adds
          * {@code includeSortOptions} on the same terms.
          */
@@ -202,14 +202,14 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T707 / Â§XLV â€” the public, <strong>anonymous-capable</strong>,
+         * T707 / §XLV — the public, <strong>anonymous-capable</strong>,
          * read-only POST search contract.
          *
          * <p>
          * The whole request travels as a JSON {@link TurSNSearchRequest} body, so
          * a filter value containing {@code & = + # %} or a space cannot be
-         * mis-read as query structure â€” the bug class described in IMPROVEMENTS
-         * Â§XLV.1 becomes impossible by construction rather than merely encoded
+         * mis-read as query structure — the bug class described in IMPROVEMENTS
+         * §XLV.1 becomes impossible by construction rather than merely encoded
          * correctly.
          * </p>
          *
@@ -217,7 +217,7 @@ public class TurSNSiteSearchAPI {
          * This is a distinct entry point from {@link #turSNSiteSearchSelectPost},
          * which keeps its impersonation/metrics payload
          * ({@code TurSNSitePostParamsBean}) and its authentication requirement.
-         * The GET mapping and its link-bearing response are untouched â€” this
+         * The GET mapping and its link-bearing response are untouched — this
          * block is purely additive.
          * </p>
          *
@@ -250,7 +250,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T712 / Â§XLV â€” the select-list counterpart of
+         * T712 / §XLV — the select-list counterpart of
          * {@link #turSNSiteSearchQueryPost}. Same anonymous JSON
          * {@link TurSNSearchRequest} body, same immunity to the query-string
          * round-trip; the projection it returns carries no links, so
@@ -283,19 +283,19 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T708 / Â§XLV â€” applies the response-format flag. {@code LINKS} (the
+         * T708 / §XLV — applies the response-format flag. {@code LINKS} (the
          * default) returns the legacy bean untouched, so a consumer that merely
          * switches to POST sees the response it already parses; {@code STRUCTURED}
          * projects it onto the link-free shape.
          *
          * <p>
-         * T856 / Â§LXV.1 made it transport-agnostic: the GET mapping routes through
+         * T856 / §LXV.1 made it transport-agnostic: the GET mapping routes through
          * this same method, and the request echo is supplied lazily so the
          * overwhelmingly common {@code LINKS} path builds nothing.
          * </p>
          *
          * <p>
-         * T857 / Â§LXV.2 â€” {@code includeSortOptions} inlines the site's sort
+         * T857 / §LXV.2 — {@code includeSortOptions} inlines the site's sort
          * options here, keeping the mapper a pure function of the response it
          * projects (the option list is site configuration, not search output).
          * </p>
@@ -325,7 +325,7 @@ public class TurSNSiteSearchAPI {
          * intact. Spring's {@code @RequestParam List<String>} returns the value
          * as a single {@code String} when there is only one match, which then
          * flows through {@code StringToCollectionConverter} and gets split on
-         * commas â€” corrupting values that legitimately contain {@code ,}.
+         * commas — corrupting values that legitimately contain {@code ,}.
          */
         private static List<String> readFilterQueries(HttpServletRequest request, String name) {
                 String[] values = request.getParameterValues(name);
@@ -359,7 +359,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T857 / Â§LXV.2 â€” the one place the site's sort options are assembled, so
+         * T857 / §LXV.2 — the one place the site's sort options are assembled, so
          * the dedicated endpoint and the inlined list in the structured response
          * can never disagree. Empty when the site is unknown.
          *
@@ -381,7 +381,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T384 / Â§XX.4 â€” public "documents similar to this id" endpoint. Returns
+         * T384 / §XX.4 — public "documents similar to this id" endpoint. Returns
          * the documents most like {@code id} on the site, so a catalog can render
          * "similar courses" live from the index. Similarity is content-based only.
          *
@@ -403,14 +403,14 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
                                         defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
                         HttpServletRequest request) {
-                // T1132 â€” the neighbours are narrowed with the search's filter semantics;
-                // T1235 â€” fqi.op joins the values of one field, as on search.
+                // T1132 — the neighbours are narrowed with the search's filter semantics;
+                // T1235 — fqi.op joins the values of one field, as on search.
                 return ResponseEntity.ok(similarDocumentsService.findSimilar(siteName, id, rows, locale, mode,
                                 queryStringFilters(request, fqOperator, fqItemOperator)));
         }
 
         /**
-         * T1239 â€” {@link #turSNSiteSimilarDocuments} with the request as a JSON
+         * T1239 — {@link #turSNSiteSimilarDocuments} with the request as a JSON
          * {@link TurSNSimilarRequest} body, so a scope of several sites and filters
          * is sent the way a search is, not as a hand-escaped query string.
          *
@@ -427,7 +427,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T1239 â€” {@link #turSNSiteDuplicateCluster} with the request as a JSON
+         * T1239 — {@link #turSNSiteDuplicateCluster} with the request as a JSON
          * {@link TurSNSimilarRequest} body.
          *
          * @since 2026.3.8
@@ -466,7 +466,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T1077 â€” the stored documents with these ids, whole: every stored field,
+         * T1077 — the stored documents with these ids, whole: every stored field,
          * unhighlighted and not shortened, in the order asked. What a detail page
          * reads one document with instead of running a search; several {@code id}
          * parameters fetch several candidates in one call. Answers 404 when none of
@@ -489,7 +489,7 @@ public class TurSNSiteSearchAPI {
         }
 
         /**
-         * T390 / Â§XX.10 â€” public "duplicate cluster" endpoint. Returns the
+         * T390 / §XX.10 — public "duplicate cluster" endpoint. Returns the
          * documents near-identical to {@code id} on the site (the same real-world
          * entity arriving from many sources), collapsed into one cluster with each
          * member's provenance kept. Clustering is content-based only and runs over
@@ -515,9 +515,9 @@ public class TurSNSiteSearchAPI {
                         @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
                                         defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
                         HttpServletRequest request) {
-                // T1132 â€” the cluster is narrowed with the search's filter semantics
+                // T1132 — the cluster is narrowed with the search's filter semantics
                 // (T1235: fqi.op included), and
-                // T1133 â€” a partitioned key clusters only its partition's documents.
+                // T1133 — a partitioned key clusters only its partition's documents.
                 return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
                                 locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
                                                 .orElse(null),

@@ -1,4 +1,8 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.solr;
+
+import com.viglet.turing.searchengine.dsl.TurDslQueryFixtures;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +24,7 @@ class TurDslSolrExecutorQueryTranslationTest {
     private final TurDslSolrExecutor executor = new TurDslSolrExecutor(null);
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("com.viglet.turing.sn.dsl.TurDslQueryFixtures#named")
+    @MethodSource("com.viglet.turing.searchengine.dsl.TurDslQueryFixtures#named")
     void translatesEveryQueryTypeToSolrQuery(TurDslQuery query) {
         SolrQuery solrQuery = executor.translateQuery(query);
         assertThat(solrQuery).as("translation of %s", query.getClass().getSimpleName()).isNotNull();

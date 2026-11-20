@@ -1009,10 +1009,10 @@ public class TurSNGenAi {
         return dslSearchService.search(siteName, locale.toString(),
                 com.viglet.turing.rag.catalog.planning.TurCopilotQueryBodies.freeText(query,
                         LEXICAL_RECALL_HITS))
-                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse::hits)
-                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse.Hits::hits)
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse::hits)
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits::hits)
                 .orElse(List.of()).stream()
-                .map(com.viglet.turing.sn.dsl.TurDslSearchResponse.Hit::id)
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hit::id)
                 .filter(StringUtils::hasText)
                 .distinct()
                 .toList();

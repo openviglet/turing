@@ -26,7 +26,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

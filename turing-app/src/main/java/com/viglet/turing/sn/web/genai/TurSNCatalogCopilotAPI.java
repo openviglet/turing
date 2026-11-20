@@ -24,7 +24,7 @@ import com.viglet.turing.rag.catalog.TurCatalogCopilotResult;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService.ChatTurn;
 import com.viglet.turing.rag.catalog.TurCatalogKitService;
-import com.viglet.turing.sn.dsl.TurDslCallerFilters;
+import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

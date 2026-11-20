@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.sn.dsl.TurDslQuery;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;

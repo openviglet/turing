@@ -31,7 +31,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * T1239 â€” the JSON body of {@code POST /api/sn/{site}/search/similar/query} and
+ * T1239 — the JSON body of {@code POST /api/sn/{site}/search/similar/query} and
  * {@code POST /api/sn/{site}/search/duplicates/query}. The filter fields carry the
  * names and aliases of {@link com.viglet.turing.commons.sn.bean.TurSNSearchRequest},
  * so a client builds the scope of a similar call the way it builds a search, without

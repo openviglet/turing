@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.eval.grader.builtin.TurNLFacetGrader;
 import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport.CaseResult;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalScorer;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;

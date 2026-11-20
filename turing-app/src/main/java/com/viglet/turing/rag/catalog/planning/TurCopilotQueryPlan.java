@@ -10,7 +10,7 @@
 package com.viglet.turing.rag.catalog.planning;
 
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 
 /**
  * T818 / §LIX.1 (Block BK) — the outcome of one

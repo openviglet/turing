@@ -24,8 +24,8 @@ package com.viglet.turing.rag.catalog.planning;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlanner.PlanRequest;
-import com.viglet.turing.sn.dsl.TurDslQuery;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.sn.nl.TurSNNLFilters;
 

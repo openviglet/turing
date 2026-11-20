@@ -52,8 +52,8 @@ import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
-import com.viglet.turing.sn.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 
@@ -560,19 +560,19 @@ class TurSNNLFilterServiceTest {
                 new TurSNNLFilters.Filter("title", List.of("analista"), null, null, List.of(), 1, false),
                 new TurSNNLFilters.Filter("salary", List.of(), "3000", null, List.of(), 1, false)),
                 List.of(), List.of());
-        var exclusion = new com.viglet.turing.sn.dsl.TurDslQuery.Term("contract", "PJ");
-        var parsed = new com.viglet.turing.sn.dsl.TurDslQuery.Bool(List.of(), List.of(), List.of(exclusion),
+        var exclusion = new com.viglet.turing.searchengine.dsl.TurDslQuery.Term("contract", "PJ");
+        var parsed = new com.viglet.turing.searchengine.dsl.TurDslQuery.Bool(List.of(), List.of(), List.of(exclusion),
                 List.of(), null);
 
-        var query = (com.viglet.turing.sn.dsl.TurDslQuery.Bool) TurSNNLFilterService.toQuery(filters, schema,
+        var query = (com.viglet.turing.searchengine.dsl.TurDslQuery.Bool) TurSNNLFilterService.toQuery(filters, schema,
                 parsed);
 
         assertThat(query.filter()).containsExactly(
-                new com.viglet.turing.sn.dsl.TurDslQuery.Terms("city", List.of("São Paulo", "Campinas")),
-                new com.viglet.turing.sn.dsl.TurDslQuery.Range("salary", 3000L, null, null, null));
+                new com.viglet.turing.searchengine.dsl.TurDslQuery.Terms("city", List.of("São Paulo", "Campinas")),
+                new com.viglet.turing.searchengine.dsl.TurDslQuery.Range("salary", 3000L, null, null, null));
         assertThat(query.must()).containsExactly(
-                new com.viglet.turing.sn.dsl.TurDslQuery.Match("title", "analista", null),
-                new com.viglet.turing.sn.dsl.TurDslQuery.Match(TurSNNLFilterService.TEXT_FIELD, "estagio", null));
+                new com.viglet.turing.searchengine.dsl.TurDslQuery.Match("title", "analista", null),
+                new com.viglet.turing.searchengine.dsl.TurDslQuery.Match(TurSNNLFilterService.TEXT_FIELD, "estagio", null));
         assertThat(query.mustNot()).containsExactly(exclusion);
     }
 

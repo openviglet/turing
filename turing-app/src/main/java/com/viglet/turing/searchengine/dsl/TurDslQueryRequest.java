@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

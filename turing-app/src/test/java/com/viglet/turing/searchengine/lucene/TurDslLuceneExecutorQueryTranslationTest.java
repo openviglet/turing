@@ -1,4 +1,8 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.lucene;
+
+import com.viglet.turing.searchengine.dsl.TurDslQueryFixtures;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +24,7 @@ class TurDslLuceneExecutorQueryTranslationTest {
     private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null, null);
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("com.viglet.turing.sn.dsl.TurDslQueryFixtures#named")
+    @MethodSource("com.viglet.turing.searchengine.dsl.TurDslQueryFixtures#named")
     void translatesEveryQueryTypeToNonNullLuceneQuery(TurDslQuery query) {
         Query translated = executor.translateQuery(query);
         assertThat(translated).as("translation of %s", query.getClass().getSimpleName()).isNotNull();

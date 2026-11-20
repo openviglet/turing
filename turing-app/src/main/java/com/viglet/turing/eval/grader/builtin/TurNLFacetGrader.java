@@ -19,7 +19,7 @@ import com.viglet.turing.eval.grader.TurEvalGraderConfigView;
 import com.viglet.turing.eval.grader.TurEvalGraderKind;
 import com.viglet.turing.eval.grader.TurEvalGraderResult;
 import com.viglet.turing.eval.grader.TurEvalGradingContext;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport.CaseResult;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalScorer;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation;

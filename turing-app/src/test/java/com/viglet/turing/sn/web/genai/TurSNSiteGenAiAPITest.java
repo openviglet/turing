@@ -257,7 +257,7 @@ class TurSNSiteGenAiAPITest {
         when(catalogCopilotService.isAvailable()).thenReturn(true);
         var seen = new java.util.concurrent.atomic.AtomicReference<java.util.Map<String, java.util.List<String>>>();
         when(catalogCopilotService.answer(eq("site1"), any(), any())).thenAnswer(invocation -> {
-            seen.set(com.viglet.turing.sn.dsl.TurDslCallerFilters.current());
+            seen.set(com.viglet.turing.searchengine.dsl.TurDslCallerFilters.current());
             return new com.viglet.turing.rag.catalog.TurCatalogCopilotResult(true, "One model.",
                     java.util.List.of(), "", 1, null);
         });

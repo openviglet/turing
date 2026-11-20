@@ -11,7 +11,7 @@ package com.viglet.turing.sn.dsl.eval;
 
 import java.util.List;
 
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 
 /**
  * The NL→facet parsing seam (T385 / §XX.5): turns a prose query into a structured

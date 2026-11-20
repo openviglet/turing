@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -91,7 +91,7 @@ public final class TurDslCallerFilters {
     }
 
     /** One filter clause per field: a term for one value, terms for several. */
-    static List<TurDslQuery> clauses(Map<String, List<String>> filters) {
+    public static List<TurDslQuery> clauses(Map<String, List<String>> filters) {
         List<TurDslQuery> clauses = new ArrayList<>();
         filters.forEach((field, values) -> clauses.add(values.size() == 1
                 ? new TurDslQuery.Term(field, values.getFirst())

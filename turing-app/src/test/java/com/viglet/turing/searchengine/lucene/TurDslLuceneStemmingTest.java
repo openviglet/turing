@@ -1,4 +1,6 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.lucene;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

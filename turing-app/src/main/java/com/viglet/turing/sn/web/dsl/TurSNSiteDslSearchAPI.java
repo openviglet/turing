@@ -4,8 +4,8 @@ import java.util.Locale;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
-import com.viglet.turing.sn.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

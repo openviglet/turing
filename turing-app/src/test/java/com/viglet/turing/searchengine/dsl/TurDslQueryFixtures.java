@@ -1,4 +1,6 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -7,13 +9,13 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.provider.Arguments;
 
-import com.viglet.turing.sn.dsl.TurDslQuery.GeoPoint;
-import com.viglet.turing.sn.dsl.TurDslQuery.IntervalsRule;
-import com.viglet.turing.sn.dsl.TurDslQuery.MatchAll;
-import com.viglet.turing.sn.dsl.TurDslQuery.ScoreFunction;
-import com.viglet.turing.sn.dsl.TurDslQuery.Script;
-import com.viglet.turing.sn.dsl.TurDslQuery.SpanTerm;
-import com.viglet.turing.sn.dsl.TurDslQuery.Term;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.GeoPoint;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.IntervalsRule;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.MatchAll;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.ScoreFunction;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.Script;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.SpanTerm;
+import com.viglet.turing.searchengine.dsl.TurDslQuery.Term;
 
 /**
  * Shared one-of-each-type {@link TurDslQuery} fixtures for the per-engine
@@ -23,13 +25,13 @@ import com.viglet.turing.sn.dsl.TurDslQuery.Term;
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
-final class TurDslQueryFixtures {
+public final class TurDslQueryFixtures {
 
     private TurDslQueryFixtures() {
     }
 
     /** One representative instance of every supported {@link TurDslQuery} family. */
-    static Stream<Arguments> named() {
+    public static Stream<Arguments> named() {
         return Stream.of(
                 arg("match_all", new MatchAll()),
                 arg("match", new TurDslQuery.Match("title", "hello", null)),

@@ -24,7 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 130 calls still reach engine internals, from api.se, the SN queue and query APIs, sn search, autocomplete, spotlights, facets and the four sn.dsl executors. → §CLXXXIX.6
+- ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 65 calls still reach Solr internals from sn search, spotlights, merge providers, the query API, autocomplete and facets; the plugin contract still takes SN entities. → §CLXXXIX.6
 - ⏳ **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — 44 classes outside sn still call SN repositories (searchengine 15, rag 9, exchange 5, agent 5, eight others); each needs an sn read service or event. → §CLXXXIX.8
 - 📋 **T1314** (deps: T1311 ✅) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
 - 📋 **T1315** (deps: T1312 ⏳, T1313 ✅, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11

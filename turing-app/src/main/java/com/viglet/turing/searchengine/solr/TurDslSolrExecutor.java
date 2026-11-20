@@ -1,4 +1,10 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.solr;
+
+import com.viglet.turing.searchengine.dsl.TurDslAggregation;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
 
 import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;

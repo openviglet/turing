@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.sn.dsl.TurDslQuery;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
 
 /**

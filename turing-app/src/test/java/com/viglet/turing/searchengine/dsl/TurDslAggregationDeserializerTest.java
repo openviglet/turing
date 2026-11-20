@@ -1,4 +1,6 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
+
+import com.viglet.turing.searchengine.dsl.TurDslAggregation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

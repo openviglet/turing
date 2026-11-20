@@ -16,6 +16,14 @@
  */
 package com.viglet.turing.sn.dsl;
 
+import com.viglet.turing.searchengine.solr.TurDslSolrExecutor;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
+import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

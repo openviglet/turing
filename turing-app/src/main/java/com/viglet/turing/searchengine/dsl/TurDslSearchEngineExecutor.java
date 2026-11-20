@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
 
 import java.util.Locale;
 import java.util.Map;

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.sn.dsl.TurDslCallerFilters;
+import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.sn.nl.TurSNNLFilters;
 

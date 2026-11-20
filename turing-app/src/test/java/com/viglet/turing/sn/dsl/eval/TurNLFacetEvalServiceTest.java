@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;

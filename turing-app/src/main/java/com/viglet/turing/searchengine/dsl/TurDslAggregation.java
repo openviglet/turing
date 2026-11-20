@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.dsl;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;

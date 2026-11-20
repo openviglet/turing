@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.sn.dsl.TurDslQuery;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport.CaseResult;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation.ExpectedFilter;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation.ExpectedRange;

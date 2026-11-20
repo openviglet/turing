@@ -18,8 +18,8 @@ import java.util.Optional;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
-import com.viglet.turing.sn.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.llm.TurLlmSummaryService;
 import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;

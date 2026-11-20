@@ -41,8 +41,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSearchProcess;
-import com.viglet.turing.sn.dsl.TurDslCallerFilters;
-import com.viglet.turing.sn.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.llm.TurDefaultChatModelResolver;
 

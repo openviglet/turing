@@ -29,7 +29,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 
 import com.viglet.turing.rag.TurRagReranker;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
-import com.viglet.turing.sn.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.llm.TurDefaultChatModelResolver;
 

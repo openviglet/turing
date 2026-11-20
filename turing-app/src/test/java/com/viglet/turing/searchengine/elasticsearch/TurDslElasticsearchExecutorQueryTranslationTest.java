@@ -1,4 +1,8 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.elasticsearch;
+
+import com.viglet.turing.searchengine.dsl.TurDslQueryFixtures;
+
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,7 +26,7 @@ class TurDslElasticsearchExecutorQueryTranslationTest {
     private final TurDslElasticsearchExecutor executor = new TurDslElasticsearchExecutor(null);
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("com.viglet.turing.sn.dsl.TurDslQueryFixtures#named")
+    @MethodSource("com.viglet.turing.searchengine.dsl.TurDslQueryFixtures#named")
     void translatesEveryQueryTypeToEsQuery(TurDslQuery query) {
         if (query instanceof TurDslQuery.GeoShape) {
             // KNOWN GAP: the ES geo_shape branch sets only `field` and never the

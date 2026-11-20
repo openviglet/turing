@@ -1,5 +1,11 @@
 package com.viglet.turing.sn.dsl;
 
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
+import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;
+
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;

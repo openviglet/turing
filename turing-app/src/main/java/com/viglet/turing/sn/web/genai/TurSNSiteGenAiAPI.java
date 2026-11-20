@@ -234,7 +234,7 @@ public class TurSNSiteGenAiAPI {
 	private Flux<TurAgentChatExecutor.ChatResponse> copilotConversation(String siteName,
 			List<ConversationMessage> messages, Locale locale, java.util.Map<String, List<String>> filters) {
 		return reactor.core.publisher.Mono.fromCallable(() -> {
-			var result = com.viglet.turing.sn.dsl.TurDslCallerFilters.with(filters,
+			var result = com.viglet.turing.searchengine.dsl.TurDslCallerFilters.with(filters,
 					() -> catalogCopilotService.answer(siteName, locale == null ? null : locale.toString(),
 							copilotTurns(messages)));
 			String text = result.answer() != null && !result.answer().isBlank() ? result.answer()

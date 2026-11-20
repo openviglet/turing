@@ -47,9 +47,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.dsl.TurDslQuery;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
-import com.viglet.turing.sn.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
@@ -176,7 +176,7 @@ class TurCatalogCopilotServiceTest {
         when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
                 .thenAnswer(inv -> {
                     TurDslQueryRequest request = inv.getArgument(2);
-                    return Optional.of(request.query() instanceof com.viglet.turing.sn.dsl.TurDslQuery.Term term
+                    return Optional.of(request.query() instanceof com.viglet.turing.searchengine.dsl.TurDslQuery.Term term
                             && "id".equals(term.field()) ? pinnedResponse : twoHitResponse());
                 });
 
@@ -212,7 +212,7 @@ class TurCatalogCopilotServiceTest {
         when(dslSearchService.search(eq("catalog"), eq("en"), any(TurDslQueryRequest.class)))
                 .thenAnswer(inv -> {
                     TurDslQueryRequest request = inv.getArgument(2);
-                    return Optional.of(request.query() instanceof com.viglet.turing.sn.dsl.TurDslQuery.Term term
+                    return Optional.of(request.query() instanceof com.viglet.turing.searchengine.dsl.TurDslQuery.Term term
                             && "id".equals(term.field()) ? none : twoHitResponse());
                 });
 

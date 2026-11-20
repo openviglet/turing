@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
-import com.viglet.turing.sn.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser.ParseRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser.TurNLFacetParseException;

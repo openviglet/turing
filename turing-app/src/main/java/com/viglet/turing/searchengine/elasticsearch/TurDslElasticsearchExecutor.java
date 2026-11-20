@@ -1,4 +1,10 @@
-package com.viglet.turing.sn.dsl;
+package com.viglet.turing.searchengine.elasticsearch;
+
+import com.viglet.turing.searchengine.dsl.TurDslAggregation;
+import com.viglet.turing.searchengine.dsl.TurDslQuery;
+import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
+import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
+import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.FieldValue;

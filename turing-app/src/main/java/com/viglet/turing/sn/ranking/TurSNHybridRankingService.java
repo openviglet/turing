@@ -377,7 +377,7 @@ public class TurSNHybridRankingService {
             // T1213 — and a caller's own filters (TurDslCallerFilters) the same way, so a
             // shared site's copilot neither recalls nor ranks another site's documents.
             Map<String, List<String>> vectorFilters = new LinkedHashMap<>(
-                    com.viglet.turing.sn.dsl.TurDslCallerFilters.current());
+                    com.viglet.turing.searchengine.dsl.TurDslCallerFilters.current());
             com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
                     .ifPresent(partition -> vectorFilters.put(partition.field(), List.of(partition.value())));
             if (!vectorFilters.isEmpty()) {
