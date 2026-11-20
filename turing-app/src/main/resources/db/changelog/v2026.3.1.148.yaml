@@ -1,0 +1,23 @@
+databaseChangeLog:
+  # --- T1319: optimistic locking on the agent ---
+  # The version Hibernate's @Version compares on save. Existing rows start at 0.
+  # Idempotent: gated by columnExists.
+  - changeSet:
+      id: v2026.3.1.148-01-agent-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: agent
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: agent
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false

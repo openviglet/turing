@@ -29,6 +29,7 @@ import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelR
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.shared.exception.TurConflictException;
 import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
@@ -164,6 +165,13 @@ public class TurAIAgentAPI {
             @RequestBody TurAIAgentDto turAIAgentDto) {
         TurAIAgent turAIAgent = turAIAgentMapper.toEntity(turAIAgentDto);
         return turAIAgentRepository.findById(id).map(agentEdit -> {
+            // T1319 — a save made from an older version would overwrite a change
+            // the caller never saw; it is refused instead.
+            if (turAIAgent.getVersion() != null && agentEdit.getVersion() != null
+                    && !turAIAgent.getVersion().equals(agentEdit.getVersion())) {
+                throw new TurConflictException(
+                        "This agent was changed by someone else since you opened it. Reload it and try again.");
+            }
             agentEdit.setTitle(turAIAgent.getTitle());
             agentEdit.setDescription(turAIAgent.getDescription());
             agentEdit.setIcon(turAIAgent.getIcon());
@@ -287,8 +295,8 @@ public class TurAIAgentAPI {
             // here. See TurSNSiteGenAi field javadoc + TurSNSiteAPI for
             // the persistence side, and the SN site GenAI settings form
             // for the UI.
-            this.turAIAgentRepository.save(agentEdit);
-            return turAIAgentMapper.toDto(agentEdit);
+            // T1319 — the merged copy carries the incremented version the next save sends back.
+            return turAIAgentMapper.toDto(this.turAIAgentRepository.save(agentEdit));
         }).orElse(new TurAIAgentDto());
     }
 
@@ -367,7 +375,7 @@ public class TurAIAgentAPI {
             return null;
         }
         if (!containsById(personaCatalog, requestedId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            throw new IllegalArgumentException(
                     "Default persona must be one of the agent's allowed personas");
         }
         return requestedId;

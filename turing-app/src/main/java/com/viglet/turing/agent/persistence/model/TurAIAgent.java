@@ -42,6 +42,15 @@ public class TurAIAgent implements Serializable {
     @jakarta.persistence.Column(name = "tenantId", length = 40)
     private String tenantId;
 
+    /**
+     * T1319 — optimistic-lock version. Two saves from the same version: the second
+     * is refused (409) instead of silently overwriting the first. A wrapper, so a
+     * new agent built with an imported id is still persisted rather than merged.
+     */
+    @jakarta.persistence.Version
+    @Column(name = "version")
+    private Long version;
+
     @Column(nullable = false, length = 100)
     private String title;
 

@@ -39,7 +39,15 @@ export function useCreateAiAgent() {
 export function useUpdateAiAgent() {
   const queryClient = useQueryClient();
   return useMutation<TurAIAgent, Error, TurAIAgent>({
-    mutationFn: (agent) => service.update(agent),
+    // T1319 — the forms each hold a copy of the agent, so the version they carry
+    // can predate this browser's own last save. Send the version the console last
+    // received; the server refuses it only when someone else saved in between.
+    mutationFn: (agent) => {
+      const cached = agent.id
+        ? queryClient.getQueryData<TurAIAgent>(queryKeys.aiAgents.detail(agent.id))
+        : undefined;
+      return service.update({ ...agent, version: cached?.version ?? agent.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.aiAgents.detail(saved.id), saved);

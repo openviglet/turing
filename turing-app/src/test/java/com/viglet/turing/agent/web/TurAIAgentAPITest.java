@@ -76,7 +76,9 @@ class TurAIAgentAPITest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(turAIAgentAPI).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(turAIAgentAPI)
+                .setControllerAdvice(new com.viglet.turing.system.web.exception.TurGlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -149,6 +151,7 @@ class TurAIAgentAPITest {
         updatedDto.setEnabled(1);
 
         when(turAIAgentRepository.findById("1")).thenReturn(Optional.of(existingAgent));
+        when(turAIAgentRepository.save(any(TurAIAgent.class))).thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(put("/api/ai-agent/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,6 +161,45 @@ class TurAIAgentAPITest {
                 .andExpect(jsonPath("$.description").value("New Description"));
 
         verify(turAIAgentRepository, times(1)).save(any(TurAIAgent.class));
+    }
+
+    /** T1319 — a save made from an older version is refused, not applied over the newer one. */
+    @Test
+    void aSaveFromAnOlderVersionIsRefusedWithAConflict() throws Exception {
+        TurAIAgent existingAgent = new TurAIAgent();
+        existingAgent.setId("1");
+        existingAgent.setTitle("Changed by someone else");
+        existingAgent.setVersion(4L);
+        when(turAIAgentRepository.findById("1")).thenReturn(Optional.of(existingAgent));
+
+        mockMvc.perform(put("/api/ai-agent/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Mine\",\"enabled\":1,\"version\":3}"))
+                .andExpect(status().isConflict());
+
+        verify(turAIAgentRepository, times(0)).save(any(TurAIAgent.class));
+    }
+
+    /** T1319 — the response carries the version of the saved copy, for the next save. */
+    @Test
+    void aSaveFromTheCurrentVersionAnswersTheSavedVersion() throws Exception {
+        TurAIAgent existingAgent = new TurAIAgent();
+        existingAgent.setId("1");
+        existingAgent.setVersion(4L);
+        when(turAIAgentRepository.findById("1")).thenReturn(Optional.of(existingAgent));
+        when(turAIAgentRepository.save(any(TurAIAgent.class))).thenAnswer(inv -> {
+            TurAIAgent merged = new TurAIAgent();
+            merged.setId("1");
+            merged.setTitle(((TurAIAgent) inv.getArgument(0)).getTitle());
+            merged.setVersion(5L);
+            return merged;
+        });
+
+        mockMvc.perform(put("/api/ai-agent/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Mine\",\"enabled\":1,\"version\":4}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(5));
     }
 
     @Test

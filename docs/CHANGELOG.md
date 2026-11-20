@@ -1781,3 +1781,4 @@
 - **T1315g** — An agent holds its default persona as defaultPersonaId, read from its persona catalog; save refuses a default outside the catalog and drops an unknown id, and the console sends the id.
 - **T1317** — All 117 tables follow <module>_<entity> (se for searchengine); 66 renamed by one idempotent changelog, and TurTableNamingConventionTest fails on a name outside the rule (design §CLXXXIX.13 recorded in `.claude/skills/turing-persistence/SKILL.md`).
 - **T1318** — Every entity has a tenancy ruling (@TenantId, deliberate plain column, global, or through a tenant-scoped owner), listed in ADR 0005 and enforced by TurTenancyRulingConventionTest (design §CLXXXIX.14 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
+- **T1319 (agent optimistic lock)** — An agent carries a @Version; a console save from an older version answers 409 instead of overwriting, a concurrent commit maps to 409, and the console sends the last version it received.

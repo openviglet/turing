@@ -226,6 +226,19 @@ public class TurGlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
     }
 
+    /**
+     * T1319 — two transactions saved the same versioned row; the later one lost.
+     * That is a conflict the caller can resolve by reloading, not a server fault.
+     */
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ProblemDetail> handleOptimisticLock(
+            org.springframework.orm.ObjectOptimisticLockingFailureException ex) {
+        ProblemDetail problem = build(HttpStatus.CONFLICT, TurErrorTypes.CONFLICT,
+                "This record was changed by someone else at the same time. Reload it and try again.");
+        log.warn("[GlobalEx] Optimistic lock conflict on {}", ex.getPersistentClassName());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ProblemDetail> handleIllegalArgument(IllegalArgumentException ex) {
         ProblemDetail problem = build(HttpStatus.BAD_REQUEST, TurErrorTypes.INVALID_ARGUMENT, ex.getMessage());
