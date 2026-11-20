@@ -57,6 +57,8 @@ export interface TurPersonaAudience {
  */
 export interface TurPersona {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description?: string | null;
   systemInstruction?: string | null;

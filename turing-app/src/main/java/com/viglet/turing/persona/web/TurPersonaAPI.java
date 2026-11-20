@@ -172,11 +172,17 @@ public class TurPersonaAPI {
             @RequestBody TurPersonaDto dto) {
         TurPersona incoming = turPersonaMapper.toEntity(dto);
         return turPersonaRepository.findById(id).map(persisted -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            if (incoming.getVersion() != null && persisted.getVersion() != null
+                    && !incoming.getVersion().equals(persisted.getVersion())) {
+                throw new com.viglet.turing.shared.exception.TurConflictException(
+                        "This persona was changed by someone else since you opened it. Reload it and try again.");
+            }
             copyEditableFields(incoming, persisted);
             persisted.setFewShotStoreId(resolveStore(incoming.getFewShotStoreId()));
             persisted.setBrandContextMcpServerId(resolveMcp(incoming.getBrandContextMcpServerId()));
-            turPersonaRepository.save(persisted);
-            return turPersonaMapper.toDto(persisted);
+            // T1319 — the merged copy carries the incremented version.
+            return turPersonaMapper.toDto(turPersonaRepository.save(persisted));
         }).orElse(new TurPersonaDto());
     }
 

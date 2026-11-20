@@ -60,6 +60,14 @@ public class TurPersona implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
 
+    /**
+     * T1319 — optimistic-lock version: a console save made from an older version
+     * is refused (409) instead of overwriting a change it never saw.
+     */
+    @jakarta.persistence.Version
+    @Column(name = "version")
+    private Long version;
+
     /** T261 / §XIV.2.5 — multi-tenancy discriminator (see TurSNSite pilot). Hibernate-managed. */
     @org.hibernate.annotations.TenantId
     @jakarta.persistence.Column(name = "tenantId", length = 40)
