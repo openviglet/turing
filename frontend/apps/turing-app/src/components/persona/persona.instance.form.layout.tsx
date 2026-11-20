@@ -50,8 +50,7 @@ interface Props {
  * Form fields are joined back into the persona payload on submit:
  * - termsToLines / linesToTerms convert between newline-friendly UI text
  *   and the pipe-separated DB format.
- * - fewShotStore / brandContextMcpServer are stored as full entity refs in
- *   form state, but the API only needs the {id} — handled in onSubmit.
+ * - fewShotStoreId / brandContextMcpServerId are plain ids (T1315), sent as-is.
  */
 export type PersonaFormShape = Omit<
   TurPersona,

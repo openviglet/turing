@@ -120,7 +120,7 @@ public class TurPersonaAPI {
             - mandatoryTerms / forbiddenTerms: pipe-separated. Never invent
               competitor names; if the user asked you to forbid competitors,
               ask which ones rather than guess.
-            - NEVER include id, fewShotStore, or brandContextMcpServer —
+            - NEVER include id, fewShotStoreId, or brandContextMcpServerId —
               those are wired by the operator after save.
             """;
 
@@ -173,10 +173,8 @@ public class TurPersonaAPI {
         TurPersona incoming = turPersonaMapper.toEntity(dto);
         return turPersonaRepository.findById(id).map(persisted -> {
             copyEditableFields(incoming, persisted);
-            persisted.setFewShotStore(resolveStore(incoming.getFewShotStore() == null
-                    ? null : incoming.getFewShotStore().getId()));
-            persisted.setBrandContextMcpServer(resolveMcp(incoming.getBrandContextMcpServer() == null
-                    ? null : incoming.getBrandContextMcpServer().getId()));
+            persisted.setFewShotStoreId(resolveStore(incoming.getFewShotStoreId()));
+            persisted.setBrandContextMcpServerId(resolveMcp(incoming.getBrandContextMcpServerId()));
             turPersonaRepository.save(persisted);
             return turPersonaMapper.toDto(persisted);
         }).orElse(new TurPersonaDto());
@@ -187,10 +185,8 @@ public class TurPersonaAPI {
     @Secured({"ROLE_ADMIN", "AI_AGENT_CREATE"})
     public TurPersonaDto turPersonaAdd(@RequestBody TurPersonaDto dto) {
         TurPersona entity = turPersonaMapper.toEntity(dto);
-        entity.setFewShotStore(resolveStore(entity.getFewShotStore() == null
-                ? null : entity.getFewShotStore().getId()));
-        entity.setBrandContextMcpServer(resolveMcp(entity.getBrandContextMcpServer() == null
-                ? null : entity.getBrandContextMcpServer().getId()));
+        entity.setFewShotStoreId(resolveStore(entity.getFewShotStoreId()));
+        entity.setBrandContextMcpServerId(resolveMcp(entity.getBrandContextMcpServerId()));
         turPersonaRepository.save(entity);
         return turPersonaMapper.toDto(entity);
     }
@@ -216,7 +212,7 @@ public class TurPersonaAPI {
     public AiAuthoringResponse<PersonaGeneration> turPersonaChat(
             @RequestBody AiAuthoringRequest<PersonaGeneration> request) {
         // No tools attached — persona authoring is pure structured output.
-        // The fewShotStore and brandContextMcpServer relations are wired by
+        // The fewShotStoreId and brandContextMcpServerId references are wired by
         // the operator after save, never by the LLM.
         return aiAuthoringService.chat(
                 request,
@@ -257,17 +253,19 @@ public class TurPersonaAPI {
         to.setAudience(from.getAudience());
     }
 
-    private com.viglet.turing.rag.persistence.model.store.TurStoreInstance resolveStore(String id) {
+    /** T1315 — the id when that store exists, else null: a dangling id is never stored. */
+    private String resolveStore(String id) {
         if (id == null || id.isBlank()) {
             return null;
         }
-        return turStoreInstanceRepository.findById(id).orElse(null);
+        return turStoreInstanceRepository.existsById(id) ? id : null;
     }
 
-    private com.viglet.turing.mcp.persistence.model.TurMcpServer resolveMcp(String id) {
+    /** T1315 — the id when that MCP server exists, else null. */
+    private String resolveMcp(String id) {
         if (id == null || id.isBlank()) {
             return null;
         }
-        return turMcpServerRepository.findById(id).orElse(null);
+        return turMcpServerRepository.existsById(id) ? id : null;
     }
 }

@@ -13,8 +13,6 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import com.viglet.turing.persona.TurPersonaStaticPromptEvictionListener;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -24,8 +22,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -165,13 +161,17 @@ public class TurPersona implements Serializable {
     @Column(name = "grounding_sn_site", length = 255)
     private String groundingSnSite;
 
-    @ManyToOne
-    @JoinColumn(name = "few_shot_store_id")
-    private TurStoreInstance fewShotStore;
+    /**
+     * T1315 — the rag store holding this persona's few-shot Q/A pairs, by id: the
+     * store belongs to the rag module, so the persona keeps its id and resolves it
+     * through that module rather than loading the store's graph.
+     */
+    @Column(name = "few_shot_store_id", length = 40)
+    private String fewShotStoreId;
 
-    @ManyToOne
-    @JoinColumn(name = "brand_context_mcp_server_id")
-    private TurMcpServer brandContextMcpServer;
+    /** T1315 — the brand-context MCP server, by id; it belongs to the mcp module. */
+    @Column(name = "brand_context_mcp_server_id", length = 40)
+    private String brandContextMcpServerId;
 
     /**
      * True when this persona may be used as an agent's voice. Null-kind is

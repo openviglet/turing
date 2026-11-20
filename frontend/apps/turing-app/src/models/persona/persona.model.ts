@@ -1,5 +1,3 @@
-import type { TurMcpServer } from "../mcp/mcp-server.model.ts";
-import type { TurStoreInstance } from "../store/store-instance.model.ts";
 
 export type TurPersonaTone = "FORMAL" | "CASUAL" | "TECHNICAL" | "EXECUTIVE";
 export type TurPersonaLanguageStyle =
@@ -93,8 +91,10 @@ export interface TurPersona {
   groundingSource?: TurPersonaGroundingSource;
   /** The bound SN site name — used only when `groundingSource` is `SN_SITE`. */
   groundingSnSite?: string | null;
-  fewShotStore?: TurStoreInstance | null;
-  brandContextMcpServer?: TurMcpServer | null;
+  /** T1315 — the rag store holding few-shot Q/A pairs, by id. */
+  fewShotStoreId?: string | null;
+  /** T1315 — the brand-context MCP server, by id. */
+  brandContextMcpServerId?: string | null;
   /** Block AA — defaults to SPEAKER for legacy voice personas. */
   personaKind?: TurPersonaKind | null;
   /** Block AA — present only for AUDIENCE / BOTH personas. */
@@ -103,7 +103,7 @@ export interface TurPersona {
 
 /**
  * LLM-shape used by the AI Authoring chat. Strips the id and the heavy
- * relations (`fewShotStore`, `brandContextMcpServer`) — the operator wires
+ * references (`fewShotStoreId`, `brandContextMcpServerId`) — the operator wires
  * those after save. Mirrors the backend `PersonaGeneration` record.
  *
  * @since 2026.2.7

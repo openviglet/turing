@@ -33,8 +33,10 @@ import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
@@ -93,17 +95,23 @@ public class TurAIAgentExportService {
     private final TurAIAgentSlotRepository slotRepository;
     private final TurIntentRepository intentRepository;
     private final TurAgentEvalSetRepository evalSetRepository;
+    private final TurMcpServerRepository mcpServerRepository;
+    private final TurStoreInstanceRepository storeInstanceRepository;
 
     public TurAIAgentExportService(TurAIAgentRepository agentRepository,
                                    TurChatFlowRepository chatFlowRepository,
                                    TurAIAgentSlotRepository slotRepository,
                                    TurIntentRepository intentRepository,
-                                   TurAgentEvalSetRepository evalSetRepository) {
+                                   TurAgentEvalSetRepository evalSetRepository,
+                                   TurMcpServerRepository mcpServerRepository,
+                                   TurStoreInstanceRepository storeInstanceRepository) {
         this.agentRepository = agentRepository;
         this.chatFlowRepository = chatFlowRepository;
         this.slotRepository = slotRepository;
         this.intentRepository = intentRepository;
         this.evalSetRepository = evalSetRepository;
+        this.mcpServerRepository = mcpServerRepository;
+        this.storeInstanceRepository = storeInstanceRepository;
     }
 
     /**
@@ -187,14 +195,19 @@ public class TurAIAgentExportService {
         }
     }
 
-    /** Personas may reference an MCP server (brand context) and a store (few-shot). */
-    private static void collectPersonaSubReferences(ReferenceBag refs) {
+    /**
+     * Personas may reference an MCP server (brand context) and a store (few-shot),
+     * by id since T1315; each is read from the module that owns it.
+     */
+    private void collectPersonaSubReferences(ReferenceBag refs) {
         for (TurPersona p : refs.personas.values()) {
-            if (p.getBrandContextMcpServer() != null) {
-                refs.mcpServers.putIfAbsent(p.getBrandContextMcpServer().getId(), p.getBrandContextMcpServer());
+            String mcpId = p.getBrandContextMcpServerId();
+            if (mcpId != null && !refs.mcpServers.containsKey(mcpId)) {
+                mcpServerRepository.findById(mcpId).ifPresent(m -> refs.mcpServers.put(mcpId, m));
             }
-            if (p.getFewShotStore() != null) {
-                refs.stores.putIfAbsent(p.getFewShotStore().getId(), p.getFewShotStore());
+            String storeId = p.getFewShotStoreId();
+            if (storeId != null && !refs.stores.containsKey(storeId)) {
+                storeInstanceRepository.findById(storeId).ifPresent(s -> refs.stores.put(storeId, s));
             }
         }
     }

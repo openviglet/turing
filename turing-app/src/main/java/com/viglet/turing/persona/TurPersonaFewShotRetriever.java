@@ -23,6 +23,7 @@ import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,9 +50,12 @@ public class TurPersonaFewShotRetriever {
     private static final int DEFAULT_TOP_K = 3;
 
     private final TurRagContextBuilder ragContextBuilder;
+    private final TurStoreInstanceRepository turStoreInstanceRepository;
 
-    public TurPersonaFewShotRetriever(TurRagContextBuilder ragContextBuilder) {
+    public TurPersonaFewShotRetriever(TurRagContextBuilder ragContextBuilder,
+            TurStoreInstanceRepository turStoreInstanceRepository) {
         this.ragContextBuilder = ragContextBuilder;
+        this.turStoreInstanceRepository = turStoreInstanceRepository;
     }
 
     public List<Document> retrieve(TurPersona persona, TurEmbeddingModel embeddingModel, String query) {
@@ -60,7 +64,7 @@ public class TurPersonaFewShotRetriever {
 
     public List<Document> retrieve(TurPersona persona, TurEmbeddingModel embeddingModel,
             String query, int topK) {
-        if (persona == null || persona.getFewShotStore() == null) {
+        if (persona == null || persona.getFewShotStoreId() == null) {
             return Collections.emptyList();
         }
         if (embeddingModel == null) {
@@ -72,7 +76,14 @@ public class TurPersonaFewShotRetriever {
             return Collections.emptyList();
         }
 
-        TurStoreInstance store = persona.getFewShotStore();
+        // T1315 — the persona holds the store by id; the rag module owns the row.
+        TurStoreInstance store = turStoreInstanceRepository.findById(persona.getFewShotStoreId())
+                .orElse(null);
+        if (store == null) {
+            log.debug("[Persona] '{}' points at few-shot store '{}', which no longer exists.",
+                    persona.getName(), persona.getFewShotStoreId());
+            return Collections.emptyList();
+        }
         Optional<TurRagContextBuilder.RagInfrastructure> infra =
                 ragContextBuilder.build(embeddingModel, store, null);
         if (infra.isEmpty()) {

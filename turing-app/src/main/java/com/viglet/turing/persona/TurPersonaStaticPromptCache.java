@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;
@@ -33,7 +34,7 @@ import com.viglet.turing.persona.persistence.model.TurPersonaTone;
  *
  *   # Required Vocabulary      (when mandatoryTerms set)
  *   # Forbidden Vocabulary     (when forbiddenTerms set)
- *   # Brand Context            (placeholder when brandContextMcpServer set)
+ *   # Brand Context            (placeholder when brandContextMcpServerId set)
  * </pre>
  *
  * <p>The composer assembles the FULL prompt as
@@ -70,6 +71,12 @@ public class TurPersonaStaticPromptCache {
     /** Public cache name — evicted by {@link TurPersonaStaticPromptEvictionListener}. */
     public static final String CACHE_NAME = "turPersonaStaticPrompt";
 
+    private final TurMcpServerRepository turMcpServerRepository;
+
+    public TurPersonaStaticPromptCache(TurMcpServerRepository turMcpServerRepository) {
+        this.turMcpServerRepository = turMcpServerRepository;
+    }
+
     /**
      * Returns the persona-only block of the system prompt. The result is
      * cached under {@link #CACHE_NAME} keyed by the persona id; subsequent
@@ -104,10 +111,14 @@ public class TurPersonaStaticPromptCache {
                 "Never use the following terms — rephrase if needed:",
                 persona.getForbiddenTerms());
 
-        if (persona.getBrandContextMcpServer() != null) {
+        // T1315 — the persona holds the MCP server by id; the mcp module owns its title.
+        String brandMcpTitle = persona.getBrandContextMcpServerId() == null ? null
+                : turMcpServerRepository.findById(persona.getBrandContextMcpServerId())
+                        .map(server -> server.getTitle()).orElse(null);
+        if (brandMcpTitle != null) {
             sb.append("\n\n# Brand Context\n");
             sb.append("You have access to brand-guideline tools provided by the '")
-                    .append(persona.getBrandContextMcpServer().getTitle())
+                    .append(brandMcpTitle)
                     .append("' MCP server. Consult them whenever the user asks about brand voice, ");
             sb.append("messaging, or visual identity.");
         }

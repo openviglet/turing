@@ -1771,3 +1771,4 @@
 - **T1316** — No entity names another module's listener: agent writes publish TurAIAgentChangedEvent, sn evicts the snapshot on it after commit, and TurEntityListenerModuleTest fails on any new crossing (design §CLXXXIX.12 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1320** — No entity uses @Lob: all 59 String fields map to longtext, none were binary, the schema is unchanged, and TurLobConventionTest fails on a new @Lob.
 - **T1310b** — SN facet typing and enabled-facet reads live in sn.facet; paging, Solr date math and field text are searchengine API; sn no longer imports the Solr query builder, TurSolrField or Lucene filters.
+- **T1315 (persona store and MCP references by id)** — TurPersona holds its few-shot store and brand-context MCP server as id columns resolved through the rag and mcp repositories; the API, form, export and docs speak fewShotStoreId and brandContextMcpServerId.

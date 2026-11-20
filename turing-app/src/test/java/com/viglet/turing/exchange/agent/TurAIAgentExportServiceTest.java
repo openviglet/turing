@@ -40,6 +40,10 @@ import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode;
 import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
 import com.viglet.turing.agent.persistence.model.intent.TurIntent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
@@ -65,6 +69,8 @@ class TurAIAgentExportServiceTest {
     @Mock private TurAIAgentSlotRepository slotRepository;
     @Mock private TurIntentRepository intentRepository;
     @Mock private TurAgentEvalSetRepository evalSetRepository;
+    @Mock private TurMcpServerRepository mcpServerRepository;
+    @Mock private TurStoreInstanceRepository storeInstanceRepository;
 
     private TurAIAgentExportService service;
     private Path producedZip;
@@ -72,7 +78,8 @@ class TurAIAgentExportServiceTest {
     @BeforeEach
     void setUp() {
         service = new TurAIAgentExportService(agentRepository, chatFlowRepository,
-                slotRepository, intentRepository, evalSetRepository);
+                slotRepository, intentRepository, evalSetRepository, mcpServerRepository,
+                storeInstanceRepository);
     }
 
     @AfterEach
@@ -90,6 +97,15 @@ class TurAIAgentExportServiceTest {
         persona.setId(UUID.randomUUID().toString());
         persona.setName("Marina — Consultora EE");
         persona.setEnabled(1);
+        // T1315 — the persona holds its few-shot store and brand MCP server by id.
+        TurStoreInstance fewShotStore = new TurStoreInstance();
+        fewShotStore.setId(UUID.randomUUID().toString());
+        fewShotStore.setTitle("Few-shot store");
+        persona.setFewShotStoreId(fewShotStore.getId());
+        TurMcpServer brandMcp = new TurMcpServer();
+        brandMcp.setId(UUID.randomUUID().toString());
+        brandMcp.setTitle("Brand MCP");
+        persona.setBrandContextMcpServerId(brandMcp.getId());
 
         TurLLMInstance llm = new TurLLMInstance();
         llm.setId(UUID.randomUUID().toString());
@@ -138,6 +154,9 @@ class TurAIAgentExportServiceTest {
         intent.setEnabled(1);
 
         when(agentRepository.findById(agent.getId())).thenReturn(java.util.Optional.of(agent));
+        when(storeInstanceRepository.findById(fewShotStore.getId()))
+                .thenReturn(java.util.Optional.of(fewShotStore));
+        when(mcpServerRepository.findById(brandMcp.getId())).thenReturn(java.util.Optional.of(brandMcp));
         when(slotRepository.findByTurAIAgent_IdOrderByNameAsc(agent.getId()))
                 .thenReturn(List.of(slot));
         when(intentRepository.findByTurAIAgent_IdOrderByTitleAsc(agent.getId()))
@@ -197,6 +216,11 @@ class TurAIAgentExportServiceTest {
                 .startsWith("chat-flows/").endsWith(".chat-flow.json");
 
         assertThat(parsed.getPersonas()).hasSize(1);
+        assertThat(parsed.getPersonas().get(0).getFewShotStoreId()).isEqualTo(fewShotStore.getId());
+        assertThat(parsed.getStore()).extracting(TurStoreInstance::getId)
+                .containsExactly(fewShotStore.getId());
+        assertThat(parsed.getMcpServers()).extracting(TurMcpServer::getId)
+                .containsExactly(brandMcp.getId());
         assertThat(parsed.getLlm()).hasSize(1);
         assertThat(parsed.getCustomTools()).hasSize(1);
         assertThat(parsed.getCustomTools().get(0).getGroovyScriptFile())

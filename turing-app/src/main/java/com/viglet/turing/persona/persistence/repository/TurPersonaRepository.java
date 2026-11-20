@@ -38,15 +38,15 @@ public interface TurPersonaRepository extends JpaRepository<TurPersona, String> 
 
     /**
      * Used by the MCP-server delete path to find personas with their
-     * {@code brandContextMcpServer} pointing at the server. The caller
+     * {@code brandContextMcpServerId} pointing at the server. The caller
      * nulls the reference + saveAndFlush before the server is deleted.
      *
      * @since 2026.2.8
      */
-    List<TurPersona> findByBrandContextMcpServer_Id(String mcpServerId);
+    List<TurPersona> findByBrandContextMcpServerId(String mcpServerId);
 
     /** Used by the store delete path (persona few-shot store). @since 2026.2.8 */
-    List<TurPersona> findByFewShotStore_Id(String storeId);
+    List<TurPersona> findByFewShotStoreId(String storeId);
 
     /**
      * T906 / §LXVIII.13 — the {@code @Modifying} delete that used to live here is gone.

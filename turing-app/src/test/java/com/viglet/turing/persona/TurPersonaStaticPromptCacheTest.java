@@ -10,10 +10,16 @@
 package com.viglet.turing.persona;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;
@@ -31,10 +37,36 @@ import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 class TurPersonaStaticPromptCacheTest {
 
     private TurPersonaStaticPromptCache cache;
+    private TurMcpServerRepository mcpServerRepository;
 
     @BeforeEach
     void setUp() {
-        cache = new TurPersonaStaticPromptCache();
+        mcpServerRepository = mock(TurMcpServerRepository.class);
+        cache = new TurPersonaStaticPromptCache(mcpServerRepository);
+    }
+
+    /** T1315 — the brand-context block names the MCP server the persona holds by id. */
+    @Test
+    void brandContextNamesTheServerResolvedById() {
+        TurMcpServer server = new TurMcpServer();
+        server.setId("mcp-1");
+        server.setTitle("Brand Guidelines");
+        when(mcpServerRepository.findById("mcp-1")).thenReturn(Optional.of(server));
+        TurPersona persona = new TurPersona();
+        persona.setBrandContextMcpServerId("mcp-1");
+
+        assertThat(cache.composeStaticBlock(persona))
+                .contains("# Brand Context").contains("'Brand Guidelines' MCP server");
+    }
+
+    /** T1315 — an id whose server was deleted leaves the block out instead of failing. */
+    @Test
+    void brandContextIsOmittedWhenTheServerIsGone() {
+        when(mcpServerRepository.findById("gone")).thenReturn(Optional.empty());
+        TurPersona persona = new TurPersona();
+        persona.setBrandContextMcpServerId("gone");
+
+        assertThat(cache.composeStaticBlock(persona)).doesNotContain("# Brand Context");
     }
 
     @Test

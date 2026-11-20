@@ -96,21 +96,14 @@ export default function PersonaInstanceGuidelinesSection() {
         <SectionCard.Content>
           <FormField
             control={form.control}
-            name="fewShotStore"
+            name="fewShotStoreId"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>{t("forms.persona.fewShotStore")}</FormLabel>
                 <FormControl>
                   <Select
-                    value={field.value?.id ?? NONE_VALUE}
-                    onValueChange={(v) => {
-                      if (v === NONE_VALUE) {
-                        field.onChange(null)
-                      } else {
-                        const store = stores.find((s) => s.id === v)
-                        field.onChange(store ?? null)
-                      }
-                    }}
+                    value={field.value ?? NONE_VALUE}
+                    onValueChange={(v) => field.onChange(v === NONE_VALUE ? null : v)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -145,21 +138,14 @@ export default function PersonaInstanceGuidelinesSection() {
         <SectionCard.Content>
           <FormField
             control={form.control}
-            name="brandContextMcpServer"
+            name="brandContextMcpServerId"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>{t("forms.persona.brandContextMcp")}</FormLabel>
                 <FormControl>
                   <Select
-                    value={field.value?.id ?? NONE_VALUE}
-                    onValueChange={(v) => {
-                      if (v === NONE_VALUE) {
-                        field.onChange(null)
-                      } else {
-                        const mcp = mcpServers.find((m) => m.id === v)
-                        field.onChange(mcp ?? null)
-                      }
-                    }}
+                    value={field.value ?? NONE_VALUE}
+                    onValueChange={(v) => field.onChange(v === NONE_VALUE ? null : v)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue

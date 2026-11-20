@@ -2611,3 +2611,16 @@ service as top-level packages. They are rewritten for the module layout. Hand-wr
 checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
+
+### CLXXXIX.26 Persona references survive agent import (T1331)
+
+TurAIAgentExportService collects each persona's few-shot store and brand-context MCP
+server into the bundle, and since T1315 the persona carries them as fewShotStoreId and
+brandContextMcpServerId. TurAIAgentImportService.upsertPersona copies name, prompt,
+style, kind and audience, but never these two ids, so an imported persona comes back
+without its few-shot examples or brand context even though the store and the MCP server
+were imported beside it. The fix belongs in the import's reference resolution:
+resolveAllReferences already maps each bundled store and MCP server old id to the row it
+upserted (refs.stores, refs.mcpServers), so personas should be resolved after those two
+and set their ids from the maps, dropping an id the bundle does not carry. A test in
+TurAIAgentImportServiceTest round-trips a persona with both references.

@@ -91,7 +91,7 @@ class TurPromptAssemblyPipelineTest {
         stableFirstPipeline = new TurPromptAssemblyPipeline(contributors, true);
 
         lenient().when(persona.getName()).thenReturn("Concierge");
-        lenient().when(persona.getFewShotStore()).thenReturn(null);
+        lenient().when(persona.getFewShotStoreId()).thenReturn(null);
         lenient().when(staticPromptCache.composeStaticBlock(persona)).thenReturn(STATIC);
         lenient().when(mcpInstructionsProvider.buildSystemPromptBlock(any())).thenReturn(MCP);
         lenient().when(skillRunnerService.isAvailable()).thenReturn(true);

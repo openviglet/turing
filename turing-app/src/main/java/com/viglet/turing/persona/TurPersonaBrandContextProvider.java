@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
 import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
@@ -35,16 +36,21 @@ import com.viglet.turing.persona.persistence.model.TurPersona;
 public class TurPersonaBrandContextProvider {
 
     private final TurMcpToolCallbackService mcpToolCallbackService;
+    private final TurMcpServerRepository turMcpServerRepository;
 
-    public TurPersonaBrandContextProvider(TurMcpToolCallbackService mcpToolCallbackService) {
+    public TurPersonaBrandContextProvider(TurMcpToolCallbackService mcpToolCallbackService,
+            TurMcpServerRepository turMcpServerRepository) {
         this.mcpToolCallbackService = mcpToolCallbackService;
+        this.turMcpServerRepository = turMcpServerRepository;
     }
 
     public ToolCallback[] getToolCallbacks(TurPersona persona) {
         if (persona == null) {
             return new ToolCallback[0];
         }
-        TurMcpServer mcpServer = persona.getBrandContextMcpServer();
+        // T1315 — the persona holds the server by id; the mcp module owns the row.
+        TurMcpServer mcpServer = persona.getBrandContextMcpServerId() == null ? null
+                : turMcpServerRepository.findById(persona.getBrandContextMcpServerId()).orElse(null);
         if (mcpServer == null) {
             return new ToolCallback[0];
         }

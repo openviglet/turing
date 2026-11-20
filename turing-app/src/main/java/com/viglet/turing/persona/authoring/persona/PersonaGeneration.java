@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
  * LLM-shape of a {@code TurPersona} used by the AI Authoring chat. Decoupled
  * from the JPA entity so the LLM cannot accidentally write to id, the
- * fewShotStore relation, or the brandContextMcpServer relation — those stay
+ * fewShotStoreId reference, or the brandContextMcpServerId reference — those stay
  * server-side. The LLM only authors the voice profile itself.
  *
  * <p>Tone values are constrained to the {@code TurPersonaTone} enum (FORMAL,

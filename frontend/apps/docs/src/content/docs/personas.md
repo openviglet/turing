@@ -32,8 +32,8 @@ The fields are grouped as the persona form groups them.
 | **Language Style** (`languageStyle`) | `NEUTRAL`, `DIRECT`, `NARRATIVE`, `PERSUASIVE`, `INSTRUCTIONAL` | | The shape of the answer |
 | **Mandatory Terms** (`mandatoryTerms`) | Pipe-separated (`\|`) list | Empty | Words and phrases the model must use |
 | **Forbidden Terms** (`forbiddenTerms`) | Pipe-separated (`\|`) list | Empty | Words and phrases that must never reach the user; see [tone validation](#tone-validation) |
-| **Few-shot Store** (`fewShotStore`) | An [embedding store](/docs/embedding-stores/) | None | Model conversations retrieved as examples; see [the few-shot store](#the-few-shot-store) |
-| **Brand Context MCP** (`brandContextMcpServer`) | An [MCP server](/docs/mcp-servers/) | None | Live brand facts added to the prompt; see [brand context](#brand-context) |
+| **Few-shot Store** (`fewShotStoreId`) | The id of an [embedding store](/docs/embedding-stores/) | None | Model conversations retrieved as examples; see [the few-shot store](#the-few-shot-store) |
+| **Brand Context MCP** (`brandContextMcpServerId`) | The id of an [MCP server](/docs/mcp-servers/) | None | Live brand facts added to the prompt; see [brand context](#brand-context) |
 | **Calibrate model from style** (`calibrateModelParams`) | On, off | Off | Lets tone and verbosity set the sampling parameters; see [style calibration](#style-calibration) |
 
 In the form you type one term per line in **Mandatory Terms** and **Forbidden Terms**;

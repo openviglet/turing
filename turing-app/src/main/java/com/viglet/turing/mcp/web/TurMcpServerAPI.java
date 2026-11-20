@@ -146,8 +146,8 @@ public class TurMcpServerAPI {
             this.turAIAgentRepository.save(agent);
         }
         this.turAIAgentRepository.flush();
-        for (var persona : this.turPersonaRepository.findByBrandContextMcpServer_Id(id)) {
-            persona.setBrandContextMcpServer(null);
+        for (var persona : this.turPersonaRepository.findByBrandContextMcpServerId(id)) {
+            persona.setBrandContextMcpServerId(null);
             this.turPersonaRepository.saveAndFlush(persona);
         }
         this.turMcpServerRepository.delete(id);

@@ -368,7 +368,7 @@ public class TurSystemPromptPreviewService {
 
         // Informational-only segments: not part of assembledText, shown as
         // "materializes at runtime" examples so the operator knows they exist.
-        if (persona != null && persona.getFewShotStore() != null) {
+        if (persona != null && persona.getFewShotStoreId() != null) {
             segments.add(new TurSystemPromptSegmentDto(TurPromptSegment.ORIGIN_FEW_SHOT,
                     persona.getName(), "", false, true,
                     "Few-shot examples are retrieved at runtime by similarity to the user's message — not fixed text.",

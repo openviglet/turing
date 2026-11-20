@@ -134,7 +134,7 @@ public class TurPersonaPromptComposer {
      */
     public String fewShotBlock(TurPersona persona, TurEmbeddingModel embeddingModel,
             String userQuery) {
-        if (persona == null || persona.getFewShotStore() == null || embeddingModel == null
+        if (persona == null || persona.getFewShotStoreId() == null || embeddingModel == null
                 || !StringUtils.hasText(userQuery)) {
             return "";
         }

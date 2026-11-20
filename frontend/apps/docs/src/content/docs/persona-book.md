@@ -331,7 +331,7 @@ Customers ask about prices, active promotions and whether a feature is in beta. 
 those facts into the prompt makes the prompt long, and turns every price change into a
 request to engineering.
 
-The **Brand Context MCP** field (`brandContextMcpServer`) points the persona at an
+The **Brand Context MCP** field (`brandContextMcpServerId`) points the persona at an
 [MCP server](/docs/mcp-servers/) you control. In each conversation, Viglet Turing calls
 one of its tools (for example `get_brand_context`) and adds the returned JSON to the
 prompt as a *"Current brand facts:"* block. That gives you:
