@@ -1786,3 +1786,4 @@
 - **T1310d** — TurSNSynonymType, TurSNSiteFacetFieldEnum and the two custom-sort enums live in the searchengine API, which sn imports; searchengine's imports of sn fell from 174 to 156.
 - **T1315h** — TurSNSiteGenAi holds turAIAgentId; TurDefaultAgentResolver.siteAgent loads the agent, the site listing reads RAG readiness in one batch, and the console picks and shows the agent by id.
 - **T1319a** — An SN site carries a @Version; a console save from an older version answers 409, the update answers the flushed version, and the console sends the last version it received.
+- **T1331** — Agent import resolves personas after stores and MCP servers and points each persona's few-shot store and brand-context server at the imported rows, dropping ids the bundle lacks.

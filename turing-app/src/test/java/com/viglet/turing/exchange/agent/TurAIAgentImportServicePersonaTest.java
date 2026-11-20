@@ -155,6 +155,66 @@ class TurAIAgentImportServicePersonaTest {
         assertThat(agentCaptor.getValue().isRichContentEnabled()).isTrue();
     }
 
+    /**
+     * T1331 — a persona's few-shot store and brand-context MCP server are bundled
+     * beside it; the imported persona points at the rows the import resolved them to,
+     * and an id the bundle does not carry is dropped.
+     */
+    @Test
+    void importPointsThePersonaAtItsBundledStoreAndMcpServer() {
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance localStore =
+                new com.viglet.turing.rag.persistence.model.store.TurStoreInstance();
+        localStore.setId("store-local");
+        when(storeRepository.findById("store-exported")).thenReturn(Optional.empty());
+        when(storeRepository.findByTitleIgnoreCase("Examples")).thenReturn(Optional.of(localStore));
+        when(storeRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        com.viglet.turing.mcp.persistence.model.TurMcpServer localMcp =
+                new com.viglet.turing.mcp.persistence.model.TurMcpServer();
+        localMcp.setId("mcp-local");
+        when(mcpServerRepository.findById("mcp-exported")).thenReturn(Optional.empty());
+        when(mcpServerRepository.findByTitleIgnoreCase("Brand")).thenReturn(Optional.of(localMcp));
+        when(mcpServerRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance bundledStore =
+                new com.viglet.turing.rag.persistence.model.store.TurStoreInstance();
+        bundledStore.setId("store-exported");
+        bundledStore.setTitle("Examples");
+        com.viglet.turing.mcp.persistence.model.TurMcpServer bundledMcp =
+                new com.viglet.turing.mcp.persistence.model.TurMcpServer();
+        bundledMcp.setId("mcp-exported");
+        bundledMcp.setTitle("Brand");
+
+        TurPersona withRefs = new TurPersona();
+        withRefs.setId("persona-voice");
+        withRefs.setName("Voice");
+        withRefs.setFewShotStoreId("store-exported");
+        withRefs.setBrandContextMcpServerId("mcp-exported");
+        TurPersona dangling = new TurPersona();
+        dangling.setId("persona-dangling");
+        dangling.setName("Dangling");
+        dangling.setFewShotStoreId("store-not-in-bundle");
+
+        TurExchange exchange = new TurExchange();
+        exchange.setStore(List.of(bundledStore));
+        exchange.setMcpServers(List.of(bundledMcp));
+        exchange.setPersonas(List.of(withRefs, dangling));
+        TurAIAgentExchange agentExchange = new TurAIAgentExchange();
+        agentExchange.setId("agent-voice");
+        agentExchange.setTitle("Voice Agent");
+        agentExchange.setEnabled(1);
+        agentExchange.setPersonaIds(List.of("persona-voice"));
+        exchange.setAgents(List.of(agentExchange));
+
+        assertThat(service.importAgents(exchange, null, true).error()).isNull();
+
+        ArgumentCaptor<TurPersona> saved = ArgumentCaptor.forClass(TurPersona.class);
+        org.mockito.Mockito.verify(personaRepository, org.mockito.Mockito.times(2)).save(saved.capture());
+        TurPersona voice = saved.getAllValues().get(0);
+        assertThat(voice.getFewShotStoreId()).isEqualTo("store-local");
+        assertThat(voice.getBrandContextMcpServerId()).isEqualTo("mcp-local");
+        assertThat(saved.getAllValues().get(1).getFewShotStoreId()).isNull();
+    }
+
     private void verifySaved(ArgumentCaptor<TurPersona> captor) {
         org.mockito.Mockito.verify(personaRepository).save(captor.capture());
     }

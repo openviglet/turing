@@ -179,18 +179,20 @@ public class TurAIAgentImportService {
      */
     private ResolvedRefs resolveAllReferences(TurExchange exchange, File extractFolder) {
         ResolvedRefs refs = new ResolvedRefs();
+        resolveEach(exchange.getLlm(), llm -> refs.llms.put(llm.getId(), upsertLLM(llm)));
+        resolveEach(exchange.getMcpServers(),
+                mcp -> refs.mcpServers.put(mcp.getId(), upsertMcpServer(mcp)));
+        resolveEach(exchange.getStore(), s -> refs.stores.put(s.getId(), upsertStore(s)));
+        // T1331 — personas after the stores and MCP servers they name, so their
+        // few-shot store and brand-context server resolve to the rows just upserted.
         resolveEach(exchange.getPersonas(), p -> {
             String originalId = p.getId();
-            TurPersona resolved = upsertPersona(p);
+            TurPersona resolved = upsertPersona(p, refs);
             refs.personas.put(originalId, resolved);
             if (!originalId.equals(resolved.getId())) {
                 refs.personaIdRemap.put(originalId, resolved.getId());
             }
         });
-        resolveEach(exchange.getLlm(), llm -> refs.llms.put(llm.getId(), upsertLLM(llm)));
-        resolveEach(exchange.getMcpServers(),
-                mcp -> refs.mcpServers.put(mcp.getId(), upsertMcpServer(mcp)));
-        resolveEach(exchange.getStore(), s -> refs.stores.put(s.getId(), upsertStore(s)));
         resolveEach(exchange.getEmbeddingModels(),
                 em -> refs.embeddings.put(em.getId(), upsertEmbedding(em, refs)));
         resolveEach(exchange.getCustomTools(),
@@ -206,7 +208,7 @@ public class TurAIAgentImportService {
         }
     }
 
-    private TurPersona upsertPersona(TurPersona p) {
+    private TurPersona upsertPersona(TurPersona p, ResolvedRefs refs) {
         java.util.Optional<TurPersona> existing = personaRepository.findById(p.getId())
                 .or(() -> personaRepository.findByNameIgnoreCase(p.getName()));
         TurPersona target = existing.orElseGet(TurPersona::new);
@@ -233,6 +235,15 @@ public class TurAIAgentImportService {
         target.setPersonaKind(p.getPersonaKind());
         target.setAudience(p.getAudience());
         target.setCalibrateModelParams(p.getCalibrateModelParams());
+        // T1331 — the few-shot store and brand-context MCP server are bundled
+        // beside the persona; point at the rows the import upserted for them, and
+        // drop an id the bundle does not carry.
+        TurStoreInstance fewShotStore = p.getFewShotStoreId() == null ? null
+                : refs.stores.get(p.getFewShotStoreId());
+        target.setFewShotStoreId(fewShotStore == null ? null : fewShotStore.getId());
+        TurMcpServer brandContext = p.getBrandContextMcpServerId() == null ? null
+                : refs.mcpServers.get(p.getBrandContextMcpServerId());
+        target.setBrandContextMcpServerId(brandContext == null ? null : brandContext.getId());
         return personaRepository.save(target);
     }
 

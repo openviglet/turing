@@ -35,7 +35,6 @@
 - 📋 **T1326** (deps: T1323) **No diagram shows the backend's modules or how they depend on each other** — Documenter output generated from the verified model keeps a contributor architecture page current without anyone redrawing it. → §CLXXXIX.22
 - 📋 **T1327** (deps: T1323) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
-- 📋 **T1331** (deps: —) **Agent import drops a persona's few-shot store and brand-context MCP server** — Export bundles both and their ids, but upsertPersona never sets them, so an imported persona loses its examples and brand context. → §CLXXXIX.26
 - 📋 **T1332** (deps: T1318 ✅) **Records keyed by a plain agent, site or instance id rely on callers loading the owner first for tenant isolation** — Ten child entities have no tenant column and no association to their owner, so a query by the plain id alone skips the @TenantId filter. → §CLXXXIX.27
 
 ## Done when — T1184
