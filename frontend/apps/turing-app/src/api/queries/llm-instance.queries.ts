@@ -68,7 +68,14 @@ export function useCreateLlmInstance() {
 export function useUpdateLlmInstance() {
   const queryClient = useQueryClient();
   return useMutation<TurLLMInstance, Error, TurLLMInstance>({
-    mutationFn: (instance) => service.update(instance),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (instance) => {
+      const cached = instance.id
+        ? queryClient.getQueryData<TurLLMInstance>(queryKeys.llmInstances.detail(instance.id))
+        : undefined;
+      return service.update({ ...instance, version: cached?.version ?? instance.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.llmInstances.detail(saved.id), saved);

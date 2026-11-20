@@ -157,6 +157,10 @@ class TurLLMInstanceAPITest {
                                 """;
 
                 when(turLLMInstanceRepository.findById("1")).thenReturn(Optional.of(existingInstance));
+
+                // T1319 — the update answers what the save returns.
+
+                org.mockito.Mockito.when(turLLMInstanceRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
                 when(turSecretCryptoService.encrypt("new-plain-key")).thenReturn("new-encrypted-key");
 
                 mockMvc.perform(put("/api/llm/1")
@@ -187,6 +191,8 @@ class TurLLMInstanceAPITest {
                 TurLLMInstance existingInstance = new TurLLMInstance();
                 existingInstance.setId("1");
                 when(turLLMInstanceRepository.findById("1")).thenReturn(Optional.of(existingInstance));
+                // T1319 — the update answers what the save returns.
+                org.mockito.Mockito.when(turLLMInstanceRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
 
                 String payload = """
                                 {
@@ -215,6 +221,8 @@ class TurLLMInstanceAPITest {
                 existingInstance.setId("1");
                 existingInstance.setEmbeddingDimensions(3072);
                 when(turLLMInstanceRepository.findById("1")).thenReturn(Optional.of(existingInstance));
+                // T1319 — the update answers what the save returns.
+                org.mockito.Mockito.when(turLLMInstanceRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
 
                 String payload = """
                                 { "title": "T", "modelName": "gpt-4o", "turLLMVendor": { "id": "OPENAI" } }

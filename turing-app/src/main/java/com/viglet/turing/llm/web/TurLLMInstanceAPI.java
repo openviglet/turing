@@ -154,6 +154,8 @@ public class TurLLMInstanceAPI {
         String apiKey = payload.get("apiKey") instanceof String apiKeyValue ? apiKeyValue : null;
         return turLLMInstanceRepository.findById(id).filter(tenantScope::isVisibleToTenant).map(turLLMInstanceEdit -> {
             tenantScope.assertWritable(turLLMInstanceEdit);
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(turLLMInstance.getVersion(), turLLMInstanceEdit.getVersion(), "LLM instance");
             turLLMInstanceEdit.setTitle(turLLMInstance.getTitle());
             turLLMInstanceEdit.setDescription(turLLMInstance.getDescription());
             turLLMInstanceEdit.setIcon(turLLMInstance.getIcon());
@@ -194,11 +196,12 @@ public class TurLLMInstanceAPI {
             if (StringUtils.hasText(apiKey)) {
                 turLLMInstanceEdit.setApiKeyEncrypted(turSecretCryptoService.encrypt(apiKey));
             }
-            this.turLLMInstanceRepository.save(turLLMInstanceEdit);
+            // T1319 — the merged copy carries the incremented version.
+            TurLLMInstance saved = this.turLLMInstanceRepository.save(turLLMInstanceEdit);
             eventPublisher.publishEvent(LlmInstanceUpdatedEvent.updated(
-                    turLLMInstanceEdit.getId(),
-                    LlmProviderType.of(resolveProviderPlugin(turLLMInstanceEdit))));
-            return turLLMInstanceMapper.toDto(turLLMInstanceEdit);
+                    saved.getId(),
+                    LlmProviderType.of(resolveProviderPlugin(saved))));
+            return turLLMInstanceMapper.toDto(saved);
         }).orElse(new TurLLMInstanceDto());
 
     }

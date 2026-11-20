@@ -2,6 +2,8 @@ import type { TurSEVendor } from "./se-vendor.model.ts";
 
 export interface TurSEInstance {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   title: string;
   description: string;
   endpointUrl: string;

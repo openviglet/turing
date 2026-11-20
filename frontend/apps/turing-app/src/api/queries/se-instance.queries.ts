@@ -49,7 +49,14 @@ export function useCreateSeInstance() {
 export function useUpdateSeInstance() {
   const queryClient = useQueryClient();
   return useMutation<TurSEInstance, Error, TurSEInstance>({
-    mutationFn: (instance) => service.update(instance),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (instance) => {
+      const cached = instance.id
+        ? queryClient.getQueryData<TurSEInstance>(queryKeys.seInstances.detail(instance.id))
+        : undefined;
+      return service.update({ ...instance, version: cached?.version ?? instance.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.seInstances.detail(saved.id), saved);

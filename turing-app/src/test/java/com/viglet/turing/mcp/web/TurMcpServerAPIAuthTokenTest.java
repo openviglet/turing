@@ -76,6 +76,8 @@ class TurMcpServerAPIAuthTokenTest {
         api = new TurMcpServerAPI(turMcpServerRepository, mapper, turAIAgentRepository,
                 turPersonaRepository, tenantScope, turSecretCryptoService);
         lenient().when(tenantScope.isVisibleToTenant(any())).thenReturn(true);
+        // T1319 — the update answers what the save returns.
+        lenient().when(turMcpServerRepository.save(any())).thenAnswer(call -> call.getArgument(0));
         lenient().when(turSecretCryptoService.encrypt(any()))
                 .thenAnswer(call -> "enc(" + call.getArgument(0) + ")");
     }

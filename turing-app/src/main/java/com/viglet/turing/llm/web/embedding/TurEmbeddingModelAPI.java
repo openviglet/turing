@@ -233,9 +233,11 @@ public class TurEmbeddingModelAPI {
             @RequestBody TurEmbeddingModelDto turEmbeddingModelDto) {
         return turEmbeddingModelRepository.findById(id).filter(tenantScope::isVisibleToTenant).map(existing -> {
             tenantScope.assertWritable(existing);
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(turEmbeddingModelDto.getVersion(), existing.getVersion(), "embedding model");
             turEmbeddingModelMapper.updateEntityFromDto(turEmbeddingModelDto, existing);
-            turEmbeddingModelRepository.save(existing);
-            return turEmbeddingModelMapper.toDto(existing);
+            // T1319 — the merged copy carries the incremented version.
+            return turEmbeddingModelMapper.toDto(turEmbeddingModelRepository.save(existing));
         }).orElse(new TurEmbeddingModelDto());
     }
 

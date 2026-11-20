@@ -27,9 +27,13 @@ public interface TurEmbeddingModelMapper {
     // the create/import path (TurInfraTenantScope), not the request body.
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
+    // T1319 — the stored version is never overwritten by the payload\'s.
+    @Mapping(target = "version", ignore = true)
     void updateEntity(TurEmbeddingModel source, @MappingTarget TurEmbeddingModel target);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
+    // T1319 — the stored version is never overwritten by the payload\'s.
+    @Mapping(target = "version", ignore = true)
     void updateEntityFromDto(TurEmbeddingModelDto source, @MappingTarget TurEmbeddingModel target);
 }

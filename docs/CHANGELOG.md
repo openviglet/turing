@@ -1795,3 +1795,4 @@
 - **T1319b** — A persona carries a @Version; a console save from an older version answers 409, the update answers the merged version, and the console sends the last version it received.
 - **T1315j** — An agent holds personaIds on the same join table; TurAgentPersonas in the persona module loads catalog and default for the resolver, preview, export and SN audience, and the console sends ids.
 - **T1315k** — An agent holds llmInstanceIds on the same join table; TurAgentLlmInstances loads the rows in id order for every chat, eval and SN caller, and the console reads instances from its cached list.
+- **T1319c** — LLM instances, embedding models, search engines, stores and MCP servers refuse a save from an older version with a 409 through one shared check; exports omit the version.

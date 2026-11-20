@@ -49,7 +49,14 @@ export function useCreateEmbeddingModel() {
 export function useUpdateEmbeddingModel() {
   const queryClient = useQueryClient();
   return useMutation<TurEmbeddingModel, Error, TurEmbeddingModel>({
-    mutationFn: (model) => service.update(model),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (model) => {
+      const cached = model.id
+        ? queryClient.getQueryData<TurEmbeddingModel>(queryKeys.embeddingModels.detail(model.id))
+        : undefined;
+      return service.update({ ...model, version: cached?.version ?? model.version });
+    },
     onSuccess: (saved) => {
       // Seed the detail cache so navigating back to the same id is instant.
       if (saved?.id) {

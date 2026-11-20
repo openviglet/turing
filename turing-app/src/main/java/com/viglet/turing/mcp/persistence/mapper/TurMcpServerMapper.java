@@ -29,6 +29,8 @@ public interface TurMcpServerMapper {
     // admin edits any other field. The API encrypts and assigns it explicitly.
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
+    // T1319 — the stored version is never overwritten by the payload\'s.
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "authTokenEncrypted", ignore = true)
     void updateEntity(TurMcpServer source, @MappingTarget TurMcpServer target);
 }

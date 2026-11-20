@@ -287,6 +287,9 @@ public class TurSNSiteImport {
 			// carried over from the export envelope is discarded first so a
 			// re-exported tenant-owned model can't leak across tenants.
 			exportedModel.setTenantId(null);
+			// T1319 — a version is this deployment's edit count; one carried in would
+			// make the save an update of a row this deployment has never had.
+			exportedModel.setVersion(null);
 			infraTenantScope.stampOnImport(exportedModel);
 			turEmbeddingModelRepository.save(exportedModel);
 			log.info("Imported Embedding Model: {} ({})", exportedModel.getModelName(), exportedModel.getId());

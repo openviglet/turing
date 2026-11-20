@@ -89,12 +89,14 @@ public class TurMcpServerAPI {
         TurMcpServer source = turMcpServerMapper.toEntity(turMcpServerDto);
         return turMcpServerRepository.findById(id).filter(tenantScope::isVisibleToTenant).map(existing -> {
             tenantScope.assertWritable(existing);
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(source.getVersion(), existing.getVersion(), "MCP server");
             turMcpServerMapper.updateEntity(source, existing);
             // T1032 / §D.12 — the mapper leaves authTokenEncrypted alone, so a
             // form that submits every other field keeps the stored credential.
             applyAuthToken(existing, turMcpServerDto.getAuthToken());
-            turMcpServerRepository.save(existing);
-            return turMcpServerMapper.toDto(existing);
+            // T1319 — the merged copy carries the incremented version.
+            return turMcpServerMapper.toDto(turMcpServerRepository.save(existing));
         }).orElse(new TurMcpServerDto());
     }
 

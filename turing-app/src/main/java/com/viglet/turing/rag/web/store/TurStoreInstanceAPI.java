@@ -147,6 +147,8 @@ public class TurStoreInstanceAPI {
         String credential = payload.get("credential") instanceof String credentialValue ? credentialValue : null;
         return turStoreInstanceRepository.findById(id).filter(tenantScope::isVisibleToTenant).map(turStoreInstanceEdit -> {
             tenantScope.assertWritable(turStoreInstanceEdit);
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(turStoreInstance.getVersion(), turStoreInstanceEdit.getVersion(), "store");
             turStoreInstanceEdit.setTitle(turStoreInstance.getTitle());
             turStoreInstanceEdit.setDescription(turStoreInstance.getDescription());
             turStoreInstanceEdit.setIcon(turStoreInstance.getIcon());
@@ -159,8 +161,8 @@ public class TurStoreInstanceAPI {
                 turStoreInstanceEdit
                         .setCredentialEncrypted(turSecretCryptoService.encrypt(credential));
             }
-            this.turStoreInstanceRepository.save(turStoreInstanceEdit);
-            return turStoreInstanceMapper.toDto(turStoreInstanceEdit);
+            // T1319 — the merged copy carries the incremented version.
+            return turStoreInstanceMapper.toDto(this.turStoreInstanceRepository.save(turStoreInstanceEdit));
         }).orElse(new TurStoreInstanceDto());
 
     }

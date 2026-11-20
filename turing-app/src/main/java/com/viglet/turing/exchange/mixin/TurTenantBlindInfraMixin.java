@@ -49,4 +49,12 @@ public abstract class TurTenantBlindInfraMixin {
 
     @JsonIgnore
     public abstract String getTenantId();
+
+    /**
+     * T1319 — the optimistic-lock version is this deployment's edit count, not
+     * content: an import carrying it would be saved as an update of a row the
+     * target has never had.
+     */
+    @JsonIgnore
+    public abstract Long getVersion();
 }

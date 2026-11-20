@@ -24,7 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 🛠 **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — Aggregates beyond the agent, SN site and persona still have no @Version, and no shared superclass replaces the 20 hand-rolled date fields. → §CLXXXIX.15
+- 🛠 **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — Console-edited aggregates beyond the agent, SN site, persona and the five infra ones have no @Version, and no shared superclass replaces the hand-rolled date fields. → §CLXXXIX.15
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 🛠, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history; a 2026.2 install upgrades by export and import. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 ✅, T1311 ✅, T1315 ✅) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
 - 📋 **T1323** (deps: T1322, T1316 ✅) **The module report never fails the build, so a new cycle merges unnoticed** — Once the moves land, the module verification runs in the unit suite and fails on any cycle or any access to another module's internal package. → §CLXXXIX.19

@@ -127,9 +127,11 @@ public class TurSEInstanceAPI {
                 TurSEInstance source = turSEInstanceMapper.toEntity(turSEInstanceDto);
                 return ResponseEntity.ok(seInstanceSource.findById(id).filter(tenantScope::isVisibleToTenant).map(existing -> {
                         tenantScope.assertWritable(existing);
+                        // T1319 — a save made from an older version is refused, not applied.
+                        com.viglet.turing.shared.exception.TurStaleVersion.refuse(source.getVersion(), existing.getVersion(), "search engine");
                         turSEInstanceMapper.updateEntity(source, existing);
-                        seInstanceSource.save(existing);
-                        return turSEInstanceMapper.toDto(existing);
+                        // T1319 — the merged copy carries the incremented version.
+                        return turSEInstanceMapper.toDto(seInstanceSource.save(existing));
                 }).orElse(new TurSEInstanceDto()));
         }
 

@@ -123,6 +123,10 @@ class TurStoreInstanceAPITest {
                                 """;
 
                 when(turStoreInstanceRepository.findById("store1")).thenReturn(Optional.of(instance));
+
+                // T1319 — the update answers what the save returns.
+
+                org.mockito.Mockito.when(turStoreInstanceRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
                 when(turSecretCryptoService.encrypt("plain-credential")).thenReturn("new-encrypted-credential");
 
                 mockMvc.perform(put("/api/store/store1")

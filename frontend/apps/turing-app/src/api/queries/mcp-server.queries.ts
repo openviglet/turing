@@ -35,7 +35,14 @@ export function useCreateMcpServer() {
 export function useUpdateMcpServer() {
   const queryClient = useQueryClient();
   return useMutation<TurMcpServer, Error, TurMcpServer>({
-    mutationFn: (server) => service.update(server),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (server) => {
+      const cached = server.id
+        ? queryClient.getQueryData<TurMcpServer>(queryKeys.mcpServers.detail(server.id))
+        : undefined;
+      return service.update({ ...server, version: cached?.version ?? server.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.mcpServers.detail(saved.id), saved);

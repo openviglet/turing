@@ -165,6 +165,10 @@ class TurSEInstanceAPITest {
 
         when(seInstanceSource.findById("1")).thenReturn(Optional.of(existingInstance));
 
+        // T1319 — the update answers what the save returns.
+
+        org.mockito.Mockito.when(seInstanceSource.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
+
         mockMvc.perform(put("/api/se/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedInstance)))

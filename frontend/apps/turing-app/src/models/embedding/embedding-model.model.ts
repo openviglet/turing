@@ -2,6 +2,8 @@ import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
 
 export interface TurEmbeddingModel {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   modelName: string;
   description: string;
   providerType: string;

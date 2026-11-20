@@ -6,6 +6,8 @@ export const MCP_AUTH_TOKEN_CLEAR = "__clear__";
 
 export interface TurMcpServer {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   title: string;
   description: string;
   /** Guidance injected into the agent system prompt when this enabled server is attached. */
