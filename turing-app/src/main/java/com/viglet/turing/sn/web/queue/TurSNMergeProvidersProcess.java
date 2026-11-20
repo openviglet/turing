@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
@@ -38,10 +36,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField;
 import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
-import com.viglet.turing.searchengine.solr.TurSolrUtils;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,15 +48,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class TurSNMergeProvidersProcess {
-    private final TurSolrInstanceProcess turSolrInstanceProcess;
-    private final TurSolr turSolr;
+    private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
 
-    public TurSNMergeProvidersProcess(TurSolrInstanceProcess turSolrInstanceProcess,
-            TurSolr turSolr,
+    public TurSNMergeProvidersProcess(TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository) {
-        this.turSolrInstanceProcess = turSolrInstanceProcess;
-        this.turSolr = turSolr;
+        this.pluginFactory = pluginFactory;
         this.turSNSiteMergeProvidersRepository = turSNSiteMergeProvidersRepository;
     }
 
@@ -86,9 +79,11 @@ public class TurSNMergeProvidersProcess {
                 }
 
                 if (queueDocumentProviders.contains(turSNSiteMergeProviders.getProviderFrom())) {
-                    return mergeFrom(queueDocumentAttrs, turSNSiteMergeProviders, locale);
+                    return mergeFrom(queueDocumentAttrs, turSNSiteMergeProviders, locale,
+                            pluginFactory.getPluginForSite(turSNSite));
                 } else if (queueDocumentProviders.contains(turSNSiteMergeProviders.getProviderTo())) {
-                    return mergeTo(queueDocumentAttrs, turSNSiteMergeProviders, locale);
+                    return mergeTo(queueDocumentAttrs, turSNSiteMergeProviders, locale,
+                            pluginFactory.getPluginForSite(turSNSite));
                 }
             }
         }
@@ -96,46 +91,43 @@ public class TurSNMergeProvidersProcess {
     }
 
     private Map<String, Object> mergeFrom(Map<String, Object> queueDocumentAttrs,
-            TurSNSiteMergeProviders turSNSiteMergeProviders, Locale locale) {
+            TurSNSiteMergeProviders turSNSiteMergeProviders, Locale locale, TurSearchEnginePlugin plugin) {
         String relationValue = (String) queueDocumentAttrs.get(turSNSiteMergeProviders.getRelationFrom());
-        List<SolrDocument> resultsFrom = solrDocumentsFrom(turSNSiteMergeProviders, relationValue, locale);
-        List<SolrDocument> resultsTo = solrDocumentsTo(turSNSiteMergeProviders, relationValue, locale);
-        List<SolrDocument> resultsFromAndTo = solrDocumentsFromAndTo(turSNSiteMergeProviders,
+        List<Map<String, Object>> resultsFrom = documentsFrom(plugin, turSNSiteMergeProviders, relationValue,
+                locale);
+        List<Map<String, Object>> resultsTo = documentsTo(plugin, turSNSiteMergeProviders, relationValue, locale);
+        List<Map<String, Object>> resultsFromAndTo = documentsFromAndTo(plugin, turSNSiteMergeProviders,
                 turSNSiteMergeProviders.getRelationTo(), relationValue, locale);
-        if (hasSolrDocuments(resultsFromAndTo)) {
-            TurSEResult turSEResultFromAndTo = TurSolrUtils
-                    .createTurSEResultFromDocument(resultsFromAndTo.getFirst());
+        if (hasDocuments(resultsFromAndTo)) {
             return doMergeContent(queueDocumentAttrs,
-                    turSEResultFromAndTo.getFields(), turSNSiteMergeProviders);
+                    new HashMap<>(resultsFromAndTo.getFirst()), turSNSiteMergeProviders);
         } else {
-            if (hasSolrDocuments(resultsFrom) && hasSolrDocuments(resultsTo)) {
-                deIndexSolrDocuments(turSNSiteMergeProviders, resultsFrom);
+            if (hasDocuments(resultsFrom) && hasDocuments(resultsTo)) {
+                deIndexDocuments(plugin, turSNSiteMergeProviders, resultsFrom);
             }
-            if (hasSolrDocuments(resultsTo)) {
-                TurSEResult turSEResultTo = TurSolrUtils.createTurSEResultFromDocument(resultsTo.getFirst());
-                return doMergeContent(queueDocumentAttrs, turSEResultTo.getFields(), turSNSiteMergeProviders);
+            if (hasDocuments(resultsTo)) {
+                return doMergeContent(queueDocumentAttrs, new HashMap<>(resultsTo.getFirst()),
+                        turSNSiteMergeProviders);
             }
         }
         return queueDocumentAttrs;
     }
 
     private Map<String, Object> mergeTo(Map<String, Object> queueDocumentAttrs,
-            TurSNSiteMergeProviders turSNSiteMergeProviders, Locale locale) {
+            TurSNSiteMergeProviders turSNSiteMergeProviders, Locale locale, TurSearchEnginePlugin plugin) {
         String relationValue = (String) queueDocumentAttrs.get(turSNSiteMergeProviders.getRelationTo());
-        List<SolrDocument> resultsFrom = solrDocumentsFrom(turSNSiteMergeProviders, relationValue, locale);
+        List<Map<String, Object>> resultsFrom = documentsFrom(plugin, turSNSiteMergeProviders, relationValue,
+                locale);
         String idValue = (String) queueDocumentAttrs.get(TurSNFieldName.ID);
-        List<SolrDocument> resultsFromAndTo = solrDocumentsFromAndTo(turSNSiteMergeProviders,
+        List<Map<String, Object>> resultsFromAndTo = documentsFromAndTo(plugin, turSNSiteMergeProviders,
                 TurSNFieldName.ID, idValue, locale);
-        if (hasSolrDocuments(resultsFromAndTo)) {
-            TurSEResult turSEResultFromAndTo = TurSolrUtils
-                    .createTurSEResultFromDocument(resultsFromAndTo.getFirst());
-            return doMergeContent(turSEResultFromAndTo.getFields(),
+        if (hasDocuments(resultsFromAndTo)) {
+            return doMergeContent(new HashMap<>(resultsFromAndTo.getFirst()),
                     queueDocumentAttrs, turSNSiteMergeProviders);
-        } else if (hasSolrDocuments(resultsFrom)) {
-            TurSEResult turSEResultFrom = TurSolrUtils.createTurSEResultFromDocument(resultsFrom.getFirst());
-            Map<String, Object> mergedDocumentAttributes = doMergeContent(turSEResultFrom.getFields(),
+        } else if (hasDocuments(resultsFrom)) {
+            Map<String, Object> mergedDocumentAttributes = doMergeContent(new HashMap<>(resultsFrom.getFirst()),
                     queueDocumentAttrs, turSNSiteMergeProviders);
-            deIndexSolrDocuments(turSNSiteMergeProviders, resultsFrom);
+            deIndexDocuments(plugin, turSNSiteMergeProviders, resultsFrom);
             return mergedDocumentAttributes;
         }
         return queueDocumentAttrs;
@@ -149,53 +141,46 @@ public class TurSNMergeProvidersProcess {
         return attributesTo;
     }
 
-    private boolean hasSolrDocuments(List<SolrDocument> resultsTo) {
-        return resultsTo != null && !resultsTo.isEmpty();
+    private boolean hasDocuments(List<Map<String, Object>> results) {
+        return results != null && !results.isEmpty();
     }
 
-    private SolrDocumentList solrDocumentsTo(TurSNSiteMergeProviders turSNSiteMergeProviders,
-            String relationValue,
-            Locale locale) {
+    private List<Map<String, Object>> documentsTo(TurSearchEnginePlugin plugin,
+            TurSNSiteMergeProviders turSNSiteMergeProviders, String relationValue, Locale locale) {
         Map<String, Object> queryMapTo = new HashMap<>();
         queryMapTo.put(turSNSiteMergeProviders.getRelationTo(), relationValue);
         queryMapTo.put(TurSNFieldName.SOURCE_APPS, turSNSiteMergeProviders.getProviderTo());
-        return solrResultAnd(turSNSiteMergeProviders, queryMapTo, locale);
+        return resultAnd(plugin, turSNSiteMergeProviders, queryMapTo, locale);
     }
 
-    private SolrDocumentList solrDocumentsFrom(TurSNSiteMergeProviders turSNSiteMergeProviders,
-            String relationValue,
-            Locale locale) {
+    private List<Map<String, Object>> documentsFrom(TurSearchEnginePlugin plugin,
+            TurSNSiteMergeProviders turSNSiteMergeProviders, String relationValue, Locale locale) {
         Map<String, Object> queryMapFrom = new HashMap<>();
         queryMapFrom.put(turSNSiteMergeProviders.getRelationFrom(), relationValue);
         queryMapFrom.put(TurSNFieldName.SOURCE_APPS, turSNSiteMergeProviders.getProviderFrom());
-        return solrResultAnd(turSNSiteMergeProviders, queryMapFrom, locale);
+        return resultAnd(plugin, turSNSiteMergeProviders, queryMapFrom, locale);
     }
 
-    private SolrDocumentList solrDocumentsFromAndTo(TurSNSiteMergeProviders turSNSiteMergeProviders,
-            String relationAttrib, String relationValue, Locale locale) {
+    private List<Map<String, Object>> documentsFromAndTo(TurSearchEnginePlugin plugin,
+            TurSNSiteMergeProviders turSNSiteMergeProviders, String relationAttrib, String relationValue,
+            Locale locale) {
         Map<String, Object> queryMapFrom = new HashMap<>();
         queryMapFrom.put(relationAttrib, relationValue);
         queryMapFrom.put(TurSNFieldName.SOURCE_APPS, String.format("(\"%s\" AND \"%s\")",
                 turSNSiteMergeProviders.getProviderFrom(), turSNSiteMergeProviders.getProviderFrom()));
-        return solrResultAnd(turSNSiteMergeProviders, queryMapFrom, locale);
+        return resultAnd(plugin, turSNSiteMergeProviders, queryMapFrom, locale);
     }
 
-    private void deIndexSolrDocuments(TurSNSiteMergeProviders turSNSiteMergeProviders, List<SolrDocument> results) {
-        turSolrInstanceProcess
-                .initSolrInstance(turSNSiteMergeProviders.getTurSNSite().getName(), turSNSiteMergeProviders.getLocale())
-                .ifPresent(turSolrInstance -> results
-                        .forEach(result -> turSolr.deIndexing(turSolrInstance,
-                                result.get(TurSNFieldName.ID).toString())));
+    private void deIndexDocuments(TurSearchEnginePlugin plugin, TurSNSiteMergeProviders turSNSiteMergeProviders,
+            List<Map<String, Object>> results) {
+        results.forEach(result -> plugin.deIndex(turSNSiteMergeProviders.getTurSNSite(),
+                turSNSiteMergeProviders.getLocale(), result.get(TurSNFieldName.ID).toString()));
     }
 
-    private SolrDocumentList solrResultAnd(TurSNSiteMergeProviders turSNSiteMergeProviders,
-            Map<String, Object> attributes, Locale locale) {
-        return turSolrInstanceProcess
-                .initSolrInstance(turSNSiteMergeProviders.getTurSNSite().getName(),
-                        Optional.ofNullable(locale).orElse(turSNSiteMergeProviders.getLocale()))
-                .map(turSolrInstance -> turSolr.solrResultAnd(turSolrInstance, attributes))
-                .orElse(new SolrDocumentList());
-
+    private List<Map<String, Object>> resultAnd(TurSearchEnginePlugin plugin,
+            TurSNSiteMergeProviders turSNSiteMergeProviders, Map<String, Object> attributes, Locale locale) {
+        return plugin.findByFieldValues(turSNSiteMergeProviders.getTurSNSite(),
+                Optional.ofNullable(locale).orElse(turSNSiteMergeProviders.getLocale()), attributes);
     }
 
     private void addOverwrittenAttributesToSolrDocument(Map<String, Object> queueDocumentAttrs,

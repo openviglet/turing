@@ -24,7 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 11 imports still reach solr from sn search, autocomplete, document response, spotlights, merge providers and the query API; the plugin contract still takes SN entities. → §CLXXXIX.6
+- 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The plugin contract still takes TurSNSite, TurSNSiteLocale and the SN search context, so searchengine and sn depend on each other. → §CLXXXIX.6
 - 🛠 **T1315** (deps: T1312 ✅, T1313 ✅, T1314 ✅) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — TurAIAgent (persona, LLM and MCP sets, default persona), TurSNSiteGenAi (agent) and TurSNSite (SE instance) still hold JPA associations into other modules. → §CLXXXIX.11
 - 📋 **T1317** (deps: T1314 ✅) **Table names follow no convention: 87 of 105 lack the tur_ prefix the other 18 carry** — With compatibility waived, every table takes one rule naming its module (for example sn_site, agent_eval_case), so a table's owner is readable from the schema alone. → §CLXXXIX.13
 - 📋 **T1318** (deps: T1314 ✅) **54 of about 106 entities have no tenant column, and the rest mix @TenantId with plain tenantId** — Each entity is ruled tenant-scoped or deliberately global, and every tenant-scoped one uses one mechanism, so Block J isolation does not depend on which entity a query hits. → §CLXXXIX.14

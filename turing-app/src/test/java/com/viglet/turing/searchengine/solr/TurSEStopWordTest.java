@@ -1,4 +1,4 @@
-package com.viglet.turing.searchengine;
+package com.viglet.turing.searchengine.solr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

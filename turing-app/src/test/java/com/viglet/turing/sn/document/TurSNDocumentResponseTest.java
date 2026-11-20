@@ -34,7 +34,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 
 /**
  * Unit tests for {@link TurSNDocumentResponse}, exercising both the full
@@ -123,7 +123,7 @@ class TurSNDocumentResponseTest {
         site.setSpotlightWithResults(0);
 
         documentResponse.responseDocuments(context(List.of()),
-                org.mockito.Mockito.mock(TurSolrInstance.class), site, Map.of(),
+                org.mockito.Mockito.mock(TurSearchEnginePlugin.class), site, Map.of(),
                 Collections.emptyList());
 
         verify(turSNSpotlightProcess, never()).addSpotlightToResults(any(), any(), any(), any(),
@@ -148,12 +148,12 @@ class TurSNDocumentResponseTest {
         when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
                 .thenReturn(Collections.emptyList());
         site.setSpotlightWithResults(1);
-        TurSolrInstance solr = org.mockito.Mockito.mock(TurSolrInstance.class);
+        TurSearchEnginePlugin plugin = org.mockito.Mockito.mock(TurSearchEnginePlugin.class);
 
-        documentResponse.responseDocuments(context(List.of()), solr, site, Map.of(),
+        documentResponse.responseDocuments(context(List.of()), plugin, site, Map.of(),
                 Collections.emptyList());
 
-        verify(turSNSpotlightProcess).addSpotlightToResults(any(), eq(solr), eq(site), any(),
+        verify(turSNSpotlightProcess).addSpotlightToResults(any(), eq(plugin), eq(site), any(),
                 any(), any());
     }
 

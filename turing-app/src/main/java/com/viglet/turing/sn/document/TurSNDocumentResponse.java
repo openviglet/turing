@@ -30,10 +30,10 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
 
 /**
  * Maps {@link TurSEResult}s into the two response shapes returned by the search
@@ -64,11 +64,11 @@ public class TurSNDocumentResponse {
 
     /**
      * Builds the {@link TurSNSiteSearchResultsBean} for a search response,
-     * including spotlight documents when enabled on the site and a Solr
-     * instance is available.
+     * including spotlight documents when enabled on the site, which the
+     * site's engine {@code plugin} looks up by id.
      */
     public TurSNSiteSearchResultsBean responseDocuments(TurSNSiteSearchContext context,
-            TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+            TurSearchEnginePlugin plugin, TurSNSite turSNSite,
             Map<String, TurSNSiteFieldExtDto> facetMap, List<TurSEResult> seResults) {
         Map<String, TurSNSiteFieldExtDto> fieldExtMap = buildFieldExtMap(turSNSite);
         List<TurSNSiteSearchDocumentBean> documents = new ArrayList<>();
@@ -76,9 +76,9 @@ public class TurSNDocumentResponse {
                 facetMap, documents, result, false));
         Optional.ofNullable(turSNSite).map(TurSNSite::getSpotlightWithResults)
                 .filter(TurSNUtils::isTrue)
-                .filter(r -> turSolrInstance != null)
+                .filter(r -> plugin != null)
                 .ifPresent(r -> turSNSpotlightProcess.addSpotlightToResults(context,
-                        turSolrInstance, turSNSite, facetMap, fieldExtMap, documents));
+                        plugin, turSNSite, facetMap, fieldExtMap, documents));
         retainRequestedFields(context, documents);
         return new TurSNSiteSearchResultsBean().setDocument(documents);
     }

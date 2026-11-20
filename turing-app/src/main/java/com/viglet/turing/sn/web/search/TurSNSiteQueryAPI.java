@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/sn/{siteName}/query")
 @Tag(name = "Semantic Navigation DSL Query", description = "Semantic Navigation DSL Query API")
 public class TurSNSiteQueryAPI {
-    private final TurSolr turSolr;
-    private final TurSolrInstanceProcess turSolrInstanceProcess;
+    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSearchEnginePluginFactory pluginFactory;
 
-    public TurSNSiteQueryAPI(TurSolr turSolr, TurSolrInstanceProcess turSolrInstanceProcess) {
-        this.turSolr = turSolr;
-        this.turSolrInstanceProcess = turSolrInstanceProcess;
+    public TurSNSiteQueryAPI(TurSNSiteRepository turSNSiteRepository,
+            TurSearchEnginePluginFactory pluginFactory) {
+        this.turSNSiteRepository = turSNSiteRepository;
+        this.pluginFactory = pluginFactory;
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,9 +56,9 @@ public class TurSNSiteQueryAPI {
             @PathVariable String siteName,
             @RequestParam(name = TurSNParamType.LOCALE) String localeRequest,
             @RequestBody String json) {
-        return turSolrInstanceProcess
-                .initSolrInstance(siteName, LocaleUtils.toLocale(localeRequest))
-                .map(turSolrInstance -> turSolr.dslQuery(turSolrInstance, json))
+        return turSNSiteRepository.findByNameIgnoreCase(siteName)
+                .flatMap(turSNSite -> pluginFactory.getPluginForSite(turSNSite)
+                        .nativeJsonQuery(turSNSite, LocaleUtils.toLocale(localeRequest), json))
                 .orElse("{}");
     }
 

@@ -39,9 +39,7 @@ import com.viglet.turing.commons.sn.search.TurSNSearchCacheKey;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
-import com.viglet.turing.searchengine.TurSEStopWord;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -55,24 +53,18 @@ public class TurSNAutoComplete {
     private static final long MIN_CANDIDATES = 50;
     /** T1226 — how many in-scope documents the candidates are matched against. */
     private static final int SCOPE_ROWS = 100;
-    private final TurSEStopWord turSEStopword;
     private final TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSolrInstanceProcess turSolrInstanceProcess;
     private final TurSNAutoCompleteTopTerms topTerms;
 
-    public TurSNAutoComplete(TurSEStopWord turSEStopword,
-            TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
+    public TurSNAutoComplete(TurSNSiteSearchCachedAPI turSNSiteSearchCachedAPI,
             TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteRepository turSNSiteRepository,
-            TurSolrInstanceProcess turSolrInstanceProcess,
             TurSNAutoCompleteTopTerms topTerms) {
-        this.turSEStopword = turSEStopword;
         this.turSNSiteSearchCachedAPI = turSNSiteSearchCachedAPI;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;
-        this.turSolrInstanceProcess = turSolrInstanceProcess;
         this.topTerms = topTerms;
     }
 
@@ -192,9 +184,7 @@ public class TurSNAutoComplete {
                 numberOfWordsFromQuery++;
             }
 
-            List<String> stopWords = turSolrInstanceProcess.initSolrInstance(siteName, locale)
-                    .map(turSEStopword::getStopWords)
-                    .orElse(Collections.emptyList());
+            List<String> stopWords = plugin.stopWords(turSNSite, locale);
             TurSNSuggestionFilter suggestionFilter = new TurSNSuggestionFilter(stopWords);
             suggestionFilter.automatonStrategyConfig(numberOfWordsFromQuery);
             List<String> filtered = suggestionFilter.filter(rawSuggestions);

@@ -60,7 +60,6 @@ import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightDocumentRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
-import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
 
 /**
@@ -82,9 +81,6 @@ class TurSNSpotlightProcessTest {
         private TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository;
 
         @Mock
-        private TurSolr turSolr;
-
-        @Mock
         private TurSpotlightCache turSpotlightCache;
 
         @Mock
@@ -96,7 +92,7 @@ class TurSNSpotlightProcessTest {
                 when(jobItem.getAttributes()).thenReturn(Map.of(TurSNFieldName.TYPE, "TUR_SPOTLIGHT"));
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -106,7 +102,7 @@ class TurSNSpotlightProcessTest {
         @Test
         void testIsSpotlightJobReturnsFalseForNullAndMissingAttributes() {
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -135,7 +131,7 @@ class TurSNSpotlightProcessTest {
                                 .thenReturn(spotlights);
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -152,7 +148,7 @@ class TurSNSpotlightProcessTest {
                 when(turSNSiteSpotlightRepository.findByProvider("cms-provider")).thenReturn(spotlights);
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -175,7 +171,7 @@ class TurSNSpotlightProcessTest {
                 when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.US)).thenReturn(null);
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -214,7 +210,7 @@ class TurSNSpotlightProcessTest {
                 when(turSNSiteSpotlightDocumentRepository.findByTurSNSiteSpotlight(any())).thenReturn(Set.of());
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -253,7 +249,7 @@ class TurSNSpotlightProcessTest {
                                 .thenReturn(Set.of(doc1, doc2));
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -302,7 +298,7 @@ class TurSNSpotlightProcessTest {
                                 .thenReturn(Set.of(siteWideDoc));
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 
@@ -336,7 +332,7 @@ class TurSNSpotlightProcessTest {
                 docs.add(TurSNSiteSearchDocumentBean.builder().fields(Map.of("title", "Doc")).build());
 
                 TurSNSpotlightProcess process = new TurSNSpotlightProcess(turSNSiteSpotlightRepository,
-                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository, turSolr,
+                                turSNSiteSpotlightTermRepository, turSNSiteSpotlightDocumentRepository,
                                 turSpotlightCache, turSNSiteLocaleRepository,
                                 new TurCacheEvictionScheduler(new ConcurrentMapCacheManager()));
 

@@ -64,8 +64,7 @@ import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightR
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSEPaging;
 
 import tools.jackson.core.type.TypeReference;
@@ -129,7 +128,6 @@ public class TurSNSpotlightProcess {
 	private final TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
 	private final TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository;
 	private final TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository;
-	private final TurSolr turSolr;
 	private final TurSpotlightCache turSpotlightCache;
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
 	private final TurCacheEvictionScheduler evictionScheduler;
@@ -137,14 +135,12 @@ public class TurSNSpotlightProcess {
 	public TurSNSpotlightProcess(TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
 			TurSNSiteSpotlightTermRepository turSNSiteSpotlightTermRepository,
 			TurSNSiteSpotlightDocumentRepository turSNSiteSpotlightDocumentRepository,
-			TurSolr turSolr,
 			TurSpotlightCache turSpotlightCache,
 			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
 			TurCacheEvictionScheduler evictionScheduler) {
 		this.turSNSiteSpotlightRepository = turSNSiteSpotlightRepository;
 		this.turSNSiteSpotlightTermRepository = turSNSiteSpotlightTermRepository;
 		this.turSNSiteSpotlightDocumentRepository = turSNSiteSpotlightDocumentRepository;
-		this.turSolr = turSolr;
 		this.turSpotlightCache = turSpotlightCache;
 		this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
 		this.evictionScheduler = evictionScheduler;
@@ -327,7 +323,7 @@ public class TurSNSpotlightProcess {
 		return turSNSiteSpotlightDocument;
 	}
 
-	public void addSpotlightToResults(TurSNSiteSearchContext context, TurSolrInstance turSolrInstance,
+	public void addSpotlightToResults(TurSNSiteSearchContext context, TurSearchEnginePlugin plugin,
 			TurSNSite turSNSite, Map<String, TurSNSiteFieldExtDto> facetMap,
 			Map<String, TurSNSiteFieldExtDto> fieldExtMap,
 			List<TurSNSiteSearchDocumentBean> turSNSiteSearchDocumentsBean) {
@@ -356,8 +352,8 @@ public class TurSNSpotlightProcess {
 				List<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments = turSNSiteSpotlightDocumentMap
 						.get(currentPositionFromCurrentPage);
 				for (TurSNSiteSpotlightDocument document : turSNSiteSpotlightDocuments) {
-					TurSEResult turSEResult = turSolr.findById(turSolrInstance, turSNSite, document.getReferenceId(),
-							context);
+					TurSEResult turSEResult = plugin.findById(context, turSNSite, document.getReferenceId())
+							.orElse(null);
 					// T1209 — findById is confined to the search's partition, so a
 					// pinned document of another partition comes back empty: it is
 					// left out rather than shown from the spotlight's stored fields.

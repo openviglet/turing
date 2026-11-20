@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.searchengine;
+package com.viglet.turing.searchengine.solr;
 
 import java.io.BufferedReader;
 import java.io.IOException;

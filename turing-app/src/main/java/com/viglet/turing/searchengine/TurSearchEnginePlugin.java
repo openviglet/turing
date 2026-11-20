@@ -635,6 +635,47 @@ public interface TurSearchEnginePlugin {
         return List.of();
     }
 
+    /**
+     * T1310 — the stop words this engine applies to the site's text for the
+     * locale, which the autocomplete filter drops from a suggestion's edges.
+     * Engines without a list of their own keep the default and filter nothing.
+     */
+    default List<String> stopWords(TurSNSite turSNSite, Locale locale) {
+        return List.of();
+    }
+
+    // ---- Document lookup (T1310) -----------------------------------------
+
+    /**
+     * T1310 — the site's document with this id, confined to the search's
+     * partition when the context carries one (T1209). Empty when the engine
+     * found none or cannot look a document up by id.
+     */
+    default Optional<com.viglet.turing.searchengine.result.TurSEResult> findById(
+            TurSNSiteSearchContext context, TurSNSite turSNSite, String id) {
+        return Optional.empty();
+    }
+
+    /**
+     * T1310 — the site's documents whose fields hold every one of these values,
+     * as their stored fields. A value is passed to the engine as written, so a
+     * merge provider's relation can carry the engine's own syntax. Engines that
+     * cannot answer it return nothing.
+     */
+    default List<Map<String, Object>> findByFieldValues(TurSNSite turSNSite, Locale locale,
+            Map<String, Object> fieldValues) {
+        return List.of();
+    }
+
+    /**
+     * T1310 — runs a query written in the engine's own JSON request syntax and
+     * returns the engine's response body. Empty when the engine has no such
+     * syntax or the site has no index for the locale.
+     */
+    default Optional<String> nativeJsonQuery(TurSNSite turSNSite, Locale locale, String json) {
+        return Optional.empty();
+    }
+
     // ---- Spell check (T686 / §XLI.2, Block AR) ---------------------------
 
     /**

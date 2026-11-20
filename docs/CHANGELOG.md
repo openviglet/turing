@@ -1777,3 +1777,4 @@
 - **T1315d** — TurAnalyticsIntent holds agentId and TurRagBm25Core holds seInstanceId on the same columns; the intent queries and readers use the id, and the BM25 provisioner and indexer resolve the SE instance by id.
 - **T1315e** — The kb site selection and config hold snSiteId on the same column, whose Liquibase ON DELETE CASCADE still removes them with the site; kb repositories and callers query by site id.
 - **T1315f** — TurAIAgent holds embeddingModelInstanceId and storeInstanceId; TurAgentRagInfra resolves them through llm and rag for the chat path and exports, and the agent and SN GenAI forms use the ids (design §CLXXXIX.31 recorded in `turing-app/src/main/java/com/viglet/turing/agent/TurAgentRagInfra.java`).
+- **T1310c** — SN search, spotlights, autocomplete stop words, merge providers and the DSL query API call the plugin's findById, stopWords, findByFieldValues and nativeJsonQuery; no sn class imports an engine package.

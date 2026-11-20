@@ -91,6 +91,14 @@ class TurLuceneAutoCompleteTest {
         return ext;
     }
 
+    /** T1310 — the stop words autocomplete filters are the ones the query analyzer drops. */
+    @Test
+    void stopWordsAreTheLanguageListTheQueryAnalyzerDrops() {
+        List<String> portuguese = plugin.stopWords(site, Locale.of("pt", "BR"));
+        org.assertj.core.api.Assertions.assertThat(portuguese).contains("para", "uma");
+        org.assertj.core.api.Assertions.assertThat(plugin.stopWords(site, Locale.of("ja"))).isEmpty();
+    }
+
     @Test
     void suggestsOnlyWordsOfTextFields() {
         when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(

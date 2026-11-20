@@ -483,6 +483,16 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
 
     // ---- Autocomplete -----------------------------------------------------
 
+    /** T1310 — the language's stop words, the list the query analyzer drops (T1242). */
+    @Override
+    public List<String> stopWords(TurSNSite turSNSite, Locale locale) {
+        List<String> words = new ArrayList<>();
+        for (Object word : TurLuceneFoldingAnalyzer.stopWordsFor(locale)) {
+            words.add(word instanceof char[] chars ? new String(chars) : String.valueOf(word));
+        }
+        return words;
+    }
+
     @Override
     public List<String> autoComplete(String siteName, String term, Locale locale, long rows) {
         if (term == null || term.length() < 2) {

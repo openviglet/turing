@@ -1159,6 +1159,39 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                 .orElseGet(com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult::new);
     }
 
+    // ---- Stop words and document lookup (T1310) ---------------------------
+
+    @Override
+    public List<String> stopWords(TurSNSite turSNSite, Locale locale) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+                .map(new TurSEStopWord(resourceLoader)::getStopWords)
+                .orElse(List.of());
+    }
+
+    @Override
+    public Optional<com.viglet.turing.searchengine.result.TurSEResult> findById(
+            TurSNSiteSearchContext context, TurSNSite turSNSite, String id) {
+        return turSolrInstanceProcess.initSolrInstance(context.getSiteName(), context.getLocale())
+                .map(instance -> turSolr.findById(instance, turSNSite, id, context));
+    }
+
+    @Override
+    public List<Map<String, Object>> findByFieldValues(TurSNSite turSNSite, Locale locale,
+            Map<String, Object> fieldValues) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+                .map(instance -> turSolr.solrResultAnd(instance, fieldValues).stream()
+                        .map(document -> TurSolrUtils.createTurSEResultFromDocument(document)
+                                .getFields())
+                        .toList())
+                .orElse(List.of());
+    }
+
+    @Override
+    public Optional<String> nativeJsonQuery(TurSNSite turSNSite, Locale locale, String json) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+                .map(instance -> turSolr.dslQuery(instance, json));
+    }
+
     // ---- Helpers ---------------------------------------------------------
 
     /**

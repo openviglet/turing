@@ -1,56 +1,55 @@
 package com.viglet.turing.sn.web.search;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
+import com.viglet.turing.searchengine.TurSearchEnginePlugin;
+import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
+/** The DSL query reaches the site's engine through the plugin contract (T1310). */
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteQueryAPITest {
 
     private MockMvc mockMvc;
 
     @Mock
-    private TurSolr turSolr;
+    private TurSNSiteRepository turSNSiteRepository;
 
     @Mock
-    private TurSolrInstanceProcess turSolrInstanceProcess;
-
-    @InjectMocks
-    private TurSNSiteQueryAPI api;
+    private TurSearchEnginePluginFactory pluginFactory;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(api).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new TurSNSiteQueryAPI(turSNSiteRepository, pluginFactory))
+                .build();
     }
 
     @Test
     void testTurSNSiteSearchSelectGet_Found() throws Exception {
-        TurSolrInstance solrInstance = mock(TurSolrInstance.class);
-
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any())).thenReturn(Optional.of(solrInstance));
-        when(turSolr.dslQuery(solrInstance, "{\"query\":\"test\"}")).thenReturn("{\"result\":\"ok\"}");
+        TurSNSite site = new TurSNSite();
+        TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
+        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(plugin.nativeJsonQuery(site, Locale.US, "{\"query\":\"test\"}"))
+                .thenReturn(Optional.of("{\"result\":\"ok\"}"));
 
         mockMvc.perform(post("/api/sn/site1/query")
                 .param("_setlocale", "en_US")
@@ -58,13 +57,27 @@ class TurSNSiteQueryAPITest {
                 .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"result\":\"ok\"}"));
+    }
 
-        verify(turSolr, times(1)).dslQuery(solrInstance, "{\"query\":\"test\"}");
+    @Test
+    void anEngineWithoutANativeQueryAnswersAnEmptyObject() throws Exception {
+        TurSNSite site = new TurSNSite();
+        TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
+        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(plugin.nativeJsonQuery(any(), any(), any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/sn/site1/query")
+                .param("_setlocale", "en_US")
+                .content("{\"query\":\"test\"}")
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{}"));
     }
 
     @Test
     void testTurSNSiteSearchSelectGet_NotFound() throws Exception {
-        when(turSolrInstanceProcess.initSolrInstance(eq("site1"), any())).thenReturn(Optional.empty());
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/sn/site1/query")
                 .param("_setlocale", "en_US")
@@ -73,6 +86,6 @@ class TurSNSiteQueryAPITest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{}"));
 
-        verify(turSolr, never()).dslQuery(any(), any());
+        verifyNoInteractions(pluginFactory);
     }
 }
