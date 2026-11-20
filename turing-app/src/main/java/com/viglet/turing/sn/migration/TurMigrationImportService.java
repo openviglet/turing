@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.sn.web.job.TurSNImportAPI;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
  * (reusing {@link TurSNSiteManifestService}, so an importer-created field is
  * byte-identical to a manifested one), then reshape each source record into a
  * {@link TurSNJobItem} and push batches through the existing import path
- * ({@link TurSNImportAPI#send}), which routes RAG-enabled sites to the vector
+ * ({@link TurSNImportService#send}), which routes RAG-enabled sites to the vector
  * store and everything to the indexing queue exactly as a normal import would. A
  * trailing {@code COMMIT} flushes the search engine at the end of the run.</p>
  *
@@ -59,7 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TurMigrationImportService {
 
     private final TurSNSiteManifestService manifestService;
-    private final TurSNImportAPI turSNImportAPI;
+    private final TurSNImportService turSNImportService;
 
     /** Creates or converges the SN site + field schema from the derived manifest. */
     public VigletManifestResult provision(VigletFieldManifest manifest) {
@@ -80,14 +80,14 @@ public class TurMigrationImportService {
         for (Map<String, Object> attributes : attributesList) {
             items.add(new TurSNJobItem(TurSNJobAction.CREATE, List.of(siteName), locale, attributes, null));
         }
-        turSNImportAPI.send(items);
+        turSNImportService.send(items);
         log.info("[Block AO] Queued {} document(s) for SN site '{}' ({})", items.size(), siteName, locale);
     }
 
     /** Flushes the search engine for the (site, locale) once every batch is queued. */
     public void commit(String siteName, Locale locale) {
         TurSNJobItem commit = new TurSNJobItem(TurSNJobAction.COMMIT, List.of(siteName), locale);
-        turSNImportAPI.send(new TurSNJobItems(commit));
+        turSNImportService.send(new TurSNJobItems(commit));
         log.info("[Block AO] Sent COMMIT for SN site '{}' ({})", siteName, locale);
     }
 }

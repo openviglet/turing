@@ -16,7 +16,7 @@ import java.util.Map;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.sn.web.job.TurSNImportAPI;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -43,7 +43,7 @@ import tools.jackson.databind.json.JsonMapper;
  * read-only deployment never sees them.
  *
  * <p><b>Reuse, don't fork (§XIII.5)</b>: indexing routes through the same
- * {@link TurSNImportAPI} JMS path the import REST endpoint uses (so the engine
+ * {@link TurSNImportService} JMS path the import REST endpoint uses (so the engine
  * routing, schema auto-creation, RAG fan-out, and tenant propagation all apply),
  * and the site reindex routes through {@link TurSNSiteContentExchangeService}.
  * Index/deindex are asynchronous (enqueued); the tools report that the work was
@@ -59,15 +59,15 @@ public class TurMcpWriteToolService {
     private static final String DEFAULT_LOCALE = "en";
 
     private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNImportAPI turSNImportAPI;
+    private final TurSNImportService turSNImportService;
     private final TurSNSiteContentExchangeService contentExchangeService;
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     public TurMcpWriteToolService(TurSNSiteRepository turSNSiteRepository,
-            TurSNImportAPI turSNImportAPI,
+            TurSNImportService turSNImportService,
             TurSNSiteContentExchangeService contentExchangeService) {
         this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNImportAPI = turSNImportAPI;
+        this.turSNImportService = turSNImportService;
         this.contentExchangeService = contentExchangeService;
     }
 
@@ -145,7 +145,7 @@ public class TurMcpWriteToolService {
                 (locale != null && !locale.isBlank()) ? locale.replace('_', '-') : DEFAULT_LOCALE);
         TurSNJobItems items = new TurSNJobItems();
         items.add(new TurSNJobItem(action, List.of(siteName), jobLocale, attributes));
-        turSNImportAPI.send(items);
+        turSNImportService.send(items);
     }
 
     private TurSNSite resolveSite(String site) {

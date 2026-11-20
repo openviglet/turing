@@ -38,7 +38,7 @@ import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletManifestDiff;
 import com.viglet.core.manifest.VigletManifestFieldChange;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.sn.web.console.TurSNSiteFieldExtAPI;
+import com.viglet.turing.sn.field.TurSNSearchWeight;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
@@ -379,7 +379,7 @@ public class TurSNSiteManifestService {
                         "Manifest field '" + spec.name() + "' must declare a 'type'");
             }
             try {
-                TurSNSiteFieldExtAPI.validSearchWeight(spec.searchWeight());
+                TurSNSearchWeight.valid(spec.searchWeight());
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException(
                         "Manifest field '" + spec.name() + "': " + e.getMessage(), e);

@@ -919,16 +919,16 @@ class TurSNSiteFieldExtAPITest {
 
         @Test
         void searchWeightAcceptsEmptyAndOneToHundred() {
-                assertThat(TurSNSiteFieldExtAPI.validSearchWeight(null)).isNull();
-                assertThat(TurSNSiteFieldExtAPI.validSearchWeight(1f)).isEqualTo(1f);
-                assertThat(TurSNSiteFieldExtAPI.validSearchWeight(3.5f)).isEqualTo(3.5f);
-                assertThat(TurSNSiteFieldExtAPI.validSearchWeight(100f)).isEqualTo(100f);
+                assertThat(com.viglet.turing.sn.field.TurSNSearchWeight.valid(null)).isNull();
+                assertThat(com.viglet.turing.sn.field.TurSNSearchWeight.valid(1f)).isEqualTo(1f);
+                assertThat(com.viglet.turing.sn.field.TurSNSearchWeight.valid(3.5f)).isEqualTo(3.5f);
+                assertThat(com.viglet.turing.sn.field.TurSNSearchWeight.valid(100f)).isEqualTo(100f);
         }
 
         @Test
         void searchWeightRefusesValuesOutsideTheRange() {
                 for (Float weight : new Float[] { 0f, 0.5f, -2f, 100.5f, Float.NaN }) {
-                        assertThatThrownBy(() -> TurSNSiteFieldExtAPI.validSearchWeight(weight))
+                        assertThatThrownBy(() -> com.viglet.turing.sn.field.TurSNSearchWeight.valid(weight))
                                         .isInstanceOf(IllegalArgumentException.class)
                                         .hasMessageContaining("searchWeight");
                 }

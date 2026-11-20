@@ -28,7 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.sn.web.job.TurSNImportAPI;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -48,7 +48,7 @@ class TurMcpWriteToolServiceTest {
     @Mock
     private TurSNSiteRepository turSNSiteRepository;
     @Mock
-    private TurSNImportAPI turSNImportAPI;
+    private TurSNImportService turSNImportService;
     @Mock
     private TurSNSiteContentExchangeService contentExchangeService;
 
@@ -64,7 +64,7 @@ class TurMcpWriteToolServiceTest {
 
     private TurSNJobItem firstItem() {
         ArgumentCaptor<TurSNJobItems> captor = ArgumentCaptor.forClass(TurSNJobItems.class);
-        verify(turSNImportAPI).send(captor.capture());
+        verify(turSNImportService).send(captor.capture());
         return captor.getValue().iterator().next();
     }
 
@@ -87,7 +87,7 @@ class TurMcpWriteToolServiceTest {
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(site("wiki", "s1")));
         String result = service.indexDocument("wiki", "en_US", "{\"title\":\"No id\"}");
         assertTrue(result.startsWith("Error"), result);
-        verify(turSNImportAPI, never()).send(any());
+        verify(turSNImportService, never()).send(any());
     }
 
     @Test
@@ -95,14 +95,14 @@ class TurMcpWriteToolServiceTest {
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(site("wiki", "s1")));
         String result = service.indexDocument("wiki", "en_US", "not json");
         assertTrue(result.startsWith("Error"), result);
-        verify(turSNImportAPI, never()).send(any());
+        verify(turSNImportService, never()).send(any());
     }
 
     @Test
     void indexDocument_siteNotFound_returnsError() {
         when(turSNSiteRepository.findByNameIgnoreCase("nope")).thenReturn(Optional.empty());
         assertTrue(service.indexDocument("nope", "en_US", "{\"id\":\"x\"}").startsWith("Error"));
-        verify(turSNImportAPI, never()).send(any());
+        verify(turSNImportService, never()).send(any());
     }
 
     @Test
@@ -121,7 +121,7 @@ class TurMcpWriteToolServiceTest {
     void deindexDocument_missingId_returnsError() {
         when(turSNSiteRepository.findByNameIgnoreCase("wiki")).thenReturn(Optional.of(site("wiki", "s1")));
         assertTrue(service.deindexDocument("wiki", "en_US", " ").startsWith("Error"));
-        verify(turSNImportAPI, never()).send(any());
+        verify(turSNImportService, never()).send(any());
     }
 
     @Test

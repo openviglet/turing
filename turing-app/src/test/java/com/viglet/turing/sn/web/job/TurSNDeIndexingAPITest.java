@@ -1,5 +1,7 @@
 package com.viglet.turing.sn.web.job;
 
+import com.viglet.turing.sn.job.TurSNImportService;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +28,7 @@ class TurSNDeIndexingAPITest {
     private MockMvc mockMvc;
 
     @Mock
-    private TurSNImportAPI turSNImportAPI;
+    private TurSNImportService turSNImportService;
 
     @InjectMocks
     private TurSNDeIndexingAPI api;
@@ -48,6 +50,6 @@ class TurSNDeIndexingAPITest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Ok"));
 
-        verify(turSNImportAPI, times(1)).send(any(TurSNJobItems.class));
+        verify(turSNImportService, times(1)).send(any(TurSNJobItems.class));
     }
 }

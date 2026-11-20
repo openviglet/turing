@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,16 +40,12 @@ import com.viglet.turing.rag.ocr.TurTikaFileAttributes;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.rag.TurSNGenAi;
-import com.viglet.turing.logging.TurLoggingUtils;
-import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.TurSNPartitionWriteGuard;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 import com.viglet.turing.utils.TurFileUtils;
@@ -67,28 +61,16 @@ import tools.jackson.databind.json.JsonMapper;
 @RequestMapping("/api/sn/import")
 @Tag(name = "Semantic Navigation Import", description = "Semantic Navigation Import API")
 public class TurSNImportAPI {
-    private final JmsMessagingTemplate jmsMessagingTemplate;
-    private final TurSNSiteRepositoryPort turSNSiteRepositoryPort;
-    private final TurSNGenAi turGenAi;
-    private final com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation;
+    private final TurSNImportService turSNImportService;
     private final TurSNBulkImportService turSNBulkImportService;
     private final TurSNPartitionWriteGuard turSNPartitionWriteGuard;
-    private final TurDefaultAgentResolver turDefaultAgentResolver;
 
-    public TurSNImportAPI(JmsMessagingTemplate jmsMessagingTemplate,
-            TurSNSiteRepositoryPort turSNSiteRepositoryPort,
-            TurSNGenAi turGenAi,
-            com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation,
+    public TurSNImportAPI(TurSNImportService turSNImportService,
             TurSNBulkImportService turSNBulkImportService,
-            TurSNPartitionWriteGuard turSNPartitionWriteGuard,
-            TurDefaultAgentResolver turDefaultAgentResolver) {
-        this.jmsMessagingTemplate = jmsMessagingTemplate;
-        this.turSNSiteRepositoryPort = turSNSiteRepositoryPort;
-        this.turGenAi = turGenAi;
-        this.turJmsTenantPropagation = turJmsTenantPropagation;
+            TurSNPartitionWriteGuard turSNPartitionWriteGuard) {
+        this.turSNImportService = turSNImportService;
         this.turSNBulkImportService = turSNBulkImportService;
         this.turSNPartitionWriteGuard = turSNPartitionWriteGuard;
-        this.turDefaultAgentResolver = turDefaultAgentResolver;
     }
 
     @Operation(summary = "Queue documents for indexing",
@@ -210,32 +192,6 @@ public class TurSNImportAPI {
         return true;
     }
 
-    private void importUnsuccessful(String siteName, TurSNJobItems turSNJobItems) {
-        turSNJobItems.forEach(turSNJobItem -> {
-            if (turSNJobItem != null) {
-                if (turSNJobItem.getTurSNJobAction().equals(TurSNJobAction.CREATE)) {
-                    log.error(
-                            "Create Object ID '{}' of '{}' SN Site ({}) was not processed. Because '{}' SN Site doesn't exist",
-                            turSNJobItem.getAttributes() != null
-                                    ? turSNJobItem.getAttributes().get(TurSNFieldName.ID)
-                                    : null,
-                            siteName, turSNJobItem.getLocale(), siteName);
-                    TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.INDEXED, "Site doesn't exist");
-                } else if (turSNJobItem.getTurSNJobAction().equals(TurSNJobAction.DELETE)) {
-                    log.error(
-                            "Delete Object ID '{}' of '{}' SN Site ({}) was not processed. Because '{}' SN Site doesn't exist",
-                            turSNJobItem.getAttributes() != null ? turSNJobItem.getAttributes().get(TurSNFieldName.TYPE)
-                                    : "empty",
-                            siteName,
-                            turSNJobItem.getLocale(), siteName);
-                    TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.DEINDEXED, "Site doesn't exist");
-                }
-            } else {
-                log.warn("No JobItem' of '{}' SN Site", siteName);
-            }
-        });
-    }
-
     @PostMapping("zip")
     public boolean turSNImportZipFileBroker(@RequestParam("file") MultipartFile multipartFile) {
         File extractFolder = TurSpringUtils.extractZipFile(multipartFile);
@@ -269,84 +225,8 @@ public class TurSNImportAPI {
         }
     }
 
-    public void send(TurSNJobItems turSNJobItems) {
-        sendToGenAi(turSNJobItems);
-        sentQueueInfo(turSNJobItems);
-        if (log.isDebugEnabled()) {
-            log.debug("Sent job - {}", TurSNConstants.INDEXING_QUEUE);
-            log.debug("turSNJob: {}", turSNJobItems);
-        }
-        // T272 / §XIV.4.6 — stamp the current tenant so the consumer thread can restore it.
-        this.jmsMessagingTemplate.convertAndSend(TurSNConstants.INDEXING_QUEUE, turSNJobItems,
-                turJmsTenantPropagation.headers());
-    }
-
-    /**
-     * Embeds the batch when any of its documents goes to a RAG-enabled site.
-     *
-     * <p>T1089 — once per batch, not once per document and site (each call embeds
-     * the whole batch, so a batch of 50 was embedded 50 times), and never the
-     * reason a batch fails: an embedding error is logged and the batch still goes
-     * to the indexing queue, so search keeps working while RAG does not.
-     */
-    private void sendToGenAi(TurSNJobItems turSNJobItems) {
-        boolean anyRagSite = false;
-        for (TurSNJobItem turJobItem : turSNJobItems) {
-            if (!isValidJobItem(turJobItem)) {
-                continue;
-            }
-            Object objectId = turJobItem.getAttributes().get(TurSNFieldName.ID);
-            for (String siteName : turJobItem.getSiteNames()) {
-                // T1147 — the effective agent, so a site on the Default AI Agent is embedded too.
-                if (turDefaultAgentResolver.isRagReadyForSiteName(siteName)) {
-                    log.debug("RAG enabled for Object ID '{}' of SN Site '{}': routing to vector store",
-                            objectId, siteName);
-                    anyRagSite = true;
-                } else {
-                    log.debug("RAG skipped for Object ID '{}' of SN Site '{}': site missing, vectorless or no RAG-ready agent",
-                            objectId, siteName);
-                }
-            }
-        }
-        if (!anyRagSite) {
-            return;
-        }
-        try {
-            turGenAi.addDocuments(turSNJobItems);
-        } catch (RuntimeException e) {
-            log.error("RAG embedding of the batch failed; its documents are still indexed for search: {}",
-                    e.getMessage(), e);
-        }
-    }
-
-    private void sentQueueInfo(TurSNJobItems turSNJobItems) {
-        turSNJobItems.forEach(turSNJobItem -> {
-            if (isValidJobItem(turSNJobItem)) {
-                turSNJobItem.getSiteNames()
-                        .forEach(siteName -> turSNSiteRepositoryPort.findByNameIgnoreCase(siteName).ifPresentOrElse(turSNSite -> {
-                            log.info("Sent to queue to {} the Object ID '{}' of '{}' SN Site ({}).",
-                                    actionType(turSNJobItem),
-                                    turSNJobItem.getAttributes().get(TurSNFieldName.ID),
-                                    turSNSite.name(),
-                                    turSNJobItem.getLocale());
-                            TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.SENT_TO_QUEUE);
-                        },
-                                () -> importUnsuccessful(siteName, turSNJobItems)));
-            }
-        });
-    }
-
-    private static boolean isValidJobItem(TurSNJobItem turJobItem) {
-        return turJobItem != null && turJobItem.getAttributes() != null &&
-                turJobItem.getAttributes().containsKey(TurSNFieldName.ID);
-    }
-
-    @NotNull
-    private static String actionType(TurSNJobItem turJobItem) {
-        return switch (turJobItem.getTurSNJobAction()) {
-            case CREATE -> "index";
-            case DELETE -> "deIndex";
-            case COMMIT -> "commit";
-        };
+    /** Delegates to the one import path every module uses (T1308). */
+    private void send(TurSNJobItems turSNJobItems) {
+        turSNImportService.send(turSNJobItems);
     }
 }

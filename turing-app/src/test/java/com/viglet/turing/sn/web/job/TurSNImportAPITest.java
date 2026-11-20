@@ -26,7 +26,6 @@ import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -50,6 +49,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +72,6 @@ class TurSNImportAPITest {
     @Mock
     private com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation;
 
-    @InjectMocks
     private TurSNImportAPI api;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -81,6 +80,8 @@ class TurSNImportAPITest {
     void setUp() {
         org.mockito.Mockito.lenient()
                 .when(turJmsTenantPropagation.headers()).thenReturn(java.util.Map.of());
+        api = new TurSNImportAPI(new TurSNImportService(jmsMessagingTemplate, turSNSiteRepositoryPort,
+                turGenAi, turJmsTenantPropagation, turDefaultAgentResolver), null, null);
         mockMvc = MockMvcBuilders.standaloneSetup(api)
                 .setControllerAdvice(new TurGlobalExceptionHandler())
                 .build();
@@ -206,9 +207,9 @@ class TurSNImportAPITest {
         when(settings.getDefaultAiAgentId()).thenReturn("def-1");
         when(agentRepository.findById("def-1")).thenReturn(Optional.of(defaultAgent));
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
-        TurSNImportAPI realGate = new TurSNImportAPI(jmsMessagingTemplate, turSNSiteRepositoryPort, turGenAi,
-                turJmsTenantPropagation, null, null,
-                new TurDefaultAgentResolver(settings, agentRepository, siteRepository));
+        TurSNImportAPI realGate = new TurSNImportAPI(new TurSNImportService(jmsMessagingTemplate, turSNSiteRepositoryPort, turGenAi,
+                turJmsTenantPropagation, new TurDefaultAgentResolver(settings, agentRepository, siteRepository)),
+                null, null);
 
         MockMvcBuilders.standaloneSetup(realGate).build().perform(post("/api/sn/import")
                 .contentType(MediaType.APPLICATION_JSON)

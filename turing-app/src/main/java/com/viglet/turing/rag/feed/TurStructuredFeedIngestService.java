@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.sn.web.job.TurSNImportAPI;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
@@ -65,7 +65,7 @@ import tools.jackson.databind.json.JsonMapper;
  *   <li>maps each record's scalar/array fields to {@link TurSNJobItem} attributes
  *       (honouring the T381 grounding contract — an empty value is omitted, never
  *       indexed as empty) and imports them through the existing
- *       {@link TurSNImportAPI#send(TurSNJobItems)} pipeline;</li>
+ *       {@link TurSNImportService#send(TurSNJobItems)} pipeline;</li>
  *   <li>de-indexes ids that vanished from the feed since the previous run.</li>
  * </ol>
  *
@@ -100,7 +100,7 @@ public class TurStructuredFeedIngestService {
     private final TurUrlFetchService urlFetchService;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNFieldProvisioner fieldProvisioner;
-    private final TurSNImportAPI turSNImportAPI;
+    private final TurSNImportService turSNImportService;
 
     /** Per-source set of ids seen on the previous successful run (de-index diff). */
     private final Map<String, Set<String>> lastSeenIds = new ConcurrentHashMap<>();
@@ -109,12 +109,12 @@ public class TurStructuredFeedIngestService {
             TurUrlFetchService urlFetchService,
             TurSNSiteRepository turSNSiteRepository,
             TurSNFieldProvisioner fieldProvisioner,
-            TurSNImportAPI turSNImportAPI) {
+            TurSNImportService turSNImportService) {
         this.property = property;
         this.urlFetchService = urlFetchService;
         this.turSNSiteRepository = turSNSiteRepository;
         this.fieldProvisioner = fieldProvisioner;
-        this.turSNImportAPI = turSNImportAPI;
+        this.turSNImportService = turSNImportService;
     }
 
     /**
@@ -240,7 +240,7 @@ public class TurStructuredFeedIngestService {
                 TurSNJobItems jobItems = new TurSNJobItems();
                 chunk.forEach(jobItems::add);
                 jobItems.add(new TurSNJobItem(TurSNJobAction.COMMIT, List.of(siteName), locale));
-                turSNImportAPI.send(jobItems);
+                turSNImportService.send(jobItems);
                 log.info("[StructuredFeed] source '{}' chunk {}/{} sent ({} items)",
                         sourceId, i + 1, total, chunk.size());
             } catch (RuntimeException e) {

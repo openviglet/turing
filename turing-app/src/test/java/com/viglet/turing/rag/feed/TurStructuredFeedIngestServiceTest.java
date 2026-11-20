@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.sn.web.job.TurSNImportAPI;
+import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -63,7 +63,7 @@ class TurStructuredFeedIngestServiceTest {
     @Mock
     private TurSNFieldProvisioner fieldProvisioner;
     @Mock
-    private TurSNImportAPI turSNImportAPI;
+    private TurSNImportService turSNImportService;
 
     private TurStructuredFeedProperty property;
     private TurStructuredFeedIngestService service;
@@ -72,7 +72,7 @@ class TurStructuredFeedIngestServiceTest {
     void setUp() {
         property = new TurStructuredFeedProperty();
         service = new TurStructuredFeedIngestService(property, urlFetchService,
-                turSNSiteRepository, fieldProvisioner, turSNImportAPI);
+                turSNSiteRepository, fieldProvisioner, turSNImportService);
     }
 
     private static Source source() {
@@ -87,7 +87,7 @@ class TurStructuredFeedIngestServiceTest {
 
     private TurSNJobItems captureSend() {
         ArgumentCaptor<TurSNJobItems> captor = ArgumentCaptor.forClass(TurSNJobItems.class);
-        verify(turSNImportAPI).send(captor.capture());
+        verify(turSNImportService).send(captor.capture());
         return captor.getValue();
     }
 
@@ -154,7 +154,7 @@ class TurStructuredFeedIngestServiceTest {
         when(turSNSiteRepository.findByNameIgnoreCase("catalog")).thenReturn(Optional.empty());
         var result = service.ingestSource(source());
         assertThat(result.success()).isFalse();
-        verify(turSNImportAPI, never()).send(any());
+        verify(turSNImportService, never()).send(any());
     }
 
     @Test
@@ -196,7 +196,7 @@ class TurStructuredFeedIngestServiceTest {
         assertThat(result.imported()).isEqualTo(5);
         // 5 records / batch-size 2 → 3 chunks → 3 sends.
         ArgumentCaptor<TurSNJobItems> captor = ArgumentCaptor.forClass(TurSNJobItems.class);
-        verify(turSNImportAPI, times(3)).send(captor.capture());
+        verify(turSNImportService, times(3)).send(captor.capture());
         // Every chunk ends in exactly one COMMIT; the CREATEs total 5 across chunks.
         int creates = 0;
         for (TurSNJobItems chunk : captor.getAllValues()) {
@@ -219,13 +219,13 @@ class TurStructuredFeedIngestServiceTest {
                 "[{\"id\":\"a\"},{\"id\":\"b\"},{\"id\":\"c\"},{\"id\":\"d\"}]");
         org.mockito.Mockito.doThrow(new RuntimeException("boom"))
                 .doNothing()
-                .when(turSNImportAPI).send(any());
+                .when(turSNImportService).send(any());
 
         var result = service.ingestSource(source());
 
         assertThat(result.success()).isTrue();
         // 4 records / 2 → 2 chunks; both are attempted even though the first throws.
-        verify(turSNImportAPI, times(2)).send(any());
+        verify(turSNImportService, times(2)).send(any());
     }
 
     @Test
@@ -257,7 +257,7 @@ class TurStructuredFeedIngestServiceTest {
         assertThat(second.deIndexed()).isEqualTo(1);
         // second send carries 1 CREATE (a) + 1 DELETE (b)
         ArgumentCaptor<TurSNJobItems> captor = ArgumentCaptor.forClass(TurSNJobItems.class);
-        verify(turSNImportAPI, times(2)).send(captor.capture());
+        verify(turSNImportService, times(2)).send(captor.capture());
         TurSNJobItems secondSend = captor.getAllValues().get(1);
         assertThat(secondSend.getTuringDocuments())
                 .anyMatch(i -> i.getTurSNJobAction() == TurSNJobAction.DELETE && "b".equals(i.getId()));

@@ -2495,15 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.4 Controllers move into their modules (T1308)
-
-api holds controllers for every subsystem and also services: genai calls
-api.sn.search.TurSNSiteSearchService and api.sn.job.TurSNImportAPI. Each controller
-moves into a web package inside its module, and each service that other modules call
-moves into that module's application layer behind its named interface. Afterwards
-nothing imports a controller and the top-level api package is gone. Request paths do not
-change.
-
 ### CLXXXIX.6 One searchengine module (T1310)
 
 plugins, se, solr, lucene, elasticsearch and contentai together implement
