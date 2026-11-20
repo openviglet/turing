@@ -173,10 +173,10 @@ public class TurAnalyticsIntentIndexer {
      * resolve.
      */
     public boolean indexRow(TurAnalyticsIntent intent) {
-        if (intent == null || intent.getTurAIAgent() == null) {
+        if (intent == null || intent.getAgentId() == null) {
             return false;
         }
-        String agentId = intent.getTurAIAgent().getId();
+        String agentId = intent.getAgentId();
         if (intent.getEnabled() != 1) {
             // Disabled rows are scrubbed from the SE so they don't keep
             // surfacing on MLT matches against a label admins paused.
@@ -187,7 +187,7 @@ public class TurAnalyticsIntentIndexer {
             return false;
         }
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(seInstance.get());
-        String indexName = indexNameFor(intent.getTurAIAgent().getId());
+        String indexName = indexNameFor(intent.getAgentId());
         try {
             boolean ok = plugin.indexStandaloneDocument(seInstance.get(), indexName,
                     toDocument(intent));
@@ -264,7 +264,7 @@ public class TurAnalyticsIntentIndexer {
                     indexName, e.getMessage());
         }
         List<TurAnalyticsIntent> catalog = intentRepository
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc(agentId, 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc(agentId, 1);
         if (catalog == null || catalog.isEmpty()) {
             plugin.commitStandalone(seInstance.get(), indexName);
             return 0;
@@ -296,7 +296,7 @@ public class TurAnalyticsIntentIndexer {
     private Map<String, Object> toDocument(TurAnalyticsIntent intent) {
         Map<String, Object> doc = new LinkedHashMap<>();
         doc.put(FIELD_ID, intent.getId());
-        doc.put(FIELD_AGENT_ID, intent.getTurAIAgent().getId());
+        doc.put(FIELD_AGENT_ID, intent.getAgentId());
         doc.put(FIELD_LABEL, intent.getLabel());
         doc.put(FIELD_SAMPLES, normalizeSamples(intent.getSamples()));
         return doc;

@@ -152,7 +152,7 @@ class TurAnalyticsIntentIndexerTest {
         TurAnalyticsIntent r2 = intent("i2", "Shipping", "where is my package", "agent-1");
         when(seInstanceRepository.findAll()).thenReturn(List.of(seInstance));
         when(pluginFactory.getPluginForInstance(seInstance)).thenReturn(plugin);
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(r1, r2));
         when(plugin.indexStandaloneDocuments(eq(seInstance), eq("intent_agent1"), any()))
                 .thenReturn(2);
@@ -218,7 +218,7 @@ class TurAnalyticsIntentIndexerTest {
         intent.setEnabled(1);
         TurAIAgent agent = new TurAIAgent();
         agent.setId(agentId);
-        intent.setTurAIAgent(agent);
+        intent.setAgentId(agent.getId());
         return intent;
     }
 

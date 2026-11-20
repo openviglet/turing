@@ -1774,3 +1774,4 @@
 - **T1315 (persona store and MCP references by id)** — TurPersona holds its few-shot store and brand-context MCP server as id columns resolved through the rag and mcp repositories; the API, form, export and docs speak fewShotStoreId and brandContextMcpServerId.
 - **T1315b** — TurAIAgent holds analyticsSeInstanceId and TurIntegrationInstance holds apiTokenId on the same columns, resolved through the searchengine and auth repositories; the two admin forms send the ids.
 - **T1315c** — TurSNSiteGenAi holds ragSeInstanceId on the same column; the site update, the RAG search tool and the BM25 core API resolve it through the SE instance repository, and the GenAI form sends the id.
+- **T1315d** — TurAnalyticsIntent holds agentId and TurRagBm25Core holds seInstanceId on the same columns; the intent queries and readers use the id, and the BM25 provisioner and indexer resolve the SE instance by id.

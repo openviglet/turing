@@ -78,10 +78,13 @@ public class TurRagBm25CoreProvisioner {
     private final TurRagBm25CoreRepository coreRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final com.viglet.turing.tenant.TurTenantCoreNaming turTenantCoreNaming;
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
 
     public TurRagBm25CoreProvisioner(TurRagBm25CoreRepository coreRepository,
             TurSearchEnginePluginFactory pluginFactory,
-            com.viglet.turing.tenant.TurTenantCoreNaming turTenantCoreNaming) {
+            com.viglet.turing.tenant.TurTenantCoreNaming turTenantCoreNaming,
+            com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository) {
+        this.seInstanceRepository = seInstanceRepository;
         this.coreRepository = coreRepository;
         this.pluginFactory = pluginFactory;
         this.turTenantCoreNaming = turTenantCoreNaming;
@@ -191,8 +194,9 @@ public class TurRagBm25CoreProvisioner {
         core.setStatus(TurRagBm25Core.Status.DELETING);
         coreRepository.save(core);
         try {
-            TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(core.getTurSEInstance());
-            plugin.deleteIndex(core.getTurSEInstance(), core.getCoreName());
+            TurSEInstance seInstance = seInstanceOf(core);
+            TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(seInstance);
+            plugin.deleteIndex(seInstance, core.getCoreName());
             coreRepository.delete(core);
             log.info("[RagBm25Provisioner] Deleted core '{}' (store={}, locale={})",
                     core.getCoreName(), store.getId(), locale.toLanguageTag());
@@ -224,7 +228,7 @@ public class TurRagBm25CoreProvisioner {
             TurSEInstance seInstance, String coreName) {
         TurRagBm25Core core = new TurRagBm25Core();
         core.setTurStoreInstance(store);
-        core.setTurSEInstance(seInstance);
+        core.setSeInstanceId(seInstance.getId());
         core.setLocale(locale);
         core.setCoreName(coreName);
         core.setStatus(TurRagBm25Core.Status.NOT_PROVISIONED);
@@ -242,5 +246,12 @@ public class TurRagBm25CoreProvisioner {
             return null;
         }
         return message.length() <= 2000 ? message : message.substring(0, 1997) + "...";
+    }
+    /** T1315 — the core holds its SE instance by id; searchengine owns the row. */
+    private TurSEInstance seInstanceOf(TurRagBm25Core core) {
+        return seInstanceRepository.findById(core.getSeInstanceId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "BM25 core " + core.getCoreName() + " points at missing SE instance "
+                                + core.getSeInstanceId()));
     }
 }

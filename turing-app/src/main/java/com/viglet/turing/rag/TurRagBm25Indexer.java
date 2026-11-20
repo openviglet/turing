@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag;
 
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,9 +86,12 @@ public class TurRagBm25Indexer {
 
     private final TurRagBm25CoreRepository coreRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
 
     public TurRagBm25Indexer(TurRagBm25CoreRepository coreRepository,
-            TurSearchEnginePluginFactory pluginFactory) {
+            TurSearchEnginePluginFactory pluginFactory,
+            com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository) {
+        this.seInstanceRepository = seInstanceRepository;
         this.coreRepository = coreRepository;
         this.pluginFactory = pluginFactory;
     }
@@ -113,7 +118,8 @@ public class TurRagBm25Indexer {
             return 0;
         }
         ensureProvisioned(core);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(core.getTurSEInstance());
+        TurSEInstance seInstance = seInstanceOf(core);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(seInstance);
         List<Map<String, Object>> batch = new ArrayList<>(chunks.size());
         for (Document chunk : chunks) {
             Map<String, Object> doc = toIndexableDoc(chunk);
@@ -124,9 +130,9 @@ public class TurRagBm25Indexer {
         if (batch.isEmpty()) {
             return 0;
         }
-        int indexed = plugin.indexStandaloneDocuments(core.getTurSEInstance(),
+        int indexed = plugin.indexStandaloneDocuments(seInstance,
                 core.getCoreName(), batch);
-        plugin.commitStandalone(core.getTurSEInstance(), core.getCoreName());
+        plugin.commitStandalone(seInstance, core.getCoreName());
         if (indexed > 0) {
             // docCount is a monotonic estimate — it's incremented on every
             // successful batch, decremented on deletes. Calls to
@@ -152,10 +158,11 @@ public class TurRagBm25Indexer {
             return false;
         }
         ensureProvisioned(core);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(core.getTurSEInstance());
-        boolean ok = plugin.deIndexStandaloneByField(core.getTurSEInstance(),
+        TurSEInstance seInstance = seInstanceOf(core);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForInstance(seInstance);
+        boolean ok = plugin.deIndexStandaloneByField(seInstance,
                 core.getCoreName(), FIELD_ASSET_ID, assetId);
-        plugin.commitStandalone(core.getTurSEInstance(), core.getCoreName());
+        plugin.commitStandalone(seInstance, core.getCoreName());
         // docCount drifts after delete-by-field because we don't know how
         // many chunks the assetId had. Flag the core for re-sync rather
         // than guessing; refreshDocCount in Phase 4 catches up.
@@ -245,5 +252,12 @@ public class TurRagBm25Indexer {
                     "Core '" + core.getCoreName() + "' is " + core.getStatus()
                             + ", expected PROVISIONED. Run the provisioner first.");
         }
+    }
+    /** T1315 — the core holds its SE instance by id; searchengine owns the row. */
+    private TurSEInstance seInstanceOf(TurRagBm25Core core) {
+        return seInstanceRepository.findById(core.getSeInstanceId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "BM25 core " + core.getCoreName() + " points at missing SE instance "
+                                + core.getSeInstanceId()));
     }
 }

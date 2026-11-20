@@ -63,7 +63,7 @@ class TurLuceneIntentClassifierTest {
                 "I want my money back\nrefund please\ncan I get a chargeback");
         TurAnalyticsIntent shipping = intent("Shipping question",
                 "where is my package\ntracking number\ndelivery delay");
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(refund, shipping));
 
         var enrichment = classifier.classify("agent-1", "I need my money back today, please refund me",
@@ -79,7 +79,7 @@ class TurLuceneIntentClassifierTest {
                 "refund money back chargeback billing");
         TurAnalyticsIntent shipping = intent("Shipping question",
                 "shipping package tracking delivery courier");
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(refund, shipping));
 
         classifier.classify("agent-1", "refund chargeback billing money back",
@@ -89,14 +89,14 @@ class TurLuceneIntentClassifierTest {
 
         assertThat(classifier.cacheSize()).isEqualTo(1);
         verify(intentRepository, times(1))
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1);
     }
 
     @Test
     void evictAllForcesRebuildOnNextClassify() {
         TurAnalyticsIntent refund = intent("Refund request",
                 "refund money back chargeback billing");
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(refund));
 
         classifier.classify("agent-1", "refund billing chargeback",
@@ -109,12 +109,12 @@ class TurLuceneIntentClassifierTest {
         classifier.classify("agent-1", "refund billing chargeback",
                 List.<Map<String, Object>>of());
         verify(intentRepository, times(2))
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1);
     }
 
     @Test
     void emptyCatalogReturnsUnclassified() {
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of());
 
         var enrichment = classifier.classify("agent-1", "any message", List.<Map<String, Object>>of());
@@ -136,7 +136,7 @@ class TurLuceneIntentClassifierTest {
         // should clear the MIN_SCORE_FLOOR.
         TurAnalyticsIntent intent = intent("Cooking recipes",
                 "ingredient recipe pasta tomato basil garlic kitchen oven");
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(intent));
 
         var enrichment = classifier.classify("agent-1",

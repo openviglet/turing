@@ -15,17 +15,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.chat.analytics.TurAnalyticsIntentEvictionListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -123,10 +119,10 @@ public class TurAnalyticsIntent implements Serializable {
      * vocabularies differ per product/persona. {@code JsonIgnore} keeps
      * the payload tight (the URL already encodes the agent id).
      */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "agent_id", nullable = false)
+    /** T1315 — the owning agent, by id: agents belong to the agent module. */
+    @Column(name = "agent_id", nullable = false, length = 36)
     @JsonIgnore
-    private TurAIAgent turAIAgent;
+    private String agentId;
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;

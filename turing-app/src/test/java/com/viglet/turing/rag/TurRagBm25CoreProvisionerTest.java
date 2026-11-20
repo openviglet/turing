@@ -54,6 +54,9 @@ class TurRagBm25CoreProvisionerTest {
     @Mock
     private TurSearchEnginePlugin plugin;
 
+    @org.mockito.Mock
+    private com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
+
     private TurRagBm25CoreProvisioner provisioner;
 
     private TurStoreInstance store;
@@ -66,7 +69,8 @@ class TurRagBm25CoreProvisionerTest {
         com.viglet.turing.tenant.TurTenantCoreNaming coreNaming =
                 new com.viglet.turing.tenant.TurTenantCoreNaming(
                         new com.viglet.turing.tenant.TurTenantContext(props));
-        provisioner = new TurRagBm25CoreProvisioner(coreRepository, pluginFactory, coreNaming);
+        provisioner = new TurRagBm25CoreProvisioner(coreRepository, pluginFactory, coreNaming,
+                seInstanceRepository);
         store = new TurStoreInstance();
         store.setId("a3b2c1d4-9876-5432-1098-abcdef012345");
         seInstance = new TurSEInstance();
@@ -215,7 +219,9 @@ class TurRagBm25CoreProvisionerTest {
         TurRagBm25Core core = new TurRagBm25Core();
         core.setId("core-1");
         core.setTurStoreInstance(store);
-        core.setTurSEInstance(seInstance);
+        core.setSeInstanceId("se-bound");
+        org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
+                .thenReturn(java.util.Optional.of(seInstance));
         core.setLocale(Locale.forLanguageTag("pt-BR"));
         core.setCoreName("rag_a3b2c1d4_pt-BR");
         core.setStatus(status);

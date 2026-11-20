@@ -101,7 +101,7 @@ public class TurSeMltIntentClassifier implements TurIntentClassifierStrategy {
             return false;
         }
         List<TurAnalyticsIntent> catalog = intentRepository
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc(agentId, 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc(agentId, 1);
         return catalog != null && !catalog.isEmpty()
                 && catalog.stream().anyMatch(i -> i.getSamples() != null && !i.getSamples().isBlank());
     }

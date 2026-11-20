@@ -110,9 +110,9 @@ public class TurRagBm25Core implements Serializable {
      * ({@code solr}/{@code elasticsearch}/{@code lucene}) determines
      * the schema + similarity bootstrap performed by the provisioner.
      */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "se_instance_id", nullable = false)
-    private TurSEInstance turSEInstance;
+    /** T1315 — the SE instance hosting the core, by id: it belongs to the searchengine module. */
+    @Column(name = "se_instance_id", nullable = false, length = 36)
+    private String seInstanceId;
 
     /**
      * IETF BCP 47 locale tag (e.g. {@code pt-BR}, {@code en-US}). Stored

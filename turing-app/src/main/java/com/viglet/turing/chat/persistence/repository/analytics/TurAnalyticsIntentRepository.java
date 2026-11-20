@@ -26,12 +26,12 @@ public interface TurAnalyticsIntentRepository extends JpaRepository<TurAnalytics
     /**
      * Hot path called once per enricher cycle per agent.
      */
-    List<TurAnalyticsIntent> findByTurAIAgent_IdAndEnabledOrderByLabelAsc(String agentId,
+    List<TurAnalyticsIntent> findByAgentIdAndEnabledOrderByLabelAsc(String agentId,
             int enabled);
 
     /**
      * Admin-listing variant — returns enabled + disabled rows. This powers
      * the admin UI which is low-traffic compared to the classifier hot path.
      */
-    List<TurAnalyticsIntent> findByTurAIAgent_IdOrderByLabelAsc(String agentId);
+    List<TurAnalyticsIntent> findByAgentIdOrderByLabelAsc(String agentId);
 }

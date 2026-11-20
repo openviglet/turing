@@ -75,8 +75,8 @@ public class TurAnalyticsIntentEvictionListener {
     public void onRemove(TurAnalyticsIntent entity) {
         evictEmbeddedIndex();
         TurAnalyticsIntentIndexer target = indexer != null ? indexer : indexerStatic.get();
-        if (target != null && entity != null && entity.getTurAIAgent() != null) {
-            target.removeRow(entity.getId(), entity.getTurAIAgent().getId());
+        if (target != null && entity != null && entity.getAgentId() != null) {
+            target.removeRow(entity.getId(), entity.getAgentId());
         }
     }
 

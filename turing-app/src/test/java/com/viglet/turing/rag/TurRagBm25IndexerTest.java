@@ -53,6 +53,9 @@ class TurRagBm25IndexerTest {
     @Mock
     private TurSearchEnginePlugin plugin;
 
+    @org.mockito.Mock
+    private com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
+
     private TurRagBm25Indexer indexer;
 
     private TurStoreInstance store;
@@ -61,7 +64,7 @@ class TurRagBm25IndexerTest {
 
     @BeforeEach
     void setUp() {
-        indexer = new TurRagBm25Indexer(coreRepository, pluginFactory);
+        indexer = new TurRagBm25Indexer(coreRepository, pluginFactory, seInstanceRepository);
         store = new TurStoreInstance();
         store.setId("a3b2c1d4");
         seInstance = new TurSEInstance();
@@ -69,7 +72,9 @@ class TurRagBm25IndexerTest {
         core = new TurRagBm25Core();
         core.setId("core-1");
         core.setTurStoreInstance(store);
-        core.setTurSEInstance(seInstance);
+        core.setSeInstanceId("se-bound");
+        org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
+                .thenReturn(java.util.Optional.of(seInstance));
         core.setLocale(Locale.forLanguageTag("pt-BR"));
         core.setCoreName("rag_a3b2c1d4_pt-BR");
         core.setStatus(TurRagBm25Core.Status.PROVISIONED);

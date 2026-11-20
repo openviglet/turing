@@ -731,7 +731,7 @@ class TurRagSearchToolServiceTest {
         var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
         core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
         core.setCoreName("rag_store_pt-BR");
-        core.setTurSEInstance(seInstance);
+        core.setSeInstanceId("se-bound");
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
                 "store-1", java.util.Locale.forLanguageTag("pt-BR")))
                 .thenReturn(java.util.Optional.of(core));
@@ -801,7 +801,7 @@ class TurRagSearchToolServiceTest {
         var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
         core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
         core.setCoreName("rag_store_pt-BR");
-        core.setTurSEInstance(seInstance);
+        core.setSeInstanceId("se-bound");
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
                 "store-1", java.util.Locale.forLanguageTag("pt-BR")))
                 .thenReturn(java.util.Optional.of(core));

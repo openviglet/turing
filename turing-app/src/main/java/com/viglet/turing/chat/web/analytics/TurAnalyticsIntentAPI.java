@@ -76,7 +76,7 @@ public class TurAnalyticsIntentAPI {
     @Operation(summary = "List analytics intents for an agent")
     @Secured({ "ROLE_ADMIN", "AI_AGENT_READ" })
     public List<TurAnalyticsIntent> list(@PathVariable String agentId) {
-        return intentRepository.findByTurAIAgent_IdOrderByLabelAsc(agentId);
+        return intentRepository.findByAgentIdOrderByLabelAsc(agentId);
     }
 
     @GetMapping("/{id}")
@@ -105,7 +105,7 @@ public class TurAnalyticsIntentAPI {
         payload.setSamples(request.samples());
         payload.setDescription(request.description());
         payload.setEnabled(request.enabledOrDefault());
-        payload.setTurAIAgent(agent);
+        payload.setAgentId(agent.getId());
         TurAnalyticsIntent saved = intentRepository.save(payload);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -166,7 +166,7 @@ public class TurAnalyticsIntentAPI {
     }
 
     private static boolean matchesAgent(TurAnalyticsIntent intent, String agentId) {
-        return intent.getTurAIAgent() != null
-                && agentId.equals(intent.getTurAIAgent().getId());
+        return intent.getAgentId() != null
+                && agentId.equals(intent.getAgentId());
     }
 }

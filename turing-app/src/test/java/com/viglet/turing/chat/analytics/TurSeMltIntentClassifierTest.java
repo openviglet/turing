@@ -89,7 +89,7 @@ class TurSeMltIntentClassifierTest {
     @Test
     void unavailableWithoutCatalog() {
         when(indexer.resolveSeInstance("agent-1")).thenReturn(Optional.of(seInstance));
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of());
 
         assertThat(classifier.isAvailable("agent-1")).isFalse();
@@ -98,7 +98,7 @@ class TurSeMltIntentClassifierTest {
     @Test
     void availableWithSeBindingAndCatalog() {
         when(indexer.resolveSeInstance("agent-1")).thenReturn(Optional.of(seInstance));
-        when(intentRepository.findByTurAIAgent_IdAndEnabledOrderByLabelAsc("agent-1", 1))
+        when(intentRepository.findByAgentIdAndEnabledOrderByLabelAsc("agent-1", 1))
                 .thenReturn(List.of(intent("Refund request", "refund samples")));
 
         assertThat(classifier.isAvailable("agent-1")).isTrue();

@@ -154,7 +154,7 @@ public class TurLuceneIntentClassifier implements TurIntentClassifierStrategy {
         // The Spring cache on the repository ensures this stays O(1) once
         // warm. No Lucene work yet — only on classify().
         List<TurAnalyticsIntent> catalog = intentRepository
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc(agentId, 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc(agentId, 1);
         return catalog != null && !catalog.isEmpty()
                 && catalog.stream().anyMatch(i -> i.getSamples() != null && !i.getSamples().isBlank());
     }
@@ -201,7 +201,7 @@ public class TurLuceneIntentClassifier implements TurIntentClassifierStrategy {
 
     private AgentIntentIndex buildIndex(String agentId) {
         List<TurAnalyticsIntent> catalog = intentRepository
-                .findByTurAIAgent_IdAndEnabledOrderByLabelAsc(agentId, 1);
+                .findByAgentIdAndEnabledOrderByLabelAsc(agentId, 1);
         if (catalog == null || catalog.isEmpty()) {
             return AgentIntentIndex.empty();
         }
