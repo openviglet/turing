@@ -2514,18 +2514,6 @@ module's named interface, and deletes that used to cascade across modules become
 the other module handles. Associations inside one module stay, under the FetchType.LAZY
 rule. The schema change is carried by the Liquibase reset, not by migrations.
 
-### CLXXXIX.12 Cache eviction through module events (T1316)
-
-TurSNSite, TurAIAgent, TurSNSiteFieldExt, TurSNSiteCustomFacet, TurSNSiteLocale,
-TurSNSiteGenAi and others name TurSNSiteSnapshotEvictionListener,
-TurSNSearchCacheEvictionListener, TurChatFlowRouterEvictionListener and
-TurPersonaStaticPromptEvictionListener in @EntityListeners. The owning module instead
-publishes a change event (site, agent, persona, flow changed) from its service, and the
-cache owners listen. Eviction stays synchronous after commit
-(@TransactionalEventListener AFTER_COMMIT), not the asynchronous
-@ApplicationModuleListener, so a read right after a write never sees the stale snapshot.
-TurAssetEventListener and TurDomainEventLogger move to the same pattern.
-
 ### CLXXXIX.13 One table-naming rule (T1317)
 
 Today ai_agent, chat_flow and agent_suggestion sit beside tur_agent_eval_case and

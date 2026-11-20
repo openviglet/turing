@@ -102,6 +102,18 @@ but each moves into the module that owns the data (`domain.sn` into `sn`, `domai
 into `llm`, ...). The top-level `domain` package disappears; the ports become the
 modules' named interfaces for reads.
 
+### 4. Cache eviction crosses modules only as events
+
+An entity names only listeners of its own module (T1316). When another module caches
+something derived from it, the owning module publishes an event from its own entity
+listener (`TurAIAgentChangedEvent`), and the caching module evicts on it, still after
+commit. `TurEntityListenerModuleTest` fails on a new crossing.
+
+Listeners inside one module stay JPA entity listeners rather than events published by
+services. A listener fires on every write, whichever service made it; a published event
+fires only where someone remembered to publish it, which is the stale-cache defect T896
+fixed.
+
 ## Consequences
 
 - Every module is independently verifiable; a new cycle fails the build once T1323

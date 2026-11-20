@@ -13,7 +13,6 @@ import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.sn.snapshot.TurSNSiteSnapshotEvictionListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +32,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "ai_agent")
-@EntityListeners(TurSNSiteSnapshotEvictionListener.class)
+@EntityListeners(TurAIAgentChangeListener.class)
 public class TurAIAgent implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
