@@ -45,7 +45,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * T1123 — one probe answers every AI feature of a site from configuration.

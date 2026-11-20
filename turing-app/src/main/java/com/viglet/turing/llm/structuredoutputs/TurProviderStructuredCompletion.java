@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.system.TurStructuredCompletionPort;
+import com.viglet.turing.llm.TurStructuredCompletionPort;
 
 import lombok.extern.slf4j.Slf4j;
 

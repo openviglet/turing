@@ -28,8 +28,8 @@ import com.viglet.turing.transcription.TurTranscriptionService;
 import com.viglet.turing.persona.persistence.model.TurPersonaKind;
 import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 /**
  * Deterministic tests for persona-from-audio derivation (Block AA / §XXVI.7).

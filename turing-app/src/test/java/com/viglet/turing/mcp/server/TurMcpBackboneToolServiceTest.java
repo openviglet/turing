@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;

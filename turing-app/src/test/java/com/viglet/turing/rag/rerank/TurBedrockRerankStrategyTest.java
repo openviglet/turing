@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.rerank;
 
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 

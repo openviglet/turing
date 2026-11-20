@@ -32,12 +32,12 @@ import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.rag.TurRagReranker;
 import com.viglet.turing.rag.TurRagRrf;
-import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -514,7 +514,7 @@ public class TurSNHybridRankingService {
         // the default LLM when the lane is unbound).
         ChatModel chatModel = strategy == TurRagRerankStrategyType.LLM
                 ? defaultChatModelResolver.resolve(
-                        com.viglet.turing.system.lane.TurModelStage.RERANK).orElse(null)
+                        com.viglet.turing.llm.lane.TurModelStage.RERANK).orElse(null)
                 : null;
         List<Document> candidates = new ArrayList<>(fused.size());
         for (Document d : fused) {

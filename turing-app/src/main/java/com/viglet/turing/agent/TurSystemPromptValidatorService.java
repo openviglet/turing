@@ -29,8 +29,8 @@ import com.viglet.turing.agent.persistence.dto.TurSystemPromptPreviewDto;
 import com.viglet.turing.agent.persistence.dto.TurSystemPromptSegmentDto;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;

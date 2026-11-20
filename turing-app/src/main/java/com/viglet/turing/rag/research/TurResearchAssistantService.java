@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.rag.persistence.model.research.TurResearchProtocol;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.DeserializationFeature;

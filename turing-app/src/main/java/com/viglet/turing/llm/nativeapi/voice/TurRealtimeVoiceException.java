@@ -12,22 +12,27 @@
  */
 package com.viglet.turing.llm.nativeapi.voice;
 
+import com.viglet.turing.shared.exception.TurProviderException;
+
 /**
  * T147 / §X.6.a — raised when a real-time voice session cannot be minted
  * (missing credentials, unsupported model, vendor/transport failure). Unlike
  * the rerank fail-open, a voice request is explicit and user-initiated, so the
- * failure surfaces rather than degrading silently.
+ * failure surfaces rather than degrading silently. It is a provider failure, so the
+ * shared handler answers 502 without naming this module (T1311).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
-public class TurRealtimeVoiceException extends RuntimeException {
+public class TurRealtimeVoiceException extends TurProviderException {
+
+    private static final String PROVIDER = "realtime-voice";
 
     public TurRealtimeVoiceException(String message) {
-        super(message);
+        super(PROVIDER, message);
     }
 
     public TurRealtimeVoiceException(String message, Throwable cause) {
-        super(message, cause);
+        super(PROVIDER, message, cause);
     }
 }

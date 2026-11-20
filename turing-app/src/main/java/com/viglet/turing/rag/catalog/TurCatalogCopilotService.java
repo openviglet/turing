@@ -50,7 +50,7 @@ import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

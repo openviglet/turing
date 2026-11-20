@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.urlfetch;
 
+import com.viglet.turing.shared.settings.TurUrlFetchMode;
+
 /**
  * T739 / §XLVIII — the effective URL content-fetch configuration for the current
  * request, merged from {@code turing.url-fetch.*} env props (which win when set)

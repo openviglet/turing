@@ -4,7 +4,7 @@ import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.storage.git.TurGitServerService;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
+import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.tenant.TurPlatformAdminService;
 import com.viglet.turing.tenant.TurTenantContext;
@@ -29,7 +29,7 @@ public class TurFeaturesAPI {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurGitServerService gitServerService;
     private final TurConfigProperties configProperties;
-    private final TurSolrInstanceSource solrInstanceSource;
+    private final TurSearchEngineReadOnlySource solrInstanceSource;
     private final TurTenantContext tenantContext;
     private final TurPlatformAdminService platformAdminService;
     private final TurDefaultAgentResolver defaultAgentResolver;
@@ -37,7 +37,7 @@ public class TurFeaturesAPI {
 
     public TurFeaturesAPI(TurStorageService storageService, TurGlobalSettingsService globalSettingsService,
                           TurGitServerService gitServerService, TurConfigProperties configProperties,
-                          TurSolrInstanceSource solrInstanceSource,
+                          TurSearchEngineReadOnlySource solrInstanceSource,
                           TurTenantContext tenantContext,
                           TurPlatformAdminService platformAdminService,
                           TurDefaultAgentResolver defaultAgentResolver,

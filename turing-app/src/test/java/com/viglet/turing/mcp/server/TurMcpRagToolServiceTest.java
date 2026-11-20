@@ -31,8 +31,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 /**
  * Unit tests for {@link TurMcpRagToolService} — the T248 {@code rag_answer} tool.

@@ -37,7 +37,7 @@ import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyPersonaRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

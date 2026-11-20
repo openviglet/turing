@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.rerank;
 
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
+
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;

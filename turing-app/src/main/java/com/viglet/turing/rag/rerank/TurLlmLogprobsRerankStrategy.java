@@ -12,6 +12,8 @@
  */
 package com.viglet.turing.rag.rerank;
 
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

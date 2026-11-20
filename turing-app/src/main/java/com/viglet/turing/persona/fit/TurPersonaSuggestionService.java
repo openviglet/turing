@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * Auto-suggest the best-fitting audience persona for a piece of content

@@ -40,10 +40,10 @@ import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchPersonaRepository;
 import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchProjectRepository;
 import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchSourceRepository;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.StructuredResult;
-import com.viglet.turing.system.TurLlmSummaryService.StructuredSpec;
-import com.viglet.turing.system.TurVerdictSource;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.StructuredResult;
+import com.viglet.turing.llm.TurLlmSummaryService.StructuredSpec;
+import com.viglet.turing.llm.TurVerdictSource;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.DeserializationFeature;

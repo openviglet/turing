@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system.web;
+package com.viglet.turing.sn.web;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -36,7 +36,7 @@ import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.sn.domain.TurSNSiteDomain;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * T1150 — {@code POST /api/v2/summary} records its spend against the site it

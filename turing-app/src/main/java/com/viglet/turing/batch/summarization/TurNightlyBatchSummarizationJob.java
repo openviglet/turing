@@ -59,7 +59,7 @@ public class TurNightlyBatchSummarizationJob {
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurSNSiteRepository snSiteRepository;
     private final TurSNSiteInsightsPromptBuilder insightsPromptBuilder;
-    private final com.viglet.turing.system.lane.TurModelLaneService modelLaneService;
+    private final com.viglet.turing.llm.lane.TurModelLaneService modelLaneService;
     private final TransactionTemplate readOnlyTransactionTemplate;
 
     public TurNightlyBatchSummarizationJob(TurConfigProperties configProperties,
@@ -67,7 +67,7 @@ public class TurNightlyBatchSummarizationJob {
             TurLLMInstanceRepository llmInstanceRepository,
             TurSNSiteRepository snSiteRepository,
             TurSNSiteInsightsPromptBuilder insightsPromptBuilder,
-            com.viglet.turing.system.lane.TurModelLaneService modelLaneService,
+            com.viglet.turing.llm.lane.TurModelLaneService modelLaneService,
             PlatformTransactionManager transactionManager) {
         this.configProperties = configProperties;
         this.batchInferenceService = batchInferenceService;
@@ -135,7 +135,7 @@ public class TurNightlyBatchSummarizationJob {
         // T517 — nightly insights are background work: ride the CHEAP model lane
         // (resolves to the default LLM when the lane is unbound).
         String llmId = modelLaneService.resolveInstanceId(
-                com.viglet.turing.system.lane.TurModelStage.BACKGROUND_SUMMARIZATION);
+                com.viglet.turing.llm.lane.TurModelStage.BACKGROUND_SUMMARIZATION);
         if (!StringUtils.hasText(llmId)) {
             return null;
         }

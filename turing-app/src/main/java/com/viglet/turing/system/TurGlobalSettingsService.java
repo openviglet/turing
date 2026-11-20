@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import com.viglet.core.settings.VigletConfigVarService;
-import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.transcription.TurTranscriptionProviderType;
 import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
@@ -298,16 +298,16 @@ public class TurGlobalSettingsService {
      * T517 — the {@code TurLLMInstance} id bound to {@code lane} (blank when the
      * lane falls back to the default LLM).
      */
-    public String getModelLaneInstanceId(com.viglet.turing.system.lane.TurModelLane lane) {
+    public String getModelLaneInstanceId(com.viglet.turing.shared.settings.TurModelLane lane) {
         return configVars.getString(modelLaneConfigVar(lane), "");
     }
 
-    public String updateModelLaneInstanceId(com.viglet.turing.system.lane.TurModelLane lane,
+    public String updateModelLaneInstanceId(com.viglet.turing.shared.settings.TurModelLane lane,
             String instanceId) {
         return configVars.setString(modelLaneConfigVar(lane), instanceId == null ? "" : instanceId);
     }
 
-    private static String modelLaneConfigVar(com.viglet.turing.system.lane.TurModelLane lane) {
+    private static String modelLaneConfigVar(com.viglet.turing.shared.settings.TurModelLane lane) {
         return switch (lane) {
             case FAST -> TurConfigVarOnStartup.MODEL_LANE_FAST;
             case REASONING -> TurConfigVarOnStartup.MODEL_LANE_REASONING;
@@ -753,19 +753,19 @@ public class TurGlobalSettingsService {
 
     /**
      * T739 — active URL-fetch mode. Unknown/blank values fall back to
-     * {@link com.viglet.turing.rag.urlfetch.TurUrlFetchMode#SIMPLE} (the legacy
+     * {@link com.viglet.turing.shared.settings.TurUrlFetchMode#SIMPLE} (the legacy
      * default), so a corrupt row can never break ingestion.
      */
-    public com.viglet.turing.rag.urlfetch.TurUrlFetchMode getUrlFetchMode() {
-        return com.viglet.turing.rag.urlfetch.TurUrlFetchMode.fromValue(
+    public com.viglet.turing.shared.settings.TurUrlFetchMode getUrlFetchMode() {
+        return com.viglet.turing.shared.settings.TurUrlFetchMode.fromValue(
                 configVars.getString(TurConfigVarOnStartup.URL_FETCH_MODE,
                         TurConfigVarOnStartup.URL_FETCH_MODE_DEFAULT_VALUE));
     }
 
-    public com.viglet.turing.rag.urlfetch.TurUrlFetchMode updateUrlFetchMode(
-            com.viglet.turing.rag.urlfetch.TurUrlFetchMode mode) {
-        com.viglet.turing.rag.urlfetch.TurUrlFetchMode value =
-                mode == null ? com.viglet.turing.rag.urlfetch.TurUrlFetchMode.DEFAULT : mode;
+    public com.viglet.turing.shared.settings.TurUrlFetchMode updateUrlFetchMode(
+            com.viglet.turing.shared.settings.TurUrlFetchMode mode) {
+        com.viglet.turing.shared.settings.TurUrlFetchMode value =
+                mode == null ? com.viglet.turing.shared.settings.TurUrlFetchMode.DEFAULT : mode;
         configVars.setRaw(TurConfigVarOnStartup.URL_FETCH_MODE, value.name());
         return value;
     }

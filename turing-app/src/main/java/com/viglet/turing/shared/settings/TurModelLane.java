@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system.lane;
+package com.viglet.turing.shared.settings;
 
 import java.util.Locale;
 

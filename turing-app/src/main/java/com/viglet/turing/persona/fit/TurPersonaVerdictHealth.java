@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.system.TurVerdictSource;
+import com.viglet.turing.llm.TurVerdictSource;
 
 /**
  * T829 / §LXI.5 (Block BN) — how the persona verdicts are <em>actually</em> being

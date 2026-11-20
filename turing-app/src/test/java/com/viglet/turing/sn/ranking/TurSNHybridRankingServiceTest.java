@@ -41,12 +41,12 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.rag.TurRagReranker;
-import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

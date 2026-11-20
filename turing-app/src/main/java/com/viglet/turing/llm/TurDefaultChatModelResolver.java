@@ -7,7 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system;
+package com.viglet.turing.llm;
+
+import com.viglet.turing.system.TurGlobalSettingsService;
 
 import java.util.Optional;
 
@@ -18,8 +20,8 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.system.lane.TurModelLaneService;
-import com.viglet.turing.system.lane.TurModelStage;
+import com.viglet.turing.llm.lane.TurModelLaneService;
+import com.viglet.turing.llm.lane.TurModelStage;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

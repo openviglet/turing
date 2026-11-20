@@ -9,7 +9,7 @@
  */
 package com.viglet.turing.properties;
 
-import com.viglet.turing.rag.urlfetch.TurUrlFetchMode;
+import com.viglet.turing.shared.settings.TurUrlFetchMode;
 
 import lombok.Getter;
 import lombok.Setter;

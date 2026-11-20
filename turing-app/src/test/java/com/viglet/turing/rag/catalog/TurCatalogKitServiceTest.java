@@ -31,7 +31,7 @@ import com.viglet.turing.rag.TurRagReranker;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 
 /**
  * T1159 — a described plan comes back as staged products by need, every product

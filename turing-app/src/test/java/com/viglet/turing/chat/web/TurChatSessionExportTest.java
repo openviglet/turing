@@ -36,7 +36,7 @@ import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
 import com.viglet.turing.chat.slots.TurChatSlotAuditService;
 import com.viglet.turing.chat.slots.TurSubmissionRetentionService;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * Unit tests for the T65 conversation-export endpoint on

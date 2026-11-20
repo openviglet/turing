@@ -1,4 +1,6 @@
-package com.viglet.turing.system;
+package com.viglet.turing.llm;
+
+import com.viglet.turing.system.TurGlobalSettingsService;
 
 import java.util.List;
 import java.util.Map;

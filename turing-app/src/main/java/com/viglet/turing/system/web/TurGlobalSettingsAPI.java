@@ -13,8 +13,6 @@ import com.viglet.turing.agent.tool.TurCodeInterpreterToolService;
 import com.viglet.turing.agent.tool.TurCodeInterpreterToolService.TurDockerStatus;
 import com.viglet.turing.transcription.TurAudioChunker;
 import com.viglet.turing.transcription.TurAudioChunker.TurFfmpegStatus;
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService.TurBrowserlessStatus;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,18 +28,15 @@ public class TurGlobalSettingsAPI {
     private final TurEmailService turEmailService;
     private final TurCodeInterpreterToolService turCodeInterpreterToolService;
     private final TurAudioChunker turAudioChunker;
-    private final TurUrlFetchService turUrlFetchService;
 
     public TurGlobalSettingsAPI(TurGlobalSettingsService turGlobalSettingsService,
             TurEmailService turEmailService,
             TurCodeInterpreterToolService turCodeInterpreterToolService,
-            TurAudioChunker turAudioChunker,
-            TurUrlFetchService turUrlFetchService) {
+            TurAudioChunker turAudioChunker) {
         this.turGlobalSettingsService = turGlobalSettingsService;
         this.turEmailService = turEmailService;
         this.turCodeInterpreterToolService = turCodeInterpreterToolService;
         this.turAudioChunker = turAudioChunker;
-        this.turUrlFetchService = turUrlFetchService;
     }
 
     @Operation(summary = "Get global settings")
@@ -56,11 +51,11 @@ public class TurGlobalSettingsAPI {
                 .codeInterpreterSkillImage(turGlobalSettingsService.getCodeInterpreterSkillImage())
                 .defaultLlmId(turGlobalSettingsService.getDefaultLlmId())
                 .modelLaneFastId(turGlobalSettingsService
-                        .getModelLaneInstanceId(com.viglet.turing.system.lane.TurModelLane.FAST))
+                        .getModelLaneInstanceId(com.viglet.turing.shared.settings.TurModelLane.FAST))
                 .modelLaneReasoningId(turGlobalSettingsService
-                        .getModelLaneInstanceId(com.viglet.turing.system.lane.TurModelLane.REASONING))
+                        .getModelLaneInstanceId(com.viglet.turing.shared.settings.TurModelLane.REASONING))
                 .modelLaneCheapId(turGlobalSettingsService
-                        .getModelLaneInstanceId(com.viglet.turing.system.lane.TurModelLane.CHEAP))
+                        .getModelLaneInstanceId(com.viglet.turing.shared.settings.TurModelLane.CHEAP))
                 .llmFallbackChainIds(turGlobalSettingsService.getLlmFallbackChainIds())
                 .llmFallbackMode(turGlobalSettingsService.getLlmFallbackMode())
                 .secondOpinionEnabled(turGlobalSettingsService.isSecondOpinionEnabled())
@@ -130,13 +125,13 @@ public class TurGlobalSettingsAPI {
                 .defaultLlmId(turGlobalSettingsService
                         .updateDefaultLlmId(globalSettings.getDefaultLlmId()))
                 .modelLaneFastId(turGlobalSettingsService.updateModelLaneInstanceId(
-                        com.viglet.turing.system.lane.TurModelLane.FAST,
+                        com.viglet.turing.shared.settings.TurModelLane.FAST,
                         globalSettings.getModelLaneFastId()))
                 .modelLaneReasoningId(turGlobalSettingsService.updateModelLaneInstanceId(
-                        com.viglet.turing.system.lane.TurModelLane.REASONING,
+                        com.viglet.turing.shared.settings.TurModelLane.REASONING,
                         globalSettings.getModelLaneReasoningId()))
                 .modelLaneCheapId(turGlobalSettingsService.updateModelLaneInstanceId(
-                        com.viglet.turing.system.lane.TurModelLane.CHEAP,
+                        com.viglet.turing.shared.settings.TurModelLane.CHEAP,
                         globalSettings.getModelLaneCheapId()))
                 .llmFallbackChainIds(turGlobalSettingsService
                         .updateLlmFallbackChainIds(globalSettings.getLlmFallbackChainIds()))
@@ -322,18 +317,6 @@ public class TurGlobalSettingsAPI {
     @GetMapping("/transcription/ffmpeg/status")
     public TurFfmpegStatus getFfmpegStatus() {
         return turAudioChunker.checkFfmpeg();
-    }
-
-    /**
-     * T739 / §XLVIII — probes whether the configured {@code browserless} sidecar
-     * is reachable, so the admin can validate it before switching the URL-fetch
-     * mode to {@code HEADLESS}/{@code AUTO}. Never sends anything sensitive — only
-     * an availability flag, the reported browser version, and an error string.
-     */
-    @Operation(summary = "Check whether the browserless sidecar is reachable for headless URL fetching")
-    @GetMapping("/url-fetch/browserless/status")
-    public TurBrowserlessStatus getBrowserlessStatus() {
-        return turUrlFetchService.checkBrowserless();
     }
 
     @Operation(summary = "Send a test email to validate email configuration")

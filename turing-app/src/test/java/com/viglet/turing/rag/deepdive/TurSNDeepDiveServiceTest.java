@@ -41,7 +41,7 @@ import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.dsl.TurDslCallerFilters;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 
 import tools.jackson.databind.json.JsonMapper;
 

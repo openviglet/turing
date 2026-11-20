@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.rag.citation.TurAnswerCitation;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 import lombok.extern.slf4j.Slf4j;
 

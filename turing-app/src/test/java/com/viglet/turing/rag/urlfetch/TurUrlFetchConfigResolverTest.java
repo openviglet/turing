@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.urlfetch;
 
+import com.viglet.turing.shared.settings.TurUrlFetchMode;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;

@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.urlfetch;
 
+import com.viglet.turing.shared.settings.TurUrlFetchMode;
+
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;

@@ -11,7 +11,7 @@ package com.viglet.turing.agent.persistence.dto;
 
 import java.util.List;
 
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * Response of the session-messages API. {@code engine} reports which

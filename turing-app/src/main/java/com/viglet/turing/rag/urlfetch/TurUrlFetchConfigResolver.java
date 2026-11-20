@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.rag.urlfetch;
 
+import com.viglet.turing.shared.settings.TurUrlFetchMode;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

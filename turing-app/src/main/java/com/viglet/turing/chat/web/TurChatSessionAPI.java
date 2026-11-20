@@ -48,7 +48,7 @@ import com.viglet.turing.chat.slots.TurChatSlotAuditService;
 import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 import com.viglet.turing.chat.slots.TurChatSlotSseRegistry;
 import com.viglet.turing.chat.slots.TurSubmissionRetentionService;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

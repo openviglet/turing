@@ -25,8 +25,8 @@ import com.viglet.turing.persona.persistence.model.TurPersonaKind;
 import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
 import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.DeserializationFeature;

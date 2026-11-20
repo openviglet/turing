@@ -28,7 +28,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

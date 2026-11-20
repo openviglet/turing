@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.rerank;
+package com.viglet.turing.shared.settings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

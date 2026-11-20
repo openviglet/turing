@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system;
+package com.viglet.turing.llm;
 
 import java.util.Map;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web;
+package com.viglet.turing.sn.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.sn.domain.TurSNSiteDomain;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -38,7 +38,7 @@ import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

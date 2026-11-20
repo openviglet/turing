@@ -27,7 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.chat.callcenter.TurCallCenterAssistService.CallAssistResult;
 import com.viglet.turing.llm.nativeapi.voice.TurVoiceTranslationService;
 import com.viglet.turing.mcp.server.TurMcpRagToolService;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * T189 / §X.15.c — unit tests for {@link TurCallCenterAssistService}: the

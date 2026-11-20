@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.urlfetch;
+package com.viglet.turing.shared.settings;
 
 /**
  * T739 / §XLVIII — how the platform turns a content URL into text.

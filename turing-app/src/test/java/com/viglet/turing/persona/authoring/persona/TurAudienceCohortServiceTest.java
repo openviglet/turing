@@ -24,8 +24,8 @@ import com.viglet.turing.persona.authoring.persona.TurAudienceCohortService.Coho
 import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
 import com.viglet.turing.persona.persistence.model.TurPersonaKind;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 /**
  * Unit coverage for {@link TurAudienceCohortService} (Block AW / §XLVI.5, T731) —

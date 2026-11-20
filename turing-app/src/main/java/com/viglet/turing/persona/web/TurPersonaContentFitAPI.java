@@ -28,7 +28,7 @@ import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

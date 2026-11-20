@@ -30,7 +30,7 @@ import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
 import com.viglet.turing.persona.persistence.model.TurPersonaKind;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**
  * Deterministic tests for the auto-suggest service (Block AA / §XXVI.8). The

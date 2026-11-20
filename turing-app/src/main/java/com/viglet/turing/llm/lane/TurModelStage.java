@@ -7,7 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system.lane;
+package com.viglet.turing.llm.lane;
+
+import com.viglet.turing.shared.settings.TurModelLane;
 
 /**
  * T517 / §XXVIII.13 — a concrete LLM <em>stage</em> in the platform pipeline,

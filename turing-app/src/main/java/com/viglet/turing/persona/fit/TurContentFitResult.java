@@ -12,7 +12,7 @@ package com.viglet.turing.persona.fit;
 import java.util.List;
 
 import com.viglet.turing.persona.readability.TurReadabilityMetrics;
-import com.viglet.turing.system.TurVerdictSource;
+import com.viglet.turing.llm.TurVerdictSource;
 
 /**
  * The content-fit verdict for one source against an audience persona

@@ -33,7 +33,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSiteDataCollectorService;
 import com.viglet.turing.system.TurGlobalSettingsService;
-import com.viglet.turing.system.TurLlmCacheService;
+import com.viglet.turing.llm.TurLlmCacheService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

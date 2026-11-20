@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.TurSNSiteInsightsPromptBuilder;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

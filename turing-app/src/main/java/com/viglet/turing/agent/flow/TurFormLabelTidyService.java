@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyField;
 import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyResponse;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;

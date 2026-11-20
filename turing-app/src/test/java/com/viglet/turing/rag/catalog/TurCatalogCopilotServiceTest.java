@@ -53,7 +53,7 @@ import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
-import com.viglet.turing.system.TurDefaultChatModelResolver;
+import com.viglet.turing.llm.TurDefaultChatModelResolver;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;

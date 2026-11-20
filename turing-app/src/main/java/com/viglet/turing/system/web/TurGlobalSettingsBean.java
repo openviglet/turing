@@ -1,6 +1,6 @@
 package com.viglet.turing.system.web;
 
-import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.transcription.TurTranscriptionProviderType;
 import com.viglet.turing.system.TurEmailProviderType;
@@ -185,7 +185,7 @@ public class TurGlobalSettingsBean {
      *
      * @since 2026.3.4
      */
-    private com.viglet.turing.rag.urlfetch.TurUrlFetchMode urlFetchMode;
+    private com.viglet.turing.shared.settings.TurUrlFetchMode urlFetchMode;
     /** T739 — browserless sidecar base URL (e.g. {@code http://browserless:3000}); blank = no sidecar. */
     private String urlFetchBrowserlessUrl;
     /**

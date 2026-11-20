@@ -29,7 +29,7 @@ import com.viglet.turing.rag.rerank.TurRagRerankCache;
 import com.viglet.turing.rag.rerank.TurRagRerankRequest;
 import com.viglet.turing.rag.rerank.TurRagRerankStrategy;
 import com.viglet.turing.rag.rerank.TurRagRerankStrategyFactory;
-import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

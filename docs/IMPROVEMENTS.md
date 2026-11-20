@@ -2504,14 +2504,6 @@ implementations become internal. sn and genai depend only on the interface, whic
 turing-search-lucene skill already names as the seam. The embedded Lucene vector store
 stays with rag.
 
-### CLXXXIX.7 Dissolving service and onstartup (T1311)
-
-service holds chatanalytics, chatslots, chatmemory, usermemory and chatflow (a chat
-module), storage and asset (a storage module), keycloak and auth (an auth module), llm
-and git. onstartup seeds data for many modules from one place. Each part moves into the
-module it serves, and each seeder moves into the module whose tables it writes, keeping
-the per-id seeding rule rather than a fresh-install check.
-
 ### CLXXXIX.8 SN persistence moves into sn (T1312)
 
 persistence.model.sn, the SN repositories, DTOs and mappers move into the sn module as

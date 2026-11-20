@@ -15,11 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.agent.tool.TurSystemInfoToolService;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.storage.TurStorageType;
-import com.viglet.turing.system.TurLlmSummaryService;
 
 /**
  * Tests for TurSystemInfoAPI.
@@ -39,18 +37,11 @@ class TurSystemInfoAPITest {
     @Mock
     private TurConfigProperties turConfigProperties;
 
-    @Mock
-    private TurLlmSummaryService llmSummaryService;
-
-    @Mock
-    private TurSystemInfoToolService systemInfoToolService;
-
     private TurSystemInfoAPI api;
 
     @BeforeEach
     void setUp() {
         api = new TurSystemInfoAPI(dataSource, storageService, turConfigProperties,
-                llmSummaryService, systemInfoToolService,
                 false, "mongodb://localhost:27017");
     }
 

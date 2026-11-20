@@ -32,10 +32,10 @@ import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
 import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.StructuredResult;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
-import com.viglet.turing.system.TurVerdictSource;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.StructuredResult;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurVerdictSource;
 
 /**
  * Deterministic tests for the content-fit evaluator (Block AA / §XXVI.4). The

@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.batch.TurBatchChatResult;
 import com.viglet.turing.batch.TurBatchCompletionHandler;
 import com.viglet.turing.batch.persistence.model.TurBatchJob;
-import com.viglet.turing.system.TurLlmCacheService;
+import com.viglet.turing.llm.TurLlmCacheService;
 
 import lombok.extern.slf4j.Slf4j;
 

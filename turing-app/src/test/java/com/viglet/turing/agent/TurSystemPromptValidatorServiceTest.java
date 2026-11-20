@@ -29,8 +29,8 @@ import com.viglet.turing.agent.persistence.dto.TurSystemPromptPreviewDto;
 import com.viglet.turing.agent.persistence.dto.TurSystemPromptSegmentDto;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.system.TurLlmSummaryService;
-import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.llm.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService.SummaryResult;
 
 /**
  * Tests for {@link TurSystemPromptValidatorService}.

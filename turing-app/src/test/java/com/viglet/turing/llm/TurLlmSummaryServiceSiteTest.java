@@ -7,7 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system;
+package com.viglet.turing.llm;
+
+import com.viglet.turing.system.TurGlobalSettingsService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

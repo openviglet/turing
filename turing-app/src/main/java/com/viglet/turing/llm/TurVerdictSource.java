@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system;
+package com.viglet.turing.llm;
 
 /**
  * T829 / §LXI.5 (Block BN) — <em>how</em> a schema-bound LLM verdict was obtained.

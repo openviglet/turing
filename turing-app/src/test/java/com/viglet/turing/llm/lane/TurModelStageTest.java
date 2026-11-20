@@ -7,7 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system.lane;
+package com.viglet.turing.llm.lane;
+
+import com.viglet.turing.shared.settings.TurModelLane;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -30,7 +30,7 @@ import com.viglet.turing.agent.persistence.dto.TurChatFlowVariantRequest;
 import com.viglet.turing.agent.persistence.dto.TurChatFlowVariantResponse;
 import com.viglet.turing.agent.persistence.mapper.TurChatFlowMapper;
 import com.viglet.turing.agent.persistence.model.TurChatFlow;
-import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.llm.TurLlmSummaryService;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;

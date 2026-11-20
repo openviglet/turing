@@ -13,6 +13,8 @@
  */
 package com.viglet.turing.searchengine.solr.source;
 
+import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -38,12 +40,13 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
  * @author Alexandre Oliveira
  * @since 2026.2.4
  */
-public interface TurSolrInstanceSource {
+public interface TurSolrInstanceSource extends TurSearchEngineReadOnlySource {
 
     /**
      * @return {@code true} when the source is backed by external configuration
      *         (properties) and therefore the SE instance catalog is read-only.
      */
+    @Override
     boolean isReadOnly();
 
     /**
