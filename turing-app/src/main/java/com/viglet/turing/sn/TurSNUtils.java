@@ -48,7 +48,7 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.searchengine.solr.TurSolrField;
+import com.viglet.turing.searchengine.TurSEFieldValues;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -330,7 +330,7 @@ public class TurSNUtils {
     private static void addFilterQueryByType(URI uri,
             List<TurSNSiteSearchDocumentMetadataBean> documentMetadataBeans, String facet,
             Object attrValue) {
-        String facetValue = TurSolrField.convertFieldToString(attrValue);
+        String facetValue = TurSEFieldValues.toText(attrValue);
         String filterQuery = facet + ":" + facetValue;
         documentMetadataBeans.add(TurSNSiteSearchDocumentMetadataBean.builder()
                 .href(TurSNUtils.addFilterQuery(uri, filterQuery).toString())

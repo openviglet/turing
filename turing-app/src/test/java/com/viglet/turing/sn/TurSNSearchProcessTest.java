@@ -75,7 +75,7 @@ import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 import com.viglet.turing.searchengine.solr.TurSolrInstance;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
-import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
+import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 
 /**
  * Unit tests for TurSNSearchProcess. Site configuration now flows through the
@@ -110,7 +110,7 @@ class TurSNSearchProcessTest {
         private TurSearchEnginePluginFactory searchEnginePluginFactory;
 
         @Mock
-        private TurSolrQueryBuilder turSolrQueryBuilder;
+        private TurSNEnabledFacets turSNEnabledFacets;
 
         @Mock
         private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
@@ -126,7 +126,7 @@ class TurSNSearchProcessTest {
 
         private com.viglet.turing.sn.facet.TurSNFacetRenderer turSNFacetRenderer() {
                 return new com.viglet.turing.sn.facet.TurSNFacetRenderer(
-                                searchEnginePluginFactory, turSolrQueryBuilder);
+                                searchEnginePluginFactory, turSNEnabledFacets);
         }
 
         private TurSNFacetDefinitionFactory turSNFacetDefinitionFactory() {
@@ -151,7 +151,7 @@ class TurSNSearchProcessTest {
                                 turSolrInstanceProcess, turSNSpotlightProcess,
                                 turSNSiteMetricAccessRepository,
                                 turSNSiteMetricAccessRepositoryPort,
-                                metricsEnabled, searchEnginePluginFactory, turSolrQueryBuilder,
+                                metricsEnabled, searchEnginePluginFactory, turSNEnabledFacets,
                                 turSNFacetDefinitionFactory(), turSNFacetRenderer(),
                                 turSNPaginationBuilder(), turSNDocumentResponse(),
                                 turSNQueryContextBuilder(),
@@ -525,7 +525,6 @@ class TurSNSearchProcessTest {
                                 snapshot(site, Locale.US, List.of(), Map.of(),
                                                 List.of(snLocale("loc-en", Locale.US, 0)))));
                 when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
-                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
                 when(hybridRankingService.isEnabled(any())).thenReturn(true);
                 when(plugin.retrieveSearchResults(any())).thenReturn(Optional.of(TurSEResults.builder()
                                 .results(page).numFound(numFound).currentPage(1).pageCount(1)
@@ -649,7 +648,6 @@ class TurSNSearchProcessTest {
                                 snapshot(site, Locale.US, List.of(), Map.of(),
                                                 List.of(snLocale("loc-en", Locale.US, 0)))));
                 when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
-                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
                 when(hybridRankingService.isEnabled(any())).thenReturn(true);
                 when(plugin.supportsIdRestriction()).thenReturn(true);
                 TurSEResults lexical = TurSEResults.builder().results(List.of()).numFound(0)
@@ -740,8 +738,8 @@ class TurSNSearchProcessTest {
                 when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
                 when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
                                 .thenReturn(List.of(facetField));
-                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
-                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
+                when(turSNEnabledFacets.facetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
+                when(searchEnginePluginFactory.getPluginForSite(any())).thenReturn(plugin);
                 when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
                                 .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
 
@@ -803,8 +801,7 @@ class TurSNSearchProcessTest {
                 when(snapshotService.getSnapshot("site", Locale.US)).thenReturn(Optional.of(
                                 snapshot(site, Locale.US, List.of(), Map.of(), List.of())));
                 when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
-                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(true);
-                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of());
+                when(turSNEnabledFacets.facetFieldsInFilterQuery(any())).thenReturn(List.of());
                 when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
                                 .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
 
@@ -914,8 +911,7 @@ class TurSNSearchProcessTest {
                 when(snapshotService.getSnapshot("site", Locale.US)).thenReturn(Optional.of(
                                 snapshot(site, Locale.US, List.of(), Map.of(), List.of())));
                 when(searchEnginePluginFactory.getPlugin("solr")).thenReturn(plugin);
-                when(turSolrQueryBuilder.hasGroup(any())).thenReturn(false);
-                when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any())).thenReturn(List.of());
+                when(turSNEnabledFacets.facetFieldsInFilterQuery(any())).thenReturn(List.of());
                 when(turSolrInstanceProcess.initSolrInstance("site", Locale.US))
                                 .thenReturn(Optional.of(org.mockito.Mockito.mock(TurSolrInstance.class)));
 

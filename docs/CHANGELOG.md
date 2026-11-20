@@ -1770,3 +1770,4 @@
 - **T1314** — The shared persistence and domain packages are gone: auth, dev tokens, kb, search-engine instances, config, integrations, assets, bento, chat analytics and tenant entities each live in their module (design §CLXXXIX.10 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1316** — No entity names another module's listener: agent writes publish TurAIAgentChangedEvent, sn evicts the snapshot on it after commit, and TurEntityListenerModuleTest fails on any new crossing (design §CLXXXIX.12 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1320** — No entity uses @Lob: all 59 String fields map to longtext, none were binary, the schema is unchanged, and TurLobConventionTest fails on a new @Lob.
+- **T1310b** — SN facet typing and enabled-facet reads live in sn.facet; paging, Solr date math and field text are searchengine API; sn no longer imports the Solr query builder, TurSolrField or Lucene filters.

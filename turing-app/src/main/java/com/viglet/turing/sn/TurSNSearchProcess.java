@@ -87,9 +87,10 @@ import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
+import com.viglet.turing.searchengine.TurSEPaging;
+import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.searchengine.solr.TurSolrInstance;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
-import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -111,7 +112,7 @@ public class TurSNSearchProcess {
         private final TurSNSiteMetricAccessRepositoryPort turSNSiteMetricAccessRepositoryPort;
         private final boolean metricsEnabled;
         private final TurSearchEnginePluginFactory searchEnginePluginFactory;
-        private final TurSolrQueryBuilder turSolrQueryBuilder;
+        private final TurSNEnabledFacets turSNEnabledFacets;
         private final TurSNFacetDefinitionFactory turSNFacetDefinitionFactory;
         private final TurSNFacetRenderer facetRenderer;
         private final TurSNPaginationBuilder paginationBuilder;
@@ -129,7 +130,7 @@ public class TurSNSearchProcess {
                         TurSNSiteMetricAccessRepositoryPort turSNSiteMetricAccessRepositoryPort,
                         @Value("${turing.search.metrics.enabled:false}") boolean metricsEnabled,
                         TurSearchEnginePluginFactory searchEnginePluginFactory,
-                        TurSolrQueryBuilder turSolrQueryBuilder,
+                        TurSNEnabledFacets turSNEnabledFacets,
                         TurSNFacetDefinitionFactory turSNFacetDefinitionFactory,
                         TurSNFacetRenderer facetRenderer,
                         TurSNPaginationBuilder paginationBuilder,
@@ -146,7 +147,7 @@ public class TurSNSearchProcess {
                 this.turSNSiteMetricAccessRepositoryPort = turSNSiteMetricAccessRepositoryPort;
                 this.metricsEnabled = metricsEnabled;
                 this.searchEnginePluginFactory = searchEnginePluginFactory;
-                this.turSolrQueryBuilder = turSolrQueryBuilder;
+                this.turSNEnabledFacets = turSNEnabledFacets;
                 this.turSNFacetDefinitionFactory = turSNFacetDefinitionFactory;
                 this.facetRenderer = facetRenderer;
                 this.paginationBuilder = paginationBuilder;
@@ -323,7 +324,7 @@ public class TurSNSearchProcess {
                 boolean relevanceSort = sort == null || sort.isBlank()
                                 || "relevance".equalsIgnoreCase(sort);
                 if (!relevanceSort || query == null || query.trim().equals("*")
-                                || turSolrQueryBuilder.hasGroup(context.getTurSEParameters())
+                                || TurSEPaging.hasGroup(context.getTurSEParameters())
                                 || turSEResults.getResults() == null) {
                         return;
                 }
@@ -539,7 +540,7 @@ public class TurSNSearchProcess {
                                 .map(TurSNFacetDefinition::toFacetFieldExtDto)
                                 .toList();
                 Map<String, TurSNSiteFieldExtDto> facetMap = setFacetMap(turSNSiteFieldExtDtoList);
-                if (turSolrQueryBuilder.hasGroup(context.getTurSEParameters())) {
+                if (TurSEPaging.hasGroup(context.getTurSEParameters())) {
                         return getSearchBeanForGroup(context, snap, turSolrInstance, turSEResults,
                                         facetMap);
                 }
@@ -869,7 +870,7 @@ public class TurSNSearchProcess {
 
         private List<String> getFacetFieldsInFilterQuery(TurSNSiteSearchContext context,
                         TurSNSite turSNSite) {
-                return turSolrQueryBuilder.getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(null,
+                return turSNEnabledFacets.facetFieldsInFilterQuery(new TurSNFacetTypeContext(null,
                                 turSNSite, context.getTurSEParameters().getTurSNFilterParams()));
         }
 

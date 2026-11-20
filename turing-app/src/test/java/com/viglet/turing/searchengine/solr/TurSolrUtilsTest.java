@@ -161,46 +161,6 @@ class TurSolrUtilsTest {
         assertFalse(TurSolrUtils.isDeleteCopyFieldByCore(null, null, "field_str", TurSEFieldType.TEXT));
     }
 
-    // ---- firstRowPositionFromCurrentPage ----
-
-    @Test
-    void firstRowPositionFromCurrentPageShouldCalculateCorrectly() {
-        TurSEParameters params = createParams(2, 10);
-        assertEquals(10, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void firstRowPositionFromFirstPageShouldBeZero() {
-        TurSEParameters params = createParams(1, 10);
-        assertEquals(0, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void firstRowPositionPage3Rows5ShouldBe10() {
-        TurSEParameters params = createParams(3, 5);
-        assertEquals(10, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    // ---- lastRowPositionFromCurrentPage ----
-
-    @Test
-    void lastRowPositionFromCurrentPageShouldCalculateCorrectly() {
-        TurSEParameters params = createParams(2, 10);
-        assertEquals(20, TurSolrUtils.lastRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void lastRowPositionPage1Rows10ShouldBe10() {
-        TurSEParameters params = createParams(1, 10);
-        assertEquals(10, TurSolrUtils.lastRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void lastRowPositionPage5Rows3ShouldBe15() {
-        TurSEParameters params = createParams(5, 3);
-        assertEquals(15, TurSolrUtils.lastRowPositionFromCurrentPage(params));
-    }
-
     // ---- Constants ----
 
     @Test
@@ -219,36 +179,6 @@ class TurSolrUtilsTest {
     @EnumSource(value = TurSEFieldType.class, names = {"INT", "BOOL", "DATE", "LONG", "FLOAT", "DOUBLE", "CURRENCY", "ARRAY"})
     void isDeleteCopyFieldByCoreShouldReturnFalseForNonTextTypes(TurSEFieldType type) {
         assertFalse(TurSolrUtils.isDeleteCopyFieldByCore(null, null, "field", type));
-    }
-
-    // ---- firstRowPositionFromCurrentPage edge cases ----
-
-    @Test
-    void firstRowPositionPage0Rows10ShouldBeClampedToZero() {
-        // A client-supplied page <= 0 must not produce a negative Solr 'start'
-        // (Solr rejects it with "'start' parameter cannot be negative").
-        TurSEParameters params = createParams(0, 10);
-        assertEquals(0, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void firstRowPositionNegativePageShouldBeClampedToZero() {
-        TurSEParameters params = createParams(-3, 10);
-        assertEquals(0, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    @Test
-    void firstRowPositionLargePageShouldCalculate() {
-        TurSEParameters params = createParams(100, 25);
-        assertEquals(2475, TurSolrUtils.firstRowPositionFromCurrentPage(params));
-    }
-
-    // ---- lastRowPositionFromCurrentPage edge cases ----
-
-    @Test
-    void lastRowPositionPage0Rows10ShouldBeZero() {
-        TurSEParameters params = createParams(0, 10);
-        assertEquals(0, TurSolrUtils.lastRowPositionFromCurrentPage(params));
     }
 
     // ---- createTurSEResultFromDocument edge cases ----

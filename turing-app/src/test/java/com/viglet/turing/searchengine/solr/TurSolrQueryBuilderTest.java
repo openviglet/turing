@@ -108,7 +108,7 @@ class TurSolrQueryBuilderTest {
                                 turSNSiteCustomFacetRepository,
                                 turSNSiteCustomSortRepository,
                                 turSNRankingExpressionRepository, turSNRankingConditionRepository,
-                                turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
+                                turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
         }
 
         private TurSNSiteSearchContext contextFrom(TurSEParameters parameters,
@@ -120,132 +120,6 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
-        void testHasGroupWhenGroupIsPresent() {
-                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
-                TurSNSearchParams searchParams = new TurSNSearchParams();
-                searchParams.setGroup("group");
-                TurSEParameters parameters = new TurSEParameters(
-                                searchParams);
-
-                assertThat(builder.hasGroup(parameters)).isTrue();
-        }
-
-        @Test
-        void testHasGroupWhenGroupIsMissing() {
-                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
-                TurSNSearchParams searchParams = new TurSNSearchParams();
-                TurSEParameters parameters = new TurSEParameters(
-                                searchParams);
-
-                assertThat(builder.hasGroup(parameters)).isFalse();
-        }
-
-        @Test
-        void testGetFqFieldsExtractsKeys() {
-                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("category:books", "type:article"))
-                                .and(List.of("author:john"))
-                                .or(List.of("format:pdf"))
-                                .build();
-
-                List<String> keys = builder.getFqFields(params);
-
-                assertThat(keys).containsExactly("category", "type", "author", "format");
-        }
-
-        @Test
-        void testGetFacetTypeAndFacetItemTypeValuesUsesSiteDefaults() {
-                TurSNSite site = new TurSNSite();
-                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
-                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .operator(TurSNFilterQueryOperator.NONE)
-                                .itemOperator(TurSNFilterQueryOperator.NONE)
-                                .build();
-
-                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
-
-                assertThat(TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(context))
-                                .isEqualTo("AND-OR");
-        }
-
-        @Test
-        void testGetFacetFieldsInFilterQueryFiltersEnabledFacets() {
-                TurSNSite site = new TurSNSite();
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("category:books", "other:1"))
-                                .build();
-                TurSNSiteFieldExt categoryFacet = TurSNSiteFieldExt.builder().name("category").facet(1).enabled(1)
-                                .build();
-                TurSNSiteFieldExt typeFacet = TurSNSiteFieldExt.builder().name("type").facet(1).enabled(1)
-                                .build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(categoryFacet, typeFacet));
-
-                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
-                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
-
-                List<String> fields = builder.getFacetFieldsInFilterQuery(context);
-
-                assertThat(fields).containsExactly("category");
-        }
-
-        @Test
-        void testGetFacetFieldsInFilterQueryIncludesCustomFacetNames() {
-                TurSNSite site = new TurSNSite();
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("price_range:101 - 500", "other:1"))
-                                .build();
-
-                TurSNSiteFieldExt idFacet = TurSNSiteFieldExt.builder()
-                                .id("field-1")
-                                .name("id")
-                                .build();
-                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
-                                .name("price_range").turSNSiteFieldExt(idFacet).build();
-
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(idFacet));
-                when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any()))
-                                .thenReturn(List.of(customFacet));
-
-                List<String> fields = builder().getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(site, params));
-
-                assertThat(fields).containsExactly("price_range");
-        }
-
-        @Test
-        void testGetFacetFieldsInFilterQueryIncludesCustomFacetWhenBaseFieldIsNotFacet() {
-                TurSNSite site = new TurSNSite();
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("price_range:101 - 500"))
-                                .build();
-
-                TurSNSiteFieldExt nonFacetField = TurSNSiteFieldExt.builder()
-                                .id("field-1")
-                                .name("id")
-                                .facet(0)
-                                .enabled(1)
-                                .build();
-                TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder()
-                                .name("price_range").turSNSiteFieldExt(nonFacetField).build();
-
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(nonFacetField));
-                when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any()))
-                                .thenReturn(List.of(customFacet));
-
-                List<String> fields = builder().getFacetFieldsInFilterQuery(new TurSNFacetTypeContext(site, params));
-
-                assertThat(fields).containsExactly("price_range");
-        }
-
-        @Test
         void testPrepareQueryMLTConfiguresQueryWhenEnabled() {
                 TurSNSite site = new TurSNSite();
                 site.setMlt(1);
@@ -254,7 +128,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(List.of(mltField));
 
                 TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, snapshotService);
+                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
                 SolrQuery query = new SolrQuery();
 
                 List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
@@ -952,82 +826,8 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
-        void testHasGroupWithBlankStringReturnsFalse() {
-                TurSNSearchParams searchParams = new TurSNSearchParams();
-                searchParams.setGroup("   ");
-                TurSEParameters parameters = new TurSEParameters(searchParams);
-
-                // StringUtils.hasText returns false for blank strings
-                assertThat(builder().hasGroup(parameters)).isFalse();
-        }
-
-        @Test
-        void testGetFqFieldsReturnsEmptyForNullParams() {
-                TurSNFilterParams params = TurSNFilterParams.builder().build();
-                List<String> keys = builder().getFqFields(params);
-                assertThat(keys).isEmpty();
-        }
-
-        @Test
-        void testGetFqFieldsExtractsKeysFromAllSources() {
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("category:books"))
-                                .and(List.of("author:john"))
-                                .or(List.of("format:pdf"))
-                                .build();
-
-                List<String> keys = builder().getFqFields(params);
-
-                assertThat(keys).containsExactly("category", "author", "format");
-        }
-
-        @Test
-        void testGetFqFieldsHandlesEmptyLists() {
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(Collections.emptyList())
-                                .and(Collections.emptyList())
-                                .or(Collections.emptyList())
-                                .build();
-
-                List<String> keys = builder().getFqFields(params);
-                assertThat(keys).isEmpty();
-        }
-
-        @Test
         void testCustomFacetQuerySeparatorConstant() {
                 assertThat(TurSolrQueryBuilder.CUSTOM_FACET_QUERY_SEPARATOR).isEqualTo("::");
-        }
-
-        @Test
-        void testGetFacetTypeAndFacetItemTypeValuesWithParamOverrides() {
-                TurSNSite site = new TurSNSite();
-                site.setFacetType(TurSNSiteFacetFieldEnum.AND);
-                site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .operator(TurSNFilterQueryOperator.AND)
-                                .itemOperator(TurSNFilterQueryOperator.OR)
-                                .build();
-
-                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
-
-                assertThat(TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(context))
-                                .isEqualTo("AND-OR");
-        }
-
-        @Test
-        void testGetFacetTypeAndFacetItemTypeValuesOrOr() {
-                TurSNSite site = new TurSNSite();
-                site.setFacetType(TurSNSiteFacetFieldEnum.OR);
-                site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .operator(TurSNFilterQueryOperator.NONE)
-                                .itemOperator(TurSNFilterQueryOperator.NONE)
-                                .build();
-
-                TurSNFacetTypeContext context = new TurSNFacetTypeContext(site, params);
-
-                assertThat(TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(context))
-                                .isEqualTo("OR-OR");
         }
 
         @Test
@@ -1335,17 +1135,6 @@ class TurSolrQueryBuilderTest {
         }
 
         @Test
-        void testGetFqFieldsHandlesValuesWithoutColons() {
-                TurSNFilterParams params = TurSNFilterParams.builder()
-                                .defaultValues(List.of("nocolon"))
-                                .build();
-
-                List<String> keys = builder().getFqFields(params);
-                // No colon means getKeyValueFromColon returns empty Optional -> null key
-                assertThat(keys).hasSize(1);
-        }
-
-        @Test
         void testPrepareSolrQueryWithPositiveRowsPerPageSetsRows() {
                 TurSNSite site = new TurSNSite();
                 site.setRowsPerPage(25);
@@ -1650,74 +1439,6 @@ class TurSolrQueryBuilderTest {
                                 .doesNotContain("ex=_all_");
         }
 
-        // --- isFacetTypeDefault (via reflection) ---
-
-        @Test
-        void testIsFacetTypeDefault() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "isFacetTypeDefault", TurSNSiteFacetFieldEnum.class);
-                method.setAccessible(true);
-
-                assertThat((boolean) method.invoke(null, TurSNSiteFacetFieldEnum.DEFAULT)).isTrue();
-                assertThat((boolean) method.invoke(null, (Object) null)).isTrue();
-                assertThat((boolean) method.invoke(null, TurSNSiteFacetFieldEnum.AND)).isFalse();
-                assertThat((boolean) method.invoke(null, TurSNSiteFacetFieldEnum.OR)).isFalse();
-        }
-
-        // --- operatorIsNotEmpty (via reflection) ---
-
-        @Test
-        void testOperatorIsNotEmpty() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "operatorIsNotEmpty", TurSNFilterQueryOperator.class);
-                method.setAccessible(true);
-
-                assertThat((boolean) method.invoke(null, TurSNFilterQueryOperator.AND)).isTrue();
-                assertThat((boolean) method.invoke(null, TurSNFilterQueryOperator.OR)).isTrue();
-                assertThat((boolean) method.invoke(null, TurSNFilterQueryOperator.NONE)).isFalse();
-                assertThat((boolean) method.invoke(null, (Object) null)).isFalse();
-        }
-
-        // --- getFacetTypeFromSite / getFacetItemTypeFromSite (via reflection) ---
-
-        @Test
-        void testGetFacetTypeFromSite() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "getFacetTypeFromSite", TurSNSite.class);
-                method.setAccessible(true);
-
-                TurSNSite orSite = new TurSNSite();
-                orSite.setFacetType(TurSNSiteFacetFieldEnum.OR);
-                assertThat(method.invoke(null, orSite)).isEqualTo(TurSNSiteFacetFieldEnum.OR);
-
-                TurSNSite andSite = new TurSNSite();
-                andSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
-                assertThat(method.invoke(null, andSite)).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-
-                TurSNSite defaultSite = new TurSNSite();
-                defaultSite.setFacetType(TurSNSiteFacetFieldEnum.DEFAULT);
-                assertThat(method.invoke(null, defaultSite)).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-        }
-
-        @Test
-        void testGetFacetItemTypeFromSite() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "getFacetItemTypeFromSite", TurSNSite.class);
-                method.setAccessible(true);
-
-                TurSNSite orSite = new TurSNSite();
-                orSite.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
-                assertThat(method.invoke(null, orSite)).isEqualTo(TurSNSiteFacetFieldEnum.OR);
-
-                TurSNSite andSite = new TurSNSite();
-                andSite.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
-                assertThat(method.invoke(null, andSite)).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-
-                TurSNSite defaultSite = new TurSNSite();
-                defaultSite.setFacetItemType(TurSNSiteFacetFieldEnum.DEFAULT);
-                assertThat(method.invoke(null, defaultSite)).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-        }
-
         // --- facetSortIsEmptyOrCount (via reflection) ---
 
         @Test
@@ -1787,20 +1508,6 @@ class TurSolrQueryBuilderTest {
 
                 TurSNSiteFieldExt disabled = TurSNSiteFieldExt.builder().facet(0).build();
                 assertThat((boolean) method.invoke(null, disabled)).isFalse();
-        }
-
-        // --- getFaceTypeFromOperator (via reflection) ---
-
-        @Test
-        void testGetFaceTypeFromOperator() throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "getFaceTypeFromOperator", TurSNFilterQueryOperator.class);
-                method.setAccessible(true);
-
-                assertThat(method.invoke(null, TurSNFilterQueryOperator.OR))
-                                .isEqualTo(TurSNSiteFacetFieldEnum.OR);
-                assertThat(method.invoke(null, TurSNFilterQueryOperator.AND))
-                                .isEqualTo(TurSNSiteFacetFieldEnum.AND);
         }
 
         // ---- T1111: an exclusive-start range is an expression, never a phrase ----

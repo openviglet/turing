@@ -32,7 +32,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
-import com.viglet.turing.searchengine.lucene.TurLuceneFilterQueries;
+import com.viglet.turing.searchengine.TurSEDateMath;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -233,7 +233,7 @@ final class TurElasticsearchFilterQueries {
         if (range.matches()) {
             return rangeQuery(target, type, range, now);
         }
-        String term = type == TurSEFieldType.DATE ? TurLuceneFilterQueries.parseDate(value.trim(), now).toString()
+        String term = type == TurSEFieldType.DATE ? TurSEDateMath.parse(value.trim(), now).toString()
                 : value;
         return Query.of(q -> q.term(t -> t.field(target).value(FieldValue.of(term))));
     }
@@ -267,7 +267,7 @@ final class TurElasticsearchFilterQueries {
         if (!StringUtils.hasText(value) || "*".equals(value)) {
             return null;
         }
-        return type == TurSEFieldType.DATE ? TurLuceneFilterQueries.parseDate(value, now).toString() : value;
+        return type == TurSEFieldType.DATE ? TurSEDateMath.parse(value, now).toString() : value;
     }
 
     /** String-like fields are mapped as text with a {@code .keyword} sub-field, as the facet aggregation reads them. */

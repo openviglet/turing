@@ -92,7 +92,7 @@ public record TurSNSiteSearchSnapshot(
      * T898 / §LXXI.1 — a custom facet as the search flow reads it. The entity it
      * replaces carried a lazy {@code items} collection and a back-reference to its
      * field ext, neither of which the one consumer
-     * ({@code TurSolrQueryBuilder#getFacetFieldsInFilterQuery}) touches: it reads
+     * ({@code TurSNEnabledFacets#facetFieldsInFilterQuery}) touches: it reads
      * the name and nothing else.
      *
      * <p>Carrying only what is read is the point, not an economy. A component added

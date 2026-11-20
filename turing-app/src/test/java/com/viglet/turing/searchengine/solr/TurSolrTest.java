@@ -708,7 +708,8 @@ class TurSolrTest {
                 turSNFieldProcess,
                 turDecimalFieldNormalizer,
                 turSNSearchRuleEvaluator,
-                snapshotService,
+                new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository,
+                        turSNSiteCustomFacetRepository, snapshotService),
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
     }
 }

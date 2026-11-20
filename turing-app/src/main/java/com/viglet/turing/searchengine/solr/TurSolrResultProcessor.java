@@ -1,5 +1,9 @@
 package com.viglet.turing.searchengine.solr;
 
+import com.viglet.turing.searchengine.TurSEPaging;
+
+import com.viglet.turing.searchengine.TurSEFieldValues;
+
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.ID;
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.MORE_LIKE_THIS;
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.TITLE;
@@ -107,7 +111,7 @@ public class TurSolrResultProcessor {
         private void processGroups(SolrQuery query, TurSolrInstance turSolrInstance,
                         TurSNSite turSNSite, TurSolrQueryContext queryContext, TurSEResults turSEResults,
                         QueryResponse queryResponse, TurSolrQueryBuilder turSolrQueryBuilder) {
-                if (!turSolrQueryBuilder.hasGroup(queryContext.getTurSEParameters())
+                if (!TurSEPaging.hasGroup(queryContext.getTurSEParameters())
                                 || queryResponse.getGroupResponse() == null) {
                         return;
                 }
@@ -294,15 +298,13 @@ public class TurSolrResultProcessor {
                         SimpleOrderedMap mltResp = (SimpleOrderedMap) queryResponse.getResponse().get(MORE_LIKE_THIS);
                         ((SolrDocumentList) mltResp.get((String) document.get(ID)))
                                         .forEach(mltDocument -> similarResults.add(TurSESimilarResult.builder()
-                                                        .id(TurSolrField.convertFieldToString(
+                                                        .id(TurSEFieldValues.toText(
                                                                         mltDocument.getFieldValue(ID)))
-                                                        .title(TurSolrField
-                                                                        .convertFieldToString(mltDocument
+                                                        .title(TurSEFieldValues.toText(mltDocument
                                                                                         .getFieldValue(TITLE)))
-                                                        .type(TurSolrField
-                                                                        .convertFieldToString(mltDocument
+                                                        .type(TurSEFieldValues.toText(mltDocument
                                                                                         .getFieldValue(TYPE)))
-                                                        .url(TurSolrField.convertFieldToString(
+                                                        .url(TurSEFieldValues.toText(
                                                                         mltDocument.getFieldValue(URL)))
                                                         .build()));
                 }

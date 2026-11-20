@@ -46,7 +46,6 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 
 /**
  * Builds the facet beans returned in a search response — main facets, secondary
@@ -70,12 +69,12 @@ public class TurSNFacetRenderer {
     private static final String FACETS_TO_REMOVE = "Facets To Remove";
 
     private final TurSearchEnginePluginFactory searchEnginePluginFactory;
-    private final TurSolrQueryBuilder turSolrQueryBuilder;
+    private final TurSNEnabledFacets turSNEnabledFacets;
 
     public TurSNFacetRenderer(TurSearchEnginePluginFactory searchEnginePluginFactory,
-            TurSolrQueryBuilder turSolrQueryBuilder) {
+            TurSNEnabledFacets turSNEnabledFacets) {
         this.searchEnginePluginFactory = searchEnginePluginFactory;
-        this.turSolrQueryBuilder = turSolrQueryBuilder;
+        this.turSNEnabledFacets = turSNEnabledFacets;
     }
 
     /** Visibility classes that gate which facets show up in which list. */
@@ -189,8 +188,8 @@ public class TurSNFacetRenderer {
         }
         TurSNFacetTypeContext typeContext = new TurSNFacetTypeContext(null, turSNSite,
                 context.getTurSEParameters().getTurSNFilterParams());
-        List<String> facetFieldsInFilterQuery = turSolrQueryBuilder
-                .getFacetFieldsInFilterQuery(typeContext);
+        List<String> facetFieldsInFilterQuery = turSNEnabledFacets
+                .facetFieldsInFilterQuery(typeContext);
         List<TurSNSiteSearchFacetItemBean> removeItems = new ArrayList<>();
         context.getTurSEParameters().getTurSNFilterParams().getDefaultValues()
                 .forEach(facetToRemove -> TurCommonsUtils.getKeyValueFromColon(facetToRemove)
@@ -253,7 +252,7 @@ public class TurSNFacetRenderer {
      */
     private static boolean showFacetByFacetItemType(TurSNSiteFieldExtDto fieldExtDto,
             TurSNSite turSNSite, TurSNFilterParams filterParams) {
-        return TurSolrQueryBuilder.getFacetTypeAndFacetItemTypeValues(
+        return TurSNFacetTypes.typeAndItemType(
                 new TurSNFacetTypeContext(fieldExtDto, turSNSite, filterParams))
                 .endsWith(FACET_ITEM_OR);
     }
@@ -263,12 +262,11 @@ public class TurSNFacetRenderer {
     private FacetResult resolveFacetResult(TurSNSiteSearchContext context, TurSEResults turSEResults,
             TurSNFacetTypeContext typeContext) {
         String facetName = typeContext.getTurSNSiteFacetFieldExtDto().getName();
-        String facetTypeAndFacetItemTypeValues = TurSolrQueryBuilder
-                .getFacetTypeAndFacetItemTypeValues(typeContext);
+        String facetTypeAndFacetItemTypeValues = TurSNFacetTypes.typeAndItemType(typeContext);
         List<String> usedFacetItems = getUsedFacetItems(context);
 
         if (facetTypeAndFacetItemTypeValues.equals(AND_OR)
-                && turSolrQueryBuilder.getFqFields(typeContext.getTurSNFilterParams())
+                && TurSNFacetTypes.fqFields(typeContext.getTurSNFilterParams())
                         .contains(facetName)) {
             TurSearchEnginePlugin plugin = searchEnginePluginFactory
                     .getPluginForSite(typeContext.getTurSNSite());

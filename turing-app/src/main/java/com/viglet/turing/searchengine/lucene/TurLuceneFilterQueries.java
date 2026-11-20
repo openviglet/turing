@@ -17,12 +17,12 @@
 package com.viglet.turing.searchengine.lucene;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+
+
+
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
+
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +36,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.searchengine.TurSEDateMath;
 
 /**
  * Turns the value of one {@code field:value} filter query into a Lucene query
@@ -59,7 +60,6 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 public final class TurLuceneFilterQueries {
 
     private static final Pattern RANGE = Pattern.compile("^([\\[{])\\s*(\\S+)\\s+TO\\s+(\\S+)\\s*([]}])$");
-    private static final Pattern DATE_MATH_STEP = Pattern.compile("([+-]\\d+|/)([A-Za-z]+)");
     private static final String OPEN = "*";
 
     private TurLuceneFilterQueries() {
@@ -105,7 +105,7 @@ public final class TurLuceneFilterQueries {
                 case LONG -> LongPoint.newExactQuery(field, Long.parseLong(trimmed));
                 case FLOAT -> FloatPoint.newExactQuery(field, Float.parseFloat(trimmed));
                 case DOUBLE, CURRENCY -> DoublePoint.newExactQuery(field, Double.parseDouble(trimmed));
-                case DATE -> LongPoint.newExactQuery(field, parseDate(trimmed, now).toEpochMilli());
+                case DATE -> LongPoint.newExactQuery(field, TurSEDateMath.parse(trimmed, now).toEpochMilli());
                 default -> null;
             };
         } catch (NumberFormatException | DateTimeParseException e) {
@@ -126,8 +126,8 @@ public final class TurLuceneFilterQueries {
                         lowerLong(OPEN.equals(from) ? null : Long.parseLong(from), fromInclusive),
                         upperLong(OPEN.equals(to) ? null : Long.parseLong(to), toInclusive));
                 case DATE -> LongPoint.newRangeQuery(field,
-                        lowerLong(OPEN.equals(from) ? null : parseDate(from, now).toEpochMilli(), fromInclusive),
-                        upperLong(OPEN.equals(to) ? null : parseDate(to, now).toEpochMilli(), toInclusive));
+                        lowerLong(OPEN.equals(from) ? null : TurSEDateMath.parse(from, now).toEpochMilli(), fromInclusive),
+                        upperLong(OPEN.equals(to) ? null : TurSEDateMath.parse(to, now).toEpochMilli(), toInclusive));
                 case FLOAT -> FloatPoint.newRangeQuery(field,
                         lowerFloat(from, fromInclusive), upperFloat(to, toInclusive));
                 case DOUBLE, CURRENCY -> DoublePoint.newRangeQuery(field,
@@ -189,85 +189,5 @@ public final class TurLuceneFilterQueries {
         if (OPEN.equals(bound)) return Double.POSITIVE_INFINITY;
         double value = Double.parseDouble(bound);
         return inclusive ? value : Math.nextDown(value);
-    }
-
-    /**
-     * Parses a date with Solr date math, in UTC. The anchor is {@code NOW}, an
-     * ISO instant or a {@code yyyy-MM-dd} day; each following step adds or
-     * subtracts units ({@code -7DAYS}) or rounds down to one ({@code /DAY}).
-     */
-    public static Instant parseDate(String value, Instant now) {
-        String upper = value.toUpperCase(Locale.ROOT);
-        ZonedDateTime anchor;
-        String math;
-        if (upper.startsWith("NOW")) {
-            anchor = now.atZone(ZoneOffset.UTC);
-            math = value.substring(3);
-        } else {
-            int split = mathStart(value);
-            String base = value.substring(0, split);
-            anchor = parseAnchor(base);
-            math = value.substring(split);
-        }
-        return applyMath(anchor, math).toInstant();
-    }
-
-    /** Where date math begins after an ISO anchor: the first {@code /}, or a sign after its 'Z'. */
-    private static int mathStart(String value) {
-        int z = value.toUpperCase(Locale.ROOT).indexOf('Z');
-        int from = z >= 0 ? z + 1 : Math.min(value.length(), 10);
-        for (int i = from; i < value.length(); i++) {
-            char c = value.charAt(i);
-            if (c == '+' || c == '-' || c == '/') {
-                return i;
-            }
-        }
-        return value.length();
-    }
-
-    private static ZonedDateTime parseAnchor(String base) {
-        try {
-            return Instant.parse(base).atZone(ZoneOffset.UTC);
-        } catch (DateTimeParseException e) {
-            return LocalDate.parse(base).atStartOfDay(ZoneOffset.UTC);
-        }
-    }
-
-    private static ZonedDateTime applyMath(ZonedDateTime anchor, String math) {
-        ZonedDateTime result = anchor;
-        int position = 0;
-        Matcher step = DATE_MATH_STEP.matcher(math);
-        while (position < math.length()) {
-            if (!step.find(position) || step.start() != position) {
-                throw new DateTimeParseException("Unparseable date math", math, position);
-            }
-            ChronoUnit unit = unit(step.group(2), math, position);
-            result = "/".equals(step.group(1))
-                    ? round(result, unit)
-                    : result.plus(Long.parseLong(step.group(1)), unit);
-            position = step.end();
-        }
-        return result;
-    }
-
-    private static ChronoUnit unit(String name, String math, int position) {
-        return switch (name.toUpperCase(Locale.ROOT)) {
-            case "YEAR", "YEARS" -> ChronoUnit.YEARS;
-            case "MONTH", "MONTHS" -> ChronoUnit.MONTHS;
-            case "DAY", "DAYS", "DATE" -> ChronoUnit.DAYS;
-            case "HOUR", "HOURS" -> ChronoUnit.HOURS;
-            case "MINUTE", "MINUTES" -> ChronoUnit.MINUTES;
-            case "SECOND", "SECONDS" -> ChronoUnit.SECONDS;
-            case "MILLI", "MILLIS", "MILLISECOND", "MILLISECONDS" -> ChronoUnit.MILLIS;
-            default -> throw new DateTimeParseException("Unknown date math unit " + name, math, position);
-        };
-    }
-
-    private static ZonedDateTime round(ZonedDateTime value, ChronoUnit unit) {
-        return switch (unit) {
-            case YEARS -> value.truncatedTo(ChronoUnit.DAYS).withDayOfYear(1);
-            case MONTHS -> value.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
-            default -> value.truncatedTo(unit);
-        };
     }
 }

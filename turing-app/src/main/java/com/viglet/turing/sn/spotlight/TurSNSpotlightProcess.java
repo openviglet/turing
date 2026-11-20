@@ -66,7 +66,7 @@ import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.searchengine.solr.TurSolrInstance;
-import com.viglet.turing.searchengine.solr.TurSolrUtils;
+import com.viglet.turing.searchengine.TurSEPaging;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
@@ -335,9 +335,9 @@ public class TurSNSpotlightProcess {
 		Map<Integer, List<TurSNSiteSpotlightDocument>> turSNSiteSpotlightDocumentMap = getSpotlightsFromQuery(context,
 				turSNSite);
 
-		int firstRowPositionFromCurrentPage = TurSolrUtils.firstRowPositionFromCurrentPage(context.getTurSEParameters())
+		int firstRowPositionFromCurrentPage = TurSEPaging.firstRow(context.getTurSEParameters())
 				+ 1;
-		int lastRowPositionFromCurrentPage = TurSolrUtils.lastRowPositionFromCurrentPage(context.getTurSEParameters())
+		int lastRowPositionFromCurrentPage = TurSEPaging.lastRow(context.getTurSEParameters())
 				- 1;
 
 		if (lastRowPositionFromCurrentPage > firstRowPositionFromCurrentPage + turSNSiteSearchDocumentsBean.size()) {

@@ -43,7 +43,6 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.TurSolrQueryBuilder;
 
 /**
  * Unit tests for {@link TurSNFacetRenderer}, focused on the visibility rules
@@ -57,7 +56,7 @@ class TurSNFacetRendererTest {
     private TurSearchEnginePluginFactory searchEnginePluginFactory;
 
     @Mock
-    private TurSolrQueryBuilder turSolrQueryBuilder;
+    private TurSNEnabledFacets turSNEnabledFacets;
 
     @InjectMocks
     private TurSNFacetRenderer renderer;
@@ -97,8 +96,6 @@ class TurSNFacetRendererTest {
     void responseFacet_includesMainFacetsAndExcludesSecondary() {
         TurSEResults results = resultsWithFacet("category", "books", 5);
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", false);
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
 
         List<TurSNSiteSearchFacetBean> mainResult = renderer.responseFacet(
                 context(), site, List.of(), facetMap, results);
@@ -114,8 +111,6 @@ class TurSNFacetRendererTest {
     void responseSecondaryFacet_includesSecondaryAndExcludesMain() {
         TurSEResults results = resultsWithFacet("category", "books", 5);
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
 
         List<TurSNSiteSearchFacetBean> mainResult = renderer.responseFacet(
                 context(), site, List.of(), facetMap, results);
@@ -135,8 +130,6 @@ class TurSNFacetRendererTest {
     void responseStructuredFacet_keepsTheAppliedFacetADrillDownSiteHides() {
         TurSEResults results = resultsWithFacet("category", "books", 5);
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", false);
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
         List<String> applied = List.of("category");
 
         List<TurSNSiteSearchFacetBean> legacy = renderer.responseFacet(
@@ -167,13 +160,13 @@ class TurSNFacetRendererTest {
         TurSNSiteSearchFacetBean bean = renderer.responseFacetToRemove(context(), site);
 
         assertThat(bean.getFacets()).isNullOrEmpty();
-        verify(turSolrQueryBuilder, never()).getFacetFieldsInFilterQuery(any());
+        verify(turSNEnabledFacets, never()).facetFieldsInFilterQuery(any());
     }
 
     @Test
     void responseFacetToRemove_emitsBeanWhenFiltersMatchKnownFacets() {
         TurSNSiteSearchContext ctx = contextWithFilters(List.of("category:books"));
-        when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any()))
+        when(turSNEnabledFacets.facetFieldsInFilterQuery(any()))
                 .thenReturn(List.of("category"));
 
         TurSNSiteSearchFacetBean bean = renderer.responseFacetToRemove(ctx, site);
@@ -186,7 +179,7 @@ class TurSNFacetRendererTest {
     @Test
     void responseFacetToRemove_skipsFiltersOnUnknownFacets() {
         TurSNSiteSearchContext ctx = contextWithFilters(List.of("category:books"));
-        when(turSolrQueryBuilder.getFacetFieldsInFilterQuery(any()))
+        when(turSNEnabledFacets.facetFieldsInFilterQuery(any()))
                 .thenReturn(List.of("color"));
 
         TurSNSiteSearchFacetBean bean = renderer.responseFacetToRemove(ctx, site);
@@ -200,8 +193,6 @@ class TurSNFacetRendererTest {
                 Map.of("books", 5, "movies", 0));
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", false);
         // showAllFacetItems defaults to null/false; zero-count items must be filtered out.
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
 
         List<TurSNSiteSearchFacetBean> result = renderer.responseFacet(
                 context(), site, List.of(), facetMap, results);
@@ -261,9 +252,10 @@ class TurSNFacetRendererTest {
     void facetInFilterQuery_staysVisibleWhenSiteItemTypeIsOr() {
         site.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
-        // Skip the AND-OR re-query branch (needs a search-engine plugin); only visibility is under test.
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
+        // AND-OR on an applied facet re-queries it without its own filter; an engine with
+        // nothing to add leaves the facet the main search returned.
+        when(searchEnginePluginFactory.getPluginForSite(any()))
+                .thenReturn(org.mockito.Mockito.mock(com.viglet.turing.searchengine.TurSearchEnginePlugin.class));
 
         List<TurSNSiteSearchFacetBean> result = renderer.responseSecondaryFacet(
                 contextWithFilters(List.of("category:books")), site, List.of("category"),
@@ -280,8 +272,6 @@ class TurSNFacetRendererTest {
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
         facetMap.get("category").setFacetType(TurSNSiteFacetFieldEnum.AND);
         facetMap.get("category").setFacetItemType(TurSNSiteFacetFieldEnum.AND);
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
         TurSEResults results = resultsWithFacet("category", "books", 5);
         TurSNSiteSearchContext ctx = contextWithFilters(List.of("category:books"));
 
@@ -301,8 +291,6 @@ class TurSNFacetRendererTest {
     private List<TurSNSiteSearchFacetBean> renderFacet(
             Map<String, TurSNSiteFieldExtDto> facetMap) {
         String fieldName = facetMap.keySet().iterator().next();
-        lenient().when(turSolrQueryBuilder.getFqFields(any(TurSNFilterParams.class)))
-                .thenReturn(Collections.emptyList());
         return renderer.responseFacet(context(), site, List.of(), facetMap,
                 resultsWithFacet(fieldName, "CHAT", 3));
     }

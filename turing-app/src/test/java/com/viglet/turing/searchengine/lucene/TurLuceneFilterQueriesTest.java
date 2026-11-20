@@ -160,16 +160,4 @@ class TurLuceneFilterQueriesTest {
         assertInstanceOf(TermQuery.class,
                 TurLuceneFilterQueries.build("salary", "negotiable", TurSEFieldType.INT, NOW));
     }
-
-    @Test
-    void dateMathRoundsAndSteps() {
-        assertEquals(Instant.parse("2026-10-04T00:00:00Z"),
-                TurLuceneFilterQueries.parseDate("NOW/DAY-7DAYS", NOW));
-        assertEquals(Instant.parse("2026-10-01T00:00:00Z"),
-                TurLuceneFilterQueries.parseDate("NOW/MONTH", NOW));
-        assertEquals(Instant.parse("2026-10-09T00:00:00Z"),
-                TurLuceneFilterQueries.parseDate("2026-10-10T00:00:00Z-1DAY", NOW));
-        assertEquals(Instant.parse("2026-01-01T00:00:00Z"),
-                TurLuceneFilterQueries.parseDate("2026-05-20/YEAR", NOW));
-    }
 }

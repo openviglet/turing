@@ -338,17 +338,6 @@ public class TurSolrUtils {
                 .build();
     }
 
-    public static int firstRowPositionFromCurrentPage(TurSEParameters turSEParameters) {
-        // Clamp to 0: a client-supplied page <= 0 would otherwise yield a negative Solr
-        // 'start', which Solr rejects with "'start' parameter cannot be negative".
-        return Math.max(0,
-                (turSEParameters.getCurrentPage() * turSEParameters.getRows()) - turSEParameters.getRows());
-    }
-
-    public static int lastRowPositionFromCurrentPage(TurSEParameters turSEParameters) {
-        return (turSEParameters.getCurrentPage() * turSEParameters.getRows());
-    }
-
     public static List<TurSECoreInfo> listCores(TurSEInstance turSEInstance) {
         HttpRequest request = getHttpRequestBuilderJson()
                 .uri(URI.create(String.format("%s/api/cores", getSolrUrl(turSEInstance))))

@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.searchengine.lucene.TurLuceneFilterQueries;
+import com.viglet.turing.searchengine.TurSEDateMath;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
@@ -109,7 +109,7 @@ public final class TurSNCustomFacetItems {
             throw new IllegalArgumentException("Relative date is too long: " + value);
         }
         try {
-            TurLuceneFilterQueries.parseDate(expression, Instant.now());
+            TurSEDateMath.parse(expression, Instant.now());
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid relative date '" + value
                     + "': use NOW with steps such as NOW-7DAYS or NOW/DAY", e);

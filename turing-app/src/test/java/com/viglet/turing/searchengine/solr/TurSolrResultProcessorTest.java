@@ -346,7 +346,6 @@ class TurSolrResultProcessorTest {
                                 .build();
 
                 TurSolrQueryBuilder queryBuilder = mock(TurSolrQueryBuilder.class);
-                when(queryBuilder.hasGroup(parameters)).thenReturn(false);
 
                 TurSEResults seResults = processor.getResults(mock(TurSolrInstance.class), site,
                                 query, queryContext, queryResponse, queryBuilder);
@@ -698,7 +697,6 @@ class TurSolrResultProcessorTest {
                                 .build();
 
                 TurSolrQueryBuilder queryBuilder = mock(TurSolrQueryBuilder.class);
-                when(queryBuilder.hasGroup(parameters)).thenReturn(false);
 
                 TurSEResults seResults = processor.getResults(mock(TurSolrInstance.class), site,
                                 query, queryContext, queryResponse, queryBuilder);
@@ -1084,6 +1082,7 @@ class TurSolrResultProcessorTest {
                 searchParams.setQ("java");
                 searchParams.setRows(10);
                 searchParams.setP(1);
+                searchParams.setGroup("type");
                 TurSEParameters parameters = new TurSEParameters(searchParams);
                 SolrQuery query = new SolrQuery().setQuery("java");
                 TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
@@ -1097,7 +1096,6 @@ class TurSolrResultProcessorTest {
                                 .build();
 
                 TurSolrQueryBuilder queryBuilder = mock(TurSolrQueryBuilder.class);
-                when(queryBuilder.hasGroup(parameters)).thenReturn(true);
 
                 try (MockedStatic<TurSolr> mockedTurSolr = mockStatic(TurSolr.class)) {
                         mockedTurSolr.when(() -> TurSolr.enabledWildcardNoResults(site)).thenReturn(true);

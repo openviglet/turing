@@ -1,5 +1,7 @@
 package com.viglet.turing.searchengine.solr;
 
+import com.viglet.turing.searchengine.TurSEFieldValues;
+
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.BOOST;
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.SCORE;
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.TYPE;
@@ -164,7 +166,7 @@ public class TurSolrDocumentHandler {
         int i = 0;
         StringBuilder sb = new StringBuilder();
         for (Object valueItem : list) {
-            sb.append(TurSolrField.convertFieldToString(valueItem));
+            sb.append(TurSEFieldValues.toText(valueItem));
             if (i++ != list.size() - 1)
                 sb.append(System.lineSeparator());
         }
@@ -242,7 +244,7 @@ public class TurSolrDocumentHandler {
     private void addDecimalValue(SolrInputDocument document, String key, Object value,
             TurSEFieldType fieldType) {
         if (fieldType == TurSEFieldType.CURRENCY) {
-            String rawCurrency = TurSolrField.convertFieldToString(value);
+            String rawCurrency = TurSEFieldValues.toText(value);
             toSolrCurrencyValue(rawCurrency)
                     .ifPresentOrElse(
                             normalizedCurrency -> document.addField(key, normalizedCurrency),
@@ -255,7 +257,7 @@ public class TurSolrDocumentHandler {
                 .ifPresentOrElse(
                         normalizedValue -> document.addField(key, normalizedValue),
                         () -> log.warn("Skipping invalid decimal value for field '{}': {}", key,
-                                TurSolrField.convertFieldToString(value)));
+                                TurSEFieldValues.toText(value)));
     }
 
     private Optional<String> toSolrCurrencyValue(String rawCurrency) {
@@ -292,7 +294,7 @@ public class TurSolrDocumentHandler {
     }
 
     private void processOtherTypes(SolrInputDocument document, String key, Object attribute) {
-        document.addField(key, TurSolrField.convertFieldToString(attribute));
+        document.addField(key, TurSEFieldValues.toText(attribute));
     }
 
     private void processInteger(SolrInputDocument document, String key, Object attribute) {
@@ -327,7 +329,7 @@ public class TurSolrDocumentHandler {
         Optional.ofNullable(attributeList).ifPresent(values -> {
             if (isMultiValued(turSNSiteFieldMap, key)) {
                 for (Object valueItem : values) {
-                    document.addField(key, TurSolrField.convertFieldToString(valueItem));
+                    document.addField(key, TurSEFieldValues.toText(valueItem));
                 }
             } else {
                 document.addField(key, concatenateString(values));

@@ -335,7 +335,8 @@ class TurSNEngineConformanceIT {
                 mock(com.viglet.turing.sn.api.TurSNRankingConditions.class),
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),
-                mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class),
+                new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository, customFacetRepository,
+                        mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class)),
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
         var solrClient = new org.apache.solr.client.solrj.impl.HttpJdkSolrClient.Builder(host + "/solr").build();
         solrInstance = new com.viglet.turing.searchengine.solr.TurSolrInstance(solrClient, new java.net.URL(host + "/solr"),
