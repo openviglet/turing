@@ -30,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -87,7 +89,10 @@ public class TurUser implements Serializable {
 	private String avatarUrl;
 
 	@Builder.Default
+	// T1317 — named, so the table follows the auth_ rule; the columns keep their names.
 	@ManyToMany
+	@JoinTable(name = "auth_user_group", joinColumns = @JoinColumn(name = "turUsers_username"),
+			inverseJoinColumns = @JoinColumn(name = "turGroups_id"))
 	private Collection<TurGroup> turGroups = new HashSet<>();
 
 	public TurUser(TurUser turUser) {

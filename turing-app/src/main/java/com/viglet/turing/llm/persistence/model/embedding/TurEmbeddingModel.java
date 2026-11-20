@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "embedding_model")
+@Table(name = "llm_embedding_model")
 public class TurEmbeddingModel implements Serializable, VigletTenantOwnedInfra {
 	@Serial
 	private static final long serialVersionUID = 1L;

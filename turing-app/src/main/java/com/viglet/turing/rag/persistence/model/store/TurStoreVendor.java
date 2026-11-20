@@ -38,7 +38,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "store_vendor")
+@Table(name = "rag_store_vendor")
 public class TurStoreVendor implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;

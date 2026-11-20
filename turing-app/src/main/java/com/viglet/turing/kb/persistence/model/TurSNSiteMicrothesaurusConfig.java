@@ -46,7 +46,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "sn_site_microthesaurus_config")
+@Table(name = "kb_sn_site_microthesaurus_config")
 public class TurSNSiteMicrothesaurusConfig implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

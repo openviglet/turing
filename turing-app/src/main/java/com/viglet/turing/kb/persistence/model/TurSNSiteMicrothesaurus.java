@@ -51,7 +51,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "sn_site_microthesaurus",
+@Table(name = "kb_sn_site_microthesaurus",
         uniqueConstraints = @UniqueConstraint(name = "uk_sn_site_microthesaurus",
                 columnNames = {"sn_site_id", "microthesaurusId"}))
 public class TurSNSiteMicrothesaurus implements Serializable {

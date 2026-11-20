@@ -47,7 +47,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "distillation_job",
+@Table(name = "eval_distillation_job",
         indexes = {
                 @Index(name = "ix_distillation_job_open", columnList = "state"),
                 @Index(name = "ix_distillation_job_agent", columnList = "agentId")

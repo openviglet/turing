@@ -44,7 +44,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_human_approval",
+@Table(name = "agent_chat_human_approval",
         indexes = {
                 @Index(name = "ix_chat_human_approval_token", columnList = "resumeToken", unique = true),
                 @Index(name = "ix_chat_human_approval_conv_node", columnList = "conversationId,nodeId"),

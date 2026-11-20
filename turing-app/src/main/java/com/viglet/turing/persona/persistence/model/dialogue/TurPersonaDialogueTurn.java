@@ -35,7 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_dialogue_turn",
+@Table(name = "persona_dialogue_turn",
         indexes = @Index(name = "idx_persona_dialogue_turn_project", columnList = "project_id"))
 public class TurPersonaDialogueTurn implements Serializable {
     @Serial

@@ -44,7 +44,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_flow_state",
+@Table(name = "agent_chat_flow_state",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_chat_flow_state_conversation_flow",
                 columnNames = { "conversationId", "flow_id" }))

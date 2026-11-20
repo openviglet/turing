@@ -34,7 +34,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "custom_tool")
+@Table(name = "agent_custom_tool")
 public class TurCustomTool implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

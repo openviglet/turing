@@ -45,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_llm_price",
+@Table(name = "llm_price",
         uniqueConstraints = @UniqueConstraint(name = "uk_llm_price_vendor_model",
                 columnNames = {"vendor_id", "model_name"}))
 public class TurLLMPrice implements Serializable {

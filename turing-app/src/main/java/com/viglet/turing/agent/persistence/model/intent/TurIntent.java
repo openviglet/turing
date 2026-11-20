@@ -33,7 +33,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Entity
-@Table(name = "intent")
+@Table(name = "agent_intent")
 public class TurIntent implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

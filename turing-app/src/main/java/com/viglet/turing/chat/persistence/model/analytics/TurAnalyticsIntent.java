@@ -59,7 +59,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "analytics_intent",
+@Table(name = "chat_analytics_intent",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_analytics_intent_agent_label",
                 columnNames = { "agent_id", "label" }))

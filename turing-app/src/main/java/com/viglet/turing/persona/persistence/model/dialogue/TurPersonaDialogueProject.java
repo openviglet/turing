@@ -40,7 +40,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_dialogue_project")
+@Table(name = "persona_dialogue_project")
 public class TurPersonaDialogueProject implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

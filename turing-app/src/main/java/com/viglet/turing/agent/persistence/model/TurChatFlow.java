@@ -45,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_flow")
+@Table(name = "agent_chat_flow")
 @EntityListeners(TurChatFlowRouterEvictionListener.class)
 public class TurChatFlow implements Serializable {
     @Serial

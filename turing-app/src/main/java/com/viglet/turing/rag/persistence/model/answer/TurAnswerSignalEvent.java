@@ -45,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_answer_signal",
+@Table(name = "rag_answer_signal",
         indexes = @Index(name = "ix_tur_answer_signal_agent", columnList = "agentId"))
 public class TurAnswerSignalEvent implements Serializable {
     @Serial

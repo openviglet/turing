@@ -50,7 +50,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_research_interview",
+@Table(name = "rag_research_interview",
         uniqueConstraints = @UniqueConstraint(name = "uk_research_interview",
                 columnNames = {"study_id", "persona_id"}),
         indexes = @Index(name = "idx_research_interview_study", columnList = "study_id"))

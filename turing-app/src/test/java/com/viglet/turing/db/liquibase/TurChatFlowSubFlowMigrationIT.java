@@ -59,7 +59,7 @@ class TurChatFlowSubFlowMigrationIT {
         applyMasterChangelog();
 
         try (Connection connection = openConnection()) {
-            ColumnInfo column = readColumnMetadata(connection, "chat_flow_state", "parentStateId");
+            ColumnInfo column = readColumnMetadata(connection, "agent_chat_flow_state", "parentStateId");
             assertThat(column).as("parentStateId column should exist after migration").isNotNull();
             assertThat(column.dataType()).isEqualToIgnoringCase("varchar");
             assertThat(column.maxLength()).isEqualTo(36);
@@ -72,11 +72,11 @@ class TurChatFlowSubFlowMigrationIT {
         applyMasterChangelog();
 
         try (Connection connection = openConnection()) {
-            assertThat(readColumnMetadata(connection, "chat_flow_state", "currentNodeId"))
+            assertThat(readColumnMetadata(connection, "agent_chat_flow_state", "currentNodeId"))
                     .as("currentNodeId must still exist").isNotNull();
-            assertThat(readColumnMetadata(connection, "chat_flow_state", "variablesJson"))
+            assertThat(readColumnMetadata(connection, "agent_chat_flow_state", "variablesJson"))
                     .as("variablesJson must still exist").isNotNull();
-            assertThat(readColumnMetadata(connection, "chat_flow_state", "conversationId"))
+            assertThat(readColumnMetadata(connection, "agent_chat_flow_state", "conversationId"))
                     .as("conversationId must still exist").isNotNull();
         }
     }
@@ -90,7 +90,7 @@ class TurChatFlowSubFlowMigrationIT {
         applyMasterChangelog();
 
         try (Connection connection = openConnection()) {
-            assertThat(readColumnMetadata(connection, "chat_flow_state", "parentStateId"))
+            assertThat(readColumnMetadata(connection, "agent_chat_flow_state", "parentStateId"))
                     .isNotNull();
         }
     }

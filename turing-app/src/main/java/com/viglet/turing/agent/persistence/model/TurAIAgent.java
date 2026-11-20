@@ -26,7 +26,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_agent")
+@Table(name = "agent")
 @EntityListeners(TurAIAgentChangeListener.class)
 public class TurAIAgent implements Serializable {
     @Serial
@@ -757,19 +757,19 @@ public class TurAIAgent implements Serializable {
     private String pythonRequirements;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ai_agent_llm_instance",
+    @JoinTable(name = "agent_llm_instance",
             joinColumns = @JoinColumn(name = "agent_id"),
             inverseJoinColumns = @JoinColumn(name = "llm_instance_id"))
     private Set<TurLLMInstance> llmInstances = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ai_agent_mcp_server",
+    @JoinTable(name = "agent_mcp_server",
             joinColumns = @JoinColumn(name = "agent_id"),
             inverseJoinColumns = @JoinColumn(name = "mcp_server_id"))
     private Set<TurMcpServer> mcpServers = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ai_agent_custom_tool",
+    @JoinTable(name = "agent_custom_tool_link",
             joinColumns = @JoinColumn(name = "agent_id"),
             inverseJoinColumns = @JoinColumn(name = "custom_tool_id"))
     private Set<TurCustomTool> customTools = new HashSet<>();
@@ -796,7 +796,7 @@ public class TurAIAgent implements Serializable {
      * @since 2026.2.7
      */
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ai_agent_persona",
+    @JoinTable(name = "agent_persona",
             joinColumns = @JoinColumn(name = "agent_id"),
             inverseJoinColumns = @JoinColumn(name = "persona_id"))
     private Set<TurPersona> personas = new HashSet<>();

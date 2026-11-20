@@ -41,7 +41,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_answer_share")
+@Table(name = "rag_answer_share")
 public class TurAnswerShare implements Serializable {
 
     @Serial

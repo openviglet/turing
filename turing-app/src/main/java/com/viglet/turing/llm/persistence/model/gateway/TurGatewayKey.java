@@ -48,7 +48,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_gateway_key")
+@Table(name = "llm_gateway_key")
 public class TurGatewayKey implements Serializable {
 
     @Serial

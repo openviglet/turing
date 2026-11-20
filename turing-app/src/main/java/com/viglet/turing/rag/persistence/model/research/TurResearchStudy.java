@@ -47,7 +47,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_research_study")
+@Table(name = "rag_research_study")
 public class TurResearchStudy implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -52,7 +52,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_agent_eval_case")
+@Table(name = "agent_eval_case")
 public class TurAgentEvalCase implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

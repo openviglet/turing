@@ -44,7 +44,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 class TurPersonaAudienceApplyLogMigrationTest {
 
     private static final String CHANGELOG = "db/changelog/db.changelog-master.yaml";
-    private static final String TABLE = "ai_persona_audience_apply_log";
+    private static final String TABLE = "persona_audience_apply_log";
 
     /**
      * A fresh, private database per run — no reuse, so nothing is pre-migrated.

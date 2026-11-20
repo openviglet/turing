@@ -43,7 +43,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_turn_feedback",
+@Table(name = "eval_chat_turn_feedback",
         indexes = @Index(name = "ix_chat_turn_feedback_agent", columnList = "agentId"))
 public class TurChatTurnFeedback implements Serializable {
     @Serial

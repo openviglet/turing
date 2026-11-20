@@ -53,7 +53,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_citation_record",
+@Table(name = "agent_chat_citation_record",
         indexes = {
                 @Index(name = "ix_chat_citation_record_conversation",
                         columnList = "conversationId"),

@@ -48,7 +48,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_audience_apply_log",
+@Table(name = "persona_audience_apply_log",
         indexes = {
                 @Index(name = "idx_persona_audience_apply_persona", columnList = "persona_id"),
                 @Index(name = "idx_persona_audience_apply_project", columnList = "project_id")

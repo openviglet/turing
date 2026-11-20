@@ -2514,14 +2514,6 @@ module's named interface, and deletes that used to cascade across modules become
 the other module handles. Associations inside one module stay, under the FetchType.LAZY
 rule. The schema change is carried by the Liquibase reset, not by migrations.
 
-### CLXXXIX.13 One table-naming rule (T1317)
-
-Today ai_agent, chat_flow and agent_suggestion sit beside tur_agent_eval_case and
-tur_agent_eval_set. Each @Table and join table is renamed to <module>_<entity> in
-snake_case, and the rule is added to the turing-persistence skill with a convention test
-that fails on a table name outside it. Column names keep the literal camelCase mapping
-the skill already documents, so only table names change.
-
 ### CLXXXIX.14 One tenant-scoping mechanism (T1318)
 
 16 entities use Hibernate @TenantId; others carry a plain tenantId column (the BYO-infra

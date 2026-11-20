@@ -41,7 +41,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_ai_usage_daily")
+@Table(name = "llm_usage_daily")
 public class TurAiUsageDaily implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

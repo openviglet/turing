@@ -46,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_source")
+@Table(name = "persona_source")
 public class TurPersonaSource implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

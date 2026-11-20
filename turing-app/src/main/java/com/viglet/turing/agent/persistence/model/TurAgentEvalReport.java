@@ -39,7 +39,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_agent_eval_report")
+@Table(name = "agent_eval_report")
 public class TurAgentEvalReport implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

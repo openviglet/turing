@@ -30,6 +30,8 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -59,7 +61,10 @@ public class TurGroup implements Serializable {
 	@Setter
 	private String description;
 
+	// T1317 — named, so the table follows the auth_ rule; the columns keep their names.
 	@ManyToMany
+	@JoinTable(name = "auth_group_role", joinColumns = @JoinColumn(name = "turGroups_id"),
+			inverseJoinColumns = @JoinColumn(name = "turRoles_id"))
 	private Collection<TurRole> turRoles = new HashSet<>();
 
 	@ManyToMany(mappedBy = "turGroups")

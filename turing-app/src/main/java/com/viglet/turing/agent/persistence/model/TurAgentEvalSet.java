@@ -52,7 +52,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_agent_eval_set",
+@Table(name = "agent_eval_set",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_agent_eval_set_agent_name",
                 columnNames = { "agent_id", "name" }))

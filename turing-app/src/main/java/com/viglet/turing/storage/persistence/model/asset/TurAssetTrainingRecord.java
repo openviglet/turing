@@ -22,7 +22,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "asset_training_record")
+@Table(name = "storage_asset_training_record")
 public class TurAssetTrainingRecord implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

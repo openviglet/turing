@@ -15,6 +15,18 @@ description: Turing JPA + Liquibase persistence rules — column naming (no impl
 - Existing tables like `sn_site` use lowercase: `description`, `name`, `facet`
 - When in doubt, check the existing columns in the entity class or run a query against the H2 dev database
 
+## Table naming: `<module>_<entity>` (T1317)
+
+- Every table is named after the module that owns the entity: the package under
+  `com.viglet.turing` (`agent`, `sn`, `llm`, `rag`, `persona`, ...), with `se` for
+  `searchengine`. Examples: `agent_chat_flow`, `agent_eval_case`, `llm_price`,
+  `se_instance`, `sn_site`. A module's main aggregate may take the bare module name
+  (`agent`, `persona`, `tenant`).
+- No `tur_` or `ai_` prefixes. Join tables and `@CollectionTable`s follow the same rule
+  and are always named explicitly (an implicit join table name is not governed).
+- `TurTableNamingConventionTest` fails on a table outside the rule, and on a mapped table
+  the master changelog does not leave in place on a fresh H2.
+
 ## Liquibase Conventions
 
 - The user may run the app between turns; editing a changeset that may already

@@ -44,7 +44,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_online_eval_snapshot",
+@Table(name = "agent_online_eval_snapshot",
         indexes = @Index(name = "idx_online_eval_agent", columnList = "agentId"))
 public class TurOnlineEvalSnapshot implements Serializable {
     @Serial

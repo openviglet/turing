@@ -45,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "store_instance")
+@Table(name = "rag_store_instance")
 public class TurStoreInstance implements Serializable, VigletTenantOwnedInfra {
 	@Serial
 	private static final long serialVersionUID = 1L;

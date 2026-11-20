@@ -38,7 +38,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_memory")
+@Table(name = "agent_user_memory")
 public class TurUserMemory implements Serializable {
 
     @Serial

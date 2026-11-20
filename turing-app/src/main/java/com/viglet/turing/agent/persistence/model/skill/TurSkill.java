@@ -49,7 +49,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "skill", uniqueConstraints = @UniqueConstraint(
+@Table(name = "agent_skill", uniqueConstraints = @UniqueConstraint(
         name = "uq_skill_path", columnNames = { "path" }))
 public class TurSkill implements Serializable {
     @Serial

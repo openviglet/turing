@@ -44,7 +44,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_agent_slot",
+@Table(name = "agent_slot",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_ai_agent_slot_agent_name",
                 columnNames = { "agent_id", "name" }))

@@ -41,7 +41,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "integration_instance")
+@Table(name = "system_integration_instance")
 public class TurIntegrationInstance implements Serializable, VigletTenantOwnedInfra {
 	@Serial
 	private static final long serialVersionUID = 1L;

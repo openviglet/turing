@@ -42,7 +42,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "dev_token")
+@Table(name = "auth_dev_token")
 public class TurDevToken extends TurAuditable<String> implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;

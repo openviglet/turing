@@ -52,7 +52,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_match_source")
+@Table(name = "persona_match_source")
 public class TurPersonaMatchSource implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

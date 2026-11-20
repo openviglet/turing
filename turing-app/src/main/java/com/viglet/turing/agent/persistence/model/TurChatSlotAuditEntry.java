@@ -45,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_slot_write_log",
+@Table(name = "agent_chat_slot_write_log",
         indexes = {
                 @Index(name = "ix_chat_slot_write_log_conversation_ts",
                         columnList = "conversationId,ts"),

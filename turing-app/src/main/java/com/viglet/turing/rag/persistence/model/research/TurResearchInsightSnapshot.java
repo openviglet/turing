@@ -46,7 +46,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_research_insight_snapshot",
+@Table(name = "rag_research_insight_snapshot",
         indexes = @Index(name = "idx_research_snapshot_study", columnList = "study_id"))
 public class TurResearchInsightSnapshot implements Serializable {
     @Serial

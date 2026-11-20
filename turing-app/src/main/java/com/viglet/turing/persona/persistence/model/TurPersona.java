@@ -49,7 +49,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona")
+@Table(name = "persona")
 @EntityListeners(TurPersonaStaticPromptEvictionListener.class)
 public class TurPersona implements Serializable {
     @Serial

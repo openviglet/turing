@@ -35,7 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_eval_dataset_snapshot")
+@Table(name = "agent_eval_dataset_snapshot")
 public class TurEvalDatasetSnapshot implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

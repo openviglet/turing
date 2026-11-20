@@ -42,7 +42,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "ai_persona_match_cell",
+@Table(name = "persona_match_cell",
         uniqueConstraints = @UniqueConstraint(name = "uk_persona_match_cell",
                 columnNames = {"project_id", "source_id", "persona_id"}),
         indexes = @Index(name = "idx_persona_match_cell_project", columnList = "project_id"))

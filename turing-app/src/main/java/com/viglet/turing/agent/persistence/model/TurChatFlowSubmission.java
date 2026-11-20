@@ -44,7 +44,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_flow_submission",
+@Table(name = "agent_chat_flow_submission",
         indexes = {
                 @Index(name = "ix_chat_flow_submission_flow_completed",
                         columnList = "flow_id,completedAt"),

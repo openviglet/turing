@@ -70,7 +70,7 @@ public class TurRole implements Serializable {
 	private Collection<TurGroup> turGroups = new HashSet<>();
 
 	@ManyToMany
-	@JoinTable(name = "auth_roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+	@JoinTable(name = "auth_role_privilege", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
 	private Collection<TurPrivilege> turPrivileges = new HashSet<>();
 
 	public TurRole() {

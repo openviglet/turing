@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "intent_action")
+@Table(name = "agent_intent_action")
 public class TurIntentAction implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

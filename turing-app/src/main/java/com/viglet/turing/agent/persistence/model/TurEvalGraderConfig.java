@@ -46,7 +46,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_eval_grader_config")
+@Table(name = "agent_eval_grader_config")
 public class TurEvalGraderConfig implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

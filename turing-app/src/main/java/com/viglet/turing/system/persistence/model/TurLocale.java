@@ -36,7 +36,7 @@ import java.util.Locale;
 @Setter
 @Getter
 @Entity
-@Table(name = "locale")
+@Table(name = "system_locale")
 public class TurLocale implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;

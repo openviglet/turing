@@ -1,0 +1,930 @@
+databaseChangeLog:
+  # --- T1317: one table-naming rule, <module>_<entity> ---
+  # Every table takes its module as a prefix (se for searchengine), so the owner of a
+  # table is readable from the schema alone. Each rename is idempotent: it runs only
+  # while the old table exists and the new one does not. Columns, indexes and
+  # constraints keep their names; only tables move.
+  - changeSet:
+      id: v2026.3.1.147-01-rename-ai_agent
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent
+        - not:
+            - tableExists:
+                tableName: agent
+      changes:
+        - renameTable:
+            oldTableName: ai_agent
+            newTableName: agent
+  - changeSet:
+      id: v2026.3.1.147-02-rename-ai_agent_custom_tool
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent_custom_tool
+        - not:
+            - tableExists:
+                tableName: agent_custom_tool_link
+      changes:
+        - renameTable:
+            oldTableName: ai_agent_custom_tool
+            newTableName: agent_custom_tool_link
+  - changeSet:
+      id: v2026.3.1.147-03-rename-ai_agent_llm_instance
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent_llm_instance
+        - not:
+            - tableExists:
+                tableName: agent_llm_instance
+      changes:
+        - renameTable:
+            oldTableName: ai_agent_llm_instance
+            newTableName: agent_llm_instance
+  - changeSet:
+      id: v2026.3.1.147-04-rename-ai_agent_mcp_server
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent_mcp_server
+        - not:
+            - tableExists:
+                tableName: agent_mcp_server
+      changes:
+        - renameTable:
+            oldTableName: ai_agent_mcp_server
+            newTableName: agent_mcp_server
+  - changeSet:
+      id: v2026.3.1.147-05-rename-ai_agent_persona
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent_persona
+        - not:
+            - tableExists:
+                tableName: agent_persona
+      changes:
+        - renameTable:
+            oldTableName: ai_agent_persona
+            newTableName: agent_persona
+  - changeSet:
+      id: v2026.3.1.147-06-rename-ai_agent_slot
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_agent_slot
+        - not:
+            - tableExists:
+                tableName: agent_slot
+      changes:
+        - renameTable:
+            oldTableName: ai_agent_slot
+            newTableName: agent_slot
+  - changeSet:
+      id: v2026.3.1.147-07-rename-ai_persona
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona
+        - not:
+            - tableExists:
+                tableName: persona
+      changes:
+        - renameTable:
+            oldTableName: ai_persona
+            newTableName: persona
+  - changeSet:
+      id: v2026.3.1.147-08-rename-ai_persona_audience_apply_log
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_audience_apply_log
+        - not:
+            - tableExists:
+                tableName: persona_audience_apply_log
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_audience_apply_log
+            newTableName: persona_audience_apply_log
+  - changeSet:
+      id: v2026.3.1.147-09-rename-ai_persona_dialogue_project
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_dialogue_project
+        - not:
+            - tableExists:
+                tableName: persona_dialogue_project
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_dialogue_project
+            newTableName: persona_dialogue_project
+  - changeSet:
+      id: v2026.3.1.147-10-rename-ai_persona_dialogue_speaker
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_dialogue_speaker
+        - not:
+            - tableExists:
+                tableName: persona_dialogue_speaker
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_dialogue_speaker
+            newTableName: persona_dialogue_speaker
+  - changeSet:
+      id: v2026.3.1.147-11-rename-ai_persona_dialogue_turn
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_dialogue_turn
+        - not:
+            - tableExists:
+                tableName: persona_dialogue_turn
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_dialogue_turn
+            newTableName: persona_dialogue_turn
+  - changeSet:
+      id: v2026.3.1.147-12-rename-ai_persona_match_cell
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_match_cell
+        - not:
+            - tableExists:
+                tableName: persona_match_cell
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_match_cell
+            newTableName: persona_match_cell
+  - changeSet:
+      id: v2026.3.1.147-13-rename-ai_persona_match_cell_history
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_match_cell_history
+        - not:
+            - tableExists:
+                tableName: persona_match_cell_history
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_match_cell_history
+            newTableName: persona_match_cell_history
+  - changeSet:
+      id: v2026.3.1.147-14-rename-ai_persona_match_persona
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_match_persona
+        - not:
+            - tableExists:
+                tableName: persona_match_persona
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_match_persona
+            newTableName: persona_match_persona
+  - changeSet:
+      id: v2026.3.1.147-15-rename-ai_persona_match_project
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_match_project
+        - not:
+            - tableExists:
+                tableName: persona_match_project
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_match_project
+            newTableName: persona_match_project
+  - changeSet:
+      id: v2026.3.1.147-16-rename-ai_persona_match_source
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_match_source
+        - not:
+            - tableExists:
+                tableName: persona_match_source
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_match_source
+            newTableName: persona_match_source
+  - changeSet:
+      id: v2026.3.1.147-17-rename-ai_persona_source
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_persona_source
+        - not:
+            - tableExists:
+                tableName: persona_source
+      changes:
+        - renameTable:
+            oldTableName: ai_persona_source
+            newTableName: persona_source
+  - changeSet:
+      id: v2026.3.1.147-18-rename-ai_research_insight_snapshot
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_research_insight_snapshot
+        - not:
+            - tableExists:
+                tableName: rag_research_insight_snapshot
+      changes:
+        - renameTable:
+            oldTableName: ai_research_insight_snapshot
+            newTableName: rag_research_insight_snapshot
+  - changeSet:
+      id: v2026.3.1.147-19-rename-ai_research_interview
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_research_interview
+        - not:
+            - tableExists:
+                tableName: rag_research_interview
+      changes:
+        - renameTable:
+            oldTableName: ai_research_interview
+            newTableName: rag_research_interview
+  - changeSet:
+      id: v2026.3.1.147-20-rename-ai_research_study
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_research_study
+        - not:
+            - tableExists:
+                tableName: rag_research_study
+      changes:
+        - renameTable:
+            oldTableName: ai_research_study
+            newTableName: rag_research_study
+  - changeSet:
+      id: v2026.3.1.147-21-rename-ai_research_study_persona
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: ai_research_study_persona
+        - not:
+            - tableExists:
+                tableName: rag_research_study_persona
+      changes:
+        - renameTable:
+            oldTableName: ai_research_study_persona
+            newTableName: rag_research_study_persona
+  - changeSet:
+      id: v2026.3.1.147-22-rename-analytics_intent
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: analytics_intent
+        - not:
+            - tableExists:
+                tableName: chat_analytics_intent
+      changes:
+        - renameTable:
+            oldTableName: analytics_intent
+            newTableName: chat_analytics_intent
+  - changeSet:
+      id: v2026.3.1.147-23-rename-asset_training_record
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: asset_training_record
+        - not:
+            - tableExists:
+                tableName: storage_asset_training_record
+      changes:
+        - renameTable:
+            oldTableName: asset_training_record
+            newTableName: storage_asset_training_record
+  - changeSet:
+      id: v2026.3.1.147-24-rename-auth_group_turroles
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: auth_group_turRoles
+        - not:
+            - tableExists:
+                tableName: auth_group_role
+      changes:
+        - renameTable:
+            oldTableName: auth_group_turRoles
+            newTableName: auth_group_role
+  - changeSet:
+      id: v2026.3.1.147-25-rename-auth_roles_privileges
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: auth_roles_privileges
+        - not:
+            - tableExists:
+                tableName: auth_role_privilege
+      changes:
+        - renameTable:
+            oldTableName: auth_roles_privileges
+            newTableName: auth_role_privilege
+  - changeSet:
+      id: v2026.3.1.147-26-rename-auth_user_turgroups
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: auth_user_turGroups
+        - not:
+            - tableExists:
+                tableName: auth_user_group
+      changes:
+        - renameTable:
+            oldTableName: auth_user_turGroups
+            newTableName: auth_user_group
+  - changeSet:
+      id: v2026.3.1.147-27-rename-chat_citation_record
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_citation_record
+        - not:
+            - tableExists:
+                tableName: agent_chat_citation_record
+      changes:
+        - renameTable:
+            oldTableName: chat_citation_record
+            newTableName: agent_chat_citation_record
+  - changeSet:
+      id: v2026.3.1.147-28-rename-chat_flow
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_flow
+        - not:
+            - tableExists:
+                tableName: agent_chat_flow
+      changes:
+        - renameTable:
+            oldTableName: chat_flow
+            newTableName: agent_chat_flow
+  - changeSet:
+      id: v2026.3.1.147-29-rename-chat_flow_state
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_flow_state
+        - not:
+            - tableExists:
+                tableName: agent_chat_flow_state
+      changes:
+        - renameTable:
+            oldTableName: chat_flow_state
+            newTableName: agent_chat_flow_state
+  - changeSet:
+      id: v2026.3.1.147-30-rename-chat_flow_submission
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_flow_submission
+        - not:
+            - tableExists:
+                tableName: agent_chat_flow_submission
+      changes:
+        - renameTable:
+            oldTableName: chat_flow_submission
+            newTableName: agent_chat_flow_submission
+  - changeSet:
+      id: v2026.3.1.147-31-rename-chat_human_approval
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_human_approval
+        - not:
+            - tableExists:
+                tableName: agent_chat_human_approval
+      changes:
+        - renameTable:
+            oldTableName: chat_human_approval
+            newTableName: agent_chat_human_approval
+  - changeSet:
+      id: v2026.3.1.147-32-rename-chat_slot_write_log
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_slot_write_log
+        - not:
+            - tableExists:
+                tableName: agent_chat_slot_write_log
+      changes:
+        - renameTable:
+            oldTableName: chat_slot_write_log
+            newTableName: agent_chat_slot_write_log
+  - changeSet:
+      id: v2026.3.1.147-33-rename-chat_turn_feedback
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: chat_turn_feedback
+        - not:
+            - tableExists:
+                tableName: eval_chat_turn_feedback
+      changes:
+        - renameTable:
+            oldTableName: chat_turn_feedback
+            newTableName: eval_chat_turn_feedback
+  - changeSet:
+      id: v2026.3.1.147-34-rename-configuration
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: configuration
+        - not:
+            - tableExists:
+                tableName: system_configuration
+      changes:
+        - renameTable:
+            oldTableName: configuration
+            newTableName: system_configuration
+  - changeSet:
+      id: v2026.3.1.147-35-rename-custom_tool
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: custom_tool
+        - not:
+            - tableExists:
+                tableName: agent_custom_tool
+      changes:
+        - renameTable:
+            oldTableName: custom_tool
+            newTableName: agent_custom_tool
+  - changeSet:
+      id: v2026.3.1.147-36-rename-dev_token
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: dev_token
+        - not:
+            - tableExists:
+                tableName: auth_dev_token
+      changes:
+        - renameTable:
+            oldTableName: dev_token
+            newTableName: auth_dev_token
+  - changeSet:
+      id: v2026.3.1.147-37-rename-distillation_job
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: distillation_job
+        - not:
+            - tableExists:
+                tableName: eval_distillation_job
+      changes:
+        - renameTable:
+            oldTableName: distillation_job
+            newTableName: eval_distillation_job
+  - changeSet:
+      id: v2026.3.1.147-38-rename-embedding_model
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: embedding_model
+        - not:
+            - tableExists:
+                tableName: llm_embedding_model
+      changes:
+        - renameTable:
+            oldTableName: embedding_model
+            newTableName: llm_embedding_model
+  - changeSet:
+      id: v2026.3.1.147-39-rename-integration_instance
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: integration_instance
+        - not:
+            - tableExists:
+                tableName: system_integration_instance
+      changes:
+        - renameTable:
+            oldTableName: integration_instance
+            newTableName: system_integration_instance
+  - changeSet:
+      id: v2026.3.1.147-40-rename-intent
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: intent
+        - not:
+            - tableExists:
+                tableName: agent_intent
+      changes:
+        - renameTable:
+            oldTableName: intent
+            newTableName: agent_intent
+  - changeSet:
+      id: v2026.3.1.147-41-rename-intent_action
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: intent_action
+        - not:
+            - tableExists:
+                tableName: agent_intent_action
+      changes:
+        - renameTable:
+            oldTableName: intent_action
+            newTableName: agent_intent_action
+  - changeSet:
+      id: v2026.3.1.147-42-rename-locale
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: locale
+        - not:
+            - tableExists:
+                tableName: system_locale
+      changes:
+        - renameTable:
+            oldTableName: locale
+            newTableName: system_locale
+  - changeSet:
+      id: v2026.3.1.147-43-rename-skill
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: skill
+        - not:
+            - tableExists:
+                tableName: agent_skill
+      changes:
+        - renameTable:
+            oldTableName: skill
+            newTableName: agent_skill
+  - changeSet:
+      id: v2026.3.1.147-44-rename-sn_site_microthesaurus
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_microthesaurus
+        - not:
+            - tableExists:
+                tableName: kb_sn_site_microthesaurus
+      changes:
+        - renameTable:
+            oldTableName: sn_site_microthesaurus
+            newTableName: kb_sn_site_microthesaurus
+  - changeSet:
+      id: v2026.3.1.147-45-rename-sn_site_microthesaurus_config
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sn_site_microthesaurus_config
+        - not:
+            - tableExists:
+                tableName: kb_sn_site_microthesaurus_config
+      changes:
+        - renameTable:
+            oldTableName: sn_site_microthesaurus_config
+            newTableName: kb_sn_site_microthesaurus_config
+  - changeSet:
+      id: v2026.3.1.147-46-rename-store_instance
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: store_instance
+        - not:
+            - tableExists:
+                tableName: rag_store_instance
+      changes:
+        - renameTable:
+            oldTableName: store_instance
+            newTableName: rag_store_instance
+  - changeSet:
+      id: v2026.3.1.147-47-rename-store_vendor
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: store_vendor
+        - not:
+            - tableExists:
+                tableName: rag_store_vendor
+      changes:
+        - renameTable:
+            oldTableName: store_vendor
+            newTableName: rag_store_vendor
+  - changeSet:
+      id: v2026.3.1.147-48-rename-tur_agent_eval_case
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_agent_eval_case
+        - not:
+            - tableExists:
+                tableName: agent_eval_case
+      changes:
+        - renameTable:
+            oldTableName: tur_agent_eval_case
+            newTableName: agent_eval_case
+  - changeSet:
+      id: v2026.3.1.147-49-rename-tur_agent_eval_report
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_agent_eval_report
+        - not:
+            - tableExists:
+                tableName: agent_eval_report
+      changes:
+        - renameTable:
+            oldTableName: tur_agent_eval_report
+            newTableName: agent_eval_report
+  - changeSet:
+      id: v2026.3.1.147-50-rename-tur_agent_eval_set
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_agent_eval_set
+        - not:
+            - tableExists:
+                tableName: agent_eval_set
+      changes:
+        - renameTable:
+            oldTableName: tur_agent_eval_set
+            newTableName: agent_eval_set
+  - changeSet:
+      id: v2026.3.1.147-51-rename-tur_ai_usage_daily
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_ai_usage_daily
+        - not:
+            - tableExists:
+                tableName: llm_usage_daily
+      changes:
+        - renameTable:
+            oldTableName: tur_ai_usage_daily
+            newTableName: llm_usage_daily
+  - changeSet:
+      id: v2026.3.1.147-52-rename-tur_answer_share
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_answer_share
+        - not:
+            - tableExists:
+                tableName: rag_answer_share
+      changes:
+        - renameTable:
+            oldTableName: tur_answer_share
+            newTableName: rag_answer_share
+  - changeSet:
+      id: v2026.3.1.147-53-rename-tur_answer_signal
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_answer_signal
+        - not:
+            - tableExists:
+                tableName: rag_answer_signal
+      changes:
+        - renameTable:
+            oldTableName: tur_answer_signal
+            newTableName: rag_answer_signal
+  - changeSet:
+      id: v2026.3.1.147-54-rename-tur_chat_webhook
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_chat_webhook
+        - not:
+            - tableExists:
+                tableName: agent_chat_webhook
+      changes:
+        - renameTable:
+            oldTableName: tur_chat_webhook
+            newTableName: agent_chat_webhook
+  - changeSet:
+      id: v2026.3.1.147-55-rename-tur_eval_dataset
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_dataset
+        - not:
+            - tableExists:
+                tableName: agent_eval_dataset
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_dataset
+            newTableName: agent_eval_dataset
+  - changeSet:
+      id: v2026.3.1.147-56-rename-tur_eval_dataset_row
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_dataset_row
+        - not:
+            - tableExists:
+                tableName: agent_eval_dataset_row
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_dataset_row
+            newTableName: agent_eval_dataset_row
+  - changeSet:
+      id: v2026.3.1.147-57-rename-tur_eval_dataset_snapshot
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_dataset_snapshot
+        - not:
+            - tableExists:
+                tableName: agent_eval_dataset_snapshot
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_dataset_snapshot
+            newTableName: agent_eval_dataset_snapshot
+  - changeSet:
+      id: v2026.3.1.147-58-rename-tur_eval_grader_config
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_grader_config
+        - not:
+            - tableExists:
+                tableName: agent_eval_grader_config
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_grader_config
+            newTableName: agent_eval_grader_config
+  - changeSet:
+      id: v2026.3.1.147-59-rename-tur_eval_grader_stack
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_grader_stack
+        - not:
+            - tableExists:
+                tableName: agent_eval_grader_stack
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_grader_stack
+            newTableName: agent_eval_grader_stack
+  - changeSet:
+      id: v2026.3.1.147-60-rename-tur_eval_review_task
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_review_task
+        - not:
+            - tableExists:
+                tableName: agent_eval_review_task
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_review_task
+            newTableName: agent_eval_review_task
+  - changeSet:
+      id: v2026.3.1.147-61-rename-tur_eval_review_verdict
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_eval_review_verdict
+        - not:
+            - tableExists:
+                tableName: agent_eval_review_verdict
+      changes:
+        - renameTable:
+            oldTableName: tur_eval_review_verdict
+            newTableName: agent_eval_review_verdict
+  - changeSet:
+      id: v2026.3.1.147-62-rename-tur_gateway_key
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_gateway_key
+        - not:
+            - tableExists:
+                tableName: llm_gateway_key
+      changes:
+        - renameTable:
+            oldTableName: tur_gateway_key
+            newTableName: llm_gateway_key
+  - changeSet:
+      id: v2026.3.1.147-63-rename-tur_llm_price
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_llm_price
+        - not:
+            - tableExists:
+                tableName: llm_price
+      changes:
+        - renameTable:
+            oldTableName: tur_llm_price
+            newTableName: llm_price
+  - changeSet:
+      id: v2026.3.1.147-64-rename-tur_online_eval_snapshot
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_online_eval_snapshot
+        - not:
+            - tableExists:
+                tableName: agent_online_eval_snapshot
+      changes:
+        - renameTable:
+            oldTableName: tur_online_eval_snapshot
+            newTableName: agent_online_eval_snapshot
+  - changeSet:
+      id: v2026.3.1.147-65-rename-tur_routine
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: tur_routine
+        - not:
+            - tableExists:
+                tableName: agent_routine
+      changes:
+        - renameTable:
+            oldTableName: tur_routine
+            newTableName: agent_routine
+  - changeSet:
+      id: v2026.3.1.147-66-rename-user_memory
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: user_memory
+        - not:
+            - tableExists:
+                tableName: agent_user_memory
+      changes:
+        - renameTable:
+            oldTableName: user_memory
+            newTableName: agent_user_memory

@@ -35,7 +35,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @Entity
-@Table(name = "configuration")
+@Table(name = "system_configuration")
 public class TurConfigVar implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;

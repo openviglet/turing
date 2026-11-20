@@ -56,7 +56,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tur_chat_webhook")
+@Table(name = "agent_chat_webhook")
 public class TurChatWebhook implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
