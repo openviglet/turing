@@ -1789,3 +1789,4 @@
 - **T1331** — Agent import resolves personas after stores and MCP servers and points each persona's few-shot store and brand-context server at the imported rows, dropping ids the bundle lacks.
 - **T1332** — The plain-id children were audited: DPO feedback loads its agent first, a microthesaurus selection is touched only by its own site, and a share reads only under its site; conversation and batch reads are filed.
 - **T1335** — With tenancy on, the batch job list and open-job count cover only jobs whose LLM instance the caller can see; single-tenant installs list every job as before.
+- **T1334** — With tenancy on, every chat session endpoint answers 404 unless a flow state, flow submission or citation record ties the conversation to the caller's tenant.

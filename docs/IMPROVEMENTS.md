@@ -2595,19 +2595,18 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.29 Conversation endpoints check their agent (T1334)
+### CLXXXIX.31 Chat memory records its agent (T1336)
 
-The T1332 audit found that TurChatSessionAPI takes a conversationId from the path and
-reads the rows stored under it without checking which agent or site the conversation
-belongs to: GET /api/chat/sessions/{conversationId}/citation-drift (recheck=true also
-rewrites the citation records), /slot-audit and /export (export also runs the
-post-export retention purge). The only guard is the ROLE_ADMIN / AI_AGENT_VIEW role, so
-an admin of one tenant who learns another tenant's conversation id (a TUR_SESSION cookie
-value) reads that conversation. The class's other endpoints (/slots, /messages, /state,
-the spectate streams, /manual-turn) follow the same pattern and were not traced.
+T1334 made TurChatSessionAPI answer 404 under tenancy unless a tenant-scoped record ties
+the conversation to the caller: a chat flow state, a flow submission, or a citation
+record whose agent the caller can load. A conversation that left only chat memory behind
+(a plain RAG chat with chatMemoryEnabled and no flow) has no such record, so with
+tenancy on its transcript can no longer be opened from the session inspector.
+Single-tenant installs are unaffected.
 
-A conversation is owned through its chat flow state or its first message, which name the
-agent. The fix resolves the conversation's agent once, loads it through the
-tenant-filtered TurAIAgentRepository and answers 404 when it is not visible, before any
-of these endpoints read or write. A test per endpoint sends another tenant's
-conversation id and expects 404.
+TurChatMemoryService.recordTurn already receives the site name and the agent, and each
+TurChatMemoryEvent carries the site name. The store (Mongo, Redis) should also keep the
+agent id on the conversation's headline, and TurChatMemoryStore should answer it for a
+conversation id, so TurConversationAccess can accept a conversation whose memory names
+an agent the caller can load. A test per store engine records a turn and reads the owner
+back.

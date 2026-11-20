@@ -103,6 +103,8 @@ public class TurChatSessionAPI {
     private final TurChatSlotSseRegistry slotSseRegistry;
     private final TurCopilotService copilotService;
     private final TurCitationDriftService citationDriftService;
+    /** T1334 — a conversation id is read only by a caller its tenant can see. */
+    private final TurConversationAccess conversationAccess;
 
     public TurChatSessionAPI(TurChatFlowEngineService chatFlowEngineService,
             TurChatMemoryService chatMemoryService,
@@ -114,7 +116,9 @@ public class TurChatSessionAPI {
             TurWorkspaceEventBus workspaceEventBus,
             TurChatSlotSseRegistry slotSseRegistry,
             TurCopilotService copilotService,
-            TurCitationDriftService citationDriftService) {
+            TurCitationDriftService citationDriftService,
+            TurConversationAccess conversationAccess) {
+        this.conversationAccess = conversationAccess;
         this.chatFlowEngineService = chatFlowEngineService;
         this.chatMemoryService = chatMemoryService;
         this.llmSummaryService = llmSummaryService;
@@ -136,6 +140,7 @@ public class TurChatSessionAPI {
     @GetMapping("/{conversationId}/slots")
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public TurChatSessionSlotsDto sessionSlots(@PathVariable String conversationId) {
+        conversationAccess.requireVisible(conversationId);
         return chatFlowEngineService.listSlotsForConversation(conversationId);
     }
 
@@ -151,6 +156,7 @@ public class TurChatSessionAPI {
             @RequestParam(defaultValue = "100") int limit,
             @RequestParam(defaultValue = "false") boolean summary,
             @RequestParam(defaultValue = "false") boolean regenerate) {
+        conversationAccess.requireVisible(conversationId);
         TurChatSessionMessagesDto base = chatMemoryService.listMessages(conversationId, limit);
         if (!summary || base.messages().isEmpty()) {
             return base;
@@ -176,6 +182,7 @@ public class TurChatSessionAPI {
     @GetMapping("/{conversationId}/slot-audit")
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public TurChatSlotAuditDto slotAudit(@PathVariable String conversationId) {
+        conversationAccess.requireVisible(conversationId);
         return new TurChatSlotAuditDto(conversationId, slotAuditEntries(conversationId));
     }
 
@@ -190,6 +197,7 @@ public class TurChatSessionAPI {
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public TurChatCitationDriftDto citationDrift(@PathVariable String conversationId,
             @RequestParam(defaultValue = "false") boolean recheck) {
+        conversationAccess.requireVisible(conversationId);
         var records = (recheck && citationDriftService.isEnabled())
                 ? citationDriftService.recheckConversation(conversationId)
                 : citationDriftService.findByConversation(conversationId);
@@ -208,6 +216,7 @@ public class TurChatSessionAPI {
     public ResponseEntity<TurChatSessionExportDto> exportConversation(
             @PathVariable String conversationId,
             @RequestParam(defaultValue = "1000") int transcriptLimit) {
+        conversationAccess.requireVisible(conversationId);
         TurChatSessionMessagesDto transcript = chatMemoryService.listMessages(conversationId, transcriptLimit);
         TurChatSessionExportDto export = new TurChatSessionExportDto(
                 conversationId,
@@ -253,6 +262,7 @@ public class TurChatSessionAPI {
     @GetMapping("/{conversationId}/state")
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public ConversationStateDto conversationState(@PathVariable String conversationId) {
+        conversationAccess.requireVisible(conversationId);
         return chatFlowEngineService.getConversationState(conversationId);
     }
 
@@ -268,6 +278,7 @@ public class TurChatSessionAPI {
     public Flux<ServerSentEvent<TurChatMessageEvent>> spectateMessages(
             @PathVariable String conversationId,
             @RequestParam(defaultValue = "200") int snapshotLimit) {
+        conversationAccess.requireVisible(conversationId);
         if (conversationId == null || conversationId.isBlank()) {
             return Flux.empty();
         }
@@ -293,6 +304,7 @@ public class TurChatSessionAPI {
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public Flux<ServerSentEvent<TurChatSessionSlotsDto>> spectateSlots(
             @PathVariable String conversationId) {
+        conversationAccess.requireVisible(conversationId);
         if (conversationId == null || conversationId.isBlank()) {
             return Flux.empty();
         }
@@ -316,6 +328,7 @@ public class TurChatSessionAPI {
     @Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
     public Flux<ServerSentEvent<TurWorkspaceEvent>> spectateWorkspace(
             @PathVariable String conversationId) {
+        conversationAccess.requireVisible(conversationId);
         if (conversationId == null || conversationId.isBlank()) {
             return Flux.empty();
         }
@@ -343,6 +356,7 @@ public class TurChatSessionAPI {
     @Secured({ "ROLE_ADMIN", "AI_AGENT_EDIT" })
     public ManualTurnResult manualTurn(@PathVariable String conversationId,
             @RequestBody ManualTurnRequest request) {
+        conversationAccess.requireVisible(conversationId);
         return copilotService.manualTurn(conversationId,
                 request == null ? null : request.agentId(),
                 request == null ? null : request.flowId(),

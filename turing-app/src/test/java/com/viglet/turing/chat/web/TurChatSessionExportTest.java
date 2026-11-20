@@ -71,7 +71,8 @@ class TurChatSessionExportTest {
                 mock(com.viglet.turing.agent.workspace.TurWorkspaceEventBus.class),
                 mock(com.viglet.turing.chat.slots.TurChatSlotSseRegistry.class),
                 mock(com.viglet.turing.eval.spectator.TurCopilotService.class),
-                mock(com.viglet.turing.rag.citation.TurCitationDriftService.class));
+                mock(com.viglet.turing.rag.citation.TurCitationDriftService.class),
+                mock(TurConversationAccess.class));
     }
 
     private TurChatSlotAuditEntry auditEntry(String slot, String oldV, String newV,
