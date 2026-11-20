@@ -152,9 +152,14 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         when(turAIAgentRepository.findAll()).thenReturn(List.of(admissions, other, demo));
         TurSNSiteGenAi unbound = new TurSNSiteGenAi();
         TurSNSiteGenAi namesOther = new TurSNSiteGenAi();
-        namesOther.setTurAIAgent(other);
+        namesOther.setTurAIAgentId(other.getId());
         TurSNSiteGenAi namesDemo = new TurSNSiteGenAi();
-        namesDemo.setTurAIAgent(demo);
+        namesDemo.setTurAIAgentId(demo.getId());
+        // T1315 — the bindings name agents by id; the lowest named id that exists wins.
+        org.mockito.Mockito.lenient().when(turAIAgentRepository.findById("agent-turing-demo"))
+                .thenReturn(java.util.Optional.of(demo));
+        org.mockito.Mockito.lenient().when(turAIAgentRepository.findById("agent-z"))
+                .thenReturn(java.util.Optional.of(other));
         when(turSNSiteGenAiRepository.findAll()).thenReturn(List.of(unbound, namesOther, namesDemo));
 
         runner.run(args);

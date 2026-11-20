@@ -52,6 +52,9 @@ class TurSNGeminiMediaIndexerTest {
     @Mock
     private TurGeminiVideoUnderstandingService videoUnderstanding;
 
+    @Mock
+    private com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+
     @InjectMocks
     private TurSNGeminiMediaIndexer indexer;
 
@@ -69,7 +72,8 @@ class TurSNGeminiMediaIndexerTest {
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setMediaUnderstandingIndexingEnabled(true);
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId("agent-1");
+        org.mockito.Mockito.lenient().when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
 
         site = new TurSNSite();
         site.setName("media-site");

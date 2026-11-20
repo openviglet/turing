@@ -1,3 +1,4 @@
+import { useAiAgent } from "@/api/queries/ai-agent.queries";
 import { useFeatures } from "@/api/queries/features.queries";
 import { useSnChatEnabled } from "@/api/queries/sn-chat-enabled.queries";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -113,13 +114,15 @@ export function SnLaunchBar({ site }: Readonly<{ site: TurSNSite }>) {
   // T790 — a site explicitly in VECTORLESS_STRUCTURED has no vectors by design, so
   // ANN is never available there, regardless of the (own or default) agent's RAG
   // flag. Folded in as the single gate so the tile tracks the runtime exactly.
-  const ownAgent = site.turSNSiteGenAi?.turAIAgent;
+  // T1315 — the binding holds its agent by id.
+  const ownAgentId = site.turSNSiteGenAi?.turAIAgentId ?? undefined;
+  const { data: ownAgent } = useAiAgent(ownAgentId);
   const ownAgentReady = ownAgent?.enabled === 1 && ownAgent?.ragEnabled === true;
   const vectorModeActive =
     site.turSNSiteGenAi?.knowledgeBaseMode !== "VECTORLESS_STRUCTURED";
   const annEnabled =
     vectorModeActive &&
-    (ownAgentReady || (!ownAgent && Boolean(features?.defaultAiAgentRagEnabled)));
+    (ownAgentReady || (!ownAgentId && Boolean(features?.defaultAiAgentRagEnabled)));
 
   const { search, ann, answer } = buildSnSearchLaunchers(
     {

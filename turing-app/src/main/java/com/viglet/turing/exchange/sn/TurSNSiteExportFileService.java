@@ -129,10 +129,13 @@ public class TurSNSiteExportFileService {
 	private final TurSNSiteExportValidator exportValidator;
 	private final TurStorageService storageService;
 	private final com.viglet.turing.agent.TurAgentRagInfra agentRagInfra;
+	private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
 	public TurSNSiteExportFileService(TurSNSiteExportValidator exportValidator,
 									  TurStorageService storageService,
-								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra) {
+								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra,
+								  com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver) {
+		this.turDefaultAgentResolver = turDefaultAgentResolver;
 		this.agentRagInfra = agentRagInfra;
 		this.exportValidator = exportValidator;
 		this.storageService = storageService;
@@ -272,10 +275,10 @@ public class TurSNSiteExportFileService {
 		}
 
 		TurSNSiteGenAi genAi = turSNSite.getTurSNSiteGenAi();
-		if (genAi == null || genAi.getTurAIAgent() == null) {
+		var agent = turDefaultAgentResolver.siteAgent(genAi);
+		if (agent == null) {
 			return;
 		}
-		var agent = genAi.getTurAIAgent();
 
 		// Pull the referenced LLM/store/embedding from the agent so the export
 		// bundle is self-contained even after the per-site fields were removed.

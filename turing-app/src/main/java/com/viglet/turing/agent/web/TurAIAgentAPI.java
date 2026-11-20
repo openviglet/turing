@@ -315,9 +315,9 @@ public class TurAIAgentAPI {
         // persistence context: a plain save() schedules the UPDATE but the
         // database doesn't see it until flush, so the FK constraint check
         // fires against the still-old agent_id and rejects the delete.
-        var attachedSites = this.turSNSiteGenAiRepository.findByTurAIAgent_Id(id);
+        var attachedSites = this.turSNSiteGenAiRepository.findByTurAIAgentId(id);
         for (var siteGenAi : attachedSites) {
-            siteGenAi.setTurAIAgent(null);
+            siteGenAi.setTurAIAgentId(null);
             this.turSNSiteGenAiRepository.saveAndFlush(siteGenAi);
         }
         // T906 / §LXVIII.13 — deleteById loads the entity, so @PostRemove fires and

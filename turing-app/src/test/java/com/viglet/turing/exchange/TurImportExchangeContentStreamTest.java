@@ -426,7 +426,8 @@ class TurImportExchangeContentStreamTest {
         var exportService = new com.viglet.turing.exchange.sn.TurSNSiteExportFileService(
                 new com.viglet.turing.exchange.sn.TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class));
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class),
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class));
 
         var seVendor = new com.viglet.turing.searchengine.persistence.model.TurSEVendor();
         seVendor.setId("SOLR");

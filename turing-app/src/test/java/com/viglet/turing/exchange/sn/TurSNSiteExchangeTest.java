@@ -37,7 +37,7 @@ class TurSNSiteExchangeTest {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setId("genai-1");
         genAi.setSitePrompt("site description");
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId(agent.getId());
         site.setTurSNSiteGenAi(genAi);
 
         TurSNSiteExchange exchange = new TurSNSiteExchange(site);

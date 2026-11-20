@@ -151,8 +151,8 @@ public class TurSNSiteExchange {
 		TurSNSiteGenAiExchange referenceGenAi = new TurSNSiteGenAiExchange();
 		referenceGenAi.setId(source.getId());
 		referenceGenAi.setSitePrompt(source.getSitePrompt());
-		if (source.getTurAIAgent() != null && source.getTurAIAgent().getId() != null) {
-			referenceGenAi.setTurAIAgent(source.getTurAIAgent().getId());
+		if (source.getTurAIAgentId() != null) {
+			referenceGenAi.setTurAIAgent(source.getTurAIAgentId());
 		}
 		return referenceGenAi;
 	}

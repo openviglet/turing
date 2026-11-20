@@ -95,7 +95,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     const audiencePersonas = (personas ?? []).filter(
         (p) => p.personaKind === "AUDIENCE" || p.personaKind === "BOTH",
     );
-    const [aiAgents, setAiAgents] = useState<TurAIAgent[]>([]);
+    // T1315 — every agent, so a saved binding to a disabled one still resolves;
+    // the picker offers only the enabled ones.
+    const [allAgents, setAllAgents] = useState<TurAIAgent[]>([]);
+    const aiAgents = allAgents.filter((a) => a.enabled === 1);
     const [seInstances, setSeInstances] = useState<TurSEInstance[]>([]);
     // T513 — embedding models selectable as a per-site domain embedder override.
     const [embeddingModels, setEmbeddingModels] = useState<TurEmbeddingModel[]>([]);
@@ -131,7 +134,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
 
     useEffect(() => {
         turAIAgentService.query().then((all) =>
-            setAiAgents(all.filter((a) => a.enabled === 1)),
+            setAllAgents(all),
         );
         turSEInstanceService
             .query()
@@ -218,7 +221,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
         loadRagCores();
     }, [loadRagCores]);
 
-    const selectedAgent = form.watch("turAIAgent");
+    const selectedAgentId = form.watch("turAIAgentId");
+    const selectedAgent = selectedAgentId
+        ? allAgents.find((a) => a.id === selectedAgentId)
+        : undefined;
     const agentEmbeddingModelName = embeddingModels
         .find((m) => m.id === selectedAgent?.embeddingModelInstanceId)?.modelName;
     const agentStoreTitle = storeInstances
@@ -269,7 +275,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     // backend rejects (403) until the chosen agent is saved on this site.
     // We also block while the form is dirty so the user can't click reindex
     // immediately after picking a different agent without saving it first.
-    const savedAgent = snSite.turSNSiteGenAi?.turAIAgent;
+    const savedAgentId = snSite.turSNSiteGenAi?.turAIAgentId;
+    const savedAgent = savedAgentId ? allAgents.find((a) => a.id === savedAgentId) : undefined;
     // T1151 — a site saved with no agent of its own reindexes into the Default AI
     // Agent's store, as the backend reindex resolves it.
     const savedVectorMode = snSite.turSNSiteGenAi?.knowledgeBaseMode !== "VECTORLESS_STRUCTURED";
@@ -285,11 +292,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
 
     function handleAgentChange(val: string) {
         if (val === NONE_VALUE) {
-            form.setValue("turAIAgent", null);
+            form.setValue("turAIAgentId", null, { shouldDirty: true });
             return;
         }
-        const agent = aiAgents.find((a) => a.id === val);
-        form.setValue("turAIAgent", agent ?? null);
+        form.setValue("turAIAgentId", val, { shouldDirty: true });
     }
 
     const generateSitePrompt = useCallback(async () => {
@@ -507,7 +513,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                         <SNFormSection icon={IconBrain} tone="violet" title={t("forms.snGenai.aiAgent")} description={t("forms.snGenai.aiAgentDesc")}>
                                 <FormField
                                     control={form.control}
-                                    name="turAIAgent"
+                                    name="turAIAgentId"
                                     render={({ field }) => (
                                         <FormItemTwoColumns>
                                             <FormItemTwoColumns.Left>
@@ -520,7 +526,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                 <FormControl>
                                                     <Select
                                                         onValueChange={handleAgentChange}
-                                                        value={field.value?.id ?? NONE_VALUE}
+                                                        value={field.value ?? NONE_VALUE}
                                                     >
                                                         <SelectTrigger className="w-full">
                                                             <SelectValue placeholder={t("forms.snGenai.noAiAgent")} />

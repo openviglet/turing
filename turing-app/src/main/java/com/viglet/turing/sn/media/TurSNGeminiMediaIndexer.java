@@ -65,6 +65,7 @@ public class TurSNGeminiMediaIndexer {
     static final String MEDIA_URL_ATTR = "media_url";
 
     private final TurGeminiVideoUnderstandingService videoUnderstanding;
+    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
     /**
      * Runs understanding on the document's media asset and appends the transcript
@@ -111,7 +112,7 @@ public class TurSNGeminiMediaIndexer {
 
     /** The GenAI agent's active LLM instance (first enabled, else first), or null. */
     private TurLLMInstance resolveLlmInstance(TurSNSiteGenAi genAi) {
-        TurAIAgent agent = genAi.getTurAIAgent();
+        TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
         if (agent == null || agent.getLlmInstances() == null) {
             return null;
         }

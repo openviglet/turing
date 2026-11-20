@@ -42,8 +42,8 @@ public class TurSNSiteGenAis {
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
     }
 
-    public List<TurSNSiteGenAi> findByTurAIAgent_Id(String agentId) {
-        return turSNSiteGenAiRepository.findByTurAIAgent_Id(agentId);
+    public List<TurSNSiteGenAi> findByTurAIAgentId(String agentId) {
+        return turSNSiteGenAiRepository.findByTurAIAgentId(agentId);
     }
 
     public List<TurSNSiteGenAi> findAll() {

@@ -93,10 +93,11 @@ public class TurSNManifestGenAiConverger {
         TurSNSiteGenAi target = live != null ? live : new TurSNSiteGenAi();
         if (live == null || !genAi.keepsLiveAgent()) {
             String agentId = genAi.ownAgentId();
-            TurAIAgent agent = agentId == null ? null
-                    : turAIAgentRepository.findById(agentId).orElseThrow(() -> new IllegalArgumentException(
-                            "Manifest genAi names agent '" + agentId + "', which does not exist"));
-            target.setTurAIAgent(agent);
+            if (agentId != null && !turAIAgentRepository.existsById(agentId)) {
+                throw new IllegalArgumentException(
+                        "Manifest genAi names agent '" + agentId + "', which does not exist");
+            }
+            target.setTurAIAgentId(agentId);
         }
         if (genAi.knowledgeBaseMode() != null) {
             target.setKnowledgeBaseMode(genAi.knowledgeBaseMode());
@@ -112,7 +113,7 @@ public class TurSNManifestGenAiConverger {
         if (live == null) {
             return false;
         }
-        String liveAgentId = live.getTurAIAgent() == null ? null : live.getTurAIAgent().getId();
+        String liveAgentId = live.getTurAIAgentId();
         return (genAi.keepsLiveAgent() || Objects.equals(liveAgentId, genAi.ownAgentId()))
                 && (genAi.knowledgeBaseMode() == null
                         || genAi.knowledgeBaseMode() == live.getKnowledgeBaseMode())

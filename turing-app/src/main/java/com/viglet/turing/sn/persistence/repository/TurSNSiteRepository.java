@@ -71,7 +71,6 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 			SELECT s FROM TurSNSite s
 			LEFT JOIN FETCH s.turSEInstance
 			LEFT JOIN FETCH s.turSNSiteGenAi genAi
-			LEFT JOIN FETCH genAi.turAIAgent
 			WHERE s.id = :id
 			""")
 	Optional<TurSNSite> findByIdWithGenAi(@Param("id") String id);
@@ -90,7 +89,6 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Query("""
 			SELECT s FROM TurSNSite s
 			LEFT JOIN FETCH s.turSNSiteGenAi genAi
-			LEFT JOIN FETCH genAi.turAIAgent
 			WHERE s.name = :name
 			""")
 	Optional<TurSNSite> findByNameWithGenAi(@Param("name") String name);
@@ -110,7 +108,6 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	@Query("""
 			SELECT s FROM TurSNSite s
 			LEFT JOIN FETCH s.turSNSiteGenAi genAi
-			LEFT JOIN FETCH genAi.turAIAgent
 			WHERE LOWER(s.name) = LOWER(:name)
 			""")
 	Optional<TurSNSite> findByNameIgnoreCaseWithGenAi(@Param("name") String name);

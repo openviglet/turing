@@ -230,8 +230,8 @@ public class TurSNEntityIndexer {
 
     /** The site agent's LLM (lowest id, as agent chat picks it), else the Default AI Agent's. */
     private TurLLMInstance llm(TurSNSiteGenAi genAi) {
-        TurAIAgent agent = genAi.getTurAIAgent() == null ? defaultAgentResolver.resolveDefaultAgent()
-                : turAIAgentRepository.findById(genAi.getTurAIAgent().getId()).orElse(null);
+        TurAIAgent agent = genAi.getTurAIAgentId() == null ? defaultAgentResolver.resolveDefaultAgent()
+                : turAIAgentRepository.findById(genAi.getTurAIAgentId()).orElse(null);
         if (agent == null || agent.getLlmInstances() == null) {
             return null;
         }

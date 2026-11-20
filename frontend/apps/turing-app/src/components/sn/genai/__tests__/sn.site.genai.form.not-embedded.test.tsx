@@ -74,7 +74,7 @@ function renderForm() {
   const site = {
     id: "site-1",
     name: "catalog",
-    turSNSiteGenAi: { id: "genai-1", turAIAgent: null },
+    turSNSiteGenAi: { id: "genai-1", turAIAgentId: null },
   } as unknown as TurSNSite;
   return render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>

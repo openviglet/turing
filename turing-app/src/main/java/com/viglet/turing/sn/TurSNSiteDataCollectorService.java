@@ -28,6 +28,7 @@ public class TurSNSiteDataCollectorService {
     private final TurSNSiteLocaleRepository snSiteLocaleRepository;
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
+    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
     public String collectSiteData(TurSNSite site) {
         StringBuilder sb = new StringBuilder();
@@ -131,7 +132,7 @@ public class TurSNSiteDataCollectorService {
 
     private void appendGenAiConfigurationSection(StringBuilder sb, TurSNSite site) {
         var genAi = site.getTurSNSiteGenAi();
-        var agent = genAi == null ? null : genAi.getTurAIAgent();
+        var agent = turDefaultAgentResolver.siteAgent(genAi);
         sb.append("## Generative AI Configuration\n");
         if (agent != null && agent.getEnabled() == 1 && agent.isRagEnabled()) {
             sb.append("- Enabled: yes\n");

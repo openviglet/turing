@@ -627,7 +627,7 @@ class TurRagSearchToolServiceTest {
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(seInstance));
-        when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
+        when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
                 "store-1", java.util.Locale.forLanguageTag("pt-BR")))
@@ -678,7 +678,7 @@ class TurRagSearchToolServiceTest {
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(org.mockito.Mockito.mock(com.viglet.turing.searchengine.persistence.model.TurSEInstance.class)));
-        when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
+        when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 
         var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
         core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONING);
@@ -726,7 +726,7 @@ class TurRagSearchToolServiceTest {
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(seInstance));
-        when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
+        when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 
         var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
         core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
@@ -796,7 +796,7 @@ class TurRagSearchToolServiceTest {
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(seInstance));
-        when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
+        when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 
         var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
         core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
@@ -859,7 +859,7 @@ class TurRagSearchToolServiceTest {
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstanceId(null); // <- the misconfiguration
-        when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
+        when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 
         // Vector pass returns one doc; tool falls back through the legacy
         // vector path (vectorStore is not a TurLuceneVectorStore mock so

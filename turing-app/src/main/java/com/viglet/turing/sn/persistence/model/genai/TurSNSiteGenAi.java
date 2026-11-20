@@ -71,10 +71,12 @@ public class TurSNSiteGenAi implements Serializable {
      * effectively disabled for the site. The agent's {@code ragEnabled},
      * embedding model, store, LLM list and {@code systemPrompt} are the
      * source of truth.
+     *
+     * <p>T1315 — held by id: the agent belongs to the agent module, and
+     * {@code TurDefaultAgentResolver#siteAgent} loads it.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id")
-    private TurAIAgent turAIAgent;
+    @Column(name = "agent_id", length = 36)
+    private String turAIAgentId;
 
     /**
      * Site description used as input to the summary/insights LLM call (a

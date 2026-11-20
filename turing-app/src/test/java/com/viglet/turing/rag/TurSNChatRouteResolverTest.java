@@ -78,7 +78,7 @@ class TurSNChatRouteResolverTest {
     private static TurSNSiteGenAi genAi(TurSNKnowledgeBaseMode mode, TurAIAgent agent) {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setKnowledgeBaseMode(mode);
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId("agent-1");
         return genAi;
     }
 

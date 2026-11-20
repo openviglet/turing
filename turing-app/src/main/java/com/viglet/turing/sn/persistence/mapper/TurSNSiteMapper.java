@@ -30,14 +30,8 @@ public interface TurSNSiteMapper {
      * enabled {@link com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi},
      * gating the ANN Search button on the admin listing.
      */
-    @Mapping(target = "genAiEnabled",
-            expression = "java(entity.getTurSNSiteGenAi() != null"
-                    + " && entity.getTurSNSiteGenAi().getTurAIAgent() != null"
-                    + " && entity.getTurSNSiteGenAi().getTurAIAgent().getEnabled() == 1"
-                    + " && entity.getTurSNSiteGenAi().getTurAIAgent().isRagEnabled())")
-    TurSNSiteListDto toListDto(TurSNSite entity);
-
-    List<TurSNSiteListDto> toListDtoList(List<TurSNSite> entities);
+    @Mapping(target = "genAiEnabled", source = "genAiEnabled")
+    TurSNSiteListDto toListDto(TurSNSite entity, boolean genAiEnabled);
 
     TurSNSiteListDto.TurSNSiteLocaleSummary toLocaleSummary(TurSNSiteLocale locale);
 }

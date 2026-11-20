@@ -52,6 +52,9 @@ class TurSNSiteDataCollectorServiceTest {
     @Mock
     private TurSearchEnginePlugin searchEnginePlugin;
 
+    @Mock
+    private com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+
     private TurSNSiteDataCollectorService service;
 
     @BeforeEach
@@ -59,7 +62,8 @@ class TurSNSiteDataCollectorServiceTest {
         service = new TurSNSiteDataCollectorService(
                 snSiteLocaleRepository,
                 metricAccessRepository,
-                pluginFactory);
+                pluginFactory,
+                turDefaultAgentResolver);
     }
 
     private TurSNSite createSite(String name) {
@@ -363,7 +367,8 @@ class TurSNSiteDataCollectorServiceTest {
         agent.getLlmInstances().add(llmInstance);
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId("agent-1");
+        when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
         site.setTurSNSiteGenAi(genAi);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
@@ -391,7 +396,8 @@ class TurSNSiteDataCollectorServiceTest {
         // No LLM attached to the agent.
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId("agent-1");
+        when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
         site.setTurSNSiteGenAi(genAi);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());

@@ -27,6 +27,8 @@ class TurSNSiteExportFileServiceTest {
 
     /** T1315 — the agent holds its store by id; this resolves it. */
     private static final com.viglet.turing.agent.TurAgentRagInfra RAG_INFRA = org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class);
+    private static final com.viglet.turing.agent.TurDefaultAgentResolver AGENTS =
+            org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -34,7 +36,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldExportRootReferencesWithoutDuplicatingLLMStoreAndSEInsideSNSite() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA);
+                RAG_INFRA, AGENTS);
 
         TurSEVendor seVendor = new TurSEVendor();
         seVendor.setId("SOLR");
@@ -84,7 +86,8 @@ class TurSNSiteExportFileServiceTest {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setId("genai-1");
         genAi.setSitePrompt("This site is...");
-        genAi.setTurAIAgent(agent);
+        genAi.setTurAIAgentId(agent.getId());
+        org.mockito.Mockito.when(AGENTS.siteAgent(genAi)).thenReturn(agent);
 
         TurSNSite siteA = new TurSNSite();
         siteA.setId("site-a");
@@ -141,7 +144,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldWriteSynonymsThatTheImportReadsBack() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA);
+                RAG_INFRA, AGENTS);
         TurSNSite site = new TurSNSite();
         site.setId("tarnfell");
         site.setName("tarnfell");

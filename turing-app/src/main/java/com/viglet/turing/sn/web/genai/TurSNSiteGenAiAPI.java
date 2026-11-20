@@ -491,10 +491,9 @@ public class TurSNSiteGenAiAPI {
 		return turSNSearchProcess.getSNSite(siteName)
 				.map(site -> {
 					TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-					if (genAi == null) return 0;
-					TurAIAgent agent = genAi.getTurAIAgent();
-					if (agent == null) return 0;
-					return chatFlowEngineService.resetAllStatesForAgent(conversationId, agent.getId());
+					if (genAi == null || genAi.getTurAIAgentId() == null) return 0;
+					return chatFlowEngineService.resetAllStatesForAgent(conversationId,
+							genAi.getTurAIAgentId());
 				})
 				.orElse(0);
 	}
@@ -815,7 +814,7 @@ public class TurSNSiteGenAiAPI {
 		}
 		TurAIAgent agent = turSNSearchProcess.getSNSite(siteName)
 				.map(site -> site.getTurSNSiteGenAi())
-				.map(genAi -> genAi == null ? null : genAi.getTurAIAgent())
+				.map(turDefaultAgentResolver::siteAgent)
 				.orElse(null);
 		if (agent == null || !agent.isProactiveEnabled()) {
 			// Not opted in — nothing to stream (the client closes/ignores it).
@@ -928,11 +927,11 @@ public class TurSNSiteGenAiAPI {
 		return turSNSearchProcess.getSNSite(siteName)
 				.map(site -> {
 					TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-					if (genAi == null || genAi.getTurAIAgent() == null) {
+					TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
+					if (agent == null) {
 						return ChatSlotExtractResponse.error(
 								"No AI agent configured for site '" + siteName + "'");
 					}
-					TurAIAgent agent = genAi.getTurAIAgent();
 					SlotExtractionResult result = slotExtractionService.extract(
 							file, agent, conversationId, parseSlotNames(slotNames), confidence, nativeBinary);
 					return ChatSlotExtractResponse.from(result);
@@ -992,11 +991,11 @@ public class TurSNSiteGenAiAPI {
 		return turSNSearchProcess.getSNSite(siteName)
 				.map(site -> {
 					TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-					if (genAi == null || genAi.getTurAIAgent() == null) {
+					TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
+					if (agent == null) {
 						return ChatSlotExtractResponse.error(
 								"No AI agent configured for site '" + siteName + "'");
 					}
-					TurAIAgent agent = genAi.getTurAIAgent();
 					SlotExtractionResult result = slotExtractionService.extractMulti(
 							files, agent, conversationId, parseSlotNames(slotNames), confidence, nativeBinary);
 					return ChatSlotExtractResponse.from(result);
@@ -1033,7 +1032,8 @@ public class TurSNSiteGenAiAPI {
 		return turSNSearchProcess.getSNSite(siteName)
 				.map(site -> {
 					TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-					if (genAi == null || genAi.getTurAIAgent() == null) {
+					TurAIAgent siteAgent = turDefaultAgentResolver.siteAgent(genAi);
+					if (siteAgent == null) {
 						return ChatSlotUploadResponse.error(
 								"No AI agent configured for site '" + siteName + "'");
 					}
@@ -1043,7 +1043,7 @@ public class TurSNSiteGenAiAPI {
 									.map(String::trim).filter(s -> !s.isEmpty())
 									.toList();
 					MultiModalSlotResult result = multiModalSlotService.upload(
-							file, genAi.getTurAIAgent(), conversationId, slotName, vision, requested);
+							file, siteAgent, conversationId, slotName, vision, requested);
 					return ChatSlotUploadResponse.from(result);
 				})
 				.orElseGet(() -> ChatSlotUploadResponse.error("Site not found: " + siteName));
@@ -1163,8 +1163,7 @@ public class TurSNSiteGenAiAPI {
 		return turSNSearchProcess.getSNSite(siteName)
 				.map(site -> {
 					TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-					if (genAi == null) return null;
-					TurAIAgent agent = genAi.getTurAIAgent();
+					TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
 					if (agent == null || agent.getEnabled() != 1) return null;
 					return turIntentMapper.toDtoList(
 							turIntentRepository

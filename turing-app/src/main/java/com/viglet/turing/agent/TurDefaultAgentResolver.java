@@ -79,10 +79,20 @@ public class TurDefaultAgentResolver {
      * @param turSNSiteGenAi the site's GenAI binding (may be {@code null})
      */
     public TurAIAgent resolveEffectiveAgent(TurSNSiteGenAi turSNSiteGenAi) {
-        if (turSNSiteGenAi != null && turSNSiteGenAi.getTurAIAgent() != null) {
-            return turSNSiteGenAi.getTurAIAgent();
+        TurAIAgent own = siteAgent(turSNSiteGenAi);
+        return own != null ? own : resolveDefaultAgent();
+    }
+
+    /**
+     * T1315 — the agent a GenAI binding names by id, loaded with its graph
+     * ({@link TurAIAgentRepository#findById(String)} fetches it), or {@code null}
+     * when the binding names none or the agent is gone. No default fallback.
+     */
+    public TurAIAgent siteAgent(TurSNSiteGenAi turSNSiteGenAi) {
+        if (turSNSiteGenAi == null || turSNSiteGenAi.getTurAIAgentId() == null) {
+            return null;
         }
-        return resolveDefaultAgent();
+        return turAIAgentRepository.findById(turSNSiteGenAi.getTurAIAgentId()).orElse(null);
     }
 
     /**

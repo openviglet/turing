@@ -35,5 +35,5 @@ public interface TurSNSiteGenAiRepository extends JpaRepository<TurSNSiteGenAi, 
      *
      * @since 2026.2.8
      */
-    List<TurSNSiteGenAi> findByTurAIAgent_Id(String agentId);
+    List<TurSNSiteGenAi> findByTurAIAgentId(String agentId);
 }

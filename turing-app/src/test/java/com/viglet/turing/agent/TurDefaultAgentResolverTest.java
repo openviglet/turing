@@ -62,11 +62,11 @@ class TurDefaultAgentResolverTest {
     void siteOwnAgentWinsAndNoDefaultLookupHappens() {
         TurAIAgent siteAgent = new TurAIAgent();
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(siteAgent);
+        bind(genAi, siteAgent);
 
         assertSame(siteAgent, resolver.resolveEffectiveAgent(genAi));
         // The site declares its own agent, so the global default is never touched.
-        verifyNoInteractions(globalSettingsService, turAIAgentRepository);
+        verifyNoInteractions(globalSettingsService);
     }
 
     @Test
@@ -102,6 +102,14 @@ class TurDefaultAgentResolverTest {
         assertNull(resolver.resolveEffectiveAgent(null));
     }
 
+    /** T1315 — the binding names its agent by id; the repository answers it. */
+    private void bind(TurSNSiteGenAi genAi, TurAIAgent agent) {
+        agent.setId("own-1");
+        genAi.setTurAIAgentId("own-1");
+        org.mockito.Mockito.lenient().when(turAIAgentRepository.findById("own-1"))
+                .thenReturn(Optional.of(agent));
+    }
+
     private static TurAIAgent ragReadyAgent() {
         TurAIAgent agent = new TurAIAgent();
         agent.setEnabled(1);
@@ -112,10 +120,10 @@ class TurDefaultAgentResolverTest {
     @Test
     void isRagReadyTrueForRagReadyOwnAgent() {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(ragReadyAgent());
+        bind(genAi, ragReadyAgent());
 
         assertTrue(resolver.isRagReady(genAi));
-        verifyNoInteractions(globalSettingsService, turAIAgentRepository);
+        verifyNoInteractions(globalSettingsService);
     }
 
     @Test
@@ -123,7 +131,7 @@ class TurDefaultAgentResolverTest {
         TurAIAgent agent = ragReadyAgent();
         agent.setEnabled(0);
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
+        bind(genAi, agent);
 
         assertFalse(resolver.isRagReady(genAi));
     }
@@ -133,7 +141,7 @@ class TurDefaultAgentResolverTest {
         TurAIAgent agent = ragReadyAgent();
         agent.setRagEnabled(false);
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(agent);
+        bind(genAi, agent);
 
         assertFalse(resolver.isRagReady(genAi));
     }
@@ -158,7 +166,7 @@ class TurDefaultAgentResolverTest {
         // T790 — the site's own agent is RAG-ready, but the site explicitly opts out
         // of vectors via VECTORLESS_STRUCTURED: no vector-dependent surface is ready.
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(ragReadyAgent());
+        bind(genAi, ragReadyAgent());
         genAi.setKnowledgeBaseMode(
                 com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
@@ -185,7 +193,7 @@ class TurDefaultAgentResolverTest {
     void isRagReadyTrueWhenHybridModeAndRagReadyOwnAgent() {
         // HYBRID needs the vector setup, so a RAG-ready agent still qualifies.
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setTurAIAgent(ragReadyAgent());
+        bind(genAi, ragReadyAgent());
         genAi.setKnowledgeBaseMode(
                 com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.HYBRID);
 
@@ -214,11 +222,11 @@ class TurDefaultAgentResolverTest {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         TurAIAgent agent = ragReadyAgent();
         agent.setRagEnabled(false);
-        genAi.setTurAIAgent(agent);
+        bind(genAi, agent);
         when(turSNSiteRepository.findByNameWithGenAi("site")).thenReturn(Optional.of(site(genAi)));
 
         assertFalse(resolver.isRagReadyForSiteName("site"));
-        verifyNoInteractions(globalSettingsService, turAIAgentRepository);
+        verifyNoInteractions(globalSettingsService);
     }
 
     @Test

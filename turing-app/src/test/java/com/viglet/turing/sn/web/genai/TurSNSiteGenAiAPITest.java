@@ -89,13 +89,29 @@ class TurSNSiteGenAiAPITest {
     @InjectMocks
     private TurSNSiteGenAiAPI api;
 
+    /** T1315 — the binding names its agent by id; the mocked resolver answers it from here. */
+    private final java.util.Map<String, com.viglet.turing.agent.persistence.model.TurAIAgent> boundAgents =
+            new java.util.HashMap<>();
+
+    private void bindAgent(TurSNSiteGenAi genAi, com.viglet.turing.agent.persistence.model.TurAIAgent agent) {
+        if (agent.getId() == null) {
+            agent.setId("agent-" + (boundAgents.size() + 1));
+        }
+        boundAgents.put(agent.getId(), agent);
+        genAi.setTurAIAgentId(agent.getId());
+    }
+
     @BeforeEach
     void setUp() {
         // Mirror the real resolver with no global default agent: the effective
         // agent is the binding's own agent (T622 fallback inert in these tests).
         when(turDefaultAgentResolver.resolveEffectiveAgent(any())).thenAnswer(inv -> {
             TurSNSiteGenAi g = inv.getArgument(0);
-            return g == null ? null : g.getTurAIAgent();
+            return g == null ? null : boundAgents.get(g.getTurAIAgentId());
+        });
+        org.mockito.Mockito.lenient().when(turDefaultAgentResolver.siteAgent(any())).thenAnswer(inv -> {
+            TurSNSiteGenAi g = inv.getArgument(0);
+            return g == null ? null : boundAgents.get(g.getTurAIAgentId());
         });
         var realResolver = new com.viglet.turing.rag.TurSNChatRouteResolver(turDefaultAgentResolver,
                 catalogCopilotService);
@@ -204,7 +220,7 @@ class TurSNSiteGenAiAPITest {
         agent.setRagEnabled(true);
         agent.setLlmInstances(new java.util.HashSet<>(java.util.List.of(
                 new com.viglet.turing.llm.persistence.model.TurLLMInstance())));
-        genAi.setTurAIAgent(agent);
+        bindAgent(genAi, agent);
         site.setTurSNSiteGenAi(genAi);
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));

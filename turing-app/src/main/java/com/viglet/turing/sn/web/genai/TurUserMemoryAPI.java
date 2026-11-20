@@ -112,11 +112,10 @@ public class TurUserMemoryAPI {
     }
 
     private String resolveAgentId(String siteName) {
-        TurAIAgent agent = turSNSearchProcess.getSNSite(siteName)
+        return turSNSearchProcess.getSNSite(siteName)
                 .map(site -> site.getTurSNSiteGenAi())
-                .map(genAi -> genAi == null ? null : genAi.getTurAIAgent())
+                .map(genAi -> genAi == null ? null : genAi.getTurAIAgentId())
                 .orElse(null);
-        return agent == null ? null : agent.getId();
     }
 
     private static boolean isBlank(String s) {

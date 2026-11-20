@@ -16,6 +16,10 @@ const probe = vi.hoisted(() => ({ data: undefined as unknown, isLoading: false }
 vi.mock("@/api/queries/features.queries", () => ({
   useFeatures: () => ({ data: { storageEnabled: false, defaultAiAgentRagEnabled: false } }),
 }));
+// T1315 — the site's own agent is loaded by id; these sites bind none.
+vi.mock("@/api/queries/ai-agent.queries", () => ({
+  useAiAgent: () => ({ data: undefined }),
+}));
 vi.mock("@/api/queries/sn-chat-enabled.queries", () => ({
   useSnChatEnabled: () => probe,
 }));

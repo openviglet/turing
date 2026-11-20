@@ -91,18 +91,18 @@ class TurSNManifestGenAiConvergerTest {
         assertThat(converger.converge(site, genAi)).isTrue();
 
         assertThat(site.getTurSNSiteGenAi()).isNotNull();
-        assertThat(site.getTurSNSiteGenAi().getTurAIAgent()).isNull();
+        assertThat(site.getTurSNSiteGenAi().getTurAIAgentId()).isNull();
         assertThat(site.getTurSNSiteGenAi().getKnowledgeBaseMode()).isEqualTo(TurSNKnowledgeBaseMode.VECTOR);
     }
 
     @Test
     void aNamedAgentAndModeAreBound() {
-        when(turAIAgentRepository.findById("a1")).thenReturn(Optional.of(agent("a1")));
+        when(turAIAgentRepository.existsById("a1")).thenReturn(true);
         when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         converger.converge(site, new TurSNManifestGenAi("a1", TurSNKnowledgeBaseMode.HYBRID));
 
-        assertThat(site.getTurSNSiteGenAi().getTurAIAgent().getId()).isEqualTo("a1");
+        assertThat(site.getTurSNSiteGenAi().getTurAIAgentId()).isEqualTo("a1");
         assertThat(site.getTurSNSiteGenAi().getKnowledgeBaseMode()).isEqualTo(TurSNKnowledgeBaseMode.HYBRID);
     }
 
@@ -110,7 +110,7 @@ class TurSNManifestGenAiConvergerTest {
     @Test
     void entityExtractionIsSetOnlyWhenDeclared() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();
-        live.setTurAIAgent(agent("a1"));
+        live.setTurAIAgentId("a1");
         site.setTurSNSiteGenAi(live);
         when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
@@ -126,7 +126,7 @@ class TurSNManifestGenAiConvergerTest {
     @Test
     void aMatchingBindingIsANoOp() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();
-        live.setTurAIAgent(agent("a1"));
+        live.setTurAIAgentId("a1");
         live.setKnowledgeBaseMode(TurSNKnowledgeBaseMode.HYBRID);
         site.setTurSNSiteGenAi(live);
         TurSNManifestGenAi genAi = new TurSNManifestGenAi("a1", null);
@@ -139,7 +139,7 @@ class TurSNManifestGenAiConvergerTest {
     @Test
     void switchingToTheDefaultAgentDropsTheSitesOwnAgentAndKeepsTheRest() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();
-        live.setTurAIAgent(agent("a1"));
+        live.setTurAIAgentId("a1");
         live.setSitePrompt("kept");
         site.setTurSNSiteGenAi(live);
         when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -147,27 +147,27 @@ class TurSNManifestGenAiConvergerTest {
         assertThat(converger.converge(site, new TurSNManifestGenAi("default", null))).isTrue();
 
         assertThat(site.getTurSNSiteGenAi()).isSameAs(live);
-        assertThat(live.getTurAIAgent()).isNull();
+        assertThat(live.getTurAIAgentId()).isNull();
         assertThat(live.getSitePrompt()).isEqualTo("kept");
     }
 
     @Test
     void anOmittedAgentKeepsTheLiveBindingsAgent() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();
-        live.setTurAIAgent(agent("a1"));
+        live.setTurAIAgentId("a1");
         site.setTurSNSiteGenAi(live);
         TurSNManifestGenAi genAi = new TurSNManifestGenAi(null, null);
 
         assertThat(converger.plan(site, genAi)).isFalse();
         assertThat(converger.converge(site, genAi)).isFalse();
-        assertThat(live.getTurAIAgent().getId()).isEqualTo("a1");
+        assertThat(live.getTurAIAgentId()).isEqualTo("a1");
         verify(turSNSiteGenAiRepository, never()).save(any());
     }
 
     @Test
     void anOmittedAgentStillChangesADifferingModeAndKeepsTheAgent() {
         TurSNSiteGenAi live = new TurSNSiteGenAi();
-        live.setTurAIAgent(agent("a1"));
+        live.setTurAIAgentId("a1");
         live.setKnowledgeBaseMode(TurSNKnowledgeBaseMode.VECTOR);
         site.setTurSNSiteGenAi(live);
         when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -175,7 +175,7 @@ class TurSNManifestGenAiConvergerTest {
 
         assertThat(converger.plan(site, genAi)).isTrue();
         assertThat(converger.converge(site, genAi)).isTrue();
-        assertThat(live.getTurAIAgent().getId()).isEqualTo("a1");
+        assertThat(live.getTurAIAgentId()).isEqualTo("a1");
         assertThat(live.getKnowledgeBaseMode()).isEqualTo(TurSNKnowledgeBaseMode.HYBRID);
     }
 
@@ -186,7 +186,7 @@ class TurSNManifestGenAiConvergerTest {
 
         assertThat(converger.plan(site, genAi)).isTrue();
         assertThat(converger.converge(site, genAi)).isTrue();
-        assertThat(site.getTurSNSiteGenAi().getTurAIAgent()).isNull();
+        assertThat(site.getTurSNSiteGenAi().getTurAIAgentId()).isNull();
     }
 
     @Test

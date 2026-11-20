@@ -56,6 +56,18 @@ class TurGenAiContextFactoryTest {
 
     private TurSNSiteGenAi turSNSiteGenAi;
 
+    /** T1315 — the binding names its agent by id; the mocked resolver answers it from here. */
+    private final java.util.Map<String, com.viglet.turing.agent.persistence.model.TurAIAgent> boundAgents =
+            new java.util.HashMap<>();
+
+    private void bindAgent(TurSNSiteGenAi genAi, com.viglet.turing.agent.persistence.model.TurAIAgent agent) {
+        if (agent.getId() == null) {
+            agent.setId("agent-" + (boundAgents.size() + 1));
+        }
+        boundAgents.put(agent.getId(), agent);
+        genAi.setTurAIAgentId(agent.getId());
+    }
+
     @BeforeEach
     void setUp() {
         turSNSiteGenAi = new TurSNSiteGenAi();
@@ -64,7 +76,7 @@ class TurGenAiContextFactoryTest {
         lenient().when(turDefaultAgentResolver.resolveEffectiveAgent(org.mockito.ArgumentMatchers.any()))
                 .thenAnswer(inv -> {
                     TurSNSiteGenAi g = inv.getArgument(0);
-                    return g == null ? null : g.getTurAIAgent();
+                    return g == null ? null : boundAgents.get(g.getTurAIAgentId());
                 });
     }
 
@@ -80,7 +92,7 @@ class TurGenAiContextFactoryTest {
         TurAIAgent agent = new TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(false);
-        turSNSiteGenAi.setTurAIAgent(agent);
+        bindAgent(turSNSiteGenAi, agent);
         TurGenAiContext context = factory.build(turSNSiteGenAi);
         assertFalse(context.isEnabled());
     }
@@ -91,7 +103,7 @@ class TurGenAiContextFactoryTest {
         agent.setEnabled(1);
         agent.setRagEnabled(true);
         // No LLM instances on the agent.
-        turSNSiteGenAi.setTurAIAgent(agent);
+        bindAgent(turSNSiteGenAi, agent);
         TurGenAiContext context = factory.build(turSNSiteGenAi);
         assertFalse(context.isEnabled());
     }
@@ -105,7 +117,7 @@ class TurGenAiContextFactoryTest {
         TurAIAgent agent = new TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
-        turSNSiteGenAi.setTurAIAgent(agent);
+        bindAgent(turSNSiteGenAi, agent);
         turSNSiteGenAi.setKnowledgeBaseMode(
                 com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
@@ -143,7 +155,7 @@ class TurGenAiContextFactoryTest {
         org.mockito.Mockito.lenient().when(agentRagInfra.embeddingModel(agent))
                 .thenReturn(java.util.Optional.of(embeddingModel));
 
-        turSNSiteGenAi.setTurAIAgent(agent);
+        bindAgent(turSNSiteGenAi, agent);
         turSNSiteGenAi.setKnowledgeBaseMode(
                 com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.HYBRID);
 
@@ -188,7 +200,7 @@ class TurGenAiContextFactoryTest {
         org.mockito.Mockito.lenient().when(agentRagInfra.embeddingModel(agent))
                 .thenReturn(java.util.Optional.of(embeddingModel));
 
-        turSNSiteGenAi.setTurAIAgent(agent);
+        bindAgent(turSNSiteGenAi, agent);
 
         when(turSecretCryptoService.decrypt("llm-encrypted")).thenReturn("llm-decrypted");
 

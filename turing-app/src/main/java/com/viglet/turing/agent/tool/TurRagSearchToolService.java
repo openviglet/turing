@@ -491,7 +491,7 @@ public class TurRagSearchToolService {
             return AgentRagFlags.defaults();
         }
         List<com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi> bindings =
-                snSiteGenAiRepository.findByTurAIAgent_Id(agentId);
+                snSiteGenAiRepository.findByTurAIAgentId(agentId);
         if (bindings.isEmpty()) {
             return AgentRagFlags.defaults();
         }

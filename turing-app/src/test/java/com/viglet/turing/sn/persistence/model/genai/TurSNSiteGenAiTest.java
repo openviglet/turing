@@ -26,18 +26,18 @@ class TurSNSiteGenAiTest {
     @Test
     void shouldSetAndGetAllProperties() {
         turSNSiteGenAi.setId("genai-id");
-        turSNSiteGenAi.setTurAIAgent(turAIAgent);
+        turSNSiteGenAi.setTurAIAgentId(turAIAgent.getId());
         turSNSiteGenAi.setSitePrompt("Site description.");
 
         assertThat(turSNSiteGenAi.getId()).isEqualTo("genai-id");
-        assertThat(turSNSiteGenAi.getTurAIAgent()).isEqualTo(turAIAgent);
+        assertThat(turSNSiteGenAi.getTurAIAgentId()).isEqualTo(turAIAgent.getId());
         assertThat(turSNSiteGenAi.getSitePrompt()).isEqualTo("Site description.");
     }
 
     @Test
     void shouldExposeDefaultValuesOnNoArgsConstructor() {
         assertThat(turSNSiteGenAi.getId()).isNull();
-        assertThat(turSNSiteGenAi.getTurAIAgent()).isNull();
+        assertThat(turSNSiteGenAi.getTurAIAgentId()).isNull();
         assertThat(turSNSiteGenAi.getSitePrompt()).isNull();
     }
 }

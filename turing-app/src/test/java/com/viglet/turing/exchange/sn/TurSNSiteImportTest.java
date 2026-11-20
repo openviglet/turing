@@ -229,8 +229,8 @@ class TurSNSiteImportTest {
                 verify(turSNSiteGenAiRepository).save(genAiCaptor.capture());
 
                 TurSNSiteGenAi savedGenAi = genAiCaptor.getValue();
-                org.assertj.core.api.Assertions.assertThat(savedGenAi.getTurAIAgent()).isNotNull();
-                org.assertj.core.api.Assertions.assertThat(savedGenAi.getTurAIAgent().getId())
+                org.assertj.core.api.Assertions.assertThat(savedGenAi.getTurAIAgentId()).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(savedGenAi.getTurAIAgentId())
                                 .isEqualTo("agent-1");
 
                 verify(turSNSiteRepository).saveAndFlush(any(TurSNSite.class));

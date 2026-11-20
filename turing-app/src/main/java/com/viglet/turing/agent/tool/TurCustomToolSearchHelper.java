@@ -113,11 +113,14 @@ public class TurCustomToolSearchHelper {
     private final TurGenAiContextFactory turGenAiContextFactory;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSiteSearchService turSNSiteSearchService;
+    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
     public TurCustomToolSearchHelper(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSiteSearchService turSNSiteSearchService) {
+            TurSNSiteSearchService turSNSiteSearchService,
+            com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver) {
+        this.turDefaultAgentResolver = turDefaultAgentResolver;
         this.turSNSearchProcess = turSNSearchProcess;
         this.turGenAiContextFactory = turGenAiContextFactory;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -199,7 +202,7 @@ public class TurCustomToolSearchHelper {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "turingSearch.ann: site '" + site + "' not found"));
         var genAi = snSite.getTurSNSiteGenAi();
-        var agent = genAi == null ? null : genAi.getTurAIAgent();
+        var agent = turDefaultAgentResolver.siteAgent(genAi);
         if (agent == null || agent.getEnabled() != 1 || !agent.isRagEnabled()) {
             throw new IllegalArgumentException(
                     "turingSearch.ann: RAG not enabled for site '" + site + "'");

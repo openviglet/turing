@@ -1784,3 +1784,4 @@
 - **T1318** — Every entity has a tenancy ruling (@TenantId, deliberate plain column, global, or through a tenant-scoped owner), listed in ADR 0005 and enforced by TurTenancyRulingConventionTest (design §CLXXXIX.14 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1319 (agent optimistic lock)** — An agent carries a @Version; a console save from an older version answers 409 instead of overwriting, a concurrent commit maps to 409, and the console sends the last version it received.
 - **T1310d** — TurSNSynonymType, TurSNSiteFacetFieldEnum and the two custom-sort enums live in the searchengine API, which sn imports; searchengine's imports of sn fell from 174 to 156.
+- **T1315h** — TurSNSiteGenAi holds turAIAgentId; TurDefaultAgentResolver.siteAgent loads the agent, the site listing reads RAG readiness in one batch, and the console picks and shows the agent by id.

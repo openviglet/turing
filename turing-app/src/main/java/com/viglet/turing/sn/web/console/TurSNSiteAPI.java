@@ -111,7 +111,23 @@ public class TurSNSiteAPI {
         // tenant isolation is now enforced automatically by the Hibernate
         // @TenantId discriminator on TurSNSite (T260).
         List<TurSNSite> sites = turSNSiteRepository.findAllForListing();
-        return turSNSiteMapper.toListDtoList(sites);
+        // T1315 — the GenAI binding holds its agent by id: load the named agents
+        // once, and a site is GenAI-enabled when its agent is enabled with RAG on.
+        java.util.Set<String> agentIds = sites.stream()
+                .map(TurSNSite::getTurSNSiteGenAi)
+                .filter(java.util.Objects::nonNull)
+                .map(TurSNSiteGenAi::getTurAIAgentId)
+                .filter(java.util.Objects::nonNull)
+                .collect(java.util.stream.Collectors.toSet());
+        java.util.Set<String> ragReady = agentIds.isEmpty() ? java.util.Set.of()
+                : turAIAgentRepository.findAllById(agentIds).stream()
+                        .filter(agent -> agent.getEnabled() == 1 && agent.isRagEnabled())
+                        .map(com.viglet.turing.agent.persistence.model.TurAIAgent::getId)
+                        .collect(java.util.stream.Collectors.toSet());
+        return sites.stream()
+                .map(site -> turSNSiteMapper.toListDto(site, site.getTurSNSiteGenAi() != null
+                        && ragReady.contains(site.getTurSNSiteGenAi().getTurAIAgentId())))
+                .toList();
     }
 
     @Operation(summary = "Semantic Navigation Site structure")
@@ -186,13 +202,10 @@ public class TurSNSiteAPI {
             Optional.ofNullable(turSNSite.getTurSNSiteGenAi()).ifPresent(genAi -> {
                 TurSNSiteGenAi turSNSiteGenAi = Optional.ofNullable(turSNSiteEdit.getTurSNSiteGenAi())
                         .orElse(new TurSNSiteGenAi());
-                // Resolve agent reference from incoming payload — clients may send
-                // either a full TurAIAgent or just an object with the id field.
-                turSNSiteGenAi.setTurAIAgent(
-                        Optional.ofNullable(genAi.getTurAIAgent())
-                                .map(a -> a.getId() != null
-                                        ? turAIAgentRepository.findById(a.getId()).orElse(null)
-                                        : null)
+                // T1315 — the agent is held by id; keep it only when it exists.
+                turSNSiteGenAi.setTurAIAgentId(
+                        Optional.ofNullable(genAi.getTurAIAgentId())
+                                .filter(turAIAgentRepository::existsById)
                                 .orElse(null));
                 turSNSiteGenAi.setSitePrompt(genAi.getSitePrompt());
                 // T19 / T24 / T24b — RAG retrieval flags. Previously dropped

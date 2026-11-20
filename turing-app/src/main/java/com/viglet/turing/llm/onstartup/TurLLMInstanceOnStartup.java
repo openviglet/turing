@@ -332,10 +332,14 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
      * bundle meant to answer, so it is the one that gets the LLM and RAG infra.
      */
     private Optional<TurAIAgent> siteNamedAgent() {
+        // T1315 — the binding holds its agent by id; the lowest named id that exists wins.
         return turSNSiteGenAiRepository.findAll().stream()
-                .map(TurSNSiteGenAi::getTurAIAgent)
+                .map(TurSNSiteGenAi::getTurAIAgentId)
                 .filter(Objects::nonNull)
-                .min(Comparator.comparing(TurAIAgent::getId));
+                .sorted()
+                .map(turAIAgentRepository::findById)
+                .flatMap(Optional::stream)
+                .findFirst();
     }
 
     /** Creates the generic helpful-assistant agent for a truly fresh install. */

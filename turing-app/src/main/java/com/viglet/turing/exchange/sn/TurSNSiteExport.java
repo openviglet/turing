@@ -158,9 +158,6 @@ public class TurSNSiteExport {
 		TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
 		if (genAi != null) {
 			Hibernate.initialize(genAi);
-			if (genAi.getTurAIAgent() != null) {
-				Hibernate.initialize(genAi.getTurAIAgent());
-			}
 		}
 	}
 

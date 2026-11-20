@@ -445,7 +445,7 @@ public class TurSNSiteImport {
 			genAi.setSitePrompt(genAiExchange.getSitePrompt());
 			if (genAiExchange.getTurAIAgent() != null) {
 				turAIAgentRepository.findById(genAiExchange.getTurAIAgent())
-						.ifPresentOrElse(genAi::setTurAIAgent, () -> {
+						.ifPresentOrElse(agent -> genAi.setTurAIAgentId(agent.getId()), () -> {
 							String warning = "SN Site '" + turSNSiteExchange.getName() + "' names AI Agent '"
 									+ genAiExchange.getTurAIAgent()
 									+ "', which is neither in the bundle nor installed; it uses the default agent.";
