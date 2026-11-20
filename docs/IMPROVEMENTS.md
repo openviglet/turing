@@ -2504,6 +2504,23 @@ implementations become internal. sn and genai depend only on the interface, whic
 turing-search-lucene skill already names as the seam. The embedded Lucene vector store
 stays with rag.
 
+Landed: the engines and DSL are gathered (T1310), no sn class imports an engine package
+(T1310c), and the search-concept enums live in the searchengine API (T1310d).
+
+What is left is the other direction. The contract still takes TurSNSite and
+TurSNSiteLocale, and 37 engine files import sn 156 times, mostly to read a site's
+fields, facets, custom sorts, ranking expressions and targeting rules while building a
+query. Two ways out, and the choice is a person's:
+
+1. An SPI in searchengine (a site search configuration record and a provider interface)
+   that sn implements and the engines read. The engines keep building queries; sn owns
+   the configuration. Larger contract, no code moves between modules.
+2. Move SN query building (retrieveSearchResults and the facet and ranking translation)
+   into sn, leaving searchengine with index lifecycle, documents and raw queries. Smaller
+   contract, but each engine's query builder splits in two.
+
+Option 1 is the smaller step from today's code and keeps one owner per engine.
+
 ### CLXXXIX.11 Cross-module references by id (T1315)
 
 JPA associations cross the new module lines: agents to SN sites, SN GenAI settings to

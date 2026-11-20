@@ -31,3 +31,5 @@
 - ⏸ **T1265** (deps: —) **An answer with no [n] marker still sends every retrieved source as its citations** — set aside (Needs real answers from the demo's model.): Find why the demo's tent question is answered with no [n] marker, and make the prompt ask for one. → §CLXXXII.12
 
 ## Block CZ — Backend modules with verified boundaries
+
+- ⏸ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — set aside (Needs a choice: config SPI or SN query building moved into sn.): The engines still import sn 156 times to read site configuration. → §CLXXXIX.6
