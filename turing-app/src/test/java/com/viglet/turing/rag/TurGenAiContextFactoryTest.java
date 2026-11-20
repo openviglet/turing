@@ -36,6 +36,12 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurGenAiContextFactoryTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock
     private TurLlmModelFactory llmModelFactory;
 
@@ -139,9 +145,7 @@ class TurGenAiContextFactoryTest {
         TurLLMInstance llmInstance = new TurLLMInstance();
         llmInstance.setApiKeyEncrypted("llm-encrypted");
         llmInstance.setEnabled(1);
-        Set<TurLLMInstance> llms = new HashSet<>();
-        llms.add(llmInstance);
-        agent.setLlmInstances(llms);
+        agentLlms.attach(agent, llmInstance);
 
         TurStoreInstance storeInstance = new TurStoreInstance();
         storeInstance.setId("store-1");
@@ -184,9 +188,7 @@ class TurGenAiContextFactoryTest {
         TurLLMInstance llmInstance = new TurLLMInstance();
         llmInstance.setApiKeyEncrypted("llm-encrypted");
         llmInstance.setEnabled(1);
-        Set<TurLLMInstance> llms = new HashSet<>();
-        llms.add(llmInstance);
-        agent.setLlmInstances(llms);
+        agentLlms.attach(agent, llmInstance);
 
         TurStoreInstance storeInstance = new TurStoreInstance();
         storeInstance.setId("store-1");

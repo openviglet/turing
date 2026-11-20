@@ -49,7 +49,7 @@ class TurAIAgentRepositoryAdapterTest {
     @Test
     void findByIdReturnsMappedDomainWithLlmInstanceIds() {
         TurAIAgent entity = buildAgent("agent-1", "Support", 1);
-        entity.setLlmInstances(setOfLlms("llm-1", "llm-2"));
+        entity.setLlmInstanceIds(new java.util.HashSet<>(Set.of("llm-1", "llm-2")));
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(entity));
 
         Optional<TurAIAgentDomain> result = adapter.findById("agent-1");
@@ -95,7 +95,7 @@ class TurAIAgentRepositoryAdapterTest {
     @Test
     void llmInstanceIdsSetIsUnmodifiable() {
         TurAIAgent entity = buildAgent("agent-1", "X", 1);
-        entity.setLlmInstances(setOfLlms("llm-1"));
+        entity.setLlmInstanceIds(new java.util.HashSet<>(Set.of("llm-1")));
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(entity));
 
         Set<String> llmInstanceIds = adapter.findById("agent-1").orElseThrow().llmInstanceIds();

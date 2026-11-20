@@ -61,7 +61,7 @@ class TurCopilotServiceTest {
 
     private TurCopilotService newService(TurChatMessageEventBus bus) {
         return new TurCopilotService(agentRepository, chatFlowRepository, chatFlowEngineService,
-                chatMemoryService, chatAnalyticsService, bus, llmModelFactory, turSecretCryptoService);
+                chatMemoryService, chatAnalyticsService, bus, llmModelFactory, turSecretCryptoService, new com.viglet.turing.agent.InMemoryAgentLlmInstances().service());
     }
 
     @Test

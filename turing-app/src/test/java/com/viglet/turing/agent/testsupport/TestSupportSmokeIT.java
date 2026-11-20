@@ -57,7 +57,7 @@ class TestSupportSmokeIT extends AbstractAgentExecutorIT {
 
         TurAIAgent agent = createAgent("smoke", null);
         TurLLMInstance llm = createMockableLlmInstance();
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
 
         List<ChatResponse> events = runTurn(agent, llm, "hi");

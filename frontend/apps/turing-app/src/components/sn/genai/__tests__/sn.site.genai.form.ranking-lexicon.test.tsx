@@ -26,6 +26,9 @@ vi.mock("@/api/queries/sn-site.queries", () => ({
 vi.mock("@/api/queries/persona.queries", () => ({
   usePersonas: () => ({ data: [] }),
 }));
+vi.mock("@/api/queries/llm-instance.queries", () => ({
+  useAgentLlmInstances: () => [],
+}));
 
 vi.mock("@/services/agent/ai-agent.service", () => ({
   TurAIAgentService: class {

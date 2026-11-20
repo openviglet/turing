@@ -1794,3 +1794,4 @@
 - **T1315i** — An agent holds mcpServerIds on the same join table; TurAgentMcpServers loads the rows for tools, prompts, federation and export, and the console sends the ids.
 - **T1319b** — A persona carries a @Version; a console save from an older version answers 409, the update answers the merged version, and the console sends the last version it received.
 - **T1315j** — An agent holds personaIds on the same join table; TurAgentPersonas in the persona module loads catalog and default for the resolver, preview, export and SN audience, and the console sends ids.
+- **T1315k** — An agent holds llmInstanceIds on the same join table; TurAgentLlmInstances loads the rows in id order for every chat, eval and SN caller, and the console reads instances from its cached list.

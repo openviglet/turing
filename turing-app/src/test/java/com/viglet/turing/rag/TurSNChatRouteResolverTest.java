@@ -69,7 +69,7 @@ class TurSNChatRouteResolverTest {
         TurAIAgent agent = new TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
-        agent.setLlmInstances(new HashSet<>(List.of(new TurLLMInstance())));
+        agent.getLlmInstanceIds().add("llm-1");
         agent.setEmbeddingModelInstanceId("emb-1");
         agent.setStoreInstanceId("store-1");
         return agent;

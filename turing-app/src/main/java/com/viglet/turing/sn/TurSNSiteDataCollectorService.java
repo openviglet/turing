@@ -29,6 +29,7 @@ public class TurSNSiteDataCollectorService {
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
     public String collectSiteData(TurSNSite site) {
         StringBuilder sb = new StringBuilder();
@@ -137,9 +138,9 @@ public class TurSNSiteDataCollectorService {
         if (agent != null && agent.getEnabled() == 1 && agent.isRagEnabled()) {
             sb.append("- Enabled: yes\n");
             sb.append("- AI Agent: ").append(agent.getTitle()).append("\n");
-            if (agent.getLlmInstances() != null && !agent.getLlmInstances().isEmpty()) {
+            if (!agent.getLlmInstanceIds().isEmpty()) {
                 sb.append("- LLM: ")
-                        .append(agent.getLlmInstances().iterator().next().getTitle())
+                        .append(agentLlmInstances.of(agent).iterator().next().getTitle())
                         .append("\n");
             }
         } else {

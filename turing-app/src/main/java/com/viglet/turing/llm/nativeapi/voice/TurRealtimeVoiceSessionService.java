@@ -53,6 +53,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurRealtimeVoiceSessionService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurAIAgentRepository agentRepository;
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurNativeCapabilityService capabilityService;
@@ -62,7 +64,9 @@ public class TurRealtimeVoiceSessionService {
     public TurRealtimeVoiceSessionService(TurAIAgentRepository agentRepository,
             TurLLMInstanceRepository llmInstanceRepository,
             TurNativeCapabilityService capabilityService,
-            TurRealtimeVoiceProviderFactory providerFactory) {
+            TurRealtimeVoiceProviderFactory providerFactory,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.llmInstanceRepository = llmInstanceRepository;
         this.capabilityService = capabilityService;
@@ -161,7 +165,7 @@ public class TurRealtimeVoiceSessionService {
      */
     private TurLLMInstance resolveInstance(TurAIAgent agent, String llmInstanceId) {
         if (!StringUtils.hasText(llmInstanceId)) {
-            return agent.getLlmInstances().stream()
+            return agentLlmInstances.of(agent).stream()
                     .min(Comparator.comparing(TurLLMInstance::getId))
                     .orElseThrow(() -> new IllegalArgumentException(
                             "AI Agent '" + agent.getId() + "' has no LLM instance configured"));
@@ -169,7 +173,7 @@ public class TurRealtimeVoiceSessionService {
         TurLLMInstance instance = llmInstanceRepository.findById(llmInstanceId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "LLM instance not found: " + llmInstanceId));
-        boolean allowed = agent.getLlmInstances().stream()
+        boolean allowed = agentLlmInstances.of(agent).stream()
                 .anyMatch(llm -> llm.getId().equals(llmInstanceId));
         if (!allowed) {
             throw new IllegalArgumentException("LLM instance '" + llmInstanceId

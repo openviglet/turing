@@ -84,6 +84,8 @@ import reactor.core.publisher.Flux;
 @Tag(name = "Semantic Navigation with Generative AI", description = "Semantic Navigation with Generative AI API")
 public class TurSNSiteGenAiAPI {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     // --- S1192: extracted duplicated literals ---
     private static final String SITE = "site '";
     private static final String HEARTBEAT = "heartbeat";
@@ -156,7 +158,9 @@ public class TurSNSiteGenAiAPI {
 			com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
 			com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver,
-			com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe) {
+			com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
 		this.vectorProbe = vectorProbe;
 		this.turSNSearchProcess = turSNSearchProcess;
 		this.turGenAi = turGenAi;
@@ -398,10 +402,10 @@ public class TurSNSiteGenAiAPI {
 						: copilotConversation(siteName, request.messages(), locale, request.filters());
 			}
 			TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(turSNSiteGenAI);
-			TurLLMInstance llmInstance = agent.getLlmInstances().stream()
+			TurLLMInstance llmInstance = agentLlmInstances.of(agent).stream()
 					.filter(llm -> llm.getEnabled() == 1)
 					.findFirst()
-					.orElseGet(() -> agent.getLlmInstances().iterator().next());
+					.orElseGet(() -> agentLlmInstances.of(agent).iterator().next());
 			String collectionName = null;
 			var siteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
 			if (siteLocale != null) {

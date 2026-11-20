@@ -61,6 +61,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurGatewayModelRouter {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     public static final String AGENT_PREFIX = "turing-agent:";
     public static final String SN_PREFIX = "turing-sn:";
     public static final String LOCAL_PREFIX = "turing-local:";
@@ -84,7 +86,9 @@ public class TurGatewayModelRouter {
             TurSNSearchProcess snSearchProcess,
             TurGenAiContextFactory contextFactory,
             TurSNGenAi snGenAi,
-            com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService) {
+            com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.llmInstanceRepository = llmInstanceRepository;
         this.agentChatExecutor = agentChatExecutor;
@@ -127,7 +131,7 @@ public class TurGatewayModelRouter {
         if (agent.getEnabled() != 1) {
             throw new IllegalArgumentException("AI Agent is disabled: " + agentId);
         }
-        TurLLMInstance llmInstance = agent.getLlmInstances().stream()
+        TurLLMInstance llmInstance = agentLlmInstances.of(agent).stream()
                 .min(Comparator.comparing(TurLLMInstance::getId))
                 .orElseThrow(() -> new IllegalArgumentException(
                         "AI Agent '" + agentId + "' has no LLM instance configured"));

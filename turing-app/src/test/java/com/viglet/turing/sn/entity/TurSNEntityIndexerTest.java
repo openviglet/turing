@@ -43,6 +43,9 @@ import com.viglet.turing.sn.kb.TurTextNormalizer;
  */
 class TurSNEntityIndexerTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     private static final String TEXT = "Bruno Bosso and Antonio Prado spoke at USP in São Paulo.";
 
     private final TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
@@ -52,7 +55,7 @@ class TurSNEntityIndexerTest {
     private final TurMicrothesaurusDictionaryService dictionaryService = mock(TurMicrothesaurusDictionaryService.class);
     private final TurSNFieldProvisioner provisioner = mock(TurSNFieldProvisioner.class);
     private final TurSNEntityIndexer indexer = new TurSNEntityIndexer(genAiRepository, agentRepository,
-            agentResolver, extractor, dictionaryService, provisioner);
+            agentResolver, extractor, dictionaryService, provisioner, agentLlms.service());
 
     private final TurSNSite site = new TurSNSite();
     private final TurSNSiteGenAi genAi = new TurSNSiteGenAi();
@@ -65,7 +68,7 @@ class TurSNEntityIndexerTest {
         site.setTurSNSiteGenAi(genAi);
         llm.setId("llm-1");
         TurAIAgent agent = new TurAIAgent();
-        agent.setLlmInstances(Set.of(llm));
+        agentLlms.attach(agent, llm);
         when(genAiRepository.findById("genai-1")).thenReturn(Optional.of(genAi));
         when(agentResolver.resolveDefaultAgent()).thenReturn(agent);
         when(dictionaryService.getDictionary(any(), any())).thenReturn(TurRecognitionDictionary.builder()

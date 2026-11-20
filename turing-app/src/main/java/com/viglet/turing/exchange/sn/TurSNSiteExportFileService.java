@@ -44,6 +44,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurSNSiteExportFileService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
 	private static final String TMP_DIR = "store/tmp";
 	private static final String EXPORT_JSON = "export.json";
 	private static final String ZIP_EXTENSION = ".zip";
@@ -134,7 +136,9 @@ public class TurSNSiteExportFileService {
 	public TurSNSiteExportFileService(TurSNSiteExportValidator exportValidator,
 									  TurStorageService storageService,
 								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra,
-								  com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver) {
+								  com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
 		this.turDefaultAgentResolver = turDefaultAgentResolver;
 		this.agentRagInfra = agentRagInfra;
 		this.exportValidator = exportValidator;
@@ -282,8 +286,8 @@ public class TurSNSiteExportFileService {
 
 		// Pull the referenced LLM/store/embedding from the agent so the export
 		// bundle is self-contained even after the per-site fields were removed.
-		if (agent.getLlmInstances() != null) {
-			agent.getLlmInstances().forEach(llm -> {
+		if (!agent.getLlmInstanceIds().isEmpty()) {
+			agentLlmInstances.of(agent).forEach(llm -> {
 				if (llm != null && llm.getId() != null) {
 					llmInstances.putIfAbsent(llm.getId(), llm);
 				}

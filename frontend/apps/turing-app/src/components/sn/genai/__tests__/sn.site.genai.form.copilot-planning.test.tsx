@@ -24,6 +24,9 @@ vi.mock("@/api/queries/sn-site.queries", () => ({
 vi.mock("@/api/queries/persona.queries", () => ({
   usePersonas: () => ({ data: [] }),
 }));
+vi.mock("@/api/queries/llm-instance.queries", () => ({
+  useAgentLlmInstances: () => [],
+}));
 
 // The form eagerly loads reference data on mount; none of it is relevant to the
 // planning card, so every service resolves empty.

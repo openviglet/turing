@@ -60,6 +60,8 @@ import reactor.core.publisher.Flux;
 @Tag(name = "AI Agent Chat", description = "Chat using AI Agent configuration")
 public class TurAIAgentChatAPI {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurAIAgentRepositoryPort turAIAgentRepositoryPort;
     private final TurLLMInstanceRepository turLLMInstanceRepository;
@@ -90,7 +92,9 @@ public class TurAIAgentChatAPI {
             TurAgentWorkspace agentWorkspace,
             TurWorkspaceEventBus workspaceEventBus,
             TurChatSlotSseRegistry slotSseRegistry,
-            com.viglet.turing.agent.safety.TurModerationService moderationService) {
+            com.viglet.turing.agent.safety.TurModerationService moderationService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.turAIAgentRepository = turAIAgentRepository;
         this.turAIAgentRepositoryPort = turAIAgentRepositoryPort;
         this.turLLMInstanceRepository = turLLMInstanceRepository;
@@ -177,7 +181,7 @@ public class TurAIAgentChatAPI {
             // keeps the choice deterministic across calls (the relation is an
             // unordered Set). This lets public/headless clients (e.g. viglet.com)
             // depend only on the agentId.
-            turLLMInstance = agent.getLlmInstances().stream()
+            turLLMInstance = agentLlmInstances.of(agent).stream()
                     .min(Comparator.comparing(TurLLMInstance::getId))
                     .orElseThrow(() -> new IllegalArgumentException(
                             "AI Agent '" + agentId + "' has no LLM instance configured"));
@@ -186,7 +190,7 @@ public class TurAIAgentChatAPI {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "LLM instance not found: " + llmInstanceId));
 
-            boolean llmAllowed = agent.getLlmInstances().stream()
+            boolean llmAllowed = agentLlmInstances.of(agent).stream()
                     .anyMatch(llm -> llm.getId().equals(llmInstanceId));
             if (!llmAllowed) {
                 throw new IllegalArgumentException(

@@ -261,7 +261,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         com.viglet.turing.agent.persistence.model.TurAIAgent agentA = createAgent("contract-20-owner-A", null);
         com.viglet.turing.agent.persistence.model.TurAIAgent agentB = createAgent("contract-20-caller-B", null);
         com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
-        agentB.getLlmInstances().add(llm);
+        agentB.getLlmInstanceIds().add(llm.getId());
         agentB = agentRepository.save(agentB);
 
         com.viglet.turing.agent.persistence.model.TurChatFlow flowOfA =
@@ -408,7 +408,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
                         "/harness-it/persona-switch-mid-flow.chat-flow.json");
         com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch16", null);
         com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(

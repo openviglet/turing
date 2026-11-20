@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurGenAiContextFactory {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService turSecretCryptoService;
     private final TurRagContextBuilder turRagContextBuilder;
@@ -38,7 +40,9 @@ public class TurGenAiContextFactory {
             TurSecretCryptoService turSecretCryptoService,
             TurRagContextBuilder turRagContextBuilder,
             TurDefaultAgentResolver turDefaultAgentResolver,
-            com.viglet.turing.agent.TurAgentRagInfra agentRagInfra) {
+            com.viglet.turing.agent.TurAgentRagInfra agentRagInfra,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRagInfra = agentRagInfra;
         this.llmModelFactory = llmModelFactory;
         this.turSecretCryptoService = turSecretCryptoService;
@@ -140,12 +144,12 @@ public class TurGenAiContextFactory {
      * the first one (by id ordering) as the active one.
      */
     private TurLLMInstance pickLlmInstance(TurAIAgent agent) {
-        if (agent.getLlmInstances() == null || agent.getLlmInstances().isEmpty()) {
+        if (agent.getLlmInstanceIds().isEmpty()) {
             return null;
         }
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .filter(llm -> llm.getEnabled() == 1)
                 .findFirst()
-                .orElseGet(() -> agent.getLlmInstances().iterator().next());
+                .orElseGet(() -> agentLlmInstances.of(agent).iterator().next());
     }
 }

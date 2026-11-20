@@ -137,7 +137,7 @@ class TurAgentChatLatencyIT extends AbstractTuringSpringIT {
         TurAIAgent newAgent = new TurAIAgent();
         newAgent.setTitle("latency-it-agent-" + UUID.randomUUID().toString().substring(0, 8));
         newAgent.setEnabled(1);
-        newAgent.setLlmInstances(Set.of(this.llm));
+        newAgent.getLlmInstanceIds().add(this.llm.getId());
         this.agent = agentRepository.save(newAgent);
     }
 

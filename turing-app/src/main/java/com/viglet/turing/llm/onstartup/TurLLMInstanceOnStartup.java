@@ -367,7 +367,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
         // this — provisioning never overrides an existing agent, so an install
         // already running picks it up by setting Chat mode to Auto in the UI.
         agent.setChatMode(com.viglet.turing.agent.persistence.model.TurAgentChatMode.AUTO);
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
 
         // Optional soft spend caps (T289–T291). Left null when unset/blank/<= 0,
         // which disables the corresponding gate.
@@ -391,10 +391,10 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
      * agent already has one, so a self-created agent is not double-wired.
      */
     private void ensureLlmWired(TurAIAgent agent, TurLLMInstance llm) {
-        if (agent.getLlmInstances() != null && !agent.getLlmInstances().isEmpty()) {
+        if (agent.getLlmInstanceIds() != null && !agent.getLlmInstanceIds().isEmpty()) {
             return;
         }
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         turAIAgentRepository.save(agent);
         log.info("Wired default LLM '{}' onto default agent '{}'.", llm.getId(), agent.getId());
     }

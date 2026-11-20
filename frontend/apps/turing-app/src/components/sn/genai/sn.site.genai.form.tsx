@@ -33,6 +33,7 @@ import type {
 } from "@/models/sn/sn-site-genai.model"
 import { useUpdateSnSite } from "@/api/queries/sn-site.queries"
 import { usePersonas } from "@/api/queries/persona.queries"
+import { useAgentLlmInstances } from "@/api/queries/llm-instance.queries"
 import { NOT_EMBEDDED, useSnAiCapabilities } from "@/api/queries/sn-ai-capabilities.queries"
 import { queryKeys } from "@/api/queries/keys"
 import { turingQueryClient } from "@/lib/query-client"
@@ -227,6 +228,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
         : undefined;
     const agentEmbeddingModelName = embeddingModels
         .find((m) => m.id === selectedAgent?.embeddingModelInstanceId)?.modelName;
+    // T1315 — the agent names its LLM instances by id.
+    const agentLlmTitle = useAgentLlmInstances(selectedAgent?.llmInstanceIds)[0]?.title;
     const agentStoreTitle = storeInstances
         .find((s) => s.id === selectedAgent?.storeInstanceId)?.title;
     // T790 — single source of truth for "vector RAG is active on this site". A
@@ -580,10 +583,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                 {agentStoreTitle}
                                             </div>
                                         )}
-                                        {selectedAgent.llmInstances?.[0]?.title && (
+                                        {agentLlmTitle && (
                                             <div>
                                                 <strong>{t("forms.snGenai.languageModel")}:</strong>{" "}
-                                                {selectedAgent.llmInstances[0].title}
+                                                {agentLlmTitle}
                                             </div>
                                         )}
                                     </div>

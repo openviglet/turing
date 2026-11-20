@@ -46,6 +46,9 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurAIAgentChatAPITest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock
     private TurAIAgentRepository turAIAgentRepository;
     @Mock
@@ -95,7 +98,7 @@ class TurAIAgentChatAPITest {
                 llmProviderFactory, turSecretCryptoService, agentChatExecutor,
                 nativeChatExecutor,
                 turChatFlowRepository, chatFlowEngineService, urlSigner,
-                agentWorkspace, workspaceEventBus, slotSseRegistry, moderationService);
+                agentWorkspace, workspaceEventBus, slotSseRegistry, moderationService, agentLlms.service());
     }
 
     private static TurAIAgentDomain agentDomain(String id) {
@@ -202,7 +205,7 @@ class TurAIAgentChatAPITest {
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
         agent.setEnabled(1);
-        agent.setLlmInstances(Set.of(otherLlm));
+        agentLlms.attach(agent, otherLlm);
 
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(agent));
         when(turLLMInstanceRepository.findById("llm-1")).thenReturn(Optional.of(llmInstance));
@@ -228,7 +231,7 @@ class TurAIAgentChatAPITest {
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
         agent.setEnabled(1);
-        agent.setLlmInstances(Set.of(llmA, llmB));
+        agentLlms.attach(agent, llmA, llmB);
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(agent));
         when(agentChatExecutor.execute(
                 org.mockito.ArgumentMatchers.any(TurAgentChatRequest.class),

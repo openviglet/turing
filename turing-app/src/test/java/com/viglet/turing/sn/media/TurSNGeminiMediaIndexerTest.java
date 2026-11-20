@@ -49,6 +49,12 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 @ExtendWith(MockitoExtension.class)
 class TurSNGeminiMediaIndexerTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock
     private TurGeminiVideoUnderstandingService videoUnderstanding;
 
@@ -68,7 +74,7 @@ class TurSNGeminiMediaIndexerTest {
         llm.setEnabled(1);
 
         TurAIAgent agent = new TurAIAgent();
-        agent.setLlmInstances(new java.util.LinkedHashSet<>(List.of(llm)));
+        agentLlms.attach(agent, llm);
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setMediaUnderstandingIndexingEnabled(true);

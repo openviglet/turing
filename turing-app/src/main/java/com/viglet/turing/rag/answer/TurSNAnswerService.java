@@ -59,6 +59,8 @@ import reactor.core.publisher.Flux;
 @Service
 public class TurSNAnswerService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final String USER_ROLE = "user";
 
     private final TurSNSearchProcess turSNSearchProcess;
@@ -83,7 +85,9 @@ public class TurSNAnswerService {
             TurFollowUpQuestionService followUpQuestionService,
             TurGlobalSettingsService globalSettingsService,
             TurSNChatRouteResolver chatRouteResolver,
-            TurSNSiteVectorProbe vectorProbe) {
+            TurSNSiteVectorProbe vectorProbe,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.chatRouteResolver = chatRouteResolver;
         this.vectorProbe = vectorProbe;
         this.turSNSearchProcess = turSNSearchProcess;
@@ -140,13 +144,13 @@ public class TurSNAnswerService {
                     "AI is not enabled for site: " + siteName + " (" + route.reason() + ")"));
         }
         TurAIAgent agent = turDefaultAgentResolver.resolveEffectiveAgent(genAi);
-        if (agent == null || agent.getLlmInstances() == null || agent.getLlmInstances().isEmpty()) {
+        if (agent == null || agent.getLlmInstanceIds().isEmpty()) {
             return Flux.just(TurAnswerStreamFramer.errorEvent("No LLM configured for site: " + siteName));
         }
-        TurLLMInstance llmInstance = agent.getLlmInstances().stream()
+        TurLLMInstance llmInstance = agentLlmInstances.of(agent).stream()
                 .filter(llm -> llm.getEnabled() == 1)
                 .findFirst()
-                .orElseGet(() -> agent.getLlmInstances().iterator().next());
+                .orElseGet(() -> agentLlmInstances.of(agent).iterator().next());
 
         // T1189 — a locale the site has no index for never answers: a null
         // collection would send retrieval to the global store, another corpus.

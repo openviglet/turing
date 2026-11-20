@@ -1,5 +1,6 @@
 "use client"
 import { useUpdateAiAgent } from "@/api/queries/ai-agent.queries"
+import { useAgentLlmInstances } from "@/api/queries/llm-instance.queries"
 import { Switch } from "@/components/ui/switch"
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -80,14 +81,15 @@ export const AIAgentRequestOptionsForm: React.FC<Props> = ({ value }) => {
     setSavedJson(serializeOptions(parsed));
   }
 
+  const agentLlmInstances = useAgentLlmInstances(value.llmInstanceIds);
   const agentProviders = useMemo(() => {
     const set = new Set<string>();
-    for (const instance of value.llmInstances ?? []) {
+    for (const instance of agentLlmInstances) {
       const vendorId = instance.turLLMVendor?.id;
       if (vendorId) set.add(vendorId.toUpperCase());
     }
     return set;
-  }, [value.llmInstances]);
+  }, [agentLlmInstances]);
 
   /** REQUEST_OPTIONs grouped by category for visual layout. */
   const categories = useMemo(() => {

@@ -47,6 +47,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurDistillationProposalService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurAgentSuggestionRepository suggestionRepository;
     private final TurAIAgentRepository agentRepository;
     private final TurLLMInstanceRepository llmInstanceRepository;
@@ -55,7 +57,9 @@ public class TurDistillationProposalService {
     public TurDistillationProposalService(TurAgentSuggestionRepository suggestionRepository,
             TurAIAgentRepository agentRepository,
             TurLLMInstanceRepository llmInstanceRepository,
-            TurGlobalSettingsService globalSettingsService) {
+            TurGlobalSettingsService globalSettingsService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.suggestionRepository = suggestionRepository;
         this.agentRepository = agentRepository;
         this.llmInstanceRepository = llmInstanceRepository;
@@ -121,8 +125,8 @@ public class TurDistillationProposalService {
 
     /** Same resolution the distillation pipeline uses: first enabled agent LLM, else the default. */
     private TurLLMInstance resolveLlm(TurAIAgent agent) {
-        if (agent.getLlmInstances() != null) {
-            Optional<TurLLMInstance> agentLlm = agent.getLlmInstances().stream()
+        if (!agent.getLlmInstanceIds().isEmpty()) {
+            Optional<TurLLMInstance> agentLlm = agentLlmInstances.of(agent).stream()
                     .filter(l -> l.getEnabled() == 1)
                     .findFirst();
             if (agentLlm.isPresent()) {

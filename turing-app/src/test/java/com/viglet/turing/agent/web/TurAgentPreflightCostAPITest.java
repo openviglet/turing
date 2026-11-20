@@ -41,6 +41,12 @@ import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 @ExtendWith(MockitoExtension.class)
 class TurAgentPreflightCostAPITest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock private TurAIAgentRepository agentRepository;
     @Mock private TurTokenCountingService tokenCountingService;
     @Mock private TurLLMPriceService priceService;
@@ -58,7 +64,7 @@ class TurAgentPreflightCostAPITest {
         instance.setEnabled(1);
         instance.setModelName("gpt-4o");
         instance.setTurLLMVendor(vendor);
-        agent.setLlmInstances(Set.of(instance));
+        agentLlms.attach(agent, instance);
         return agent;
     }
 

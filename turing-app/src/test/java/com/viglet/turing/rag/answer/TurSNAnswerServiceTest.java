@@ -54,6 +54,12 @@ import reactor.core.publisher.Flux;
 @ExtendWith(MockitoExtension.class)
 class TurSNAnswerServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock
     private TurSNSearchProcess turSNSearchProcess;
     @Mock
@@ -99,7 +105,7 @@ class TurSNAnswerServiceTest {
         TurAIAgent agent = new TurAIAgent();
         TurLLMInstance llm = new TurLLMInstance();
         llm.setEnabled(1);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("sn_site1_en");
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
@@ -182,7 +188,7 @@ class TurSNAnswerServiceTest {
         TurAIAgent agent = new TurAIAgent();
         TurLLMInstance llm = new TurLLMInstance();
         llm.setEnabled(1);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("sn_site1_en");
 
@@ -215,7 +221,7 @@ class TurSNAnswerServiceTest {
         TurAIAgent agent = new TurAIAgent();
         TurLLMInstance llm = new TurLLMInstance();
         llm.setEnabled(1);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
         when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
@@ -252,7 +258,7 @@ class TurSNAnswerServiceTest {
         TurAIAgent agent = new TurAIAgent();
         TurLLMInstance llm = new TurLLMInstance();
         llm.setEnabled(1);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
         when(chatRouteResolver.resolve(null)).thenReturn(RAG);
@@ -295,7 +301,7 @@ class TurSNAnswerServiceTest {
         TurAIAgent agent = new TurAIAgent();
         TurLLMInstance llm = new TurLLMInstance();
         llm.setEnabled(1);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
         when(chatRouteResolver.resolve(null)).thenReturn(RAG);
         when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);

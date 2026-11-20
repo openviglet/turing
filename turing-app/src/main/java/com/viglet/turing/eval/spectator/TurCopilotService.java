@@ -73,6 +73,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurCopilotService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurAIAgentRepository agentRepository;
     private final TurChatFlowRepository chatFlowRepository;
     private final TurChatFlowEngineService chatFlowEngineService;
@@ -89,7 +91,9 @@ public class TurCopilotService {
             TurChatAnalyticsService chatAnalyticsService,
             TurChatMessageEventBus chatMessageEventBus,
             TurLlmModelFactory llmModelFactory,
-            TurSecretCryptoService turSecretCryptoService) {
+            TurSecretCryptoService turSecretCryptoService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.chatFlowRepository = chatFlowRepository;
         this.chatFlowEngineService = chatFlowEngineService;
@@ -267,7 +271,7 @@ public class TurCopilotService {
      */
     private ChatModel buildAuxiliaryModel(TurAIAgent agent) {
         try {
-            Optional<TurLLMInstance> llmOpt = agent.getLlmInstances().stream()
+            Optional<TurLLMInstance> llmOpt = agentLlmInstances.of(agent).stream()
                     .min(Comparator.comparing(TurLLMInstance::getId));
             if (llmOpt.isEmpty()) {
                 return null;

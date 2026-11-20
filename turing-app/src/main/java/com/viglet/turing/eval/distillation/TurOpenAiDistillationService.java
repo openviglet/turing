@@ -67,6 +67,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurOpenAiDistillationService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurNativeProviderClient nativeClient;
     private final TurGenAiLlmProviderFactory providerFactory;
     private final TurConfigProperties configProperties;
@@ -85,7 +87,9 @@ public class TurOpenAiDistillationService {
             TurDistillationJobRepository jobRepository,
             TurGlobalSettingsService globalSettingsService,
             TurAgentEvalRunnerService evalRunnerService,
-            TurDistillationProposalService proposalService) {
+            TurDistillationProposalService proposalService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.nativeClient = nativeClient;
         this.providerFactory = providerFactory;
         this.configProperties = configProperties;
@@ -381,8 +385,8 @@ public class TurOpenAiDistillationService {
     }
 
     private TurLLMInstance resolveLlm(TurAIAgent agent) {
-        if (agent.getLlmInstances() != null) {
-            Optional<TurLLMInstance> agentLlm = agent.getLlmInstances().stream()
+        if (!agent.getLlmInstanceIds().isEmpty()) {
+            Optional<TurLLMInstance> agentLlm = agentLlmInstances.of(agent).stream()
                     .filter(l -> l.getEnabled() == 1)
                     .findFirst();
             if (agentLlm.isPresent()) {

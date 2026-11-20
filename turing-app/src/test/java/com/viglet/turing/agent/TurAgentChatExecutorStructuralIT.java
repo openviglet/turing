@@ -137,7 +137,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
                         "/harness-it/persona-switch-mid-flow.chat-flow.json");
         com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch1", null);
         com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(
@@ -363,7 +363,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
 
         com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch6", null);
         com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(
@@ -672,7 +672,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         // — no in-memory patching needed.
         com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch3", null);
         com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
-        agent.getLlmInstances().add(llm);
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(

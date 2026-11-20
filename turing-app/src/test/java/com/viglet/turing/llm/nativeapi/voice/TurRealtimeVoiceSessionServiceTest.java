@@ -39,6 +39,9 @@ import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 @ExtendWith(MockitoExtension.class)
 class TurRealtimeVoiceSessionServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock private TurAIAgentRepository agentRepository;
     @Mock private TurLLMInstanceRepository llmInstanceRepository;
     @Mock private TurNativeCapabilityService capabilityService;
@@ -53,7 +56,7 @@ class TurRealtimeVoiceSessionServiceTest {
     @BeforeEach
     void setUp() {
         service = new TurRealtimeVoiceSessionService(agentRepository, llmInstanceRepository,
-                capabilityService, providerFactory);
+                capabilityService, providerFactory, agentLlms.service());
         instance = new TurLLMInstance();
         instance.setId("inst-1");
         agent = new TurAIAgent();
@@ -61,7 +64,7 @@ class TurRealtimeVoiceSessionServiceTest {
         agent.setTitle("Voice Agent");
         agent.setEnabled(1);
         agent.setSystemPrompt("You are Marina, a helpful concierge.");
-        agent.setLlmInstances(Set.of(instance));
+        agentLlms.attach(agent, instance);
     }
 
     private void stubVoiceEnabled(String configJson) {

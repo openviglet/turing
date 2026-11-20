@@ -51,6 +51,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Agent Pre-flight Cost", description = "F.7 §X.8.g — per-turn cost quote gate")
 public class TurAgentPreflightCostAPI {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     /** Fallback expected output tokens when the instance has no numPredict. */
     private static final int DEFAULT_OUTPUT_TOKENS = 500;
 
@@ -60,7 +62,9 @@ public class TurAgentPreflightCostAPI {
 
     public TurAgentPreflightCostAPI(TurAIAgentRepository agentRepository,
             TurTokenCountingService tokenCountingService,
-            TurLLMPriceService priceService) {
+            TurLLMPriceService priceService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.tokenCountingService = tokenCountingService;
         this.priceService = priceService;
@@ -118,10 +122,7 @@ public class TurAgentPreflightCostAPI {
     }
 
     private TurLLMInstance firstEnabledInstance(TurAIAgent agent) {
-        if (agent.getLlmInstances() == null) {
-            return null;
-        }
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .filter(i -> i != null && i.getEnabled() == 1)
                 .findFirst()
                 .orElse(null);

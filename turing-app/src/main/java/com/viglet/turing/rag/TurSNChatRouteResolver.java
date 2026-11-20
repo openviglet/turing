@@ -115,7 +115,7 @@ public class TurSNChatRouteResolver {
         if (!agent.isRagEnabled()) {
             return TurSNChatDisabledReason.RAG_DISABLED;
         }
-        if (agent.getLlmInstances() == null || agent.getLlmInstances().isEmpty()) {
+        if (agent.getLlmInstanceIds().isEmpty()) {
             return TurSNChatDisabledReason.MISSING_LLM;
         }
         if (agent.getEmbeddingModelInstanceId() == null) {

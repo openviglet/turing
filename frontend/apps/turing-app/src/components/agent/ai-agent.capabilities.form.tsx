@@ -1,5 +1,6 @@
 "use client"
 import { useUpdateAiAgent } from "@/api/queries/ai-agent.queries"
+import { useAgentLlmInstances } from "@/api/queries/llm-instance.queries"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { TurAIAgent } from "@/models/agent/ai-agent.model.ts"
@@ -68,14 +69,15 @@ export const AIAgentCapabilitiesForm: React.FC<Props> = ({ value }) => {
   }
 
   /** The providers the agent's bound LLM instances can actually run (vendor id, upper-cased). */
+  const agentLlmInstances = useAgentLlmInstances(value.llmInstanceIds);
   const agentProviders = useMemo(() => {
     const set = new Set<string>();
-    for (const instance of value.llmInstances ?? []) {
+    for (const instance of agentLlmInstances) {
       const vendorId = instance.turLLMVendor?.id;
       if (vendorId) set.add(vendorId.toUpperCase());
     }
     return set;
-  }, [value.llmInstances]);
+  }, [agentLlmInstances]);
 
   /** Capabilities grouped by abstract function, in a stable category-then-function order. */
   const functionGroups = useMemo(() => {

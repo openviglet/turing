@@ -83,6 +83,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurChatMultiModalSlotService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     /** Conversation-scoped object-storage prefix for multi-modal slot binaries. */
     static final String SLOT_STORAGE_PREFIX = "chat-slots/";
 
@@ -101,7 +103,9 @@ public class TurChatMultiModalSlotService {
             TurChatFlowEngineService engineService,
             TurAIAgentSlotRepository slotRepository,
             TurGeminiVideoUnderstandingService videoUnderstanding,
-            TurTranscriptionService transcriptionService) {
+            TurTranscriptionService transcriptionService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.storageService = storageService;
         this.llmProviderFactory = llmProviderFactory;
         this.cryptoService = cryptoService;
@@ -413,13 +417,10 @@ public class TurChatMultiModalSlotService {
 
     /** The agent's active LLM instance (first enabled, else first), or null. */
     private TurLLMInstance resolveLlmInstance(TurAIAgent agent) {
-        if (agent.getLlmInstances() == null) {
-            return null;
-        }
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .filter(l -> l.getEnabled() == 1)
                 .findFirst()
-                .orElseGet(() -> agent.getLlmInstances().stream().findFirst().orElse(null));
+                .orElseGet(() -> agentLlmInstances.of(agent).stream().findFirst().orElse(null));
     }
 
     private String resolveContentType(MultipartFile file) {

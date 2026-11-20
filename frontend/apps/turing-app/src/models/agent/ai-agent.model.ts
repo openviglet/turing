@@ -1,5 +1,4 @@
 import type { TurCustomTool } from "../customtool/custom-tool.model.ts";
-import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
 
 /**
  * Per-agent toggle for how the executor issues the LLM round-trip.
@@ -200,7 +199,8 @@ export interface TurAIAgent {
    * pre-2026.2.7 behavior). @since 2026.2.7
    */
   pythonRequirements?: string | null;
-  llmInstances: TurLLMInstance[];
+  /** T1315 — the LLM instances this agent may chat with, by id. */
+  llmInstanceIds: string[];
   /** T1315 — the MCP servers this agent may call, by id. */
   mcpServerIds: string[];
   customTools: TurCustomTool[];

@@ -159,7 +159,7 @@ public class TurSNSearchProcess {
          *
          * <p>This is the genai/ann accessor: 22 call sites across 11 files take what
          * it returns and walk {@code turSNSiteGenAi -> turAIAgent} and past it, into
-         * {@code agent.getLlmInstances()} and {@code agent.getPersonaIds()}. Those two
+         * {@code agent.getLlmInstanceIds()} and {@code agent.getPersonaIds()}. Those two
          * are {@code LAZY} and are <em>not</em> covered by the snapshot query's two
          * fetch joins, so serving them off a detached instance cached in an earlier
          * request left them as proxies on a closed session — the failure mode Block

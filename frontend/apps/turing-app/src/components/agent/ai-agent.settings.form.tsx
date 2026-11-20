@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useCreateAiAgent, useUpdateAiAgent } from "@/api/queries/ai-agent.queries"
+import { useAgentLlmInstances } from "@/api/queries/llm-instance.queries"
 import type { TurAIAgent, TurAgentChatMode } from "@/models/agent/ai-agent.model.ts"
 import type { TurEmbeddingModel } from "@/models/embedding/embedding-model.model"
 import type { TurSEInstance } from "@/models/se/se-instance.model"
@@ -99,6 +100,8 @@ const AgentFormSection: React.FC<SectionProps> = ({
 
 export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }) => {
   const { t } = useTranslation();
+  // T1315 — the agent names its LLM instances by id; the budget downgrade picker lists them.
+  const agentLlmInstances = useAgentLlmInstances(value.llmInstanceIds);
   const urlBase = baseRoute ?? ROUTES.BENTO_AI_AGENT_INSTANCE;
 
   // Stable alias so the ~15 <Section> call sites below stay unchanged. Its
@@ -162,7 +165,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
       description: value.description ?? "",
       systemPrompt: value.systemPrompt ?? "",
       nativeTools: value.nativeTools ?? null,
-      llmInstances: value.llmInstances ?? [],
+      llmInstanceIds: value.llmInstanceIds ?? [],
       mcpServerIds: value.mcpServerIds ?? [],
       // Status toggle lives in the bento dashboard hero, not in this form.
       // Default new agents to enabled so they appear in pickers (e.g. the
@@ -1296,7 +1299,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
                           disabled={!form.watch("monthlyBudgetUsd")}
                         >
                           <option value="">{t("forms.agentSettings.budgetWarnOnly", { defaultValue: "Warn only (no downgrade)" })}</option>
-                          {(form.watch("llmInstances") ?? []).map((llm) => (
+                          {agentLlmInstances.map((llm) => (
                             <option key={llm.id} value={llm.id}>{llm.title}</option>
                           ))}
                         </select>

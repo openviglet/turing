@@ -55,7 +55,7 @@ class TurGatewayModelRouterTest {
 
     private TurGatewayModelRouter router() {
         return new TurGatewayModelRouter(agentRepository, llmInstanceRepository, agentChatExecutor,
-                snSearchProcess, contextFactory, snGenAi, catalogCopilotService);
+                snSearchProcess, contextFactory, snGenAi, catalogCopilotService, new com.viglet.turing.agent.InMemoryAgentLlmInstances().service());
     }
 
     @Test

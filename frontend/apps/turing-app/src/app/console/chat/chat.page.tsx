@@ -138,7 +138,7 @@ export default function ChatPage({
   // LLM instances filtered by active agent
   const visibleLlmInstances = useMemo(() => {
     if (!activeAgent) return llmInstances
-    const agentLlmIds = new Set(activeAgent.llmInstances.map((l) => l.id))
+    const agentLlmIds = new Set(activeAgent.llmInstanceIds ?? [])
     return llmInstances.filter((i) => agentLlmIds.has(i.id))
   }, [activeAgent, llmInstances])
 

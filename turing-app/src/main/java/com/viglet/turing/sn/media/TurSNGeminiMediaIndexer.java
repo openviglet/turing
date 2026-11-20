@@ -66,6 +66,7 @@ public class TurSNGeminiMediaIndexer {
 
     private final TurGeminiVideoUnderstandingService videoUnderstanding;
     private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
     /**
      * Runs understanding on the document's media asset and appends the transcript
@@ -113,13 +114,13 @@ public class TurSNGeminiMediaIndexer {
     /** The GenAI agent's active LLM instance (first enabled, else first), or null. */
     private TurLLMInstance resolveLlmInstance(TurSNSiteGenAi genAi) {
         TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
-        if (agent == null || agent.getLlmInstances() == null) {
+        if (agent == null || agent.getLlmInstanceIds().isEmpty()) {
             return null;
         }
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .filter(l -> l.getEnabled() == 1)
                 .findFirst()
-                .orElseGet(() -> agent.getLlmInstances().stream().findFirst().orElse(null));
+                .orElseGet(() -> agentLlmInstances.of(agent).stream().findFirst().orElse(null));
     }
 
     /** The {@value #MEDIA_URL_ATTR} attribute when present, else the {@code url} field. */

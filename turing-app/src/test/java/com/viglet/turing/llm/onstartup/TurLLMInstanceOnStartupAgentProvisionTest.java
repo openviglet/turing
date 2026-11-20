@@ -93,7 +93,7 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         verify(turAIAgentRepository).save(captor.capture());
         TurAIAgent created = captor.getValue();
         assertThat(created.getTitle()).isEqualTo("Default Agent");
-        assertThat(created.getLlmInstances()).hasSize(1);
+        assertThat(created.getLlmInstanceIds()).hasSize(1);
         // The auto-provisioned default agent backs the zero-config public demo's
         // SN chat (T622 fallback), so it ships grounded to the site's content.
         assertThat(created.getGroundingMode())
@@ -136,7 +136,7 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         // Adopted as the global default (not a freshly-created generic agent).
         verify(turGlobalSettingsService).updateDefaultAiAgentId("imported-1");
         // The env-key LLM was wired onto the imported agent.
-        assertThat(imported.getLlmInstances()).hasSize(1);
+        assertThat(imported.getLlmInstanceIds()).hasSize(1);
         verify(turAIAgentRepository).save(imported);
     }
 
@@ -165,8 +165,8 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         runner.run(args);
 
         verify(turGlobalSettingsService).updateDefaultAiAgentId("agent-turing-demo");
-        assertThat(demo.getLlmInstances()).hasSize(1);
-        assertThat(admissions.getLlmInstances()).isEmpty();
+        assertThat(demo.getLlmInstanceIds()).hasSize(1);
+        assertThat(admissions.getLlmInstanceIds()).isEmpty();
     }
 
     @Test
@@ -209,13 +209,13 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
     void importedAgentAlreadyWiredIsNotDoubleWired() {
         TurAIAgent imported = new TurAIAgent();
         imported.setId("imported-1");
-        imported.getLlmInstances().add(new TurLLMInstance()); // already has an LLM
+        imported.getLlmInstanceIds().add("llm-already-wired"); // already has an LLM
         when(turAIAgentRepository.findAll()).thenReturn(List.of(imported));
 
         runner.run(args);
 
         verify(turGlobalSettingsService).updateDefaultAiAgentId("imported-1");
-        assertThat(imported.getLlmInstances()).hasSize(1); // unchanged
+        assertThat(imported.getLlmInstanceIds()).hasSize(1); // unchanged
         verify(turAIAgentRepository, never()).save(imported); // no re-wire save
     }
 

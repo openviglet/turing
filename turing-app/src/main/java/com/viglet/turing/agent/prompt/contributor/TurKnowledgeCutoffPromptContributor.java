@@ -43,9 +43,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurKnowledgeCutoffPromptContributor implements TurPromptContributor {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private final TurLlmModelCatalog modelCatalog;
 
-    public TurKnowledgeCutoffPromptContributor(TurLlmModelCatalog modelCatalog) {
+    public TurKnowledgeCutoffPromptContributor(TurLlmModelCatalog modelCatalog,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.modelCatalog = modelCatalog;
     }
 
@@ -100,11 +104,8 @@ public class TurKnowledgeCutoffPromptContributor implements TurPromptContributor
         }
     }
 
-    private static TurLLMInstance firstEnabledInstance(TurAIAgent agent) {
-        if (agent.getLlmInstances() == null) {
-            return null;
-        }
-        return agent.getLlmInstances().stream()
+    private TurLLMInstance firstEnabledInstance(TurAIAgent agent) {
+        return agentLlmInstances.of(agent).stream()
                 .filter(i -> i != null && i.getEnabled() == 1)
                 .findFirst()
                 .orElse(null);

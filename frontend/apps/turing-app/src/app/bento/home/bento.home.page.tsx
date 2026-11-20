@@ -80,10 +80,10 @@ export default function BentoHomePage() {
         const agent = await turAIAgentService.get(defaultAgentId);
         if (agent?.enabled !== 1) return;
         const enabledLlmIds = new Set((llmInstances ?? []).filter((i) => i.enabled === 1).map((i) => i.id));
-        const agentLlm = agent.llmInstances.find((l) => enabledLlmIds.has(l.id));
-        if (!agentLlm) return;
+        const agentLlmId = (agent.llmInstanceIds ?? []).find((id) => enabledLlmIds.has(id));
+        if (!agentLlmId) return;
         setDefaultAgent(agent);
-        setChatLlmId(agentLlm.id);
+        setChatLlmId(agentLlmId);
       } catch (err) {
         console.warn("Failed to load default AI agent for home chat:", err);
       }

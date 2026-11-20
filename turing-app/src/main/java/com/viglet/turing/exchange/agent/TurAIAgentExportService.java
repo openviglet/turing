@@ -79,6 +79,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurAIAgentExportService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final String TMP_DIR = "store/tmp";
     /**
      * Same name SN site export uses, so a future combined export can carry both
@@ -110,7 +112,9 @@ public class TurAIAgentExportService {
                                    TurStoreInstanceRepository storeInstanceRepository,
                                    com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository,
             com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
-            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
+            com.viglet.turing.persona.TurAgentPersonas agentPersonas,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentMcpServers = agentMcpServers;
         this.agentPersonas = agentPersonas;
         this.embeddingModelRepository = embeddingModelRepository;
@@ -174,8 +178,8 @@ public class TurAIAgentExportService {
         ReferenceBag refs = new ReferenceBag();
         // T1315 — the default persona is always a member of the catalog.
         agentPersonas.of(agent).forEach(p -> refs.personas.put(p.getId(), p));
-        if (agent.getLlmInstances() != null) {
-            agent.getLlmInstances().forEach(l -> refs.llms.put(l.getId(), l));
+        if (!agent.getLlmInstanceIds().isEmpty()) {
+            agentLlmInstances.of(agent).forEach(l -> refs.llms.put(l.getId(), l));
         }
         if (agent.getMcpServerIds() != null) {
             agentMcpServers.of(agent).forEach(m -> refs.mcpServers.put(m.getId(), m));

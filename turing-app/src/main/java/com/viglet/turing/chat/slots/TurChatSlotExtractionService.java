@@ -81,6 +81,8 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class TurChatSlotExtractionService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final TypeReference<Map<String, String>> STRING_MAP =
             new TypeReference<>() { };
@@ -95,7 +97,9 @@ public class TurChatSlotExtractionService {
     public TurChatSlotExtractionService(TurGenAiLlmProviderFactory llmProviderFactory,
             TurSecretCryptoService cryptoService,
             TurChatFlowEngineService engineService,
-            TurAIAgentSlotRepository slotRepository) {
+            TurAIAgentSlotRepository slotRepository,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.llmProviderFactory = llmProviderFactory;
         this.cryptoService = cryptoService;
         this.engineService = engineService;
@@ -554,10 +558,10 @@ public class TurChatSlotExtractionService {
 
     /** The LLM instance used for extraction: the first enabled one, else the first. */
     private TurLLMInstance resolveLlmInstance(TurAIAgent agent) {
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .filter(l -> l.getEnabled() == 1)
                 .findFirst()
-                .orElseGet(() -> agent.getLlmInstances().stream().findFirst().orElse(null));
+                .orElseGet(() -> agentLlmInstances.of(agent).stream().findFirst().orElse(null));
     }
 
     private ChatModel buildChatModel(TurLLMInstance llm) {

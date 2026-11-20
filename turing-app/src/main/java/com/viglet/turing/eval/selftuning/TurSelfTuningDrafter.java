@@ -40,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurSelfTuningDrafter {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final String JUDGE_SYSTEM = """
             You are a senior prompt engineer improving a chat agent's system prompt.
             Given the CURRENT prompt and a digest of recent FAILED conversations,
@@ -55,7 +57,9 @@ public class TurSelfTuningDrafter {
     public TurSelfTuningDrafter(TurLlmModelFactory llmModelFactory,
             TurLLMInstanceRepository llmInstanceRepository,
             TurSecretCryptoService secretCryptoService,
-            TurGlobalSettingsService globalSettingsService) {
+            TurGlobalSettingsService globalSettingsService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.llmModelFactory = llmModelFactory;
         this.llmInstanceRepository = llmInstanceRepository;
         this.secretCryptoService = secretCryptoService;
@@ -96,8 +100,8 @@ public class TurSelfTuningDrafter {
     }
 
     private TurLLMInstance resolveLlm(TurAIAgent agent) {
-        if (agent.getLlmInstances() != null) {
-            Optional<TurLLMInstance> agentLlm = agent.getLlmInstances().stream()
+        if (!agent.getLlmInstanceIds().isEmpty()) {
+            Optional<TurLLMInstance> agentLlm = agentLlmInstances.of(agent).stream()
                     .filter(l -> l.getEnabled() == 1).findFirst();
             if (agentLlm.isPresent()) {
                 return agentLlm.get();

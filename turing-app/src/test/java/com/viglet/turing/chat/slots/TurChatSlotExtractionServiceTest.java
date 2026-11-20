@@ -59,6 +59,9 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurChatSlotExtractionServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     private static final String CONV = "conv-1";
     private static final String AGENT_ID = "agent-1";
 
@@ -72,13 +75,13 @@ class TurChatSlotExtractionServiceTest {
     @BeforeEach
     void setUp() {
         service = new TurChatSlotExtractionService(llmProviderFactory, cryptoService,
-                engineService, slotRepository);
+                engineService, slotRepository, agentLlms.service());
     }
 
     private TurAIAgent agentWithLlm() {
         TurAIAgent agent = new TurAIAgent();
         agent.setId(AGENT_ID);
-        agent.setLlmInstances(java.util.Set.of(enabledLlm()));
+        agentLlms.attach(agent, enabledLlm());
         return agent;
     }
 
@@ -178,7 +181,7 @@ class TurChatSlotExtractionServiceTest {
                 .thenReturn(List.of(slot("name")));
         TurAIAgent agent = new TurAIAgent();
         agent.setId(AGENT_ID);
-        agent.setLlmInstances(java.util.Set.of());
+        
 
         SlotExtractionResult result = service.extract(
                 file("cv.png", "image/png", new byte[] { 1 }), agent, CONV, List.of());
@@ -289,7 +292,7 @@ class TurChatSlotExtractionServiceTest {
         llm.setFileUploadEnabled(true);
         TurAIAgent agent = new TurAIAgent();
         agent.setId(AGENT_ID);
-        agent.setLlmInstances(java.util.Set.of(llm));
+        agentLlms.attach(agent, llm);
 
         SlotExtractionResult result = service.extract(
                 file("cv.pdf", "application/pdf", new byte[] { 1, 2 }),

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   TurLLMInstance,
@@ -14,6 +15,18 @@ export function useLlmInstances() {
     queryKey: queryKeys.llmInstances.list(),
     queryFn: () => service.query(),
   });
+}
+
+/**
+ * T1315 — the instances an agent names by id, read from the cached list (an
+ * agent holds `llmInstanceIds`, not the instances themselves).
+ */
+export function useAgentLlmInstances(llmInstanceIds: readonly string[] | undefined) {
+  const { data } = useLlmInstances();
+  return useMemo(() => {
+    const ids = new Set(llmInstanceIds ?? []);
+    return (data ?? []).filter((instance) => ids.has(instance.id));
+  }, [data, llmInstanceIds]);
 }
 
 /** T782 — instances configured with a catalog-deprecated/retired model. */

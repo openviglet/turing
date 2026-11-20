@@ -89,6 +89,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurSNEntityIndexer {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     /** The facet field of each entity kind. */
     public static final String PERSON_FIELD = "entity_person";
     public static final String ORGANIZATION_FIELD = "entity_organization";
@@ -115,7 +117,9 @@ public class TurSNEntityIndexer {
     public TurSNEntityIndexer(TurSNSiteGenAiRepository turSNSiteGenAiRepository,
             TurAIAgentRepository turAIAgentRepository, TurDefaultAgentResolver defaultAgentResolver,
             TurSNEntityExtractor extractor, TurMicrothesaurusDictionaryService dictionaryService,
-            TurSNFieldProvisioner fieldProvisioner) {
+            TurSNFieldProvisioner fieldProvisioner,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
         this.turAIAgentRepository = turAIAgentRepository;
         this.defaultAgentResolver = defaultAgentResolver;
@@ -232,10 +236,10 @@ public class TurSNEntityIndexer {
     private TurLLMInstance llm(TurSNSiteGenAi genAi) {
         TurAIAgent agent = genAi.getTurAIAgentId() == null ? defaultAgentResolver.resolveDefaultAgent()
                 : turAIAgentRepository.findById(genAi.getTurAIAgentId()).orElse(null);
-        if (agent == null || agent.getLlmInstances() == null) {
+        if (agent == null || agent.getLlmInstanceIds().isEmpty()) {
             return null;
         }
-        return agent.getLlmInstances().stream().min(Comparator.comparing(TurLLMInstance::getId)).orElse(null);
+        return agentLlmInstances.of(agent).stream().min(Comparator.comparing(TurLLMInstance::getId)).orElse(null);
     }
 
     private static String extractText(TurSNSite turSNSite, Map<String, Object> attributes) {

@@ -41,6 +41,9 @@ import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 @ExtendWith(MockitoExtension.class)
 class TurKnowledgeCutoffPromptContributorTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock
     private TurLlmModelCatalog modelCatalog;
 
@@ -54,7 +57,7 @@ class TurKnowledgeCutoffPromptContributorTest {
         instance.setEnabled(1);
         instance.setModelName(modelName);
         instance.setTurLLMVendor(vendor);
-        agent.setLlmInstances(Set.of(instance));
+        agentLlms.attach(agent, instance);
         return agent;
     }
 
@@ -71,14 +74,14 @@ class TurKnowledgeCutoffPromptContributorTest {
 
     @Test
     void emitsNothingWhenToggleOff() {
-        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog);
+        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog, agentLlms.service());
         assertThat(contributor.contribute(ctx(agent(false, "OPENAI", "gpt-4o")))).isEmpty();
     }
 
     @Test
     void injectsCutoffLineWhenToggleOnAndCatalogKnowsIt() {
         stubCatalog("openai", "gpt-4o", "2024-10");
-        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog);
+        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog, agentLlms.service());
 
         List<TurPromptSegment> segments = contributor.contribute(ctx(agent(true, "OPENAI", "gpt-4o")));
 
@@ -89,13 +92,13 @@ class TurKnowledgeCutoffPromptContributorTest {
     @Test
     void emitsNothingWhenCatalogHasNoCutoff() {
         stubCatalog("openai", "gpt-4o", null);
-        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog);
+        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog, agentLlms.service());
         assertThat(contributor.contribute(ctx(agent(true, "OPENAI", "gpt-4o")))).isEmpty();
     }
 
     @Test
     void orderIsAfterCapabilityBlocks() {
-        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog);
+        TurKnowledgeCutoffPromptContributor contributor = new TurKnowledgeCutoffPromptContributor(modelCatalog, agentLlms.service());
         assertThat(contributor.order()).isEqualTo(TurKnowledgeCutoffPromptContributor.ORDER_KNOWLEDGE_CUTOFF);
         assertThat(contributor.order()).isGreaterThan(TurKnowledgeCutoffPromptContributor.ORDER_CAPABILITY);
     }

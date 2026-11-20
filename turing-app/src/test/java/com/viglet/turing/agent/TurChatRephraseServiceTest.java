@@ -39,6 +39,9 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
  */
 class TurChatRephraseServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     private TurAIAgentRepository agentRepository;
     private TurPredictedOutputsResolver predictedOutputsResolver;
     private TurOpenAiPredictedOutputsService predictedOutputsService;
@@ -54,7 +57,7 @@ class TurChatRephraseServiceTest {
         llmModelFactory = mock(TurLlmModelFactory.class);
         secretCryptoService = mock(TurSecretCryptoService.class);
         service = new TurChatRephraseService(agentRepository, predictedOutputsResolver,
-                predictedOutputsService, llmModelFactory, secretCryptoService);
+                predictedOutputsService, llmModelFactory, secretCryptoService, agentLlms.service());
     }
 
     private TurAIAgent agentWithInstance(String instanceId) {
@@ -63,7 +66,7 @@ class TurChatRephraseServiceTest {
         instance.setModelName("gpt-4o");
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent1");
-        agent.getLlmInstances().add(instance);
+        agentLlms.attach(agent, instance);
         when(agentRepository.findById("agent1")).thenReturn(Optional.of(agent));
         return agent;
     }

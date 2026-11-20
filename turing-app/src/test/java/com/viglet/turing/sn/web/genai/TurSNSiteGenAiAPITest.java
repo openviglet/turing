@@ -37,6 +37,12 @@ import com.viglet.turing.system.TurGlobalSettingsService;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurSNSiteGenAiAPITest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     private MockMvc mockMvc;
 
     @Mock
@@ -218,8 +224,7 @@ class TurSNSiteGenAiAPITest {
         var agent = new com.viglet.turing.agent.persistence.model.TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
-        agent.setLlmInstances(new java.util.HashSet<>(java.util.List.of(
-                new com.viglet.turing.llm.persistence.model.TurLLMInstance())));
+        agent.getLlmInstanceIds().add("llm-1");
         bindAgent(genAi, agent);
         site.setTurSNSiteGenAi(genAi);
 

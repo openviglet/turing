@@ -64,6 +64,9 @@ import tools.jackson.databind.json.JsonMapper;
 @ExtendWith(MockitoExtension.class)
 class TurAIAgentExportServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock private TurAIAgentRepository agentRepository;
     @Mock private TurChatFlowRepository chatFlowRepository;
     @Mock private TurAIAgentSlotRepository slotRepository;
@@ -84,7 +87,7 @@ class TurAIAgentExportServiceTest {
                 slotRepository, intentRepository, evalSetRepository, mcpServerRepository,
                 storeInstanceRepository, embeddingModelRepository,
                 new com.viglet.turing.agent.TurAgentMcpServers(mcpServerRepository),
-                personas.service());
+                personas.service(), agentLlms.service());
     }
 
     @AfterEach
@@ -136,7 +139,7 @@ class TurAIAgentExportServiceTest {
         agent.setEnabled(1);
         agent.setRichContentEnabled(true); // T632 — must survive the export envelope
         personas.attachDefault(agent, persona);
-        agent.setLlmInstances(new HashSet<>(List.of(llm)));
+        agentLlms.attach(agent, llm);
         agent.setCustomTools(new HashSet<>(List.of(tool)));
 
         TurChatFlow flow = new TurChatFlow();

@@ -44,6 +44,12 @@ import com.viglet.turing.system.TurGlobalSettingsService;
 @ExtendWith(MockitoExtension.class)
 class TurDistillationProposalServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock private TurAgentSuggestionRepository suggestionRepository;
     @Mock private TurAIAgentRepository agentRepository;
     @Mock private TurLLMInstanceRepository llmInstanceRepository;
@@ -59,11 +65,11 @@ class TurDistillationProposalServiceTest {
         return i;
     }
 
-    private static TurAIAgent agentWith(TurLLMInstance... instances) {
+    private TurAIAgent agentWith(TurLLMInstance... instances) {
         TurAIAgent a = new TurAIAgent();
         a.setId("agent-1");
         a.setTitle("Agent");
-        a.setLlmInstances(Set.of(instances));
+        agentLlms.attach(a, instances);
         return a;
     }
 

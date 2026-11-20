@@ -73,6 +73,7 @@ public class TurChatRephraseService {
     private final TurOpenAiPredictedOutputsService predictedOutputsService;
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService secretCryptoService;
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
     /** Outcome of a rephrase request. {@code usedPrediction} reports whether the OpenAI fast-path ran. */
     public record RephraseResult(boolean success, String error, String rephrased, boolean usedPrediction) {
@@ -122,13 +123,13 @@ public class TurChatRephraseService {
 
     private TurLLMInstance resolveInstance(TurAIAgent agent, String llmInstanceId) {
         if (StringUtils.hasText(llmInstanceId)) {
-            return agent.getLlmInstances().stream()
+            return agentLlmInstances.of(agent).stream()
                     .filter(llm -> llm.getId().equals(llmInstanceId))
                     .findFirst()
                     .orElse(null);
         }
         // Deterministic default mirrors TurAIAgentChatAPI: lowest id of an unordered Set.
-        return agent.getLlmInstances().stream()
+        return agentLlmInstances.of(agent).stream()
                 .min(Comparator.comparing(TurLLMInstance::getId))
                 .orElse(null);
     }

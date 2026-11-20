@@ -182,8 +182,7 @@ public class TurAIAgentAPI {
             agentEdit.setNativeCapabilities(turAIAgent.getNativeCapabilities());
             // T435 / §X.18.d — per-agent REQUEST_OPTION selections.
             agentEdit.setRequestOptionsJson(turAIAgent.getRequestOptionsJson());
-            agentEdit.setLlmInstances(resolveRelations(
-                    turAIAgent.getLlmInstances(), turLLMInstanceRepository));
+            agentEdit.setLlmInstanceIds(existingLlmInstanceIds(turAIAgent.getLlmInstanceIds()));
             // T1315 — the MCP servers are held by id; keep only the ones that exist.
             agentEdit.setMcpServerIds(existingMcpServerIds(turAIAgent.getMcpServerIds()));
             agentEdit.setCustomTools(resolveRelations(
@@ -205,7 +204,7 @@ public class TurAIAgentAPI {
             agentEdit.setDefaultPersonaId(
                     validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
             agentEdit.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
-                    agentEdit.getLlmInstances(),
+                    agentEdit.getLlmInstanceIds(),
                     agentEdit.getEmbeddingModelInstanceId(),
                     agentEdit.getStoreInstanceId()));
             // Rich-content rendering opt-in (```html / ```d2 live preview).
@@ -332,8 +331,7 @@ public class TurAIAgentAPI {
         // provisioning, or need a flag threaded through to say "not this one".
         turTenantQuotaService.checkCanCreateAgent();
         TurAIAgent turAIAgent = turAIAgentMapper.toEntity(turAIAgentDto);
-        turAIAgent.setLlmInstances(resolveRelations(
-                turAIAgent.getLlmInstances(), turLLMInstanceRepository));
+        turAIAgent.setLlmInstanceIds(existingLlmInstanceIds(turAIAgent.getLlmInstanceIds()));
         turAIAgent.setMcpServerIds(existingMcpServerIds(turAIAgent.getMcpServerIds()));
         turAIAgent.setCustomTools(resolveRelations(
                 turAIAgent.getCustomTools(), turCustomToolRepository));
@@ -348,7 +346,7 @@ public class TurAIAgentAPI {
         turAIAgent.setDefaultPersonaId(
                 validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
         turAIAgent.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
-                turAIAgent.getLlmInstances(),
+                turAIAgent.getLlmInstanceIds(),
                 turAIAgent.getEmbeddingModelInstanceId(),
                 turAIAgent.getStoreInstanceId()));
         this.turAIAgentRepository.save(turAIAgent);
@@ -364,6 +362,15 @@ public class TurAIAgentAPI {
         java.util.Set<String> existing = new java.util.HashSet<>();
         if (requested != null && !requested.isEmpty()) {
             turMcpServerRepository.findAllById(requested).forEach(server -> existing.add(server.getId()));
+        }
+        return existing;
+    }
+
+    /** T1315 — the LLM instance ids that name an existing instance; the rest are dropped. */
+    private Set<String> existingLlmInstanceIds(Set<String> requested) {
+        Set<String> existing = new java.util.HashSet<>();
+        if (requested != null && !requested.isEmpty()) {
+            turLLMInstanceRepository.findAllById(requested).forEach(llm -> existing.add(llm.getId()));
         }
         return existing;
     }
@@ -435,13 +442,13 @@ public class TurAIAgentAPI {
      * still block the toggle on its side for a useful error message.
      */
     private boolean canEnableRag(boolean requested,
-            Set<com.viglet.turing.llm.persistence.model.TurLLMInstance> llmInstances,
+            Set<String> llmInstanceIds,
             String embeddingModelId,
             String storeInstanceId) {
         if (!requested) {
             return false;
         }
-        boolean hasLlm = llmInstances != null && !llmInstances.isEmpty();
+        boolean hasLlm = llmInstanceIds != null && !llmInstanceIds.isEmpty();
         boolean modelOk = embeddingModelId != null
                 || StringUtils.hasText(turGlobalSettingsService.getDefaultEmbeddingModelId());
         boolean storeOk = storeInstanceId != null

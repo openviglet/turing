@@ -58,9 +58,19 @@ class TurCustomToolAgentHelperTest {
     private static final String PARENT_CONV = "parent-conv-1";
 
     private TurCustomToolAgentHelper helper;
+    private final Map<String, TurLLMInstance> llmRows = new java.util.HashMap<>();
 
     @BeforeEach
     void setUp() {
+        org.mockito.Mockito.lenient().when(llmRepository.findAllById(any())).thenAnswer(inv -> {
+            java.util.List<TurLLMInstance> found = new java.util.ArrayList<>();
+            for (String id : inv.<Iterable<String>>getArgument(0)) {
+                if (llmRows.containsKey(id)) {
+                    found.add(llmRows.get(id));
+                }
+            }
+            return found;
+        });
         helper = new TurCustomToolAgentHelper(executor, agentRepository, llmRepository,
                 PARENT_CONV, 0);
     }
@@ -264,15 +274,15 @@ class TurCustomToolAgentHelperTest {
 
     // -- helpers --
 
-    private static TurAIAgent newAgent(String id, int enabled, TurLLMInstance llm) {
+    private TurAIAgent newAgent(String id, int enabled, TurLLMInstance llm) {
         TurAIAgent a = new TurAIAgent();
         a.setId(id);
         a.setTitle("Agent " + id);
         a.setEnabled(enabled);
         if (llm != null) {
-            HashSet<TurLLMInstance> set = new HashSet<>();
-            set.add(llm);
-            a.setLlmInstances(set);
+            // T1315 — the agent names its LLM by id; the repository serves the row.
+            llmRows.put(llm.getId(), llm);
+            a.getLlmInstanceIds().add(llm.getId());
         }
         return a;
     }

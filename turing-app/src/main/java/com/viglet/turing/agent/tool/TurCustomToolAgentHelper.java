@@ -79,6 +79,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurCustomToolAgentHelper {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     /** Default ceiling on recursive {@code agent.invoke(...)} calls. */
     public static final int DEFAULT_DEPTH_CAP = 3;
 
@@ -101,6 +103,8 @@ public class TurCustomToolAgentHelper {
             String parentConversationId,
             int currentDepth,
             int depthCap) {
+        // T1315 — the target agent names its LLMs by id; load them through the same repository.
+        this.agentLlmInstances = new com.viglet.turing.agent.TurAgentLlmInstances(llmRepository);
         this.executor = executor;
         this.agentRepository = agentRepository;
         this.llmRepository = llmRepository;
@@ -179,7 +183,7 @@ public class TurCustomToolAgentHelper {
 
     /** Diagnostic message for why {@code resolveLlm} returned null (no LLM, or a disallowed one). */
     private String llmNotResolvedMessage(TurAIAgent target, Map<String, ?> opts) {
-        if (target.getLlmInstances() == null || target.getLlmInstances().isEmpty()) {
+        if (target.getLlmInstanceIds().isEmpty()) {
             return "[agent.invoke: agent has no LLM configured]";
         }
         // The opts.llmInstanceId either didn't resolve or wasn't allowed.
@@ -247,19 +251,19 @@ public class TurCustomToolAgentHelper {
     private TurLLMInstance resolveLlm(TurAIAgent target, Map<String, ?> opts) {
         Object requested = opts == null ? null : opts.get("llmInstanceId");
         if (requested instanceof String requestedId && !requestedId.isBlank()) {
-            boolean allowed = target.getLlmInstances() != null
-                    && target.getLlmInstances().stream()
+            boolean allowed = !target.getLlmInstanceIds().isEmpty()
+                    && agentLlmInstances.of(target).stream()
                             .anyMatch(l -> requestedId.equals(l.getId()));
             if (!allowed) {
                 return null;
             }
             return llmRepository.findById(requestedId).orElse(null);
         }
-        if (target.getLlmInstances() == null || target.getLlmInstances().isEmpty()) {
+        if (target.getLlmInstanceIds().isEmpty()) {
             return null;
         }
         // Pick the first allowed LLM that still exists + is enabled.
-        for (TurLLMInstance candidate : target.getLlmInstances()) {
+        for (TurLLMInstance candidate : agentLlmInstances.of(target)) {
             TurLLMInstance fresh = llmRepository.findById(candidate.getId()).orElse(null);
             if (fresh != null && fresh.getEnabled() == 1) {
                 return fresh;

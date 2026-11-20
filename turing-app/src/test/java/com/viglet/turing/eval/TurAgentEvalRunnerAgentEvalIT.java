@@ -96,7 +96,7 @@ class TurAgentEvalRunnerAgentEvalIT extends AbstractTuringSpringIT {
         agent.setTitle("eval-it-agent-" + UUID.randomUUID().toString().substring(0, 8));
         agent.setEnabled(1);
         agent.setSystemPrompt("You are a friendly, concise assistant.");
-        agent.setLlmInstances(new HashSet<>(java.util.List.of(llm)));
+        agent.getLlmInstanceIds().add(llm.getId());
         agent = agentRepository.save(agent);
 
         TurAgentEvalSet set = new TurAgentEvalSet();

@@ -51,6 +51,12 @@ import reactor.core.publisher.Flux;
 @ExtendWith(MockitoExtension.class)
 class TurMcpAgentToolServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @Mock
     private TurAIAgentRepository turAIAgentRepository;
     @Mock
@@ -68,9 +74,9 @@ class TurMcpAgentToolServiceTest {
         agent.setDescription("desc-" + title);
         agent.setEnabled(enabled);
         if (llm != null) {
-            agent.setLlmInstances(Set.of(llm));
+            agentLlms.attach(agent, llm);
         } else {
-            agent.setLlmInstances(Set.of());
+            
         }
         return agent;
     }

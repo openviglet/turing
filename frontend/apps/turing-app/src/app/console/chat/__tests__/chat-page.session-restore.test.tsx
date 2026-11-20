@@ -12,7 +12,7 @@ vi.mock("@/services/agent/ai-agent.service", () => ({
   TurAIAgentService: class {
     query() {
       return Promise.resolve([
-        { id: "agent-1", enabled: 1, title: "Support Agent", icon: null, llmInstances: [{ id: "llm-1" }] },
+        { id: "agent-1", enabled: 1, title: "Support Agent", icon: null, llmInstanceIds: ["llm-1"] },
       ]);
     }
   },

@@ -84,6 +84,8 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class TurSystemPromptPreviewService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     // Mirrors TurAgentChatExecutor.DEFAULT_SYSTEM_PROMPT — the fallback used
     // when an agent has no system prompt of its own. Kept in sync manually
     // (both are tiny and rarely change); the preview labels it as a fallback.
@@ -127,7 +129,9 @@ public class TurSystemPromptPreviewService {
             TurToolCallTraceService toolCallTraceService,
             com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService,
             com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
-            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
+            com.viglet.turing.persona.TurAgentPersonas agentPersonas,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentMcpServers = agentMcpServers;
         this.agentPersonas = agentPersonas;
         this.promptAssemblyPipeline = promptAssemblyPipeline;
@@ -492,11 +496,8 @@ public class TurSystemPromptPreviewService {
     }
 
     /** The agent's first enabled LLM instance, or {@code null} when none. */
-    private static TurLLMInstance firstEnabledInstance(TurAIAgent agent) {
-        if (agent.getLlmInstances() == null) {
-            return null;
-        }
-        return agent.getLlmInstances().stream()
+    private TurLLMInstance firstEnabledInstance(TurAIAgent agent) {
+        return agentLlmInstances.of(agent).stream()
                 .filter(i -> i != null && i.getEnabled() == 1)
                 .findFirst()
                 .orElse(null);

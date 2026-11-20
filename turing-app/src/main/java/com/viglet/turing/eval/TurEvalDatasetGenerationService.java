@@ -84,6 +84,8 @@ import tools.jackson.databind.node.ObjectNode;
 @Service
 public class TurEvalDatasetGenerationService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /** Upper bound on rows synthesized per generate call (protects the LLM budget). */
@@ -110,7 +112,9 @@ public class TurEvalDatasetGenerationService {
             TurEvalDatasetRowRepository datasetRowRepository,
             TurGlobalSettingsService globalSettingsService,
             com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository llmInstanceRepository,
-            TurLlmModelFactory llmModelFactory, TurSecretCryptoService secretCryptoService) {
+            TurLlmModelFactory llmModelFactory, TurSecretCryptoService secretCryptoService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.slotRepository = slotRepository;
         this.chatFlowRepository = chatFlowRepository;
@@ -540,8 +544,8 @@ public class TurEvalDatasetGenerationService {
     // ─────────────────────────── LLM resolution (mirrors the eval runner) ───────────────────────────
 
     private TurLLMInstance resolveLlm(TurAIAgent agent) {
-        if (agent != null && agent.getLlmInstances() != null) {
-            Optional<TurLLMInstance> agentLlm = agent.getLlmInstances().stream()
+        if (agent != null) {
+            Optional<TurLLMInstance> agentLlm = agentLlmInstances.of(agent).stream()
                     .filter(l -> l.getEnabled() == 1).findFirst();
             if (agentLlm.isPresent()) {
                 return agentLlm.get();

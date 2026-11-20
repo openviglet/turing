@@ -40,6 +40,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurSNSiteDataCollectorServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock
     private TurSNSiteLocaleRepository snSiteLocaleRepository;
 
@@ -63,7 +66,7 @@ class TurSNSiteDataCollectorServiceTest {
                 snSiteLocaleRepository,
                 metricAccessRepository,
                 pluginFactory,
-                turDefaultAgentResolver);
+                turDefaultAgentResolver, agentLlms.service());
     }
 
     private TurSNSite createSite(String name) {
@@ -364,7 +367,7 @@ class TurSNSiteDataCollectorServiceTest {
         agent.setRagEnabled(true);
         TurLLMInstance llmInstance = new TurLLMInstance();
         llmInstance.setTitle("GPT-4");
-        agent.getLlmInstances().add(llmInstance);
+        agentLlms.attach(agent, llmInstance);
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setTurAIAgentId("agent-1");

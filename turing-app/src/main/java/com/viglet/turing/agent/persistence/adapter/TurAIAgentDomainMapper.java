@@ -27,8 +27,6 @@ import org.mapstruct.Mapping;
 import com.viglet.turing.agent.domain.TurAIAgentDomain;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 
 /**
  * MapStruct mapper for the JPA {@link TurAIAgent} entity to the
@@ -42,7 +40,7 @@ import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 @Mapper(componentModel = "spring")
 public interface TurAIAgentDomainMapper {
 
-    @Mapping(target = "llmInstanceIds", source = "llmInstances")
+    @Mapping(target = "llmInstanceIds", expression = "java(java.util.Set.copyOf(entity.getLlmInstanceIds()))")
     @Mapping(target = "mcpServerIds", expression = "java(java.util.Set.copyOf(entity.getMcpServerIds()))")
     @Mapping(target = "customToolIds", source = "customTools")
     @Mapping(target = "embeddingModelInstanceId", source = "embeddingModelInstanceId")
@@ -50,12 +48,6 @@ public interface TurAIAgentDomainMapper {
     TurAIAgentDomain toDomain(TurAIAgent entity);
 
     List<TurAIAgentDomain> toDomainList(List<TurAIAgent> entities);
-
-    default Set<String> llmInstancesToIds(Set<TurLLMInstance> set) {
-        return set == null ? Set.of()
-                : Collections.unmodifiableSet(
-                        set.stream().map(TurLLMInstance::getId).collect(Collectors.toSet()));
-    }
 
     default Set<String> customToolsToIds(Set<TurCustomTool> set) {
         return set == null ? Set.of()

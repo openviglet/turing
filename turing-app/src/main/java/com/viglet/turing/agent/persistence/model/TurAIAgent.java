@@ -763,11 +763,16 @@ public class TurAIAgent implements Serializable {
     @Column(name = "pythonRequirements", columnDefinition = "longtext")
     private String pythonRequirements;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "agent_llm_instance",
-            joinColumns = @JoinColumn(name = "agent_id"),
-            inverseJoinColumns = @JoinColumn(name = "llm_instance_id"))
-    private Set<TurLLMInstance> llmInstances = new HashSet<>();
+    /**
+     * T1315 — the LLM instances this agent may chat with, by id: the instances
+     * belong to the llm module, and {@code TurAgentLlmInstances} loads them. Same
+     * join table as before, so the schema is unchanged.
+     */
+    @jakarta.persistence.ElementCollection(fetch = FetchType.LAZY)
+    @jakarta.persistence.CollectionTable(name = "agent_llm_instance",
+            joinColumns = @JoinColumn(name = "agent_id"))
+    @Column(name = "llm_instance_id", length = 36)
+    private Set<String> llmInstanceIds = new HashSet<>();
 
     /**
      * T1315 — the MCP servers this agent may call, by id: the servers belong to

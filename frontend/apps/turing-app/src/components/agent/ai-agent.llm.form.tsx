@@ -30,7 +30,7 @@ export const AIAgentLlmForm: React.FC<Props> = ({ value }) => {
   const [syncedValue, setSyncedValue] = useState<TurAIAgent | null>(null);
   if (syncedValue !== value) {
     setSyncedValue(value);
-    const ids = new Set((value.llmInstances ?? []).map((i) => i.id));
+    const ids = new Set(value.llmInstanceIds ?? []);
     setSelectedIds(ids);
     setSavedIds(ids);
   }
@@ -53,8 +53,9 @@ export const AIAgentLlmForm: React.FC<Props> = ({ value }) => {
   }
 
   async function onSave() {
-    const selected = llmInstances.filter((i) => selectedIds.has(i.id));
-    const payload: TurAIAgent = { ...value, llmInstances: selected };
+    // T1315 — the agent names its LLM instances by id; keep only ids still listed.
+    const selected = llmInstances.filter((i) => selectedIds.has(i.id)).map((i) => i.id);
+    const payload: TurAIAgent = { ...value, llmInstanceIds: selected };
     try {
       const result = await updateMutation.mutateAsync(payload);
       if (result) {

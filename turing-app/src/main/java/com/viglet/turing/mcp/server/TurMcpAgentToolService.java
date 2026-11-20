@@ -54,6 +54,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurMcpAgentToolService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     /** Cap a headless turn so a stuck model can't hold the MCP request open forever. */
     private static final Duration INVOKE_TIMEOUT = Duration.ofSeconds(120);
 
@@ -64,7 +66,9 @@ public class TurMcpAgentToolService {
 
     public TurMcpAgentToolService(TurAIAgentRepository turAIAgentRepository,
             TurAgentChatExecutor agentChatExecutor,
-            TurChatFlowEngineService chatFlowEngineService) {
+            TurChatFlowEngineService chatFlowEngineService,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.turAIAgentRepository = turAIAgentRepository;
         this.agentChatExecutor = agentChatExecutor;
         this.chatFlowEngineService = chatFlowEngineService;
@@ -115,7 +119,7 @@ public class TurMcpAgentToolService {
             return "Error: AI Agent is disabled: " + agentId;
         }
 
-        TurLLMInstance llmInstance = agent.getLlmInstances().stream()
+        TurLLMInstance llmInstance = agentLlmInstances.of(agent).stream()
                 .min(Comparator.comparing(TurLLMInstance::getId))
                 .orElse(null);
         if (llmInstance == null) {

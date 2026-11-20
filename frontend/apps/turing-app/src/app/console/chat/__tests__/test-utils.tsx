@@ -59,7 +59,7 @@ export function makeAgent(overrides: Partial<TurAIAgent> = {}): TurAIAgent {
     enabled: 1,
     title: "Support Agent",
     icon: null,
-    llmInstances: [{ id: "llm-1" }],
+    llmInstanceIds: ["llm-1"],
     ...overrides,
   } as unknown as TurAIAgent;
 }

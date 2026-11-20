@@ -25,6 +25,9 @@ import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
 
 class TurSNSiteExportFileServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     /** T1315 — the agent holds its store by id; this resolves it. */
     private static final com.viglet.turing.agent.TurAgentRagInfra RAG_INFRA = org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class);
     private static final com.viglet.turing.agent.TurDefaultAgentResolver AGENTS =
@@ -36,7 +39,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldExportRootReferencesWithoutDuplicatingLLMStoreAndSEInsideSNSite() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA, AGENTS);
+                RAG_INFRA, AGENTS, agentLlms.service());
 
         TurSEVendor seVendor = new TurSEVendor();
         seVendor.setId("SOLR");
@@ -79,7 +82,7 @@ class TurSNSiteExportFileServiceTest {
         agent.setId("agent-1");
         agent.setEnabled(1);
         agent.setRagEnabled(true);
-        agent.getLlmInstances().add(llmInstance);
+        agentLlms.attach(agent, llmInstance);
         agent.setStoreInstanceId(storeInstance.getId());
         org.mockito.Mockito.when(RAG_INFRA.store(agent)).thenReturn(java.util.Optional.of(storeInstance));
 
@@ -144,7 +147,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldWriteSynonymsThatTheImportReadsBack() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA, AGENTS);
+                RAG_INFRA, AGENTS, agentLlms.service());
         TurSNSite site = new TurSNSite();
         site.setId("tarnfell");
         site.setName("tarnfell");

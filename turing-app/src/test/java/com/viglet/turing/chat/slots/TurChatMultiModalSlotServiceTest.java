@@ -57,6 +57,9 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurChatMultiModalSlotServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     private static final String CONV = "conv-1";
     private static final String AGENT_ID = "agent-1";
 
@@ -74,7 +77,7 @@ class TurChatMultiModalSlotServiceTest {
     void setUp() {
         service = new TurChatMultiModalSlotService(storageService, llmProviderFactory,
                 cryptoService, engineService, slotRepository, videoUnderstanding,
-                transcriptionService);
+                transcriptionService, agentLlms.service());
     }
 
     private TurAIAgent agent() {
@@ -199,7 +202,7 @@ class TurChatMultiModalSlotServiceTest {
                 .thenReturn(1);
 
         TurAIAgent agent = agent();
-        agent.setLlmInstances(java.util.Set.of(enabledLlm()));
+        agentLlms.attach(agent, enabledLlm());
         when(cryptoService.decrypt(any())).thenReturn("key");
         TurGenAiLlmProvider provider = mock(TurGenAiLlmProvider.class);
         ChatModel chatModel = mock(ChatModel.class);

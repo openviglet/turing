@@ -57,6 +57,9 @@ import com.viglet.turing.system.security.TurSecretCryptoService;
 @ExtendWith(MockitoExtension.class)
 class TurEvalDatasetGenerationServiceTest {
 
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
     @Mock
     private TurAIAgentRepository agentRepository;
     @Mock
@@ -87,7 +90,7 @@ class TurEvalDatasetGenerationServiceTest {
                 new TurEvalDatasetImportService(datasetRepository, datasetRowRepository);
         return new TurEvalDatasetGenerationService(agentRepository, slotRepository,
                 chatFlowRepository, chatFlowEngineService, importService, datasetRowRepository,
-                globalSettingsService, llmInstanceRepository, llmModelFactory, secretCryptoService);
+                globalSettingsService, llmInstanceRepository, llmModelFactory, secretCryptoService, agentLlms.service());
     }
 
     private static ChatModel modelReturning(String text) {
@@ -105,7 +108,7 @@ class TurEvalDatasetGenerationServiceTest {
         agent.setId("a1");
         agent.setTitle("Concierge");
         agent.setSystemPrompt("You help students enroll.");
-        agent.setLlmInstances(Set.of(llm));
+        agentLlms.attach(agent, llm);
         lenient().when(agentRepository.findById("a1")).thenReturn(java.util.Optional.of(agent));
         lenient().when(slotRepository.findByTurAIAgent_IdOrderByNameAsc("a1")).thenReturn(List.of());
         lenient().when(chatFlowRepository.findByTurAIAgent_IdOrderByNameAsc("a1")).thenReturn(List.of());
@@ -171,7 +174,7 @@ class TurEvalDatasetGenerationServiceTest {
     void generateFailsOpenWithNoLlm() {
         TurAIAgent agent = new TurAIAgent();
         agent.setId("a1");
-        agent.setLlmInstances(Set.of()); // no attached LLM
+         // no attached LLM
         when(agentRepository.findById("a1")).thenReturn(java.util.Optional.of(agent));
         when(globalSettingsService.getDefaultLlmId()).thenReturn(null); // no default either
 

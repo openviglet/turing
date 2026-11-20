@@ -89,6 +89,8 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class TurAgentEvalRunnerService {
 
+    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final TurAIAgentRepository agentRepository;
@@ -132,7 +134,9 @@ public class TurAgentEvalRunnerService {
             com.viglet.turing.eval.grader.TurEvalGraderRegistry graderRegistry,
             TurEvalReviewTaskService reviewTaskService,
             com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository datasetRowRepository,
-            com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository datasetRepository) {
+            com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository datasetRepository,
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+        this.agentLlmInstances = agentLlmInstances;
         this.agentRepository = agentRepository;
         this.evalSetRepository = evalSetRepository;
         this.reportRepository = reportRepository;
@@ -700,8 +704,8 @@ public class TurAgentEvalRunnerService {
     // ─────────────────────────── Helpers ───────────────────────────
 
     private TurLLMInstance resolveLlm(TurAIAgent agent) {
-        if (agent.getLlmInstances() != null) {
-            Optional<TurLLMInstance> agentLlm = agent.getLlmInstances().stream()
+        if (!agent.getLlmInstanceIds().isEmpty()) {
+            Optional<TurLLMInstance> agentLlm = agentLlmInstances.of(agent).stream()
                     .filter(l -> l.getEnabled() == 1)
                     .findFirst();
             if (agentLlm.isPresent()) {
