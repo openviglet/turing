@@ -15,11 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.kb.TurMicrothesaurusDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;
-import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
-import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.dto.TurMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
+import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusRepository;
 import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
 
 /**

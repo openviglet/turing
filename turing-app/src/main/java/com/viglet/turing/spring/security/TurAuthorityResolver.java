@@ -1,16 +1,16 @@
 package com.viglet.turing.spring.security;
 
 import com.viglet.core.security.VigletKeycloakClaims;
-import com.viglet.turing.persistence.model.auth.TurGroup;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembership;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembershipStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
+import com.viglet.turing.auth.persistence.model.TurGroup;
+import com.viglet.turing.auth.persistence.model.TurRole;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembership;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembershipStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurTenancyProperty;
 import com.viglet.core.tenancy.VigletPlatformAdminService;

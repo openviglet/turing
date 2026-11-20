@@ -26,10 +26,10 @@ import java.util.Collections;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.auth.TurGroup;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+import com.viglet.turing.auth.persistence.model.TurGroup;
+import com.viglet.turing.auth.persistence.model.TurRole;
+import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 
 @Component
 public class TurGroupOnStartup implements TurFirstTimeSeeder {

@@ -26,13 +26,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.dto.kb.TurRelatedTermSuggestionDto;
-import com.viglet.turing.persistence.model.kb.TurThesaurusRelationType;
-import com.viglet.turing.persistence.model.kb.TurThesaurusTerm;
-import com.viglet.turing.persistence.model.kb.TurThesaurusTermRelation;
+import com.viglet.turing.kb.persistence.dto.TurRelatedTermSuggestionDto;
+import com.viglet.turing.kb.persistence.model.TurThesaurusRelationType;
+import com.viglet.turing.kb.persistence.model.TurThesaurusTerm;
+import com.viglet.turing.kb.persistence.model.TurThesaurusTermRelation;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.persistence.repository.kb.TurThesaurusTermRelationRepository;
-import com.viglet.turing.persistence.repository.kb.TurThesaurusTermRepository;
+import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRelationRepository;
+import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

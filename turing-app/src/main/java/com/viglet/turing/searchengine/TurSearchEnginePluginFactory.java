@@ -17,7 +17,7 @@
 package com.viglet.turing.searchengine;
 
 import com.viglet.turing.observability.TurSearchObservation;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.resilience.TurResilienceExecutor;
 import com.viglet.turing.resilience.TurResilienceRegistry;

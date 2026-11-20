@@ -15,7 +15,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.tenant.TurTenantContext;
 
 import lombok.extern.slf4j.Slf4j;

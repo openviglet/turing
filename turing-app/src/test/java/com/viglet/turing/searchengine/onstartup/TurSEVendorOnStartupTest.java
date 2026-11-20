@@ -17,8 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.repository.TurSEVendorRepository;
 
 /**
  * The seeding used to be guarded by {@code findAll().isEmpty()}, and this class

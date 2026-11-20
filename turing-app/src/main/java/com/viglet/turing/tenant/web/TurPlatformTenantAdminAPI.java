@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.core.tenancy.VigletPlatformAdminService;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.tenant.TurPlatformAdminService;
 import com.viglet.turing.tenant.TurTenantResolutionFilter;
 import com.viglet.turing.tenant.TurTenantService;

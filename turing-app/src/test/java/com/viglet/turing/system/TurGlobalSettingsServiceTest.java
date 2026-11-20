@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
-import com.viglet.turing.persistence.model.system.TurConfigVar;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.model.TurConfigVar;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 
 /**
  * Tests for TurGlobalSettingsService.

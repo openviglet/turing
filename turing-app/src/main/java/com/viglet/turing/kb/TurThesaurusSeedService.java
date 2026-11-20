@@ -31,9 +31,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.dto.kb.TurMicrothesaurusDto;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusSeedDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.dto.TurMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusSeedDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
 
 /**
  * T674 / §XL (Block AQ) — the importable <em>seed library</em>: pre-populated,

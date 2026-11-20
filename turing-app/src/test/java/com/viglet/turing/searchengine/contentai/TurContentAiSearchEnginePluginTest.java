@@ -57,7 +57,7 @@ import com.viglet.turing.searchengine.contentai.TurContentAiClient;
 import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.searchengine.contentai.TurContentAiResponseMapper;
 import com.viglet.turing.searchengine.contentai.TurContentAiSourceCatalog;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;

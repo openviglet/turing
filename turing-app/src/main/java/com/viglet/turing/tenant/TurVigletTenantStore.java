@@ -21,13 +21,13 @@ import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantRole;
 import com.viglet.core.tenancy.VigletTenantStatus;
 import com.viglet.core.tenancy.VigletTenantStore;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembership;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembershipStatus;
-import com.viglet.turing.persistence.model.tenant.TurTenantRole;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembership;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembershipStatus;
+import com.viglet.turing.tenant.persistence.model.TurTenantRole;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 
 /**
  * T396 / §XIV.9 — the {@link VigletTenantStore} SPI over Turing's

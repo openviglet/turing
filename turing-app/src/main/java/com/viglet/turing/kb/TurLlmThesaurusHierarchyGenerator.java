@@ -25,8 +25,8 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusGenerationRequest;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusGenerationRequest;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;

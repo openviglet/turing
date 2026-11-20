@@ -9,7 +9,7 @@
  */
 package com.viglet.turing.tenant.web;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 
 /**
  * T264 / §XIV.3 — public view of a {@link TurTenant} returned by the signup,

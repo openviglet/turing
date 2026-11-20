@@ -12,7 +12,7 @@ package com.viglet.turing.tenant;
 import org.springframework.stereotype.Component;
 
 import com.viglet.core.tenancy.VigletTenantContext;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.properties.TurConfigProperties;
 
 /**

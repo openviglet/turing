@@ -22,7 +22,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.tenant.TurTenantResolutionFilter;
 

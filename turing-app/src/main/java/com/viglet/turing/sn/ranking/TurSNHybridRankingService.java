@@ -101,7 +101,7 @@ public class TurSNHybridRankingService {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurRagReranker reranker;
     private final TurDefaultChatModelResolver defaultChatModelResolver;
-    private final com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository;
+    private final com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository devTokenRepository;
 
     /** Cached infra per (site, embeddingModel, store) so search latency doesn't pay a rebuild per query. */
     private final Map<String, RagInfrastructure> infraCache = new ConcurrentHashMap<>();
@@ -118,7 +118,7 @@ public class TurSNHybridRankingService {
             TurGlobalSettingsService globalSettingsService,
             TurRagReranker reranker,
             TurDefaultChatModelResolver defaultChatModelResolver,
-            com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository) {
+            com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository devTokenRepository) {
         this.ragContextBuilder = ragContextBuilder;
         this.globalSettingsService = globalSettingsService;
         this.reranker = reranker;

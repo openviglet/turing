@@ -32,9 +32,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.integration.TurIntegrationInstanceMapper;
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+import com.viglet.turing.system.persistence.mapper.integration.TurIntegrationInstanceMapper;
+import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 @ExtendWith(MockitoExtension.class)

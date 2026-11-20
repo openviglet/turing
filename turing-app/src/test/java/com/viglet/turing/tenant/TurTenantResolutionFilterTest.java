@@ -34,12 +34,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.viglet.core.tenancy.VigletTenantMembershipService;
 import com.viglet.core.tenancy.VigletTenantResolver;
 import com.viglet.core.tenancy.VigletTenantSlugValidator;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembership;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembershipStatus;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembership;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembershipStatus;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 /**

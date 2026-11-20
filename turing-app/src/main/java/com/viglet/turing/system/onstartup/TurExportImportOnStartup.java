@@ -21,8 +21,8 @@
 package com.viglet.turing.system.onstartup;
 
 import com.viglet.turing.exchange.TurImportExchange;
-import com.viglet.turing.persistence.model.system.TurConfigVar;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.model.TurConfigVar;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.boot.ApplicationArguments;

@@ -14,10 +14,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.kb.TurThesaurusSeedDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;
-import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusSeedDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
+import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
 import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
 
 /**

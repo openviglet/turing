@@ -15,7 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.auth.persistence.model.TurUser;
 
 class TurAuditorAwareImplTest {
 

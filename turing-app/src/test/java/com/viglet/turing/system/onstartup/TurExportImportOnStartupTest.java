@@ -37,8 +37,8 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
-import com.viglet.turing.persistence.model.system.TurConfigVar;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.model.TurConfigVar;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 
 /**
  * T949 / §XIV.8.8 — a boot that imported nothing must not look like one that

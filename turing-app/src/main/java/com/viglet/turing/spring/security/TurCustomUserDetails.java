@@ -30,7 +30,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.auth.persistence.model.TurUser;
 
 public class TurCustomUserDetails extends TurUser implements UserDetails {
 

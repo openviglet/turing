@@ -24,8 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.tenant.TurTenantResolutionFilter;
 import com.viglet.turing.tenant.TurTenantService;
 

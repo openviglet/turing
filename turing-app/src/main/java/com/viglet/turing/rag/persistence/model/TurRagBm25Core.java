@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 

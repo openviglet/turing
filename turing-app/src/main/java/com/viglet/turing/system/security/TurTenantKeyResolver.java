@@ -1,7 +1,7 @@
 package com.viglet.turing.system.security;
 
 import com.viglet.core.crypto.VigletTenantKeyResolver;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.tenant.TurTenantContext;
 
 /**

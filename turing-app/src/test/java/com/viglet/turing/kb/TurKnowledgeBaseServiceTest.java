@@ -15,10 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.kb.TurKnowledgeBaseDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBaseSource;
-import com.viglet.turing.persistence.repository.kb.TurKnowledgeBaseRepository;
+import com.viglet.turing.kb.persistence.dto.TurKnowledgeBaseDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBaseSource;
+import com.viglet.turing.kb.persistence.repository.TurKnowledgeBaseRepository;
 
 /**
  * T669 / §XL (Block AQ) — unit tests for the Knowledge Base CRUD service over a
@@ -84,8 +84,8 @@ class TurKnowledgeBaseServiceTest {
         TurKnowledgeBase kb = new TurKnowledgeBase();
         kb.setName("KB");
         kb.setTurMicrothesauri(java.util.Set.of(
-                new com.viglet.turing.persistence.model.kb.TurMicrothesaurus(),
-                new com.viglet.turing.persistence.model.kb.TurMicrothesaurus()));
+                new com.viglet.turing.kb.persistence.model.TurMicrothesaurus(),
+                new com.viglet.turing.kb.persistence.model.TurMicrothesaurus()));
         assertThat(TurKnowledgeBaseService.toDto(kb).microthesaurusCount()).isEqualTo(2);
     }
 }

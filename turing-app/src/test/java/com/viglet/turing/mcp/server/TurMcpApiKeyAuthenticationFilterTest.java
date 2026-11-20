@@ -27,8 +27,8 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

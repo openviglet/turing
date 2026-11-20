@@ -45,8 +45,8 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
-import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
+import com.viglet.turing.chat.persistence.model.analytics.TurAnalyticsIntent;
+import com.viglet.turing.chat.persistence.repository.analytics.TurAnalyticsIntentRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

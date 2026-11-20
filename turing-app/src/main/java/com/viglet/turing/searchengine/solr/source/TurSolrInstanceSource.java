@@ -18,7 +18,7 @@ import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;
 import java.util.List;
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 
 /**
  * Abstraction over the backing store that provides {@link TurSEInstance}

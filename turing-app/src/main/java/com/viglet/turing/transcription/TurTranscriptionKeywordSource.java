@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.repository.kb.TurThesaurusTermRepository;
+import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

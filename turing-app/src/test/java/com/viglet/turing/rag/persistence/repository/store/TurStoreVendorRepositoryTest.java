@@ -2,7 +2,7 @@ package com.viglet.turing.rag.persistence.repository.store;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.repository.RepositoryContractAssertions;
+import com.viglet.turing.db.repository.RepositoryContractAssertions;
 
 class TurStoreVendorRepositoryTest {
     @Test

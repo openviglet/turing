@@ -21,7 +21,7 @@
 
 package com.viglet.turing.spring.security;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.auth.persistence.model.TurUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 

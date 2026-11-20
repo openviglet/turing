@@ -37,11 +37,11 @@ import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.kb.TurAuthorityFileImportService;
 import com.viglet.turing.kb.TurMicrothesaurusService;
 import com.viglet.turing.kb.TurThesaurusGenerationService;
-import com.viglet.turing.persistence.dto.kb.TurMicrothesaurusDto;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusGenerationRequest;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.repository.kb.TurKnowledgeBaseRepository;
+import com.viglet.turing.kb.persistence.dto.TurMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusGenerationRequest;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.repository.TurKnowledgeBaseRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

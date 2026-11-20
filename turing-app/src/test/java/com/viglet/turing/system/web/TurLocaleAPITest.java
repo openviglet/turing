@@ -30,9 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.system.TurLocaleMapper;
-import com.viglet.turing.persistence.model.system.TurLocale;
-import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
+import com.viglet.turing.system.persistence.mapper.TurLocaleMapper;
+import com.viglet.turing.system.persistence.model.TurLocale;
+import com.viglet.turing.system.persistence.repository.TurLocaleRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurLocaleAPITest {

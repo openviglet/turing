@@ -28,7 +28,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
 
 import jakarta.servlet.http.HttpServletRequest;
 

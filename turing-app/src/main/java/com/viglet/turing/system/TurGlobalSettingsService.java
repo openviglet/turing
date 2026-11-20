@@ -10,7 +10,7 @@ import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.transcription.TurTranscriptionProviderType;
 import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

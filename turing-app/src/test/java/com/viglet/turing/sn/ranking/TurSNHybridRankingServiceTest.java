@@ -71,7 +71,7 @@ class TurSNHybridRankingServiceTest {
     @Mock
     private TurDefaultChatModelResolver defaultChatModelResolver;
     @Mock
-    private com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository devTokenRepository;
+    private com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository devTokenRepository;
 
     private TurSNHybridRankingService service;
 

@@ -38,10 +38,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.dev.token.TurDevTokenDto;
-import com.viglet.turing.persistence.mapper.dev.token.TurDevTokenMapper;
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.dto.devtoken.TurDevTokenDto;
+import com.viglet.turing.auth.persistence.mapper.devtoken.TurDevTokenMapper;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;

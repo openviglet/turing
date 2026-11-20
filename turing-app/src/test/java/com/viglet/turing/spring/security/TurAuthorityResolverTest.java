@@ -18,14 +18,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.viglet.turing.persistence.model.auth.TurGroup;
-import com.viglet.turing.persistence.model.auth.TurPrivilege;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.auth.persistence.model.TurGroup;
+import com.viglet.turing.auth.persistence.model.TurPrivilege;
+import com.viglet.turing.auth.persistence.model.TurRole;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 /**
@@ -46,7 +46,7 @@ class TurAuthorityResolverTest {
     @Mock
     private TurPrivilegeRepository turPrivilegeRepository;
     @Mock
-    private com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository turTenantMembershipRepository;
+    private com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository turTenantMembershipRepository;
     @Mock
     private TurConfigProperties turConfigProperties;
     @InjectMocks
@@ -59,14 +59,14 @@ class TurAuthorityResolverTest {
         tenancy.setEnabled(true);
         when(turConfigProperties.getTenancy()).thenReturn(tenancy);
 
-        com.viglet.turing.persistence.model.tenant.TurTenant tenant =
-                new com.viglet.turing.persistence.model.tenant.TurTenant();
+        com.viglet.turing.tenant.persistence.model.TurTenant tenant =
+                new com.viglet.turing.tenant.persistence.model.TurTenant();
         tenant.setId("t-1");
-        com.viglet.turing.persistence.model.tenant.TurTenantMembership m =
-                new com.viglet.turing.persistence.model.tenant.TurTenantMembership();
+        com.viglet.turing.tenant.persistence.model.TurTenantMembership m =
+                new com.viglet.turing.tenant.persistence.model.TurTenantMembership();
         m.setTenant(tenant);
-        m.setRole(com.viglet.turing.persistence.model.tenant.TurTenantRole.OWNER);
-        m.setStatus(com.viglet.turing.persistence.model.tenant.TurTenantMembershipStatus.ACTIVE);
+        m.setRole(com.viglet.turing.tenant.persistence.model.TurTenantRole.OWNER);
+        m.setStatus(com.viglet.turing.tenant.persistence.model.TurTenantMembershipStatus.ACTIVE);
         when(turTenantMembershipRepository.findByUsername("alice")).thenReturn(List.of(m));
 
         assertThat(resolver.tenantAuthorities("alice"))

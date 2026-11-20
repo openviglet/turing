@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.rag.persistence.model.TurRagBm25Source;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
 import com.viglet.turing.sn.snapshot.TurSNSiteSnapshotEvictionListener;

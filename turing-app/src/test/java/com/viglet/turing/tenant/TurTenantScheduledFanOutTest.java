@@ -20,9 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 /**

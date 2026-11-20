@@ -30,12 +30,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantMembership;
-import com.viglet.turing.persistence.model.tenant.TurTenantRole;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantMembership;
+import com.viglet.turing.tenant.persistence.model.TurTenantRole;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurTenantDeprovisionMode;
 

@@ -16,8 +16,8 @@ package com.viglet.turing.searchengine.solr.source;
 import java.util.List;
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 
 /**
  * Property-backed implementation of {@link TurSolrInstanceSource}. Exposes a

@@ -548,7 +548,7 @@ public class TurLuceneStoreProvider implements TurGenAiStoreProvider {
         }
         String tenant = tenantContext.resolveCurrentTenant();
         if (tenant == null
-                || com.viglet.turing.persistence.model.tenant.TurTenant.DEFAULT_TENANT_ID.equals(tenant)) {
+                || com.viglet.turing.tenant.persistence.model.TurTenant.DEFAULT_TENANT_ID.equals(tenant)) {
             return "";
         }
         return tenant;

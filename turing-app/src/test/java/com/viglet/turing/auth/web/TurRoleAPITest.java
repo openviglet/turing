@@ -29,9 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.auth.TurRoleMapper;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+import com.viglet.turing.auth.persistence.mapper.TurRoleMapper;
+import com.viglet.turing.auth.persistence.model.TurRole;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurRoleAPITest {

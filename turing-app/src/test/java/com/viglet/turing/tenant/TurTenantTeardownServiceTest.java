@@ -29,9 +29,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.storage.TurStorageService;
 

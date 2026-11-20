@@ -73,7 +73,7 @@ class TurWeeklySearchReportServiceTest {
                 new com.viglet.turing.tenant.TurTenantScheduledFanOut(
                         new com.viglet.turing.tenant.TurTenantContext(props),
                         org.mockito.Mockito.mock(
-                                com.viglet.turing.persistence.repository.tenant.TurTenantRepository.class));
+                                com.viglet.turing.tenant.persistence.repository.TurTenantRepository.class));
         service = new TurWeeklySearchReportService(emailService, snSiteRepository,
                 snSiteLocaleRepository, metricAccessRepository, pluginFactory,
                 globalSettingsService, llmInstanceRepository, llmModelFactory,

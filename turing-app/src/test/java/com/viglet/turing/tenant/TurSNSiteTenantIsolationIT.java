@@ -23,10 +23,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 import jakarta.persistence.EntityManager;

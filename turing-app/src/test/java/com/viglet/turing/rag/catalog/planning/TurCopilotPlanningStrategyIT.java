@@ -20,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;

@@ -26,7 +26,7 @@ import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.searchengine.lucene.TurLuceneUtils;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

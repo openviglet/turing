@@ -2504,13 +2504,6 @@ implementations become internal. sn and genai depend only on the interface, whic
 turing-search-lucene skill already names as the seam. The embedded Lucene vector store
 stays with rag.
 
-### CLXXXIX.10 Emptying the persistence package (T1314)
-
-What remains in persistence (chat, thesaurus, tenant, system, auth, persona, research,
-metrics) moves to its module. When persistence.model, repository, dto, mapper and
-adapter are empty the package is deleted, and the domain records and ports under domain
-move into their modules too. No module then shares an entity class with another.
-
 ### CLXXXIX.11 Cross-module references by id (T1315)
 
 JPA associations cross the new module lines: agents to SN sites, SN GenAI settings to

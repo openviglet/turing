@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;

@@ -27,9 +27,9 @@ import com.viglet.core.tenancy.VigletTenantMembershipService;
 import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantSlugValidator;
 import com.viglet.core.tenancy.VigletTenantStatus;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 
 /**
  * Unit tests for {@link TurTenantService} — the Turing-facing adapter over the

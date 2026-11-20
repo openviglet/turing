@@ -30,7 +30,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRule;

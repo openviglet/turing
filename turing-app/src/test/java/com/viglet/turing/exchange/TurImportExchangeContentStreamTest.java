@@ -427,10 +427,10 @@ class TurImportExchangeContentStreamTest {
                 new com.viglet.turing.exchange.sn.TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class));
 
-        var seVendor = new com.viglet.turing.persistence.model.se.TurSEVendor();
+        var seVendor = new com.viglet.turing.searchengine.persistence.model.TurSEVendor();
         seVendor.setId("SOLR");
         seVendor.setTitle("Solr");
-        var seInstance = new com.viglet.turing.persistence.model.se.TurSEInstance();
+        var seInstance = new com.viglet.turing.searchengine.persistence.model.TurSEInstance();
         seInstance.setId("se-1");
         seInstance.setTitle("Search Engine 1");
         seInstance.setEnabled(1);

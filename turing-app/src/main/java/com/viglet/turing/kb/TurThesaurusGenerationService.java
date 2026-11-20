@@ -24,12 +24,12 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.kb.TurMicrothesaurusDto;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft.TurThesaurusDraftTerm;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft.TurThesaurusDraftVariation;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusGenerationRequest;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.dto.TurMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft.TurThesaurusDraftTerm;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft.TurThesaurusDraftVariation;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusGenerationRequest;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
 
 import lombok.RequiredArgsConstructor;
 

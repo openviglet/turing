@@ -12,8 +12,8 @@ import org.json.JSONObject;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

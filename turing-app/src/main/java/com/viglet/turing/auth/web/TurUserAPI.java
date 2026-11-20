@@ -44,14 +44,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.bean.TurCurrentUser;
-import com.viglet.turing.persistence.dto.auth.TurUserDto;
-import com.viglet.turing.persistence.mapper.auth.TurUserMapper;
-import com.viglet.turing.persistence.model.auth.TurGroup;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.auth.persistence.dto.TurUserDto;
+import com.viglet.turing.auth.persistence.mapper.TurUserMapper;
+import com.viglet.turing.auth.persistence.model.TurGroup;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -113,7 +113,7 @@ public class TurUserAPI {
     private List<String> resolvePrivileges(TurUser turUser) {
         if (!turConfigProperties.isPermissions()) {
             return turPrivilegeRepository.findAll().stream()
-                    .map(com.viglet.turing.persistence.model.auth.TurPrivilege::getName)
+                    .map(com.viglet.turing.auth.persistence.model.TurPrivilege::getName)
                     .toList();
         }
         var groups = turGroupRepository.findByTurUsersContaining(turUser);

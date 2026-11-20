@@ -34,7 +34,7 @@ import com.viglet.turing.sn.bean.TurSolrCoreExists;
 import com.viglet.turing.sn.bean.TurSolrFieldCore;
 import com.viglet.turing.sn.bean.TurSolrFieldStatus;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

@@ -63,7 +63,7 @@ public class TurAIAgentAPI {
     private final TurCustomToolRepository turCustomToolRepository;
     private final TurEmbeddingModelRepository turEmbeddingModelRepository;
     private final TurStoreInstanceRepository turStoreInstanceRepository;
-    private final com.viglet.turing.persistence.repository.se.TurSEInstanceRepository turSEInstanceRepository;
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository turSEInstanceRepository;
     private final TurPersonaRepository turPersonaRepository;
     private final TurSNSiteGenAis turSNSiteGenAiRepository;
     private final TurGlobalSettingsService turGlobalSettingsService;
@@ -77,7 +77,7 @@ public class TurAIAgentAPI {
             TurCustomToolRepository turCustomToolRepository,
             TurEmbeddingModelRepository turEmbeddingModelRepository,
             TurStoreInstanceRepository turStoreInstanceRepository,
-            com.viglet.turing.persistence.repository.se.TurSEInstanceRepository turSEInstanceRepository,
+            com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository turSEInstanceRepository,
             TurPersonaRepository turPersonaRepository,
             TurSNSiteGenAis turSNSiteGenAiRepository,
             TurGlobalSettingsService turGlobalSettingsService,

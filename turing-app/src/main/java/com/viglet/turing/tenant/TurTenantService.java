@@ -18,9 +18,9 @@ import com.viglet.core.tenancy.VigletTenantMembershipService;
 import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantSlugValidator;
 import com.viglet.core.tenancy.VigletTenantStatus;
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 
 /**
  * T264 / §XIV.3.2 — self-service tenant lifecycle: create a tenant with an OWNER

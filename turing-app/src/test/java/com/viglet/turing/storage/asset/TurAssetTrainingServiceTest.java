@@ -25,8 +25,8 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
-import com.viglet.turing.persistence.model.asset.TurAssetTrainingRecord;
-import com.viglet.turing.persistence.repository.asset.TurAssetTrainingRecordRepository;
+import com.viglet.turing.storage.persistence.model.asset.TurAssetTrainingRecord;
+import com.viglet.turing.storage.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

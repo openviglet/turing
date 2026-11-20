@@ -16,7 +16,7 @@ package com.viglet.turing.searchengine.solr.source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurSolrProperty;
 

@@ -34,8 +34,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 
 /**
  * T1124 — CSRF is lifted for a request a usable API key authenticates, and for

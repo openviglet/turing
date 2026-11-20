@@ -35,8 +35,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.persistence.mapper.se.TurSEInstanceMapper;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.mapper.TurSEInstanceMapper;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;

@@ -24,10 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.dto.kb.TurKnowledgeBaseDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBaseSource;
-import com.viglet.turing.persistence.repository.kb.TurKnowledgeBaseRepository;
+import com.viglet.turing.kb.persistence.dto.TurKnowledgeBaseDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBaseSource;
+import com.viglet.turing.kb.persistence.repository.TurKnowledgeBaseRepository;
 
 /**
  * T669 / §XL (Block AQ) — CRUD over the Knowledge Base aggregate root. Admin/CRUD

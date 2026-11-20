@@ -16,8 +16,8 @@
  */
 package com.viglet.turing.kb;
 
-import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusGenerationRequest;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusDraft;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusGenerationRequest;
 
 /**
  * T675 / §XL (Block AQ) — the seam that turns a domain+language prompt into a

@@ -35,10 +35,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.persistence.model.auth.TurPrivilege;
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.auth.persistence.model.TurPrivilege;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurGuestConsoleProperty;
 import com.viglet.turing.spring.security.auth.TurGuestReadOnlyFilter;

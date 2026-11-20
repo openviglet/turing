@@ -29,8 +29,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.system.TurConfigVar;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.model.TurConfigVar;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 
 @Component
 @Transactional

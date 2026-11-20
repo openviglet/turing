@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.kb.TurThesaurusTermService;
-import com.viglet.turing.persistence.dto.kb.TurThesaurusTermDto;
-import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;
-import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.dto.TurThesaurusTermDto;
+import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
+import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

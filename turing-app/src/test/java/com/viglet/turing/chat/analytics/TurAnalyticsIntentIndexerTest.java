@@ -29,11 +29,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.chat.persistence.model.analytics.TurAnalyticsIntent;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
+import com.viglet.turing.chat.persistence.repository.analytics.TurAnalyticsIntentRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 

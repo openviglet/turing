@@ -30,10 +30,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 import com.viglet.turing.sn.api.TurSNSites;
 
 import jakarta.servlet.FilterChain;

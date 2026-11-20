@@ -19,8 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.persistence.model.system.TurLocale;
-import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
+import com.viglet.turing.system.persistence.model.TurLocale;
+import com.viglet.turing.system.persistence.repository.TurLocaleRepository;
 
 /**
  * T1043 — the seeding used to be guarded by {@code findAll().isEmpty()}, and a

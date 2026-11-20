@@ -304,8 +304,8 @@ class TurSNEngineConformanceIT {
         assertThat(install.getExitCode()).as(install.getStderr()).isZero();
         String host = "http://" + solrContainer.getHost() + ":" + solrContainer.getMappedPort(8983);
         assertThat(com.viglet.turing.searchengine.solr.TurSolrUtils.createCore(host, SOLR_CORE, "en")).as("Solr core").isTrue();
-        com.viglet.turing.persistence.model.se.TurSEInstance seInstance =
-                new com.viglet.turing.persistence.model.se.TurSEInstance();
+        com.viglet.turing.searchengine.persistence.model.TurSEInstance seInstance =
+                new com.viglet.turing.searchengine.persistence.model.TurSEInstance();
         seInstance.setEndpointUrl(host);
         FIELD_TYPES.forEach((name, type) -> {
             if (!TurSNFieldName.ID.equals(name)) {

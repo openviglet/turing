@@ -37,15 +37,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.viglet.turing.persistence.dto.kb.TurMicrothesaurusDto;
-import com.viglet.turing.persistence.model.kb.TurKnowledgeBase;
-import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;
-import com.viglet.turing.persistence.model.kb.TurThesaurusRelationDirectionality;
-import com.viglet.turing.persistence.model.kb.TurThesaurusRelationType;
-import com.viglet.turing.persistence.model.kb.TurThesaurusTerm;
-import com.viglet.turing.persistence.model.kb.TurThesaurusTermRelation;
-import com.viglet.turing.persistence.model.kb.TurThesaurusTermVariation;
-import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.dto.TurMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
+import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
+import com.viglet.turing.kb.persistence.model.TurThesaurusRelationDirectionality;
+import com.viglet.turing.kb.persistence.model.TurThesaurusRelationType;
+import com.viglet.turing.kb.persistence.model.TurThesaurusTerm;
+import com.viglet.turing.kb.persistence.model.TurThesaurusTermRelation;
+import com.viglet.turing.kb.persistence.model.TurThesaurusTermVariation;
+import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
 import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
 
 /**

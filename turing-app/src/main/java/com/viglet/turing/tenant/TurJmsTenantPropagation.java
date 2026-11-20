@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 
 /**
  * T272 / §XIV.4.6 — propagates the current tenant across the Artemis JMS hop.

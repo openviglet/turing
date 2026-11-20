@@ -31,9 +31,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.dev.token.TurDevTokenMapper;
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.mapper.devtoken.TurDevTokenMapper;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurDevTokenAPITest {

@@ -26,7 +26,7 @@ import java.util.Map;
  *       costs an LLM round-trip per session.</li>
  *   <li>{@code TurLuceneIntentClassifier} — embedded Lucene
  *       {@code MoreLikeThis} over the per-agent
- *       {@link com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent}
+ *       {@link com.viglet.turing.chat.persistence.model.analytics.TurAnalyticsIntent}
  *       catalog. Zero external deps, runs in-process; the
  *       dev/single-instance/no-LLM fallback.</li>
  *   <li>{@code TurSeMltIntentClassifier} (T28 Phase B, deferred) —

@@ -11,9 +11,9 @@ package com.viglet.turing.tenant;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
-import com.viglet.turing.persistence.model.tenant.TurTenantStatus;
-import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
+import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

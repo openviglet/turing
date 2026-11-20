@@ -18,8 +18,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 
 /**
  * Tests for TurIntegrationMonitoringToolService.

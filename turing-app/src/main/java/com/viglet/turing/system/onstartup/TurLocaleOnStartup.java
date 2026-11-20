@@ -32,8 +32,8 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.system.TurLocale;
-import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
+import com.viglet.turing.system.persistence.model.TurLocale;
+import com.viglet.turing.system.persistence.repository.TurLocaleRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.integration.TurIntegrationInstanceDto;
-import com.viglet.turing.persistence.mapper.integration.TurIntegrationInstanceMapper;
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+import com.viglet.turing.system.persistence.dto.integration.TurIntegrationInstanceDto;
+import com.viglet.turing.system.persistence.mapper.integration.TurIntegrationInstanceMapper;
+import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 

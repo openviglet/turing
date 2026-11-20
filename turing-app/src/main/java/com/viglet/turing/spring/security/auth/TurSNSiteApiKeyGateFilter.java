@@ -24,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 import com.viglet.turing.sn.api.TurSNSites;
 
 import jakarta.servlet.FilterChain;
@@ -187,7 +187,7 @@ public class TurSNSiteApiKeyGateFilter extends OncePerRequestFilter {
         String key = request.getHeader(TurAuthTokenHeaderFilter.KEY);
         return key != null && !key.isBlank()
                 && turDevTokenRepository.findByToken(key.trim())
-                        .filter(com.viglet.turing.persistence.model.dev.token.TurDevToken::isUsable)
+                        .filter(com.viglet.turing.auth.persistence.model.devtoken.TurDevToken::isUsable)
                         .isPresent();
     }
 }

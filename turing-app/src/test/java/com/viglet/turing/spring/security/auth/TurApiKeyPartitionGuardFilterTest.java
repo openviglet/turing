@@ -29,7 +29,7 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
 
 /**
  * T1133 — a partitioned key reaches only the endpoints that enforce partitions.

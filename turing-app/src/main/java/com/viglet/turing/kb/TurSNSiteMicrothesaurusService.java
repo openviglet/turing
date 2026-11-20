@@ -27,15 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusConfigDto;
-import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusDto;
-import com.viglet.turing.persistence.model.kb.TurMicrothesaurus;
-import com.viglet.turing.persistence.model.kb.TurSNSiteMicrothesaurus;
-import com.viglet.turing.persistence.model.kb.TurSNSiteMicrothesaurusConfig;
+import com.viglet.turing.kb.persistence.dto.TurSNSiteMicrothesaurusConfigDto;
+import com.viglet.turing.kb.persistence.dto.TurSNSiteMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
+import com.viglet.turing.kb.persistence.model.TurSNSiteMicrothesaurus;
+import com.viglet.turing.kb.persistence.model.TurSNSiteMicrothesaurusConfig;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
-import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusConfigRepository;
-import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
+import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusConfigRepository;
+import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
 

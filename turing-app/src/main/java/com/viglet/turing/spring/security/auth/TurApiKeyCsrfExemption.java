@@ -25,8 +25,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
+import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 

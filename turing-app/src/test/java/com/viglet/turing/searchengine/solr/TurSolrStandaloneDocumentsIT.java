@@ -31,7 +31,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.searchengine.solr.TurSolrInstance;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;

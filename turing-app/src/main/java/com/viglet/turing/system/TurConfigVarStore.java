@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.viglet.core.settings.VigletConfigVarStore;
-import com.viglet.turing.persistence.model.system.TurConfigVar;
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.model.TurConfigVar;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 
 /**
  * Turing's persistence adapter for the {@code viglet-core}

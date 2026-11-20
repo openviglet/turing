@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;

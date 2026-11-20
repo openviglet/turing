@@ -29,7 +29,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
 import com.viglet.turing.shared.onstartup.TurStartupReconciler;
 

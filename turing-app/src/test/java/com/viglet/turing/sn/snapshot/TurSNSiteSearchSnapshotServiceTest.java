@@ -33,7 +33,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;

@@ -27,12 +27,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEVendorRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.persistence.repository.synonym.TurSNSynonymRepository;

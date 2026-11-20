@@ -20,9 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.model.bento.TurBentoLayout;
-import com.viglet.turing.persistence.model.bento.TurBentoLayoutScope;
-import com.viglet.turing.persistence.repository.bento.TurBentoLayoutRepository;
+import com.viglet.turing.bento.persistence.model.TurBentoLayout;
+import com.viglet.turing.bento.persistence.model.TurBentoLayoutScope;
+import com.viglet.turing.bento.persistence.repository.TurBentoLayoutRepository;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;

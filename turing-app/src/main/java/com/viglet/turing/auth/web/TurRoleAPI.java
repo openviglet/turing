@@ -31,9 +31,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.auth.TurRoleDto;
-import com.viglet.turing.persistence.mapper.auth.TurRoleMapper;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+import com.viglet.turing.auth.persistence.dto.TurRoleDto;
+import com.viglet.turing.auth.persistence.mapper.TurRoleMapper;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -63,7 +63,7 @@ public class TurRoleAPI {
 	@GetMapping("/{id}")
 	public TurRoleDto turRoleEdit(@PathVariable String id) {
 		return turRoleMapper
-				.toDto(turRoleRepository.findById(id).orElse(new com.viglet.turing.persistence.model.auth.TurRole()));
+				.toDto(turRoleRepository.findById(id).orElse(new com.viglet.turing.auth.persistence.model.TurRole()));
 	}
 
 	@Transactional
@@ -76,7 +76,7 @@ public class TurRoleAPI {
 			turRoleRepository.save(existing);
 			return turRoleMapper.toDto(existing);
 		}).orElseGet(() -> {
-			com.viglet.turing.persistence.model.auth.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
+			com.viglet.turing.auth.persistence.model.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
 			turRoleRepository.save(turRole);
 			return turRoleMapper.toDto(turRole);
 		});
@@ -91,7 +91,7 @@ public class TurRoleAPI {
 
 	@PostMapping
 	public TurRoleDto turRoleAdd(@RequestBody TurRoleDto turRoleDto) {
-		com.viglet.turing.persistence.model.auth.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
+		com.viglet.turing.auth.persistence.model.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
 
 		turRoleRepository.save(turRole);
 

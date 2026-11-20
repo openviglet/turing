@@ -31,7 +31,7 @@ import org.springframework.http.ResponseEntity;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagBm25CoreProvisioner;
 import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

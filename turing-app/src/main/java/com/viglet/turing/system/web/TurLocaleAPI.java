@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.system.TurLocaleDto;
-import com.viglet.turing.persistence.mapper.system.TurLocaleMapper;
-import com.viglet.turing.persistence.model.system.TurLocale;
-import com.viglet.turing.persistence.repository.system.TurLocaleRepository;
+import com.viglet.turing.system.persistence.dto.TurLocaleDto;
+import com.viglet.turing.system.persistence.mapper.TurLocaleMapper;
+import com.viglet.turing.system.persistence.model.TurLocale;
+import com.viglet.turing.system.persistence.repository.TurLocaleRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

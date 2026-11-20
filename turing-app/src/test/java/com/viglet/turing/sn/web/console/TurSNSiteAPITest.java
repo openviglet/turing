@@ -48,7 +48,7 @@ import com.viglet.turing.exchange.sn.TurSNSiteExport;
 import com.viglet.turing.sn.persistence.dto.TurSNSiteDto;
 import com.viglet.turing.sn.persistence.dto.TurSNSiteListDto;
 import com.viglet.turing.sn.persistence.mapper.TurSNSiteMapper;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
@@ -88,7 +88,7 @@ class TurSNSiteAPITest {
                         TurSNSiteMapper siteMapper) {
                 return new TurSNSiteAPI(siteRepository, localeRepository, genAiRepository,
                                 mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
-                                mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class),
+                                mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class),
                                 export, mock(TurSNSiteContentExchangeService.class),
                                 template, queue, pluginFactory, siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
@@ -105,7 +105,7 @@ class TurSNSiteAPITest {
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
                                 mock(TurSNSiteGenAiRepository.class),
                                 mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
-                                mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class),
+                                mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class),
                                 mock(TurSNSiteExport.class), mock(TurSNSiteContentExchangeService.class),
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class),
@@ -210,8 +210,8 @@ class TurSNSiteAPITest {
                 // round-trip through the controller now.
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
                 TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
-                com.viglet.turing.persistence.repository.se.TurSEInstanceRepository seRepo =
-                                mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class);
+                com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seRepo =
+                                mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class);
                 TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), genAiRepository,

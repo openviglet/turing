@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.searchengine.contentai.TurContentAiClient;
 import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSites;

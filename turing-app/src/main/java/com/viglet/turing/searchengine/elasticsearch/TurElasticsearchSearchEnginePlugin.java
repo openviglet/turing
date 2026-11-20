@@ -24,7 +24,7 @@ import com.viglet.turing.searchengine.elasticsearch.TurElasticsearch;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstance;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchUtils;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

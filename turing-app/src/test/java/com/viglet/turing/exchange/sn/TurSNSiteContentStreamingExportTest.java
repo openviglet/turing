@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**

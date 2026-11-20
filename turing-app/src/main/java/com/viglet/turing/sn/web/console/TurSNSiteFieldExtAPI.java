@@ -54,7 +54,7 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtFacetRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;

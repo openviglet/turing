@@ -12,7 +12,7 @@ package com.viglet.turing.tenant;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.tenant.TurTenant;
+import com.viglet.turing.tenant.persistence.model.TurTenant;
 
 /**
  * T268 / §XIV.4.2 — prefixes search-engine core / index names with the current

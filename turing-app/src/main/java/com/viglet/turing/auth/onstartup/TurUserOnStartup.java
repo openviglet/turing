@@ -27,9 +27,9 @@ import java.util.Collections;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
-import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
-import com.viglet.turing.persistence.repository.auth.TurUserRepository;
+import com.viglet.turing.auth.persistence.model.TurUser;
+import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
+import com.viglet.turing.auth.persistence.repository.TurUserRepository;
 
 @Component
 public class TurUserOnStartup implements TurFirstTimeSeeder {

@@ -32,13 +32,13 @@ import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletManifestResult;
 import com.viglet.turing.rag.feed.TurStructuredFeedIngestService;
 import com.viglet.turing.rag.feed.TurStructuredFeedIngestService.IngestResult;
-import com.viglet.turing.persistence.model.se.TurSEInstance;
+import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
+import com.viglet.turing.searchengine.persistence.repository.TurSEVendorRepository;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.api.TurSNSiteGenAis;
@@ -125,7 +125,7 @@ class TurStructuredFeedProvisioningOnStartupTest {
     void createsDefaultLuceneSeInstance_whenNonePresent() {
         Source source = provisionSource();
         property.setSources(List.of(source));
-        var vendor = new com.viglet.turing.persistence.model.se.TurSEVendor();
+        var vendor = new com.viglet.turing.searchengine.persistence.model.TurSEVendor();
         vendor.setId("LUCENE");
         when(turSNSiteRepository.findByNameIgnoreCase("model-catalog")).thenReturn(Optional.empty());
         when(turSEInstanceRepository.findByTurSEVendor_Id("LUCENE")).thenReturn(List.of());

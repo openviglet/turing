@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.auth.TurUser;
+import com.viglet.turing.auth.persistence.model.TurUser;
 
 @Component
 public class TurAuditorAwareImpl implements AuditorAware<String> {

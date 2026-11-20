@@ -9,10 +9,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.auth.TurPrivilege;
-import com.viglet.turing.persistence.model.auth.TurRole;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
-import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
+import com.viglet.turing.auth.persistence.model.TurPrivilege;
+import com.viglet.turing.auth.persistence.model.TurRole;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 
 import jakarta.transaction.Transactional;
 

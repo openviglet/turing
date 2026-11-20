@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.model.integration.TurIntegrationInstance;
-import com.viglet.turing.persistence.repository.integration.TurIntegrationInstanceRepository;
+import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
+import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

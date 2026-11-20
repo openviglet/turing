@@ -1,7 +1,7 @@
 package com.viglet.turing.auth.web;
 
-import com.viglet.turing.persistence.model.auth.TurPrivilege;
-import com.viglet.turing.persistence.repository.auth.TurPrivilegeRepository;
+import com.viglet.turing.auth.persistence.model.TurPrivilege;
+import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;

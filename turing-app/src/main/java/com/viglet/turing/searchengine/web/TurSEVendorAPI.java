@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.se.TurSEVendorDto;
-import com.viglet.turing.persistence.mapper.se.TurSEVendorMapper;
-import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
+import com.viglet.turing.searchengine.persistence.dto.TurSEVendorDto;
+import com.viglet.turing.searchengine.persistence.mapper.TurSEVendorMapper;
+import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
+import com.viglet.turing.searchengine.persistence.repository.TurSEVendorRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;

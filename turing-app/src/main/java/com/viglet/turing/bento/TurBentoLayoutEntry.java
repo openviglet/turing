@@ -9,7 +9,7 @@
  */
 package com.viglet.turing.bento;
 
-import com.viglet.turing.persistence.model.bento.TurBentoEmphasis;
+import com.viglet.turing.bento.persistence.model.TurBentoEmphasis;
 
 /**
  * T574 / §XXXI.11 — one item's placement in a Bento list: its stable id, its

@@ -299,7 +299,7 @@ class TurSecretCryptoServiceTest {
 
         // Encrypt with the legacy global path (no tenant), decrypt as DEFAULT.
         String legacy = service.encrypt("token");
-        assertThat(service.decrypt(legacy, com.viglet.turing.persistence.model.tenant.TurTenant.DEFAULT_TENANT_ID))
+        assertThat(service.decrypt(legacy, com.viglet.turing.tenant.persistence.model.TurTenant.DEFAULT_TENANT_ID))
                 .isEqualTo("token");
     }
 }

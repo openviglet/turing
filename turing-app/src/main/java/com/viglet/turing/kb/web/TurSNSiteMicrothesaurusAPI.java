@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.kb.TurSNSiteMicrothesaurusService;
-import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusConfigDto;
-import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusDto;
+import com.viglet.turing.kb.persistence.dto.TurSNSiteMicrothesaurusConfigDto;
+import com.viglet.turing.kb.persistence.dto.TurSNSiteMicrothesaurusDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 
