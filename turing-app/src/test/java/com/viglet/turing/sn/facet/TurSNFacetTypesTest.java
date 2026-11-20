@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 /** T1310 - moved from TurSolrQueryBuilderTest with the logic it covers. */
 class TurSNFacetTypesTest {

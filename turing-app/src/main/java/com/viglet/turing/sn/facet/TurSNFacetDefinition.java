@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 

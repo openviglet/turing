@@ -19,7 +19,7 @@ package com.viglet.turing.sn.persistence.dto.synonym;
 import java.util.List;
 import java.util.Locale;
 
-import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * T662 / §XXXIX (Block AP) — request/response shape for a synonym rule.

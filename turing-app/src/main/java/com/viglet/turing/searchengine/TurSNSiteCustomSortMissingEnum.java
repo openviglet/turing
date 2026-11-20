@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.persistence.model.sort;
+package com.viglet.turing.searchengine;
 
 /**
  * Where a custom sort level puts the documents that have no value in its field

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * T662 / §XXXIX (Block AP) — pure validation + normalization for a synonym

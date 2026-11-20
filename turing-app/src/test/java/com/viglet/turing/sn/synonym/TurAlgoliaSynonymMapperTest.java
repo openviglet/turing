@@ -31,7 +31,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
-import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * Unit tests for the Algolia-synonym -> Turing-DTO mapping (T666).

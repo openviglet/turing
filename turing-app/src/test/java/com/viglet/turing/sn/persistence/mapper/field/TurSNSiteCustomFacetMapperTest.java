@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteCustomFacetDto;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 /**
  * Tests for TurSNSiteCustomFacetMapperImpl.

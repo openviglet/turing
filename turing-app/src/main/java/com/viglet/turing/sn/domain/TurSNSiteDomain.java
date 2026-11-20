@@ -17,7 +17,7 @@
 package com.viglet.turing.sn.domain;
 
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 /**
  * Domain entity for a Semantic Navigation site — the aggregate root identity

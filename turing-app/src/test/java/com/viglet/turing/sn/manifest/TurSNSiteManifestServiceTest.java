@@ -291,8 +291,8 @@ class TurSNSiteManifestServiceTest {
     private static TurSNManifestCustomSort closingSoonest() {
         return new TurSNManifestCustomSort("closingSoonest", "Closing soonest", List.of(
                 new TurSNManifestCustomSortItem("expiresAt",
-                        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.ASC,
-                        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)));
+                        com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.ASC,
+                        com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST)));
     }
 
     @Test

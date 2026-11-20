@@ -21,6 +21,10 @@
 
 package com.viglet.turing.sn.persistence.model.sort;
 
+import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
+
+import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
+
 import java.io.Serial;
 import java.io.Serializable;
 

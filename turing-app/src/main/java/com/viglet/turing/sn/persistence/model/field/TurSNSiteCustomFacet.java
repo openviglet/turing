@@ -21,6 +21,8 @@
 
 package com.viglet.turing.sn.persistence.model.field;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;

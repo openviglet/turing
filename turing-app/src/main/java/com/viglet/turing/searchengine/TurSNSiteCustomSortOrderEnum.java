@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.persistence.model.sort;
+package com.viglet.turing.searchengine;
 
 /**
  * Sort order direction for custom sort items.

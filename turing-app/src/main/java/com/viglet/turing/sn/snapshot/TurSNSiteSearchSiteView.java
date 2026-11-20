@@ -19,7 +19,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
 
 /**

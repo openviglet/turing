@@ -26,7 +26,7 @@ import java.util.Set;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.TurSNFieldType;
 

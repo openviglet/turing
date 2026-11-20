@@ -1,5 +1,7 @@
 package com.viglet.turing.sn.persistence.model.field;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

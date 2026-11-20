@@ -521,7 +521,7 @@ class TurElasticsearchTest {
         closingSoonest.setItems(new java.util.HashSet<>(java.util.Set.of(
                 com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                         .fieldName("expiresAt").position(1)
-                        .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)
+                        .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST)
                         .build())));
         when(turSNSiteCustomSortRepository.findByTurSNSiteAndName(site, "closingSoonest"))
                 .thenReturn(Optional.of(closingSoonest));

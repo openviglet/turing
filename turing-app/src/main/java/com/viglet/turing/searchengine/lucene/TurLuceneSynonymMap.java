@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.lucene.analysis.synonym.SynonymMap;
 
-import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * T665 / §XXXIX (Block AP) — the result of mapping Turing synonym rules onto a

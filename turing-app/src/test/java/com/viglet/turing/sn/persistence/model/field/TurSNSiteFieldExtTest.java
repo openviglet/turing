@@ -21,6 +21,8 @@
 
 package com.viglet.turing.sn.persistence.model.field;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashSet;

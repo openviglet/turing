@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.sn.persistence.model.synonym;
 
+import com.viglet.turing.searchengine.TurSNSynonymType;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;

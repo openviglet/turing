@@ -188,11 +188,11 @@ class TurSNManifestSdkWireContractTest {
             assertThat(sort.items()).extracting(TurSNManifestCustomSortItem::field)
                     .containsExactly("expiresAt", "publishedAt");
             assertThat(sort.items().get(0).order())
-                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.ASC);
+                    .isEqualTo(com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.ASC);
             assertThat(sort.items().get(0).missing())
-                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST);
+                    .isEqualTo(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST);
             assertThat(sort.items().get(1).order())
-                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.DESC);
+                    .isEqualTo(com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.DESC);
             assertThat(sort.items().get(1).missing()).isNull();
         });
     }
@@ -252,9 +252,9 @@ class TurSNManifestSdkWireContractTest {
         TurSNManifestFacets bound = bind(MAPPER.writeValueAsString(manifest)).facets();
         assertThat(bound.enabled()).isTrue();
         assertThat(bound.type())
-                .isEqualTo(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum.AND);
+                .isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.AND);
         assertThat(bound.itemType())
-                .isEqualTo(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum.OR);
+                .isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
         assertThat(bound.itemsPerFacet()).isEqualTo(25);
 
         var serverResult = new TurSNManifestProvisionResult(new VigletManifestResult("s1", "Sample", false,

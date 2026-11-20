@@ -57,7 +57,7 @@ import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.searchengine.TurSNSynonymType;
 import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;

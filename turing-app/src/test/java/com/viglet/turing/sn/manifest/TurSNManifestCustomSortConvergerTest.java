@@ -50,8 +50,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 

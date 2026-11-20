@@ -57,7 +57,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
@@ -1528,11 +1528,11 @@ class TurSolrQueryBuilderTest {
                 var items = new java.util.HashSet<com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem>();
                 items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                                 .fieldName("publishedAt").position(2)
-                                .sortOrder(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.DESC)
+                                .sortOrder(com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.DESC)
                                 .build());
                 items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                                 .fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)
+                                .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST)
                                 .build());
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))
@@ -1545,7 +1545,7 @@ class TurSolrQueryBuilderTest {
         void customSortLevelWithMissingFirstPutsTheUndatedFirst() {
                 var items = java.util.Set.of(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem
                                 .builder().fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.FIRST)
+                                .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.FIRST)
                                 .build());
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))

@@ -44,7 +44,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
