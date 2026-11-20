@@ -48,6 +48,9 @@ class TurGenAiContextFactoryTest {
     @Mock
     private TurDefaultAgentResolver turDefaultAgentResolver;
 
+    @Mock
+    private com.viglet.turing.agent.TurAgentRagInfra agentRagInfra;
+
     @InjectMocks
     private TurGenAiContextFactory factory;
 
@@ -130,11 +133,15 @@ class TurGenAiContextFactoryTest {
 
         TurStoreInstance storeInstance = new TurStoreInstance();
         storeInstance.setId("store-1");
-        agent.setTurStoreInstance(storeInstance);
+        agent.setStoreInstanceId(storeInstance.getId());
+        org.mockito.Mockito.lenient().when(agentRagInfra.store(agent))
+                .thenReturn(java.util.Optional.of(storeInstance));
 
         TurEmbeddingModel embeddingModel = new TurEmbeddingModel();
         embeddingModel.setId("emb-1");
-        agent.setTurEmbeddingModelInstance(embeddingModel);
+        agent.setEmbeddingModelInstanceId(embeddingModel.getId());
+        org.mockito.Mockito.lenient().when(agentRagInfra.embeddingModel(agent))
+                .thenReturn(java.util.Optional.of(embeddingModel));
 
         turSNSiteGenAi.setTurAIAgent(agent);
         turSNSiteGenAi.setKnowledgeBaseMode(
@@ -171,11 +178,15 @@ class TurGenAiContextFactoryTest {
 
         TurStoreInstance storeInstance = new TurStoreInstance();
         storeInstance.setId("store-1");
-        agent.setTurStoreInstance(storeInstance);
+        agent.setStoreInstanceId(storeInstance.getId());
+        org.mockito.Mockito.lenient().when(agentRagInfra.store(agent))
+                .thenReturn(java.util.Optional.of(storeInstance));
 
         TurEmbeddingModel embeddingModel = new TurEmbeddingModel();
         embeddingModel.setId("emb-1");
-        agent.setTurEmbeddingModelInstance(embeddingModel);
+        agent.setEmbeddingModelInstanceId(embeddingModel.getId());
+        org.mockito.Mockito.lenient().when(agentRagInfra.embeddingModel(agent))
+                .thenReturn(java.util.Optional.of(embeddingModel));
 
         turSNSiteGenAi.setTurAIAgent(agent);
 

@@ -686,10 +686,8 @@ public class TurAgentChatExecutor {
                     agent.getId(),
                     activePersona == null ? null : activePersona.getId(),
                     llmInstance == null ? null : llmInstance.getId(),
-                    agent.getTurEmbeddingModelInstance() == null
-                            ? null : agent.getTurEmbeddingModelInstance().getId(),
-                    agent.getTurStoreInstance() == null
-                            ? null : agent.getTurStoreInstance().getId(),
+                    agent.getEmbeddingModelInstanceId(),
+                    agent.getStoreInstanceId(),
                     username);
             chatAnalyticsService.recordSessionStart(refs,
                     new TurChatVisitorContext(cohort.locale(), cohort.timezone(), cohort.deviceType()),

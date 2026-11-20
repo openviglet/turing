@@ -51,7 +51,8 @@ class TurSNSiteContentStreamingExportTest {
 
     private static TurSNSiteExportFileService service() {
         return new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
-                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class));
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class));
     }
 
     private static TurSNSite site(String name) {

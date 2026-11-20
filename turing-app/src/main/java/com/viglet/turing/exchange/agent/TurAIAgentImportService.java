@@ -473,10 +473,13 @@ public class TurAIAgentImportService {
         agent.setMcpServers(resolveSet(a.getMcpServerIds(), refs.mcpServers::get));
         agent.setCustomTools(resolveSet(a.getCustomToolIds(), refs.customTools::get));
         if (a.getStoreInstanceId() != null) {
-            agent.setTurStoreInstance(refs.stores.get(a.getStoreInstanceId()));
+            agent.setStoreInstanceId(java.util.Optional.ofNullable(refs.stores.get(a.getStoreInstanceId()))
+                    .map(store -> store.getId()).orElse(null));
         }
         if (a.getEmbeddingModelInstanceId() != null) {
-            agent.setTurEmbeddingModelInstance(refs.embeddings.get(a.getEmbeddingModelInstanceId()));
+            agent.setEmbeddingModelInstanceId(java.util.Optional.ofNullable(
+                    refs.embeddings.get(a.getEmbeddingModelInstanceId()))
+                    .map(model -> model.getId()).orElse(null));
         }
     }
 

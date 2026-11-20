@@ -1,9 +1,7 @@
 import type { TurCustomTool } from "../customtool/custom-tool.model.ts";
-import type { TurEmbeddingModel } from "../embedding/embedding-model.model.ts";
 import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
 import type { TurMcpServer } from "../mcp/mcp-server.model.ts";
 import type { TurPersona } from "../persona/persona.model.ts";
-import type { TurStoreInstance } from "../store/store-instance.model.ts";
 
 /**
  * Per-agent toggle for how the executor issues the LLM round-trip.
@@ -209,8 +207,10 @@ export interface TurAIAgent {
   personas?: TurPersona[];
   /** Voice used when no chat flow has overridden the active persona. @since 2026.2.7 */
   defaultPersona?: TurPersona | null;
-  turEmbeddingModelInstance?: TurEmbeddingModel | null;
-  turStoreInstance?: TurStoreInstance | null;
+  /** T1315 — the embedding model, by id (null = the global default). */
+  embeddingModelInstanceId?: string | null;
+  /** T1315 — the vector store, by id (null = the global default). */
+  storeInstanceId?: string | null;
   /**
    * T28 / §III.5 Phase C — optional SE binding for the analytics intent
    * index. When null, {@code TurAnalyticsIntentIndexer} falls back to the

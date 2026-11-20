@@ -70,8 +70,8 @@ class TurSNChatRouteResolverTest {
         agent.setEnabled(1);
         agent.setRagEnabled(true);
         agent.setLlmInstances(new HashSet<>(List.of(new TurLLMInstance())));
-        agent.setTurEmbeddingModelInstance(new TurEmbeddingModel());
-        agent.setTurStoreInstance(new TurStoreInstance());
+        agent.setEmbeddingModelInstanceId("emb-1");
+        agent.setStoreInstanceId("store-1");
         return agent;
     }
 
@@ -135,7 +135,7 @@ class TurSNChatRouteResolverTest {
     @DisplayName("The vector walk names the first missing piece")
     void vectorWalkNamesTheFirstMissingPiece() {
         TurAIAgent agent = completeAgent();
-        agent.setTurStoreInstance(null);
+        agent.setStoreInstanceId(null);
         lenient().when(turDefaultAgentResolver.resolveEffectiveAgent(any())).thenReturn(agent);
 
         assertThat(resolver.resolve(genAi(TurSNKnowledgeBaseMode.VECTOR, agent)).reason())

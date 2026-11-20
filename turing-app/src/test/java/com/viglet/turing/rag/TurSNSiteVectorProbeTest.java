@@ -51,8 +51,10 @@ class TurSNSiteVectorProbeTest {
     private final TurSNSiteLocales localeRepository = mock(TurSNSiteLocales.class);
     private final TurGenAiStoreProviderFactory providerFactory = mock(TurGenAiStoreProviderFactory.class);
     private final TurGenAiStoreProvider provider = mock(TurGenAiStoreProvider.class);
+    private final com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeRepository =
+            mock(com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository.class);
     private final TurSNSiteVectorProbe probe = new TurSNSiteVectorProbe(localeRepository, providerFactory,
-            mock(TurSecretCryptoService.class));
+            mock(TurSecretCryptoService.class), storeRepository);
     private final TurSNSite site = new TurSNSite();
     private final TurAIAgent agent = new TurAIAgent();
     private final TurStoreInstance store = new TurStoreInstance();
@@ -62,7 +64,9 @@ class TurSNSiteVectorProbeTest {
         site.setId("site-1");
         site.setName("Sample");
         store.setId("store-1");
-        agent.setTurStoreInstance(store);
+        agent.setStoreInstanceId(store.getId());
+        org.mockito.Mockito.lenient().when(storeRepository.findById("store-1"))
+                .thenReturn(java.util.Optional.of(store));
         when(localeRepository.findByTurSNSite(site)).thenReturn(List.of(locale("sample_en"), locale("sample_pt")));
         when(providerFactory.getProvider(store)).thenReturn(provider);
     }

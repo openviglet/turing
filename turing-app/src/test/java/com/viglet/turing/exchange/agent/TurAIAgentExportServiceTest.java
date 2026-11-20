@@ -71,6 +71,7 @@ class TurAIAgentExportServiceTest {
     @Mock private TurAgentEvalSetRepository evalSetRepository;
     @Mock private TurMcpServerRepository mcpServerRepository;
     @Mock private TurStoreInstanceRepository storeInstanceRepository;
+    @Mock private com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     private TurAIAgentExportService service;
     private Path producedZip;
@@ -79,7 +80,7 @@ class TurAIAgentExportServiceTest {
     void setUp() {
         service = new TurAIAgentExportService(agentRepository, chatFlowRepository,
                 slotRepository, intentRepository, evalSetRepository, mcpServerRepository,
-                storeInstanceRepository);
+                storeInstanceRepository, embeddingModelRepository);
     }
 
     @AfterEach

@@ -186,29 +186,28 @@ public class TurDefaultRagInfraOnStartup implements ApplicationRunner {
         // bootstrap when any embedding model or store exists: the seed ships its
         // "Default Vector Store", and the all-or-nothing guard left the agent with
         // neither model nor store. An agent already wired is left as it was.
-        if (agent.getTurEmbeddingModelInstance() != null && agent.getTurStoreInstance() != null) {
+        if (agent.getEmbeddingModelInstanceId() != null && agent.getStoreInstanceId() != null) {
             log.debug("Default local RAG backend: default agent '{}' already has an embedding model and a store.",
                     agent.getId());
             return;
         }
-        if (agent.getTurEmbeddingModelInstance() == null) {
-            TurEmbeddingModel model = ensureEmbeddingModel();
-            if (model == null) {
-                return;
-            }
-            agent.setTurEmbeddingModelInstance(model);
+        // T1315 — the agent holds both by id; the pieces it already has are read back.
+        TurEmbeddingModel embeddingModel = agent.getEmbeddingModelInstanceId() == null
+                ? ensureEmbeddingModel()
+                : turEmbeddingModelRepository.findById(agent.getEmbeddingModelInstanceId()).orElse(null);
+        if (embeddingModel == null) {
+            return;
         }
-        if (agent.getTurStoreInstance() == null) {
-            TurStoreInstance store = ensureStore();
-            if (store == null) {
-                return;
-            }
-            agent.setTurStoreInstance(store);
+        TurStoreInstance storeInstance = agent.getStoreInstanceId() == null
+                ? ensureStore()
+                : turStoreInstanceRepository.findById(agent.getStoreInstanceId()).orElse(null);
+        if (storeInstance == null) {
+            return;
         }
+        agent.setEmbeddingModelInstanceId(embeddingModel.getId());
+        agent.setStoreInstanceId(storeInstance.getId());
         agent.setRagEnabled(true);
         turAIAgentRepository.save(agent);
-        TurEmbeddingModel embeddingModel = agent.getTurEmbeddingModelInstance();
-        TurStoreInstance storeInstance = agent.getTurStoreInstance();
         log.info("Default local RAG backend: wired embedding model '{}' and store '{}' onto default agent '{}' "
                 + "with RAG enabled.", embeddingModel.getId(), storeInstance.getId(), agent.getId());
         startWarmUpAndReindex(embeddingModel);

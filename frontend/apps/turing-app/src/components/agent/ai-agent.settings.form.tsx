@@ -129,8 +129,8 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
   const updateMutation = useUpdateAiAgent();
 
   const ragEnabled = form.watch("ragEnabled");
-  const embeddingModelValue = form.watch("turEmbeddingModelInstance");
-  const storeInstanceValue = form.watch("turStoreInstance");
+  const embeddingModelValue = form.watch("embeddingModelInstanceId");
+  const storeInstanceValue = form.watch("storeInstanceId");
   const chatMemoryEnabled = form.watch("chatMemoryEnabled");
   // T30 — gates the topK + recentN inputs; only meaningful when the base
   // chat memory is also active, hence the && composition below.
@@ -225,8 +225,8 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
       // moved from agent to TurSNSiteGenAi (RAG only runs in SN site
       // context; locale-aware retrieval needs SN site's locale config).
       // The toggles now live in sn.site.genai.form.tsx.
-      turEmbeddingModelInstance: value.turEmbeddingModelInstance,
-      turStoreInstance: value.turStoreInstance,
+      embeddingModelInstanceId: value.embeddingModelInstanceId,
+      storeInstanceId: value.storeInstanceId,
       // T28 / §III.5 Phase C — null clears the per-agent SE binding so
       // TurAnalyticsIntentIndexer.resolveSeInstance falls back to the
       // global default (property / first registered SE).
@@ -262,31 +262,31 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
     }
   }, [ragEnabled, canEnableRag, form]);
 
-  function getSelectValue(instance: { id: string } | null | undefined, hasGlobalDefault: boolean): string {
-    if (instance === undefined) return NONE_VALUE;
-    if (instance === null) return hasGlobalDefault ? DEFAULT_VALUE : NONE_VALUE;
-    return instance.id;
+  function getSelectValue(id: string | null | undefined, hasGlobalDefault: boolean): string {
+    if (id === undefined) return NONE_VALUE;
+    if (id === null) return hasGlobalDefault ? DEFAULT_VALUE : NONE_VALUE;
+    return id;
   }
 
   function handleEmbeddingModelChange(val: string) {
     if (val === DEFAULT_VALUE) {
-      form.setValue("turEmbeddingModelInstance", null);
+      form.setValue("embeddingModelInstanceId", null);
     } else if (val === NONE_VALUE) {
-      form.setValue("turEmbeddingModelInstance", undefined);
+      form.setValue("embeddingModelInstanceId", undefined);
     } else {
-      const instance = embeddingModels.find((i) => i.id === val);
-      form.setValue("turEmbeddingModelInstance", instance ?? undefined);
+      form.setValue("embeddingModelInstanceId",
+        embeddingModels.some((i) => i.id === val) ? val : undefined);
     }
   }
 
   function handleStoreChange(val: string) {
     if (val === DEFAULT_VALUE) {
-      form.setValue("turStoreInstance", null);
+      form.setValue("storeInstanceId", null);
     } else if (val === NONE_VALUE) {
-      form.setValue("turStoreInstance", undefined);
+      form.setValue("storeInstanceId", undefined);
     } else {
-      const instance = storeInstances.find((i) => i.id === val);
-      form.setValue("turStoreInstance", instance ?? undefined);
+      form.setValue("storeInstanceId",
+        storeInstances.some((i) => i.id === val) ? val : undefined);
     }
   }
 
@@ -401,7 +401,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
           <Section variant="violet" tone="violet" icon={IconBrain} title={t("forms.agentSettings.ragModels")} description={t("forms.agentSettings.ragModelsDesc")}>
               <FormField
                 control={form.control}
-                name="turEmbeddingModelInstance"
+                name="embeddingModelInstanceId"
                 render={({ field }) => (
                   <FormItemTwoColumns>
                     <FormItemTwoColumns.Left>
@@ -439,7 +439,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
               />
               <FormField
                 control={form.control}
-                name="turStoreInstance"
+                name="storeInstanceId"
                 render={({ field }) => (
                   <FormItemTwoColumns>
                     <FormItemTwoColumns.Left>

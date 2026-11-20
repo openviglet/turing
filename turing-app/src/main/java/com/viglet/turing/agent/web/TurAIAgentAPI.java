@@ -22,9 +22,7 @@ import com.viglet.turing.exchange.agent.TurAIAgentExportService;
 import com.viglet.turing.agent.persistence.dto.TurAIAgentDto;
 import com.viglet.turing.agent.persistence.mapper.TurAIAgentMapper;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
@@ -183,10 +181,10 @@ public class TurAIAgentAPI {
                     turAIAgent.getMcpServers(), turMcpServerRepository));
             agentEdit.setCustomTools(resolveRelations(
                     turAIAgent.getCustomTools(), turCustomToolRepository));
-            agentEdit.setTurEmbeddingModelInstance(resolveSingleRelation(
-                    turAIAgent.getTurEmbeddingModelInstance(), turEmbeddingModelRepository));
-            agentEdit.setTurStoreInstance(resolveSingleRelation(
-                    turAIAgent.getTurStoreInstance(), turStoreInstanceRepository));
+            agentEdit.setEmbeddingModelInstanceId(existingId(turAIAgent.getEmbeddingModelInstanceId(),
+                    turEmbeddingModelRepository));
+            agentEdit.setStoreInstanceId(existingId(turAIAgent.getStoreInstanceId(),
+                    turStoreInstanceRepository));
             // T28 / §III.5 Phase C — per-agent SE binding for the analytics
             // intent index. Null clears the binding so the indexer falls back
             // to the global default (property / first registered SE).
@@ -218,8 +216,8 @@ public class TurAIAgentAPI {
             agentEdit.setDefaultPersona(defaultPersona);
             agentEdit.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
                     agentEdit.getLlmInstances(),
-                    agentEdit.getTurEmbeddingModelInstance(),
-                    agentEdit.getTurStoreInstance()));
+                    agentEdit.getEmbeddingModelInstanceId(),
+                    agentEdit.getStoreInstanceId()));
             // Rich-content rendering opt-in (```html / ```d2 live preview).
             // Field-by-field copy like the other toggles — omitting it would
             // silently drop the switch on save.
@@ -350,10 +348,10 @@ public class TurAIAgentAPI {
                 turAIAgent.getMcpServers(), turMcpServerRepository));
         turAIAgent.setCustomTools(resolveRelations(
                 turAIAgent.getCustomTools(), turCustomToolRepository));
-        turAIAgent.setTurEmbeddingModelInstance(resolveSingleRelation(
-                turAIAgent.getTurEmbeddingModelInstance(), turEmbeddingModelRepository));
-        turAIAgent.setTurStoreInstance(resolveSingleRelation(
-                turAIAgent.getTurStoreInstance(), turStoreInstanceRepository));
+        turAIAgent.setEmbeddingModelInstanceId(existingId(turAIAgent.getEmbeddingModelInstanceId(),
+                turEmbeddingModelRepository));
+        turAIAgent.setStoreInstanceId(existingId(turAIAgent.getStoreInstanceId(),
+                turStoreInstanceRepository));
         // T28 / §III.5 Phase C — same per-agent SE binding propagation on create.
         turAIAgent.setAnalyticsSeInstanceId(existingSeInstanceId(turAIAgent.getAnalyticsSeInstanceId()));
         Set<TurPersona> personaCatalog = resolveRelations(
@@ -373,8 +371,8 @@ public class TurAIAgentAPI {
         turAIAgent.setDefaultPersona(defaultPersona);
         turAIAgent.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
                 turAIAgent.getLlmInstances(),
-                turAIAgent.getTurEmbeddingModelInstance(),
-                turAIAgent.getTurStoreInstance()));
+                turAIAgent.getEmbeddingModelInstanceId(),
+                turAIAgent.getStoreInstanceId()));
         this.turAIAgentRepository.save(turAIAgent);
         return turAIAgentMapper.toDto(turAIAgent);
     }
@@ -394,6 +392,12 @@ public class TurAIAgentAPI {
      * fetches the managed instance from the repo. Returns null if not found or
      * if the input was null.
      */
+    /** T1315 — the id when that row exists in {@code repo}, else null: never a dangling id. */
+    private static String existingId(String id,
+            org.springframework.data.jpa.repository.JpaRepository<?, String> repo) {
+        return id != null && !id.isBlank() && repo.existsById(id) ? id : null;
+    }
+
     /**
      * T1315 — the SE instance belongs to the searchengine module, so the agent holds
      * it by id: the id when that instance exists, else null, never a dangling id.
@@ -431,15 +435,15 @@ public class TurAIAgentAPI {
      */
     private boolean canEnableRag(boolean requested,
             Set<com.viglet.turing.llm.persistence.model.TurLLMInstance> llmInstances,
-            TurEmbeddingModel embeddingModel,
-            TurStoreInstance storeInstance) {
+            String embeddingModelId,
+            String storeInstanceId) {
         if (!requested) {
             return false;
         }
         boolean hasLlm = llmInstances != null && !llmInstances.isEmpty();
-        boolean modelOk = embeddingModel != null
+        boolean modelOk = embeddingModelId != null
                 || StringUtils.hasText(turGlobalSettingsService.getDefaultEmbeddingModelId());
-        boolean storeOk = storeInstance != null
+        boolean storeOk = storeInstanceId != null
                 || StringUtils.hasText(turGlobalSettingsService.getDefaultEmbeddingStoreId());
         return hasLlm && modelOk && storeOk;
     }

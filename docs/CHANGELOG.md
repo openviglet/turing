@@ -1776,3 +1776,4 @@
 - **T1315c** — TurSNSiteGenAi holds ragSeInstanceId on the same column; the site update, the RAG search tool and the BM25 core API resolve it through the SE instance repository, and the GenAI form sends the id.
 - **T1315d** — TurAnalyticsIntent holds agentId and TurRagBm25Core holds seInstanceId on the same columns; the intent queries and readers use the id, and the BM25 provisioner and indexer resolve the SE instance by id.
 - **T1315e** — The kb site selection and config hold snSiteId on the same column, whose Liquibase ON DELETE CASCADE still removes them with the site; kb repositories and callers query by site id.
+- **T1315f** — TurAIAgent holds embeddingModelInstanceId and storeInstanceId; TurAgentRagInfra resolves them through llm and rag for the chat path and exports, and the agent and SN GenAI forms use the ids (design §CLXXXIX.31 recorded in `turing-app/src/main/java/com/viglet/turing/agent/TurAgentRagInfra.java`).

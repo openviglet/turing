@@ -128,9 +128,12 @@ public class TurSNSiteExportFileService {
 
 	private final TurSNSiteExportValidator exportValidator;
 	private final TurStorageService storageService;
+	private final com.viglet.turing.agent.TurAgentRagInfra agentRagInfra;
 
 	public TurSNSiteExportFileService(TurSNSiteExportValidator exportValidator,
-									  TurStorageService storageService) {
+									  TurStorageService storageService,
+								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra) {
+		this.agentRagInfra = agentRagInfra;
 		this.exportValidator = exportValidator;
 		this.storageService = storageService;
 	}
@@ -283,12 +286,8 @@ public class TurSNSiteExportFileService {
 				}
 			});
 		}
-		if (agent.getTurStoreInstance() != null && agent.getTurStoreInstance().getId() != null) {
-			storeInstances.putIfAbsent(agent.getTurStoreInstance().getId(), agent.getTurStoreInstance());
-		}
-		if (agent.getTurEmbeddingModelInstance() != null && agent.getTurEmbeddingModelInstance().getId() != null) {
-			embeddingModels.putIfAbsent(agent.getTurEmbeddingModelInstance().getId(),
-					agent.getTurEmbeddingModelInstance());
-		}
+		// T1315 — the agent holds its store and embedding model by id.
+		agentRagInfra.store(agent).ifPresent(store -> storeInstances.putIfAbsent(store.getId(), store));
+		agentRagInfra.embeddingModel(agent).ifPresent(model -> embeddingModels.putIfAbsent(model.getId(), model));
 	}
 }

@@ -97,6 +97,21 @@ class TurDefaultRagInfraOnStartupTest {
         agent.setId("agent-1");
         when(settings.getDefaultAiAgentId()).thenReturn("agent-1");
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(agent));
+        // T1315 — the agent stores ids, so a created row needs the id JPA would assign.
+        lenient().when(turEmbeddingModelRepository.save(any(TurEmbeddingModel.class))).thenAnswer(inv -> {
+            TurEmbeddingModel saved = inv.getArgument(0);
+            if (saved.getId() == null) {
+                saved.setId("created-model");
+            }
+            return saved;
+        });
+        lenient().when(turStoreInstanceRepository.save(any(TurStoreInstance.class))).thenAnswer(inv -> {
+            TurStoreInstance saved = inv.getArgument(0);
+            if (saved.getId() == null) {
+                saved.setId("created-store");
+            }
+            return saved;
+        });
     }
 
     private static TurStoreInstance luceneStore(String id) {
@@ -119,12 +134,11 @@ class TurDefaultRagInfraOnStartupTest {
 
         runner.run(null);
 
-        assertThat(agent.getTurEmbeddingModelInstance()).isNotNull();
-        assertThat(agent.getTurEmbeddingModelInstance().getProviderType())
-                .isEqualTo(TurHuggingFaceEmbeddingModelFactory.PROVIDER_TYPE);
-        assertThat(agent.getTurStoreInstance()).isSameAs(seedStore);
+        assertThat(agent.getEmbeddingModelInstanceId()).isEqualTo("created-model");
+        verify(turEmbeddingModelRepository).save(org.mockito.ArgumentMatchers.<TurEmbeddingModel>argThat(
+                m -> TurHuggingFaceEmbeddingModelFactory.PROVIDER_TYPE.equals(m.getProviderType())));
+        assertThat(agent.getStoreInstanceId()).isEqualTo("seed-store");
         assertThat(agent.isRagEnabled()).isTrue();
-        verify(turEmbeddingModelRepository).save(any(TurEmbeddingModel.class));
         verify(turStoreInstanceRepository, never()).save(any());
         verify(settings).updateDefaultEmbeddingStoreId("seed-store");
         verify(turAIAgentRepository).save(agent);
@@ -142,16 +156,18 @@ class TurDefaultRagInfraOnStartupTest {
 
         runner.run(null);
 
-        assertThat(agent.getTurEmbeddingModelInstance()).isNotNull();
-        assertThat(agent.getTurStoreInstance().getTurStoreVendor()).isSameAs(vendor);
+        assertThat(agent.getEmbeddingModelInstanceId()).isEqualTo("created-model");
+        assertThat(agent.getStoreInstanceId()).isEqualTo("created-store");
+        verify(turStoreInstanceRepository).save(org.mockito.ArgumentMatchers.<TurStoreInstance>argThat(
+                s -> s.getTurStoreVendor() == vendor));
         assertThat(agent.isRagEnabled()).isTrue();
-        verify(turStoreInstanceRepository).save(any(TurStoreInstance.class));
     }
 
     @Test
     @DisplayName("Global defaults are adopted rather than anything created")
     void globalDefaultsAreAdopted() {
         TurEmbeddingModel model = new TurEmbeddingModel();
+        model.setId("model-1");
         model.setEnabled(1);
         TurStoreInstance store = luceneStore("store-1");
         when(settings.getDefaultEmbeddingModelId()).thenReturn("model-1");
@@ -161,8 +177,8 @@ class TurDefaultRagInfraOnStartupTest {
 
         runner.run(null);
 
-        assertThat(agent.getTurEmbeddingModelInstance()).isSameAs(model);
-        assertThat(agent.getTurStoreInstance()).isSameAs(store);
+        assertThat(agent.getEmbeddingModelInstanceId()).isEqualTo("model-1");
+        assertThat(agent.getStoreInstanceId()).isEqualTo("store-1");
         verify(turEmbeddingModelRepository, never()).save(any());
         verify(turStoreInstanceRepository, never()).save(any());
     }
@@ -174,7 +190,7 @@ class TurDefaultRagInfraOnStartupTest {
 
         runner.run(null);
 
-        assertThat(agent.getTurEmbeddingModelInstance()).isNull();
+        assertThat(agent.getEmbeddingModelInstanceId()).isNull();
         assertThat(agent.isRagEnabled()).isFalse();
         verify(turAIAgentRepository, never()).save(any());
     }
@@ -182,8 +198,8 @@ class TurDefaultRagInfraOnStartupTest {
     @Test
     @DisplayName("An agent that already has a model and a store is left alone")
     void wiredAgentIsLeftAlone() {
-        agent.setTurEmbeddingModelInstance(new TurEmbeddingModel());
-        agent.setTurStoreInstance(luceneStore("mine"));
+        agent.setEmbeddingModelInstanceId("mine-model");
+        agent.setStoreInstanceId("mine");
         lenient().when(turEmbeddingModelRepository.count()).thenReturn(0L);
 
         runner.run(null);

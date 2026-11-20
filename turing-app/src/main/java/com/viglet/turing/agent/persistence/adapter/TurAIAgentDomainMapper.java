@@ -45,8 +45,8 @@ public interface TurAIAgentDomainMapper {
     @Mapping(target = "llmInstanceIds", source = "llmInstances")
     @Mapping(target = "mcpServerIds", source = "mcpServers")
     @Mapping(target = "customToolIds", source = "customTools")
-    @Mapping(target = "embeddingModelInstanceId", source = "turEmbeddingModelInstance.id")
-    @Mapping(target = "storeInstanceId", source = "turStoreInstance.id")
+    @Mapping(target = "embeddingModelInstanceId", source = "embeddingModelInstanceId")
+    @Mapping(target = "storeInstanceId", source = "storeInstanceId")
     TurAIAgentDomain toDomain(TurAIAgent entity);
 
     List<TurAIAgentDomain> toDomainList(List<TurAIAgent> entities);

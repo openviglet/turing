@@ -77,7 +77,7 @@ class TurChatPromptAssemblerMemoryPipelineTest {
                 new TurMemorySummaryMessageContributor(compressionService),
                 new TurRelevanceMessageContributor(relevanceRetriever)));
         assembler = new TurChatPromptAssembler(observation, attachmentService,
-                promptAssemblyPipeline, messagePipeline);
+                promptAssemblyPipeline, messagePipeline, org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class));
 
         lenient().when(promptAssemblyPipeline.assemble(any()))
                 .thenReturn(new TurPromptAssembly(List.of(), SYSTEM, -1));

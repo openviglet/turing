@@ -159,12 +159,8 @@ public class TurAIAgentExchange {
         if (agent.getCustomTools() != null) {
             agent.getCustomTools().forEach(t -> e.customToolIds.add(t.getId()));
         }
-        if (agent.getTurEmbeddingModelInstance() != null) {
-            e.embeddingModelInstanceId = agent.getTurEmbeddingModelInstance().getId();
-        }
-        if (agent.getTurStoreInstance() != null) {
-            e.storeInstanceId = agent.getTurStoreInstance().getId();
-        }
+        e.embeddingModelInstanceId = agent.getEmbeddingModelInstanceId();
+        e.storeInstanceId = agent.getStoreInstanceId();
         return e;
     }
 }

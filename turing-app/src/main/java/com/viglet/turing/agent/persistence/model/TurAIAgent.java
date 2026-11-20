@@ -6,11 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -777,13 +775,13 @@ public class TurAIAgent implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "custom_tool_id"))
     private Set<TurCustomTool> customTools = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "embedding_model_instance_id")
-    private TurEmbeddingModel turEmbeddingModelInstance;
+    /** T1315 — the embedding model, by id: it belongs to the llm module ({@code TurAgentRagInfra}). */
+    @Column(name = "embedding_model_instance_id")
+    private String embeddingModelInstanceId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_instance_id")
-    private TurStoreInstance turStoreInstance;
+    /** T1315 — the vector store, by id: it belongs to the rag module ({@code TurAgentRagInfra}). */
+    @Column(name = "store_instance_id")
+    private String storeInstanceId;
 
     /**
      * Catalogue of personas this agent is allowed to speak with. The agent

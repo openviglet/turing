@@ -32,11 +32,14 @@ public class TurGenAiContextFactory {
     private final TurSecretCryptoService turSecretCryptoService;
     private final TurRagContextBuilder turRagContextBuilder;
     private final TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.agent.TurAgentRagInfra agentRagInfra;
 
     public TurGenAiContextFactory(TurLlmModelFactory llmModelFactory,
             TurSecretCryptoService turSecretCryptoService,
             TurRagContextBuilder turRagContextBuilder,
-            TurDefaultAgentResolver turDefaultAgentResolver) {
+            TurDefaultAgentResolver turDefaultAgentResolver,
+            com.viglet.turing.agent.TurAgentRagInfra agentRagInfra) {
+        this.agentRagInfra = agentRagInfra;
         this.llmModelFactory = llmModelFactory;
         this.turSecretCryptoService = turSecretCryptoService;
         this.turRagContextBuilder = turRagContextBuilder;
@@ -87,8 +90,8 @@ public class TurGenAiContextFactory {
             return TurGenAiContext.disabled();
         }
 
-        TurEmbeddingModel embeddingModel = agent.getTurEmbeddingModelInstance();
-        TurStoreInstance storeInstance = agent.getTurStoreInstance();
+        TurEmbeddingModel embeddingModel = agentRagInfra.embeddingModel(agent).orElse(null);
+        TurStoreInstance storeInstance = agentRagInfra.store(agent).orElse(null);
         if (embeddingModel == null || storeInstance == null) {
             log.warn("RAG enabled on agent without embedding model or store. agentId={}", agent.getId());
             return TurGenAiContext.disabled();

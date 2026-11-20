@@ -65,10 +65,10 @@ class TurAIAgentRepositoryAdapterTest {
         TurAIAgent entity = buildAgent("agent-1", "RAG", 1);
         TurEmbeddingModel embedding = new TurEmbeddingModel();
         embedding.setId("emb-1");
-        entity.setTurEmbeddingModelInstance(embedding);
+        entity.setEmbeddingModelInstanceId(embedding.getId());
         TurStoreInstance store = new TurStoreInstance();
         store.setId("store-1");
-        entity.setTurStoreInstance(store);
+        entity.setStoreInstanceId(store.getId());
         when(turAIAgentRepository.findById("agent-1")).thenReturn(Optional.of(entity));
 
         TurAIAgentDomain domain = adapter.findById("agent-1").orElseThrow();

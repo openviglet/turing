@@ -72,11 +72,14 @@ public class TurChatPromptAssembler {
     private final TurChatAttachmentService chatAttachmentService;
     private final TurPromptAssemblyPipeline promptAssemblyPipeline;
     private final TurMessageAssemblyPipeline messageAssemblyPipeline;
+    private final TurAgentRagInfra agentRagInfra;
 
     public TurChatPromptAssembler(TurChatPipelineObservation chatPipelineObservation,
             TurChatAttachmentService chatAttachmentService,
             TurPromptAssemblyPipeline promptAssemblyPipeline,
-            TurMessageAssemblyPipeline messageAssemblyPipeline) {
+            TurMessageAssemblyPipeline messageAssemblyPipeline,
+            TurAgentRagInfra agentRagInfra) {
+        this.agentRagInfra = agentRagInfra;
         this.chatPipelineObservation = chatPipelineObservation;
         this.chatAttachmentService = chatAttachmentService;
         this.promptAssemblyPipeline = promptAssemblyPipeline;
@@ -101,7 +104,7 @@ public class TurChatPromptAssembler {
         TurPromptAssemblyContext context = new TurPromptAssemblyContext(
                 agent,
                 request.effectivePersona(),
-                agent.getTurEmbeddingModelInstance(),
+                agentRagInfra.embeddingModel(agent).orElse(null),
                 request.lastUserMessage(),
                 request.baseSystemPrompt(),
                 request.flowContext(),

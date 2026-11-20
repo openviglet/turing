@@ -37,6 +37,12 @@ vi.mock("@/services/se/se.service", () => ({
     query = () => Promise.resolve([]);
   },
 }));
+// T1315 — the form reads the agent's store title from the store list.
+vi.mock("@/services/store/store.service", () => ({
+  TurStoreInstanceService: class {
+    query = () => Promise.resolve([]);
+  },
+}));
 vi.mock("@/services/embedding/embedding-model.service", () => ({
   TurEmbeddingModelService: class {
     query = () => Promise.resolve([]);

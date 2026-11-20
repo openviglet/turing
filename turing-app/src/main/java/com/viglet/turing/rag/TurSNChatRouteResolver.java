@@ -118,10 +118,10 @@ public class TurSNChatRouteResolver {
         if (agent.getLlmInstances() == null || agent.getLlmInstances().isEmpty()) {
             return TurSNChatDisabledReason.MISSING_LLM;
         }
-        if (agent.getTurEmbeddingModelInstance() == null) {
+        if (agent.getEmbeddingModelInstanceId() == null) {
             return TurSNChatDisabledReason.MISSING_EMBEDDING;
         }
-        if (agent.getTurStoreInstance() == null) {
+        if (agent.getStoreInstanceId() == null) {
             return TurSNChatDisabledReason.MISSING_STORE;
         }
         return TurSNChatDisabledReason.NONE;

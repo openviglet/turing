@@ -97,6 +97,7 @@ public class TurAIAgentExportService {
     private final TurAgentEvalSetRepository evalSetRepository;
     private final TurMcpServerRepository mcpServerRepository;
     private final TurStoreInstanceRepository storeInstanceRepository;
+    private final com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     public TurAIAgentExportService(TurAIAgentRepository agentRepository,
                                    TurChatFlowRepository chatFlowRepository,
@@ -104,7 +105,9 @@ public class TurAIAgentExportService {
                                    TurIntentRepository intentRepository,
                                    TurAgentEvalSetRepository evalSetRepository,
                                    TurMcpServerRepository mcpServerRepository,
-                                   TurStoreInstanceRepository storeInstanceRepository) {
+                                   TurStoreInstanceRepository storeInstanceRepository,
+                                   com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository) {
+        this.embeddingModelRepository = embeddingModelRepository;
         this.agentRepository = agentRepository;
         this.chatFlowRepository = chatFlowRepository;
         this.slotRepository = slotRepository;
@@ -178,16 +181,18 @@ public class TurAIAgentExportService {
         if (agent.getCustomTools() != null) {
             agent.getCustomTools().forEach(t -> refs.tools.put(t.getId(), t));
         }
-        if (agent.getTurStoreInstance() != null) {
-            refs.stores.put(agent.getTurStoreInstance().getId(), agent.getTurStoreInstance());
+        if (agent.getStoreInstanceId() != null) {
+            storeInstanceRepository.findById(agent.getStoreInstanceId())
+                    .ifPresent(store -> refs.stores.put(store.getId(), store));
         }
         collectEmbeddingAndLinkedLlm(agent, refs);
         collectPersonaSubReferences(refs);
         return refs;
     }
 
-    private static void collectEmbeddingAndLinkedLlm(TurAIAgent agent, ReferenceBag refs) {
-        TurEmbeddingModel em = agent.getTurEmbeddingModelInstance();
+    private void collectEmbeddingAndLinkedLlm(TurAIAgent agent, ReferenceBag refs) {
+        TurEmbeddingModel em = agent.getEmbeddingModelInstanceId() == null ? null
+                : embeddingModelRepository.findById(agent.getEmbeddingModelInstanceId()).orElse(null);
         if (em == null) return;
         refs.embeddings.put(em.getId(), em);
         if (em.getTurLLMInstance() != null) {

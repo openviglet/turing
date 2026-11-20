@@ -42,6 +42,8 @@ import { formatTime } from "@/lib/format-time"
 import { TurAIAgentService } from "@/services/agent/ai-agent.service"
 import { TurEmbeddingModelService } from "@/services/embedding/embedding-model.service"
 import type { TurEmbeddingModel } from "@/models/embedding/embedding-model.model"
+import type { TurStoreInstance } from "@/models/store/store-instance.model"
+import { TurStoreInstanceService } from "@/services/store/store.service"
 import { postLlmChat } from "@viglet/turing-react-sdk"
 import { TurSEInstanceService } from "@/services/se/se.service"
 import {
@@ -67,6 +69,7 @@ const turAIAgentService = new TurAIAgentService();
 const turSEInstanceService = new TurSEInstanceService();
 const turGlobalSettingsService = new TurGlobalSettingsService();
 const turEmbeddingModelService = new TurEmbeddingModelService();
+const turStoreInstanceService = new TurStoreInstanceService();
 
 const NONE_VALUE = "__none__";
 
@@ -96,6 +99,8 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     const [seInstances, setSeInstances] = useState<TurSEInstance[]>([]);
     // T513 — embedding models selectable as a per-site domain embedder override.
     const [embeddingModels, setEmbeddingModels] = useState<TurEmbeddingModel[]>([]);
+    // T1315 — the agent holds its store by id; titles come from the store list.
+    const [storeInstances, setStoreInstances] = useState<TurStoreInstance[]>([]);
     const [ragCores, setRagCores] = useState<TurRagBm25CoreStatus[]>([]);
     const [isProvisioning, setIsProvisioning] = useState(false);
     const [defaultLlmId, setDefaultLlmId] = useState<string>("");
@@ -140,6 +145,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
             .query()
             .then((all) => setEmbeddingModels(all.filter((m) => m.enabled === 1)))
             .catch((err) => console.error("Failed to load embedding models", err));
+        turStoreInstanceService
+            .query()
+            .then(setStoreInstances)
+            .catch((err) => console.error("Failed to load stores", err));
     }, []);
 
     useEffect(() => {
@@ -210,6 +219,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
     }, [loadRagCores]);
 
     const selectedAgent = form.watch("turAIAgent");
+    const agentEmbeddingModelName = embeddingModels
+        .find((m) => m.id === selectedAgent?.embeddingModelInstanceId)?.modelName;
+    const agentStoreTitle = storeInstances
+        .find((s) => s.id === selectedAgent?.storeInstanceId)?.title;
     // T790 — single source of truth for "vector RAG is active on this site". A
     // VECTORLESS_STRUCTURED site never embeds, so every vector-RAG control (reindex,
     // hybrid-retrieval tuning, ANN) is off regardless of the agent's RAG flag. Fold
@@ -549,16 +562,16 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                 ? t("forms.snGenai.ragEnabledOnAgent")
                                                 : t("forms.snGenai.ragDisabledOnAgent")}
                                         </div>
-                                        {selectedAgent.turEmbeddingModelInstance?.modelName && (
+                                        {agentEmbeddingModelName && (
                                             <div>
                                                 <strong>{t("forms.snGenai.embeddingModel")}:</strong>{" "}
-                                                {selectedAgent.turEmbeddingModelInstance.modelName}
+                                                {agentEmbeddingModelName}
                                             </div>
                                         )}
-                                        {selectedAgent.turStoreInstance?.title && (
+                                        {agentStoreTitle && (
                                             <div>
                                                 <strong>{t("forms.snGenai.embeddingStore")}:</strong>{" "}
-                                                {selectedAgent.turStoreInstance.title}
+                                                {agentStoreTitle}
                                             </div>
                                         )}
                                         {selectedAgent.llmInstances?.[0]?.title && (

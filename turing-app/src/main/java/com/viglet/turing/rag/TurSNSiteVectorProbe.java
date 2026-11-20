@@ -80,11 +80,14 @@ public class TurSNSiteVectorProbe {
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurGenAiStoreProviderFactory storeProviderFactory;
     private final TurSecretCryptoService secretCryptoService;
+    private final com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository;
     private final Map<String, Cached> cache = new ConcurrentHashMap<>();
     private Clock clock = Clock.systemUTC();
 
     public TurSNSiteVectorProbe(TurSNSiteLocales turSNSiteLocaleRepository,
-            TurGenAiStoreProviderFactory storeProviderFactory, TurSecretCryptoService secretCryptoService) {
+            TurGenAiStoreProviderFactory storeProviderFactory, TurSecretCryptoService secretCryptoService,
+            com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository) {
+        this.storeInstanceRepository = storeInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.storeProviderFactory = storeProviderFactory;
         this.secretCryptoService = secretCryptoService;
@@ -99,7 +102,8 @@ public class TurSNSiteVectorProbe {
      *              store answers {@link Presence#UNKNOWN}
      */
     public Presence probe(TurSNSite site, TurAIAgent agent) {
-        TurStoreInstance store = agent == null ? null : agent.getTurStoreInstance();
+        TurStoreInstance store = agent == null || agent.getStoreInstanceId() == null ? null
+                : storeInstanceRepository.findById(agent.getStoreInstanceId()).orElse(null);
         if (site == null || store == null) {
             return Presence.UNKNOWN;
         }
@@ -133,7 +137,8 @@ public class TurSNSiteVectorProbe {
      */
     public Presence probePartition(TurAIAgent agent, String collection,
             com.viglet.turing.commons.se.TurSEPartition partition) {
-        TurStoreInstance store = agent == null ? null : agent.getTurStoreInstance();
+        TurStoreInstance store = agent == null || agent.getStoreInstanceId() == null ? null
+                : storeInstanceRepository.findById(agent.getStoreInstanceId()).orElse(null);
         if (store == null || !StringUtils.hasText(collection) || partition == null) {
             return Presence.UNKNOWN;
         }
