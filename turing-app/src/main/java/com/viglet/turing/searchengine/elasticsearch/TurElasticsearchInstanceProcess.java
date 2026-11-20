@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TurElasticsearchInstanceProcess {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints;
 
     private final ConcurrentHashMap<String, TurElasticsearchInstance> instanceCache =
             new ConcurrentHashMap<>();
@@ -57,8 +57,8 @@ public class TurElasticsearchInstanceProcess {
     public TurElasticsearchInstanceProcess(
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNSites turSNSiteRepository,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
-        this.snSiteSEInstances = snSiteSEInstances;
+            com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
+        this.seInstanceEndpoints = seInstanceEndpoints;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
     }
@@ -78,8 +78,8 @@ public class TurElasticsearchInstanceProcess {
     }
 
     public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSNSiteLocale turSNSiteLocale) {
-        return getElasticsearchInstance(
-                snSiteSEInstances.of(turSNSiteLocale.getTurSNSite()),
+        // T1337 — only the endpoint is needed, and it is cached by SE instance id.
+        return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSiteLocale.getTurSNSite()),
                 turSNSiteLocale.getCore());
     }
 
@@ -97,20 +97,28 @@ public class TurElasticsearchInstanceProcess {
             return Optional.empty();
         }
         log.debug("Found locale core={}", turSNSiteLocale.getCore());
-        return getElasticsearchInstance(snSiteSEInstances.of(turSNSite), turSNSiteLocale.getCore());
+        return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite), turSNSiteLocale.getCore());
     }
 
     private Optional<TurElasticsearchInstance> getElasticsearchInstance(TurSEInstance turSEInstance,
             String index) {
+        return instanceFor(turSEInstance.getEndpointUrl(), index);
+    }
+
+    private Optional<TurElasticsearchInstance> instanceFor(String endpointUrl, String index) {
+        if (endpointUrl == null) {
+            log.warn("No Elasticsearch endpoint for index '{}'", index);
+            return Optional.empty();
+        }
         String normalizedIndex = index.toLowerCase();
-        String cacheKey = turSEInstance.getEndpointUrl() + "/" + normalizedIndex;
+        String cacheKey = endpointUrl + "/" + normalizedIndex;
         try {
             TurElasticsearchInstance instance = instanceCache.computeIfAbsent(cacheKey, key ->
-                    createInstance(turSEInstance.getEndpointUrl(), normalizedIndex));
+                    createInstance(endpointUrl, normalizedIndex));
             return Optional.ofNullable(instance);
         } catch (Exception e) {
             log.error("Error obtaining Elasticsearch instance for index '{}' at '{}'",
-                    index, turSEInstance.getEndpointUrl(), e);
+                    index, endpointUrl, e);
             return Optional.empty();
         }
     }

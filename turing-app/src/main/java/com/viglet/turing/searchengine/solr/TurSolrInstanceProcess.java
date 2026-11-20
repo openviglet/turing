@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.searchengine.solr;
 
+import com.viglet.turing.searchengine.TurSEInstanceEndpoints;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Locale;
@@ -47,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurSolrInstanceProcess {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints;
     private final ConcurrentHashMap<String, SolrClient> clientCache = new ConcurrentHashMap<>();
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSites turSNSiteRepository;
@@ -57,8 +59,8 @@ public class TurSolrInstanceProcess {
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNSites turSNSiteRepository,
             TurSolrInstanceSource solrInstanceSource,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
-        this.snSiteSEInstances = snSiteSEInstances;
+            com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
+        this.seInstanceEndpoints = seInstanceEndpoints;
         System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection");
         System.setProperty("jdk.httpclient.HttpClient.version", "HTTP_1_1");
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -67,7 +69,10 @@ public class TurSolrInstanceProcess {
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSEInstance turSEInstance, String core) {
-        String endpoint = resolveEndpoint(turSEInstance);
+        return clientFor(resolveEndpoint(turSEInstance != null ? turSEInstance.getEndpointUrl() : null), core);
+    }
+
+    private Optional<TurSolrInstance> clientFor(String endpoint, String core) {
         // T1247 — one URL, a node list served with load balancing and failover, or a
         // ZooKeeper ensemble whose cluster state the client follows.
         TurSolrEndpoints endpoints = TurSolrEndpoints.parse(endpoint);
@@ -124,17 +129,19 @@ public class TurSolrInstanceProcess {
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
-        return getSolrClient(snSiteSEInstances.of(turSNSite), turSNSiteLocale.getCore());
+        // T1337 — only the endpoint is needed, and it is cached by SE instance id.
+        return clientFor(resolveEndpoint(TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite)),
+                turSNSiteLocale.getCore());
     }
 
-    private String resolveEndpoint(TurSEInstance turSEInstance) {
+    private String resolveEndpoint(String instanceEndpoint) {
         if (solrInstanceSource != null && solrInstanceSource.isReadOnly()) {
             String configured = solrInstanceSource.getConfiguredEndpoint();
             if (configured != null && !configured.isBlank()) {
                 return configured;
             }
         }
-        return turSEInstance != null ? turSEInstance.getEndpointUrl() : null;
+        return instanceEndpoint;
     }
 
     @PreDestroy

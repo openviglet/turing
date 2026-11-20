@@ -39,6 +39,7 @@ public final class InMemorySNSiteSEInstances {
     private final TurSEInstanceRepository repository;
     private final TurSNSiteSEInstances siteSEInstances;
     private final TurSEInstancePluginTypes pluginTypes;
+    private final TurSEInstanceEndpoints endpoints;
 
     public InMemorySNSiteSEInstances() {
         repository = mock(TurSEInstanceRepository.class, withSettings().strictness(Strictness.LENIENT));
@@ -46,10 +47,16 @@ public final class InMemorySNSiteSEInstances {
         when(repository.existsById(any())).thenAnswer(inv -> rows.containsKey(inv.<String>getArgument(0)));
         this.siteSEInstances = new TurSNSiteSEInstances(repository);
         this.pluginTypes = new TurSEInstancePluginTypes(repository);
+        this.endpoints = new TurSEInstanceEndpoints(repository);
     }
 
     public TurSNSiteSEInstances service() {
         return siteSEInstances;
+    }
+
+    /** T1337 — the endpoint lookup the engine instance processes use. */
+    public TurSEInstanceEndpoints endpoints() {
+        return endpoints;
     }
 
     public TurSEInstancePluginTypes pluginTypes() {

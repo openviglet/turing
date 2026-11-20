@@ -48,7 +48,7 @@ class TurLuceneInstanceProcessTest {
 
     @BeforeEach
     void setUp() {
-        process = new TurLuceneInstanceProcess(turSNSiteRepository, turSNSiteLocaleRepository, null, seInstances.service());
+        process = new TurLuceneInstanceProcess(turSNSiteRepository, turSNSiteLocaleRepository, null, seInstances.endpoints());
     }
 
     @AfterEach

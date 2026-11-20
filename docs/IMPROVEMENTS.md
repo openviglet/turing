@@ -2611,21 +2611,3 @@ service as top-level packages. They are rewritten for the module layout. Hand-wr
 checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
-
-### CLXXXIX.32 Cache the SE connection read-model (T1315 follow-up) (T1337)
-
-T1315 turned `TurSNSite.turSEInstance` into `turSEInstanceId`. Before, the eager
-association came joined with every site load; now `TurSolrInstanceProcess`,
-`TurElasticsearchInstanceProcess` and `TurLuceneInstanceProcess` call
-`TurSNSiteSEInstances.of(site)`, a primary-key read of `se_instance` per client lookup,
-which on the Solr path is per search. The plugin type is already cached
-(`TurSEInstancePluginTypes`, evicted by `TurSEInstanceEvictionListener`), so only the
-connection data is read each time.
-
-Build a service-level cache of an immutable connection read-model keyed by SE instance
-id (endpoint URL, vendor plugin, the decrypted or encrypted credential the client
-needs), never the `TurSEInstance` entity, per the caching rule in the turing-caching
-skill. Evict it from the same listener that clears `turSEInstancePluginType`. The three
-instance processes then build or look up their clients from the read-model. Measure
-first: if the client caches keyed by endpoint already make the read negligible against
-the engine round-trip, retire this line instead.

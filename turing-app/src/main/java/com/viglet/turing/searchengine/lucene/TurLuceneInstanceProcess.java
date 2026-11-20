@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TurLuceneInstanceProcess {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints;
 
     private final ConcurrentHashMap<String, TurLuceneInstance> instanceCache = new ConcurrentHashMap<>();
     private final TurSNSites turSNSiteRepository;
@@ -59,8 +59,8 @@ public class TurLuceneInstanceProcess {
     public TurLuceneInstanceProcess(TurSNSites turSNSiteRepository,
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneStorageSync storageSync,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
-        this.snSiteSEInstances = snSiteSEInstances;
+            com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
+        this.seInstanceEndpoints = seInstanceEndpoints;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.storageSync = storageSync;
@@ -80,7 +80,7 @@ public class TurLuceneInstanceProcess {
             log.warn("{} site with {} locale not found", turSNSite.getName(), locale);
             return Optional.empty();
         }
-        return getLuceneInstance(snSiteSEInstances.of(turSNSite), siteLocale.getCore());
+        return resolveEndpoint(turSNSite).flatMap(endpoint -> instanceFor(endpoint, siteLocale.getCore()));
     }
 
     /**
@@ -91,23 +91,21 @@ public class TurLuceneInstanceProcess {
     }
 
     public Optional<TurLuceneInstance> initLuceneInstance(TurSNSiteLocale turSNSiteLocale) {
-        return resolveSEInstance(turSNSiteLocale.getTurSNSite())
-                .flatMap(seInstance -> getLuceneInstance(seInstance, turSNSiteLocale.getCore()));
+        return resolveEndpoint(turSNSiteLocale.getTurSNSite())
+                .flatMap(endpoint -> instanceFor(endpoint, turSNSiteLocale.getCore()));
     }
 
     /**
      * T1078 — the site a {@link TurSNSiteLocale} carries may be the transient one the
-     * search snapshot rebuilds; since T1315 it names its SE instance by id, which is
-     * loaded here for the endpoint the index path needs.
+     * search snapshot rebuilds; since T1315 it names its SE instance by id, whose
+     * endpoint (cached by id since T1337) is all the index path needs.
      */
-    private Optional<TurSEInstance> resolveSEInstance(TurSNSite turSNSite) {
+    private Optional<String> resolveEndpoint(TurSNSite turSNSite) {
         if (turSNSite == null) {
             return Optional.empty();
         }
-        // T1315 — the site names its SE instance by id, so even the snapshot's
-        // transient site resolves it; the index path needs the endpoint.
-        Optional<TurSEInstance> resolved = Optional.ofNullable(snSiteSEInstances.of(turSNSite))
-                .filter(instance -> instance.getEndpointUrl() != null);
+        Optional<String> resolved = Optional.ofNullable(
+                com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite));
         if (resolved.isEmpty()) {
             log.warn("No Lucene endpoint for site '{}'", turSNSite.getName());
         }
@@ -125,12 +123,16 @@ public class TurLuceneInstanceProcess {
     }
 
     private Optional<TurLuceneInstance> getLuceneInstance(TurSEInstance turSEInstance, String coreName) {
-        Path indexPath = resolveIndexPath(turSEInstance.getEndpointUrl(), coreName);
+        return instanceFor(turSEInstance.getEndpointUrl(), coreName);
+    }
+
+    private Optional<TurLuceneInstance> instanceFor(String endpointUrl, String coreName) {
+        Path indexPath = resolveIndexPath(endpointUrl, coreName);
         try {
             return openInstance(indexPath);
         } catch (Exception e) {
             log.error("Error obtaining Lucene instance for core '{}' at '{}'", coreName,
-                    turSEInstance.getEndpointUrl(), e);
+                    endpointUrl, e);
             return Optional.empty();
         }
     }

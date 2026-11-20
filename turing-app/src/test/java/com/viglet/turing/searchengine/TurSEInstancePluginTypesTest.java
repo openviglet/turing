@@ -58,6 +58,22 @@ class TurSEInstancePluginTypesTest {
     }
 
     @Test
+    void aSiteResolvesTheEndpointOfTheInstanceItNames() {
+        TurSEInstance solr = instance("se-solr", "SOLR", "solr");
+        solr.setEndpointUrl("http://solr:8983/solr");
+        TurSNSite site = seInstances.attach(new TurSNSite(), solr);
+        TurSEInstance bare = new TurSEInstance();
+        bare.setId("se-bare");
+        TurSNSite bareSite = seInstances.attach(new TurSNSite(), bare);
+
+        assertThat(TurSEInstanceEndpoints.ofSite(seInstances.endpoints(), site)).isEqualTo("http://solr:8983/solr");
+        // T1337 — nothing null reaches the cache; a missing endpoint reads as none.
+        assertThat(seInstances.endpoints().of("se-deleted")).isEmpty();
+        assertThat(TurSEInstanceEndpoints.ofSite(seInstances.endpoints(), bareSite)).isNull();
+        assertThat(TurSEInstanceEndpoints.ofSite(seInstances.endpoints(), new TurSNSite())).isNull();
+    }
+
+    @Test
     void aSiteResolvesTheInstanceItNames() {
         TurSEInstance lucene = instance("se-lucene", "LUCENE", "lucene");
         TurSNSite site = seInstances.attach(new TurSNSite(), lucene);

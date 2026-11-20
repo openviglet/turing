@@ -83,7 +83,7 @@ class TurSolrInstanceProcessTest {
         turSolrInstanceProcess = new TurSolrInstanceProcess(
                 turSNSiteLocaleRepository,
                 turSNSiteRepository,
-                solrInstanceSource, new com.viglet.turing.searchengine.InMemorySNSiteSEInstances().service());
+                solrInstanceSource, new com.viglet.turing.searchengine.InMemorySNSiteSEInstances().endpoints());
     }
 
     @Test

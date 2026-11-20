@@ -57,6 +57,8 @@ public class TurSEInstanceEvictionListener {
                 : evictionSchedulerStatic.get();
         if (scheduler != null) {
             scheduler.clearOnce(TurSEInstancePluginTypes.CACHE_NAME);
+            // T1337 — the endpoint the engine clients are built from.
+            scheduler.clearOnce(TurSEInstanceEndpoints.CACHE_NAME);
         }
     }
 }
