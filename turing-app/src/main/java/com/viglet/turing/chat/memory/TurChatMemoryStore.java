@@ -41,4 +41,13 @@ public interface TurChatMemoryStore {
      * implementations that don't store messages return an empty list.
      */
     List<java.util.Map<String, Object>> findMessages(String conversationId, int limit);
+
+    /**
+     * T1336 — the agent the conversation's first remembered turn was answered by,
+     * read from the headline the store keeps. Empty when the store keeps none or
+     * the conversation is unknown.
+     */
+    default java.util.Optional<String> findAgentId(String conversationId) {
+        return java.util.Optional.empty();
+    }
 }

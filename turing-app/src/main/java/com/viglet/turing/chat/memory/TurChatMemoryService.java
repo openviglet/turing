@@ -162,6 +162,11 @@ public class TurChatMemoryService {
      *
      * @since 2026.2.7
      */
+    /** T1336 — the agent the conversation's memory names, when the store keeps one. */
+    public java.util.Optional<String> findAgentId(String conversationId) {
+        return store.isEnabled() ? store.findAgentId(conversationId) : java.util.Optional.empty();
+    }
+
     public TurChatSessionMessagesDto listMessages(String conversationId, int limit) {
         String engine = store.getEngine().name();
         boolean enabled = store.isEnabled();

@@ -113,6 +113,24 @@ public class TurMongoChatMemoryStore implements TurChatMemoryStore {
     }
 
     @Override
+    public java.util.Optional<String> findAgentId(String conversationId) {
+        if (conversationId == null || conversationId.isBlank()) return java.util.Optional.empty();
+        try {
+            Document doc = client.getDatabase(databaseName)
+                    .getCollection(collectionName)
+                    .find(com.mongodb.client.model.Filters.eq("_id", conversationId))
+                    .projection(new Document("agentId", 1))
+                    .first();
+            return java.util.Optional.ofNullable(doc == null ? null : doc.getString("agentId"))
+                    .filter(id -> !id.isBlank());
+        } catch (Exception e) {
+            log.warn("Failed to read the chat memory owner of conversation {}: {}",
+                    conversationId, e.getMessage());
+            return java.util.Optional.empty();
+        }
+    }
+
+    @Override
     public List<Map<String, Object>> findMessages(String conversationId, int limit) {
         if (conversationId == null || conversationId.isBlank()) return List.of();
         int cap = Math.clamp(limit, 1, 1000);

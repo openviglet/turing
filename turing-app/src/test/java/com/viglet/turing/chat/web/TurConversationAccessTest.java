@@ -33,15 +33,17 @@ class TurConversationAccessTest {
     private final TurChatFlowSubmissionRepository submissions = mock(TurChatFlowSubmissionRepository.class);
     private final TurChatCitationRecordRepository citations = mock(TurChatCitationRecordRepository.class);
     private final TurAIAgentRepository agents = mock(TurAIAgentRepository.class);
+    private final com.viglet.turing.chat.memory.TurChatMemoryService memory =
+            mock(com.viglet.turing.chat.memory.TurChatMemoryService.class);
     private final TurConversationAccess access =
-            new TurConversationAccess(tenantContext, states, submissions, citations, agents);
+            new TurConversationAccess(tenantContext, states, submissions, citations, agents, memory);
 
     @Test
     void withTenancyOffEveryConversationIsVisible() {
         when(tenantContext.isTenancyEnabled()).thenReturn(false);
 
         assertThat(access.isVisible("c1")).isTrue();
-        verifyNoInteractions(states, submissions, citations, agents);
+        verifyNoInteractions(states, submissions, citations, agents, memory);
     }
 
     @Test
@@ -72,5 +74,18 @@ class TurConversationAccessTest {
         when(agents.existsById("agent-theirs")).thenReturn(false);
 
         assertThatThrownBy(() -> access.requireVisible("c2")).isInstanceOf(TurNotFoundException.class);
+    }
+
+    /** T1336 — a plain RAG chat is opened through the agent its memory names. */
+    @Test
+    void aConversationProvenOnlyByItsMemoryIsVisibleToItsAgentsTenant() {
+        when(tenantContext.isTenancyEnabled()).thenReturn(true);
+        when(memory.findAgentId("c3")).thenReturn(java.util.Optional.of("agent-mine"));
+        when(memory.findAgentId("c4")).thenReturn(java.util.Optional.of("agent-theirs"));
+        when(agents.existsById("agent-mine")).thenReturn(true);
+        when(agents.existsById("agent-theirs")).thenReturn(false);
+
+        assertThat(access.isVisible("c3")).isTrue();
+        assertThat(access.isVisible("c4")).isFalse();
     }
 }

@@ -27,8 +27,9 @@ import com.viglet.turing.tenant.TurTenantContext;
  * a conversation is the caller's only when a tenant-scoped record proves it: a
  * chat flow state or a flow submission for it (both {@code @TenantId}, so
  * another tenant's are invisible here), or a citation record whose agent the
- * caller can load. With none, the conversation answers as not found, rather than
- * opening another tenant's conversation to anyone who has its id. With tenancy
+ * caller can load, or chat memory naming such an agent (T1336). With none, the
+ * conversation answers as not found, rather than opening another tenant's
+ * conversation to anyone who has its id. With tenancy
  * off there is one tenant and nothing to check.
  *
  * @author Alexandre Oliveira
@@ -42,12 +43,15 @@ public class TurConversationAccess {
     private final TurChatFlowSubmissionRepository submissionRepository;
     private final TurChatCitationRecordRepository citationRecordRepository;
     private final TurAIAgentRepository agentRepository;
+    private final com.viglet.turing.chat.memory.TurChatMemoryService chatMemoryService;
 
     public TurConversationAccess(TurTenantContext tenantContext,
             TurChatFlowStateRepository flowStateRepository,
             TurChatFlowSubmissionRepository submissionRepository,
             TurChatCitationRecordRepository citationRecordRepository,
-            TurAIAgentRepository agentRepository) {
+            TurAIAgentRepository agentRepository,
+            com.viglet.turing.chat.memory.TurChatMemoryService chatMemoryService) {
+        this.chatMemoryService = chatMemoryService;
         this.tenantContext = tenantContext;
         this.flowStateRepository = flowStateRepository;
         this.submissionRepository = submissionRepository;
@@ -73,10 +77,14 @@ public class TurConversationAccess {
                 || !submissionRepository.findByConversationIdOrderByCompletedAtDesc(conversationId).isEmpty()) {
             return true;
         }
-        return citationRecordRepository.findByConversationIdOrderByAnswerProducedAtAsc(conversationId).stream()
+        if (citationRecordRepository.findByConversationIdOrderByAnswerProducedAtAsc(conversationId).stream()
                 .map(TurChatCitationRecord::getAgentId)
                 .filter(agentId -> agentId != null && !agentId.isBlank())
                 .distinct()
-                .anyMatch(agentRepository::existsById);
+                .anyMatch(agentRepository::existsById)) {
+            return true;
+        }
+        // T1336 — a plain RAG chat leaves only memory, whose headline names its agent.
+        return chatMemoryService.findAgentId(conversationId).filter(agentRepository::existsById).isPresent();
     }
 }

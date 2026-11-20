@@ -2594,19 +2594,3 @@ service as top-level packages. They are rewritten for the module layout. Hand-wr
 checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
-
-### CLXXXIX.31 Chat memory records its agent (T1336)
-
-T1334 made TurChatSessionAPI answer 404 under tenancy unless a tenant-scoped record ties
-the conversation to the caller: a chat flow state, a flow submission, or a citation
-record whose agent the caller can load. A conversation that left only chat memory behind
-(a plain RAG chat with chatMemoryEnabled and no flow) has no such record, so with
-tenancy on its transcript can no longer be opened from the session inspector.
-Single-tenant installs are unaffected.
-
-TurChatMemoryService.recordTurn already receives the site name and the agent, and each
-TurChatMemoryEvent carries the site name. The store (Mongo, Redis) should also keep the
-agent id on the conversation's headline, and TurChatMemoryStore should answer it for a
-conversation id, so TurConversationAccess can accept a conversation whose memory names
-an agent the caller can load. A test per store engine records a turn and reads the owner
-back.

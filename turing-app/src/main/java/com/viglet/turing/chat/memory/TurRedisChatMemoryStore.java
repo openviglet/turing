@@ -98,6 +98,19 @@ public class TurRedisChatMemoryStore implements TurChatMemoryStore {
     }
 
     @Override
+    public java.util.Optional<String> findAgentId(String conversationId) {
+        if (conversationId == null || conversationId.isBlank()) return java.util.Optional.empty();
+        try (Jedis jedis = pool.getResource()) {
+            return java.util.Optional.ofNullable(jedis.hget(keyPrefix + ":" + conversationId, "agentId"))
+                    .filter(id -> !id.isBlank());
+        } catch (Exception e) {
+            log.warn("Failed to read the chat memory owner of conversation {}: {}",
+                    conversationId, e.getMessage());
+            return java.util.Optional.empty();
+        }
+    }
+
+    @Override
     public List<Map<String, Object>> findMessages(String conversationId, int limit) {
         if (conversationId == null || conversationId.isBlank()) return List.of();
         int cap = Math.clamp(limit, 1, 1000);

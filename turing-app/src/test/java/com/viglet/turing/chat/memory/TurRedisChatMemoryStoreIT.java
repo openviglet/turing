@@ -118,4 +118,13 @@ class TurRedisChatMemoryStoreIT {
     void emptyConversationReturnsEmpty() {
         assertThat(store.findMessages("nope", 10)).isEmpty();
     }
+
+    /** T1336 — the store answers the agent a conversation's memory names, and nothing for an unknown one. */
+    @Test
+    void readsBackTheConversationsAgent() {
+        store.appendBatch("owned", List.of(turn("owned", "hi", "hello", 50)));
+
+        assertThat(store.findAgentId("owned")).contains("agent-1");
+        assertThat(store.findAgentId("never-seen")).isEmpty();
+    }
 }
