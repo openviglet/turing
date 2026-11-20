@@ -38,7 +38,7 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
     @Override
     @Query("SELECT DISTINCT a FROM TurAIAgent a"
             + " LEFT JOIN FETCH a.llmInstances"
-            + " LEFT JOIN FETCH a.mcpServers"
+            + " LEFT JOIN FETCH a.mcpServerIds"
             + " LEFT JOIN FETCH a.customTools"
             + " LEFT JOIN FETCH a.personas"
             + " WHERE a.id = :id")
@@ -55,7 +55,7 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
      *
      * @since 2026.2.8
      */
-    @Query("SELECT a FROM TurAIAgent a JOIN a.mcpServers m WHERE m.id = ?1")
+    @Query("SELECT a FROM TurAIAgent a JOIN a.mcpServerIds m WHERE m = ?1")
     List<TurAIAgent> findByMcpServerId(String mcpServerId);
 
     /** Used by the LLM delete path. @since 2026.2.8 */

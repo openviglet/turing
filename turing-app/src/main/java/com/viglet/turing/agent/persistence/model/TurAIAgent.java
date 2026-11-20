@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
@@ -339,7 +338,7 @@ public class TurAIAgent implements Serializable {
 
     /**
      * T145 / §X.5.b — when {@code true}, the agent's attached MCP servers (the
-     * {@link #mcpServers} allow-list) are <em>federated</em> to whichever native
+     * {@link #mcpServerIds} allow-list) are <em>federated</em> to whichever native
      * vendor handles the turn: the OpenAI Responses remote {@code mcp} tool
      * (T138) or the Anthropic MCP Connector (T144). On such a native turn the
      * same servers are <em>not</em> also wired as Turing-side MCP client tools
@@ -771,11 +770,16 @@ public class TurAIAgent implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "llm_instance_id"))
     private Set<TurLLMInstance> llmInstances = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "agent_mcp_server",
-            joinColumns = @JoinColumn(name = "agent_id"),
-            inverseJoinColumns = @JoinColumn(name = "mcp_server_id"))
-    private Set<TurMcpServer> mcpServers = new HashSet<>();
+    /**
+     * T1315 — the MCP servers this agent may call, by id: the servers belong to
+     * the mcp module, and {@code TurAgentMcpServers} loads them. Same join table
+     * as before, so the schema is unchanged.
+     */
+    @jakarta.persistence.ElementCollection(fetch = FetchType.LAZY)
+    @jakarta.persistence.CollectionTable(name = "agent_mcp_server",
+            joinColumns = @JoinColumn(name = "agent_id"))
+    @Column(name = "mcp_server_id", length = 36)
+    private Set<String> mcpServerIds = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "agent_custom_tool_link",

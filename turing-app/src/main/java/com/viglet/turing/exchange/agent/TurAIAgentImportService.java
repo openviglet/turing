@@ -482,7 +482,10 @@ public class TurAIAgentImportService {
             agent.setDefaultPersonaId(defaultPersona == null ? null : defaultPersona.getId());
         }
         agent.setLlmInstances(resolveSet(a.getLlmInstanceIds(), refs.llms::get));
-        agent.setMcpServers(resolveSet(a.getMcpServerIds(), refs.mcpServers::get));
+        // T1315 — the agent names its MCP servers by id: the ids of the rows the import resolved.
+        java.util.Set<String> mcpServerIds = new java.util.HashSet<>();
+        resolveSet(a.getMcpServerIds(), refs.mcpServers::get).forEach(m -> mcpServerIds.add(m.getId()));
+        agent.setMcpServerIds(mcpServerIds);
         agent.setCustomTools(resolveSet(a.getCustomToolIds(), refs.customTools::get));
         if (a.getStoreInstanceId() != null) {
             agent.setStoreInstanceId(java.util.Optional.ofNullable(refs.stores.get(a.getStoreInstanceId()))

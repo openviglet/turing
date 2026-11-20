@@ -185,8 +185,8 @@ public class TurAIAgentAPI {
             agentEdit.setRequestOptionsJson(turAIAgent.getRequestOptionsJson());
             agentEdit.setLlmInstances(resolveRelations(
                     turAIAgent.getLlmInstances(), turLLMInstanceRepository));
-            agentEdit.setMcpServers(resolveRelations(
-                    turAIAgent.getMcpServers(), turMcpServerRepository));
+            // T1315 — the MCP servers are held by id; keep only the ones that exist.
+            agentEdit.setMcpServerIds(existingMcpServerIds(turAIAgent.getMcpServerIds()));
             agentEdit.setCustomTools(resolveRelations(
                     turAIAgent.getCustomTools(), turCustomToolRepository));
             agentEdit.setEmbeddingModelInstanceId(existingId(turAIAgent.getEmbeddingModelInstanceId(),
@@ -342,8 +342,7 @@ public class TurAIAgentAPI {
         TurAIAgent turAIAgent = turAIAgentMapper.toEntity(turAIAgentDto);
         turAIAgent.setLlmInstances(resolveRelations(
                 turAIAgent.getLlmInstances(), turLLMInstanceRepository));
-        turAIAgent.setMcpServers(resolveRelations(
-                turAIAgent.getMcpServers(), turMcpServerRepository));
+        turAIAgent.setMcpServerIds(existingMcpServerIds(turAIAgent.getMcpServerIds()));
         turAIAgent.setCustomTools(resolveRelations(
                 turAIAgent.getCustomTools(), turCustomToolRepository));
         turAIAgent.setEmbeddingModelInstanceId(existingId(turAIAgent.getEmbeddingModelInstanceId(),
@@ -370,6 +369,14 @@ public class TurAIAgentAPI {
      * dropped; one that exists outside the agent's catalog is refused, since
      * the runtime reads the default from the catalog.
      */
+    private java.util.Set<String> existingMcpServerIds(java.util.Set<String> requested) {
+        java.util.Set<String> existing = new java.util.HashSet<>();
+        if (requested != null && !requested.isEmpty()) {
+            turMcpServerRepository.findAllById(requested).forEach(server -> existing.add(server.getId()));
+        }
+        return existing;
+    }
+
     private String validDefaultPersonaId(String requestedId, Set<TurPersona> personaCatalog) {
         if (requestedId == null || !turPersonaRepository.existsById(requestedId)) {
             return null;

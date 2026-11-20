@@ -60,6 +60,8 @@ class TurPromptAssemblyPipelineTest {
     @Mock
     private TurMcpInstructionsProvider mcpInstructionsProvider;
     @Mock
+    private com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
+    @Mock
     private TurSkillRunnerService skillRunnerService;
     @Mock
     private TurChatFlowEngineService chatFlowEngineService;
@@ -83,7 +85,7 @@ class TurPromptAssemblyPipelineTest {
         List<TurPromptContributor> contributors = List.of(
                 new TurPersonaPromptContributor(staticPromptCache, composer),
                 new TurAgentBasePromptContributor(),
-                new TurMcpPromptContributor(mcpInstructionsProvider),
+                new TurMcpPromptContributor(mcpInstructionsProvider, agentMcpServers),
                 new TurCapabilityPromptContributor(), // no @PostConstruct → all prompts blank
                 new TurSkillPromptContributor(skillRunnerService),
                 new TurFlowPromptContributor(chatFlowEngineService));
@@ -105,9 +107,13 @@ class TurPromptAssemblyPipelineTest {
             boolean withSkill, TurAgentChatFlowContext flow) {
         when(agent.isSkillsEnabled()).thenReturn(withSkill);
         // Capability flags default to false on the mock → no capability segments.
-        when(agent.getMcpServers()).thenReturn(withMcp ? java.util.Set.of() : null);
+        // T1315 — the agent names its servers by id; the lookup answers the rows.
+        java.util.Set<com.viglet.turing.mcp.persistence.model.TurMcpServer> servers = withMcp
+                ? java.util.Set.of(new com.viglet.turing.mcp.persistence.model.TurMcpServer())
+                : java.util.Set.of();
+        when(agentMcpServers.of(agent)).thenReturn(servers);
         if (!withMcp) {
-            when(mcpInstructionsProvider.buildSystemPromptBlock(null)).thenReturn("");
+            when(mcpInstructionsProvider.buildSystemPromptBlock(servers)).thenReturn("");
         }
         return new TurPromptAssemblyContext(agent, p, null, null, base, flow, null);
     }

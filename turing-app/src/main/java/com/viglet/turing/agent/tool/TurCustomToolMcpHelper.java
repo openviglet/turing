@@ -60,12 +60,15 @@ public class TurCustomToolMcpHelper {
     private final TurAIAgentRepository agentRepository;
     private final String agentId;
     private final ObjectMapper objectMapper;
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
 
     /** Resolved lazily on first {@link #call} so tool setup pays nothing. */
     private ToolCallback[] cachedCallbacks;
 
     public TurCustomToolMcpHelper(TurMcpToolCallbackService mcpToolCallbackService,
-            TurAIAgentRepository agentRepository, String agentId, ObjectMapper objectMapper) {
+            TurAIAgentRepository agentRepository, String agentId, ObjectMapper objectMapper,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.mcpToolCallbackService = mcpToolCallbackService;
         this.agentRepository = agentRepository;
         this.agentId = agentId;
@@ -123,7 +126,7 @@ public class TurCustomToolMcpHelper {
             return cachedCallbacks;
         }
         cachedCallbacks = agentRepository.findById(agentId)
-                .map(TurAIAgent::getMcpServers)
+                .map(agentMcpServers::of)
                 .filter(servers -> servers != null && !servers.isEmpty())
                 .map(this::callbacksFor)
                 .orElseGet(() -> new ToolCallback[0]);

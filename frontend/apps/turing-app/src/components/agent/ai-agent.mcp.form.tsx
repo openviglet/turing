@@ -59,7 +59,7 @@ export const AIAgentMcpForm: React.FC<Props> = ({ value }) => {
   const [syncedValue, setSyncedValue] = useState<TurAIAgent | null>(null);
   if (syncedValue !== value) {
     setSyncedValue(value);
-    const ids = new Set((value.mcpServers ?? []).map((s) => s.id));
+    const ids = new Set(value.mcpServerIds ?? []);
     setSelectedIds(ids);
     setSavedIds(ids);
     setFederation(value.mcpNativeFederation ?? false);
@@ -85,8 +85,8 @@ export const AIAgentMcpForm: React.FC<Props> = ({ value }) => {
   }
 
   async function onSave() {
-    const selected = mcpServers.filter((s) => selectedIds.has(s.id));
-    const payload: TurAIAgent = { ...value, mcpServers: selected, mcpNativeFederation: federation };
+    const selected = mcpServers.filter((s) => selectedIds.has(s.id)).map((s) => s.id);
+    const payload: TurAIAgent = { ...value, mcpServerIds: selected, mcpNativeFederation: federation };
     try {
       const result = await updateMutation.mutateAsync(payload);
       if (result) {

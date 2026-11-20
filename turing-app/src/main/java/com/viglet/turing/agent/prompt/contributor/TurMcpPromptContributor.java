@@ -38,7 +38,11 @@ public class TurMcpPromptContributor implements TurPromptContributor {
 
     private final TurMcpInstructionsProvider mcpInstructionsProvider;
 
-    public TurMcpPromptContributor(TurMcpInstructionsProvider mcpInstructionsProvider) {
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
+
+    public TurMcpPromptContributor(TurMcpInstructionsProvider mcpInstructionsProvider,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.mcpInstructionsProvider = mcpInstructionsProvider;
     }
 
@@ -49,7 +53,7 @@ public class TurMcpPromptContributor implements TurPromptContributor {
 
     @Override
     public List<TurPromptSegment> contribute(TurPromptAssemblyContext context) {
-        String mcp = mcpInstructionsProvider.buildSystemPromptBlock(context.agent().getMcpServers());
+        String mcp = mcpInstructionsProvider.buildSystemPromptBlock(agentMcpServers.of(context.agent()));
         if (!StringUtils.hasText(mcp)) {
             return List.of();
         }

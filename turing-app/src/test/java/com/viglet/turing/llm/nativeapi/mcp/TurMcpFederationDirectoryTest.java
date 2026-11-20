@@ -25,7 +25,13 @@ import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
 
 class TurMcpFederationDirectoryTest {
 
-    private final TurMcpFederationDirectory directory = new TurMcpFederationDirectory();
+    /** T1315 — the agent names servers by id; the lookup answers the rows. */
+    private static final java.util.Map<TurAIAgent, Set<TurMcpServer>> SERVERS =
+            new java.util.IdentityHashMap<>();
+    private final TurMcpFederationDirectory directory = new TurMcpFederationDirectory(
+            org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentMcpServers.class,
+                    inv -> inv.getMethod().getName().equals("of")
+                            ? SERVERS.getOrDefault(inv.getArgument(0), Set.of()) : null));
 
     private static TurMcpServer httpServer(String id, String title, String url) {
         TurMcpServer server = new TurMcpServer();
@@ -41,7 +47,7 @@ class TurMcpFederationDirectoryTest {
         TurAIAgent agent = new TurAIAgent();
         agent.setTitle("agent");
         agent.setMcpNativeFederation(federation);
-        agent.setMcpServers(new LinkedHashSet<>(Set.of(servers)));
+        SERVERS.put(agent, new LinkedHashSet<>(Set.of(servers)));
         return agent;
     }
 

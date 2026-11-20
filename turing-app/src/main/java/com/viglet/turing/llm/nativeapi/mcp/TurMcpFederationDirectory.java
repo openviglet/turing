@@ -66,6 +66,12 @@ public class TurMcpFederationDirectory {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
+
+    public TurMcpFederationDirectory(com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
+    }
+
     /**
      * One federated server: the originating {@code serverId} (so the executor can
      * exclude it from the Turing MCP client path) plus the synthetic
@@ -89,11 +95,12 @@ public class TurMcpFederationDirectory {
         if (capability == null) {
             return List.of();
         }
-        if (agent.getMcpServers() == null || agent.getMcpServers().isEmpty()) {
+        java.util.Set<TurMcpServer> servers = agentMcpServers.of(agent);
+        if (servers.isEmpty()) {
             return List.of();
         }
         List<FederatedMcp> result = new ArrayList<>();
-        for (TurMcpServer server : agent.getMcpServers()) {
+        for (TurMcpServer server : servers) {
             toFederated(server, capability).ifPresent(result::add);
         }
         if (!result.isEmpty()) {

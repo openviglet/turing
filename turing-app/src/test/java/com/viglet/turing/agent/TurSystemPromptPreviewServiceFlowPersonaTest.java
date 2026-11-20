@@ -84,7 +84,8 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
         service = new TurSystemPromptPreviewService(promptAssemblyPipeline,
                 messageAssemblyPipeline, chatFlowEngineService,
                 chatFlowRepository, priceService, new TurInertRegionDetector(),
-                personaResolver, toolCallTraceService, promptCaptureService);
+                personaResolver, toolCallTraceService, promptCaptureService,
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentMcpServers.class));
     }
 
     /** start → persona(personaId) → aiQuestion — the canonical override path. */

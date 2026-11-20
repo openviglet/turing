@@ -97,6 +97,7 @@ public class TurAIAgentExportService {
     private final TurAgentEvalSetRepository evalSetRepository;
     private final TurMcpServerRepository mcpServerRepository;
     private final TurStoreInstanceRepository storeInstanceRepository;
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
     private final com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     public TurAIAgentExportService(TurAIAgentRepository agentRepository,
@@ -106,7 +107,9 @@ public class TurAIAgentExportService {
                                    TurAgentEvalSetRepository evalSetRepository,
                                    TurMcpServerRepository mcpServerRepository,
                                    TurStoreInstanceRepository storeInstanceRepository,
-                                   com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository) {
+                                   com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.embeddingModelRepository = embeddingModelRepository;
         this.agentRepository = agentRepository;
         this.chatFlowRepository = chatFlowRepository;
@@ -176,8 +179,8 @@ public class TurAIAgentExportService {
         if (agent.getLlmInstances() != null) {
             agent.getLlmInstances().forEach(l -> refs.llms.put(l.getId(), l));
         }
-        if (agent.getMcpServers() != null) {
-            agent.getMcpServers().forEach(m -> refs.mcpServers.put(m.getId(), m));
+        if (agent.getMcpServerIds() != null) {
+            agentMcpServers.of(agent).forEach(m -> refs.mcpServers.put(m.getId(), m));
         }
         if (agent.getCustomTools() != null) {
             agent.getCustomTools().forEach(t -> refs.tools.put(t.getId(), t));

@@ -142,7 +142,7 @@ public class TurMcpServerAPI {
         // JPQL bulk delete that bypasses the persistence context — pending
         // updates must hit the DB before the constraint check fires.
         for (var agent : this.turAIAgentRepository.findByMcpServerId(id)) {
-            agent.getMcpServers().removeIf(m -> id.equals(m.getId()));
+            agent.getMcpServerIds().remove(id);
             this.turAIAgentRepository.save(agent);
         }
         this.turAIAgentRepository.flush();

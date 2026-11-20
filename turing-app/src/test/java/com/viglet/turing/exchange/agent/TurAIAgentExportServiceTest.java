@@ -80,7 +80,8 @@ class TurAIAgentExportServiceTest {
     void setUp() {
         service = new TurAIAgentExportService(agentRepository, chatFlowRepository,
                 slotRepository, intentRepository, evalSetRepository, mcpServerRepository,
-                storeInstanceRepository, embeddingModelRepository);
+                storeInstanceRepository, embeddingModelRepository,
+                new com.viglet.turing.agent.TurAgentMcpServers(mcpServerRepository));
     }
 
     @AfterEach

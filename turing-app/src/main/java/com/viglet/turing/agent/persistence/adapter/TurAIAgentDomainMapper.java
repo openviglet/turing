@@ -43,7 +43,7 @@ import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 public interface TurAIAgentDomainMapper {
 
     @Mapping(target = "llmInstanceIds", source = "llmInstances")
-    @Mapping(target = "mcpServerIds", source = "mcpServers")
+    @Mapping(target = "mcpServerIds", expression = "java(java.util.Set.copyOf(entity.getMcpServerIds()))")
     @Mapping(target = "customToolIds", source = "customTools")
     @Mapping(target = "embeddingModelInstanceId", source = "embeddingModelInstanceId")
     @Mapping(target = "storeInstanceId", source = "storeInstanceId")
@@ -55,12 +55,6 @@ public interface TurAIAgentDomainMapper {
         return set == null ? Set.of()
                 : Collections.unmodifiableSet(
                         set.stream().map(TurLLMInstance::getId).collect(Collectors.toSet()));
-    }
-
-    default Set<String> mcpServersToIds(Set<TurMcpServer> set) {
-        return set == null ? Set.of()
-                : Collections.unmodifiableSet(
-                        set.stream().map(TurMcpServer::getId).collect(Collectors.toSet()));
     }
 
     default Set<String> customToolsToIds(Set<TurCustomTool> set) {

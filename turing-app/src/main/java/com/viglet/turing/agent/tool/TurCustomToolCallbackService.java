@@ -180,6 +180,7 @@ public class TurCustomToolCallbackService {
     private final com.viglet.turing.agent.workspace.TurAgentWorkspace agentWorkspace;
     private final TurMcpToolCallbackService mcpToolCallbackService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
     private final ConcurrentHashMap<String, CachedScript> scriptCache = new ConcurrentHashMap<>();
 
     public TurCustomToolCallbackService(TurCustomToolReader reader,
@@ -197,7 +198,9 @@ public class TurCustomToolCallbackService {
             TurAIAgentRepository agentRepository,
             TurLLMInstanceRepository llmRepository,
             com.viglet.turing.agent.workspace.TurAgentWorkspace agentWorkspace,
-            TurMcpToolCallbackService mcpToolCallbackService) {
+            TurMcpToolCallbackService mcpToolCallbackService,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.reader = reader;
         this.searchHelper = searchHelper;
         this.stateRepository = stateRepository;
@@ -483,7 +486,8 @@ public class TurCustomToolCallbackService {
         // that one integration instead of a parallel direct-REST call to the same
         // backend. No-op when there's no agent context / no attached servers.
         binding.setVariable("mcp",
-                new TurCustomToolMcpHelper(mcpToolCallbackService, agentRepository, tenantAgentId, objectMapper));
+                new TurCustomToolMcpHelper(mcpToolCallbackService, agentRepository, tenantAgentId, objectMapper,
+                        agentMcpServers));
         Script script = scriptClass.getDeclaredConstructor().newInstance();
         script.setBinding(binding);
         Object result = script.run();

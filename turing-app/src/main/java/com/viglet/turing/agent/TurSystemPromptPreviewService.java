@@ -114,6 +114,7 @@ public class TurSystemPromptPreviewService {
     private final TurAgentPersonaResolver personaResolver;
     private final TurToolCallTraceService toolCallTraceService;
     private final com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
 
     public TurSystemPromptPreviewService(TurPromptAssemblyPipeline promptAssemblyPipeline,
             TurMessageAssemblyPipeline messageAssemblyPipeline,
@@ -123,7 +124,9 @@ public class TurSystemPromptPreviewService {
             TurInertRegionDetector inertRegionDetector,
             TurAgentPersonaResolver personaResolver,
             TurToolCallTraceService toolCallTraceService,
-            com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService) {
+            com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.promptAssemblyPipeline = promptAssemblyPipeline;
         this.messageAssemblyPipeline = messageAssemblyPipeline;
         this.chatFlowEngineService = chatFlowEngineService;
@@ -879,10 +882,7 @@ public class TurSystemPromptPreviewService {
     }
 
     private void addMcpTools(TurAIAgent agent, List<TurSystemPromptToolDto> tools) {
-        if (agent.getMcpServers() == null) {
-            return;
-        }
-        for (TurMcpServer server : agent.getMcpServers()) {
+        for (TurMcpServer server : agentMcpServers.of(agent)) {
             if (server.getEnabled() != 1) {
                 continue;
             }

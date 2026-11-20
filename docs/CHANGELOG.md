@@ -1791,3 +1791,4 @@
 - **T1335** — With tenancy on, the batch job list and open-job count cover only jobs whose LLM instance the caller can see; single-tenant installs list every job as before.
 - **T1334** — With tenancy on, every chat session endpoint answers 404 unless a flow state, flow submission or citation record ties the conversation to the caller's tenant.
 - **T1336** — The Mongo and Redis memory stores answer a conversation's agent from their headline, so with tenancy on a plain RAG chat opens for the tenant that owns its agent.
+- **T1315i** — An agent holds mcpServerIds on the same join table; TurAgentMcpServers loads the rows for tools, prompts, federation and export, and the console sends the ids.

@@ -46,9 +46,11 @@ class TurCustomToolMcpHelperTest {
     private final TurMcpToolCallbackService mcpService = mock(TurMcpToolCallbackService.class);
     private final TurAIAgentRepository agentRepository = mock(TurAIAgentRepository.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers = mock(com.viglet.turing.agent.TurAgentMcpServers.class);
 
     private TurCustomToolMcpHelper helperFor(String agentId) {
-        return new TurCustomToolMcpHelper(mcpService, agentRepository, agentId, objectMapper);
+        return new TurCustomToolMcpHelper(mcpService, agentRepository, agentId, objectMapper,
+                agentMcpServers);
     }
 
     @Test
@@ -102,7 +104,8 @@ class TurCustomToolMcpHelperTest {
         TurAIAgent agent = new TurAIAgent();
         Set<TurMcpServer> servers = new HashSet<>();
         servers.add(new TurMcpServer());
-        agent.setMcpServers(servers);
+        agent.getMcpServerIds().add("mcp-1");
+        lenient().when(agentMcpServers.of(agent)).thenReturn(servers);
         when(agentRepository.findById(eq(agentId))).thenReturn(Optional.of(agent));
         lenient().when(mcpService.getToolCallbacks(anySet())).thenReturn(tools);
     }

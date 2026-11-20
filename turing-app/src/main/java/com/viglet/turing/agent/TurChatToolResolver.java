@@ -69,6 +69,7 @@ public class TurChatToolResolver {
     private final TurChatPipelineObservation chatPipelineObservation;
     private final TurSkillRunnerService skillRunnerService;
     private final TurClientToolService clientToolService;
+    private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
     private final com.viglet.turing.agent.handoff.TurAgentHandoffService agentHandoffService;
 
     public TurChatToolResolver(TurNativeToolService nativeToolService,
@@ -80,7 +81,9 @@ public class TurChatToolResolver {
             TurChatPipelineObservation chatPipelineObservation,
             TurSkillRunnerService skillRunnerService,
             TurClientToolService clientToolService,
-            com.viglet.turing.agent.handoff.TurAgentHandoffService agentHandoffService) {
+            com.viglet.turing.agent.handoff.TurAgentHandoffService agentHandoffService,
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+        this.agentMcpServers = agentMcpServers;
         this.nativeToolService = nativeToolService;
         this.mcpToolCallbackService = mcpToolCallbackService;
         this.customToolCallbackService = customToolCallbackService;
@@ -128,7 +131,7 @@ public class TurChatToolResolver {
      * @since 2026.3.1
      */
     private ToolCallback[] mcpCallbacks(TurAIAgent agent, Set<String> excludeMcpServerIds) {
-        Set<TurMcpServer> servers = agent.getMcpServers();
+        Set<TurMcpServer> servers = agentMcpServers.of(agent);
         if (servers == null || servers.isEmpty()) {
             return new ToolCallback[0];
         }
@@ -220,7 +223,7 @@ public class TurChatToolResolver {
      * <p>Package-private for unit testing in isolation.
      */
     Set<String> triggerBoostedMcpToolNames(TurAIAgent agent, String userMessage) {
-        Set<TurMcpServer> servers = agent.getMcpServers();
+        Set<TurMcpServer> servers = agentMcpServers.of(agent);
         if (servers == null || servers.isEmpty() || userMessage == null || userMessage.isBlank()) {
             return Set.of();
         }

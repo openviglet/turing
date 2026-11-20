@@ -163,7 +163,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
       systemPrompt: value.systemPrompt ?? "",
       nativeTools: value.nativeTools ?? null,
       llmInstances: value.llmInstances ?? [],
-      mcpServers: value.mcpServers ?? [],
+      mcpServerIds: value.mcpServerIds ?? [],
       // Status toggle lives in the bento dashboard hero, not in this form.
       // Default new agents to enabled so they appear in pickers (e.g. the
       // Global Settings "Default AI Agent" select, which filters by enabled).

@@ -1,6 +1,5 @@
 import type { TurCustomTool } from "../customtool/custom-tool.model.ts";
 import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
-import type { TurMcpServer } from "../mcp/mcp-server.model.ts";
 import type { TurPersona } from "../persona/persona.model.ts";
 
 /**
@@ -203,7 +202,8 @@ export interface TurAIAgent {
    */
   pythonRequirements?: string | null;
   llmInstances: TurLLMInstance[];
-  mcpServers: TurMcpServer[];
+  /** T1315 — the MCP servers this agent may call, by id. */
+  mcpServerIds: string[];
   customTools: TurCustomTool[];
   /** Catalog of voices this agent is allowed to speak with — chat flows pick from here. @since 2026.2.7 */
   personas?: TurPersona[];

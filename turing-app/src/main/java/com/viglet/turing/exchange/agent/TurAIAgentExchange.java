@@ -153,8 +153,8 @@ public class TurAIAgentExchange {
         if (agent.getLlmInstances() != null) {
             agent.getLlmInstances().forEach(l -> e.llmInstanceIds.add(l.getId()));
         }
-        if (agent.getMcpServers() != null) {
-            agent.getMcpServers().forEach(m -> e.mcpServerIds.add(m.getId()));
+        if (agent.getMcpServerIds() != null) {
+            e.mcpServerIds.addAll(agent.getMcpServerIds());
         }
         if (agent.getCustomTools() != null) {
             agent.getCustomTools().forEach(t -> e.customToolIds.add(t.getId()));

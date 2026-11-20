@@ -100,7 +100,7 @@ function AgentBento({ agent }: Readonly<{ agent: TurAIAgent }>) {
 
   const counts = useMemo(() => ({
     llm: agent.llmInstances?.length ?? 0,
-    mcp: agent.mcpServers?.length ?? 0,
+    mcp: agent.mcpServerIds?.length ?? 0,
     custom: agent.customTools?.length ?? 0,
     nativeTools: agent.nativeTools ? agent.nativeTools.split(",").filter(Boolean).length : 0,
     personas: agent.personas?.length ?? 0,

@@ -24,7 +24,7 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 🛠 **T1315** (deps: T1312 ✅, T1313 ✅, T1314 ✅) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — TurAIAgent (persona, LLM and MCP sets) and TurSNSite (SE instance) still hold JPA associations into other modules. → §CLXXXIX.11
+- 🛠 **T1315** (deps: T1312 ✅, T1313 ✅, T1314 ✅) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — TurAIAgent (persona and LLM sets) and TurSNSite (SE instance) still hold JPA associations into other modules. → §CLXXXIX.11
 - 🛠 **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — Aggregates other than the agent and the SN site still have no @Version, and no shared superclass replaces the 20 hand-rolled date fields. → §CLXXXIX.15
 - 📋 **T1321** (deps: T1315 🛠, T1317 ✅, T1318 ✅, T1319 🛠, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history; a 2026.2 install upgrades by export and import. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 ✅, T1311 ✅, T1315 🛠) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
