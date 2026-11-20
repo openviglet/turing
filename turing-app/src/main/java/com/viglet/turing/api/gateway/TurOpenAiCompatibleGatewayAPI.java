@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.TurUnsupportedParameterException;
-import com.viglet.turing.genai.gateway.TurGatewayGuardrailException;
-import com.viglet.turing.genai.gateway.TurGatewayLimitException;
-import com.viglet.turing.genai.gateway.TurGatewayLlmService;
-import com.viglet.turing.genai.gateway.TurGatewayOptions;
-import com.viglet.turing.genai.gateway.TurGatewayProviderLimit;
-import com.viglet.turing.genai.gateway.TurOpenAiWire.ChatCompletionRequest;
-import com.viglet.turing.genai.gateway.TurOpenAiWire.EmbeddingRequest;
-import com.viglet.turing.genai.gateway.TurOpenAiWire.ErrorEnvelope;
+import com.viglet.turing.agent.TurUnsupportedParameterException;
+import com.viglet.turing.llm.gateway.TurGatewayGuardrailException;
+import com.viglet.turing.llm.gateway.TurGatewayLimitException;
+import com.viglet.turing.llm.gateway.TurGatewayLlmService;
+import com.viglet.turing.llm.gateway.TurGatewayOptions;
+import com.viglet.turing.llm.gateway.TurGatewayProviderLimit;
+import com.viglet.turing.llm.gateway.TurOpenAiWire.ChatCompletionRequest;
+import com.viglet.turing.llm.gateway.TurOpenAiWire.EmbeddingRequest;
+import com.viglet.turing.llm.gateway.TurOpenAiWire.ErrorEnvelope;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -23,11 +23,11 @@ import com.viglet.turing.domain.agent.TurAIAgentDomain;
 import com.viglet.turing.domain.agent.TurAIAgentRepositoryPort;
 import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
 import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.genai.TurAgentChatRequest;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.genai.tool.TurMcpToolCallbackService;
-import com.viglet.turing.genai.tool.TurNativeToolService;
+import com.viglet.turing.agent.TurAgentChatRequest;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.agent.tool.TurNativeToolService;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 
@@ -67,23 +67,23 @@ class TurAIAgentChatAPITest {
     @Mock
     private TurGenAiLlmProvider provider;
     @Mock
-    private com.viglet.turing.genai.TurAgentChatExecutor agentChatExecutor;
+    private com.viglet.turing.agent.TurAgentChatExecutor agentChatExecutor;
     @Mock
-    private com.viglet.turing.genai.nativeapi.TurNativeChatExecutor nativeChatExecutor;
+    private com.viglet.turing.llm.nativeapi.TurNativeChatExecutor nativeChatExecutor;
     @Mock
     private TurChatFlowRepository turChatFlowRepository;
     @Mock
-    private com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService;
+    private com.viglet.turing.agent.flow.TurChatFlowEngineService chatFlowEngineService;
     @Mock
-    private com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner urlSigner;
+    private com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner urlSigner;
     @Mock
-    private com.viglet.turing.genai.workspace.TurAgentWorkspace agentWorkspace;
+    private com.viglet.turing.agent.workspace.TurAgentWorkspace agentWorkspace;
     @Mock
-    private com.viglet.turing.genai.workspace.TurWorkspaceEventBus workspaceEventBus;
+    private com.viglet.turing.agent.workspace.TurWorkspaceEventBus workspaceEventBus;
     @Mock
     private com.viglet.turing.service.chatslots.TurChatSlotSseRegistry slotSseRegistry;
     @Mock
-    private com.viglet.turing.genai.safety.TurModerationService moderationService;
+    private com.viglet.turing.agent.safety.TurModerationService moderationService;
 
     private TurAIAgentChatAPI api;
 
@@ -417,13 +417,13 @@ class TurAIAgentChatAPITest {
     void streamWorkspaceEmitsInitialSnapshotThenRelaysBus() {
         // Snapshot back-fill from the workspace, plus a live put from the bus.
         when(agentWorkspace.list("agent-1", "conv-1", null)).thenReturn(List.of(
-                new com.viglet.turing.genai.workspace.WorkspaceEntry(
+                new com.viglet.turing.agent.workspace.WorkspaceEntry(
                         "reports/a.csv", 12L, "text/csv", "2026-06-03T00:00:00Z",
                         "/api/v2/workspace/file?agentId=agent-1&conversationId=conv-1&key=reports%2Fa.csv")));
         when(workspaceEventBus.subscribe("conv-1")).thenReturn(reactor.core.publisher.Flux.just(
-                com.viglet.turing.genai.workspace.TurWorkspaceEvent.delete("conv-1", "old.txt")));
+                com.viglet.turing.agent.workspace.TurWorkspaceEvent.delete("conv-1", "old.txt")));
 
-        List<com.viglet.turing.genai.workspace.TurWorkspaceEvent> received = new ArrayList<>();
+        List<com.viglet.turing.agent.workspace.TurWorkspaceEvent> received = new ArrayList<>();
         var sub = api.streamWorkspace("agent-1", "conv-1")
                 .map(sse -> sse.data())
                 .filter(Objects::nonNull)
@@ -433,19 +433,19 @@ class TurAIAgentChatAPITest {
         // (fromIterable + Flux.just); the 25s heartbeat hasn't fired.
         assertThat(received).hasSize(2);
         assertThat(received.get(0).event())
-                .isEqualTo(com.viglet.turing.genai.workspace.TurWorkspaceEvent.EVENT_PUT);
+                .isEqualTo(com.viglet.turing.agent.workspace.TurWorkspaceEvent.EVENT_PUT);
         assertThat(received.get(0).key()).isEqualTo("reports/a.csv");
         assertThat(received.get(0).contentType()).isEqualTo("text/csv");
         assertThat(received.get(0).size()).isEqualTo(12L);
         assertThat(received.get(1).event())
-                .isEqualTo(com.viglet.turing.genai.workspace.TurWorkspaceEvent.EVENT_DELETE);
+                .isEqualTo(com.viglet.turing.agent.workspace.TurWorkspaceEvent.EVENT_DELETE);
         assertThat(received.get(1).key()).isEqualTo("old.txt");
         sub.dispose();
     }
 
     @Test
     void streamWorkspaceBlankConversationIsEmpty() {
-        List<com.viglet.turing.genai.workspace.TurWorkspaceEvent> received = new ArrayList<>();
+        List<com.viglet.turing.agent.workspace.TurWorkspaceEvent> received = new ArrayList<>();
         var sub = api.streamWorkspace("agent-1", "  ")
                 .map(sse -> sse.data())
                 .filter(Objects::nonNull)

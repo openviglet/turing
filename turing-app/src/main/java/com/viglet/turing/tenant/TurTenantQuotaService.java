@@ -22,7 +22,7 @@ import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletQuotaService;
 import com.viglet.core.tenancy.VigletTenantContext;
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
-import com.viglet.turing.genai.vigletai.TurVigletUpgradeTargetService;
+import com.viglet.turing.llm.vigletai.TurVigletUpgradeTargetService;
 
 /**
  * T277 / §XIV.5.3 — enforces plan-based quotas at resource-create time and at

@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.feed.TurStructuredFeedIngestService.IngestResult;
-import com.viglet.turing.genai.feed.TurStructuredFeedTrigger;
+import com.viglet.turing.rag.feed.TurStructuredFeedIngestService.IngestResult;
+import com.viglet.turing.rag.feed.TurStructuredFeedTrigger;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

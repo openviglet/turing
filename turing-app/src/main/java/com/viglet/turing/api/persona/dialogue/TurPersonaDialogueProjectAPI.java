@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.persona.dialogue.TurDialogueEvent;
-import com.viglet.turing.genai.persona.dialogue.TurPersonaDialogueProjectService;
-import com.viglet.turing.genai.persona.dialogue.dto.TurPersonaDialogueProjectDto;
-import com.viglet.turing.genai.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;
-import com.viglet.turing.genai.persona.dialogue.dto.TurPersonaDialogueTurnDto;
+import com.viglet.turing.persona.dialogue.TurDialogueEvent;
+import com.viglet.turing.persona.dialogue.TurPersonaDialogueProjectService;
+import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueProjectDto;
+import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;
+import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueTurnDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

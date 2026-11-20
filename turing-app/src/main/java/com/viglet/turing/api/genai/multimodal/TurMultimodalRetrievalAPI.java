@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.ai.document.Document;
 import org.springframework.http.HttpStatus;
 
-import com.viglet.turing.genai.multimodal.TurMultimodalRetrievalService;
+import com.viglet.turing.rag.multimodal.TurMultimodalRetrievalService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

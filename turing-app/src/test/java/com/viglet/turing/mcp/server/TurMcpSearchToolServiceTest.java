@@ -23,7 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.tool.TurDslToolService;
+import com.viglet.turing.agent.tool.TurDslToolService;
 
 /**
  * Unit tests for {@link TurMcpSearchToolService} — the T247 MCP read surface.

@@ -1,6 +1,6 @@
 package com.viglet.turing.api.system;
 
-import com.viglet.turing.genai.tool.TurSystemInfoToolService;
+import com.viglet.turing.agent.tool.TurSystemInfoToolService;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.service.storage.TurStorageService;
 import com.viglet.turing.service.storage.TurStorageType;

@@ -25,13 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.persistence.adapter.customtool.TurCustomToolReader;
-import com.viglet.turing.genai.tool.TurCustomToolCallbackService;
-import com.viglet.turing.genai.tool.TurCustomToolCallbackService.PreviewResult;
-import com.viglet.turing.genai.tool.TurCustomToolDescriptorService;
-import com.viglet.turing.genai.tool.TurCustomToolDescriptorService.ToolEditorDescriptor;
-import com.viglet.turing.genai.tool.TurCustomToolDraftRegistry;
-import com.viglet.turing.genai.tool.TurCustomToolDraftRegistry.DraftEntry;
-import com.viglet.turing.genai.tool.TurCustomToolDraftRegistry.PutResult;
+import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
+import com.viglet.turing.agent.tool.TurCustomToolCallbackService.PreviewResult;
+import com.viglet.turing.agent.tool.TurCustomToolDescriptorService;
+import com.viglet.turing.agent.tool.TurCustomToolDescriptorService.ToolEditorDescriptor;
+import com.viglet.turing.agent.tool.TurCustomToolDraftRegistry;
+import com.viglet.turing.agent.tool.TurCustomToolDraftRegistry.DraftEntry;
+import com.viglet.turing.agent.tool.TurCustomToolDraftRegistry.PutResult;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

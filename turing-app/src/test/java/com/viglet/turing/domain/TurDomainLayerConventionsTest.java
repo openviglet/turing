@@ -83,7 +83,7 @@ class TurDomainLayerConventionsTest {
      * which legitimately keeps the metric-access repo for its access <em>write</em>).
      */
     private static final Map<String, String> PORT_ONLY_HOT_PATH = Map.of(
-            "genai/tool/TurDslToolService.java",
+            "agent/tool/TurDslToolService.java",
             "com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository",
             "sn/spotlight/TurSpotlightService.java",
             "com.viglet.turing.persistence.repository.sn.TurSNSiteRepository",

@@ -1,0 +1,332 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ */
+package com.viglet.turing.persona.fit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.viglet.turing.persona.readability.TurReadabilityScorer;
+import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
+import com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel;
+import com.viglet.turing.persistence.model.persona.TurPersonaSource;
+import com.viglet.turing.system.TurLlmSummaryService;
+import com.viglet.turing.system.TurLlmSummaryService.StructuredResult;
+import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
+import com.viglet.turing.system.TurVerdictSource;
+
+/**
+ * Deterministic tests for the content-fit evaluator (Block AA / §XXVI.4). The
+ * LLM is mocked through {@link TurLlmSummaryService}; the readability scorer is
+ * the real (pure) component. We assert the grounding hard-fail (ungrounded
+ * spans dropped), the score fusion, and graceful degradation when the LLM is
+ * unavailable.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.4
+ */
+@ExtendWith(MockitoExtension.class)
+class TurPersonaContentFitEvaluatorTest {
+
+    @Spy
+    private TurReadabilityScorer readabilityScorer = new TurReadabilityScorer();
+
+    @Mock
+    private TurLlmSummaryService llmSummaryService;
+
+    /** T829 — real (process-local) counter so the degradation tallies are asserted. */
+    @Spy
+    private TurPersonaVerdictHealth verdictHealth = new TurPersonaVerdictHealth();
+
+    @InjectMocks
+    private TurPersonaContentFitEvaluator evaluator;
+
+    /** A reply the provider's schema enforced (the T829 healthy path). */
+    private static StructuredResult schemaVerdict(String json) {
+        return new StructuredResult(new SummaryResult(true, null, json, true),
+                TurVerdictSource.PROVIDER_SCHEMA);
+    }
+
+    private static final String SOURCE =
+            "The quarterly report leverages synergistic paradigms. "
+                    + "We had a good year and sold many products.";
+
+    private TurPersona audiencePersona() {
+        TurPersona persona = new TurPersona();
+        persona.setId("p1");
+        persona.setName("low-literacy-shopper");
+        TurPersonaAudience audience = new TurPersonaAudience();
+        audience.setReadingLevel(TurPersonaReadingLevel.ELEMENTARY);
+        audience.setPrimaryLanguage("en");
+        persona.setAudience(audience);
+        return persona;
+    }
+
+    private TurPersonaSource source(String text) {
+        TurPersonaSource s = new TurPersonaSource();
+        s.setId("s1");
+        s.setSourceName("Q-report");
+        s.setCachedText(text);
+        return s;
+    }
+
+    @Test
+    void groundedMisfitKept_ungroundedDropped() {
+        String verdict = """
+                {"fitScore": 40, "summary": "Too formal in places.",
+                 "fits": ["Plain sentence about a good year"],
+                 "misfits": [
+                   {"span": "synergistic paradigms", "reason": "jargon", "suggestion": "working together"},
+                   {"span": "this phrase is not in the text", "reason": "tone", "suggestion": "x"}
+                 ]}
+                """;
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(verdict));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.llmUsed()).isTrue();
+        // Ungrounded span dropped; only the verbatim one survives.
+        assertThat(result.misfits()).hasSize(1);
+        assertThat(result.misfits().getFirst().span()).isEqualTo("synergistic paradigms");
+        assertThat(result.fits()).containsExactly("Plain sentence about a good year");
+        assertThat(result.fitScore()).isBetween(0.0, 100.0);
+    }
+
+    @Test
+    void fusesReadabilityWithLlmScore() {
+        // LLM returns a high fit (90); readability for elementary on this jargon
+        // text is lower — the fused score must sit strictly between them.
+        String verdict = """
+                {"fitScore": 90, "summary": "ok", "fits": [], "misfits": []}
+                """;
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(verdict));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.fitScore())
+                .isGreaterThan(result.readabilityScore())
+                .isLessThan(90.0);
+    }
+
+    @Test
+    void degradesToReadabilityWhenLlmUnavailable() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(new StructuredResult(
+                        new SummaryResult(false, "No default LLM configured.", null, false),
+                        TurVerdictSource.UNAVAILABLE));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.llmUsed()).isFalse();
+        assertThat(result.fitScore()).isEqualTo(result.readabilityScore());
+        assertThat(result.error()).contains("No default LLM");
+    }
+
+    @Test
+    void unparseableVerdictDegradesGracefully() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict("sorry, I cannot do that"));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.llmUsed()).isFalse();
+        assertThat(result.fitScore()).isEqualTo(result.readabilityScore());
+    }
+
+    @Test
+    void blankSourceShortCircuitsWithoutCallingLlm() {
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source("  "), false);
+
+        assertThat(result.llmUsed()).isFalse();
+        assertThat(result.error()).contains("no extracted text");
+    }
+
+    // ---- T825 / §LXI.1 — the caller's LLM instance drives the score ---------
+
+    private static final String OK_VERDICT =
+            "{\"fitScore\": 70, \"summary\": \"ok\", \"fits\": [], \"misfits\": []}";
+
+    @Test
+    void passesTheChosenLlmInstanceThroughToTheSummaryService() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false, "llm-fast");
+
+        verify(llmSummaryService).generateStructured(anyString(), anyString(), anyString(), eq(false),
+                eq("llm-fast"), any());
+    }
+
+    @Test
+    void foldsTheChosenLlmInstanceIntoTheCacheKey() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false, "llm-a");
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false, "llm-b");
+
+        ArgumentCaptor<String> keys = ArgumentCaptor.forClass(String.class);
+        verify(llmSummaryService, times(2)).generateStructured(keys.capture(),
+                anyString(), anyString(), anyBoolean(), any(), any());
+        // Same persona + source + content, different model → different key, so a
+        // lane change never serves the previous model's verdict.
+        assertThat(keys.getAllValues().get(0)).endsWith(":llm-a");
+        assertThat(keys.getAllValues().get(1)).endsWith(":llm-b");
+        assertThat(keys.getAllValues().get(0)).isNotEqualTo(keys.getAllValues().get(1));
+    }
+
+    @Test
+    void defaultLlmCallerKeepsTheLegacyCacheKeyAndPassesNoOverride() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        ArgumentCaptor<String> key = ArgumentCaptor.forClass(String.class);
+        verify(llmSummaryService).generateStructured(key.capture(), anyString(), anyString(), eq(false),
+                isNull(), any());
+        // No instance segment — byte-for-byte the pre-T825 key, so no cached
+        // verdict is invalidated for the four default-LLM call sites.
+        assertThat(key.getValue()).startsWith("persona-fit:p1:s1:");
+        assertThat(key.getValue().chars().filter(c -> c == ':').count()).isEqualTo(3);
+    }
+
+    @Test
+    void blankOrWhitespaceInstanceIsTreatedAsNoOverride() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false, "   ");
+
+        ArgumentCaptor<String> key = ArgumentCaptor.forClass(String.class);
+        verify(llmSummaryService).generateStructured(key.capture(), anyString(), anyString(), anyBoolean(),
+                any(), any());
+        assertThat(key.getValue().chars().filter(c -> c == ':').count()).isEqualTo(3);
+    }
+
+    // ---- T829 / §LXI.5 — provider-side schema + visible degradations ---------
+
+    @Test
+    void theVerdictShapeIsSentAsASchemaNotJustDescribedInThePrompt() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        ArgumentCaptor<TurLlmSummaryService.StructuredSpec> spec =
+                ArgumentCaptor.forClass(TurLlmSummaryService.StructuredSpec.class);
+        verify(llmSummaryService).generateStructured(anyString(), anyString(), anyString(),
+                anyBoolean(), any(), spec.capture());
+        assertThat(spec.getValue().schemaName()).isEqualTo("persona_fit_verdict");
+        // A real JSON Schema derived from TurPersonaFitVerdict, naming its properties.
+        assertThat(spec.getValue().jsonSchema()).containsKey("properties");
+        assertThat(spec.getValue().jsonSchema().toString())
+                .contains("fitScore")
+                .contains("misfits");
+        // The format instruction is carried for the plain-chat fallback only.
+        assertThat(spec.getValue().formatInstruction()).isNotBlank();
+    }
+
+    @Test
+    void aProviderEnforcedVerdictIsCountedAsSuchAndReportedOnTheResult() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict(OK_VERDICT));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.llmUsed()).isTrue();
+        assertThat(result.verdictSource()).isEqualTo(TurVerdictSource.PROVIDER_SCHEMA);
+        assertThat(verdictHealth.snapshot().providerSchema()).isEqualTo(1);
+        assertThat(verdictHealth.snapshot().unreadable()).isZero();
+    }
+
+    @Test
+    void aPromptJsonFallbackKeepsWorkingAndIsCountedSeparately() {
+        // No provider schema surface: the summary service answered over plain chat,
+        // fences and all — the brace-scan is still the safety net.
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(new StructuredResult(
+                        new SummaryResult(true, null, "```json\n" + OK_VERDICT + "\n```", true),
+                        TurVerdictSource.PROMPT_JSON));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.llmUsed()).isTrue();
+        assertThat(result.verdictSource()).isEqualTo(TurVerdictSource.PROMPT_JSON);
+        assertThat(verdictHealth.snapshot().promptJson()).isEqualTo(1);
+    }
+
+    @Test
+    void anUnreadableVerdictIsDistinguishedFromNoLlmAtAll() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(schemaVerdict("sorry, I cannot do that"));
+
+        TurContentFitResult unreadable =
+                evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+        assertThat(unreadable.llmUsed()).isFalse();
+        assertThat(unreadable.verdictSource()).isEqualTo(TurVerdictSource.UNREADABLE);
+
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(new StructuredResult(
+                        new SummaryResult(false, "No default LLM configured.", null, false),
+                        TurVerdictSource.UNAVAILABLE));
+
+        TurContentFitResult noLlm = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+        assertThat(noLlm.llmUsed()).isFalse();
+        assertThat(noLlm.verdictSource()).isEqualTo(TurVerdictSource.UNAVAILABLE);
+
+        // Both render as "heuristic only", but the counters tell them apart — which is
+        // the whole point: one is a config gap, the other is a quality bug.
+        TurPersonaVerdictHealth.Snapshot snapshot = verdictHealth.snapshot();
+        assertThat(snapshot.unreadable()).isEqualTo(1);
+        assertThat(snapshot.unavailable()).isEqualTo(1);
+        assertThat(snapshot.unreadableRate()).isEqualTo(100.0);
+    }
+
+    @Test
+    void aCachedVerdictIsCountedAsCacheNotAsAFreshSchemaCall() {
+        when(llmSummaryService.generateStructured(anyString(), anyString(), anyString(), anyBoolean(), any(), any()))
+                .thenReturn(new StructuredResult(new SummaryResult(true, null, OK_VERDICT, true),
+                        TurVerdictSource.CACHE));
+
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source(SOURCE), false);
+
+        assertThat(result.verdictSource()).isEqualTo(TurVerdictSource.CACHE);
+        assertThat(verdictHealth.snapshot().cached()).isEqualTo(1);
+        assertThat(verdictHealth.snapshot().llmAnswered()).isZero();
+    }
+
+    @Test
+    void aTextlessSourceNeverTouchesTheLlmOrTheCounters() {
+        TurContentFitResult result = evaluator.evaluate(audiencePersona(), source("  "), false);
+
+        assertThat(result.llmUsed()).isFalse();
+        assertThat(result.verdictSource()).isEqualTo(TurVerdictSource.UNAVAILABLE);
+        assertThat(verdictHealth.snapshot().llmAnswered()).isZero();
+        assertThat(verdictHealth.snapshot().unavailable()).isZero();
+    }
+}

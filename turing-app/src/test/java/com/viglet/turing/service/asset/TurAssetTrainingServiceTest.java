@@ -23,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.persistence.model.asset.TurAssetTrainingRecord;
 import com.viglet.turing.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -52,7 +52,7 @@ class TurAssetTrainingServiceTest {
         private TurAssetTrainingRecordRepository trainingRecordRepository;
 
         @Mock
-        private com.viglet.turing.genai.ocr.TurMistralOcrService mistralOcrService;
+        private com.viglet.turing.rag.ocr.TurMistralOcrService mistralOcrService;
 
         @Mock
         private RagInfrastructure ragInfrastructure;
@@ -285,8 +285,8 @@ class TurAssetTrainingServiceTest {
 
         @Test
         void deindexSingleFileCallsDeleteWhenRagConfigured() {
-                com.viglet.turing.genai.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
-                                .mock(com.viglet.turing.genai.provider.store.TurGenAiStoreProvider.class);
+                com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
+                                .mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
                 com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
                                 .mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
                 org.springframework.ai.vectorstore.VectorStore mockVectorStore = org.mockito.Mockito
@@ -354,8 +354,8 @@ class TurAssetTrainingServiceTest {
 
         @Test
         void deindexSingleFileHandlesStoreProviderException() {
-                com.viglet.turing.genai.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
-                                .mock(com.viglet.turing.genai.provider.store.TurGenAiStoreProvider.class);
+                com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
+                                .mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
                 com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
                                 .mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
                 org.springframework.ai.vectorstore.VectorStore mockVectorStore = org.mockito.Mockito

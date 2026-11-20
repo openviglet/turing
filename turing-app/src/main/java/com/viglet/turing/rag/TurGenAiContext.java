@@ -1,0 +1,89 @@
+/*
+ *
+ * Copyright (C) 2016-2025 the original author or authors.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package com.viglet.turing.rag;
+
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.vectorstore.VectorStore;
+
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
+
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder(toBuilder = true)
+public class TurGenAiContext {
+    private final VectorStore vectorStore;
+    private final EmbeddingModel embeddingModel;
+    private final ChatModel chatModel;
+    private final boolean enabled;
+    private final String systemPrompt;
+    /**
+     * Per-agent grounding policy (from {@code TurAIAgent#groundingMode}). When
+     * {@code STRICT_RAG}, the SN RAG path prefixes a non-removable grounding
+     * guard to the system prompt. {@code null} is treated as {@code OPEN} (e.g.
+     * the {@link #disabled()} context), so it never forces grounding by accident.
+     */
+    private final com.viglet.turing.persistence.model.agent.TurAgentGroundingMode groundingMode;
+    private final RagInfrastructure ragInfrastructure;
+    /**
+     * T500 / §X.19 — per-site full-context (retrieval-free) answering opt-in.
+     * When {@code true} and the whole corpus fits {@link #fullContextTokenBudget},
+     * the SN RAG path grounds over every chunk instead of top-K retrieval.
+     */
+    private final boolean fullContextEnabled;
+    /** T500 — max estimated corpus tokens that still qualify for full-context. */
+    private final int fullContextTokenBudget;
+    /**
+     * T1157 — the site's follow-up query mode; {@code null} (no site binding,
+     * the {@link #disabled()} context) searches the latest message alone.
+     */
+    private final com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode followupQueryMode;
+    /**
+     * T1127 — the instance {@link #chatModel} was built from, and the agent it
+     * belongs to, so the SN calls made with this context land in the cost ledger.
+     * {@code null} on the {@link #disabled()} context.
+     */
+    private final com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance;
+    private final String agentId;
+    /** T1127 — the SN site the context answers for, recorded with each call's cost. */
+    private final String siteName;
+    /**
+     * T1133 — the partition of a shared SN site the caller's API key is bound to:
+     * every vector read made with this context is confined to the chunks whose
+     * metadata carries it, and the turn runs without tools. {@code null} for an
+     * unpartitioned caller. Set by the request entry point, which still has the
+     * request, never by the factory, which may run after it.
+     */
+    private final com.viglet.turing.commons.se.TurSEPartition partition;
+    public static final String COLLECTION_NAME = "turing";
+
+    /** T1133 — this context confined to {@code partition}; itself when {@code null}. */
+    public TurGenAiContext withPartition(com.viglet.turing.commons.se.TurSEPartition partition) {
+        return partition == null ? this : toBuilder().partition(partition).build();
+    }
+
+    public static TurGenAiContext disabled() {
+        return TurGenAiContext.builder()
+                .enabled(false)
+                .build();
+    }
+
+}

@@ -32,7 +32,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
 
 /**
  * T807 / §LV.5 (Block BG) — deterministic coverage for the opt-in direct

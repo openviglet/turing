@@ -100,7 +100,7 @@ public class TurSNSiteAPI {
     private final TurSNSiteMapper turSNSiteMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
-    private final com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping

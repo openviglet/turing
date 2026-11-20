@@ -19,12 +19,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.genai.provider.llm.TurLlmModelKind;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata.TurLlmModelBenchmarks;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata.TurLlmModelPricing;
-import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurLlmModelKind;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata.TurLlmModelBenchmarks;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata.TurLlmModelPricing;
+import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

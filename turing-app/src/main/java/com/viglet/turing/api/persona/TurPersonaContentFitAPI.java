@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.persona.fit.TurContentFitResult;
-import com.viglet.turing.genai.persona.fit.TurPersonaContentFitEvaluator;
-import com.viglet.turing.genai.persona.fit.TurPersonaFitReport;
+import com.viglet.turing.persona.fit.TurContentFitResult;
+import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
+import com.viglet.turing.persona.fit.TurPersonaFitReport;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.persona.TurPersonaSource;
 import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;

@@ -22,12 +22,12 @@ import java.util.Set;
 import org.springframework.ai.tool.ToolCallback;
 
 import com.viglet.turing.domain.agent.TurAIAgentRepositoryPort;
-import com.viglet.turing.genai.authoring.AiAuthoringRequest;
-import com.viglet.turing.genai.authoring.AiAuthoringResponse;
-import com.viglet.turing.genai.authoring.TurAiAuthoringService;
-import com.viglet.turing.genai.authoring.intent.IntentGeneration;
-import com.viglet.turing.genai.tool.TurNativeToolService;
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
+import com.viglet.turing.persona.authoring.AiAuthoringRequest;
+import com.viglet.turing.persona.authoring.AiAuthoringResponse;
+import com.viglet.turing.persona.authoring.TurAiAuthoringService;
+import com.viglet.turing.persona.authoring.intent.IntentGeneration;
+import com.viglet.turing.agent.tool.TurNativeToolService;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.persistence.dto.intent.TurIntentDto;
 import com.viglet.turing.persistence.mapper.intent.TurIntentMapper;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;

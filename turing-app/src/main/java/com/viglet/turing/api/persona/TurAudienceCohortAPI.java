@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.authoring.persona.TurAudienceCohortService;
-import com.viglet.turing.genai.authoring.persona.TurAudienceCohortService.CohortResult;
+import com.viglet.turing.persona.authoring.persona.TurAudienceCohortService;
+import com.viglet.turing.persona.authoring.persona.TurAudienceCohortService.CohortResult;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

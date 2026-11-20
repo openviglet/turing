@@ -1,7 +1,7 @@
 package com.viglet.turing.persistence.model.agent;
 
 /**
- * Per-agent toggle for how {@link com.viglet.turing.genai.TurAgentChatExecutor}
+ * Per-agent toggle for how {@link com.viglet.turing.agent.TurAgentChatExecutor}
  * issues the LLM round-trip:
  *
  * <ul>
@@ -48,19 +48,19 @@ package com.viglet.turing.persistence.model.agent;
  * before publishing.
  *
  * <p>To restore real token-by-token streaming on the OpenAI provider,
- * {@link com.viglet.turing.genai.provider.llm.TurOpenAiLlmProvider#createStreamingChatModel}
- * returns a hand-rolled {@link com.viglet.turing.genai.provider.llm.TurOpenAiStreamingChatModel}
+ * {@link com.viglet.turing.llm.provider.llm.TurOpenAiLlmProvider#createStreamingChatModel}
+ * returns a hand-rolled {@link com.viglet.turing.llm.provider.llm.TurOpenAiStreamingChatModel}
  * that POSTs directly to {@code /v1/chat/completions} with {@code stream:true}
  * via {@link org.springframework.web.reactive.function.client.WebClient}
  * and emits one Spring AI {@code ChatResponse} per SSE {@code delta.content}
- * line. The {@link com.viglet.turing.genai.TurAgentChatExecutor} STREAM
+ * line. The {@link com.viglet.turing.agent.TurAgentChatExecutor} STREAM
  * branch calls {@code llmModelFactory.createStreamingChatModel(...)} so the
  * SSE pipeline receives chunks as they arrive (validated empirically by
  * {@code TurOpenAiStreamingChatModelBehavioralIT}: 100-300 chunks per turn
  * vs. ~1 chunk on the SDK path).
  *
  * <p>Other providers (Ollama, Anthropic, Gemini) inherit the default
- * {@link com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider#createStreamingChatModel}
+ * {@link com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider#createStreamingChatModel}
  * implementation that just returns the same model {@code createChatModel}
  * would — their Spring AI 2.0.0-M6 adapters are already Reactor-friendly.
  *

@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.tool.TurChatToolCall;
+import com.viglet.turing.agent.tool.TurChatToolCall;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * ok/err) so the assertion is exact, and doubles as a per-conversation tool
  * timeline for observability.
  *
- * <p>The data is captured by {@link com.viglet.turing.genai.tool.TurLoggingToolCallback}
+ * <p>The data is captured by {@link com.viglet.turing.agent.tool.TurLoggingToolCallback}
  * into a per-turn {@code TurToolCallCollector} and drained here once the turn
  * completes. Storage is process-local (like the in-flight analytics bag) and
  * bounded two ways so a chatty or long-lived deployment can't grow it without

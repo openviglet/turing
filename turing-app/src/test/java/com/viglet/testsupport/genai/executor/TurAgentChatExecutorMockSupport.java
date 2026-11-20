@@ -37,7 +37,7 @@ import reactor.core.publisher.Flux;
 
 /**
  * Shared {@code @TestConfiguration} for Structural and Contract integration
- * tests of {@link com.viglet.turing.genai.TurAgentChatExecutor}. Replaces the
+ * tests of {@link com.viglet.turing.agent.TurAgentChatExecutor}. Replaces the
  * production {@link TurLlmModelFactory} with a {@code @Primary} mock factory
  * that returns a Mockito {@link ChatModel} controlled by {@link ChatModelHarness}.
  *
@@ -46,7 +46,7 @@ import reactor.core.publisher.Flux;
  * {@code @TestConfiguration} (meta-annotated with {@code @TestComponent}) is
  * <b>auto-discovered</b> by every {@code @SpringBootTest} whose
  * {@code @SpringBootApplication} root scans this class's package. When this
- * class previously lived under {@code com.viglet.turing.genai.testsupport} —
+ * class previously lived under {@code com.viglet.turing.agent.testsupport} —
  * inside the {@code com.viglet.turing} scan owned by {@code TuringES} — it
  * silently registered its {@code @Primary} mock factory in EVERY
  * {@code @SpringBootTest} context, including ITs that wanted the real

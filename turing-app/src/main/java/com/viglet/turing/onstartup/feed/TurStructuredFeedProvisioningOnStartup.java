@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.genai.feed.TurStructuredFeedIngestService;
+import com.viglet.turing.rag.feed.TurStructuredFeedIngestService;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.persistence.model.sn.TurSNSite;

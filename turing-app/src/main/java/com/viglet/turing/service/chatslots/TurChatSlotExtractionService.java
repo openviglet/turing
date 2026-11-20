@@ -30,9 +30,9 @@ import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.genai.TurChatAttachmentService;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.TurChatAttachmentService;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
 import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;

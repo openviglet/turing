@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.genai.answer.TurSNAnswerService;
+import com.viglet.turing.rag.answer.TurSNAnswerService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,15 +52,15 @@ import reactor.core.publisher.Flux;
 public class TurSNAnswerAPI {
 
     private final TurSNAnswerService answerService;
-    private final com.viglet.turing.genai.citation.TurCitationDriftService driftService;
-    private final com.viglet.turing.genai.answer.TurAnswerShareService answerShareService;
-    private final com.viglet.turing.genai.answer.TurAnswerSignalService answerSignalService;
+    private final com.viglet.turing.rag.citation.TurCitationDriftService driftService;
+    private final com.viglet.turing.rag.answer.TurAnswerShareService answerShareService;
+    private final com.viglet.turing.rag.answer.TurAnswerSignalService answerSignalService;
     private final TurSNSiteSearchService turSNSiteSearchService;
 
     public TurSNAnswerAPI(TurSNAnswerService answerService,
-            com.viglet.turing.genai.citation.TurCitationDriftService driftService,
-            com.viglet.turing.genai.answer.TurAnswerShareService answerShareService,
-            com.viglet.turing.genai.answer.TurAnswerSignalService answerSignalService,
+            com.viglet.turing.rag.citation.TurCitationDriftService driftService,
+            com.viglet.turing.rag.answer.TurAnswerShareService answerShareService,
+            com.viglet.turing.rag.answer.TurAnswerSignalService answerSignalService,
             TurSNSiteSearchService turSNSiteSearchService) {
         this.turSNSiteSearchService = turSNSiteSearchService;
         this.answerService = answerService;
@@ -93,16 +93,16 @@ public class TurSNAnswerAPI {
     @Operation(summary = "Re-check whether a produced answer's cited sources have drifted")
     @org.springframework.web.bind.annotation.PostMapping(value = "/freshness",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<com.viglet.turing.genai.citation.TurCitationDriftService.FreshnessVerdict> freshness(
+    public List<com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessVerdict> freshness(
             @PathVariable String siteName,
             @org.springframework.web.bind.annotation.RequestBody FreshnessRequest request) {
         if (request == null || request.sources() == null || request.sources().isEmpty()) {
             return List.of();
         }
-        List<com.viglet.turing.genai.citation.TurCitationDriftService.FreshnessRef> refs =
+        List<com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessRef> refs =
                 request.sources().stream()
                         .filter(java.util.Objects::nonNull)
-                        .map(s -> new com.viglet.turing.genai.citation.TurCitationDriftService.FreshnessRef(
+                        .map(s -> new com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessRef(
                                 s.sourceId(), s.citedText()))
                         .toList();
         int topK = request.topK() == null ? 0 : request.topK();
@@ -196,7 +196,7 @@ public class TurSNAnswerAPI {
             @org.springframework.web.bind.annotation.RequestBody SignalRequest request) {
         if (request != null) {
             answerSignalService.record(siteName, request.conversationId(),
-                    com.viglet.turing.genai.answer.TurAnswerSignal.fromWire(request.signal()),
+                    com.viglet.turing.rag.answer.TurAnswerSignal.fromWire(request.signal()),
                     request.query());
         }
         return org.springframework.http.ResponseEntity.noContent().build();

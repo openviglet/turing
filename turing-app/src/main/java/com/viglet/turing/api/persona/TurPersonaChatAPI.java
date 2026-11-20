@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.TurAgentChatExecutor;
-import com.viglet.turing.genai.TurAgentChatRequest;
-import com.viglet.turing.genai.TurChatProviderErrorMapper;
-import com.viglet.turing.genai.tool.TurNativeToolService;
+import com.viglet.turing.agent.TurAgentChatExecutor;
+import com.viglet.turing.agent.TurAgentChatRequest;
+import com.viglet.turing.agent.TurChatProviderErrorMapper;
+import com.viglet.turing.agent.tool.TurNativeToolService;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.persona.TurPersona;

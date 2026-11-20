@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.core.ParameterizedTypeReference;
 
-import com.viglet.turing.genai.authoring.AiAuthoringRequest;
-import com.viglet.turing.genai.authoring.AiAuthoringResponse;
-import com.viglet.turing.genai.authoring.TurAiAuthoringService;
-import com.viglet.turing.genai.authoring.persona.PersonaGeneration;
+import com.viglet.turing.persona.authoring.AiAuthoringRequest;
+import com.viglet.turing.persona.authoring.AiAuthoringResponse;
+import com.viglet.turing.persona.authoring.TurAiAuthoringService;
+import com.viglet.turing.persona.authoring.persona.PersonaGeneration;
 import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
 import com.viglet.turing.persistence.mapper.persona.TurPersonaMapper;
 import com.viglet.turing.persistence.model.persona.TurPersona;

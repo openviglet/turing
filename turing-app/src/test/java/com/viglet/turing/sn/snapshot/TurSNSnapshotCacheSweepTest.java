@@ -28,7 +28,7 @@ import org.springframework.format.datetime.standard.DurationFormatterUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.PropertyPlaceholderHelper;
 
-import com.viglet.turing.genai.tool.TurSNSiteConfigCache;
+import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 
 /**
  * T905 / §LXVIII.12 — the backstop sweep clears both SN read-model caches, and its

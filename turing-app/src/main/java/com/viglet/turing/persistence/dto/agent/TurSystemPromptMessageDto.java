@@ -17,7 +17,7 @@ package com.viglet.turing.persistence.dto.agent;
  * the client history — the T115 chat-memory summary and the T30
  * relevance-retrieved older turns.
  *
- * <p>Mirrors {@link com.viglet.turing.genai.prompt.TurPromptMessage} so the
+ * <p>Mirrors {@link com.viglet.turing.agent.prompt.TurPromptMessage} so the
  * preview renders the <em>same</em> messages the runtime
  * {@code TurMessageAssemblyPipeline} emits (no drift). A config-level preview has
  * no live conversation, so these are surfaced as {@code runtimeOnly}

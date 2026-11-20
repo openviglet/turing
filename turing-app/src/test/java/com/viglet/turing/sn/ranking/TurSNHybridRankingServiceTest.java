@@ -38,10 +38,10 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.TurRagContextBuilder.RagInfrastructure;
-import com.viglet.turing.genai.rag.TurRagReranker;
-import com.viglet.turing.genai.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.rag.TurRagReranker;
+import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
@@ -560,7 +560,7 @@ class TurSNHybridRankingServiceTest {
 
         List<Document> weighted = TurSNHybridRankingService.weightedFuse(vector, lexical,
                 TurSNHybridRankingService.DEFAULT_VECTOR_WEIGHT, 3);
-        List<Document> plain = com.viglet.turing.genai.rag.TurRagRrf.fuse(vector, lexical, 3);
+        List<Document> plain = com.viglet.turing.rag.TurRagRrf.fuse(vector, lexical, 3);
 
         assertThat(weighted).extracting(Document::getId)
                 .containsExactlyElementsOf(plain.stream().map(Document::getId).toList());

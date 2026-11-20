@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.distillation.TurOpenAiDistillationService;
-import com.viglet.turing.genai.distillation.TurOpenAiDistillationService.DistillResult;
-import com.viglet.turing.genai.gateway.TurGatewayKeyService;
-import com.viglet.turing.genai.gateway.TurGatewayKeyService.GeneratedKey;
-import com.viglet.turing.genai.gateway.TurGatewayTrafficCaptureService;
-import com.viglet.turing.genai.gateway.TurGatewayUsageService;
-import com.viglet.turing.genai.gateway.TurGatewayUsageService.KeyBudgetStatus;
-import com.viglet.turing.genai.gateway.TurGatewayUsageService.KeyUsageRow;
+import com.viglet.turing.eval.distillation.TurOpenAiDistillationService;
+import com.viglet.turing.eval.distillation.TurOpenAiDistillationService.DistillResult;
+import com.viglet.turing.llm.gateway.TurGatewayKeyService;
+import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
+import com.viglet.turing.llm.gateway.TurGatewayTrafficCaptureService;
+import com.viglet.turing.llm.gateway.TurGatewayUsageService;
+import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyBudgetStatus;
+import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyUsageRow;
 import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
 

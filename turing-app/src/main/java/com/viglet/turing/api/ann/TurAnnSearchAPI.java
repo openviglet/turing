@@ -41,11 +41,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
-import com.viglet.turing.genai.TurGenAiContext;
-import com.viglet.turing.genai.TurGenAiContextFactory;
-import com.viglet.turing.genai.TurRagFilters;
-import com.viglet.turing.genai.provider.store.TurStoreChunkPage;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurGenAiContext;
+import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurRagFilters;
+import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;

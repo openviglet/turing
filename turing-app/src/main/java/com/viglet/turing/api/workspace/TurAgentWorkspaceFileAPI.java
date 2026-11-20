@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.workspace.TurAgentWorkspace;
-import com.viglet.turing.genai.workspace.TurAgentWorkspaceUrlSigner;
-import com.viglet.turing.genai.workspace.TurAgentWorkspaceUrlSigner.VerifyResult;
+import com.viglet.turing.agent.workspace.TurAgentWorkspace;
+import com.viglet.turing.agent.workspace.TurAgentWorkspaceUrlSigner;
+import com.viglet.turing.agent.workspace.TurAgentWorkspaceUrlSigner.VerifyResult;
 import com.viglet.turing.service.storage.TurStorageContentTypes;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

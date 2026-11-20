@@ -37,7 +37,7 @@ import lombok.Setter;
  *
  * <p>Every field except {@link #enabled} is derived from the {@code SKILL.md}
  * YAML frontmatter and is re-synced from storage on
- * {@link com.viglet.turing.genai.skill.TurSkillCatalogService#reindex() reindex}.
+ * {@link com.viglet.turing.agent.skill.TurSkillCatalogService#reindex() reindex}.
  * The {@link #path} (the skill's storage folder) is the stable identity — one
  * index row per folder.
  *

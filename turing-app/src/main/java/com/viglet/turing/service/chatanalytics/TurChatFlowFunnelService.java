@@ -17,10 +17,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.flow.ChatFlowGraph;
-import com.viglet.turing.genai.flow.ChatFlowNode;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.flow.TurChatFlowNodeVisitPath;
+import com.viglet.turing.agent.flow.ChatFlowGraph;
+import com.viglet.turing.agent.flow.ChatFlowNode;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.flow.TurChatFlowNodeVisitPath;
 import com.viglet.turing.persistence.model.agent.TurChatFlow;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;

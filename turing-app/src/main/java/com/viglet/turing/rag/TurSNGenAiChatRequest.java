@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.viglet.turing.rag;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.viglet.turing.rag.TurSNGenAi.ConversationMessage;
+
+/**
+ * The per-turn request inputs to {@link TurSNGenAi#assistantConversationStreaming}
+ * — the conversation {@code history}, the active facet {@code filters}, the
+ * {@code conversationId}/{@code flowId} that bind the turn to a chat flow, the
+ * optional A/B {@code forcedVariant} hint and the response {@code locale}.
+ * Bundled into one record (separate from the resolved RAG context / agent / LLM
+ * configuration) so the streaming entry point stays below the parameter
+ * threshold.
+ *
+ * <p>T633 / §XXVII.4 added the optional {@code personaId} — a per-request
+ * persona override for the anonymous public SN chat ("same question, different
+ * eyes"). It is validated against the effective agent's catalog downstream
+ * (unknown → default); null on every non-demo turn.
+ *
+ * <p>T1085 added {@code siteName}: with it, a list-style question takes its
+ * filters from {@code TurSNNLFilterService}, checked against the site's own
+ * values. {@code includeFilters} asks for those filters as a {@code "filters"}
+ * stream event; it is opt-in because a client that predates the event reads an
+ * unknown event type as answer text.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.1
+ */
+public record TurSNGenAiChatRequest(
+        List<ConversationMessage> history,
+        Map<String, List<String>> filters,
+        String conversationId,
+        String flowId,
+        String forcedVariant,
+        Locale locale,
+        String personaId,
+        String siteName,
+        boolean includeFilters,
+        String documentId) {
+
+    /**
+     * The request before T1085, kept for callers that name no site: their list-style
+     * questions keep the vector-metadata extractor, and no filters event is sent.
+     */
+    public TurSNGenAiChatRequest(List<ConversationMessage> history, Map<String, List<String>> filters,
+            String conversationId, String flowId, String forcedVariant, Locale locale, String personaId) {
+        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, null, false, null);
+    }
+
+    /**
+     * The request before T1178's {@code documentId}: the indexed id of the document
+     * the question is about, whose chunks are pinned first in the context and the
+     * sources, never a filter.
+     */
+    public TurSNGenAiChatRequest(List<ConversationMessage> history, Map<String, List<String>> filters,
+            String conversationId, String flowId, String forcedVariant, Locale locale, String personaId,
+            String siteName, boolean includeFilters) {
+        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, siteName,
+                includeFilters, null);
+    }
+}

@@ -1,10 +1,10 @@
 package com.viglet.turing.service.asset;
 
 import com.viglet.turing.api.asset.TurAssetItem;
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.TurRagContextBuilder.RagInfrastructure;
-import com.viglet.turing.genai.TurRagUtils;
-import com.viglet.turing.genai.ocr.TurMistralOcrService;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.rag.TurRagUtils;
+import com.viglet.turing.rag.ocr.TurMistralOcrService;
 import com.viglet.turing.persistence.model.asset.TurAssetTrainingRecord;
 import com.viglet.turing.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.service.storage.TurStorageService;

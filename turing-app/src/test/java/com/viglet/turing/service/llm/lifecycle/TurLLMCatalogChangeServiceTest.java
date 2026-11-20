@@ -19,9 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.provider.llm.TurCatalogChanges;
-import com.viglet.turing.genai.provider.llm.TurCatalogChanges.TurCatalogChangeEntry;
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurCatalogChanges;
+import com.viglet.turing.llm.provider.llm.TurCatalogChanges.TurCatalogChangeEntry;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.nativeapi.TurNativeCapability;
-import com.viglet.turing.genai.nativeapi.TurNativeCapabilityService;
+import com.viglet.turing.llm.nativeapi.TurNativeCapability;
+import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService;
 import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 

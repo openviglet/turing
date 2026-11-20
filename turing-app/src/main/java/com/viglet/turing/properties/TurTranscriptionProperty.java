@@ -12,7 +12,7 @@ package com.viglet.turing.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.viglet.turing.genai.transcription.TurTranscriptionProviderType;
+import com.viglet.turing.transcription.TurTranscriptionProviderType;
 
 import lombok.Getter;
 import lombok.Setter;

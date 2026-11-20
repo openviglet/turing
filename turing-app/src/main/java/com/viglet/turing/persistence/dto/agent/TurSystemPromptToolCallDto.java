@@ -13,7 +13,7 @@ package com.viglet.turing.persistence.dto.agent;
  * Block AK / T612 — one tool invocation from a replayed conversation's T427
  * tool-call trace, shown alongside the assembled prompt so the operator sees
  * <em>what the model actually did</em> on that conversation (not just what it
- * was told). Mirrors {@link com.viglet.turing.genai.tool.TurChatToolCall}'s
+ * was told). Mirrors {@link com.viglet.turing.agent.tool.TurChatToolCall}'s
  * terminal shape, trimmed to the fields the preview renders.
  *
  * @param name        the tool name (matches the schema channel entry).

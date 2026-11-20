@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.distillation.TurChatFeedbackRating;
-import com.viglet.turing.genai.distillation.TurChatFeedbackService;
-import com.viglet.turing.genai.distillation.TurChatFeedbackService.DpoDataset;
+import com.viglet.turing.eval.distillation.TurChatFeedbackRating;
+import com.viglet.turing.eval.distillation.TurChatFeedbackService;
+import com.viglet.turing.eval.distillation.TurChatFeedbackService.DpoDataset;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

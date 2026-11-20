@@ -17,7 +17,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.genai.tool.TurSNSiteConfigCache;
+import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

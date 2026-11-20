@@ -234,9 +234,9 @@ public class TurGlobalExceptionHandler {
      * raised as {@link IllegalArgumentException} (400) by the service; this maps
      * the genuine upstream/credential failures to 502.
      */
-    @ExceptionHandler(com.viglet.turing.genai.nativeapi.voice.TurRealtimeVoiceException.class)
+    @ExceptionHandler(com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceException.class)
     public ResponseEntity<ProblemDetail> handleRealtimeVoice(
-            com.viglet.turing.genai.nativeapi.voice.TurRealtimeVoiceException ex) {
+            com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceException ex) {
         ProblemDetail problem = build(HttpStatus.BAD_GATEWAY, TurErrorTypes.PROVIDER_FAILURE,
                 ex.getMessage());
         log.warn("[GlobalEx] Realtime voice session failed: {}", ex.getMessage());

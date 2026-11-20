@@ -17,11 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
 import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.genai.tool.TurMcpToolCallbackService;
-import com.viglet.turing.genai.tool.TurDslToolService;
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.agent.tool.TurDslToolService;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
@@ -44,9 +44,9 @@ class TurLLMSemanticChatAPITest {
     @Mock
     private TurDslToolService dslToolService;
     @Mock
-    private com.viglet.turing.genai.catalog.TurCatalogCopilotToolService catalogCopilotToolService;
+    private com.viglet.turing.rag.catalog.TurCatalogCopilotToolService catalogCopilotToolService;
     @Mock
-    private com.viglet.turing.genai.catalog.TurRankingExplainToolService rankingExplainToolService;
+    private com.viglet.turing.rag.catalog.TurRankingExplainToolService rankingExplainToolService;
     @Mock
     private TurMcpToolCallbackService mcpToolCallbackService;
     @Mock
@@ -65,7 +65,7 @@ class TurLLMSemanticChatAPITest {
                 llmProviderFactory, llmModelFactory, turSecretCryptoService,
                 dslToolService, catalogCopilotToolService, rankingExplainToolService,
                 mcpToolCallbackService, toolCallbackPipeline, tokenUsageService,
-                new com.viglet.turing.genai.TurToolExecutionLoop());
+                new com.viglet.turing.agent.TurToolExecutionLoop());
     }
 
     private static TurLLMInstanceDomain llmDomain(String id, Integer contextWindow) {

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.persona.fit.TurPersonaSuggestionReport;
-import com.viglet.turing.genai.persona.fit.TurPersonaSuggestionService;
+import com.viglet.turing.persona.fit.TurPersonaSuggestionReport;
+import com.viglet.turing.persona.fit.TurPersonaSuggestionService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

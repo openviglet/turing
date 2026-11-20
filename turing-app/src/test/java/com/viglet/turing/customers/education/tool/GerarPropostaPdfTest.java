@@ -36,7 +36,7 @@ import groovy.lang.GroovyShell;
  * <p>No Spring boot, no real Python execution, no DB. Each test runs
  * in ~30 ms — the test pins the Groovy-side caching behavior without
  * the cost of actually invoking the platform's
- * {@link com.viglet.turing.genai.tool.TurCodeInterpreterToolService}.
+ * {@link com.viglet.turing.agent.tool.TurCodeInterpreterToolService}.
  *
  * <h2>What gets pinned here</h2>
  * <ul>
@@ -69,7 +69,7 @@ class GerarPropostaPdfTest {
 
     /**
      * Canned markdown response the platform's
-     * {@link com.viglet.turing.genai.tool.TurCodeInterpreterToolService}
+     * {@link com.viglet.turing.agent.tool.TurCodeInterpreterToolService}
      * emits when a Python script writes a non-image file. The regex in
      * the tool's success path keys on
      * {@code [Download {filename}]({url}.pdf)} — match this shape
@@ -332,7 +332,7 @@ class GerarPropostaPdfTest {
      * {@code code.executePython(...)} stub. Counts invocations so tests
      * can assert short-circuit behavior; returns canned markdown output
      * matching what the platform's
-     * {@link com.viglet.turing.genai.tool.TurCodeInterpreterToolService}
+     * {@link com.viglet.turing.agent.tool.TurCodeInterpreterToolService}
      * emits in production.
      */
     static class MockCode {

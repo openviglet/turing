@@ -11,7 +11,7 @@ package com.viglet.turing.persistence.dto.agent;
 
 /**
  * T94 / §VII.11.d — one finding from
- * {@link com.viglet.turing.genai.flow.TurChatFlowLinterService}. The admin
+ * {@link com.viglet.turing.agent.flow.TurChatFlowLinterService}. The admin
  * editor renders these in a sidebar panel so authoring problems surface at
  * edit time instead of waiting for a real chat turn to expose them.
  *

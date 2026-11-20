@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.flow.TurHumanApprovalService;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.flow.TurHumanApprovalService;
 import com.viglet.turing.persistence.dto.agent.TurHumanApprovalDto;
 import com.viglet.turing.persistence.model.agent.TurChatHumanApproval;
 import com.viglet.turing.persistence.model.agent.TurHumanApprovalStatus;

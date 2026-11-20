@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.viglet.core.tenancy.VigletTenantContext;
-import com.viglet.turing.genai.tool.TurSNSiteConfigCache;
+import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 import com.viglet.turing.tenant.TurTenantCacheKey;
 
 /**

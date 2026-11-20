@@ -23,8 +23,8 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.genai.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
-import com.viglet.turing.genai.nativeapi.openai.TurOpenAiStructuredOutputsService;
+import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
+import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
 import com.viglet.turing.persistence.dto.kb.TurThesaurusDraft;
 import com.viglet.turing.persistence.dto.kb.TurThesaurusGenerationRequest;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;

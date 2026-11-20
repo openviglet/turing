@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.viglet.turing.genai.flow.TurChatFlowRouterEvictionListener;
+import com.viglet.turing.agent.flow.TurChatFlowRouterEvictionListener;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -308,7 +308,7 @@ public class TurChatFlow implements Serializable {
      * {@code cargo_atual} into the B2B flow as {@code position}).
      *
      * <p>Applied by both the manual pin
-     * ({@link com.viglet.turing.genai.flow.TurChatFlowEngineService#pinFlowForConversation})
+     * ({@link com.viglet.turing.agent.flow.TurChatFlowEngineService#pinFlowForConversation})
      * and the auto-router transition into a fresh flow. Null/blank → no
      * inheritance, matches the pre-T93 behaviour where every flow started
      * with an empty slot map.

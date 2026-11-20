@@ -35,9 +35,9 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.genai.TurChatToolOptions;
-import com.viglet.turing.genai.TurToolExecutionLoop;
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
+import com.viglet.turing.agent.TurChatToolOptions;
+import com.viglet.turing.agent.TurToolExecutionLoop;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;

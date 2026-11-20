@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.skill.sandbox.TurSkillSandboxResult;
-import com.viglet.turing.genai.skill.sandbox.TurSkillSandboxService;
-import com.viglet.turing.genai.skill.sandbox.TurSkillSandboxSession;
-import com.viglet.turing.genai.skill.sandbox.TurSkillSandboxSessionManager;
+import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxResult;
+import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxService;
+import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxSession;
+import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxSessionManager;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import io.swagger.v3.oas.annotations.Operation;

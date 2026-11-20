@@ -27,7 +27,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatMessageItem;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 

@@ -20,10 +20,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.api.genai.TurCapabilityRegistryAPI.InstanceCapabilityRow;
-import com.viglet.turing.genai.nativeapi.TurNativeCapabilityService;
-import com.viglet.turing.genai.nativeapi.capability.TurCapabilityRegistry;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService;
+import com.viglet.turing.llm.nativeapi.capability.TurCapabilityRegistry;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

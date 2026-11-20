@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.time.Instant;
 
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.genai.answer.TurAnswerSignal;
+import com.viglet.turing.rag.answer.TurAnswerSignal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

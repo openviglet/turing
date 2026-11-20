@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.genai.tool.TurSNSiteConfigCache;
+import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
@@ -39,7 +39,7 @@ import jakarta.persistence.PostUpdate;
  * service or controller saved the entity.
  *
  * <p>It also drops the T487 Semantic Navigation field-config read-model cache
- * ({@link com.viglet.turing.genai.tool.TurSNSiteConfigCache#FIELD_CONFIG_CACHE})
+ * ({@link com.viglet.turing.agent.tool.TurSNSiteConfigCache#FIELD_CONFIG_CACHE})
  * on the same events — that cache projects the same SN site + field graph, so it
  * must invalidate whenever the snapshot does.
  *

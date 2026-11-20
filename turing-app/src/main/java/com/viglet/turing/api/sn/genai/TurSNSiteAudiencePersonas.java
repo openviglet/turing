@@ -16,7 +16,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.sn.TurSNSite;

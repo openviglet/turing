@@ -17,8 +17,8 @@ import java.io.File;
 import java.nio.file.Files;
 
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner;
-import com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner.VerifyResult;
+import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner;
+import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner.VerifyResult;
 
 class TurCodeInterpreterFileAPITest {
 

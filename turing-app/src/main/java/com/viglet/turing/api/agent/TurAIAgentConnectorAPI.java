@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.connector.TurConnectorDescriptor;
-import com.viglet.turing.genai.connector.TurConnectorSelfInstallService;
-import com.viglet.turing.genai.connector.TurConnectorSelfInstallService.ConnectionTestRequest;
-import com.viglet.turing.genai.connector.TurConnectorSelfInstallService.ConnectionTestResult;
-import com.viglet.turing.genai.connector.TurConnectorSelfInstallService.ConnectorGuide;
+import com.viglet.turing.rag.connector.TurConnectorDescriptor;
+import com.viglet.turing.rag.connector.TurConnectorSelfInstallService;
+import com.viglet.turing.rag.connector.TurConnectorSelfInstallService.ConnectionTestRequest;
+import com.viglet.turing.rag.connector.TurConnectorSelfInstallService.ConnectionTestResult;
+import com.viglet.turing.rag.connector.TurConnectorSelfInstallService.ConnectorGuide;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 

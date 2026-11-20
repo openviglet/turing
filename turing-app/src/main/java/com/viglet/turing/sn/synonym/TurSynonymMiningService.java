@@ -26,7 +26,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;

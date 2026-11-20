@@ -25,8 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.genai.TurSNGenAi;
-import com.viglet.turing.genai.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.rag.TurGenAiContextFactory;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
@@ -58,11 +58,11 @@ class TurSNSiteGenAiAPITest {
     private TurGlobalSettingsService turGlobalSettingsService;
 
     @Mock
-    private com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver;
+    private com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 
     // T790 / §LIV.1 (Block BF) — used by the VECTORLESS_STRUCTURED readiness path.
     @Mock
-    private com.viglet.turing.genai.catalog.TurCatalogCopilotService catalogCopilotService;
+    private com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
 
     // /enabled reads configProperties.getChat().getSession() — deep-stub the chain
     // so the endpoint builds its ChatEnabledResponse without a real config bean.
@@ -78,13 +78,13 @@ class TurSNSiteGenAiAPITest {
     // T1087 — the route both chat endpoints read; delegates to a real resolver
     // over the mocks above, so these tests exercise the real decision.
     @Mock
-    private com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver;
+    private com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver;
 
     // T1292 — the resume endpoint's collaborators.
     @Mock
-    private com.viglet.turing.genai.flow.TurChatFlowEngineService chatFlowEngineService;
+    private com.viglet.turing.agent.flow.TurChatFlowEngineService chatFlowEngineService;
     @Mock
-    private com.viglet.turing.genai.flow.TurConversationLock conversationLock;
+    private com.viglet.turing.agent.flow.TurConversationLock conversationLock;
 
     @InjectMocks
     private TurSNSiteGenAiAPI api;
@@ -97,7 +97,7 @@ class TurSNSiteGenAiAPITest {
             TurSNSiteGenAi g = inv.getArgument(0);
             return g == null ? null : g.getTurAIAgent();
         });
-        var realResolver = new com.viglet.turing.genai.TurSNChatRouteResolver(turDefaultAgentResolver,
+        var realResolver = new com.viglet.turing.rag.TurSNChatRouteResolver(turDefaultAgentResolver,
                 catalogCopilotService);
         when(chatRouteResolver.resolve(any())).thenAnswer(inv -> realResolver.resolve(inv.getArgument(0)));
         // T1189 — the locale seam chat shares with /answer, real over the mocks above.
@@ -233,11 +233,11 @@ class TurSNSiteGenAiAPITest {
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(vectorlessSite()));
         when(catalogCopilotService.isAvailable()).thenReturn(true);
         when(catalogCopilotService.answer(eq("site1"), any(), any())).thenReturn(
-                new com.viglet.turing.genai.catalog.TurCatalogCopilotResult(true, "There are 3 models.",
+                new com.viglet.turing.rag.catalog.TurCatalogCopilotResult(true, "There are 3 models.",
                         java.util.List.of(), "", 3, null));
 
         var events = api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                java.util.List.of(new com.viglet.turing.genai.TurSNGenAi.ConversationMessage("user",
+                java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
                         "which models?")),
                 "en_US", null, null, null, null, null))
                 .collectList().block();
@@ -258,12 +258,12 @@ class TurSNSiteGenAiAPITest {
         var seen = new java.util.concurrent.atomic.AtomicReference<java.util.Map<String, java.util.List<String>>>();
         when(catalogCopilotService.answer(eq("site1"), any(), any())).thenAnswer(invocation -> {
             seen.set(com.viglet.turing.sn.dsl.TurDslCallerFilters.current());
-            return new com.viglet.turing.genai.catalog.TurCatalogCopilotResult(true, "One model.",
+            return new com.viglet.turing.rag.catalog.TurCatalogCopilotResult(true, "One model.",
                     java.util.List.of(), "", 1, null);
         });
 
         api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                java.util.List.of(new com.viglet.turing.genai.TurSNGenAi.ConversationMessage("user",
+                java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
                         "which models?")),
                 "en_US", java.util.Map.of("site_key", java.util.List.of("a")), null, null, null, null))
                 .collectList().block();
@@ -284,10 +284,10 @@ class TurSNSiteGenAiAPITest {
                 new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
         org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
                 new org.springframework.web.context.request.ServletRequestAttributes(request));
-        java.util.List<com.viglet.turing.genai.TurAgentChatExecutor.ChatResponse> events;
+        java.util.List<com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse> events;
         try {
             events = api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                    java.util.List.of(new com.viglet.turing.genai.TurSNGenAi.ConversationMessage("user",
+                    java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
                             "which models?")),
                     "en_US", null, null, null, null, null))
                     .collectList().block();
@@ -307,7 +307,7 @@ class TurSNSiteGenAiAPITest {
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(vectorlessSite()));
         when(catalogCopilotService.isAvailable()).thenReturn(true);
         when(catalogCopilotService.answer(eq("site1"), any(), any())).thenReturn(
-                new com.viglet.turing.genai.catalog.TurCatalogCopilotResult(true, "There are 3 models.",
+                new com.viglet.turing.rag.catalog.TurCatalogCopilotResult(true, "There are 3 models.",
                         java.util.List.of(), "", 3, null));
 
         mockMvc.perform(get("/api/sn/site1/chat").param("q", "which models?").param("_setlocale", "en_US"))
@@ -332,7 +332,7 @@ class TurSNSiteGenAiAPITest {
         when(conversationLock.runExclusive(eq("conv-1"), any(java.util.function.Supplier.class)))
                 .thenAnswer(inv -> ((java.util.function.Supplier<Object>) inv.getArgument(1)).get());
         when(chatFlowEngineService.resumeSuspendedFlow(eq("conv-1"), any(), any()))
-                .thenReturn(new com.viglet.turing.genai.flow.TurChatFlowEngineService.ResumeResult(resumed, false));
+                .thenReturn(new com.viglet.turing.agent.flow.TurChatFlowEngineService.ResumeResult(resumed, false));
     }
 
     @Test

@@ -19,19 +19,19 @@ import com.viglet.turing.api.llm.chat.TurLLMChatAPI;
 import com.viglet.turing.domain.agent.TurAIAgentRepositoryPort;
 import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
 import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.genai.TurAgentChatExecutor;
-import com.viglet.turing.genai.TurAgentChatRequest;
-import com.viglet.turing.genai.TurChatProviderErrorMapper;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.nativeapi.TurNativeChatExecutor;
-import com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner;
-import com.viglet.turing.genai.workspace.TurAgentWorkspace;
-import com.viglet.turing.genai.workspace.TurWorkspaceEvent;
-import com.viglet.turing.genai.workspace.TurWorkspaceEventBus;
+import com.viglet.turing.agent.TurAgentChatExecutor;
+import com.viglet.turing.agent.TurAgentChatRequest;
+import com.viglet.turing.agent.TurChatProviderErrorMapper;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.llm.nativeapi.TurNativeChatExecutor;
+import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner;
+import com.viglet.turing.agent.workspace.TurAgentWorkspace;
+import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
+import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
 import com.viglet.turing.service.chatslots.TurChatSlotSseRegistry;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.agent.TurChatFlow;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
@@ -74,7 +74,7 @@ public class TurAIAgentChatAPI {
     private final TurAgentWorkspace agentWorkspace;
     private final TurWorkspaceEventBus workspaceEventBus;
     private final TurChatSlotSseRegistry slotSseRegistry;
-    private final com.viglet.turing.genai.safety.TurModerationService moderationService;
+    private final com.viglet.turing.agent.safety.TurModerationService moderationService;
 
     public TurAIAgentChatAPI(TurAIAgentRepository turAIAgentRepository,
             TurAIAgentRepositoryPort turAIAgentRepositoryPort,
@@ -90,7 +90,7 @@ public class TurAIAgentChatAPI {
             TurAgentWorkspace agentWorkspace,
             TurWorkspaceEventBus workspaceEventBus,
             TurChatSlotSseRegistry slotSseRegistry,
-            com.viglet.turing.genai.safety.TurModerationService moderationService) {
+            com.viglet.turing.agent.safety.TurModerationService moderationService) {
         this.turAIAgentRepository = turAIAgentRepository;
         this.turAIAgentRepositoryPort = turAIAgentRepositoryPort;
         this.turLLMInstanceRepository = turLLMInstanceRepository;

@@ -26,9 +26,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.api.gateway.TurGatewayAdminAPI.CreatedKey;
 import com.viglet.turing.api.gateway.TurGatewayAdminAPI.KeyUpsertRequest;
 import com.viglet.turing.api.gateway.TurGatewayAdminAPI.KeyView;
-import com.viglet.turing.genai.gateway.TurGatewayKeyService;
-import com.viglet.turing.genai.gateway.TurGatewayKeyService.GeneratedKey;
-import com.viglet.turing.genai.gateway.TurGatewayUsageService;
+import com.viglet.turing.llm.gateway.TurGatewayKeyService;
+import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
+import com.viglet.turing.llm.gateway.TurGatewayUsageService;
 import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
 
@@ -50,9 +50,9 @@ class TurGatewayAdminAPITest {
     @Mock
     private TurGatewayKeyRepository keyRepository;
     @Mock
-    private com.viglet.turing.genai.gateway.TurGatewayTrafficCaptureService trafficCapture;
+    private com.viglet.turing.llm.gateway.TurGatewayTrafficCaptureService trafficCapture;
     @Mock
-    private com.viglet.turing.genai.distillation.TurOpenAiDistillationService distillationService;
+    private com.viglet.turing.eval.distillation.TurOpenAiDistillationService distillationService;
 
     private TurGatewayAdminAPI api() {
         return new TurGatewayAdminAPI(usageService, keyService, keyRepository, trafficCapture,

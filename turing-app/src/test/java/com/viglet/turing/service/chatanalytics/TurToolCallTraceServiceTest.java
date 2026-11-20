@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.genai.tool.TurChatToolCall;
+import com.viglet.turing.agent.tool.TurChatToolCall;
 
 class TurToolCallTraceServiceTest {
 

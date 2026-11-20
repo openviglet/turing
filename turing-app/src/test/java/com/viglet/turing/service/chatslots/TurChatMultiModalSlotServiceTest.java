@@ -35,9 +35,9 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
 import com.viglet.turing.persistence.model.agent.TurAIAgentSlotType;
@@ -65,8 +65,8 @@ class TurChatMultiModalSlotServiceTest {
     @Mock private TurSecretCryptoService cryptoService;
     @Mock private TurChatFlowEngineService engineService;
     @Mock private TurAIAgentSlotRepository slotRepository;
-    @Mock private com.viglet.turing.genai.nativeapi.gemini.TurGeminiVideoUnderstandingService videoUnderstanding;
-    @Mock private com.viglet.turing.genai.transcription.TurTranscriptionService transcriptionService;
+    @Mock private com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService videoUnderstanding;
+    @Mock private com.viglet.turing.transcription.TurTranscriptionService transcriptionService;
 
     private TurChatMultiModalSlotService service;
 
@@ -269,7 +269,7 @@ class TurChatMultiModalSlotServiceTest {
                 .thenReturn(1);
         when(transcriptionService.isAvailable()).thenReturn(true);
         when(transcriptionService.transcribe(any(), any(), any())).thenReturn(
-                com.viglet.turing.genai.transcription.TurTranscriptionResult.ok("hello there", "en"));
+                com.viglet.turing.transcription.TurTranscriptionResult.ok("hello there", "en"));
 
         MultiModalSlotResult result = service.upload(
                 file("clip.mp3", "audio/mpeg", new byte[] { 1, 2, 3 }),

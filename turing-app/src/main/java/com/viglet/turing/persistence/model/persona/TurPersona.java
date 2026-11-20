@@ -12,7 +12,7 @@ package com.viglet.turing.persistence.model.persona;
 import java.io.Serial;
 import java.io.Serializable;
 
-import com.viglet.turing.genai.persona.TurPersonaStaticPromptEvictionListener;
+import com.viglet.turing.persona.TurPersonaStaticPromptEvictionListener;
 import com.viglet.turing.persistence.model.mcp.TurMcpServer;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;

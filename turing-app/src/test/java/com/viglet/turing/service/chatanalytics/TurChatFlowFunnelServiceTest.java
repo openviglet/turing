@@ -21,10 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.flow.ChatFlowEdge;
-import com.viglet.turing.genai.flow.ChatFlowGraph;
-import com.viglet.turing.genai.flow.ChatFlowNode;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.flow.ChatFlowEdge;
+import com.viglet.turing.agent.flow.ChatFlowGraph;
+import com.viglet.turing.agent.flow.ChatFlowNode;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.persistence.model.agent.TurChatFlow;
 import com.viglet.turing.persistence.model.agent.TurChatFlowSubmission;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;

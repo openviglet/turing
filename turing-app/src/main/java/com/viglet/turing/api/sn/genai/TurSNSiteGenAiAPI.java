@@ -38,20 +38,20 @@ import org.springframework.http.MediaType;
 
 import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.genai.TurAgentChatExecutor;
-import com.viglet.turing.genai.TurChatMessage;
-import com.viglet.turing.genai.TurChatProviderErrorMapper;
-import com.viglet.turing.genai.TurSNChatDisabledReason;
-import com.viglet.turing.genai.TurSNChatRouteResolver;
-import com.viglet.turing.genai.TurSNGenAi;
-import com.viglet.turing.genai.TurSNGenAiChatRequest;
-import com.viglet.turing.genai.TurSNGenAi.ConversationMessage;
-import com.viglet.turing.genai.TurGenAiContext;
-import com.viglet.turing.genai.TurGenAiContextFactory;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
-import com.viglet.turing.genai.workspace.TurAgentWorkspace;
-import com.viglet.turing.genai.workspace.TurWorkspaceEvent;
-import com.viglet.turing.genai.workspace.TurWorkspaceEventBus;
+import com.viglet.turing.agent.TurAgentChatExecutor;
+import com.viglet.turing.agent.TurChatMessage;
+import com.viglet.turing.agent.TurChatProviderErrorMapper;
+import com.viglet.turing.rag.TurSNChatDisabledReason;
+import com.viglet.turing.rag.TurSNChatRouteResolver;
+import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.rag.TurSNGenAiChatRequest;
+import com.viglet.turing.rag.TurSNGenAi.ConversationMessage;
+import com.viglet.turing.rag.TurGenAiContext;
+import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.workspace.TurAgentWorkspace;
+import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
+import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
 import com.viglet.turing.persistence.dto.intent.TurIntentDto;
 import com.viglet.turing.persistence.mapper.intent.TurIntentMapper;
@@ -110,18 +110,18 @@ public class TurSNSiteGenAiAPI {
 	private final TurChatShareOgService shareOgService;
 	private final TurAgentWorkspace agentWorkspace;
 	private final TurWorkspaceEventBus workspaceEventBus;
-	private final com.viglet.turing.genai.flow.TurConversationLock conversationLock;
-	private final com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver;
-	private final com.viglet.turing.genai.persona.TurAgentPersonaResolver turAgentPersonaResolver;
+	private final com.viglet.turing.agent.flow.TurConversationLock conversationLock;
+	private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+	private final com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver;
 	private final com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate;
 	private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
 	// T790 / §LIV.1 (Block BF) — resolves whether the vectorless copilot can answer
 	// (a default LLM is configured) for the VECTORLESS_STRUCTURED readiness path.
-	private final com.viglet.turing.genai.catalog.TurCatalogCopilotService catalogCopilotService;
+	private final com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
 	// T1087 — the one decision both /chat/enabled and /chat/conversation read.
-	private final com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver;
+	private final com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver;
 	// T1133 — whether the collection holds chunks of a partitioned key's partition.
-	private final com.viglet.turing.genai.TurSNSiteVectorProbe vectorProbe;
+	private final com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe;
 
 	/** T1133 — the copilot route reads the index without the partition. */
 	static final String PARTITION_COPILOT_MESSAGE = "This API key is bound to a partition of a shared site, "
@@ -149,14 +149,14 @@ public class TurSNSiteGenAiAPI {
 			TurChatShareOgService shareOgService,
 			TurAgentWorkspace agentWorkspace,
 			TurWorkspaceEventBus workspaceEventBus,
-			com.viglet.turing.genai.flow.TurConversationLock conversationLock,
-			com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver,
-			com.viglet.turing.genai.persona.TurAgentPersonaResolver turAgentPersonaResolver,
+			com.viglet.turing.agent.flow.TurConversationLock conversationLock,
+			com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
+			com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver,
 			com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate,
 			com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty,
-			com.viglet.turing.genai.catalog.TurCatalogCopilotService catalogCopilotService,
-			com.viglet.turing.genai.TurSNChatRouteResolver chatRouteResolver,
-			com.viglet.turing.genai.TurSNSiteVectorProbe vectorProbe) {
+			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
+			com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver,
+			com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe) {
 		this.vectorProbe = vectorProbe;
 		this.turSNSearchProcess = turSNSearchProcess;
 		this.turGenAi = turGenAi;
@@ -243,11 +243,11 @@ public class TurSNSiteGenAiAPI {
 		}).subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic()).flux();
 	}
 
-	private static List<com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn> copilotTurns(
+	private static List<com.viglet.turing.rag.catalog.TurCatalogCopilotService.ChatTurn> copilotTurns(
 			List<ConversationMessage> messages) {
 		return messages == null ? List.of()
 				: messages.stream()
-						.map(m -> new com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn(m.role(),
+						.map(m -> new com.viglet.turing.rag.catalog.TurCatalogCopilotService.ChatTurn(m.role(),
 								m.content()))
 						.toList();
 	}
@@ -281,7 +281,7 @@ public class TurSNSiteGenAiAPI {
 				}
 				if (route.route() == TurSNChatRouteResolver.Route.COPILOT) {
 					var answer = catalogCopilotService.answer(siteName, locale.toString(),
-							List.of(new com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn("user", q)));
+							List.of(new com.viglet.turing.rag.catalog.TurCatalogCopilotService.ChatTurn("user", q)));
 					return TurChatMessage.builder().text(answer.answer()).enabled(true).build();
 				}
 				String collectionName = null;
@@ -413,7 +413,7 @@ public class TurSNSiteGenAiAPI {
 			// and is refused while the collection holds none (indexed before the
 			// chunks carried the field, until the site's vectors are reindexed).
 			if (partition != null && (collectionName == null || vectorProbe.probePartition(agent, collectionName,
-					partition) == com.viglet.turing.genai.TurSNSiteVectorProbe.Presence.ABSENT)) {
+					partition) == com.viglet.turing.rag.TurSNSiteVectorProbe.Presence.ABSENT)) {
 				return Flux.just(new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE,
 						PARTITION_NOT_INDEXED_MESSAGE));
 			}
@@ -530,7 +530,7 @@ public class TurSNSiteGenAiAPI {
 	 * @since 2026.2.7
 	 */
 	@GetMapping("/state")
-	public com.viglet.turing.genai.flow.TurChatFlowEngineService.ConversationStateDto chatState(
+	public com.viglet.turing.agent.flow.TurChatFlowEngineService.ConversationStateDto chatState(
 			@PathVariable String siteName,
 			@RequestParam String conversationId) {
 		return chatFlowEngineService.getConversationState(conversationId);
@@ -853,7 +853,7 @@ public class TurSNSiteGenAiAPI {
 	 * blob store is scoped by agent + conversation); omit it and the stream still
 	 * delivers live mutations, just without the back-fill. After the snapshot the
 	 * stream relays every {@code put}/{@code delete} from
-	 * {@link com.viglet.turing.genai.workspace.TurWorkspaceEventBus}.
+	 * {@link com.viglet.turing.agent.workspace.TurWorkspaceEventBus}.
 	 *
 	 * <p>Each event carries <b>metadata only</b>
 	 * ({@code {event, key, contentType, size, signedUrl}}) — never the bytes, so

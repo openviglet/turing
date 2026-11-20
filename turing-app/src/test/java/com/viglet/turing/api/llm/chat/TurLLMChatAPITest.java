@@ -20,22 +20,22 @@ import org.springframework.ai.chat.messages.UserMessage;
 
 import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
 import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.genai.TurChatAttachmentService;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.genai.tool.TurCodeInterpreterToolService;
+import com.viglet.turing.agent.TurChatAttachmentService;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.tool.TurCodeInterpreterToolService;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.genai.tool.TurDateTimeToolService;
-import com.viglet.turing.genai.tool.TurFinanceToolService;
-import com.viglet.turing.genai.tool.TurImageSearchToolService;
-import com.viglet.turing.genai.tool.TurWeatherToolService;
-import com.viglet.turing.genai.tool.TurRagSearchToolService;
-import com.viglet.turing.genai.tool.TurIconifyToolService;
-import com.viglet.turing.genai.tool.TurIntegrationMonitoringToolService;
-import com.viglet.turing.genai.tool.TurLoggingToolService;
-import com.viglet.turing.genai.tool.TurSystemInfoToolService;
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
-import com.viglet.turing.genai.tool.TurWebCrawlerToolService;
+import com.viglet.turing.agent.tool.TurDateTimeToolService;
+import com.viglet.turing.agent.tool.TurFinanceToolService;
+import com.viglet.turing.agent.tool.TurImageSearchToolService;
+import com.viglet.turing.agent.tool.TurWeatherToolService;
+import com.viglet.turing.agent.tool.TurRagSearchToolService;
+import com.viglet.turing.agent.tool.TurIconifyToolService;
+import com.viglet.turing.agent.tool.TurIntegrationMonitoringToolService;
+import com.viglet.turing.agent.tool.TurLoggingToolService;
+import com.viglet.turing.agent.tool.TurSystemInfoToolService;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
+import com.viglet.turing.agent.tool.TurWebCrawlerToolService;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
@@ -99,7 +99,7 @@ class TurLLMChatAPITest {
                 loggingToolService, integrationMonitoringToolService,
                 systemInfoToolService, iconifyToolService,
                 chatAttachmentService,
-                new com.viglet.turing.genai.TurToolExecutionLoop());
+                new com.viglet.turing.agent.TurToolExecutionLoop());
     }
 
     private static TurLLMInstanceDomain llmDomain(String id, Integer contextWindow) {
@@ -354,7 +354,7 @@ class TurLLMChatAPITest {
                 null, null, null, null, "json_object", null, null);
 
         assertThatThrownBy(() -> api.chatJson("llm-1", request))
-                .isInstanceOfSatisfying(com.viglet.turing.genai.TurUnsupportedParameterException.class,
+                .isInstanceOfSatisfying(com.viglet.turing.agent.TurUnsupportedParameterException.class,
                         e -> assertThat(e.getParam()).isEqualTo("responseFormat"));
     }
 

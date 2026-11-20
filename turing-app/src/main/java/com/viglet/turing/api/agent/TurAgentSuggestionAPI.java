@@ -45,11 +45,11 @@ public class TurAgentSuggestionAPI {
 
     private final TurAgentSuggestionRepository suggestionRepository;
     private final TurAIAgentRepository agentRepository;
-    private final com.viglet.turing.genai.distillation.TurDistillationProposalService proposalService;
+    private final com.viglet.turing.eval.distillation.TurDistillationProposalService proposalService;
 
     public TurAgentSuggestionAPI(TurAgentSuggestionRepository suggestionRepository,
             TurAIAgentRepository agentRepository,
-            com.viglet.turing.genai.distillation.TurDistillationProposalService proposalService) {
+            com.viglet.turing.eval.distillation.TurDistillationProposalService proposalService) {
         this.suggestionRepository = suggestionRepository;
         this.agentRepository = agentRepository;
         this.proposalService = proposalService;

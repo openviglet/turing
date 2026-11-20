@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.eval.TurAgentEvalRunnerService;
+import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
 import com.viglet.turing.persistence.dto.agent.TurEvalRunRequest;
 import com.viglet.turing.persistence.dto.agent.TurEvalRunResultDto;

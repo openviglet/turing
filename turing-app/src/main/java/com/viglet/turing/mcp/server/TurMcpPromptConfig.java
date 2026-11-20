@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.viglet.turing.genai.persona.TurPersonaPromptComposer;
+import com.viglet.turing.persona.TurPersonaPromptComposer;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
 

@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;

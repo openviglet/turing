@@ -22,7 +22,7 @@ import com.openai.core.http.Headers;
 import com.openai.errors.RateLimitException;
 import com.openai.models.ErrorObject;
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
-import com.viglet.turing.genai.gateway.TurOpenAiWire.ErrorEnvelope;
+import com.viglet.turing.llm.gateway.TurOpenAiWire.ErrorEnvelope;
 
 /**
  * T1092 — a provider's 429 (out of credits, or rate limited) and the tenant's

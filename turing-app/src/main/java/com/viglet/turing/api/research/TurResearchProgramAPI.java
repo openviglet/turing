@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.research.TurResearchProgramService;
-import com.viglet.turing.genai.research.dto.TurResearchProgramRollupDto;
+import com.viglet.turing.rag.research.TurResearchProgramService;
+import com.viglet.turing.rag.research.dto.TurResearchProgramRollupDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1762,3 +1762,4 @@
 - **T1306** — Spring Modulith 2.1.3 is on the build and TurModuleReportTest writes the module report without failing: 33 modules, 27,039 violations (99 cycles), the baseline each later move is measured against.
 - **T1307** — The 11 API exception types moved to com.viglet.turing.shared.exception, an open shared module declared with @Modulithic, so no module reaches into api for one; violations 27,039 to 27,018.
 - **T1310 (one module)** — plugins, se, solr, lucene, elasticsearch and contentai are one searchengine module, its plugin contract at the root and result and facet as named interfaces; violations 27,018 to 26,181.
+- **T1309** — genai is gone: its packages are the llm, agent, rag, persona, eval, transcription and batch modules (callcenter went to chat); violations 26,181 to 26,485 as calls inside genai became cross-module calls the report now shows.

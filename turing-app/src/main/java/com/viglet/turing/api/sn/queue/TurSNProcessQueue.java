@@ -86,7 +86,7 @@ public class TurSNProcessQueue {
     private final TurSNSearchCacheEvictor turSNSearchCacheEvictor;
     private final TurSNProcessQueue self;
     /** T1158 — removes a deleted document's chunks from the site's RAG collection. */
-    private final com.viglet.turing.genai.TurSNGenAi turSNGenAi;
+    private final com.viglet.turing.rag.TurSNGenAi turSNGenAi;
 
     public TurSNProcessQueue(TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteRepository turSNSiteRepository,
@@ -104,7 +104,7 @@ public class TurSNProcessQueue {
             com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer,
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,
             @org.springframework.context.annotation.Lazy TurSNProcessQueue self,
-            @org.springframework.context.annotation.Lazy com.viglet.turing.genai.TurSNGenAi turSNGenAi) {
+            @org.springframework.context.annotation.Lazy com.viglet.turing.rag.TurSNGenAi turSNGenAi) {
         this.turSNGenAi = turSNGenAi;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;

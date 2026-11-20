@@ -53,11 +53,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.provider.store.TurGenAiStoreProviderFactory;
-import com.viglet.turing.genai.provider.store.TurStoreCollectionInfo;
-import com.viglet.turing.genai.provider.store.TurStoreExportRecord;
-import com.viglet.turing.genai.provider.store.TurStoreImportResult;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.llm.provider.store.TurGenAiStoreProviderFactory;
+import com.viglet.turing.llm.provider.store.TurStoreCollectionInfo;
+import com.viglet.turing.llm.provider.store.TurStoreExportRecord;
+import com.viglet.turing.llm.provider.store.TurStoreImportResult;
 import com.viglet.turing.persistence.dto.store.TurStoreInstanceDto;
 import com.viglet.turing.persistence.mapper.store.TurStoreInstanceMapper;
 import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
@@ -87,7 +87,7 @@ public class TurStoreInstanceAPI {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurRagContextBuilder ragContextBuilder;
     private final TurInfraTenantScope tenantScope;
-    private final com.viglet.turing.genai.batch.embedding.TurBatchReEmbeddingService batchReEmbeddingService;
+    private final com.viglet.turing.batch.embedding.TurBatchReEmbeddingService batchReEmbeddingService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TurStoreInstanceAPI(TurStoreInstanceRepository turStoreInstanceRepository,
@@ -97,7 +97,7 @@ public class TurStoreInstanceAPI {
             TurGlobalSettingsService globalSettingsService,
             TurRagContextBuilder ragContextBuilder,
             TurInfraTenantScope tenantScope,
-            com.viglet.turing.genai.batch.embedding.TurBatchReEmbeddingService batchReEmbeddingService) {
+            com.viglet.turing.batch.embedding.TurBatchReEmbeddingService batchReEmbeddingService) {
         this.turStoreInstanceRepository = turStoreInstanceRepository;
         this.turStoreInstanceMapper = turStoreInstanceMapper;
         this.turSecretCryptoService = turSecretCryptoService;

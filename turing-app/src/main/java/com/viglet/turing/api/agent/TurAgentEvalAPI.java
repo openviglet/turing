@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.distillation.TurOpenAiDistillationService;
-import com.viglet.turing.genai.distillation.TurOpenAiDistillationService.DistillResult;
-import com.viglet.turing.genai.eval.TurAgentEvalGateService;
-import com.viglet.turing.genai.eval.TurAgentEvalRunnerService;
+import com.viglet.turing.eval.distillation.TurOpenAiDistillationService;
+import com.viglet.turing.eval.distillation.TurOpenAiDistillationService.DistillResult;
+import com.viglet.turing.eval.TurAgentEvalGateService;
+import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.persistence.dto.agent.TurAgentEvalGateDto;
 import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
 

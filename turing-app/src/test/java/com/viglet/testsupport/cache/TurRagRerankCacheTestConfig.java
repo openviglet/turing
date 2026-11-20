@@ -14,7 +14,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.viglet.turing.genai.rag.rerank.TurRagRerankCache;
+import com.viglet.turing.rag.rerank.TurRagRerankCache;
 
 /**
  * Standalone cache context for {@code TurRagRerankCacheTest} (T341).

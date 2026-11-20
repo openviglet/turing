@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.genai.persona.readability.TurReadabilityScorer;
+import com.viglet.turing.persona.readability.TurReadabilityScorer;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;

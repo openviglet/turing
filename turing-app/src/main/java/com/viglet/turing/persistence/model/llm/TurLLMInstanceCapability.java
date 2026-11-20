@@ -44,7 +44,7 @@ import lombok.Setter;
  * monolithic flag day — capabilities ship one row at a time.
  *
  * <p>The {@code capabilityKey} is the stable string from
- * {@link com.viglet.turing.genai.nativeapi.TurNativeCapability#getKey()}.
+ * {@link com.viglet.turing.llm.nativeapi.TurNativeCapability#getKey()}.
  * {@code configJson} carries per-capability configuration (e.g. the
  * {@code vectorStoreIds} for {@code file_search} or the {@code serverLabel} /
  * {@code serverUrl} for the remote {@code mcp} tool).

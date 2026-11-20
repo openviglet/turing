@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 
-import com.viglet.turing.genai.provider.llm.TurMultimodalEmbeddingModel;
+import com.viglet.turing.llm.provider.llm.TurMultimodalEmbeddingModel;
 import com.viglet.turing.observability.TurLlmObservation;
 import com.viglet.turing.resilience.TurResilienceExecutor;
 import com.viglet.turing.resilience.TurResilienceRegistry;
@@ -114,9 +114,9 @@ class TurResilientEmbeddingModelTest {
     void embedDocumentChunks_contextualDelegate_delegatesThroughResilience() {
         EmbeddingModel contextualDelegate = mock(EmbeddingModel.class,
                 withSettings().extraInterfaces(
-                        com.viglet.turing.genai.provider.llm.TurContextualEmbeddingModel.class));
+                        com.viglet.turing.llm.provider.llm.TurContextualEmbeddingModel.class));
         var asContextual =
-                (com.viglet.turing.genai.provider.llm.TurContextualEmbeddingModel) contextualDelegate;
+                (com.viglet.turing.llm.provider.llm.TurContextualEmbeddingModel) contextualDelegate;
         List<float[]> expected = List.of(new float[] { 0.1f }, new float[] { 0.2f });
         when(asContextual.supportsContextualChunks()).thenReturn(true);
         when(asContextual.embedDocumentChunks(any())).thenReturn(expected);

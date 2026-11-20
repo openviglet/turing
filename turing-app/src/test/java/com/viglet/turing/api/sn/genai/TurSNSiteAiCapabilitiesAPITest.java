@@ -34,12 +34,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
-import com.viglet.turing.genai.TurSNChatDisabledReason;
-import com.viglet.turing.genai.TurSNChatRouteResolver;
-import com.viglet.turing.genai.TurSNSiteVectorProbe;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurSNChatDisabledReason;
+import com.viglet.turing.rag.TurSNChatRouteResolver;
+import com.viglet.turing.rag.TurSNSiteVectorProbe;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
+import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;

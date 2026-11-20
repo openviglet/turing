@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.genai.skill.TurSkillCatalogService;
-import com.viglet.turing.genai.skill.TurSkillFileService;
+import com.viglet.turing.agent.skill.TurSkillCatalogService;
+import com.viglet.turing.agent.skill.TurSkillFileService;
 import com.viglet.turing.persistence.model.skill.TurSkill;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,10 +53,10 @@ public class TurSkillAPI {
 
     private final TurSkillCatalogService catalogService;
     private final TurSkillFileService fileService;
-    private final com.viglet.turing.genai.skill.ui.TurSkillUiService skillUiService;
+    private final com.viglet.turing.agent.skill.ui.TurSkillUiService skillUiService;
 
     public TurSkillAPI(TurSkillCatalogService catalogService, TurSkillFileService fileService,
-            com.viglet.turing.genai.skill.ui.TurSkillUiService skillUiService) {
+            com.viglet.turing.agent.skill.ui.TurSkillUiService skillUiService) {
         this.catalogService = catalogService;
         this.fileService = fileService;
         this.skillUiService = skillUiService;
@@ -91,7 +91,7 @@ public class TurSkillAPI {
 
     @Operation(summary = "T449 — list the UI components a skill ships (ui/components.json)")
     @GetMapping("/{id}/ui-components")
-    public List<com.viglet.turing.genai.skill.ui.TurSkillUiComponent> uiComponents(
+    public List<com.viglet.turing.agent.skill.ui.TurSkillUiComponent> uiComponents(
             @PathVariable String id) {
         return skillUiService.listComponents(id);
     }

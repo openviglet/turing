@@ -1,6 +1,6 @@
 package com.viglet.turing.api.system;
 
-import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.service.git.TurGitServerService;
 import com.viglet.turing.service.storage.TurStorageService;

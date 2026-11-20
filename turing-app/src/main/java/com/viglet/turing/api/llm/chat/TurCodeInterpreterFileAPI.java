@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner;
-import com.viglet.turing.genai.tool.TurCodeInterpreterUrlSigner.VerifyResult;
+import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner;
+import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner.VerifyResult;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

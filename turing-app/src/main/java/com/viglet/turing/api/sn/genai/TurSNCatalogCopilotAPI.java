@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.catalog.TurCatalogCopilotResult;
-import com.viglet.turing.genai.catalog.TurCatalogCopilotService;
-import com.viglet.turing.genai.catalog.TurCatalogCopilotService.ChatTurn;
-import com.viglet.turing.genai.catalog.TurCatalogKitService;
+import com.viglet.turing.rag.catalog.TurCatalogCopilotResult;
+import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
+import com.viglet.turing.rag.catalog.TurCatalogCopilotService.ChatTurn;
+import com.viglet.turing.rag.catalog.TurCatalogKitService;
 import com.viglet.turing.sn.dsl.TurDslCallerFilters;
 
 import io.swagger.v3.oas.annotations.Operation;

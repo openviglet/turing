@@ -2504,14 +2504,6 @@ moves into that module's application layer behind its named interface. Afterward
 nothing imports a controller and the top-level api package is gone. Request paths do not
 change.
 
-### CLXXXIX.5 Splitting genai into modules (T1309)
-
-genai is a third of the backend: nativeapi, provider, catalog and gateway (llm); agent,
-tool, flow and skill (agent); rag; persona and research (persona); eval; transcription;
-batch. Each becomes a top-level module with its own internal packages. The split moves
-packages and fixes imports first, so the module report shows where the real cross-module
-calls are before any of them is redesigned.
-
 ### CLXXXIX.6 One searchengine module (T1310)
 
 plugins, se, solr, lucene, elasticsearch and contentai together implement

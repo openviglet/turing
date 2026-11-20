@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.genai.flow.strategy.ChatFlowOps;
+import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.persistence.model.agent.TurChatFlowState;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
 

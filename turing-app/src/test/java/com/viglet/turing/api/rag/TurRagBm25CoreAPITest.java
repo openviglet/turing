@@ -28,8 +28,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.rag.TurRagBm25CoreProvisioner;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagBm25CoreProvisioner;
 import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;

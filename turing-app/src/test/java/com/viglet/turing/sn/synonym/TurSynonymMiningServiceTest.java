@@ -37,8 +37,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.embedding.EmbeddingModel;
 
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;

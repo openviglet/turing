@@ -16,7 +16,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
-import com.viglet.turing.genai.distillation.TurChatFeedbackRating;
+import com.viglet.turing.eval.distillation.TurChatFeedbackRating;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;

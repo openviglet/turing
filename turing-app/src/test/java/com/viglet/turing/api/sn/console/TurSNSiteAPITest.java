@@ -93,15 +93,15 @@ class TurSNSiteAPITest {
                                 template, queue, pluginFactory, siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class));
+                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class));
         }
 
         @Test
         void aSiteOnTheDefaultAgentCanStartAReindex() {
                 // T1151 — the gate reads the effective agent, as the reindex does.
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-                com.viglet.turing.genai.TurDefaultAgentResolver resolver =
-                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class);
+                com.viglet.turing.agent.TurDefaultAgentResolver resolver =
+                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
                                 mock(TurSNSiteGenAiRepository.class),
                                 mock(com.viglet.turing.persistence.repository.agent.TurAIAgentRepository.class),
@@ -223,7 +223,7 @@ class TurSNSiteAPITest {
                                 mock(TurSearchEnginePluginFactory.class), siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.genai.TurDefaultAgentResolver.class));
+                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class));
 
                 TurSNSite existing = new TurSNSite();
                 TurSNSiteGenAi existingGenAi = new TurSNSiteGenAi();

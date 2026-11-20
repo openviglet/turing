@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  * (one resolution per turn), so it is {@code @Cacheable("turLlmPrice")}.
  * {@link #computeCost} routes through the {@code @Lazy} self-proxy so the cache
  * advice actually fires (a {@code this.rates(...)} call would bypass it — see
- * {@link com.viglet.turing.genai.flow.TurChatFlowStaticPromptCache}). Every
+ * {@link com.viglet.turing.agent.flow.TurChatFlowStaticPromptCache}). Every
  * mutation evicts the whole cache so an operator's price edit takes effect on
  * the next turn.
  *

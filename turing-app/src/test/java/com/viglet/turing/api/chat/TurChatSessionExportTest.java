@@ -25,7 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.persistence.dto.agent.TurChatFlowSubmissionDto;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionExportDto;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionMessageDto;
@@ -66,12 +66,12 @@ class TurChatSessionExportTest {
         audit = mock(TurChatSlotAuditService.class);
         retention = mock(TurSubmissionRetentionService.class);
         api = new TurChatSessionAPI(engine, memory, summary, audit, retention,
-                mock(com.viglet.turing.genai.spectator.TurChatMessageEventBus.class),
+                mock(com.viglet.turing.eval.spectator.TurChatMessageEventBus.class),
                 mock(com.viglet.turing.service.chatslots.TurChatSlotEventBus.class),
-                mock(com.viglet.turing.genai.workspace.TurWorkspaceEventBus.class),
+                mock(com.viglet.turing.agent.workspace.TurWorkspaceEventBus.class),
                 mock(com.viglet.turing.service.chatslots.TurChatSlotSseRegistry.class),
-                mock(com.viglet.turing.genai.spectator.TurCopilotService.class),
-                mock(com.viglet.turing.genai.citation.TurCitationDriftService.class));
+                mock(com.viglet.turing.eval.spectator.TurCopilotService.class),
+                mock(com.viglet.turing.rag.citation.TurCitationDriftService.class));
     }
 
     private TurChatSlotAuditEntry auditEntry(String slot, String oldV, String newV,

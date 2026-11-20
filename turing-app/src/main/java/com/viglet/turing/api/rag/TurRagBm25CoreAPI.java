@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.rag.TurRagBm25CoreProvisioner;
+import com.viglet.turing.rag.TurRagBm25CoreProvisioner;
 import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
@@ -34,7 +34,7 @@ import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
 import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
-import com.viglet.turing.genai.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

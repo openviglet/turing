@@ -28,10 +28,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.genai.answer.TurAnswerShareService;
-import com.viglet.turing.genai.answer.TurAnswerSignalService;
-import com.viglet.turing.genai.answer.TurSNAnswerService;
-import com.viglet.turing.genai.citation.TurCitationDriftService;
+import com.viglet.turing.rag.answer.TurAnswerShareService;
+import com.viglet.turing.rag.answer.TurAnswerSignalService;
+import com.viglet.turing.rag.answer.TurSNAnswerService;
+import com.viglet.turing.rag.citation.TurCitationDriftService;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView;

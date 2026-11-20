@@ -379,7 +379,7 @@ public class TurAIAgent implements Serializable {
      * the conversation's current state (T612). Because this writes on the chat
      * hot path it is opt-in and bounded (a per-conversation turn ring, a
      * per-entry byte cap, and a retention sweep — see
-     * {@code com.viglet.turing.genai.capture.TurPromptCaptureProperties}).
+     * {@code com.viglet.turing.agent.capture.TurPromptCaptureProperties}).
      * Default {@code false} keeps existing agents byte-for-byte unchanged (no
      * extra storage writes). Has no effect on a storage-disabled deployment
      * (the capture service reports itself unavailable and every write is
@@ -680,7 +680,7 @@ public class TurAIAgent implements Serializable {
 
     /**
      * T433 / §X.18.b — the per-agent selection of <em>provider-native</em>
-     * capabilities (a CSV of {@link com.viglet.turing.genai.nativeapi.TurNativeCapability}
+     * capabilities (a CSV of {@link com.viglet.turing.llm.nativeapi.TurNativeCapability}
      * keys, e.g. {@code "anthropic-web-search,anthropic-code-execution"}),
      * mirroring {@link #nativeTools}. It is a subset of what the agent's LLM
      * instance is technically capable of (the per-instance matrix, T132); the
@@ -719,7 +719,7 @@ public class TurAIAgent implements Serializable {
      * as one SSE event) or the reactive {@code chatModel.stream(prompt)}
      * (each token chunk is forwarded immediately to the SSE pipeline so
      * the user sees the bubble fill in). Honored by
-     * {@link com.viglet.turing.genai.TurAgentChatExecutor} on the
+     * {@link com.viglet.turing.agent.TurAgentChatExecutor} on the
      * non-flow path; flow-driven turns always fall back to {@code call}
      * because the post-LLM advance/regen pipeline needs the full text
      * before deciding whether to rewrite the bubble.

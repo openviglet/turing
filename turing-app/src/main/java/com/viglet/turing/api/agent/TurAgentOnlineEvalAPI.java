@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.eval.online.TurOnlineEvalService;
+import com.viglet.turing.eval.online.TurOnlineEvalService;
 import com.viglet.turing.persistence.dto.agent.TurOnlineEvalSnapshotDto;
 
 import io.swagger.v3.oas.annotations.Operation;

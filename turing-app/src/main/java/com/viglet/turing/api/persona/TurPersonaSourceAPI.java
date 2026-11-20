@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.persona.TurPersonaSourceService;
+import com.viglet.turing.persona.TurPersonaSourceService;
 import com.viglet.turing.persistence.dto.persona.TurPersonaSourceDto;
 import com.viglet.turing.persistence.mapper.persona.TurPersonaSourceMapper;
 import com.viglet.turing.persistence.model.persona.TurPersona;

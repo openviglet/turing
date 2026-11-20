@@ -90,7 +90,7 @@ public class TurSNSiteGenAi implements Serializable {
      * T19 / §III.3 (repositioned 2026.2.7) — opt-out for the BM25 emergency
      * fallback in {@code search_knowledge_base}. When {@code true} (default),
      * if the vector top-1 cosine score is below {@code MIN_VECTOR_CONFIDENCE},
-     * {@link com.viglet.turing.genai.tool.TurRagSearchToolService} retries
+     * {@link com.viglet.turing.agent.tool.TurRagSearchToolService} retries
      * the query as BM25 and prepends a keyword-only warning header. When
      * {@code false}, vector misses return "no results" directly.
      *
@@ -165,11 +165,11 @@ public class TurSNSiteGenAi implements Serializable {
      * lexical-only ranking — existing sites need no revalidation.
      * {@link TurSNRankingMode#HYBRID_RRF} fuses the lexical (BM25) ranking with
      * a vector ranking of the same documents via Reciprocal Rank Fusion
-     * ({@code k=60}), reusing {@link com.viglet.turing.genai.rag.TurRagRrf} and
+     * ({@code k=60}), reusing {@link com.viglet.turing.rag.TurRagRrf} and
      * the embedded vector store the RAG path already builds. Effective only when
      * the request sort is relevance; facet counts and pagination stay BM25-derived.
      * {@link TurSNRankingMode#HYBRID_RRF_RERANK} (T389) additionally re-orders the
-     * fused page through the Block N {@link com.viglet.turing.genai.rag.TurRagReranker}
+     * fused page through the Block N {@link com.viglet.turing.rag.TurRagReranker}
      * strategy seam.
      *
      * @since 2026.3.1
@@ -263,7 +263,7 @@ public class TurSNSiteGenAi implements Serializable {
      * {@code true} (and {@link #contentFitPersonaId} resolves to an
      * {@code AUDIENCE}/{@code BOTH} persona), each document is scored at index
      * time by the deterministic
-     * {@link com.viglet.turing.genai.persona.readability.TurReadabilityScorer}
+     * {@link com.viglet.turing.persona.readability.TurReadabilityScorer}
      * against that audience and the 0–100 fit score is stored as the
      * {@code content_fit_score} SN field. The
      * {@code GET /api/sn/{id}/content-fit} coverage report then surfaces "content
@@ -339,7 +339,7 @@ public class TurSNSiteGenAi implements Serializable {
      * {@code true} and the site's GenAI agent resolves to a <em>Gemini</em> LLM
      * instance, a document that references a video or audio asset (a media URL in
      * its {@code media_url} attribute, or a media-typed {@code url}) is run through
-     * {@link com.viglet.turing.genai.nativeapi.gemini.TurGeminiVideoUnderstandingService}
+     * {@link com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService}
      * at index time and the resulting timestamped transcript + scene description is
      * appended to the document's text field — so the spoken/visual content of the
      * clip becomes searchable through the normal full-text path. A media-catalog

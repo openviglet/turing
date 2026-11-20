@@ -35,7 +35,7 @@ import tools.jackson.databind.ObjectMapper;
  * {@code aula_relampago} Custom Tool. This test boots a
  * {@link GroovyShell} with a {@link Binding} that mocks the
  * three helpers the script uses ({@code args}, {@code http}, {@code slots})
- * — same shape {@link com.viglet.turing.genai.tool.TurCustomToolCallbackService}
+ * — same shape {@link com.viglet.turing.agent.tool.TurCustomToolCallbackService}
  * exposes in production, minus the live HTTP and DB.
  *
  * <p>No Spring boot, no DB. Each test runs in ~50 ms, so the suite is

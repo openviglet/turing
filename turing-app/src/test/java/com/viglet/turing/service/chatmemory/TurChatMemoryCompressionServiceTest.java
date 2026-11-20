@@ -35,8 +35,8 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatMessageItem;
-import com.viglet.turing.genai.workspace.TurAgentWorkspace;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
+import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

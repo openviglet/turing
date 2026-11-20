@@ -13,8 +13,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
-import com.viglet.turing.genai.batch.TurBatchKind;
-import com.viglet.turing.genai.batch.TurBatchState;
+import com.viglet.turing.batch.TurBatchKind;
+import com.viglet.turing.batch.TurBatchState;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -31,7 +31,7 @@ import lombok.Setter;
 /**
  * F.7 / §X.8.a — one tracked Batch inference job.
  *
- * <p>{@link com.viglet.turing.genai.batch.TurBatchInferenceService#submit} writes
+ * <p>{@link com.viglet.turing.batch.TurBatchInferenceService#submit} writes
  * a row here the moment a batch is accepted by a vendor; the cluster-wide-once
  * {@code TurBatchJobPoller} (ShedLock) refreshes its {@link #state} and per-request
  * counts on a schedule, and when the batch ends it fetches the results and hands

@@ -30,9 +30,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatMessageItem;
-import com.viglet.turing.genai.TurTokenBudgetService;
-import com.viglet.turing.genai.workspace.TurAgentWorkspace;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
+import com.viglet.turing.agent.TurTokenBudgetService;
+import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
@@ -62,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
  * This runs <em>alongside</em> {@link TurChatMemoryRelevanceRetriever}: the
  * BM25 retriever still surfaces specific high-signal older turns verbatim when
  * they match the current query; the summary is the cheap default carrying the
- * low-signal background. {@link com.viglet.turing.genai.TurChatPromptAssembler}
+ * low-signal background. {@link com.viglet.turing.agent.TurChatPromptAssembler}
  * prepends the summary, then the retrieved turns, then the recent window.
  *
  * <h2>Cost control</h2>
@@ -313,7 +313,7 @@ public class TurChatMemoryCompressionService {
 
     /**
      * T123 — on-demand summarization of an arbitrary block of conversation
-     * text for the budget-driven {@link com.viglet.turing.genai.TurPromptCompactor}.
+     * text for the budget-driven {@link com.viglet.turing.agent.TurPromptCompactor}.
      * Reuses the same {@code prompts/chat-memory-compression.md} system prompt
      * and LLM-instance resolution as the scheduled older-pool summary, but is
      * triggered by the executor's over-budget path rather than the recent-N

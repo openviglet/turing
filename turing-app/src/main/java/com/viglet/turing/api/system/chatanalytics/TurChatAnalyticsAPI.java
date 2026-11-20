@@ -79,7 +79,7 @@ public class TurChatAnalyticsAPI {
     private final TurPersonaRepository personaRepository;
     private final com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService significanceService;
     private final com.viglet.turing.service.chatanalytics.TurChampionChallengerService championChallengerService;
-    private final com.viglet.turing.genai.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog;
+    private final com.viglet.turing.agent.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog;
     private final com.viglet.turing.service.chatslots.TurChatSlotSseRegistry slotSseRegistry;
     private final com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService;
 
@@ -89,7 +89,7 @@ public class TurChatAnalyticsAPI {
             TurPersonaRepository personaRepository,
             com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService significanceService,
             com.viglet.turing.service.chatanalytics.TurChampionChallengerService championChallengerService,
-            com.viglet.turing.genai.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog,
+            com.viglet.turing.agent.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog,
             com.viglet.turing.service.chatslots.TurChatSlotSseRegistry slotSseRegistry,
             com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService) {
         this.analyticsService = analyticsService;
@@ -325,7 +325,7 @@ public class TurChatAnalyticsAPI {
      * @since 2026.3.1
      */
     @GetMapping(value = "/router-decisions", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<com.viglet.turing.genai.flow.router.TurChatFlowRouterDecision> routerDecisions(
+    public List<com.viglet.turing.agent.flow.router.TurChatFlowRouterDecision> routerDecisions(
             @RequestParam(required = false) String conversationId,
             @RequestParam(defaultValue = "100") int limit) {
         return conversationId != null && !conversationId.isBlank()
@@ -535,7 +535,7 @@ public class TurChatAnalyticsAPI {
      */
     @GetMapping(value = "/sessions/{conversationId}/tool-calls",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<com.viglet.turing.genai.tool.TurChatToolCall>> toolCalls(
+    public ResponseEntity<List<com.viglet.turing.agent.tool.TurChatToolCall>> toolCalls(
             @PathVariable String conversationId) {
         return ResponseEntity.ok(toolCallTraceService.getTrace(conversationId));
     }

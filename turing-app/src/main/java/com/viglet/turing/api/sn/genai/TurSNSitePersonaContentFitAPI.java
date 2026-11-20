@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.shared.exception.TurPayloadTooLargeException;
 import com.viglet.turing.shared.exception.TurValidationException;
-import com.viglet.turing.genai.persona.fit.TurContentFitMisfit;
-import com.viglet.turing.genai.persona.fit.TurContentFitResult;
-import com.viglet.turing.genai.persona.fit.TurPersonaContentFitEvaluator;
+import com.viglet.turing.persona.fit.TurContentFitMisfit;
+import com.viglet.turing.persona.fit.TurContentFitResult;
+import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 

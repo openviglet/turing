@@ -28,11 +28,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.genai.TurRagContextBuilder;
-import com.viglet.turing.genai.TurRagContextBuilder.RagInfrastructure;
-import com.viglet.turing.genai.rag.TurRagReranker;
-import com.viglet.turing.genai.rag.TurRagRrf;
-import com.viglet.turing.genai.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.rag.TurRagReranker;
+import com.viglet.turing.rag.TurRagRrf;
+import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
@@ -381,7 +381,7 @@ public class TurSNHybridRankingService {
             com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
                     .ifPresent(partition -> vectorFilters.put(partition.field(), List.of(partition.value())));
             if (!vectorFilters.isEmpty()) {
-                request.filterExpression(com.viglet.turing.genai.TurRagFilters.buildFilterExpression(vectorFilters));
+                request.filterExpression(com.viglet.turing.rag.TurRagFilters.buildFilterExpression(vectorFilters));
             }
             List<Document> vectorAll = infra.vectorStore().similaritySearch(request.build());
             // Stage 1.5 (recall, opt-in): bring in the vector hits the lexical page missed.
@@ -663,7 +663,7 @@ public class TurSNHybridRankingService {
                     .topK(topK + 1)
                     .similarityThreshold(Math.max(0.0, minSimilarity));
             if (partition != null) {
-                request.filterExpression(com.viglet.turing.genai.TurRagFilters.buildFilterExpression(
+                request.filterExpression(com.viglet.turing.rag.TurRagFilters.buildFilterExpression(
                         Map.of(partition.field(), List.of(partition.value()))));
             }
             List<Document> hits = infra.vectorStore().similaritySearch(request.build());

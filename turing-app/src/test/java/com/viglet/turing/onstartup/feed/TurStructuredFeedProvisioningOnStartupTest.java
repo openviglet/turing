@@ -30,8 +30,8 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.genai.feed.TurStructuredFeedIngestService;
-import com.viglet.turing.genai.feed.TurStructuredFeedIngestService.IngestResult;
+import com.viglet.turing.rag.feed.TurStructuredFeedIngestService;
+import com.viglet.turing.rag.feed.TurStructuredFeedIngestService.IngestResult;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;

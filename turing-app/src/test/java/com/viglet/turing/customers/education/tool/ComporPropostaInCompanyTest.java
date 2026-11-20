@@ -37,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
  * chat-flow. This test boots a {@link GroovyShell} with a {@link Binding} that mocks
  * {@code slots} + {@code turingSearch} (the script's only two helpers)
  * — same shape
- * {@link com.viglet.turing.genai.tool.TurCustomToolCallbackService} exposes
+ * {@link com.viglet.turing.agent.tool.TurCustomToolCallbackService} exposes
  * in production.
  *
  * <p>No Spring boot, no DB, no LLM. Each test runs in ~30 ms — the

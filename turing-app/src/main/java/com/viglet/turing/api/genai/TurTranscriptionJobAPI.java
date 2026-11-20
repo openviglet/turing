@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.transcription.TurTranscriptionJobEventBus;
-import com.viglet.turing.genai.transcription.TurTranscriptionJobService;
-import com.viglet.turing.genai.transcription.TurTranscriptionJobStatus;
+import com.viglet.turing.transcription.TurTranscriptionJobEventBus;
+import com.viglet.turing.transcription.TurTranscriptionJobService;
+import com.viglet.turing.transcription.TurTranscriptionJobStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

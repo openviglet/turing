@@ -30,10 +30,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.TurAgentChatExecutor;
-import com.viglet.turing.genai.TurAgentChatRequest;
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatResponse;
-import com.viglet.turing.genai.flow.TurChatFlowEngineService;
+import com.viglet.turing.agent.TurAgentChatExecutor;
+import com.viglet.turing.agent.TurAgentChatRequest;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
+import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;

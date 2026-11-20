@@ -29,8 +29,8 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.http.HttpStatus;
 
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.observability.TurLlmObservation;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.resilience.TurResilienceExecutor;

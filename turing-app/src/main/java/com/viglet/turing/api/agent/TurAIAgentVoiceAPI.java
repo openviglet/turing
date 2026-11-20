@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.nativeapi.voice.TurRealtimeVoiceSession;
-import com.viglet.turing.genai.nativeapi.voice.TurRealtimeVoiceSessionService;
-import com.viglet.turing.genai.nativeapi.voice.TurRealtimeVoiceSessionService.VoiceAvailability;
-import com.viglet.turing.genai.nativeapi.voice.TurVoiceTranslationService;
+import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSession;
+import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSessionService;
+import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSessionService.VoiceAvailability;
+import com.viglet.turing.llm.nativeapi.voice.TurVoiceTranslationService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

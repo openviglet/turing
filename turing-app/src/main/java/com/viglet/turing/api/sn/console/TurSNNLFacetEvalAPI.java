@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.catalog.planning.TurCopilotPlanningComparison;
-import com.viglet.turing.genai.catalog.planning.TurCopilotPlanningComparisonRequest;
-import com.viglet.turing.genai.catalog.planning.TurCopilotPlanningComparisonService;
+import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparison;
+import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparisonRequest;
+import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparisonService;
 import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetDatasetService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalPack;

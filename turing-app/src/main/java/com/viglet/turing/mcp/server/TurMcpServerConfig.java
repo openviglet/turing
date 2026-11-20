@@ -17,7 +17,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;

@@ -24,15 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
 import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.genai.TurChatToolOptions;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProvider;
-import com.viglet.turing.genai.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.genai.tool.TurToolCallbackPipeline;
+import com.viglet.turing.agent.TurChatToolOptions;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
+import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
+import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.genai.tool.TurMcpToolCallbackService;
-import com.viglet.turing.genai.tool.TurDslToolService;
-import com.viglet.turing.genai.catalog.TurCatalogCopilotToolService;
-import com.viglet.turing.genai.catalog.TurRankingExplainToolService;
+import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.agent.tool.TurDslToolService;
+import com.viglet.turing.rag.catalog.TurCatalogCopilotToolService;
+import com.viglet.turing.rag.catalog.TurRankingExplainToolService;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
@@ -87,7 +87,7 @@ public class TurLLMSemanticChatAPI {
     private final TurMcpToolCallbackService mcpToolCallbackService;
     private final TurToolCallbackPipeline toolCallbackPipeline;
     private final TurLLMTokenUsageService tokenUsageService;
-    private final com.viglet.turing.genai.TurToolExecutionLoop toolExecutionLoop;
+    private final com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop;
 
     public TurLLMSemanticChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurLLMInstanceRepositoryPort turLLMInstanceRepositoryPort,
@@ -100,7 +100,7 @@ public class TurLLMSemanticChatAPI {
             TurMcpToolCallbackService mcpToolCallbackService,
             TurToolCallbackPipeline toolCallbackPipeline,
             TurLLMTokenUsageService tokenUsageService,
-            com.viglet.turing.genai.TurToolExecutionLoop toolExecutionLoop) {
+            com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.turLLMInstanceRepositoryPort = turLLMInstanceRepositoryPort;
         this.llmProviderFactory = llmProviderFactory;

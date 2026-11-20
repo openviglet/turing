@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.TurSystemPromptPreviewService;
-import com.viglet.turing.genai.TurSystemPromptValidatorService;
+import com.viglet.turing.agent.TurSystemPromptPreviewService;
+import com.viglet.turing.agent.TurSystemPromptValidatorService;
 import com.viglet.turing.persistence.dto.agent.TurSystemPromptIssueDto;
 import com.viglet.turing.persistence.dto.agent.TurSystemPromptPreviewDto;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;

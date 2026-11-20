@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.genai.provider.llm.TurLlmModelKind;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
-import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurLlmModelKind;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
+import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
 
 /**
  * T785 / §LIII.3 (Block BE) — the "find me a model" advisor: a constraint-driven

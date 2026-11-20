@@ -6,9 +6,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import com.viglet.core.settings.VigletConfigVarService;
-import com.viglet.turing.genai.rag.rerank.TurRagRerankStrategyType;
-import com.viglet.turing.genai.tool.TurCodeInterpreterExecutionMode;
-import com.viglet.turing.genai.transcription.TurTranscriptionProviderType;
+import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
+import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.transcription.TurTranscriptionProviderType;
 import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -753,19 +753,19 @@ public class TurGlobalSettingsService {
 
     /**
      * T739 — active URL-fetch mode. Unknown/blank values fall back to
-     * {@link com.viglet.turing.genai.urlfetch.TurUrlFetchMode#SIMPLE} (the legacy
+     * {@link com.viglet.turing.rag.urlfetch.TurUrlFetchMode#SIMPLE} (the legacy
      * default), so a corrupt row can never break ingestion.
      */
-    public com.viglet.turing.genai.urlfetch.TurUrlFetchMode getUrlFetchMode() {
-        return com.viglet.turing.genai.urlfetch.TurUrlFetchMode.fromValue(
+    public com.viglet.turing.rag.urlfetch.TurUrlFetchMode getUrlFetchMode() {
+        return com.viglet.turing.rag.urlfetch.TurUrlFetchMode.fromValue(
                 configVars.getString(TurConfigVarOnStartup.URL_FETCH_MODE,
                         TurConfigVarOnStartup.URL_FETCH_MODE_DEFAULT_VALUE));
     }
 
-    public com.viglet.turing.genai.urlfetch.TurUrlFetchMode updateUrlFetchMode(
-            com.viglet.turing.genai.urlfetch.TurUrlFetchMode mode) {
-        com.viglet.turing.genai.urlfetch.TurUrlFetchMode value =
-                mode == null ? com.viglet.turing.genai.urlfetch.TurUrlFetchMode.DEFAULT : mode;
+    public com.viglet.turing.rag.urlfetch.TurUrlFetchMode updateUrlFetchMode(
+            com.viglet.turing.rag.urlfetch.TurUrlFetchMode mode) {
+        com.viglet.turing.rag.urlfetch.TurUrlFetchMode value =
+                mode == null ? com.viglet.turing.rag.urlfetch.TurUrlFetchMode.DEFAULT : mode;
         configVars.setRaw(TurConfigVarOnStartup.URL_FETCH_MODE, value.name());
         return value;
     }

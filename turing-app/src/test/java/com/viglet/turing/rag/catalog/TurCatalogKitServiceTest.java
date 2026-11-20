@@ -1,0 +1,474 @@
+package com.viglet.turing.rag.catalog;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
+import org.springframework.ai.chat.prompt.Prompt;
+
+import com.viglet.turing.rag.TurRagReranker;
+import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.sn.dsl.TurDslQuery;
+import com.viglet.turing.sn.nl.TurSNNLFilterService;
+import com.viglet.turing.system.TurDefaultChatModelResolver;
+
+/**
+ * T1159 — a described plan comes back as staged products by need, every product
+ * one the catalog retrieval returned.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.6
+ */
+class TurCatalogKitServiceTest {
+
+    private TurCatalogCopilotService copilotService;
+    private TurDefaultChatModelResolver chatModelResolver;
+    private ChatModel chatModel;
+    private TurSNNLFilterService nlFilterService;
+    private TurRagReranker reranker;
+    private TurCatalogKitService service;
+
+    @BeforeEach
+    void setUp() {
+        copilotService = mock(TurCatalogCopilotService.class);
+        chatModelResolver = mock(TurDefaultChatModelResolver.class);
+        chatModel = mock(ChatModel.class);
+        nlFilterService = mock(TurSNNLFilterService.class);
+        reranker = mock(TurRagReranker.class);
+        when(chatModelResolver.resolve()).thenReturn(Optional.of(chatModel));
+        when(chatModelResolver.defaultInstance()).thenReturn(Optional.empty());
+        // Retrieval order unless a test says otherwise.
+        when(reranker.reorder(any(), anyString(), any())).thenAnswer(inv -> inv.getArgument(2));
+        service = new TurCatalogKitService(copilotService, chatModelResolver, mock(TurLLMTokenUsageService.class),
+                nlFilterService, reranker);
+    }
+
+    /**
+     * T1190 — the July first-timer's plan: retrieval leads with the dearest tent
+     * and a winter bag, and the stage leads with what the plan fits once its
+     * candidates are ranked against the whole plan.
+     */
+    @Test
+    void aStageLeadsWithWhatThePlanFitsNotWhatRetrievalRankedFirst() {
+        modelReplies("GAP: Sleeping | summer sleeping bag | warm enough for July nights");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("summer sleeping bag"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("winter"), product("summer"),
+                        product("three-season")), List.of("Bowfell winter down bag", "Fairfield summer bag",
+                                "Skiddaw three-season bag"), 3, null, true,
+                        List.of(Map.of("season", "winter"), Map.of("season", "summer"),
+                                Map.of("season", "three-season"))));
+        ArgumentCaptor<String> query = ArgumentCaptor.forClass(String.class);
+        when(reranker.reorder(any(), query.capture(), any())).thenAnswer(inv -> {
+            List<org.springframework.ai.document.Document> docs = inv.getArgument(2);
+            return List.of(docs.get(1), docs.get(2), docs.get(0));
+        });
+
+        var products = service.plan("outdoor", "en", "two days crossing the mountains in July, first time",
+                null, null).stages().getFirst().products();
+
+        assertEquals(List.of("summer", "three-season", "winter"),
+                products.stream().map(TurCatalogKitService.KitProduct::id).toList());
+        assertTrue(query.getValue().contains("PLAN: two days crossing the mountains in July, first time"),
+                "the candidates are ranked against the whole plan, not the gap query alone");
+        assertTrue(query.getValue().contains("Sleeping"));
+    }
+
+    /** T1190 — a reranker that fails, or returns a partial list, keeps retrieval order. */
+    @Test
+    void aFailedRerankKeepsRetrievalOrder() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"), product("t2"));
+        when(reranker.reorder(any(), anyString(), any())).thenThrow(new IllegalStateException("down"));
+
+        assertEquals(List.of("t1", "t2"), service.plan("outdoor", "en", "a trip", null, null).stages()
+                .getFirst().products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+
+        org.mockito.Mockito.doAnswer(inv -> List.of(((List<?>) inv.getArgument(2)).get(1)))
+                .when(reranker).reorder(any(), anyString(), any());
+        assertEquals(List.of("t1", "t2"), service.plan("outdoor", "en", "a trip", null, null).stages()
+                .getFirst().products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+    }
+
+    /** T1190 — the gap prompt asks for the plan's constraints in each query. */
+    @Test
+    void theGapPromptCarriesThePlansConstraintsIntoEachQuery() {
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "en", "July, first time", 3, Map.of());
+
+        assertTrue(prompt.contains("Carry into each query what the plan states that bears on that need"));
+    }
+
+    /** T1197 — the gap prompt names the request's language, or the plan's when there is none. */
+    @Test
+    void theGapPromptNamesTheRequestsLanguage() {
+        String ptBr = TurCatalogKitService.gapPrompt("recanto", "pt_BR", "Dois dias na montanha", 3,
+                Map.of("category", List.of("Jaquetas")));
+        assertTrue(ptBr.contains("in Portuguese (Brazil);"));
+        assertTrue(ptBr.contains("copy any field=value exactly as listed, never translated"));
+
+        String none = TurCatalogKitService.gapPrompt("outdoor", null, "a trip", 3, Map.of());
+        assertTrue(none.contains("in the language the plan is written in."));
+        assertFalse(none.contains("field=value"));
+        String blank = TurCatalogKitService.gapPrompt("outdoor", "  ", "a trip", 3, Map.of());
+        assertTrue(blank.contains("in the language the plan is written in."));
+        String unparseable = TurCatalogKitService.gapPrompt("outdoor", "not a locale!", "a trip", 3, Map.of());
+        assertTrue(unparseable.contains("in the language the plan is written in."));
+    }
+
+    /** T1169 — the gap prompt carries the catalog's facet values, so queries use its words. */
+    @Test
+    void theGapPromptNamesTheSitesFacetValues() {
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("category", List.of("Jackets", "Fleece"));
+        vocabulary.put("empty", List.of());
+        String prompt = TurCatalogKitService.gapPrompt("outdoor", "en", "a rainy weekend", 3, vocabulary);
+
+        assertTrue(prompt.contains("- category=Jackets\n- category=Fleece"));
+        assertFalse(prompt.contains("category: Jackets"), "T1171: a field: values block gets copied into queries");
+        assertTrue(prompt.contains("never a field name"));
+        assertTrue(prompt.contains("| field=value (optional)"));
+        assertFalse(prompt.contains("empty"));
+        assertTrue(prompt.contains("PLAN: a rainy weekend"));
+        String bare = TurCatalogKitService.gapPrompt("outdoor", "en", "a trip", 3, Map.of());
+        assertFalse(bare.contains("catalog's own values"));
+        assertFalse(bare.contains("field=value"));
+    }
+
+    /** T1171 — a fourth part naming a known facet value becomes the gap's filter. */
+    @Test
+    void aGapsFieldValueIsKeptOnlyWhenTheVocabularyHasIt() {
+        Map<String, List<String>> vocabulary = Map.of("product_cat", List.of("Waterproof jackets", "Tents"));
+        TurCatalogKitService.Plan plan = TurCatalogKitService.parse("""
+                GAP: Shell | rain jacket | wet July | PRODUCT_CAT = waterproof JACKETS
+                GAP: Shelter | tent | nights out | product_cat=Hammocks
+                GAP: Feet | hiking boots | rocky trail | brand=Acme
+                GAP: Light | headlamp | early starts""", 5, vocabulary);
+
+        TurCatalogKitService.Gap shell = plan.gaps().get(0);
+        assertEquals("product_cat", shell.filterField());
+        assertEquals("Waterproof jackets", shell.filterValue(), "the site's own spelling");
+        assertNull(plan.gaps().get(1).filterField(), "an unknown value is ignored");
+        assertNull(plan.gaps().get(2).filterField(), "an unknown field is ignored");
+        assertNull(plan.gaps().get(3).filterField(), "three columns still parse");
+        assertEquals("headlamp", plan.gaps().get(3).query());
+    }
+
+    @Test
+    void aFilteredGapRetrievesInsideItsFacetValue() {
+        modelReplies("""
+                GAP: Shell | rain jacket | wet July | product_cat=Waterproof jackets
+                GAP: Light | headlamp | early starts""");
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(Map.of("product_cat", List.of("Waterproof jackets", "Tents")));
+        when(copilotService.retrieve("outdoor", "en", "rain jacket",
+                new TurDslQuery.Term("product_cat", "Waterproof jackets"))).thenReturn(
+                        new TurCatalogCopilotService.Retrieval(List.of(product("j1")), List.of(), 1, null, true));
+        retrievalReturns("headlamp", product("h1"));
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "two days in the mountains", null, null);
+
+        assertEquals(List.of("Shell", "Light"), result.stages().stream().map(TurCatalogKitService.Stage::gap).toList());
+        verify(copilotService, never()).retrieve("outdoor", "en", "rain jacket");
+    }
+
+    @Test
+    void thePlanSendsTheReadValuesToTheModelAndSurvivesAFailedRead() {
+        modelReplies("GAP: Shell | waterproof jacket | rain all weekend");
+        retrievalReturns("waterproof jacket", product("j1"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(Map.of("category", List.of("Jackets", "Tents")));
+
+        service.plan("outdoor", "en", "a rainy weekend camping trip", null, null);
+
+        ArgumentCaptor<Prompt> sent = ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel).call(sent.capture());
+        assertTrue(sent.getValue().getContents().contains("- category=Jackets"));
+
+        when(nlFilterService.facetVocabulary(anyString(), anyString(), org.mockito.ArgumentMatchers.anyInt()))
+                .thenThrow(new IllegalStateException("engine down"));
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "a rainy weekend camping trip",
+                null, null);
+        assertNull(result.error());
+        assertEquals(1, result.stages().size());
+    }
+
+    private void modelReplies(String text) {
+        when(chatModel.call(any(Prompt.class)))
+                .thenReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(text)))));
+    }
+
+    private static TurCatalogCitation product(String id) {
+        return new TurCatalogCitation(1, id, "Product " + id, "/p/" + id, 1.0, null);
+    }
+
+    private void retrievalReturns(String query, TurCatalogCitation... products) {
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq(query))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(products), List.of(), products.length, null, true));
+    }
+
+    @Test
+    void stagesTheRetrievedProductsUnderEachNeed() {
+        modelReplies("""
+                SUMMARY: A two-day mountain crossing in July for a beginner.
+                GAP: Shelter | lightweight tent | nights on the trail
+                GAP: Water | water filter | streams are the only source
+                GAP: Navigation | trail map compass | first time on the route""");
+        retrievalReturns("lightweight tent", product("t1"), product("t2"), product("t3"), product("t4"));
+        retrievalReturns("water filter", product("w1"), product("t1"));
+        retrievalReturns("trail map compass");
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en",
+                "two days crossing the mountains in July, first time", null, 3);
+
+        assertNull(result.error());
+        assertEquals("A two-day mountain crossing in July for a beginner.", result.summary());
+        assertEquals(2, result.stages().size());
+        assertEquals("Shelter", result.stages().get(0).gap());
+        assertEquals("nights on the trail", result.stages().get(0).reason());
+        assertEquals(List.of("t1", "t2", "t3"),
+                result.stages().get(0).products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+        // t1 is already staged under Shelter, so Water keeps only w1.
+        assertEquals(List.of("w1"),
+                result.stages().get(1).products().stream().map(TurCatalogKitService.KitProduct::id).toList());
+        assertEquals(List.of("Navigation"), result.unfilled());
+    }
+
+    /** T1159 — each product's reason quotes its own facet values, the gap's words first, labelled (T1174). */
+    @Test
+    void eachProductsReasonComesFromItsOwnAttributes() {
+        modelReplies("GAP: Shelter | lightweight tent | nights on the trail, light to carry");
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("color", List.of("green", "red"));
+        vocabulary.put("weight", List.of("1.2 kg, light", "2 kg"));
+        vocabulary.put("capacity", List.of("2 people", "3 people"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(vocabulary);
+        when(nlFilterService.facetLabels("outdoor", "en")).thenReturn(Map.of("color", "Colour", "weight", "Weight"));
+        Map<String, String> first = new LinkedHashMap<>();
+        first.put("site_key", "localhost");
+        first.put("color", "green");
+        first.put("weight", "1.2 kg, light");
+        first.put("capacity", "2 people");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("lightweight tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1"), product("t2")), List.of(), 2, null,
+                        true, List.of(first, Map.of("image", "http://x/tent.webp", "capacity", "3 people"))));
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "a trip", null, null);
+
+        List<TurCatalogKitService.KitProduct> products = result.stages().getFirst().products();
+        assertEquals("Weight: 1.2 kg, light; Colour: green", products.get(0).reason(),
+                "the facet sharing a word with the gap leads");
+        assertEquals("Capacity: 3 people", products.get(1).reason(), "an unlabelled facet is humanized");
+        assertNull(products.get(0).available(), "no availability field was named");
+    }
+
+    /**
+     * T1191 — a facet with one value across the catalog (the site a connector
+     * indexes) tells no product apart: it is no reason and never reaches the prompt.
+     */
+    @Test
+    void aSingleValuedFacetIsNeitherAReasonNorAGapWord() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        Map<String, List<String>> vocabulary = new LinkedHashMap<>();
+        vocabulary.put("site", List.of("localhost"));
+        vocabulary.put("product_cat", List.of("Tents", "Jackets"));
+        when(nlFilterService.facetVocabulary("outdoor", "en", TurCatalogKitService.VOCABULARY_VALUES))
+                .thenReturn(vocabulary);
+        when(nlFilterService.facetLabels("outdoor", "en")).thenReturn(Map.of("site", "Site",
+                "product_cat", "Category"));
+        Map<String, String> attributes = new LinkedHashMap<>();
+        attributes.put("site", "localhost");
+        attributes.put("product_cat", "Tents");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1")), List.of(), 1, null, true,
+                        List.of(attributes)));
+
+        var products = service.plan("outdoor", "en", "a trip", null, null).stages().getFirst().products();
+
+        assertEquals("Category: Tents", products.getFirst().reason());
+        ArgumentCaptor<Prompt> sent = ArgumentCaptor.forClass(Prompt.class);
+        verify(chatModel).call(sent.capture());
+        assertFalse(sent.getValue().getContents().contains("site=localhost"));
+    }
+
+    /** T1175 — with product types named, a page between two products is not staged. */
+    @Test
+    void onlyTheNamedProductTypesAreStaged() {
+        TurCatalogCopilotService.Retrieval retrieval = new TurCatalogCopilotService.Retrieval(
+                List.of(product("page1"), product("p1"), product("p2")), List.of(), 3, null, true, List.of(
+                        Map.of("type", "page"), Map.of("type", "Product"), Map.of("type", "product")));
+        TurCatalogKitService.Gap gap = new TurCatalogKitService.Gap("Shelter", "tent", "nights out");
+
+        var typed = TurCatalogKitService.stageProducts(retrieval, gap, new TurCatalogKitService.Options(null, null,
+                null, null, null, List.of(" PRODUCT ")), 2, new java.util.HashSet<>(), java.util.Set.of(), Map.of());
+        assertEquals(List.of("p1", "p2"), typed.stream().map(TurCatalogKitService.KitProduct::id).toList());
+
+        var untyped = TurCatalogKitService.stageProducts(retrieval, gap, TurCatalogKitService.Options.DEFAULTS, 2,
+                new java.util.HashSet<>(), java.util.Set.of(), Map.of());
+        assertEquals(List.of("page1", "p1"), untyped.stream().map(TurCatalogKitService.KitProduct::id).toList(),
+                "without product types, today's behaviour");
+    }
+
+    /** T1174 — a site key or an image URL is never a reason; no facet vocabulary, no reason. */
+    @Test
+    void aReasonUsesTheSitesFacetsOnly() {
+        TurCatalogKitService.Gap gap = new TurCatalogKitService.Gap("Shelter", "tent", "nights out");
+        Map<String, String> attributes = new LinkedHashMap<>();
+        attributes.put("site_key", "localhost");
+        attributes.put("image", "http://x/fairfield-grid-fleece-sky.webp");
+        attributes.put("product_cat", "Tents");
+        attributes.put("brand", "Acme");
+
+        assertEquals("Category: Tents; Brand: Acme", TurCatalogKitService.reason(attributes, gap, null,
+                Map.of("product_cat", "Category", "brand", "Brand")));
+        assertNull(TurCatalogKitService.reason(attributes, gap, null, Map.of()));
+        assertNull(TurCatalogKitService.reason(Map.of("site_key", "localhost"), gap, null,
+                Map.of("product_cat", "Category")));
+    }
+
+    /** T1159 — a named availability field marks, or drops, an unavailable product. */
+    @Test
+    void anAvailabilityFieldMarksOrDropsUnavailableProducts() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("tent"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("t1"), product("t2"), product("t3")),
+                        List.of(), 3, null, true, List.of(
+                                java.util.Map.of("in_stock", "Out of stock"),
+                                java.util.Map.of("in_stock", "true"),
+                                java.util.Map.of())));
+
+        var marked = service.plan("outdoor", "en", "a trip", new TurCatalogKitService.Options(null, 3,
+                "in_stock", TurCatalogKitService.Availability.MARK)).stages().getFirst().products();
+        assertEquals(java.util.Arrays.asList(false, true, null),
+                marked.stream().map(TurCatalogKitService.KitProduct::available).toList());
+        assertNull(marked.get(1).reason(), "the availability field is not a reason");
+
+        var dropped = service.plan("outdoor", "en", "a trip", new TurCatalogKitService.Options(null, 3,
+                "in_stock", TurCatalogKitService.Availability.DROP)).stages().getFirst().products();
+        assertEquals(List.of("t2", "t3"), dropped.stream().map(TurCatalogKitService.KitProduct::id).toList());
+    }
+
+    /** T1167 — a guide of a requested type is cited; a product-typed or staged one is not. */
+    @Test
+    void citesGuidesOfTheRequestedTypesOnly() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"));
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("a first mountain crossing"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(
+                        List.of(product("g1"), product("t1"), product("p9"), product("g2"), product("g3")),
+                        List.of(), 5, null, true, List.of(
+                                java.util.Map.of("type", "Guide"),
+                                java.util.Map.of("type", "guide"),
+                                java.util.Map.of("type", "product"),
+                                java.util.Map.of("type", "checklist"),
+                                java.util.Map.of("type", "guide"))));
+
+        var guided = service.plan("outdoor", "en", "a first mountain crossing",
+                new TurCatalogKitService.Options(null, null, null, null, List.of("guide", "checklist")));
+
+        assertEquals(List.of("g1", "g2"), guided.guides().stream().map(TurCatalogCitation::id).toList(),
+                "t1 is staged, p9 is a product, and two guides is the cap");
+    }
+
+    /** T1172 — a document of a requested guide type never fills a stage; it stays a guide. */
+    @Test
+    void aGuideTypedDocumentIsNeverStagedAndStaysCitedAsAGuide() {
+        modelReplies("GAP: Shell | waterproof jacket | rain all weekend");
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("waterproof jacket"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("post158"), product("j1"), product("j2")),
+                        List.of(), 3, null, true, List.of(
+                                Map.of("type", "Post"),
+                                Map.of("type", "product"),
+                                Map.of())));
+        when(copilotService.retrieve(eq("outdoor"), eq("en"), eq("a rainy weekend"))).thenReturn(
+                new TurCatalogCopilotService.Retrieval(List.of(product("post158")), List.of(), 1, null, true,
+                        List.of(Map.of("type", "post"))));
+
+        var result = service.plan("outdoor", "en", "a rainy weekend",
+                new TurCatalogKitService.Options(null, 2, null, null, List.of("post")));
+
+        assertEquals(List.of("j1", "j2"), result.stages().getFirst().products().stream()
+                .map(TurCatalogKitService.KitProduct::id).toList(), "the stage fills from the next products");
+        assertEquals(List.of("post158"), result.guides().stream().map(TurCatalogCitation::id).toList());
+    }
+
+    @Test
+    void withoutGuideTypesNoGuideIsSearched() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        retrievalReturns("tent", product("t1"));
+
+        var result = service.plan("outdoor", "en", "a first mountain crossing", null, null);
+
+        assertTrue(result.guides().isEmpty());
+        verify(copilotService, never()).retrieve("outdoor", "en", "a first mountain crossing");
+    }
+
+    @Test
+    void aPlanWithoutGapsSearchesNothing() {
+        modelReplies("SUMMARY: Just browsing.");
+
+        TurCatalogKitService.Result result = service.plan("outdoor", "en", "just browsing", null, null);
+
+        assertNotNull(result.error());
+        verify(copilotService, never()).retrieve(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void anUnknownSiteIsAnError() {
+        modelReplies("GAP: Shelter | tent | nights out");
+        when(copilotService.retrieve(any(), any(), any()))
+                .thenReturn(new TurCatalogCopilotService.Retrieval(List.of(), List.of(), 0, null, false));
+
+        assertNotNull(service.plan("missing", "en", "a trip", null, null).error());
+    }
+
+    @Test
+    void withoutADefaultLlmThereIsNoKit() {
+        when(chatModelResolver.resolve()).thenReturn(Optional.empty());
+
+        assertNotNull(service.plan("outdoor", "en", "a trip", null, null).error());
+    }
+
+    @Test
+    void aFailedModelCallIsAnErrorNotAnException() {
+        when(chatModel.call(any(Prompt.class))).thenThrow(new IllegalStateException("model down"));
+
+        assertTrue(service.plan("outdoor", "en", "a trip", null, null).error().contains("model down"));
+    }
+
+    @Test
+    void parsingIsLenientAndCapped() {
+        TurCatalogKitService.Plan plan = TurCatalogKitService.parse("""
+                Here is the kit:
+                - GAP: Shelter | tent | nights
+                2. GAP: shelter | duplicate | ignored
+                GAP: Layers
+                GAP: Water | filter | streams""", 2);
+
+        assertNull(plan.summary());
+        assertEquals(2, plan.gaps().size());
+        assertEquals("Layers", plan.gaps().get(1).name());
+        assertEquals("Layers", plan.gaps().get(1).query(), "a gap without a query searches its name");
+        assertNull(plan.gaps().get(1).reason());
+    }
+}

@@ -42,7 +42,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatMessageItem;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
@@ -105,7 +105,7 @@ import lombok.extern.slf4j.Slf4j;
  * The index is built per-call (one tiny {@link ByteBuffersDirectory} per
  * chat turn, then closed) — sub-millisecond for the typical &lt;200-message
  * pool. This matches the pattern used by
- * {@link com.viglet.turing.genai.tool.TurToolPreFilterService} for the tool
+ * {@link com.viglet.turing.agent.tool.TurToolPreFilterService} for the tool
  * pre-filter: stateless, no cache, no eviction headaches. Per-conversation
  * caching is intentionally avoided because most conversations only see a
  * handful of turns and the cache would be cold on the first call anyway.
@@ -146,7 +146,7 @@ public class TurChatMemoryRelevanceRetriever {
      * either detection (extra cost on the hot path) or a schema change.
      * {@link StandardAnalyzer} (lowercase + EN stop-words) is the no-regret
      * default for the term-overlap shape this retriever does — the same
-     * choice {@link com.viglet.turing.genai.tool.TurToolPreFilterService}
+     * choice {@link com.viglet.turing.agent.tool.TurToolPreFilterService}
      * landed on.
      */
     private static final Analyzer ANALYZER = new StandardAnalyzer();
@@ -202,7 +202,7 @@ public class TurChatMemoryRelevanceRetriever {
      * store error, or when BM25 finds nothing on-topic.
      *
      * <p>This is the message-level entry point the T616
-     * {@link com.viglet.turing.genai.prompt.TurMessageContributor} pipeline calls:
+     * {@link com.viglet.turing.agent.prompt.TurMessageContributor} pipeline calls:
      * the retriever contributes a history <em>prefix</em>, and the assembler owns
      * the single concatenation with the client history. {@link #enrich} is retained
      * as the {@code prefix + history} convenience for the legacy inline path.

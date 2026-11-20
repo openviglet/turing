@@ -100,7 +100,7 @@ public final class TurMeterNames {
      * Tag key for the bypass-reason on T29 tool pre-filter samples — used
      * to count how often each short-circuit branch fires. Cardinality is
      * bounded by the enum-like set of reasons declared in
-     * {@link com.viglet.turing.genai.tool.TurToolPreFilterService}.
+     * {@link com.viglet.turing.agent.tool.TurToolPreFilterService}.
      *
      * @since 2026.3.1
      */

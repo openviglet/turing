@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.tool.TurDslToolService;
+import com.viglet.turing.agent.tool.TurDslToolService;
 
 @ExtendWith(MockitoExtension.class)
 class TurSemanticNavToolAPITest {

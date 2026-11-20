@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.eval.TurAgentEvalRunnerService;
+import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
 import com.viglet.turing.persistence.dto.agent.TurEvalRunRequest;
 import com.viglet.turing.persistence.dto.agent.TurEvalRunResultDto;

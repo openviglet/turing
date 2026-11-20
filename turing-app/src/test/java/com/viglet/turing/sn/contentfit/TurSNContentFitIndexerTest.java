@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.persona.readability.TurReadabilityScorer;
+import com.viglet.turing.persona.readability.TurReadabilityScorer;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
 import com.viglet.turing.persistence.model.persona.TurPersonaKind;

@@ -38,10 +38,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.genai.TurGenAiContext;
+import com.viglet.turing.rag.TurGenAiContext;
 import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.genai.TurGenAiContextFactory;
-import com.viglet.turing.genai.TurSNGenAi;
+import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.persistence.model.sn.TurSNSite;
 import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
 import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
@@ -79,7 +79,7 @@ public class TurSNSiteContentExchangeService {
     private final TurSNSiteFieldService turSNSiteFieldService;
     private final TurSNGenAi turSNGenAi;
     private final TurGenAiContextFactory turGenAiContextFactory;
-    private final com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
     private final TurConfigProperties turConfigProperties;
 
     private final ConcurrentHashMap<String, ContentExchangeProgress> progressMap = new ConcurrentHashMap<>();
@@ -115,7 +115,7 @@ public class TurSNSiteContentExchangeService {
             TurSNSiteFieldService turSNSiteFieldService,
             TurSNGenAi turSNGenAi,
             TurGenAiContextFactory turGenAiContextFactory,
-            com.viglet.turing.genai.TurDefaultAgentResolver turDefaultAgentResolver,
+            com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
             TurConfigProperties turConfigProperties) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;

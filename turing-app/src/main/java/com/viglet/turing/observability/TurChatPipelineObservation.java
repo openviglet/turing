@@ -255,7 +255,7 @@ public class TurChatPipelineObservation {
 
     /**
      * T124 / §IX.7.b — records one artifact write to a conversation
-     * {@link com.viglet.turing.genai.workspace.TurAgentWorkspace}: bumps the
+     * {@link com.viglet.turing.agent.workspace.TurAgentWorkspace}: bumps the
      * put counter and adds the payload size to the bytes-stored counter.
      *
      * @param bytes payload length written (a value &le; 0 only bumps the count).

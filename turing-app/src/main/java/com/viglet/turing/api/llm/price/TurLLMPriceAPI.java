@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.genai.provider.llm.TurCatalogPlans;
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurCatalogPlans;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.persistence.model.llm.TurLLMPrice;
 import com.viglet.turing.service.llm.price.TurLLMPriceService;
 

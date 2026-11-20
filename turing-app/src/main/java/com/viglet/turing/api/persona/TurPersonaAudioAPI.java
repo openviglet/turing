@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.genai.authoring.persona.TurPersonaAudioDeriveService;
-import com.viglet.turing.genai.authoring.persona.TurPersonaAudioDeriveService.DraftResult;
-import com.viglet.turing.genai.authoring.persona.TurPersonaAudioJobEventBus;
-import com.viglet.turing.genai.authoring.persona.TurPersonaAudioJobService;
-import com.viglet.turing.genai.authoring.persona.TurPersonaAudioJobStatus;
+import com.viglet.turing.persona.authoring.persona.TurPersonaAudioDeriveService;
+import com.viglet.turing.persona.authoring.persona.TurPersonaAudioDeriveService.DraftResult;
+import com.viglet.turing.persona.authoring.persona.TurPersonaAudioJobEventBus;
+import com.viglet.turing.persona.authoring.persona.TurPersonaAudioJobService;
+import com.viglet.turing.persona.authoring.persona.TurPersonaAudioJobStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

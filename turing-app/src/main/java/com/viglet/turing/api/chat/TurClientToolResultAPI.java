@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.TurAgentChatExecutor.ChatResponse;
-import com.viglet.turing.genai.TurChatStreamingDispatcher;
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
+import com.viglet.turing.agent.TurChatStreamingDispatcher;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

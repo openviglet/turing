@@ -23,8 +23,8 @@ import org.springframework.ai.embedding.EmbeddingResponse;
 
 import java.util.List;
 
-import com.viglet.turing.genai.provider.llm.TurContextualEmbeddingModel;
-import com.viglet.turing.genai.provider.llm.TurMultimodalEmbeddingModel;
+import com.viglet.turing.llm.provider.llm.TurContextualEmbeddingModel;
+import com.viglet.turing.llm.provider.llm.TurMultimodalEmbeddingModel;
 import com.viglet.turing.observability.TurLlmObservation;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.resilience.TurResilienceExecutor;

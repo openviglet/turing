@@ -19,10 +19,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.genai.provider.llm.TurLlmModelKind;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
-import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurLlmModelKind;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
+import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;

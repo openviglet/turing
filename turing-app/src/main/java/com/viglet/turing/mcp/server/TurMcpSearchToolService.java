@@ -15,7 +15,7 @@ import java.util.Map;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.tool.TurDslToolService;
+import com.viglet.turing.agent.tool.TurDslToolService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
@@ -37,7 +37,7 @@ import tools.jackson.databind.json.JsonMapper;
  * public vocabulary, not a second search implementation.
  *
  * <p>Descriptions are supplied through the {@code prompts/tools/mcp/*.md} files
- * and applied by {@link com.viglet.turing.genai.tool.TurToolCallbackPipeline}.
+ * and applied by {@link com.viglet.turing.agent.tool.TurToolCallbackPipeline}.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.1

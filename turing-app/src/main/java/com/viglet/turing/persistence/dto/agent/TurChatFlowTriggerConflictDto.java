@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * One pair of chat flows whose {@code triggerDescription} stems overlap enough
  * for the procedural router to score them ambiguously. Emitted by
- * {@link com.viglet.turing.genai.flow.TurTriggerConflictService} and surfaced
+ * {@link com.viglet.turing.agent.flow.TurTriggerConflictService} and surfaced
  * in the admin chat-flow UI so authors can disambiguate before the LLM
  * fallback masks the conflict.
  *

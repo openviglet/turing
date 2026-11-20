@@ -14,7 +14,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.viglet.turing.genai.flow.TurChatFlowGraphCache;
+import com.viglet.turing.agent.flow.TurChatFlowGraphCache;
 
 /**
  * Standalone cache context for {@code TurChatFlowGraphCacheTest} (T487).

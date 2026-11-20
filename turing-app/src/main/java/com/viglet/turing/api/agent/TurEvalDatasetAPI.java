@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.genai.eval.TurEvalDatasetGenerationService;
-import com.viglet.turing.genai.eval.TurEvalDatasetImportService;
-import com.viglet.turing.genai.eval.TurEvalDatasetImportService.Format;
-import com.viglet.turing.genai.eval.TurEvalDatasetSourceImportService;
-import com.viglet.turing.genai.eval.TurEvalDatasetVersionService;
+import com.viglet.turing.eval.TurEvalDatasetGenerationService;
+import com.viglet.turing.eval.TurEvalDatasetImportService;
+import com.viglet.turing.eval.TurEvalDatasetImportService.Format;
+import com.viglet.turing.eval.TurEvalDatasetSourceImportService;
+import com.viglet.turing.eval.TurEvalDatasetVersionService;
 import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDiffDto;
 import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
 import com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto;

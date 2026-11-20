@@ -14,7 +14,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.viglet.turing.genai.distillation.TurDistillationState;
+import com.viglet.turing.eval.distillation.TurDistillationState;
 import com.viglet.turing.persistence.model.distillation.TurDistillationJob;
 
 /**

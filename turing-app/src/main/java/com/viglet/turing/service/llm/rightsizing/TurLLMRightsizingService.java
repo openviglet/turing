@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.genai.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.genai.provider.llm.TurLlmModelMetadata;
-import com.viglet.turing.genai.provider.llm.TurLlmModelOption;
+import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
+import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
+import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
 import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
 import com.viglet.turing.service.llm.lifecycle.TurLLMModelLifecycleService;
 import com.viglet.turing.service.llm.price.TurLLMPriceService;

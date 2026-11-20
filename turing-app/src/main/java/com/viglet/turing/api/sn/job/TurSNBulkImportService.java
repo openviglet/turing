@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.api.sn.queue.TurSNProcessQueue;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.genai.TurDefaultAgentResolver;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
 
 import lombok.extern.slf4j.Slf4j;
 

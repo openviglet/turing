@@ -34,11 +34,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.genai.provider.llm.TurEmbeddingDimensionService;
-import com.viglet.turing.genai.provider.llm.TurHuggingFaceModelDiscoveryService;
-import com.viglet.turing.genai.provider.llm.TurHuggingFaceRepoResolver;
-import com.viglet.turing.genai.provider.llm.TurLlmModelDiscoveryService;
-import com.viglet.turing.genai.verify.TurModelVerifyService;
+import com.viglet.turing.llm.provider.llm.TurEmbeddingDimensionService;
+import com.viglet.turing.llm.provider.llm.TurHuggingFaceModelDiscoveryService;
+import com.viglet.turing.llm.provider.llm.TurHuggingFaceRepoResolver;
+import com.viglet.turing.llm.provider.llm.TurLlmModelDiscoveryService;
+import com.viglet.turing.agent.verify.TurModelVerifyService;
 import com.viglet.turing.persistence.dto.embedding.TurEmbeddingModelDto;
 import com.viglet.turing.persistence.mapper.embedding.TurEmbeddingModelMapper;
 import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
