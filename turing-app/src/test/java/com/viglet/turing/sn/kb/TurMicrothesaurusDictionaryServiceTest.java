@@ -71,10 +71,10 @@ class TurMicrothesaurusDictionaryServiceTest {
         TurSNSiteMicrothesaurus selection = new TurSNSiteMicrothesaurus();
         selection.setMicrothesaurusId(m.getId());
         selection.setEnabled(true);
-        when(selectionRepository.findByTurSNSiteAndEnabledTrue(site)).thenReturn(List.of(selection));
+        when(selectionRepository.findBySnSiteIdAndEnabledTrue(site.getId())).thenReturn(List.of(selection));
         TurSNSiteMicrothesaurusConfig config = new TurSNSiteMicrothesaurusConfig();
         config.setIncludeSynonyms(includeSynonyms);
-        lenient().when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(config));
+        lenient().when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(config));
         lenient().when(microthesaurusRepository.findById(m.getId())).thenReturn(Optional.of(m));
         lenient().when(termRepository.findByTurMicrothesaurus(m)).thenReturn(terms);
     }

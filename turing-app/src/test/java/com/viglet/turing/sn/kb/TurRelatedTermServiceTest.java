@@ -88,7 +88,7 @@ class TurRelatedTermServiceTest {
         TurSNSiteMicrothesaurus selection = new TurSNSiteMicrothesaurus();
         selection.setMicrothesaurusId("m1");
         selection.setEnabled(true);
-        lenient().when(selectionRepository.findByTurSNSiteAndEnabledTrue(site))
+        lenient().when(selectionRepository.findBySnSiteIdAndEnabledTrue(site.getId()))
                 .thenReturn(List.of(selection));
         lenient().when(microthesaurusRepository.findById("m1")).thenReturn(Optional.of(m));
         lenient().when(termRepository.findByTurMicrothesaurus(m))
@@ -144,7 +144,7 @@ class TurRelatedTermServiceTest {
 
     @Test
     void optedOutSiteYieldsEmpty() {
-        when(selectionRepository.findByTurSNSiteAndEnabledTrue(site)).thenReturn(List.of());
+        when(selectionRepository.findBySnSiteIdAndEnabledTrue(site.getId())).thenReturn(List.of());
         assertThat(service.suggest(site, pt, "pneumonia")).isEmpty();
     }
 

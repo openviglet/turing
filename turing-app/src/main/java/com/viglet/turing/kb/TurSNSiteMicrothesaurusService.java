@@ -81,7 +81,7 @@ public class TurSNSiteMicrothesaurusService {
 
     @Transactional(readOnly = true)
     public List<TurSNSiteMicrothesaurusDto> listSelections(TurSNSite turSNSite) {
-        return selectionRepository.findByTurSNSite(turSNSite).stream().map(this::toDto).toList();
+        return selectionRepository.findBySnSiteId(turSNSite.getId()).stream().map(this::toDto).toList();
     }
 
     @Transactional
@@ -92,12 +92,12 @@ public class TurSNSiteMicrothesaurusService {
         TurMicrothesaurus microthesaurus = microthesaurusRepository.findById(dto.microthesaurusId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Unknown microthesaurus: " + dto.microthesaurusId()));
-        if (selectionRepository.existsByTurSNSiteAndMicrothesaurusId(turSNSite,
+        if (selectionRepository.existsBySnSiteIdAndMicrothesaurusId(turSNSite.getId(),
                 dto.microthesaurusId())) {
             throw new IllegalArgumentException("Microthesaurus already selected for this site");
         }
         TurSNSiteMicrothesaurus selection = new TurSNSiteMicrothesaurus();
-        selection.setTurSNSite(turSNSite);
+        selection.setSnSiteId(turSNSite.getId());
         selection.setMicrothesaurusId(microthesaurus.getId());
         selection.setEnabled(dto.enabled());
         TurSNSiteMicrothesaurusDto saved = toDto(selectionRepository.save(selection));
@@ -130,7 +130,7 @@ public class TurSNSiteMicrothesaurusService {
     /** Returns the stored config, or a transient defaults instance when none exists. */
     @Transactional(readOnly = true)
     public TurSNSiteMicrothesaurusConfigDto getConfig(TurSNSite turSNSite) {
-        return configRepository.findByTurSNSite(turSNSite)
+        return configRepository.findBySnSiteId(turSNSite.getId())
                 .map(TurSNSiteMicrothesaurusService::toConfigDto)
                 .orElseGet(() -> new TurSNSiteMicrothesaurusConfigDto(false,
                         TurSNSiteMicrothesaurusConfig.DEFAULT_FIELD_NAME,
@@ -144,10 +144,10 @@ public class TurSNSiteMicrothesaurusService {
         if (dto == null) {
             throw new IllegalArgumentException("Config is required");
         }
-        TurSNSiteMicrothesaurusConfig config = configRepository.findByTurSNSite(turSNSite)
+        TurSNSiteMicrothesaurusConfig config = configRepository.findBySnSiteId(turSNSite.getId())
                 .orElseGet(() -> {
                     TurSNSiteMicrothesaurusConfig created = new TurSNSiteMicrothesaurusConfig();
-                    created.setTurSNSite(turSNSite);
+                    created.setSnSiteId(turSNSite.getId());
                     return created;
                 });
         config.setEnabled(dto.enabled());

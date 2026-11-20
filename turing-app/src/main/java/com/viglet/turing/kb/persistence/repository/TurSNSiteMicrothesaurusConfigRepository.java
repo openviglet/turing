@@ -32,5 +32,5 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 public interface TurSNSiteMicrothesaurusConfigRepository
         extends JpaRepository<TurSNSiteMicrothesaurusConfig, String> {
 
-    Optional<TurSNSiteMicrothesaurusConfig> findByTurSNSite(TurSNSite turSNSite);
+    Optional<TurSNSiteMicrothesaurusConfig> findBySnSiteId(String snSiteId);
 }

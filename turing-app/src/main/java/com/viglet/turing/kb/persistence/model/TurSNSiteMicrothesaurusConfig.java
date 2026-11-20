@@ -19,18 +19,12 @@ package com.viglet.turing.kb.persistence.model;
 import java.io.Serial;
 import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -94,8 +88,10 @@ public class TurSNSiteMicrothesaurusConfig implements Serializable {
     @Column(nullable = false, length = 100)
     private String pathFieldName = DEFAULT_PATH_FIELD_NAME;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sn_site_id", nullable = false, unique = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private TurSNSite turSNSite;
+    /**
+     * T1315 — the SN site, by id: sites belong to the sn module. The
+     * {@code ON DELETE CASCADE} on this column lives in the Liquibase schema.
+     */
+    @Column(name = "sn_site_id", nullable = false, unique = true, length = 255)
+    private String snSiteId;
 }

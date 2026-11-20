@@ -19,18 +19,12 @@ package com.viglet.turing.kb.persistence.model;
 import java.io.Serial;
 import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -46,9 +40,10 @@ import lombok.Setter;
  * <p>The microthesaurus is referenced by a <em>soft FK</em>
  * ({@link #microthesaurusId}) rather than a JPA association: the recognition
  * dictionary (T671) resolves the selected ids to trees in a single batch load,
- * and the join must not drag a lazy KB aggregate onto the SN-site graph. The SN
- * site <em>is</em> a real {@code @ManyToOne} so the selection is deleted with the
- * site.
+ * and the join must not drag a lazy KB aggregate onto the SN-site graph. Since
+ * T1315 the SN site is an id too ({@link #snSiteId}): the sn module owns sites,
+ * and the {@code ON DELETE CASCADE} on the column still deletes the selection
+ * with its site.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -76,8 +71,10 @@ public class TurSNSiteMicrothesaurus implements Serializable {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sn_site_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private TurSNSite turSNSite;
+    /**
+     * T1315 — the SN site, by id: sites belong to the sn module. The
+     * {@code ON DELETE CASCADE} on this column lives in the Liquibase schema.
+     */
+    @Column(name = "sn_site_id", nullable = false, length = 255)
+    private String snSiteId;
 }

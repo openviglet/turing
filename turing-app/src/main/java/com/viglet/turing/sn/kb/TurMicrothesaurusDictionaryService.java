@@ -101,11 +101,11 @@ public class TurMicrothesaurusDictionaryService {
     }
 
     private TurRecognitionDictionary compile(TurSNSite site, Locale locale) {
-        boolean includeSynonyms = configRepository.findByTurSNSite(site)
+        boolean includeSynonyms = configRepository.findBySnSiteId(site.getId())
                 .map(TurSNSiteMicrothesaurusConfig::isIncludeSynonyms).orElse(true);
         TurRecognitionDictionary.Builder builder = TurRecognitionDictionary.builder();
         for (TurSNSiteMicrothesaurus selection :
-                selectionRepository.findByTurSNSiteAndEnabledTrue(site)) {
+                selectionRepository.findBySnSiteIdAndEnabledTrue(site.getId())) {
             microthesaurusRepository.findById(selection.getMicrothesaurusId())
                     .filter(m -> localeMatches(m.getLanguage(), locale))
                     .ifPresent(m -> addMicrothesaurus(builder, m, includeSynonyms));

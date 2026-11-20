@@ -78,7 +78,7 @@ public class TurSNMicrothesaurusIndexer {
             return;
         }
         try {
-            TurSNSiteMicrothesaurusConfig config = configRepository.findByTurSNSite(turSNSite)
+            TurSNSiteMicrothesaurusConfig config = configRepository.findBySnSiteId(turSNSite.getId())
                     .orElse(null);
             if (config == null || !config.isEnabled()) {
                 return; // never opted in → byte-identical legacy path

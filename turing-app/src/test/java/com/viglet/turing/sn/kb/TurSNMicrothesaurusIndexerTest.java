@@ -88,7 +88,7 @@ class TurSNMicrothesaurusIndexerTest {
         TurSNSiteMicrothesaurus selection = new TurSNSiteMicrothesaurus();
         selection.setMicrothesaurusId("m1");
         selection.setEnabled(true);
-        lenient().when(selectionRepository.findByTurSNSiteAndEnabledTrue(site))
+        lenient().when(selectionRepository.findBySnSiteIdAndEnabledTrue(site.getId()))
                 .thenReturn(List.of(selection));
         lenient().when(microthesaurusRepository.findById("m1")).thenReturn(Optional.of(m));
         lenient().when(termRepository.findByTurMicrothesaurus(m)).thenReturn(List.of(
@@ -99,7 +99,7 @@ class TurSNMicrothesaurusIndexerTest {
 
     @Test
     void expandsDocumentWithHierarchicalPath() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(config(true)));
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(config(true)));
         wireTree();
 
         Map<String, Object> attributes = new HashMap<>();
@@ -120,7 +120,7 @@ class TurSNMicrothesaurusIndexerTest {
     void writesHierarchicalPathTokensWhenPathFacetEnabled() {
         TurSNSiteMicrothesaurusConfig cfg = config(true);
         cfg.setPathFacetEnabled(true);
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(cfg));
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(cfg));
         wireTree();
 
         Map<String, Object> attributes = new HashMap<>();
@@ -140,7 +140,7 @@ class TurSNMicrothesaurusIndexerTest {
 
     @Test
     void doesNotWritePathTokensWhenPathFacetDisabled() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(config(true)));
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(config(true)));
         wireTree();
 
         Map<String, Object> attributes = new HashMap<>();
@@ -159,7 +159,7 @@ class TurSNMicrothesaurusIndexerTest {
 
     @Test
     void optedOutSiteIsUntouched() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(config(false)));
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(config(false)));
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(TurSNFieldName.TITLE, "Pneumonia");
@@ -171,7 +171,7 @@ class TurSNMicrothesaurusIndexerTest {
 
     @Test
     void noConfigIsUntouched() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.empty());
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.empty());
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(TurSNFieldName.TITLE, "Pneumonia");
@@ -182,7 +182,7 @@ class TurSNMicrothesaurusIndexerTest {
 
     @Test
     void documentWithNoRecognisedTermIsUntouched() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.of(config(true)));
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.of(config(true)));
         wireTree();
 
         Map<String, Object> attributes = new HashMap<>();

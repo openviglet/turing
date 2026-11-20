@@ -32,11 +32,11 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 public interface TurSNSiteMicrothesaurusRepository
         extends JpaRepository<TurSNSiteMicrothesaurus, String> {
 
-    List<TurSNSiteMicrothesaurus> findByTurSNSite(TurSNSite turSNSite);
+    List<TurSNSiteMicrothesaurus> findBySnSiteId(String snSiteId);
 
-    List<TurSNSiteMicrothesaurus> findByTurSNSiteAndEnabledTrue(TurSNSite turSNSite);
+    List<TurSNSiteMicrothesaurus> findBySnSiteIdAndEnabledTrue(String snSiteId);
 
-    boolean existsByTurSNSiteAndMicrothesaurusId(TurSNSite turSNSite, String microthesaurusId);
+    boolean existsBySnSiteIdAndMicrothesaurusId(String snSiteId, String microthesaurusId);
 
     void deleteByMicrothesaurusId(String microthesaurusId);
 }

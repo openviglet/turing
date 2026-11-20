@@ -87,7 +87,7 @@ class TurSNSiteMicrothesaurusServiceTest {
     @Test
     void selectRejectsDuplicate() {
         when(microthesaurusRepository.findById("m1")).thenReturn(Optional.of(tree("m1")));
-        when(selectionRepository.existsByTurSNSiteAndMicrothesaurusId(site, "m1")).thenReturn(true);
+        when(selectionRepository.existsBySnSiteIdAndMicrothesaurusId(site.getId(), "m1")).thenReturn(true);
         assertThatThrownBy(() -> service.select(site,
                 new TurSNSiteMicrothesaurusDto(null, "m1", true, null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -97,7 +97,7 @@ class TurSNSiteMicrothesaurusServiceTest {
     @Test
     void selectPersistsAndResolvesDisplayFields() {
         when(microthesaurusRepository.findById("m1")).thenReturn(Optional.of(tree("m1")));
-        when(selectionRepository.existsByTurSNSiteAndMicrothesaurusId(site, "m1")).thenReturn(false);
+        when(selectionRepository.existsBySnSiteIdAndMicrothesaurusId(site.getId(), "m1")).thenReturn(false);
         when(selectionRepository.save(any(TurSNSiteMicrothesaurus.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
@@ -111,7 +111,7 @@ class TurSNSiteMicrothesaurusServiceTest {
 
     @Test
     void getConfigReturnsDefaultsWhenNoneStored() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.empty());
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.empty());
         TurSNSiteMicrothesaurusConfigDto cfg = service.getConfig(site);
         assertThat(cfg.enabled()).isFalse();
         assertThat(cfg.fieldName()).isEqualTo(TurSNSiteMicrothesaurusConfig.DEFAULT_FIELD_NAME);
@@ -124,7 +124,7 @@ class TurSNSiteMicrothesaurusServiceTest {
 
     @Test
     void saveEnabledConfigProvisionsBackingField() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.empty());
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.empty());
         when(configRepository.save(any(TurSNSiteMicrothesaurusConfig.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
@@ -142,7 +142,7 @@ class TurSNSiteMicrothesaurusServiceTest {
 
     @Test
     void saveWithPathFacetProvisionsBothFields() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.empty());
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.empty());
         when(configRepository.save(any(TurSNSiteMicrothesaurusConfig.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
@@ -160,7 +160,7 @@ class TurSNSiteMicrothesaurusServiceTest {
 
     @Test
     void saveDisabledConfigDoesNotProvision() {
-        when(configRepository.findByTurSNSite(site)).thenReturn(Optional.empty());
+        when(configRepository.findBySnSiteId(site.getId())).thenReturn(Optional.empty());
         when(configRepository.save(any(TurSNSiteMicrothesaurusConfig.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
