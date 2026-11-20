@@ -28,7 +28,6 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -80,7 +79,6 @@ public class TurLLMInstanceCapability implements Serializable {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
-    @Lob
-    @Column(name = "configJson")
+    @Column(name = "configJson", columnDefinition = "longtext")
     private String configJson;
 }

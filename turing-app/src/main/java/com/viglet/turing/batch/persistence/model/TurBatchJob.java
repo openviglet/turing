@@ -23,7 +23,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,7 +98,6 @@ public class TurBatchJob implements Serializable {
     private long failedRequests;
 
     /** Handler-private context to reattach results to domain objects on completion. */
-    @Lob
     @Column(name = "contextJson", columnDefinition = "longtext")
     private String contextJson;
 

@@ -25,7 +25,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,12 +63,10 @@ public class TurChatTurnFeedback implements Serializable {
     private String conversationId;
 
     /** The user prompt the assistant answered (the DPO example's input). */
-    @Lob
     @Column(name = "userPrompt", columnDefinition = "longtext", nullable = false)
     private String userPrompt;
 
     /** The assistant answer being rated (chosen or rejected, per {@link #rating}). */
-    @Lob
     @Column(name = "assistantAnswer", columnDefinition = "longtext", nullable = false)
     private String assistantAnswer;
 

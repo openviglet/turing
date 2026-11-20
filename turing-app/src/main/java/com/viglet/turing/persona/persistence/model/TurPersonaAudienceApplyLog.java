@@ -21,7 +21,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -83,17 +82,14 @@ public class TurPersonaAudienceApplyLog implements Serializable {
     private TurPersonaAudienceField field;
 
     /** The value the write replaced — {@code null} when the field was unset. */
-    @Lob
-    @Column(name = "old_value")
+    @Column(name = "old_value", columnDefinition = "longtext")
     private String oldValue;
 
-    @Lob
-    @Column(name = "new_value")
+    @Column(name = "new_value", columnDefinition = "longtext")
     private String newValue;
 
     /** The suggestion's own sentence, so the cause survives without the project. */
-    @Lob
-    @Column(name = "rationale")
+    @Column(name = "rationale", columnDefinition = "longtext")
     private String rationale;
 
     /**

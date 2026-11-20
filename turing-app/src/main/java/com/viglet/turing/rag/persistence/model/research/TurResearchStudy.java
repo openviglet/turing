@@ -20,7 +20,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,13 +66,11 @@ public class TurResearchStudy implements Serializable {
     private String name;
 
     /** The research goal that drives the DYNAMIC_SCRIPT interviewer sub-loop. */
-    @Lob
-    @Column(name = "goal")
+    @Column(name = "goal", columnDefinition = "longtext")
     private String goal;
 
     /** The hypothesis the study is probing (framing for the interviewer). */
-    @Lob
-    @Column(name = "hypothesis")
+    @Column(name = "hypothesis", columnDefinition = "longtext")
     private String hypothesis;
 
     @Column(name = "description", length = 2000)
@@ -87,13 +84,11 @@ public class TurResearchStudy implements Serializable {
     private TurResearchProtocol protocol = TurResearchProtocol.DYNAMIC_SCRIPT;
 
     /** CONCEPT_TEST only — the proposed concept/message participants react to. */
-    @Lob
-    @Column(name = "concept_text")
+    @Column(name = "concept_text", columnDefinition = "longtext")
     private String conceptText;
 
     /** CUSTOM_SCRIPT only — a JSON array of the fixed questions asked verbatim. */
-    @Lob
-    @Column(name = "questions_json")
+    @Column(name = "questions_json", columnDefinition = "longtext")
     private String questionsJson;
 
     /** DYNAMIC_SCRIPT / CONCEPT_TEST — the adaptive follow-up question cap. */

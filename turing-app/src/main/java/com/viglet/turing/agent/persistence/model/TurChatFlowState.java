@@ -21,7 +21,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -89,7 +88,6 @@ public class TurChatFlowState implements Serializable {
     @Column(name = "parentStateId", length = 36)
     private String parentStateId;
 
-    @Lob
     @Column(name = "variablesJson", columnDefinition = "longtext")
     private String variablesJson;
 
@@ -103,7 +101,6 @@ public class TurChatFlowState implements Serializable {
      *
      * @since 2026.3.4
      */
-    @Lob
     @Column(name = "nodeVisitPath", columnDefinition = "longtext")
     private String nodeVisitPath;
 

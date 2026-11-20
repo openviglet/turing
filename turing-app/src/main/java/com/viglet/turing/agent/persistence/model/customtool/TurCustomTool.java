@@ -17,7 +17,6 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,8 +55,7 @@ public class TurCustomTool implements Serializable {
     @Column(length = 500)
     private String description;
 
-    @Lob
-    @Column(name = "descriptionMetaPrompt")
+    @Column(name = "descriptionMetaPrompt", columnDefinition = "longtext")
     private String descriptionMetaPrompt;
 
     @Column(length = 150)
@@ -66,20 +64,16 @@ public class TurCustomTool implements Serializable {
     @Column(name = "llmDescription", nullable = false, length = 2000)
     private String llmDescription;
 
-    @Lob
-    @Column(name = "llmDescriptionMetaPrompt")
+    @Column(name = "llmDescriptionMetaPrompt", columnDefinition = "longtext")
     private String llmDescriptionMetaPrompt;
 
-    @Lob
-    @Column(name = "groovyScript", nullable = false)
+    @Column(name = "groovyScript", nullable = false, columnDefinition = "longtext")
     private String groovyScript;
 
-    @Lob
-    @Column(name = "groovyMetaPrompt")
+    @Column(name = "groovyMetaPrompt", columnDefinition = "longtext")
     private String groovyMetaPrompt;
 
-    @Lob
-    @Column(name = "parametersJson")
+    @Column(name = "parametersJson", columnDefinition = "longtext")
     private String parametersJson;
 
     @Column(name = "returnType", nullable = false, length = 20)

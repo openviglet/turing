@@ -29,7 +29,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -70,14 +69,12 @@ public class TurChatFlow implements Serializable {
      * {@code VARCHAR(500)} → {@code longtext} in v2026.2.7.7 — real-world
      * persona descriptions (e.g. Executive Education's Aula-Relâmpago professor at
      * ~580 chars) overflow the original cap. The trigger-description and
-     * definition-json fields on this same entity already use {@code @Lob}
+     * definition-json fields on this same entity already use a long-text column
      * for the same reason; aligning the description here matches them.
      */
-    @Lob
     @Column(columnDefinition = "longtext")
     private String description;
 
-    @Lob
     @Column(name = "definitionJson", columnDefinition = "longtext")
     private String definitionJson;
 
@@ -118,7 +115,6 @@ public class TurChatFlow implements Serializable {
      *
      * @since 2026.3.1
      */
-    @Lob
     @Column(name = "abandonHandoffMessage", columnDefinition = "longtext")
     private String abandonHandoffMessage;
 
@@ -128,7 +124,6 @@ public class TurChatFlow implements Serializable {
      * auto-trigger — the flow can still be picked manually from the chat
      * dropdown.
      */
-    @Lob
     @Column(name = "triggerDescription", columnDefinition = "longtext")
     private String triggerDescription;
 
@@ -319,7 +314,6 @@ public class TurChatFlow implements Serializable {
      *
      * @since 2026.3.1
      */
-    @Lob
     @Column(name = "slotInheritanceJson", columnDefinition = "longtext")
     private String slotInheritanceJson;
 

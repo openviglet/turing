@@ -21,7 +21,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -73,7 +72,6 @@ public class TurChatFlowSubmission implements Serializable {
     @Column(name = "conversationId", nullable = false, length = 100)
     private String conversationId;
 
-    @Lob
     @Column(name = "variablesJson", columnDefinition = "longtext")
     private String variablesJson;
 

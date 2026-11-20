@@ -16,7 +16,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Lob;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,24 +56,21 @@ public class TurPersonaAudience implements Serializable {
      * follow. The deterministic readability scorer (T466) measures the
      * complex-word ratio against this.
      */
-    @Lob
-    @Column(name = "vocabulary_ceiling")
+    @Column(name = "vocabulary_ceiling", columnDefinition = "longtext")
     private String vocabularyCeiling;
 
     /**
      * Comprehension constraints in free text — e.g. "second-language reader",
      * "skims rather than reads", "needs concrete examples".
      */
-    @Lob
-    @Column(name = "comprehension_notes")
+    @Column(name = "comprehension_notes", columnDefinition = "longtext")
     private String comprehensionNotes;
 
     /**
      * Accessibility constraints in free text — e.g. "dyslexia-friendly",
      * "screen reader", "high-contrast / short paragraphs".
      */
-    @Lob
-    @Column(name = "accessibility_notes")
+    @Column(name = "accessibility_notes", columnDefinition = "longtext")
     private String accessibilityNotes;
 
     /**

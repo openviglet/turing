@@ -28,6 +28,7 @@ description: Turing JPA + Liquibase persistence rules — column naming (no impl
 - Column size changes: use `modifyDataType`; new data: use `insert`
 - **Column names must match the JPA field name exactly** (camelCase) — see "JPA & Database Column Naming" above
 - **Large text columns**: use `longtext` instead of `clob` — `longtext` is compatible with H2, MySQL, and PostgreSQL, while `clob` may not map correctly on MySQL
+- **No `@Lob` on entities** (T1320): map a large-text field as `@Column(columnDefinition = "longtext")`. `@Lob` on a String binds as a CLOB, which PostgreSQL may treat as a large object while the column is `text`. `TurLobConventionTest` fails on a new `@Lob`
 
 - Use lowercase portable Liquibase types (`boolean`, `longtext`), not uppercase
   `BOOLEAN`/`CLOB`; `TurLiquibaseChangelogAgnosticTest` checks this.

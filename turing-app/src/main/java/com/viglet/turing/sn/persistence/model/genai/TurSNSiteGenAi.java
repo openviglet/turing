@@ -36,7 +36,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -82,8 +81,7 @@ public class TurSNSiteGenAi implements Serializable {
      * different feature from the chat). Distinct from the agent's system
      * prompt, which drives the chat itself.
      */
-    @Lob
-    @Column
+    @Column(columnDefinition = "longtext")
     private String sitePrompt;
 
     /**

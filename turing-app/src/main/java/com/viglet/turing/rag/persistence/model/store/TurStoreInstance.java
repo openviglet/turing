@@ -32,7 +32,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -84,8 +83,7 @@ public class TurStoreInstance implements Serializable, VigletTenantOwnedInfra {
 	@Column
 	private String collectionName;
 
-	@Lob
-	@Column
+	@Column(columnDefinition = "longtext")
 	private String providerOptionsJson;
 
 	@Column

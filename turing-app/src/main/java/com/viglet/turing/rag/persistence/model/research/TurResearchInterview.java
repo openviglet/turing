@@ -24,7 +24,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -83,8 +82,7 @@ public class TurResearchInterview implements Serializable {
 
     /** JSON array of {@code {index, question, answer}} turns. */
     @JsonIgnore
-    @Lob
-    @Column(name = "transcript_json")
+    @Column(name = "transcript_json", columnDefinition = "longtext")
     private String transcriptJson;
 
     /** Convenience count of captured turns (mirrors {@code transcriptJson}). */

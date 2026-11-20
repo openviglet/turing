@@ -2540,14 +2540,6 @@ createdAt, modifiedAt, createdBy, modifiedBy and version; entities extend it, th
 console turns an OptimisticLockException into a 409 that says the record changed, and
 the domain records keep the version so a save sends it back.
 
-### CLXXXIX.16 Portable large-text columns (T1320)
-
-@Lob on a String maps to clob on H2, text through an oid on some PostgreSQL setups and
-longtext on MySQL, which is why the turing-persistence skill already forbids clob in
-changelogs. Each of the 29 fields is mapped to an explicit long-text type, and a binary
-@Lob becomes a reference to the storage module where one already exists. A convention
-test fails on a new @Lob.
-
 ### CLXXXIX.17 The Liquibase reset (T1321)
 
 db/changelog holds 205 files with every change since the project began, including

@@ -17,7 +17,6 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -75,8 +74,7 @@ public class TurSkill implements Serializable {
      * sees to decide whether a skill is relevant. Can be long (paragraphs), so
      * stored as {@code longtext}.
      */
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "longtext")
     private String description;
 
     /** Semver string from {@code metadata.version} (or top-level {@code version}). */

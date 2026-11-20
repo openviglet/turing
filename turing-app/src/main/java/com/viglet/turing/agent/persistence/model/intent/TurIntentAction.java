@@ -11,7 +11,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -39,7 +38,6 @@ public class TurIntentAction implements Serializable {
     @Column(nullable = false, length = 150)
     private String label;
 
-    @Lob
     @Column(name = "prompt", columnDefinition = "longtext")
     private String prompt;
 

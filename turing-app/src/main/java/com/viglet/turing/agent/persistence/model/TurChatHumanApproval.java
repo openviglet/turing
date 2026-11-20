@@ -21,7 +21,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -93,7 +92,6 @@ public class TurChatHumanApproval implements Serializable {
     private String target;
 
     /** Rendered notification body — also shown on the approval page. */
-    @Lob
     @Column(name = "promptText", columnDefinition = "longtext")
     private String promptText;
 

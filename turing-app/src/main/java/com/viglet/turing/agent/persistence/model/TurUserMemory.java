@@ -17,7 +17,6 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,8 +66,7 @@ public class TurUserMemory implements Serializable {
     private String memoryKey;
 
     /** The remembered fact. */
-    @Lob
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "longtext")
     private String content;
 
     /** Epoch millis of first write. */

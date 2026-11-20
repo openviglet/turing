@@ -25,7 +25,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -93,8 +92,7 @@ public class TurPersona implements Serializable {
     @Embedded
     private TurPersonaAudience audience;
 
-    @Lob
-    @Column(name = "system_instruction")
+    @Column(name = "system_instruction", columnDefinition = "longtext")
     private String systemInstruction;
 
     @Enumerated(EnumType.STRING)
@@ -108,12 +106,10 @@ public class TurPersona implements Serializable {
     @Column(name = "language_style", length = 16)
     private TurPersonaLanguageStyle languageStyle;
 
-    @Lob
-    @Column(name = "mandatory_terms")
+    @Column(name = "mandatory_terms", columnDefinition = "longtext")
     private String mandatoryTerms;
 
-    @Lob
-    @Column(name = "forbidden_terms")
+    @Column(name = "forbidden_terms", columnDefinition = "longtext")
     private String forbiddenTerms;
 
     @Column(nullable = false)

@@ -19,7 +19,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -81,13 +80,11 @@ public class TurPersonaMatchCell implements Serializable {
     private String summary;
 
     /** JSON array of "what suits this reader" bullets. */
-    @Lob
-    @Column(name = "fits_json")
+    @Column(name = "fits_json", columnDefinition = "longtext")
     private String fitsJson;
 
     /** JSON array of grounded misfits (span/reason/suggestion). */
-    @Lob
-    @Column(name = "misfits_json")
+    @Column(name = "misfits_json", columnDefinition = "longtext")
     private String misfitsJson;
 
     /** Whether the grounded LLM judge contributed (false = readability-only). */

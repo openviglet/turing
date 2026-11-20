@@ -17,7 +17,6 @@ import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -76,16 +75,13 @@ public class TurAgentSuggestion implements Serializable {
     @Column(name = "kind", nullable = false, length = 30)
     private Kind kind = Kind.SYSTEM_PROMPT;
 
-    @Lob
-    @Column(name = "currentValue")
+    @Column(name = "currentValue", columnDefinition = "longtext")
     private String currentValue;
 
-    @Lob
-    @Column(name = "proposedValue")
+    @Column(name = "proposedValue", columnDefinition = "longtext")
     private String proposedValue;
 
-    @Lob
-    @Column(name = "rationale")
+    @Column(name = "rationale", columnDefinition = "longtext")
     private String rationale;
 
     @Column(name = "baselineScore", nullable = false)

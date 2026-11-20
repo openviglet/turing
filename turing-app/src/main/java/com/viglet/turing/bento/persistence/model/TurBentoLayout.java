@@ -19,7 +19,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,8 +70,7 @@ public class TurBentoLayout implements Serializable {
     private String listId;
 
     /** JSON array of {@code {itemId, emphasis, displayOrder}} placements. */
-    @Lob
-    @Column(name = "layoutJson")
+    @Column(name = "layoutJson", columnDefinition = "longtext")
     private String layoutJson;
 
     /** Epoch millis of first write. */

@@ -25,7 +25,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -91,8 +90,7 @@ public class TurPersonaMatchSource implements Serializable {
     private String siteName;
 
     @JsonIgnore
-    @Lob
-    @Column(name = "cached_text")
+    @Column(name = "cached_text", columnDefinition = "longtext")
     private String cachedText;
 
     /** Hash of the extracted text; drives the re-run cell-skip optimisation. */

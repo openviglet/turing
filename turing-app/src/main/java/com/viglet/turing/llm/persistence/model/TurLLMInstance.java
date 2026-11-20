@@ -32,7 +32,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -169,8 +168,7 @@ public class TurLLMInstance implements Serializable, VigletTenantOwnedInfra {
 	@Column(name = "context_window")
 	private Integer contextWindow;
 
-	@Lob
-	@Column
+	@Column(columnDefinition = "longtext")
 	private String providerOptionsJson;
 
 	@Column(name = "tools_enabled", nullable = false)

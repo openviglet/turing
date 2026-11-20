@@ -25,7 +25,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -95,12 +94,11 @@ public class TurAnalyticsIntent implements Serializable {
 
     /**
      * Newline-separated bag of representative user utterances the
-     * classifier matches conversation transcripts against. {@code @Lob}
+     * classifier matches conversation transcripts against. A long-text column
      * because real-world catalogs ship dozens of samples per intent and
      * VARCHAR caps lead to silent truncation. Empty/blank is allowed —
      * the classifier just skips the entry.
      */
-    @Lob
     @Column(name = "samples", columnDefinition = "longtext")
     private String samples;
 
@@ -117,7 +115,6 @@ public class TurAnalyticsIntent implements Serializable {
      * it captures). Not consumed by the classifier; rendered on the
      * admin UI for context.
      */
-    @Lob
     @Column(name = "description", columnDefinition = "longtext")
     private String description;
 

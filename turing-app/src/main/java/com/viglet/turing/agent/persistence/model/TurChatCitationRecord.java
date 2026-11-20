@@ -19,7 +19,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,7 +76,6 @@ public class TurChatCitationRecord implements Serializable {
     private String agentId;
 
     /** The user question that produced this answer — replayed to re-retrieve. */
-    @Lob
     @Column(name = "question", columnDefinition = "longtext")
     private String question;
 
@@ -88,12 +86,10 @@ public class TurChatCitationRecord implements Serializable {
     @Column(name = "documentTitle", length = 512)
     private String documentTitle;
 
-    @Lob
     @Column(name = "url", columnDefinition = "longtext")
     private String url;
 
     /** The exact span Claude grounded the claim on — the drift probe. */
-    @Lob
     @Column(name = "citedText", columnDefinition = "longtext")
     private String citedText;
 

@@ -21,7 +21,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -56,12 +55,10 @@ public class TurAIAgent implements Serializable {
     @Column(length = 150)
     private String icon;
 
-    @Lob
-    @Column(name = "system_prompt")
+    @Column(name = "system_prompt", columnDefinition = "longtext")
     private String systemPrompt;
 
-    @Lob
-    @Column(name = "systemPromptMetaPrompt")
+    @Column(name = "systemPromptMetaPrompt", columnDefinition = "longtext")
     private String systemPromptMetaPrompt;
 
     @Column(nullable = false)
@@ -411,8 +408,7 @@ public class TurAIAgent implements Serializable {
      *
      * @since 2026.3.4
      */
-    @Lob
-    @Column(name = "client_tools_json")
+    @Column(name = "client_tools_json", columnDefinition = "longtext")
     private String clientToolsJson;
 
     /**
@@ -761,8 +757,7 @@ public class TurAIAgent implements Serializable {
      *
      * @since 2026.2.7
      */
-    @Lob
-    @Column(name = "pythonRequirements")
+    @Column(name = "pythonRequirements", columnDefinition = "longtext")
     private String pythonRequirements;
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -22,7 +22,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,7 +69,6 @@ public class TurAnswerSignalEvent implements Serializable {
     private String conversationId;
 
     /** The question the answer answered (context for the failure digest). */
-    @Lob
     @Column(name = "query", columnDefinition = "longtext")
     private String query;
 
