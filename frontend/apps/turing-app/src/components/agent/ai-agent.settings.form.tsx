@@ -230,7 +230,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
       // T28 / §III.5 Phase C — null clears the per-agent SE binding so
       // TurAnalyticsIntentIndexer.resolveSeInstance falls back to the
       // global default (property / first registered SE).
-      analyticsSeInstance: value.analyticsSeInstance ?? null,
+      analyticsSeInstanceId: value.analyticsSeInstanceId ?? null,
     });
   }, [form, value])
 
@@ -477,7 +477,7 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
               />
               <FormField
                 control={form.control}
-                name="analyticsSeInstance"
+                name="analyticsSeInstanceId"
                 render={({ field }) => (
                   <FormItemTwoColumns>
                     <FormItemTwoColumns.Left>
@@ -489,15 +489,10 @@ export const AIAgentSettingsForm: React.FC<Props> = ({ value, isNew, baseRoute }
                     <FormItemTwoColumns.Right>
                       <FormControl>
                         <Select
-                          onValueChange={(value: string) => {
-                            if (value === NONE_VALUE) {
-                              field.onChange(null);
-                            } else {
-                              const instance = seInstances.find((i) => i.id === value);
-                              field.onChange(instance ?? null);
-                            }
-                          }}
-                          value={field.value?.id ?? NONE_VALUE}
+                          onValueChange={(value: string) =>
+                            field.onChange(value === NONE_VALUE ? null : value)
+                          }
+                          value={field.value ?? NONE_VALUE}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder={t("forms.agentSettings.analyticsSeInstanceNone")} />

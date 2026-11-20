@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.system.web.integration;
 
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
+
 import java.net.URI;
 import java.nio.file.Paths;
 
@@ -46,11 +48,13 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Integration API", description = "Integration API")
 public class TurIntegrationAPI {
     private final TurIntegrationInstanceRepository turIntegrationInstanceRepository;
+    private final TurDevTokenRepository devTokenRepository;
     private final CloseableHttpClient proxyHttpClient;
 
     TurIntegrationAPI(TurIntegrationInstanceRepository turIntegrationInstanceRepository,
-            CloseableHttpClient proxyHttpClient) {
+            CloseableHttpClient proxyHttpClient, TurDevTokenRepository devTokenRepository) {
         this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
+        this.devTokenRepository = devTokenRepository;
         this.proxyHttpClient = proxyHttpClient;
     }
 
@@ -169,9 +173,13 @@ public class TurIntegrationAPI {
     }
 
     private void addApiKeyHeader(TurIntegrationInstance instance, ClassicHttpRequest proxyRequest) {
-        if (instance.getApiToken() != null && instance.getApiToken().getToken() != null) {
-            proxyRequest.setHeader("Key", instance.getApiToken().getToken());
+        // T1315 — the instance holds its dev token by id; the auth module owns the value.
+        if (instance.getApiTokenId() == null) {
+            return;
         }
+        devTokenRepository.findById(instance.getApiTokenId())
+                .map(devToken -> devToken.getToken())
+                .ifPresent(token -> proxyRequest.setHeader("Key", token));
     }
 
     /**

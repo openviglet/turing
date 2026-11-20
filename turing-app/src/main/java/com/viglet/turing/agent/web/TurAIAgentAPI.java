@@ -190,8 +190,7 @@ public class TurAIAgentAPI {
             // T28 / §III.5 Phase C — per-agent SE binding for the analytics
             // intent index. Null clears the binding so the indexer falls back
             // to the global default (property / first registered SE).
-            agentEdit.setAnalyticsSeInstance(resolveSingleRelation(
-                    turAIAgent.getAnalyticsSeInstance(), turSEInstanceRepository));
+            agentEdit.setAnalyticsSeInstanceId(existingSeInstanceId(turAIAgent.getAnalyticsSeInstanceId()));
             // Personas: catalog (M2M) + default (M2O). The default, when set,
             // must belong to the catalog — otherwise the runtime resolver
             // would silently fall back to null on every turn. We enforce it
@@ -356,8 +355,7 @@ public class TurAIAgentAPI {
         turAIAgent.setTurStoreInstance(resolveSingleRelation(
                 turAIAgent.getTurStoreInstance(), turStoreInstanceRepository));
         // T28 / §III.5 Phase C — same per-agent SE binding propagation on create.
-        turAIAgent.setAnalyticsSeInstance(resolveSingleRelation(
-                turAIAgent.getAnalyticsSeInstance(), turSEInstanceRepository));
+        turAIAgent.setAnalyticsSeInstanceId(existingSeInstanceId(turAIAgent.getAnalyticsSeInstanceId()));
         Set<TurPersona> personaCatalog = resolveRelations(
                 turAIAgent.getPersonas(), turPersonaRepository);
         turAIAgent.setPersonas(personaCatalog);
@@ -396,6 +394,14 @@ public class TurAIAgentAPI {
      * fetches the managed instance from the repo. Returns null if not found or
      * if the input was null.
      */
+    /**
+     * T1315 — the SE instance belongs to the searchengine module, so the agent holds
+     * it by id: the id when that instance exists, else null, never a dangling id.
+     */
+    private String existingSeInstanceId(String id) {
+        return id != null && !id.isBlank() && turSEInstanceRepository.existsById(id) ? id : null;
+    }
+
     private <T> T resolveSingleRelation(
             T incoming,
             org.springframework.data.jpa.repository.JpaRepository<T, String> repo) {

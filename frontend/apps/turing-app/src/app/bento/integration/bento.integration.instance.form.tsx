@@ -128,23 +128,16 @@ export const BentoIntegrationInstanceForm: React.FC<Props> = ({ value, isNew, re
           />
           <FormField
             control={form.control}
-            name="apiToken"
+            name="apiTokenId"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>{t("forms.integration.apiTokenLabel")}</FormLabel>
                 <p className="text-sm text-muted-foreground">{t("forms.integration.apiTokenDesc")}</p>
                 <FormControl>
                   <Select
-                    value={field.value?.id ?? ""}
+                    value={field.value ?? ""}
                     disabled={readOnly}
-                    onValueChange={(val) => {
-                      if (val === "__none__") {
-                        field.onChange(null)
-                      } else {
-                        const selected = tokens.find((tk) => tk.id === val)
-                        field.onChange(selected ?? null)
-                      }
-                    }}
+                    onValueChange={(val) => field.onChange(val === "__none__" ? null : val)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder={t("forms.integration.apiTokenPlaceholder")} />

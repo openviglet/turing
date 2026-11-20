@@ -33,11 +33,14 @@ class TurIntegrationMonitoringToolServiceTest {
     @Mock
     private TurIntegrationInstanceRepository integrationRepository;
 
+    @Mock
+    private com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository devTokenRepository;
+
     private TurIntegrationMonitoringToolService service;
 
     @BeforeEach
     void setUp() {
-        service = new TurIntegrationMonitoringToolService(integrationRepository);
+        service = new TurIntegrationMonitoringToolService(integrationRepository, devTokenRepository);
     }
 
     @Test

@@ -98,7 +98,7 @@ public class TurAnalyticsIntentIndexer {
      * Resolves the SE instance to use for {@code agentId}'s analytics
      * intent index. Resolution order:
      * <ol>
-     *   <li>Phase C per-agent binding: {@link TurAIAgent#analyticsSeInstance}
+     *   <li>Phase C per-agent binding: {@link TurAIAgent#getAnalyticsSeInstanceId()}
      *       when set on the agent row.</li>
      *   <li>Property override: {@code turing.chat.analytics.classifier.se-instance-id}.</li>
      *   <li>Global fallback: the first registered SE instance.</li>
@@ -114,8 +114,10 @@ public class TurAnalyticsIntentIndexer {
      */
     public Optional<TurSEInstance> resolveSeInstance(String agentId) {
         if (agentId != null && !agentId.isBlank()) {
+            // T1315 — the agent holds its SE binding by id; searchengine owns the row.
             Optional<TurSEInstance> agentBinding = agentRepository.findById(agentId)
-                    .map(TurAIAgent::getAnalyticsSeInstance);
+                    .map(TurAIAgent::getAnalyticsSeInstanceId)
+                    .flatMap(seInstanceRepository::findById);
             if (agentBinding.isPresent()) {
                 return agentBinding;
             }

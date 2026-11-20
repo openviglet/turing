@@ -10,7 +10,6 @@ import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
@@ -834,7 +833,6 @@ public class TurAIAgent implements Serializable {
      *
      * @since 2026.3.1
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "analytics_se_instance_id")
-    private TurSEInstance analyticsSeInstance;
+    @Column(name = "analytics_se_instance_id", length = 36)
+    private String analyticsSeInstanceId;
 }

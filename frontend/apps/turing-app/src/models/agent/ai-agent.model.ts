@@ -3,7 +3,6 @@ import type { TurEmbeddingModel } from "../embedding/embedding-model.model.ts";
 import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
 import type { TurMcpServer } from "../mcp/mcp-server.model.ts";
 import type { TurPersona } from "../persona/persona.model.ts";
-import type { TurSEInstance } from "../se/se-instance.model.ts";
 import type { TurStoreInstance } from "../store/store-instance.model.ts";
 
 /**
@@ -218,6 +217,7 @@ export interface TurAIAgent {
    * global default property (or the first registered SE instance).
    * @since 2026.3.1
    */
-  analyticsSeInstance?: TurSEInstance | null;
+  /** T1315 — the SE instance for the analytics intent index, by id. */
+  analyticsSeInstanceId?: string | null;
   icon?: string | null;
 }

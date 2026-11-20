@@ -1,5 +1,7 @@
 package com.viglet.turing.agent.tool;
 
+import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -35,10 +37,13 @@ public class TurIntegrationMonitoringToolService {
     private static final String RAW_RESPONSE_PREFIX = "Raw response: ";
 
     private final TurIntegrationInstanceRepository integrationRepository;
+    private final TurDevTokenRepository devTokenRepository;
     private final HttpClient httpClient;
 
-    public TurIntegrationMonitoringToolService(TurIntegrationInstanceRepository integrationRepository) {
+    public TurIntegrationMonitoringToolService(TurIntegrationInstanceRepository integrationRepository,
+            TurDevTokenRepository devTokenRepository) {
         this.integrationRepository = integrationRepository;
+        this.devTokenRepository = devTokenRepository;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(TIMEOUT)
                 .followRedirects(HttpClient.Redirect.NORMAL)
@@ -418,8 +423,12 @@ public class TurIntegrationMonitoringToolService {
     }
 
     private void addApiKeyHeader(TurIntegrationInstance instance, HttpRequest.Builder requestBuilder) {
-        if (instance.getApiToken() != null && instance.getApiToken().getToken() != null) {
-            requestBuilder.header("Key", instance.getApiToken().getToken());
+        // T1315 — the instance holds its dev token by id; the auth module owns the value.
+        if (instance.getApiTokenId() == null) {
+            return;
         }
+        devTokenRepository.findById(instance.getApiTokenId())
+                .map(devToken -> devToken.getToken())
+                .ifPresent(token -> requestBuilder.header("Key", token));
     }
 }

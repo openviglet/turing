@@ -183,8 +183,9 @@ class TurAnalyticsIntentIndexerTest {
         TurSEInstance agentBoundSe = mockSeInstance("agent-bound");
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
-        agent.setAnalyticsSeInstance(agentBoundSe);
+        agent.setAnalyticsSeInstanceId("agent-bound-id");
         when(agentRepository.findById("agent-1")).thenReturn(java.util.Optional.of(agent));
+        when(seInstanceRepository.findById("agent-bound-id")).thenReturn(java.util.Optional.of(agentBoundSe));
 
         TurAnalyticsIntentIndexer pinned = new TurAnalyticsIntentIndexer(intentRepository,
                 seInstanceRepository, agentRepository, pluginFactory, "configured-id");
@@ -197,7 +198,7 @@ class TurAnalyticsIntentIndexerTest {
     void perAgentBindingFallsThroughWhenAgentHasNone() {
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
-        agent.setAnalyticsSeInstance(null);
+        agent.setAnalyticsSeInstanceId(null);
         TurSEInstance configuredSe = mockSeInstance("configured");
         when(agentRepository.findById("agent-1")).thenReturn(java.util.Optional.of(agent));
         when(seInstanceRepository.findById("configured-id")).thenReturn(java.util.Optional.of(configuredSe));
