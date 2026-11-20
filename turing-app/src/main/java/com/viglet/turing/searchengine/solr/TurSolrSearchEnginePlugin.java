@@ -21,8 +21,8 @@ import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -985,7 +985,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     private static boolean isFieldMultiValued(Map<String, ?> siteFieldMap, String fieldName) {
         Object field = siteFieldMap.get(fieldName);
-        if (field instanceof com.viglet.turing.persistence.model.sn.field.TurSNSiteField f) {
+        if (field instanceof com.viglet.turing.sn.persistence.model.field.TurSNSiteField f) {
             return f.getMultiValued() == 1;
         }
         return false;

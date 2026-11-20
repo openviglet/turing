@@ -35,11 +35,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.sn.bean.TurSNSiteMetricsTopTermsBean;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricAccess;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 

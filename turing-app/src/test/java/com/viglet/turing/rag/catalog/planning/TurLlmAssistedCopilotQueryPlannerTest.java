@@ -28,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.rag.catalog.planning.TurCopilotPlanRepair.TermFilter;
 import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlanner.PlanRequest;
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;

@@ -55,7 +55,7 @@ public class TurGenAiContext {
      * T1157 — the site's follow-up query mode; {@code null} (no site binding,
      * the {@link #disabled()} context) searches the latest message alone.
      */
-    private final com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode followupQueryMode;
+    private final com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode followupQueryMode;
     /**
      * T1127 — the instance {@link #chatModel} was built from, and the agent it
      * belongs to, so the SN calls made with this context land in the cost ledger.

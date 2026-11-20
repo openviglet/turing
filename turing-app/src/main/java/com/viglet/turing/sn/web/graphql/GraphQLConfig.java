@@ -32,9 +32,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.idl.RuntimeWiring;

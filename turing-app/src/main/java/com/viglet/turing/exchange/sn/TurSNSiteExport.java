@@ -40,12 +40,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 
 import lombok.extern.log4j.Log4j2;
 

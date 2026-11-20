@@ -39,8 +39,8 @@ import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 

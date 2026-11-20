@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**

@@ -1,9 +1,9 @@
 package com.viglet.turing.sn.spotlight;
 
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

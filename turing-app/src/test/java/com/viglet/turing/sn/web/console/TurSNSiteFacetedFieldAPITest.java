@@ -33,11 +33,11 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.sn.bean.TurSNSiteFacetOrderingDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFieldFacetDefinition;

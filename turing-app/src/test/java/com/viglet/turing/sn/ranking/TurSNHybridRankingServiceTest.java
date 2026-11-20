@@ -42,9 +42,9 @@ import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.rag.TurRagReranker;
 import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.system.TurDefaultChatModelResolver;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -127,7 +127,7 @@ class TurSNHybridRankingServiceTest {
         // the catalog runs the pure lexical path (and never touches the embedder).
         TurSNSite site = siteWithMode(TurSNRankingMode.HYBRID_RRF);
         site.getTurSNSiteGenAi().setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
         assertThat(service.isEnabled(site)).isFalse();
     }
@@ -136,7 +136,7 @@ class TurSNHybridRankingServiceTest {
     void fuseOnVectorlessStructuredSiteReturnsPageUntouchedAndNeverBuildsInfra() {
         TurSNSite site = siteWithMode(TurSNRankingMode.HYBRID_RRF);
         site.getTurSNSiteGenAi().setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
         List<TurSEResult> page = List.of(result("A"), result("B"));
         List<TurSEResult> fused = service.fuse(site, Locale.ENGLISH, "query", page);

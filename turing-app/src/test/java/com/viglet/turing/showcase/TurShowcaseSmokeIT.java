@@ -41,7 +41,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 import tools.jackson.databind.JsonNode;

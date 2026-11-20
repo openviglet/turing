@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode;
+import com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode;
 
 import lombok.extern.slf4j.Slf4j;
 

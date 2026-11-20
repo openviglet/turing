@@ -26,7 +26,7 @@ import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;

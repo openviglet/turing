@@ -36,10 +36,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**
@@ -160,7 +160,7 @@ class TurDefaultAgentResolverTest {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setTurAIAgent(ragReadyAgent());
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
         assertFalse(resolver.isRagReady(genAi));
         // Short-circuits on the mode before ever resolving/looking up an agent.
@@ -175,7 +175,7 @@ class TurDefaultAgentResolverTest {
         // first, so the default lookup is short-circuited.
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
         assertFalse(resolver.isRagReady(genAi));
         verifyNoInteractions(globalSettingsService, turAIAgentRepository);
@@ -187,7 +187,7 @@ class TurDefaultAgentResolverTest {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setTurAIAgent(ragReadyAgent());
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.HYBRID);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.HYBRID);
 
         assertTrue(resolver.isRagReady(genAi));
     }

@@ -22,9 +22,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.properties.TurCatalogCopilotProperty;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 

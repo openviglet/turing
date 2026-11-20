@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 
 /**
  * T666 / §XXXIX (Block AP) — pure mapping of the raw Algolia synonym objects

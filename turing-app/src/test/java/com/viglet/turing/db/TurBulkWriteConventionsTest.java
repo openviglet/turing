@@ -103,8 +103,18 @@ class TurBulkWriteConventionsTest {
 
     private static final Path SOURCE_ROOT = Paths.get("src/main/java");
     private static final Path CLASSES_ROOT = Paths.get("target/classes");
-    private static final Path REPOSITORY_ROOT =
-            SOURCE_ROOT.resolve("com/viglet/turing/persistence/repository");
+    /**
+     * T1312 / ADR 0005 — repositories and entities live in each module's
+     * {@code persistence} package now, so the walk covers the whole tree and keeps the
+     * files under a {@code persistence/repository} or {@code persistence/model} segment.
+     */
+    private static final Path REPOSITORY_ROOT = SOURCE_ROOT.resolve("com/viglet/turing");
+    private static final String REPOSITORY_SEGMENT = "/persistence/repository/";
+    private static final String MODEL_SEGMENT = "/persistence/model/";
+
+    private static boolean under(Path path, String segment) {
+        return path.toString().replace(File.separatorChar, '/').contains(segment);
+    }
 
     private static final String MODIFYING = "org.springframework.data.jpa.repository.Modifying";
 
@@ -128,6 +138,7 @@ class TurBulkWriteConventionsTest {
         try (Stream<Path> paths = Files.walk(REPOSITORY_ROOT)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".java"))
+                    .filter(p -> under(p, REPOSITORY_SEGMENT))
                     .forEach(p -> managedEntity(p)
                             .filter(entitiesWithListeners::contains)
                             .ifPresent(entity -> guarded
@@ -140,10 +151,11 @@ class TurBulkWriteConventionsTest {
     private static Set<String> entitiesDeclaringListeners() throws IOException {
         MetadataReaderFactory readers = new SimpleMetadataReaderFactory();
         Set<String> entities = new TreeSet<>();
-        Path entityClasses = CLASSES_ROOT.resolve("com/viglet/turing/persistence/model");
+        Path entityClasses = CLASSES_ROOT.resolve("com/viglet/turing");
         try (Stream<Path> paths = Files.walk(entityClasses)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".class"))
+                    .filter(p -> under(p, MODEL_SEGMENT))
                     .forEach(p -> readClass(readers, p).ifPresent(reader -> {
                         if (reader.getAnnotationMetadata().isAnnotated(EntityListeners.class
                                 .getName())) {
@@ -178,10 +190,11 @@ class TurBulkWriteConventionsTest {
 
         MetadataReaderFactory readers = new SimpleMetadataReaderFactory();
         Set<String> violations = new TreeSet<>();
-        Path repositoryClasses = CLASSES_ROOT.resolve("com/viglet/turing/persistence/repository");
+        Path repositoryClasses = CLASSES_ROOT.resolve("com/viglet/turing");
         try (Stream<Path> paths = Files.walk(repositoryClasses)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".class"))
+                    .filter(p -> under(p, REPOSITORY_SEGMENT))
                     .forEach(p -> readClass(readers, p).ifPresent(reader -> {
                         String className = reader.getClassMetadata().getClassName();
                         String simpleName = className.substring(className.lastIndexOf('.') + 1);

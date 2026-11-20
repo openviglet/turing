@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.system.TurLlmSummaryService;
 

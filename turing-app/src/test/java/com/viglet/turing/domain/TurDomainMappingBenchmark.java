@@ -24,9 +24,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.persistence.adapter.sn.TurSNSiteDomainMapperImpl;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.persistence.adapter.TurSNSiteDomainMapperImpl;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * T540 — micro-benchmark for the double-mapping cost of the domain layer.

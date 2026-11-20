@@ -71,16 +71,16 @@ import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.searchengine.lucene.TurLuceneDocumentHandler;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -318,21 +318,21 @@ class TurSNEngineConformanceIT {
         // "posted" -> "Recent": the same custom facet the other engines resolve, as Solr stores it.
         TurSNSiteFieldExt publishedAt = fields.stream().filter(f -> "publishedAt".equals(f.getName()))
                 .findFirst().orElseThrow();
-        com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet posted =
-                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet.builder()
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet posted =
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet.builder()
                         .name("posted").turSNSiteFieldExt(publishedAt).build();
         posted.setItems(new HashSet<>(Set.of(
-                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem.builder()
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem.builder()
                         .label("Recent").position(1)
                         .rangeStartDate(java.time.Instant.parse("2026-10-15T00:00:00Z")).build())));
         var customFacetRepository = mock(
-                com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository.class);
+                com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository.class);
         when(customFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of(posted));
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
         solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository, sortRepository,
                 mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class), fieldService,
-                mock(com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository.class),
-                mock(com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository.class),
+                mock(com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository.class),
+                mock(com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository.class),
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),
                 mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class),
@@ -686,9 +686,9 @@ class TurSNEngineConformanceIT {
     @org.junit.jupiter.api.Test
     void rankingExpressionsRankTheSameOnLuceneAndElasticsearch() throws Exception {
         var expressionRepository = mock(
-                com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository.class);
+                com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository.class);
         var conditionRepository = mock(
-                com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository.class);
+                com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository.class);
         var healthFirst = rankingExpression("health-first", 10f, "sector", "saude");
         var recent = rankingExpression("recent", 2f, "publishedAt", "asc");
         when(conditionRepository.findByTurSNRankingExpression(healthFirst.getKey()))
@@ -726,17 +726,17 @@ class TurSNEngineConformanceIT {
         assertThat(es).as("Elasticsearch").containsExactlyElementsOf(expected);
     }
 
-    private static Map.Entry<com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression,
-            com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition> rankingExpression(String name,
+    private static Map.Entry<com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression,
+            com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition> rankingExpression(String name,
                     float weight, String attribute, String value) {
-        var expression = new com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression();
+        var expression = new com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression();
         expression.setId(name);
         expression.setName(name);
         expression.setWeight(weight);
-        var condition = new com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition();
+        var condition = new com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition();
         condition.setAttribute(attribute);
         condition.setValue(value);
-        condition.setCondition(com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition.IS);
+        condition.setCondition(com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition.IS);
         return Map.entry(expression, condition);
     }
 

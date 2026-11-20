@@ -25,7 +25,7 @@ import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import tools.jackson.databind.json.JsonMapper;
 

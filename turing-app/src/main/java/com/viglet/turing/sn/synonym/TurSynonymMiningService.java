@@ -27,11 +27,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.rag.TurRagContextBuilder;
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.synonym.TurSynonymClusterer.TurSynonymCandidate;
 
 import lombok.extern.slf4j.Slf4j;

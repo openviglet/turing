@@ -45,10 +45,10 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchGroupBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.domain.sn.TurSNSiteLocaleRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtDomain;
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtDomain;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtRepositoryPort;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**
@@ -61,8 +61,8 @@ import com.viglet.turing.sn.TurSNSearchProcess;
 class TurSNSiteSearchGraphQLControllerTest {
 
     /** Minimal site domain record for tests that pass a site to siteSearch. */
-    private static com.viglet.turing.domain.sn.TurSNSiteDomain siteDomain(String name, Integer hl) {
-        return new com.viglet.turing.domain.sn.TurSNSiteDomain(name + "-id", name, null, null,
+    private static com.viglet.turing.sn.domain.TurSNSiteDomain siteDomain(String name, Integer hl) {
+        return new com.viglet.turing.sn.domain.TurSNSiteDomain(name + "-id", name, null, null,
                 null, null, null, null, null, null, hl, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null);
@@ -139,7 +139,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 1);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 1);
 
         when(searchProcess.existsByTurSNSiteAndLanguage("demo", Locale.ENGLISH)).thenReturn(true);
         when(siteRepositoryPort.findByNameIgnoreCase("demo")).thenReturn(Optional.of(site));
@@ -183,7 +183,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         TurSNSearchParamsInput input = new TurSNSearchParamsInput();
         input.setQ("java");
@@ -210,7 +210,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         TurSNSearchParamsInput input = new TurSNSearchParamsInput();
         input.setQ("java");
@@ -241,7 +241,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         when(searchProcess.existsByTurSNSiteAndLanguage("demo", Locale.ENGLISH)).thenReturn(true);
         when(siteRepositoryPort.findByNameIgnoreCase("demo")).thenReturn(Optional.of(site));
@@ -274,7 +274,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         TurSNSiteFieldExtDomain titleField = fieldDomain("title", "title_i");
         TurSNSiteFieldExtDomain priceField = fieldDomain("price", "price_d");
@@ -333,7 +333,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         TurSNSiteFieldExtDomain titleField = fieldDomain("title", "title_i");
         TurSNSiteFieldExtDomain urlField = fieldDomain("url", "url_s");
@@ -370,7 +370,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("education-stage-publish", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("education-stage-publish", 0);
 
         // resolveSiteName now goes through the port: enum-style → hyphenated.
         when(siteRepositoryPort.findByNameIgnoreCase("EDUCATION_STAGE_PUBLISH"))
@@ -399,7 +399,7 @@ class TurSNSiteSearchGraphQLControllerTest {
         TurSNSiteSearchGraphQLController controller = new TurSNSiteSearchGraphQLController(
                 searchProcess, siteRepositoryPort, fieldExtRepository, localeRepositoryPort);
 
-        com.viglet.turing.domain.sn.TurSNSiteDomain site = siteDomain("demo", 0);
+        com.viglet.turing.sn.domain.TurSNSiteDomain site = siteDomain("demo", 0);
 
         TurSNSiteFieldExtDomain hyphenField = fieldDomain("content-type", "content-type_s");
         TurSNSiteFieldExtDomain normalField = fieldDomain("author", "author_s");

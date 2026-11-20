@@ -30,7 +30,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persistence.model.kb.TurSNSiteMicrothesaurusConfig;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusConfigRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 

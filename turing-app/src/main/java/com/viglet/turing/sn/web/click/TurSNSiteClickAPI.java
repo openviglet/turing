@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricClick;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +123,7 @@ public class TurSNSiteClickAPI {
         click.setAccessDate(Instant.now());
         click.setTurSNSite(siteOpt.get());
         // T1298 / T1329 — personal data masked by the site's own setting.
-        click.setTerm(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(
+        click.setTerm(com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy.mask(
                 StringUtils.defaultIfBlank(request.term(), ""), siteOpt.get().getMetricsMaskPersonalData()));
         click.setDocumentId(request.documentId());
         click.setPosition(Math.max(0, request.position()));

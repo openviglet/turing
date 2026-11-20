@@ -37,12 +37,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 /**

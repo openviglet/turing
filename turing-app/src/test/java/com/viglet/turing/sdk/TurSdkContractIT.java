@@ -53,16 +53,16 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
 import com.viglet.turing.persistence.model.dev.token.TurDevToken;
-import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
+import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
-import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricClick;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricClick;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
 import com.viglet.turing.sn.insights.TurSNClickThroughService;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 import tools.jackson.databind.JsonNode;
@@ -189,7 +189,7 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private TurDevTokenRepository devTokenRepository;
 
     @Autowired
-    private com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository siteFieldExtRepository;
+    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository siteFieldExtRepository;
 
     @Autowired
     private com.viglet.turing.sn.web.console.TurSNSiteAPI siteAPI;

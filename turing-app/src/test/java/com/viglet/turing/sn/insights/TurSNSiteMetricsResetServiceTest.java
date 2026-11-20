@@ -25,9 +25,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
 
 /**
  * T1195 — clearing a site's metrics removes its searches and clicks, all of

@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 
 /**
  * Decides how a site's chat answers (T1087): through RAG over the site's

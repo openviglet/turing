@@ -39,8 +39,8 @@ import org.apache.lucene.search.uhighlight.UnifiedHighlighter;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;

@@ -27,9 +27,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.rag.TurGenAiContextFactory;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
@@ -163,7 +163,7 @@ class TurSNSiteGenAiAPITest {
         TurSNSite site = new TurSNSite();
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
         site.setTurSNSiteGenAi(genAi);
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
@@ -180,7 +180,7 @@ class TurSNSiteGenAiAPITest {
         TurSNSite site = new TurSNSite();
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
         site.setTurSNSiteGenAi(genAi);
 
         when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
@@ -222,7 +222,7 @@ class TurSNSiteGenAiAPITest {
         site.setName("site1");
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
         site.setTurSNSiteGenAi(genAi);
         return site;
     }

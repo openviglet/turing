@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.domain.llm.LlmInstanceUpdatedEvent;
 import com.viglet.turing.domain.llm.LlmProviderType;
-import com.viglet.turing.domain.sn.SnSiteIndexInvalidatedEvent;
+import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 
 /**
  * Smoke tests for the default domain-event listener. The listener's only side

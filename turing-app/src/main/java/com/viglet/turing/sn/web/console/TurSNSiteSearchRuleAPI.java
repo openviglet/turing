@@ -21,17 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRule;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleAction;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleActionTypeEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleCondition;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleLogicOperatorEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleOperatorEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleParameterEnum;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.searchrule.TurSNSiteSearchRuleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRule;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleAction;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleActionTypeEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleCondition;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleLogicOperatorEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleOperatorEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleParameterEnum;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.searchrule.TurSNSiteSearchRuleRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

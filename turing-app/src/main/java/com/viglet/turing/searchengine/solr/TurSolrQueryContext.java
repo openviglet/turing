@@ -7,7 +7,7 @@ import org.apache.solr.client.solrj.request.SolrQuery;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 
 import lombok.Builder;
 import lombok.Data;

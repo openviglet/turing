@@ -36,7 +36,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 

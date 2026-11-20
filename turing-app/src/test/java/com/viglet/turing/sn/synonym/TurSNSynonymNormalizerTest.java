@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 
 /**
  * Unit tests for the pure synonym rule validation/normalization (T662).

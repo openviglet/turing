@@ -398,7 +398,7 @@ class TurCacheAnnotationConventionsTest {
 
     /** The shape the snapshot had: an entity behind a record behind an Optional. */
     record EntityBearingProbe(String label,
-            java.util.List<com.viglet.turing.persistence.model.sn.TurSNSite> sites) {
+            java.util.List<com.viglet.turing.sn.persistence.model.TurSNSite> sites) {
     }
 
     private static java.lang.reflect.Type positiveControlType() throws NoSuchMethodException {

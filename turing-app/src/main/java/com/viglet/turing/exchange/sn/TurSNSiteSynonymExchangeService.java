@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
-import com.viglet.turing.persistence.repository.sn.synonym.TurSNSynonymRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonym;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.repository.synonym.TurSNSynonymRepository;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 

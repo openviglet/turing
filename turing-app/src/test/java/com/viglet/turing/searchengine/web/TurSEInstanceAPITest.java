@@ -68,7 +68,7 @@ class TurSEInstanceAPITest {
     private TurSolr turSolr;
 
     @Mock
-    private com.viglet.turing.domain.sn.TurSNSiteLocaleRepositoryPort turSNSiteLocaleRepositoryPort;
+    private com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort turSNSiteLocaleRepositoryPort;
 
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
@@ -312,9 +312,9 @@ class TurSEInstanceAPITest {
         when(plugin.listIndexes(instance)).thenReturn(
                 List.of(new TurSECoreInfo("core1", 7, List.of())));
         when(turSNSiteLocaleRepositoryPort.findCoreUsage("core1")).thenReturn(List.of(
-                new com.viglet.turing.domain.sn.TurSNSiteCoreUsageDomain(
+                new com.viglet.turing.sn.domain.TurSNSiteCoreUsageDomain(
                         "locale-1", java.util.Locale.US, "site-1", "MarketingSite"),
-                new com.viglet.turing.domain.sn.TurSNSiteCoreUsageDomain(
+                new com.viglet.turing.sn.domain.TurSNSiteCoreUsageDomain(
                         "locale-2", java.util.Locale.of("pt", "BR"), "site-2", "BlogPT")));
 
         mockMvc.perform(get("/api/se/1/cores"))

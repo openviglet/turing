@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.domain.sn.TurSNSiteLocaleRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.persistence.dto.se.TurSEInstanceDto;
 import com.viglet.turing.persistence.mapper.se.TurSEInstanceMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;

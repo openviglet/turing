@@ -52,16 +52,16 @@ import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.domain.sn.TurSNSiteMetricAccessRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteMetricAccessTermDomain;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.domain.TurSNSiteMetricAccessRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteMetricAccessTermDomain;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
@@ -101,7 +101,7 @@ class TurSNSearchProcessTest {
         @Mock
         private TurSNSiteMetricAccessRepository turSNSiteMetricAccessRepository;
         @Mock
-        private com.viglet.turing.persistence.repository.sn.TurSNSiteRepository turSNSiteRepository;
+        private com.viglet.turing.sn.persistence.repository.TurSNSiteRepository turSNSiteRepository;
 
         @Mock
         private TurSNSiteMetricAccessRepositoryPort turSNSiteMetricAccessRepositoryPort;
@@ -113,7 +113,7 @@ class TurSNSearchProcessTest {
         private TurSolrQueryBuilder turSolrQueryBuilder;
 
         @Mock
-        private com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
 
         @Mock
         private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
@@ -355,12 +355,12 @@ class TurSNSearchProcessTest {
         /** T1249 — the clean-up link drops the primary facet fields and keeps the secondary ones. */
         @Test
         void testCleanUpKeepsTheSecondaryFacetFields() {
-                com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto type =
-                                new com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto();
+                com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto type =
+                                new com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto();
                 type.setName("type");
                 type.setSecondaryFacet(true);
-                com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto year =
-                                new com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto();
+                com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto year =
+                                new com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto();
                 year.setName("year");
 
                 assertThat(TurSNSearchProcess.primaryFacetFields(List.of("type", "year"),
@@ -978,7 +978,7 @@ class TurSNSearchProcessTest {
         }
 
     private static com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView view(
-            com.viglet.turing.persistence.model.sn.TurSNSite site) {
+            com.viglet.turing.sn.persistence.model.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
 }

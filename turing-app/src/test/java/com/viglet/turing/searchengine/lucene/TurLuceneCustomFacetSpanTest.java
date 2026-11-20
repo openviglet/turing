@@ -34,13 +34,13 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 
 /**

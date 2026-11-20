@@ -20,8 +20,8 @@
  */
 package com.viglet.turing.sn.web;
 
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.storage.TurStorageKeys;
 import com.viglet.turing.storage.TurStorageService;
 import jakarta.servlet.http.HttpServletRequest;

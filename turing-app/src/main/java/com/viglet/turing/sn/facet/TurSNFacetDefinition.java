@@ -3,11 +3,11 @@ package com.viglet.turing.sn.facet;
 import java.util.Collections;
 import java.util.Set;
 
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 
 public interface TurSNFacetDefinition {
     String getId();

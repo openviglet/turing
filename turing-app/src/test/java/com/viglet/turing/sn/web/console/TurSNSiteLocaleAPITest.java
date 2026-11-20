@@ -36,12 +36,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import com.viglet.turing.persistence.dto.sn.locale.TurSNSiteLocaleDto;
-import com.viglet.turing.persistence.mapper.sn.locale.TurSNSiteLocaleMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.dto.locale.TurSNSiteLocaleDto;
+import com.viglet.turing.sn.persistence.mapper.locale.TurSNSiteLocaleMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.template.TurSNTemplate;
 
 /**

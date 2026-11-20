@@ -56,7 +56,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSortOptionBean;
 import com.viglet.turing.commons.sn.bean.structured.TurSNStructuredSearchBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNResponseFormat;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNDuplicateClusteringService;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNSimilarDocumentsService;
@@ -760,7 +760,7 @@ class TurSNSiteSearchAPITest {
     }
 
     private static com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView view(
-            com.viglet.turing.persistence.model.sn.TurSNSite site) {
+            com.viglet.turing.sn.persistence.model.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
 }

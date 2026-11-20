@@ -35,9 +35,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSEInventoryEntry;
 import com.viglet.turing.searchengine.TurSEInventoryPage;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;

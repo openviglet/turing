@@ -32,8 +32,8 @@ import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.kb.TurSNSiteMicrothesaurusService;
 import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusConfigDto;
 import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

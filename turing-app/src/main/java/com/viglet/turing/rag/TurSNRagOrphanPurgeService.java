@@ -31,8 +31,8 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 

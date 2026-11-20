@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
 
 @Component
 public class TurSNSiteFieldService {

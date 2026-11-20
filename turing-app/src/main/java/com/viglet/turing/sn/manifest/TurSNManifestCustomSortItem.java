@@ -21,8 +21,8 @@
 
 package com.viglet.turing.sn.manifest;
 
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
 
 /**
  * One level of a manifest custom sort (T1104).

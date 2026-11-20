@@ -35,7 +35,7 @@ import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 
 /**
  * Tests for TurAIAgentAPI.

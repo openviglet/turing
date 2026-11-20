@@ -25,10 +25,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
-import com.viglet.turing.persistence.repository.sn.synonym.TurSNSynonymRepository;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonym;
+import com.viglet.turing.sn.persistence.repository.synonym.TurSNSynonymRepository;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**

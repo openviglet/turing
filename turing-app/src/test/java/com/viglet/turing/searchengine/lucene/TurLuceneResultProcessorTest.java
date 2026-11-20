@@ -316,15 +316,15 @@ class TurLuceneResultProcessorTest {
     private int invokeEffectiveRows(Integer rows, Integer rowsPerPage) throws Exception {
         java.lang.reflect.Method method = TurLuceneResultProcessor.class.getDeclaredMethod(
                 "effectiveRows", com.viglet.turing.commons.se.TurSEParameters.class,
-                com.viglet.turing.persistence.model.sn.TurSNSite.class);
+                com.viglet.turing.sn.persistence.model.TurSNSite.class);
         method.setAccessible(true);
 
         com.viglet.turing.commons.se.TurSEParameters params =
                 org.mockito.Mockito.mock(com.viglet.turing.commons.se.TurSEParameters.class);
         org.mockito.Mockito.when(params.getRows()).thenReturn(rows);
 
-        com.viglet.turing.persistence.model.sn.TurSNSite site =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.sn.TurSNSite.class);
+        com.viglet.turing.sn.persistence.model.TurSNSite site =
+                org.mockito.Mockito.mock(com.viglet.turing.sn.persistence.model.TurSNSite.class);
         org.mockito.Mockito.when(site.getRowsPerPage()).thenReturn(rowsPerPage);
 
         return (int) method.invoke(processor, params, site);
@@ -415,8 +415,8 @@ class TurLuceneResultProcessorTest {
                 java.nio.file.Path.of("test-index"), new org.apache.lucene.facet.FacetsConfig());
 
         // Site configured with 10 rows per page; request omits "rows" (arrives as -1).
-        com.viglet.turing.persistence.model.sn.TurSNSite site =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.sn.TurSNSite.class);
+        com.viglet.turing.sn.persistence.model.TurSNSite site =
+                org.mockito.Mockito.mock(com.viglet.turing.sn.persistence.model.TurSNSite.class);
         org.mockito.Mockito.when(site.getRowsPerPage()).thenReturn(10);
 
         org.apache.lucene.search.Query query = org.apache.lucene.search.MatchAllDocsQuery.INSTANCE;
@@ -472,12 +472,12 @@ class TurLuceneResultProcessorTest {
 
         TurLuceneInstance instance = new TurLuceneInstance(writer, directory,
                 java.nio.file.Path.of("test-index"), new org.apache.lucene.facet.FacetsConfig());
-        com.viglet.turing.persistence.model.sn.TurSNSite site =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.sn.TurSNSite.class);
+        com.viglet.turing.sn.persistence.model.TurSNSite site =
+                org.mockito.Mockito.mock(com.viglet.turing.sn.persistence.model.TurSNSite.class);
         org.mockito.Mockito.when(site.getRowsPerPage()).thenReturn(10);
         org.mockito.Mockito.when(site.getHl()).thenReturn(1);
-        com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt textField =
-                new com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt textField =
+                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt();
         textField.setName("text");
         textField.setType(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT);
         try {

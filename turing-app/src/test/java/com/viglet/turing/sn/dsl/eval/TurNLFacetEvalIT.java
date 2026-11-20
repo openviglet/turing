@@ -43,7 +43,7 @@ import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;

@@ -1,11 +1,11 @@
 package com.viglet.turing.agent.tool;
 
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtDomain;
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtRepositoryPort;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtDomain;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtRepositoryPort;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;

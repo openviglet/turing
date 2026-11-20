@@ -29,7 +29,7 @@ import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -104,7 +104,7 @@ class TurGenAiContextFactoryTest {
         agent.setRagEnabled(true);
         turSNSiteGenAi.setTurAIAgent(agent);
         turSNSiteGenAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTORLESS_STRUCTURED);
 
         TurGenAiContext context = factory.build(turSNSiteGenAi);
 
@@ -138,7 +138,7 @@ class TurGenAiContextFactoryTest {
 
         turSNSiteGenAi.setTurAIAgent(agent);
         turSNSiteGenAi.setKnowledgeBaseMode(
-                com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.HYBRID);
+                com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.HYBRID);
 
         when(turSecretCryptoService.decrypt("llm-encrypted")).thenReturn("llm-decrypted");
         ChatModel chatModel = mock(ChatModel.class);

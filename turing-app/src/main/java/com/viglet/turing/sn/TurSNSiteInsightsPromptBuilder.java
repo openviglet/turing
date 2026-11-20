@@ -12,7 +12,7 @@ package com.viglet.turing.sn;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * F.7 / §X.8.b — single source of truth for the per-site AI Insights prompt.

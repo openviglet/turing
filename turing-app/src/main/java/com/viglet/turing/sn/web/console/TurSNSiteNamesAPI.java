@@ -21,7 +21,7 @@
 
 package com.viglet.turing.sn.web.console;
 
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

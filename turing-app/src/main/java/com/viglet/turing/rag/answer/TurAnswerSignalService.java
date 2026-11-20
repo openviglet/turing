@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.answer.TurAnswerSignalEvent;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.answer.TurAnswerSignalRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
@@ -87,7 +87,7 @@ public class TurAnswerSignalService {
         event.setSiteName(siteName);
         event.setConversationId(conversationId);
         // T1298 / T1329 — nor does an answer signal's, by the site's own setting.
-        event.setQuery(truncate(com.viglet.turing.persistence.repository.sn.metric.TurSearchTermPrivacy.mask(query,
+        event.setQuery(truncate(com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy.mask(query,
                 site.get().getMetricsMaskPersonalData()), QUERY_MAX));
         event.setSignal(signal);
         event.setRelevanceMiss(signal.isRelevanceMiss());

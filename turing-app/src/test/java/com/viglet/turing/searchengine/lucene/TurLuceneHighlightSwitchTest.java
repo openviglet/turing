@@ -26,8 +26,8 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 /**
  * T1226 — the Lucene engine honours a caller's {@code hlEnabled=false}, as Solr

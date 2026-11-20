@@ -22,15 +22,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
@@ -44,7 +44,7 @@ class TurSNFieldProvisionerTest {
     @Mock
     private TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;
     @Mock
-    private com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository
+    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository
             turSNSiteCustomFacetRepository;
     @Mock
     private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -123,10 +123,10 @@ class TurSNFieldProvisionerTest {
         TurSNSite site = site();
         site.setTurSEInstance(null);
         TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("author").type(TurSEFieldType.STRING).build();
-        var facet = new com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet();
-        java.util.Set<com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet> facets =
+        var facet = new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet();
+        java.util.Set<com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet> facets =
                 java.util.Set.of(facet);
-        List<com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet> customFacets = List.of();
+        List<com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet> customFacets = List.of();
         TurSNJobAttributeSpec spec = TurSNJobAttributeSpec.builder()
                 .name("author").type(TurSEFieldType.STRING).multiValued(true).build();
 
@@ -169,8 +169,8 @@ class TurSNFieldProvisionerTest {
         TurSNSite site = site();
         TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("evento_inicio").facet(1).required(0)
                 .description("Start").facetName("When").build();
-        com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet ptBr =
-                new com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet ptBr =
+                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet();
         ptBr.setLocale(java.util.Locale.of("pt", "BR"));
         ptBr.setLabel("Quando");
         ptBr.setTurSNSiteFieldExt(ext);
@@ -197,12 +197,12 @@ class TurSNFieldProvisionerTest {
         assertEquals("Date", ext.getFacetName());
         verify(turSNSiteFieldExtFacetRepository).deleteAll(any());
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<java.util.Collection<com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet>> saved =
+        ArgumentCaptor<java.util.Collection<com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet>> saved =
                 ArgumentCaptor.forClass(java.util.Collection.class);
         verify(turSNSiteFieldExtFacetRepository, org.mockito.Mockito.atLeastOnce()).saveAll(saved.capture());
         assertEquals("Data", saved.getValue().iterator().next().getLabel());
         assertEquals(List.of("Data"), ext.getFacetLocales().stream().map(
-                com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet::getLabel).toList());
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet::getLabel).toList());
     }
 
     /** T1296 — a field that already matches changes nothing and is saved by nobody. */

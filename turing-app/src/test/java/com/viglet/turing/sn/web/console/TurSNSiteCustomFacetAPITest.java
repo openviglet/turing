@@ -27,14 +27,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 
 @ExtendWith(MockitoExtension.class)
@@ -313,7 +313,7 @@ class TurSNSiteCustomFacetAPITest {
         TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetItemDto item = new TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetItemDto();
         item.setLabel("Last 7 days");
         item.setPosition(1);
-        item.setOperator(com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL);
+        item.setOperator(com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL);
         item.setRangeStartDate(start);
         item.setRangeEndDate(end);
         TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetDto payload = new TurSNSiteCustomFacetAPI.TurSNSiteCustomFacetDto();

@@ -46,19 +46,19 @@ import org.mockito.Mockito;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.persistence.mapper.sn.field.TurSNSiteFieldExtMapper;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.sn.persistence.mapper.field.TurSNSiteFieldExtMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.template.TurSNTemplate;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
@@ -937,8 +937,8 @@ class TurSNSiteFieldExtAPITest {
         /** T1248 — a range is kept on a DATE field only; any other type stores DISABLED. */
         @Test
         void facetRangeIsKeptOnlyOnADateField() {
-                var month = com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum.MONTH;
-                var disabled = com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum.DISABLED;
+                var month = com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum.MONTH;
+                var disabled = com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum.DISABLED;
                 assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.DATE, month)).isEqualTo(month);
                 assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.DATE, null)).isEqualTo(disabled);
                 assertThat(TurSNSiteFieldExtAPI.facetRangeFor(TurSEFieldType.STRING, month)).isEqualTo(disabled);

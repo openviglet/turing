@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.rag.TurSNRagOrphanPurgeService;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

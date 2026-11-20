@@ -46,9 +46,9 @@ import com.viglet.turing.rag.TurGenAiContext;
 import com.viglet.turing.rag.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -35,17 +35,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.persistence.dto.sn.spotlight.TurSNSiteSpotlightDto;
-import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.dto.spotlight.TurSNSiteSpotlightDto;
+import com.viglet.turing.sn.persistence.mapper.spotlight.TurSNSiteSpotlightMapper;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.spotlight.TurSpotlightCache;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightDocumentRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 

@@ -37,10 +37,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.sn.bean.TurSNSiteFacetOrderingDto;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 

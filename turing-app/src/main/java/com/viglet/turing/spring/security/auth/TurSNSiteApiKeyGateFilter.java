@@ -22,10 +22,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteApiAuthMode;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

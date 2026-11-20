@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
-import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 
 /**
  * T954 / §LXIX.30 — the {@link java.io.Serializable} contract the clustered

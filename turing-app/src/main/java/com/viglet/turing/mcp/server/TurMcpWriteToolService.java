@@ -21,8 +21,8 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

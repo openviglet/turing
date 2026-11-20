@@ -33,16 +33,16 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNFieldType;
 

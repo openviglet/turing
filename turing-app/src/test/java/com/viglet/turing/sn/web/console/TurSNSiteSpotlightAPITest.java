@@ -32,15 +32,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
+import com.viglet.turing.sn.persistence.mapper.spotlight.TurSNSiteSpotlightMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightDocumentRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteSpotlightAPITest {

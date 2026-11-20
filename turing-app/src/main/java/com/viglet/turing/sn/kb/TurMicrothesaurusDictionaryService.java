@@ -37,7 +37,7 @@ import com.viglet.turing.persistence.model.kb.TurThesaurusRelationType;
 import com.viglet.turing.persistence.model.kb.TurThesaurusTerm;
 import com.viglet.turing.persistence.model.kb.TurThesaurusTermRelation;
 import com.viglet.turing.persistence.model.kb.TurThesaurusTermVariation;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.kb.TurMicrothesaurusRepository;
 import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusConfigRepository;
 import com.viglet.turing.persistence.repository.kb.TurSNSiteMicrothesaurusRepository;

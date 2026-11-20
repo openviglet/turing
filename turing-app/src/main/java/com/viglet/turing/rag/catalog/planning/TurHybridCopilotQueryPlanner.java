@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 
 import lombok.extern.slf4j.Slf4j;
 

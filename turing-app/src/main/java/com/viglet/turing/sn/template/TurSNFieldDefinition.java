@@ -3,7 +3,7 @@ package com.viglet.turing.sn.template;
 import java.util.Set;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 
 public record TurSNFieldDefinition(
                 String name,

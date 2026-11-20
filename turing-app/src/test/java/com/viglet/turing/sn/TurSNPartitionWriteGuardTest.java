@@ -45,7 +45,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView;

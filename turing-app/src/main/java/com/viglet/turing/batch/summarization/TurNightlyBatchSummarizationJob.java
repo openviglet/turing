@@ -22,9 +22,9 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.batch.TurBatchChatRequest;
 import com.viglet.turing.batch.TurBatchInferenceService;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNSiteInsightsPromptBuilder;
 

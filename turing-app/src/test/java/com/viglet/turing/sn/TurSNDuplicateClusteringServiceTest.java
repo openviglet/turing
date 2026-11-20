@@ -34,8 +34,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.sn.bean.TurSNDuplicateCluster;
 import com.viglet.turing.commons.sn.bean.TurSNDuplicateClusterMember;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -396,7 +396,7 @@ class TurSNDuplicateClusteringServiceTest {
     }
 
     private static com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView view(
-            com.viglet.turing.persistence.model.sn.TurSNSite site) {
+            com.viglet.turing.sn.persistence.model.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
 }

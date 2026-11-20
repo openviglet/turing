@@ -52,10 +52,10 @@ import com.viglet.turing.searchengine.lucene.TurLucene;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**

@@ -45,23 +45,23 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.viglet.turing.sn.bean.TurSNSiteMonitoringStatusBean;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExport;
-import com.viglet.turing.persistence.dto.sn.TurSNSiteDto;
-import com.viglet.turing.persistence.dto.sn.TurSNSiteListDto;
-import com.viglet.turing.persistence.mapper.sn.TurSNSiteMapper;
+import com.viglet.turing.sn.persistence.dto.TurSNSiteDto;
+import com.viglet.turing.sn.persistence.dto.TurSNSiteListDto;
+import com.viglet.turing.sn.persistence.mapper.TurSNSiteMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNQueue;
@@ -248,7 +248,7 @@ class TurSNSiteAPITest {
                 payloadGenAi.setRagSeInstance(payloadSe);
                 // T383 — public-search ranking mode round-trips alongside the RAG flags.
                 payloadGenAi.setSnRankingMode(
-                                com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode.HYBRID_RRF);
+                                com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode.HYBRID_RRF);
                 payload.setTurSNSiteGenAi(payloadGenAi);
 
                 when(siteRepository.findByIdWithGenAi("site")).thenReturn(Optional.of(existing));
@@ -263,7 +263,7 @@ class TurSNSiteAPITest {
                                 .isEqualTo(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
                 assertThat(existingGenAi.getRagSeInstance()).isSameAs(seInstance);
                 assertThat(existingGenAi.getSnRankingMode())
-                                .isEqualTo(com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode.HYBRID_RRF);
+                                .isEqualTo(com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode.HYBRID_RRF);
                 verify(genAiRepository).save(existingGenAi);
         }
 

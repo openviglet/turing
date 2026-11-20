@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonym;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 
 /**
  * T1263 — one SN site synonym rule as an export carries it: the rule without its

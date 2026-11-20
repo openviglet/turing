@@ -12,7 +12,7 @@ import com.viglet.turing.persistence.model.rag.TurRagBm25Source;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.searchengine.TurSEStandaloneHit;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
@@ -487,7 +487,7 @@ public class TurRagSearchToolService {
         if (agentId.isBlank()) {
             return AgentRagFlags.defaults();
         }
-        List<com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi> bindings =
+        List<com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi> bindings =
                 snSiteGenAiRepository.findByTurAIAgent_Id(agentId);
         if (bindings.isEmpty()) {
             return AgentRagFlags.defaults();

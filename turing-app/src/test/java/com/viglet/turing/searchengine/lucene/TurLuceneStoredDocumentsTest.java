@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.searchengine.lucene.TurLucenePerFieldAnalyzer;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 
 /**
  * T1077 — a document read by id on the Lucene engine carries every stored

@@ -30,8 +30,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
 
 /**
  * Unit tests for TurSpotlightCache.

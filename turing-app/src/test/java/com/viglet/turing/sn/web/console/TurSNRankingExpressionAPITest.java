@@ -36,14 +36,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.sn.ranking.TurSNRankingExpressionDto;
-import com.viglet.turing.persistence.mapper.sn.ranking.TurSNRankingExpressionMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.persistence.dto.ranking.TurSNRankingExpressionDto;
+import com.viglet.turing.sn.persistence.mapper.ranking.TurSNRankingExpressionMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 
 /**
  * Unit tests for TurSNRankingExpressionAPI.

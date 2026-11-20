@@ -46,14 +46,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 
 /**
  * T1104 — custom sorts declared in a manifest converge by name: created when

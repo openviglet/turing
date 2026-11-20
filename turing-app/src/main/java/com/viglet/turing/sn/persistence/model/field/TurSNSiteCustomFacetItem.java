@@ -1,0 +1,115 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package com.viglet.turing.sn.persistence.model.field;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.viglet.core.jpa.VigletAssignableUuidGenerator;
+
+import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@EntityListeners(TurSNSearchCacheEvictionListener.class)
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@Table(name = "sn_site_custom_facet_item")
+@JsonIgnoreProperties({ "turSNSiteCustomFacet" })
+public class TurSNSiteCustomFacetItem implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @VigletAssignableUuidGenerator
+    @Column(name = "id", updatable = false, nullable = false)
+    private String id;
+
+    @Column(nullable = false, length = 255)
+    private String label;
+
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "sn_site_custom_facet_item_label", joinColumns = @JoinColumn(name = "custom_facet_item_id"))
+    @MapKeyColumn(name = "locale", length = 20)
+    @Column(name = "label", nullable = false, length = 255)
+    private Map<String, String> labels = new HashMap<>();
+
+    @Column(name = "facet_item_position")
+    private Integer position;
+
+    @Column(name = "range_start", precision = 19, scale = 6)
+    private BigDecimal rangeStart;
+
+    @Column(name = "range_end", precision = 19, scale = 6)
+    private BigDecimal rangeEnd;
+
+    @Column(name = "range_start_date")
+    private Instant rangeStartDate;
+
+    @Column(name = "range_end_date")
+    private Instant rangeEndDate;
+
+    /**
+     * T1075 — a relative lower bound for a DATE field, in Solr date math
+     * ({@code NOW-7DAYS}, {@code NOW/DAY}); wins over {@link #rangeStartDate}.
+     */
+    @Column(name = "range_start_expression", length = 64)
+    private String rangeStartExpression;
+
+    /** T1075 — a relative upper bound for a DATE field; wins over {@link #rangeEndDate}. */
+    @Column(name = "range_end_expression", length = 64)
+    private String rangeEndExpression;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operator", length = 20)
+    private TurSNSiteCustomFacetOperatorEnum operator;
+
+    @ManyToOne
+    @JoinColumn(name = "custom_facet_id", nullable = false)
+    private TurSNSiteCustomFacet turSNSiteCustomFacet;
+}

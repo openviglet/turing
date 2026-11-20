@@ -25,11 +25,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.core.lang.UrlTemplate;
 
 import lombok.extern.slf4j.Slf4j;

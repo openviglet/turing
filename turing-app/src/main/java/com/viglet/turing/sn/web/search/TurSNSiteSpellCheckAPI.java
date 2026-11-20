@@ -31,7 +31,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNUtils;
 

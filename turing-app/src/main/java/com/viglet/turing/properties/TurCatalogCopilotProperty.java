@@ -12,7 +12,7 @@ package com.viglet.turing.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 
 import lombok.Getter;
 import lombok.Setter;

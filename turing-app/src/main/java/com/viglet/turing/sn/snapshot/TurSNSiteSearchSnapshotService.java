@@ -34,21 +34,21 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot.CustomFacetView;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot.FacetLabelView;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot.FieldExtView;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot.LocaleView;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot.CustomSortView;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtFacetRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtFacetRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 
 /**
  * Builds and caches {@link TurSNSiteSearchSnapshot} objects keyed by

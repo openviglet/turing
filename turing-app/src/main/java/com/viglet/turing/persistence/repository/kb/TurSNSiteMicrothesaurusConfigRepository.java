@@ -21,7 +21,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.viglet.turing.persistence.model.kb.TurSNSiteMicrothesaurusConfig;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * T670 / §XL (Block AQ) — the single per-site microthesaurus index config.

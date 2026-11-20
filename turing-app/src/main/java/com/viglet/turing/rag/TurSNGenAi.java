@@ -58,9 +58,9 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import lombok.extern.slf4j.Slf4j;
@@ -1198,8 +1198,8 @@ public class TurSNGenAi {
      * cost ledger; it falls back to {@code latest} on any failure.
      */
     String standaloneQuery(TurGenAiContext context, List<ConversationMessage> history, String latest) {
-        com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode mode = context.getFollowupQueryMode();
-        if (mode == null || mode == com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.LATEST_ONLY) {
+        com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode mode = context.getFollowupQueryMode();
+        if (mode == null || mode == com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode.LATEST_ONLY) {
             return latest;
         }
         String query = com.viglet.turing.rag.TurStandaloneQuery.resolve(mode,

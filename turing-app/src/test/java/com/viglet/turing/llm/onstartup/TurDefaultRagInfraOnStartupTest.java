@@ -48,7 +48,7 @@ import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;

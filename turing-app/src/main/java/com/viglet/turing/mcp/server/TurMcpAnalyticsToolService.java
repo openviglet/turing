@@ -21,10 +21,10 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +90,7 @@ public class TurMcpAnalyticsToolService {
             totalSearches = metricAccessRepository.countTermsByPeriod(snSite, since, now);
         }
         // T1179 — each search as visitors typed it, not its grouping key.
-        com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms.asTyped(metricAccessRepository,
+        com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms.asTyped(metricAccessRepository,
                 snSite, terms);
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("site", snSite.getName());

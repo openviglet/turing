@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.rag.TurStandaloneQuery.Turn;
-import com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode;
+import com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode;
 
 /**
  * T1157 — the standalone question a follow-up turn's retrieval searches.

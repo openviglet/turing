@@ -43,10 +43,10 @@ import org.springframework.ai.vectorstore.VectorStore;
 
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**
@@ -131,7 +131,7 @@ class TurSNGenAiTest {
                 .thenReturn(List.of(new Document("Send the form to the Office of Research.")));
         TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
                 .vectorStore(vectorStore)
-                .followupQueryMode(com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.REWRITE)
+                .followupQueryMode(com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode.REWRITE)
                 .build();
         List<TurSNGenAi.ConversationMessage> history = List.of(
                 new TurSNGenAi.ConversationMessage("user", "When do applications for the research grant close?"),
@@ -913,7 +913,7 @@ class TurSNGenAiTest {
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of());
         TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
                 .vectorStore(vectorStore)
-                .followupQueryMode(com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode.REWRITE)
+                .followupQueryMode(com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode.REWRITE)
                 .build();
         var agent = mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class);
         List<TurSNGenAi.ConversationMessage> history = List.of(

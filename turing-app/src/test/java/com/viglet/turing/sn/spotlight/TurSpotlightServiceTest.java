@@ -18,10 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 
 /**
  * Tests for TurSpotlightService.

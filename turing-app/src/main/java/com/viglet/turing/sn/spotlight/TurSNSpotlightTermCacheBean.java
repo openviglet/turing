@@ -20,7 +20,7 @@
  */
 package com.viglet.turing.sn.spotlight;
 
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import lombok.Getter;
 import lombok.Setter;
 

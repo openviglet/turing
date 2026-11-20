@@ -16,15 +16,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRule;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleAction;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleActionTypeEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleCondition;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleLogicOperatorEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleOperatorEnum;
-import com.viglet.turing.persistence.model.sn.searchrule.TurSNSiteSearchRuleParameterEnum;
-import com.viglet.turing.persistence.repository.sn.searchrule.TurSNSiteSearchRuleRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRule;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleAction;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleActionTypeEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleCondition;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleLogicOperatorEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleOperatorEnum;
+import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleParameterEnum;
+import com.viglet.turing.sn.persistence.repository.searchrule.TurSNSiteSearchRuleRepository;
 
 /**
  * Evaluates search rules for a Semantic Navigation site and applies

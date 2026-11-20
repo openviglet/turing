@@ -19,7 +19,7 @@ package com.viglet.turing.searchengine.elasticsearch;
 import java.util.List;
 import java.util.Set;
 
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 
 /**
  * T664 / §XXXIX (Block AP) — the result of mapping Turing synonym rules onto

@@ -47,23 +47,23 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.viglet.turing.sn.bean.TurSNSiteMonitoringStatusBean;
-import com.viglet.turing.domain.sn.SnSiteIndexInvalidatedEvent;
+import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExport;
-import com.viglet.turing.persistence.dto.sn.TurSNSiteDto;
-import com.viglet.turing.persistence.dto.sn.TurSNSiteListDto;
-import com.viglet.turing.persistence.mapper.sn.TurSNSiteMapper;
+import com.viglet.turing.sn.persistence.dto.TurSNSiteDto;
+import com.viglet.turing.sn.persistence.dto.TurSNSiteListDto;
+import com.viglet.turing.sn.persistence.mapper.TurSNSiteMapper;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNQueue;
 import com.viglet.turing.sn.template.TurSNTemplate;
@@ -218,7 +218,7 @@ public class TurSNSiteAPI {
                 // the RAG flags above.
                 turSNSiteGenAi.setSnRankingMode(
                         Optional.ofNullable(genAi.getSnRankingMode())
-                                .orElse(com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode.LEGACY));
+                                .orElse(com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode.LEGACY));
                 // T1103 / §CXVI — semantic recall (opt-in) and its similarity floor.
                 turSNSiteGenAi.setSnSemanticRecall(genAi.isSnSemanticRecall());
                 turSNSiteGenAi.setSnSemanticRecallMinScore(genAi.getSnSemanticRecallMinScore());
@@ -230,7 +230,7 @@ public class TurSNSiteAPI {
                 // HYBRID = both). Names the retrieval strategy so it is discoverable.
                 turSNSiteGenAi.setKnowledgeBaseMode(
                         Optional.ofNullable(genAi.getKnowledgeBaseMode())
-                                .orElse(com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.VECTOR));
+                                .orElse(com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.VECTOR));
                 // T472 / §XXVI.9 — index-time content-fit signal (opt-in). The
                 // master switch + target-audience persona id drive the
                 // deterministic readability scorer at index time.

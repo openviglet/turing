@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 import graphql.schema.idl.RuntimeWiring;
 

@@ -33,12 +33,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldDto;
-import com.viglet.turing.persistence.mapper.sn.field.TurSNSiteFieldMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldDto;
+import com.viglet.turing.sn.persistence.mapper.field.TurSNSiteFieldMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
 
 /**
  * Unit tests for TurSNSiteFieldAPI.

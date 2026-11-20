@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 
 /**
  * Unit tests for TurSNSpotlightTermCacheBean.

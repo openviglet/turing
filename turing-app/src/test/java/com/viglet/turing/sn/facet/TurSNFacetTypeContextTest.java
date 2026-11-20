@@ -26,9 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 
 /**
  * Unit tests for TurSNFacetTypeContext.

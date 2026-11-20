@@ -34,8 +34,8 @@ import java.util.Optional;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.lucene.TurLuceneFilterQueries;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
 /**
  * Builds a {@link TurSNSiteCustomFacetItem} from the shape both the console and

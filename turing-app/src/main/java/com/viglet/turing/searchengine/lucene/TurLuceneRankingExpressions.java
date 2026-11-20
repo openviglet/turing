@@ -47,13 +47,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import lombok.extern.slf4j.Slf4j;

@@ -20,7 +20,7 @@
  */
 package com.viglet.turing.sn.bean;
 
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 import lombok.Getter;
 import lombok.Setter;
 

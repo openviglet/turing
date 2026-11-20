@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
 
 @Component
 public class TurSNFacetDefinitionFactory {

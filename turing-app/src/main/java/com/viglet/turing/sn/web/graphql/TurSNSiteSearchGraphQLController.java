@@ -44,11 +44,11 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchGroupBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchResultsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtDomain;
-import com.viglet.turing.domain.sn.TurSNSiteFieldExtRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteLocaleRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtDomain;
+import com.viglet.turing.sn.domain.TurSNSiteFieldExtRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
 

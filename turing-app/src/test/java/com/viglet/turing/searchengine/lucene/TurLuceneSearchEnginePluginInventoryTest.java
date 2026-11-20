@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.searchengine.lucene.TurLucene;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 
 /**
  * T1029 / §XX.16 — the Lucene inventory scan walks the {@code id} term

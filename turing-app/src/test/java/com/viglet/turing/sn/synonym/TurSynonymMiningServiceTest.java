@@ -39,11 +39,11 @@ import org.springframework.ai.embedding.EmbeddingModel;
 
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 
 /**
  * Unit tests for AI-assisted synonym mining (T667) — the embed + cluster +

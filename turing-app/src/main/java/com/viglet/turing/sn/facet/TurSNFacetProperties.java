@@ -18,7 +18,7 @@
 
 package com.viglet.turing.sn.facet;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

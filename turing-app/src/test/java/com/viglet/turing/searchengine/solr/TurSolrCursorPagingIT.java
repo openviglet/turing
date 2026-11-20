@@ -41,7 +41,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.searchengine.solr.TurSolrInstance;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;

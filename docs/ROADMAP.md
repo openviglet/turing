@@ -27,11 +27,11 @@
 - ⏳ **T1308** (deps: T1307 ✅) **Controllers and services of every subsystem share the api package, so genai calls into it** — Two controllers are still called by other code: sn.web.job.TurSNImportAPI (3 callers) and sn.web.console.TurSNSiteFieldExtAPI (1), whose logic must move into sn services. → §CLXXXIX.4
 - ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 130 calls still reach engine internals, from api.se, the SN queue and query APIs, sn search, autocomplete, spotlights, facets and the four sn.dsl executors. → §CLXXXIX.6
 - ⏳ **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — TurOnStartup, in system.onstartup, still calls the auth, searchengine, llm and rag seeders, so system depends on them until each runs itself. → §CLXXXIX.7
-- 📋 **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — Moving them into the sn module as internal packages makes sn the only writer of its tables, with other modules reading through its named interface or its events. → §CLXXXIX.8
+- ⏳ **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — 44 classes outside sn still call SN repositories (searchengine 15, rag 9, exchange 5, agent 5, eight others); each needs an sn read service or event. → §CLXXXIX.8
 - 📋 **T1313** (deps: T1309 ✅) **LLM, agent and flow entities sit in persistence, apart from the genai modules that own them** — Moving entities, repositories, DTOs, mappers and enums into the new genai modules ends persistence importing genai types such as TurBatchKind. → §CLXXXIX.9
 - 📋 **T1314** (deps: T1311 ⏳) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
-- 📋 **T1315** (deps: T1312, T1313, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
-- 📋 **T1316** (deps: T1312) **Entity classes name sn and genai eviction listeners, so persistence depends on its callers** — Owning modules publish change events after commit and the cache owners listen, which removes the back-edge and the @EntityListeners coupling on the SN and agent entities. → §CLXXXIX.12
+- 📋 **T1315** (deps: T1312 ⏳, T1313, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
+- 📋 **T1316** (deps: T1312 ⏳) **Entity classes name sn and genai eviction listeners, so persistence depends on its callers** — Owning modules publish change events after commit and the cache owners listen, which removes the back-edge and the @EntityListeners coupling on the SN and agent entities. → §CLXXXIX.12
 - 📋 **T1317** (deps: T1314) **Table names follow no convention: 87 of 105 lack the tur_ prefix the other 18 carry** — With compatibility waived, every table takes one rule naming its module (for example sn_site, agent_eval_case), so a table's owner is readable from the schema alone. → §CLXXXIX.13
 - 📋 **T1318** (deps: T1314) **54 of about 106 entities have no tenant column, and the rest mix @TenantId with plain tenantId** — Each entity is ruled tenant-scoped or deliberately global, and every tenant-scoped one uses one mechanism, so Block J isolation no longer depends on which entity a query hits. → §CLXXXIX.14
 - 📋 **T1319** (deps: T1314) **No entity has @Version and only one records created and modified dates through auditing** — A mapped superclass with audit dates and an optimistic-lock version stops silent concurrent overwrites and replaces 20 hand-rolled date fields. → §CLXXXIX.15
@@ -69,6 +69,12 @@
 - **Nothing outside a web package imports a class from one** A search of the main
   sources finds no import of com.viglet.turing.*.web.* from a class outside a web
   package; the import and field-ext logic the callers use lives in sn services.
+
+## Done when — T1312
+
+- **No class outside sn imports an SN repository** A search of the main sources finds no
+  import of com.viglet.turing.sn.persistence.repository outside the sn module; reads go
+  through sn's named interface, changes arrive as its events.
 
 ## Non-goals (do NOT add as tasks)
 

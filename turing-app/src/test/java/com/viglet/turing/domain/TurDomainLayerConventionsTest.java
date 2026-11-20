@@ -84,11 +84,11 @@ class TurDomainLayerConventionsTest {
      */
     private static final Map<String, String> PORT_ONLY_HOT_PATH = Map.of(
             "agent/tool/TurDslToolService.java",
-            "com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository",
+            "com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository",
             "sn/spotlight/TurSpotlightService.java",
-            "com.viglet.turing.persistence.repository.sn.TurSNSiteRepository",
+            "com.viglet.turing.sn.persistence.repository.TurSNSiteRepository",
             "sn/web/console/TurSNSiteNamesAPI.java",
-            "com.viglet.turing.persistence.repository.sn.TurSNSiteRepository");
+            "com.viglet.turing.sn.persistence.repository.TurSNSiteRepository");
 
     @Test
     void domainRecordsCarryNoPersistenceOrJacksonAnnotations() throws Exception {

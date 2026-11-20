@@ -27,11 +27,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.viglet.turing.TuringES;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
 import com.viglet.core.lang.UrlTemplate;
 
 import lombok.extern.slf4j.Slf4j;

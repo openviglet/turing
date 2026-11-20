@@ -36,12 +36,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.sn.merge.TurSNSiteMergeProvidersDto;
-import com.viglet.turing.persistence.mapper.sn.merge.TurSNSiteMergeProvidersMapper;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersFieldRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.persistence.dto.merge.TurSNSiteMergeProvidersDto;
+import com.viglet.turing.sn.persistence.mapper.merge.TurSNSiteMergeProvidersMapper;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersFieldRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

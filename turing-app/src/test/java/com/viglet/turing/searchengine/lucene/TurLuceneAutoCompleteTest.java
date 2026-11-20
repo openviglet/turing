@@ -28,10 +28,10 @@ import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.searchengine.lucene.TurLucenePerFieldAnalyzer;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 /**
  * Autocomplete on the Lucene engine draws its suggestions only from the

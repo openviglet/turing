@@ -34,17 +34,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.mapstruct.factory.Mappers;
 
-import com.viglet.turing.persistence.dto.sn.spotlight.TurSNSiteSpotlightDto;
-import com.viglet.turing.persistence.mapper.sn.spotlight.TurSNSiteSpotlightMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.dto.spotlight.TurSNSiteSpotlightDto;
+import com.viglet.turing.sn.persistence.mapper.spotlight.TurSNSiteSpotlightMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightDocumentRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightTermRepository;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightDocumentRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
 
 /**
  * Unit tests for TurSNSiteSpotlightAPI.

@@ -25,8 +25,8 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.commons.sn.bean.TurSNDuplicateCluster;
 import com.viglet.turing.commons.sn.bean.TurSNDuplicateClusterMember;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -55,7 +55,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p><strong>Vector-only and fail-safe.</strong> Clustering needs the per-site
  * {@code sn_<siteId>} vector collection, so it only runs on
- * {@link com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode#isHybrid()
+ * {@link com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode#isHybrid()
  * hybrid} sites with a default embedding model configured. On any other site, a
  * missing seed, or any failure it degrades to a single-member cluster (the seed
  * alone, {@code duplicate=false}) — it never wrongly merges distinct documents.

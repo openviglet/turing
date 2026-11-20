@@ -53,21 +53,21 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteFacetRangeEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
@@ -92,7 +92,7 @@ class TurSolrQueryBuilderTest {
         private TurSNTargetingRules turSNTargetingRules;
 
         @Mock
-        private com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
 
         @Mock
         private TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
@@ -322,7 +322,7 @@ class TurSolrQueryBuilderTest {
                                 .facet(1)
                                 .enabled(1)
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
-                                .facetSort(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldSortEnum.DEFAULT)
+                                .facetSort(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
                 when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
@@ -1210,7 +1210,7 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setFacet(1);
                 site.setItemsPerFacet(10);
-                site.setFacetSort(com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum.COUNT);
+                site.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.COUNT);
                 site.setFacetType(TurSNSiteFacetFieldEnum.AND);
                 site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
 
@@ -1236,7 +1236,7 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setFacet(1);
                 site.setItemsPerFacet(10);
-                site.setFacetSort(com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum.ALPHABETICAL);
+                site.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.ALPHABETICAL);
                 site.setFacetType(TurSNSiteFacetFieldEnum.AND);
                 site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
 
@@ -1453,11 +1453,11 @@ class TurSolrQueryBuilderTest {
         // --- buildFilterQueryByOperator (via reflection) ---
 
         private static String invokeBuildFilterQueryByOperator(
-                        com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum op,
+                        com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum op,
                         String field, String start, String end) throws Exception {
                 Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
                                 "buildFilterQueryByOperator", String.class,
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.class,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.class,
                                 String.class, String.class);
                 method.setAccessible(true);
                 return (String) method.invoke(null, field, op, start, end);
@@ -1466,7 +1466,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryBetweenInclusive() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
                                 "price", "10", "100"))
                                 .isEqualTo("price:[10 TO 100]");
         }
@@ -1474,7 +1474,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryBetweenInclusiveWithNullStart() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
                                 "price", null, "100"))
                                 .isEqualTo("price:[* TO 100]");
         }
@@ -1482,7 +1482,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryBetweenInclusiveWithNullEnd() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE,
                                 "price", "10", null))
                                 .isEqualTo("price:[10 TO *]");
         }
@@ -1490,7 +1490,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryBetweenExclusive() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_EXCLUSIVE,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.BETWEEN_EXCLUSIVE,
                                 "price", "10", "100"))
                                 .isEqualTo("price:{10 TO 100}");
         }
@@ -1498,7 +1498,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryEqual() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
                                 "status", "active", null))
                                 .isEqualTo("status:active");
         }
@@ -1506,7 +1506,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryEqualUsesEndWhenStartNull() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
                                 "status", null, "inactive"))
                                 .isEqualTo("status:inactive");
         }
@@ -1514,7 +1514,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryEqualBothNullUsesWildcard() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.EQUAL,
                                 "status", null, null))
                                 .isEqualTo("status:*");
         }
@@ -1522,7 +1522,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryGreaterThanStrict() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN,
                                 "price", "50", null))
                                 .isEqualTo("price:{50 TO *]");
         }
@@ -1530,7 +1530,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryGreaterThanOrEqual() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.GREATER_THAN_OR_EQUAL,
                                 "price", "50", null))
                                 .isEqualTo("price:[50 TO *]");
         }
@@ -1538,7 +1538,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryLessThanStrict() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.LESS_THAN,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.LESS_THAN,
                                 "price", null, "100"))
                                 .isEqualTo("price:[* TO 100}");
         }
@@ -1546,7 +1546,7 @@ class TurSolrQueryBuilderTest {
         @Test
         void testBuildFilterQueryLessThanOrEqual() throws Exception {
                 assertThat(invokeBuildFilterQueryByOperator(
-                                com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum.LESS_THAN_OR_EQUAL,
+                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.LESS_THAN_OR_EQUAL,
                                 "price", null, "100"))
                                 .isEqualTo("price:[* TO 100]");
         }
@@ -1731,11 +1731,11 @@ class TurSolrQueryBuilderTest {
                 assertThat((boolean) method.invoke(null, nullSort)).isTrue();
 
                 TurSNSite countSort = new TurSNSite();
-                countSort.setFacetSort(com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum.COUNT);
+                countSort.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.COUNT);
                 assertThat((boolean) method.invoke(null, countSort)).isTrue();
 
                 TurSNSite alphaSort = new TurSNSite();
-                alphaSort.setFacetSort(com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum.ALPHABETICAL);
+                alphaSort.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.ALPHABETICAL);
                 assertThat((boolean) method.invoke(null, alphaSort)).isFalse();
         }
 
@@ -1818,14 +1818,14 @@ class TurSolrQueryBuilderTest {
 
         @Test
         void customSortLevelWithMissingLastIsPrecededByAnExistsSort() {
-                var items = new java.util.HashSet<com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem>();
-                items.add(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem.builder()
+                var items = new java.util.HashSet<com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem>();
+                items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                                 .fieldName("publishedAt").position(2)
-                                .sortOrder(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum.DESC)
+                                .sortOrder(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.DESC)
                                 .build());
-                items.add(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem.builder()
+                items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                                 .fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum.LAST)
+                                .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)
                                 .build());
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))
@@ -1836,9 +1836,9 @@ class TurSolrQueryBuilderTest {
 
         @Test
         void customSortLevelWithMissingFirstPutsTheUndatedFirst() {
-                var items = java.util.Set.of(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem
+                var items = java.util.Set.of(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem
                                 .builder().fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum.FIRST)
+                                .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.FIRST)
                                 .build());
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))

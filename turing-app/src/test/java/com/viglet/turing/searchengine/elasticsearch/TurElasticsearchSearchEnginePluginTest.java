@@ -40,9 +40,9 @@ import com.viglet.turing.searchengine.elasticsearch.TurElasticsearch;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstance;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**

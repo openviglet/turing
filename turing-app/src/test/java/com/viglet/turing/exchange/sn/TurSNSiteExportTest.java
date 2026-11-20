@@ -19,16 +19,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightDocument;
-import com.viglet.turing.persistence.model.sn.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.persistence.repository.sn.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
+import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 

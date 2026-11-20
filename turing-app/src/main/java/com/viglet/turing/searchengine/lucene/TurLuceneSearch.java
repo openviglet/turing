@@ -19,7 +19,7 @@ package com.viglet.turing.searchengine.lucene;
 import org.apache.lucene.search.Query;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * The four inputs that define a single Lucene search execution: the open index

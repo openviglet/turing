@@ -34,11 +34,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldDto;
-import com.viglet.turing.persistence.mapper.sn.field.TurSNSiteFieldMapper;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldRepository;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldDto;
+import com.viglet.turing.sn.persistence.mapper.field.TurSNSiteFieldMapper;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

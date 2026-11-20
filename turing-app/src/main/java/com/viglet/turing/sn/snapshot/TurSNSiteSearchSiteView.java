@@ -14,13 +14,13 @@ import java.io.Serializable;
 
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.TurSNSiteApiAuthMode;
-import com.viglet.turing.persistence.model.sn.TurSNSiteFacetSortEnum;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.genai.TurSNRankingMode;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
+import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
 
 /**
  * The SN site as the cache holds it (T953 / §LXXI.7) — every scalar, plus the

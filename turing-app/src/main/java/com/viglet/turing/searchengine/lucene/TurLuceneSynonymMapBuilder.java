@@ -26,7 +26,7 @@ import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.util.CharsRef;
 import org.apache.lucene.util.CharsRefBuilder;
 
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**

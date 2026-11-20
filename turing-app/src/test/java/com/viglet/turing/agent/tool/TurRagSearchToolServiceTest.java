@@ -34,7 +34,7 @@ class TurRagSearchToolServiceTest {
     @Mock
     private TurAssetTrainingRecordRepository trainingRecordRepository;
     @Mock
-    private com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository snSiteGenAiRepository;
+    private com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository snSiteGenAiRepository;
     @Mock
     private com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository ragBm25CoreRepository;
     @Mock
@@ -616,7 +616,7 @@ class TurRagSearchToolServiceTest {
 
         // Binding with SE_INSTANCE source pointing at an SE instance, no core
         // provisioned yet for the requested locale.
-        var binding = new com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi();
+        var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
@@ -666,7 +666,7 @@ class TurRagSearchToolServiceTest {
                 mockStoreInstance, "cred", "collection");
         when(ragContextBuilder.buildFromGlobalSettings()).thenReturn(java.util.Optional.of(infra));
 
-        var binding = new com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi();
+        var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
@@ -712,7 +712,7 @@ class TurRagSearchToolServiceTest {
         when(ragContextBuilder.buildFromGlobalSettings()).thenReturn(java.util.Optional.of(infra));
 
         var seInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.se.TurSEInstance.class);
-        var binding = new com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi();
+        var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
@@ -780,7 +780,7 @@ class TurRagSearchToolServiceTest {
         when(ragContextBuilder.buildFromGlobalSettings()).thenReturn(java.util.Optional.of(infra));
 
         var seInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.se.TurSEInstance.class);
-        var binding = new com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi();
+        var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
@@ -843,7 +843,7 @@ class TurRagSearchToolServiceTest {
                 mockStoreInstance, "cred", "collection");
         when(ragContextBuilder.buildFromGlobalSettings()).thenReturn(java.util.Optional.of(infra));
 
-        var binding = new com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi();
+        var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
         binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);

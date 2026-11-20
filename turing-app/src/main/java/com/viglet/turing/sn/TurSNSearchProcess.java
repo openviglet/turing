@@ -59,18 +59,18 @@ import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.domain.sn.TurSNSiteMetricAccessRepositoryPort;
-import com.viglet.turing.domain.sn.TurSNSiteMetricAccessTermDomain;
+import com.viglet.turing.sn.domain.TurSNSiteMetricAccessRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteMetricAccessTermDomain;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.model.sn.metric.TurSNSiteMetricAccess;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricAccess;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
@@ -640,7 +640,7 @@ public class TurSNSearchProcess {
                         turSNSiteMetricAccess.setAccessDate(Instant.now());
                         turSNSiteMetricAccess.setLanguage(turSNSiteSearchContext.getLocale());
                         // T1298 / T1329 — personal data masked by the site's own setting.
-                        turSNSiteMetricAccess.setTerm(com.viglet.turing.persistence.repository.sn.metric
+                        turSNSiteMetricAccess.setTerm(com.viglet.turing.sn.persistence.repository.metric
                                         .TurSearchTermPrivacy.mask(
                                                         turSNSiteSearchContext.getTurSEParameters().getQuery(),
                                                         turSNSite.getMetricsMaskPersonalData()));
@@ -819,11 +819,11 @@ public class TurSNSearchProcess {
 
         /**
          * Domain-friendly overload — controllers that already hold a
-         * {@link com.viglet.turing.domain.sn.TurSNSiteDomain} from the port can call
+         * {@link com.viglet.turing.sn.domain.TurSNSiteDomain} from the port can call
          * this directly without re-loading the JPA entity.
          */
         public List<TurSNSiteLocaleBean> responseLocales(
-                        com.viglet.turing.domain.sn.TurSNSiteDomain site, URI uri) {
+                        com.viglet.turing.sn.domain.TurSNSiteDomain site, URI uri) {
                 return snapshotService.getSnapshot(site.name(), null)
                                 .map(snap -> responseLocaleBeans(snap.allLocales(), uri))
                                 .orElseGet(ArrayList::new);

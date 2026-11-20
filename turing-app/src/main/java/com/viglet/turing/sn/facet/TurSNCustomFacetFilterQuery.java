@@ -24,8 +24,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
 /**
  * T1083 — the filter query a custom facet item stands for, in Solr's range

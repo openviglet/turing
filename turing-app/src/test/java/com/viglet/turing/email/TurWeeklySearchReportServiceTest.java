@@ -15,12 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNSiteDataCollectorService;
@@ -503,8 +503,8 @@ class TurWeeklySearchReportServiceTest {
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
-        var enLocale = mock(com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale.class);
-        var ptLocale = mock(com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale.class);
+        var enLocale = mock(com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
+        var ptLocale = mock(com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale, ptLocale));
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
@@ -533,7 +533,7 @@ class TurWeeklySearchReportServiceTest {
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
-        var enLocale = mock(com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale.class);
+        var enLocale = mock(com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale));
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);

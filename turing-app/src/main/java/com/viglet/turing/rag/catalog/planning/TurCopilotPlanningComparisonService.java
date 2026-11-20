@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparison.StrategyOutcome;
 import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlanner.PlanRequest;
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.properties.TurCatalogCopilotProperty;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalCase;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalPack;

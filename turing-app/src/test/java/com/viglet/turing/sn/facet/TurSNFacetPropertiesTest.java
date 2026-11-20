@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 
 /**
  * Unit tests for TurSNFacetProperties.

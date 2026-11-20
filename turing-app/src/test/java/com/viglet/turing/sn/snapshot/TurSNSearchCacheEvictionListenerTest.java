@@ -98,7 +98,8 @@ class TurSNSearchCacheEvictionListenerTest {
         Set<String> missingListener = new TreeSet<>();
         Set<String> unexpectedListener = new TreeSet<>();
 
-        Path snModel = classesDir.resolve("com/viglet/turing/persistence/model/sn");
+        // T1312 / ADR 0005 — the SN entities live in the sn module now.
+        Path snModel = classesDir.resolve("com/viglet/turing/sn/persistence/model");
         try (Stream<Path> paths = Files.walk(snModel)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".class"))

@@ -43,15 +43,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

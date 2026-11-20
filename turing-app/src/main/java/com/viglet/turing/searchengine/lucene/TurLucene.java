@@ -18,9 +18,9 @@ package com.viglet.turing.searchengine.lucene;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;

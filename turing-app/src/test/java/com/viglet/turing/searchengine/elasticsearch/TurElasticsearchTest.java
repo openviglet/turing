@@ -43,15 +43,15 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ErrorCause;
 import co.elastic.clients.elasticsearch._types.ErrorResponse;
 import co.elastic.clients.elasticsearch.core.*;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 
 import java.util.Collections;
 import java.util.List;
@@ -71,10 +71,10 @@ class TurElasticsearchTest {
     private TurSNSiteRepository turSNSiteRepository;
 
     @Mock
-    private com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 
     @Mock
-    private com.viglet.turing.persistence.repository.sn.sort.TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+    private com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
 
     @Mock
     private com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets customFacets;
@@ -515,13 +515,13 @@ class TurElasticsearchTest {
         TurSNSite site = new TurSNSite();
         site.setName("site");
         when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
-        com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort closingSoonest =
-                com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort.builder()
+        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort closingSoonest =
+                com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort.builder()
                         .name("closingSoonest").build();
         closingSoonest.setItems(new java.util.HashSet<>(java.util.Set.of(
-                com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortItem.builder()
+                com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
                         .fieldName("expiresAt").position(1)
-                        .missing(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum.LAST)
+                        .missing(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)
                         .build())));
         when(turSNSiteCustomSortRepository.findByTurSNSiteAndName(site, "closingSoonest"))
                 .thenReturn(Optional.of(closingSoonest));

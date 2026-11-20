@@ -9,7 +9,7 @@ import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

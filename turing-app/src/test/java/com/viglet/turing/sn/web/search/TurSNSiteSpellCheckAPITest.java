@@ -37,8 +37,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.bean.spellcheck.TurSNSiteSpellCheckBean;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 

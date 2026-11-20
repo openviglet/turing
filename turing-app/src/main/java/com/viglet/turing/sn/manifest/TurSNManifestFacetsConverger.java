@@ -25,8 +25,8 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 
 /**
  * Converges the site-level facet behaviour an SN manifest declares (T1135), so a

@@ -35,8 +35,8 @@ import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**

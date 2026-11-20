@@ -24,8 +24,8 @@ import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.dto.sn.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.result.TurSEResult;
 
 /**

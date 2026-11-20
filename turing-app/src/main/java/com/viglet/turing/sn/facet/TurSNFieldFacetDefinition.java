@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 
 public class TurSNFieldFacetDefinition implements TurSNFacetDefinition {
     private final TurSNSiteFieldExt fieldExt;

@@ -32,11 +32,11 @@ import org.springframework.core.env.Environment;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

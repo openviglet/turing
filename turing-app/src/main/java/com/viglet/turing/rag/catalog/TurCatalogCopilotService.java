@@ -37,11 +37,11 @@ import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlanner.PlanRequest
 import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlannerFactory;
 import com.viglet.turing.rag.citation.TurAnswerCitationNumberer;
 import com.viglet.turing.rag.TurStandaloneQuery;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurFollowupQueryMode;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
@@ -481,7 +481,7 @@ public class TurCatalogCopilotService {
         // decomposed into sub-queries whose recall is RRF-unioned before rerank. Off
         // by default, never for DETERMINISTIC sites, and fail-open to single-pass.
         if (filter == null && copilotProperty.getPlanning() != null && copilotProperty.getPlanning().isFanOut()
-                && planner.strategy() != com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy.DETERMINISTIC) {
+                && planner.strategy() != com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy.DETERMINISTIC) {
             Optional<Retrieval> fanned =
                     fanOutRetrieve(site, siteName, searchLocale, query, schema, resolution);
             if (fanned.isPresent()) {

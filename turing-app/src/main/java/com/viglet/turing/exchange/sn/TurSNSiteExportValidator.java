@@ -27,8 +27,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 
 import lombok.extern.slf4j.Slf4j;
 

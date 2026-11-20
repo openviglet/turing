@@ -18,8 +18,8 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.persistence.model.store.TurStoreVendor;
 
@@ -144,10 +144,10 @@ class TurSNSiteExportFileServiceTest {
         site.setMlt(0);
         site.setThesaurus(0);
         TurSNSynonymExchange regular = new TurSNSynonymExchange("syn-1", "raincoat",
-                com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType.REGULAR,
+                com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType.REGULAR,
                 java.util.Locale.US, null, List.of("raincoat", "rain jacket"), true);
         TurSNSynonymExchange oneWay = new TurSNSynonymExchange("syn-2", null,
-                com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType.ONE_WAY,
+                com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType.ONE_WAY,
                 java.util.Locale.US, "rucksack", List.of("backpack"), false);
 
         Path zipPath = service.exportSNSitesToZip(List.of(site),

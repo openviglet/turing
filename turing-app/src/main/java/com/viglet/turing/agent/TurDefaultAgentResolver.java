@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

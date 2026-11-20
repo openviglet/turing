@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.persistence.dto.kb.TurRelatedTermSuggestionDto;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.kb.TurRelatedTermService;
 
 import io.swagger.v3.oas.annotations.Operation;

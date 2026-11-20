@@ -41,8 +41,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
@@ -79,7 +79,7 @@ class TurImportExchangeContentStreamTest {
     void setUp() {
         contentExchangeService = new TurSNSiteContentExchangeService(turSNSiteRepository,
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository.class),
+                        com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository.class),
                 pluginFactory,
                 org.mockito.Mockito.mock(com.viglet.turing.sn.field.TurSNSiteFieldService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.rag.TurSNGenAi.class),

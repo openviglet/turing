@@ -24,8 +24,8 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDefaultFieldsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchQueryContextBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchQueryContextQueryBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**

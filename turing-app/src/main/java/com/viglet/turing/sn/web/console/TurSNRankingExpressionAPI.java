@@ -35,13 +35,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.dto.sn.ranking.TurSNRankingExpressionDto;
-import com.viglet.turing.persistence.mapper.sn.ranking.TurSNRankingExpressionMapper;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingCondition;
-import com.viglet.turing.persistence.model.sn.ranking.TurSNRankingExpression;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.persistence.repository.sn.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.persistence.dto.ranking.TurSNRankingExpressionDto;
+import com.viglet.turing.sn.persistence.mapper.ranking.TurSNRankingExpressionMapper;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
+import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
+import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;

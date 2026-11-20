@@ -32,8 +32,8 @@ import org.mockito.quality.Strictness;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
-import com.viglet.turing.domain.sn.TurSNSiteDomain;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteDomain;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.storage.TurStorageKeys;
 import com.viglet.turing.storage.TurStorageService;
 

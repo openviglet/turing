@@ -17,14 +17,14 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.sn.merge.TurSNSiteMergeProvidersDto;
-import com.viglet.turing.persistence.mapper.sn.merge.TurSNSiteMergeProvidersMapper;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProviders;
-import com.viglet.turing.persistence.model.sn.merge.TurSNSiteMergeProvidersField;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersFieldRepository;
-import com.viglet.turing.persistence.repository.sn.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.persistence.dto.merge.TurSNSiteMergeProvidersDto;
+import com.viglet.turing.sn.persistence.mapper.merge.TurSNSiteMergeProvidersMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
+import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersFieldRepository;
+import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteMergeProvidersAPITest {

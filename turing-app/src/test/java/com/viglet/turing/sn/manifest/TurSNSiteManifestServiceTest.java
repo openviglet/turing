@@ -34,14 +34,14 @@ import com.viglet.core.manifest.VigletManifestFieldChange;
 import com.viglet.core.manifest.VigletManifestMigrationAction;
 import com.viglet.core.manifest.VigletManifestResult;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
-import com.viglet.turing.domain.sn.SnSiteIndexInvalidatedEvent;
+import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 import com.viglet.turing.sn.template.TurSNTemplate;
 
@@ -291,8 +291,8 @@ class TurSNSiteManifestServiceTest {
     private static TurSNManifestCustomSort closingSoonest() {
         return new TurSNManifestCustomSort("closingSoonest", "Closing soonest", List.of(
                 new TurSNManifestCustomSortItem("expiresAt",
-                        com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum.ASC,
-                        com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum.LAST)));
+                        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.ASC,
+                        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST)));
     }
 
     @Test

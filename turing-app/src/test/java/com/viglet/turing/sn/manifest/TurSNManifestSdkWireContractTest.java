@@ -41,7 +41,7 @@ import com.viglet.turing.client.sn.manifest.TurSNManifestDiff;
 import com.viglet.turing.client.sn.manifest.TurSNManifestFieldChange;
 import com.viglet.turing.client.sn.manifest.TurSNManifestResult;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -188,11 +188,11 @@ class TurSNManifestSdkWireContractTest {
             assertThat(sort.items()).extracting(TurSNManifestCustomSortItem::field)
                     .containsExactly("expiresAt", "publishedAt");
             assertThat(sort.items().get(0).order())
-                    .isEqualTo(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum.ASC);
+                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.ASC);
             assertThat(sort.items().get(0).missing())
-                    .isEqualTo(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortMissingEnum.LAST);
+                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum.LAST);
             assertThat(sort.items().get(1).order())
-                    .isEqualTo(com.viglet.turing.persistence.model.sn.sort.TurSNSiteCustomSortOrderEnum.DESC);
+                    .isEqualTo(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum.DESC);
             assertThat(sort.items().get(1).missing()).isNull();
         });
     }
@@ -226,7 +226,7 @@ class TurSNManifestSdkWireContractTest {
         TurSNManifestGenAi bound = bind(MAPPER.writeValueAsString(manifest)).genAi();
         assertThat(bound.ownAgentId()).isNull();
         assertThat(bound.knowledgeBaseMode())
-                .isEqualTo(com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode.HYBRID);
+                .isEqualTo(com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode.HYBRID);
 
         var serverResult = new TurSNManifestProvisionResult(new VigletManifestResult("s1", "Sample", false,
                 List.of(), List.of(), List.of(), List.of(), null), List.of(), List.of(), true);
@@ -252,9 +252,9 @@ class TurSNManifestSdkWireContractTest {
         TurSNManifestFacets bound = bind(MAPPER.writeValueAsString(manifest)).facets();
         assertThat(bound.enabled()).isTrue();
         assertThat(bound.type())
-                .isEqualTo(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum.AND);
+                .isEqualTo(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum.AND);
         assertThat(bound.itemType())
-                .isEqualTo(com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum.OR);
+                .isEqualTo(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum.OR);
         assertThat(bound.itemsPerFacet()).isEqualTo(25);
 
         var serverResult = new TurSNManifestProvisionResult(new VigletManifestResult("s1", "Sample", false,

@@ -25,7 +25,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSearchCacheKey;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;

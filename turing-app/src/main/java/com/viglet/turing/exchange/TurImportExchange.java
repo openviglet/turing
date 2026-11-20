@@ -37,8 +37,8 @@ import com.viglet.turing.exchange.agent.TurAIAgentImportService;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 

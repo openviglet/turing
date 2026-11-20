@@ -40,11 +40,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricClickTerm;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickTerm;
 
 /**
  * T1131 — the click-through report joins searches and clicks per term.

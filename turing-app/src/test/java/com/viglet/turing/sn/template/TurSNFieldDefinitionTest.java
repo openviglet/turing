@@ -8,7 +8,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExtFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;
 
 class TurSNFieldDefinitionTest {
 

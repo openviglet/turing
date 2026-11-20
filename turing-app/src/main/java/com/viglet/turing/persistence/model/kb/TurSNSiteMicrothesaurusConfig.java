@@ -23,7 +23,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

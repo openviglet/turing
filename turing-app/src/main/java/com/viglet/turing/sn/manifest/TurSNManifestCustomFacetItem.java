@@ -24,7 +24,7 @@ package com.viglet.turing.sn.manifest;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
 /**
  * One bucket of a {@link TurSNManifestCustomFacet} (T1084), spelled as the

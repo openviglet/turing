@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.viglet.turing.sn.web.queue.TurSNProcessQueue;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

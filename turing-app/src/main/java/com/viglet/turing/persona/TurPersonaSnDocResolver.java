@@ -22,7 +22,7 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;

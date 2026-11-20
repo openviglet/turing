@@ -25,10 +25,10 @@ import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.persona.TurPersonaGroundingSource;
 import com.viglet.turing.persistence.model.persona.TurPersonaSource;
 import com.viglet.turing.persistence.model.persona.TurPersonaSourceStatus;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.persistence.repository.persona.TurPersonaSourceRepository;
-import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import lombok.extern.slf4j.Slf4j;

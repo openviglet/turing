@@ -21,7 +21,7 @@
 
 package com.viglet.turing.sn.manifest;
 
-import com.viglet.turing.persistence.model.sn.genai.TurSNKnowledgeBaseMode;
+import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 
 /**
  * The GenAI binding an SN manifest declares for its site (T1116). Declaring it

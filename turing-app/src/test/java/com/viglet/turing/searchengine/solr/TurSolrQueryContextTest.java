@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 
 /**
  * Unit tests for TurSolrQueryContext.

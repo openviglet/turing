@@ -19,10 +19,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonym;
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
-import com.viglet.turing.persistence.repository.sn.synonym.TurSNSynonymRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonym;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.repository.synonym.TurSNSynonymRepository;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 
 @ExtendWith(MockitoExtension.class)

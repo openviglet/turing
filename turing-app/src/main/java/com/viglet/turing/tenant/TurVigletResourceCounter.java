@@ -19,7 +19,7 @@ import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletResourceCounter;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 /**
  * T396 / §XIV.9 — the {@link VigletResourceCounter} SPI feeding the shared

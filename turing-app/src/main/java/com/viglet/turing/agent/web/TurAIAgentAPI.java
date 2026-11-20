@@ -31,7 +31,7 @@ import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepos
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
 import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.sn.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.system.TurGlobalSettingsService;

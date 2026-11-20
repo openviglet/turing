@@ -30,7 +30,7 @@ import com.viglet.turing.persistence.dto.kb.TurRelatedTermSuggestionDto;
 import com.viglet.turing.persistence.model.kb.TurThesaurusRelationType;
 import com.viglet.turing.persistence.model.kb.TurThesaurusTerm;
 import com.viglet.turing.persistence.model.kb.TurThesaurusTermRelation;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persistence.repository.kb.TurThesaurusTermRelationRepository;
 import com.viglet.turing.persistence.repository.kb.TurThesaurusTermRepository;
 

@@ -35,8 +35,8 @@ import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService.VideoUnderstanding;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 
 /**
  * T501 / §X.19 — unit coverage for the index-time media-understanding enricher:

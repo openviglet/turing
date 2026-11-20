@@ -12,7 +12,7 @@ package com.viglet.turing.rag.catalog.planning;
 import java.util.List;
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.sn.genai.TurCopilotPlanningStrategy;
+import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
 
 /**

@@ -48,7 +48,7 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.logging.TurLoggingUtils;
-import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.TurSNPartitionWriteGuard;

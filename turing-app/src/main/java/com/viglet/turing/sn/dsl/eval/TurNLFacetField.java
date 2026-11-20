@@ -11,7 +11,7 @@ package com.viglet.turing.sn.dsl.eval;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 
 /**
  * A single declared field in the schema the NL→facet parser maps onto (T385 /

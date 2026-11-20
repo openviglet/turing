@@ -51,8 +51,8 @@ import com.viglet.turing.searchengine.elasticsearch.TurElasticsearch;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstance;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchUtils;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 /**
  * T1040 / §CVI.5 — the Elasticsearch half: asks the engine the same two questions

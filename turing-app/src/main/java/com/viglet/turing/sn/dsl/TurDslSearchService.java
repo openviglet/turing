@@ -3,7 +3,7 @@ package com.viglet.turing.sn.dsl;
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.LocaleUtils;

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * Tests for TurSearchEnginePluginFactory.

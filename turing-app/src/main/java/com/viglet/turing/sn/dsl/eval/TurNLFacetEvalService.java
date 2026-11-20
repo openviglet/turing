@@ -15,8 +15,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport.CaseResult;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser.ParseRequest;

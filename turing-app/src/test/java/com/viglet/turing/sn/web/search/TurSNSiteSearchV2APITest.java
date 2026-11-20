@@ -49,7 +49,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteLocaleBean;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
@@ -193,7 +193,7 @@ class TurSNSiteSearchV2APITest {
     }
 
     private static com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView view(
-            com.viglet.turing.persistence.model.sn.TurSNSite site) {
+            com.viglet.turing.sn.persistence.model.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
 }

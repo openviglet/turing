@@ -21,7 +21,7 @@
 
 package com.viglet.turing.sn.manifest;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 
 /**
  * The site-level facet behaviour an SN manifest declares (T1135). Every

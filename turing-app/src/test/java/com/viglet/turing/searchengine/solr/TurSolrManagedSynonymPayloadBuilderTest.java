@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.sn.synonym.TurSNSynonymType;
+import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**

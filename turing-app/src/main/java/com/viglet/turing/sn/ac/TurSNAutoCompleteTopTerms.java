@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
-import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricTerms;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms;
 import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;

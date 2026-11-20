@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.se.passage.TurSEPassage;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;

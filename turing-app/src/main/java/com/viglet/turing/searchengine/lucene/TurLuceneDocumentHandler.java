@@ -19,8 +19,8 @@ package com.viglet.turing.searchengine.lucene;
 import static com.viglet.turing.searchengine.lucene.TurLuceneConstants.*;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteField;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.document.*;

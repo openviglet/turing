@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFacetDefinitionFactory;
 

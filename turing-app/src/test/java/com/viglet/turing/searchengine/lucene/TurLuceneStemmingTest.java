@@ -31,9 +31,9 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 
 /**
  * T1170 — a plural query finds the singular-titled document (and the reverse) on

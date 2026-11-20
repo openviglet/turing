@@ -31,11 +31,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymAlgoliaImportRequest;
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymDto;
-import com.viglet.turing.persistence.dto.sn.synonym.TurSNSynonymSupportDto;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymAlgoliaImportRequest;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
+import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymSupportDto;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 import com.viglet.turing.sn.synonym.TurSNSynonymImportService;

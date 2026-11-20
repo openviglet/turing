@@ -53,11 +53,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
-import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEGroup;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -80,7 +80,7 @@ class TurSolrResultProcessorTest {
         private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
 
         @Mock
-        private com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
 
         @Test
         @SuppressWarnings("unchecked")

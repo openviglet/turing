@@ -32,8 +32,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persistence.model.sn.TurSNSite;
-import com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
@@ -112,9 +112,9 @@ class TurSNSimilarDocumentsServiceTest {
 
         service.findSimilar(SITE, SEED, 10, Locale.ENGLISH, null);
 
-        org.mockito.ArgumentCaptor<com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale>
+        org.mockito.ArgumentCaptor<com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale>
                 captor = org.mockito.ArgumentCaptor.forClass(
-                        com.viglet.turing.persistence.model.sn.locale.TurSNSiteLocale.class);
+                        com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
         verify(plugin).getSimilarDocuments(captor.capture(), eq(SEED), eq(10));
 
         assertThat(captor.getValue()).satisfies(siteLocale -> {
@@ -259,7 +259,7 @@ class TurSNSimilarDocumentsServiceTest {
     }
 
     private static com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView view(
-            com.viglet.turing.persistence.model.sn.TurSNSite site) {
+            com.viglet.turing.sn.persistence.model.TurSNSite site) {
         return com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView.from(site, "solr");
     }
 }
