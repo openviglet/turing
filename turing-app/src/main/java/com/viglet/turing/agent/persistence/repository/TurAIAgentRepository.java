@@ -23,8 +23,8 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
      * already closed. Joining at load time materializes everything as
      * concrete objects that don't need a session for later access.
      *
-     * <p>The ManyToOne {@code defaultPersona} (with, until T1315 made them ids,
-     * the embedding model and the store) is accessed by every
+     * <p>The ManyToOne {@code defaultPersona} (with the embedding model and the
+     * store, until T1315 made all three ids) is accessed by every
      * chat turn — each as a separate lazy load before this was added, costing
      * ~50-100ms per round-trip with the temporary session opened by
      * {@code enable_lazy_load_no_trans}. Folding them into the same query
@@ -41,7 +41,6 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
             + " LEFT JOIN FETCH a.mcpServers"
             + " LEFT JOIN FETCH a.customTools"
             + " LEFT JOIN FETCH a.personas"
-            + " LEFT JOIN FETCH a.defaultPersona"
             + " WHERE a.id = :id")
     @NotNull
     Optional<TurAIAgent> findById(@NotNull @Param("id") String id);

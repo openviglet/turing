@@ -83,6 +83,7 @@ class TurSystemPromptValidatorServiceTest {
     private static TurPersona persona(String name) {
         TurPersona p = new TurPersona();
         p.setName(name);
+        p.setId("persona-" + name);
         return p;
     }
 
@@ -117,7 +118,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("Always respond in English.");
         TurPersona persona = persona("Voz BR");
         persona.setSystemInstruction("Você é simpático. Sempre responda em português.");
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
 
         var issues = service.validate(agent);
         assertThat(codes(issues)).contains("language_directive_conflict");
@@ -129,7 +130,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("Always respond in English.");
         TurPersona persona = persona("Voice");
         persona.setSystemInstruction("Be friendly and reply in English.");
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
 
         assertThat(codes(service.validate(agent))).doesNotContain("language_directive_conflict");
     }
@@ -141,7 +142,7 @@ class TurSystemPromptValidatorServiceTest {
         TurPersona persona = persona("P");
         persona.setMandatoryTerms("innovation | synergy");
         persona.setForbiddenTerms("synergy | cheap");
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
 
         var issues = service.validate(agent);
         assertThat(issues).anyMatch(i -> i.code().equals("persona_vocab_contradiction")
@@ -154,7 +155,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("You must always be cheap and fast.");
         TurPersona persona = persona("P");
         persona.setForbiddenTerms("cheap");
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
 
         assertThat(codes(service.validate(agent))).contains("forbidden_term_in_prompt");
     }

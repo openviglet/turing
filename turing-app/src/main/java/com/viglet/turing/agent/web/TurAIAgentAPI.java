@@ -202,18 +202,8 @@ public class TurAIAgentAPI {
             Set<TurPersona> personaCatalog = resolveRelations(
                     turAIAgent.getPersonas(), turPersonaRepository);
             agentEdit.setPersonas(personaCatalog);
-            TurPersona defaultPersona = null;
-            if (turAIAgent.getDefaultPersona() != null
-                    && turAIAgent.getDefaultPersona().getId() != null) {
-                defaultPersona = turPersonaRepository
-                        .findById(turAIAgent.getDefaultPersona().getId())
-                        .orElse(null);
-            }
-            if (defaultPersona != null && !containsById(personaCatalog, defaultPersona.getId())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Default persona must be one of the agent's allowed personas");
-            }
-            agentEdit.setDefaultPersona(defaultPersona);
+            agentEdit.setDefaultPersonaId(
+                    validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
             agentEdit.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
                     agentEdit.getLlmInstances(),
                     agentEdit.getEmbeddingModelInstanceId(),
@@ -357,24 +347,30 @@ public class TurAIAgentAPI {
         Set<TurPersona> personaCatalog = resolveRelations(
                 turAIAgent.getPersonas(), turPersonaRepository);
         turAIAgent.setPersonas(personaCatalog);
-        TurPersona defaultPersona = null;
-        if (turAIAgent.getDefaultPersona() != null
-                && turAIAgent.getDefaultPersona().getId() != null) {
-            defaultPersona = turPersonaRepository
-                    .findById(turAIAgent.getDefaultPersona().getId())
-                    .orElse(null);
-        }
-        if (defaultPersona != null && !containsById(personaCatalog, defaultPersona.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Default persona must be one of the agent's allowed personas");
-        }
-        turAIAgent.setDefaultPersona(defaultPersona);
+        turAIAgent.setDefaultPersonaId(
+                validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
         turAIAgent.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
                 turAIAgent.getLlmInstances(),
                 turAIAgent.getEmbeddingModelInstanceId(),
                 turAIAgent.getStoreInstanceId()));
         this.turAIAgentRepository.save(turAIAgent);
         return turAIAgentMapper.toDto(turAIAgent);
+    }
+
+    /**
+     * T1315 — the default persona is held by id. An id no persona has is
+     * dropped; one that exists outside the agent's catalog is refused, since
+     * the runtime reads the default from the catalog.
+     */
+    private String validDefaultPersonaId(String requestedId, Set<TurPersona> personaCatalog) {
+        if (requestedId == null || !turPersonaRepository.existsById(requestedId)) {
+            return null;
+        }
+        if (!containsById(personaCatalog, requestedId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Default persona must be one of the agent's allowed personas");
+        }
+        return requestedId;
     }
 
     /**

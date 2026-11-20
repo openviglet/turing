@@ -66,6 +66,9 @@ class TurAIAgentAPITest {
     @Mock
     private com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
 
+    @Mock
+    private com.viglet.turing.persona.persistence.repository.TurPersonaRepository turPersonaRepository;
+
     @InjectMocks
     private TurAIAgentAPI turAIAgentAPI;
 
@@ -197,6 +200,34 @@ class TurAIAgentAPITest {
         verify(turAIAgentRepository, times(1)).save(any(TurAIAgent.class));
         // T963 — the plan is consulted on every create, not only when it bites.
         verify(turTenantQuotaService, times(1)).checkCanCreateAgent();
+    }
+
+    /** T1315 — a default persona outside the agent's catalog is refused. */
+    @Test
+    void aDefaultPersonaOutsideTheCatalogIsRefused() throws Exception {
+        when(turPersonaRepository.existsById("p1")).thenReturn(true);
+
+        mockMvc.perform(post("/api/ai-agent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"A\",\"enabled\":1,\"defaultPersonaId\":\"p1\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(turAIAgentRepository, times(0)).save(any(TurAIAgent.class));
+    }
+
+    /** T1315 — a default persona id no persona has is dropped, not stored. */
+    @Test
+    void anUnknownDefaultPersonaIdIsDropped() throws Exception {
+        when(turPersonaRepository.existsById("ghost")).thenReturn(false);
+
+        mockMvc.perform(post("/api/ai-agent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"A\",\"enabled\":1,\"defaultPersonaId\":\"ghost\"}"))
+                .andExpect(status().isOk());
+
+        org.mockito.ArgumentCaptor<TurAIAgent> saved = org.mockito.ArgumentCaptor.forClass(TurAIAgent.class);
+        verify(turAIAgentRepository).save(saved.capture());
+        org.assertj.core.api.Assertions.assertThat(saved.getValue().getDefaultPersonaId()).isNull();
     }
 
     /**

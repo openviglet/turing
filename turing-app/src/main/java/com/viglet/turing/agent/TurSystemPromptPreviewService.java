@@ -352,7 +352,7 @@ public class TurSystemPromptPreviewService {
                 ? null : flowPreview.personaResolution();
         TurPersona persona = replay != null ? replay.persona()
                 : (personaResolution != null
-                        ? personaResolution.persona() : agent.getDefaultPersona());
+                        ? personaResolution.persona() : agent.defaultPersonaFromCatalog());
 
         // ONE assembly, shared with the runtime. Null embedding model + null
         // query so the persona contributor skips live few-shot retrieval; null
@@ -784,7 +784,7 @@ public class TurSystemPromptPreviewService {
      * otherwise fall back to the default and flag the silent fallback.
      */
     private FlowPersonaResolution resolvePersona(TurAIAgent agent, String overrideId) {
-        TurPersona defaultPersona = agent.getDefaultPersona();
+        TurPersona defaultPersona = agent.defaultPersonaFromCatalog();
         if (!StringUtils.hasText(overrideId)) {
             return new FlowPersonaResolution(defaultPersona, null, false, false);
         }

@@ -19,7 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -788,10 +787,10 @@ public class TurAIAgent implements Serializable {
      * runs with one persona at a time at runtime, but a chat flow can switch
      * the active voice mid-conversation by setting the special variable
      * {@code __activePersonaId} on the flow state — the resolver picks the
-     * matching entry from this set before each turn. {@link #defaultPersona}
+     * matching entry from this set before each turn. {@link #defaultPersonaId}
      * is the fallback when no override is active.
      *
-     * <p>Constraint enforced at save time: {@link #defaultPersona}, when
+     * <p>Constraint enforced at save time: {@link #defaultPersonaId}, when
      * present, must be a member of this set.
      *
      * @since 2026.2.7
@@ -806,15 +805,14 @@ public class TurAIAgent implements Serializable {
      * The persona used when no chat flow has overridden the active voice.
      * Optional — when null, the agent speaks in the LLM's default voice.
      *
-     * <p>Mapped to the (renamed) column {@code default_persona_id}; the
-     * column kept its FK contract from the v2026.2.6.3 migration but was
-     * renamed in v2026.2.7.1.
+     * <p>T1315 — held by id: the persona belongs to the persona module, and
+     * the default is always a member of {@link #personas}, so
+     * {@link #defaultPersonaFromCatalog()} answers it without another load.
      *
      * @since 2026.2.7
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "default_persona_id")
-    private TurPersona defaultPersona;
+    @Column(name = "default_persona_id", length = 36)
+    private String defaultPersonaId;
 
     /**
      * T28 / §III.5 Phase C — SE instance hosting the agent's analytics
@@ -833,4 +831,33 @@ public class TurAIAgent implements Serializable {
      */
     @Column(name = "analytics_se_instance_id", length = 36)
     private String analyticsSeInstanceId;
+
+    /**
+     * T1315 — the default persona, read from this agent's catalog, where the
+     * save path keeps it. {@code null} when none is set or it is not in the
+     * catalog. Not a bean property, so it is never serialized.
+     */
+    public TurPersona defaultPersonaFromCatalog() {
+        if (defaultPersonaId == null || personas == null) {
+            return null;
+        }
+        return personas.stream()
+                .filter(p -> defaultPersonaId.equals(p.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * T1315 — makes {@code persona} this agent's default, adding it to the
+     * catalog so {@link #defaultPersonaFromCatalog()} finds it. For the
+     * never-persisted shells that speak in one persona's voice.
+     */
+    public void useDefaultPersona(TurPersona persona) {
+        if (persona == null) {
+            defaultPersonaId = null;
+            return;
+        }
+        personas.add(persona);
+        defaultPersonaId = persona.getId();
+    }
 }

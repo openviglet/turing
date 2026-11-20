@@ -1778,3 +1778,4 @@
 - **T1315e** — The kb site selection and config hold snSiteId on the same column, whose Liquibase ON DELETE CASCADE still removes them with the site; kb repositories and callers query by site id.
 - **T1315f** — TurAIAgent holds embeddingModelInstanceId and storeInstanceId; TurAgentRagInfra resolves them through llm and rag for the chat path and exports, and the agent and SN GenAI forms use the ids (design §CLXXXIX.31 recorded in `turing-app/src/main/java/com/viglet/turing/agent/TurAgentRagInfra.java`).
 - **T1310c** — SN search, spotlights, autocomplete stop words, merge providers and the DSL query API call the plugin's findById, stopWords, findByFieldValues and nativeJsonQuery; no sn class imports an engine package.
+- **T1315g** — An agent holds its default persona as defaultPersonaId, read from its persona catalog; save refuses a default outside the catalog and drops an unknown id, and the console sends the id.

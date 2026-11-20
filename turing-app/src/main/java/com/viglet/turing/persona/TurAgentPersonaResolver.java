@@ -37,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
  *   <li>If the conversation has an active flow state with a non-blank
  *       {@code __activePersonaId} variable AND that persona is in the agent's
  *       catalog, return it.</li>
- *   <li>Otherwise, return {@code agent.getDefaultPersona()} (which may be
+ *   <li>Otherwise, return {@code agent.defaultPersonaFromCatalog()} (which may be
  *       {@code null} — the agent then speaks in the LLM's default voice).</li>
  * </ol>
  *
@@ -107,7 +107,7 @@ public class TurAgentPersonaResolver {
         if (override != null) return asSpeaker(agent, override);
         TurPersona requested = findInCatalog(agent, requestPersonaId);
         if (requested != null) return asSpeaker(agent, requested);
-        return asSpeaker(agent, agent.getDefaultPersona());
+        return asSpeaker(agent, agent.defaultPersonaFromCatalog());
     }
 
     /**

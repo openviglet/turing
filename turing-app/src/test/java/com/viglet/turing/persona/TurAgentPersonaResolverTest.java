@@ -64,7 +64,7 @@ class TurAgentPersonaResolverTest {
         agent = new TurAIAgent();
         agent.setId(AGENT_ID);
         agent.setPersonas(Set.of(speaker, other, audienceOnly, defaultPersona));
-        agent.setDefaultPersona(defaultPersona);
+        agent.setDefaultPersonaId(defaultPersona.getId());
         // No flow state by default — the anonymous RAG turn has none.
         lenient().when(flowStateRepository
                 .findByConversationIdAndFlow_TurAIAgent_Id(CONV, AGENT_ID))

@@ -205,8 +205,8 @@ export interface TurAIAgent {
   customTools: TurCustomTool[];
   /** Catalog of voices this agent is allowed to speak with — chat flows pick from here. @since 2026.2.7 */
   personas?: TurPersona[];
-  /** Voice used when no chat flow has overridden the active persona. @since 2026.2.7 */
-  defaultPersona?: TurPersona | null;
+  /** Voice used when no chat flow has overridden the active persona; T1315 — by id, always one of `personas`. @since 2026.2.7 */
+  defaultPersonaId?: string | null;
   /** T1315 — the embedding model, by id (null = the global default). */
   embeddingModelInstanceId?: string | null;
   /** T1315 — the vector store, by id (null = the global default). */

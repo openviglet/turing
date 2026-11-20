@@ -200,7 +200,7 @@ public class TurPersonaChatAPI {
         agent.setTitle("Persona: " + persona.getName());
         agent.setEnabled(1);
         agent.setNativeTools(allNativeToolNamesCsv());
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
         return agent;
     }
 

@@ -250,7 +250,7 @@ public class TurResearchInterviewEngine {
         agent.setTitle("Research participant: " + persona.getName());
         agent.setEnabled(1);
         agent.setNativeTools(allNativeToolNamesCsv());
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
         return agent;
     }
 

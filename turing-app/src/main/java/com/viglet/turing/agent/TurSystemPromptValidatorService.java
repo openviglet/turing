@@ -104,7 +104,7 @@ public class TurSystemPromptValidatorService {
     public List<TurSystemPromptIssueDto> validate(TurAIAgent agent) {
         List<TurSystemPromptIssueDto> issues = new ArrayList<>();
         String base = agent.getSystemPrompt();
-        TurPersona persona = agent.getDefaultPersona();
+        TurPersona persona = agent.defaultPersonaFromCatalog();
         String personaInstruction = persona == null ? null : persona.getSystemInstruction();
         TurSystemPromptPreviewDto preview = previewService.buildPreview(agent);
 

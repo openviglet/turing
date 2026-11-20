@@ -169,8 +169,9 @@ public class TurAIAgentExportService {
         if (agent.getPersonas() != null) {
             agent.getPersonas().forEach(p -> refs.personas.put(p.getId(), p));
         }
-        if (agent.getDefaultPersona() != null) {
-            refs.personas.putIfAbsent(agent.getDefaultPersona().getId(), agent.getDefaultPersona());
+        TurPersona defaultPersona = agent.defaultPersonaFromCatalog();
+        if (defaultPersona != null) {
+            refs.personas.putIfAbsent(defaultPersona.getId(), defaultPersona);
         }
         if (agent.getLlmInstances() != null) {
             agent.getLlmInstances().forEach(l -> refs.llms.put(l.getId(), l));

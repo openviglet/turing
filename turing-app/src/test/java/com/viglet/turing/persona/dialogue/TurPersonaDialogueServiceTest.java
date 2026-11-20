@@ -86,7 +86,7 @@ class TurPersonaDialogueServiceTest {
         // the round-robin and the "reply to the previous message" threading.
         when(agentChatExecutor.execute(any(TurAgentChatRequest.class))).thenAnswer(inv -> {
             TurAgentChatRequest req = inv.getArgument(0);
-            String name = req.agent().getDefaultPersona().getName();
+            String name = req.agent().defaultPersonaFromCatalog().getName();
             String incoming = req.history().get(0).content();
             return Flux.just(new ChatResponse("assistant", name + "->" + incoming, "token"));
         });

@@ -132,7 +132,7 @@ class TurAIAgentExportServiceTest {
         agent.setEnabled(1);
         agent.setRichContentEnabled(true); // T632 — must survive the export envelope
         agent.setPersonas(new HashSet<>(List.of(persona)));
-        agent.setDefaultPersona(persona);
+        agent.useDefaultPersona(persona);
         agent.setLlmInstances(new HashSet<>(List.of(llm)));
         agent.setCustomTools(new HashSet<>(List.of(tool)));
 

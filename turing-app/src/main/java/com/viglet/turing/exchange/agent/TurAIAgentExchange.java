@@ -147,8 +147,8 @@ public class TurAIAgentExchange {
         if (agent.getPersonas() != null) {
             agent.getPersonas().forEach(p -> e.personaIds.add(p.getId()));
         }
-        if (agent.getDefaultPersona() != null) {
-            e.defaultPersonaId = agent.getDefaultPersona().getId();
+        if (agent.getDefaultPersonaId() != null) {
+            e.defaultPersonaId = agent.getDefaultPersonaId();
         }
         if (agent.getLlmInstances() != null) {
             agent.getLlmInstances().forEach(l -> e.llmInstanceIds.add(l.getId()));

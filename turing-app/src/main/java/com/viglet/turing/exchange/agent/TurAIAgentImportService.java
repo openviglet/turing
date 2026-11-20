@@ -467,7 +467,8 @@ public class TurAIAgentImportService {
     private static void wireAgentReferences(TurAIAgent agent, TurAIAgentExchange a, ResolvedRefs refs) {
         agent.setPersonas(resolveSet(a.getPersonaIds(), refs.personas::get));
         if (a.getDefaultPersonaId() != null) {
-            agent.setDefaultPersona(refs.personas.get(a.getDefaultPersonaId()));
+            var defaultPersona = refs.personas.get(a.getDefaultPersonaId());
+            agent.setDefaultPersonaId(defaultPersona == null ? null : defaultPersona.getId());
         }
         agent.setLlmInstances(resolveSet(a.getLlmInstanceIds(), refs.llms::get));
         agent.setMcpServers(resolveSet(a.getMcpServerIds(), refs.mcpServers::get));
