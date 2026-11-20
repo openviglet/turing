@@ -43,7 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.core.content.VigletContentExtractor;
 import com.viglet.core.content.VigletExtractedContent;
-import com.viglet.turing.api.ocr.TurTikaFileAttributes;
+import com.viglet.turing.rag.ocr.TurTikaFileAttributes;
 import com.viglet.turing.commons.file.TurFileAttributes;
 import com.viglet.turing.commons.file.TurFileSize;
 import com.viglet.turing.commons.utils.TurCommonsUtils;

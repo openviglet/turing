@@ -1,0 +1,445 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package com.viglet.turing.sn.web.console;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.viglet.turing.sn.facet.TurSNCustomFacetItems;
+
+import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacet;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetItem;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteCustomFacetOperatorEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.persistence.model.sn.field.TurSNSiteFieldExt;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteCustomFacetRepository;
+import com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@RestController
+@RequestMapping("/api/sn/{snSiteId}/custom-facet")
+@Tag(name = "Semantic Navigation Custom Facet", description = "Semantic Navigation Custom Facet API")
+@Transactional
+public class TurSNSiteCustomFacetAPI {
+    private static final String CUSTOM_FACET_NOT_FOUND = "Custom facet not found.";
+
+    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+
+    public TurSNSiteCustomFacetAPI(TurSNSiteRepository turSNSiteRepository,
+            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+            TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository) {
+        this.turSNSiteRepository = turSNSiteRepository;
+        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
+        this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
+    }
+
+    @Operation(summary = "Semantic Navigation Site Custom Facet List")
+    @GetMapping
+    public List<TurSNSiteCustomFacetDto> list(@PathVariable String snSiteId) {
+        TurSNSite turSNSite = getSite(snSiteId);
+        return getAllCustomFacets(turSNSite).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    @Operation(summary = "Show a Semantic Navigation Site Custom Facet")
+    @GetMapping("/{customFacetId}")
+    public TurSNSiteCustomFacetDto get(@PathVariable String snSiteId,
+            @PathVariable String customFacetId) {
+        TurSNSite turSNSite = getSite(snSiteId);
+        TurSNSiteCustomFacet turSNSiteCustomFacet = findCustomFacetById(turSNSite, customFacetId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, CUSTOM_FACET_NOT_FOUND));
+        return toDto(turSNSiteCustomFacet);
+    }
+
+    @Operation(summary = "Create a Semantic Navigation Site Custom Facet")
+    @PostMapping
+    public TurSNSiteCustomFacetDto create(@PathVariable String snSiteId,
+            @RequestBody TurSNSiteCustomFacetDto payload) {
+        TurSNSite turSNSite = getSite(snSiteId);
+        TurSNSiteFieldExt targetField = getTargetField(turSNSite, payload.getFieldExtId());
+
+        TurSNSiteCustomFacet customFacet = TurSNSiteCustomFacet.builder().build();
+        customFacet.setTurSNSiteFieldExt(targetField);
+        applyPayload(customFacet, payload, turSNSite, true);
+
+        Set<TurSNSiteCustomFacet> customFacets = new HashSet<>(
+                Optional.ofNullable(targetField.getCustomFacets()).orElse(Set.of()));
+        customFacets.add(customFacet);
+        targetField.setCustomFacets(customFacets);
+
+        TurSNSiteFieldExt savedField = turSNSiteFieldExtRepository.save(targetField);
+        TurSNSiteCustomFacet savedFacet = Optional.ofNullable(savedField.getCustomFacets())
+                .orElse(Set.of())
+                .stream()
+                .filter(facet -> facet.getName().equals(customFacet.getName()))
+                .max(Comparator.comparing(this::safeFacetPosition)
+                        .thenComparing(TurSNSiteCustomFacet::getId, Comparator.nullsLast(String::compareTo)))
+                .orElse(customFacet);
+        return toDto(savedFacet);
+    }
+
+    @Operation(summary = "Update a Semantic Navigation Site Custom Facet")
+    @PutMapping("/{customFacetId}")
+    public TurSNSiteCustomFacetDto update(@PathVariable String snSiteId,
+            @PathVariable String customFacetId,
+            @RequestBody TurSNSiteCustomFacetDto payload) {
+        TurSNSite turSNSite = getSite(snSiteId);
+        CustomFacetFieldBinding currentBinding = findCustomFacetBindingById(turSNSite, customFacetId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, CUSTOM_FACET_NOT_FOUND));
+
+        TurSNSiteFieldExt sourceField = getTargetField(turSNSite, currentBinding.getFieldExt().getId());
+        TurSNSiteCustomFacet customFacet = turSNSiteCustomFacetRepository.findById(customFacetId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, CUSTOM_FACET_NOT_FOUND));
+
+        TurSNSiteFieldExt targetField = Optional.ofNullable(payload.getFieldExtId())
+                .filter(id -> !id.equals(sourceField.getId()))
+                .map(fieldId -> getTargetField(turSNSite, fieldId))
+                .orElse(sourceField);
+
+        customFacet.setTurSNSiteFieldExt(targetField);
+        applyPayload(customFacet, payload, turSNSite, false);
+
+        if (!sourceField.getId().equals(targetField.getId())) {
+            Set<TurSNSiteCustomFacet> targetFacets = new HashSet<>(
+                    Optional.ofNullable(targetField.getCustomFacets()).orElse(Set.of()));
+            customFacet.setTurSNSiteFieldExt(targetField);
+            targetFacets.add(customFacet);
+
+            targetField.setCustomFacets(targetFacets);
+
+            TurSNSiteFieldExt savedTargetField = turSNSiteFieldExtRepository.save(targetField);
+            return Optional.ofNullable(savedTargetField.getCustomFacets())
+                    .orElse(Set.of())
+                    .stream()
+                    .filter(item -> customFacetId.equals(item.getId()))
+                    .findFirst()
+                    .map(this::toDto)
+                    .orElseGet(() -> toDto(customFacet));
+        }
+
+        Set<TurSNSiteCustomFacet> sourceFacets = new HashSet<>(
+                Optional.ofNullable(sourceField.getCustomFacets()).orElse(Set.of()));
+        sourceField.setCustomFacets(sourceFacets);
+        TurSNSiteFieldExt savedSourceField = turSNSiteFieldExtRepository.save(sourceField);
+
+        return Optional.ofNullable(savedSourceField.getCustomFacets())
+                .orElse(Set.of())
+                .stream()
+                .filter(item -> customFacetId.equals(item.getId()))
+                .findFirst()
+                .map(this::toDto)
+                .orElseGet(() -> toDto(customFacet));
+    }
+
+    @Operation(summary = "Delete a Semantic Navigation Site Custom Facet")
+    @DeleteMapping("/{customFacetId}")
+    public boolean delete(@PathVariable String snSiteId,
+            @PathVariable String customFacetId) {
+        TurSNSite turSNSite = getSite(snSiteId);
+        CustomFacetFieldBinding binding = findCustomFacetBindingById(turSNSite, customFacetId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, CUSTOM_FACET_NOT_FOUND));
+
+        TurSNSiteFieldExt fieldExt = getTargetField(turSNSite, binding.getFieldExt().getId());
+        fieldExt.setCustomFacets(fieldExt.getCustomFacets().stream()
+                .filter(item -> !customFacetId.equals(item.getId()))
+                .collect(Collectors.toSet()));
+
+        turSNSiteFieldExtRepository.save(fieldExt);
+        return true;
+    }
+
+    private void applyPayload(TurSNSiteCustomFacet target,
+            TurSNSiteCustomFacetDto payload,
+            TurSNSite turSNSite,
+            boolean isCreate) {
+        if (payload == null) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid custom facet payload.");
+        }
+
+        if (payload.getName() == null || payload.getName().isBlank()) {
+            throw new ResponseStatusException(BAD_REQUEST, "Custom facet name is required.");
+        }
+
+        target.setName(payload.getName());
+        target.setDefaultLabel(payload.getDefaultLabel());
+        target.setLabel(Optional.ofNullable(payload.getLabel()).orElse(Map.of()));
+        target.setFacetType(Optional.ofNullable(payload.getFacetType())
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
+        target.setFacetItemType(Optional.ofNullable(payload.getFacetItemType())
+                .orElse(TurSNSiteFacetFieldEnum.DEFAULT));
+        applyEndField(target, payload.getEndField(), turSNSite);
+
+        Integer facetPosition = payload.getFacetPosition();
+        if (facetPosition == null || facetPosition <= 0) {
+            facetPosition = isCreate ? nextFacetPosition(turSNSite) : target.getFacetPosition();
+        }
+        target.setFacetPosition(facetPosition);
+
+        TurSEFieldType fieldType = Optional.ofNullable(target.getTurSNSiteFieldExt())
+                .map(TurSNSiteFieldExt::getType)
+                .orElse(TurSEFieldType.INT);
+
+        Set<TurSNSiteCustomFacetItem> items = Optional.ofNullable(payload.getItems())
+                .orElse(List.of())
+                .stream()
+                .sorted(Comparator.comparing(this::safeItemPositionDto)
+                        .thenComparing(TurSNSiteCustomFacetItemDto::getLabel, Comparator.nullsLast(String::compareTo)))
+                .map(itemDto -> toEntity(itemDto, fieldType))
+                .collect(Collectors.toCollection(HashSet::new));
+        target.setItems(items);
+    }
+
+    /**
+     * T1224 — a payload without {@code endField} keeps the facet's (a form that
+     * never sent it does not clear what a manifest set); a blank one clears it.
+     */
+    private void applyEndField(TurSNSiteCustomFacet target, String endField, TurSNSite turSNSite) {
+        if (endField == null) {
+            return;
+        }
+        if (endField.isBlank()) {
+            target.setEndField(null);
+            return;
+        }
+        String name = endField.trim();
+        TurSNSiteFieldExt end = turSNSiteFieldExtRepository.findByTurSNSiteAndName(turSNSite, name).stream()
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST,
+                        "End field '" + name + "' is not a field of the site."));
+        TurSNSiteFieldExt start = target.getTurSNSiteFieldExt();
+        if (start != null && (name.equals(start.getName()) || !Objects.equals(start.getType(), end.getType()))) {
+            throw new ResponseStatusException(BAD_REQUEST,
+                    "End field '" + name + "' must be another field of the same type as '" + start.getName() + "'.");
+        }
+        target.setEndField(name);
+    }
+
+    private TurSNSiteCustomFacetItem toEntity(TurSNSiteCustomFacetItemDto dto, TurSEFieldType fieldType) {
+        try {
+            return TurSNCustomFacetItems.toEntity(dto.getId(), dto.getLabel(), dto.getLabels(),
+                    safeItemPositionDto(dto), dto.getOperator(), dto.getRangeStart(), dto.getRangeEnd(),
+                    dto.getRangeStartDate(), dto.getRangeEndDate(), fieldType);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage(), e);
+        }
+    }
+
+    private TurSNSiteCustomFacetDto toDto(TurSNSiteCustomFacet customFacet) {
+        TurSNSiteFieldExt fieldExt = customFacet.getTurSNSiteFieldExt();
+        Map<String, String> labels = new HashMap<>(Optional.ofNullable(customFacet.getLabel()).orElse(Map.of()));
+        List<TurSNSiteCustomFacetItemDto> items = Optional.ofNullable(customFacet.getItems())
+                .orElse(Set.of())
+                .stream()
+                .sorted(Comparator.comparing(this::safeItemPositionEntity)
+                        .thenComparing(TurSNSiteCustomFacetItem::getLabel, Comparator.nullsLast(String::compareTo)))
+                .map(item -> {
+                    TurSNSiteCustomFacetItemDto dto = new TurSNSiteCustomFacetItemDto();
+                    dto.setId(item.getId());
+                    dto.setLabel(item.getLabel());
+                    dto.setLabels(new HashMap<>(Optional.ofNullable(item.getLabels()).orElse(Map.of())));
+                    dto.setPosition(item.getPosition());
+                    dto.setOperator(Optional.ofNullable(item.getOperator())
+                            .orElse(TurSNSiteCustomFacetOperatorEnum.BETWEEN_INCLUSIVE));
+                    dto.setRangeStart(item.getRangeStart());
+                    dto.setRangeEnd(item.getRangeEnd());
+                    dto.setRangeStartDate(item.getRangeStartExpression() != null
+                            ? item.getRangeStartExpression() : formatIsoDate(item.getRangeStartDate()));
+                    dto.setRangeEndDate(item.getRangeEndExpression() != null
+                            ? item.getRangeEndExpression() : formatIsoDate(item.getRangeEndDate()));
+                    return dto;
+                })
+                .toList();
+
+        TurSNSiteCustomFacetDto dto = new TurSNSiteCustomFacetDto();
+        dto.setId(customFacet.getId());
+        dto.setName(customFacet.getName());
+        dto.setDefaultLabel(customFacet.getDefaultLabel());
+        dto.setLabel(labels);
+        dto.setFacetPosition(customFacet.getFacetPosition());
+        dto.setFacetType(customFacet.getFacetType());
+        dto.setFacetItemType(customFacet.getFacetItemType());
+        dto.setEndField(customFacet.getEndField());
+        dto.setItems(items);
+        dto.setFieldExtId(fieldExt != null ? fieldExt.getId() : null);
+        dto.setFieldExtName(fieldExt != null ? fieldExt.getName() : null);
+        dto.setFieldExtType(fieldExt != null && fieldExt.getType() != null
+                ? fieldExt.getType().toString()
+                : null);
+        return dto;
+    }
+
+    private String formatIsoDate(Instant value) {
+        return Optional.ofNullable(value)
+                .map(Instant::toString)
+                .orElse(null);
+    }
+
+    private List<TurSNSiteCustomFacet> getAllCustomFacets(TurSNSite turSNSite) {
+        List<TurSNSiteFieldExt> siteFields = getSiteFields(turSNSite);
+        if (siteFields.isEmpty()) {
+            return List.of();
+        }
+        return turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(siteFields).stream()
+                .sorted(Comparator.comparing(this::safeFacetPosition)
+                        .thenComparing(TurSNSiteCustomFacet::getName, Comparator.nullsLast(String::compareTo)))
+                .toList();
+    }
+
+    private Optional<TurSNSiteCustomFacet> findCustomFacetById(TurSNSite turSNSite, String customFacetId) {
+        return getAllCustomFacets(turSNSite).stream()
+                .filter(customFacet -> customFacetId.equals(customFacet.getId()))
+                .findFirst();
+    }
+
+    private Optional<CustomFacetFieldBinding> findCustomFacetBindingById(TurSNSite turSNSite,
+            String customFacetId) {
+        List<TurSNSiteFieldExt> siteFields = getSiteFields(turSNSite);
+        if (siteFields.isEmpty()) {
+            return Optional.empty();
+        }
+        return turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(siteFields).stream()
+                .filter(customFacet -> customFacetId.equals(customFacet.getId()))
+                .findFirst()
+                .map(customFacet -> CustomFacetFieldBinding.builder()
+                        .fieldExt(customFacet.getTurSNSiteFieldExt())
+                        .customFacet(customFacet)
+                        .build());
+    }
+
+    private TurSNSiteFieldExt getTargetField(TurSNSite turSNSite, String fieldExtId) {
+        if (fieldExtId == null || fieldExtId.isBlank()) {
+            throw new ResponseStatusException(BAD_REQUEST, "fieldExtId is required.");
+        }
+
+        return turSNSiteFieldExtRepository.findById(fieldExtId)
+                .filter(field -> field.getTurSNSite() != null
+                        && turSNSite.getId().equals(field.getTurSNSite().getId()))
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Field not found for this site."));
+    }
+
+    private TurSNSite getSite(String snSiteId) {
+        return turSNSiteRepository.findById(snSiteId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "SN Site not found."));
+    }
+
+    private List<TurSNSiteFieldExt> getSiteFields(TurSNSite turSNSite) {
+        return turSNSiteFieldExtRepository.findByTurSNSite(Sort.by(Sort.Order.asc("name")), turSNSite);
+    }
+
+    private Integer nextFacetPosition(TurSNSite turSNSite) {
+        return getAllCustomFacets(turSNSite).stream()
+                .map(this::safeFacetPosition)
+                .max(Integer::compareTo)
+                .map(maxPosition -> maxPosition + 1)
+                .orElse(1);
+    }
+
+    private Integer safeFacetPosition(TurSNSiteCustomFacet customFacet) {
+        return Optional.ofNullable(customFacet.getFacetPosition()).orElse(Integer.MAX_VALUE);
+    }
+
+    private Integer safeItemPositionEntity(TurSNSiteCustomFacetItem item) {
+        return Optional.ofNullable(item.getPosition()).orElse(Integer.MAX_VALUE);
+    }
+
+    private Integer safeItemPositionDto(TurSNSiteCustomFacetItemDto item) {
+        return Optional.ofNullable(item.getPosition()).orElse(Integer.MAX_VALUE);
+    }
+
+    @Setter
+    @Getter
+    @Builder
+    private static class CustomFacetFieldBinding {
+        private TurSNSiteFieldExt fieldExt;
+        private TurSNSiteCustomFacet customFacet;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TurSNSiteCustomFacetItemDto {
+        private String id;
+        private String label;
+        private Map<String, String> labels;
+        private Integer position;
+        private TurSNSiteCustomFacetOperatorEnum operator;
+        private BigDecimal rangeStart;
+        private BigDecimal rangeEnd;
+        private String rangeStartDate;
+        private String rangeEndDate;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TurSNSiteCustomFacetDto {
+        private String id;
+        private String name;
+        private String defaultLabel;
+        private Map<String, String> label;
+        private Integer facetPosition;
+        private TurSNSiteFacetFieldEnum facetType;
+        private TurSNSiteFacetFieldEnum facetItemType;
+        /** T1224 — the site field where a span ends; absent keeps it, blank clears it. */
+        private String endField;
+        private List<TurSNSiteCustomFacetItemDto> items;
+        private String fieldExtId;
+        private String fieldExtName;
+        private String fieldExtType;
+    }
+}

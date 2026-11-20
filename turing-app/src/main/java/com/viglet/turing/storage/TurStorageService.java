@@ -1,6 +1,6 @@
 package com.viglet.turing.storage;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;

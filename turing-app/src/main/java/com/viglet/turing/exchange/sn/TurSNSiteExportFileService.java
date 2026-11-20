@@ -17,7 +17,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.exchange.TurExchange;

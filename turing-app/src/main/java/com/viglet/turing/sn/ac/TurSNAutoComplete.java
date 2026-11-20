@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.api.sn.search.TurSNSiteSearchCachedAPI;
+import com.viglet.turing.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;

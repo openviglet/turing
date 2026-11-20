@@ -1,6 +1,6 @@
 package com.viglet.turing.storage.asset;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.rag.TurRagUtils;

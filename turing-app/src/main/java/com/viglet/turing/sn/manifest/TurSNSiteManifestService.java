@@ -38,7 +38,7 @@ import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletManifestDiff;
 import com.viglet.core.manifest.VigletManifestFieldChange;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.api.sn.console.TurSNSiteFieldExtAPI;
+import com.viglet.turing.sn.web.console.TurSNSiteFieldExtAPI;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.domain.sn.SnSiteIndexInvalidatedEvent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;

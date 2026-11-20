@@ -1,0 +1,542 @@
+/*
+ * Copyright (C) 2016-2022 the original author or authors.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package com.viglet.turing.sn.web.search;
+
+import com.viglet.turing.sn.search.TurSNSearchRequestAdapter;
+
+import com.viglet.turing.sn.search.TurSNSiteSearchService;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.commons.se.similar.TurSESimilarResult;
+import com.viglet.turing.commons.sn.bean.TurSNSearchLatestRequestBean;
+import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
+import com.viglet.turing.commons.sn.bean.TurSNSearchRequest;
+import com.viglet.turing.commons.sn.bean.TurSNSearchResponse;
+import com.viglet.turing.commons.sn.bean.TurSNSiteLocaleBean;
+import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
+import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
+import com.viglet.turing.commons.sn.bean.TurSNSortOptionBean;
+import com.viglet.turing.commons.sn.bean.structured.TurSNStructuredSearchBean;
+import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
+import com.viglet.turing.commons.sn.search.TurSNParamType;
+import com.viglet.turing.commons.sn.search.TurSNResponseFormat;
+import com.viglet.turing.commons.sn.bean.TurSNDuplicateCluster;
+import com.viglet.turing.sn.TurSNDuplicateClusteringService;
+import com.viglet.turing.sn.TurSNSearchProcess;
+import com.viglet.turing.sn.TurSNSimilarDocumentsService;
+import com.viglet.turing.sn.TurSNStoredDocumentService;
+import com.viglet.turing.shared.exception.TurNotFoundException;
+import com.viglet.turing.sn.TurSNSimilarMode;
+import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/sn/{siteName}/search")
+@Tag(name = "Semantic Navigation Search", description = "Semantic Navigation Search API")
+public class TurSNSiteSearchAPI {
+        private static final String NONE = "NONE";
+        private final TurSNSiteSearchService turSNSiteSearchService;
+        private final TurSNSearchProcess turSNSearchProcess;
+        private final TurSNSiteSearchSnapshotService snapshotService;
+        private final TurSNSimilarDocumentsService similarDocumentsService;
+        private final TurSNDuplicateClusteringService duplicateClusteringService;
+        private final TurSNStoredDocumentService storedDocumentService;
+
+        public TurSNSiteSearchAPI(TurSNSiteSearchService turSNSiteSearchService,
+                        TurSNSearchProcess turSNSearchProcess,
+                        TurSNSiteSearchSnapshotService snapshotService,
+                        TurSNSimilarDocumentsService similarDocumentsService,
+                        TurSNDuplicateClusteringService duplicateClusteringService) {
+                this(turSNSiteSearchService, turSNSearchProcess, snapshotService, similarDocumentsService,
+                                duplicateClusteringService, null);
+        }
+
+        @org.springframework.beans.factory.annotation.Autowired
+        public TurSNSiteSearchAPI(TurSNSiteSearchService turSNSiteSearchService,
+                        TurSNSearchProcess turSNSearchProcess,
+                        TurSNSiteSearchSnapshotService snapshotService,
+                        TurSNSimilarDocumentsService similarDocumentsService,
+                        TurSNDuplicateClusteringService duplicateClusteringService,
+                        TurSNStoredDocumentService storedDocumentService) {
+                this.turSNSiteSearchService = turSNSiteSearchService;
+                this.turSNSearchProcess = turSNSearchProcess;
+                this.snapshotService = snapshotService;
+                this.similarDocumentsService = similarDocumentsService;
+                this.duplicateClusteringService = duplicateClusteringService;
+                this.storedDocumentService = storedDocumentService;
+        }
+
+        @GetMapping(value = "list", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<List<Object>> turSNSiteSearchSelectListGet(
+                        @PathVariable String siteName,
+                        @ModelAttribute TurSNSearchParams turSNSearchParams,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        HttpServletRequest request) {
+                if (locale == null) {
+                        locale = turSNSiteSearchService.resolveDefaultLocale(siteName);
+                }
+                turSNSiteSearchService.setSearchParams(turSNSearchParams,
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_DEFAULT),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_AND),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_OR),
+                                fqOperator, fqItemOperator, locale);
+                if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
+                        return turSNSiteSearchService.notFoundResponse();
+                }
+                List<Object> termList = turSNSearchProcess
+                                .searchList(turSNSiteSearchService.getTurSNSiteSearchContext(turSNSearchParams,
+                                                request, siteName));
+                return new ResponseEntity<>(termList, HttpStatus.OK);
+        }
+
+        /**
+         * The link-bearing GET search. Since T856 / Â§LXV.1 it also honours the
+         * {@code responseFormat} flag: {@code LINKS} (the default, and what every
+         * existing caller sends by omission) keeps the response byte-identical,
+         * while {@code responseFormat=STRUCTURED} returns the link-free shape over
+         * this transport too â€” which is what Â§XLV.5 promised when it chose a
+         * request field over {@code Accept} negotiation. T857 adds
+         * {@code includeSortOptions} on the same terms.
+         */
+        @GetMapping
+        public ResponseEntity<TurSNSearchResponse> turSNSiteSearchSelectGet(
+                        @PathVariable String siteName,
+                        @ModelAttribute TurSNSearchParams turSNSearchParams,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        @RequestParam(required = false, name = TurSNParamType.RESPONSE_FORMAT) String responseFormat,
+                        @RequestParam(required = false, name = TurSNParamType.INCLUDE_SORT_OPTIONS, defaultValue = "false") boolean includeSortOptions,
+                        HttpServletRequest request) {
+                // Parsed first: an unusable flag is a 400 that must not cost a search.
+                TurSNResponseFormat format = TurSNResponseFormat.of(responseFormat);
+                if (locale == null) {
+                        locale = turSNSiteSearchService.resolveDefaultLocale(siteName);
+                }
+                turSNSiteSearchService.setSearchParams(turSNSearchParams,
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_DEFAULT),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_AND),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_OR),
+                                fqOperator, fqItemOperator, locale);
+                if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
+                        return turSNSiteSearchService.notFoundResponse();
+                }
+                Locale resolvedLocale = locale;
+                return negotiate(turSNSiteSearchService.executeGetSearch(turSNSearchParams, request,
+                                siteName), format,
+                                () -> TurSNSearchRequestAdapter.effectiveRequest(turSNSearchParams,
+                                                resolvedLocale, format),
+                                resolvedLocale, includeSortOptions, siteName);
+        }
+
+        @PostMapping
+        public ResponseEntity<TurSNSiteSearchBean> turSNSiteSearchSelectPost(
+                        @PathVariable String siteName,
+                        @ModelAttribute TurSNSearchParams turSNSearchParams,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR, defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        @RequestBody TurSNSitePostParamsBean turSNSitePostParamsBean,
+                        Principal principal,
+                        HttpServletRequest request) {
+                if (principal == null) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+                Locale resolvedLocale = turSNSiteSearchService.determineLocale(turSNSitePostParamsBean, locale);
+                if (resolvedLocale == null) {
+                        resolvedLocale = turSNSiteSearchService.resolveDefaultLocale(siteName);
+                }
+                turSNSiteSearchService.setSearchParams(turSNSearchParams,
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_DEFAULT),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_AND),
+                                readFilterQueries(request, TurSNParamType.FILTER_QUERIES_OR),
+                                fqOperator, fqItemOperator, resolvedLocale);
+                if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName, turSNSearchParams.getLocale())) {
+                        return turSNSiteSearchService.notFoundResponse();
+                }
+                return turSNSiteSearchService.executePostSearch(turSNSearchParams,
+                                turSNSitePostParamsBean, request, siteName);
+        }
+
+        /**
+         * T707 / Â§XLV â€” the public, <strong>anonymous-capable</strong>,
+         * read-only POST search contract.
+         *
+         * <p>
+         * The whole request travels as a JSON {@link TurSNSearchRequest} body, so
+         * a filter value containing {@code & = + # %} or a space cannot be
+         * mis-read as query structure â€” the bug class described in IMPROVEMENTS
+         * Â§XLV.1 becomes impossible by construction rather than merely encoded
+         * correctly.
+         * </p>
+         *
+         * <p>
+         * This is a distinct entry point from {@link #turSNSiteSearchSelectPost},
+         * which keeps its impersonation/metrics payload
+         * ({@code TurSNSitePostParamsBean}) and its authentication requirement.
+         * The GET mapping and its link-bearing response are untouched â€” this
+         * block is purely additive.
+         * </p>
+         *
+         * @since 2026.3.4
+         */
+        @PostMapping(value = "query", consumes = MediaType.APPLICATION_JSON_VALUE,
+                        produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<TurSNSearchResponse> turSNSiteSearchQueryPost(
+                        @PathVariable String siteName,
+                        @RequestBody TurSNSearchRequest searchRequest,
+                        HttpServletRequest request) {
+                Locale locale = TurSNSearchRequestAdapter.resolveLocale(searchRequest);
+                if (locale == null) {
+                        locale = turSNSiteSearchService.resolveDefaultLocale(siteName);
+                }
+                TurSNSearchParams turSNSearchParams = TurSNSearchRequestAdapter
+                                .toSearchParams(searchRequest, locale);
+                if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName,
+                                turSNSearchParams.getLocale())) {
+                        return turSNSiteSearchService.notFoundResponse();
+                }
+                ResponseEntity<TurSNSiteSearchBean> response = turSNSiteSearchService
+                                .executePublicPostSearch(searchRequest, turSNSearchParams, request,
+                                                siteName);
+                Locale resolvedLocale = locale;
+                return negotiate(response, searchRequest.getResponseFormat(),
+                                () -> TurSNSearchRequestAdapter.effectiveRequest(searchRequest,
+                                                turSNSearchParams, resolvedLocale),
+                                resolvedLocale, searchRequest.isIncludeSortOptions(), siteName);
+        }
+
+        /**
+         * T712 / Â§XLV â€” the select-list counterpart of
+         * {@link #turSNSiteSearchQueryPost}. Same anonymous JSON
+         * {@link TurSNSearchRequest} body, same immunity to the query-string
+         * round-trip; the projection it returns carries no links, so
+         * {@code responseFormat} does not apply here.
+         *
+         * <p>
+         * The GET {@code list} mapping is untouched.
+         * </p>
+         *
+         * @since 2026.3.4
+         */
+        @PostMapping(value = "list/query", consumes = MediaType.APPLICATION_JSON_VALUE,
+                        produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<List<Object>> turSNSiteSearchSelectListQueryPost(
+                        @PathVariable String siteName,
+                        @RequestBody TurSNSearchRequest searchRequest,
+                        HttpServletRequest request) {
+                Locale locale = TurSNSearchRequestAdapter.resolveLocale(searchRequest);
+                if (locale == null) {
+                        locale = turSNSiteSearchService.resolveDefaultLocale(siteName);
+                }
+                TurSNSearchParams turSNSearchParams = TurSNSearchRequestAdapter
+                                .toSearchParams(searchRequest, locale);
+                if (!turSNSearchProcess.existsByTurSNSiteAndLanguage(siteName,
+                                turSNSearchParams.getLocale())) {
+                        return turSNSiteSearchService.notFoundResponse();
+                }
+                return turSNSiteSearchService.executePublicPostSearchList(searchRequest,
+                                turSNSearchParams, request, siteName);
+        }
+
+        /**
+         * T708 / Â§XLV â€” applies the response-format flag. {@code LINKS} (the
+         * default) returns the legacy bean untouched, so a consumer that merely
+         * switches to POST sees the response it already parses; {@code STRUCTURED}
+         * projects it onto the link-free shape.
+         *
+         * <p>
+         * T856 / Â§LXV.1 made it transport-agnostic: the GET mapping routes through
+         * this same method, and the request echo is supplied lazily so the
+         * overwhelmingly common {@code LINKS} path builds nothing.
+         * </p>
+         *
+         * <p>
+         * T857 / Â§LXV.2 â€” {@code includeSortOptions} inlines the site's sort
+         * options here, keeping the mapper a pure function of the response it
+         * projects (the option list is site configuration, not search output).
+         * </p>
+         *
+         * @since 2026.3.4
+         */
+        private ResponseEntity<TurSNSearchResponse> negotiate(
+                        ResponseEntity<TurSNSiteSearchBean> response,
+                        TurSNResponseFormat responseFormat,
+                        Supplier<TurSNSearchRequest> effectiveRequest, Locale locale,
+                        boolean includeSortOptions, String siteName) {
+                TurSNSiteSearchBean body = response.getBody();
+                if (responseFormat != TurSNResponseFormat.STRUCTURED || body == null) {
+                        return ResponseEntity.status(response.getStatusCode()).body(body);
+                }
+                TurSNStructuredSearchBean structured = TurSNStructuredResponseMapper
+                                .toStructured(body, effectiveRequest.get(), locale);
+                if (includeSortOptions) {
+                        sortOptions(siteName).ifPresent(structured::setSortOptions);
+                }
+                return ResponseEntity.status(response.getStatusCode()).body(structured);
+        }
+
+        /**
+         * Reads filter-query parameters straight from the request so a single
+         * occurrence containing a comma (e.g. {@code fq[]=facet:1,2}) is kept
+         * intact. Spring's {@code @RequestParam List<String>} returns the value
+         * as a single {@code String} when there is only one match, which then
+         * flows through {@code StringToCollectionConverter} and gets split on
+         * commas â€” corrupting values that legitimately contain {@code ,}.
+         */
+        private static List<String> readFilterQueries(HttpServletRequest request, String name) {
+                String[] values = request.getParameterValues(name);
+                return values != null ? List.of(values) : null;
+        }
+
+        @GetMapping("locales")
+        public List<TurSNSiteLocaleBean> turSNSiteSearchLocale(@PathVariable String siteName) {
+                return snapshotService.getSnapshot(siteName, null).map(snap -> {
+                        try {
+                                return turSNSearchProcess.responseLocales(snap, new URI(
+                                                String.format("/api/sn/%s/search", siteName)));
+                        } catch (URISyntaxException e) {
+                                log.error(e.getMessage(), e);
+                        }
+                        return TurSNSiteSearchService.getTurSNSiteLocaleBeans();
+                }).orElse(Collections.emptyList());
+        }
+
+        /**
+         * Returns the available sort options for a site: the three built-in options
+         * (relevance, newest, oldest) plus any custom sorts configured for the site.
+         *
+         * @since 2026.1.14
+         */
+        @GetMapping("sort-options")
+        public ResponseEntity<List<TurSNSortOptionBean>> turSNSiteSearchSortOptions(
+                        @PathVariable String siteName) {
+                return sortOptions(siteName).map(ResponseEntity::ok)
+                                .orElse(ResponseEntity.notFound().build());
+        }
+
+        /**
+         * T857 / Â§LXV.2 â€” the one place the site's sort options are assembled, so
+         * the dedicated endpoint and the inlined list in the structured response
+         * can never disagree. Empty when the site is unknown.
+         *
+         * @since 2026.3.4
+         */
+        private Optional<List<TurSNSortOptionBean>> sortOptions(String siteName) {
+                return snapshotService.getSnapshot(siteName, null).map(snap -> {
+                        List<TurSNSortOptionBean> options = new ArrayList<>();
+                        options.add(new TurSNSortOptionBean("relevance", "Relevance"));
+                        options.add(new TurSNSortOptionBean("newest", "Newest"));
+                        options.add(new TurSNSortOptionBean("oldest", "Oldest"));
+                        snap.customSorts()
+                                        .forEach(cs -> options.add(new TurSNSortOptionBean(
+                                                        cs.name(), cs.description() != null
+                                                                        ? cs.description()
+                                                                        : cs.name())));
+                        return options;
+                });
+        }
+
+        /**
+         * T384 / Â§XX.4 â€” public "documents similar to this id" endpoint. Returns
+         * the documents most like {@code id} on the site, so a catalog can render
+         * "similar courses" live from the index. Similarity is content-based only.
+         *
+         * @param id   the seed document id
+         * @param rows desired number of results (default 10, capped at 50)
+         * @param locale request locale (a default site locale is used when omitted)
+         * @param mode {@code VECTOR} (semantic) or {@code MLT} (lexical); auto-selected when omitted
+         * @since 2026.3.4
+         */
+        @GetMapping("similar")
+        public ResponseEntity<List<TurSESimilarResult>> turSNSiteSimilarDocuments(
+                        @PathVariable String siteName,
+                        @RequestParam(name = "id") String id,
+                        @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "10") int rows,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        @RequestParam(required = false, name = "mode") TurSNSimilarMode mode,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
+                                        defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
+                                        defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
+                        HttpServletRequest request) {
+                // T1132 â€” the neighbours are narrowed with the search's filter semantics;
+                // T1235 â€” fqi.op joins the values of one field, as on search.
+                return ResponseEntity.ok(similarDocumentsService.findSimilar(siteName, id, rows, locale, mode,
+                                queryStringFilters(request, fqOperator, fqItemOperator)));
+        }
+
+        /**
+         * T1239 â€” {@link #turSNSiteSimilarDocuments} with the request as a JSON
+         * {@link TurSNSimilarRequest} body, so a scope of several sites and filters
+         * is sent the way a search is, not as a hand-escaped query string.
+         *
+         * @since 2026.3.8
+         */
+        @PostMapping(value = "similar/query", consumes = MediaType.APPLICATION_JSON_VALUE,
+                        produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<List<TurSESimilarResult>> turSNSiteSimilarDocumentsQuery(
+                        @PathVariable String siteName, @RequestBody TurSNSimilarRequest similarRequest) {
+                requireSeed(similarRequest);
+                return ResponseEntity.ok(similarDocumentsService.findSimilar(siteName, similarRequest.getId(),
+                                similarRequest.rowsOrDefault(), similarRequest.resolvedLocale(),
+                                similarRequest.getMode(), similarRequest.filters()));
+        }
+
+        /**
+         * T1239 â€” {@link #turSNSiteDuplicateCluster} with the request as a JSON
+         * {@link TurSNSimilarRequest} body.
+         *
+         * @since 2026.3.8
+         */
+        @PostMapping(value = "duplicates/query", consumes = MediaType.APPLICATION_JSON_VALUE,
+                        produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<TurSNDuplicateCluster> turSNSiteDuplicateClusterQuery(
+                        @PathVariable String siteName, @RequestBody TurSNSimilarRequest similarRequest) {
+                requireSeed(similarRequest);
+                return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, similarRequest.getId(),
+                                similarRequest.thresholdOrDefault(), similarRequest.rowsOrDefault(),
+                                similarRequest.resolvedLocale(),
+                                com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                                                .orElse(null),
+                                similarRequest.filters()));
+        }
+
+        private static void requireSeed(TurSNSimilarRequest similarRequest) {
+                if (similarRequest == null || org.apache.commons.lang3.StringUtils.isBlank(similarRequest.getId())) {
+                        throw new IllegalArgumentException("The request needs the seed document id");
+                }
+        }
+
+        /**
+         * The filters of a similar or duplicates GET, read through
+         * {@link #readFilterQueries} so a single {@code fq[]=type:a,b} keeps its comma.
+         */
+        private static com.viglet.turing.commons.sn.bean.TurSNFilterParams queryStringFilters(
+                        HttpServletRequest request, TurSNFilterQueryOperator fqOperator,
+                        TurSNFilterQueryOperator fqItemOperator) {
+                return com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
+                                .defaultValues(readFilterQueries(request, TurSNParamType.FILTER_QUERIES_DEFAULT))
+                                .and(readFilterQueries(request, TurSNParamType.FILTER_QUERIES_AND))
+                                .or(readFilterQueries(request, TurSNParamType.FILTER_QUERIES_OR))
+                                .operator(fqOperator).itemOperator(fqItemOperator).build();
+        }
+
+        /**
+         * T1077 â€” the stored documents with these ids, whole: every stored field,
+         * unhighlighted and not shortened, in the order asked. What a detail page
+         * reads one document with instead of running a search; several {@code id}
+         * parameters fetch several candidates in one call. Answers 404 when none of
+         * the ids is on the site.
+         *
+         * @param ids    one or more document ids (up to 50)
+         * @param locale request locale (a default site locale is used when omitted)
+         * @since 2026.3.4
+         */
+        @GetMapping("document")
+        public ResponseEntity<List<Map<String, Object>>> turSNSiteStoredDocuments(
+                        @PathVariable String siteName,
+                        @RequestParam(name = "id") List<String> ids,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale) {
+                List<Map<String, Object>> documents = storedDocumentService.findByIds(siteName, ids, locale);
+                if (documents.isEmpty()) {
+                        throw new TurNotFoundException("No document with id " + ids + " on site " + siteName);
+                }
+                return ResponseEntity.ok(documents);
+        }
+
+        /**
+         * T390 / Â§XX.10 â€” public "duplicate cluster" endpoint. Returns the
+         * documents near-identical to {@code id} on the site (the same real-world
+         * entity arriving from many sources), collapsed into one cluster with each
+         * member's provenance kept. Clustering is content-based only and runs over
+         * the per-site vector collection; non-hybrid sites get a single-member,
+         * non-duplicate cluster.
+         *
+         * @param id        the seed document id
+         * @param threshold minimum similarity for a document to count as a duplicate
+         *                 (default {@code 0.92}; a non-positive value uses the default)
+         * @param rows      max extra members beyond the seed (default 10, capped at 50)
+         * @param locale    request locale (a default site locale is used when omitted)
+         * @since 2026.3.4
+         */
+        @GetMapping("duplicates")
+        public ResponseEntity<TurSNDuplicateCluster> turSNSiteDuplicateCluster(
+                        @PathVariable String siteName,
+                        @RequestParam(name = "id") String id,
+                        @RequestParam(required = false, name = "threshold", defaultValue = "0.92") double threshold,
+                        @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "10") int rows,
+                        @RequestParam(required = false, name = TurSNParamType.LOCALE) Locale locale,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_OPERATOR,
+                                        defaultValue = NONE) TurSNFilterQueryOperator fqOperator,
+                        @RequestParam(required = false, name = TurSNParamType.FILTER_QUERY_ITEM_OPERATOR,
+                                        defaultValue = NONE) TurSNFilterQueryOperator fqItemOperator,
+                        HttpServletRequest request) {
+                // T1132 â€” the cluster is narrowed with the search's filter semantics
+                // (T1235: fqi.op included), and
+                // T1133 â€” a partitioned key clusters only its partition's documents.
+                return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
+                                locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                                                .orElse(null),
+                                queryStringFilters(request, fqOperator, fqItemOperator)));
+        }
+
+        @PostMapping("latest")
+        public ResponseEntity<List<String>> turSNSiteSearchLatestImpersonate(
+                        @PathVariable String siteName,
+                        @RequestParam(required = false, name = TurSNParamType.ROWS, defaultValue = "5") Integer rows,
+                        @RequestParam(name = TurSNParamType.LOCALE) String locale,
+                        @RequestBody Optional<TurSNSearchLatestRequestBean> turSNSearchLatestRequestBean,
+                        Principal principal) {
+                if (principal == null) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+                return new ResponseEntity<>(turSNSearchProcess.latestSearches(siteName, locale,
+                                turSNSiteSearchService.isLatestImpersonate(turSNSearchLatestRequestBean, principal),
+                                rows), HttpStatus.OK);
+        }
+
+}

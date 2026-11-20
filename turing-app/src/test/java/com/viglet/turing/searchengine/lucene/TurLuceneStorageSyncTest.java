@@ -20,7 +20,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.storage.TurStorageType;
 

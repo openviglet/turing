@@ -117,7 +117,9 @@ class TurChatCohortResolverTest {
     @Test
     void resolveFromCurrentRequest_offRequestThreadReturnsEmptyCohort() {
         // No ServletRequestAttributes bound to this test thread → empty cohort,
-        // never throws (the agent.invoke child-session path relies on this).
+        // never throws (the agent.invoke child-session path relies on this). Reset
+        // first: a request another test bound on this thread would leak in.
+        org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
         TurChatCohortResolver.Cohort cohort = new TurChatCohortResolver().resolveFromCurrentRequest();
         assertThat(cohort.locale()).isNull();
         assertThat(cohort.timezone()).isNull();

@@ -6,7 +6,7 @@ import com.viglet.core.storage.VigletStorageObject;
 import com.viglet.core.storage.VigletStorageObjectStat;
 import com.viglet.core.storage.VigletStorageProperties;
 import com.viglet.core.storage.VigletStorageType;
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurMinioProperty;
 import com.viglet.turing.properties.TurStorageProperty;

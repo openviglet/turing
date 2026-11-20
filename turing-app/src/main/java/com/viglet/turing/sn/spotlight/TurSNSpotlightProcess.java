@@ -45,7 +45,7 @@ import org.apache.lucene.search.Query;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.api.sn.queue.TurSpotlightContent;
+import com.viglet.turing.sn.spotlight.TurSpotlightContent;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
 import com.viglet.turing.commons.se.TurSEPartition;

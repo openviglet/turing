@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.storage.TurStorageContentTypes;
 import com.viglet.turing.storage.TurStorageService;

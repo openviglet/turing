@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.api.sn.search.TurSNSearchCacheEvictor;
+import com.viglet.turing.sn.search.TurSNSearchCacheEvictor;
 
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;

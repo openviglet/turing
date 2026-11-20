@@ -14,7 +14,7 @@ import java.time.Duration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.storage.TurStorageService;
 
 import lombok.extern.slf4j.Slf4j;

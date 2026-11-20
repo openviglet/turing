@@ -21,7 +21,7 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.storage.TurStorageService;

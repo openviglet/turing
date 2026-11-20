@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.api.asset.TurAssetItem;
-import com.viglet.turing.api.skill.TurSkillFileNode;
+import com.viglet.turing.storage.asset.TurAssetItem;
+import com.viglet.turing.agent.skill.TurSkillFileNode;
 import com.viglet.turing.persistence.model.skill.TurSkill;
 import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;

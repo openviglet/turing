@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.core.storage.VigletStorageService;
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 
 /**
  * Adapts a neutral {@code viglet-core} {@link VigletStorageService} backend to

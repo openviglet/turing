@@ -26,7 +26,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.api.sn.search.TurSNSiteSearchService;
+import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.passage.TurSEPassage;
 import com.viglet.turing.commons.sn.TurSNConfig;

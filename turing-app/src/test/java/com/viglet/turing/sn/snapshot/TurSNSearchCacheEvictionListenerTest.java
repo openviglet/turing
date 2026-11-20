@@ -27,7 +27,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 
-import com.viglet.turing.api.sn.search.TurSNSearchCacheEvictor;
+import com.viglet.turing.sn.search.TurSNSearchCacheEvictor;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

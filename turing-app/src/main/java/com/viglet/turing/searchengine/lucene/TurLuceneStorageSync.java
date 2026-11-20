@@ -16,7 +16,7 @@
  */
 package com.viglet.turing.searchengine.lucene;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.storage.TurStorageType;
 import jakarta.annotation.PreDestroy;

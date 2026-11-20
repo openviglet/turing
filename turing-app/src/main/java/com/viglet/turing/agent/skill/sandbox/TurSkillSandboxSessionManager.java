@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.api.asset.TurAssetItem;
+import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.persistence.model.skill.TurSkill;

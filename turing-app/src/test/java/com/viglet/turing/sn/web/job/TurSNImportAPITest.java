@@ -1,0 +1,307 @@
+package com.viglet.turing.sn.web.job;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.system.web.exception.TurGlobalExceptionHandler;
+import com.viglet.turing.client.sn.job.TurSNJobAction;
+import com.viglet.turing.client.sn.job.TurSNJobItem;
+import com.viglet.turing.client.sn.job.TurSNJobItems;
+import com.viglet.turing.commons.sn.field.TurSNFieldName;
+import com.viglet.turing.domain.sn.TurSNSiteDomain;
+import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.persistence.model.sn.TurSNSite;
+import com.viglet.turing.persistence.model.sn.genai.TurSNSiteGenAi;
+import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.persistence.repository.sn.TurSNSiteRepository;
+import com.viglet.turing.system.TurGlobalSettingsService;
+
+@ExtendWith(MockitoExtension.class)
+class TurSNImportAPITest {
+
+    private MockMvc mockMvc;
+
+    @Mock
+    private JmsMessagingTemplate jmsMessagingTemplate;
+
+    @Mock
+    private TurSNSiteRepositoryPort turSNSiteRepositoryPort;
+
+    @Mock
+    private TurSNGenAi turGenAi;
+
+    @Mock
+    private TurDefaultAgentResolver turDefaultAgentResolver;
+
+    @Mock
+    private com.viglet.turing.tenant.TurJmsTenantPropagation turJmsTenantPropagation;
+
+    @InjectMocks
+    private TurSNImportAPI api;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    void setUp() {
+        org.mockito.Mockito.lenient()
+                .when(turJmsTenantPropagation.headers()).thenReturn(java.util.Map.of());
+        mockMvc = MockMvcBuilders.standaloneSetup(api)
+                .setControllerAdvice(new TurGlobalExceptionHandler())
+                .build();
+    }
+
+    @Test
+    void importWithNoItemsIsRejected() throws Exception {
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"turingDocuments\": []}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("turingDocuments")));
+
+        verify(jmsMessagingTemplate, never()).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    @Test
+    void importWithItemsUnderAnUnknownKeyIsRejected() throws Exception {
+        mockMvc.perform(post("/api/sn/import/bulk")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"documents\": [{\"siteNames\": [\"site1\"]}]}"))
+                .andExpect(status().isBadRequest());
+
+        verify(jmsMessagingTemplate, never()).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    @Test
+    void importAcceptsSnJobItemsAsAnAlias() throws Exception {
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1"))
+                .thenReturn(Optional.of(siteDomain("site1")));
+
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"snJobItems\": [{\"turSNJobAction\": \"CREATE\", \"siteNames\": [\"site1\"],"
+                        + " \"locale\": \"en_US\", \"attributes\": {\"id\": \"1\"}}]}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(jmsMessagingTemplate, times(1)).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    private static TurSNSiteDomain siteDomain(String name) {
+        return new TurSNSiteDomain(name + "-id", name, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null);
+    }
+
+    @Test
+    void testTurSNImportBroker_Success() throws Exception {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.CREATE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(java.util.Locale.US);
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(TurSNFieldName.ID, "1");
+        item.setAttributes(attributes);
+        jobItems.add(item);
+
+        // T1147 — the gate is the resolver's (own agent or the Default AI
+        // Agent); TurDefaultAgentResolverTest covers its branches.
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1"))
+                .thenReturn(Optional.of(siteDomain("site1")));
+
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(jobItems)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(turGenAi, times(1)).addDocuments(any(TurSNJobItems.class));
+        verify(jmsMessagingTemplate, times(1)).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    private static TurSNJobItems batchOf(int size) {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        for (int i = 0; i < size; i++) {
+            TurSNJobItem item = new TurSNJobItem();
+            item.setTurSNJobAction(TurSNJobAction.CREATE);
+            item.setSiteNames(Collections.singletonList("site1"));
+            item.setLocale(java.util.Locale.US);
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put(TurSNFieldName.ID, String.valueOf(i));
+            item.setAttributes(attributes);
+            jobItems.add(item);
+        }
+        return jobItems;
+    }
+
+    @Test
+    void ragBatchIsEmbeddedOnceNotOncePerDocument() throws Exception {
+        // T1089 — each addDocuments call embeds the whole batch, so calling it per
+        // document embedded a batch of three three times.
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
+
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(batchOf(3))))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(turGenAi, times(1)).addDocuments(any(TurSNJobItems.class));
+    }
+
+    @Test
+    void aSiteOnTheDefaultAgentIsEmbeddedOnImport() throws Exception {
+        // T1147 — the binding has no agent of its own and the Default AI Agent is
+        // RAG-ready: the gate used to read only the site's own agent and skipped it.
+        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurGlobalSettingsService settings = mock(TurGlobalSettingsService.class);
+        TurAIAgentRepository agentRepository = mock(TurAIAgentRepository.class);
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        site.setTurSNSiteGenAi(new TurSNSiteGenAi());
+        TurAIAgent defaultAgent = new TurAIAgent();
+        defaultAgent.setEnabled(1);
+        defaultAgent.setRagEnabled(true);
+        when(siteRepository.findByNameWithGenAi("site1")).thenReturn(Optional.of(site));
+        when(settings.getDefaultAiAgentId()).thenReturn("def-1");
+        when(agentRepository.findById("def-1")).thenReturn(Optional.of(defaultAgent));
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
+        TurSNImportAPI realGate = new TurSNImportAPI(jmsMessagingTemplate, turSNSiteRepositoryPort, turGenAi,
+                turJmsTenantPropagation, null, null,
+                new TurDefaultAgentResolver(settings, agentRepository, siteRepository));
+
+        MockMvcBuilders.standaloneSetup(realGate).build().perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(batchOf(2))))
+                .andExpect(status().isOk());
+
+        verify(turGenAi, times(1)).addDocuments(any(TurSNJobItems.class));
+    }
+
+    @Test
+    void anEmbeddingFailureStillIndexesTheBatchForSearch() throws Exception {
+        // T1089 — embedding is a side path: its failure must not stop the queue send.
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(true);
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
+        when(turGenAi.addDocuments(any(TurSNJobItems.class)))
+                .thenThrow(new IllegalArgumentException("metadata cannot have null values"));
+
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(batchOf(2))))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(jmsMessagingTemplate, times(1)).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    @Test
+    void testTurSNImportBroker_SiteNotFound() throws Exception {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        TurSNJobItem item = new TurSNJobItem();
+        item.setTurSNJobAction(TurSNJobAction.CREATE);
+        item.setSiteNames(Collections.singletonList("site1"));
+        item.setLocale(java.util.Locale.US);
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put(TurSNFieldName.ID, "1");
+        item.setAttributes(attributes);
+        jobItems.add(item);
+
+        when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
+        when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/sn/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(jobItems)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(turGenAi, never()).addDocuments(any(TurSNJobItems.class));
+        verify(jmsMessagingTemplate, times(1)).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+    }
+
+    @Test
+    void testTurSNImportZipFileBroker() throws Exception {
+        // Create a temporary zip file
+        File tempZip = File.createTempFile("test", ".zip");
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempZip))) {
+            zos.putNextEntry(new ZipEntry("export.json"));
+
+            TurSNJobItems jobItems = new TurSNJobItems();
+            TurSNJobItem item = new TurSNJobItem();
+            item.setTurSNJobAction(TurSNJobAction.CREATE);
+            item.setSiteNames(Collections.singletonList("site1"));
+            item.setLocale(java.util.Locale.US);
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put(TurSNFieldName.ID, "1");
+            attributes.put("text_file", "file://sample.txt");
+            item.setAttributes(attributes);
+            jobItems.add(item);
+
+            when(turDefaultAgentResolver.isRagReadyForSiteName("site1")).thenReturn(false);
+            when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.empty());
+
+            zos.write(objectMapper.writeValueAsBytes(jobItems));
+            zos.closeEntry();
+
+            zos.putNextEntry(new ZipEntry("sample.txt"));
+            zos.write("hello".getBytes());
+            zos.closeEntry();
+        }
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test.zip",
+                "application/zip",
+                java.nio.file.Files.readAllBytes(tempZip.toPath()));
+
+        mockMvc.perform(multipart("/api/sn/import/zip").file(file))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(jmsMessagingTemplate, times(1)).convertAndSend(anyString(), any(TurSNJobItems.class), anyMap());
+
+        tempZip.delete();
+    }
+}

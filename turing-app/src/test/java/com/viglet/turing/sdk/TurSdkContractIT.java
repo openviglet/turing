@@ -45,8 +45,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import com.viglet.turing.api.sn.queue.TurSNProcessQueue;
-import com.viglet.turing.api.sn.search.TurSNSearchCacheEvictor;
+import com.viglet.turing.sn.web.queue.TurSNProcessQueue;
+import com.viglet.turing.sn.search.TurSNSearchCacheEvictor;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -192,7 +192,7 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
     private com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository siteFieldExtRepository;
 
     @Autowired
-    private com.viglet.turing.api.sn.console.TurSNSiteAPI siteAPI;
+    private com.viglet.turing.sn.web.console.TurSNSiteAPI siteAPI;
 
     @Autowired
     private org.springframework.transaction.PlatformTransactionManager transactionManager;

@@ -1764,3 +1764,4 @@
 - **T1310 (one module)** — plugins, se, solr, lucene, elasticsearch and contentai are one searchengine module, its plugin contract at the root and result and facet as named interfaces; violations 27,018 to 26,181.
 - **T1309** — genai is gone: its packages are the llm, agent, rag, persona, eval, transcription and batch modules (callcenter went to chat); violations 26,181 to 26,485 as calls inside genai became cross-module calls the report now shows.
 - **T1311 (packages dissolved)** — service and onstartup are gone: chat, storage, auth, llm.cost and each seeder sit in the module they serve, logback follows them; violations 26,485 to 26,134.
+- **T1308 (controllers moved)** — The api package is gone: each controller sits in its module's web package, and the services and beans other code used left web for their module; request paths unchanged; violations 26,134 to 25,001.

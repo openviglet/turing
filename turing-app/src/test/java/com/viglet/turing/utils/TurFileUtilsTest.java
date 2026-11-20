@@ -42,7 +42,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.viglet.turing.api.ocr.TurTikaFileAttributes;
+import com.viglet.turing.rag.ocr.TurTikaFileAttributes;
 import com.viglet.turing.commons.file.TurFileAttributes;
 
 /**

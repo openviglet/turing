@@ -87,7 +87,7 @@ class TurDomainLayerConventionsTest {
             "com.viglet.turing.persistence.repository.sn.field.TurSNSiteFieldExtRepository",
             "sn/spotlight/TurSpotlightService.java",
             "com.viglet.turing.persistence.repository.sn.TurSNSiteRepository",
-            "api/sn/console/TurSNSiteNamesAPI.java",
+            "sn/web/console/TurSNSiteNamesAPI.java",
             "com.viglet.turing.persistence.repository.sn.TurSNSiteRepository");
 
     @Test
