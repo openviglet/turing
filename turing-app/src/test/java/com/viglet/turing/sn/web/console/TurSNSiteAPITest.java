@@ -198,8 +198,29 @@ class TurSNSiteAPITest {
                 assertThat(result).isNotNull();
                 assertThat(result.getName()).isEqualTo("New");
                 assertThat(result.getDescription()).isEqualTo("Desc");
-                verify(siteRepository).save(existing);
+                verify(siteRepository).saveAndFlush(existing);
                 verify(genAiRepository).save(any(TurSNSiteGenAi.class));
+        }
+
+        /** T1319 — a save made from an older version is refused, not applied over the newer one. */
+        @Test
+        void aSiteSaveFromAnOlderVersionIsRefused() {
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                TurSNSiteAPI api = newApi(siteRepository,
+                                mock(TurSNSiteLocaleRepository.class), mock(TurSNSiteGenAiRepository.class),
+                                mock(TurSNSiteExport.class), mock(TurSNTemplate.class), mock(TurSNQueue.class),
+                                mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class));
+                TurSNSite existing = new TurSNSite();
+                existing.setVersion(7L);
+                TurSNSiteDto payload = new TurSNSiteDto();
+                payload.setName("New");
+                payload.setVersion(6L);
+                when(siteRepository.findByIdWithGenAi("site")).thenReturn(Optional.of(existing));
+                when(siteRepository.findByNameIgnoreCase("New")).thenReturn(Optional.empty());
+
+                org.assertj.core.api.Assertions.assertThatThrownBy(() -> api.turSNSiteUpdate("site", payload))
+                                .isInstanceOf(com.viglet.turing.shared.exception.TurConflictException.class);
+                verify(siteRepository, org.mockito.Mockito.never()).saveAndFlush(any());
         }
 
         @Test

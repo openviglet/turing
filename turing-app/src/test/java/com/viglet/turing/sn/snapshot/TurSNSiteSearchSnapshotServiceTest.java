@@ -402,6 +402,9 @@ class TurSNSiteSearchSnapshotServiceTest {
                     || declared.getType() == TurSNSiteGenAi.class) {
                 continue; // the two associations are asserted separately below
             }
+            if (declared.isAnnotationPresent(jakarta.persistence.Version.class)) {
+                continue; // T1319 — the lock version is not content; the rebuilt copy is never saved
+            }
             declared.setAccessible(true);
             int nth = seenPerType.merge(declared.getType(), 1, Integer::sum) - 1;
             declared.set(original, sampleFor(declared.getType(), declared.getName(), nth));

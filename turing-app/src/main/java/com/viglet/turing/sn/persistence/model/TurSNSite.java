@@ -87,6 +87,15 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	private String id;
 
 	/**
+	 * T1319 — optimistic-lock version: a console save made from an older version
+	 * is refused (409) instead of overwriting a change it never saw. A wrapper, so
+	 * an imported site built with its exported id is persisted, not merged.
+	 */
+	@jakarta.persistence.Version
+	@Column(name = "version")
+	private Long version;
+
+	/**
 	 * T260 / §XIV.2.4 — multi-tenancy discriminator. Hibernate's native
 	 * {@code @TenantId} stamps this on insert from the
 	 * {@code CurrentTenantIdentifierResolver} (which reads

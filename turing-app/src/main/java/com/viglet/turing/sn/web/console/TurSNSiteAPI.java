@@ -163,6 +163,13 @@ public class TurSNSiteAPI {
         }
         TurSNSite turSNSite = turSNSiteMapper.toEntity(turSNSiteDto);
         return ResponseEntity.ok(this.turSNSiteRepository.findByIdWithGenAi(id).map(turSNSiteEdit -> {
+            // T1319 — a save made from an older version would overwrite a change
+            // the caller never saw; it is refused instead.
+            if (turSNSite.getVersion() != null && turSNSiteEdit.getVersion() != null
+                    && !turSNSite.getVersion().equals(turSNSiteEdit.getVersion())) {
+                throw new com.viglet.turing.shared.exception.TurConflictException(
+                        "This site was changed by someone else since you opened it. Reload it and try again.");
+            }
             turSNSiteEdit.setName(turSNSite.getName());
             turSNSiteEdit.setDescription(turSNSite.getDescription());
             turSNSiteEdit.setIcon(turSNSite.getIcon());
@@ -258,7 +265,8 @@ public class TurSNSiteAPI {
                 turSNSiteGenAiRepository.save(turSNSiteGenAi);
                 turSNSiteEdit.setTurSNSiteGenAi(turSNSiteGenAi);
             });
-            turSNSiteRepository.save(turSNSiteEdit);
+            // T1319 — flushed, so the answer carries the version the next save sends back.
+            turSNSiteRepository.saveAndFlush(turSNSiteEdit);
             eventPublisher.publishEvent(SnSiteIndexInvalidatedEvent.updated(
                     turSNSiteEdit.getId(), turSNSiteEdit.getName()));
             return turSNSiteMapper.toDto(turSNSiteEdit);

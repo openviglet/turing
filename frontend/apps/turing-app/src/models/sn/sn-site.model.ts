@@ -6,6 +6,8 @@ import type { TurSNSiteLocale } from "./sn-site-locale.model.ts";
 
 export type TurSNSite = {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description: string;
   exactMatchField: string;

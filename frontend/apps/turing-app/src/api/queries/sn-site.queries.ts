@@ -93,7 +93,15 @@ export function useCreateSnSite() {
 export function useUpdateSnSite() {
   const queryClient = useQueryClient();
   return useMutation<TurSNSite, Error, TurSNSite>({
-    mutationFn: (site) => service.update(site),
+    // T1319 — send the version this console last received for the site, so a
+    // form holding an older copy does not refuse its own follow-up save; the
+    // server answers 409 only when someone else saved in between.
+    mutationFn: (site) => {
+      const cached = site.id
+        ? queryClient.getQueryData<TurSNSite>(queryKeys.snSites.detail(site.id))
+        : undefined;
+      return service.update({ ...site, version: cached?.version ?? site.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.snSites.detail(saved.id), saved);
