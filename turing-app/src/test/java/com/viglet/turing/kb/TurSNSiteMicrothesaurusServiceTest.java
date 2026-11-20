@@ -66,6 +66,23 @@ class TurSNSiteMicrothesaurusServiceTest {
         return m;
     }
 
+    /** T1332 — another site's selection id answers as not found, and is left alone. */
+    @Test
+    void aSelectionOfAnotherSiteIsNeitherToggledNorRemoved() {
+        site.setId("site-mine");
+        com.viglet.turing.kb.persistence.model.TurSNSiteMicrothesaurus theirs =
+                new com.viglet.turing.kb.persistence.model.TurSNSiteMicrothesaurus();
+        theirs.setId("sel-theirs");
+        theirs.setSnSiteId("site-theirs");
+        when(selectionRepository.findById("sel-theirs")).thenReturn(Optional.of(theirs));
+
+        org.assertj.core.api.Assertions.assertThat(service.setSelectionEnabled(site, "sel-theirs", false))
+                .isEmpty();
+        org.assertj.core.api.Assertions.assertThat(service.deselect(site, "sel-theirs")).isFalse();
+        verify(selectionRepository, never()).save(any());
+        verify(selectionRepository, never()).deleteById(any());
+    }
+
     @Test
     void selectRejectsBlankMicrothesaurusId() {
         assertThatThrownBy(() -> service.select(site,

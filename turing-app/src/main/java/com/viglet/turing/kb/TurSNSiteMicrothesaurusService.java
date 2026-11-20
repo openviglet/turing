@@ -106,8 +106,13 @@ public class TurSNSiteMicrothesaurusService {
     }
 
     @Transactional
-    public Optional<TurSNSiteMicrothesaurusDto> setSelectionEnabled(String id, boolean enabled) {
-        return selectionRepository.findById(id).map(selection -> {
+    public Optional<TurSNSiteMicrothesaurusDto> setSelectionEnabled(TurSNSite turSNSite, String id,
+            boolean enabled) {
+        // T1332 — a selection has no tenant column; it is the site's only when its
+        // snSiteId says so, so another site's selection id answers as not found.
+        return selectionRepository.findById(id)
+                .filter(selection -> turSNSite.getId().equals(selection.getSnSiteId()))
+                .map(selection -> {
             selection.setEnabled(enabled);
             TurSNSiteMicrothesaurusDto saved = toDto(selectionRepository.save(selection));
             dictionaryService.evictAll();
@@ -116,8 +121,11 @@ public class TurSNSiteMicrothesaurusService {
     }
 
     @Transactional
-    public boolean deselect(String id) {
-        if (!selectionRepository.existsById(id)) {
+    public boolean deselect(TurSNSite turSNSite, String id) {
+        // T1332 — only a selection of this site is removed.
+        if (selectionRepository.findById(id)
+                .filter(selection -> turSNSite.getId().equals(selection.getSnSiteId()))
+                .isEmpty()) {
             return false;
         }
         selectionRepository.deleteById(id);

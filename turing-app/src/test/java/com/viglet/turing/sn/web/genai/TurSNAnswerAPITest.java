@@ -89,4 +89,26 @@ class TurSNAnswerAPITest {
 
         verify(answerService).answer(eq("demo"), eq("q"), eq(Locale.US), any());
     }
+
+    /** T1332 — a share is read under the site it was made on, not under any site's URL. */
+    @Test
+    void aShareIsReadOnlyUnderItsOwnSite() {
+        TurAnswerShareService shares = mock(TurAnswerShareService.class);
+        TurSNAnswerAPI withShares = new TurSNAnswerAPI(answerService, mock(TurCitationDriftService.class),
+                shares, mock(TurAnswerSignalService.class), new TurSNSiteSearchService(searchProcess,
+                        mock(TurSNSiteSearchCachedAPI.class), snapshots));
+        com.viglet.turing.rag.persistence.model.answer.TurAnswerShare share =
+                new com.viglet.turing.rag.persistence.model.answer.TurAnswerShare();
+        share.setId("s1");
+        share.setSiteName("demo");
+        when(shares.find("s1")).thenReturn(Optional.of(share));
+        when(shares.renderOgCard("s1", null)).thenReturn(Optional.of("<html/>"));
+
+        org.assertj.core.api.Assertions.assertThat(withShares.readShare("demo", "s1").getStatusCode().value())
+                .isEqualTo(200);
+        org.assertj.core.api.Assertions.assertThat(withShares.readShare("other", "s1").getStatusCode().value())
+                .isEqualTo(404);
+        org.assertj.core.api.Assertions.assertThat(withShares.shareOg("other", "s1", null).getStatusCode().value())
+                .isEqualTo(404);
+    }
 }

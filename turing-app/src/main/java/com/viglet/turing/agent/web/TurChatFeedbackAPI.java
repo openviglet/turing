@@ -42,9 +42,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TurChatFeedbackAPI {
 
     private final TurChatFeedbackService feedbackService;
+    private final com.viglet.turing.agent.persistence.repository.TurAIAgentRepository agentRepository;
 
-    public TurChatFeedbackAPI(TurChatFeedbackService feedbackService) {
+    public TurChatFeedbackAPI(TurChatFeedbackService feedbackService,
+            com.viglet.turing.agent.persistence.repository.TurAIAgentRepository agentRepository) {
         this.feedbackService = feedbackService;
+        this.agentRepository = agentRepository;
+    }
+
+    /**
+     * T1332 — feedback rows hold the agent by a plain id, which no tenant filter
+     * guards; the agent is loaded through its own (tenant-filtered) repository first,
+     * so another tenant's agent id answers as not found.
+     */
+    private void requireAgent(String agentId) {
+        if (!agentRepository.existsById(agentId)) {
+            throw com.viglet.turing.shared.exception.TurNotFoundException.of("AI Agent", agentId);
+        }
     }
 
     /** Request to record one thumb-up/down on an assistant turn. */
@@ -57,6 +71,7 @@ public class TurChatFeedbackAPI {
     @Secured({ "ROLE_ADMIN", "AI_AGENT_EDIT", "AI_AGENT_VIEW" })
     public java.util.Map<String, Object> record(@PathVariable String agentId,
             @RequestBody TurChatFeedbackRequest request) {
+        requireAgent(agentId);
         try {
             String id = feedbackService.record(agentId, request.conversationId(), request.prompt(),
                     request.answer(), request.rating()).getId();
@@ -70,6 +85,7 @@ public class TurChatFeedbackAPI {
     @GetMapping("/dpo-dataset")
     @Secured({ "ROLE_ADMIN", "AI_AGENT_EDIT" })
     public DpoDataset dpoDataset(@PathVariable String agentId) {
+        requireAgent(agentId);
         return feedbackService.buildDpoDataset(agentId);
     }
 }

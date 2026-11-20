@@ -141,7 +141,9 @@ public class TurSNAnswerAPI {
     @GetMapping(value = "/share/{shareId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public org.springframework.http.ResponseEntity<AnswerShareView> readShare(
             @PathVariable String siteName, @PathVariable String shareId) {
+        // T1332 — a share is read under the site it was made on, not any site's URL.
         return answerShareService.find(shareId)
+                .filter(share -> siteName.equals(share.getSiteName()))
                 .map(share -> org.springframework.http.ResponseEntity.ok(new AnswerShareView(
                         share.getId(), share.getSiteName(), share.getQuery(), share.getFiltersJson(),
                         share.getAnswerText(), share.getSourcesJson(), share.getCitationsJson(),
@@ -159,7 +161,9 @@ public class TurSNAnswerAPI {
     public org.springframework.http.ResponseEntity<String> shareOg(@PathVariable String siteName,
             @PathVariable String shareId,
             @RequestParam(value = "dest", required = false) String dest) {
-        return answerShareService.renderOgCard(shareId, dest)
+        return answerShareService.find(shareId)
+                .filter(share -> siteName.equals(share.getSiteName()))
+                .flatMap(share -> answerShareService.renderOgCard(shareId, dest))
                 .map(org.springframework.http.ResponseEntity::ok)
                 .orElseGet(() -> org.springframework.http.ResponseEntity.notFound().build());
     }

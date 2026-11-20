@@ -82,16 +82,14 @@ public class TurSNSiteMicrothesaurusAPI {
     @PutMapping("/{selectionId}")
     public TurSNSiteMicrothesaurusDto setEnabled(@PathVariable String snSiteId,
             @PathVariable String selectionId, @RequestParam boolean enabled) {
-        snSite(snSiteId);
-        return service.setSelectionEnabled(selectionId, enabled)
+        return service.setSelectionEnabled(snSite(snSiteId), selectionId, enabled)
                 .orElseThrow(() -> TurNotFoundException.of("Selection", selectionId));
     }
 
     @Operation(summary = "Remove a selection")
     @DeleteMapping("/{selectionId}")
     public boolean deselect(@PathVariable String snSiteId, @PathVariable String selectionId) {
-        snSite(snSiteId);
-        return service.deselect(selectionId);
+        return service.deselect(snSite(snSiteId), selectionId);
     }
 
     @Operation(summary = "Get the per-site microthesaurus index config")

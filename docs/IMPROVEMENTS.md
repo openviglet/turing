@@ -2595,20 +2595,31 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.27 Children keyed by a plain owner id (T1332)
+### CLXXXIX.29 Conversation endpoints check their agent (T1334)
 
-T1318 ruled 36 entities "through an owner": they have no tenant column and are isolated
-because a tenant-scoped owner reaches them. That holds for JPA children (an SN site's
-fields, rules, spotlights), but several are keyed by a plain owner id rather than an
-association: TurChatCitationRecord, TurChatSlotAuditEntry, TurChatTurnFeedback,
-TurAnswerSignalEvent and TurDistillationJob (agentId or conversationId), TurAnswerShare
-(siteName), TurSNSiteMicrothesaurus and its config (snSiteId), TurVendorFile and
-TurBatchJob (instanceId). For those, isolation depends on every repository read first
-loading the owner through its filtered repository. A query by the plain id alone skips
-the @TenantId filter.
+The T1332 audit found that TurChatSessionAPI takes a conversationId from the path and
+reads the rows stored under it without checking which agent or site the conversation
+belongs to: GET /api/chat/sessions/{conversationId}/citation-drift (recheck=true also
+rewrites the citation records), /slot-audit and /export (export also runs the
+post-export retention purge). The only guard is the ROLE_ADMIN / AI_AGENT_VIEW role, so
+an admin of one tenant who learns another tenant's conversation id (a TUR_SESSION cookie
+value) reads that conversation. The class's other endpoints (/slots, /messages, /state,
+the spectate streams, /manual-turn) follow the same pattern and were not traced.
 
-Audit each of these repositories' callers. Where a read goes straight to the child by
-the plain id (an analytics query, a feedback list, a share lookup), either load the
-owner first or give the entity a @TenantId column and move it out of the "through an
-owner" list in TurTenancyRulingConventionTest. A public share link that is meant to be
-readable without a tenant should be ruled explicitly, not left implicit.
+A conversation is owned through its chat flow state or its first message, which name the
+agent. The fix resolves the conversation's agent once, loads it through the
+tenant-filtered TurAIAgentRepository and answers 404 when it is not visible, before any
+of these endpoints read or write. A test per endpoint sends another tenant's
+conversation id and expects 404.
+
+### CLXXXIX.30 Batch jobs narrowed to visible LLM instances (T1335)
+
+TurBatchJobAPI's GET /api/system/batch/jobs lists every batch job with
+findByOrderByCreatedAtDesc, and /status counts open jobs with
+countByResultsCollectedFalse, across all tenants. TurBatchJob has no tenant column;
+T1318 ruled it reached through its LLM instance (instanceId), but these two reads never
+go through one. Whether /api/system/** is limited to the platform admin decides how much
+this matters; if a tenant admin can call it, the list must be narrowed to jobs whose
+instanceId names an LLM instance the caller can see (TurInfraTenantScope.visibleList
+over the LLM repository), and the count the same way. A test with two tenants' jobs
+checks that each sees only its own.
