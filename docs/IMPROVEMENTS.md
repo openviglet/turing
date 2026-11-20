@@ -2553,6 +2553,16 @@ in the module's base package. Everything else is internal by package. The allowe
 dependencies come from ADR 0005; one the code needs and the ADR does not list is a
 design question answered in the ADR first.
 
+Measured on 2026-11-20, after T1315 (import counts between top-level packages): the code
+needs many dependencies the ADR's direction rules forbid. llm imports agent 119 times,
+rag 37 and persona 7; sn imports agent 71, rag 58, chat 30, kb 20 and persona 15;
+searchengine imports sn 163 (the deferred T1310); agent, chat and eval form a cycle
+(chat to agent 90, eval to agent 161, agent to chat 43 and eval 21); system imports chat
+21 and agent 13. Twelve leftover top-level packages (artemis, bean, bento, email, jpa,
+logging, properties, resilience, spring, swagger, tomcat, utils) are still modules of
+their own, where the ADR folds them into shared and system. Before the declarations, the
+ADR needs a ruling per crossing: allow it in the map, or move the code so it disappears.
+
 ### CLXXXIX.19 Module verification as a gate (T1323)
 
 The report test becomes ApplicationModules.verify() in mvn test, so a cycle, a call into
