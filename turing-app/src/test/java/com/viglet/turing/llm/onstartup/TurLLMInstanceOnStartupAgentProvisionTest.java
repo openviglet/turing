@@ -36,7 +36,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -59,7 +59,7 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
     @Mock private TurAIAgentRepository turAIAgentRepository;
     @Mock private TurSecretCryptoService turSecretCryptoService;
     @Mock private TurGlobalSettingsService turGlobalSettingsService;
-    @Mock private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    @Mock private TurSNSiteGenAis turSNSiteGenAiRepository;
     @Mock private ApplicationArguments args;
 
     private TurLLMInstanceOnStartup runner;

@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 
 /**
  * Tests for TurLuceneInstanceProcess.
@@ -33,10 +33,10 @@ import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleReposit
 class TurLuceneInstanceProcessTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
 
     @Mock
-    private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private TurSNSiteLocales turSNSiteLocaleRepository;
 
     @TempDir
     Path tempDir;

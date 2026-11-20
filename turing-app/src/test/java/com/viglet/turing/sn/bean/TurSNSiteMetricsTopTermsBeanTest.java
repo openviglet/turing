@@ -21,7 +21,7 @@
 
 package com.viglet.turing.sn.bean;
 
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

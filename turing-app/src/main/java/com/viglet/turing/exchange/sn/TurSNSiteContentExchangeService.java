@@ -45,8 +45,8 @@ import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.properties.TurConfigProperties;
@@ -73,8 +73,8 @@ public class TurSNSiteContentExchangeService {
     private static final int EXPORT_PAGE_SIZE = 500;
     public static final int IMPORT_CHUNK_SIZE = 100;
 
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSiteFieldService turSNSiteFieldService;
     private final TurSNGenAi turSNGenAi;
@@ -109,8 +109,8 @@ public class TurSNSiteContentExchangeService {
         }
     }
 
-    public TurSNSiteContentExchangeService(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurSNSiteContentExchangeService(TurSNSites turSNSiteRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurSearchEnginePluginFactory pluginFactory,
             TurSNSiteFieldService turSNSiteFieldService,
             TurSNGenAi turSNGenAi,

@@ -66,9 +66,9 @@ import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnu
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.lucene.TurLuceneSynonymAnalyzer;
 import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
 import com.viglet.turing.sn.facet.TurSNFilterExclusion;
@@ -90,16 +90,16 @@ public class TurLuceneQueryBuilder {
     private static final Set<TurSEFieldType> TEXT_FIELD_TYPES = EnumSet.of(TurSEFieldType.TEXT, TurSEFieldType.STRING,
             TurSEFieldType.ARRAY);
 
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurLuceneSynonymRegistry synonymRegistry;
     private final TurLuceneRankingExpressions rankingExpressions;
     private final TurLuceneCustomFacets customFacets;
 
-    public TurLuceneQueryBuilder(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions) {
         this(turSNSiteFieldExtRepository, turSNSiteCustomSortRepository, turSNSiteLocaleRepository,
@@ -107,9 +107,9 @@ public class TurLuceneQueryBuilder {
     }
 
     @org.springframework.beans.factory.annotation.Autowired
-    public TurLuceneQueryBuilder(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions,
             TurLuceneCustomFacets customFacets) {

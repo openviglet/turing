@@ -43,7 +43,7 @@ import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 
 /**
  * Unit tests for AI-assisted synonym mining (T667) — the embed + cluster +

@@ -19,8 +19,8 @@ package com.viglet.turing.searchengine.lucene;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.facet.FacetsConfig;
@@ -50,12 +50,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TurLuceneInstanceProcess {
 
     private final ConcurrentHashMap<String, TurLuceneInstance> instanceCache = new ConcurrentHashMap<>();
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurLuceneStorageSync storageSync;
 
-    public TurLuceneInstanceProcess(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurLuceneInstanceProcess(TurSNSites turSNSiteRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneStorageSync storageSync) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;

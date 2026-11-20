@@ -34,7 +34,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 /**
  * Unit tests for {@link TurMcpWriteToolService} — the T253 gated write tools.
@@ -46,7 +46,7 @@ import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 class TurMcpWriteToolServiceTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurSNImportService turSNImportService;
     @Mock

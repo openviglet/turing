@@ -25,7 +25,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * Tests for TurLuceneQueryBuilder.
@@ -37,7 +37,7 @@ import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtReposi
 class TurLuceneQueryBuilderTest {
 
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @Mock
     private TurLuceneRankingExpressions rankingExpressions;

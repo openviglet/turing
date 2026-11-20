@@ -4,8 +4,8 @@ import com.viglet.turing.sn.domain.TurSNSiteFieldExtDomain;
 import com.viglet.turing.sn.domain.TurSNSiteFieldExtRepositoryPort;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
@@ -42,16 +42,16 @@ import java.util.stream.Collectors;
 @Service
 public class TurDslToolService {
 
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSiteFieldExtRepositoryPort turSNSiteFieldExtRepositoryPort;
     private final TurDslSearchService turDslSearchService;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSiteConfigCache configCache;
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
-    public TurDslToolService(TurSNSiteRepository turSNSiteRepository,
-                              TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurDslToolService(TurSNSites turSNSiteRepository,
+                              TurSNSiteLocales turSNSiteLocaleRepository,
                               TurSNSiteFieldExtRepositoryPort turSNSiteFieldExtRepositoryPort,
                               TurDslSearchService turDslSearchService,
                               TurSearchEnginePluginFactory pluginFactory,

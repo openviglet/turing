@@ -60,7 +60,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +138,7 @@ public class TurSNGenAi {
             Language: Always respond in English.""";
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurGenAiContextFactory turGenAiContextFactory;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurRagContextBuilder turRagContextBuilder;
     private final TurRagFacetExtractor facetExtractor;
     private final TurAgentChatExecutor agentChatExecutor;
@@ -192,7 +192,7 @@ public class TurSNGenAi {
     /** The constructor before T1085, kept for callers that build this class by hand. */
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurRagContextBuilder turRagContextBuilder,
             TurRagFacetExtractor facetExtractor,
             TurAgentChatExecutor agentChatExecutor,
@@ -209,7 +209,7 @@ public class TurSNGenAi {
     /** The constructor before T1127, kept for callers that build this class by hand. */
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurRagContextBuilder turRagContextBuilder,
             TurRagFacetExtractor facetExtractor,
             TurAgentChatExecutor agentChatExecutor,
@@ -227,7 +227,7 @@ public class TurSNGenAi {
     /** The constructor before T1157, kept for callers that build this class by hand. */
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurRagContextBuilder turRagContextBuilder,
             TurRagFacetExtractor facetExtractor,
             TurAgentChatExecutor agentChatExecutor,
@@ -246,7 +246,7 @@ public class TurSNGenAi {
     /** The constructor before T1294, kept for callers that build this class by hand. */
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurRagContextBuilder turRagContextBuilder,
             TurRagFacetExtractor facetExtractor,
             TurAgentChatExecutor agentChatExecutor,
@@ -280,7 +280,7 @@ public class TurSNGenAi {
     @org.springframework.beans.factory.annotation.Autowired
     public TurSNGenAi(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurRagContextBuilder turRagContextBuilder,
             TurRagFacetExtractor facetExtractor,
             TurAgentChatExecutor agentChatExecutor,

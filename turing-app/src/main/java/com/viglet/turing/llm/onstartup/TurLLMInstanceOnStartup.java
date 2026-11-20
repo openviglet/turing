@@ -40,7 +40,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -161,7 +161,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurSecretCryptoService turSecretCryptoService;
     private final TurGlobalSettingsService turGlobalSettingsService;
-    private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    private final TurSNSiteGenAis turSNSiteGenAiRepository;
 
     public TurLLMInstanceOnStartup(Environment environment,
             TurLLMInstanceRepository turLLMInstanceRepository,
@@ -169,7 +169,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
             TurAIAgentRepository turAIAgentRepository,
             TurSecretCryptoService turSecretCryptoService,
             TurGlobalSettingsService turGlobalSettingsService,
-            TurSNSiteGenAiRepository turSNSiteGenAiRepository) {
+            TurSNSiteGenAis turSNSiteGenAiRepository) {
         this.environment = environment;
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.turLLMVendorRepository = turLLMVendorRepository;

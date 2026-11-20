@@ -30,8 +30,8 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -80,16 +80,16 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     private final TurLucene turLucene;
     private final TurLuceneInstanceProcess turLuceneInstanceProcess;
     private final TurLuceneQueryBuilder turLuceneQueryBuilder;
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final com.viglet.turing.searchengine.lucene.TurLuceneStorageSync storageSync;
     private final TurLuceneSynonymRegistry synonymRegistry;
 
     public TurLuceneSearchEnginePlugin(TurLucene turLucene,
             TurLuceneInstanceProcess turLuceneInstanceProcess,
             TurLuceneQueryBuilder turLuceneQueryBuilder,
-            TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+            TurSNSites turSNSiteRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
             com.viglet.turing.searchengine.lucene.TurLuceneStorageSync storageSync,
             TurLuceneSynonymRegistry synonymRegistry) {
         this.turLucene = turLucene;

@@ -28,7 +28,7 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -91,12 +91,12 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
 
     private final TurElasticsearch turElasticsearch;
     private final TurElasticsearchInstanceProcess turElasticsearchInstanceProcess;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     public TurElasticsearchSearchEnginePlugin(
             TurElasticsearch turElasticsearch,
             TurElasticsearchInstanceProcess turElasticsearchInstanceProcess,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
+            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
         this.turElasticsearch = turElasticsearch;
         this.turElasticsearchInstanceProcess = turElasticsearchInstanceProcess;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;

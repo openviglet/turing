@@ -39,9 +39,9 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
@@ -61,15 +61,15 @@ class TurStructuredFeedProvisioningOnStartupTest {
     @Mock
     private TurSNSiteManifestService manifestService;
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
-    private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    private TurSNSiteGenAis turSNSiteGenAiRepository;
     @Mock
     private TurSEInstanceRepository turSEInstanceRepository;
     @Mock
     private TurSEVendorRepository turSEVendorRepository;
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
     @Mock
     private TurStructuredFeedIngestService ingestService;
 

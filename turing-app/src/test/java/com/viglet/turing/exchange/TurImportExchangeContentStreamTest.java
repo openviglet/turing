@@ -42,7 +42,7 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
@@ -63,7 +63,7 @@ class TurImportExchangeContentStreamTest {
     private static final int CHUNK = TurSNSiteContentExchangeService.IMPORT_CHUNK_SIZE;
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
     @Mock
@@ -79,7 +79,7 @@ class TurImportExchangeContentStreamTest {
     void setUp() {
         contentExchangeService = new TurSNSiteContentExchangeService(turSNSiteRepository,
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository.class),
+                        com.viglet.turing.sn.api.TurSNSiteLocales.class),
                 pluginFactory,
                 org.mockito.Mockito.mock(com.viglet.turing.sn.field.TurSNSiteFieldService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.rag.TurSNGenAi.class),

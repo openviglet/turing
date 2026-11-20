@@ -34,7 +34,7 @@ import com.viglet.turing.persona.persistence.model.TurPersonaSource;
 import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**
@@ -49,7 +49,7 @@ class TurPersonaGroundingServiceTest {
     @Mock
     private TurSNSearchProcess turSNSearchProcess;
     @Mock
-    private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private TurSNSiteLocales turSNSiteLocaleRepository;
     @Mock
     private TurGenAiContextFactory turGenAiContextFactory;
     @Mock

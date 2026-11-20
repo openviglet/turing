@@ -39,7 +39,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 

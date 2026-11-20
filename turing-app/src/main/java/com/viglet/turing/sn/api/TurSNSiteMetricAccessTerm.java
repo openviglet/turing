@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.sn.persistence.repository.metric;
+package com.viglet.turing.sn.api;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

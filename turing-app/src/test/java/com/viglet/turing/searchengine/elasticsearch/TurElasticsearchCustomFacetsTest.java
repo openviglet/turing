@@ -25,9 +25,9 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -85,7 +85,7 @@ class TurElasticsearchCustomFacetsTest {
 
     @Test
     void theSearchRequestAsksForTheSitesCustomFacets() throws Exception {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSites siteRepository = mock(TurSNSites.class);
         TurLuceneCustomFacets customFacets = mock(TurLuceneCustomFacets.class);
         ElasticsearchClient client = mock(ElasticsearchClient.class);
         TurSNSite site = new TurSNSite();
@@ -95,8 +95,8 @@ class TurElasticsearchCustomFacetsTest {
         when(customFacets.facets(site, Locale.US)).thenReturn(List.of(SALARY));
         ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
         when(client.search(request.capture(), any(Type.class))).thenThrow(new IOException("stop here"));
-        TurElasticsearch engine = new TurElasticsearch(siteRepository, mock(TurSNSiteFieldExtRepository.class),
-                mock(TurSNSiteCustomSortRepository.class), customFacets);
+        TurElasticsearch engine = new TurElasticsearch(siteRepository, mock(TurSNSiteFieldExts.class),
+                mock(TurSNSiteCustomSorts.class), customFacets);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ("*");
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),

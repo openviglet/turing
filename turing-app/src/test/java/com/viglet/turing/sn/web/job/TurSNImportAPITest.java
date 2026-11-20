@@ -208,7 +208,7 @@ class TurSNImportAPITest {
         when(agentRepository.findById("def-1")).thenReturn(Optional.of(defaultAgent));
         when(turSNSiteRepositoryPort.findByNameIgnoreCase("site1")).thenReturn(Optional.of(siteDomain("site1")));
         TurSNImportAPI realGate = new TurSNImportAPI(new TurSNImportService(jmsMessagingTemplate, turSNSiteRepositoryPort, turGenAi,
-                turJmsTenantPropagation, new TurDefaultAgentResolver(settings, agentRepository, siteRepository)),
+                turJmsTenantPropagation, new TurDefaultAgentResolver(settings, agentRepository, new com.viglet.turing.sn.api.TurSNSites(siteRepository))),
                 null, null);
 
         MockMvcBuilders.standaloneSetup(realGate).build().perform(post("/api/sn/import")

@@ -31,7 +31,7 @@ import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.synonym.TurSynonymClusterer.TurSynonymCandidate;
 
 import lombok.extern.slf4j.Slf4j;

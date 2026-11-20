@@ -39,8 +39,8 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 
 /**
@@ -55,8 +55,8 @@ class TurLuceneCustomFacetSpanTest {
 
     private static final Duration DAY = Duration.ofDays(1);
 
-    private final TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
-    private final TurSNSiteCustomFacetRepository customFacetRepository = mock(TurSNSiteCustomFacetRepository.class);
+    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
+    private final TurSNSiteCustomFacets customFacetRepository = mock(TurSNSiteCustomFacets.class);
     private final TurLuceneCustomFacets customFacets = new TurLuceneCustomFacets(fieldRepository,
             customFacetRepository);
     private final TurSNSite site = new TurSNSite();

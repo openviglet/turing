@@ -55,7 +55,7 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**
@@ -72,7 +72,7 @@ class TurLuceneSearchEnginePluginTest {
     @Mock
     private TurLuceneInstanceProcess turLuceneInstanceProcess;
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @InjectMocks
     private TurLuceneSearchEnginePlugin plugin;

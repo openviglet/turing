@@ -25,10 +25,10 @@ import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteMergeProvidersAccess;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNSiteSpotlights;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,10 +37,10 @@ class TurSNSiteExportTest {
 
     @Test
     void shouldHydrateSpotlightsAndMergeProvidersBeforeExportAll() {
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-        TurSNSiteSpotlightRepository spotlightRepository = mock(TurSNSiteSpotlightRepository.class);
-        TurSNSiteMergeProvidersRepository mergeProvidersRepository = mock(TurSNSiteMergeProvidersRepository.class);
-        TurSNSiteCustomSortRepository customSortRepository = mock(TurSNSiteCustomSortRepository.class);
+        TurSNSites siteRepository = mock(TurSNSites.class);
+        TurSNSiteSpotlights spotlightRepository = mock(TurSNSiteSpotlights.class);
+        TurSNSiteMergeProvidersAccess mergeProvidersRepository = mock(TurSNSiteMergeProvidersAccess.class);
+        TurSNSiteCustomSorts customSortRepository = mock(TurSNSiteCustomSorts.class);
         TurSNSiteExportFileService exportFileService = mock(TurSNSiteExportFileService.class);
 
         TurSNSite site = new TurSNSite();

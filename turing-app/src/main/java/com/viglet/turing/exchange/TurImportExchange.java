@@ -38,7 +38,7 @@ import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.spring.utils.TurSpringUtils;
 
@@ -68,7 +68,7 @@ public class TurImportExchange {
 
 	private final TurSNSiteImport turSNSiteImport;
 	private final TurSNSiteContentExchangeService contentExchangeService;
-	private final TurSNSiteRepository turSNSiteRepository;
+	private final TurSNSites turSNSiteRepository;
 	private final TurStorageService storageService;
 	private final TurAIAgentImportService turAIAgentImportService;
 	private static final String EXPORT_FILE = "export.json";
@@ -153,7 +153,7 @@ public class TurImportExchange {
 
 	public TurImportExchange(TurSNSiteImport turSNSiteImport,
 			TurSNSiteContentExchangeService contentExchangeService,
-			TurSNSiteRepository turSNSiteRepository,
+			TurSNSites turSNSiteRepository,
 			TurStorageService storageService,
 			TurAIAgentImportService turAIAgentImportService) {
 		this.turSNSiteImport = turSNSiteImport;

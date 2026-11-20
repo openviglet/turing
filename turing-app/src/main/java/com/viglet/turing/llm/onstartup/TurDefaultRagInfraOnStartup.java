@@ -40,7 +40,7 @@ import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -138,7 +138,7 @@ public class TurDefaultRagInfraOnStartup implements ApplicationRunner {
     private final TurStoreInstanceRepository turStoreInstanceRepository;
     private final TurStoreVendorRepository turStoreVendorRepository;
     private final TurAIAgentRepository turAIAgentRepository;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurGlobalSettingsService turGlobalSettingsService;
     private final TurLocalEmbeddingModelFactory localEmbeddingModelFactory;
     private final TurHuggingFaceEmbeddingModelFactory huggingFaceEmbeddingModelFactory;
@@ -149,7 +149,7 @@ public class TurDefaultRagInfraOnStartup implements ApplicationRunner {
             TurStoreInstanceRepository turStoreInstanceRepository,
             TurStoreVendorRepository turStoreVendorRepository,
             TurAIAgentRepository turAIAgentRepository,
-            TurSNSiteRepository turSNSiteRepository,
+            TurSNSites turSNSiteRepository,
             TurGlobalSettingsService turGlobalSettingsService,
             TurLocalEmbeddingModelFactory localEmbeddingModelFactory,
             TurHuggingFaceEmbeddingModelFactory huggingFaceEmbeddingModelFactory,

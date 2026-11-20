@@ -82,11 +82,11 @@ import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
@@ -110,20 +110,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurSolrQueryBuilder {
     public static final String CUSTOM_FACET_QUERY_SEPARATOR = "::";
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
-    private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
-    private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
-    private final TurSNRankingConditionRepository turSNRankingConditionRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
+    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
+    private final TurSNRankingExpressions turSNRankingExpressionRepository;
+    private final TurSNRankingConditions turSNRankingConditionRepository;
     private final TurSNTargetingRules turSNTargetingRules;
     private final TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
     private final TurSNSiteSearchSnapshotService snapshotService;
 
-    public TurSolrQueryBuilder(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
-            TurSNRankingExpressionRepository turSNRankingExpressionRepository,
-            TurSNRankingConditionRepository turSNRankingConditionRepository,
+    public TurSolrQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSNRankingExpressions turSNRankingExpressionRepository,
+            TurSNRankingConditions turSNRankingConditionRepository,
             TurSNTargetingRules turSNTargetingRules,
             TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNSiteSearchSnapshotService snapshotService) {

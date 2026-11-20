@@ -28,7 +28,7 @@ import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import lombok.extern.slf4j.Slf4j;
@@ -72,12 +72,12 @@ public class TurPersonaGroundingService {
     private static final int MAX_GROUNDING_CHARS = 8000;
 
     private final TurSNSearchProcess turSNSearchProcess;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurGenAiContextFactory turGenAiContextFactory;
     private final TurPersonaSourceRepository turPersonaSourceRepository;
 
     public TurPersonaGroundingService(TurSNSearchProcess turSNSearchProcess,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurGenAiContextFactory turGenAiContextFactory,
             TurPersonaSourceRepository turPersonaSourceRepository) {
         this.turSNSearchProcess = turSNSearchProcess;

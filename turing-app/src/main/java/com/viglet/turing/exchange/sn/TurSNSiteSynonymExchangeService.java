@@ -28,7 +28,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonym;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
-import com.viglet.turing.sn.persistence.repository.synonym.TurSNSynonymRepository;
+import com.viglet.turing.sn.api.TurSNSynonyms;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.sn.synonym.TurSNSynonymApplyService;
 
@@ -56,10 +56,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurSNSiteSynonymExchangeService {
 
-    private final TurSNSynonymRepository synonymRepository;
+    private final TurSNSynonyms synonymRepository;
     private final TurSNSynonymApplyService applyService;
 
-    public TurSNSiteSynonymExchangeService(TurSNSynonymRepository synonymRepository,
+    public TurSNSiteSynonymExchangeService(TurSNSynonyms synonymRepository,
             TurSNSynonymApplyService applyService) {
         this.synonymRepository = synonymRepository;
         this.applyService = applyService;

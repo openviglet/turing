@@ -40,9 +40,9 @@ import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.properties.TurContentAiProperty;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
@@ -104,9 +104,9 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     private final TurContentAiResponseMapper responseMapper;
     private final TurContentAiSourceCatalog sourceCatalog;
     private final TurContentAiProperty property;
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     /**
      * T1045 — endpoints whose configured source has already been diagnosed, so the
@@ -119,9 +119,9 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     public TurContentAiSearchEnginePlugin(TurContentAiClient client,
             TurContentAiQueryBuilder queryBuilder, TurContentAiResponseMapper responseMapper,
             TurContentAiSourceCatalog sourceCatalog,
-            TurContentAiProperty property, TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
+            TurContentAiProperty property, TurSNSites turSNSiteRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.responseMapper = responseMapper;

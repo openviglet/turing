@@ -62,12 +62,12 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
@@ -80,22 +80,22 @@ import com.viglet.turing.sn.tr.TurSNTargetingRules;
 class TurSolrQueryBuilderTest {
 
         @Mock
-        private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+        private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
         @Mock
-        private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+        private TurSNRankingExpressions turSNRankingExpressionRepository;
 
         @Mock
-        private TurSNRankingConditionRepository turSNRankingConditionRepository;
+        private TurSNRankingConditions turSNRankingConditionRepository;
 
         @Mock
         private TurSNTargetingRules turSNTargetingRules;
 
         @Mock
-        private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private com.viglet.turing.sn.api.TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
         @Mock
-        private TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+        private TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 
         @Mock
         private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;

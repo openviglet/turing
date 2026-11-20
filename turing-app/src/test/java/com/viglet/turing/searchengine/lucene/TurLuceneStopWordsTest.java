@@ -32,7 +32,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.TurSNQueryRelaxer;
 
 /**
@@ -50,7 +50,7 @@ class TurLuceneStopWordsTest {
     private static final Locale PT_BR = Locale.of("pt", "BR");
 
     @Mock
-    private TurSNSiteFieldExtRepository fieldExtRepository;
+    private TurSNSiteFieldExts fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;

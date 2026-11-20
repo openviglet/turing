@@ -45,8 +45,8 @@ import com.viglet.turing.rag.catalog.planning.TurCopilotQueryPlannerFactory;
 import com.viglet.turing.rag.catalog.planning.TurDeterministicCopilotQueryPlanner;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.dsl.TurDslQuery;
 import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
@@ -83,9 +83,9 @@ class TurCatalogCopilotServiceTest {
     @Mock
     private TurDslSearchService dslSearchService;
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
     @Mock
     private TurSNHybridRankingService hybridRankingService;
     @Mock

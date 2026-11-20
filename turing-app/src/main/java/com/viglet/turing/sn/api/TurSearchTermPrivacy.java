@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.persistence.repository.metric;
+package com.viglet.turing.sn.api;
 
 import java.util.regex.Pattern;
 

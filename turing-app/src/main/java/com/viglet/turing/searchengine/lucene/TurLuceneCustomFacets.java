@@ -38,8 +38,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
@@ -67,11 +67,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurLuceneCustomFacets {
 
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
-    public TurLuceneCustomFacets(TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository) {
+    public TurLuceneCustomFacets(TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomFacets turSNSiteCustomFacetRepository) {
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
     }

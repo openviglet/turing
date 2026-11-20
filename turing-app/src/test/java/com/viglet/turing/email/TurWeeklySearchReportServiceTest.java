@@ -17,10 +17,10 @@ import org.springframework.data.domain.Sort;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccesses;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNSiteDataCollectorService;
@@ -41,11 +41,11 @@ class TurWeeklySearchReportServiceTest {
     @Mock
     private TurEmailService emailService;
     @Mock
-    private TurSNSiteRepository snSiteRepository;
+    private TurSNSites snSiteRepository;
     @Mock
-    private TurSNSiteLocaleRepository snSiteLocaleRepository;
+    private TurSNSiteLocales snSiteLocaleRepository;
     @Mock
-    private TurSNSiteMetricAccessRepository metricAccessRepository;
+    private TurSNSiteMetricAccesses metricAccessRepository;
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
     @Mock

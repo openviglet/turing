@@ -39,8 +39,8 @@ import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.contentai.TurContentAiSearchEnginePlugin;
 import com.viglet.turing.properties.TurContentAiProperty;
 
@@ -144,13 +144,13 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
     private final TurContentAiClient client;
     private final TurContentAiQueryBuilder queryBuilder;
     private final TurContentAiProperty property;
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
 
     public TurDslContentAiExecutor(TurContentAiClient client,
             TurContentAiQueryBuilder queryBuilder, TurContentAiProperty property,
-            TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository) {
+            TurSNSites turSNSiteRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository) {
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.property = property;

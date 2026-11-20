@@ -20,9 +20,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 
@@ -36,11 +36,11 @@ class TurElasticsearchRankingExpressionsTest {
     private static final long NOW = Instant.parse("2026-10-10T15:00:00Z").toEpochMilli();
 
     @Mock
-    private TurSNRankingExpressionRepository expressionRepository;
+    private TurSNRankingExpressions expressionRepository;
     @Mock
-    private TurSNRankingConditionRepository conditionRepository;
+    private TurSNRankingConditions conditionRepository;
     @Mock
-    private TurSNSiteFieldExtRepository fieldExtRepository;
+    private TurSNSiteFieldExts fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
 

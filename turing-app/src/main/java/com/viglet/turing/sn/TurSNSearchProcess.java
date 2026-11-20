@@ -640,8 +640,7 @@ public class TurSNSearchProcess {
                         turSNSiteMetricAccess.setAccessDate(Instant.now());
                         turSNSiteMetricAccess.setLanguage(turSNSiteSearchContext.getLocale());
                         // T1298 / T1329 — personal data masked by the site's own setting.
-                        turSNSiteMetricAccess.setTerm(com.viglet.turing.sn.persistence.repository.metric
-                                        .TurSearchTermPrivacy.mask(
+                        turSNSiteMetricAccess.setTerm(com.viglet.turing.sn.api.TurSearchTermPrivacy.mask(
                                                         turSNSiteSearchContext.getTurSEParameters().getQuery(),
                                                         turSNSite.getMetricsMaskPersonalData()));
                         // T953 — the site is rebuilt from the cached view now, so the FK

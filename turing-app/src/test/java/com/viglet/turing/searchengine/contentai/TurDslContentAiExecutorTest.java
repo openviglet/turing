@@ -56,8 +56,8 @@ import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.properties.TurContentAiProperty;
 
 import tools.jackson.databind.JsonNode;
@@ -89,9 +89,9 @@ class TurDslContentAiExecutorTest {
     private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
-    private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private TurSNSiteLocales turSNSiteLocaleRepository;
 
     private HttpServer server;
     private final List<String> bodies = new ArrayList<>();

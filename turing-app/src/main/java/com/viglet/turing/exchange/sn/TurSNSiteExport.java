@@ -42,10 +42,10 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteMergeProvidersAccess;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNSiteSpotlights;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -53,20 +53,20 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class TurSNSiteExport {
 
-	private final TurSNSiteRepository turSNSiteRepository;
-	private final TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
-	private final TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
-	private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+	private final TurSNSites turSNSiteRepository;
+	private final TurSNSiteSpotlights turSNSiteSpotlightRepository;
+	private final TurSNSiteMergeProvidersAccess turSNSiteMergeProvidersRepository;
+	private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 	private final TurSNSiteExportFileService exportFileService;
 	private final TurSNSiteContentExchangeService contentExchangeService;
 	private final TurSNSiteSynonymExchangeService synonymExchangeService;
 	private final TransactionTemplate readOnlyTransactionTemplate;
 	private final ConcurrentHashMap<String, Path> asyncExportFiles = new ConcurrentHashMap<>();
 
-	public TurSNSiteExport(TurSNSiteRepository turSNSiteRepository,
-			TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
-			TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository,
-			TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+	public TurSNSiteExport(TurSNSites turSNSiteRepository,
+			TurSNSiteSpotlights turSNSiteSpotlightRepository,
+			TurSNSiteMergeProvidersAccess turSNSiteMergeProvidersRepository,
+			TurSNSiteCustomSorts turSNSiteCustomSortRepository,
 			TurSNSiteExportFileService exportFileService,
 			TurSNSiteContentExchangeService contentExchangeService,
 			TurSNSiteSynonymExchangeService synonymExchangeService,

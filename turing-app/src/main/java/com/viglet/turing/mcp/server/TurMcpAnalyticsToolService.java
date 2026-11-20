@@ -22,9 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccesses;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ import tools.jackson.databind.json.JsonMapper;
  * project.
  *
  * <p>Three tools, all site-scoped and backed by the existing
- * {@link TurSNSiteMetricAccessRepository} search-access log (no new telemetry,
+ * {@link TurSNSiteMetricAccesses} search-access log (no new telemetry,
  * no Mongo/Redis dependency — works on the default install):
  * <ul>
  *   <li>{@code search_metrics} — top queries with how often they ran and their
@@ -56,13 +56,13 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurMcpAnalyticsToolService {
 
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteMetricAccessRepository metricAccessRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteMetricAccesses metricAccessRepository;
     private final TurSNSearchInsightsService searchInsightsService;
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
-    public TurMcpAnalyticsToolService(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteMetricAccessRepository metricAccessRepository,
+    public TurMcpAnalyticsToolService(TurSNSites turSNSiteRepository,
+            TurSNSiteMetricAccesses metricAccessRepository,
             TurSNSearchInsightsService searchInsightsService) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.metricAccessRepository = metricAccessRepository;
@@ -90,7 +90,7 @@ public class TurMcpAnalyticsToolService {
             totalSearches = metricAccessRepository.countTermsByPeriod(snSite, since, now);
         }
         // T1179 — each search as visitors typed it, not its grouping key.
-        com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms.asTyped(metricAccessRepository,
+        metricAccessRepository.asTyped(
                 snSite, terms);
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("site", snSite.getName());

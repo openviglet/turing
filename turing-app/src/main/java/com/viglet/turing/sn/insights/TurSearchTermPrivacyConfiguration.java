@@ -12,7 +12,7 @@ package com.viglet.turing.sn.insights;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy;
+import com.viglet.turing.sn.api.TurSearchTermPrivacy;
 
 import lombok.extern.slf4j.Slf4j;
 

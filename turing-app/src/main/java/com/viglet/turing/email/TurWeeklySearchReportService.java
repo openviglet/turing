@@ -25,10 +25,10 @@ import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccesses;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSiteDataCollectorService;
@@ -55,9 +55,9 @@ public class TurWeeklySearchReportService {
     };
 
     private final TurEmailService emailService;
-    private final TurSNSiteRepository snSiteRepository;
-    private final TurSNSiteLocaleRepository snSiteLocaleRepository;
-    private final TurSNSiteMetricAccessRepository metricAccessRepository;
+    private final TurSNSites snSiteRepository;
+    private final TurSNSiteLocales snSiteLocaleRepository;
+    private final TurSNSiteMetricAccesses metricAccessRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurGlobalSettingsService globalSettingsService;
     private final TurLLMInstanceRepository llmInstanceRepository;
@@ -69,9 +69,9 @@ public class TurWeeklySearchReportService {
     private final com.viglet.turing.tenant.TurTenantScheduledFanOut tenantFanOut;
 
     public TurWeeklySearchReportService(TurEmailService emailService,
-            TurSNSiteRepository snSiteRepository,
-            TurSNSiteLocaleRepository snSiteLocaleRepository,
-            TurSNSiteMetricAccessRepository metricAccessRepository,
+            TurSNSites snSiteRepository,
+            TurSNSiteLocales snSiteLocaleRepository,
+            TurSNSiteMetricAccesses metricAccessRepository,
             TurSearchEnginePluginFactory pluginFactory,
             TurGlobalSettingsService globalSettingsService,
             TurLLMInstanceRepository llmInstanceRepository,

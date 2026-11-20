@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.mcp.server;
 
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,9 +30,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccesses;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 
 /**
@@ -44,7 +46,7 @@ import com.viglet.turing.sn.insights.TurSNSearchInsightsService;
 class TurMcpAnalyticsToolServiceTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurSNSiteMetricAccessRepository metricAccessRepository;
 
@@ -53,7 +55,7 @@ class TurMcpAnalyticsToolServiceTest {
     /** T1119 — the failed-searches and gaps tools read through the shared insights service. */
     @BeforeEach
     void setUp() {
-        service = new TurMcpAnalyticsToolService(turSNSiteRepository, metricAccessRepository,
+        service = new TurMcpAnalyticsToolService(turSNSiteRepository, new TurSNSiteMetricAccesses(metricAccessRepository),
                 new TurSNSearchInsightsService(metricAccessRepository));
     }
 

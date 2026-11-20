@@ -32,8 +32,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 
 import jakarta.annotation.PreDestroy;
@@ -47,13 +47,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TurSolrInstanceProcess {
     private final ConcurrentHashMap<String, SolrClient> clientCache = new ConcurrentHashMap<>();
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurSolrInstanceSource solrInstanceSource;
 
     public TurSolrInstanceProcess(
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteRepository turSNSiteRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
+            TurSNSites turSNSiteRepository,
             TurSolrInstanceSource solrInstanceSource) {
         System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection");
         System.setProperty("jdk.httpclient.HttpClient.version", "HTTP_1_1");

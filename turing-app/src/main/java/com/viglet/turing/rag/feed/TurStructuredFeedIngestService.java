@@ -34,7 +34,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
@@ -98,7 +98,7 @@ public class TurStructuredFeedIngestService {
 
     private final TurStructuredFeedProperty property;
     private final TurUrlFetchService urlFetchService;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurSNFieldProvisioner fieldProvisioner;
     private final TurSNImportService turSNImportService;
 
@@ -107,7 +107,7 @@ public class TurStructuredFeedIngestService {
 
     public TurStructuredFeedIngestService(TurStructuredFeedProperty property,
             TurUrlFetchService urlFetchService,
-            TurSNSiteRepository turSNSiteRepository,
+            TurSNSites turSNSiteRepository,
             TurSNFieldProvisioner fieldProvisioner,
             TurSNImportService turSNImportService) {
         this.property = property;

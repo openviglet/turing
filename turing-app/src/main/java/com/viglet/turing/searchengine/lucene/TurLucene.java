@@ -20,7 +20,7 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;
@@ -48,13 +48,13 @@ import java.util.Optional;
 @Transactional
 public class TurLucene {
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurLuceneQueryBuilder turLuceneQueryBuilder;
     private final TurLuceneResultProcessor turLuceneResultProcessor;
     private final TurLuceneDocumentHandler turLuceneDocumentHandler;
     private final TurLuceneCustomFacets turLuceneCustomFacets;
 
-    public TurLucene(TurSNSiteRepository turSNSiteRepository,
+    public TurLucene(TurSNSites turSNSiteRepository,
             TurSNSiteFieldService turSNSiteFieldService,
             TurLuceneQueryBuilder turLuceneQueryBuilder,
             TurLuceneStorageSync turLuceneStorageSync,

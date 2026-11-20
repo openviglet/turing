@@ -48,7 +48,7 @@ import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -72,7 +72,7 @@ class TurDefaultRagInfraOnStartupTest {
     @Mock
     private TurAIAgentRepository turAIAgentRepository;
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurGlobalSettingsService settings;
     @Mock

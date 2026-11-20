@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.properties.TurCatalogCopilotProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +43,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurCopilotQueryPlannerFactory {
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurCatalogCopilotProperty copilotProperty;
     private final Map<TurCopilotPlanningStrategy, TurCopilotQueryPlanner> planners =
             new EnumMap<>(TurCopilotPlanningStrategy.class);
 
-    public TurCopilotQueryPlannerFactory(TurSNSiteRepository turSNSiteRepository,
+    public TurCopilotQueryPlannerFactory(TurSNSites turSNSiteRepository,
             TurCatalogCopilotProperty copilotProperty, List<TurCopilotQueryPlanner> allPlanners) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.copilotProperty = copilotProperty;

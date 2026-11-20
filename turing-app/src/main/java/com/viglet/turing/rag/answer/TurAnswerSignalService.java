@@ -87,7 +87,7 @@ public class TurAnswerSignalService {
         event.setSiteName(siteName);
         event.setConversationId(conversationId);
         // T1298 / T1329 — nor does an answer signal's, by the site's own setting.
-        event.setQuery(truncate(com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy.mask(query,
+        event.setQuery(truncate(com.viglet.turing.sn.api.TurSearchTermPrivacy.mask(query,
                 site.get().getMetricsMaskPersonalData()), QUERY_MAX));
         event.setSignal(signal);
         event.setRelevanceMiss(signal.isRelevanceMiss());

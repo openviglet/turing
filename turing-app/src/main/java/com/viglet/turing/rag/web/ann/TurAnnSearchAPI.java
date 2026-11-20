@@ -48,7 +48,7 @@ import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -75,13 +75,13 @@ public class TurAnnSearchAPI {
 
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurGenAiContextFactory turGenAiContextFactory;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSiteSearchService turSNSiteSearchService;
     private final TurDefaultAgentResolver turDefaultAgentResolver;
 
     public TurAnnSearchAPI(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNSiteSearchService turSNSiteSearchService,
             TurDefaultAgentResolver turDefaultAgentResolver) {
         this.turSNSearchProcess = turSNSearchProcess;

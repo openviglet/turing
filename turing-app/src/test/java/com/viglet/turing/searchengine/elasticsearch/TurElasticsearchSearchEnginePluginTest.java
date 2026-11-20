@@ -42,7 +42,7 @@ import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProc
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**
@@ -59,7 +59,7 @@ class TurElasticsearchSearchEnginePluginTest {
     @Mock
     private TurElasticsearchInstanceProcess turElasticsearchInstanceProcess;
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @InjectMocks
     private TurElasticsearchSearchEnginePlugin plugin;

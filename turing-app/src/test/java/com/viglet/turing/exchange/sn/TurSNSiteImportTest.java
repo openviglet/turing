@@ -47,15 +47,15 @@ import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
-import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteFieldsAccess;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.api.TurSNSiteMergeProvidersAccess;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.sn.api.TurSNSiteSpotlights;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 
@@ -63,25 +63,25 @@ import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorReposito
 class TurSNSiteImportTest {
 
         @Mock
-        private TurSNSiteRepository turSNSiteRepository;
+        private TurSNSites turSNSiteRepository;
         @Mock
         private TurSEInstanceRepository turSEInstanceRepository;
         @Mock
         private TurSEVendorRepository turSEVendorRepository;
         @Mock
-        private TurSNSiteFieldRepository turSNSiteFieldRepository;
+        private TurSNSiteFieldsAccess turSNSiteFieldRepository;
         @Mock
-        private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+        private TurSNSiteFieldExts turSNSiteFieldExtRepository;
         @Mock
-        private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+        private TurSNSiteLocales turSNSiteLocaleRepository;
         @Mock
-        private TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
+        private TurSNSiteSpotlights turSNSiteSpotlightRepository;
         @Mock
-        private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+        private TurSNRankingExpressions turSNRankingExpressionRepository;
         @Mock
-        private TurSNRankingConditionRepository turSNRankingConditionRepository;
+        private TurSNRankingConditions turSNRankingConditionRepository;
         @Mock
-        private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+        private TurSNSiteGenAis turSNSiteGenAiRepository;
         @Mock
         private com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository;
         @Mock
@@ -93,7 +93,7 @@ class TurSNSiteImportTest {
         @Mock
         private TurStoreVendorRepository turStoreVendorRepository;
         @Mock
-        private TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
+        private TurSNSiteMergeProvidersAccess turSNSiteMergeProvidersRepository;
         @Mock
         private CacheManager cacheManager;
         @Mock

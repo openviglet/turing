@@ -44,7 +44,7 @@ import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ErrorCause;
@@ -68,13 +68,13 @@ import java.util.Map;
 class TurElasticsearchTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
 
     @Mock
-    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private com.viglet.turing.sn.api.TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @Mock
-    private com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+    private com.viglet.turing.sn.api.TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 
     @Mock
     private com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets customFacets;

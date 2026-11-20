@@ -41,7 +41,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.TurImportExchange.ImportResult;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 import tools.jackson.databind.JsonNode;
@@ -92,7 +92,7 @@ class TurShowcaseSmokeIT extends AbstractTuringSpringIT {
     private TurImportExchange importExchange;
 
     @Autowired
-    private TurSNSiteRepository siteRepository;
+    private TurSNSites siteRepository;
 
     private final HttpClient http = HttpClient.newHttpClient();
     private final ObjectMapper json = JsonMapper.builder().build();

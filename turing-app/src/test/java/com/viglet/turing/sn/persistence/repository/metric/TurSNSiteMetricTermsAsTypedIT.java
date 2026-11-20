@@ -9,6 +9,9 @@
  */
 package com.viglet.turing.sn.persistence.repository.metric;
 
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;

@@ -123,7 +123,7 @@ public class TurSNSiteClickAPI {
         click.setAccessDate(Instant.now());
         click.setTurSNSite(siteOpt.get());
         // T1298 / T1329 — personal data masked by the site's own setting.
-        click.setTerm(com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy.mask(
+        click.setTerm(com.viglet.turing.sn.api.TurSearchTermPrivacy.mask(
                 StringUtils.defaultIfBlank(request.term(), ""), siteOpt.get().getMetricsMaskPersonalData()));
         click.setDocumentId(request.documentId());
         click.setPosition(Math.max(0, request.position()));

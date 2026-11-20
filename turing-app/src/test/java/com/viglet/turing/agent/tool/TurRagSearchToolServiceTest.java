@@ -34,7 +34,7 @@ class TurRagSearchToolServiceTest {
     @Mock
     private TurAssetTrainingRecordRepository trainingRecordRepository;
     @Mock
-    private com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository snSiteGenAiRepository;
+    private com.viglet.turing.sn.api.TurSNSiteGenAis snSiteGenAiRepository;
     @Mock
     private com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository ragBm25CoreRepository;
     @Mock

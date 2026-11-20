@@ -41,8 +41,8 @@ import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEGenericResults;
@@ -57,13 +57,13 @@ import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 public class TurSolrResultProcessor {
 
         private final TurSNFieldProcess turSNFieldProcess;
-        private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-        private final TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+        private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
         private final TurSearchPipelineObservation pipelineObservation;
 
         public TurSolrResultProcessor(TurSNFieldProcess turSNFieldProcess,
-                        TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-                        TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository,
+                        TurSNSiteFieldExts turSNSiteFieldExtRepository,
+                        TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
                         TurSearchPipelineObservation pipelineObservation) {
                 this.turSNFieldProcess = turSNFieldProcess;
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;

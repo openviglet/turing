@@ -42,9 +42,9 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
@@ -101,20 +101,20 @@ public class TurStructuredFeedProvisioningOnStartup implements ApplicationRunner
 
     private final TurStructuredFeedProperty property;
     private final TurSNSiteManifestService manifestService;
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteGenAis turSNSiteGenAiRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSEVendorRepository turSEVendorRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurStructuredFeedIngestService ingestService;
 
     public TurStructuredFeedProvisioningOnStartup(TurStructuredFeedProperty property,
             TurSNSiteManifestService manifestService,
-            TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteGenAiRepository turSNSiteGenAiRepository,
+            TurSNSites turSNSiteRepository,
+            TurSNSiteGenAis turSNSiteGenAiRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSEVendorRepository turSEVendorRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurStructuredFeedIngestService ingestService) {
         this.property = property;
         this.manifestService = manifestService;

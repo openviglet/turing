@@ -31,7 +31,7 @@ import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelR
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -65,7 +65,7 @@ public class TurAIAgentAPI {
     private final TurStoreInstanceRepository turStoreInstanceRepository;
     private final com.viglet.turing.persistence.repository.se.TurSEInstanceRepository turSEInstanceRepository;
     private final TurPersonaRepository turPersonaRepository;
-    private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    private final TurSNSiteGenAis turSNSiteGenAiRepository;
     private final TurGlobalSettingsService turGlobalSettingsService;
     private final TurAIAgentExportService turAIAgentExportService;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
@@ -79,7 +79,7 @@ public class TurAIAgentAPI {
             TurStoreInstanceRepository turStoreInstanceRepository,
             com.viglet.turing.persistence.repository.se.TurSEInstanceRepository turSEInstanceRepository,
             TurPersonaRepository turPersonaRepository,
-            TurSNSiteGenAiRepository turSNSiteGenAiRepository,
+            TurSNSiteGenAis turSNSiteGenAiRepository,
             TurGlobalSettingsService turGlobalSettingsService,
             TurAIAgentExportService turAIAgentExportService,
             com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService) {

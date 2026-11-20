@@ -31,7 +31,7 @@ import com.viglet.turing.sn.domain.TurSNSiteMetricAccessTermDomain;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.metric.TurSNSiteMetricAccess;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 
 /** Unit tests for {@link TurSNSiteMetricAccessRepositoryAdapter}. */
 @ExtendWith(MockitoExtension.class)

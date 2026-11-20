@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,10 +62,10 @@ public class TurDefaultAgentResolver {
 
     private final TurGlobalSettingsService globalSettingsService;
     private final TurAIAgentRepository turAIAgentRepository;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
 
     public TurDefaultAgentResolver(TurGlobalSettingsService globalSettingsService,
-            TurAIAgentRepository turAIAgentRepository, TurSNSiteRepository turSNSiteRepository) {
+            TurAIAgentRepository turAIAgentRepository, TurSNSites turSNSiteRepository) {
         this.globalSettingsService = globalSettingsService;
         this.turAIAgentRepository = turAIAgentRepository;
         this.turSNSiteRepository = turSNSiteRepository;

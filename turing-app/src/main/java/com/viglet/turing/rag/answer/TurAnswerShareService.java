@@ -39,7 +39,7 @@ public class TurAnswerShareService {
 
     private final TurAnswerShareRepository repository;
     private final TurChatShareOgService shareOgService;
-    private final com.viglet.turing.sn.persistence.repository.TurSNSiteRepository siteRepository;
+    private final com.viglet.turing.sn.api.TurSNSites siteRepository;
 
     /** The constructor before T1329, kept for callers that build this class by hand. */
     public TurAnswerShareService(TurAnswerShareRepository repository,
@@ -54,7 +54,7 @@ public class TurAnswerShareService {
     @org.springframework.beans.factory.annotation.Autowired
     public TurAnswerShareService(TurAnswerShareRepository repository,
             TurChatShareOgService shareOgService,
-            com.viglet.turing.sn.persistence.repository.TurSNSiteRepository siteRepository) {
+            com.viglet.turing.sn.api.TurSNSites siteRepository) {
         this.repository = repository;
         this.shareOgService = shareOgService;
         this.siteRepository = siteRepository;
@@ -82,7 +82,7 @@ public class TurAnswerShareService {
                 : siteRepository.findByNameIgnoreCase(siteName)
                         .map(com.viglet.turing.sn.persistence.model.TurSNSite::getMetricsMaskPersonalData)
                         .orElse(null);
-        share.setQuery(truncate(com.viglet.turing.sn.persistence.repository.metric.TurSearchTermPrivacy.mask(query,
+        share.setQuery(truncate(com.viglet.turing.sn.api.TurSearchTermPrivacy.mask(query,
                 siteSetting), QUERY_MAX));
         share.setFiltersJson(filtersJson);
         share.setAnswerText(answerText);

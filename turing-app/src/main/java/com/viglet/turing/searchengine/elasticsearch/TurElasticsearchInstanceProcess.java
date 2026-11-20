@@ -25,8 +25,8 @@ import org.elasticsearch.client.RestClient;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -49,12 +49,12 @@ public class TurElasticsearchInstanceProcess {
 
     private final ConcurrentHashMap<String, TurElasticsearchInstance> instanceCache =
             new ConcurrentHashMap<>();
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
 
     public TurElasticsearchInstanceProcess(
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-            TurSNSiteRepository turSNSiteRepository) {
+            TurSNSiteLocales turSNSiteLocaleRepository,
+            TurSNSites turSNSiteRepository) {
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
     }

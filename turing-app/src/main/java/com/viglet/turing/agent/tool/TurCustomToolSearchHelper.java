@@ -40,7 +40,7 @@ import com.viglet.turing.rag.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**
@@ -111,12 +111,12 @@ public class TurCustomToolSearchHelper {
 
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurGenAiContextFactory turGenAiContextFactory;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSiteSearchService turSNSiteSearchService;
 
     public TurCustomToolSearchHelper(TurSNSearchProcess turSNSearchProcess,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNSiteSearchService turSNSiteSearchService) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.turGenAiContextFactory = turGenAiContextFactory;

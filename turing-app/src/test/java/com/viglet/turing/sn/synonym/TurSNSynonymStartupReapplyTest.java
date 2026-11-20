@@ -214,8 +214,8 @@ class TurSNSynonymStartupReapplyTest {
             throws Exception {
         when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT).build()));
-        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null,
-                siteLocaleRepository, registry, null);
+        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(new com.viglet.turing.sn.api.TurSNSiteFieldExts(fieldExtRepository), null,
+                new com.viglet.turing.sn.api.TurSNSiteLocales(siteLocaleRepository), registry, null);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
         Query query = queryBuilder.buildQuery(site,

@@ -24,7 +24,7 @@ import com.viglet.turing.batch.TurBatchInferenceService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNSiteInsightsPromptBuilder;
 
@@ -57,7 +57,7 @@ public class TurNightlyBatchSummarizationJob {
     private final TurConfigProperties configProperties;
     private final TurBatchInferenceService batchInferenceService;
     private final TurLLMInstanceRepository llmInstanceRepository;
-    private final TurSNSiteRepository snSiteRepository;
+    private final TurSNSites snSiteRepository;
     private final TurSNSiteInsightsPromptBuilder insightsPromptBuilder;
     private final com.viglet.turing.llm.lane.TurModelLaneService modelLaneService;
     private final TransactionTemplate readOnlyTransactionTemplate;
@@ -65,7 +65,7 @@ public class TurNightlyBatchSummarizationJob {
     public TurNightlyBatchSummarizationJob(TurConfigProperties configProperties,
             TurBatchInferenceService batchInferenceService,
             TurLLMInstanceRepository llmInstanceRepository,
-            TurSNSiteRepository snSiteRepository,
+            TurSNSites snSiteRepository,
             TurSNSiteInsightsPromptBuilder insightsPromptBuilder,
             com.viglet.turing.llm.lane.TurModelLaneService modelLaneService,
             PlatformTransactionManager transactionManager) {

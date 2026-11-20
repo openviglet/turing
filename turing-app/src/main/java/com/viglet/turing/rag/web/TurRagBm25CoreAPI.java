@@ -31,8 +31,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.rag.TurRagContextBuilder;
 
@@ -85,8 +85,8 @@ public class TurRagBm25CoreAPI {
     private static final String LANGUAGE = "language";
 
 
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurRagBm25CoreRepository ragBm25CoreRepository;
     private final TurRagBm25CoreProvisioner provisioner;
     private final TurGlobalSettingsService globalSettingsService;

@@ -33,7 +33,7 @@ import com.viglet.turing.kb.TurSNSiteMicrothesaurusService;
 import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusConfigDto;
 import com.viglet.turing.persistence.dto.kb.TurSNSiteMicrothesaurusDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,10 +51,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "SN Site Microthesaurus", description = "Per-site Knowledge Base selection & index config")
 public class TurSNSiteMicrothesaurusAPI {
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurSNSiteMicrothesaurusService service;
 
-    public TurSNSiteMicrothesaurusAPI(TurSNSiteRepository turSNSiteRepository,
+    public TurSNSiteMicrothesaurusAPI(TurSNSites turSNSiteRepository,
             TurSNSiteMicrothesaurusService service) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.service = service;

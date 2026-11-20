@@ -34,7 +34,7 @@ import com.viglet.turing.persistence.model.dev.token.TurDevToken;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +54,7 @@ import jakarta.servlet.http.HttpServletResponse;
 class TurSNSiteApiKeyGateFilterTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurDevTokenRepository turDevTokenRepository;
     @InjectMocks

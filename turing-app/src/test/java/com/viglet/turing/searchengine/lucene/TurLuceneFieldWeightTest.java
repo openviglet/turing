@@ -31,7 +31,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * T1065 — a field's search weight lets a title match outrank the same word in
@@ -41,7 +41,7 @@ import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtReposi
 class TurLuceneFieldWeightTest {
 
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @InjectMocks
     private TurLuceneQueryBuilder queryBuilder;

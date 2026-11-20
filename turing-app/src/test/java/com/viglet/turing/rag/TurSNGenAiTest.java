@@ -46,7 +46,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**
@@ -63,7 +63,7 @@ class TurSNGenAiTest {
     @Mock
     private TurGenAiContextFactory contextFactory;
     @Mock
-    private TurSNSiteLocaleRepository localeRepository;
+    private TurSNSiteLocales localeRepository;
     @Mock
     private TurRagContextBuilder ragContextBuilder;
     @Mock

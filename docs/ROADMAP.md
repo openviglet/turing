@@ -25,10 +25,9 @@
 ## Block CZ — Backend modules with verified boundaries
 
 - ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 65 calls still reach Solr internals from sn search, spotlights, merge providers, the query API, autocomplete and facets; the plugin contract still takes SN entities. → §CLXXXIX.6
-- ⏳ **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — 44 classes outside sn still call SN repositories (searchengine 15, rag 9, exchange 5, agent 5, eight others); each needs an sn read service or event. → §CLXXXIX.8
 - 📋 **T1314** (deps: T1311 ✅) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
-- 📋 **T1315** (deps: T1312 ⏳, T1313 ✅, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
-- 📋 **T1316** (deps: T1312 ⏳) **Entity classes name sn and genai eviction listeners, so persistence depends on its callers** — Owning modules publish change events after commit and the cache owners listen, which removes the back-edge and the @EntityListeners coupling on the SN and agent entities. → §CLXXXIX.12
+- 📋 **T1315** (deps: T1312 ✅, T1313 ✅, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
+- 📋 **T1316** (deps: T1312 ✅) **Entity classes name sn and genai eviction listeners, so persistence depends on its callers** — Owning modules publish change events after commit and the cache owners listen, which removes the back-edge and the @EntityListeners coupling on the SN and agent entities. → §CLXXXIX.12
 - 📋 **T1317** (deps: T1314) **Table names follow no convention: 87 of 105 lack the tur_ prefix the other 18 carry** — With compatibility waived, every table takes one rule naming its module (for example sn_site, agent_eval_case), so a table's owner is readable from the schema alone. → §CLXXXIX.13
 - 📋 **T1318** (deps: T1314) **54 of about 106 entities have no tenant column, and the rest mix @TenantId with plain tenantId** — Each entity is ruled tenant-scoped or deliberately global, and every tenant-scoped one uses one mechanism, so Block J isolation no longer depends on which entity a query hits. → §CLXXXIX.14
 - 📋 **T1319** (deps: T1314) **No entity has @Version and only one records created and modified dates through auditing** — A mapped superclass with audit dates and an optimistic-lock version stops silent concurrent overwrites and replaces 20 hand-rolled date fields. → §CLXXXIX.15
@@ -54,12 +53,6 @@
   TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
   violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
   into the module with the DSL types or call the plugin.
-
-## Done when — T1312
-
-- **No class outside sn imports an SN repository** A search of the main sources finds no
-  import of com.viglet.turing.sn.persistence.repository outside the sn module; reads go
-  through sn's named interface, changes arrive as its events.
 
 ## Non-goals (do NOT add as tasks)
 

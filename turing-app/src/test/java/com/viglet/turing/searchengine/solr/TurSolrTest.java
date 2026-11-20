@@ -57,15 +57,15 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
@@ -78,13 +78,13 @@ import com.viglet.turing.sn.tr.TurSNTargetingRules;
 class TurSolrTest {
 
     @Mock
-    private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @Mock
-    private TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+    private TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
     @Mock
-    private TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+    private TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 
     @Mock
     private TurSNTargetingRules turSNTargetingRules;
@@ -93,13 +93,13 @@ class TurSolrTest {
     private TurSNSiteFieldService turSNSiteFieldService;
 
     @Mock
-    private TurSNRankingExpressionRepository turSNRankingExpressionRepository;
+    private TurSNRankingExpressions turSNRankingExpressionRepository;
 
     @Mock
-    private TurSNRankingConditionRepository turSNRankingConditionRepository;
+    private TurSNRankingConditions turSNRankingConditionRepository;
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
 
     @Mock
     private TurSNFieldProcess turSNFieldProcess;

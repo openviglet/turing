@@ -57,7 +57,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEGroup;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -77,10 +77,10 @@ class TurSolrResultProcessorTest {
         private TurSNFieldProcess turSNFieldProcess;
 
         @Mock
-        private TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+        private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
         @Mock
-        private com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository;
+        private com.viglet.turing.sn.api.TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
         @Test
         @SuppressWarnings("unchecked")

@@ -31,7 +31,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
@@ -64,7 +64,7 @@ public class TurSNAnswerService {
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurDefaultAgentResolver turDefaultAgentResolver;
     private final TurGenAiContextFactory turGenAiContextFactory;
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNGenAi turGenAi;
     private final TurFollowUpQuestionService followUpQuestionService;
     private final TurGlobalSettingsService globalSettingsService;
@@ -78,7 +78,7 @@ public class TurSNAnswerService {
     public TurSNAnswerService(TurSNSearchProcess turSNSearchProcess,
             TurDefaultAgentResolver turDefaultAgentResolver,
             TurGenAiContextFactory turGenAiContextFactory,
-            TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+            TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNGenAi turGenAi,
             TurFollowUpQuestionService followUpQuestionService,
             TurGlobalSettingsService globalSettingsService,

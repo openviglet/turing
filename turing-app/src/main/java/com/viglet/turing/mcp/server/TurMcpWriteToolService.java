@@ -22,7 +22,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;
@@ -58,12 +58,12 @@ public class TurMcpWriteToolService {
 
     private static final String DEFAULT_LOCALE = "en";
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurSNImportService turSNImportService;
     private final TurSNSiteContentExchangeService contentExchangeService;
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
-    public TurMcpWriteToolService(TurSNSiteRepository turSNSiteRepository,
+    public TurMcpWriteToolService(TurSNSites turSNSiteRepository,
             TurSNImportService turSNImportService,
             TurSNSiteContentExchangeService contentExchangeService) {
         this.turSNSiteRepository = turSNSiteRepository;

@@ -42,8 +42,8 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
@@ -64,9 +64,9 @@ class TurSNSiteContentPagingTest {
     private static final int PAGE = 500;
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
-    private TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private TurSNSiteLocales turSNSiteLocaleRepository;
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
     @Mock

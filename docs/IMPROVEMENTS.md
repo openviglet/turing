@@ -2504,14 +2504,6 @@ implementations become internal. sn and genai depend only on the interface, whic
 turing-search-lucene skill already names as the seam. The embedded Lucene vector store
 stays with rag.
 
-### CLXXXIX.8 SN persistence moves into sn (T1312)
-
-persistence.model.sn, the SN repositories, DTOs and mappers move into the sn module as
-internal packages. Other modules stop calling SN repositories: they call the sn named
-interface for reads and listen to its events for changes. The searchengine and genai
-calls that read SN sites directly are the ones the module report lists; each is
-replaced, not exempted.
-
 ### CLXXXIX.10 Emptying the persistence package (T1314)
 
 What remains in persistence (chat, thesaurus, tenant, system, auth, persona, research,

@@ -48,8 +48,8 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
@@ -84,9 +84,9 @@ class TurSNResearchStreamIT extends AbstractTuringSpringIT {
     @Autowired
     private TurImportExchange importExchange;
     @Autowired
-    private TurSNSiteRepository siteRepository;
+    private TurSNSites siteRepository;
     @Autowired
-    private TurSNSiteGenAiRepository genAiRepository;
+    private TurSNSiteGenAis genAiRepository;
     @Autowired
     private TurLLMInstanceRepository llmInstanceRepository;
     @Autowired

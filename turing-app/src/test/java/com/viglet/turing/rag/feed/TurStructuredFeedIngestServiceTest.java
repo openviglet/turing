@@ -39,7 +39,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.properties.TurStructuredFeedProperty;
 import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
@@ -59,7 +59,7 @@ class TurStructuredFeedIngestServiceTest {
     @Mock
     private TurUrlFetchService urlFetchService;
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
     @Mock
     private TurSNFieldProvisioner fieldProvisioner;
     @Mock

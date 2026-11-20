@@ -40,8 +40,8 @@ import com.viglet.turing.rag.TurStandaloneQuery;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.dsl.TurDslQuery;
 import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
@@ -117,8 +117,8 @@ public class TurCatalogCopilotService {
     private final TurNLFacetParser parser;
     private final TurCopilotQueryPlannerFactory plannerFactory;
     private final TurDslSearchService dslSearchService;
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSNHybridRankingService hybridRankingService;
     private final TurDefaultChatModelResolver chatModelResolver;
     private final com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty;
@@ -133,8 +133,8 @@ public class TurCatalogCopilotService {
     public TurCatalogCopilotService(TurNLFacetParser parser,
             TurCopilotQueryPlannerFactory plannerFactory,
             TurDslSearchService dslSearchService,
-            TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
+            TurSNSites turSNSiteRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNHybridRankingService hybridRankingService,
             TurDefaultChatModelResolver chatModelResolver,
             com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty,

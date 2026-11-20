@@ -12,7 +12,7 @@ import com.viglet.turing.rag.persistence.model.TurRagBm25Source;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 import com.viglet.turing.searchengine.TurSEStandaloneHit;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
@@ -70,7 +70,7 @@ public class TurRagSearchToolService {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurRagContextBuilder ragContextBuilder;
     private final TurAssetTrainingRecordRepository trainingRecordRepository;
-    private final TurSNSiteGenAiRepository snSiteGenAiRepository;
+    private final TurSNSiteGenAis snSiteGenAiRepository;
     private final TurRagBm25CoreRepository ragBm25CoreRepository;
     private final TurSearchEnginePluginFactory searchEnginePluginFactory;
     private final com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver;
@@ -78,7 +78,7 @@ public class TurRagSearchToolService {
     public TurRagSearchToolService(TurGlobalSettingsService globalSettingsService,
                                     TurRagContextBuilder ragContextBuilder,
                                     TurAssetTrainingRecordRepository trainingRecordRepository,
-                                    TurSNSiteGenAiRepository snSiteGenAiRepository,
+                                    TurSNSiteGenAis snSiteGenAiRepository,
                                     TurRagBm25CoreRepository ragBm25CoreRepository,
                                     TurSearchEnginePluginFactory searchEnginePluginFactory,
                                     com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver) {

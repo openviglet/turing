@@ -34,7 +34,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * T1080 — an accented and an unaccented spelling match each other on the
@@ -46,7 +46,7 @@ import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtReposi
  */
 class TurLuceneAccentFoldingTest {
 
-    private final TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
+    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
     private final TurLuceneQueryBuilder queryBuilder =
             new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
     private final TurSNSite site = new TurSNSite();

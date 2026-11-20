@@ -25,7 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
 import com.viglet.turing.persistence.repository.dev.token.TurDevTokenRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -94,10 +94,10 @@ public class TurSNSiteApiKeyGateFilter extends OncePerRequestFilter {
     private static final Pattern CONTENT_FIT_PATH = Pattern.compile(
             "^/api/sn/([^/]+)/persona/[^/]+/content-fit$");
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurDevTokenRepository turDevTokenRepository;
 
-    public TurSNSiteApiKeyGateFilter(TurSNSiteRepository turSNSiteRepository,
+    public TurSNSiteApiKeyGateFilter(TurSNSites turSNSiteRepository,
             TurDevTokenRepository turDevTokenRepository) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turDevTokenRepository = turDevTokenRepository;

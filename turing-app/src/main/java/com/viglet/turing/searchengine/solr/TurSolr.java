@@ -40,12 +40,12 @@ import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteCustomFacetRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
@@ -71,7 +71,7 @@ public class TurSolr {
     private static final Pattern SPELL_CHECK_SPECIAL_CHARS =
             Pattern.compile("[+\\-!(){}\\[\\]^~*?:\\\\/&|]");
 
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final boolean isCommitEnabled;
     private final TurSolrDocumentHandler turSolrDocumentHandler;
     private final TurSolrQueryBuilder turSolrQueryBuilder;
@@ -81,13 +81,13 @@ public class TurSolr {
 
     public TurSolr(@Value("${turing.solr.commit.enabled:false}") boolean isCommitEnabled,
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
-            TurSNRankingExpressionRepository turSNRankingExpressionRepository,
-            TurSNRankingConditionRepository turSNRankingConditionRepository,
-            TurSNSiteRepository turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
+            TurSNRankingExpressions turSNRankingExpressionRepository,
+            TurSNRankingConditions turSNRankingConditionRepository,
+            TurSNSites turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer,
             TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNSiteSearchSnapshotService snapshotService,

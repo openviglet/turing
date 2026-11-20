@@ -53,16 +53,16 @@ import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
-import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteFieldsAccess;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.api.TurSNSiteMergeProvidersAccess;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.sn.api.TurSNSiteSpotlights;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
@@ -77,22 +77,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class TurSNSiteImport {
-	private final TurSNSiteRepository turSNSiteRepository;
+	private final TurSNSites turSNSiteRepository;
 	private final TurSEInstanceRepository turSEInstanceRepository;
 	private final TurSEVendorRepository turSEVendorRepository;
-	private final TurSNSiteFieldRepository turSNSiteFieldRepository;
-	private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
-	private final TurSNSiteSpotlightRepository turSNSiteSpotlightRepository;
-	private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
-	private final TurSNRankingConditionRepository turSNRankingConditionRepository;
-	private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+	private final TurSNSiteFieldsAccess turSNSiteFieldRepository;
+	private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+	private final TurSNSiteLocales turSNSiteLocaleRepository;
+	private final TurSNSiteSpotlights turSNSiteSpotlightRepository;
+	private final TurSNRankingExpressions turSNRankingExpressionRepository;
+	private final TurSNRankingConditions turSNRankingConditionRepository;
+	private final TurSNSiteGenAis turSNSiteGenAiRepository;
 	private final TurLLMInstanceRepository turLLMInstanceRepository;
 	private final TurLLMVendorRepository turLLMVendorRepository;
 	private final TurStoreInstanceRepository turStoreInstanceRepository;
 	private final TurStoreVendorRepository turStoreVendorRepository;
-	private final TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
-	private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+	private final TurSNSiteMergeProvidersAccess turSNSiteMergeProvidersRepository;
+	private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 	private final TurEmbeddingModelRepository turEmbeddingModelRepository;
 	private final com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository;
 	private final TurSearchEnginePluginFactory turSearchEnginePluginFactory;
@@ -100,22 +100,22 @@ public class TurSNSiteImport {
 	private final CacheManager cacheManager;
 	private final TurSNSiteSynonymExchangeService synonymExchangeService;
 
-	public TurSNSiteImport(TurSNSiteRepository turSNSiteRepository,
+	public TurSNSiteImport(TurSNSites turSNSiteRepository,
 			TurSEInstanceRepository turSEInstanceRepository,
 			TurSEVendorRepository turSEVendorRepository,
-			TurSNSiteFieldRepository turSNSiteFieldRepository,
-			TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-			TurSNSiteSpotlightRepository turSNSiteSpotlightRepository,
-			TurSNRankingExpressionRepository turSNRankingExpressionRepository,
-			TurSNRankingConditionRepository turSNRankingConditionRepository,
-			TurSNSiteGenAiRepository turSNSiteGenAiRepository,
+			TurSNSiteFieldsAccess turSNSiteFieldRepository,
+			TurSNSiteFieldExts turSNSiteFieldExtRepository,
+			TurSNSiteLocales turSNSiteLocaleRepository,
+			TurSNSiteSpotlights turSNSiteSpotlightRepository,
+			TurSNRankingExpressions turSNRankingExpressionRepository,
+			TurSNRankingConditions turSNRankingConditionRepository,
+			TurSNSiteGenAis turSNSiteGenAiRepository,
 			TurLLMInstanceRepository turLLMInstanceRepository,
 			TurLLMVendorRepository turLLMVendorRepository,
 			TurStoreInstanceRepository turStoreInstanceRepository,
 			TurStoreVendorRepository turStoreVendorRepository,
-			TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository,
-			TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+			TurSNSiteMergeProvidersAccess turSNSiteMergeProvidersRepository,
+			TurSNSiteCustomSorts turSNSiteCustomSortRepository,
 			TurEmbeddingModelRepository turEmbeddingModelRepository,
 			com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository,
 			TurSearchEnginePluginFactory turSearchEnginePluginFactory,

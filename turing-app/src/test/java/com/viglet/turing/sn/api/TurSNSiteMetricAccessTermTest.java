@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.persistence.repository.metric;
+package com.viglet.turing.sn.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

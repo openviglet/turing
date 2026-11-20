@@ -42,9 +42,9 @@ import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortMissingEnum;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortOrderEnum;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -77,24 +77,24 @@ public class TurElasticsearch {
 
     private static final String FACET_AGG_PREFIX = "facet_";
 
-    private final TurSNSiteRepository turSNSiteRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
+    private final TurSNSites turSNSiteRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
     private final TurLuceneCustomFacets customFacets;
     private final TurElasticsearchRankingExpressions rankingExpressions;
 
     /** Without ranking expressions: the shape before T1222. */
-    public TurElasticsearch(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+    public TurElasticsearch(TurSNSites turSNSiteRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurLuceneCustomFacets customFacets) {
         this(turSNSiteRepository, turSNSiteFieldExtRepository, turSNSiteCustomSortRepository, customFacets, null);
     }
 
     @org.springframework.beans.factory.annotation.Autowired
-    public TurElasticsearch(TurSNSiteRepository turSNSiteRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
-            TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
+    public TurElasticsearch(TurSNSites turSNSiteRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurLuceneCustomFacets customFacets,
             TurElasticsearchRankingExpressions rankingExpressions) {
         this.turSNSiteRepository = turSNSiteRepository;

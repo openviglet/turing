@@ -10,7 +10,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
@@ -54,11 +54,11 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
 
     private final TurLuceneInstanceProcess turLuceneInstanceProcess;
-    private final TurSNSiteRepository turSNSiteRepository;
+    private final TurSNSites turSNSiteRepository;
     private final TurSNSiteFieldService turSNSiteFieldService;
 
     public TurDslLuceneExecutor(TurLuceneInstanceProcess turLuceneInstanceProcess,
-            TurSNSiteRepository turSNSiteRepository,
+            TurSNSites turSNSiteRepository,
             TurSNSiteFieldService turSNSiteFieldService) {
         this.turLuceneInstanceProcess = turLuceneInstanceProcess;
         this.turSNSiteRepository = turSNSiteRepository;

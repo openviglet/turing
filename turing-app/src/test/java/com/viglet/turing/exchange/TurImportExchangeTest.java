@@ -25,7 +25,7 @@ import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -36,7 +36,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class));
 
@@ -51,7 +51,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
         MultipartFile multipartFile = new MockMultipartFile("file", "any.zip", "application/zip", new byte[] { 1, 2 });
@@ -69,7 +69,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
@@ -92,7 +92,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
@@ -129,7 +129,7 @@ class TurImportExchangeTest {
         var agentImport = org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 agentImport));
         File extract = tempDir.resolve("extract").toFile();
@@ -171,7 +171,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
@@ -211,7 +211,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
@@ -244,7 +244,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
@@ -272,7 +272,7 @@ class TurImportExchangeTest {
         TurSNSiteImport turSNSiteImport = org.mockito.Mockito.mock(TurSNSiteImport.class);
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
-                org.mockito.Mockito.mock(TurSNSiteRepository.class),
+                org.mockito.Mockito.mock(TurSNSites.class),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 

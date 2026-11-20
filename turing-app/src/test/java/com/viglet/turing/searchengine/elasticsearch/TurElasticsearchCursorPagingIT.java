@@ -52,7 +52,7 @@ import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstance;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
 import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchUtils;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * T1040 / §CVI.5 — the Elasticsearch half: asks the engine the same two questions
@@ -147,7 +147,7 @@ class TurElasticsearchCursorPagingIT {
 
         siteLocale = new TurSNSiteLocale();
         plugin = new TurElasticsearchSearchEnginePlugin(mock(TurElasticsearch.class),
-                instanceProcess, mock(TurSNSiteFieldExtRepository.class));
+                instanceProcess, mock(TurSNSiteFieldExts.class));
     }
 
     @AfterAll

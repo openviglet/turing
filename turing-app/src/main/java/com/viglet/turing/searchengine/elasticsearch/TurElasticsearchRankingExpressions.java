@@ -33,9 +33,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
-import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNRankingConditions;
+import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
@@ -79,13 +79,13 @@ public class TurElasticsearchRankingExpressions {
      */
     static final long RECENCY_PIVOT_MS = Math.round(1 / 3.16e-11);
 
-    private final TurSNRankingExpressionRepository turSNRankingExpressionRepository;
-    private final TurSNRankingConditionRepository turSNRankingConditionRepository;
-    private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
+    private final TurSNRankingExpressions turSNRankingExpressionRepository;
+    private final TurSNRankingConditions turSNRankingConditionRepository;
+    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
-    public TurElasticsearchRankingExpressions(TurSNRankingExpressionRepository turSNRankingExpressionRepository,
-            TurSNRankingConditionRepository turSNRankingConditionRepository,
-            TurSNSiteFieldExtRepository turSNSiteFieldExtRepository) {
+    public TurElasticsearchRankingExpressions(TurSNRankingExpressions turSNRankingExpressionRepository,
+            TurSNRankingConditions turSNRankingConditionRepository,
+            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
         this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
         this.turSNRankingConditionRepository = turSNRankingConditionRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;

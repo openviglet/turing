@@ -33,7 +33,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * T1170 — a plural query finds the singular-titled document (and the reverse) on
@@ -46,7 +46,7 @@ class TurLuceneStemmingTest {
 
     private static final Locale PT_BR = Locale.of("pt", "BR");
 
-    private final TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
+    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
     private final TurLuceneQueryBuilder queryBuilder =
             new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
     private final TurSNSite site = new TurSNSite();

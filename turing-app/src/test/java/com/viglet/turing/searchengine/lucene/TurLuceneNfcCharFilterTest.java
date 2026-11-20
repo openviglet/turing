@@ -37,7 +37,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * T1194 — a title stored with decomposed accents (Unicode NFD) is found by the
@@ -53,7 +53,7 @@ class TurLuceneNfcCharFilterTest {
     private static final String NFD_TITLE = "Jaqueta impermeável do dia a dia Borrowdale";
     private static final String NFC_TITLE = "Jaqueta impermeável do dia a dia Borrowdale";
 
-    private final TurSNSiteFieldExtRepository fieldRepository = mock(TurSNSiteFieldExtRepository.class);
+    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
     private final TurLuceneQueryBuilder queryBuilder =
             new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
     private final TurSNSite site = new TurSNSite();

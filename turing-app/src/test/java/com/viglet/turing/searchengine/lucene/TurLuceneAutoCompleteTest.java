@@ -30,8 +30,8 @@ import com.viglet.turing.searchengine.lucene.TurLucenePerFieldAnalyzer;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 
 /**
  * Autocomplete on the Lucene engine draws its suggestions only from the
@@ -46,7 +46,7 @@ class TurLuceneAutoCompleteTest {
     private Directory directory;
     private TurLuceneInstance instance;
     private TurLuceneSearchEnginePlugin plugin;
-    private TurSNSiteFieldExtRepository fieldRepository;
+    private TurSNSiteFieldExts fieldRepository;
     private TurSNSite site;
 
     @BeforeEach
@@ -67,8 +67,8 @@ class TurLuceneAutoCompleteTest {
 
         site = new TurSNSite();
         site.setName("vagas");
-        fieldRepository = mock(TurSNSiteFieldExtRepository.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        fieldRepository = mock(TurSNSiteFieldExts.class);
+        TurSNSites siteRepository = mock(TurSNSites.class);
         when(siteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
         TurLuceneInstanceProcess instanceProcess = mock(TurLuceneInstanceProcess.class);
         when(instanceProcess.initLuceneInstance(any(String.class), any(Locale.class))).thenReturn(Optional.of(instance));

@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.properties.TurCatalogCopilotProperty;
 
 /**
@@ -37,7 +37,7 @@ import com.viglet.turing.properties.TurCatalogCopilotProperty;
 class TurCopilotQueryPlannerFactoryTest {
 
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
 
     private final TurCatalogCopilotProperty property = new TurCatalogCopilotProperty();
 

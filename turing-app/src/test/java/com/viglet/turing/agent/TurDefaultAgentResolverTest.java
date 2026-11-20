@@ -39,7 +39,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**
@@ -53,7 +53,7 @@ class TurDefaultAgentResolverTest {
     @Mock
     private TurAIAgentRepository turAIAgentRepository;
     @Mock
-    private TurSNSiteRepository turSNSiteRepository;
+    private TurSNSites turSNSiteRepository;
 
     @InjectMocks
     private TurDefaultAgentResolver resolver;

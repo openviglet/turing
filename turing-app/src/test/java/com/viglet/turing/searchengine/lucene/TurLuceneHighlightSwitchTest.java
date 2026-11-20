@@ -27,7 +27,7 @@ import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 /**
  * T1226 — the Lucene engine honours a caller's {@code hlEnabled=false}, as Solr
@@ -42,7 +42,7 @@ class TurLuceneHighlightSwitchTest {
     @Test
     void aSearchWithHighlightingOffAsksForNoHighlightFields() throws Exception {
         TurLuceneQueryBuilder queryBuilder = mock(TurLuceneQueryBuilder.class);
-        TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+        TurSNSites siteRepository = mock(TurSNSites.class);
         TurSNSite site = new TurSNSite();
         site.setName("site");
         site.setHl(1);

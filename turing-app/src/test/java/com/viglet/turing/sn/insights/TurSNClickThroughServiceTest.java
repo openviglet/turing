@@ -42,7 +42,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
-import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessTerm;
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickTerm;
 

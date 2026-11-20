@@ -37,8 +37,8 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**
@@ -53,8 +53,8 @@ import com.viglet.turing.system.TurGlobalSettingsService;
 class TurRagBm25CoreAPITest {
 
     private TurRagBm25CoreAPI newApi(
-            TurSNSiteRepository siteRepo,
-            TurSNSiteLocaleRepository localeRepo,
+            TurSNSites siteRepo,
+            TurSNSiteLocales localeRepo,
             TurRagBm25CoreRepository coreRepo,
             TurRagBm25CoreProvisioner provisioner,
             TurGlobalSettingsService settings,
@@ -75,9 +75,9 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void listCoresReturns404WhenSiteMissing() {
-        var siteRepo = mock(TurSNSiteRepository.class);
+        var siteRepo = mock(TurSNSites.class);
         var api = newApi(siteRepo,
-                mock(TurSNSiteLocaleRepository.class),
+                mock(TurSNSiteLocales.class),
                 mock(TurRagBm25CoreRepository.class),
                 mock(TurRagBm25CoreProvisioner.class),
                 mock(TurGlobalSettingsService.class),
@@ -91,10 +91,10 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void listCoresReturnsEmptyWhenNoDefaultStore() {
-        var siteRepo = mock(TurSNSiteRepository.class);
+        var siteRepo = mock(TurSNSites.class);
         var settings = mock(TurGlobalSettingsService.class);
         var api = newApi(siteRepo,
-                mock(TurSNSiteLocaleRepository.class),
+                mock(TurSNSiteLocales.class),
                 mock(TurRagBm25CoreRepository.class),
                 mock(TurRagBm25CoreProvisioner.class),
                 settings,
@@ -110,8 +110,8 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void listCoresReturnsRowPerLocaleWithStatus() {
-        var siteRepo = mock(TurSNSiteRepository.class);
-        var localeRepo = mock(TurSNSiteLocaleRepository.class);
+        var siteRepo = mock(TurSNSites.class);
+        var localeRepo = mock(TurSNSiteLocales.class);
         var coreRepo = mock(TurRagBm25CoreRepository.class);
         var settings = mock(TurGlobalSettingsService.class);
         var builder = mock(TurRagContextBuilder.class);
@@ -161,9 +161,9 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void provisionRejectsWhenSeInstanceMissing() {
-        var siteRepo = mock(TurSNSiteRepository.class);
+        var siteRepo = mock(TurSNSites.class);
         var api = newApi(siteRepo,
-                mock(TurSNSiteLocaleRepository.class),
+                mock(TurSNSiteLocales.class),
                 mock(TurRagBm25CoreRepository.class),
                 mock(TurRagBm25CoreProvisioner.class),
                 mock(TurGlobalSettingsService.class),
@@ -179,8 +179,8 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void provisionCallsProvisionerOnceLocale() {
-        var siteRepo = mock(TurSNSiteRepository.class);
-        var localeRepo = mock(TurSNSiteLocaleRepository.class);
+        var siteRepo = mock(TurSNSites.class);
+        var localeRepo = mock(TurSNSiteLocales.class);
         var coreRepo = mock(TurRagBm25CoreRepository.class);
         var provisioner = mock(TurRagBm25CoreProvisioner.class);
         var settings = mock(TurGlobalSettingsService.class);
@@ -216,8 +216,8 @@ class TurRagBm25CoreAPITest {
         // One locale throws; the other must still be attempted. Contract:
         // partial failures are visible via the next listCores call
         // (ERROR status), not bubbled to the admin as a 500.
-        var siteRepo = mock(TurSNSiteRepository.class);
-        var localeRepo = mock(TurSNSiteLocaleRepository.class);
+        var siteRepo = mock(TurSNSites.class);
+        var localeRepo = mock(TurSNSiteLocales.class);
         var coreRepo = mock(TurRagBm25CoreRepository.class);
         var provisioner = mock(TurRagBm25CoreProvisioner.class);
         var settings = mock(TurGlobalSettingsService.class);
@@ -251,8 +251,8 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void deprovisionDeletesPerLocale() {
-        var siteRepo = mock(TurSNSiteRepository.class);
-        var localeRepo = mock(TurSNSiteLocaleRepository.class);
+        var siteRepo = mock(TurSNSites.class);
+        var localeRepo = mock(TurSNSiteLocales.class);
         var provisioner = mock(TurRagBm25CoreProvisioner.class);
         var settings = mock(TurGlobalSettingsService.class);
         var builder = mock(TurRagContextBuilder.class);
@@ -276,11 +276,11 @@ class TurRagBm25CoreAPITest {
 
     @Test
     void deprovisionNoOpsWhenStoreCannotResolve() {
-        var siteRepo = mock(TurSNSiteRepository.class);
+        var siteRepo = mock(TurSNSites.class);
         var provisioner = mock(TurRagBm25CoreProvisioner.class);
         var settings = mock(TurGlobalSettingsService.class);
         var builder = mock(TurRagContextBuilder.class);
-        var api = newApi(siteRepo, mock(TurSNSiteLocaleRepository.class),
+        var api = newApi(siteRepo, mock(TurSNSiteLocales.class),
                 mock(TurRagBm25CoreRepository.class), provisioner, settings, builder);
         when(siteRepo.findById("site")).thenReturn(Optional.of(new TurSNSite()));
         when(settings.getDefaultEmbeddingStoreId()).thenReturn("store-1");

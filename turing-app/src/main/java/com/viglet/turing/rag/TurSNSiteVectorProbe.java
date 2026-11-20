@@ -41,7 +41,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -77,13 +77,13 @@ public class TurSNSiteVectorProbe {
     private record Cached(Presence presence, Instant at) {
     }
 
-    private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
+    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurGenAiStoreProviderFactory storeProviderFactory;
     private final TurSecretCryptoService secretCryptoService;
     private final Map<String, Cached> cache = new ConcurrentHashMap<>();
     private Clock clock = Clock.systemUTC();
 
-    public TurSNSiteVectorProbe(TurSNSiteLocaleRepository turSNSiteLocaleRepository,
+    public TurSNSiteVectorProbe(TurSNSiteLocales turSNSiteLocaleRepository,
             TurGenAiStoreProviderFactory storeProviderFactory, TurSecretCryptoService secretCryptoService) {
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.storeProviderFactory = storeProviderFactory;

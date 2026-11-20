@@ -35,7 +35,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
-import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
+import com.viglet.turing.sn.api.TurSNSiteGenAis;
 
 /**
  * Tests for TurAIAgentAPI.
@@ -61,7 +61,7 @@ class TurAIAgentAPITest {
     private TurMcpServerRepository turMcpServerRepository;
 
     @Mock
-    private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
+    private TurSNSiteGenAis turSNSiteGenAiRepository;
 
     @Mock
     private com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;

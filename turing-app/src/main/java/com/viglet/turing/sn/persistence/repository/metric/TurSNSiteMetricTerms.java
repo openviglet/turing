@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.sn.persistence.repository.metric;
 
+import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
+
 import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.HashMap;

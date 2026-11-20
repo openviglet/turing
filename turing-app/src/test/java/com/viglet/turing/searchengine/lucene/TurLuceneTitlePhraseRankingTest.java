@@ -35,8 +35,8 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.persistence.model.synonym.TurSNSynonymType;
-import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
-import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 import com.viglet.turing.searchengine.lucene.TurLuceneSynonymMapBuilder;
 import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
@@ -53,9 +53,9 @@ import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
 class TurLuceneTitlePhraseRankingTest {
 
     @Mock
-    private TurSNSiteFieldExtRepository fieldExtRepository;
+    private TurSNSiteFieldExts fieldExtRepository;
     @Mock
-    private TurSNSiteLocaleRepository localeRepository;
+    private TurSNSiteLocales localeRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;

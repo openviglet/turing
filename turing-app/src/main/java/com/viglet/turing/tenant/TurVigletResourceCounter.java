@@ -19,7 +19,7 @@ import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletResourceCounter;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
-import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSites;
 
 /**
  * T396 / §XIV.9 — the {@link VigletResourceCounter} SPI feeding the shared
@@ -53,11 +53,11 @@ public class TurVigletResourceCounter implements VigletResourceCounter {
             AGENTS, 3L, SITES, 2L, MONTHLY_TOKENS, 100_000L);
 
     private final TurAIAgentRepository agentRepository;
-    private final TurSNSiteRepository snSiteRepository;
+    private final TurSNSites snSiteRepository;
     private final TurLLMTokenUsageRepository tokenUsageRepository;
 
     public TurVigletResourceCounter(TurAIAgentRepository agentRepository,
-            TurSNSiteRepository snSiteRepository,
+            TurSNSites snSiteRepository,
             TurLLMTokenUsageRepository tokenUsageRepository) {
         this.agentRepository = agentRepository;
         this.snSiteRepository = snSiteRepository;
