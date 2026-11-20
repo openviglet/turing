@@ -36,7 +36,6 @@
 - 📋 **T1327** (deps: T1323) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
 - 📋 **T1334** (deps: —) **Chat session endpoints read another tenant's conversation given its id** — TurChatSessionAPI reads citation drift, slot audit and exports by a path conversationId without checking the conversation's agent is visible to the caller. → §CLXXXIX.29
-- 📋 **T1335** (deps: —) **The batch job list and status count every tenant's jobs** — TurBatchJobAPI lists and counts batch jobs with no tenant narrowing, though a job is ruled as reached through its LLM instance. → §CLXXXIX.30
 
 ## Done when — T1184
 

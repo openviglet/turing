@@ -2611,15 +2611,3 @@ agent. The fix resolves the conversation's agent once, loads it through the
 tenant-filtered TurAIAgentRepository and answers 404 when it is not visible, before any
 of these endpoints read or write. A test per endpoint sends another tenant's
 conversation id and expects 404.
-
-### CLXXXIX.30 Batch jobs narrowed to visible LLM instances (T1335)
-
-TurBatchJobAPI's GET /api/system/batch/jobs lists every batch job with
-findByOrderByCreatedAtDesc, and /status counts open jobs with
-countByResultsCollectedFalse, across all tenants. TurBatchJob has no tenant column;
-T1318 ruled it reached through its LLM instance (instanceId), but these two reads never
-go through one. Whether /api/system/** is limited to the platform admin decides how much
-this matters; if a tenant admin can call it, the list must be narrowed to jobs whose
-instanceId names an LLM instance the caller can see (TurInfraTenantScope.visibleList
-over the LLM repository), and the count the same way. A test with two tenants' jobs
-checks that each sees only its own.

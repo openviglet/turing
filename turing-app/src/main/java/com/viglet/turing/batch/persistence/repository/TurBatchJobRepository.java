@@ -38,4 +38,11 @@ public interface TurBatchJobRepository extends JpaRepository<TurBatchJob, String
     List<TurBatchJob> findByOrderByCreatedAtDesc(Pageable pageable);
 
     long countByResultsCollectedFalse();
+
+    /** T1335 — the jobs of these LLM instances, newest first. */
+    List<TurBatchJob> findByInstanceIdInOrderByCreatedAtDesc(java.util.Collection<String> instanceIds,
+            Pageable pageable);
+
+    /** T1335 — open jobs of these LLM instances. */
+    long countByResultsCollectedFalseAndInstanceIdIn(java.util.Collection<String> instanceIds);
 }

@@ -42,11 +42,29 @@ public class TurBatchJobAPI {
 
     private final TurBatchJobRepository batchJobRepository;
     private final TurConfigProperties configProperties;
+    private final com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository llmInstanceRepository;
+    private final com.viglet.turing.tenant.TurInfraTenantScope tenantScope;
 
     public TurBatchJobAPI(TurBatchJobRepository batchJobRepository,
-            TurConfigProperties configProperties) {
+            TurConfigProperties configProperties,
+            com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository llmInstanceRepository,
+            com.viglet.turing.tenant.TurInfraTenantScope tenantScope) {
         this.batchJobRepository = batchJobRepository;
         this.configProperties = configProperties;
+        this.llmInstanceRepository = llmInstanceRepository;
+        this.tenantScope = tenantScope;
+    }
+
+    /**
+     * T1335 — a batch job has no tenant column; it belongs to whoever can see its
+     * LLM instance. With tenancy on, the ids of the instances the caller sees (its
+     * own and the GLOBAL pool); with tenancy off, {@code null}: every job.
+     */
+    private List<String> visibleInstanceIds() {
+        return tenantScope.visibleList(() -> null,
+                tenantId -> llmInstanceRepository.findVisibleToTenant(tenantId).stream()
+                        .map(com.viglet.turing.llm.persistence.model.TurLLMInstance::getId)
+                        .toList());
     }
 
     public record BatchStatusView(boolean enabled, long openJobs) {
@@ -76,14 +94,23 @@ public class TurBatchJobAPI {
 
     @GetMapping("/status")
     public BatchStatusView status() {
-        return new BatchStatusView(configProperties.getBatch().isEnabled(),
-                batchJobRepository.countByResultsCollectedFalse());
+        List<String> visible = visibleInstanceIds();
+        long open = visible == null ? batchJobRepository.countByResultsCollectedFalse()
+                : visible.isEmpty() ? 0
+                        : batchJobRepository.countByResultsCollectedFalseAndInstanceIdIn(visible);
+        return new BatchStatusView(configProperties.getBatch().isEnabled(), open);
     }
 
     @GetMapping("/jobs")
     public List<BatchJobView> jobs(@RequestParam(defaultValue = "50") int limit) {
         int capped = Math.min(Math.max(limit, 1), 200);
-        return batchJobRepository.findByOrderByCreatedAtDesc(PageRequest.of(0, capped))
-                .stream().map(BatchJobView::of).toList();
+        List<String> visible = visibleInstanceIds();
+        if (visible != null && visible.isEmpty()) {
+            return List.of();
+        }
+        List<TurBatchJob> page = visible == null
+                ? batchJobRepository.findByOrderByCreatedAtDesc(PageRequest.of(0, capped))
+                : batchJobRepository.findByInstanceIdInOrderByCreatedAtDesc(visible, PageRequest.of(0, capped));
+        return page.stream().map(BatchJobView::of).toList();
     }
 }
