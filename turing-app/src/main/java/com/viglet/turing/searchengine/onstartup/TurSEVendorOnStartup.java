@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.searchengine.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +30,12 @@ import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
 
 @Component
 @Transactional
-public class TurSEVendorOnStartup {
+public class TurSEVendorOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 50;
+    }
+
 
 	private final TurSEVendorRepository turSEVendorRepository;
 

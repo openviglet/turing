@@ -20,6 +20,10 @@
  */
 package com.viglet.turing.llm.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurStartupReconciler;
+
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +35,22 @@ import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 
 @Component
 @Transactional
-public class TurLLMVendorOnStartup {
+public class TurLLMVendorOnStartup implements TurFirstTimeSeeder, TurStartupReconciler {
+    @Override
+    public int seedOrder() {
+        return 60;
+    }
+
+    @Override
+    public int reconcileOrder() {
+        return 20;
+    }
+
+    @Override
+    public void reconcileOnStartup() {
+        createDefaultRows();
+    }
+
 
 	private final TurLLMVendorRepository turLLMVendorRepository;
 

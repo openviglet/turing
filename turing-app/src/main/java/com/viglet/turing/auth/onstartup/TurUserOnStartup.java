@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.auth.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import java.time.Instant;
 import java.util.Collections;
 
@@ -30,7 +32,12 @@ import com.viglet.turing.persistence.repository.auth.TurGroupRepository;
 import com.viglet.turing.persistence.repository.auth.TurUserRepository;
 
 @Component
-public class TurUserOnStartup {
+public class TurUserOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 40;
+    }
+
     private final TurUserRepository turUserRepository;
     private final TurGroupRepository turGroupRepository;
 

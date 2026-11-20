@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.system.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.UUID;
@@ -32,7 +34,12 @@ import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 
 @Component
 @Transactional
-public class TurConfigVarOnStartup {
+public class TurConfigVarOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 80;
+    }
+
 	/** Reused across calls — SecureRandom is thread-safe and instantiating it is expensive (kernel entropy seeding). */
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 	public static final String FIRST_TIME = "FIRST_TIME";

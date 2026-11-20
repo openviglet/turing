@@ -1,5 +1,7 @@
 package com.viglet.turing.auth;
 
+import com.viglet.turing.shared.onstartup.TurStartupReconciler;
+
 import java.time.Instant;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +30,17 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class TurAdminPasswordService {
+public class TurAdminPasswordService implements TurStartupReconciler {
+    @Override
+    public int reconcileOrder() {
+        return 10;
+    }
+
+    @Override
+    public void reconcileOnStartup() {
+        bootstrapFromConfiguration();
+    }
+
 
     public static final String ADMIN = "admin";
     public static final int PASSWORD_MINIMUM_SIZE = 6;

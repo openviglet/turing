@@ -25,7 +25,7 @@
 ## Block CZ — Backend modules with verified boundaries
 
 - ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 130 calls still reach engine internals, from api.se, the SN queue and query APIs, sn search, autocomplete, spotlights, facets and the four sn.dsl executors. → §CLXXXIX.6
-- ⏳ **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — TurOnStartup, in system.onstartup, still calls the auth, searchengine, llm and rag seeders, so system depends on them until each runs itself. → §CLXXXIX.7
+- ⏳ **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — System still imports llm, rag and searchengine outside startup: four LLM services that belong in llm, global settings (rerank type, URL fetch) and TurFeaturesAPI (Solr). → §CLXXXIX.7
 - ⏳ **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — 44 classes outside sn still call SN repositories (searchengine 15, rag 9, exchange 5, agent 5, eight others); each needs an sn read service or event. → §CLXXXIX.8
 - 📋 **T1314** (deps: T1311 ⏳) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
 - 📋 **T1315** (deps: T1312 ⏳, T1313 ✅, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
@@ -58,9 +58,9 @@
 
 ## Done when — T1311
 
-- **No startup orchestrator reaches into another module's seeder** Each module's seeder
-  runs as its own ordered runner behind the per-id seeding rule, and TurModuleReportTest
-  shows no dependency from system to auth, searchengine, llm or rag.
+- **No startup orchestrator reaches into another module's seeder** Seeders run through
+  the shared TurFirstTimeSeeder contract, first-time only so a deleted default is never
+  recreated, and system imports no class of auth, searchengine, llm or rag.
 
 ## Done when — T1312
 

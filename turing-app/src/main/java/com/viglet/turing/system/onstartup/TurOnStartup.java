@@ -20,26 +20,27 @@
  */
 package com.viglet.turing.system.onstartup;
 
+import java.util.Comparator;
+import java.util.List;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.auth.onstartup.TurGroupOnStartup;
-import com.viglet.turing.auth.onstartup.TurRoleOnStartup;
-import com.viglet.turing.auth.onstartup.TurUserOnStartup;
-import com.viglet.turing.llm.onstartup.TurEmbeddingModelUnificationService;
-import com.viglet.turing.llm.onstartup.TurLLMVendorOnStartup;
-import com.viglet.turing.searchengine.onstartup.TurSEVendorOnStartup;
-import com.viglet.turing.rag.onstartup.TurStoreVendorOnStartup;
-import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
-import com.viglet.turing.system.onstartup.TurLocaleOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
-import com.viglet.turing.auth.TurAdminPasswordService;
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+import com.viglet.turing.shared.onstartup.TurStartupReconciler;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Runs every module's first-time seeder on a fresh install, then every module's
+ * idempotent reconciliation on each boot. It knows the seeders only through the
+ * shared {@link TurFirstTimeSeeder} and {@link TurStartupReconciler} contracts,
+ * so the system module depends on no module whose tables they write (T1311).
+ */
 @Slf4j
 @Component
 @Transactional
@@ -47,71 +48,31 @@ import lombok.extern.slf4j.Slf4j;
 public class TurOnStartup implements ApplicationRunner {
 	public static final String FIRST_TIME = "FIRST_TIME";
 	private final TurConfigVarRepository turConfigVarRepository;
-	private final TurLocaleOnStartup turLocaleOnStartup;
-	private final TurSEVendorOnStartup turSEVendorOnStartup;
-	private final TurLLMVendorOnStartup turLLMVendorOnStartup;
-	private final TurStoreVendorOnStartup turStoreVendorOnStartup;
-	private final TurConfigVarOnStartup turConfigVarOnStartup;
-	private final TurUserOnStartup turUserOnStartup;
-	private final TurGroupOnStartup turGroupOnStartup;
-	private final TurRoleOnStartup turRoleOnStartup;
-	private final TurEmbeddingModelUnificationService turEmbeddingModelUnificationService;
-	private final TurAdminPasswordService turAdminPasswordService;
+	private final List<TurFirstTimeSeeder> seeders;
+	private final List<TurStartupReconciler> reconcilers;
 
 	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
-			TurLocaleOnStartup turLocaleOnStartup,
-			TurSEVendorOnStartup turSEVendorOnStartup,
-			TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
-			TurConfigVarOnStartup turConfigVarOnStartup,
-			TurUserOnStartup turUserOnStartup,
-			TurGroupOnStartup turGroupOnStartup,
-			TurRoleOnStartup turRoleOnStartup,
-			TurEmbeddingModelUnificationService turEmbeddingModelUnificationService,
-			TurAdminPasswordService turAdminPasswordService) {
+			List<TurFirstTimeSeeder> seeders,
+			List<TurStartupReconciler> reconcilers) {
 		this.turConfigVarRepository = turConfigVarRepository;
-		this.turLocaleOnStartup = turLocaleOnStartup;
-		this.turSEVendorOnStartup = turSEVendorOnStartup;
-		this.turLLMVendorOnStartup = turLLMVendorOnStartup;
-		this.turStoreVendorOnStartup = turStoreVendorOnStartup;
-		this.turConfigVarOnStartup = turConfigVarOnStartup;
-		this.turUserOnStartup = turUserOnStartup;
-		this.turGroupOnStartup = turGroupOnStartup;
-		this.turRoleOnStartup = turRoleOnStartup;
-		this.turEmbeddingModelUnificationService = turEmbeddingModelUnificationService;
-		this.turAdminPasswordService = turAdminPasswordService;
+		this.seeders = seeders.stream().sorted(Comparator.comparingInt(TurFirstTimeSeeder::seedOrder)).toList();
+		this.reconcilers = reconcilers.stream()
+				.sorted(Comparator.comparingInt(TurStartupReconciler::reconcileOrder)).toList();
 	}
 
 	@Override
 	public void run(ApplicationArguments arg0) {
 		if (turConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
 			log.info("First Time Configuration ...");
-
-			turLocaleOnStartup.createDefaultRows();
-			turRoleOnStartup.createDefaultRows();
-			turGroupOnStartup.createDefaultRows();
-			turUserOnStartup.createDefaultRows();
-			turSEVendorOnStartup.createDefaultRows();
-			turLLMVendorOnStartup.createDefaultRows();
-			turStoreVendorOnStartup.createDefaultRows();
-			turConfigVarOnStartup.createDefaultRows();
-
+			seeders.forEach(TurFirstTimeSeeder::createDefaultRows);
 			log.info("First Time Configuration completed. Set the admin password via the web interface.");
 		}
 
-		// Headless admin bootstrap (TURING_ADMIN_PASSWORD) — outside the FIRST_TIME
-		// block on purpose: an install seeded before the env var was supplied (or one
-		// whose setup screen was never completed) still gets a usable admin login. A
-		// no-op once the password is set, so restarts never overwrite it.
-		turAdminPasswordService.bootstrapFromConfiguration();
-
-		// Always-run, idempotent reconciliations — must reach EXISTING installs too
-		// (the FIRST_TIME block above runs only on a fresh database). Both are no-ops
-		// once applied.
-		// T754 — self-heal newly-added built-in LLM vendors (e.g. the ONNX embedding
-		// vendors) on upgraded installs. T755 — unify legacy embedding models onto
-		// llm_instance (id-preserving, non-destructive; embedding_model kept).
-		turLLMVendorOnStartup.createDefaultRows();
-		turEmbeddingModelUnificationService.reconcile();
+		// Always-run, idempotent reconciliations — they must reach EXISTING installs
+		// too (the block above runs only on a fresh database): the headless admin
+		// password (TURING_ADMIN_PASSWORD), newly-added built-in LLM vendors (T754)
+		// and the embedding-model unification (T755). Each is a no-op once applied.
+		reconcilers.forEach(TurStartupReconciler::reconcileOnStartup);
 	}
 
 }

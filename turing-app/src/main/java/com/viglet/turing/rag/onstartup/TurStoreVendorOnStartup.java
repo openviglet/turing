@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.rag.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +30,12 @@ import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorReposito
 
 @Component
 @Transactional
-public class TurStoreVendorOnStartup {
+public class TurStoreVendorOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 70;
+    }
+
 
 	private final TurStoreVendorRepository turStoreVendorRepository;
 

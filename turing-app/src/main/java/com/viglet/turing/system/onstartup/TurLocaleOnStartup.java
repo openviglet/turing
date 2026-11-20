@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.system.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +40,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @Transactional
-public class TurLocaleOnStartup {
+public class TurLocaleOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 10;
+    }
+
 	private final TurLocaleRepository turLocaleRepository;
 
 	public TurLocaleOnStartup(TurLocaleRepository turLocaleRepository) {

@@ -1,5 +1,7 @@
 package com.viglet.turing.llm.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurStartupReconciler;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -38,7 +40,17 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class TurEmbeddingModelUnificationService {
+public class TurEmbeddingModelUnificationService implements TurStartupReconciler {
+    @Override
+    public int reconcileOrder() {
+        return 30;
+    }
+
+    @Override
+    public void reconcileOnStartup() {
+        reconcile();
+    }
+
 
     private static final int MAX_TITLE = 100;
 

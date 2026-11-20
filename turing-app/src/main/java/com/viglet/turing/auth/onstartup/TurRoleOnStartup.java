@@ -1,5 +1,7 @@
 package com.viglet.turing.auth.onstartup;
 
+import com.viglet.turing.shared.onstartup.TurFirstTimeSeeder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +17,12 @@ import com.viglet.turing.persistence.repository.auth.TurRoleRepository;
 import jakarta.transaction.Transactional;
 
 @Component
-public class TurRoleOnStartup {
+public class TurRoleOnStartup implements TurFirstTimeSeeder {
+    @Override
+    public int seedOrder() {
+        return 20;
+    }
+
     private static final String CATEGORY_EMBEDDING = "EMBEDDING";
     private static final String CATEGORY_STORE = "STORE";
     private static final String CATEGORY_AI_AGENT = "AI_AGENT";
