@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.eval.selftuning.TurSelfTuningMiner;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionMessageDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurChatFlowSubmission;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionMessageDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurChatFlowSubmission;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 import com.viglet.turing.chat.analytics.TurChatSessionFilter;
 import com.viglet.turing.chat.memory.TurChatMemoryService;

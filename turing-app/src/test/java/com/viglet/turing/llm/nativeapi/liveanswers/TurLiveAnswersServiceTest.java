@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.viglet.turing.rag.citation.TurCitationDocument;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * T187 / §X.15.a — unit tests for {@link TurLiveAnswersService}: the opt-in

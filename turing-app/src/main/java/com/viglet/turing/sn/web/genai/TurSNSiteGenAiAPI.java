@@ -52,13 +52,13 @@ import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
 import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
-import com.viglet.turing.persistence.dto.intent.TurIntentDto;
-import com.viglet.turing.persistence.mapper.intent.TurIntentMapper;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
+import com.viglet.turing.agent.persistence.dto.intent.TurIntentDto;
+import com.viglet.turing.agent.persistence.mapper.intent.TurIntentMapper;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.intent.TurIntentRepository;
+import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
@@ -583,7 +583,7 @@ public class TurSNSiteGenAiAPI {
 		int touched = conversationLock.runExclusive(body.conversationId(), () ->
 				chatFlowEngineService.writeSlot(
 						body.conversationId(), body.name(), body.value(),
-						com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.ENDPOINT,
+						com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.ENDPOINT,
 						"site=" + siteName));
 		return new ChatSlotWriteResponse(touched);
 	}
@@ -769,7 +769,7 @@ public class TurSNSiteGenAiAPI {
 	 * @since 2026.3.1
 	 */
 	@GetMapping(value = "/slots/stream/delta", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto>> streamSlotDeltas(
+	public Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto>> streamSlotDeltas(
 			@PathVariable String siteName,
 			@RequestParam String conversationId) {
 		if (conversationId == null || conversationId.isBlank()) {
@@ -777,14 +777,14 @@ public class TurSNSiteGenAiAPI {
 		}
 		java.util.Map<String, String> initial =
 				chatFlowEngineService.listSlotsForConversation(conversationId).slots();
-		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto>> data =
+		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto>> data =
 				slotEventBus.subscribeDelta(conversationId, initial)
 						.map(delta -> org.springframework.http.codec.ServerSentEvent
-								.<com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto>builder(delta).build());
-		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto>> heartbeats =
+								.<com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto>builder(delta).build());
+		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto>> heartbeats =
 				Flux.interval(java.time.Duration.ofSeconds(25))
 						.map(tick -> org.springframework.http.codec.ServerSentEvent
-								.<com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto>builder().comment(HEARTBEAT).build());
+								.<com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto>builder().comment(HEARTBEAT).build());
 		// T90 — same refcounting as the snapshot stream, on the DELTA channel.
 		return Flux.merge(data, heartbeats)
 				.doOnSubscribe(s -> slotSseRegistry.acquire(conversationId,

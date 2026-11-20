@@ -14,7 +14,7 @@ package com.viglet.turing.llm.nativeapi.cache;
 
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T499 / §X.20 — the cross-vendor <em>context caching</em> seam. The single

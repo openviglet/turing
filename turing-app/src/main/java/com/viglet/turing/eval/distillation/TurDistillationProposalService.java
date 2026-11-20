@@ -17,12 +17,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAgentSuggestion;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentSuggestionRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAgentSuggestion;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentSuggestionRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

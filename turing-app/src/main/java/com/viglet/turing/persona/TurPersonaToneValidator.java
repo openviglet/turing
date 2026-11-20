@@ -27,7 +27,7 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 import lombok.extern.slf4j.Slf4j;
 

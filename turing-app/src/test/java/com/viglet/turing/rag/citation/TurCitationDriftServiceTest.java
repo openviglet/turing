@@ -37,8 +37,8 @@ import com.viglet.turing.rag.citation.TurCitationDriftService.DriftVerdict;
 import com.viglet.turing.rag.citation.TurCitationDriftService.ResolvedChunk;
 import com.viglet.turing.rag.citation.TurCitationDriftService.Status;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
-import com.viglet.turing.persistence.model.agent.TurChatCitationRecord;
-import com.viglet.turing.persistence.repository.agent.TurChatCitationRecordRepository;
+import com.viglet.turing.agent.persistence.model.TurChatCitationRecord;
+import com.viglet.turing.agent.persistence.repository.TurChatCitationRecordRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import tools.jackson.databind.ObjectMapper;

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurLLMTokenUsageAPITest {

@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
 
 /**
  * T26 / §II.2.2 — pins the procedural router's MoreLikeThis scoring.

@@ -24,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.viglet.turing.llm.gateway.TurGatewayContext;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService;
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.properties.TurGatewayProperty;
 
 import jakarta.servlet.FilterChain;

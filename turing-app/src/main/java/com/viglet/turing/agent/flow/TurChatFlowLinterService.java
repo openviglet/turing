@@ -19,12 +19,12 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowLintIssueDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowTriggerConflictDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowLintIssueDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowTriggerConflictDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 
 /**
  * T94 / §VII.11.d — static analysis for chat-flow authoring. Renders a

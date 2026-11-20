@@ -23,7 +23,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.eval.grader.builtin.TurEmbeddingSimilarityGrader;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

@@ -20,8 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurMemoryScope;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurMemoryScope;
 
 import lombok.extern.slf4j.Slf4j;
 

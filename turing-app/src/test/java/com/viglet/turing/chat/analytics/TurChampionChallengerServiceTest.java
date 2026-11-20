@@ -23,8 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.chat.analytics.TurChampionChallengerService.PromotionResult;
 import com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SignificanceResult;
 import com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric;

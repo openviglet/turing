@@ -28,17 +28,17 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.rag.research.dto.TurResearchInterviewDto;
 import com.viglet.turing.rag.research.dto.TurResearchTurnDto;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.research.TurResearchInterview;
-import com.viglet.turing.persistence.model.research.TurResearchInterviewStatus;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.model.research.TurResearchStudyPersona;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchInterviewRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterview;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterviewStatus;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudyPersona;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 import com.viglet.turing.tenant.TurTenantContext;
 
 import lombok.extern.slf4j.Slf4j;

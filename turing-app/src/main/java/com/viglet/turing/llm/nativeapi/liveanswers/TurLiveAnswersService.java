@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.rag.citation.TurCitationDocument;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

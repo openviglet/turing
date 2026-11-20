@@ -26,7 +26,7 @@ import com.viglet.turing.agent.TurDefaultAgentResolver;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 

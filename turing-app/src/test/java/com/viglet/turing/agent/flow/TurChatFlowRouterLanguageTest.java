@@ -18,7 +18,7 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.pt.PortugueseAnalyzer;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
 
 /**
  * T25 / §II.2.1 — pins per-language analyzer routing semantics + the AUTO

@@ -15,10 +15,10 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;

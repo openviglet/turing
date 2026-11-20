@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurAIAgentSlotDto;
-import com.viglet.turing.persistence.mapper.agent.TurAIAgentSlotMapper;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.dto.TurAIAgentSlotDto;
+import com.viglet.turing.agent.persistence.mapper.TurAIAgentSlotMapper;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

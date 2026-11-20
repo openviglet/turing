@@ -23,7 +23,7 @@ import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.ExportEntry;
 import com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * Smoke tests for the three harness fixtures created under task T5

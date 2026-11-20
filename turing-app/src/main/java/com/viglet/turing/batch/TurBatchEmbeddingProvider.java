@@ -11,7 +11,7 @@ package com.viglet.turing.batch;
 
 import java.util.List;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.7 / §X.8.c — the embeddings-batch seam, separate from the chat

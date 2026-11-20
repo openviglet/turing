@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.eval.TurAgentEvalRunnerService;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalRunRequest;
-import com.viglet.turing.persistence.dto.agent.TurEvalRunResultDto;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderStack;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalGraderStackRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalReportDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalRunRequest;
+import com.viglet.turing.agent.persistence.dto.TurEvalRunResultDto;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderStack;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalGraderStackRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

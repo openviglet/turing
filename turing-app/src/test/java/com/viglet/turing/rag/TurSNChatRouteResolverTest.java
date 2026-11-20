@@ -41,12 +41,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.rag.TurSNChatRouteResolver.Route;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 
 /**
  * T1087 — one decision answers both "is the chat ready?" and "how does it

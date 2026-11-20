@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
-import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
+import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
+import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
 import com.viglet.turing.agent.TurChatAttachmentService;
 import com.viglet.turing.agent.TurChatToolOptions;
 import com.viglet.turing.agent.TurPromptOverrides;
@@ -47,8 +47,8 @@ import com.viglet.turing.agent.tool.TurLoggingToolService;
 import com.viglet.turing.agent.tool.TurSystemInfoToolService;
 import com.viglet.turing.agent.tool.TurIconifyToolService;
 import com.viglet.turing.agent.tool.TurWebCrawlerToolService;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

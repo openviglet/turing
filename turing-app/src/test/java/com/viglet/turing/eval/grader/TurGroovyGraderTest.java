@@ -18,7 +18,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.eval.grader.builtin.TurGroovyGrader;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
 
 /**
  * T589 / §XXXIII.4 — the custom Groovy eval grader: return-value interpretation

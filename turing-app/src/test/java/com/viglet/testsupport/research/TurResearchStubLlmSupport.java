@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 
 import reactor.core.publisher.Flux;

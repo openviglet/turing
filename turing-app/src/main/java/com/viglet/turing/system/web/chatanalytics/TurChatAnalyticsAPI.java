@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 import com.viglet.turing.chat.analytics.TurChatSessionFilter;
@@ -349,7 +349,7 @@ public class TurChatAnalyticsAPI {
      * @since 2026.3.1
      */
     @GetMapping(value = "/slot-sse-channels", produces = MediaType.APPLICATION_JSON_VALUE)
-    public com.viglet.turing.persistence.dto.agent.TurChatSlotSseChannelsDto slotSseChannels() {
+    public com.viglet.turing.agent.persistence.dto.TurChatSlotSseChannelsDto slotSseChannels() {
         return slotSseRegistry.snapshot();
     }
 

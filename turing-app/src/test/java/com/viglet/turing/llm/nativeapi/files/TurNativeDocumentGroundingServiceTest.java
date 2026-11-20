@@ -36,7 +36,7 @@ import org.springframework.ai.document.Document;
 
 import com.viglet.turing.rag.citation.TurCitationDocument;
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge.TurVendorFileRef;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.storage.TurStorageObjectStat;
 import com.viglet.turing.storage.TurStorageService;
 

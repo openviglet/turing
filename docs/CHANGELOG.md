@@ -1766,3 +1766,4 @@
 - **T1311 (packages dissolved)** — service and onstartup are gone: chat, storage, auth, llm.cost and each seeder sit in the module they serve, logback follows them; violations 26,485 to 26,134.
 - **T1308 (controllers moved)** — The api package is gone: each controller sits in its module's web package, and the services and beans other code used left web for their module; request paths unchanged; violations 26,134 to 25,001.
 - **T1312 (entities moved)** — The SN entities, repositories, DTOs, mappers and adapters live in sn.persistence and domain.sn in sn.domain; violations 25,001 to 21,385.
+- **T1313** — LLM, agent, RAG, persona, batch, eval and MCP entities, repositories, DTOs, mappers, adapters and domain ports live in their modules; the shared persistence imports no genai type but the chat analytics entity T1314 moves; violations 21,385 to 15,162.

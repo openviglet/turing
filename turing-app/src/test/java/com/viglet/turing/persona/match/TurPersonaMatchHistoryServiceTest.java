@@ -22,8 +22,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.persona.match.dto.TurPersonaMatchDriftDto;
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchCellHistory;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchCellHistoryRepository;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchCellHistory;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchCellHistoryRepository;
 
 /**
  * T826 / §LXI.2 (Block BN) — the drift report's "crossed below/above fit" flags

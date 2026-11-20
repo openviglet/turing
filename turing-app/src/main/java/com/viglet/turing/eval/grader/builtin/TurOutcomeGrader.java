@@ -17,7 +17,7 @@ import com.viglet.turing.eval.grader.TurEvalGraderConfigView;
 import com.viglet.turing.eval.grader.TurEvalGraderKind;
 import com.viglet.turing.eval.grader.TurEvalGraderResult;
 import com.viglet.turing.eval.grader.TurEvalGradingContext;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
 
 /**
  * T586 / §XXXIII.1 — built-in CODE grader wrapping the historical <b>outcome</b>

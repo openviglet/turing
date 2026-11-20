@@ -10,8 +10,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 
 class TurGenAiLlmProviderFactoryTest {
 

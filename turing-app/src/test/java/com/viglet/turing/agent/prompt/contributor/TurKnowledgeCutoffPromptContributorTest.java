@@ -28,9 +28,9 @@ import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.llm.provider.llm.TurLlmModelKind;
 import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
 import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 
 /**
  * T787 / §LIII.4 — unit tests for the opt-in knowledge-cutoff prompt contributor.

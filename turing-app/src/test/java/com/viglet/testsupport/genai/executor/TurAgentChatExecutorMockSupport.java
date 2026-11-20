@@ -102,7 +102,7 @@ import reactor.core.publisher.Flux;
  * <p>Streaming is supported via {@link ChatModelHarness#queueStreamingResponse(String...)}:
  * each varargs element becomes one chunk of the {@code Flux<ChatResponse>} the
  * mock will emit. The executor's STREAM path
- * ({@link com.viglet.turing.persistence.model.agent.TurAgentChatMode#STREAM})
+ * ({@link com.viglet.turing.agent.persistence.model.TurAgentChatMode#STREAM})
  * exercises this code path.
  *
  * <p><b>Tool-strip tests (patches #3, #4)</b> don't need to simulate the LLM
@@ -142,14 +142,14 @@ public class TurAgentChatExecutorMockSupport {
         return new TurLlmModelFactory(null, null, null, null, null) {
             @Override
             public org.springframework.ai.chat.model.ChatModel createChatModel(
-                    com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance,
+                    com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance,
                     String decryptedApiKey) {
                 return harness.chatModel();
             }
 
             @Override
             public org.springframework.ai.embedding.EmbeddingModel createEmbeddingModel(
-                    com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance,
+                    com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance,
                     String decryptedApiKey) {
                 // Defensive: the @Primary bean WILL be picked up by every
                 // EmbeddingModel consumer in the context. RAG ITs shouldn't

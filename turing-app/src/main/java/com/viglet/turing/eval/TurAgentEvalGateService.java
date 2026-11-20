@@ -15,14 +15,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalCaseResultDto;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalGateDto;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalGateDto.Finding;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalReport;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalReportRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalCaseResultDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalGateDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalGateDto.Finding;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalReportDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalReport;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalReportRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
 
 /**
  * T287 / §XV.3 — computes the pre-publish gate status for an agent from its

@@ -19,20 +19,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.exchange.agent.TurAIAgentExportService;
-import com.viglet.turing.persistence.dto.agent.TurAIAgentDto;
-import com.viglet.turing.persistence.mapper.agent.TurAIAgentMapper;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.customtool.TurCustomToolRepository;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.agent.persistence.dto.TurAIAgentDto;
+import com.viglet.turing.agent.persistence.mapper.TurAIAgentMapper;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
@@ -424,7 +424,7 @@ public class TurAIAgentAPI {
      * still block the toggle on its side for a useful error message.
      */
     private boolean canEnableRag(boolean requested,
-            Set<com.viglet.turing.persistence.model.llm.TurLLMInstance> llmInstances,
+            Set<com.viglet.turing.llm.persistence.model.TurLLMInstance> llmInstances,
             TurEmbeddingModel embeddingModel,
             TurStoreInstance storeInstance) {
         if (!requested) {

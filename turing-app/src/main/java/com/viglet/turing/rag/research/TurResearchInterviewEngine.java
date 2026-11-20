@@ -23,12 +23,12 @@ import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.agent.TurAgentChatRequest;
 import com.viglet.turing.rag.research.dto.TurResearchTurnDto;
 import com.viglet.turing.agent.tool.TurNativeToolService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.research.TurResearchProtocol;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.research.TurResearchProtocol;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

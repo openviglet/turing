@@ -38,8 +38,8 @@ import com.viglet.turing.agent.prompt.contributor.TurPersonaPromptContributor;
 import com.viglet.turing.agent.prompt.contributor.TurSkillPromptContributor;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
 import com.viglet.turing.agent.tool.TurMcpInstructionsProvider;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Block AL / T613 + T614 — proves the single-pass contributor pipeline reproduces

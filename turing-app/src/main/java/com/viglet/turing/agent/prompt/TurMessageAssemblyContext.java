@@ -12,7 +12,7 @@
  */
 package com.viglet.turing.agent.prompt;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * Block AL / §XXXV.3 (T616) — the inputs a {@link TurMessageContributor} reads to

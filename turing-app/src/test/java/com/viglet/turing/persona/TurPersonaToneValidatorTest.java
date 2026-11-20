@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Unit tests for {@link TurPersonaToneValidator}. No Spring context — the

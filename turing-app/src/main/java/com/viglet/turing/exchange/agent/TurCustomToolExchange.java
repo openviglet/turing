@@ -10,7 +10,7 @@
 package com.viglet.turing.exchange.agent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
 
 import lombok.Getter;
 import lombok.Setter;

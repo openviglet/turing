@@ -29,14 +29,14 @@ import org.springframework.stereotype.Component;
  * <p><b>Why this is Block AC-safe.</b> The cached value is the parsed
  * {@link ChatFlowGraph} — an immutable record tree with <em>no</em> JPA lazy
  * proxies and no session affinity — never the {@link
- * com.viglet.turing.persistence.model.agent.TurChatFlow} entity. So a hit is
+ * com.viglet.turing.agent.persistence.model.TurChatFlow} entity. So a hit is
  * safe to read anywhere, any time, outside a transaction; this is precisely the
  * property the old repository-level entity cache never had (T486). The graph
  * record tree is {@link java.io.Serializable} so it round-trips through a
  * clustered Hazelcast {@code IMap} as well as the in-process map.
  *
  * <p><b>Why a separate bean.</b> Spring's {@code @Cacheable} is proxy-based, so
- * {@link TurChatFlowEngineService#parseGraph(com.viglet.turing.persistence.model.agent.TurChatFlow)}
+ * {@link TurChatFlowEngineService#parseGraph(com.viglet.turing.agent.persistence.model.TurChatFlow)}
  * cannot memoize via a {@code this} call (it would no-op). Routing the cacheable
  * call through this injected bean keeps the Spring proxy in the path — the
  * canonical pattern from {@code TurChatFlowStaticPromptCache} and
@@ -45,7 +45,7 @@ import org.springframework.stereotype.Component;
  * <p><b>Eviction.</b> The {@code turChatFlowGraph} cache name is cleared by
  * {@link TurChatFlowEngineService#evictFlowDerivedCaches()}, invoked from the
  * {@code TurChatFlowRouterEvictionListener} JPA callback on any {@link
- * com.viglet.turing.persistence.model.agent.TurChatFlow} persist/update/remove
+ * com.viglet.turing.agent.persistence.model.TurChatFlow} persist/update/remove
  * and at the one bulk-DML delete site — so an operator edit to the flow
  * definition propagates on the next chat turn, alongside the router-decision and
  * static head/tail caches.

@@ -4,12 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

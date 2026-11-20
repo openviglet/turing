@@ -25,11 +25,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.CacheManager;
 
 import com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 

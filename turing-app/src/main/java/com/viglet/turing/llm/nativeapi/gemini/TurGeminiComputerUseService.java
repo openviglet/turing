@@ -41,7 +41,7 @@ import com.viglet.turing.llm.nativeapi.openai.computeruse.TurComputerUseDriver;
 import com.viglet.turing.llm.nativeapi.openai.computeruse.TurComputerUseEnvironment;
 import com.viglet.turing.llm.nativeapi.openai.computeruse.TurComputerUseScreenshot;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

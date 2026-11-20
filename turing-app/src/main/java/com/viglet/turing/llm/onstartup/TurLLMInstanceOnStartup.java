@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -353,7 +353,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
         // off-topic tasks). This only affects the SN RAG path; general agent
         // chat / MCP ignore the mode, so reusing this agent elsewhere is
         // unaffected. Operators can flip it to OPEN in the UI.
-        agent.setGroundingMode(com.viglet.turing.persistence.model.agent.TurAgentGroundingMode.STRICT_RAG);
+        agent.setGroundingMode(com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG);
         // T1004 — and for the same reason, AUTO rather than the CALL default.
         // This agent answers the public SN chat, where the whole answer used to
         // arrive as one SSE event: a consumer reading the body with a stream
@@ -362,7 +362,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
         // a tool is in play, so nothing is traded for it. Only new installs get
         // this — provisioning never overrides an existing agent, so an install
         // already running picks it up by setting Chat mode to Auto in the UI.
-        agent.setChatMode(com.viglet.turing.persistence.model.agent.TurAgentChatMode.AUTO);
+        agent.setChatMode(com.viglet.turing.agent.persistence.model.TurAgentChatMode.AUTO);
         agent.getLlmInstances().add(llm);
 
         // Optional soft spend caps (T289–T291). Left null when unset/blank/<= 0,

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * T31 / §IV.5 — caches the deterministic portions of the system-prompt

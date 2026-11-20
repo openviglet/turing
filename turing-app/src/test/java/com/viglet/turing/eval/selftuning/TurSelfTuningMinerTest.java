@@ -26,8 +26,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.rag.answer.TurAnswerSignal;
-import com.viglet.turing.persistence.model.answer.TurAnswerSignalEvent;
-import com.viglet.turing.persistence.repository.answer.TurAnswerSignalRepository;
+import com.viglet.turing.rag.persistence.model.answer.TurAnswerSignalEvent;
+import com.viglet.turing.rag.persistence.repository.answer.TurAnswerSignalRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 import com.viglet.turing.chat.analytics.TurChatSessionFilter;
 

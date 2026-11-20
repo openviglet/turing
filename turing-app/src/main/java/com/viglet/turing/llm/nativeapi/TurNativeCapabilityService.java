@@ -18,8 +18,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceCapabilityRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstanceCapability;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceCapabilityRepository;
 
 /**
  * T130/T132 / §X.2 — read/write façade over the per-LLM-instance native

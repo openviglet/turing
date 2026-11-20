@@ -24,8 +24,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
@@ -41,10 +41,10 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
@@ -56,8 +56,8 @@ import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProviders
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteImportTest {
@@ -83,7 +83,7 @@ class TurSNSiteImportTest {
         @Mock
         private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
         @Mock
-        private com.viglet.turing.persistence.repository.agent.TurAIAgentRepository turAIAgentRepository;
+        private com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository;
         @Mock
         private TurLLMInstanceRepository turLLMInstanceRepository;
         @Mock
@@ -197,8 +197,8 @@ class TurSNSiteImportTest {
                 existingStore.setUrl("http://localhost:8000");
                 existingStore.setTurStoreVendor(storeVendor);
 
-                com.viglet.turing.persistence.model.agent.TurAIAgent existingAgent =
-                                new com.viglet.turing.persistence.model.agent.TurAIAgent();
+                com.viglet.turing.agent.persistence.model.TurAIAgent existingAgent =
+                                new com.viglet.turing.agent.persistence.model.TurAIAgent();
                 existingAgent.setId("agent-1");
 
                 TurSNSiteGenAiExchange genAiRef = new TurSNSiteGenAiExchange();

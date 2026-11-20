@@ -27,13 +27,13 @@ import com.viglet.turing.persona.match.dto.TurPersonaAudienceApplyDto.ConfirmedF
 import com.viglet.turing.persona.match.dto.TurPersonaAudienceApplyDto.Request;
 import com.viglet.turing.persona.match.dto.TurPersonaAudienceApplyDto.Response;
 import com.viglet.turing.persona.match.dto.TurPersonaAudienceApplyDto.SkippedField;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudienceApplyLog;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudienceField;
-import com.viglet.turing.persistence.repository.persona.TurPersonaAudienceApplyLogRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchPersonaRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudienceApplyLog;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudienceField;
+import com.viglet.turing.persona.persistence.repository.TurPersonaAudienceApplyLogRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchPersonaRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

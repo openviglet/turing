@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowVariantRequest;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowVariantResponse;
-import com.viglet.turing.persistence.mapper.agent.TurChatFlowMapper;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowVariantRequest;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowVariantResponse;
+import com.viglet.turing.agent.persistence.mapper.TurChatFlowMapper;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;

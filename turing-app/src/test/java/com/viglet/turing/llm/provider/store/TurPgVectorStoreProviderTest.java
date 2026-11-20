@@ -29,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.embedding.EmbeddingModel;
 
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**

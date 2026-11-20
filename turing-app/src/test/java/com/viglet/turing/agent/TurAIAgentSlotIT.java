@@ -28,12 +28,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.agent.web.TurAIAgentSlotAPI;
-import com.viglet.turing.persistence.dto.agent.TurAIAgentSlotDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlotType;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.dto.TurAIAgentSlotDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlotType;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

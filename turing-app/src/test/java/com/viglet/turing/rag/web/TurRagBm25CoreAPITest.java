@@ -30,13 +30,13 @@ import org.springframework.http.ResponseEntity;
 
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagBm25CoreProvisioner;
-import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
+import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;

@@ -29,13 +29,13 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.domain.customtool.TurCustomToolDomain;
+import com.viglet.turing.agent.domain.customtool.TurCustomToolDomain;
 import com.viglet.turing.agent.TurAgentChatExecutor;
-import com.viglet.turing.persistence.adapter.customtool.TurCustomToolReader;
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.agent.persistence.adapter.customtool.TurCustomToolReader;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 import org.springframework.context.annotation.Lazy;
 

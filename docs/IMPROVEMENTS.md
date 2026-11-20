@@ -2529,14 +2529,6 @@ interface for reads and listen to its events for changes. The searchengine and g
 calls that read SN sites directly are the ones the module report lists; each is
 replaced, not exempted.
 
-### CLXXXIX.9 GenAI persistence moves into its modules (T1313)
-
-LLM instance, model, agent, flow, skill, tool, eval, batch and distillation entities,
-with their repositories, DTOs and mappers, move into the modules the genai split
-created. Enums such as TurBatchKind, TurBatchState, TurChatFeedbackRating and
-TurDistillationState move with the module that owns them, which ends persistence
-importing genai types.
-
 ### CLXXXIX.10 Emptying the persistence package (T1314)
 
 What remains in persistence (chat, thesaurus, tenant, system, auth, persona, research,

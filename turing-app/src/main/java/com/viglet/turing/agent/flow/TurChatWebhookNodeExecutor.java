@@ -12,7 +12,7 @@ package com.viglet.turing.agent.flow;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 import com.viglet.turing.chat.slots.TurChatWebhookService;
 import com.viglet.turing.chat.slots.TurChatWebhookService.DispatchOutcome;
 
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * T62 — runtime execution for the {@code webhook} chat-flow node type. Fires a
- * named, admin-declared {@link com.viglet.turing.persistence.model.agent.TurChatWebhook}
+ * named, admin-declared {@link com.viglet.turing.agent.persistence.model.TurChatWebhook}
  * deterministically at a precise step of the flow (a CRM push the author wants
  * to guarantee), rather than waiting on a slot-write trigger or an explicit
  * handoff click.

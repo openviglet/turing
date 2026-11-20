@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
 import com.viglet.turing.chat.slots.TurChatSlotAuditService;
 import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 

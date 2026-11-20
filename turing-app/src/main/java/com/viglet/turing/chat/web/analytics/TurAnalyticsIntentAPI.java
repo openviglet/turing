@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
 import com.viglet.turing.chat.analytics.TurAnalyticsIntentIndexer;
 

@@ -25,7 +25,7 @@ import com.viglet.turing.llm.nativeapi.gemini.TurGoogleGenAiNativeService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiResponsesService;
 import com.viglet.turing.persona.TurPersonaModelCalibration;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

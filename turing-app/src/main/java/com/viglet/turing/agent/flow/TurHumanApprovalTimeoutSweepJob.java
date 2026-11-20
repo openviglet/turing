@@ -15,7 +15,7 @@ import java.util.Map;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurChatHumanApproval;
+import com.viglet.turing.agent.persistence.model.TurChatHumanApproval;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

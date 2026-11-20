@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

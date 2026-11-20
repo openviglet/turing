@@ -694,7 +694,7 @@ public record ChatFlowNode(String id, String type, NodeData data) implements Ser
      *       Selects how the approver is notified.</li>
      *   <li>{@code target} — channel-specific destination: an e-mail address
      *       ({@code email}), a Slack incoming-webhook URL ({@code slack}), or
-     *       the name of an admin-declared {@link com.viglet.turing.persistence.model.agent.TurChatWebhook}
+     *       the name of an admin-declared {@link com.viglet.turing.agent.persistence.model.TurChatWebhook}
      *       to fire ({@code webhook}).</li>
      *   <li>{@code template} — message body; {@code {{slot}}} placeholders are
      *       substituted with the conversation's slot values. A blank template

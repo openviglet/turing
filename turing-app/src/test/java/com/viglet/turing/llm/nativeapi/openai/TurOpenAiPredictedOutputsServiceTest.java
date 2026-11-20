@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import com.openai.client.OpenAIClient;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.10 / §X.11.a — verifies that {@link TurOpenAiPredictedOutputsService}

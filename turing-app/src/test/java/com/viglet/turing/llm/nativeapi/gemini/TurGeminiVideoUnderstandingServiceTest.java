@@ -24,8 +24,8 @@ import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService.VideoUnderstanding;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 
 /**
  * T501 / §X.19 — unit coverage for the deterministic surface of Gemini video

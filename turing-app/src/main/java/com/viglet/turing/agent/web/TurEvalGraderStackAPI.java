@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.eval.TurEvalGraderStackService;
-import com.viglet.turing.persistence.dto.agent.TurEvalGraderStackDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalGraderStackDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -34,8 +34,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.viglet.turing.agent.skill.TurSkillFileNode;
-import com.viglet.turing.persistence.model.skill.TurSkill;
-import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurFilesystemStorageService;

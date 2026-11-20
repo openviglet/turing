@@ -16,7 +16,7 @@ import org.springframework.data.domain.Sort;
 
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
@@ -314,8 +314,8 @@ class TurWeeklySearchReportServiceTest {
 
         // Setup LLM with cached summary
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-1");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("GPT-4");
         llmInstance.setModelName("gpt-4-turbo");
@@ -358,8 +358,8 @@ class TurWeeklySearchReportServiceTest {
 
         // Setup LLM
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-2");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("Claude");
         llmInstance.setModelName(null);
@@ -414,8 +414,8 @@ class TurWeeklySearchReportServiceTest {
 
         // Setup LLM that throws during summary
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-3");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("Broken LLM");
         llmInstance.setModelName("broken");
@@ -443,8 +443,8 @@ class TurWeeklySearchReportServiceTest {
     void buildReportHtmlShouldSkipDisabledLlmInstance() {
         when(snSiteRepository.findAll(any(Sort.class))).thenReturn(Collections.emptyList());
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-disabled");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(0);
         when(llmInstanceRepository.findById("llm-disabled")).thenReturn(Optional.of(llmInstance));
         when(emailService.loadTemplate(anyString())).thenReturn("{{reportPeriod}}{{totalSearches}}{{siteCards}}{{generatedAt}}");
@@ -554,8 +554,8 @@ class TurWeeklySearchReportServiceTest {
     void buildReportHtmlShouldHandleLlmProviderCreationException() {
         when(snSiteRepository.findAll(any(Sort.class))).thenReturn(Collections.emptyList());
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-fail");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("Failing LLM");
         llmInstance.setApiKeyEncrypted("enc");
@@ -584,8 +584,8 @@ class TurWeeklySearchReportServiceTest {
                 .thenReturn(Collections.emptyList());
 
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-empty");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("EmptyLLM");
         llmInstance.setModelName("empty-model");
@@ -634,8 +634,8 @@ class TurWeeklySearchReportServiceTest {
                 .thenReturn(Collections.emptyList());
 
         when(globalSettingsService.getDefaultLlmId()).thenReturn("llm-mn");
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance =
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         llmInstance.setEnabled(1);
         llmInstance.setTitle("OpenAI");
         llmInstance.setModelName("gpt-4o");

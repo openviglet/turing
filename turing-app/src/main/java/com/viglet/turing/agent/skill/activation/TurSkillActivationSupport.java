@@ -16,7 +16,7 @@ import java.util.Map;
 import org.springframework.ai.chat.model.ToolContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 /**
  * T322 / §IX.4.d — small shared helpers for the skill activation tool

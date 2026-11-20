@@ -26,10 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurRoutineDto;
-import com.viglet.turing.persistence.model.agent.TurRoutine;
-import com.viglet.turing.persistence.model.agent.TurRoutineKind;
-import com.viglet.turing.persistence.repository.agent.TurRoutineRepository;
+import com.viglet.turing.agent.persistence.dto.TurRoutineDto;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
+import com.viglet.turing.agent.persistence.model.TurRoutineKind;
+import com.viglet.turing.agent.persistence.repository.TurRoutineRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

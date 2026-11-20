@@ -27,11 +27,11 @@ import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurAgentChatRequest;
 import com.viglet.turing.agent.TurChatProviderErrorMapper;
 import com.viglet.turing.agent.tool.TurNativeToolService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

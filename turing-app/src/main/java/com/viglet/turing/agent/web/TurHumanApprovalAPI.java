@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurHumanApprovalService;
-import com.viglet.turing.persistence.dto.agent.TurHumanApprovalDto;
-import com.viglet.turing.persistence.model.agent.TurChatHumanApproval;
-import com.viglet.turing.persistence.model.agent.TurHumanApprovalStatus;
+import com.viglet.turing.agent.persistence.dto.TurHumanApprovalDto;
+import com.viglet.turing.agent.persistence.model.TurChatHumanApproval;
+import com.viglet.turing.agent.persistence.model.TurHumanApprovalStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

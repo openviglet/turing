@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptInertRegionDto;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptInertRegionDto;
 
 /**
  * T609 — "inert this turn" heuristic + author-marker detection.

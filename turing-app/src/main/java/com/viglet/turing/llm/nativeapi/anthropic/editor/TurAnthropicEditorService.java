@@ -37,7 +37,7 @@ import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.llm.nativeapi.TurNativeCapability;
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapability;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

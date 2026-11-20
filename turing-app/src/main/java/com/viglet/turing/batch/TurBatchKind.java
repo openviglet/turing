@@ -10,7 +10,7 @@
 package com.viglet.turing.batch;
 
 /**
- * F.7 / §X.8 — what kind of work a {@link com.viglet.turing.persistence.model.batch.TurBatchJob}
+ * F.7 / §X.8 — what kind of work a {@link com.viglet.turing.batch.persistence.model.TurBatchJob}
  * carries, so the poller knows which result type to fetch on completion.
  *
  * @author Alexandre Oliveira

@@ -22,12 +22,12 @@ import com.viglet.turing.llm.provider.llm.TurHuggingFaceRepoResolver;
 import com.viglet.turing.llm.provider.llm.TurLlmModelDiscoveryService;
 import com.viglet.turing.agent.verify.TurModelVerifyResult;
 import com.viglet.turing.agent.verify.TurModelVerifyService;
-import com.viglet.turing.persistence.dto.embedding.TurEmbeddingModelDto;
-import com.viglet.turing.persistence.mapper.embedding.TurEmbeddingModelMapper;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.dto.embedding.TurEmbeddingModelDto;
+import com.viglet.turing.llm.persistence.mapper.embedding.TurEmbeddingModelMapper;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 import io.swagger.v3.oas.annotations.Operation;

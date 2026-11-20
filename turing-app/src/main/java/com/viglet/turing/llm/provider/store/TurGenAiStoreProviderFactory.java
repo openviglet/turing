@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 
 @Component
 public class TurGenAiStoreProviderFactory {

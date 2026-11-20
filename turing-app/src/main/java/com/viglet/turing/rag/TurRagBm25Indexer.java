@@ -18,8 +18,8 @@ import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
-import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
+import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
+import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 

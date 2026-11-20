@@ -21,19 +21,19 @@ import java.util.Set;
 
 import org.springframework.ai.tool.ToolCallback;
 
-import com.viglet.turing.domain.agent.TurAIAgentRepositoryPort;
+import com.viglet.turing.agent.domain.TurAIAgentRepositoryPort;
 import com.viglet.turing.persona.authoring.AiAuthoringRequest;
 import com.viglet.turing.persona.authoring.AiAuthoringResponse;
 import com.viglet.turing.persona.authoring.TurAiAuthoringService;
 import com.viglet.turing.persona.authoring.intent.IntentGeneration;
 import com.viglet.turing.agent.tool.TurNativeToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
-import com.viglet.turing.persistence.dto.intent.TurIntentDto;
-import com.viglet.turing.persistence.mapper.intent.TurIntentMapper;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.intent.TurIntent;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.intent.TurIntentRepository;
+import com.viglet.turing.agent.persistence.dto.intent.TurIntentDto;
+import com.viglet.turing.agent.persistence.mapper.intent.TurIntentMapper;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.intent.TurIntent;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.rag.TurRagBm25CoreProvisioner;
-import com.viglet.turing.persistence.model.rag.TurRagBm25Core;
+import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository;
+import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -243,7 +243,7 @@ public class TurRagBm25CoreAPI {
      * callers translate to a 400. Routed through {@link TurRagContextBuilder}
      * so the GenAI infra resolution path stays in one place.
      */
-    private com.viglet.turing.persistence.model.store.TurStoreInstance resolveStoreInstance() {
+    private com.viglet.turing.rag.persistence.model.store.TurStoreInstance resolveStoreInstance() {
         return ragContextBuilder.buildFromGlobalSettings()
                 .map(TurRagContextBuilder.RagInfrastructure::storeInstance)
                 .orElse(null);

@@ -16,8 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.agent.flow.routine.TurRoutineGroovyExecutor.RoutineExecutionException;
-import com.viglet.turing.persistence.model.agent.TurRoutine;
-import com.viglet.turing.persistence.model.agent.TurRoutineKind;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
+import com.viglet.turing.agent.persistence.model.TurRoutineKind;
 
 /**
  * Pin tests for the GROOVY routine executor. Exercises the binding

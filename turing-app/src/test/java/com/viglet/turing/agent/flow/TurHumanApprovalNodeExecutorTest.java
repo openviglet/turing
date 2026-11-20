@@ -22,7 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 import tools.jackson.databind.ObjectMapper;
 

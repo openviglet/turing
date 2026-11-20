@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.persistence.model.research.TurResearchProtocol;
+import com.viglet.turing.rag.persistence.model.research.TurResearchProtocol;
 import com.viglet.turing.system.TurLlmSummaryService;
 import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
 

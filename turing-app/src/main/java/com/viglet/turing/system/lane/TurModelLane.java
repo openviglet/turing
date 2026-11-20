@@ -13,7 +13,7 @@ import java.util.Locale;
 
 /**
  * T517 / §XXVIII.13 — a cross-provider "model lane": a coarse class of LLM work
- * the admin can bind to a specific {@link com.viglet.turing.persistence.model.llm.TurLLMInstance},
+ * the admin can bind to a specific {@link com.viglet.turing.llm.persistence.model.TurLLMInstance},
  * independent of which vendor answers the user's chat turn. The multi-provider
  * seam (Block AD) is what makes this pay off — point each lane at the vendor that
  * fits it.

@@ -24,7 +24,7 @@ import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxService;
 import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxSession;
 import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxSessionManager;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -42,8 +42,8 @@ import com.viglet.turing.rag.research.dto.TurResearchReportDto;
 import com.viglet.turing.rag.research.dto.TurResearchSaturationResultDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyPersonaRefDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
 import com.viglet.turing.tenant.TurTenantContext;
 
 import io.swagger.v3.oas.annotations.Operation;

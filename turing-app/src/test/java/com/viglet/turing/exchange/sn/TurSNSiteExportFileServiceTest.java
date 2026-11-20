@@ -14,14 +14,14 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.persistence.model.se.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
 
 class TurSNSiteExportFileServiceTest {
 
@@ -68,8 +68,8 @@ class TurSNSiteExportFileServiceTest {
         storeInstance.setUrl("http://localhost:8000");
         storeInstance.setTurStoreVendor(storeVendor);
 
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent =
-                new com.viglet.turing.persistence.model.agent.TurAIAgent();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
+                new com.viglet.turing.agent.persistence.model.TurAIAgent();
         agent.setId("agent-1");
         agent.setEnabled(1);
         agent.setRagEnabled(true);

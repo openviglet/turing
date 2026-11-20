@@ -21,7 +21,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
 import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.llm.provider.store.TurStoreCollectionInfo;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.tenant.TurTenantContext;
 
 /**

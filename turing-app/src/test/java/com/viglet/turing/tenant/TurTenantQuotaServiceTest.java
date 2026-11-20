@@ -31,8 +31,8 @@ import com.viglet.core.tenancy.VigletTenantStatus;
 import com.viglet.core.tenancy.VigletTenantStore;
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
 import com.viglet.turing.llm.vigletai.TurVigletUpgradeTargetService;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 

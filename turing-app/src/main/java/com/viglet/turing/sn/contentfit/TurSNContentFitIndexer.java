@@ -27,10 +27,10 @@ import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.persona.readability.TurReadabilityScorer;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 
 import lombok.RequiredArgsConstructor;

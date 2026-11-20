@@ -14,9 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaLanguageStyle;
-import com.viglet.turing.persistence.model.persona.TurPersonaTone;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
+import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 
 /**
  * Tests for T31 / §IV.5 persona static-prompt cache. The unit tests below

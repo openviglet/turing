@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.springframework.ai.chat.model.ChatModel;
 
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
 
 /**
  * T586 / §XXXIII.1 — everything a {@link TurEvalGrader} needs to score one

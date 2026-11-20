@@ -23,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 
 /**
  * T499 / §X.20 — unit coverage for the cross-vendor context-caching seam: the

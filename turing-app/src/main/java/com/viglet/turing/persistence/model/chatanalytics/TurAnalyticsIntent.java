@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.chat.analytics.TurAnalyticsIntentEvictionListener;
 
@@ -46,7 +46,7 @@ import lombok.Setter;
  * non-LLM classifiers ({@code TurLuceneIntentClassifier} via embedded
  * {@code MoreLikeThis}; the deferred {@code TurEsMltIntentClassifier}
  * via Elasticsearch {@code more_like_this}) work against. Independent
- * from {@link com.viglet.turing.persistence.model.agent.TurChatFlow}'s
+ * from {@link com.viglet.turing.agent.persistence.model.TurChatFlow}'s
  * {@code triggerDescription}: chat flows describe <em>routing</em>
  * intents (where to send a turn); analytics intents describe
  * <em>categorisation</em> intents (what the conversation was about).

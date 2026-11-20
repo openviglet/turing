@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;
 

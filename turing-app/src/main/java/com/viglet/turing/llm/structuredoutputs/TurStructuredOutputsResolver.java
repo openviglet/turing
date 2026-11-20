@@ -17,8 +17,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.10 / §X.11.c–d — resolves whether <b>strict structured outputs</b> are

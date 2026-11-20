@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.batch.TurBatchChatResult;
 import com.viglet.turing.batch.TurBatchCompletionHandler;
-import com.viglet.turing.persistence.model.batch.TurBatchJob;
+import com.viglet.turing.batch.persistence.model.TurBatchJob;
 
 import lombok.extern.slf4j.Slf4j;
 

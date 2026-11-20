@@ -364,8 +364,8 @@ public class TurSNGenAi {
      */
     public reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> assistantConversationStreaming(
             TurGenAiContext context,
-            com.viglet.turing.persistence.model.agent.TurAIAgent agent,
-            com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance,
+            com.viglet.turing.agent.persistence.model.TurAIAgent agent,
+            com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance,
             TurSNGenAiChatRequest request) {
         List<ConversationMessage> history = request.history();
         java.util.Map<String, List<String>> filters = request.filters();
@@ -1218,7 +1218,7 @@ public class TurSNGenAi {
      * count), so the Live Preview can show what the follow-up became. Nothing is
      * recorded when the latest message was searched as it is.
      */
-    private void recordSearchedQuery(com.viglet.turing.persistence.model.agent.TurAIAgent agent,
+    private void recordSearchedQuery(com.viglet.turing.agent.persistence.model.TurAIAgent agent,
             String conversationId, List<ConversationMessage> history, String latest, String searched) {
         if (promptCaptureService == null || searched == null || searched.equals(latest)) {
             return;
@@ -1279,7 +1279,7 @@ public class TurSNGenAi {
      */
     /**
      * Non-removable grounding guard prefixed to the system prompt when the agent
-     * runs in {@link com.viglet.turing.persistence.model.agent.TurAgentGroundingMode#STRICT_RAG}.
+     * runs in {@link com.viglet.turing.agent.persistence.model.TurAgentGroundingMode#STRICT_RAG}.
      * Unlike {@link #DEFAULT_BEHAVIOR_PROMPT} (a fallback the operator can replace
      * entirely), this text is always prepended ahead of the configured prompt, so
      * a permissive or accidentally-weakened custom prompt cannot relax the
@@ -1310,7 +1310,7 @@ public class TurSNGenAi {
 
     /**
      * Builds the SN chat system prompt. When {@code strictRag} is set (the
-     * agent's {@link com.viglet.turing.persistence.model.agent.TurAgentGroundingMode#STRICT_RAG}
+     * agent's {@link com.viglet.turing.agent.persistence.model.TurAgentGroundingMode#STRICT_RAG}
      * policy), the non-removable {@link #STRICT_RAG_GUARD} is prefixed ahead of
      * the configured/default behavior prompt: the operator's prompt is still
      * applied but only additively (tone / domain framing) and cannot relax the
@@ -1361,7 +1361,7 @@ public class TurSNGenAi {
     private static boolean isStrictRag(TurGenAiContext context) {
         return context != null
                 && context.getGroundingMode()
-                        == com.viglet.turing.persistence.model.agent.TurAgentGroundingMode.STRICT_RAG;
+                        == com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG;
     }
 
     /**

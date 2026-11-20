@@ -28,10 +28,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.persona.readability.TurReadabilityScorer;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel;
-import com.viglet.turing.persistence.model.persona.TurPersonaSource;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
+import com.viglet.turing.persona.persistence.model.TurPersonaSource;
 import com.viglet.turing.system.TurLlmSummaryService;
 import com.viglet.turing.system.TurLlmSummaryService.StructuredResult;
 import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;

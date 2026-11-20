@@ -287,8 +287,8 @@ class TurAssetTrainingServiceTest {
         void deindexSingleFileCallsDeleteWhenRagConfigured() {
                 com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
                                 .mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-                com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
-                                .mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+                com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
+                                .mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
                 org.springframework.ai.vectorstore.VectorStore mockVectorStore = org.mockito.Mockito
                                 .mock(org.springframework.ai.vectorstore.VectorStore.class);
                 org.springframework.ai.embedding.EmbeddingModel mockEmbeddingModel = org.mockito.Mockito
@@ -356,8 +356,8 @@ class TurAssetTrainingServiceTest {
         void deindexSingleFileHandlesStoreProviderException() {
                 com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider = org.mockito.Mockito
                                 .mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-                com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
-                                .mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+                com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance = org.mockito.Mockito
+                                .mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
                 org.springframework.ai.vectorstore.VectorStore mockVectorStore = org.mockito.Mockito
                                 .mock(org.springframework.ai.vectorstore.VectorStore.class);
                 org.springframework.ai.embedding.EmbeddingModel mockEmbeddingModel = org.mockito.Mockito

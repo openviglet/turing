@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 /**
  * T322 — verifies {@code load_skill} resolves an offered skill by name (and id),

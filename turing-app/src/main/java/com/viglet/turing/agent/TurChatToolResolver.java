@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.clienttool.TurClientToolService;
 import com.viglet.turing.agent.flow.ChatFlowNode;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.TurPersonaBrandContextProvider;
 import com.viglet.turing.agent.skill.activation.TurRunSkillToolCallback;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
@@ -37,8 +37,8 @@ import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.agent.tool.TurToolPreFilterService;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.observability.TurMeterNames;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 import lombok.extern.slf4j.Slf4j;
 

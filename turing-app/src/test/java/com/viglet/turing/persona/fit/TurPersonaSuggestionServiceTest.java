@@ -26,10 +26,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 /**

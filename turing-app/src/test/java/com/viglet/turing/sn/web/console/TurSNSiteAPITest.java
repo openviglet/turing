@@ -87,7 +87,7 @@ class TurSNSiteAPITest {
                         TurSearchEnginePluginFactory pluginFactory,
                         TurSNSiteMapper siteMapper) {
                 return new TurSNSiteAPI(siteRepository, localeRepository, genAiRepository,
-                                mock(com.viglet.turing.persistence.repository.agent.TurAIAgentRepository.class),
+                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class),
                                 export, mock(TurSNSiteContentExchangeService.class),
                                 template, queue, pluginFactory, siteMapper,
@@ -104,7 +104,7 @@ class TurSNSiteAPITest {
                                 mock(com.viglet.turing.agent.TurDefaultAgentResolver.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
                                 mock(TurSNSiteGenAiRepository.class),
-                                mock(com.viglet.turing.persistence.repository.agent.TurAIAgentRepository.class),
+                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 mock(com.viglet.turing.persistence.repository.se.TurSEInstanceRepository.class),
                                 mock(TurSNSiteExport.class), mock(TurSNSiteContentExchangeService.class),
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
@@ -215,7 +215,7 @@ class TurSNSiteAPITest {
                 TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), genAiRepository,
-                                mock(com.viglet.turing.persistence.repository.agent.TurAIAgentRepository.class),
+                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 seRepo,
                                 mock(TurSNSiteExport.class),
                                 mock(TurSNSiteContentExchangeService.class),
@@ -230,7 +230,7 @@ class TurSNSiteAPITest {
                 existingGenAi.setRagBm25Fallback(true);
                 existingGenAi.setRagHybridSearch(true);
                 existingGenAi.setRagBm25Source(
-                                com.viglet.turing.persistence.model.rag.TurRagBm25Source.EMBEDDED);
+                                com.viglet.turing.rag.persistence.model.TurRagBm25Source.EMBEDDED);
                 existing.setTurSNSiteGenAi(existingGenAi);
 
                 TurSEInstance seInstance = new TurSEInstance();
@@ -242,7 +242,7 @@ class TurSNSiteAPITest {
                 payloadGenAi.setRagBm25Fallback(false);
                 payloadGenAi.setRagHybridSearch(false);
                 payloadGenAi.setRagBm25Source(
-                                com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+                                com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
                 TurSEInstance payloadSe = new TurSEInstance();
                 payloadSe.setId("se-1");
                 payloadGenAi.setRagSeInstance(payloadSe);
@@ -260,7 +260,7 @@ class TurSNSiteAPITest {
                 assertThat(existingGenAi.isRagBm25Fallback()).isFalse();
                 assertThat(existingGenAi.isRagHybridSearch()).isFalse();
                 assertThat(existingGenAi.getRagBm25Source())
-                                .isEqualTo(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+                                .isEqualTo(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
                 assertThat(existingGenAi.getRagSeInstance()).isSameAs(seInstance);
                 assertThat(existingGenAi.getSnRankingMode())
                                 .isEqualTo(com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode.HYBRID_RRF);

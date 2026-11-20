@@ -16,9 +16,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.persona.dialogue.TurPersonaDialogueTurn;
-import com.viglet.turing.persistence.repository.persona.dialogue.TurPersonaDialogueProjectRepository;
-import com.viglet.turing.persistence.repository.persona.dialogue.TurPersonaDialogueTurnRepository;
+import com.viglet.turing.persona.persistence.model.dialogue.TurPersonaDialogueTurn;
+import com.viglet.turing.persona.persistence.repository.dialogue.TurPersonaDialogueProjectRepository;
+import com.viglet.turing.persona.persistence.repository.dialogue.TurPersonaDialogueTurnRepository;
 
 /**
  * Transactional writer for a Persona Dialogue project's last-run transcript

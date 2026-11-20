@@ -31,8 +31,8 @@ import com.viglet.turing.agent.TurChatToolOptions;
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 

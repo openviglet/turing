@@ -16,8 +16,8 @@
  */
 package com.viglet.turing.agent;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * The identity, attribution and timing of a single chat turn, shared by every

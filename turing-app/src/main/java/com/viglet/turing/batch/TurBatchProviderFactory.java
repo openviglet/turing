@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.7 / §X.8.a — resolves the {@link TurBatchProvider} for a

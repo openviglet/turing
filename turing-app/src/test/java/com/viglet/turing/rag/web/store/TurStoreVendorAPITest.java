@@ -30,9 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.store.TurStoreVendorMapper;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.rag.persistence.mapper.store.TurStoreVendorMapper;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurStoreVendorAPITest {

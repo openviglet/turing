@@ -27,9 +27,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditEntry;
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;
-import com.viglet.turing.persistence.repository.agent.TurChatSlotAuditRepository;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditEntry;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
+import com.viglet.turing.agent.persistence.repository.TurChatSlotAuditRepository;
 
 /**
  * Pins the T60 audit-service contract: every {@code record(...)} call lands

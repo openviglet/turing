@@ -27,8 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.agent.TurFormLabelTidyField;
-import com.viglet.turing.persistence.dto.agent.TurFormLabelTidyResponse;
+import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyField;
+import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyResponse;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 /**

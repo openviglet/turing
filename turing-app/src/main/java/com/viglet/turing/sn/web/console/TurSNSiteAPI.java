@@ -59,7 +59,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
@@ -206,7 +206,7 @@ public class TurSNSiteAPI {
                 turSNSiteGenAi.setRagHybridSearch(genAi.isRagHybridSearch());
                 turSNSiteGenAi.setRagBm25Source(
                         Optional.ofNullable(genAi.getRagBm25Source())
-                                .orElse(com.viglet.turing.persistence.model.rag.TurRagBm25Source.EMBEDDED));
+                                .orElse(com.viglet.turing.rag.persistence.model.TurRagBm25Source.EMBEDDED));
                 turSNSiteGenAi.setRagSeInstance(
                         Optional.ofNullable(genAi.getRagSeInstance())
                                 .map(se -> se.getId() != null

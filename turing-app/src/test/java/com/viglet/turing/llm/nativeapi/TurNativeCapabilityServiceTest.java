@@ -25,8 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapability;
-import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceCapabilityRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstanceCapability;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceCapabilityRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurNativeCapabilityServiceTest {

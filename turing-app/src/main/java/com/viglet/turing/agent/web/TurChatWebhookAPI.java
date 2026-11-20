@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurChatWebhookDto;
-import com.viglet.turing.persistence.model.agent.TurChatWebhook;
-import com.viglet.turing.persistence.repository.agent.TurChatWebhookRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatWebhookDto;
+import com.viglet.turing.agent.persistence.model.TurChatWebhook;
+import com.viglet.turing.agent.persistence.repository.TurChatWebhookRepository;
 import com.viglet.turing.chat.slots.TurChatWebhookService;
 
 import io.swagger.v3.oas.annotations.Operation;

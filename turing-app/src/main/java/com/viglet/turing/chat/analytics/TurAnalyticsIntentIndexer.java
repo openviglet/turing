@@ -19,10 +19,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;

@@ -23,8 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.eval.distillation.TurOpenAiDistillationService.DistillResult;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 /**
  * T191 / §X.15.e — unit tests for {@link TurOvernightImprovementJob}: the nightly

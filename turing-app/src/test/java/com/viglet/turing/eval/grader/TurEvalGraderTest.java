@@ -29,10 +29,10 @@ import com.viglet.turing.eval.grader.builtin.TurSlotMatchGrader;
 import com.viglet.turing.eval.grader.builtin.TurSlotToleranceGrader;
 import com.viglet.turing.eval.grader.builtin.TurToolCalledGrader;
 import com.viglet.turing.agent.tool.TurChatToolCall;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderConfig;
 import com.viglet.turing.chat.analytics.TurToolCallTraceService;
 
 /**

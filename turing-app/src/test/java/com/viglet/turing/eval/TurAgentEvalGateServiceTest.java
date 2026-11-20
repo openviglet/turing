@@ -22,13 +22,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalCaseResultDto;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalGateDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalReport;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalReportRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalCaseResultDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalGateDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalReport;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalReportRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
 
 import tools.jackson.databind.ObjectMapper;
 

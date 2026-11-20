@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.observability.TurChatPipelineObservation;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * Tests for T30 / §IV.4 conversation-relevance retrieval.

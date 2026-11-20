@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

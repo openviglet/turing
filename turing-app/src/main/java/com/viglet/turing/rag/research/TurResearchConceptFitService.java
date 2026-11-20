@@ -20,13 +20,13 @@ import com.viglet.turing.persona.fit.TurContentFitResult;
 import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
 import com.viglet.turing.rag.research.dto.TurResearchConceptFitDto;
 import com.viglet.turing.rag.research.dto.TurResearchConceptFitEntryDto;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.research.TurResearchProtocol;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.model.research.TurResearchStudyPersona;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.research.TurResearchProtocol;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudyPersona;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -31,9 +31,9 @@ import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
 import com.viglet.turing.agent.flow.routine.TurScheduleAgentNodeExecutor.Outcome;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.agent.TurRoutine;
-import com.viglet.turing.persistence.repository.agent.TurRoutineRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
+import com.viglet.turing.agent.persistence.repository.TurRoutineRepository;
 import com.viglet.turing.sn.TurSNConstants;
 
 /**

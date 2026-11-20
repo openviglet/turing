@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
  *       {@code {"text": …}} payload is POSTed through the shared
  *       {@link VigletWebhookDispatcher}.</li>
  *   <li><b>webhook</b> — {@code target} names an admin-declared
- *       {@link com.viglet.turing.persistence.model.agent.TurChatWebhook}; it is
+ *       {@link com.viglet.turing.agent.persistence.model.TurChatWebhook}; it is
  *       fired through {@link TurChatWebhookService#dispatchFromFlowNode} with
  *       the resume URL and prompt added to the slot map so the webhook's own
  *       payload template can reference them.</li>

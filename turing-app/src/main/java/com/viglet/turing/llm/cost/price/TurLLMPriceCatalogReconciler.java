@@ -25,8 +25,8 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
 import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService.CatalogPrice;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@link TurLLMPriceService#computeCost} and {@code TurLLMTokenUsage.costUsd}
  * populate automatically for well-known models.
  *
- * <p>It only ever writes {@link com.viglet.turing.persistence.model.llm.TurLLMPriceSource#CATALOG
+ * <p>It only ever writes {@link com.viglet.turing.llm.persistence.model.TurLLMPriceSource#CATALOG
  * CATALOG} rows: an operator's {@code MANUAL} (negotiated / hand-edited) rate is
  * never overwritten (see {@link TurLLMPriceService#reconcileCatalogPrices}). Runs
  * off the boot path on a TTL (mirroring the catalog refresh cadence) so a running

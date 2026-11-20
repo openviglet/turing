@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.eval.TurEvalReviewTaskService;
-import com.viglet.turing.persistence.dto.agent.TurEvalAgreementDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalCalibrationDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalReviewRequest;
-import com.viglet.turing.persistence.dto.agent.TurEvalReviewTaskDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalAgreementDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalCalibrationDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalReviewRequest;
+import com.viglet.turing.agent.persistence.dto.TurEvalReviewTaskDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

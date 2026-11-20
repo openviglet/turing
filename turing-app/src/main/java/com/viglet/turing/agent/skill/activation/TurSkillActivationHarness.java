@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxService;
 import com.viglet.turing.agent.skill.sandbox.TurSkillSandboxSessionManager;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 /**
  * T322 / §IX.4.d — the <strong>skill activation harness</strong>: the piece

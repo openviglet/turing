@@ -26,7 +26,7 @@ import com.viglet.turing.agent.prompt.TurPromptAssemblyContext;
 import com.viglet.turing.agent.prompt.TurPromptContributor;
 import com.viglet.turing.agent.prompt.TurPromptSegment;
 import com.viglet.turing.agent.prompt.TurPromptStability;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Unit tests for the persona grounding prompt contributor (T718).

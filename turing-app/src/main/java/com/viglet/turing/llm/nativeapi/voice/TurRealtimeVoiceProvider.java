@@ -12,7 +12,7 @@
  */
 package com.viglet.turing.llm.nativeapi.voice;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T147 / §X.6.a — pluggable real-time voice transport seam, the voice analog of

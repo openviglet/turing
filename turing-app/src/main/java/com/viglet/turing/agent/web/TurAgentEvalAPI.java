@@ -22,8 +22,8 @@ import com.viglet.turing.eval.distillation.TurOpenAiDistillationService;
 import com.viglet.turing.eval.distillation.TurOpenAiDistillationService.DistillResult;
 import com.viglet.turing.eval.TurAgentEvalGateService;
 import com.viglet.turing.eval.TurAgentEvalRunnerService;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalGateDto;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalGateDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalReportDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

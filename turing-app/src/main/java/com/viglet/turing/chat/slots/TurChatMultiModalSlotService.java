@@ -38,12 +38,12 @@ import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlotType;
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlotType;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

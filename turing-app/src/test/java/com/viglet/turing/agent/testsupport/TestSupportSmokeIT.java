@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Import;
 
 import com.viglet.testsupport.genai.executor.TurAgentChatExecutorMockSupport;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * Smoke test for the {@code genai/testsupport} infrastructure shipped under

@@ -42,15 +42,15 @@ import org.springframework.mock.env.MockEnvironment;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
 import com.viglet.turing.llm.provider.llm.TurHuggingFaceEmbeddingModelFactory;
 import com.viglet.turing.llm.provider.llm.TurLocalEmbeddingModelFactory;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

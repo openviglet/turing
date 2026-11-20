@@ -25,7 +25,7 @@ import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 
 import lombok.extern.slf4j.Slf4j;
 

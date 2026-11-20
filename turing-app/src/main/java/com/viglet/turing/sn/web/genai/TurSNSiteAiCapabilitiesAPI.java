@@ -32,7 +32,7 @@ import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurSNChatDisabledReason;
 import com.viglet.turing.rag.TurSNChatRouteResolver;
 import com.viglet.turing.rag.TurSNSiteVectorProbe;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;

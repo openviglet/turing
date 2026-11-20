@@ -4,7 +4,7 @@ package com.viglet.turing.llm.provider.llm;
  * A single selectable model exposed to the LLM-instance model picker.
  *
  * <p>{@code id} is the exact string that must be stored on
- * {@link com.viglet.turing.persistence.model.llm.TurLLMInstance}'s
+ * {@link com.viglet.turing.llm.persistence.model.TurLLMInstance}'s
  * {@code modelName} (what the provider SDK sends to the vendor). {@code label} is a
  * human-friendly name for the dropdown; when the vendor API only returns an id
  * the label is just the id echoed back. {@code kind} is the classified

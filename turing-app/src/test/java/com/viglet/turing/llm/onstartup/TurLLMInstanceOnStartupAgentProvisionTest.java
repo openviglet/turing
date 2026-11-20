@@ -29,13 +29,13 @@ import org.mockito.quality.Strictness;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.env.Environment;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -97,12 +97,12 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         // The auto-provisioned default agent backs the zero-config public demo's
         // SN chat (T622 fallback), so it ships grounded to the site's content.
         assertThat(created.getGroundingMode())
-                .isEqualTo(com.viglet.turing.persistence.model.agent.TurAgentGroundingMode.STRICT_RAG);
+                .isEqualTo(com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG);
         // T1004 — and streams that chat rather than emitting the whole answer as
         // one SSE event. AUTO, not STREAM: the same agent is reachable from the
         // admin surfaces, where a turn carrying tools must still be a CALL.
         assertThat(created.getChatMode())
-                .isEqualTo(com.viglet.turing.persistence.model.agent.TurAgentChatMode.AUTO);
+                .isEqualTo(com.viglet.turing.agent.persistence.model.TurAgentChatMode.AUTO);
         verify(turGlobalSettingsService).updateDefaultAiAgentId(any());
     }
 
@@ -115,13 +115,13 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         TurAIAgent imported = new TurAIAgent();
         imported.setId("imported-2");
         imported.setTitle("Turing Demo Assistant");
-        imported.setChatMode(com.viglet.turing.persistence.model.agent.TurAgentChatMode.CALL);
+        imported.setChatMode(com.viglet.turing.agent.persistence.model.TurAgentChatMode.CALL);
         when(turAIAgentRepository.findAll()).thenReturn(List.of(imported));
 
         runner.run(args);
 
         assertThat(imported.getChatMode())
-                .isEqualTo(com.viglet.turing.persistence.model.agent.TurAgentChatMode.CALL);
+                .isEqualTo(com.viglet.turing.agent.persistence.model.TurAgentChatMode.CALL);
     }
 
     @Test

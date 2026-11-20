@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.storage.TurStorageContentTypes;
 import com.viglet.turing.storage.TurStorageObjectStat;
 import com.viglet.turing.storage.TurStorageService;

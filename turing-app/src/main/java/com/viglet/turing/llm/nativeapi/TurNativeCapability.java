@@ -33,7 +33,7 @@ import com.viglet.turing.llm.nativeapi.capability.TurCapabilityProvider;
 
 /**
  * F.1/F.2 / §X.2-§X.3 — the catalogue of native (non-Spring-AI) LLM
- * capabilities a {@link com.viglet.turing.persistence.model.llm.TurLLMInstance}
+ * capabilities a {@link com.viglet.turing.llm.persistence.model.TurLLMInstance}
  * can opt into.
  *
  * <p>Each constant carries a stable {@link #getKey() key} (the value stored in

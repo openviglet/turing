@@ -26,11 +26,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.answer.TurAnswerSignalEvent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.rag.persistence.model.answer.TurAnswerSignalEvent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.answer.TurAnswerSignalRepository;
+import com.viglet.turing.rag.persistence.repository.answer.TurAnswerSignalRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 /**

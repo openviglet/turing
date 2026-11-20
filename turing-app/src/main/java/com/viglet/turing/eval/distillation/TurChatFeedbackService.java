@@ -19,8 +19,8 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.eval.distillation.TurDpoDatasetBuilder.FeedbackEntry;
 import com.viglet.turing.eval.distillation.TurDpoDatasetBuilder.PreferencePair;
-import com.viglet.turing.persistence.model.distillation.TurChatTurnFeedback;
-import com.viglet.turing.persistence.repository.distillation.TurChatTurnFeedbackRepository;
+import com.viglet.turing.eval.persistence.model.distillation.TurChatTurnFeedback;
+import com.viglet.turing.eval.persistence.repository.distillation.TurChatTurnFeedbackRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

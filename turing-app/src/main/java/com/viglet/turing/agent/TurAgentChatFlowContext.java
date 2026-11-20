@@ -14,8 +14,8 @@
 package com.viglet.turing.agent;
 
 import com.viglet.turing.agent.flow.ChatFlowGraph;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Resolved per-turn flow runtime — group of values that always travel

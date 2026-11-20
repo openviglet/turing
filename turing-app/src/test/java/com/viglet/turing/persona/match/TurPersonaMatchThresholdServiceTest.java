@@ -21,8 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchProject;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchProjectRepository;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchProject;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchProjectRepository;
 
 /**
  * T826 / §LXI.2 (Block BN) — the per-project good-fit threshold resolves to one

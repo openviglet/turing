@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.agent.prompt.TurPromptSegment;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptInertRegionDto;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptInertRegionDto;
 
 /**
  * Block AK / T609 — detects the regions of an agent's system prompt that are

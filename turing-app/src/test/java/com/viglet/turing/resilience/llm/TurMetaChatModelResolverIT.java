@@ -20,7 +20,7 @@ import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 

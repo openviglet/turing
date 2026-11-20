@@ -29,8 +29,8 @@ import com.viglet.turing.llm.web.gateway.TurGatewayAdminAPI.KeyView;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService;
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayKeyRepository;
 
 /**
  * T748 / §XLIX — unit coverage for the gateway virtual-key CRUD admin surface,

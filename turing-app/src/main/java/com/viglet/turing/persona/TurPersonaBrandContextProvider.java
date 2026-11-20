@@ -15,8 +15,8 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Exposes the tool callbacks of the MCP server attached to a persona as

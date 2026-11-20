@@ -20,10 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowTriggerConflictDto;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowTriggerConflictDto;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 
 /**
  * Pins the T91 trigger-conflict detection: shape of emitted pairs, severity

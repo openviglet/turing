@@ -22,11 +22,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.eval.TurEvalDatasetImportService.Format;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
 
 /**
  * T596 / §XXXIII.11 — dataset import parsing (JSON / JSONL / CSV / OpenAI-Evals),

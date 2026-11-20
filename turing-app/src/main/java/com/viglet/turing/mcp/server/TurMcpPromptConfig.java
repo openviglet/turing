@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.viglet.turing.persona.TurPersonaPromptComposer;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 
 import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;

@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.batch.TurBatchJob;
-import com.viglet.turing.persistence.repository.batch.TurBatchJobRepository;
+import com.viglet.turing.batch.persistence.model.TurBatchJob;
+import com.viglet.turing.batch.persistence.repository.TurBatchJobRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;

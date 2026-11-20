@@ -22,7 +22,7 @@ import com.viglet.turing.agent.prompt.TurPromptContributor;
 import com.viglet.turing.agent.prompt.TurPromptSegment;
 import com.viglet.turing.agent.prompt.TurPromptStability;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * Block AL / §XXXV.1 — emits the T323 skill progressive-disclosure catalog (each

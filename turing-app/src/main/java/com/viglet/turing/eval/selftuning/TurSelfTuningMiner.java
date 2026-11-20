@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.answer.TurAnswerSignalEvent;
-import com.viglet.turing.persistence.repository.answer.TurAnswerSignalRepository;
+import com.viglet.turing.rag.persistence.model.answer.TurAnswerSignalEvent;
+import com.viglet.turing.rag.persistence.repository.answer.TurAnswerSignalRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 import com.viglet.turing.chat.analytics.TurChatSessionFilter;
 

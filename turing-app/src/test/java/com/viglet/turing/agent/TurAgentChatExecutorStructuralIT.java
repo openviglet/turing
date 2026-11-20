@@ -135,20 +135,20 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.ExportEntry entry =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.loadFromClasspath(
                         "/harness-it/persona-switch-mid-flow.chat-flow.json");
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent = createAgent("patch1", null);
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llm = createMockableLlmInstance();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch1", null);
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
         agent.getLlmInstances().add(llm);
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(
                         agent, entry, importRepos());
 
-        com.viglet.turing.persistence.model.agent.TurAIAgent reloaded =
+        com.viglet.turing.agent.persistence.model.TurAIAgent reloaded =
                 agentRepository.findById(agent.getId()).orElseThrow();
-        com.viglet.turing.persistence.model.persona.TurPersona marina = reloaded.getPersonas().stream()
+        com.viglet.turing.persona.persistence.model.TurPersona marina = reloaded.getPersonas().stream()
                 .filter(p -> p.getName().contains("Marina"))
                 .findFirst().orElseThrow(() -> new AssertionError("Marina must be linked to the agent"));
-        com.viglet.turing.persistence.model.persona.TurPersona lucas = reloaded.getPersonas().stream()
+        com.viglet.turing.persona.persistence.model.TurPersona lucas = reloaded.getPersonas().stream()
                 .filter(p -> p.getName().contains("Lucas"))
                 .findFirst().orElseThrow(() -> new AssertionError("Lucas must be linked to the agent"));
 
@@ -158,12 +158,12 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         // to Marina (post-walk would have been Marina, since the start →
         // persona-marina → ai-name walk landed there).
         String conv = "conv-patch1-" + java.util.UUID.randomUUID();
-        com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository stateRepo =
+        com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository stateRepo =
                 org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors(
                         applicationContext,
-                        com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository.class);
-        com.viglet.turing.persistence.model.agent.TurChatFlowState seeded =
-                new com.viglet.turing.persistence.model.agent.TurChatFlowState();
+                        com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository.class);
+        com.viglet.turing.agent.persistence.model.TurChatFlowState seeded =
+                new com.viglet.turing.agent.persistence.model.TurChatFlowState();
         seeded.setConversationId(conv);
         seeded.setFlow(imp.flow());
         seeded.setCurrentNodeId("ai-name");
@@ -190,7 +190,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
                 .resolve(Mockito.any(), Mockito.eq(conv), Mockito.isNull());
 
         // 2. Cursor walked through persona-lucas and landed on ai-objetivo
-        com.viglet.turing.persistence.model.agent.TurChatFlowState finalState =
+        com.viglet.turing.agent.persistence.model.TurChatFlowState finalState =
                 stateRepo.findByConversationIdAndFlow_Id(conv, imp.flow().getId()).orElseThrow();
         org.assertj.core.api.Assertions.assertThat(finalState.getCurrentNodeId())
                 .as("Post-advance: walk through switch-route → persona-lucas → ai-objetivo")
@@ -361,8 +361,8 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
                         entry.variantLabel(), entry.trafficWeight(),
                         entry.personas(), entry.slots(), entry.graph());
 
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent = createAgent("patch6", null);
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llm = createMockableLlmInstance();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch6", null);
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
         agent.getLlmInstances().add(llm);
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
@@ -377,18 +377,18 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         // PT stems with the user message, so the first flow dominates by
         // the PROCEDURAL_DOMINANCE_RATIO factor and gets picked
         // deterministically.
-        com.viglet.turing.persistence.model.agent.TurChatFlow offTopic =
-                new com.viglet.turing.persistence.model.agent.TurChatFlow();
+        com.viglet.turing.agent.persistence.model.TurChatFlow offTopic =
+                new com.viglet.turing.agent.persistence.model.TurChatFlow();
         offTopic.setName("off-topic-decoy");
         offTopic.setDescription("Off-topic decoy to keep procedural router engaged");
         offTopic.setDefinitionJson(imp.flow().getDefinitionJson());
         offTopic.setEnabled(1);
         offTopic.setGuardrailMethod(
-                com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod.LLM_JUDGE);
+                com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod.LLM_JUDGE);
         offTopic.setTriggerDescription(
                 "Ative para reclamações sobre boleto, fatura, pagamento ou pix");
         offTopic.setTriggerMode(
-                com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode.ONCE);
+                com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode.ONCE);
         offTopic.setTurAIAgent(agent);
         chatFlowRepository.save(offTopic);
 
@@ -430,11 +430,11 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         // 0. Sanity: the procedural router actually picked the flow (state
         //    row exists). If absent, the freshlyTriggered branch never ran
         //    and the rest of the assertions would be deceptively passing.
-        com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository stateRepo =
+        com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository stateRepo =
                 org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors(
                         applicationContext,
-                        com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository.class);
-        com.viglet.turing.persistence.model.agent.TurChatFlowState finalState =
+                        com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository.class);
+        com.viglet.turing.agent.persistence.model.TurChatFlowState finalState =
                 stateRepo.findByConversationIdAndFlow_Id(conv, imp.flow().getId())
                         .orElseThrow(() -> new AssertionError(
                                 "Flow state should exist post-turn — procedural router likely "
@@ -483,7 +483,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
      * Comportamento a travar:
      *   Toda fixture {@code harness-it/*.chat-flow.json} importada via
      *   {@link com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil}
-     *   produz {@link com.viglet.turing.persistence.model.persona.TurPersona}
+     *   produz {@link com.viglet.turing.persona.persistence.model.TurPersona}
      *   rows cujos {@code mandatoryTerms}/{@code forbiddenTerms} são EXATAMENTE
      *   o que a fixture declarou. Isso protege contra duas regressões:
      *
@@ -541,7 +541,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         for (String fixtureResource : fixtures) {
             com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.ExportEntry entry =
                     com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.loadFromClasspath(fixtureResource);
-            com.viglet.turing.persistence.model.agent.TurAIAgent agent =
+            com.viglet.turing.agent.persistence.model.TurAIAgent agent =
                     createAgent("persona-tone-guard-" + java.util.UUID.randomUUID().toString().substring(0, 8), null);
             com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.importIntoAgent(agent, entry, importRepos());
 
@@ -551,7 +551,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
 
             for (java.util.Map<String, Object> declared : entry.personas()) {
                 String name = (String) declared.get("name");
-                com.viglet.turing.persistence.model.persona.TurPersona persisted =
+                com.viglet.turing.persona.persistence.model.TurPersona persisted =
                         personaRepository.findByNameIgnoreCase(name).orElseThrow(() ->
                                 new AssertionError("Persona '" + name + "' was not persisted by import "
                                         + "of " + fixtureResource));
@@ -580,12 +580,12 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
                 if (expectedTone != null && !expectedTone.isBlank()) {
                     org.assertj.core.api.Assertions.assertThat(persisted.getTone())
                             .as("tone enum for persona '%s' from %s", name, fixtureResource)
-                            .isEqualTo(com.viglet.turing.persistence.model.persona.TurPersonaTone.valueOf(expectedTone));
+                            .isEqualTo(com.viglet.turing.persona.persistence.model.TurPersonaTone.valueOf(expectedTone));
                 }
                 if (expectedStyle != null && !expectedStyle.isBlank()) {
                     org.assertj.core.api.Assertions.assertThat(persisted.getLanguageStyle())
                             .as("languageStyle enum for persona '%s' from %s", name, fixtureResource)
-                            .isEqualTo(com.viglet.turing.persistence.model.persona.TurPersonaLanguageStyle.valueOf(expectedStyle));
+                            .isEqualTo(com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle.valueOf(expectedStyle));
                 }
             }
         }
@@ -670,8 +670,8 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
                         "/harness-it/tool-free-node.chat-flow.json");
         // The fixture already declares toolsEnabled=false on ai-coupon-code
         // — no in-memory patching needed.
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent = createAgent("patch3", null);
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llm = createMockableLlmInstance();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch3", null);
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
         agent.getLlmInstances().add(llm);
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
@@ -687,7 +687,7 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
         com.viglet.turing.agent.flow.ChatFlowGraph graph =
                 chatFlowEngineService.parseGraph(imp.flow()).orElseThrow();
         String conv = "conv-patch3-" + java.util.UUID.randomUUID();
-        com.viglet.turing.persistence.model.agent.TurChatFlowState state =
+        com.viglet.turing.agent.persistence.model.TurChatFlowState state =
                 chatFlowEngineService.loadOrInitState(conv, imp.flow(), graph).orElseThrow();
         // loadOrInitState's walk lands the cursor on ai-coupon-code (first
         // interactive node after start + persona-* transparent hops).

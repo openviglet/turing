@@ -31,21 +31,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlotType;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode;
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.persistence.model.intent.TurIntent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.intent.TurIntentRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlotType;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.agent.persistence.model.intent.TurIntent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 
 import tools.jackson.databind.json.JsonMapper;
 

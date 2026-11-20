@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.agent.TurChatHumanApproval;
-import com.viglet.turing.persistence.model.agent.TurHumanApprovalStatus;
-import com.viglet.turing.persistence.repository.agent.TurChatHumanApprovalRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatHumanApproval;
+import com.viglet.turing.agent.persistence.model.TurHumanApprovalStatus;
+import com.viglet.turing.agent.persistence.repository.TurChatHumanApprovalRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import tools.jackson.databind.ObjectMapper;

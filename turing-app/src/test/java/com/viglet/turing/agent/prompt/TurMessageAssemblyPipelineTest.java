@@ -29,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.agent.prompt.contributor.TurMemorySummaryMessageContributor;
 import com.viglet.turing.agent.prompt.contributor.TurRelevanceMessageContributor;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
 import com.viglet.turing.chat.memory.TurChatMemoryRelevanceRetriever;
 

@@ -22,8 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurUserMemory;
-import com.viglet.turing.persistence.repository.agent.TurUserMemoryRepository;
+import com.viglet.turing.agent.persistence.model.TurUserMemory;
+import com.viglet.turing.agent.persistence.repository.TurUserMemoryRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurUserMemoryServiceTest {

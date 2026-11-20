@@ -43,9 +43,9 @@ import com.viglet.turing.llm.nativeapi.TurNativeProviderClient.NativeCredentials
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge.TurVendorFileRef;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurVendorFile;
-import com.viglet.turing.persistence.repository.llm.TurVendorFileRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurVendorFile;
+import com.viglet.turing.llm.persistence.repository.TurVendorFileRepository;
 
 /**
  * T175 — unit coverage for {@link TurFilesApiBridge}: content-hash cache hit /

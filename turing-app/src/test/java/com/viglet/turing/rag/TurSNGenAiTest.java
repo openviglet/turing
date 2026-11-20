@@ -99,7 +99,7 @@ class TurSNGenAiTest {
         var chatModel = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatModel.class);
         var response = org.mockito.Mockito.mock(org.springframework.ai.chat.model.ChatResponse.class);
         when(chatModel.call(any(org.springframework.ai.chat.prompt.Prompt.class))).thenReturn(response);
-        var instance = new com.viglet.turing.persistence.model.llm.TurLLMInstance();
+        var instance = new com.viglet.turing.llm.persistence.model.TurLLMInstance();
         TurGenAiContext context = TurGenAiContext.builder().enabled(true).chatModel(chatModel)
                 .llmInstance(instance).agentId("agent-1").siteName("Sample").build();
 
@@ -915,14 +915,14 @@ class TurSNGenAiTest {
                 .vectorStore(vectorStore)
                 .followupQueryMode(com.viglet.turing.sn.persistence.model.genai.TurFollowupQueryMode.REWRITE)
                 .build();
-        var agent = mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class);
+        var agent = mock(com.viglet.turing.agent.persistence.model.TurAIAgent.class);
         List<TurSNGenAi.ConversationMessage> history = List.of(
                 new TurSNGenAi.ConversationMessage("user", "When does the grant close?"),
                 new TurSNGenAi.ConversationMessage("assistant", "March 31."),
                 new TurSNGenAi.ConversationMessage("user", "Where do I send it?"));
 
         withCapture.assistantConversationStreaming(context, agent,
-                mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class),
+                mock(com.viglet.turing.llm.persistence.model.TurLLMInstance.class),
                 new TurSNGenAiChatRequest(history, null, "conv-1", null, null, Locale.ENGLISH, null))
                 .collectList().block();
 
@@ -937,8 +937,8 @@ class TurSNGenAiTest {
         when(context.getVectorStore()).thenReturn(vectorStore);
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of());
 
-        var agent = mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class);
-        var llm = mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class);
+        var agent = mock(com.viglet.turing.agent.persistence.model.TurAIAgent.class);
+        var llm = mock(com.viglet.turing.llm.persistence.model.TurLLMInstance.class);
         List<TurSNGenAi.ConversationMessage> history =
                 List.of(new TurSNGenAi.ConversationMessage("user", "pergunta sem contexto"));
 
@@ -1066,8 +1066,8 @@ class TurSNGenAiTest {
                 List.of(new TurSNGenAi.ConversationMessage("user", "list all the sales"));
 
         withService.assistantConversationStreaming(context,
-                mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class),
-                mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class),
+                mock(com.viglet.turing.agent.persistence.model.TurAIAgent.class),
+                mock(com.viglet.turing.llm.persistence.model.TurLLMInstance.class),
                 new TurSNGenAiChatRequest(history, null, "conv-1", null, null, Locale.ENGLISH, null, "shared",
                         true, "a-1"))
                 .collectList().block();
@@ -1227,8 +1227,8 @@ class TurSNGenAiTest {
         List<TurSNGenAi.ConversationMessage> history =
                 List.of(new TurSNGenAi.ConversationMessage("user", "quais vagas em sao paulo"));
         return withService.assistantConversationStreaming(context,
-                mock(com.viglet.turing.persistence.model.agent.TurAIAgent.class),
-                mock(com.viglet.turing.persistence.model.llm.TurLLMInstance.class),
+                mock(com.viglet.turing.agent.persistence.model.TurAIAgent.class),
+                mock(com.viglet.turing.llm.persistence.model.TurLLMInstance.class),
                 new TurSNGenAiChatRequest(history, null, "conv-1", null, null,
                         Locale.forLanguageTag("pt-BR"), null, "vagas", includeFilters))
                 .collectList().block();

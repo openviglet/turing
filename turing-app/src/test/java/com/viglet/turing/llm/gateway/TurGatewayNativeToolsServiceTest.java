@@ -23,7 +23,7 @@ import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicMessagesService;
 import com.viglet.turing.llm.nativeapi.gemini.TurGoogleGenAiNativeService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiResponsesService;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T747 / §XLIX — unit coverage for the {@code x-turing-tools} header normalisation

@@ -38,7 +38,7 @@ import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapabil
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicContextManagement;
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicContextManagement.Options;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

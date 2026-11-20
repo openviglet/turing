@@ -71,7 +71,7 @@ import lombok.extern.slf4j.Slf4j;
  *   <li><b>Tool calling.</b> {@link #call(Prompt)} throws because the
  *       streaming model has no use case for the blocking shape; STREAM
  *       agents are tool-free by design (documented on
- *       {@link com.viglet.turing.persistence.model.agent.TurAgentChatMode}).
+ *       {@link com.viglet.turing.agent.persistence.model.TurAgentChatMode}).
  *       If a caller needs blocking + tools, route through the regular
  *       {@code TurOpenAiLlmProvider#createChatModel(...)} which returns
  *       the SDK-backed {@code OpenAiChatModel}.</li>

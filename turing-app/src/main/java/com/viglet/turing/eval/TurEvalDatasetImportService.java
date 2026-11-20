@@ -20,13 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

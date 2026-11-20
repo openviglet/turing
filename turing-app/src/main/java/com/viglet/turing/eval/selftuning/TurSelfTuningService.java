@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.eval.selftuning.TurSelfTuningMiner.FailureSummary;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAgentSuggestion;
-import com.viglet.turing.persistence.repository.agent.TurAgentSuggestionRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAgentSuggestion;
+import com.viglet.turing.agent.persistence.repository.TurAgentSuggestionRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

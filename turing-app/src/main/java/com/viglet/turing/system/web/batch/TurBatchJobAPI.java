@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.model.batch.TurBatchJob;
-import com.viglet.turing.persistence.repository.batch.TurBatchJobRepository;
+import com.viglet.turing.batch.persistence.model.TurBatchJob;
+import com.viglet.turing.batch.persistence.repository.TurBatchJobRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

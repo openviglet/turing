@@ -21,13 +21,13 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.rag.TurGenAiContext;
 import com.viglet.turing.rag.TurGenAiContextFactory;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaGroundingSource;
-import com.viglet.turing.persistence.model.persona.TurPersonaSource;
-import com.viglet.turing.persistence.model.persona.TurPersonaSourceStatus;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaGroundingSource;
+import com.viglet.turing.persona.persistence.model.TurPersonaSource;
+import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.persistence.repository.persona.TurPersonaSourceRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.sn.TurSNSearchProcess;
 

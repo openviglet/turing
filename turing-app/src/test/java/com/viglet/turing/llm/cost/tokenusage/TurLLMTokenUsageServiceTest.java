@@ -18,11 +18,11 @@ import org.springframework.ai.chat.model.ChatResponse;
 
 import com.viglet.turing.observability.TurLangSmithExporter;
 import com.viglet.turing.observability.TurLlmObservation;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMTokenUsage;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMPriceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMTokenUsage;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMPriceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -159,8 +159,8 @@ class TurLLMTokenUsageServiceTest {
         return captor.getValue();
     }
 
-    private static com.viglet.turing.persistence.model.llm.TurLLMPrice price(double in, double out) {
-        com.viglet.turing.persistence.model.llm.TurLLMPrice price = new com.viglet.turing.persistence.model.llm.TurLLMPrice();
+    private static com.viglet.turing.llm.persistence.model.TurLLMPrice price(double in, double out) {
+        com.viglet.turing.llm.persistence.model.TurLLMPrice price = new com.viglet.turing.llm.persistence.model.TurLLMPrice();
         price.setInputPricePerMillion(in);
         price.setOutputPricePerMillion(out);
         return price;

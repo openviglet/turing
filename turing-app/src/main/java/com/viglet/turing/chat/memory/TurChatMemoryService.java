@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSessionMessageDto;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionMessagesDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionMessageDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionMessagesDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

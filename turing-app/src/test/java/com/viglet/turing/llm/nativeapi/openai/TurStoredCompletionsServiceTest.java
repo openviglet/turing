@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.llm.nativeapi.openai.TurStoredCompletionsService.StoredCompletionsDirective;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /** F.9 / §X.10.a — T167 stored-completions directive resolution. */
 class TurStoredCompletionsServiceTest {

@@ -18,13 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaDomainExpertise;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.model.persona.TurPersonaLanguageStyle;
-import com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel;
-import com.viglet.turing.persistence.model.persona.TurPersonaTone;
+import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaDomainExpertise;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
+import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
+import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 import com.viglet.turing.system.TurLlmSummaryService;
 import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
 

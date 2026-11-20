@@ -21,8 +21,8 @@ import org.springframework.ai.tool.metadata.ToolMetadata;
 import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.tool.TurCustomToolAgentHelper;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

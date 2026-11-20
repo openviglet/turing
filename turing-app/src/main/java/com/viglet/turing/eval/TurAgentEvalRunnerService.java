@@ -36,24 +36,24 @@ import com.viglet.turing.eval.grader.TurEvalGraderResult;
 import com.viglet.turing.eval.grader.TurEvalGradingContext;
 import com.viglet.turing.eval.grader.TurEvalResolvedGrader;
 import com.viglet.turing.eval.grader.TurEvalStackAggregator;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalCaseResultDto;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalCaseResultDto.SlotDiff;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowSubmissionDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalReport;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalReportRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalCaseResultDto;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalCaseResultDto.SlotDiff;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalReportDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowSubmissionDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalReport;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalReportRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -107,8 +107,8 @@ public class TurAgentEvalRunnerService {
     private final com.viglet.turing.properties.TurConfigProperties configProperties;
     private final com.viglet.turing.eval.grader.TurEvalGraderRegistry graderRegistry;
     private final TurEvalReviewTaskService reviewTaskService;
-    private final com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository datasetRowRepository;
-    private final com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository datasetRepository;
+    private final com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository datasetRowRepository;
+    private final com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository datasetRepository;
 
     /** Used by {@link #scoreWithSystemPrompt} to detach the agent before the
      *  in-memory prompt swap, so a trial run can never flush to the DB. */
@@ -131,8 +131,8 @@ public class TurAgentEvalRunnerService {
             com.viglet.turing.properties.TurConfigProperties configProperties,
             com.viglet.turing.eval.grader.TurEvalGraderRegistry graderRegistry,
             TurEvalReviewTaskService reviewTaskService,
-            com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository datasetRowRepository,
-            com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository datasetRepository) {
+            com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository datasetRowRepository,
+            com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository datasetRepository) {
         this.agentRepository = agentRepository;
         this.evalSetRepository = evalSetRepository;
         this.reportRepository = reportRepository;
@@ -195,7 +195,7 @@ public class TurAgentEvalRunnerService {
                 .filter(id -> id != null && !id.isBlank()).findFirst().orElse(null);
         int datasetVersion = datasetId == null ? 0
                 : datasetRepository.findById(datasetId)
-                        .map(com.viglet.turing.persistence.model.agent.TurEvalDataset::getVersion)
+                        .map(com.viglet.turing.agent.persistence.model.TurEvalDataset::getVersion)
                         .orElse(0);
         return persistReport(agent, results, datasetId, datasetVersion);
     }
@@ -251,7 +251,7 @@ public class TurAgentEvalRunnerService {
             results.add(runCase(agent, llmInstance, judgeModel, ephemeral, source, false));
         }
         int datasetVersion = datasetRepository.findById(datasetId)
-                .map(com.viglet.turing.persistence.model.agent.TurEvalDataset::getVersion).orElse(0);
+                .map(com.viglet.turing.agent.persistence.model.TurEvalDataset::getVersion).orElse(0);
         return persistDatasetRunReport(agent, results, datasetId, datasetVersion);
     }
 
@@ -747,7 +747,7 @@ public class TurAgentEvalRunnerService {
 
     /**
      * Resolves the cases to score for a set: the bound {@link
-     * com.viglet.turing.persistence.model.agent.TurEvalDataset}'s rows (mapped to
+     * com.viglet.turing.agent.persistence.model.TurEvalDataset}'s rows (mapped to
      * transient cases) when {@code datasetId} is set, else the legacy inline
      * cases (byte-identical).
      */

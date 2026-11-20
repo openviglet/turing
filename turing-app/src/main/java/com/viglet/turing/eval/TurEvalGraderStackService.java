@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurEvalGraderStackDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalGraderStackDto.GraderConfigEntry;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderStack;
-import com.viglet.turing.persistence.repository.agent.TurEvalGraderStackRepository;
+import com.viglet.turing.agent.persistence.dto.TurEvalGraderStackDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalGraderStackDto.GraderConfigEntry;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderConfig;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderStack;
+import com.viglet.turing.agent.persistence.repository.TurEvalGraderStackRepository;
 
 /**
  * T600 / §XXXIII.15 — CRUD for named, reusable grader stacks. A stack is

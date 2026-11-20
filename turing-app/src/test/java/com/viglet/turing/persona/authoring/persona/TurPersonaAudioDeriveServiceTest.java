@@ -25,9 +25,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.persona.authoring.persona.TurPersonaAudioDeriveService.DraftResult;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel;
-import com.viglet.turing.persistence.model.persona.TurPersonaTone;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
+import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 import com.viglet.turing.system.TurLlmSummaryService;
 import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
 

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.observability.TurLangSmithExporter;
 import com.viglet.turing.observability.TurLlmObservation;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMTokenUsage;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMTokenUsage;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 import lombok.extern.slf4j.Slf4j;

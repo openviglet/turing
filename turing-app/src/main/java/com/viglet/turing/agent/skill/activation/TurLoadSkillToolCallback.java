@@ -20,7 +20,7 @@ import org.springframework.ai.tool.metadata.DefaultToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 import lombok.extern.slf4j.Slf4j;
 

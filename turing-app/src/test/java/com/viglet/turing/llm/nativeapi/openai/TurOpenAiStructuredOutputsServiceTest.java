@@ -23,7 +23,7 @@ import com.openai.client.OpenAIClient;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFormatTextJsonSchemaConfig;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.10 / §X.11.c — verifies that {@link TurOpenAiStructuredOutputsService}

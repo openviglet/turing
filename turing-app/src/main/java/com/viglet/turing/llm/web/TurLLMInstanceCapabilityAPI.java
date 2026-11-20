@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.llm.nativeapi.TurNativeCapability;
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService;
-import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstanceCapability;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

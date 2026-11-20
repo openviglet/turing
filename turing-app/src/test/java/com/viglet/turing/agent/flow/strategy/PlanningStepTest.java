@@ -28,7 +28,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps.PlanItem;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Pure-function tests for the T108 {@code planningStep} helpers in

@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

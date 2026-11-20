@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.persistence.adapter.customtool.TurCustomToolReader;
+import com.viglet.turing.agent.persistence.adapter.customtool.TurCustomToolReader;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService.PreviewResult;
 import com.viglet.turing.agent.tool.TurCustomToolDescriptorService;
@@ -35,10 +35,10 @@ import com.viglet.turing.agent.tool.TurCustomToolDraftRegistry.PutResult;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.viglet.turing.persistence.dto.customtool.TurCustomToolDto;
-import com.viglet.turing.persistence.mapper.customtool.TurCustomToolMapper;
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.persistence.repository.customtool.TurCustomToolRepository;
+import com.viglet.turing.agent.persistence.dto.customtool.TurCustomToolDto;
+import com.viglet.turing.agent.persistence.mapper.customtool.TurCustomToolMapper;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import groovy.lang.GroovyShell;

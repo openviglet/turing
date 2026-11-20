@@ -13,8 +13,8 @@ import org.springframework.ai.chat.model.ChatModel;
 
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Snapshot of inputs every {@link TurChatFlowGuardrailStrategy} needs to

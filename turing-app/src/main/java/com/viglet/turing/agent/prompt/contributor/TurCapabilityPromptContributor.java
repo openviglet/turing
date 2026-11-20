@@ -25,7 +25,7 @@ import com.viglet.turing.agent.prompt.TurPromptAssemblyContext;
 import com.viglet.turing.agent.prompt.TurPromptContributor;
 import com.viglet.turing.agent.prompt.TurPromptSegment;
 import com.viglet.turing.agent.prompt.TurPromptStability;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

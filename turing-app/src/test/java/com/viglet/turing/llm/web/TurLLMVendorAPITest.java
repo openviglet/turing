@@ -31,9 +31,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.mapper.llm.TurLLMVendorMapper;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.llm.persistence.mapper.TurLLMVendorMapper;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurLLMVendorAPITest {

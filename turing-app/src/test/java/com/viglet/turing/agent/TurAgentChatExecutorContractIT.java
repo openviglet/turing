@@ -16,7 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.viglet.turing.agent.testsupport.AbstractAgentExecutorIT;
 import com.viglet.testsupport.genai.executor.TurAgentChatExecutorMockSupport;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
 
 /**
  * Contract integration tests for {@link TurAgentChatExecutor}. Locks
@@ -114,17 +114,17 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
                 .getDeclaredField("strategyByMethod");
         field.setAccessible(true);
         @SuppressWarnings("unchecked")
-        java.util.Map<com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod,
+        java.util.Map<com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod,
                 com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy> original =
-                (java.util.Map<com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod,
+                (java.util.Map<com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod,
                         com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy>)
                         field.get(engineTarget);
         // Build a copy without LLM_JUDGE → resolveStrategy will hit the
         // fallback log + return HEURISTIC.
-        java.util.Map<com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod,
+        java.util.Map<com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod,
                 com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy> trimmed =
                 new java.util.EnumMap<>(original);
-        trimmed.remove(com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod.LLM_JUDGE);
+        trimmed.remove(com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod.LLM_JUDGE);
 
         ch.qos.logback.classic.Logger engineLogger = (ch.qos.logback.classic.Logger)
                 org.slf4j.LoggerFactory.getLogger(com.viglet.turing.agent.flow.TurChatFlowEngineService.class);
@@ -166,13 +166,13 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
      * (we just need to hit {@code resolveStrategy} once).
      */
     private void driveOneTurnOnLlmJudgeFlow() {
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent = createAgent("contract-18", null);
-        com.viglet.turing.persistence.model.agent.TurChatFlow flow =
-                new com.viglet.turing.persistence.model.agent.TurChatFlow();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("contract-18", null);
+        com.viglet.turing.agent.persistence.model.TurChatFlow flow =
+                new com.viglet.turing.agent.persistence.model.TurChatFlow();
         flow.setName("Contract #18 — LLM_JUDGE without bean");
         flow.setEnabled(1);
-        flow.setGuardrailMethod(com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod.LLM_JUDGE);
-        flow.setTriggerMode(com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode.ONCE);
+        flow.setGuardrailMethod(com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod.LLM_JUDGE);
+        flow.setTriggerMode(com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode.ONCE);
         flow.setTriggerDescription("contract-18 — never auto-triggered");
         // Minimal graph: start → end. The engine only needs to find the
         // current node and call resolveStrategy once; no real interaction
@@ -185,7 +185,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         flow = chatFlowRepository.save(flow);
         com.viglet.turing.agent.flow.ChatFlowGraph graph = chatFlowEngineService.parseGraph(flow).orElseThrow();
         String conv = "conv-contract-18-" + java.util.UUID.randomUUID();
-        com.viglet.turing.persistence.model.agent.TurChatFlowState state =
+        com.viglet.turing.agent.persistence.model.TurChatFlowState state =
                 chatFlowEngineService.loadOrInitState(conv, flow, graph).orElseThrow();
         chatFlowEngineService.advance(flow, state, graph, "hello", null, harness().chatModel());
     }
@@ -258,18 +258,18 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         // Two distinct agents. Agent A owns the flow; Agent B is the one
         // we'll drive. Sending B a forced flowId pointing at A's flow must
         // log a WARN and silently drop the flow override.
-        com.viglet.turing.persistence.model.agent.TurAIAgent agentA = createAgent("contract-20-owner-A", null);
-        com.viglet.turing.persistence.model.agent.TurAIAgent agentB = createAgent("contract-20-caller-B", null);
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llm = createMockableLlmInstance();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agentA = createAgent("contract-20-owner-A", null);
+        com.viglet.turing.agent.persistence.model.TurAIAgent agentB = createAgent("contract-20-caller-B", null);
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
         agentB.getLlmInstances().add(llm);
         agentB = agentRepository.save(agentB);
 
-        com.viglet.turing.persistence.model.agent.TurChatFlow flowOfA =
-                new com.viglet.turing.persistence.model.agent.TurChatFlow();
+        com.viglet.turing.agent.persistence.model.TurChatFlow flowOfA =
+                new com.viglet.turing.agent.persistence.model.TurChatFlow();
         flowOfA.setName("Contract #20 — owned by agent A only");
         flowOfA.setEnabled(1);
-        flowOfA.setGuardrailMethod(com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod.HEURISTIC);
-        flowOfA.setTriggerMode(com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode.ONCE);
+        flowOfA.setGuardrailMethod(com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod.HEURISTIC);
+        flowOfA.setTriggerMode(com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode.ONCE);
         flowOfA.setTriggerDescription("contract-20 — owned by A");
         flowOfA.setDefinitionJson("{\"nodes\":["
                 + "{\"id\":\"start\",\"type\":\"start\",\"data\":{\"label\":\"INÍCIO\",\"type\":\"start\"}},"
@@ -406,8 +406,8 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.ExportEntry entry =
                 com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.loadFromClasspath(
                         "/harness-it/persona-switch-mid-flow.chat-flow.json");
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent = createAgent("patch16", null);
-        com.viglet.turing.persistence.model.llm.TurLLMInstance llm = createMockableLlmInstance();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent = createAgent("patch16", null);
+        com.viglet.turing.llm.persistence.model.TurLLMInstance llm = createMockableLlmInstance();
         agent.getLlmInstances().add(llm);
         agent = agentRepository.save(agent);
         com.viglet.turing.agent.testsupport.ChatFlowImportTestUtil.Imported imp =
@@ -419,8 +419,8 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         // routes through persona-lucas — multi-hop walk that triggers
         // multiple in-walk save() calls.
         String conv = "conv-patch16-" + java.util.UUID.randomUUID();
-        com.viglet.turing.persistence.model.agent.TurChatFlowState seeded =
-                new com.viglet.turing.persistence.model.agent.TurChatFlowState();
+        com.viglet.turing.agent.persistence.model.TurChatFlowState seeded =
+                new com.viglet.turing.agent.persistence.model.TurChatFlowState();
         seeded.setConversationId(conv);
         seeded.setFlow(imp.flow());
         seeded.setCurrentNodeId("ai-name");
@@ -496,9 +496,9 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         // 1. The strategy save + the in-walk saves (persona-lucas landing
         //    + switch-route landing) must each have hit stateRepository.save —
         //    at least TWO calls to prove the walk wasn't short-circuited.
-        org.mockito.ArgumentCaptor<com.viglet.turing.persistence.model.agent.TurChatFlowState> captor =
+        org.mockito.ArgumentCaptor<com.viglet.turing.agent.persistence.model.TurChatFlowState> captor =
                 org.mockito.ArgumentCaptor.forClass(
-                        com.viglet.turing.persistence.model.agent.TurChatFlowState.class);
+                        com.viglet.turing.agent.persistence.model.TurChatFlowState.class);
         org.mockito.Mockito.verify(stateRepoSpy, org.mockito.Mockito.atLeast(2)).save(captor.capture());
 
         // 2. The COALESCE invariant: every in-walk save ran inside a
@@ -520,11 +520,11 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         //    landed on ai-objetivo (the post-walk interactive node) and
         //    the name slot was captured. Proves the transaction committed
         //    successfully (not rolled back) AND the in-walk saves persisted.
-        com.viglet.turing.persistence.model.agent.TurChatFlowState finalState =
-                ((com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository)
+        com.viglet.turing.agent.persistence.model.TurChatFlowState finalState =
+                ((com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository)
                         org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors(
                                 applicationContext,
-                                com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository.class))
+                                com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository.class))
                         .findByConversationIdAndFlow_Id(conv, imp.flow().getId())
                         .orElseThrow();
         org.assertj.core.api.Assertions.assertThat(finalState.getCurrentNodeId())
@@ -614,10 +614,10 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         // TurChatFlowSubFlowEngineIT's graph builders) reaches the same
         // invariant without either, and runs in the default mock-harness
         // suite (no OPENAI_API_KEY needed).
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent =
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
                 createAgent("contract-cascade-ascent", null);
 
-        com.viglet.turing.persistence.model.agent.TurChatFlow flowC = saveCascadeFlow(agent,
+        com.viglet.turing.agent.persistence.model.TurChatFlow flowC = saveCascadeFlow(agent,
                 "cascade-C — pass-through",
                 """
                 {"nodes":[
@@ -625,7 +625,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
                   {"id":"endC","type":"end","data":{"label":"FIM","type":"end"}}
                 ],"edges":[{"id":"eC","source":"startC","target":"endC"}]}
                 """);
-        com.viglet.turing.persistence.model.agent.TurChatFlow flowB = saveCascadeFlow(agent,
+        com.viglet.turing.agent.persistence.model.TurChatFlow flowB = saveCascadeFlow(agent,
                 "cascade-B — subFlow(C) then end",
                 """
                 {"nodes":[
@@ -637,7 +637,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
                   {"id":"eB2","source":"subB","target":"endB"}
                 ]}
                 """.formatted(flowC.getId()));
-        com.viglet.turing.persistence.model.agent.TurChatFlow flowA = saveCascadeFlow(agent,
+        com.viglet.turing.agent.persistence.model.TurChatFlow flowA = saveCascadeFlow(agent,
                 "cascade-A — subFlow(B) then ai-confirma",
                 """
                 {"nodes":[
@@ -655,7 +655,7 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
         String conv = "conv-cascade-ascent-" + java.util.UUID.randomUUID();
         com.viglet.turing.agent.flow.ChatFlowGraph graphA =
                 chatFlowEngineService.parseGraph(flowA).orElseThrow();
-        com.viglet.turing.persistence.model.agent.TurChatFlowState leaf =
+        com.viglet.turing.agent.persistence.model.TurChatFlowState leaf =
                 chatFlowEngineService.loadOrInitState(conv, flowA, graphA).orElseThrow();
 
         // 1. Final state landed back on the TOP-LEVEL flow A (sobe DUAS vezes).
@@ -682,21 +682,21 @@ class TurAgentChatExecutorContractIT extends AbstractAgentExecutorIT {
     }
 
     /**
-     * Persists a {@link com.viglet.turing.persistence.model.agent.TurChatFlow}
+     * Persists a {@link com.viglet.turing.agent.persistence.model.TurChatFlow}
      * owned by {@code agent} with a HEURISTIC guardrail and a one-off name.
      * The cascade-ascent test never reaches an interactive node's advance —
      * it parks on init — so the guardrail method is immaterial; HEURISTIC
      * just avoids needing an LLM bean.
      */
-    private com.viglet.turing.persistence.model.agent.TurChatFlow saveCascadeFlow(
-            com.viglet.turing.persistence.model.agent.TurAIAgent agent,
+    private com.viglet.turing.agent.persistence.model.TurChatFlow saveCascadeFlow(
+            com.viglet.turing.agent.persistence.model.TurAIAgent agent,
             String name, String definitionJson) {
-        com.viglet.turing.persistence.model.agent.TurChatFlow flow =
-                new com.viglet.turing.persistence.model.agent.TurChatFlow();
+        com.viglet.turing.agent.persistence.model.TurChatFlow flow =
+                new com.viglet.turing.agent.persistence.model.TurChatFlow();
         flow.setName(name + " — " + java.util.UUID.randomUUID().toString().substring(0, 6));
         flow.setEnabled(1);
         flow.setGuardrailMethod(
-                com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod.HEURISTIC);
+                com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod.HEURISTIC);
         flow.setDefinitionJson(definitionJson);
         flow.setTurAIAgent(agent);
         return chatFlowRepository.save(flow);

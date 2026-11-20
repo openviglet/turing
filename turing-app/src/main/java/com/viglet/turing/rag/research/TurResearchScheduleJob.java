@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.research.TurResearchSchedule;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.rag.persistence.model.research.TurResearchSchedule;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

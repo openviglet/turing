@@ -22,9 +22,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowImportDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeSummaryDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowImportDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeSummaryDto;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

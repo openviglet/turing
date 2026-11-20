@@ -28,12 +28,12 @@ import com.viglet.turing.persona.authoring.AiAuthoringRequest;
 import com.viglet.turing.persona.authoring.AiAuthoringResponse;
 import com.viglet.turing.persona.authoring.TurAiAuthoringService;
 import com.viglet.turing.persona.authoring.persona.PersonaGeneration;
-import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
-import com.viglet.turing.persistence.mapper.persona.TurPersonaMapper;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
+import com.viglet.turing.persona.persistence.mapper.TurPersonaMapper;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -246,25 +246,25 @@ public class TurPersonaAPI {
         to.setNeuroticism(from.getNeuroticism());
         // T718 / §XLVI.1 — knowledge binding. Default NONE when the client omits it.
         to.setGroundingSource(from.getGroundingSource() == null
-                ? com.viglet.turing.persistence.model.persona.TurPersonaGroundingSource.NONE
+                ? com.viglet.turing.persona.persistence.model.TurPersonaGroundingSource.NONE
                 : from.getGroundingSource());
         to.setGroundingSnSite(from.getGroundingSnSite());
         // Block AA / §XXVI.1 — audience facet. Default SPEAKER when the client
         // omits the discriminator so legacy persona forms stay unchanged.
         to.setPersonaKind(from.getPersonaKind() == null
-                ? com.viglet.turing.persistence.model.persona.TurPersonaKind.SPEAKER
+                ? com.viglet.turing.persona.persistence.model.TurPersonaKind.SPEAKER
                 : from.getPersonaKind());
         to.setAudience(from.getAudience());
     }
 
-    private com.viglet.turing.persistence.model.store.TurStoreInstance resolveStore(String id) {
+    private com.viglet.turing.rag.persistence.model.store.TurStoreInstance resolveStore(String id) {
         if (id == null || id.isBlank()) {
             return null;
         }
         return turStoreInstanceRepository.findById(id).orElse(null);
     }
 
-    private com.viglet.turing.persistence.model.mcp.TurMcpServer resolveMcp(String id) {
+    private com.viglet.turing.mcp.persistence.model.TurMcpServer resolveMcp(String id) {
         if (id == null || id.isBlank()) {
             return null;
         }

@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurRoutineDto;
-import com.viglet.turing.persistence.model.agent.TurRoutine;
-import com.viglet.turing.persistence.model.agent.TurRoutineKind;
-import com.viglet.turing.persistence.repository.agent.TurRoutineRepository;
+import com.viglet.turing.agent.persistence.dto.TurRoutineDto;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
+import com.viglet.turing.agent.persistence.model.TurRoutineKind;
+import com.viglet.turing.agent.persistence.repository.TurRoutineRepository;
 
 /**
  * Unit tests for the T48 routine CRUD endpoint. Exercises validation,

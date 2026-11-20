@@ -24,7 +24,7 @@ import com.anthropic.models.messages.MessageCreateParams;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * F.10 / §X.11.d — verifies that {@link TurAnthropicStructuredOutputsService}

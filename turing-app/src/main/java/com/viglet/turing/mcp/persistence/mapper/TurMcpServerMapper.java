@@ -1,0 +1,34 @@
+package com.viglet.turing.mcp.persistence.mapper;
+
+import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import java.util.List;
+import java.util.Set;
+
+@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
+public interface TurMcpServerMapper {
+    TurMcpServerDto toDto(TurMcpServer entity);
+
+    TurMcpServer toEntity(TurMcpServerDto dto);
+
+    List<TurMcpServerDto> toDtoList(List<TurMcpServer> entities);
+
+    Set<TurMcpServerDto> toDtoSet(Set<TurMcpServer> entities);
+
+    // T372 — never reassign ownership through an edit; tenantId is owned by
+    // the create/import path (TurInfraTenantScope), not the request body.
+    //
+    // T1032 / §D.12 — authTokenEncrypted is never copied from a request-derived
+    // source: the request carries the plaintext `authToken`, so mapping the
+    // encrypted field would write a null over a stored credential every time an
+    // admin edits any other field. The API encrypts and assigns it explicitly.
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "authTokenEncrypted", ignore = true)
+    void updateEntity(TurMcpServer source, @MappingTarget TurMcpServer target);
+}

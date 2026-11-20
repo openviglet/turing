@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.agent.flow.TurParkedConversationService;
-import com.viglet.turing.persistence.dto.agent.TurParkedConversationDto;
+import com.viglet.turing.agent.persistence.dto.TurParkedConversationDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T499 / §X.20 — the default {@link TurContextCacheProvider}: it never caches.

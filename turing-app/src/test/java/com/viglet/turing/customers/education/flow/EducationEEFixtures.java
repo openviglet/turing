@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.persistence.repository.customtool.TurCustomToolRepository;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
 
 /**
  * Idempotent fixture loader for the Executive Education demo. Re-applies

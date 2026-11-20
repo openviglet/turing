@@ -21,7 +21,7 @@
 
 package com.viglet.turing.sn.entity;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T1228 — the seam between the indexer and the model: the entities an LLM finds

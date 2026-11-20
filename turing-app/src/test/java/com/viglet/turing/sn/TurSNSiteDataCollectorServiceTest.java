@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -354,8 +354,8 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSite site = createSite("GenAiSite");
         site.setRowsPerPage(10);
 
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent =
-                new com.viglet.turing.persistence.model.agent.TurAIAgent();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
+                new com.viglet.turing.agent.persistence.model.TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
         TurLLMInstance llmInstance = new TurLLMInstance();
@@ -384,8 +384,8 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSite site = createSite("GenAiNoLLM");
         site.setRowsPerPage(10);
 
-        com.viglet.turing.persistence.model.agent.TurAIAgent agent =
-                new com.viglet.turing.persistence.model.agent.TurAIAgent();
+        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
+                new com.viglet.turing.agent.persistence.model.TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
         // No LLM attached to the agent.

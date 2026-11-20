@@ -27,10 +27,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.properties.TurAbuseControlProperty;
 
 /**
@@ -164,8 +164,8 @@ class TurChatCostBudgetGateTest {
 
     // ---- T742 / §XLIX per-key gateway budget + hard cap ---------------------
 
-    private com.viglet.turing.persistence.model.gateway.TurGatewayKey key() {
-        var k = new com.viglet.turing.persistence.model.gateway.TurGatewayKey();
+    private com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey key() {
+        var k = new com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey();
         k.setId("key-1");
         return k;
     }

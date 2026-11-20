@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeSummaryDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeSummaryDto;
 import com.viglet.turing.agent.chatflow.TurChatFlowRecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;

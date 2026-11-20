@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.model.ToolContext;
 
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 /**
  * T323 — verifies the parent-facing {@code run_skill} delegation tool resolves

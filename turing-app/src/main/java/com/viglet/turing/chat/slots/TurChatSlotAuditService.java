@@ -18,9 +18,9 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditEntry;
-import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;
-import com.viglet.turing.persistence.repository.agent.TurChatSlotAuditRepository;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditEntry;
+import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
+import com.viglet.turing.agent.persistence.repository.TurChatSlotAuditRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

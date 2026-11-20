@@ -30,7 +30,7 @@ import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import com.viglet.turing.agent.flow.ChatFlowEdge;
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;

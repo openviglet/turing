@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.tool.TurNativeToolService;
-import com.viglet.turing.persistence.model.agent.TurRoutine;
-import com.viglet.turing.persistence.repository.agent.TurRoutineRepository;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
+import com.viglet.turing.agent.persistence.repository.TurRoutineRepository;
 import com.viglet.turing.sn.TurSNConstants;
 
 import lombok.extern.slf4j.Slf4j;

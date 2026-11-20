@@ -28,11 +28,11 @@ import org.springframework.beans.factory.InitializingBean;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProvider;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProviderFactory;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -60,7 +60,7 @@ class TurRagContextBuilderTest {
     @Mock
     private TurEmbeddingModelRepository embeddingModelRepository;
     @Mock
-    private com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository instanceRepository;
+    private com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository instanceRepository;
     @Mock
     private TurStoreInstanceRepository storeInstanceRepository;
 

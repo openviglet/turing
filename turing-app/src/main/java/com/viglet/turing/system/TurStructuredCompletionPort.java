@@ -12,7 +12,7 @@ package com.viglet.turing.system;
 import java.util.Map;
 import java.util.Optional;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T829 / §LXI.5 (Block BN) — the seam through which {@link TurLlmSummaryService}

@@ -34,12 +34,12 @@ import com.viglet.turing.agent.prompt.TurMessageAssemblyPipeline;
 import com.viglet.turing.agent.prompt.TurPromptAssembly;
 import com.viglet.turing.agent.prompt.TurPromptAssemblyContext;
 import com.viglet.turing.agent.prompt.TurPromptAssemblyPipeline;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptPreviewDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptPreviewDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.chat.analytics.TurToolCallTraceService;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
@@ -275,7 +275,7 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
         when(chatFlowEngineService.getConversationState("conv-1"))
                 .thenReturn(conversationState(flow.getId(), "n3"));
         when(chatFlowEngineService.listSlotsForConversation("conv-1"))
-                .thenReturn(new com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto(
+                .thenReturn(new com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto(
                         "conv-1", java.util.Map.of("cargo", "developer")));
         when(personaResolver.resolve(agent, "conv-1")).thenReturn(marina);
         when(toolCallTraceService.getTrace("conv-1")).thenReturn(List.of(

@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayKeyRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 
 /**
  * T747 / §XLIX — gateway observability: rolls the per-key spend/token metering

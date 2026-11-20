@@ -20,7 +20,7 @@ import com.viglet.turing.agent.flow.ChatFlowEdge;
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Pin tests for the T49 failure-routing helper

@@ -35,13 +35,13 @@ import com.viglet.turing.eval.distillation.TurOpenAiDistillationJsonl.TrainingMe
 import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalReportDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.distillation.TurDistillationJob;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.distillation.TurDistillationJobRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalReportDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.eval.persistence.model.distillation.TurDistillationJob;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.eval.persistence.repository.distillation.TurDistillationJobRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.system.TurGlobalSettingsService;
 

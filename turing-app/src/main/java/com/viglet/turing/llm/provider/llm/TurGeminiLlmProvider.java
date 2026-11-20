@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import com.google.genai.Client;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiEmbeddingModel;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * Native Gemini provider using Google's GenAI SDK directly.

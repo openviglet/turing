@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 
 /**
  * Unit tests for the deterministic A/B variant assignment helper used by

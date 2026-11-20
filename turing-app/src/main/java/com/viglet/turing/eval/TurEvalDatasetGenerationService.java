@@ -27,18 +27,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -100,7 +100,7 @@ public class TurEvalDatasetGenerationService {
     private final TurEvalDatasetImportService importService;
     private final TurEvalDatasetRowRepository datasetRowRepository;
     private final TurGlobalSettingsService globalSettingsService;
-    private final com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository llmInstanceRepository;
+    private final com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository llmInstanceRepository;
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService secretCryptoService;
 
@@ -109,7 +109,7 @@ public class TurEvalDatasetGenerationService {
             TurChatFlowEngineService chatFlowEngineService, TurEvalDatasetImportService importService,
             TurEvalDatasetRowRepository datasetRowRepository,
             TurGlobalSettingsService globalSettingsService,
-            com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository llmInstanceRepository,
+            com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository llmInstanceRepository,
             TurLlmModelFactory llmModelFactory, TurSecretCryptoService secretCryptoService) {
         this.agentRepository = agentRepository;
         this.slotRepository = slotRepository;

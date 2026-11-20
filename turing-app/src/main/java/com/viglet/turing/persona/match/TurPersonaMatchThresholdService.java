@@ -12,8 +12,8 @@ package com.viglet.turing.persona.match;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchProject;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchProjectRepository;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchProject;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchProjectRepository;
 
 /**
  * The one place that answers "what counts as a good fit for this project?"

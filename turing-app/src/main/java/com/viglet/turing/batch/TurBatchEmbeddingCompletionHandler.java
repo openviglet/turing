@@ -11,7 +11,7 @@ package com.viglet.turing.batch;
 
 import java.util.List;
 
-import com.viglet.turing.persistence.model.batch.TurBatchJob;
+import com.viglet.turing.batch.persistence.model.TurBatchJob;
 
 /**
  * F.7 / §X.8.c — the embeddings analog of {@link TurBatchCompletionHandler}.

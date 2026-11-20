@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;
@@ -103,10 +103,10 @@ public class TurNLFacetDatasetService {
             dataset.getRows().add(row);
         }
         dataset = datasetRepository.save(dataset);
-        List<com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto> rows = dataset.getRows()
+        List<com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto> rows = dataset.getRows()
                 .stream()
                 .sorted(java.util.Comparator.comparingInt(TurEvalDatasetRow::getSortOrder))
-                .map(com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto::fromEntity)
+                .map(com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto::fromEntity)
                 .toList();
         return TurEvalDatasetDto.detail(dataset, rows);
     }
@@ -123,9 +123,9 @@ public class TurNLFacetDatasetService {
     /** Detail view of one NL→facet dataset (with rows). 404 when missing / not NL→facet. */
     public TurEvalDatasetDto get(String datasetId) {
         TurEvalDataset dataset = requireNlFacet(datasetId);
-        List<com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto> rows =
+        List<com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto> rows =
                 datasetRowRepository.findByTurEvalDataset_IdOrderBySortOrderAsc(datasetId).stream()
-                        .map(com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto::fromEntity)
+                        .map(com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto::fromEntity)
                         .toList();
         return TurEvalDatasetDto.detail(dataset, rows);
     }

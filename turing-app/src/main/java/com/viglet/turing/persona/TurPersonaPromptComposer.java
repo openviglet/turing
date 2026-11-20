@@ -15,8 +15,8 @@ import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Fuses a {@link TurPersona} into the system prompt for a chat turn. The

@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
-import com.viglet.turing.persistence.model.agent.TurChatWebhook;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
+import com.viglet.turing.agent.persistence.model.TurChatWebhook;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

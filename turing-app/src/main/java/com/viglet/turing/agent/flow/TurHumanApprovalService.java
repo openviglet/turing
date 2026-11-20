@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.agent.flow.ChatFlowNode.HumanApprovalConfig;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.dto.agent.TurHumanApprovalDto;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.agent.TurChatHumanApproval;
-import com.viglet.turing.persistence.model.agent.TurHumanApprovalStatus;
-import com.viglet.turing.persistence.repository.agent.TurChatHumanApprovalRepository;
+import com.viglet.turing.agent.persistence.dto.TurHumanApprovalDto;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatHumanApproval;
+import com.viglet.turing.agent.persistence.model.TurHumanApprovalStatus;
+import com.viglet.turing.agent.persistence.repository.TurChatHumanApprovalRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;

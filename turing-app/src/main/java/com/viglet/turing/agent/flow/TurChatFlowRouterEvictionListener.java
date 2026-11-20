@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;

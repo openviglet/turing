@@ -19,7 +19,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
 
 import lombok.extern.slf4j.Slf4j;
 

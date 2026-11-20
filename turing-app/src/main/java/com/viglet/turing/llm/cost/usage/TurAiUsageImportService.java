@@ -20,8 +20,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.llm.TurAiUsageDaily;
-import com.viglet.turing.persistence.repository.llm.TurAiUsageDailyRepository;
+import com.viglet.turing.llm.persistence.model.TurAiUsageDaily;
+import com.viglet.turing.llm.persistence.repository.TurAiUsageDailyRepository;
 import com.viglet.turing.llm.cost.usage.TurAnthropicUsageClient.Report;
 import com.viglet.turing.llm.cost.usage.TurAnthropicUsageParser.CostRow;
 import com.viglet.turing.llm.cost.usage.TurAnthropicUsageParser.UsageRow;

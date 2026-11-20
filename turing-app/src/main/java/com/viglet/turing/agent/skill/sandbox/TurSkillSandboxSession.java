@@ -30,7 +30,7 @@ import java.io.File;
  * debug/admin exec, in which case a {@code default} bucket is used.
  *
  * @param sessionId       short opaque id (also the container-name suffix).
- * @param skillId         the {@link com.viglet.turing.persistence.model.skill.TurSkill} id.
+ * @param skillId         the {@link com.viglet.turing.agent.persistence.model.skill.TurSkill} id.
  * @param agentId         owning agent id, or {@code "default"} when unscoped.
  * @param conversationId  owning conversation id, or {@code "default"} when unscoped.
  * @param sessionDir      session root on the host (parent of skill/ + workspace/).

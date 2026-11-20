@@ -30,9 +30,9 @@ import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata.TurLlmModelBenchma
 import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata.TurLlmModelPerformance;
 import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata.TurLlmModelPricing;
 import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 /**
  * T745 / §XLIX — unit coverage for gateway router parsing, round-robin rotation,

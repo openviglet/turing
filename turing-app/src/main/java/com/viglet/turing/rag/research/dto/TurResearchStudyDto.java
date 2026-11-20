@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * The API view of a {@link com.viglet.turing.persistence.model.research.TurResearchStudy}
+ * The API view of a {@link com.viglet.turing.rag.persistence.model.research.TurResearchStudy}
  * (Block AW / §XLVI.2, T719) — doubles as the create/update request body (id +
  * derived counts / {@code llmName} / {@code lastRunAt} / roster / interviews are
  * ignored on write). {@code questions} is the CUSTOM_SCRIPT list; {@code conceptText}

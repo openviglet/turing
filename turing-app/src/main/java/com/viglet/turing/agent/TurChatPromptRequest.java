@@ -19,8 +19,8 @@ package com.viglet.turing.agent;
 import java.util.List;
 
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * The core inputs to {@link TurChatPromptAssembler#assemble} for one turn —

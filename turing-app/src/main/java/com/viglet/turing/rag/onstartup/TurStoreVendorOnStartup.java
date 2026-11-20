@@ -23,8 +23,8 @@ package com.viglet.turing.rag.onstartup;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 
 @Component
 @Transactional

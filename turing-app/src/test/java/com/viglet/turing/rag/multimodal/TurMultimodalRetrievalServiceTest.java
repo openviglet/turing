@@ -35,7 +35,7 @@ import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.llm.provider.llm.TurMultimodalEmbeddingModel;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProvider;
 import com.viglet.turing.llm.provider.store.TurStoreImportResult;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 
 @ExtendWith(MockitoExtension.class)
 class TurMultimodalRetrievalServiceTest {

@@ -199,11 +199,11 @@ class TurSNSiteGenAiAPITest {
         // enabled, RAG-on agent with an LLM but no embedding model → MISSING_EMBEDDING.
         TurSNSite site = new TurSNSite();
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        var agent = new com.viglet.turing.persistence.model.agent.TurAIAgent();
+        var agent = new com.viglet.turing.agent.persistence.model.TurAIAgent();
         agent.setEnabled(1);
         agent.setRagEnabled(true);
         agent.setLlmInstances(new java.util.HashSet<>(java.util.List.of(
-                new com.viglet.turing.persistence.model.llm.TurLLMInstance())));
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance())));
         genAi.setTurAIAgent(agent);
         site.setTurSNSiteGenAi(genAi);
 

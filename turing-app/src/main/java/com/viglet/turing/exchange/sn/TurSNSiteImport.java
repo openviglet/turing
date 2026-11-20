@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -47,10 +47,10 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.model.store.TurStoreVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMVendorRepository;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.persistence.repository.se.TurSEInstanceRepository;
 import com.viglet.turing.persistence.repository.se.TurSEVendorRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
@@ -63,9 +63,9 @@ import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepos
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class TurSNSiteImport {
 	private final TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository;
 	private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
 	private final TurEmbeddingModelRepository turEmbeddingModelRepository;
-	private final com.viglet.turing.persistence.repository.agent.TurAIAgentRepository turAIAgentRepository;
+	private final com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository;
 	private final TurSearchEnginePluginFactory turSearchEnginePluginFactory;
 	private final com.viglet.turing.tenant.TurInfraTenantScope infraTenantScope;
 	private final CacheManager cacheManager;
@@ -117,7 +117,7 @@ public class TurSNSiteImport {
 			TurSNSiteMergeProvidersRepository turSNSiteMergeProvidersRepository,
 			TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
 			TurEmbeddingModelRepository turEmbeddingModelRepository,
-			com.viglet.turing.persistence.repository.agent.TurAIAgentRepository turAIAgentRepository,
+			com.viglet.turing.agent.persistence.repository.TurAIAgentRepository turAIAgentRepository,
 			TurSearchEnginePluginFactory turSearchEnginePluginFactory,
 			com.viglet.turing.tenant.TurInfraTenantScope infraTenantScope,
 			CacheManager cacheManager,

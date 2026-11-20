@@ -47,8 +47,8 @@ import com.viglet.turing.llm.nativeapi.openai.computeruse.TurOpenAiComputerUseSe
 import com.viglet.turing.persona.TurAgentPersonaResolver;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import reactor.core.publisher.Flux;
 

@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 
 import lombok.extern.slf4j.Slf4j;
 

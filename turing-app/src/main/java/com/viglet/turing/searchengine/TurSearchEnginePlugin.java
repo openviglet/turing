@@ -263,7 +263,7 @@ public interface TurSearchEnginePlugin {
      *
      * <p>Used by {@code TurRagSearchToolService} on the SE-backed
      * production hybrid path: the tool dispatches to the per-locale core
-     * (resolved via {@link com.viglet.turing.persistence.model.rag.TurRagBm25Core}),
+     * (resolved via {@link com.viglet.turing.rag.persistence.model.TurRagBm25Core}),
      * gets a ranked list, and feeds it to the RRF fuser together with
      * the vector-store list.
      *

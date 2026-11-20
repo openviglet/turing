@@ -12,10 +12,10 @@ package com.viglet.turing.exchange.agent;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowCaptureMode;
-import com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowCaptureMode;
+import com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode;
 
 import lombok.Getter;
 import lombok.Setter;

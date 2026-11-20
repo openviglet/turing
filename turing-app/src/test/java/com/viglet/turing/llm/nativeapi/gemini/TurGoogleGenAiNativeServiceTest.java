@@ -26,7 +26,7 @@ import com.viglet.turing.llm.nativeapi.cache.TurContextCacheRef;
 import com.viglet.turing.llm.nativeapi.cache.TurNoOpContextCacheProvider;
 import com.viglet.turing.persona.TurPersonaModelCalibration.Params;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T489 / §X.19 — unit coverage for the pure prompt/option mapping of the Gemini

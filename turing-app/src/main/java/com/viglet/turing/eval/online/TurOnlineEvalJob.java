@@ -12,9 +12,9 @@ package com.viglet.turing.eval.online;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.agent.TurOnlineEvalSnapshotDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.dto.TurOnlineEvalSnapshotDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;

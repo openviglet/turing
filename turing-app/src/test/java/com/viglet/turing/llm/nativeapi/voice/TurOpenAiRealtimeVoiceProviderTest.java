@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient.NativeCredentials;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 @ExtendWith(MockitoExtension.class)
 class TurOpenAiRealtimeVoiceProviderTest {

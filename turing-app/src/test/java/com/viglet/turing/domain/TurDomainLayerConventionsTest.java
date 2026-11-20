@@ -67,9 +67,40 @@ class TurDomainLayerConventionsTest {
 
     /** Module-relative source root — the test runs with the module dir as CWD. */
     private static final Path SRC = Paths.get("src", "main", "java");
-    private static final Path DOMAIN_SRC = SRC.resolve(Paths.get("com", "viglet", "turing", "domain"));
-    private static final Path ADAPTER_SRC =
-            SRC.resolve(Paths.get("com", "viglet", "turing", "persistence", "adapter"));
+    /**
+     * ADR 0005 amends ADR 0001: the domain records and ports live in each module's
+     * {@code domain} package and the adapters and mappers in its {@code persistence.adapter},
+     * so both are found by path segment under the whole tree (T1313).
+     */
+    private static final Path TURING_SRC = SRC.resolve(Paths.get("com", "viglet", "turing"));
+    private static final String DOMAIN_SEGMENT = "/domain/";
+    private static final String ADAPTER_SEGMENT = "/persistence/adapter/";
+    private static final java.util.regex.Pattern REPOSITORY_IMPORT =
+            java.util.regex.Pattern.compile("import com\\.viglet\\.turing\\.(\\w+\\.)?persistence\\.repository\\.");
+    private static final java.util.regex.Pattern ADAPTER_IMPORT =
+            java.util.regex.Pattern.compile("import com\\.viglet\\.turing\\.(\\w+\\.)?persistence\\.adapter\\.");
+
+    private static boolean under(Path path, String segment) {
+        return ("/" + path.toString().replace(java.io.File.separatorChar, '/') + "/").contains(segment);
+    }
+
+    /** Every source under a {@code domain} package, the shared kernel's and the modules'. */
+    private static List<Path> domainSources() throws IOException {
+        try (Stream<Path> paths = Files.walk(TURING_SRC)) {
+            return paths.filter(p -> p.toString().endsWith(".java"))
+                    .filter(p -> under(TURING_SRC.relativize(p.getParent()), DOMAIN_SEGMENT)
+                            || TURING_SRC.relativize(p).toString().replace(java.io.File.separatorChar, '/')
+                                    .startsWith("domain/"))
+                    .sorted().toList();
+        }
+    }
+
+    private static long countAdapterFiles(String fileName) throws IOException {
+        try (Stream<Path> paths = Files.walk(TURING_SRC)) {
+            return paths.filter(p -> p.getFileName().toString().equals(fileName))
+                    .filter(p -> under(TURING_SRC.relativize(p.getParent()), ADAPTER_SEGMENT)).count();
+        }
+    }
 
     /** Annotation packages a proxy-free, JPA-free domain record must never carry. */
     private static final List<String> FORBIDDEN_ANNOTATION_PACKAGES = List.of(
@@ -128,16 +159,14 @@ class TurDomainLayerConventionsTest {
         TreeSet<String> violations = new TreeSet<>();
 
         // (a) No domain source may reach into JPA repositories or the adapter package.
-        try (Stream<Path> paths = Files.walk(DOMAIN_SRC)) {
-            paths.filter(p -> p.toString().endsWith(".java")).forEach(p -> {
-                String body = read(p);
-                if (body.contains("import com.viglet.turing.persistence.repository.")) {
-                    violations.add(DOMAIN_SRC.relativize(p) + " imports a JPA repository");
-                }
-                if (body.contains("import com.viglet.turing.persistence.adapter.")) {
-                    violations.add(DOMAIN_SRC.relativize(p) + " imports the adapter package");
-                }
-            });
+        for (Path p : domainSources()) {
+            String body = read(p);
+            if (REPOSITORY_IMPORT.matcher(body).find()) {
+                violations.add(TURING_SRC.relativize(p) + " imports a JPA repository");
+            }
+            if (ADAPTER_IMPORT.matcher(body).find()) {
+                violations.add(TURING_SRC.relativize(p) + " imports the adapter package");
+            }
         }
 
         // (b) Curated hot-path consumers must not regress to the JPA repo they left.
@@ -165,19 +194,17 @@ class TurDomainLayerConventionsTest {
     void everySurvivingPortHasExactlyOneAdapterAndOneMapper() throws IOException {
         TreeSet<String> violations = new TreeSet<>();
 
-        List<Path> ports;
-        try (Stream<Path> paths = Files.walk(DOMAIN_SRC)) {
-            ports = paths.filter(p -> p.getFileName().toString().endsWith("RepositoryPort.java"))
-                    .toList();
-        }
-        assertThat(ports).as("expected at least one *RepositoryPort under %s", DOMAIN_SRC).isNotEmpty();
+        List<Path> ports = domainSources().stream()
+                .filter(p -> p.getFileName().toString().endsWith("RepositoryPort.java"))
+                .toList();
+        assertThat(ports).as("expected at least one *RepositoryPort under a domain package").isNotEmpty();
 
         for (Path port : ports) {
             String portSimple = stripExt(port.getFileName().toString());
             String base = portSimple.substring(0, portSimple.length() - "RepositoryPort".length());
 
-            long adapters = countFiles(ADAPTER_SRC, base + "RepositoryAdapter.java");
-            long mappers = countFiles(ADAPTER_SRC, base + "DomainMapper.java");
+            long adapters = countAdapterFiles(base + "RepositoryAdapter.java");
+            long mappers = countAdapterFiles(base + "DomainMapper.java");
 
             if (adapters != 1) {
                 violations.add(portSimple + " has " + adapters + " adapters (expected exactly 1: "
@@ -200,10 +227,7 @@ class TurDomainLayerConventionsTest {
     // ---- helpers ----------------------------------------------------------
 
     private static List<Class<?>> domainClasses() throws IOException, ClassNotFoundException {
-        List<Path> sources;
-        try (Stream<Path> paths = Files.walk(DOMAIN_SRC)) {
-            sources = paths.filter(p -> p.toString().endsWith(".java")).sorted().toList();
-        }
+        List<Path> sources = domainSources();
         ClassLoader loader = TurDomainLayerConventionsTest.class.getClassLoader();
         List<Class<?>> classes = new java.util.ArrayList<>();
         for (Path src : sources) {
@@ -221,15 +245,6 @@ class TurDomainLayerConventionsTest {
             if (FORBIDDEN_ANNOTATION_PACKAGES.stream().anyMatch(name::startsWith)) {
                 out.add(where + " → " + name);
             }
-        }
-    }
-
-    private static long countFiles(Path root, String fileName) throws IOException {
-        if (!Files.isDirectory(root)) {
-            return 0;
-        }
-        try (Stream<Path> paths = Files.walk(root)) {
-            return paths.filter(p -> p.getFileName().toString().equals(fileName)).count();
         }
     }
 

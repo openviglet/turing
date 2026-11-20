@@ -24,10 +24,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.agent.TurSystemPromptPreviewService;
 import com.viglet.turing.agent.TurSystemPromptValidatorService;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptIssueDto;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptPreviewDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptIssueDto;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptPreviewDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

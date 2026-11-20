@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel;
 
 /**
  * A <strong>pure</strong> multilingual readability / complexity scorer

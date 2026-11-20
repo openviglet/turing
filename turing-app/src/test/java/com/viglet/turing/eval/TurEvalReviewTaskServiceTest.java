@@ -27,22 +27,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.persistence.dto.agent.TurAgentEvalCaseResultDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalCalibrationDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalReviewRequest;
-import com.viglet.turing.persistence.dto.agent.TurEvalReviewTaskDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalReport;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.model.agent.TurEvalReviewTask;
-import com.viglet.turing.persistence.model.agent.TurEvalReviewVerdict;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalReportRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalReviewTaskRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalReviewVerdictRepository;
+import com.viglet.turing.agent.persistence.dto.TurAgentEvalCaseResultDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalCalibrationDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalReviewRequest;
+import com.viglet.turing.agent.persistence.dto.TurEvalReviewTaskDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalReport;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.agent.persistence.model.TurEvalReviewTask;
+import com.viglet.turing.agent.persistence.model.TurEvalReviewVerdict;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalReportRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalReviewTaskRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalReviewVerdictRepository;
 
 import tools.jackson.databind.ObjectMapper;
 

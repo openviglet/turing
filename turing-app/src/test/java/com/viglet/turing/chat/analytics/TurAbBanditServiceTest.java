@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 
 /**
  * Pins the T70 bandit picker: Thompson sampling on Beta-Bernoulli

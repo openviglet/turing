@@ -32,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.agent.skill.TurSkillFileService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

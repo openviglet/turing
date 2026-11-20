@@ -17,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.commons.file.TurFileAttributes;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
-import com.viglet.turing.persistence.model.persona.TurPersonaSource;
-import com.viglet.turing.persistence.model.persona.TurPersonaSourceStatus;
+import com.viglet.turing.persona.persistence.model.TurPersonaSource;
+import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.utils.TurFileUtils;
 
 import lombok.extern.slf4j.Slf4j;

@@ -25,8 +25,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.answer.TurAnswerShare;
-import com.viglet.turing.persistence.repository.answer.TurAnswerShareRepository;
+import com.viglet.turing.rag.persistence.model.answer.TurAnswerShare;
+import com.viglet.turing.rag.persistence.repository.answer.TurAnswerShareRepository;
 import com.viglet.turing.chat.slots.TurChatShareOgService;
 
 /**

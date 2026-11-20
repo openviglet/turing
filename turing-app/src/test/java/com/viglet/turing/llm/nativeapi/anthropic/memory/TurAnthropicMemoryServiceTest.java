@@ -21,7 +21,7 @@ import com.anthropic.models.beta.messages.BetaMessageParam;
 import com.anthropic.models.beta.messages.MessageCreateParams;
 import com.viglet.turing.llm.nativeapi.anthropic.memory.TurAnthropicMemoryService.Config;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 class TurAnthropicMemoryServiceTest {
 

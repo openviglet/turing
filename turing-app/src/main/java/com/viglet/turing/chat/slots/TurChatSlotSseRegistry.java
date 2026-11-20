@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSlotSseChannelsDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSlotSseChannelsDto;
 
 /**
  * T90 / §VII.10.g — refcounted registry of open slot-stream SSE channels on

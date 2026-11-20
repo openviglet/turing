@@ -28,7 +28,7 @@ import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
 import com.viglet.turing.agent.flow.TurFunctionCallNodeExecutor.ExecutionResult;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.agent.tool.TurNativeToolService;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Pin tests for the T46 {@code functionCall} runtime. Exercises:

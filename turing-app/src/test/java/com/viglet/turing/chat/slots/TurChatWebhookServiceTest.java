@@ -30,8 +30,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.agent.TurChatWebhook;
-import com.viglet.turing.persistence.repository.agent.TurChatWebhookRepository;
+import com.viglet.turing.agent.persistence.model.TurChatWebhook;
+import com.viglet.turing.agent.persistence.repository.TurChatWebhookRepository;
 import com.viglet.turing.chat.slots.TurChatWebhookService.DispatchOutcome;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

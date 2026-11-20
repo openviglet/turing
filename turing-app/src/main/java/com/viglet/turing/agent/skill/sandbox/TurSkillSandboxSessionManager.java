@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 import com.viglet.turing.storage.TurStorageService;
 
 /**

@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * T450 / §XXIII.9 — the built-in "action widget" client tools that turn the

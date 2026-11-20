@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurRoutine;
+import com.viglet.turing.agent.persistence.model.TurRoutine;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;

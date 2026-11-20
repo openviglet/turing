@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

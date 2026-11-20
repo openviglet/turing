@@ -31,9 +31,9 @@ import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.eval.TurEvalDatasetImportService.Format;
 import com.viglet.turing.eval.TurEvalDatasetSourceImportService;
 import com.viglet.turing.eval.TurEvalDatasetVersionService;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDiffDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetDto;
-import com.viglet.turing.persistence.dto.agent.TurEvalDatasetRowDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDiffDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
+import com.viglet.turing.agent.persistence.dto.TurEvalDatasetRowDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

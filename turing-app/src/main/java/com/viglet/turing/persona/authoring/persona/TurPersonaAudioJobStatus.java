@@ -9,7 +9,7 @@
  */
 package com.viglet.turing.persona.authoring.persona;
 
-import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
+import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
 
 /**
  * T715 / §XLII.7 — an immutable snapshot of an async persona-from-audio job,

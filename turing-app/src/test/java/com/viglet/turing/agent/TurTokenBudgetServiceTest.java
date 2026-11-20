@@ -21,8 +21,8 @@ import org.springframework.ai.chat.messages.UserMessage;
 import static org.mockito.Mockito.mock;
 
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAgentOverBudgetBehavior;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAgentOverBudgetBehavior;
 
 /**
  * Pins the T123 token-budget contract: budget=0 disables the check,

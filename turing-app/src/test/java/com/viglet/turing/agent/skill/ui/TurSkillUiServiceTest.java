@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.agent.skill.TurSkillFileService;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 @ExtendWith(MockitoExtension.class)
 class TurSkillUiServiceTest {

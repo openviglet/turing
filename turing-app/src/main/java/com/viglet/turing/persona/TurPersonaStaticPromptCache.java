@@ -16,9 +16,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaLanguageStyle;
-import com.viglet.turing.persistence.model.persona.TurPersonaTone;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
+import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 
 /**
  * T31 / §IV.5 — caches the deterministic, persona-only portion of the

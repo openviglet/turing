@@ -35,8 +35,8 @@ import com.viglet.turing.llm.gateway.TurGatewayTrafficCaptureService;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyBudgetStatus;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyUsageRow;
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayKeyRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

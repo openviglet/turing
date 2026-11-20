@@ -15,7 +15,7 @@ package com.viglet.turing.llm.nativeapi.cache;
 import java.time.Duration;
 import java.util.List;
 
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T499 / §X.20 — the vendor-neutral input to {@link TurContextCacheProvider}: the

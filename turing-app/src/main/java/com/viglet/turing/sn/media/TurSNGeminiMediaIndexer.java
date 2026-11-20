@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService.VideoUnderstanding;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 

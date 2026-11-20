@@ -21,10 +21,10 @@ import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowNodeVisitPath;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

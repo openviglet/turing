@@ -25,8 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayKeyRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

@@ -19,9 +19,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderConfig;
 
 /**
  * T586 / §XXXIII.1 — discovers every {@link TurEvalGrader} bean and resolves
@@ -37,10 +37,10 @@ import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
 public class TurEvalGraderRegistry {
 
     private final Map<String, TurEvalGrader> byId;
-    private final com.viglet.turing.persistence.repository.agent.TurEvalGraderStackRepository stackRepository;
+    private final com.viglet.turing.agent.persistence.repository.TurEvalGraderStackRepository stackRepository;
 
     public TurEvalGraderRegistry(List<TurEvalGrader> graders,
-            com.viglet.turing.persistence.repository.agent.TurEvalGraderStackRepository stackRepository) {
+            com.viglet.turing.agent.persistence.repository.TurEvalGraderStackRepository stackRepository) {
         Map<String, TurEvalGrader> map = new LinkedHashMap<>();
         for (TurEvalGrader grader : graders) {
             map.put(grader.graderId(), grader);

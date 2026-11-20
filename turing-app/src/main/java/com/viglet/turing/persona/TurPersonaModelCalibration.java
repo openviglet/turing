@@ -9,8 +9,8 @@
  */
 package com.viglet.turing.persona;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaTone;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaTone;
 
 /**
  * T605 — opt-in translation of a persona's <b>Style Guidelines</b> into concrete
@@ -18,7 +18,7 @@ import com.viglet.turing.persistence.model.persona.TurPersonaTone;
  * (tone / verbosity / language style) only reached the model as <em>text</em> in
  * the system prompt (see {@code TurPersonaStaticPromptCache}); the model's
  * {@code temperature}/{@code maxTokens} came solely from the
- * {@link com.viglet.turing.persistence.model.llm.TurLLMInstance}.
+ * {@link com.viglet.turing.llm.persistence.model.TurLLMInstance}.
  *
  * <p>When a persona sets {@code calibrateModelParams = 1}, this pure mapper
  * derives per-turn overrides so the style also shapes the <em>sampling</em>:

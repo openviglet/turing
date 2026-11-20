@@ -24,7 +24,7 @@ import com.viglet.turing.llm.nativeapi.TurNativeCapability;
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapability;
 import com.viglet.turing.persona.TurPersonaModelCalibration.Params;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 class TurAnthropicMessagesServiceTest {
 
@@ -45,7 +45,7 @@ class TurAnthropicMessagesServiceTest {
     private static TurLLMInstance anthropicInstance(String providerOptionsJson) {
         TurLLMInstance instance = new TurLLMInstance();
         instance.setId("anthropic-1");
-        var vendor = new com.viglet.turing.persistence.model.llm.TurLLMVendor();
+        var vendor = new com.viglet.turing.llm.persistence.model.TurLLMVendor();
         vendor.setId("anthropic");
         vendor.setPlugin("anthropic");
         instance.setTurLLMVendor(vendor);

@@ -30,11 +30,11 @@ import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.agent.TurAgentChatRequest;
 import com.viglet.turing.persona.dialogue.TurDialogueEvent.TurDialogueEventType;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 import reactor.core.publisher.Flux;

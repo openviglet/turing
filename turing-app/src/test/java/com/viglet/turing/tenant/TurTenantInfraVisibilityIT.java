@@ -23,10 +23,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerConnectionType;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerType;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

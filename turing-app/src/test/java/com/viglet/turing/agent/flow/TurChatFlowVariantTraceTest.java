@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
 
 /**
  * Unit tests for the per-turn A/B variant trace formatter

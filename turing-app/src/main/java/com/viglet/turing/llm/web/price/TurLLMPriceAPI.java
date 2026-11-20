@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.llm.provider.llm.TurCatalogPlans;
 import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.persistence.model.llm.TurLLMPrice;
+import com.viglet.turing.llm.persistence.model.TurLLMPrice;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

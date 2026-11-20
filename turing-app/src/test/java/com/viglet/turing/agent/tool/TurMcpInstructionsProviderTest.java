@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 
 /**
  * Tests for {@link TurMcpInstructionsProvider}.

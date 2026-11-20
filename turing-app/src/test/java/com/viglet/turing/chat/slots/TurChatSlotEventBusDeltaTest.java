@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDeltaDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDeltaDto;
 
 import reactor.core.Disposable;
 

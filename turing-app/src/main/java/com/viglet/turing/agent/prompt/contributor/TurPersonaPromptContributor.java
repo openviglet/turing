@@ -24,7 +24,7 @@ import com.viglet.turing.agent.prompt.TurPromptAssemblyContext;
 import com.viglet.turing.agent.prompt.TurPromptContributor;
 import com.viglet.turing.agent.prompt.TurPromptSegment;
 import com.viglet.turing.agent.prompt.TurPromptStability;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Block AL / §XXXV.1 — emits the persona "head" of the system prompt: the

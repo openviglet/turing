@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persistence.dto.agent.TurFormLabelTidyField;
-import com.viglet.turing.persistence.dto.agent.TurFormLabelTidyResponse;
+import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyField;
+import com.viglet.turing.agent.persistence.dto.TurFormLabelTidyResponse;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;

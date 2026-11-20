@@ -24,11 +24,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptIssueDto;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptPreviewDto;
-import com.viglet.turing.persistence.dto.agent.TurSystemPromptSegmentDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptIssueDto;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptPreviewDto;
+import com.viglet.turing.agent.persistence.dto.TurSystemPromptSegmentDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.system.TurLlmSummaryService;
 import com.viglet.turing.system.TurLlmSummaryService.SummaryResult;
 

@@ -36,9 +36,9 @@ import com.openai.models.files.FileObject;
 import com.openai.models.files.FilePurpose;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurVendorFile;
-import com.viglet.turing.persistence.repository.llm.TurVendorFileRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurVendorFile;
+import com.viglet.turing.llm.persistence.repository.TurVendorFileRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

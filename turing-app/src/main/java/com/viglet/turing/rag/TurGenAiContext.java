@@ -41,7 +41,7 @@ public class TurGenAiContext {
      * guard to the system prompt. {@code null} is treated as {@code OPEN} (e.g.
      * the {@link #disabled()} context), so it never forces grounding by accident.
      */
-    private final com.viglet.turing.persistence.model.agent.TurAgentGroundingMode groundingMode;
+    private final com.viglet.turing.agent.persistence.model.TurAgentGroundingMode groundingMode;
     private final RagInfrastructure ragInfrastructure;
     /**
      * T500 / §X.19 — per-site full-context (retrieval-free) answering opt-in.
@@ -61,7 +61,7 @@ public class TurGenAiContext {
      * belongs to, so the SN calls made with this context land in the cost ledger.
      * {@code null} on the {@link #disabled()} context.
      */
-    private final com.viglet.turing.persistence.model.llm.TurLLMInstance llmInstance;
+    private final com.viglet.turing.llm.persistence.model.TurLLMInstance llmInstance;
     private final String agentId;
     /** T1127 — the SN site the context answers for, recorded with each call's cost. */
     private final String siteName;

@@ -18,7 +18,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.stereotype.Service;
 
 import com.viglet.turing.observability.TurChatPipelineObservation;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p>When the assembled prompt for a turn exceeds the agent's
  * {@code maxPromptTokens} and the agent's
- * {@link com.viglet.turing.persistence.model.agent.TurAgentOverBudgetBehavior}
+ * {@link com.viglet.turing.agent.persistence.model.TurAgentOverBudgetBehavior}
  * is {@code COMPACT}, the {@link TurAgentChatExecutor} routes the
  * {@code List<Message>} through this compactor BEFORE the LLM call. The
  * compactor:

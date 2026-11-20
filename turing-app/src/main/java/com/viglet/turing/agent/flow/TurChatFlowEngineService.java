@@ -51,17 +51,17 @@ import com.viglet.turing.agent.flow.strategy.AdvanceContext;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.persona.TurAgentPersonaResolver;
 import com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowSubmissionDto;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowGuardrailMethod;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
-import com.viglet.turing.persistence.model.agent.TurChatFlowSubmission;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowSubmissionDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowGuardrailMethod;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowSubmission;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerMode;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.analytics.TurChatSessionOutcome;
 import com.viglet.turing.chat.slots.TurChatSlotEventBus;
@@ -541,7 +541,7 @@ public class TurChatFlowEngineService {
                         + (Objects.equals(previousNodeId, leaf.getCurrentNodeId())
                                 ? "" : "->" + leaf.getCurrentNodeId());
                 slotAuditService.recordDiff(leaf.getConversationId(), before, after,
-                        com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.NODE,
+                        com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.NODE,
                         detail);
             } catch (RuntimeException auditEx) {
                 log.debug("[FlowEngine] slot-audit skipped for conv={}: {}",
@@ -662,7 +662,7 @@ public class TurChatFlowEngineService {
         }
         for (Map.Entry<String, String> e : slotUpdates.entrySet()) {
             writeSlot(conversationId, e.getKey(), e.getValue(),
-                    com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.ENDPOINT,
+                    com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.ENDPOINT,
                     resumeReason == null ? "resume" : "resume=" + resumeReason);
         }
     }
@@ -768,7 +768,7 @@ public class TurChatFlowEngineService {
                     continue;
                 }
                 writeSlot(conversationId, e.getKey(), e.getValue(),
-                        com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.NODE,
+                        com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.NODE,
                         "formCapture");
                 fieldsWritten++;
             }
@@ -1062,7 +1062,7 @@ public class TurChatFlowEngineService {
      * @since 2026.3.1
      */
     @Transactional(readOnly = true)
-    public List<com.viglet.turing.persistence.dto.agent.TurChatSessionExportDto.FlowState> exportFlowStates(
+    public List<com.viglet.turing.agent.persistence.dto.TurChatSessionExportDto.FlowState> exportFlowStates(
             String conversationId) {
         if (conversationId == null || conversationId.isBlank()) {
             return List.of();
@@ -1072,7 +1072,7 @@ public class TurChatFlowEngineService {
                         Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
                 .map(state -> {
                     TurChatFlow flow = state.getFlow();
-                    return new com.viglet.turing.persistence.dto.agent.TurChatSessionExportDto.FlowState(
+                    return new com.viglet.turing.agent.persistence.dto.TurChatSessionExportDto.FlowState(
                             state.getId(),
                             flow == null ? null : flow.getId(),
                             flow == null ? null : flow.getName(),
@@ -1170,7 +1170,7 @@ public class TurChatFlowEngineService {
      */
     public int writeSlot(String conversationId, String name, String value) {
         return writeSlot(conversationId, name, value,
-                com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.ENDPOINT, null);
+                com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.ENDPOINT, null);
     }
 
     /**
@@ -1182,7 +1182,7 @@ public class TurChatFlowEngineService {
      * @since 2026.3.1
      */
     public int writeSlot(String conversationId, String name, String value,
-            com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource source,
+            com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource source,
             String originDetail) {
         if (conversationId == null || conversationId.isBlank()
                 || name == null || name.isBlank()) {
@@ -1214,7 +1214,7 @@ public class TurChatFlowEngineService {
         // query (typically <1 ms).
         slotEventBus.publish(conversationId, listSlotsForConversation(conversationId).slots());
         slotAuditService.record(conversationId, name, previousValue, coerced,
-                source != null ? source : com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource.ENDPOINT,
+                source != null ? source : com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource.ENDPOINT,
                 originDetail);
         return touched;
     }

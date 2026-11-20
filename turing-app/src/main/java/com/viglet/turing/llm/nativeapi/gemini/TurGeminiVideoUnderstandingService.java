@@ -29,7 +29,7 @@ import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge;
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge.TurVendorFileRef;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 

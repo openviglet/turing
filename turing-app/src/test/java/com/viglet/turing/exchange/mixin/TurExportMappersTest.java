@@ -9,11 +9,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 
 import tools.jackson.databind.json.JsonMapper;
 

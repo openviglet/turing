@@ -21,8 +21,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * The core inputs to {@link TurAgentChatExecutor#execute} for one agent-driven

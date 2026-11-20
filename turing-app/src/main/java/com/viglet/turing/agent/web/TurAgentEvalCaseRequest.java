@@ -9,7 +9,7 @@
  */
 package com.viglet.turing.agent.web;
 
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
 
 /**
  * Request body for one golden case inside a {@code TurAgentEvalSet} upsert.

@@ -23,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.persona.match.dto.TurPersonaMatchDriftDto;
 import com.viglet.turing.persona.match.dto.TurPersonaMatchTrendDto;
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchCellHistory;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchCellHistoryRepository;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchCellHistory;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchCellHistoryRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

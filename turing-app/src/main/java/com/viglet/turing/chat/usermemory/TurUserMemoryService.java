@@ -14,8 +14,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.agent.TurUserMemory;
-import com.viglet.turing.persistence.repository.agent.TurUserMemoryRepository;
+import com.viglet.turing.agent.persistence.model.TurUserMemory;
+import com.viglet.turing.agent.persistence.repository.TurUserMemoryRepository;
 
 /**
  * T446 / §XXIII.5 — cross-conversation personal memory: the assistant's durable

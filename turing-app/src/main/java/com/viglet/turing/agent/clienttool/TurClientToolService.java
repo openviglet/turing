@@ -17,7 +17,7 @@ import java.util.Set;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

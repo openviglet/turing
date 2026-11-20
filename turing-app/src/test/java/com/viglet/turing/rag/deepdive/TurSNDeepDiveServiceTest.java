@@ -33,7 +33,7 @@ import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurSNChatRouteResolver;
 import com.viglet.turing.rag.catalog.TurCatalogCitation;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;

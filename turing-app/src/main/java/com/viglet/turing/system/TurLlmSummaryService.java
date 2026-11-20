@@ -14,11 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.domain.llm.TurLLMInstanceDomain;
-import com.viglet.turing.domain.llm.TurLLMInstanceRepositoryPort;
+import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
+import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

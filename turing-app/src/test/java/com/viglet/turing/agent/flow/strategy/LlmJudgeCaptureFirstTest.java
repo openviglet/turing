@@ -29,9 +29,9 @@ import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
 import com.viglet.turing.agent.flow.TurChatFlowStaticPromptCache;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowCaptureMode;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowCaptureMode;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * T51 / §VII.4.e — capture-first inversion behaviour of

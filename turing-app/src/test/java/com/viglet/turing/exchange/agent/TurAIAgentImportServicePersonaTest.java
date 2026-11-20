@@ -26,21 +26,21 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaAudience;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.customtool.TurCustomToolRepository;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.intent.TurIntentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaAudience;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 /**
@@ -89,7 +89,7 @@ class TurAIAgentImportServicePersonaTest {
     @Test
     void importCarriesPersonaKindAudienceAndPreservesId() {
         TurPersonaAudience audience = new TurPersonaAudience();
-        audience.setReadingLevel(com.viglet.turing.persistence.model.persona.TurPersonaReadingLevel.MIDDLE);
+        audience.setReadingLevel(com.viglet.turing.persona.persistence.model.TurPersonaReadingLevel.MIDDLE);
         audience.setPrimaryLanguage("en");
 
         TurPersona persona = new TurPersona();

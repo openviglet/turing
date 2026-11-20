@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
 import com.viglet.turing.llm.provider.llm.TurLlmModelMetadata;
 import com.viglet.turing.llm.provider.llm.TurLlmModelOption;
-import com.viglet.turing.persistence.repository.llm.TurLLMTokenUsageRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.llm.cost.lifecycle.TurLLMModelLifecycleService;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 

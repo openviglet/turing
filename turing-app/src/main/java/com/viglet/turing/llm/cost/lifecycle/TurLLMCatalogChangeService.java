@@ -21,9 +21,9 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.llm.provider.llm.TurCatalogChanges;
 import com.viglet.turing.llm.provider.llm.TurCatalogChanges.TurCatalogChangeEntry;
 import com.viglet.turing.llm.provider.llm.TurLlmModelCatalog;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMVendor;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMVendor;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 /**
  * T788 / §LIII.4 (Block BE) — turns the catalog change feed (T788 in

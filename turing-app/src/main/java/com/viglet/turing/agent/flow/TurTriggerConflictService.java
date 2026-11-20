@@ -20,9 +20,9 @@ import java.util.Set;
 import org.apache.lucene.analysis.Analyzer;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowTriggerConflictDto;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowTriggerConflictDto;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 
 /**
  * T91 / §VII.11.a — surfaces pairs of chat flows whose

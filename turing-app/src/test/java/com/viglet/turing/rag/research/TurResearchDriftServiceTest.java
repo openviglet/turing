@@ -27,14 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.rag.research.dto.TurResearchDriftDto;
 import com.viglet.turing.rag.research.dto.TurResearchSaturationResultDto;
-import com.viglet.turing.persistence.model.research.TurResearchInsightSnapshot;
-import com.viglet.turing.persistence.model.research.TurResearchInterview;
-import com.viglet.turing.persistence.model.research.TurResearchInterviewStatus;
-import com.viglet.turing.persistence.model.research.TurResearchSchedule;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.repository.research.TurResearchInsightSnapshotRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchInterviewRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInsightSnapshot;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterview;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterviewStatus;
+import com.viglet.turing.rag.persistence.model.research.TurResearchSchedule;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchInsightSnapshotRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 
 /**
  * T729 / §XLVI.4 — Continuous Insight drift: capturing the deterministic

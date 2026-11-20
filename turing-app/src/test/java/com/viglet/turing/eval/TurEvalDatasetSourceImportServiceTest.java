@@ -26,15 +26,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.eval.selftuning.TurSelfTuningMiner;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionMessageDto;
-import com.viglet.turing.persistence.dto.agent.TurChatSessionMessagesDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurChatFlowSubmission;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionMessageDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSessionMessagesDto;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurChatFlowSubmission;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
 

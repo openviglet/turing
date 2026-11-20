@@ -25,8 +25,8 @@ import com.viglet.turing.shared.exception.TurValidationException;
 import com.viglet.turing.persona.fit.TurContentFitMisfit;
 import com.viglet.turing.persona.fit.TurContentFitResult;
 import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -20,7 +20,7 @@ import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 import lombok.extern.slf4j.Slf4j;
 

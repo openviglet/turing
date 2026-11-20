@@ -25,8 +25,8 @@ import com.viglet.core.webhook.VigletWebhookDeliveryResult;
 import com.viglet.core.webhook.VigletWebhookDispatcher;
 import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.core.webhook.VigletWebhookRetryPolicy;
-import com.viglet.turing.persistence.model.agent.TurChatWebhook;
-import com.viglet.turing.persistence.repository.agent.TurChatWebhookRepository;
+import com.viglet.turing.agent.persistence.model.TurChatWebhook;
+import com.viglet.turing.agent.persistence.repository.TurChatWebhookRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

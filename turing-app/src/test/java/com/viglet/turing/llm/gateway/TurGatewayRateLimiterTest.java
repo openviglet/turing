@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 
 /**
  * T742 / §XLIX — unit coverage for per-key gateway rate limiting.

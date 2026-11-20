@@ -33,7 +33,7 @@ import com.viglet.turing.batch.TurBatchProvider;
 import com.viglet.turing.batch.TurBatchState;
 import com.viglet.turing.batch.TurBatchStatus;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 import lombok.extern.slf4j.Slf4j;
 

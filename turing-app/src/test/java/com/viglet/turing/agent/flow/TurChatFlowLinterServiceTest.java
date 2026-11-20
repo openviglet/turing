@@ -23,14 +23,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.CacheManager;
 
 import com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowLintIssueDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowTriggerConflictDto;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowLintIssueDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowTriggerConflictDto;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 
@@ -265,12 +265,12 @@ class TurChatFlowLinterServiceTest {
         flowA.setTriggerDescription(
                 "Plano de carreira desenvolvimento profissional individual");
         flowA.setTriggerLanguage(
-                com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage.PT);
+                com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage.PT);
         TurChatFlow flowB = flow("flow-b", def);
         flowB.setTriggerDescription(
                 "Plano de carreira desenvolvimento profissional adicional");
         flowB.setTriggerLanguage(
-                com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage.PT);
+                com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage.PT);
         when(chatFlowRepository.findByTurAIAgent_IdOrderByNameAsc(AGENT_ID))
                 .thenReturn(List.of(flowA, flowB));
 
@@ -504,8 +504,8 @@ class TurChatFlowLinterServiceTest {
         flow.setName(id);
         flow.setEnabled(1);
         flow.setDefinitionJson(definitionJson);
-        com.viglet.turing.persistence.model.agent.TurAIAgent owning =
-                new com.viglet.turing.persistence.model.agent.TurAIAgent();
+        com.viglet.turing.agent.persistence.model.TurAIAgent owning =
+                new com.viglet.turing.agent.persistence.model.TurAIAgent();
         owning.setId(AGENT_ID);
         flow.setTurAIAgent(owning);
         return flow;

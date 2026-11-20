@@ -24,9 +24,9 @@ import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService;
 import com.viglet.turing.llm.nativeapi.capability.TurCapabilityDescriptor;
 import com.viglet.turing.llm.nativeapi.capability.TurCapabilityRegistry;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.llm.TurLLMInstanceCapability;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstanceCapability;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -32,15 +32,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.persistence.dto.mcp.TurMcpServerDto;
-import com.viglet.turing.persistence.mapper.mcp.TurMcpServerMapper;
-import com.viglet.turing.persistence.mapper.mcp.TurMcpServerMapperImpl;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerConnectionType;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerType;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
+import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.mcp.persistence.mapper.TurMcpServerMapper;
+import com.viglet.turing.mcp.persistence.mapper.TurMcpServerMapperImpl;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 

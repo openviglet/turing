@@ -45,10 +45,10 @@ import com.viglet.turing.sn.domain.TurSNSiteDomain;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurSNGenAi;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 

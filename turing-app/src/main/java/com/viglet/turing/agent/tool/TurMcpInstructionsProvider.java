@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 
 /**
  * Builds the system-prompt fragment that carries each attached MCP server's

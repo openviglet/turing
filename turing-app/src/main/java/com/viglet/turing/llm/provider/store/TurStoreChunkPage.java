@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * A page of chunks returned by
- * {@link TurGenAiStoreProvider#listChunks(com.viglet.turing.persistence.model.store.TurStoreInstance,
+ * {@link TurGenAiStoreProvider#listChunks(com.viglet.turing.rag.persistence.model.store.TurStoreInstance,
  * String, String, int, int, Map)} — used by the ANN admin UI to browse all
  * indexed content without similarity scoring.
  *

@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.llm.nativeapi.TurNativeCapability;
 import com.viglet.turing.llm.nativeapi.mcp.TurMcpFederationDirectory.FederatedMcp;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerConnectionType;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
 
 class TurMcpFederationDirectoryTest {
 

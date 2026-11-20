@@ -23,7 +23,7 @@ import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.ChatFlowNode.FormField;
 import com.viglet.turing.agent.flow.ChatFlowNode.NodeData;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Pure-function tests for the T107 native multi-field {@code formCapture}

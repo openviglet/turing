@@ -27,7 +27,7 @@ import com.viglet.turing.transcription.TurTranscriptionBusyException;
 import com.viglet.turing.transcription.TurTranscriptionHints;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
-import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
+import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurTranscriptionProperty;
 

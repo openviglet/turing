@@ -8,7 +8,7 @@
  */
 package com.viglet.turing.llm.gateway;
 
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 
 /**
  * T741 / §XLIX — per-request holder for the authenticated {@link TurGatewayKey}.

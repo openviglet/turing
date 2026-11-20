@@ -20,7 +20,7 @@ import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletFieldType;
 import com.viglet.core.manifest.VigletManifestDeriveRequest;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;

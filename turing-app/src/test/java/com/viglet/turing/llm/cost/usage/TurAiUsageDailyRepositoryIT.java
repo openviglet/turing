@@ -18,8 +18,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.viglet.turing.persistence.model.llm.TurAiUsageDaily;
-import com.viglet.turing.persistence.repository.llm.TurAiUsageDailyRepository;
+import com.viglet.turing.llm.persistence.model.TurAiUsageDaily;
+import com.viglet.turing.llm.persistence.repository.TurAiUsageDailyRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

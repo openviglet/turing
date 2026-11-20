@@ -26,7 +26,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.genai.Client;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiEmbeddingModel;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T510 / §XXVIII.6 — Google <b>Vertex AI</b> provider, the enterprise path for

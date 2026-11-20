@@ -25,9 +25,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.persistence.model.llm.TurLLMPrice;
-import com.viglet.turing.persistence.model.llm.TurLLMPriceSource;
-import com.viglet.turing.persistence.repository.llm.TurLLMPriceRepository;
+import com.viglet.turing.llm.persistence.model.TurLLMPrice;
+import com.viglet.turing.llm.persistence.model.TurLLMPriceSource;
+import com.viglet.turing.llm.persistence.repository.TurLLMPriceRepository;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService.CatalogPrice;
 
 /**

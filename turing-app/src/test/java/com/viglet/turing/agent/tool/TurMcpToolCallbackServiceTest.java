@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.tool.ToolCallback;
 
-import com.viglet.turing.domain.mcp.TurMcpServerDomain;
-import com.viglet.turing.domain.mcp.TurMcpServerRepositoryPort;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerConnectionType;
-import com.viglet.turing.persistence.model.mcp.TurMcpServerTransportType;
+import com.viglet.turing.mcp.domain.TurMcpServerDomain;
+import com.viglet.turing.mcp.domain.TurMcpServerRepositoryPort;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.mcp.persistence.model.TurMcpServerTransportType;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

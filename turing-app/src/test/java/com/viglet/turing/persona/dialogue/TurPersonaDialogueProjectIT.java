@@ -21,11 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueProjectDto;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.persona.dialogue.TurPersonaDialogueProjectRepository;
-import com.viglet.turing.persistence.repository.persona.dialogue.TurPersonaDialogueTurnRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.repository.dialogue.TurPersonaDialogueProjectRepository;
+import com.viglet.turing.persona.persistence.repository.dialogue.TurPersonaDialogueTurnRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

@@ -3,7 +3,7 @@ package com.viglet.turing.llm.provider.store;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;
 
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
 
 import java.util.List;
 import java.util.Map;

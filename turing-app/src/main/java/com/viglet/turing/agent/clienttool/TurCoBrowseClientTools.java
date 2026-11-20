@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * T443 / §XXIII.2 — the built-in "co-browse" client tools.

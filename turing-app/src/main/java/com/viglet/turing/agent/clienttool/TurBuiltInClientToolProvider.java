@@ -11,7 +11,7 @@ package com.viglet.turing.agent.clienttool;
 
 import java.util.List;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * A source of <em>built-in</em> frontend ("client") tools that {@link

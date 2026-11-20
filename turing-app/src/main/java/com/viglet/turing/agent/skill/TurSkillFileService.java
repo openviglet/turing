@@ -32,8 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.agent.skill.TurSkillFileNode;
-import com.viglet.turing.persistence.model.skill.TurSkill;
-import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurStorageKeys;

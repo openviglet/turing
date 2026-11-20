@@ -34,7 +34,7 @@ import com.viglet.turing.agent.prompt.TurPromptAssemblyPipeline;
 import com.viglet.turing.agent.prompt.TurPromptMessage;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.observability.TurMeterNames;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * Composes the {@code List<Message>} that ships to the LLM:

@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * T442 / §XXIII.1 — the built-in "answer-as-an-app" generative-UI client tools.

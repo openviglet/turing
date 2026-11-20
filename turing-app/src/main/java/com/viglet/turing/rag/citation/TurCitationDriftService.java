@@ -31,8 +31,8 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.rag.TurRagSource;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
-import com.viglet.turing.persistence.model.agent.TurChatCitationRecord;
-import com.viglet.turing.persistence.repository.agent.TurChatCitationRecordRepository;
+import com.viglet.turing.agent.persistence.model.TurChatCitationRecord;
+import com.viglet.turing.agent.persistence.repository.TurChatCitationRecordRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurGenAiProperty.TurGenAiCitationDriftProperty;
 

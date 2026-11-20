@@ -24,31 +24,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.exchange.TurExchange;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.customtool.TurCustomTool;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.intent.TurIntent;
-import com.viglet.turing.persistence.model.intent.TurIntentAction;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
-import com.viglet.turing.persistence.repository.agent.TurAgentEvalSetRepository;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.persistence.repository.customtool.TurCustomToolRepository;
-import com.viglet.turing.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.persistence.repository.intent.TurIntentRepository;
-import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.persistence.repository.mcp.TurMcpServerRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderConfig;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.agent.persistence.model.intent.TurIntent;
+import com.viglet.turing.agent.persistence.model.intent.TurIntentAction;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
+import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
+import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
+import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
+import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;
@@ -413,7 +413,7 @@ public class TurAIAgentImportService {
         // export that omits the field keeps the entity default (OPEN) instead of
         // nulling a non-null column.
         agent.setGroundingMode(a.getGroundingMode() == null
-                ? com.viglet.turing.persistence.model.agent.TurAgentGroundingMode.OPEN
+                ? com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.OPEN
                 : a.getGroundingMode());
         // T1004 — chat mode travels with the agent, null-guarded the same way: a
         // bundle written before this field existed keeps CALL, and one that asks
@@ -421,7 +421,7 @@ public class TurAIAgentImportService {
         // Like every scalar here, this only reaches an existing agent under
         // overwrite=true — without it the agent is skipped whole (see caller).
         agent.setChatMode(a.getChatMode() == null
-                ? com.viglet.turing.persistence.model.agent.TurAgentChatMode.CALL
+                ? com.viglet.turing.agent.persistence.model.TurAgentChatMode.CALL
                 : a.getChatMode());
         // T632 / T295 — rich-content rendering travels with the agent. Primitive
         // boolean: a pre-T632 export that omits it deserializes to false, which

@@ -25,7 +25,7 @@ import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.rag.citation.TurChatCitation;
 import com.viglet.turing.rag.citation.TurCitationDocument;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

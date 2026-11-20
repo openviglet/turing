@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 
 /**
  * Unit tests for {@link TurHuggingFaceEmbeddingModelFactory}. Only the cheap,

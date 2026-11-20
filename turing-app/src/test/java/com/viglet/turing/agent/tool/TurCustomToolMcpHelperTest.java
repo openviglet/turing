@@ -30,9 +30,9 @@ import org.springframework.ai.tool.metadata.DefaultToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.mcp.TurMcpServer;
-import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 /**
  * Tests for T425 / §XXI.1 — the {@code mcp} custom-tool binding

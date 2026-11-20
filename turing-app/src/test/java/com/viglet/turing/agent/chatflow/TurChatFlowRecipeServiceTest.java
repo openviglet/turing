@@ -17,8 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeDto;
-import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeSummaryDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeDto;
+import com.viglet.turing.agent.persistence.dto.TurChatFlowRecipeSummaryDto;
 
 /**
  * Loads the bundled recipes from the classpath and pins the catalog

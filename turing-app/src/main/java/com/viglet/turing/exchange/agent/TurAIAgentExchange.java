@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.agent.TurAIAgentSlot;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.intent.TurIntent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgentSlot;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.intent.TurIntent;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -49,13 +49,13 @@ public class TurAIAgentExchange {
     // Per-agent grounding policy. Carried so STRICT_RAG survives an export/import
     // round-trip (e.g. the public demo ships its agent locked to site content).
     // Null on a pre-existing export that omits it → import falls back to OPEN.
-    private com.viglet.turing.persistence.model.agent.TurAgentGroundingMode groundingMode;
+    private com.viglet.turing.agent.persistence.model.TurAgentGroundingMode groundingMode;
     // T1004 — per-agent chat mode. Carried for the same reason as groundingMode:
     // a seeded demo agent that is meant to stream its answer has to arrive that
     // way, and without this field the import silently produced the CALL default
     // no matter what the bundle said. Null on an export that omits it → import
     // falls back to the entity default.
-    private com.viglet.turing.persistence.model.agent.TurAgentChatMode chatMode;
+    private com.viglet.turing.agent.persistence.model.TurAgentChatMode chatMode;
     // T295 / render.md — per-agent rich-content rendering (```html/```d2/charts).
     // Carried so the capability survives an export/import round-trip (e.g. the
     // public demo ships its agent with this on). Primitive default (false)
@@ -84,10 +84,10 @@ public class TurAIAgentExchange {
     private String requestOptionsJson;
     private String pythonRequirements;
     // T66 / §VII.6.g — submission retention policy travels with the agent.
-    private com.viglet.turing.persistence.model.agent.TurSubmissionRetention submissionRetention;
+    private com.viglet.turing.agent.persistence.model.TurSubmissionRetention submissionRetention;
     private Integer submissionRetentionDays;
     // T166 / §X.9.d — memory tool scope travels with the agent.
-    private com.viglet.turing.persistence.model.agent.TurMemoryScope memoryScope;
+    private com.viglet.turing.agent.persistence.model.TurMemoryScope memoryScope;
 
     // ─── reference IDs (entities live at envelope root) ───────────────
     private List<String> personaIds = new ArrayList<>();

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.persistence.dto.agent.TurChatSlotSseChannelsDto;
+import com.viglet.turing.agent.persistence.dto.TurChatSlotSseChannelsDto;
 import com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode;
 
 /**

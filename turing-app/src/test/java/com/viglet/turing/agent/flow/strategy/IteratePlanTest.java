@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps.PlanItem;
-import com.viglet.turing.persistence.model.agent.TurChatFlowState;
+import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 
 /**
  * Pure-function tests for the T108-2 {@code iteratePlan} helpers in

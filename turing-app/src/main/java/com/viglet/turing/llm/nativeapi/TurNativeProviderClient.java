@@ -17,7 +17,7 @@ import java.util.Optional;
 import com.anthropic.client.AnthropicClient;
 import com.google.genai.Client;
 import com.openai.client.OpenAIClient;
-import com.viglet.turing.persistence.model.llm.TurLLMInstance;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 
 /**
  * T130 / §X.2 — the seam. Exposes per-{@link TurLLMInstance} access to the

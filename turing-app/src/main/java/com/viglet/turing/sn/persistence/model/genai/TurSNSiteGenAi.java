@@ -21,8 +21,8 @@ package com.viglet.turing.sn.persistence.model.genai;
 import java.io.Serial;
 import java.io.Serializable;
 
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.rag.TurRagBm25Source;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.rag.persistence.model.TurRagBm25Source;
 import com.viglet.turing.persistence.model.se.TurSEInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;

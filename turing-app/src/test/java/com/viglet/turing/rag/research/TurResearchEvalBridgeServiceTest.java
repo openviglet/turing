@@ -26,21 +26,21 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.rag.research.dto.TurResearchReportDto;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
-import com.viglet.turing.persistence.model.agent.TurEvalDataset;
-import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.research.TurResearchInterview;
-import com.viglet.turing.persistence.model.research.TurResearchInterviewStatus;
-import com.viglet.turing.persistence.model.research.TurResearchProtocol;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.model.research.TurResearchStudyPersona;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
-import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchInterviewRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
+import com.viglet.turing.agent.persistence.model.TurEvalDataset;
+import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterview;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterviewStatus;
+import com.viglet.turing.rag.persistence.model.research.TurResearchProtocol;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudyPersona;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
+import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 
 /**
  * T725 / §XLVI.4 — promoting a completed Synthetic User Research study into a

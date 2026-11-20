@@ -36,7 +36,7 @@ class TurRagSearchToolServiceTest {
     @Mock
     private com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository snSiteGenAiRepository;
     @Mock
-    private com.viglet.turing.persistence.repository.rag.TurRagBm25CoreRepository ragBm25CoreRepository;
+    private com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository ragBm25CoreRepository;
     @Mock
     private com.viglet.turing.searchengine.TurSearchEnginePluginFactory searchEnginePluginFactory;
     @Mock
@@ -382,8 +382,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -408,8 +408,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -444,8 +444,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -477,8 +477,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -509,8 +509,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -547,8 +547,8 @@ class TurRagSearchToolServiceTest {
                 org.mockito.Mockito.mock(org.springframework.ai.embedding.EmbeddingModel.class);
         com.viglet.turing.llm.provider.store.TurGenAiStoreProvider mockStoreProvider =
                 org.mockito.Mockito.mock(com.viglet.turing.llm.provider.store.TurGenAiStoreProvider.class);
-        com.viglet.turing.persistence.model.store.TurStoreInstance mockStoreInstance =
-                org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        com.viglet.turing.rag.persistence.model.store.TurStoreInstance mockStoreInstance =
+                org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
 
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore, mockEmbeddingModel, mockStoreProvider, mockStoreInstance, "cred", "collection");
@@ -605,7 +605,7 @@ class TurRagSearchToolServiceTest {
         when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
 
         var mockVectorStore = org.mockito.Mockito.mock(org.springframework.ai.vectorstore.VectorStore.class);
-        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
         when(mockStoreInstance.getId()).thenReturn("store-1");
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore,
@@ -619,7 +619,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         var seInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.se.TurSEInstance.class);
         binding.setRagSeInstance(seInstance);
         when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
@@ -657,7 +657,7 @@ class TurRagSearchToolServiceTest {
         when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
 
         var mockVectorStore = org.mockito.Mockito.mock(org.springframework.ai.vectorstore.VectorStore.class);
-        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
         when(mockStoreInstance.getId()).thenReturn("store-1");
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore,
@@ -669,12 +669,12 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstance(org.mockito.Mockito.mock(com.viglet.turing.persistence.model.se.TurSEInstance.class));
         when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
 
-        var core = new com.viglet.turing.persistence.model.rag.TurRagBm25Core();
-        core.setStatus(com.viglet.turing.persistence.model.rag.TurRagBm25Core.Status.PROVISIONING);
+        var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
+        core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONING);
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
                 "store-1", java.util.Locale.forLanguageTag("en-US")))
                 .thenReturn(java.util.Optional.of(core));
@@ -702,7 +702,7 @@ class TurRagSearchToolServiceTest {
         when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
 
         var mockVectorStore = org.mockito.Mockito.mock(org.springframework.ai.vectorstore.VectorStore.class);
-        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
         when(mockStoreInstance.getId()).thenReturn("store-1");
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore,
@@ -715,12 +715,12 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstance(seInstance);
         when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
 
-        var core = new com.viglet.turing.persistence.model.rag.TurRagBm25Core();
-        core.setStatus(com.viglet.turing.persistence.model.rag.TurRagBm25Core.Status.PROVISIONED);
+        var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
+        core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
         core.setCoreName("rag_store_pt-BR");
         core.setTurSEInstance(seInstance);
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
@@ -770,7 +770,7 @@ class TurRagSearchToolServiceTest {
         when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
 
         var mockVectorStore = org.mockito.Mockito.mock(org.springframework.ai.vectorstore.VectorStore.class);
-        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
         when(mockStoreInstance.getId()).thenReturn("store-1");
         TurRagContextBuilder.RagInfrastructure infra = new TurRagContextBuilder.RagInfrastructure(
                 mockVectorStore,
@@ -783,12 +783,12 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstance(seInstance);
         when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
 
-        var core = new com.viglet.turing.persistence.model.rag.TurRagBm25Core();
-        core.setStatus(com.viglet.turing.persistence.model.rag.TurRagBm25Core.Status.PROVISIONED);
+        var core = new com.viglet.turing.rag.persistence.model.TurRagBm25Core();
+        core.setStatus(com.viglet.turing.rag.persistence.model.TurRagBm25Core.Status.PROVISIONED);
         core.setCoreName("rag_store_pt-BR");
         core.setTurSEInstance(seInstance);
         when(ragBm25CoreRepository.findByTurStoreInstance_IdAndLocale(
@@ -832,7 +832,7 @@ class TurRagSearchToolServiceTest {
         when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
 
         var mockVectorStore = org.mockito.Mockito.mock(org.springframework.ai.vectorstore.VectorStore.class);
-        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.persistence.model.store.TurStoreInstance.class);
+        var mockStoreInstance = org.mockito.Mockito.mock(com.viglet.turing.rag.persistence.model.store.TurStoreInstance.class);
         // Note: mockStoreInstance.getId() is NOT stubbed — the defensive
         // check (seInstance == null) short-circuits before any storeId
         // resolution, so the call shouldn't happen at all.
@@ -846,7 +846,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.persistence.model.rag.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstance(null); // <- the misconfiguration
         when(snSiteGenAiRepository.findByTurAIAgent_Id("agent-1")).thenReturn(List.of(binding));
 

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.agent.clienttool.TurBuiltInClientToolProvider;
 import com.viglet.turing.agent.clienttool.TurClientTool;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
 
 /**
  * T449 / §XXIII.8 — exposes each available skill's shipped UI components (its

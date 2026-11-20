@@ -25,7 +25,7 @@ package com.viglet.turing.llm.provider.llm;
  * model picker (T624/T626).
  *
  * <p>{@code repoId} is the exact string stored in
- * {@link com.viglet.turing.persistence.model.embedding.TurEmbeddingModel}'s
+ * {@link com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel}'s
  * {@code modelReference} column when the {@code HUGGINGFACE} provider is chosen
  * (e.g. {@code sentence-transformers/all-MiniLM-L6-v2}). The remaining fields
  * are display/ranking metadata: {@code downloads}/{@code likes} for popularity

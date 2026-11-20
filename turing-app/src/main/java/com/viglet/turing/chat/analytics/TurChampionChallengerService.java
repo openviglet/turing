@@ -18,8 +18,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SignificanceResult;
 import com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric;
 

@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.domain.llm.LlmInstanceUpdatedEvent;
-import com.viglet.turing.domain.llm.LlmProviderType;
+import com.viglet.turing.llm.domain.LlmInstanceUpdatedEvent;
+import com.viglet.turing.llm.domain.LlmProviderType;
 import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 
 /**

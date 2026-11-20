@@ -19,7 +19,7 @@ package com.viglet.turing.domain.event;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.domain.llm.LlmInstanceUpdatedEvent;
+import com.viglet.turing.llm.domain.LlmInstanceUpdatedEvent;
 import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
 
 import lombok.extern.slf4j.Slf4j;

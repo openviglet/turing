@@ -24,10 +24,10 @@ import org.springframework.web.server.ResponseStatusException;
 import com.viglet.turing.persona.fit.TurContentFitResult;
 import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
 import com.viglet.turing.persona.fit.TurPersonaFitReport;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaSource;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaSourceRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaSource;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;

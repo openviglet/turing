@@ -51,9 +51,9 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.ProceduralOutcome;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.RouterCandidate;
-import com.viglet.turing.persistence.model.agent.TurChatFlow;
-import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerLanguage;
-import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
+import com.viglet.turing.agent.persistence.model.TurChatFlow;
+import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
+import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

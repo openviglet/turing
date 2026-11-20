@@ -23,11 +23,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.eval.grader.builtin.TurNodeGrader;
 import com.viglet.turing.eval.grader.builtin.TurOutcomeGrader;
 import com.viglet.turing.eval.grader.builtin.TurSlotMatchGrader;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
-import com.viglet.turing.persistence.model.agent.TurEvalGraderStack;
-import com.viglet.turing.persistence.repository.agent.TurEvalGraderStackRepository;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalSet;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderConfig;
+import com.viglet.turing.agent.persistence.model.TurEvalGraderStack;
+import com.viglet.turing.agent.persistence.repository.TurEvalGraderStackRepository;
 
 /**
  * T600 / §XXXIII.15 — a set bound to a reusable stack resolves the stack's

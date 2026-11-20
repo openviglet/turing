@@ -28,13 +28,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.persona.TurPersonaSourceService;
-import com.viglet.turing.persistence.dto.persona.TurPersonaSourceDto;
-import com.viglet.turing.persistence.mapper.persona.TurPersonaSourceMapper;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaSource;
-import com.viglet.turing.persistence.model.persona.TurPersonaSourceType;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.persona.TurPersonaSourceRepository;
+import com.viglet.turing.persona.persistence.dto.TurPersonaSourceDto;
+import com.viglet.turing.persona.persistence.mapper.TurPersonaSourceMapper;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaSource;
+import com.viglet.turing.persona.persistence.model.TurPersonaSourceType;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.persona.persistence.repository.TurPersonaSourceRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

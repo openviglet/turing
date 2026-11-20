@@ -26,7 +26,7 @@ import com.viglet.turing.persona.authoring.persona.TurPersonaAudioDeriveService.
 import com.viglet.turing.transcription.TurTranscriptionProgressListener;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
-import com.viglet.turing.persistence.dto.persona.TurPersonaDto;
+import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurTranscriptionProperty;
 

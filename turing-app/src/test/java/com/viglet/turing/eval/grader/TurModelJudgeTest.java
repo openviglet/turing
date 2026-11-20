@@ -25,7 +25,7 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 
 import com.viglet.turing.eval.grader.builtin.TurModelJudgeGrader;
-import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
+import com.viglet.turing.agent.persistence.model.TurAgentEvalCase;
 
 /**
  * T590 / §XXXIII.5 — MODEL grader strategies: strategy-flavored prompt building,

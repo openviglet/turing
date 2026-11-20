@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchProject;
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchSchedule;
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchSource;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchProjectRepository;
-import com.viglet.turing.persistence.repository.persona.match.TurPersonaMatchSourceRepository;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchProject;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchSchedule;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchSource;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchProjectRepository;
+import com.viglet.turing.persona.persistence.repository.match.TurPersonaMatchSourceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

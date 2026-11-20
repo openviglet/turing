@@ -19,8 +19,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.persistence.repository.gateway.TurGatewayKeyRepository;
+import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
+import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayKeyRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

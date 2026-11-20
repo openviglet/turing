@@ -22,8 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.clienttool.TurClientTool;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.skill.TurSkill;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 
 @ExtendWith(MockitoExtension.class)
 class TurSkillUiClientToolProviderTest {

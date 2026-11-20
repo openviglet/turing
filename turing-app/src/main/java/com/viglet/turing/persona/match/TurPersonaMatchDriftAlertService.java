@@ -23,7 +23,7 @@ import com.viglet.core.webhook.VigletWebhookDispatcher;
 import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.core.webhook.VigletWebhookRetryPolicy;
 import com.viglet.turing.persona.match.dto.TurPersonaMatchDriftDto;
-import com.viglet.turing.persistence.model.persona.match.TurPersonaMatchProject;
+import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchProject;
 import com.viglet.turing.spring.security.ssrf.TurSsrfGuard;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

@@ -13,9 +13,9 @@
 package com.viglet.turing.agent.prompt;
 
 import com.viglet.turing.agent.TurAgentChatFlowContext;
-import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.persistence.model.embedding.TurEmbeddingModel;
-import com.viglet.turing.persistence.model.persona.TurPersona;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
+import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**
  * Block AL / §XXXV.1 — the inputs every {@link TurPromptContributor} reads to

@@ -21,14 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.viglet.turing.rag.research.dto.TurResearchInterviewDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyPersonaRefDto;
-import com.viglet.turing.persistence.model.persona.TurPersona;
-import com.viglet.turing.persistence.model.persona.TurPersonaKind;
-import com.viglet.turing.persistence.model.research.TurResearchInterview;
-import com.viglet.turing.persistence.model.research.TurResearchInterviewStatus;
-import com.viglet.turing.persistence.model.research.TurResearchStudy;
-import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchInterviewRepository;
-import com.viglet.turing.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.persona.persistence.model.TurPersona;
+import com.viglet.turing.persona.persistence.model.TurPersonaKind;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterview;
+import com.viglet.turing.rag.persistence.model.research.TurResearchInterviewStatus;
+import com.viglet.turing.rag.persistence.model.research.TurResearchStudy;
+import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
+import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**
