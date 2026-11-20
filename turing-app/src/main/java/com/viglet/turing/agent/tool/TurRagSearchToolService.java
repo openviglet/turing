@@ -72,6 +72,7 @@ public class TurRagSearchToolService {
     private final TurAssetTrainingRecordRepository trainingRecordRepository;
     private final TurSNSiteGenAis snSiteGenAiRepository;
     private final TurRagBm25CoreRepository ragBm25CoreRepository;
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
     private final TurSearchEnginePluginFactory searchEnginePluginFactory;
     private final com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver;
 
@@ -81,7 +82,9 @@ public class TurRagSearchToolService {
                                     TurSNSiteGenAis snSiteGenAiRepository,
                                     TurRagBm25CoreRepository ragBm25CoreRepository,
                                     TurSearchEnginePluginFactory searchEnginePluginFactory,
-                                    com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver) {
+                                    com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver,
+                                    com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository) {
+        this.seInstanceRepository = seInstanceRepository;
         this.globalSettingsService = globalSettingsService;
         this.ragContextBuilder = ragContextBuilder;
         this.trainingRecordRepository = trainingRecordRepository;
@@ -496,13 +499,11 @@ public class TurRagSearchToolService {
         TurRagBm25Source source = binding.getRagBm25Source() == null
                 ? TurRagBm25Source.EMBEDDED
                 : binding.getRagBm25Source();
-        // Touch the lazy SE instance inside the open Hibernate session. The
-        // chat flow runs inside @Transactional (TurAgentChatExecutor) so the
-        // session is available; outside it, hibernate.enable_lazy_load_no_trans
-        // opens a temp session.
+        // T1315 — the binding holds the SE instance by id; searchengine owns the row.
         TurSEInstance seInstance = source == TurRagBm25Source.SE_INSTANCE
-                ? binding.getRagSeInstance()
-                : null;
+                && binding.getRagSeInstanceId() != null
+                        ? seInstanceRepository.findById(binding.getRagSeInstanceId()).orElse(null)
+                        : null;
         return new AgentRagFlags(binding.isRagBm25Fallback(), binding.isRagHybridSearch(),
                 source, seInstance);
     }

@@ -92,6 +92,7 @@ public class TurRagBm25CoreAPI {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurRagContextBuilder ragContextBuilder;
     private final com.viglet.turing.tenant.TurTenantCoreNaming turTenantCoreNaming;
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
 
     /**
      * Admin status row for one (site locale, BM25 core) pair. Sent to the
@@ -172,7 +173,10 @@ public class TurRagBm25CoreAPI {
         }
         TurSNSite site = siteOpt.get();
         TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-        if (genAi == null || genAi.getRagSeInstance() == null) {
+        // T1315 — the GenAI settings hold the SE instance by id; searchengine owns the row.
+        var ragSeInstance = genAi == null || genAi.getRagSeInstanceId() == null ? null
+                : seInstanceRepository.findById(genAi.getRagSeInstanceId()).orElse(null);
+        if (ragSeInstance == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(List.of());
         }
@@ -191,7 +195,7 @@ public class TurRagBm25CoreAPI {
             try {
                 // Idempotent — already-PROVISIONED rows return without
                 // a re-create call, ERROR rows are retried.
-                provisioner.provision(storeInstance, loc.getLanguage(), genAi.getRagSeInstance());
+                provisioner.provision(storeInstance, loc.getLanguage(), ragSeInstance);
             } catch (RuntimeException e) {
                 log.warn("[RagCoresAPI] Failed to provision locale {} for site {}: {}",
                         loc.getLanguage().toLanguageTag(), siteId, e.getMessage());

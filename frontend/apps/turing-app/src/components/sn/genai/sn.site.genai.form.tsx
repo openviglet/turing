@@ -170,7 +170,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
             // T24b — BM25 source defaults to EMBEDDED so a pre-T24b
             // binding renders the radio in the safe "no SE selected" state.
             ragBm25Source: snSite.turSNSiteGenAi?.ragBm25Source ?? "EMBEDDED",
-            ragSeInstance: snSite.turSNSiteGenAi?.ragSeInstance ?? null,
+            ragSeInstanceId: snSite.turSNSiteGenAi?.ragSeInstanceId ?? null,
             // T383 — public SN search ranking mode; LEGACY keeps the historical
             // lexical-only ranking so a pre-T383 binding renders the legacy state.
             snRankingMode: snSite.turSNSiteGenAi?.snRankingMode ?? "LEGACY",
@@ -1066,7 +1066,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                         }
                                                         onClick={() => {
                                                             field.onChange("EMBEDDED");
-                                                            form.setValue("ragSeInstance", null);
+                                                            form.setValue("ragSeInstanceId", null);
                                                         }}
                                                     >
                                                         {t("forms.snGenai.bm25SourceEmbedded")}
@@ -1093,7 +1093,7 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                     <>
                                         <FormField
                                             control={form.control}
-                                            name="ragSeInstance"
+                                            name="ragSeInstanceId"
                                             render={({ field }) => (
                                                 <FormItemTwoColumns>
                                                     <FormItemTwoColumns.Left>
@@ -1106,15 +1106,10 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                     </FormItemTwoColumns.Left>
                                                     <FormItemTwoColumns.Right>
                                                         <Select
-                                                            value={field.value?.id ?? NONE_VALUE}
-                                                            onValueChange={(val) => {
-                                                                if (val === NONE_VALUE) {
-                                                                    field.onChange(null);
-                                                                    return;
-                                                                }
-                                                                const inst = seInstances.find((i) => i.id === val);
-                                                                field.onChange(inst ?? null);
-                                                            }}
+                                                            value={field.value ?? NONE_VALUE}
+                                                            onValueChange={(val) =>
+                                                                field.onChange(val === NONE_VALUE ? null : val)
+                                                            }
                                                             disabled={!ragEnabled}
                                                         >
                                                             <SelectTrigger>
@@ -1167,12 +1162,12 @@ export const SNSiteGenAiForm: React.FC<Props> = ({ snSite, baseRoute = ROUTES.BE
                                                         disabled={
                                                             isProvisioning
                                                             || form.formState.isDirty
-                                                            || !snSite.turSNSiteGenAi?.ragSeInstance
+                                                            || !snSite.turSNSiteGenAi?.ragSeInstanceId
                                                         }
                                                         title={
                                                             form.formState.isDirty
                                                                 ? t("forms.snGenai.coresSaveFirst")
-                                                                : !snSite.turSNSiteGenAi?.ragSeInstance
+                                                                : !snSite.turSNSiteGenAi?.ragSeInstanceId
                                                                     ? t("forms.snGenai.coresPickSe")
                                                                     : undefined
                                                         }

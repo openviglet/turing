@@ -207,11 +207,10 @@ public class TurSNSiteAPI {
                 turSNSiteGenAi.setRagBm25Source(
                         Optional.ofNullable(genAi.getRagBm25Source())
                                 .orElse(com.viglet.turing.rag.persistence.model.TurRagBm25Source.EMBEDDED));
-                turSNSiteGenAi.setRagSeInstance(
-                        Optional.ofNullable(genAi.getRagSeInstance())
-                                .map(se -> se.getId() != null
-                                        ? turSEInstanceRepository.findById(se.getId()).orElse(null)
-                                        : null)
+                // T1315 — the SE instance is held by id; keep it only when it exists.
+                turSNSiteGenAi.setRagSeInstanceId(
+                        Optional.ofNullable(genAi.getRagSeInstanceId())
+                                .filter(turSEInstanceRepository::existsById)
                                 .orElse(null));
                 // T383 / §XX.3 — public SN search ranking mode (LEGACY default,
                 // HYBRID_RRF opts into BM25 + vector RRF fusion). Distinct from

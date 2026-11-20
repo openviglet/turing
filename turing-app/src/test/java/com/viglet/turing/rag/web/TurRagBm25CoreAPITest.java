@@ -52,6 +52,8 @@ import com.viglet.turing.system.TurGlobalSettingsService;
 @ExtendWith(MockitoExtension.class)
 class TurRagBm25CoreAPITest {
 
+    private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository = mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class);
+
     private TurRagBm25CoreAPI newApi(
             TurSNSites siteRepo,
             TurSNSiteLocales localeRepo,
@@ -64,7 +66,7 @@ class TurRagBm25CoreAPITest {
                         new com.viglet.turing.tenant.TurTenantContext(
                                 new com.viglet.turing.properties.TurConfigProperties()));
         return new TurRagBm25CoreAPI(siteRepo, localeRepo, coreRepo, provisioner, settings, builder,
-                coreNaming);
+                coreNaming, seInstanceRepository);
     }
 
     private TurSNSiteLocale localeFor(String tag) {
@@ -190,7 +192,8 @@ class TurRagBm25CoreAPITest {
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setId("se-1");
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setRagSeInstance(seInstance);
+        genAi.setRagSeInstanceId("se-bound");
+        when(seInstanceRepository.findById("se-bound")).thenReturn(Optional.of(seInstance));
         TurSNSite site = new TurSNSite();
         site.setTurSNSiteGenAi(genAi);
 
@@ -226,7 +229,8 @@ class TurRagBm25CoreAPITest {
 
         TurSEInstance seInstance = new TurSEInstance();
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
-        genAi.setRagSeInstance(seInstance);
+        genAi.setRagSeInstanceId("se-bound");
+        when(seInstanceRepository.findById("se-bound")).thenReturn(Optional.of(seInstance));
         TurSNSite site = new TurSNSite();
         site.setTurSNSiteGenAi(genAi);
         when(siteRepo.findById("site")).thenReturn(Optional.of(site));

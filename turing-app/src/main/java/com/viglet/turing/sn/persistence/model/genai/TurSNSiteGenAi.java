@@ -125,7 +125,7 @@ public class TurSNSiteGenAi implements Serializable {
      * T24b / §III.2 — picks where the BM25 half of hybrid retrieval lives:
      * {@link TurRagBm25Source#EMBEDDED} (default — single in-process
      * Lucene index, T24 base path) or {@link TurRagBm25Source#SE_INSTANCE}
-     * (per-locale cores in {@link #ragSeInstance}, T24b production path).
+     * (per-locale cores in {@link #ragSeInstanceId}, T24b production path).
      *
      * <p>Effective only when {@link #ragBm25Fallback} and
      * {@link #ragHybridSearch} are both {@code true}. Otherwise ignored
@@ -150,9 +150,8 @@ public class TurSNSiteGenAi implements Serializable {
      *
      * @since 2026.2.7
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rag_se_instance_id")
-    private TurSEInstance ragSeInstance;
+    @Column(name = "rag_se_instance_id", length = 36)
+    private String ragSeInstanceId;
 
     /**
      * T383 / §XX.3 — ranking mode for the <strong>public</strong> SN search

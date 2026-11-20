@@ -91,7 +91,7 @@ export interface TurSNSiteGenAi {
    * T24b / §III.2 — BM25 source for hybrid retrieval. `EMBEDDED` (default)
    * uses a single in-process Lucene index for every locale; `SE_INSTANCE`
    * routes BM25 to per-locale Solr / Elasticsearch cores on
-   * {@link ragSeInstance} (one core per SN site locale).
+   * {@link ragSeInstanceId} (one core per SN site locale).
    * @since 2026.2.7
    */
   ragBm25Source?: TurRagBm25Source;
@@ -100,7 +100,8 @@ export interface TurSNSiteGenAi {
    * {@link ragBm25Source} is `SE_INSTANCE`. Null on the embedded path.
    * @since 2026.2.7
    */
-  ragSeInstance?: TurSEInstance | null;
+  /** T1315 — the SE instance that hosts the per-locale BM25 cores, by id. */
+  ragSeInstanceId?: string | null;
   /**
    * T383 / §XX.3 — ranking mode for the public SN search. `LEGACY` (default)
    * keeps lexical-only ranking; `HYBRID_RRF` opts into BM25 + vector RRF
