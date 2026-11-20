@@ -58,6 +58,19 @@ class TurGlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.timestamp", notNullValue()));
     }
 
+    /** T1333 — a ResponseStatusException keeps its status instead of falling to 500. */
+    @Test
+    void responseStatusException_keepsItsStatusAndReason() throws Exception {
+        mvc.perform(get("/test/status-forbidden"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status", equalTo(403)))
+                .andExpect(jsonPath("$.detail", equalTo("Global pool rows are read-only")))
+                .andExpect(jsonPath("$.type", startsWith("tag:viglet.com,2026:errors/access-denied")));
+        mvc.perform(get("/test/status-not-found"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail", equalTo("Not Found")));
+    }
+
     @Test
     void validation_mapsTo400() throws Exception {
         mvc.perform(get("/test/validation"))
@@ -252,6 +265,18 @@ class TurGlobalExceptionHandlerTest {
     @RestController
     @RequestMapping("/test")
     static class TestController {
+
+        @GetMapping("/status-forbidden")
+        public void statusForbidden() {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Global pool rows are read-only");
+        }
+
+        @GetMapping("/status-not-found")
+        public void statusNotFound() {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND);
+        }
 
         @GetMapping("/not-found")
         public void notFound() {

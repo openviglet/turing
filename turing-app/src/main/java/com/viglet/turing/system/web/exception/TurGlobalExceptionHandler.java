@@ -227,6 +227,32 @@ public class TurGlobalExceptionHandler {
     }
 
     /**
+     * T1333 — a {@code ResponseStatusException} (or any {@code ErrorResponseException})
+     * already says which status it means. Without this handler the catch-all below
+     * claimed it first and every such 403, 404 or 400 reached the caller as a 500.
+     */
+    @ExceptionHandler(org.springframework.web.ErrorResponseException.class)
+    public ResponseEntity<ProblemDetail> handleErrorResponse(
+            org.springframework.web.ErrorResponseException ex) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        String reason = ex instanceof org.springframework.web.server.ResponseStatusException rse
+                && rse.getReason() != null ? rse.getReason() : status.getReasonPhrase();
+        String type = switch (status) {
+            case NOT_FOUND -> TurErrorTypes.NOT_FOUND;
+            case FORBIDDEN -> TurErrorTypes.FORBIDDEN;
+            case CONFLICT -> TurErrorTypes.CONFLICT;
+            case UNAUTHORIZED -> TurErrorTypes.UNAUTHENTICATED;
+            default -> status.is4xxClientError() ? TurErrorTypes.INVALID_ARGUMENT : TurErrorTypes.INTERNAL;
+        };
+        ProblemDetail problem = build(status, type, reason);
+        log.warn("[GlobalEx] {} {}", status.value(), reason);
+        return ResponseEntity.status(status).headers(ex.getHeaders()).body(problem);
+    }
+
+    /**
      * T1319 — two transactions saved the same versioned row; the later one lost.
      * That is a conflict the caller can resolve by reloading, not a server fault.
      */
