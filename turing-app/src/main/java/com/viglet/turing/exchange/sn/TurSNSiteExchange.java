@@ -131,9 +131,7 @@ public class TurSNSiteExchange {
 		this.setSpellCheckFixes(turSNSite.getSpellCheckFixes());
 		this.setSpotlightWithResults(turSNSite.getSpotlightWithResults());
 		this.setSearchTemplate(turSNSite.getSearchTemplate());
-		if (turSNSite.getTurSEInstance() != null) {
-			this.setTurSEInstance(turSNSite.getTurSEInstance().getId());
-		}
+		this.setTurSEInstance(turSNSite.getTurSEInstanceId());
 		this.setTurSNSiteGenAi(this.toReferenceGenAi(turSNSite.getTurSNSiteGenAi()));
 		this.setTurSNSiteFields(turSNSite.getTurSNSiteFields());
 		this.setTurSNSiteFieldExts(turSNSite.getTurSNSiteFieldExts());

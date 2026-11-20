@@ -49,6 +49,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TurLuceneInstanceProcess {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private final ConcurrentHashMap<String, TurLuceneInstance> instanceCache = new ConcurrentHashMap<>();
     private final TurSNSites turSNSiteRepository;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
@@ -56,7 +58,9 @@ public class TurLuceneInstanceProcess {
 
     public TurLuceneInstanceProcess(TurSNSites turSNSiteRepository,
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurLuceneStorageSync storageSync) {
+            TurLuceneStorageSync storageSync,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.storageSync = storageSync;
@@ -76,7 +80,7 @@ public class TurLuceneInstanceProcess {
             log.warn("{} site with {} locale not found", turSNSite.getName(), locale);
             return Optional.empty();
         }
-        return getLuceneInstance(turSNSite.getTurSEInstance(), siteLocale.getCore());
+        return getLuceneInstance(snSiteSEInstances.of(turSNSite), siteLocale.getCore());
     }
 
     /**
@@ -93,25 +97,21 @@ public class TurLuceneInstanceProcess {
 
     /**
      * T1078 — the site a {@link TurSNSiteLocale} carries may be the transient one the
-     * search snapshot rebuilds, whose SE instance keeps only its id and vendor. The
-     * index path needs the endpoint, so such a site is reloaded by id first.
+     * search snapshot rebuilds; since T1315 it names its SE instance by id, which is
+     * loaded here for the endpoint the index path needs.
      */
     private Optional<TurSEInstance> resolveSEInstance(TurSNSite turSNSite) {
         if (turSNSite == null) {
             return Optional.empty();
         }
-        TurSEInstance seInstance = turSNSite.getTurSEInstance();
-        if (seInstance != null && seInstance.getEndpointUrl() != null) {
-            return Optional.of(seInstance);
-        }
-        Optional<TurSEInstance> reloaded = Optional.ofNullable(turSNSite.getId())
-                .flatMap(turSNSiteRepository::findById)
-                .map(TurSNSite::getTurSEInstance)
+        // T1315 — the site names its SE instance by id, so even the snapshot's
+        // transient site resolves it; the index path needs the endpoint.
+        Optional<TurSEInstance> resolved = Optional.ofNullable(snSiteSEInstances.of(turSNSite))
                 .filter(instance -> instance.getEndpointUrl() != null);
-        if (reloaded.isEmpty()) {
+        if (resolved.isEmpty()) {
             log.warn("No Lucene endpoint for site '{}'", turSNSite.getName());
         }
-        return reloaded;
+        return resolved;
     }
 
     private static final String LUCENE_BASE_DIR = "store/lucene";

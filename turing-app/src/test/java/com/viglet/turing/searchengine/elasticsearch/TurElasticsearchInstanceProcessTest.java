@@ -48,6 +48,9 @@ import com.viglet.turing.sn.api.TurSNSiteLocales;
 @ExtendWith(MockitoExtension.class)
 class TurElasticsearchInstanceProcessTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     @Mock
     private TurSNSiteLocales turSNSiteLocaleRepository;
 
@@ -59,7 +62,7 @@ class TurElasticsearchInstanceProcessTest {
         when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.empty());
 
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         assertThat(process.initElasticsearchInstance("site", Locale.US)).isEmpty();
     }
@@ -73,7 +76,7 @@ class TurElasticsearchInstanceProcessTest {
                 .thenReturn(null);
 
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         assertThat(process.initElasticsearchInstance("site", Locale.US)).isEmpty();
     }
@@ -81,7 +84,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testInitElasticsearchInstanceByTurSEInstanceCreatesInstance() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
@@ -99,7 +102,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testInitElasticsearchInstanceByTurSEInstanceCachesInstance() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
@@ -118,7 +121,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testInitElasticsearchInstanceNormalizesIndexToLowercase() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
@@ -134,13 +137,13 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testInitElasticsearchInstanceBySiteLocale() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
 
         TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setTurSNSite(site);
@@ -157,7 +160,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testEvictRemovesCachedInstance() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
@@ -178,7 +181,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testEvictNonExistentKeyDoesNotFail() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(
                 () -> process.evict("http://nonexistent:9200", "no-such-index"));
@@ -187,7 +190,7 @@ class TurElasticsearchInstanceProcessTest {
     @Test
     void testShutdownClearsCache() {
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setEndpointUrl("http://localhost:9200");
@@ -209,7 +212,7 @@ class TurElasticsearchInstanceProcessTest {
 
         TurSNSite site = new TurSNSite();
         site.setName("mySite");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setCore("en_us_core");
@@ -219,7 +222,7 @@ class TurElasticsearchInstanceProcessTest {
                 .thenReturn(locale);
 
         TurElasticsearchInstanceProcess process = new TurElasticsearchInstanceProcess(
-                turSNSiteLocaleRepository, turSNSiteRepository);
+                turSNSiteLocaleRepository, turSNSiteRepository, seInstances.service());
 
         Optional<TurElasticsearchInstance> result = process.initElasticsearchInstance("mySite", Locale.US);
 

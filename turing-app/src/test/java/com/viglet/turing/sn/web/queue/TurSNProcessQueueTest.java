@@ -46,6 +46,12 @@ import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 @ExtendWith(MockitoExtension.class)
 class TurSNProcessQueueTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances = seInstances.service();
+
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
     @Mock
@@ -104,7 +110,7 @@ class TurSNProcessQueueTest {
 
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
 
@@ -484,7 +490,7 @@ class TurSNProcessQueueTest {
         seInstance.setId("se1");
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
 
@@ -536,7 +542,7 @@ class TurSNProcessQueueTest {
         siteSeInstance.setId("se1");
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(siteSeInstance);
+        seInstances.attach(site, siteSeInstance);
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
 
@@ -575,7 +581,7 @@ class TurSNProcessQueueTest {
 
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setCore("t1234abcd_site1_en");
@@ -620,7 +626,7 @@ class TurSNProcessQueueTest {
 
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setCore("core_en");

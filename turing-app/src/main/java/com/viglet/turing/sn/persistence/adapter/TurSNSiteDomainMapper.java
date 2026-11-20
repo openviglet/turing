@@ -37,7 +37,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 @Mapper(componentModel = "spring")
 public interface TurSNSiteDomainMapper {
 
-    @Mapping(target = "seInstanceId", source = "turSEInstance.id")
+    @Mapping(target = "seInstanceId", source = "turSEInstanceId")
     @Mapping(target = "genAiId", source = "turSNSiteGenAi.id")
     TurSNSiteDomain toDomain(TurSNSite entity);
 }

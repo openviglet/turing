@@ -62,6 +62,9 @@ import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorReposito
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteImportTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
         @Mock
         private TurSNSites turSNSiteRepository;
         @Mock
@@ -288,9 +291,9 @@ class TurSNSiteImportTest {
 
                 ArgumentCaptor<TurSNSite> siteCaptor = ArgumentCaptor.forClass(TurSNSite.class);
                 verify(turSNSiteRepository).saveAndFlush(siteCaptor.capture());
-                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance())
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstanceId())
                                 .isNotNull();
-                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance().getId())
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstanceId())
                                 .isEqualTo("se-available");
         }
 
@@ -428,8 +431,8 @@ class TurSNSiteImportTest {
                 verify(turSEInstanceRepository).save(any(TurSEInstance.class));
                 ArgumentCaptor<TurSNSite> siteCaptor = ArgumentCaptor.forClass(TurSNSite.class);
                 verify(turSNSiteRepository).saveAndFlush(siteCaptor.capture());
-                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance()).isNotNull();
-                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstance().getId())
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstanceId()).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(siteCaptor.getValue().getTurSEInstanceId())
                                 .isEqualTo("se-new");
         }
 

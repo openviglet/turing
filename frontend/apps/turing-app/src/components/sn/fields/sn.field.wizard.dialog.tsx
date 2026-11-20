@@ -158,7 +158,7 @@ export const SNFieldWizardDialog: React.FC<Props> = ({
     deriveMutation.mutate(
       {
         name: site?.name ?? "",
-        seInstanceId: site?.turSEInstance?.id,
+        seInstanceId: site?.turSEInstanceId,
         documents,
       },
       {
@@ -197,7 +197,7 @@ export const SNFieldWizardDialog: React.FC<Props> = ({
     }
     const manifest: TurSNSiteManifest = {
       name: site?.name ?? draft.name,
-      seInstanceId: site?.turSEInstance?.id ?? draft.seInstanceId,
+      seInstanceId: site?.turSEInstanceId ?? draft.seInstanceId,
       schemaVersion: draft.schemaVersion,
       fields: draft.fields.filter((f) => selected.has(f.name)),
     };

@@ -55,6 +55,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
  */
 class TurSNSiteFieldCheckAPITest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private final TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
     private final TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
     private final TurSNSiteLocaleRepository localeRepository = mock(TurSNSiteLocaleRepository.class);
@@ -67,11 +70,11 @@ class TurSNSiteFieldCheckAPITest {
         lenient().when(plugin.hasFieldSchema()).thenReturn(hasSchema);
         TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
         lenient().when(factory.getPluginForSite(any())).thenReturn(plugin);
-        return new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, factory);
+        return new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, factory, seInstances.service());
     }
 
     private TurSNSiteFieldExt field(String core, String name, TurSEFieldType type, int multiValued, int facet) {
-        site.setTurSEInstance(instance);
+        seInstances.attach(site, instance);
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setCore(core);
         TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();

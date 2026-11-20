@@ -30,7 +30,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRule;
@@ -55,8 +54,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -244,9 +241,13 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	@Column(name = "apiAuthMode", length = 16)
 	private TurSNSiteApiAuthMode apiAuthMode = TurSNSiteApiAuthMode.PUBLIC;
 
-	@ManyToOne
-	@JoinColumn(name = "se_instance_id", nullable = false)
-	private TurSEInstance turSEInstance;
+	/**
+	 * T1315 — the search-engine instance, by id: it belongs to the searchengine
+	 * module, whose {@code TurSEInstanceRepository} loads it. Same column as the
+	 * association it replaces, so the schema is unchanged.
+	 */
+	@Column(name = "se_instance_id", nullable = false, length = 36)
+	private String turSEInstanceId;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	private TurSNSiteGenAi turSNSiteGenAi;

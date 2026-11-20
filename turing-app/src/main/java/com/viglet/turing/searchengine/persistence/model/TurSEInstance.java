@@ -42,6 +42,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@jakarta.persistence.EntityListeners(com.viglet.turing.searchengine.TurSEInstanceEvictionListener.class)
 @Table(name = "se_instance")
 public class TurSEInstance implements Serializable, VigletTenantOwnedInfra {
 	@Serial

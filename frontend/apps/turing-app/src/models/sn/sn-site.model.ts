@@ -1,4 +1,3 @@
-import type { TurSEInstance } from "../se/se-instance.model.ts";
 import type { TurSNSiteFacetFieldSortTypes } from "./sn-site-facet-field-sort.type.ts";
 import type { TurSNSiteFacetTypes } from "./sn-site-facet.type.ts";
 import type { TurSNSiteGenAi } from "./sn-site-genai.model.ts";
@@ -25,7 +24,8 @@ export type TurSNSite = {
   hlPost: string;
   mlt: number;
   thesaurus: number;
-  turSEInstance: TurSEInstance;
+  /** T1315 — the search-engine instance, by id. */
+  turSEInstanceId: string;
   turSNSiteLocales: TurSNSiteLocale[];
   rowsPerPage: number;
   spellCheck: number;

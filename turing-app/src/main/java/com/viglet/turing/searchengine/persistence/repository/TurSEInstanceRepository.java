@@ -22,7 +22,6 @@
 package com.viglet.turing.searchengine.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -30,9 +29,8 @@ import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 
 public interface TurSEInstanceRepository extends JpaRepository<TurSEInstance, String> {
 
-	@Modifying
-	@Query("delete from  TurSEInstance si where si.id = ?1")
-	void delete(String id);
+	// T1315 — no @Modifying bulk delete: TurSEInstance declares an entity listener
+	// (TurSEInstanceEvictionListener), which only the inherited deleteById fires.
 
     /**
      * T275 / §XIV.5.1 — instances visible to a tenant: its own ({@code tenantId = :tenantId})

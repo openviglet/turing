@@ -60,6 +60,7 @@ class TurSNSiteSearchSnapshotSerializationTest {
         genAi.setEmbeddingModelId("emb-1");
         genAi.setSnRankingMode(TurSNRankingMode.HYBRID_RRF);
         site.setTurSNSiteGenAi(genAi);
+        site.setTurSEInstanceId("se-1");
 
         return new TurSNSiteSearchSnapshot(
                 TurSNSiteSearchSiteView.from(site, "solr"), Locale.US, "solr", true,
@@ -129,8 +130,8 @@ class TurSNSiteSearchSnapshotSerializationTest {
         assertThat(back.getTurSNSiteGenAi().getEmbeddingModelId()).isEqualTo("emb-1");
         assertThat(back.getTurSNSiteGenAi().getSnRankingMode())
                 .isEqualTo(TurSNRankingMode.HYBRID_RRF);
-        // getPluginForSite reads the vendor's plugin off the rebuilt SE instance.
-        assertThat(back.getTurSEInstance().getTurSEVendor().getPlugin()).isEqualTo("solr");
+        // T1315 — getPluginForSite resolves the plugin from the SE instance id.
+        assertThat(back.getTurSEInstanceId()).isEqualTo("se-1");
     }
 
     /**

@@ -40,6 +40,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurSNSiteDataCollectorServiceTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
             new com.viglet.turing.agent.InMemoryAgentLlmInstances();
 
@@ -66,7 +69,7 @@ class TurSNSiteDataCollectorServiceTest {
                 snSiteLocaleRepository,
                 metricAccessRepository,
                 pluginFactory,
-                turDefaultAgentResolver, agentLlms.service());
+                turDefaultAgentResolver, agentLlms.service(), seInstances.service());
     }
 
     private TurSNSite createSite(String name) {
@@ -98,7 +101,7 @@ class TurSNSiteDataCollectorServiceTest {
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setTitle("Solr Engine");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
@@ -122,7 +125,7 @@ class TurSNSiteDataCollectorServiceTest {
     @Test
     void collectSiteDataWithNullSEInstance() {
         TurSNSite site = createSite("NoEngine");
-        site.setTurSEInstance(null);
+        site.setTurSEInstanceId(null);
         site.setRowsPerPage(10);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());

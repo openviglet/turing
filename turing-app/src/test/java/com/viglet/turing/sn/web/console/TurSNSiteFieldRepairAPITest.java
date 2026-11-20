@@ -54,6 +54,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
  */
 class TurSNSiteFieldRepairAPITest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private final TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
     private final TurSNSiteFieldExtRepository fieldExtRepository = mock(TurSNSiteFieldExtRepository.class);
     private final TurSEInstanceRepository instanceRepository = mock(TurSEInstanceRepository.class);
@@ -64,13 +67,13 @@ class TurSNSiteFieldRepairAPITest {
     TurSNSiteFieldRepairAPITest() {
         TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
         when(factory.getPluginForSite(any())).thenReturn(plugin);
-        api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository, instanceRepository, factory);
+        api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository, instanceRepository, factory, seInstances.service());
     }
 
     private TurSNSiteFieldExt field(TurSEFieldType type, int multiValued) {
         instance.setId("se");
         TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(instance);
+        seInstances.attach(site, instance);
         TurSNSiteFieldExt fieldExt = new TurSNSiteFieldExt();
         fieldExt.setName("title");
         fieldExt.setType(type);

@@ -109,6 +109,8 @@ import tools.jackson.databind.node.ObjectNode;
 @Component
 public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<ObjectNode, JsonNode> {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private static final String ENGINE = TurContentAiSearchEnginePlugin.PLUGIN_TYPE;
 
     private static final String FIELD_TYPE = "type";
@@ -150,7 +152,9 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
     public TurDslContentAiExecutor(TurContentAiClient client,
             TurContentAiQueryBuilder queryBuilder, TurContentAiProperty property,
             TurSNSites turSNSiteRepository,
-            TurSNSiteLocales turSNSiteLocaleRepository) {
+            TurSNSiteLocales turSNSiteLocaleRepository,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.property = property;
@@ -771,7 +775,7 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
     }
 
     private String endpointUrl(TurSNSite site) {
-        return Optional.ofNullable(site.getTurSEInstance())
+        return Optional.ofNullable(snSiteSEInstances.of(site))
                 .map(TurSEInstance::getEndpointUrl)
                 .orElse("");
     }

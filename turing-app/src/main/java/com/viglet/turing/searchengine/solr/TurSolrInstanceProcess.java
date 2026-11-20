@@ -46,6 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class TurSolrInstanceProcess {
+
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
     private final ConcurrentHashMap<String, SolrClient> clientCache = new ConcurrentHashMap<>();
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSites turSNSiteRepository;
@@ -54,7 +56,9 @@ public class TurSolrInstanceProcess {
     public TurSolrInstanceProcess(
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurSNSites turSNSiteRepository,
-            TurSolrInstanceSource solrInstanceSource) {
+            TurSolrInstanceSource solrInstanceSource,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection");
         System.setProperty("jdk.httpclient.HttpClient.version", "HTTP_1_1");
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -120,7 +124,7 @@ public class TurSolrInstanceProcess {
     }
 
     private Optional<TurSolrInstance> getSolrClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
-        return getSolrClient(turSNSite.getTurSEInstance(), turSNSiteLocale.getCore());
+        return getSolrClient(snSiteSEInstances.of(turSNSite), turSNSiteLocale.getCore());
     }
 
     private String resolveEndpoint(TurSEInstance turSEInstance) {

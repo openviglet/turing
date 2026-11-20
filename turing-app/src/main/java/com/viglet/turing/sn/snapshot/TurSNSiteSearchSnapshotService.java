@@ -77,6 +77,7 @@ public class TurSNSiteSearchSnapshotService {
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteCustomSortRepository turSNSiteCustomSortRepository;
     private final TurSearchPipelineObservation pipelineObservation;
+    private final com.viglet.turing.searchengine.TurSEInstancePluginTypes seInstancePluginTypes;
 
     public TurSNSiteSearchSnapshotService(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
@@ -84,7 +85,9 @@ public class TurSNSiteSearchSnapshotService {
             TurSNSiteCustomFacetRepository turSNSiteCustomFacetRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository,
             TurSNSiteCustomSortRepository turSNSiteCustomSortRepository,
-            TurSearchPipelineObservation pipelineObservation) {
+            TurSearchPipelineObservation pipelineObservation,
+            com.viglet.turing.searchengine.TurSEInstancePluginTypes seInstancePluginTypes) {
+        this.seInstancePluginTypes = seInstancePluginTypes;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteFieldExtFacetRepository = turSNSiteFieldExtFacetRepository;
@@ -235,10 +238,10 @@ public class TurSNSiteSearchSnapshotService {
                 .build();
     }
 
-    private static String resolvePluginType(TurSNSite site) {
-        return Optional.ofNullable(site.getTurSEInstance())
-                .map(i -> i.getTurSEVendor())
-                .map(v -> StringUtils.isNotBlank(v.getPlugin()) ? v.getPlugin() : v.getId())
-                .orElse("solr");
+    /** T1315 — the site names its SE instance by id; the plugin type is cached by id. */
+    private String resolvePluginType(TurSNSite site) {
+        return site.getTurSEInstanceId() == null
+                ? com.viglet.turing.searchengine.TurSEInstancePluginTypes.DEFAULT_PLUGIN_TYPE
+                : seInstancePluginTypes.of(site.getTurSEInstanceId());
     }
 }

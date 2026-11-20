@@ -25,6 +25,9 @@ import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
 
 class TurSNSiteExportFileServiceTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
             new com.viglet.turing.agent.InMemoryAgentLlmInstances();
 
@@ -39,7 +42,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldExportRootReferencesWithoutDuplicatingLLMStoreAndSEInsideSNSite() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA, AGENTS, agentLlms.service());
+                RAG_INFRA, AGENTS, agentLlms.service(), seInstances.service());
 
         TurSEVendor seVendor = new TurSEVendor();
         seVendor.setId("SOLR");
@@ -99,7 +102,7 @@ class TurSNSiteExportFileServiceTest {
         siteA.setHl(0);
         siteA.setMlt(0);
         siteA.setThesaurus(0);
-        siteA.setTurSEInstance(seInstance);
+        seInstances.attach(siteA, seInstance);
         siteA.setTurSNSiteGenAi(genAi);
 
         TurSNSite siteB = new TurSNSite();
@@ -109,7 +112,7 @@ class TurSNSiteExportFileServiceTest {
         siteB.setHl(0);
         siteB.setMlt(0);
         siteB.setThesaurus(0);
-        siteB.setTurSEInstance(seInstance);
+        seInstances.attach(siteB, seInstance);
         siteB.setTurSNSiteGenAi(genAi);
 
         Path zipPath = service.exportSNSitesToZip(List.of(siteA, siteB), null, false);
@@ -147,7 +150,7 @@ class TurSNSiteExportFileServiceTest {
     void shouldWriteSynonymsThatTheImportReadsBack() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
-                RAG_INFRA, AGENTS, agentLlms.service());
+                RAG_INFRA, AGENTS, agentLlms.service(), seInstances.service());
         TurSNSite site = new TurSNSite();
         site.setId("tarnfell");
         site.setName("tarnfell");

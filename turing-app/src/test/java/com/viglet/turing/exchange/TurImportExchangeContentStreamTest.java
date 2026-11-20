@@ -60,6 +60,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurImportExchangeContentStreamTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private static final int CHUNK = TurSNSiteContentExchangeService.IMPORT_CHUNK_SIZE;
 
     @Mock
@@ -427,7 +430,7 @@ class TurImportExchangeContentStreamTest {
                 new com.viglet.turing.exchange.sn.TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class),
-                org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class), new com.viglet.turing.agent.InMemoryAgentLlmInstances().service());
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class), new com.viglet.turing.agent.InMemoryAgentLlmInstances().service(), seInstances.service());
 
         var seVendor = new com.viglet.turing.searchengine.persistence.model.TurSEVendor();
         seVendor.setId("SOLR");
@@ -445,7 +448,7 @@ class TurImportExchangeContentStreamTest {
         exported.setHl(0);
         exported.setMlt(0);
         exported.setThesaurus(0);
-        exported.setTurSEInstance(seInstance);
+        seInstances.attach(exported, seInstance);
 
         // Two pages in one locale, so the writer crosses a page boundary.
         var pages = List.of(localeRun("en_US", CHUNK, 0), localeRun("en_US", 5, CHUNK)).stream()

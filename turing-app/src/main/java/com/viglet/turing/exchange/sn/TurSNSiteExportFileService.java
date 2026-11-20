@@ -44,6 +44,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurSNSiteExportFileService {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
 	private static final String TMP_DIR = "store/tmp";
@@ -137,7 +139,9 @@ public class TurSNSiteExportFileService {
 									  TurStorageService storageService,
 								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra,
 								  com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
-            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
+            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.agentLlmInstances = agentLlmInstances;
 		this.turDefaultAgentResolver = turDefaultAgentResolver;
 		this.agentRagInfra = agentRagInfra;
@@ -274,8 +278,8 @@ public class TurSNSiteExportFileService {
 			Map<String, TurStoreInstance> storeInstances,
 			Map<String, TurSEInstance> seInstances,
 			Map<String, TurEmbeddingModel> embeddingModels) {
-		if (turSNSite.getTurSEInstance() != null && turSNSite.getTurSEInstance().getId() != null) {
-			seInstances.putIfAbsent(turSNSite.getTurSEInstance().getId(), turSNSite.getTurSEInstance());
+		if (turSNSite.getTurSEInstanceId() != null && turSNSite.getTurSEInstanceId() != null) {
+			seInstances.putIfAbsent(turSNSite.getTurSEInstanceId(), snSiteSEInstances.of(turSNSite));
 		}
 
 		TurSNSiteGenAi genAi = turSNSite.getTurSNSiteGenAi();

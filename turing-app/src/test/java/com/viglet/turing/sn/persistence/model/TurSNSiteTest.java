@@ -111,7 +111,7 @@ class TurSNSiteTest {
         turSNSite.setSpellCheck(spellCheck);
         turSNSite.setSpellCheckFixes(spellCheckFixes);
         turSNSite.setSpotlightWithResults(spotlightWithResults);
-        turSNSite.setTurSEInstance(turSEInstance);
+        turSNSite.setTurSEInstanceId("se-1");
         turSNSite.setTurSNSiteGenAi(turSNSiteGenAi);
 
         // Grouped assertions for basic fields
@@ -173,7 +173,7 @@ class TurSNSiteTest {
         assertThat(turSNSite.getSpellCheck()).isEqualTo(spellCheck);
         assertThat(turSNSite.getSpellCheckFixes()).isEqualTo(spellCheckFixes);
         assertThat(turSNSite.getSpotlightWithResults()).isEqualTo(spotlightWithResults);
-        assertThat(turSNSite.getTurSEInstance()).isEqualTo(turSEInstance);
+        assertThat(turSNSite.getTurSEInstanceId()).isEqualTo("se-1");
         assertThat(turSNSite.getTurSNSiteGenAi()).isEqualTo(turSNSiteGenAi);
     }
 
@@ -274,21 +274,21 @@ class TurSNSiteTest {
         turSNSite.setName("name");
         turSNSite.setDescription("description");
         turSNSite.setRowsPerPage(20);
-        turSNSite.setTurSEInstance(turSEInstance);
+        turSNSite.setTurSEInstanceId("se-1");
         turSNSite.setTurSNSiteGenAi(turSNSiteGenAi);
 
         turSNSite.setId(null);
         turSNSite.setName(null);
         turSNSite.setDescription(null);
         turSNSite.setRowsPerPage(null);
-        turSNSite.setTurSEInstance(null);
+        turSNSite.setTurSEInstanceId(null);
         turSNSite.setTurSNSiteGenAi(null);
 
         assertThat(turSNSite.getId()).isNull();
         assertThat(turSNSite.getName()).isNull();
         assertThat(turSNSite.getDescription()).isNull();
         assertThat(turSNSite.getRowsPerPage()).isNull();
-        assertThat(turSNSite.getTurSEInstance()).isNull();
+        assertThat(turSNSite.getTurSEInstanceId()).isNull();
         assertThat(turSNSite.getTurSNSiteGenAi()).isNull();
     }
 

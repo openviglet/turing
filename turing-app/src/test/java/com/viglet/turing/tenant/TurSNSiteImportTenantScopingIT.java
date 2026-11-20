@@ -98,7 +98,7 @@ class TurSNSiteImportTenantScopingIT extends AbstractTuringSpringIT {
             TurSNSite site = new TurSNSite();
             site.setId(assignedId);
             site.setName("imported-" + assignedId);
-            site.setTurSEInstance(entityManager.find(TurSEInstance.class, instanceId));
+            site.setTurSEInstanceId(instanceId);
             return turSNSiteRepository.saveAndFlush(site);
         });
 
@@ -129,7 +129,7 @@ class TurSNSiteImportTenantScopingIT extends AbstractTuringSpringIT {
             TurSNSite site = new TurSNSite();
             site.setId(assignedId);
             site.setName("cached-" + assignedId);
-            site.setTurSEInstance(entityManager.find(TurSEInstance.class, instanceId));
+            site.setTurSEInstanceId(instanceId);
             return turSNSiteRepository.saveAndFlush(site);
         });
 
@@ -247,7 +247,7 @@ class TurSNSiteImportTenantScopingIT extends AbstractTuringSpringIT {
             TurSNSite site = new TurSNSite();
             site.setId(siteId);
             site.setName("seeded-" + siteId);
-            site.setTurSEInstance(entityManager.find(TurSEInstance.class, instanceId));
+            site.setTurSEInstanceId(instanceId);
             return turSNSiteRepository.saveAndFlush(site);
         });
         return siteId;

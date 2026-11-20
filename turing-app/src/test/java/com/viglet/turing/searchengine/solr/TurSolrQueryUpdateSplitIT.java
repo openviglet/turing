@@ -71,7 +71,7 @@ class TurSolrQueryUpdateSplitIT {
 
             TurSEInstance seInstance = new TurSEInstance();
             seInstance.setEndpointUrl(endpoint);
-            TurSolrInstanceProcess process = new TurSolrInstanceProcess(null, null, null);
+            TurSolrInstanceProcess process = new TurSolrInstanceProcess(null, null, null, new com.viglet.turing.searchengine.InMemorySNSiteSEInstances().service());
             try {
                 TurSolrInstance instance = process.initSolrInstance(seInstance, CORE).orElseThrow();
 

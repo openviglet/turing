@@ -30,6 +30,7 @@ public class TurSNSiteDataCollectorService {
     private final TurSearchEnginePluginFactory pluginFactory;
     private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
     private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
 
     public String collectSiteData(TurSNSite site) {
         StringBuilder sb = new StringBuilder();
@@ -47,8 +48,8 @@ public class TurSNSiteDataCollectorService {
         if (StringUtils.hasText(site.getDescription())) {
             sb.append("Description: ").append(site.getDescription()).append("\n");
         }
-        sb.append("Search Engine: ").append(site.getTurSEInstance() != null
-                ? site.getTurSEInstance().getTitle()
+        sb.append("Search Engine: ").append(site.getTurSEInstanceId() != null
+                ? snSiteSEInstances.of(site).getTitle()
                 : "Not configured").append("\n");
         sb.append("Rows per page: ").append(site.getRowsPerPage()).append("\n");
         sb.append("Highlight: ").append(isEnabled(site.getHl()) ? ENABLED : DISABLED).append("\n");

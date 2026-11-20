@@ -81,6 +81,9 @@ import com.viglet.turing.tenant.TurTenantScheduledFanOut;
 @ExtendWith(MockitoExtension.class)
 class TurSNSynonymStartupReapplyTest {
 
+    private static final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private static final Locale EN = Locale.ENGLISH;
     private static final String CORE = "demo_en";
 
@@ -100,7 +103,7 @@ class TurSNSynonymStartupReapplyTest {
     private static TurSNSite site(String id) {
         TurSNSite site = new TurSNSite();
         site.setId(id);
-        site.setTurSEInstance(new TurSEInstance());
+        seInstances.attach(site, new TurSEInstance());
         return site;
     }
 
@@ -119,7 +122,7 @@ class TurSNSynonymStartupReapplyTest {
 
     private TurSNSynonymStartupReapply reapply(boolean tenancy) {
         TurSNSynonymApplyService applyService = new TurSNSynonymApplyService(pluginFactory,
-                synonymService, siteRepository, siteLocaleRepository);
+                synonymService, siteRepository, siteLocaleRepository, seInstances.service());
         return new TurSNSynonymStartupReapply(siteRepository, applyService,
                 new TurTenantScheduledFanOut(new TurTenantContext(props(tenancy)), tenantRepository));
     }

@@ -243,10 +243,10 @@ public class TurSNFieldProvisioner {
     }
 
     private void dropFieldInSearchEngine(TurSNSite turSNSite, String name, TurSEFieldType liveType) {
-        if (turSNSite.getTurSEInstance() == null) {
+        if (turSNSite.getTurSEInstanceId() == null) {
             return;
         }
-        turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId()).ifPresent(seInstance ->
+        turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId()).ifPresent(seInstance ->
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite).stream()
                         .filter(locale -> pluginFactory.getPluginForSite(turSNSite)
                                 .fieldExists(seInstance, locale.getCore(), name))
@@ -301,17 +301,17 @@ public class TurSNFieldProvisioner {
 
     private void createFieldInSearchEngine(TurSNSite turSNSite, String coreName,
             TurSNSiteField turSNSiteField) {
-        turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+        turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
                 .ifPresent(seInstance -> pluginFactory.getPluginForSite(turSNSite)
                         .addOrUpdateField(seInstance, coreName, turSNSiteField.getName(),
                                 turSNSiteField.getType(), true, turSNSiteField.getMultiValued() == 1, true));
     }
 
     private boolean existsFieldInSearchEngine(TurSNSite turSNSite, String coreName, String name) {
-        if (turSNSite.getTurSEInstance() == null) {
+        if (turSNSite.getTurSEInstanceId() == null) {
             return false;
         }
-        return turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+        return turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
                 .map(seInstance -> pluginFactory.getPluginForSite(turSNSite)
                         .fieldExists(seInstance, coreName, name))
                 .orElse(false);

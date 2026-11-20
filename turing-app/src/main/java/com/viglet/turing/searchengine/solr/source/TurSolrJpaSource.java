@@ -66,6 +66,7 @@ public class TurSolrJpaSource implements TurSolrInstanceSource {
 
     @Override
     public void delete(String id) {
-        repository.delete(id);
+        // T1315 — deleteById loads the row, so TurSEInstanceEvictionListener fires.
+        repository.deleteById(id);
     }
 }

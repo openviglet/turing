@@ -32,6 +32,9 @@ import com.viglet.turing.sn.api.TurSNSiteLocales;
 @ExtendWith(MockitoExtension.class)
 class TurLuceneInstanceProcessTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     @Mock
     private TurSNSites turSNSiteRepository;
 
@@ -45,7 +48,7 @@ class TurLuceneInstanceProcessTest {
 
     @BeforeEach
     void setUp() {
-        process = new TurLuceneInstanceProcess(turSNSiteRepository, turSNSiteLocaleRepository, null);
+        process = new TurLuceneInstanceProcess(turSNSiteRepository, turSNSiteLocaleRepository, null, seInstances.service());
     }
 
     @AfterEach
@@ -122,7 +125,7 @@ class TurLuceneInstanceProcessTest {
 
         TurSNSite site = new TurSNSite();
         site.setName("MySite");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("en-core");
@@ -144,7 +147,7 @@ class TurLuceneInstanceProcessTest {
         seInstance.setEndpointUrl(tempDir.toString());
 
         TurSNSite site = new TurSNSite();
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("locale-core");
@@ -156,20 +159,17 @@ class TurLuceneInstanceProcessTest {
     }
 
     @Test
-    void initLuceneInstanceByLocaleEntityShouldReloadASnapshotSiteWithoutEndpoint() {
-        // T1078 — the search snapshot rebuilds the site with an SE instance that keeps
-        // only its id and vendor; Paths.get(null) used to throw on the similar path.
-        TurSEInstance snapshotInstance = new TurSEInstance();
-        snapshotInstance.setId("se-1");
+    void initLuceneInstanceByLocaleEntityShouldLoadTheSnapshotSitesInstanceById() {
+        // T1078 — the search snapshot rebuilds the site; since T1315 it carries only
+        // the SE instance id, which resolves to the persisted instance's endpoint.
+        TurSEInstance persistedInstance = new TurSEInstance();
+        persistedInstance.setId("se-1");
+        persistedInstance.setEndpointUrl(tempDir.toString());
+        seInstances.attach(new TurSNSite(), persistedInstance);
+
         TurSNSite snapshotSite = new TurSNSite();
         snapshotSite.setId("site-1");
-        snapshotSite.setTurSEInstance(snapshotInstance);
-
-        TurSEInstance persistedInstance = new TurSEInstance();
-        persistedInstance.setEndpointUrl(tempDir.toString());
-        TurSNSite persistedSite = new TurSNSite();
-        persistedSite.setTurSEInstance(persistedInstance);
-        when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(persistedSite));
+        snapshotSite.setTurSEInstanceId("se-1");
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("snapshot-core");
@@ -182,8 +182,7 @@ class TurLuceneInstanceProcessTest {
     void initLuceneInstanceByLocaleEntityShouldBeEmptyWhenNoEndpointResolves() {
         TurSNSite site = new TurSNSite();
         site.setId("gone");
-        site.setTurSEInstance(new TurSEInstance());
-        when(turSNSiteRepository.findById("gone")).thenReturn(Optional.empty());
+        seInstances.attach(site, new TurSEInstance());
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setCore("core");

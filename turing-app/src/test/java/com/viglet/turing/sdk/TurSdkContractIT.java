@@ -994,7 +994,7 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
      */
     @Test
     void aManifestCreatesASiteAndMigratesATemplateFieldInOneCall() throws Exception {
-        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstance().getId();
+        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstanceId();
         String newSite = "t1241-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         String manifest = """
                 {"name":"%s","seInstanceId":"%s","locales":["%s"],
@@ -1026,7 +1026,7 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
      */
     @Test
     void theFieldExtApiChangesAFieldOnALuceneSite() throws Exception {
-        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstance().getId();
+        String seInstanceId = siteRepository.findByName(SITE).orElseThrow().getTurSEInstanceId();
         String newSite = "t1243-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         String key = unpartitionedKey();
         try {

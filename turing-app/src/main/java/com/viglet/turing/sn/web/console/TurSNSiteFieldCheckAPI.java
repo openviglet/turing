@@ -55,6 +55,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/sn/{siteId}/field/check")
 @Tag(name = "Semantic Navigation Field Check Ext", description = "Semantic Navigation Field Check Ext API")
 public class TurSNSiteFieldCheckAPI {
+
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
         private final TurSNSiteRepository turSNSiteRepository;
         private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
         private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -63,7 +65,9 @@ public class TurSNSiteFieldCheckAPI {
         public TurSNSiteFieldCheckAPI(TurSNSiteRepository turSNSiteRepository,
                         TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
                         TurSNSiteLocaleRepository turSNSiteLocaleRepository,
-                        TurSearchEnginePluginFactory pluginFactory) {
+                        TurSearchEnginePluginFactory pluginFactory,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
                 this.turSNSiteRepository = turSNSiteRepository;
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
                 this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
@@ -82,7 +86,7 @@ public class TurSNSiteFieldCheckAPI {
 
         private List<TurSolrFieldStatus> fieldsCheck(TurSNSite turSNSite) {
                 List<TurSolrFieldStatus> fieldsExist = new ArrayList<>();
-                TurSEInstance turSEInstance = turSNSite.getTurSEInstance();
+                TurSEInstance turSEInstance = snSiteSEInstances.of(turSNSite);
                 List<TurSNSiteLocale> siteLocales = turSNSiteLocaleRepository.findByTurSNSite(turSNSite);
                 // T1243 — the site's engine answers, not Solr directly.
                 TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
@@ -175,7 +179,7 @@ public class TurSNSiteFieldCheckAPI {
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite)
                                 .forEach(turSNSiteLocale -> coresExist.add(TurSolrCoreExists.builder()
                                                 .name(turSNSiteLocale.getCore())
-                                                .exists(plugin.indexExists(turSNSite.getTurSEInstance(),
+                                                .exists(plugin.indexExists(snSiteSEInstances.of(turSNSite),
                                                                 turSNSiteLocale.getCore()))
                                                 .build()));
                 return coresExist;

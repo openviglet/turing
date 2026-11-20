@@ -334,7 +334,7 @@ public class TurSNSiteManifestService {
         TurSNSite site = new TurSNSite();
         site.setName(manifest.name());
         site.setDescription(manifest.description());
-        site.setTurSEInstance(seInstance);
+        site.setTurSEInstanceId(seInstance.getId());
         turSNSiteRepository.save(site);
 
         // Seeds default UI config + the first locale (core) + the base SE fields.

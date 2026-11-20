@@ -49,7 +49,7 @@ export const BentoSNInstanceForm: React.FC<Props> = ({ value, isNew, staged, onS
   const [seInstances, setSeInstances] = useState<TurSEInstance[]>([])
   const [pages, setPages] = useState<TurPageSite[]>([])
   const [storageEnabled, setStorageEnabled] = useState(true)
-  const selectedSeId = form.watch("turSEInstance.id")
+  const selectedSeId = form.watch("turSEInstanceId")
   const navigate = useNavigate()
 
   const createMutation = useCreateSnSite()
@@ -157,7 +157,7 @@ export const BentoSNInstanceForm: React.FC<Props> = ({ value, isNew, staged, onS
         >
           <FormField
             control={form.control}
-            name="turSEInstance.id"
+            name="turSEInstanceId"
             rules={{ required: t("forms.snSiteForm.seInstanceRequired") }}
             render={({ field }) => (
               <FormItemTwoColumns>

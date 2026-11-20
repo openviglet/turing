@@ -53,7 +53,6 @@ import com.viglet.turing.exchange.sn.TurSNSiteExport;
 import com.viglet.turing.sn.persistence.dto.TurSNSiteDto;
 import com.viglet.turing.sn.persistence.dto.TurSNSiteListDto;
 import com.viglet.turing.sn.persistence.mapper.TurSNSiteMapper;
-import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
@@ -137,7 +136,6 @@ public class TurSNSiteAPI {
         TurSNSite turSNSite = new TurSNSite();
         turSNSite.setFacetSort(TurSNSiteFacetSortEnum.COUNT);
         turSNSite.setFacetType(TurSNSiteFacetFieldEnum.AND);
-        turSNSite.setTurSEInstance(new TurSEInstance());
         turSNSite.setTurSNSiteGenAi(new TurSNSiteGenAi());
         return turSNSiteMapper.toDto(turSNSite);
     }
@@ -173,7 +171,7 @@ public class TurSNSiteAPI {
             turSNSiteEdit.setName(turSNSite.getName());
             turSNSiteEdit.setDescription(turSNSite.getDescription());
             turSNSiteEdit.setIcon(turSNSite.getIcon());
-            turSNSiteEdit.setTurSEInstance(turSNSite.getTurSEInstance());
+            turSNSiteEdit.setTurSEInstanceId(turSNSite.getTurSEInstanceId());
             turSNSiteEdit.setThesaurus(turSNSite.getThesaurus());
             turSNSiteEdit.setFacet(turSNSite.getFacet());
             turSNSiteEdit.setFacetType(turSNSite.getFacetType());

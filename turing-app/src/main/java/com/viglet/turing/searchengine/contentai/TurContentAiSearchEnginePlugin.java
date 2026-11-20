@@ -90,6 +90,8 @@ import tools.jackson.databind.JsonNode;
 @Component
 public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     public static final String PLUGIN_TYPE = "contentai";
 
     private static final int DEFAULT_ROWS = 10;
@@ -121,7 +123,9 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
             TurContentAiSourceCatalog sourceCatalog,
             TurContentAiProperty property, TurSNSites turSNSiteRepository,
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
+            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.responseMapper = responseMapper;
@@ -463,7 +467,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     private String endpointUrl(TurSNSite site) {
-        return Optional.ofNullable(site.getTurSEInstance())
+        return Optional.ofNullable(snSiteSEInstances.of(site))
                 .map(TurSEInstance::getEndpointUrl)
                 .orElse("");
     }

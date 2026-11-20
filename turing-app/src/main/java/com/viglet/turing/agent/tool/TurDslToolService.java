@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
 @Service
 public class TurDslToolService {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private final TurSNSites turSNSiteRepository;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSNSiteFieldExtRepositoryPort turSNSiteFieldExtRepositoryPort;
@@ -55,7 +57,9 @@ public class TurDslToolService {
                               TurSNSiteFieldExtRepositoryPort turSNSiteFieldExtRepositoryPort,
                               TurDslSearchService turDslSearchService,
                               TurSearchEnginePluginFactory pluginFactory,
-                              TurSNSiteConfigCache configCache) {
+                              TurSNSiteConfigCache configCache,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteFieldExtRepositoryPort = turSNSiteFieldExtRepositoryPort;
@@ -88,9 +92,9 @@ public class TurDslToolService {
             String localeStr = locales.stream()
                     .map(l -> l.getLanguage().toString())
                     .collect(Collectors.joining(", "));
-            String engineType = site.getTurSEInstance() != null
-                    && site.getTurSEInstance().getTurSEVendor() != null
-                    ? site.getTurSEInstance().getTurSEVendor().getTitle() : "unknown";
+            var siteSeInstance = snSiteSEInstances.of(site);
+            String engineType = siteSeInstance != null && siteSeInstance.getTurSEVendor() != null
+                    ? siteSeInstance.getTurSEVendor().getTitle() : "unknown";
 
             Map<String, Object> index = new LinkedHashMap<>();
             index.put("index", site.getName());
@@ -258,7 +262,7 @@ public class TurDslToolService {
     /** Builds the cat-shards style row for one site+locale (doc count + store size via the SE plugin). */
     private Map<String, Object> buildShardRow(TurSNSite site, TurSNSiteLocale locale) {
         var plugin = pluginFactory.getPluginForSite(site);
-        var seInstance = site.getTurSEInstance();
+        var seInstance = snSiteSEInstances.of(site);
         String coreName = locale.getCore();
 
         // Get document count via plugin

@@ -152,9 +152,6 @@ public class TurSNSiteExport {
 		Hibernate.initialize(site.getTurSNSiteFieldExts());
 		Hibernate.initialize(site.getTurSNSiteLocales());
 		Hibernate.initialize(site.getTurSNRankingExpressions());
-		if (site.getTurSEInstance() != null) {
-			Hibernate.initialize(site.getTurSEInstance());
-		}
 		TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
 		if (genAi != null) {
 			Hibernate.initialize(genAi);

@@ -47,13 +47,16 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
  */
 class TurSNSiteContentStreamingExportTest {
 
+    private static final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static TurSNSiteExportFileService service() {
         return new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
                 org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentRagInfra.class),
-                org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class), new com.viglet.turing.agent.InMemoryAgentLlmInstances().service());
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class), new com.viglet.turing.agent.InMemoryAgentLlmInstances().service(), seInstances.service());
     }
 
     private static TurSNSite site(String name) {
@@ -74,7 +77,7 @@ class TurSNSiteContentStreamingExportTest {
         site.setHl(0);
         site.setMlt(0);
         site.setThesaurus(0);
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
         return site;
     }
 

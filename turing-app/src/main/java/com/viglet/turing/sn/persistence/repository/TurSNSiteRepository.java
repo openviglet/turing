@@ -57,8 +57,8 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 
 	/**
 	 * Loads a site with its <em>to-one</em> GenAI graph fetched in one query —
-	 * {@code turSEInstance}, {@code turSNSiteGenAi}, and the GenAI's
-	 * {@code turAIAgent} (the RAG SE instance is an id since T1315). Intended for the admin
+	 * {@code turSNSiteGenAi} (the site's and the RAG SE instance are ids since
+	 * T1315). Intended for the admin
 	 * load-mutate-map paths (T488 / §XXVIII.3) that map the site to a DTO or
 	 * build an insights prompt: the mapper/prompt-builder dereferences these
 	 * associations, so fetching them up front avoids the N+1 round-trips a plain
@@ -69,7 +69,6 @@ public interface TurSNSiteRepository extends JpaRepository<TurSNSite, String> {
 	 */
 	@Query("""
 			SELECT s FROM TurSNSite s
-			LEFT JOIN FETCH s.turSEInstance
 			LEFT JOIN FETCH s.turSNSiteGenAi genAi
 			WHERE s.id = :id
 			""")

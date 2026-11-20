@@ -62,6 +62,9 @@ import com.viglet.turing.properties.TurSolrProperty;
  */
 class TurSNTemplateTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private TurSNTemplate newTemplate(
             TurSNSiteFieldRepository fieldRepository,
             TurSNSiteFieldExtRepository fieldExtRepository,
@@ -91,7 +94,7 @@ class TurSNTemplateTest {
         siteInstance.setId(instanceId);
         TurSNSite site = new TurSNSite();
         site.setName("My Site");
-        site.setTurSEInstance(siteInstance);
+        seInstances.attach(site, siteInstance);
         return site;
     }
 

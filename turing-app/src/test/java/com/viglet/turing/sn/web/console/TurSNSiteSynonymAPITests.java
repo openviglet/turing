@@ -95,7 +95,7 @@ class TurSNSiteSynonymAPITests {
             TurSNSite newSite = new TurSNSite();
             newSite.setName("SynonymTest");
             newSite.setDescription("Synonym Test Site");
-            newSite.setTurSEInstance(savedInstance);
+            newSite.setTurSEInstanceId(savedInstance.getId());
             return turSNSiteRepository.save(newSite);
         });
         if (turSNSiteLocaleRepository.findByTurSNSite(site).isEmpty()) {

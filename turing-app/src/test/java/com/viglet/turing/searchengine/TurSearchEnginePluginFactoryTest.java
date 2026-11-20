@@ -19,13 +19,15 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
  */
 class TurSearchEnginePluginFactoryTest {
 
+    private final InMemorySNSiteSEInstances seInstances = new InMemorySNSiteSEInstances();
+
     // --- getPlugin ---
 
     @Test
     void getPluginShouldReturnRegisteredPlugin() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         assertSame(solr, factory.getPlugin("solr"));
         assertSame(solr, factory.getPlugin("SOLR"));
@@ -35,7 +37,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginShouldFallbackToSolrForUnknown() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         assertSame(solr, factory.getPlugin("unknown"));
     }
@@ -44,7 +46,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginShouldThrowWhenNoSolrFallback() {
         TurSearchEnginePlugin lucene = mock(TurSearchEnginePlugin.class);
         when(lucene.getPluginType()).thenReturn("lucene");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(lucene));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(lucene), seInstances::pluginTypeOf);
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> factory.getPlugin("unknown"));
@@ -76,7 +78,7 @@ class TurSearchEnginePluginFactoryTest {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
 
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(es, solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(es, solr), seInstances::pluginTypeOf);
 
         assertSame(es, factory.getPlugin("elasticsearch"));
         assertSame(es, factory.getPlugin("ELASTICSEARCH"));
@@ -90,14 +92,14 @@ class TurSearchEnginePluginFactoryTest {
         when(lucene.getPluginType()).thenReturn("lucene");
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(lucene, solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(lucene, solr), seInstances::pluginTypeOf);
 
         TurSEVendor vendor = mock(TurSEVendor.class);
         when(vendor.getPlugin()).thenReturn("lucene");
         TurSEInstance seInstance = mock(TurSEInstance.class);
         when(seInstance.getTurSEVendor()).thenReturn(vendor);
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getTurSEInstance()).thenReturn(seInstance);
+        when(seInstance.getId()).thenReturn("se-1");
+        TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
         assertSame(lucene, factory.getPluginForSite(site));
     }
@@ -106,7 +108,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForSiteShouldFallbackToSolrForNullSite() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         assertSame(solr, factory.getPluginForSite(null));
     }
@@ -115,10 +117,9 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForSiteShouldFallbackToSolrWhenNoSEInstance() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getTurSEInstance()).thenReturn(null);
+        TurSNSite site = new TurSNSite();
 
         assertSame(solr, factory.getPluginForSite(site));
     }
@@ -127,12 +128,12 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForSiteShouldFallbackToSolrWhenNoVendor() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSEInstance seInstance = mock(TurSEInstance.class);
         when(seInstance.getTurSEVendor()).thenReturn(null);
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getTurSEInstance()).thenReturn(seInstance);
+        when(seInstance.getId()).thenReturn("se-1");
+        TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
         assertSame(solr, factory.getPluginForSite(site));
     }
@@ -141,15 +142,15 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForSiteShouldUseVendorIdWhenPluginBlank() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSEVendor vendor = mock(TurSEVendor.class);
         when(vendor.getPlugin()).thenReturn("");
         when(vendor.getId()).thenReturn("solr");
         TurSEInstance seInstance = mock(TurSEInstance.class);
         when(seInstance.getTurSEVendor()).thenReturn(vendor);
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getTurSEInstance()).thenReturn(seInstance);
+        when(seInstance.getId()).thenReturn("se-1");
+        TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
         assertSame(solr, factory.getPluginForSite(site));
     }
@@ -158,15 +159,15 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForSiteShouldUseVendorIdWhenPluginNull() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSEVendor vendor = mock(TurSEVendor.class);
         when(vendor.getPlugin()).thenReturn(null);
         when(vendor.getId()).thenReturn("solr");
         TurSEInstance seInstance = mock(TurSEInstance.class);
         when(seInstance.getTurSEVendor()).thenReturn(vendor);
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getTurSEInstance()).thenReturn(seInstance);
+        when(seInstance.getId()).thenReturn("se-1");
+        TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
         assertSame(solr, factory.getPluginForSite(site));
     }
@@ -179,7 +180,7 @@ class TurSearchEnginePluginFactoryTest {
         when(es.getPluginType()).thenReturn("elasticsearch");
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(es, solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(es, solr), seInstances::pluginTypeOf);
 
         TurSEVendor vendor = mock(TurSEVendor.class);
         when(vendor.getPlugin()).thenReturn("elasticsearch");
@@ -193,7 +194,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForInstanceShouldUseVendorIdWhenPluginBlank() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSEVendor vendor = mock(TurSEVendor.class);
         when(vendor.getPlugin()).thenReturn("");
@@ -208,7 +209,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForInstanceShouldFallbackToSolrForNull() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         assertSame(solr, factory.getPluginForInstance(null));
     }
@@ -217,7 +218,7 @@ class TurSearchEnginePluginFactoryTest {
     void getPluginForInstanceShouldFallbackToSolrWhenNoVendor() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
-        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr));
+        TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSEInstance instance = mock(TurSEInstance.class);
         when(instance.getTurSEVendor()).thenReturn(null);

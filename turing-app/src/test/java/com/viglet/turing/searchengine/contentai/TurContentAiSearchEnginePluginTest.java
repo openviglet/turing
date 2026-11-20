@@ -108,6 +108,9 @@ import tools.jackson.databind.json.JsonMapper;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurContentAiSearchEnginePluginTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private static final String SITE = "atlas";
     private static final String CORE = "atlas_en_us";
     private static final String SOURCE = "content-ai-articles-index";
@@ -248,7 +251,7 @@ class TurContentAiSearchEnginePluginTest {
 
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
-        site.setTurSEInstance(instance);
+        seInstances.attach(site, instance);
         site.setFacetItemType(siteItemType);
 
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
@@ -269,7 +272,7 @@ class TurContentAiSearchEnginePluginTest {
 
         return new TurContentAiSearchEnginePlugin(client, queryBuilder, responseMapper,
                 sourceCatalog, property, turSNSiteRepository, turSNSiteLocaleRepository,
-                turSNSiteFieldExtRepository);
+                turSNSiteFieldExtRepository, seInstances.service());
     }
 
     private static TurSNSiteFieldExt facetField(String name, int position,
@@ -1136,7 +1139,7 @@ class TurContentAiSearchEnginePluginTest {
         instance.setEndpointUrl(endpoint);
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
-        site.setTurSEInstance(instance);
+        seInstances.attach(site, instance);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setTurSNSite(site);
         siteLocale.setCore(CORE);

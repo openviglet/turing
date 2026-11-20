@@ -115,7 +115,7 @@ class TurSNSiteSearchSnapshotServiceTest {
         service = new TurSNSiteSearchSnapshotService(turSNSiteRepository,
                 turSNSiteFieldExtRepository, turSNSiteFieldExtFacetRepository,
                 turSNSiteCustomFacetRepository, turSNSiteLocaleRepository,
-                turSNSiteCustomSortRepository, pipelineObservation);
+                turSNSiteCustomSortRepository, pipelineObservation, new com.viglet.turing.searchengine.InMemorySNSiteSEInstances().pluginTypes());
 
         // The observation wrapper is a pass-through here.
         when(pipelineObservation.record(anyString(), any(Supplier.class)))
@@ -398,9 +398,8 @@ class TurSNSiteSearchSnapshotServiceTest {
         for (java.lang.reflect.Field declared : TurSNSite.class.getDeclaredFields()) {
             if (java.lang.reflect.Modifier.isStatic(declared.getModifiers())
                     || java.util.Collection.class.isAssignableFrom(declared.getType())
-                    || declared.getType() == TurSEInstance.class
                     || declared.getType() == TurSNSiteGenAi.class) {
-                continue; // the two associations are asserted separately below
+                continue; // the GenAI association is asserted separately below
             }
             if (declared.isAnnotationPresent(jakarta.persistence.Version.class)) {
                 continue; // T1319 — the lock version is not content; the rebuilt copy is never saved
@@ -410,8 +409,9 @@ class TurSNSiteSearchSnapshotServiceTest {
             declared.set(original, sampleFor(declared.getType(), declared.getName(), nth));
             scalars.add(declared);
         }
-        // T1329 — metricsMaskPersonalData is the 35th; T1330 — timeZone the 36th.
-        assertThat(scalars).as("the site must still have scalars to copy").hasSize(36);
+        // T1329 — metricsMaskPersonalData is the 35th; T1330 — timeZone the 36th;
+        // T1315 — turSEInstanceId, an id since the association went, the 37th.
+        assertThat(scalars).as("the site must still have scalars to copy").hasSize(37);
 
         TurSNSite rebuilt = TurSNSiteSearchSiteView.from(original, "solr").toEntity();
 
@@ -446,13 +446,14 @@ class TurSNSiteSearchSnapshotServiceTest {
 
     @Test
     void theRebuiltSiteAnswersThePluginLookupIdentically() {
-        // getPluginForSite resolves vendor.plugin, falling back to vendor.id. The
-        // snapshot already resolved both into pluginType, so the rebuilt vendor
-        // must answer with it or every search silently falls back to Solr.
-        TurSNSite rebuilt = TurSNSiteSearchSiteView.from(site(), "lucene").toEntity();
+        // T1315 — getPluginForSite resolves the plugin from the site's SE instance
+        // id, so the rebuilt site must keep that id or every search silently falls
+        // back to Solr.
+        TurSNSite original = site();
+        original.setTurSEInstanceId("se-lucene");
+        TurSNSite rebuilt = TurSNSiteSearchSiteView.from(original, "lucene").toEntity();
 
-        assertThat(rebuilt.getTurSEInstance()).isNotNull();
-        assertThat(rebuilt.getTurSEInstance().getTurSEVendor().getPlugin()).isEqualTo("lucene");
+        assertThat(rebuilt.getTurSEInstanceId()).isEqualTo("se-lucene");
     }
 
     @Test

@@ -66,6 +66,8 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Semantic Navigation Field Repair", description = "Semantic Navigation Repair Field API")
 @Transactional
 public class TurSNSiteFieldRepairAPI {
+
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
@@ -74,7 +76,9 @@ public class TurSNSiteFieldRepairAPI {
     public TurSNSiteFieldRepairAPI(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSEInstanceRepository turSEInstanceRepository,
-            TurSearchEnginePluginFactory pluginFactory) {
+            TurSearchEnginePluginFactory pluginFactory,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSEInstanceRepository = turSEInstanceRepository;
@@ -107,7 +111,7 @@ public class TurSNSiteFieldRepairAPI {
     }
 
     private Optional<TurSEInstance> resolveInstance(TurSNSite turSNSite) {
-        return Optional.ofNullable(turSNSite.getTurSEInstance())
+        return Optional.ofNullable(snSiteSEInstances.of(turSNSite))
                 .map(TurSEInstance::getId)
                 .flatMap(turSEInstanceRepository::findById);
     }

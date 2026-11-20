@@ -47,6 +47,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TurElasticsearchInstanceProcess {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private final ConcurrentHashMap<String, TurElasticsearchInstance> instanceCache =
             new ConcurrentHashMap<>();
     private final TurSNSiteLocales turSNSiteLocaleRepository;
@@ -54,7 +56,9 @@ public class TurElasticsearchInstanceProcess {
 
     public TurElasticsearchInstanceProcess(
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSites turSNSiteRepository) {
+            TurSNSites turSNSiteRepository,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.turSNSiteRepository = turSNSiteRepository;
     }
@@ -75,7 +79,7 @@ public class TurElasticsearchInstanceProcess {
 
     public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSNSiteLocale turSNSiteLocale) {
         return getElasticsearchInstance(
-                turSNSiteLocale.getTurSNSite().getTurSEInstance(),
+                snSiteSEInstances.of(turSNSiteLocale.getTurSNSite()),
                 turSNSiteLocale.getCore());
     }
 
@@ -93,7 +97,7 @@ public class TurElasticsearchInstanceProcess {
             return Optional.empty();
         }
         log.debug("Found locale core={}", turSNSiteLocale.getCore());
-        return getElasticsearchInstance(turSNSite.getTurSEInstance(), turSNSiteLocale.getCore());
+        return getElasticsearchInstance(snSiteSEInstances.of(turSNSite), turSNSiteLocale.getCore());
     }
 
     private Optional<TurElasticsearchInstance> getElasticsearchInstance(TurSEInstance turSEInstance,

@@ -56,12 +56,25 @@ public class TurSearchEnginePluginFactory {
     private final TurResilienceExecutor resilienceExecutor;
     private final TurResilienceRegistry resilienceRegistry;
     private final TurSearchObservation searchObservation;
+    /** T1315 — SE instance id to plugin type; null in tests that build sites without one. */
+    private final java.util.function.Function<String, String> pluginTypeOfSeInstance;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TurSearchEnginePluginFactory(List<TurSearchEnginePlugin> plugins,
             TurResilienceExecutor resilienceExecutor,
             TurResilienceRegistry resilienceRegistry,
-            TurSearchObservation searchObservation) {
+            TurSearchObservation searchObservation,
+            TurSEInstancePluginTypes seInstancePluginTypes) {
+        this(plugins, resilienceExecutor, resilienceRegistry, searchObservation,
+                seInstancePluginTypes == null ? null : seInstancePluginTypes::of);
+    }
+
+    private TurSearchEnginePluginFactory(List<TurSearchEnginePlugin> plugins,
+            TurResilienceExecutor resilienceExecutor,
+            TurResilienceRegistry resilienceRegistry,
+            TurSearchObservation searchObservation,
+            java.util.function.Function<String, String> pluginTypeOfSeInstance) {
+        this.pluginTypeOfSeInstance = pluginTypeOfSeInstance;
         this.resilienceExecutor = resilienceExecutor;
         this.resilienceRegistry = resilienceRegistry;
         this.searchObservation = searchObservation;
@@ -83,7 +96,16 @@ public class TurSearchEnginePluginFactory {
      * DI which always provides the multi-arg constructor.
      */
     public TurSearchEnginePluginFactory(List<TurSearchEnginePlugin> plugins) {
-        this(plugins, null, null, null);
+        this(plugins, null, null, null, (java.util.function.Function<String, String>) null);
+    }
+
+    /**
+     * T1315 — test-only constructor that also says which plugin type each SE
+     * instance id runs, since a site names its SE instance by id.
+     */
+    public TurSearchEnginePluginFactory(List<TurSearchEnginePlugin> plugins,
+            java.util.function.Function<String, String> pluginTypeOfSeInstance) {
+        this(plugins, null, null, null, pluginTypeOfSeInstance);
     }
 
     /**
@@ -148,11 +170,11 @@ public class TurSearchEnginePluginFactory {
      * @return the matching plugin, or Solr as fallback
      */
     public TurSearchEnginePlugin getPluginForSite(TurSNSite turSNSite) {
-        String pluginType = Optional.ofNullable(turSNSite)
-                .map(TurSNSite::getTurSEInstance)
-                .map(i -> i.getTurSEVendor())
-                .map(v -> StringUtils.isNotBlank(v.getPlugin()) ? v.getPlugin() : v.getId())
-                .orElse("solr");
+        // T1315 — the site names its SE instance by id; the plugin type is cached by id.
+        String seInstanceId = turSNSite == null ? null : turSNSite.getTurSEInstanceId();
+        String pluginType = seInstanceId == null || pluginTypeOfSeInstance == null
+                ? TurSEInstancePluginTypes.DEFAULT_PLUGIN_TYPE
+                : pluginTypeOfSeInstance.apply(seInstanceId);
         return getPlugin(pluginType);
     }
 

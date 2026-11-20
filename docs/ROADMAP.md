@@ -24,16 +24,16 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 🛠 **T1315** (deps: T1312 ✅, T1313 ✅, T1314 ✅) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — TurSNSite still holds its SE instance as a JPA association into the searchengine module. → §CLXXXIX.11
 - 🛠 **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — Aggregates beyond the agent, SN site and persona still have no @Version, and no shared superclass replaces the 20 hand-rolled date fields. → §CLXXXIX.15
-- 📋 **T1321** (deps: T1315 🛠, T1317 ✅, T1318 ✅, T1319 🛠, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history; a 2026.2 install upgrades by export and import. → §CLXXXIX.17
-- 📋 **T1322** (deps: T1308 ✅, T1310 ✅, T1311 ✅, T1315 🛠) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
+- 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 🛠, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history; a 2026.2 install upgrades by export and import. → §CLXXXIX.17
+- 📋 **T1322** (deps: T1308 ✅, T1310 ✅, T1311 ✅, T1315 ✅) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
 - 📋 **T1323** (deps: T1322, T1316 ✅) **The module report never fails the build, so a new cycle merges unnoticed** — Once the moves land, the module verification runs in the unit suite and fails on any cycle or any access to another module's internal package. → §CLXXXIX.19
 - 📋 **T1324** (deps: T1316 ✅, T1321) **A module event lost to a crash between commit and listener is never delivered** — The JPA event publication registry, its table in the Liquibase baseline, tenant-aware and republished by one node under ShedLock, makes cross-module listeners at-least-once. → §CLXXXIX.20
 - 📋 **T1325** (deps: T1323) **Every integration test boots the whole context, even for one module's behaviour** — Module slice tests boot one module with its declared dependencies, so module ITs start faster and fail when a hidden dependency appears. → §CLXXXIX.21
 - 📋 **T1326** (deps: T1323) **No diagram shows the backend's modules or how they depend on each other** — Documenter output generated from the verified model keeps a contributor architecture page current without anyone redrawing it. → §CLXXXIX.22
 - 📋 **T1327** (deps: T1323) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
+- 📋 **T1337** (deps: T1315 ✅) **Engine client lookups read the site's SE instance row on every search since it became an id** — The Solr, Elasticsearch and Lucene instance processes now load the SE instance by id per lookup, where the eager association used to come joined. → §CLXXXIX.32
 
 ## Done when — T1184
 
@@ -47,13 +47,6 @@
   TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
   violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
   into the module with the DSL types or call the plugin.
-
-## Done when — T1315
-
-- **No JPA association targets an entity of another module** Every @ManyToOne,
-  @OneToMany, @ManyToMany and @OneToOne field's type lives in the same top-level module
-  package as its entity; checked by grepping the association fields' types against their
-  packages.
 
 ## Done when — T1319
 

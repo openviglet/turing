@@ -12,8 +12,6 @@ package com.viglet.turing.sn.snapshot;
 import java.io.Serial;
 import java.io.Serializable;
 
-import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
 import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
@@ -42,11 +40,10 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
  *       {@code snSemanticRecallMinScore}, and T1105's
  *       {@code snHybridVectorWeight} + {@code snEmbeddedFields}), so those are
  *       carried and the rest is not.</li>
- *   <li>{@code turSEInstance} — reached only by
- *       {@code TurSearchEnginePluginFactory#getPluginForSite}, which resolves the
- *       vendor's {@code plugin} (falling back to its id). The snapshot already
- *       computes exactly that as {@code pluginType}, so the rebuilt vendor
- *       carries it and the lookup answers identically. Nothing else on this path
+ *   <li>{@code turSEInstanceId} — a plain id since T1315, carried as is;
+ *       {@code TurSearchEnginePluginFactory#getPluginForSite} turns it into the
+ *       plugin type through the cached {@code TurSEInstancePluginTypes}, the same
+ *       answer the snapshot records as {@code pluginType}. Nothing else on this path
  *       touches the SE instance — {@code TurSolrInstanceProcess} loads its own
  *       site by name, so the Solr client is not built from here.</li>
  * </ul>
@@ -84,7 +81,6 @@ public record TurSNSiteSearchSiteView(
     /** Projected in-session, while the two associations are still initialised. */
     public static TurSNSiteSearchSiteView from(TurSNSite site, String pluginType) {
         TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
-        TurSEInstance seInstance = site.getTurSEInstance();
         return new TurSNSiteSearchSiteView(
                 site.getId(), site.getTenantId(), site.getName(), site.getDescription(),
                 site.getIcon(), site.getRowsPerPage(), site.getWildcardNoResults(),
@@ -107,7 +103,7 @@ public record TurSNSiteSearchSiteView(
                 genAi == null ? null : genAi.getSnSemanticRecallMinScore(),
                 genAi == null ? null : genAi.getSnHybridVectorWeight(),
                 genAi == null ? null : genAi.getSnEmbeddedFields(),
-                seInstance == null ? null : seInstance.getId(),
+                site.getTurSEInstanceId(),
                 pluginType);
     }
 
@@ -155,7 +151,7 @@ public record TurSNSiteSearchSiteView(
         site.setMetricsMaskPersonalData(metricsMaskPersonalData);
         site.setTimeZone(timeZone);
         site.setTurSNSiteGenAi(genAiOrNull());
-        site.setTurSEInstance(seInstanceOrNull());
+        site.setTurSEInstanceId(seInstanceId);
         return site;
     }
 
@@ -176,19 +172,4 @@ public record TurSNSiteSearchSiteView(
         return genAi;
     }
 
-    private TurSEInstance seInstanceOrNull() {
-        if (seInstanceId == null && pluginType == null) {
-            return null;
-        }
-        TurSEVendor vendor = new TurSEVendor();
-        // getPluginForSite reads plugin, falling back to the vendor id — the
-        // snapshot already resolved both into pluginType, so setting it answers
-        // the lookup identically without carrying the vendor row.
-        vendor.setId(pluginType);
-        vendor.setPlugin(pluginType);
-        TurSEInstance seInstance = new TurSEInstance();
-        seInstance.setId(seInstanceId);
-        seInstance.setTurSEVendor(vendor);
-        return seInstance;
-    }
 }

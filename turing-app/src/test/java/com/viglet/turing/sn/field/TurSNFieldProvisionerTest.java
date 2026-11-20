@@ -37,6 +37,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 @ExtendWith(MockitoExtension.class)
 class TurSNFieldProvisionerTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     @Mock
     private TurSNSiteFieldRepository turSNSiteFieldRepository;
     @Mock
@@ -60,7 +63,7 @@ class TurSNFieldProvisionerTest {
         seInstance.setId("se1");
         TurSNSite site = new TurSNSite();
         site.setName("site1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
         return site;
     }
 
@@ -121,7 +124,7 @@ class TurSNFieldProvisionerTest {
     @Test
     void recreateFieldDeletesTheFacetRowsBeforeTheExt() {
         TurSNSite site = site();
-        site.setTurSEInstance(null);
+        site.setTurSEInstanceId(null);
         TurSNSiteFieldExt ext = TurSNSiteFieldExt.builder().name("author").type(TurSEFieldType.STRING).build();
         var facet = new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet();
         java.util.Set<com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet> facets =

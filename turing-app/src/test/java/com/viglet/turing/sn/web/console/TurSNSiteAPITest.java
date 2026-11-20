@@ -78,6 +78,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteAPITest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
         private TurSNSiteAPI newApi(TurSNSiteRepository siteRepository,
                         TurSNSiteLocaleRepository localeRepository,
                         TurSNSiteGenAiRepository genAiRepository,
@@ -154,7 +157,6 @@ class TurSNSiteAPITest {
 
                 assertThat(result.getFacetSort()).isEqualTo(TurSNSiteFacetSortEnum.COUNT);
                 assertThat(result.getFacetType()).isEqualTo(TurSNSiteFacetFieldEnum.AND);
-                assertThat(result.getTurSEInstance()).isNotNull();
                 assertThat(result.getTurSNSiteGenAi()).isNotNull();
         }
 
@@ -298,7 +300,7 @@ class TurSNSiteAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
                 instance.setEndpointUrl("http://localhost:8983/solr");
-                site.setTurSEInstance(instance);
+                seInstances.attach(site, instance);
 
                 when(siteRepository.findById("site")).thenReturn(Optional.of(site));
 
@@ -323,7 +325,7 @@ class TurSNSiteAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
                 instance.setEndpointUrl("http://localhost:8983/solr");
-                site.setTurSEInstance(instance);
+                seInstances.attach(site, instance);
                 TurSNSiteGenAi genAi = new TurSNSiteGenAi();
                 site.setTurSNSiteGenAi(genAi);
 

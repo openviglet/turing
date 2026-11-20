@@ -58,6 +58,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurSNSynonymApplyService {
 
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSynonymService synonymService;
     private final TurSNSiteRepository siteRepository;
@@ -66,7 +68,9 @@ public class TurSNSynonymApplyService {
     public TurSNSynonymApplyService(TurSearchEnginePluginFactory pluginFactory,
             TurSNSynonymService synonymService,
             TurSNSiteRepository siteRepository,
-            TurSNSiteLocaleRepository siteLocaleRepository) {
+            TurSNSiteLocaleRepository siteLocaleRepository,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.pluginFactory = pluginFactory;
         this.synonymService = synonymService;
         this.siteRepository = siteRepository;
@@ -126,7 +130,7 @@ public class TurSNSynonymApplyService {
     }
 
     private TurSESynonymApplyResult applyForLocale(TurSNSite site, TurSNSiteLocale locale) {
-        TurSEInstance seInstance = site.getTurSEInstance();
+        TurSEInstance seInstance = snSiteSEInstances.of(site);
         if (seInstance == null) {
             return new TurSESynonymApplyResult(false, 0, Set.of(),
                     List.of("Site has no search engine instance; cannot apply synonyms."));

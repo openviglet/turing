@@ -136,7 +136,7 @@ public class TurSNTemplate {
         public String createSolrCore(TurSNSiteLocale turSNSiteLocale, String username) {
                 final String coreName = getCoreName(turSNSiteLocale, username);
                 turSEInstanceRepository
-                                .findById(turSNSiteLocale.getTurSNSite().getTurSEInstance().getId())
+                                .findById(turSNSiteLocale.getTurSNSite().getTurSEInstanceId())
                                 .ifPresent(instance ->
                                         pluginFactory.getPluginForInstance(instance)
                                                 .createIndex(instance, turSNSiteLocale, coreName, Map.of())
@@ -203,7 +203,7 @@ public class TurSNTemplate {
 
         private void createCopyField(int multiValued, TurSNSiteLocale turSNSiteLocale, TurSNSiteField turSNSiteField) {
                 turSEInstanceRepository
-                                .findById(turSNSiteLocale.getTurSNSite().getTurSEInstance().getId())
+                                .findById(turSNSiteLocale.getTurSNSite().getTurSEInstanceId())
                                 .ifPresent(turSEInstance ->
                                         pluginFactory.getPluginForInstance(turSEInstance)
                                                 .createCopyField(turSEInstance, turSNSiteLocale.getCore(),

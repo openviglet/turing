@@ -72,6 +72,9 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
  */
 class TurSNSiteFieldExtAPITest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
         private static TurSNSiteFieldExtDto asDto(TurSNSiteFieldExt fieldExt) {
                 TurSNSiteFieldExtDto dto = new TurSNSiteFieldExtDto(fieldExt);
                 dto.setFacetLocales(fieldExt.getFacetLocales());
@@ -548,7 +551,7 @@ class TurSNSiteFieldExtAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
                 instance.setId("se-id");
-                site.setTurSEInstance(instance);
+                seInstances.attach(site, instance);
                 site.setTurSNSiteLocales(new HashSet<>());
                 TurSNSiteFieldExt payload = new TurSNSiteFieldExt();
                 payload.setName("title");
@@ -808,7 +811,7 @@ class TurSNSiteFieldExtAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance siteInstance = new TurSEInstance();
                 siteInstance.setId("se-id");
-                site.setTurSEInstance(siteInstance);
+                seInstances.attach(site, siteInstance);
 
                 TurSNSiteLocale locale = new TurSNSiteLocale();
                 locale.setCore("core_en");
@@ -856,7 +859,7 @@ class TurSNSiteFieldExtAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance siteInstance = new TurSEInstance();
                 siteInstance.setId("se-id");
-                site.setTurSEInstance(siteInstance);
+                seInstances.attach(site, siteInstance);
                 TurSNSiteLocale locale = new TurSNSiteLocale();
                 locale.setCore("core_en");
                 site.setTurSNSiteLocales(new HashSet<>(Set.of(locale)));
@@ -908,7 +911,7 @@ class TurSNSiteFieldExtAPITest {
                 TurSNSite site = new TurSNSite();
                 TurSEInstance instance = new TurSEInstance();
                 instance.setId("se-id");
-                site.setTurSEInstance(instance);
+                seInstances.attach(site, instance);
                 site.setTurSNSiteLocales(new HashSet<>());
 
                 invokePrivate(api, "deleteSolrSchema",

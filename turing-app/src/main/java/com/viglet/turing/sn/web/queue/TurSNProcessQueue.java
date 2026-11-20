@@ -66,6 +66,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Component
 @Slf4j
 public class TurSNProcessQueue {
+
+    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
     public static final String INDEXED = "Indexed";
     public static final String DEINDEXED = "Deindexed";
     private final TurSearchEnginePluginFactory pluginFactory;
@@ -104,7 +106,9 @@ public class TurSNProcessQueue {
             com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer,
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,
             @org.springframework.context.annotation.Lazy TurSNProcessQueue self,
-            @org.springframework.context.annotation.Lazy com.viglet.turing.rag.TurSNGenAi turSNGenAi) {
+            @org.springframework.context.annotation.Lazy com.viglet.turing.rag.TurSNGenAi turSNGenAi,
+            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+        this.snSiteSEInstances = snSiteSEInstances;
         this.turSNGenAi = turSNGenAi;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;
@@ -308,7 +312,7 @@ public class TurSNProcessQueue {
         var turSNSite = siteOpt.get();
         log.debug("receiveIndexingQueue: found site='{}' seInstance={}",
                 turSNSite.getName(),
-                turSNSite.getTurSEInstance() != null ? turSNSite.getTurSEInstance().getId() : "null");
+                turSNSite.getTurSEInstanceId() != null ? turSNSite.getTurSEInstanceId() : "null");
         if (turSNJobItem.getTurSNJobAction() == TurSNJobAction.CREATE) {
             ensureCoreExists(turSNSite, turSNJobItem.getLocale(), ensuredCores);
         }
@@ -500,7 +504,7 @@ public class TurSNProcessQueue {
      * rather than masking the original error.
      */
     private void ensureCoreExists(TurSNSite turSNSite, Locale locale, Set<String> ensuredCores) {
-        TurSEInstance seInstance = turSNSite.getTurSEInstance();
+        TurSEInstance seInstance = snSiteSEInstances.of(turSNSite);
         if (seInstance == null) {
             return;
         }

@@ -78,7 +78,7 @@ class TurSNSiteMetricTermsAsTypedIT extends AbstractTuringSpringIT {
             TurSNSite created = new TurSNSite();
             created.setId(UUID.randomUUID().toString());
             created.setName("as-typed-" + suffix);
-            created.setTurSEInstance(instance);
+            created.setTurSEInstanceId(instance.getId());
             entityManager.persist(created);
             Instant when = start.plus(1, ChronoUnit.MINUTES);
             for (String term : List.of("emergência", "emergência", "Emergência ", "emergencia", "палатка",

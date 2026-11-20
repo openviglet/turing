@@ -81,6 +81,9 @@ import tools.jackson.databind.json.JsonMapper;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TurDslContentAiExecutorTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     private static final String SITE = "atlas";
     private static final String CORE = "atlas_en_us";
     private static final String SOURCE = "content-ai-articles-index";
@@ -137,7 +140,7 @@ class TurDslContentAiExecutorTest {
         instance.setEndpointUrl(endpoint);
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
-        site.setTurSEInstance(instance);
+        seInstances.attach(site, instance);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setTurSNSite(site);
         siteLocale.setLanguage(LOCALE);
@@ -153,7 +156,7 @@ class TurDslContentAiExecutorTest {
         property.getSources().put(SITE, SOURCE);
 
         executor = new TurDslContentAiExecutor(client, queryBuilder, property,
-                turSNSiteRepository, turSNSiteLocaleRepository);
+                turSNSiteRepository, turSNSiteLocaleRepository, seInstances.service());
     }
 
     @AfterEach

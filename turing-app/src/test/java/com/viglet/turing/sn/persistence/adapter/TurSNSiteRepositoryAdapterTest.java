@@ -35,6 +35,9 @@ import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteRepositoryAdapterTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     @Mock
     private TurSNSiteRepository turSNSiteRepository;
 
@@ -86,7 +89,7 @@ class TurSNSiteRepositoryAdapterTest {
         TurSNSite entity = buildSite();
         TurSEInstance se = new TurSEInstance();
         se.setId("se-id");
-        entity.setTurSEInstance(se);
+        seInstances.attach(entity, se);
         when(turSNSiteRepository.findByName("site")).thenReturn(Optional.of(entity));
 
         TurSNSiteDomain domain = adapter.findByName("site").orElseThrow();

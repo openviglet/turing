@@ -15,6 +15,9 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 
 class TurSNSiteExchangeTest {
 
+    private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
+            new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+
     @Test
     void shouldMapTurSNSiteWithGenAiAndSeReference() {
         TurSNSite site = new TurSNSite();
@@ -29,7 +32,7 @@ class TurSNSiteExchangeTest {
 
         TurSEInstance seInstance = new TurSEInstance();
         seInstance.setId("se-1");
-        site.setTurSEInstance(seInstance);
+        seInstances.attach(site, seInstance);
 
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
@@ -62,7 +65,7 @@ class TurSNSiteExchangeTest {
         site.setHl(0);
         site.setMlt(1);
         site.setThesaurus(0);
-        site.setTurSEInstance(null);
+        site.setTurSEInstanceId(null);
         site.setTurSNSiteGenAi(null);
 
         TurSNSiteExchange exchange = new TurSNSiteExchange(site);

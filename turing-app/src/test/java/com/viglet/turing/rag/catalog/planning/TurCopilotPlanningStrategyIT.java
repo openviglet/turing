@@ -156,7 +156,7 @@ class TurCopilotPlanningStrategyIT extends AbstractTuringSpringIT {
             TurSNSite site = new TurSNSite();
             String name = "bk-planning-" + UUID.randomUUID();
             site.setName(name);
-            site.setTurSEInstance(entityManager.find(TurSEInstance.class, instanceId));
+            site.setTurSEInstanceId(instanceId);
             site.setTurSNSiteGenAi(genAi);
             entityManager.persist(site);
             return name;

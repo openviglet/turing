@@ -176,7 +176,7 @@ public class TurSNSiteImport {
 
 			TurSNSite turSNSite = createSNSiteFromExchange(turSNSiteExchange);
 
-			if (turSNSite.getTurSEInstance() == null) {
+			if (turSNSite.getTurSEInstanceId() == null) {
 				log.error("Cannot import SN Site '{}' ({}): no SE Instance available. " +
 						"Please create a Search Engine instance first.",
 						turSNSiteExchange.getName(), turSNSiteExchange.getId());
@@ -379,7 +379,7 @@ public class TurSNSiteImport {
 		if (turSNSiteExchange.getTurSEInstance() != null) {
 			turSEInstanceRepository.findById(turSNSiteExchange.getTurSEInstance())
 					.ifPresentOrElse(
-							turSNSite::setTurSEInstance,
+							seInstance -> turSNSite.setTurSEInstanceId(seInstance.getId()),
 							() -> {
 								log.warn("SE Instance '{}' from export not found. " +
 										"Falling back to first available SE Instance.",
@@ -400,13 +400,13 @@ public class TurSNSiteImport {
 						seInstance -> {
 							log.info("Using SE Instance '{}' ({}) as fallback.",
 									seInstance.getTitle(), seInstance.getId());
-							turSNSite.setTurSEInstance(seInstance);
+							turSNSite.setTurSEInstanceId(seInstance.getId());
 						},
 						() -> {
 							log.warn("No SE Instance available. Creating a default Solr instance.");
 							TurSEInstance newInstance = createDefaultSEInstance();
 							if (newInstance != null) {
-								turSNSite.setTurSEInstance(newInstance);
+								turSNSite.setTurSEInstanceId(newInstance.getId());
 							} else {
 								log.error("Failed to create default SE Instance. " +
 										"Cannot import SN Site without a Search Engine instance.");
@@ -743,7 +743,8 @@ public class TurSNSiteImport {
 	}
 
 	private void createIndexIfNotExists(TurSNSite turSNSite, TurSNSiteLocale locale) {
-		TurSEInstance seInstance = turSNSite.getTurSEInstance();
+		TurSEInstance seInstance = turSNSite.getTurSEInstanceId() == null ? null
+				: turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId()).orElse(null);
 		if (seInstance == null || locale.getCore() == null) {
 			return;
 		}

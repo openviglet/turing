@@ -119,7 +119,7 @@ class TurSNSiteTenantIsolationIT extends AbstractTuringSpringIT {
         return inTenant(tenant, () -> {
             TurSNSite site = new TurSNSite();
             site.setName(name);
-            site.setTurSEInstance(entityManager.find(TurSEInstance.class, instanceId));
+            site.setTurSEInstanceId(instanceId);
             entityManager.persist(site);
             return site.getId();
         });

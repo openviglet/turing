@@ -413,10 +413,10 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private void deleteSolrSchema(TurSNSite turSNSite, TurSNSiteField field) {
-        if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
+        if (turSNSite.getTurSEInstanceId() == null || turSNSite.getTurSNSiteLocales() == null
                 || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
-        turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+        turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
                 // T1243 — through the site's engine, not Solr directly: a Lucene or
                 // Elasticsearch site has no Solr to talk to, and an env-configured Solr
                 // is reached through the plugin's effective instance.
@@ -429,10 +429,10 @@ public class TurSNSiteFieldExtAPI {
     }
 
     private void updateSolrSchema(TurSNSite turSNSite, TurSNSiteField field) {
-        if (turSNSite.getTurSEInstance() == null || turSNSite.getTurSNSiteLocales() == null
+        if (turSNSite.getTurSEInstanceId() == null || turSNSite.getTurSNSiteLocales() == null
                 || turSNSite.getTurSNSiteLocales().isEmpty())
             return;
-        turSEInstanceRepository.findById(turSNSite.getTurSEInstance().getId())
+        turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
                 .ifPresent(turSEInstance -> {
                     // T1243 — through the site's engine; a field the core already holds
                     // is replaced, so a changed type or cardinality takes effect.

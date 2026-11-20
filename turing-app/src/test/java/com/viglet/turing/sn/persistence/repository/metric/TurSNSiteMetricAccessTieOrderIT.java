@@ -79,7 +79,7 @@ class TurSNSiteMetricAccessTieOrderIT extends AbstractTuringSpringIT {
             TurSNSite created = new TurSNSite();
             created.setId(UUID.randomUUID().toString());
             created.setName("tie-order-" + suffix);
-            created.setTurSEInstance(instance);
+            created.setTurSEInstanceId(instance.getId());
             entityManager.persist(created);
             // One search each, a minute apart: term-0 is the oldest, term-5 the newest.
             for (int i = 0; i < ONE_OFF_TERMS; i++) {

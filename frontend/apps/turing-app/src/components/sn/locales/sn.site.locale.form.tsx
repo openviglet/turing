@@ -186,7 +186,7 @@ export const SNSiteLocaleForm: React.FC<Props> = ({ snSiteId, snLocale, isNew, o
                 control={form.control}
                 name="core"
                 render={({ field }) => {
-                  const seId = snLocale.turSNSite?.turSEInstance?.id;
+                  const seId = snLocale.turSNSite?.turSEInstanceId;
                   const searchSuffix = field.value ? `?search=${encodeURIComponent(field.value)}` : "";
                   const coresUrl = seId
                     ? `${ROUTES.BENTO_SE_INSTANCE}/${seId}/cores${searchSuffix}`

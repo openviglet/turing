@@ -1772,7 +1772,7 @@
 - **T1316** — No entity names another module's listener: agent writes publish TurAIAgentChangedEvent, sn evicts the snapshot on it after commit, and TurEntityListenerModuleTest fails on any new crossing (design §CLXXXIX.12 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1320** — No entity uses @Lob: all 59 String fields map to longtext, none were binary, the schema is unchanged, and TurLobConventionTest fails on a new @Lob.
 - **T1310b** — SN facet typing and enabled-facet reads live in sn.facet; paging, Solr date math and field text are searchengine API; sn no longer imports the Solr query builder, TurSolrField or Lucene filters.
-- **T1315 (persona store and MCP references by id)** — TurPersona holds its few-shot store and brand-context MCP server as id columns resolved through the rag and mcp repositories; the API, form, export and docs speak fewShotStoreId and brandContextMcpServerId.
+- **T1315** — No JPA association crosses a module line: an SN site holds its SE instance by id, resolved per search through a cached plugin type evicted by an SE instance listener.
 - **T1315b** — TurAIAgent holds analyticsSeInstanceId and TurIntegrationInstance holds apiTokenId on the same columns, resolved through the searchengine and auth repositories; the two admin forms send the ids.
 - **T1315c** — TurSNSiteGenAi holds ragSeInstanceId on the same column; the site update, the RAG search tool and the BM25 core API resolve it through the SE instance repository, and the GenAI form sends the id.
 - **T1315d** — TurAnalyticsIntent holds agentId and TurRagBm25Core holds seInstanceId on the same columns; the intent queries and readers use the id, and the BM25 provisioner and indexer resolve the SE instance by id.
