@@ -114,6 +114,29 @@ services. A listener fires on every write, whichever service made it; a publishe
 fires only where someone remembered to publish it, which is the stale-cache defect T896
 fixed.
 
+### 5. Tenancy rulings
+
+Every entity has one of four rulings (T1318); `TurTenancyRulingConventionTest` holds the
+lists and fails on an entity without one.
+
+- **Tenant-owned**: Hibernate `@TenantId`. This is the one mechanism for a row a tenant
+  owns; it is stamped and filtered without any code asking.
+- **Plain `tenantId`, on purpose**: a column the code stamps by hand and may read across
+  tenants. Only three reasons qualify: the BYO-infra pool, where a null tenant is the
+  GLOBAL pool every tenant sees (`TurSEInstance`, `TurLLMInstance`, `TurEmbeddingModel`,
+  `TurStoreInstance`, `TurIntegrationInstance`, `TurMcpServer`); billing that rolls usage
+  up across tenants (`TurLLMTokenUsage`, `TurAiUsageDaily`); and the gateway key, which
+  is looked up before any tenant is bound (`TurGatewayKey`).
+- **Global**: platform catalogs and identity, with no tenant column. The vendors
+  (`TurLLMVendor`, `TurSEVendor`, `TurStoreVendor`), `TurLLMPrice`, `TurLocale`,
+  `TurConfigVar`, `TurSNSourceType`; the identity tables (`TurUser`, `TurGroup`,
+  `TurRole`, `TurPrivilege`), since one user spans tenants; and the tenancy tables
+  themselves (`TurTenant`, `TurTenantMembership`).
+- **Through an owner**: a child row with no column of its own, isolated because it is
+  reached through a tenant-scoped owner (an SN site's fields, rules and spotlights, an
+  agent's slots and conversation records, a knowledge base's terms). The test names each
+  child's owner and checks the owner is tenant-scoped.
+
 ## Consequences
 
 - Every module is independently verifiable; a new cycle fails the build once T1323

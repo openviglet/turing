@@ -2514,15 +2514,6 @@ module's named interface, and deletes that used to cascade across modules become
 the other module handles. Associations inside one module stay, under the FetchType.LAZY
 rule. The schema change is carried by the Liquibase reset, not by migrations.
 
-### CLXXXIX.14 One tenant-scoping mechanism (T1318)
-
-16 entities use Hibernate @TenantId; others carry a plain tenantId column (the BYO-infra
-scoping) and 54 carry none. Some of those are global on purpose (the T372 GLOBAL
-read-only rows, the model catalog). The task lists every entity with a ruling, puts the
-tenant column on every tenant-scoped one through one mechanism, documents the global set
-in ADR 0005, and adds a convention test that fails on an entity with neither a tenant
-column nor a place in the global list.
-
 ### CLXXXIX.15 Audit columns and optimistic locking (T1319)
 
 Two admins saving the same agent or SN site today overwrite each other silently, because
@@ -2616,3 +2607,21 @@ resolveAllReferences already maps each bundled store and MCP server old id to th
 upserted (refs.stores, refs.mcpServers), so personas should be resolved after those two
 and set their ids from the maps, dropping an id the bundle does not carry. A test in
 TurAIAgentImportServiceTest round-trips a persona with both references.
+
+### CLXXXIX.27 Children keyed by a plain owner id (T1332)
+
+T1318 ruled 36 entities "through an owner": they have no tenant column and are isolated
+because a tenant-scoped owner reaches them. That holds for JPA children (an SN site's
+fields, rules, spotlights), but several are keyed by a plain owner id rather than an
+association: TurChatCitationRecord, TurChatSlotAuditEntry, TurChatTurnFeedback,
+TurAnswerSignalEvent and TurDistillationJob (agentId or conversationId), TurAnswerShare
+(siteName), TurSNSiteMicrothesaurus and its config (snSiteId), TurVendorFile and
+TurBatchJob (instanceId). For those, isolation depends on every repository read first
+loading the owner through its filtered repository. A query by the plain id alone skips
+the @TenantId filter.
+
+Audit each of these repositories' callers. Where a read goes straight to the child by
+the plain id (an analytics query, a feedback list, a share lookup), either load the
+owner first or give the entity a @TenantId column and move it out of the "through an
+owner" list in TurTenancyRulingConventionTest. A public share link that is meant to be
+readable without a tenant should be ruled explicitly, not left implicit.
