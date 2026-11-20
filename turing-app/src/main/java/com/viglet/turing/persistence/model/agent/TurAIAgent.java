@@ -374,7 +374,7 @@ public class TurAIAgent implements Serializable {
      * When {@code true} (and object storage is enabled), the executor captures
      * the exact assembled system message + the T617 whole-message list at send
      * time, keyed by conversation id + turn index, onto the pluggable
-     * {@link com.viglet.turing.service.storage.TurStorageService} — so the Live
+     * {@link com.viglet.turing.storage.TurStorageService} — so the Live
      * Preview can load any <em>past</em> turn verbatim instead of reconstructing
      * the conversation's current state (T612). Because this writes on the chat
      * hot path it is opt-in and bounded (a per-conversation turn ring, a

@@ -19,8 +19,8 @@ import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurGenAiProperty.TurGenAiToolResultOffloadProperty;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * Single consolidation point for the tool-callback decorator chain.

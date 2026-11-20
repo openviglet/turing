@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeDto;
 import com.viglet.turing.persistence.dto.agent.TurChatFlowRecipeSummaryDto;
-import com.viglet.turing.service.chatflow.TurChatFlowRecipeService;
+import com.viglet.turing.agent.chatflow.TurChatFlowRecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

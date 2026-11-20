@@ -1,10 +1,10 @@
 package com.viglet.turing.api.git;
 
-import com.viglet.turing.service.git.TurGitBrowseService;
-import com.viglet.turing.service.git.TurGitBuildStatus;
-import com.viglet.turing.service.git.TurGitPipelineService;
-import com.viglet.turing.service.git.TurGitRepositoryInfo;
-import com.viglet.turing.service.git.TurGitServerService;
+import com.viglet.turing.storage.git.TurGitBrowseService;
+import com.viglet.turing.storage.git.TurGitBuildStatus;
+import com.viglet.turing.storage.git.TurGitPipelineService;
+import com.viglet.turing.storage.git.TurGitRepositoryInfo;
+import com.viglet.turing.storage.git.TurGitServerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;

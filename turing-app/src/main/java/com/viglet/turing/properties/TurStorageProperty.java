@@ -1,6 +1,6 @@
 package com.viglet.turing.properties;
 
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageType;
 import lombok.Getter;
 import lombok.Setter;
 

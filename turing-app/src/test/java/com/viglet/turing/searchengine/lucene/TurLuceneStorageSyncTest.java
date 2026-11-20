@@ -21,8 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.api.asset.TurAssetItem;
-import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageType;
 
 /**
  * Unit tests for {@link TurLuceneStorageSync}.

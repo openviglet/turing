@@ -2,8 +2,8 @@ package com.viglet.turing.api.system;
 
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.service.git.TurGitServerService;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.git.TurGitServerService;
+import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.tenant.TurPlatformAdminService;

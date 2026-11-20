@@ -22,8 +22,8 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.api.asset.TurAssetItem;
 import com.viglet.turing.observability.TurChatPipelineObservation;
-import com.viglet.turing.service.storage.TurStorageContentTypes;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageContentTypes;
+import com.viglet.turing.storage.TurStorageService;
 
 import lombok.extern.slf4j.Slf4j;
 

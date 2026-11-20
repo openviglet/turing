@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.agent.workspace.TurAgentWorkspaceUrlSigner;
 import com.viglet.turing.agent.workspace.TurAgentWorkspaceUrlSigner.VerifyResult;
-import com.viglet.turing.service.storage.TurStorageContentTypes;
+import com.viglet.turing.storage.TurStorageContentTypes;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

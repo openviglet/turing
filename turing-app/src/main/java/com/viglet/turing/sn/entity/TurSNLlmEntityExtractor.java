@@ -41,7 +41,7 @@ import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

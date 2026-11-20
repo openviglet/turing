@@ -25,11 +25,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.viglet.turing.service.asset.TurAssetEvent;
-import com.viglet.turing.service.asset.TurAssetTrainingService;
-import com.viglet.turing.service.asset.TurAssetTrainingState;
-import com.viglet.turing.service.asset.TurAssetTrainingStatus;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.asset.TurAssetEvent;
+import com.viglet.turing.storage.asset.TurAssetTrainingService;
+import com.viglet.turing.storage.asset.TurAssetTrainingState;
+import com.viglet.turing.storage.asset.TurAssetTrainingStatus;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * Tests for TurAssetAPI.

@@ -29,8 +29,8 @@ import com.viglet.core.webhook.VigletWebhookDispatcher;
 import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.turing.email.TurEmailMessage;
 import com.viglet.turing.email.TurEmailService;
-import com.viglet.turing.service.chatslots.TurChatWebhookService;
-import com.viglet.turing.service.chatslots.TurChatWebhookService.DispatchOutcome;
+import com.viglet.turing.chat.slots.TurChatWebhookService;
+import com.viglet.turing.chat.slots.TurChatWebhookService.DispatchOutcome;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

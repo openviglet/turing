@@ -5,7 +5,7 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 import org.springframework.ai.chat.model.ToolContext;
 
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 
 import lombok.extern.slf4j.Slf4j;
 

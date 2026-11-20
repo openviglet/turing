@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Per-conversation key-value-blob store for AI agents (T111).
  *
- * <p>A thin façade over the pluggable {@link com.viglet.turing.service.storage.TurStorageService}
+ * <p>A thin façade over the pluggable {@link com.viglet.turing.storage.TurStorageService}
  * (NoOp / Filesystem / MinIO, selected by {@code turing.storage.type}). Each
  * conversation gets an isolated namespace; the backend writes under the
  * T78 multi-tenant path

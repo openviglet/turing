@@ -40,8 +40,8 @@ import com.viglet.turing.persistence.model.agent.TurChatFlow;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.model.persona.TurPersonaKind;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.service.chatanalytics.TurToolCallTraceService;
-import com.viglet.turing.service.llm.price.TurLLMPriceService;
+import com.viglet.turing.chat.analytics.TurToolCallTraceService;
+import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 /**
  * T607 — flow-aware persona resolution in the Live Preview. Exercises the

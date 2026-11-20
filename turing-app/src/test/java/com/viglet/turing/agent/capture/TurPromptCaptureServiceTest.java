@@ -32,10 +32,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.viglet.turing.api.asset.TurAssetItem;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.service.storage.TurStorageContentTypes;
-import com.viglet.turing.service.storage.TurStorageObjectStat;
-import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageContentTypes;
+import com.viglet.turing.storage.TurStorageObjectStat;
+import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageType;
 
 /**
  * Unit tests for {@link TurPromptCaptureService} (T618) — capture/read round

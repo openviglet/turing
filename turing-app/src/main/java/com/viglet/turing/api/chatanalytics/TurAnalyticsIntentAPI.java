@@ -29,7 +29,7 @@ import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.chatanalytics.TurAnalyticsIntent;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.chatanalytics.TurAnalyticsIntentRepository;
-import com.viglet.turing.service.chatanalytics.TurAnalyticsIntentIndexer;
+import com.viglet.turing.chat.analytics.TurAnalyticsIntentIndexer;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

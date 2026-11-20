@@ -26,10 +26,10 @@
 
 - 📋 **T1308** (deps: T1307 ✅) **Controllers and services of every subsystem share the api package, so genai calls into it** — Each controller moves into the module it serves and services such as TurSNSiteSearchService leave api, so web adapters depend inward and nothing depends on them. → §CLXXXIX.4
 - ⏳ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — 130 calls still reach engine internals, from api.se, the SN queue and query APIs, sn search, autocomplete, spotlights, facets and the four sn.dsl executors. → §CLXXXIX.6
-- 📋 **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — Chat analytics, slots and memory form a chat module, storage and assets another, and each seeder moves into the module whose data it writes. → §CLXXXIX.7
+- ⏳ **T1311** (deps: T1306 ✅) **The service and onstartup packages hold chat, storage, auth and seeding for unrelated modules** — TurOnStartup, in system.onstartup, still calls the auth, searchengine, llm and rag seeders, so system depends on them until each runs itself. → §CLXXXIX.7
 - 📋 **T1312** (deps: T1306 ✅) **Semantic Navigation entities, repositories and DTOs live in a shared persistence package** — Moving them into the sn module as internal packages makes sn the only writer of its tables, with other modules reading through its named interface or its events. → §CLXXXIX.8
 - 📋 **T1313** (deps: T1309 ✅) **LLM, agent and flow entities sit in persistence, apart from the genai modules that own them** — Moving entities, repositories, DTOs, mappers and enums into the new genai modules ends persistence importing genai types such as TurBatchKind. → §CLXXXIX.9
-- 📋 **T1314** (deps: T1311) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
+- 📋 **T1314** (deps: T1311 ⏳) **Chat, thesaurus, tenant, system and persona entities still sit in the shared persistence package** — Moving the rest empties persistence.model, repository, dto, mapper and adapter, so the package is deleted and no module shares another's entity classes. → §CLXXXIX.10
 - 📋 **T1315** (deps: T1312, T1313, T1314) **JPA associations cross module lines, so TurAIAgent and TurSNSite load each other's graph** — With compatibility waived, cross-module JPA associations become id columns resolved through the owning module, the reference style Spring Modulith expects. → §CLXXXIX.11
 - 📋 **T1316** (deps: T1312) **Entity classes name sn and genai eviction listeners, so persistence depends on its callers** — Owning modules publish change events after commit and the cache owners listen, which removes the back-edge and the @EntityListeners coupling on the SN and agent entities. → §CLXXXIX.12
 - 📋 **T1317** (deps: T1314) **Table names follow no convention: 87 of 105 lack the tur_ prefix the other 18 carry** — With compatibility waived, every table takes one rule naming its module (for example sn_site, agent_eval_case), so a table's owner is readable from the schema alone. → §CLXXXIX.13
@@ -37,7 +37,7 @@
 - 📋 **T1319** (deps: T1314) **No entity has @Version and only one records created and modified dates through auditing** — A mapped superclass with audit dates and an optimistic-lock version stops silent concurrent overwrites and replaces 20 hand-rolled date fields. → §CLXXXIX.15
 - 📋 **T1320** (deps: T1314) **29 @Lob fields leave each large-text column's type to the database dialect** — Mapping large text to the portable longtext column the persistence rules require, and binary data to storage, gives the same schema on H2, MySQL, PostgreSQL and SQL Server. → §CLXXXIX.16
 - 📋 **T1321** (deps: T1315, T1317, T1318, T1319, T1320) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — With compatibility waived, a squashed baseline per module replaces the history, and a 2026.2 install upgrades by export and import instead of by migration. → §CLXXXIX.17
-- 📋 **T1322** (deps: T1308, T1310 ⏳, T1311, T1315) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
+- 📋 **T1322** (deps: T1308, T1310 ⏳, T1311 ⏳, T1315) **No package declares what it exposes, so any class is reachable from any module** — A package-info with @ApplicationModule and allowedDependencies on each module, plus @NamedInterface on what others may call, turns the map in ADR 0005 into code. → §CLXXXIX.18
 - 📋 **T1323** (deps: T1322, T1316) **The module report never fails the build, so a new cycle merges unnoticed** — Once the moves land, the module verification runs in the unit suite and fails on any cycle or any access to another module's internal package. → §CLXXXIX.19
 - 📋 **T1324** (deps: T1316, T1321) **A module event lost to a crash between commit and listener is never delivered** — The JPA event publication registry, its table in the Liquibase baseline, tenant-aware and republished by one node under ShedLock, makes cross-module listeners at-least-once. → §CLXXXIX.20
 - 📋 **T1325** (deps: T1323) **Every integration test boots the whole context, even for one module's behaviour** — Module slice tests boot one module with its declared dependencies, so module ITs start faster and fail when a hidden dependency appears. → §CLXXXIX.21
@@ -57,6 +57,12 @@
   TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
   violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
   into the module with the DSL types or call the plugin.
+
+## Done when — T1311
+
+- **No startup orchestrator reaches into another module's seeder** Each module's seeder
+  runs as its own ordered runner behind the per-id seeding rule, and TurModuleReportTest
+  shows no dependency from system to auth, searchengine, llm or rag.
 
 ## Non-goals (do NOT add as tasks)
 

@@ -26,7 +26,7 @@ import com.viglet.turing.api.asset.TurAssetItem;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.persistence.model.skill.TurSkill;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T321 / §IX.4.d — opens and tracks {@link TurSkillSandboxSession}s.

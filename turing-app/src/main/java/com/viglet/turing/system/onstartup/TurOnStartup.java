@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2016-2022 the original author or authors. 
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package com.viglet.turing.system.onstartup;
+
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.viglet.turing.auth.onstartup.TurGroupOnStartup;
+import com.viglet.turing.auth.onstartup.TurRoleOnStartup;
+import com.viglet.turing.auth.onstartup.TurUserOnStartup;
+import com.viglet.turing.llm.onstartup.TurEmbeddingModelUnificationService;
+import com.viglet.turing.llm.onstartup.TurLLMVendorOnStartup;
+import com.viglet.turing.searchengine.onstartup.TurSEVendorOnStartup;
+import com.viglet.turing.rag.onstartup.TurStoreVendorOnStartup;
+import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
+import com.viglet.turing.system.onstartup.TurLocaleOnStartup;
+import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
+import com.viglet.turing.auth.TurAdminPasswordService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@Transactional
+@Order(1)
+public class TurOnStartup implements ApplicationRunner {
+	public static final String FIRST_TIME = "FIRST_TIME";
+	private final TurConfigVarRepository turConfigVarRepository;
+	private final TurLocaleOnStartup turLocaleOnStartup;
+	private final TurSEVendorOnStartup turSEVendorOnStartup;
+	private final TurLLMVendorOnStartup turLLMVendorOnStartup;
+	private final TurStoreVendorOnStartup turStoreVendorOnStartup;
+	private final TurConfigVarOnStartup turConfigVarOnStartup;
+	private final TurUserOnStartup turUserOnStartup;
+	private final TurGroupOnStartup turGroupOnStartup;
+	private final TurRoleOnStartup turRoleOnStartup;
+	private final TurEmbeddingModelUnificationService turEmbeddingModelUnificationService;
+	private final TurAdminPasswordService turAdminPasswordService;
+
+	public TurOnStartup(TurConfigVarRepository turConfigVarRepository,
+			TurLocaleOnStartup turLocaleOnStartup,
+			TurSEVendorOnStartup turSEVendorOnStartup,
+			TurLLMVendorOnStartup turLLMVendorOnStartup, TurStoreVendorOnStartup turStoreVendorOnStartup,
+			TurConfigVarOnStartup turConfigVarOnStartup,
+			TurUserOnStartup turUserOnStartup,
+			TurGroupOnStartup turGroupOnStartup,
+			TurRoleOnStartup turRoleOnStartup,
+			TurEmbeddingModelUnificationService turEmbeddingModelUnificationService,
+			TurAdminPasswordService turAdminPasswordService) {
+		this.turConfigVarRepository = turConfigVarRepository;
+		this.turLocaleOnStartup = turLocaleOnStartup;
+		this.turSEVendorOnStartup = turSEVendorOnStartup;
+		this.turLLMVendorOnStartup = turLLMVendorOnStartup;
+		this.turStoreVendorOnStartup = turStoreVendorOnStartup;
+		this.turConfigVarOnStartup = turConfigVarOnStartup;
+		this.turUserOnStartup = turUserOnStartup;
+		this.turGroupOnStartup = turGroupOnStartup;
+		this.turRoleOnStartup = turRoleOnStartup;
+		this.turEmbeddingModelUnificationService = turEmbeddingModelUnificationService;
+		this.turAdminPasswordService = turAdminPasswordService;
+	}
+
+	@Override
+	public void run(ApplicationArguments arg0) {
+		if (turConfigVarRepository.findById(FIRST_TIME).isEmpty()) {
+			log.info("First Time Configuration ...");
+
+			turLocaleOnStartup.createDefaultRows();
+			turRoleOnStartup.createDefaultRows();
+			turGroupOnStartup.createDefaultRows();
+			turUserOnStartup.createDefaultRows();
+			turSEVendorOnStartup.createDefaultRows();
+			turLLMVendorOnStartup.createDefaultRows();
+			turStoreVendorOnStartup.createDefaultRows();
+			turConfigVarOnStartup.createDefaultRows();
+
+			log.info("First Time Configuration completed. Set the admin password via the web interface.");
+		}
+
+		// Headless admin bootstrap (TURING_ADMIN_PASSWORD) — outside the FIRST_TIME
+		// block on purpose: an install seeded before the env var was supplied (or one
+		// whose setup screen was never completed) still gets a usable admin login. A
+		// no-op once the password is set, so restarts never overwrite it.
+		turAdminPasswordService.bootstrapFromConfiguration();
+
+		// Always-run, idempotent reconciliations — must reach EXISTING installs too
+		// (the FIRST_TIME block above runs only on a fresh database). Both are no-ops
+		// once applied.
+		// T754 — self-heal newly-added built-in LLM vendors (e.g. the ONNX embedding
+		// vendors) on upgraded installs. T755 — unify legacy embedding models onto
+		// llm_instance (id-preserving, non-destructive; embedding_model kept).
+		turLLMVendorOnStartup.createDefaultRows();
+		turEmbeddingModelUnificationService.reconcile();
+	}
+
+}

@@ -29,7 +29,7 @@ import lombok.Setter;
  * T289 / §XVI.1 — admin-editable per-model price table backing the Block L
  * cost &amp; token governance layer. One row per {@code (vendorId, modelName)}
  * pair holds the price (in USD) of a million prompt tokens and a million
- * completion tokens; {@link com.viglet.turing.service.llm.price.TurLLMPriceService}
+ * completion tokens; {@link com.viglet.turing.llm.cost.price.TurLLMPriceService}
  * multiplies those rates by the per-turn token counts captured from the Spring
  * AI {@code ChatResponse} usage metadata to produce the per-call USD cost
  * stamped onto {@link TurLLMTokenUsage}.

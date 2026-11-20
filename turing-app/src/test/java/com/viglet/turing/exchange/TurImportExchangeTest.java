@@ -37,7 +37,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class));
 
         var result = turImportExchange.importFromFile(new File("D:/this/path/does/not/exist.zip"));
@@ -52,7 +52,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
         MultipartFile multipartFile = new MockMultipartFile("file", "any.zip", "application/zip", new byte[] { 1, 2 });
 
@@ -70,7 +70,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File rootExtract = tempDir.resolve("rootExtract").toFile();
@@ -93,7 +93,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File extract = tempDir.resolve("extract").toFile();
@@ -130,7 +130,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 agentImport));
         File extract = tempDir.resolve("extract").toFile();
         Files.createDirectories(extract.toPath());
@@ -172,7 +172,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File extract = tempDir.resolve("extract").toFile();
@@ -212,7 +212,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File extract = tempDir.resolve("extract").toFile();
@@ -245,7 +245,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File extract = tempDir.resolve("extract").toFile();
@@ -273,7 +273,7 @@ class TurImportExchangeTest {
         TurImportExchange turImportExchange = org.mockito.Mockito.spy(new TurImportExchange(turSNSiteImport,
                 org.mockito.Mockito.mock(TurSNSiteContentExchangeService.class),
                 org.mockito.Mockito.mock(TurSNSiteRepository.class),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class),
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class),
                 org.mockito.Mockito.mock(com.viglet.turing.exchange.agent.TurAIAgentImportService.class)));
 
         File extract = tempDir.resolve("extract").toFile();

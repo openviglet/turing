@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.service.chatanalytics.TurAnalyticsIntentEvictionListener;
+import com.viglet.turing.chat.analytics.TurAnalyticsIntentEvictionListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -54,8 +54,8 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.mcp.TurMcpServer;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
-import com.viglet.turing.service.chatanalytics.TurToolCallTraceService;
-import com.viglet.turing.service.llm.price.TurLLMPriceService;
+import com.viglet.turing.chat.analytics.TurToolCallTraceService;
+import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;

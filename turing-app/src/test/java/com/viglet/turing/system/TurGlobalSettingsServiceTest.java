@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
+import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
 import com.viglet.turing.persistence.model.system.TurConfigVar;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 

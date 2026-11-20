@@ -33,7 +33,7 @@ import com.viglet.turing.persistence.model.agent.TurAgentEvalCase;
 import com.viglet.turing.persistence.model.agent.TurAgentEvalExpectedOutcome;
 import com.viglet.turing.persistence.model.agent.TurAgentEvalSet;
 import com.viglet.turing.persistence.model.agent.TurEvalGraderConfig;
-import com.viglet.turing.service.chatanalytics.TurToolCallTraceService;
+import com.viglet.turing.chat.analytics.TurToolCallTraceService;
 
 /**
  * T586–T588 / §XXXIII — unit coverage for the grader SPI: registry resolution

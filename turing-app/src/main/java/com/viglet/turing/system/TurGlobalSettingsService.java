@@ -9,7 +9,7 @@ import com.viglet.core.settings.VigletConfigVarService;
 import com.viglet.turing.rag.rerank.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.transcription.TurTranscriptionProviderType;
-import com.viglet.turing.onstartup.system.TurConfigVarOnStartup;
+import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
 import com.viglet.turing.persistence.repository.system.TurConfigVarRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

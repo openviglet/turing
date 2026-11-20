@@ -29,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.viglet.turing.persistence.dto.agent.TurChatWebhookDto;
 import com.viglet.turing.persistence.model.agent.TurChatWebhook;
 import com.viglet.turing.persistence.repository.agent.TurChatWebhookRepository;
-import com.viglet.turing.service.chatslots.TurChatWebhookService;
+import com.viglet.turing.chat.slots.TurChatWebhookService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

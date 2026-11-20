@@ -35,7 +35,7 @@ import com.viglet.turing.rag.catalog.TurCatalogCopilotToolService;
 import com.viglet.turing.rag.catalog.TurRankingExplainToolService;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

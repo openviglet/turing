@@ -21,7 +21,7 @@ import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.agent.prompt.TurMessageAssemblyContext;
 import com.viglet.turing.agent.prompt.TurMessageContributor;
 import com.viglet.turing.agent.prompt.TurPromptMessage;
-import com.viglet.turing.service.chatmemory.TurChatMemoryCompressionService;
+import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
 
 /**
  * Block AL / §XXXV.3 (T616) — contributes the T115 chat-memory compression summary

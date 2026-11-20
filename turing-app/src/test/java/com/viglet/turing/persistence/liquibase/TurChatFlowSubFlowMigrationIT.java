@@ -35,7 +35,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
  * expected for the new sub-flow column.
  *
  * <p>Skipped automatically when Docker isn't available — same pattern as
- * {@link com.viglet.turing.service.storage.TurMinioStorageServiceIT}.
+ * {@link com.viglet.turing.storage.TurMinioStorageServiceIT}.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.6

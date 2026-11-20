@@ -34,8 +34,8 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.service.storage.TurStorageKeys;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageKeys;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T951 / §XXXVII.19 — an encoded traversal must not reach the storage key.

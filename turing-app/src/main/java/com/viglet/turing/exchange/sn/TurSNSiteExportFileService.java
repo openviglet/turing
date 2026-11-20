@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.api.asset.TurAssetItem;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.exchange.mixin.TurExportMappers;
 import com.viglet.turing.exchange.sn.mixin.TurSNSiteExchangeMixin;

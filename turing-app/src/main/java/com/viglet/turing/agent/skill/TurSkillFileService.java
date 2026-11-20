@@ -36,8 +36,8 @@ import com.viglet.turing.persistence.model.skill.TurSkill;
 import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurStorageProperty;
-import com.viglet.turing.service.storage.TurStorageKeys;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageKeys;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T318 / §IX.4.d — file-system CRUD over a skill <em>folder</em> in object

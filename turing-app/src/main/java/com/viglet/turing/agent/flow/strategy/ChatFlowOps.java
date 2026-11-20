@@ -1789,8 +1789,8 @@ public final class ChatFlowOps {
             Map<String, String> result = parsed != null ? new LinkedHashMap<>(parsed) : new LinkedHashMap<>();
             // T61: decrypt pii_* slots transparently. INSTANCE is null in
             // pure unit tests, in which case the map is returned as-is.
-            com.viglet.turing.service.chatslots.TurPiiSlotService pii =
-                    com.viglet.turing.service.chatslots.TurPiiSlotService.getInstance();
+            com.viglet.turing.chat.slots.TurPiiSlotService pii =
+                    com.viglet.turing.chat.slots.TurPiiSlotService.getInstance();
             if (pii != null) pii.decryptInPlace(result);
             return result;
         } catch (JacksonException e) {
@@ -1807,8 +1807,8 @@ public final class ChatFlowOps {
             // T61: encrypt pii_* slots before they hit the persistence
             // layer. INSTANCE is null in pure unit tests — the map is
             // serialized as-is, preserving legacy semantics.
-            com.viglet.turing.service.chatslots.TurPiiSlotService pii =
-                    com.viglet.turing.service.chatslots.TurPiiSlotService.getInstance();
+            com.viglet.turing.chat.slots.TurPiiSlotService pii =
+                    com.viglet.turing.chat.slots.TurPiiSlotService.getInstance();
             if (pii != null) pii.encryptInPlace(toSerialize);
             state.setVariablesJson(OBJECT_MAPPER.writeValueAsString(toSerialize));
         } catch (JacksonException e) {

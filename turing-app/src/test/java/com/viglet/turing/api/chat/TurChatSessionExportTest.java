@@ -33,9 +33,9 @@ import com.viglet.turing.persistence.dto.agent.TurChatSessionMessagesDto;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
 import com.viglet.turing.persistence.model.agent.TurChatSlotAuditEntry;
 import com.viglet.turing.persistence.model.agent.TurChatSlotAuditSource;
-import com.viglet.turing.service.chatmemory.TurChatMemoryService;
-import com.viglet.turing.service.chatslots.TurChatSlotAuditService;
-import com.viglet.turing.service.chatslots.TurSubmissionRetentionService;
+import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.chat.slots.TurChatSlotAuditService;
+import com.viglet.turing.chat.slots.TurSubmissionRetentionService;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 /**
@@ -67,9 +67,9 @@ class TurChatSessionExportTest {
         retention = mock(TurSubmissionRetentionService.class);
         api = new TurChatSessionAPI(engine, memory, summary, audit, retention,
                 mock(com.viglet.turing.eval.spectator.TurChatMessageEventBus.class),
-                mock(com.viglet.turing.service.chatslots.TurChatSlotEventBus.class),
+                mock(com.viglet.turing.chat.slots.TurChatSlotEventBus.class),
                 mock(com.viglet.turing.agent.workspace.TurWorkspaceEventBus.class),
-                mock(com.viglet.turing.service.chatslots.TurChatSlotSseRegistry.class),
+                mock(com.viglet.turing.chat.slots.TurChatSlotSseRegistry.class),
                 mock(com.viglet.turing.eval.spectator.TurCopilotService.class),
                 mock(com.viglet.turing.rag.citation.TurCitationDriftService.class));
     }

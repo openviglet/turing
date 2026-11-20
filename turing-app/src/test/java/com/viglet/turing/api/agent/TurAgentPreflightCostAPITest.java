@@ -29,7 +29,7 @@ import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.llm.TurLLMVendor;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.service.llm.price.TurLLMPriceService;
+import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 /**
  * F.7 / §X.8.g — verifies the pre-flight cost quote: disabled without a cap, and

@@ -148,7 +148,7 @@ public class TurSNGenAi {
     private final com.viglet.turing.agent.safety.TurModerationService moderationService;
     private final TurSNFullContextService fullContextService;
     private final com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
-    private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
+    private final com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService;
     private final com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
     private final com.viglet.turing.sn.dsl.TurDslSearchService dslSearchService;
 
@@ -237,7 +237,7 @@ public class TurSNGenAi {
             com.viglet.turing.agent.safety.TurModerationService moderationService,
             TurSNFullContextService fullContextService,
             com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
-            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+            com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService) {
         this(turSNSearchProcess, turGenAiContextFactory, turSNSiteLocaleRepository, turRagContextBuilder,
                 facetExtractor, agentChatExecutor, globalSettingsService, ragReranker, chatFlowEngineService,
                 moderationService, fullContextService, nlFilterService, tokenUsageService, null);
@@ -256,7 +256,7 @@ public class TurSNGenAi {
             com.viglet.turing.agent.safety.TurModerationService moderationService,
             TurSNFullContextService fullContextService,
             com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
-            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService,
+            com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService,
             com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService) {
         this(turSNSearchProcess, turGenAiContextFactory, turSNSiteLocaleRepository, turRagContextBuilder,
                 facetExtractor, agentChatExecutor, globalSettingsService, ragReranker, chatFlowEngineService,
@@ -290,7 +290,7 @@ public class TurSNGenAi {
             com.viglet.turing.agent.safety.TurModerationService moderationService,
             TurSNFullContextService fullContextService,
             @org.springframework.context.annotation.Lazy com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService,
-            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService,
+            com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService,
             com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService,
             @org.springframework.context.annotation.Lazy com.viglet.turing.sn.dsl.TurDslSearchService dslSearchService) {
         this.dslSearchService = dslSearchService;

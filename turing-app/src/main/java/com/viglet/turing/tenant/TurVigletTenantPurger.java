@@ -17,7 +17,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import com.viglet.core.tenancy.VigletTenantPurger;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 import lombok.extern.slf4j.Slf4j;
 

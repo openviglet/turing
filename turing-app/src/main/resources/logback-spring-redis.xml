@@ -45,7 +45,19 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="com.viglet.turing.onstartup" level="info" additivity="false">
+    <logger name="com.viglet.turing.system.onstartup" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.viglet.turing.auth.onstartup" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.viglet.turing.llm.onstartup" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.viglet.turing.searchengine.onstartup" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.viglet.turing.rag.onstartup" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

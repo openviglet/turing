@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.service.asset.TurAssetEvent;
-import com.viglet.turing.service.asset.TurAssetTrainingService;
-import com.viglet.turing.service.asset.TurAssetTrainingState;
-import com.viglet.turing.service.asset.TurAssetTrainingStatus;
-import com.viglet.turing.service.storage.TurStorageObjectStat;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.asset.TurAssetEvent;
+import com.viglet.turing.storage.asset.TurAssetTrainingService;
+import com.viglet.turing.storage.asset.TurAssetTrainingState;
+import com.viglet.turing.storage.asset.TurAssetTrainingStatus;
+import com.viglet.turing.storage.TurStorageObjectStat;
+import com.viglet.turing.storage.TurStorageService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

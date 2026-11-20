@@ -20,7 +20,7 @@
  */
 package com.viglet.turing.api.page;
 
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;

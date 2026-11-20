@@ -21,7 +21,7 @@ import lombok.Setter;
  * <p>Per-agent opt-in ({@code TurAIAgent.promptCaptureEnabled}) turns capture
  * <em>on</em>; these properties keep it from growing without limit — the same
  * "retention window + per-entry cap + global cap" posture as the T427 tool-call
- * trace, but adapted to the pluggable {@link com.viglet.turing.service.storage.TurStorageService}
+ * trace, but adapted to the pluggable {@link com.viglet.turing.storage.TurStorageService}
  * seam instead of an in-memory ring:
  *
  * <ul>

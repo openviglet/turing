@@ -170,8 +170,8 @@ public class TurCustomToolCallbackService {
     private final TurCustomToolReader reader;
     private final TurCustomToolSearchHelper searchHelper;
     private final TurChatFlowStateRepository stateRepository;
-    private final com.viglet.turing.service.chatslots.TurChatSlotEventBus slotEventBus;
-    private final com.viglet.turing.service.chatslots.TurChatSlotAuditService slotAuditService;
+    private final com.viglet.turing.chat.slots.TurChatSlotEventBus slotEventBus;
+    private final com.viglet.turing.chat.slots.TurChatSlotAuditService slotAuditService;
     private final TurCodeInterpreterToolService codeInterpreterToolService;
     private final TurCustomToolDraftRegistry draftRegistry;
     private final TurAgentChatExecutor agentChatExecutor;
@@ -185,8 +185,8 @@ public class TurCustomToolCallbackService {
     public TurCustomToolCallbackService(TurCustomToolReader reader,
             TurCustomToolSearchHelper searchHelper,
             TurChatFlowStateRepository stateRepository,
-            com.viglet.turing.service.chatslots.TurChatSlotEventBus slotEventBus,
-            com.viglet.turing.service.chatslots.TurChatSlotAuditService slotAuditService,
+            com.viglet.turing.chat.slots.TurChatSlotEventBus slotEventBus,
+            com.viglet.turing.chat.slots.TurChatSlotAuditService slotAuditService,
             TurCodeInterpreterToolService codeInterpreterToolService,
             TurCustomToolDraftRegistry draftRegistry,
             // @Lazy breaks the cycle: TurAgentChatExecutor → TurChatToolResolver

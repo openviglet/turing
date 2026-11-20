@@ -35,15 +35,15 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
-import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageType;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**
  * End-to-end integration test for the T114 auto-offload-large-tool-results
  * flow (§IX.3.d). Boots the full Spring context with
  * {@code turing.storage.type=filesystem} so the real
- * {@link com.viglet.turing.service.storage.TurStorageConfig} factory selects
+ * {@link com.viglet.turing.storage.TurStorageConfig} factory selects
  * the filesystem backend and {@link TurStorageService#isEnabled()} returns
  * {@code true} — which is exactly what flips
  * {@link TurToolCallbackPipeline} into offload mode.

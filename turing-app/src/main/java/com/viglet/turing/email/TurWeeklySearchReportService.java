@@ -30,7 +30,7 @@ import com.viglet.turing.persistence.repository.sn.locale.TurSNSiteLocaleReposit
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.persistence.repository.sn.metric.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSiteDataCollectorService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.TurLlmCacheService;

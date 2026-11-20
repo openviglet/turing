@@ -62,9 +62,9 @@ import com.viglet.turing.persistence.model.agent.TurChatFlowTriggerMode;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.chatanalytics.TurChatSessionOutcome;
-import com.viglet.turing.service.chatslots.TurChatSlotEventBus;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.analytics.TurChatSessionOutcome;
+import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
@@ -123,8 +123,8 @@ public class TurChatFlowEngineService {
     private final TurChatFlowSubmissionRepository submissionRepository;
     private final TurChatAnalyticsService chatAnalyticsService;
     private final TurChatSlotEventBus slotEventBus;
-    private final com.viglet.turing.service.chatslots.TurChatSlotAuditService slotAuditService;
-    private final com.viglet.turing.service.chatanalytics.TurAbBanditService abBanditService;
+    private final com.viglet.turing.chat.slots.TurChatSlotAuditService slotAuditService;
+    private final com.viglet.turing.chat.analytics.TurAbBanditService abBanditService;
     private final CacheManager cacheManager;
     private final TurFunctionCallNodeExecutor functionCallExecutor;
     private final TurScheduleAgentNodeExecutor scheduleAgentExecutor;
@@ -181,8 +181,8 @@ public class TurChatFlowEngineService {
             TurChatFlowSubmissionRepository submissionRepository,
             TurChatAnalyticsService chatAnalyticsService,
             TurChatSlotEventBus slotEventBus,
-            com.viglet.turing.service.chatslots.TurChatSlotAuditService slotAuditService,
-            com.viglet.turing.service.chatanalytics.TurAbBanditService abBanditService,
+            com.viglet.turing.chat.slots.TurChatSlotAuditService slotAuditService,
+            com.viglet.turing.chat.analytics.TurAbBanditService abBanditService,
             CacheManager cacheManager,
             TurFunctionCallNodeExecutor functionCallExecutor,
             TurScheduleAgentNodeExecutor scheduleAgentExecutor,
@@ -1953,7 +1953,7 @@ public class TurChatFlowEngineService {
             // T70: if any variant has banditEnabled, route via Thompson
             // sampling on the observed conversion data instead of the
             // deterministic fixed-weight hash.
-            TurChatFlow assigned = com.viglet.turing.service.chatanalytics.TurAbBanditService
+            TurChatFlow assigned = com.viglet.turing.chat.analytics.TurAbBanditService
                             .isBanditExperiment(variants)
                     ? abBanditService.pickVariant(variants, experimentKey)
                     : assignVariant(variants, conversationId, experimentKey);

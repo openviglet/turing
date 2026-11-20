@@ -22,8 +22,8 @@ package com.viglet.turing.api.sn;
 
 import com.viglet.turing.domain.sn.TurSNSiteDomain;
 import com.viglet.turing.domain.sn.TurSNSiteRepositoryPort;
-import com.viglet.turing.service.storage.TurStorageKeys;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageKeys;
+import com.viglet.turing.storage.TurStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;

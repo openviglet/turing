@@ -43,11 +43,11 @@ import com.viglet.turing.persistence.dto.agent.TurChatSessionMessagesDto;
 import com.viglet.turing.persistence.dto.agent.TurChatSessionSlotsDto;
 import com.viglet.turing.persistence.dto.agent.TurChatSlotAuditDto;
 import com.viglet.turing.persistence.model.agent.TurChatSlotAuditEntry;
-import com.viglet.turing.service.chatmemory.TurChatMemoryService;
-import com.viglet.turing.service.chatslots.TurChatSlotAuditService;
-import com.viglet.turing.service.chatslots.TurChatSlotEventBus;
-import com.viglet.turing.service.chatslots.TurChatSlotSseRegistry;
-import com.viglet.turing.service.chatslots.TurSubmissionRetentionService;
+import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.chat.slots.TurChatSlotAuditService;
+import com.viglet.turing.chat.slots.TurChatSlotEventBus;
+import com.viglet.turing.chat.slots.TurChatSlotSseRegistry;
+import com.viglet.turing.chat.slots.TurSubmissionRetentionService;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 import io.swagger.v3.oas.annotations.Operation;

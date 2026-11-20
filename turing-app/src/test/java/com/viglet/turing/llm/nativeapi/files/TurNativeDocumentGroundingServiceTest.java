@@ -37,8 +37,8 @@ import org.springframework.ai.document.Document;
 import com.viglet.turing.rag.citation.TurCitationDocument;
 import com.viglet.turing.llm.nativeapi.files.TurFilesApiBridge.TurVendorFileRef;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
-import com.viglet.turing.service.storage.TurStorageObjectStat;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageObjectStat;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T176 — coverage for {@link TurNativeDocumentGroundingService}: native PDF

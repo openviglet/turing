@@ -17,8 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.tool.TurSystemInfoToolService;
 import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageType;
 import com.viglet.turing.system.TurLlmSummaryService;
 
 /**

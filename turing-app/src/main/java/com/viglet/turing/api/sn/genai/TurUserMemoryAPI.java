@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.agent.TurUserMemory;
 import com.viglet.turing.sn.TurSNSearchProcess;
-import com.viglet.turing.service.usermemory.TurUserMemoryService;
+import com.viglet.turing.chat.usermemory.TurUserMemoryService;
 
 import lombok.extern.slf4j.Slf4j;
 

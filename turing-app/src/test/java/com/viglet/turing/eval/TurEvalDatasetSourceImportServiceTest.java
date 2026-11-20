@@ -35,8 +35,8 @@ import com.viglet.turing.persistence.model.agent.TurEvalDatasetRow;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
 import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRepository;
 import com.viglet.turing.persistence.repository.agent.TurEvalDatasetRowRepository;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsStore;
-import com.viglet.turing.service.chatmemory.TurChatMemoryService;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
+import com.viglet.turing.chat.memory.TurChatMemoryService;
 
 import org.springframework.web.server.ResponseStatusException;
 

@@ -22,7 +22,7 @@ package com.viglet.turing.api.page;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.api.asset.TurAssetItem;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

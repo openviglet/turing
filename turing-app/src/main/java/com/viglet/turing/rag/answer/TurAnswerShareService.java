@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.persistence.model.answer.TurAnswerShare;
 import com.viglet.turing.persistence.repository.answer.TurAnswerShareRepository;
-import com.viglet.turing.service.chatslots.TurChatShareOgService;
+import com.viglet.turing.chat.slots.TurChatShareOgService;
 
 /**
  * T844 / §LXII.13 — mints and reads back {@link TurAnswerShare answer permalinks}:

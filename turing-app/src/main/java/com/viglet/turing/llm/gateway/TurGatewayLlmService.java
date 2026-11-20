@@ -43,8 +43,8 @@ import com.viglet.turing.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.service.llm.budget.TurChatCostBudgetGate;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

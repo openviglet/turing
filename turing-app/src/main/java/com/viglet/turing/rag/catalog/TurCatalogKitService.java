@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldLabel;
 import com.viglet.turing.rag.TurRagReranker;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.dsl.TurDslQuery;
 import com.viglet.turing.sn.nl.TurSNNLFilterService;
 import com.viglet.turing.system.TurDefaultChatModelResolver;

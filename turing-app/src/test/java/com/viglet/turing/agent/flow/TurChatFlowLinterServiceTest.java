@@ -31,8 +31,8 @@ import com.viglet.turing.persistence.repository.agent.TurAIAgentSlotRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowStateRepository;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepository;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.chatslots.TurChatSlotEventBus;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.slots.TurChatSlotEventBus;
 
 /**
  * Pins the T94 lint rule set. Each test isolates one rule by giving the
@@ -71,9 +71,9 @@ class TurChatFlowLinterServiceTest {
                 chatFlowRepository, submissionRepository, chatAnalyticsService,
                 slotEventBus,
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.service.chatslots.TurChatSlotAuditService.class),
+                        com.viglet.turing.chat.slots.TurChatSlotAuditService.class),
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.service.chatanalytics.TurAbBanditService.class),
+                        com.viglet.turing.chat.analytics.TurAbBanditService.class),
                 cacheManager,
                 org.mockito.Mockito.mock(TurFunctionCallNodeExecutor.class),
                 org.mockito.Mockito.mock(

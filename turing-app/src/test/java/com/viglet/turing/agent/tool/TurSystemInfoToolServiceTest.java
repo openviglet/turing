@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurMinioProperty;
 import com.viglet.turing.properties.TurStorageProperty;
-import com.viglet.turing.service.storage.TurStorageService;
-import com.viglet.turing.service.storage.TurStorageType;
+import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageType;
 
 /**
  * Tests for TurSystemInfoToolService.

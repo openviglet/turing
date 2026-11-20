@@ -92,7 +92,7 @@ class TurSNGenAiTest {
     @Test
     void anSnCallIsRecordedInTheCostLedger() {
         var tokenUsage = org.mockito.Mockito.mock(
-                com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService.class);
+                com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService.class);
         TurSNGenAi recording = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
                 ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
                 chatFlowEngineService, moderationService, new TurSNFullContextService(), null, tokenUsage);

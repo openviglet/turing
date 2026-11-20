@@ -50,7 +50,7 @@ import com.viglet.turing.persistence.repository.agent.TurChatFlowSubmissionRepos
 import com.viglet.turing.persistence.repository.agent.TurOnlineEvalSnapshotRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurGenAiProperty;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsStore;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 
 /**
  * T603 / §XXXIII.18 — continuous / online eval. Verifies the opt-in / fail-open
@@ -69,7 +69,7 @@ class TurOnlineEvalServiceTest {
     @Mock private TurAIAgentRepository agentRepository;
     @Mock private TurOnlineEvalSnapshotRepository snapshotRepository;
     @Mock private TurChatAnalyticsStore analyticsStore;
-    @Mock private com.viglet.turing.service.chatmemory.TurChatMemoryService chatMemoryService;
+    @Mock private com.viglet.turing.chat.memory.TurChatMemoryService chatMemoryService;
     @Mock private TurChatFlowSubmissionRepository submissionRepository;
     @Mock private TurSelfTuningMiner failureMiner;
     @Mock private TurCitationDriftService citationDriftService;

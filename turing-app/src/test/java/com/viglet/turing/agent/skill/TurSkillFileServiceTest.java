@@ -38,8 +38,8 @@ import com.viglet.turing.persistence.model.skill.TurSkill;
 import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurStorageProperty;
-import com.viglet.turing.service.storage.TurFilesystemStorageService;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurFilesystemStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T318 / §IX.4.d — verifies {@link TurSkillFileService} performs file CRUD that
@@ -313,7 +313,7 @@ class TurSkillFileServiceTest {
     void safeRelativeDelegatesToTheOneSharedRule() {
         org.assertj.core.api.Assertions
                 .assertThat(TurSkillFileService.safeRelative("docs/a.md"))
-                .isEqualTo(com.viglet.turing.service.storage.TurStorageKeys
+                .isEqualTo(com.viglet.turing.storage.TurStorageKeys
                         .safeRelative("docs/a.md"));
         org.assertj.core.api.Assertions
                 .assertThatThrownBy(() -> TurSkillFileService.safeRelative("../escape"))

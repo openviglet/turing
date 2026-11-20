@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.api.asset.TurAssetItem;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
  * T618 / §XXXIV.6 — tolerant parsing of a storage object's {@code lastModified}
  * string into epoch millis.
  *
- * <p>The {@link com.viglet.turing.service.storage.TurStorageService} backends
+ * <p>The {@link com.viglet.turing.storage.TurStorageService} backends
  * (MinIO / filesystem) report {@code lastModified} in different formats. Rather
  * than couple the capture store to any one backend's format, this helper tries
  * the common representations and returns {@code 0} when none parse — callers

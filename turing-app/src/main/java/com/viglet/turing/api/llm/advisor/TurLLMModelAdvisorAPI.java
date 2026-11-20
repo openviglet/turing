@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.service.llm.advisor.TurLLMModelAdvisorService;
-import com.viglet.turing.service.llm.advisor.TurLLMModelAdvisorService.AdvisorQuery;
-import com.viglet.turing.service.llm.advisor.TurLLMModelAdvisorService.Recommendation;
+import com.viglet.turing.llm.cost.advisor.TurLLMModelAdvisorService;
+import com.viglet.turing.llm.cost.advisor.TurLLMModelAdvisorService.AdvisorQuery;
+import com.viglet.turing.llm.cost.advisor.TurLLMModelAdvisorService.Recommendation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -32,8 +32,8 @@ import com.viglet.turing.persistence.model.skill.TurSkill;
 import com.viglet.turing.persistence.repository.skill.TurSkillRepository;
 import com.viglet.turing.properties.TurConfigProperties;
 import com.viglet.turing.properties.TurStorageProperty;
-import com.viglet.turing.service.storage.TurFilesystemStorageService;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurFilesystemStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T317 / §IX.4.d — verifies {@link TurSkillCatalogService} reconciles the thin

@@ -20,8 +20,8 @@
  */
 package com.viglet.turing.api.auth;
 
-import com.viglet.turing.service.keycloak.TurKeycloakAdminService;
-import com.viglet.turing.service.keycloak.TurKeycloakUserDto;
+import com.viglet.turing.auth.keycloak.TurKeycloakAdminService;
+import com.viglet.turing.auth.keycloak.TurKeycloakUserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

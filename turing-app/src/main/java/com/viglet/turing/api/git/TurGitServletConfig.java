@@ -1,6 +1,6 @@
 package com.viglet.turing.api.git;
 
-import com.viglet.turing.service.git.TurGitServerService;
+import com.viglet.turing.storage.git.TurGitServerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.jgit.http.server.GitServlet;
 import org.eclipse.jgit.lib.Repository;

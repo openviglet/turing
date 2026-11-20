@@ -27,7 +27,7 @@ import com.viglet.turing.agent.TurTokenCountingService;
 import com.viglet.turing.persistence.model.agent.TurAIAgent;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
-import com.viglet.turing.service.llm.price.TurLLMPriceService;
+import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

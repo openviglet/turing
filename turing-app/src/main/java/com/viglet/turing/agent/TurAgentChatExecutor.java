@@ -40,10 +40,10 @@ import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.persistence.repository.agent.TurChatFlowRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.chatanalytics.TurChatCohortResolver;
-import com.viglet.turing.service.chatanalytics.TurChatSessionRefs;
-import com.viglet.turing.service.chatanalytics.TurChatVisitorContext;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.analytics.TurChatCohortResolver;
+import com.viglet.turing.chat.analytics.TurChatSessionRefs;
+import com.viglet.turing.chat.analytics.TurChatVisitorContext;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +112,7 @@ public class TurAgentChatExecutor {
     private final TurChatAnalyticsService chatAnalyticsService;
     private final TurChatCohortResolver chatCohortResolver;
     private final TurChatPipelineObservation chatPipelineObservation;
-    private final com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate;
+    private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
     private final com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver;
     private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
 
@@ -130,7 +130,7 @@ public class TurAgentChatExecutor {
             TurChatAnalyticsService chatAnalyticsService,
             TurChatCohortResolver chatCohortResolver,
             TurChatPipelineObservation chatPipelineObservation,
-            com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate,
+            com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
             com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver,
             com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty) {
         this.llmModelFactory = llmModelFactory;

@@ -30,7 +30,7 @@ class TurSNSiteExportFileServiceTest {
     @Test
     void shouldExportRootReferencesWithoutDuplicatingLLMStoreAndSEInsideSNSite() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class));
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class));
 
         TurSEVendor seVendor = new TurSEVendor();
         seVendor.setId("SOLR");
@@ -135,7 +135,7 @@ class TurSNSiteExportFileServiceTest {
     @Test
     void shouldWriteSynonymsThatTheImportReadsBack() throws Exception {
         TurSNSiteExportFileService service = new TurSNSiteExportFileService(new TurSNSiteExportValidator(),
-                org.mockito.Mockito.mock(com.viglet.turing.service.storage.TurStorageService.class));
+                org.mockito.Mockito.mock(com.viglet.turing.storage.TurStorageService.class));
         TurSNSite site = new TurSNSite();
         site.setId("tarnfell");
         site.setName("tarnfell");

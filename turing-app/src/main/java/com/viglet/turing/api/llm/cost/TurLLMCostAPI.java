@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * T290 / §XVI.2 (Block L) — the live, all-provider AI-spend dashboard backend.
  * Reads the frozen per-turn {@code cost_usd} stamped by
- * {@link com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService} and
+ * {@link com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService} and
  * rolls it up per agent / model / stage / tenant plus a daily time-series.
  *
  * <p>Complements (does not duplicate) the F.13 vendor-Usage import: where both

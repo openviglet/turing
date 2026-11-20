@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.service.llm.rightsizing.TurLLMRightsizingService;
-import com.viglet.turing.service.llm.rightsizing.TurLLMRightsizingService.RightsizingSuggestion;
+import com.viglet.turing.llm.cost.rightsizing.TurLLMRightsizingService;
+import com.viglet.turing.llm.cost.rightsizing.TurLLMRightsizingService.RightsizingSuggestion;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

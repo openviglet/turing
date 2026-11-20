@@ -123,7 +123,7 @@ public class TurCatalogCopilotService {
     private final TurDefaultChatModelResolver chatModelResolver;
     private final com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty;
     private final com.viglet.turing.rag.catalog.planning.TurQueryFanOut queryFanOut;
-    private final com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService;
+    private final com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService;
 
     /** T1127 — the cost stage of a catalog copilot answer. */
     static final String STAGE_COPILOT = "sn.copilot";
@@ -139,7 +139,7 @@ public class TurCatalogCopilotService {
             TurDefaultChatModelResolver chatModelResolver,
             com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty,
             com.viglet.turing.rag.catalog.planning.TurQueryFanOut queryFanOut,
-            com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService tokenUsageService) {
+            com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService) {
         this.tokenUsageService = tokenUsageService;
         this.parser = parser;
         this.plannerFactory = plannerFactory;

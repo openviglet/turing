@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.persistence.model.answer.TurAnswerSignalEvent;
 import com.viglet.turing.persistence.repository.answer.TurAnswerSignalRepository;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsStore;
-import com.viglet.turing.service.chatanalytics.TurChatSessionFilter;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
+import com.viglet.turing.chat.analytics.TurChatSessionFilter;
 
 import lombok.extern.slf4j.Slf4j;
 

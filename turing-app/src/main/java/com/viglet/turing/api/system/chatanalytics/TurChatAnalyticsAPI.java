@@ -36,10 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.persistence.repository.agent.TurAIAgentRepository;
 import com.viglet.turing.persistence.repository.persona.TurPersonaRepository;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsStore;
-import com.viglet.turing.service.chatanalytics.TurChatSessionFilter;
-import com.viglet.turing.service.chatmemory.TurChatMemoryStore;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
+import com.viglet.turing.chat.analytics.TurChatSessionFilter;
+import com.viglet.turing.chat.memory.TurChatMemoryStore;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -77,21 +77,21 @@ public class TurChatAnalyticsAPI {
     private final TurChatMemoryStore chatMemoryStore;
     private final TurAIAgentRepository agentRepository;
     private final TurPersonaRepository personaRepository;
-    private final com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService significanceService;
-    private final com.viglet.turing.service.chatanalytics.TurChampionChallengerService championChallengerService;
+    private final com.viglet.turing.chat.analytics.TurExperimentSignificanceService significanceService;
+    private final com.viglet.turing.chat.analytics.TurChampionChallengerService championChallengerService;
     private final com.viglet.turing.agent.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog;
-    private final com.viglet.turing.service.chatslots.TurChatSlotSseRegistry slotSseRegistry;
-    private final com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService;
+    private final com.viglet.turing.chat.slots.TurChatSlotSseRegistry slotSseRegistry;
+    private final com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService;
 
     public TurChatAnalyticsAPI(TurChatAnalyticsService analyticsService,
             TurChatMemoryStore chatMemoryStore,
             TurAIAgentRepository agentRepository,
             TurPersonaRepository personaRepository,
-            com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService significanceService,
-            com.viglet.turing.service.chatanalytics.TurChampionChallengerService championChallengerService,
+            com.viglet.turing.chat.analytics.TurExperimentSignificanceService significanceService,
+            com.viglet.turing.chat.analytics.TurChampionChallengerService championChallengerService,
             com.viglet.turing.agent.flow.router.TurChatFlowRouterDecisionLog routerDecisionLog,
-            com.viglet.turing.service.chatslots.TurChatSlotSseRegistry slotSseRegistry,
-            com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService) {
+            com.viglet.turing.chat.slots.TurChatSlotSseRegistry slotSseRegistry,
+            com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService) {
         this.analyticsService = analyticsService;
         this.chatMemoryStore = chatMemoryStore;
         this.agentRepository = agentRepository;
@@ -223,7 +223,7 @@ public class TurChatAnalyticsAPI {
      * Most recent sessions in the time range, sorted desc by {@code startedAt}.
      * Optional filters: agent, persona, outcome, intentLabel, goalAchieved,
      * sentiment. Filters by enrichment fields rely on the scheduled
-     * {@link com.viglet.turing.service.chatanalytics.TurChatAnalyticsEnricher}
+     * {@link com.viglet.turing.chat.analytics.TurChatAnalyticsEnricher}
      * having processed the session — recent terminal sessions may not be
      * classified yet.
      */
@@ -425,19 +425,19 @@ public class TurChatAnalyticsAPI {
      */
     @GetMapping(value = "/experiment/{experimentKey}/significance",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SignificanceResult
+    public com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SignificanceResult
             experimentSignificance(
             @org.springframework.web.bind.annotation.PathVariable String experimentKey,
             @RequestParam(defaultValue = "GOAL_ACHIEVED") String successMetric,
             @RequestParam(required = false) Double alpha,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to) {
-        com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric metric;
+        com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric metric;
         try {
-            metric = com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric
+            metric = com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric
                     .valueOf(successMetric.toUpperCase(java.util.Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            metric = com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric.GOAL_ACHIEVED;
+            metric = com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric.GOAL_ACHIEVED;
         }
         Instant fromInstant = parseInstant(from, defaultFrom());
         Instant toInstant   = parseInstant(to,   defaultTo());
@@ -470,18 +470,18 @@ public class TurChatAnalyticsAPI {
             value = "/experiment/{experimentKey}/promote",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @org.springframework.security.access.annotation.Secured({ "ROLE_ADMIN", "AI_AGENT_VIEW" })
-    public com.viglet.turing.service.chatanalytics.TurChampionChallengerService.PromotionResult
+    public com.viglet.turing.chat.analytics.TurChampionChallengerService.PromotionResult
             promoteExperimentWinner(
             @PathVariable String experimentKey,
             @RequestParam(defaultValue = "GOAL_ACHIEVED") String successMetric,
             @RequestParam(required = false) Double alpha,
             @RequestParam(defaultValue = "false") boolean dryRun) {
-        com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric metric;
+        com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric metric;
         try {
-            metric = com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric
+            metric = com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric
                     .valueOf(successMetric.toUpperCase(java.util.Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            metric = com.viglet.turing.service.chatanalytics.TurExperimentSignificanceService.SuccessMetric.GOAL_ACHIEVED;
+            metric = com.viglet.turing.chat.analytics.TurExperimentSignificanceService.SuccessMetric.GOAL_ACHIEVED;
         }
         return championChallengerService.promote(experimentKey, metric, alpha, dryRun);
     }

@@ -168,7 +168,7 @@ class TurTenantQuotaBatchTest {
      */
     @Test
     void theFirstBootSeedNeverSeesTheQuota() {
-        for (var constructor : com.viglet.turing.onstartup.TurExportImportOnStartup.class
+        for (var constructor : com.viglet.turing.system.onstartup.TurExportImportOnStartup.class
                 .getDeclaredConstructors()) {
             assertThat(constructor.getParameterTypes())
                     .withFailMessage("The first-boot seed must stay exempt from the plan quota — "

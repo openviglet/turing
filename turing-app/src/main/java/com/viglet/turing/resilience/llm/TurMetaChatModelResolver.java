@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
-import com.viglet.turing.service.llm.price.TurLLMPriceService;
+import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

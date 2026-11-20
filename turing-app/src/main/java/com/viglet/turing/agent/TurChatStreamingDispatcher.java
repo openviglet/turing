@@ -48,9 +48,9 @@ import com.viglet.turing.persistence.model.agent.TurChatFlowState;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.model.persona.TurPersona;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.service.chatanalytics.TurChatAnalyticsService;
-import com.viglet.turing.service.chatmemory.TurChatMemoryService;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -101,8 +101,8 @@ public class TurChatStreamingDispatcher {
     private final TurChatPipelineObservation chatPipelineObservation;
     private final TurToolExecutionLoop toolExecutionLoop;
     private final TurChatMessageEventBus chatMessageEventBus;
-    private final com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate;
-    private final com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService;
+    private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
+    private final com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService;
     private final com.viglet.turing.agent.clienttool.TurClientToolService clientToolService;
     private final TurClientToolParkRegistry clientToolParkRegistry;
     private final TurAnswerGuardrailService answerGuardrailService;
@@ -117,8 +117,8 @@ public class TurChatStreamingDispatcher {
             TurChatPipelineObservation chatPipelineObservation,
             TurToolExecutionLoop toolExecutionLoop,
             TurChatMessageEventBus chatMessageEventBus,
-            com.viglet.turing.service.llm.budget.TurChatCostBudgetGate costBudgetGate,
-            com.viglet.turing.service.chatanalytics.TurToolCallTraceService toolCallTraceService,
+            com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
+            com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService,
             com.viglet.turing.agent.clienttool.TurClientToolService clientToolService,
             TurClientToolParkRegistry clientToolParkRegistry,
             TurAnswerGuardrailService answerGuardrailService,

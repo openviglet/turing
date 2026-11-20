@@ -29,7 +29,7 @@ import com.viglet.turing.llm.gateway.TurOpenAiWire.ModelList;
 import com.viglet.turing.persistence.model.llm.TurLLMInstance;
 import com.viglet.turing.persistence.repository.llm.TurLLMInstanceRepository;
 import com.viglet.turing.resilience.llm.TurLlmModelFactory;
-import com.viglet.turing.service.llm.tokenusage.TurLLMTokenUsageService;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -61,7 +61,7 @@ class TurGatewayLlmServiceTest {
     @Mock
     private TurGatewayRateLimiter gatewayRateLimiter;
     @Mock
-    private com.viglet.turing.service.llm.budget.TurChatCostBudgetGate budgetGate;
+    private com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate budgetGate;
     @Mock
     private TurGatewayResponseCache responseCache;
     @Mock

@@ -33,7 +33,7 @@ import com.viglet.turing.persistence.model.tenant.TurTenant;
 import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
 import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
 import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * Unit tests for {@link TurTenantTeardownService} (T281).

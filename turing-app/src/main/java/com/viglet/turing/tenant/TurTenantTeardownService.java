@@ -17,7 +17,7 @@ import com.viglet.core.tenancy.VigletTenantTeardownService;
 import com.viglet.turing.persistence.model.tenant.TurTenant;
 import com.viglet.turing.persistence.repository.tenant.TurTenantMembershipRepository;
 import com.viglet.turing.persistence.repository.tenant.TurTenantRepository;
-import com.viglet.turing.service.storage.TurStorageService;
+import com.viglet.turing.storage.TurStorageService;
 
 /**
  * T281 / §XIV.7.2 — tenant lifecycle teardown: suspend (block auth) and delete
