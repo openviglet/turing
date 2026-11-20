@@ -47,10 +47,13 @@ class TurSystemPromptValidatorServiceTest {
     private TurLlmSummaryService llmSummaryService;
 
     private TurSystemPromptValidatorService service;
+    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.persona.InMemoryAgentPersonas();
 
     @BeforeEach
     void setUp() {
-        service = new TurSystemPromptValidatorService(previewService, llmSummaryService);
+        service = new TurSystemPromptValidatorService(previewService, llmSummaryService,
+                personas.service());
         // T607 — validate() always consults flow persona diagnostics; default to
         // none so the pre-existing checks stay isolated (lenient: deepCheck tests
         // don't run validate()).
@@ -118,7 +121,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("Always respond in English.");
         TurPersona persona = persona("Voz BR");
         persona.setSystemInstruction("Você é simpático. Sempre responda em português.");
-        agent.useDefaultPersona(persona);
+        personas.attachDefault(agent, persona);
 
         var issues = service.validate(agent);
         assertThat(codes(issues)).contains("language_directive_conflict");
@@ -130,7 +133,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("Always respond in English.");
         TurPersona persona = persona("Voice");
         persona.setSystemInstruction("Be friendly and reply in English.");
-        agent.useDefaultPersona(persona);
+        personas.attachDefault(agent, persona);
 
         assertThat(codes(service.validate(agent))).doesNotContain("language_directive_conflict");
     }
@@ -142,7 +145,7 @@ class TurSystemPromptValidatorServiceTest {
         TurPersona persona = persona("P");
         persona.setMandatoryTerms("innovation | synergy");
         persona.setForbiddenTerms("synergy | cheap");
-        agent.useDefaultPersona(persona);
+        personas.attachDefault(agent, persona);
 
         var issues = service.validate(agent);
         assertThat(issues).anyMatch(i -> i.code().equals("persona_vocab_contradiction")
@@ -155,7 +158,7 @@ class TurSystemPromptValidatorServiceTest {
         TurAIAgent agent = agent("You must always be cheap and fast.");
         TurPersona persona = persona("P");
         persona.setForbiddenTerms("cheap");
-        agent.useDefaultPersona(persona);
+        personas.attachDefault(agent, persona);
 
         assertThat(codes(service.validate(agent))).contains("forbidden_term_in_prompt");
     }

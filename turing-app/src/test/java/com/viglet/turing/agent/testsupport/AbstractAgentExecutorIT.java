@@ -159,7 +159,7 @@ public abstract class AbstractAgentExecutorIT extends AbstractTuringSpringIT {
         agent.setTitle(title + "-" + UUID.randomUUID().toString().substring(0, 8));
         agent.setEnabled(1);
         if (defaultPersona != null) {
-            agent.getPersonas().add(defaultPersona);
+            agent.getPersonaIds().add(defaultPersona.getId());
             agent.setDefaultPersonaId(defaultPersona.getId());
         }
         return agentRepository.save(agent);

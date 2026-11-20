@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useAIAgentSlots } from "@/api/queries/ai-agent-slot.queries";
 import { useAiAgent } from "@/api/queries/ai-agent.queries";
 import { useChatFlows } from "@/api/queries/chat-flow.queries";
+import { usePersonas } from "@/api/queries/persona.queries";
 import { useRoutines } from "@/api/queries/routine.queries";
 import { useChatWebhooks } from "@/api/queries/webhook.queries";
 import { Button } from "@/components/ui/button";
@@ -80,7 +81,12 @@ export function FlowProperties({ node, nodes, edges, onChange, onApplyGraph, onC
   // catalog — same allow-list the backend enforces. Loading the agent here
   // is cached by react-query, no extra round-trips per selected node.
   const { data: agent } = useAiAgent(agentId);
-  const personaOptions = useMemo(() => agent?.personas ?? [], [agent]);
+  // T1315 — the agent names its catalog by id; the personas come from the list.
+  const { data: allPersonas } = usePersonas();
+  const personaOptions = useMemo(() => {
+    const ids = new Set(agent?.personaIds ?? []);
+    return (allPersonas ?? []).filter((p) => ids.has(p.id));
+  }, [agent, allPersonas]);
   // Slots catalogue — outputVariable on askQuestion nodes must reference
   // one of these so captured values land in a stable, typed schema.
   const { data: slots } = useAIAgentSlots(agentId);

@@ -217,7 +217,7 @@ public class TurPersonaDialogueService {
         agent.setTitle("Persona: " + persona.getName());
         agent.setEnabled(1);
         agent.setSystemPrompt(isLast ? DIALOGUE_CLOSING_DIRECTIVE : DIALOGUE_DIRECTIVE);
-        agent.useDefaultPersona(persona);
+        agent.useDefaultPersona(persona.getId());
         return agent;
     }
 

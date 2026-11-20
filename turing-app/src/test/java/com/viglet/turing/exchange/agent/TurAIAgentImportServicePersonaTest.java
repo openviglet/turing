@@ -125,8 +125,7 @@ class TurAIAgentImportServicePersonaTest {
         ArgumentCaptor<TurAIAgent> agentCaptor = ArgumentCaptor.forClass(TurAIAgent.class);
         org.mockito.Mockito.verify(agentRepository, org.mockito.Mockito.atLeastOnce())
                 .save(agentCaptor.capture());
-        assertThat(agentCaptor.getValue().getPersonas())
-                .anyMatch(p -> "persona-first-time-user".equals(p.getId()));
+        assertThat(agentCaptor.getValue().getPersonaIds()).contains("persona-first-time-user");
     }
 
     /**

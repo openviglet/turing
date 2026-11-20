@@ -118,7 +118,7 @@ class HarnessFixtureSmokeIT extends AbstractAgentExecutorIT {
         // that's Lucas (declared second). Verify BOTH personas landed by
         // re-querying the agent.
         TurAIAgent reloaded = agentRepository.findById(agent.getId()).orElseThrow();
-        assertThat(reloaded.getPersonas())
+        assertThat(personaRepository.findAllById(reloaded.getPersonaIds()))
                 .as("Both Marina and Lucas must be linked to the agent post-import")
                 .extracting(p -> p.getName())
                 .anyMatch(name -> name.contains("Marina"))

@@ -74,6 +74,8 @@ class TurAIAgentExportServiceTest {
     @Mock private com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     private TurAIAgentExportService service;
+    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.persona.InMemoryAgentPersonas();
     private Path producedZip;
 
     @BeforeEach
@@ -81,7 +83,8 @@ class TurAIAgentExportServiceTest {
         service = new TurAIAgentExportService(agentRepository, chatFlowRepository,
                 slotRepository, intentRepository, evalSetRepository, mcpServerRepository,
                 storeInstanceRepository, embeddingModelRepository,
-                new com.viglet.turing.agent.TurAgentMcpServers(mcpServerRepository));
+                new com.viglet.turing.agent.TurAgentMcpServers(mcpServerRepository),
+                personas.service());
     }
 
     @AfterEach
@@ -132,8 +135,7 @@ class TurAIAgentExportServiceTest {
         agent.setTitle("Marina Agent");
         agent.setEnabled(1);
         agent.setRichContentEnabled(true); // T632 — must survive the export envelope
-        agent.setPersonas(new HashSet<>(List.of(persona)));
-        agent.useDefaultPersona(persona);
+        personas.attachDefault(agent, persona);
         agent.setLlmInstances(new HashSet<>(List.of(llm)));
         agent.setCustomTools(new HashSet<>(List.of(tool)));
 

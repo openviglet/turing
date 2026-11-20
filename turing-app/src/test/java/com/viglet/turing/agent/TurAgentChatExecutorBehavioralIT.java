@@ -186,11 +186,11 @@ class TurAgentChatExecutorBehavioralIT extends AbstractTuringSpringIT {
     private TurPersona resolvePostWalkPersona(TurAIAgent a, TurChatFlowState state) {
         String json = state.getVariablesJson();
         if (json == null || json.isBlank()) {
-            return a.defaultPersonaFromCatalog();
+            return catalogPersona(a, a.getDefaultPersonaId());
         }
         int idx = json.indexOf("\"__activePersonaId\"");
         if (idx < 0) {
-            return a.defaultPersonaFromCatalog();
+            return catalogPersona(a, a.getDefaultPersonaId());
         }
         // Cheap JSON sniff — variablesJson is small + flat enough that this
         // is fine for tests; production code uses ObjectMapper through
@@ -199,13 +199,19 @@ class TurAgentChatExecutorBehavioralIT extends AbstractTuringSpringIT {
         int q1 = json.indexOf('"', colon + 1);
         int q2 = json.indexOf('"', q1 + 1);
         if (colon < 0 || q1 < 0 || q2 < 0) {
-            return a.defaultPersonaFromCatalog();
+            return catalogPersona(a, a.getDefaultPersonaId());
         }
         String activeId = json.substring(q1 + 1, q2);
-        return a.getPersonas().stream()
-                .filter(p -> activeId.equals(p.getId()))
-                .findFirst()
-                .orElse(a.defaultPersonaFromCatalog());
+        TurPersona active = catalogPersona(a, activeId);
+        return active != null ? active : catalogPersona(a, a.getDefaultPersonaId());
+    }
+
+    /** T1315 — the agent holds persona ids; the persona when it is in the catalog. */
+    private TurPersona catalogPersona(TurAIAgent a, String personaId) {
+        if (personaId == null || !a.getPersonaIds().contains(personaId)) {
+            return null;
+        }
+        return personaRepository.findById(personaId).orElse(null);
     }
 
     /**

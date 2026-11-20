@@ -1054,8 +1054,8 @@ class ProgramaMatchEEFlowIT extends AbstractTuringSpringIT {
                 // otherwise hit a unique-constraint violation on the
                 // ai_agent_persona join table when re-adding a persona
                 // already attached from a previous importIntoAgent call.
-                if (!agent.getPersonas().contains(persona)) {
-                    agent.getPersonas().add(persona);
+                if (!agent.getPersonaIds().contains(persona.getId())) {
+                    agent.getPersonaIds().add(persona.getId());
                 }
                 resolvedPersona = persona;
             }

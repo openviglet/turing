@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.viglet.turing.agent.persistence.model.customtool.TurCustomTool;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 
 import jakarta.persistence.Column;
@@ -806,21 +805,24 @@ public class TurAIAgent implements Serializable {
      * <p>Constraint enforced at save time: {@link #defaultPersonaId}, when
      * present, must be a member of this set.
      *
+     * <p>T1315 — held by id: the personas belong to the persona module, and
+     * {@code TurAgentPersonas} loads them. Same join table as before, so the
+     * schema is unchanged.
+     *
      * @since 2026.2.7
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "agent_persona",
-            joinColumns = @JoinColumn(name = "agent_id"),
-            inverseJoinColumns = @JoinColumn(name = "persona_id"))
-    private Set<TurPersona> personas = new HashSet<>();
+    @jakarta.persistence.ElementCollection(fetch = FetchType.LAZY)
+    @jakarta.persistence.CollectionTable(name = "agent_persona",
+            joinColumns = @JoinColumn(name = "agent_id"))
+    @Column(name = "persona_id", length = 36)
+    private Set<String> personaIds = new HashSet<>();
 
     /**
      * The persona used when no chat flow has overridden the active voice.
      * Optional — when null, the agent speaks in the LLM's default voice.
      *
      * <p>T1315 — held by id: the persona belongs to the persona module, and
-     * the default is always a member of {@link #personas}, so
-     * {@link #defaultPersonaFromCatalog()} answers it without another load.
+     * the default is always a member of {@link #personaIds}.
      *
      * @since 2026.2.7
      */
@@ -846,31 +848,16 @@ public class TurAIAgent implements Serializable {
     private String analyticsSeInstanceId;
 
     /**
-     * T1315 — the default persona, read from this agent's catalog, where the
-     * save path keeps it. {@code null} when none is set or it is not in the
-     * catalog. Not a bean property, so it is never serialized.
+     * T1315 — makes the persona with {@code personaId} this agent's default,
+     * adding it to the catalog so the default stays one of its members. For
+     * the never-persisted shells that speak in one persona's voice.
      */
-    public TurPersona defaultPersonaFromCatalog() {
-        if (defaultPersonaId == null || personas == null) {
-            return null;
-        }
-        return personas.stream()
-                .filter(p -> defaultPersonaId.equals(p.getId()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * T1315 — makes {@code persona} this agent's default, adding it to the
-     * catalog so {@link #defaultPersonaFromCatalog()} finds it. For the
-     * never-persisted shells that speak in one persona's voice.
-     */
-    public void useDefaultPersona(TurPersona persona) {
-        if (persona == null) {
+    public void useDefaultPersona(String personaId) {
+        if (personaId == null) {
             defaultPersonaId = null;
             return;
         }
-        personas.add(persona);
-        defaultPersonaId = persona.getId();
+        personaIds.add(personaId);
+        defaultPersonaId = personaId;
     }
 }

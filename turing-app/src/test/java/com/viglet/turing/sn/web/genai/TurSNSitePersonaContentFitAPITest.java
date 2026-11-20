@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,14 +66,17 @@ class TurSNSitePersonaContentFitAPITest {
 
     @BeforeEach
     void setUp() {
+        com.viglet.turing.persona.InMemoryAgentPersonas catalog =
+                new com.viglet.turing.persona.InMemoryAgentPersonas();
         api = new TurSNSitePersonaContentFitAPI(
-                new TurSNSiteAudiencePersonas(turSNSearchProcess, turDefaultAgentResolver), evaluator);
+                new TurSNSiteAudiencePersonas(turSNSearchProcess, turDefaultAgentResolver,
+                        catalog.service()), evaluator);
 
         TurPersona audience = persona("p-audience", TurPersonaKind.AUDIENCE);
         TurPersona speakerOnly = persona("p-speaker", TurPersonaKind.SPEAKER);
         agent = new TurAIAgent();
         agent.setId("agent-1");
-        agent.setPersonas(Set.of(audience, speakerOnly));
+        catalog.attach(agent, audience, speakerOnly);
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         TurSNSite site = new TurSNSite();

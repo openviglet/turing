@@ -103,7 +103,7 @@ function AgentBento({ agent }: Readonly<{ agent: TurAIAgent }>) {
     mcp: agent.mcpServerIds?.length ?? 0,
     custom: agent.customTools?.length ?? 0,
     nativeTools: agent.nativeTools ? agent.nativeTools.split(",").filter(Boolean).length : 0,
-    personas: agent.personas?.length ?? 0,
+    personas: agent.personaIds?.length ?? 0,
     capabilities: agent.nativeCapabilities ? agent.nativeCapabilities.split(",").filter(Boolean).length : 0,
   }), [agent]);
 

@@ -145,10 +145,10 @@ class TurAgentChatExecutorStructuralIT extends AbstractAgentExecutorIT {
 
         com.viglet.turing.agent.persistence.model.TurAIAgent reloaded =
                 agentRepository.findById(agent.getId()).orElseThrow();
-        com.viglet.turing.persona.persistence.model.TurPersona marina = reloaded.getPersonas().stream()
+        com.viglet.turing.persona.persistence.model.TurPersona marina = personaRepository.findAllById(reloaded.getPersonaIds()).stream()
                 .filter(p -> p.getName().contains("Marina"))
                 .findFirst().orElseThrow(() -> new AssertionError("Marina must be linked to the agent"));
-        com.viglet.turing.persona.persistence.model.TurPersona lucas = reloaded.getPersonas().stream()
+        com.viglet.turing.persona.persistence.model.TurPersona lucas = personaRepository.findAllById(reloaded.getPersonaIds()).stream()
                 .filter(p -> p.getName().contains("Lucas"))
                 .findFirst().orElseThrow(() -> new AssertionError("Lucas must be linked to the agent"));
 

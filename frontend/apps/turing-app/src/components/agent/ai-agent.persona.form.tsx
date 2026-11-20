@@ -32,7 +32,7 @@ export const AIAgentPersonaForm: React.FC<Props> = ({ value }) => {
   const [syncedValue, setSyncedValue] = useState<TurAIAgent | null>(null);
   if (syncedValue !== value) {
     setSyncedValue(value);
-    const ids = new Set((value.personas ?? []).map((p) => p.id));
+    const ids = new Set(value.personaIds ?? []);
     setSelectedIds(ids);
     setSavedIds(ids);
     const fallbackDefault = value.defaultPersonaId ?? null;
@@ -78,10 +78,9 @@ export const AIAgentPersonaForm: React.FC<Props> = ({ value }) => {
   }
 
   async function onSave() {
-    const selected = personas.filter((p) => selectedIds.has(p.id));
     const payload: TurAIAgent = {
       ...value,
-      personas: selected,
+      personaIds: [...selectedIds],
       defaultPersonaId: defaultId,
     };
     try {

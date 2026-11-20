@@ -14,7 +14,6 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,8 @@ class TurAgentPersonaResolverTest {
 
     @BeforeEach
     void setUp() {
-        resolver = new TurAgentPersonaResolver(flowStateRepository);
+        InMemoryAgentPersonas personas = new InMemoryAgentPersonas();
+        resolver = new TurAgentPersonaResolver(flowStateRepository, personas.service());
         speaker = persona("p-speaker", TurPersonaKind.SPEAKER);
         other = persona("p-other", TurPersonaKind.SPEAKER);
         audienceOnly = persona("p-audience", TurPersonaKind.AUDIENCE);
@@ -63,7 +63,7 @@ class TurAgentPersonaResolverTest {
 
         agent = new TurAIAgent();
         agent.setId(AGENT_ID);
-        agent.setPersonas(Set.of(speaker, other, audienceOnly, defaultPersona));
+        personas.attach(agent, speaker, other, audienceOnly, defaultPersona);
         agent.setDefaultPersonaId(defaultPersona.getId());
         // No flow state by default — the anonymous RAG turn has none.
         lenient().when(flowStateRepository

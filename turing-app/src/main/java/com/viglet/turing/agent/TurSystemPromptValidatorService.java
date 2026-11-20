@@ -91,12 +91,15 @@ public class TurSystemPromptValidatorService {
 
     private final TurSystemPromptPreviewService previewService;
     private final TurLlmSummaryService llmSummaryService;
+    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TurSystemPromptValidatorService(TurSystemPromptPreviewService previewService,
-            TurLlmSummaryService llmSummaryService) {
+            TurLlmSummaryService llmSummaryService,
+            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
         this.previewService = previewService;
         this.llmSummaryService = llmSummaryService;
+        this.agentPersonas = agentPersonas;
     }
 
     /** Deterministic heuristic checks — fast, no LLM call. */
@@ -104,7 +107,7 @@ public class TurSystemPromptValidatorService {
     public List<TurSystemPromptIssueDto> validate(TurAIAgent agent) {
         List<TurSystemPromptIssueDto> issues = new ArrayList<>();
         String base = agent.getSystemPrompt();
-        TurPersona persona = agent.defaultPersonaFromCatalog();
+        TurPersona persona = agentPersonas.defaultOf(agent);
         String personaInstruction = persona == null ? null : persona.getSystemInstruction();
         TurSystemPromptPreviewDto preview = previewService.buildPreview(agent);
 

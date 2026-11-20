@@ -98,6 +98,7 @@ public class TurAIAgentExportService {
     private final TurMcpServerRepository mcpServerRepository;
     private final TurStoreInstanceRepository storeInstanceRepository;
     private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
+    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
     private final com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     public TurAIAgentExportService(TurAIAgentRepository agentRepository,
@@ -108,8 +109,10 @@ public class TurAIAgentExportService {
                                    TurMcpServerRepository mcpServerRepository,
                                    TurStoreInstanceRepository storeInstanceRepository,
                                    com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository,
-            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
+            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
         this.agentMcpServers = agentMcpServers;
+        this.agentPersonas = agentPersonas;
         this.embeddingModelRepository = embeddingModelRepository;
         this.agentRepository = agentRepository;
         this.chatFlowRepository = chatFlowRepository;
@@ -169,13 +172,8 @@ public class TurAIAgentExportService {
      */
     private ReferenceBag collectReferences(TurAIAgent agent) {
         ReferenceBag refs = new ReferenceBag();
-        if (agent.getPersonas() != null) {
-            agent.getPersonas().forEach(p -> refs.personas.put(p.getId(), p));
-        }
-        TurPersona defaultPersona = agent.defaultPersonaFromCatalog();
-        if (defaultPersona != null) {
-            refs.personas.putIfAbsent(defaultPersona.getId(), defaultPersona);
-        }
+        // T1315 — the default persona is always a member of the catalog.
+        agentPersonas.of(agent).forEach(p -> refs.personas.put(p.getId(), p));
         if (agent.getLlmInstances() != null) {
             agent.getLlmInstances().forEach(l -> refs.llms.put(l.getId(), l));
         }

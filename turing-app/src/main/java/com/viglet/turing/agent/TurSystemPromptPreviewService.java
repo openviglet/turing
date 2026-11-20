@@ -115,6 +115,7 @@ public class TurSystemPromptPreviewService {
     private final TurToolCallTraceService toolCallTraceService;
     private final com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
     private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
+    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
 
     public TurSystemPromptPreviewService(TurPromptAssemblyPipeline promptAssemblyPipeline,
             TurMessageAssemblyPipeline messageAssemblyPipeline,
@@ -125,8 +126,10 @@ public class TurSystemPromptPreviewService {
             TurAgentPersonaResolver personaResolver,
             TurToolCallTraceService toolCallTraceService,
             com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService,
-            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers) {
+            com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
+            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
         this.agentMcpServers = agentMcpServers;
+        this.agentPersonas = agentPersonas;
         this.promptAssemblyPipeline = promptAssemblyPipeline;
         this.messageAssemblyPipeline = messageAssemblyPipeline;
         this.chatFlowEngineService = chatFlowEngineService;
@@ -355,7 +358,7 @@ public class TurSystemPromptPreviewService {
                 ? null : flowPreview.personaResolution();
         TurPersona persona = replay != null ? replay.persona()
                 : (personaResolution != null
-                        ? personaResolution.persona() : agent.defaultPersonaFromCatalog());
+                        ? personaResolution.persona() : agentPersonas.defaultOf(agent));
 
         // ONE assembly, shared with the runtime. Null embedding model + null
         // query so the persona contributor skips live few-shot retrieval; null
@@ -787,26 +790,16 @@ public class TurSystemPromptPreviewService {
      * otherwise fall back to the default and flag the silent fallback.
      */
     private FlowPersonaResolution resolvePersona(TurAIAgent agent, String overrideId) {
-        TurPersona defaultPersona = agent.defaultPersonaFromCatalog();
+        TurPersona defaultPersona = agentPersonas.defaultOf(agent);
         if (!StringUtils.hasText(overrideId)) {
             return new FlowPersonaResolution(defaultPersona, null, false, false);
         }
-        TurPersona match = findInCatalog(agent, overrideId);
+        TurPersona match = agentPersonas.inCatalog(agent, overrideId);
         if (match != null && match.isUsableAsSpeaker()) {
             return new FlowPersonaResolution(match, overrideId, true, false);
         }
         // Requested but not honourable — runtime quietly uses the default too.
         return new FlowPersonaResolution(defaultPersona, overrideId, false, true);
-    }
-
-    private static TurPersona findInCatalog(TurAIAgent agent, String personaId) {
-        if (agent.getPersonas() == null) {
-            return null;
-        }
-        return agent.getPersonas().stream()
-                .filter(p -> personaId.equals(p.getId()))
-                .findFirst()
-                .orElse(null);
     }
 
     /** Origin-note for the PERSONA segment, aware of a flow persona switch. */
@@ -839,7 +832,7 @@ public class TurSystemPromptPreviewService {
             if (!StringUtils.hasText(overrideId)) {
                 continue;
             }
-            TurPersona match = findInCatalog(agent, overrideId);
+            TurPersona match = agentPersonas.inCatalog(agent, overrideId);
             if (match == null) {
                 diagnostics.add(new FlowPersonaDiagnostic(flow.getName(), overrideId, true, false));
             } else if (!match.isUsableAsSpeaker()) {

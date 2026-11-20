@@ -72,6 +72,8 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
     private com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
 
     private TurSystemPromptPreviewService service;
+    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.persona.InMemoryAgentPersonas();
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -85,7 +87,8 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
                 messageAssemblyPipeline, chatFlowEngineService,
                 chatFlowRepository, priceService, new TurInertRegionDetector(),
                 personaResolver, toolCallTraceService, promptCaptureService,
-                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentMcpServers.class));
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurAgentMcpServers.class),
+                personas.service());
     }
 
     /** start → persona(personaId) → aiQuestion — the canonical override path. */
@@ -116,11 +119,10 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
         return flow;
     }
 
-    private static TurAIAgent agentWith(TurPersona... catalog) {
+    private TurAIAgent agentWith(TurPersona... catalog) {
         TurAIAgent agent = new TurAIAgent();
         agent.setId("agent-1");
-        agent.setPersonas(new java.util.HashSet<>(List.of(catalog)));
-        return agent;
+        return personas.attach(agent, catalog);
     }
 
     private static TurPersona persona(String id, String name, TurPersonaKind kind) {

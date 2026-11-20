@@ -144,8 +144,8 @@ public class TurAIAgentExchange {
         e.submissionRetentionDays = agent.getSubmissionRetentionDays();
         e.memoryScope = agent.getMemoryScope();
 
-        if (agent.getPersonas() != null) {
-            agent.getPersonas().forEach(p -> e.personaIds.add(p.getId()));
+        if (agent.getPersonaIds() != null) {
+            e.personaIds.addAll(agent.getPersonaIds());
         }
         if (agent.getDefaultPersonaId() != null) {
             e.defaultPersonaId = agent.getDefaultPersonaId();

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.persona.TurAgentPersonas;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;
@@ -39,11 +40,13 @@ public class TurSNSiteAudiencePersonas {
 
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurDefaultAgentResolver turDefaultAgentResolver;
+    private final TurAgentPersonas agentPersonas;
 
     public TurSNSiteAudiencePersonas(TurSNSearchProcess turSNSearchProcess,
-            TurDefaultAgentResolver turDefaultAgentResolver) {
+            TurDefaultAgentResolver turDefaultAgentResolver, TurAgentPersonas agentPersonas) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.turDefaultAgentResolver = turDefaultAgentResolver;
+        this.agentPersonas = agentPersonas;
     }
 
     /**
@@ -60,10 +63,7 @@ public class TurSNSiteAudiencePersonas {
 
     /** The agent's personas usable as an audience, ordered by name. */
     public List<TurPersona> of(TurAIAgent agent) {
-        if (agent.getPersonas() == null) {
-            return List.of();
-        }
-        return agent.getPersonas().stream()
+        return agentPersonas.of(agent).stream()
                 .filter(TurPersona::isUsableAsAudience)
                 .sorted(Comparator.comparing(TurPersona::getName, Comparator.nullsLast(String::compareTo)))
                 .toList();

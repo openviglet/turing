@@ -40,7 +40,7 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
             + " LEFT JOIN FETCH a.llmInstances"
             + " LEFT JOIN FETCH a.mcpServerIds"
             + " LEFT JOIN FETCH a.customTools"
-            + " LEFT JOIN FETCH a.personas"
+            + " LEFT JOIN FETCH a.personaIds"
             + " WHERE a.id = :id")
     @NotNull
     Optional<TurAIAgent> findById(@NotNull @Param("id") String id);
@@ -67,7 +67,7 @@ public interface TurAIAgentRepository extends JpaRepository<TurAIAgent, String> 
     List<TurAIAgent> findByCustomToolId(String customToolId);
 
     /** Used by the persona delete path. @since 2026.2.8 */
-    @Query("SELECT a FROM TurAIAgent a JOIN a.personas p WHERE p.id = ?1")
+    @Query("SELECT a FROM TurAIAgent a JOIN a.personaIds p WHERE p = ?1")
     List<TurAIAgent> findByPersonaId(String personaId);
 
     /**

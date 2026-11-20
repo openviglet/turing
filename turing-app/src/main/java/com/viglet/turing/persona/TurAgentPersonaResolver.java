@@ -37,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
  *   <li>If the conversation has an active flow state with a non-blank
  *       {@code __activePersonaId} variable AND that persona is in the agent's
  *       catalog, return it.</li>
- *   <li>Otherwise, return {@code agent.defaultPersonaFromCatalog()} (which may be
+ *   <li>Otherwise, return the agent's default persona (which may be
  *       {@code null} — the agent then speaks in the LLM's default voice).</li>
  * </ol>
  *
@@ -64,9 +64,12 @@ public class TurAgentPersonaResolver {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final TurChatFlowStateRepository flowStateRepository;
+    private final TurAgentPersonas agentPersonas;
 
-    public TurAgentPersonaResolver(TurChatFlowStateRepository flowStateRepository) {
+    public TurAgentPersonaResolver(TurChatFlowStateRepository flowStateRepository,
+            TurAgentPersonas agentPersonas) {
         this.flowStateRepository = flowStateRepository;
+        this.agentPersonas = agentPersonas;
     }
 
     /**
@@ -107,7 +110,7 @@ public class TurAgentPersonaResolver {
         if (override != null) return asSpeaker(agent, override);
         TurPersona requested = findInCatalog(agent, requestPersonaId);
         if (requested != null) return asSpeaker(agent, requested);
-        return asSpeaker(agent, agent.defaultPersonaFromCatalog());
+        return asSpeaker(agent, agentPersonas.defaultOf(agent));
     }
 
     /**
@@ -164,15 +167,13 @@ public class TurAgentPersonaResolver {
      * same way everywhere: an id not in the catalog is never honoured.
      */
     private TurPersona findInCatalog(TurAIAgent agent, String personaId) {
-        if (StringUtils.isBlank(personaId) || agent.getPersonas() == null) return null;
-        return agent.getPersonas().stream()
-                .filter(p -> personaId.equals(p.getId()))
-                .findFirst()
-                .orElseGet(() -> {
-                    log.warn("[PersonaResolver] persona {} is not in agent {} catalog; "
-                                    + "falling back to default", personaId, agent.getId());
-                    return null;
-                });
+        if (StringUtils.isBlank(personaId)) return null;
+        TurPersona persona = agentPersonas.inCatalog(agent, personaId);
+        if (persona == null) {
+            log.warn("[PersonaResolver] persona {} is not in agent {} catalog; "
+                            + "falling back to default", personaId, agent.getId());
+        }
+        return persona;
     }
 
     private String readActivePersonaId(TurChatFlowState state) {

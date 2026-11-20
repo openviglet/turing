@@ -476,7 +476,10 @@ public class TurAIAgentImportService {
     }
 
     private static void wireAgentReferences(TurAIAgent agent, TurAIAgentExchange a, ResolvedRefs refs) {
-        agent.setPersonas(resolveSet(a.getPersonaIds(), refs.personas::get));
+        // T1315 — the agent names its personas by id: the ids of the rows the import resolved.
+        java.util.Set<String> personaIds = new java.util.HashSet<>();
+        resolveSet(a.getPersonaIds(), refs.personas::get).forEach(p -> personaIds.add(p.getId()));
+        agent.setPersonaIds(personaIds);
         if (a.getDefaultPersonaId() != null) {
             var defaultPersona = refs.personas.get(a.getDefaultPersonaId());
             agent.setDefaultPersonaId(defaultPersona == null ? null : defaultPersona.getId());

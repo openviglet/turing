@@ -22,7 +22,6 @@ import com.viglet.turing.exchange.agent.TurAIAgentExportService;
 import com.viglet.turing.agent.persistence.dto.TurAIAgentDto;
 import com.viglet.turing.agent.persistence.mapper.TurAIAgentMapper;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
@@ -197,19 +196,12 @@ public class TurAIAgentAPI {
             // intent index. Null clears the binding so the indexer falls back
             // to the global default (property / first registered SE).
             agentEdit.setAnalyticsSeInstanceId(existingSeInstanceId(turAIAgent.getAnalyticsSeInstanceId()));
-            // Personas: catalog (M2M) + default (M2O). The default, when set,
-            // must belong to the catalog — otherwise the runtime resolver
+            // Personas: catalog + default, both by id (T1315). The default, when
+            // set, must belong to the catalog — otherwise the runtime resolver
             // would silently fall back to null on every turn. We enforce it
             // here once instead of every chat request.
-            //
-            // We resolve the default by id directly from the repo (rather than
-            // through resolveSingleRelation) because TurPersona doesn't
-            // implement Persistable, and the generic helper falls through to
-            // returning the detached DTO — Hibernate's M2O FK update is
-            // sensitive enough that a managed entity is the safe path.
-            Set<TurPersona> personaCatalog = resolveRelations(
-                    turAIAgent.getPersonas(), turPersonaRepository);
-            agentEdit.setPersonas(personaCatalog);
+            Set<String> personaCatalog = existingPersonaIds(turAIAgent.getPersonaIds());
+            agentEdit.setPersonaIds(personaCatalog);
             agentEdit.setDefaultPersonaId(
                     validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
             agentEdit.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
@@ -351,9 +343,8 @@ public class TurAIAgentAPI {
                 turStoreInstanceRepository));
         // T28 / §III.5 Phase C — same per-agent SE binding propagation on create.
         turAIAgent.setAnalyticsSeInstanceId(existingSeInstanceId(turAIAgent.getAnalyticsSeInstanceId()));
-        Set<TurPersona> personaCatalog = resolveRelations(
-                turAIAgent.getPersonas(), turPersonaRepository);
-        turAIAgent.setPersonas(personaCatalog);
+        Set<String> personaCatalog = existingPersonaIds(turAIAgent.getPersonaIds());
+        turAIAgent.setPersonaIds(personaCatalog);
         turAIAgent.setDefaultPersonaId(
                 validDefaultPersonaId(turAIAgent.getDefaultPersonaId(), personaCatalog));
         turAIAgent.setRagEnabled(canEnableRag(turAIAgent.isRagEnabled(),
@@ -377,25 +368,24 @@ public class TurAIAgentAPI {
         return existing;
     }
 
-    private String validDefaultPersonaId(String requestedId, Set<TurPersona> personaCatalog) {
+    /** T1315 — the persona ids that name an existing persona; the rest are dropped. */
+    private Set<String> existingPersonaIds(Set<String> requested) {
+        Set<String> existing = new java.util.HashSet<>();
+        if (requested != null && !requested.isEmpty()) {
+            turPersonaRepository.findAllById(requested).forEach(persona -> existing.add(persona.getId()));
+        }
+        return existing;
+    }
+
+    private String validDefaultPersonaId(String requestedId, Set<String> personaCatalog) {
         if (requestedId == null || !turPersonaRepository.existsById(requestedId)) {
             return null;
         }
-        if (!containsById(personaCatalog, requestedId)) {
+        if (!personaCatalog.contains(requestedId)) {
             throw new IllegalArgumentException(
                     "Default persona must be one of the agent's allowed personas");
         }
         return requestedId;
-    }
-
-    /**
-     * True when {@code catalog} contains a persona with the given id.
-     * Defensive against null entries (in case the resolver returns a
-     * managed entity with a null id from a partial relation).
-     */
-    private static boolean containsById(Set<TurPersona> catalog, String id) {
-        if (catalog == null || id == null) return false;
-        return catalog.stream().anyMatch(p -> p != null && id.equals(p.getId()));
     }
 
     /**

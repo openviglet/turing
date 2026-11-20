@@ -233,7 +233,7 @@ public class TurChatFlowAPI {
                     personaIdRemap.put(incoming.getId(), resolved.getId());
                 }
                 personaNameById.put(resolved.getId(), resolved.getName());
-                agent.getPersonas().add(resolved);
+                agent.getPersonaIds().add(resolved.getId());
             }
             // Persist the agent once — even when every persona already existed,
             // this guarantees the EAGER personas Set is the same fetched on the
@@ -350,7 +350,7 @@ public class TurChatFlowAPI {
             personaIdRemap.put(incoming.getId(), resolved.getId());
         }
         personaNameById.put(resolved.getId(), resolved.getName());
-        agent.getPersonas().add(resolved);
+        agent.getPersonaIds().add(resolved.getId());
         return true;
     }
 

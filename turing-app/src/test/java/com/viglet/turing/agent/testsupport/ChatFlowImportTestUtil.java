@@ -185,8 +185,8 @@ public final class ChatFlowImportTestUtil {
                 if (originalId != null && !originalId.isBlank()) {
                     personaIdRemap.put(originalId, persona.getId());
                 }
-                if (!agent.getPersonas().contains(persona)) {
-                    agent.getPersonas().add(persona);
+                if (!agent.getPersonaIds().contains(persona.getId())) {
+                    agent.getPersonaIds().add(persona.getId());
                 }
                 resolvedPersona = persona;
             }
@@ -279,8 +279,8 @@ public final class ChatFlowImportTestUtil {
                 if (originalId != null && !originalId.isBlank()) {
                     personaIdRemap.put(originalId, persona.getId());
                 }
-                if (!agent.getPersonas().contains(persona)) {
-                    agent.getPersonas().add(persona);
+                if (!agent.getPersonaIds().contains(persona.getId())) {
+                    agent.getPersonaIds().add(persona.getId());
                 }
                 personas.add(persona);
             }

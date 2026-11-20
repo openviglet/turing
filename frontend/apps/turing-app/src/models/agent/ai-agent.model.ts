@@ -1,6 +1,5 @@
 import type { TurCustomTool } from "../customtool/custom-tool.model.ts";
 import type { TurLLMInstance } from "../llm/llm-instance.model.ts";
-import type { TurPersona } from "../persona/persona.model.ts";
 
 /**
  * Per-agent toggle for how the executor issues the LLM round-trip.
@@ -205,9 +204,9 @@ export interface TurAIAgent {
   /** T1315 — the MCP servers this agent may call, by id. */
   mcpServerIds: string[];
   customTools: TurCustomTool[];
-  /** Catalog of voices this agent is allowed to speak with — chat flows pick from here. @since 2026.2.7 */
-  personas?: TurPersona[];
-  /** Voice used when no chat flow has overridden the active persona; T1315 — by id, always one of `personas`. @since 2026.2.7 */
+  /** Catalog of voices this agent is allowed to speak with — chat flows pick from here; T1315 — by id. @since 2026.2.7 */
+  personaIds?: string[];
+  /** Voice used when no chat flow has overridden the active persona; T1315 — by id, always one of `personaIds`. @since 2026.2.7 */
   defaultPersonaId?: string | null;
   /** T1315 — the embedding model, by id (null = the global default). */
   embeddingModelInstanceId?: string | null;

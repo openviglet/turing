@@ -1793,3 +1793,4 @@
 - **T1336** — The Mongo and Redis memory stores answer a conversation's agent from their headline, so with tenancy on a plain RAG chat opens for the tenant that owns its agent.
 - **T1315i** — An agent holds mcpServerIds on the same join table; TurAgentMcpServers loads the rows for tools, prompts, federation and export, and the console sends the ids.
 - **T1319b** — A persona carries a @Version; a console save from an older version answers 409, the update answers the merged version, and the console sends the last version it received.
+- **T1315j** — An agent holds personaIds on the same join table; TurAgentPersonas in the persona module loads catalog and default for the resolver, preview, export and SN audience, and the console sends ids.
