@@ -57,8 +57,12 @@ class TurLuceneCustomFacetSpanTest {
 
     private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
     private final TurSNSiteCustomFacets customFacetRepository = mock(TurSNSiteCustomFacets.class);
-    private final TurLuceneCustomFacets customFacets = new TurLuceneCustomFacets(fieldRepository,
-            customFacetRepository);
+    private final com.viglet.turing.sn.facet.TurSNCustomFacetCatalog catalog =
+            new com.viglet.turing.sn.facet.TurSNCustomFacetCatalog(fieldRepository, customFacetRepository);
+    private final com.viglet.turing.searchengine.spi.TurSESiteSearchConfig siteSearchConfig =
+            mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class,
+                    inv -> "customFacets".equals(inv.getMethod().getName()) ? catalog.customFacets(this.site) : null);
+    private final TurLuceneCustomFacets customFacets = new TurLuceneCustomFacets(siteSearchConfig);
     private final TurSNSite site = new TurSNSite();
     private final Instant now = Instant.now();
 

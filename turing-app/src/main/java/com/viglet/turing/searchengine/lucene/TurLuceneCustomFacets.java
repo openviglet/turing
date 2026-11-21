@@ -19,13 +19,10 @@ package com.viglet.turing.searchengine.lucene;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -35,14 +32,11 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
-import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
+import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
+import com.viglet.turing.searchengine.spi.TurSECustomFacet;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,8 +51,9 @@ import lombok.extern.slf4j.Slf4j;
  * <li>{@link #resolveFilter} turns the {@code <customFacet>:<label>} filter
  * query a clicked item sends back into the range it stands for.</li>
  * </ul>
- * The range is built by {@link TurSNCustomFacetFilterQuery}, the same text Solr
- * receives, and read by {@link TurLuceneFilterQueries}.
+ * The range is built by sn's {@code TurSNCustomFacetFilterQuery}, the same text Solr
+ * receives, handed over through {@link TurSESiteSearchConfig#customFacets} (T1310),
+ * and read by {@link TurLuceneFilterQueries}.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -67,13 +62,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurLuceneCustomFacets {
 
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
 
-    public TurLuceneCustomFacets(TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomFacets turSNSiteCustomFacetRepository) {
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
-        this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
+    public TurLuceneCustomFacets(TurSESiteSearchConfig siteSearchConfig) {
+        this.siteSearchConfig = siteSearchConfig;
     }
 
     /**
@@ -81,7 +73,7 @@ public class TurLuceneCustomFacets {
      * {@code span} is set when the facet names an end field (T1224).
      */
     public record ItemFilter(String field, TurSEFieldType type, String value,
-            TurSNCustomFacetFilterQuery.Span span) {
+            TurSECustomFacetSpan span) {
 
         public ItemFilter(String field, TurSEFieldType type, String value) {
             this(field, type, value, null);
@@ -128,20 +120,15 @@ public class TurLuceneCustomFacets {
      */
     public List<Facet> facets(TurSNSite turSNSite, Locale locale) {
         List<Facet> facets = new ArrayList<>();
-        for (Definition definition : definitions(turSNSite).values()) {
+        for (TurSECustomFacet definition : definitions(turSNSite).values()) {
             List<Item> items = definition.items().stream()
-                    .map(item -> new Item(item.getLabel(), displayLabel(item, locale), itemFilter(definition, item)))
+                    .map(item -> new Item(item.label(), displayLabel(item, locale), itemFilter(item)))
                     .toList();
             if (!items.isEmpty()) {
-                facets.add(new Facet(definition.facet().getName(), definition.facet().getFacetPosition(), items));
+                facets.add(new Facet(definition.name(), definition.position(), items));
             }
         }
         return facets;
-    }
-
-    /** One custom facet: its field, and its items in display order. */
-    private record Definition(TurSNSiteCustomFacet facet, TurSNSiteFieldExt field,
-            List<TurSNSiteCustomFacetItem> items) {
     }
 
     /**
@@ -149,14 +136,14 @@ public class TurLuceneCustomFacets {
      * {@code facetName} names no custom facet of the site (an ordinary field).
      */
     public Optional<ItemFilter> resolveFilter(TurSNSite turSNSite, String facetName, String label) {
-        Definition definition = definitions(turSNSite).get(facetName);
+        TurSECustomFacet definition = definitions(turSNSite).get(facetName);
         if (definition == null) {
             return Optional.empty();
         }
         return definition.items().stream()
-                .filter(item -> label.equals(item.getLabel()))
+                .filter(item -> label.equals(item.label()))
                 .findFirst()
-                .map(item -> itemFilter(definition, item));
+                .map(TurLuceneCustomFacets::itemFilter);
     }
 
     /**
@@ -167,8 +154,8 @@ public class TurLuceneCustomFacets {
     public List<TurSEFacetResult> count(IndexSearcher searcher, Query query, TurSNSite turSNSite,
             Locale locale, String onlyFacet) {
         List<TurSEFacetResult> results = new ArrayList<>();
-        for (Definition definition : definitions(turSNSite).values()) {
-            if (onlyFacet != null && !onlyFacet.equals(definition.facet().getName())) {
+        for (TurSECustomFacet definition : definitions(turSNSite).values()) {
+            if (onlyFacet != null && !onlyFacet.equals(definition.name())) {
                 continue;
             }
             countFacet(searcher, query, definition, locale).ifPresent(results::add);
@@ -177,78 +164,42 @@ public class TurLuceneCustomFacets {
     }
 
     private Optional<TurSEFacetResult> countFacet(IndexSearcher searcher, Query query,
-            Definition definition, Locale locale) {
+            TurSECustomFacet definition, Locale locale) {
         TurSEFacetResult result = new TurSEFacetResult();
-        result.setFacet(definition.facet().getName());
+        result.setFacet(definition.name());
         Instant now = Instant.now();
-        for (TurSNSiteCustomFacetItem item : definition.items()) {
+        for (TurSECustomFacet.Item item : definition.items()) {
             try {
-                ItemFilter filter = itemFilter(definition, item);
+                ItemFilter filter = itemFilter(item);
                 Query itemQuery = new BooleanQuery.Builder()
                         .add(query, BooleanClause.Occur.MUST)
                         .add(filter.toLuceneQuery(now), BooleanClause.Occur.FILTER)
                         .build();
-                result.add(item.getLabel(), new TurSEFacetResultAttr(item.getLabel(),
+                result.add(item.label(), new TurSEFacetResultAttr(item.label(),
                         searcher.count(itemQuery), displayLabel(item, locale)));
             } catch (IOException | IllegalArgumentException e) {
-                log.warn("[Lucene] custom facet item '{}' of '{}' not counted: {}", item.getLabel(),
-                        definition.facet().getName(), e.getMessage());
+                log.warn("[Lucene] custom facet item '{}' of '{}' not counted: {}", item.label(),
+                        definition.name(), e.getMessage());
             }
         }
         return result.getTurSEFacetResultAttr().isEmpty() ? Optional.empty() : Optional.of(result);
     }
 
-    private static ItemFilter itemFilter(Definition definition, TurSNSiteCustomFacetItem item) {
-        TurSNSiteFieldExt field = definition.field();
-        String fq = TurSNCustomFacetFilterQuery.of(field.getName(), field.getType(), item);
-        String endField = definition.facet().getEndField();
-        TurSNCustomFacetFilterQuery.Span span = endField == null || endField.isBlank() ? null
-                : TurSNCustomFacetFilterQuery.span(field.getName(), endField, field.getType(), item);
-        return new ItemFilter(field.getName(), field.getType(), fq.substring(fq.indexOf(':') + 1), span);
+    private static ItemFilter itemFilter(TurSECustomFacet.Item item) {
+        return new ItemFilter(item.field(), item.type(), item.value(), item.span());
     }
 
-    /** The site's custom facets by name, each with the enabled field it belongs to. */
-    private Map<String, Definition> definitions(TurSNSite turSNSite) {
-        List<TurSNSiteFieldExt> enabledFields = turSNSiteFieldExtRepository
-                .findByTurSNSiteAndEnabled(turSNSite, 1);
-        if (enabledFields == null || enabledFields.isEmpty()) {
-            return Map.of();
-        }
-        Map<String, TurSNSiteFieldExt> fieldById = enabledFields.stream()
-                .filter(field -> field.getId() != null)
-                .collect(Collectors.toMap(TurSNSiteFieldExt::getId, Function.identity(), (a, b) -> a));
-        return turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(enabledFields).stream()
-                .filter(facet -> facet.getName() != null && facet.getTurSNSiteFieldExt() != null)
-                .filter(facet -> fieldById.containsKey(facet.getTurSNSiteFieldExt().getId()))
-                .sorted(Comparator.comparing(TurLuceneCustomFacets::position)
-                        .thenComparing(TurSNSiteCustomFacet::getName, String::compareToIgnoreCase))
-                .collect(Collectors.toMap(TurSNSiteCustomFacet::getName,
-                        facet -> new Definition(facet, fieldById.get(facet.getTurSNSiteFieldExt().getId()),
-                                orderedItems(facet)),
-                        (a, b) -> a, java.util.LinkedHashMap::new));
+    /** The site's custom facets by name, in display order (T1310: through the SPI). */
+    private Map<String, TurSECustomFacet> definitions(TurSNSite turSNSite) {
+        Map<String, TurSECustomFacet> byName = new java.util.LinkedHashMap<>();
+        siteSearchConfig.customFacets(turSNSite.getId()).forEach(facet -> byName.putIfAbsent(facet.name(), facet));
+        return byName;
     }
-
-    private static int position(TurSNSiteCustomFacet facet) {
-        Integer position = facet.getFacetPosition();
-        return position != null && position > 0 ? position : Integer.MAX_VALUE;
-    }
-
-    /** Items with a label, by position then label, as Solr lists them. */
-    private static List<TurSNSiteCustomFacetItem> orderedItems(TurSNSiteCustomFacet facet) {
-        return facet.getItems() == null ? List.of() : facet.getItems().stream()
-                .filter(item -> item.getLabel() != null && !item.getLabel().isBlank())
-                .sorted(Comparator.comparing((TurSNSiteCustomFacetItem item) ->
-                        item.getPosition() != null && item.getPosition() > 0 ? item.getPosition()
-                                : Integer.MAX_VALUE)
-                        .thenComparing(TurSNSiteCustomFacetItem::getLabel, String::compareToIgnoreCase))
-                .toList();
-    }
-
     /** The item's label for the request locale, as {@code TurSolrResultProcessor} resolves it. */
-    private static String displayLabel(TurSNSiteCustomFacetItem item, Locale locale) {
-        Map<String, String> labels = item.getLabels();
+    private static String displayLabel(TurSECustomFacet.Item item, Locale locale) {
+        Map<String, String> labels = item.labels();
         if (labels == null || labels.isEmpty() || locale == null) {
-            return item.getLabel();
+            return item.label();
         }
         for (String key : List.of(locale.toString(), locale.toLanguageTag(), locale.getLanguage())) {
             String translated = labels.get(key);
@@ -256,6 +207,6 @@ public class TurLuceneCustomFacets {
                 return translated;
             }
         }
-        return item.getLabel();
+        return item.label();
     }
 }

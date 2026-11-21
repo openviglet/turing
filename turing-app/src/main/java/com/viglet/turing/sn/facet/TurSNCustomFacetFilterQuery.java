@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum;
 
@@ -58,19 +59,6 @@ public final class TurSNCustomFacetFilterQuery {
                 Optional.ofNullable(item.getRangeEnd()).map(TurSNCustomFacetFilterQuery::plain).orElse(null));
     }
 
-    /** T1224 — one condition of a span filter: {@code field} holds {@code value}, a range. */
-    public record Clause(String field, String value) {
-    }
-
-    /**
-     * T1224 — an item's filter over a span that starts at {@code field} and ends at
-     * {@code endField}: a document with no end value is the point at its start and
-     * matches {@code point} on {@code field}, as without an end field; a document
-     * with one matches when every {@code overlap} clause holds.
-     */
-    public record Span(String field, String endField, String point, List<Clause> overlap) {
-    }
-
     /**
      * The filter query for {@code item} over a span (T1224), in Solr syntax; with
      * no {@code endField} it is {@link #of(String, TurSEFieldType, TurSNSiteCustomFacetItem)}.
@@ -80,7 +68,7 @@ public final class TurSNCustomFacetFilterQuery {
         if (endField == null || endField.isBlank()) {
             return of(fieldName, fieldType, item);
         }
-        Span span = span(fieldName, endField, fieldType, item);
+        TurSECustomFacetSpan span = span(fieldName, endField, fieldType, item);
         String overlap = span.overlap().stream()
                 .map(clause -> "+" + clause.field() + ":" + clause.value())
                 .collect(Collectors.joining(" "));
@@ -94,21 +82,21 @@ public final class TurSNCustomFacetFilterQuery {
      * start ("Past") tests the end alone, so it holds what has ended by its end
      * rather than everything that started before it.
      */
-    public static Span span(String fieldName, String endField, TurSEFieldType fieldType,
+    public static TurSECustomFacetSpan span(String fieldName, String endField, TurSEFieldType fieldType,
             TurSNSiteCustomFacetItem item) {
         String fq = of(fieldName, fieldType, item);
         String point = fq.substring(fq.indexOf(':') + 1);
         Bounds bounds = bounds(fieldType, item);
-        List<Clause> overlap = new ArrayList<>();
+        List<TurSECustomFacetSpan.Clause> overlap = new ArrayList<>();
         if (bounds.low() == null) {
-            overlap.add(new Clause(endField, upTo(bounds)));
-            return new Span(fieldName, endField, point, overlap);
+            overlap.add(new TurSECustomFacetSpan.Clause(endField, upTo(bounds)));
+            return new TurSECustomFacetSpan(fieldName, endField, point, overlap);
         }
         if (bounds.high() != null) {
-            overlap.add(new Clause(fieldName, upTo(bounds)));
+            overlap.add(new TurSECustomFacetSpan.Clause(fieldName, upTo(bounds)));
         }
-        overlap.add(new Clause(endField, (bounds.lowInclusive() ? "[" : "{") + bounds.low() + " TO *]"));
-        return new Span(fieldName, endField, point, overlap);
+        overlap.add(new TurSECustomFacetSpan.Clause(endField, (bounds.lowInclusive() ? "[" : "{") + bounds.low() + " TO *]"));
+        return new TurSECustomFacetSpan(fieldName, endField, point, overlap);
     }
 
     /** The range from anywhere up to the item's end, open when the item has none. */

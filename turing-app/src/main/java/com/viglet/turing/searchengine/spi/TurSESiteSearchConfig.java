@@ -96,4 +96,10 @@ public interface TurSESiteSearchConfig {
 
     /** The site's enabled facet fields in facet-position order; empty for a {@code null} id. */
     List<TurSEFacetField> facetFields(String siteId);
+
+    /**
+     * The site's custom facets on enabled fields, by position then name; empty when
+     * the site is unknown or has none.
+     */
+    List<TurSECustomFacet> customFacets(String siteId);
 }

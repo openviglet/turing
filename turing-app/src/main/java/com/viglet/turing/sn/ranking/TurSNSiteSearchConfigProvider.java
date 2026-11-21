@@ -31,6 +31,8 @@ import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSEIndexField;
 import com.viglet.turing.searchengine.spi.TurSECoreUsage;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
+import com.viglet.turing.searchengine.spi.TurSECustomFacet;
+import com.viglet.turing.sn.facet.TurSNCustomFacetCatalog;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -76,6 +78,7 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort;
     private final TurSNSearchRuleEvaluator searchRuleEvaluator;
     private final TurSNFieldProcess fieldProcess;
+    private final TurSNCustomFacetCatalog customFacetCatalog;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
@@ -86,7 +89,9 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             TurSNSiteLocales siteLocaleRepository,
             TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort,
             TurSNSearchRuleEvaluator searchRuleEvaluator,
-            TurSNFieldProcess fieldProcess) {
+            TurSNFieldProcess fieldProcess,
+            TurSNCustomFacetCatalog customFacetCatalog) {
+        this.customFacetCatalog = customFacetCatalog;
         this.siteLocaleRepositoryPort = siteLocaleRepositoryPort;
         this.searchRuleEvaluator = searchRuleEvaluator;
         this.fieldProcess = fieldProcess;
@@ -213,6 +218,14 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .map(field -> new TurSEFacetField(field.getName(), field.getFacetPosition(),
                         field.getFacetItemType()))
                 .toList();
+    }
+
+    @Override
+    public List<TurSECustomFacet> customFacets(String siteId) {
+        if (siteId == null) {
+            return List.of();
+        }
+        return siteRepository.findById(siteId).map(customFacetCatalog::customFacets).orElseGet(List::of);
     }
 
     @Override

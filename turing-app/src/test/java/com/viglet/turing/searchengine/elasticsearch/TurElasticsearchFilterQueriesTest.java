@@ -160,10 +160,10 @@ class TurElasticsearchFilterQueriesTest {
     /** T1224 — over a span: the point range without an end value, or the overlap with one. */
     @Test
     void aCustomFacetSelectionOverASpanIsThePointOrTheOverlap() {
-        TurSNCustomFacetFilterQuery.Span span = new TurSNCustomFacetFilterQuery.Span("startsAt", "endsAt",
+        com.viglet.turing.searchengine.facet.TurSECustomFacetSpan span = new com.viglet.turing.searchengine.facet.TurSECustomFacetSpan("startsAt", "endsAt",
                 "[NOW/DAY TO NOW/DAY+7DAYS]", List.of(
-                        new TurSNCustomFacetFilterQuery.Clause("startsAt", "[* TO NOW/DAY+7DAYS]"),
-                        new TurSNCustomFacetFilterQuery.Clause("endsAt", "[NOW/DAY TO *]")));
+                        new com.viglet.turing.searchengine.facet.TurSECustomFacetSpan.Clause("startsAt", "[* TO NOW/DAY+7DAYS]"),
+                        new com.viglet.turing.searchengine.facet.TurSECustomFacetSpan.Clause("endsAt", "[NOW/DAY TO *]")));
         Query query = TurElasticsearchFilterQueries.build(new TurSNSite(),
                 TurSNFilterParams.builder().defaultValues(List.of("agenda:Next 7 days")).build(), FIELDS,
                 (facet, label) -> Optional.of(new TurLuceneCustomFacets.ItemFilter("startsAt", TurSEFieldType.DATE,

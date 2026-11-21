@@ -36,7 +36,7 @@ import com.viglet.turing.searchengine.TurSEDateMath;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
+import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
 import com.viglet.turing.searchengine.facet.TurSNFilterExclusion;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
@@ -216,7 +216,7 @@ final class TurElasticsearchFilterQueries {
      * no end value, or every overlap clause for one with an end value.
      */
     static Query spanQuery(TurLuceneCustomFacets.ItemFilter item, Instant now) {
-        TurSNCustomFacetFilterQuery.Span span = item.span();
+        TurSECustomFacetSpan span = item.span();
         Query point = Query.of(q -> q.bool(b -> b
                 .filter(valueQuery(span.field(), item.type(), span.point(), now))
                 .mustNot(Query.of(m -> m.exists(e -> e.field(span.endField()))))));

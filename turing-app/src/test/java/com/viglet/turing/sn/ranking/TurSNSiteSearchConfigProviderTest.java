@@ -57,11 +57,14 @@ class TurSNSiteSearchConfigProviderTest {
     private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator searchRuleEvaluator;
     @Mock
     private com.viglet.turing.sn.TurSNFieldProcess fieldProcess;
+    @Mock
+    private com.viglet.turing.sn.facet.TurSNCustomFacetCatalog customFacetCatalog;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
                 fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository,
-                siteLocaleRepositoryPort, searchRuleEvaluator, fieldProcess);
+                siteLocaleRepositoryPort, searchRuleEvaluator, fieldProcess,
+                customFacetCatalog);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -276,4 +279,18 @@ class TurSNSiteSearchConfigProviderTest {
                 new com.viglet.turing.searchengine.spi.TurSEFacetField("type", 1,
                         com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR));
         assertThat(provider().facetFields(null)).isEmpty();
+    }
+
+    @Test
+    void customFacetsComeFromTheCatalogForAKnownSite() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        List<com.viglet.turing.searchengine.spi.TurSECustomFacet> facets = List.of(
+                new com.viglet.turing.searchengine.spi.TurSECustomFacet("salary", 1, List.of()));
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(siteRepository.findById("missing")).thenReturn(Optional.empty());
+        when(customFacetCatalog.customFacets(site)).thenReturn(facets);
+
+        assertThat(provider().customFacets("site-1")).isEqualTo(facets);
+        assertThat(provider().customFacets("missing")).isEmpty();
+        assertThat(provider().customFacets(null)).isEmpty();
     }}
