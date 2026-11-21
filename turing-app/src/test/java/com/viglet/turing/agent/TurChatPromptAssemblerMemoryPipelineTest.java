@@ -35,8 +35,8 @@ import com.viglet.turing.agent.prompt.contributor.TurMemorySummaryMessageContrib
 import com.viglet.turing.agent.prompt.contributor.TurRelevanceMessageContributor;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
-import com.viglet.turing.chat.memory.TurChatMemoryRelevanceRetriever;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryCompressionService;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryRelevanceRetriever;
 
 /**
  * Block AL / §XXXV.3 — proves the message contributor pipeline layers

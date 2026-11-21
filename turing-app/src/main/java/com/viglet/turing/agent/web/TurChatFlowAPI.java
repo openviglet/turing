@@ -40,7 +40,7 @@ import com.viglet.turing.persona.authoring.chatflow.ChatFlowGeneration;
 import com.viglet.turing.eval.TurAgentEvalGateService;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowLinterService;
-import com.viglet.turing.chat.analytics.TurChatFlowFunnelService;
+import com.viglet.turing.agent.chat.analytics.TurChatFlowFunnelService;
 import com.viglet.turing.agent.flow.TurChatFlowVariantService;
 import com.viglet.turing.agent.flow.TurFormLabelTidyService;
 import com.viglet.turing.agent.flow.TurTriggerConflictService;

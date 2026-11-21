@@ -17,7 +17,7 @@ import reactor.core.publisher.Sinks;
 
 /**
  * In-process pub/sub for workspace mutations, keyed by {@code conversationId}
- * (T113). The exact analogue of {@link com.viglet.turing.chat.slots.TurChatSlotEventBus}
+ * (T113). The exact analogue of {@link com.viglet.turing.agent.chat.slots.TurChatSlotEventBus}
  * for the per-conversation blob store: subscribers
  * ({@code GET /chat/workspace/stream}) receive a server-sent event every time a
  * blob is written or deleted through {@link TurAgentWorkspaceService}, which is

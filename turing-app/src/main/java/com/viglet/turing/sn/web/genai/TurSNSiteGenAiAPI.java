@@ -61,17 +61,17 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.system.properties.TurConfigProperties;
-import com.viglet.turing.chat.memory.TurChatMemoryService;
-import com.viglet.turing.chat.slots.TurChatHandoffService;
-import com.viglet.turing.chat.slots.TurChatHandoffService.Channel;
-import com.viglet.turing.chat.slots.TurChatHandoffService.HandoffRequest;
-import com.viglet.turing.chat.slots.TurChatHandoffService.HandoffResult;
-import com.viglet.turing.chat.slots.TurChatMultiModalSlotService;
-import com.viglet.turing.chat.slots.TurChatMultiModalSlotService.MultiModalSlotResult;
-import com.viglet.turing.chat.slots.TurChatShareOgService;
-import com.viglet.turing.chat.slots.TurChatSlotEventBus;
-import com.viglet.turing.chat.slots.TurChatSlotExtractionService;
-import com.viglet.turing.chat.slots.TurChatSlotExtractionService.SlotExtractionResult;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryService;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.Channel;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.HandoffRequest;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.HandoffResult;
+import com.viglet.turing.agent.chat.slots.TurChatMultiModalSlotService;
+import com.viglet.turing.agent.chat.slots.TurChatMultiModalSlotService.MultiModalSlotResult;
+import com.viglet.turing.agent.chat.slots.TurChatShareOgService;
+import com.viglet.turing.agent.chat.slots.TurChatSlotEventBus;
+import com.viglet.turing.agent.chat.slots.TurChatSlotExtractionService;
+import com.viglet.turing.agent.chat.slots.TurChatSlotExtractionService.SlotExtractionResult;
 import com.viglet.turing.sn.TurSNSearchProcess;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -104,8 +104,8 @@ public class TurSNSiteGenAiAPI {
 	private final TurConfigProperties configProperties;
 	private final TurChatMemoryService chatMemoryService;
 	private final TurChatSlotEventBus slotEventBus;
-	private final com.viglet.turing.chat.slots.TurProactiveCopilotService proactiveCopilotService;
-	private final com.viglet.turing.chat.slots.TurChatSlotSseRegistry slotSseRegistry;
+	private final com.viglet.turing.agent.chat.slots.TurProactiveCopilotService proactiveCopilotService;
+	private final com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry slotSseRegistry;
 	private final TurChatSlotExtractionService slotExtractionService;
 	private final TurChatMultiModalSlotService multiModalSlotService;
 	private final TurChatHandoffService handoffService;
@@ -143,8 +143,8 @@ public class TurSNSiteGenAiAPI {
 			TurConfigProperties configProperties,
 			TurChatMemoryService chatMemoryService,
 			TurChatSlotEventBus slotEventBus,
-			com.viglet.turing.chat.slots.TurProactiveCopilotService proactiveCopilotService,
-			com.viglet.turing.chat.slots.TurChatSlotSseRegistry slotSseRegistry,
+			com.viglet.turing.agent.chat.slots.TurProactiveCopilotService proactiveCopilotService,
+			com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry slotSseRegistry,
 			TurChatSlotExtractionService slotExtractionService,
 			TurChatMultiModalSlotService multiModalSlotService,
 			TurChatHandoffService handoffService,
@@ -724,7 +724,7 @@ public class TurSNSiteGenAiAPI {
 	 * see them as a no-op. No need for a {@code transport: "sse"} client
 	 * change to handle them.
 	 *
-	 * <p>Single-node only — see {@link com.viglet.turing.chat.slots.TurChatSlotEventBus}
+	 * <p>Single-node only — see {@link com.viglet.turing.agent.chat.slots.TurChatSlotEventBus}
 	 * for the cluster caveat. SDKs that need cluster-correctness should keep
 	 * polling as a fallback.
 	 *
@@ -751,9 +751,9 @@ public class TurSNSiteGenAiAPI {
 		// complete / error / cancel (cancel being the usual SSE disconnect).
 		return Flux.merge(data, heartbeats)
 				.doOnSubscribe(s -> slotSseRegistry.acquire(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.SNAPSHOT))
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.SNAPSHOT))
 				.doFinally(sig -> slotSseRegistry.release(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.SNAPSHOT));
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.SNAPSHOT));
 	}
 
 	/**
@@ -791,16 +791,16 @@ public class TurSNSiteGenAiAPI {
 		// T90 — same refcounting as the snapshot stream, on the DELTA channel.
 		return Flux.merge(data, heartbeats)
 				.doOnSubscribe(s -> slotSseRegistry.acquire(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.DELTA))
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.DELTA))
 				.doFinally(sig -> slotSseRegistry.release(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.DELTA));
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.DELTA));
 	}
 
 	/**
 	 * T445 / §XXIII.4 — ambient / proactive copilot stream. Opt-in per agent
 	 * ({@code proactiveEnabled}); when off the stream is empty. Subscribes to the
 	 * conversation's slot bus and runs each post-write slot map through
-	 * {@link com.viglet.turing.chat.slots.TurProactiveCopilotService}: when
+	 * {@link com.viglet.turing.agent.chat.slots.TurProactiveCopilotService}: when
 	 * an ambient signal ({@code signal.<kind>} slot) crosses the agent's threshold
 	 * it pushes ONE throttled proactive offer. The host writes those signal slots
 	 * from real interactions (clicks/dwell/opened facets) via the existing
@@ -810,7 +810,7 @@ public class TurSNSiteGenAiAPI {
 	 * @since 2026.3.4
 	 */
 	@GetMapping(value = "/proactive/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.chat.slots.TurProactiveSuggestionDto>> streamProactive(
+	public Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.chat.slots.TurProactiveSuggestionDto>> streamProactive(
 			@PathVariable String siteName,
 			@RequestParam String conversationId) {
 		if (conversationId == null || conversationId.isBlank()) {
@@ -826,21 +826,21 @@ public class TurSNSiteGenAiAPI {
 		}
 		final int threshold = agent.getProactiveThresholdSignals();
 		final long throttleMillis =
-				com.viglet.turing.chat.slots.TurProactiveCopilotService.DEFAULT_THROTTLE_MILLIS;
+				com.viglet.turing.agent.chat.slots.TurProactiveCopilotService.DEFAULT_THROTTLE_MILLIS;
 		final var state = proactiveCopilotService.newState();
 		TurChatSessionSlotsDto initial = chatFlowEngineService.listSlotsForConversation(conversationId);
-		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.chat.slots.TurProactiveSuggestionDto>> data =
+		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.chat.slots.TurProactiveSuggestionDto>> data =
 				Flux.concat(Flux.just(initial), slotEventBus.subscribe(conversationId))
 						.flatMap(snapshot -> proactiveCopilotService.evaluate(state, conversationId,
 								snapshot.slots(), threshold, throttleMillis, System.currentTimeMillis())
 								.map(Flux::just).orElseGet(Flux::empty))
 						.map(suggestion -> org.springframework.http.codec.ServerSentEvent
-								.<com.viglet.turing.chat.slots.TurProactiveSuggestionDto>builder(suggestion)
+								.<com.viglet.turing.agent.chat.slots.TurProactiveSuggestionDto>builder(suggestion)
 								.event("proactive-suggestion").build());
-		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.chat.slots.TurProactiveSuggestionDto>> heartbeats =
+		Flux<org.springframework.http.codec.ServerSentEvent<com.viglet.turing.agent.chat.slots.TurProactiveSuggestionDto>> heartbeats =
 				Flux.interval(java.time.Duration.ofSeconds(25))
 						.map(tick -> org.springframework.http.codec.ServerSentEvent
-								.<com.viglet.turing.chat.slots.TurProactiveSuggestionDto>builder().comment(HEARTBEAT).build());
+								.<com.viglet.turing.agent.chat.slots.TurProactiveSuggestionDto>builder().comment(HEARTBEAT).build());
 		return Flux.merge(data, heartbeats);
 	}
 
@@ -894,9 +894,9 @@ public class TurSNSiteGenAiAPI {
 		// debug surface reports it alongside the slot channels.
 		return Flux.merge(data, heartbeats)
 				.doOnSubscribe(s -> slotSseRegistry.acquire(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.WORKSPACE))
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.WORKSPACE))
 				.doFinally(sig -> slotSseRegistry.release(conversationId,
-						com.viglet.turing.chat.slots.TurChatSlotSseRegistry.Mode.WORKSPACE));
+						com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.Mode.WORKSPACE));
 	}
 
 	/**

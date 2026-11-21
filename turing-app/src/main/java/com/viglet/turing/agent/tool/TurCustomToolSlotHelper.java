@@ -18,8 +18,8 @@ import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
-import com.viglet.turing.chat.slots.TurChatSlotAuditService;
-import com.viglet.turing.chat.slots.TurChatSlotEventBus;
+import com.viglet.turing.agent.chat.slots.TurChatSlotAuditService;
+import com.viglet.turing.agent.chat.slots.TurChatSlotEventBus;
 
 import lombok.extern.slf4j.Slf4j;
 

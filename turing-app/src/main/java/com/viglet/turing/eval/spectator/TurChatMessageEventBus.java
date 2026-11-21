@@ -17,7 +17,7 @@ import reactor.core.publisher.Sinks;
 
 /**
  * In-process pub/sub for chat messages, keyed by {@code conversationId} (T120).
- * The exact analogue of {@link com.viglet.turing.chat.slots.TurChatSlotEventBus}
+ * The exact analogue of {@link com.viglet.turing.agent.chat.slots.TurChatSlotEventBus}
  * and {@link com.viglet.turing.agent.workspace.TurWorkspaceEventBus} for the
  * conversation transcript: subscribers (the spectator stream
  * {@code GET /api/chat/sessions/{id}/spectate/stream}) receive a server-sent

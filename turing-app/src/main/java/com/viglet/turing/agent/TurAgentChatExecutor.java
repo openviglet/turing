@@ -40,10 +40,10 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.llm.resilience.TurLlmModelFactory;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
-import com.viglet.turing.chat.analytics.TurChatCohortResolver;
-import com.viglet.turing.chat.analytics.TurChatSessionRefs;
-import com.viglet.turing.chat.analytics.TurChatVisitorContext;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.agent.chat.analytics.TurChatCohortResolver;
+import com.viglet.turing.agent.chat.analytics.TurChatSessionRefs;
+import com.viglet.turing.agent.chat.analytics.TurChatVisitorContext;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

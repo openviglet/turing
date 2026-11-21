@@ -33,12 +33,12 @@ import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
-import com.viglet.turing.chat.slots.TurChatHandoffService;
-import com.viglet.turing.chat.slots.TurChatHandoffService.Channel;
-import com.viglet.turing.chat.slots.TurChatHandoffService.HandoffRequest;
-import com.viglet.turing.chat.slots.TurChatHandoffService.HandoffResult;
-import com.viglet.turing.chat.slots.TurChatSlotExtractionService;
-import com.viglet.turing.chat.slots.TurChatSlotExtractionService.SlotExtractionResult;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.Channel;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.HandoffRequest;
+import com.viglet.turing.agent.chat.slots.TurChatHandoffService.HandoffResult;
+import com.viglet.turing.agent.chat.slots.TurChatSlotExtractionService;
+import com.viglet.turing.agent.chat.slots.TurChatSlotExtractionService.SlotExtractionResult;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

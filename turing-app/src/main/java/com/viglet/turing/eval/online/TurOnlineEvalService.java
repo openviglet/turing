@@ -48,9 +48,9 @@ import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepos
 import com.viglet.turing.agent.persistence.repository.TurOnlineEvalSnapshotRepository;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.properties.TurGenAiProperty.TurGenAiOnlineEvalProperty;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
-import com.viglet.turing.chat.analytics.TurChatSessionFilter;
-import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsStore;
+import com.viglet.turing.agent.chat.analytics.TurChatSessionFilter;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

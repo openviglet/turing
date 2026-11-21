@@ -30,7 +30,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryCompressionService;
 
 /**
  * Pins the T123 prompt-compaction contract: the leading system message and the

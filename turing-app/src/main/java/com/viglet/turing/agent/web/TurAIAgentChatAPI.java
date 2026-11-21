@@ -29,7 +29,7 @@ import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
 import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
 import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
-import com.viglet.turing.chat.slots.TurChatSlotSseRegistry;
+import com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

@@ -254,7 +254,7 @@ public class TurChatFlow implements Serializable {
      * T71 / §VII.8.b — champion-challenger auto-promotion opt-in. When any
      * variant under the same {@code experimentKey} has this set to
      * {@code TRUE}, the daily
-     * {@link com.viglet.turing.chat.analytics.TurChampionChallengerPromotionJob}
+     * {@link com.viglet.turing.agent.chat.analytics.TurChampionChallengerPromotionJob}
      * evaluates the experiment's statistical significance and, once a winner
      * is declared, auto-promotes the winner to {@code trafficWeight=100} and
      * archives the losing arms ({@code trafficWeight=0} +

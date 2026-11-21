@@ -28,8 +28,8 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.llm.resilience.TurLlmModelFactory;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
-import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

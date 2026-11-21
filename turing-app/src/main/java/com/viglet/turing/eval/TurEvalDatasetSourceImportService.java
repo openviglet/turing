@@ -25,9 +25,9 @@ import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
 import com.viglet.turing.agent.persistence.model.TurChatFlowSubmission;
 import com.viglet.turing.agent.persistence.model.TurEvalDataset;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
-import com.viglet.turing.chat.analytics.TurChatSessionFilter;
-import com.viglet.turing.chat.memory.TurChatMemoryService;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsStore;
+import com.viglet.turing.agent.chat.analytics.TurChatSessionFilter;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryService;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

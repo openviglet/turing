@@ -20,7 +20,7 @@ import com.viglet.turing.eval.grader.TurEvalGraderKind;
 import com.viglet.turing.eval.grader.TurEvalGraderResult;
 import com.viglet.turing.eval.grader.TurEvalGradingContext;
 import com.viglet.turing.agent.tool.TurChatToolCall;
-import com.viglet.turing.chat.analytics.TurToolCallTraceService;
+import com.viglet.turing.agent.chat.analytics.TurToolCallTraceService;
 
 /**
  * T588 / §XXXIII.3 — config-driven CODE grader that composes the T427 tool-call

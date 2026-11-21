@@ -30,8 +30,8 @@ import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.agent.prompt.contributor.TurMemorySummaryMessageContributor;
 import com.viglet.turing.agent.prompt.contributor.TurRelevanceMessageContributor;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
-import com.viglet.turing.chat.memory.TurChatMemoryRelevanceRetriever;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryCompressionService;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryRelevanceRetriever;
 
 /**
  * Block AL / §XXXV.3 (T616) — proves the message contributor pipeline layers the

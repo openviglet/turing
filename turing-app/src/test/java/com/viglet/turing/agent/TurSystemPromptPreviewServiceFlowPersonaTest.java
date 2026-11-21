@@ -40,7 +40,7 @@ import com.viglet.turing.agent.persistence.model.TurChatFlow;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaKind;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
-import com.viglet.turing.chat.analytics.TurToolCallTraceService;
+import com.viglet.turing.agent.chat.analytics.TurToolCallTraceService;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 
 /**

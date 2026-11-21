@@ -19,7 +19,7 @@ import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.properties.TurGenAiProperty.TurGenAiToolResultOffloadProperty;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.storage.TurStorageService;
 
 /**

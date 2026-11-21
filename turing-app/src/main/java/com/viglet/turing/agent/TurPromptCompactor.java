@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.chat.memory.TurChatMemoryCompressionService;
+import com.viglet.turing.agent.chat.memory.TurChatMemoryCompressionService;
 
 import lombok.extern.slf4j.Slf4j;
 

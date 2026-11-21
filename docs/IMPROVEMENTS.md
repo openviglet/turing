@@ -2612,17 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.36 chat merges into agent (T1322d)
-
-chat imports agent 79 times and agent imports chat 26: sessions, slots, memory
-compression, webhooks, analytics and call-center assist are the agent's conversation
-state, and their entities (TurChatFlow, TurAIAgentSlot, TurChatSlotAuditEntry,
-TurChatWebhook, TurUserMemory) already live in agent. ADR 0005 section 6 merges chat
-into agent: its packages move under agent (agent.chat.analytics, agent.chat.memory,
-agent.chat.slots, agent.chat.usermemory, agent.callcenter) and its controllers under
-agent.web. REST paths stay. Done when no chat package is left and nothing imports
-com.viglet.turing.chat.
-
 ### CLXXXIX.37 Persona's agent runners move into agent (T1322e)
 
 agent imports persona 34 times (prompt composition, calibration, authoring) and persona

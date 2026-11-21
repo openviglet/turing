@@ -84,7 +84,7 @@ class TurAIAgentChatAPITest {
     @Mock
     private com.viglet.turing.agent.workspace.TurWorkspaceEventBus workspaceEventBus;
     @Mock
-    private com.viglet.turing.chat.slots.TurChatSlotSseRegistry slotSseRegistry;
+    private com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry slotSseRegistry;
     @Mock
     private com.viglet.turing.agent.safety.TurModerationService moderationService;
 

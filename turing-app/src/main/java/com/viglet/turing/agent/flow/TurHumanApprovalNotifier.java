@@ -22,7 +22,7 @@ import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.core.webhook.VigletWebhookRetryPolicy;
 import com.viglet.turing.system.email.TurEmailMessage;
 import com.viglet.turing.system.email.TurEmailService;
-import com.viglet.turing.chat.slots.TurChatWebhookService;
+import com.viglet.turing.agent.chat.slots.TurChatWebhookService;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

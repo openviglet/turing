@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.chat.callcenter.TurCallCenterAssistService;
-import com.viglet.turing.chat.callcenter.TurCallCenterAssistService.CallAssistResult;
+import com.viglet.turing.agent.chat.callcenter.TurCallCenterAssistService;
+import com.viglet.turing.agent.chat.callcenter.TurCallCenterAssistService.CallAssistResult;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 

@@ -30,8 +30,8 @@ import com.viglet.turing.agent.persistence.model.TurChatFlowTriggerLanguage;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowStateRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
-import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
-import com.viglet.turing.chat.slots.TurChatSlotEventBus;
+import com.viglet.turing.agent.chat.analytics.TurChatAnalyticsService;
+import com.viglet.turing.agent.chat.slots.TurChatSlotEventBus;
 
 /**
  * T27 / §II.2.3 — pins the per-agent {@code SearcherManager} cache wired
@@ -74,9 +74,9 @@ class TurChatFlowRouterIndexCacheTest {
         engine = new TurChatFlowEngineService(stateRepository, chatFlowRepository,
                 submissionRepository, chatAnalyticsService, slotEventBus,
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.chat.slots.TurChatSlotAuditService.class),
+                        com.viglet.turing.agent.chat.slots.TurChatSlotAuditService.class),
                 org.mockito.Mockito.mock(
-                        com.viglet.turing.chat.analytics.TurAbBanditService.class),
+                        com.viglet.turing.agent.chat.analytics.TurAbBanditService.class),
                 cacheManager,
                 org.mockito.Mockito.mock(TurFunctionCallNodeExecutor.class),
                 org.mockito.Mockito.mock(

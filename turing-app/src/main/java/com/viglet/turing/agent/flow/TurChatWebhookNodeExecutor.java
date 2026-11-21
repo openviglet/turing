@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
 import com.viglet.turing.agent.persistence.model.TurChatFlowState;
-import com.viglet.turing.chat.slots.TurChatWebhookService;
-import com.viglet.turing.chat.slots.TurChatWebhookService.DispatchOutcome;
+import com.viglet.turing.agent.chat.slots.TurChatWebhookService;
+import com.viglet.turing.agent.chat.slots.TurChatWebhookService.DispatchOutcome;
 
 import lombok.extern.slf4j.Slf4j;
 
