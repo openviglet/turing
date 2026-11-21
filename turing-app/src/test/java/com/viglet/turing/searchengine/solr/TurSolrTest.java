@@ -63,7 +63,6 @@ import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNFieldProcess;
-import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
  * Unit tests for TurSolr.

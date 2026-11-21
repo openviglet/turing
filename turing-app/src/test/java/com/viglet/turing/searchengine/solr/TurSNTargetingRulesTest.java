@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.tr;
+package com.viglet.turing.searchengine.solr;
 
 import static org.junit.jupiter.api.Assertions.*;
 

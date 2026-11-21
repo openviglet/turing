@@ -321,7 +321,7 @@ class TurSNEngineConformanceIT {
         when(customFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of(posted));
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
         solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository,
-                mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class),
+                mock(com.viglet.turing.searchengine.solr.TurSNTargetingRules.class),
                 sortRepository,
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),

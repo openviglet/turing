@@ -51,7 +51,6 @@ import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.facet.TurSNEnabledFacets;
-import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 import lombok.extern.slf4j.Slf4j;
 

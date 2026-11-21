@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.tr;
+package com.viglet.turing.searchengine.solr;
 
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import org.springframework.stereotype.Component;

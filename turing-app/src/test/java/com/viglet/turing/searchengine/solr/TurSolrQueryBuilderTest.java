@@ -68,7 +68,6 @@ import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
-import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
  * Tests for TurSolrQueryBuilder.
@@ -401,7 +400,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, post);
                 TurSESpellCheckResult spell = new TurSESpellCheckResult(false, "");
 
-                when(turSNTargetingRules.ruleExpression(com.viglet.turing.sn.tr.TurSNTargetingRuleMethod.AND,
+                when(turSNTargetingRules.ruleExpression(com.viglet.turing.searchengine.solr.TurSNTargetingRuleMethod.AND,
                                 List.of("segment:vip")))
                                 .thenReturn("segment:\"vip\"");
 
@@ -413,7 +412,7 @@ class TurSolrQueryBuilderTest {
                 assertThat(query.get(GroupParams.GROUP_FIELD)).isEqualTo("type");
                 assertThat(query.getFilterQueries()).contains("segment:\"vip\"");
                 verify(turSNTargetingRules).ruleExpression(
-                                com.viglet.turing.sn.tr.TurSNTargetingRuleMethod.AND,
+                                com.viglet.turing.searchengine.solr.TurSNTargetingRuleMethod.AND,
                                 List.of("segment:vip"));
         }
 

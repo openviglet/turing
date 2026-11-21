@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.tr;
+package com.viglet.turing.searchengine.solr;
 
 public enum TurSNTargetingRuleMethod {
 	AND("AND"), OR("OR");
