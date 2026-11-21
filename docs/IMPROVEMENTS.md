@@ -2621,6 +2621,10 @@ persona below agent, so the code in persona that runs or resolves an agent moves
 agent; persona keeps personas, prompt composition, readability, fit and authoring
 prompts. Done when persona imports no agent type.
 
+Waits for T1322j and T1322m (2026-11-21): persona also reaches the MCP client
+(TurMcpToolCallbackService in agent, TurMcpServer in mcp) for brand context, and
+transcription for audio-derived personas; both move below persona there.
+
 ### CLXXXIX.38 Eval leaves agent (T1322f)
 
 eval imports agent 138 times, mostly the eval entities that live in agent's persistence
@@ -2663,14 +2667,21 @@ microthesaurus indexer) and kb imports sn 10 (TurSNSite, the field provisioner).
 query expansion at search time reaches the dictionary through an SPI sn declares and kb
 implements. Done when sn imports no kb type.
 
-### CLXXXIX.42 The MCP client moves into agent (T1322j)
+### CLXXXIX.42 The MCP client moves into llm (T1322j)
 
-agent imports mcp 11 times for the MCP client (TurMcpServer, its repository,
-TurMcpToolCallbackService, TurAgentMcpServers) and mcp imports agent 12 times for the
-MCP server that exposes agents as tools. ADR 0005 section 6: the client half
-(TurMcpServer and its repository, the callback service) moves into agent; mcp keeps the
-server and sits above agent. TurMcpServer keeps its tenancy ruling. Done when agent
-imports no mcp type.
+agent imports mcp 11 times for the MCP client (TurMcpServer, its repository and domain
+port, TurMcpToolCallbackService, TurAgentMcpServers) and mcp imports agent 12 times for
+the MCP server that exposes agents as tools. persona needs the same client for its brand
+context (TurPersonaBrandContextProvider, TurPersonaStaticPromptCache, TurPersonaAPI),
+and persona sits below agent.
+
+Revised 2026-11-21 while working T1322e: the client half moves into llm (llm.mcp), as
+tool-connection infrastructure every AI module reads, not into agent.
+TurMcpToolCallbackService takes the server ids it should build callbacks for instead of
+a TurAIAgent; TurAgentMcpServers stays in agent and passes them. mcp keeps the server
+and sits above agent. TurMcpServer keeps its tenancy ruling, and its table takes the
+llm_ prefix. Done when agent and persona reach the MCP client only in llm, and llm
+imports no agent type.
 
 ### CLXXXIX.43 system stops importing agent (T1322k)
 
@@ -2701,3 +2712,17 @@ controllers into auth. Controllers in system that serve one feature move to that
 feature's module with their REST paths unchanged. Tenant's per-module counters and
 teardown become SPIs tenant declares and each module implements. Done when system
 imports only shared, tenant only system and shared, and auth only those three.
+
+### CLXXXIX.47 transcription moves beside llm (T1322m)
+
+Measured 2026-11-21 while working T1322e. ADR 0005 section 6 put transcription on the
+top layer beside eval and batch, but it is a speech-to-text provider layer: it imports
+system 21 times, llm twice and kb once (TurTranscriptionKeywordSource reads thesaurus
+terms as recognition hints), and persona's audio derivation
+(TurPersonaAudioDeriveService, TurPersonaAudioJobService) needs it while sitting below
+it.
+
+Move transcription to layer 3 beside llm, recorded in ADR 0005 section 6 when this
+ships. The kb read becomes an SPI transcription declares (a keyword-hint provider) and
+kb implements, so transcription imports only infrastructure and llm. Done when
+transcription imports no kb type and the layer table in the ADR says layer 3.
