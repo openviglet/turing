@@ -137,6 +137,57 @@ lists and fails on an entity without one.
   agent's slots and conversation records, a knowledge base's terms). The test names each
   child's owner and checks the owner is tenant-scoped.
 
+### 6. Rulings on the measured crossings (2026-11-21)
+
+Measured after T1315, the code needed dependencies the direction rules forbid (T1322).
+Each one was ruled: **move** the code so the crossing disappears, or **amend** the map.
+None is allowed as an exception; a module that cannot meet its layer moves its class.
+
+The layers, bottom to top, replacing the direction paragraph of §1 where they differ:
+
+1. `shared`: also absorbs `bean`, `jpa`, `utils`.
+2. Infrastructure: `system` (absorbs `artemis`, `logging`, `email`, `properties`,
+   `swagger`, `tomcat`, `bento`, the generic part of `resilience`, `urlfetch`), `tenant`,
+   `auth` (absorbs `spring`), and **`observability`**, moved down from the top: every
+   module records meters and observations, so it is infrastructure. A class in these
+   packages that imports a feature module (an SN mail template, an LLM retry policy, a
+   per-module property class) moves into that feature module.
+3. `searchengine`, `llm`. **`llm` also owns the vector stores** (store instances, vendors
+   and providers), which `rag`, `agent` and `persona` all read as infrastructure.
+4. `sn`, `storage`.
+5. `kb` (**moved above `sn`**: thesaurus configuration is per SN site), `rag` retrieval
+   (context building, sources, rerank, citations, ocr, multimodal, feed, connectors).
+6. `persona`.
+7. `agent` (**absorbs `chat`**: sessions, slots, memory, webhooks and call-center assist
+   are the agent's conversation state and their entities already live in `agent`).
+8. `answer` (**new**, split from `rag`: the SN chat `TurSNGenAi`, answers, research,
+   deep dive and the catalog copilot, which run agents), `eval`, `mcp`, `batch`,
+   `transcription`.
+9. `exchange`.
+
+A module depends only on lower layers, never sideways inside its own layer.
+
+| Crossing (imports) | Ruling |
+|---|---|
+| `llm` → `agent` 91, `persona` 7, `rag` 30 | **Move.** Native chat execution (`TurNativeChatExecutor`, provider services that run an agent's turn with its tools, memory, workspace or computer use), the gateway's agent routing and `llm.web.chat` move to `agent`; `TurDefaultRagInfraOnStartup` to `rag`. `llm` keeps the provider clients and the capability registry. |
+| `sn` → `agent` 42, `rag` 29, `chat` 12, `persona` 11 | **Move.** SN's GenAI surface (`sn.web.genai`, the LLM entity extractor, the manifest GenAI converger, `sn.dsl.eval`, `sn.contentfit`, the snapshot agent listeners, hybrid ranking) moves to `answer`, `rag`, `eval` or `persona`. Where the search path itself must call up, `sn` declares an SPI the upper module implements. |
+| `sn` → `kb` 20, `kb` → `sn` 10 | **Amend + move.** `kb` sits above `sn`; `sn.kb` moves to `kb`, and query expansion reaches it through an `sn` SPI. |
+| `searchengine` → `sn` 158 | **Move**, option 1 of T1310: a site search configuration SPI in `searchengine` that `sn` implements. |
+| `agent` ↔ `chat` 26 / 79 | **Amend.** `chat` merges into `agent`. |
+| `agent` ↔ `eval` 19 / 138 | **Move.** The eval controllers in `agent.web` and the eval entities move to `eval`; the dispatcher's spectator and online-eval hooks become events `agent` publishes and `eval` listens to. |
+| `agent` ↔ `persona` 34 / 14 | **Move.** `persona` sits below `agent`; the persona chat API, dialogue runner and agent-persona resolver move to `agent`. |
+| `agent` ↔ `rag` 22 / 38 | **Amend + move.** Retrieval stays below `agent`; what runs agents moves to `answer`. |
+| `agent` ↔ `mcp` 11 / 12 | **Move.** The MCP client (`TurMcpServer`, its repository, `TurMcpToolCallbackService`) moves to `agent`; `mcp` keeps the server and sits above `agent`. |
+| `system` → `agent` 8, `chat` 4 | **Move.** Parked-conversation and chat-analytics controllers move to `agent`; global settings read the code interpreter through a `system` SPI. |
+| `agent`, `sn` → `observability` | **Amend**: `observability` is infrastructure (layer 2). |
+
+### 7. Audit dates (T1319)
+
+`TurAuditable` is extended by the **console-edited aggregates only**; append-only event
+rows keep their single creation timestamp. Responses keep today's JSON names through
+`@JsonProperty` on the subclass (an overriding getter or a Jackson mix-in), not a DTO in
+front of each entity.
+
 ## Consequences
 
 - Every module is independently verifiable; a new cycle fails the build once T1323

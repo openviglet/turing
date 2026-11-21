@@ -2519,7 +2519,8 @@ query. Two ways out, and the choice is a person's:
    into sn, leaving searchengine with index lifecycle, documents and raw queries. Smaller
    contract, but each engine's query builder splits in two.
 
-Option 1 is the smaller step from today's code and keeps one owner per engine.
+Ruled on 2026-11-21 in ADR 0005 section 6: option 1, the smaller step from today's code,
+which keeps one owner per engine.
 
 ### CLXXXIX.15 Audit columns and optimistic locking (T1319)
 
@@ -2537,10 +2538,10 @@ or Instant (batch, tenant, feedback rows), and creationDate and modificationDate
 (thesaurus, gateway key, persona projects, SN spotlight and synonym). Many are
 append-only event rows, not aggregates.
 
-Two rulings are needed before the move. Which entities extend TurAuditable: the
-console-edited aggregates only, or every row with a date. And how their JSON keeps
-today's names, since ADR 0005 holds REST response shapes: per-entity @JsonProperty on
-the inherited getters, or a DTO in front of each entity that is returned directly today.
+Ruled on 2026-11-21 in ADR 0005 section 7: only the console-edited aggregates extend
+TurAuditable, and append-only event rows keep their single creation timestamp. JSON
+keeps today's names through @JsonProperty on the subclass (an overriding getter or a
+Jackson mix-in), not a DTO in front of each entity.
 
 ### CLXXXIX.17 The Liquibase reset (T1321)
 
@@ -2572,8 +2573,9 @@ searchengine imports sn 163 (the deferred T1310); agent, chat and eval form a cy
 (chat to agent 90, eval to agent 161, agent to chat 43 and eval 21); system imports chat
 21 and agent 13. Twelve leftover top-level packages (artemis, bean, bento, email, jpa,
 logging, properties, resilience, spring, swagger, tomcat, utils) are still modules of
-their own, where the ADR folds them into shared and system. Before the declarations, the
-ADR needs a ruling per crossing: allow it in the map, or move the code so it disappears.
+their own, where the ADR folds them into shared and system. Ruled on 2026-11-21 in ADR
+0005 section 6, which replaces the direction rules with nine layers; the moves are
+T1322a to T1322k, and the declarations land after them.
 
 ### CLXXXIX.19 Module verification as a gate (T1323)
 
@@ -2623,3 +2625,116 @@ service as top-level packages. They are rewritten for the module layout. Hand-wr
 checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
+
+### CLXXXIX.33 Fold the leftover packages (T1322a)
+
+ADR 0005 section 6 layers 1 and 2. bean, jpa and utils move into shared; artemis,
+logging, email, properties, swagger, tomcat, bento and the generic half of resilience
+into system; spring into auth. observability stays a module but becomes infrastructure,
+so agent and sn may import it. A class among these that imports a feature module moves
+into that module instead: the SN and LLM mail pieces of email, resilience.llm (into
+llm), the per-module property classes of properties (sn, storage, transcription),
+observability's sn and llm imports. Done when no package outside the ADR's module list
+is left at the top level and none of the moved classes imports a module above its layer.
+Mechanical moves; tests move with their classes.
+
+### CLXXXIX.34 Vector stores move into llm (T1322b)
+
+ADR 0005 section 6 puts the vector stores in llm, as infrastructure every AI module
+reads. TurStoreInstance, TurStoreVendor, their repositories and the store providers
+(llm.provider.store already lives in llm and imports them from rag) move into llm, with
+TurDefaultRagInfraOnStartup's store half. urlfetch (TurUrlFetchService) moves into
+system. Done when llm, agent and persona no longer import rag for stores, and persona no
+longer imports rag at all. The entities keep their tables; only packages change.
+
+### CLXXXIX.35 Native chat execution moves into agent (T1322c)
+
+llm imports agent 91 times, persona 7 and rag 30, nearly all from code that runs an
+agent's turn: TurNativeChatExecutor and the provider services that execute with tools,
+memory scope, workspace, computer use or the editor (llm.nativeapi.anthropic, openai,
+gemini, cohere), TurGatewayModelRouter's agent routing and the llm.web.chat controllers.
+ADR 0005 section 6 moves them into agent; llm keeps the provider clients
+(TurNativeProviderClient), the capability registry and the gateway keys. Persona model
+calibration and citations then reach llm only from above. Split a class whose lower half
+is provider-only rather than moving both halves. Done when llm imports no agent, persona
+or rag type.
+
+### CLXXXIX.36 chat merges into agent (T1322d)
+
+chat imports agent 79 times and agent imports chat 26: sessions, slots, memory
+compression, webhooks, analytics and call-center assist are the agent's conversation
+state, and their entities (TurChatFlow, TurAIAgentSlot, TurChatSlotAuditEntry,
+TurChatWebhook, TurUserMemory) already live in agent. ADR 0005 section 6 merges chat
+into agent: its packages move under agent (agent.chat.analytics, agent.chat.memory,
+agent.chat.slots, agent.chat.usermemory, agent.callcenter) and its controllers under
+agent.web. REST paths stay. Done when no chat package is left and nothing imports
+com.viglet.turing.chat.
+
+### CLXXXIX.37 Persona's agent runners move into agent (T1322e)
+
+agent imports persona 34 times (prompt composition, calibration, authoring) and persona
+imports agent 14 (TurPersonaChatAPI, TurPersonaDialogueService, TurAgentPersonaResolver,
+TurAgentPersonas, the authoring service running an agent). ADR 0005 section 6 puts
+persona below agent, so the code in persona that runs or resolves an agent moves into
+agent; persona keeps personas, prompt composition, readability, fit and authoring
+prompts. Done when persona imports no agent type.
+
+### CLXXXIX.38 Eval leaves agent (T1322f)
+
+eval imports agent 138 times, mostly the eval entities that live in agent's persistence
+(TurEvalDataset, TurAgentEvalSet/Case/Report, TurEvalGraderConfig, TurAgentSuggestion)
+and the chat flow it replays; agent imports eval 19 times from the eval controllers in
+agent.web and from TurChatStreamingDispatcher's spectator and online-eval hooks. ADR
+0005 section 6: the eval controllers and eval entities move to eval; the dispatcher
+publishes a chat-message event from agent's named interface (TurChatMessageEvent moves
+there) and eval listens. sn.dsl.eval's dataset use moves with it. Done when agent
+imports no eval type.
+
+### CLXXXIX.39 The answer module splits from rag (T1322g)
+
+rag imports agent 38 times (TurSNGenAi, TurSNAnswerService, research, deep dive,
+citation drift, route resolver, vector probe) and agent imports rag 22 (the RAG search
+tool, connector API, TurAgentRagInfra). ADR 0005 section 6 splits rag: retrieval
+(context building, sources, rerank, RRF, citations, ocr, multimodal, feed, connectors)
+stays in rag below agent, and a new answer module above agent takes what runs agents:
+the SN chat, answers, research, deep dive and the catalog copilot, with their
+controllers. A retrieval class that resolves the default agent takes the agent as a
+parameter instead. Done when rag imports no agent, persona or answer type.
+
+### CLXXXIX.40 SN's GenAI surface leaves sn (T1322h)
+
+sn imports agent 42 times, rag 29, chat 12 and persona 11, almost all from its GenAI
+surface: sn.web.genai, the LLM entity extractor and indexer, the manifest GenAI
+converger, sn.dsl.eval, sn.contentfit, the snapshot agent listeners and hybrid ranking.
+ADR 0005 section 6 moves each to the module whose layer allows its imports (answer, rag,
+eval, persona). Where the search path itself must call up (hybrid ranking, entity
+extraction at index time), sn declares an SPI in its named interface and the upper
+module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi's agent
+reference is an id column. REST paths stay. Done when sn imports no agent, rag, chat,
+persona, answer or eval type.
+
+### CLXXXIX.41 kb moves above sn (T1322i)
+
+sn imports kb 20 times (sn.kb: the microthesaurus dictionary, related terms and the
+microthesaurus indexer) and kb imports sn 10 (TurSNSite, the field provisioner). ADR
+0005 section 6 places kb above sn: sn.kb and TurSNSiteRelatedTermsAPI move into kb, and
+query expansion at search time reaches the dictionary through an SPI sn declares and kb
+implements. Done when sn imports no kb type.
+
+### CLXXXIX.42 The MCP client moves into agent (T1322j)
+
+agent imports mcp 11 times for the MCP client (TurMcpServer, its repository,
+TurMcpToolCallbackService, TurAgentMcpServers) and mcp imports agent 12 times for the
+MCP server that exposes agents as tools. ADR 0005 section 6: the client half
+(TurMcpServer and its repository, the callback service) moves into agent; mcp keeps the
+server and sits above agent. TurMcpServer keeps its tenancy ruling. Done when agent
+imports no mcp type.
+
+### CLXXXIX.43 system stops importing agent (T1322k)
+
+system imports agent 8 times and chat 4: TurParkedConversationsAPI, the chat analytics
+API, and TurGlobalSettingsService, TurGlobalSettingsBean and TurFeaturesAPI reading the
+code interpreter mode and Docker status. ADR 0005 section 6: the two controllers move to
+agent with their REST paths unchanged, and global settings read the code interpreter
+through an SPI system declares and agent implements. Done when system imports no feature
+module.
