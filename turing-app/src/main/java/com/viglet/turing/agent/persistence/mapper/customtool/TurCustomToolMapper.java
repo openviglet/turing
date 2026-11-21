@@ -35,5 +35,7 @@ public interface TurCustomToolMapper {
     Set<TurCustomToolDto> toDtoSet(Set<TurCustomTool> entities);
 
     @Mapping(target = "id", ignore = true)
+    // T1319 — the stored version is never overwritten by the payload's.
+    @Mapping(target = "version", ignore = true)
     void updateEntity(TurCustomTool source, @MappingTarget TurCustomTool target);
 }

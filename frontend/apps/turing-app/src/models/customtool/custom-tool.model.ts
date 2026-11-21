@@ -13,6 +13,8 @@ export interface CustomToolParameter {
 
 export interface TurCustomTool {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   title: string;
   description?: string | null;
   /** User-authored brief that drives the SmartDescription "Help me write" modal. */

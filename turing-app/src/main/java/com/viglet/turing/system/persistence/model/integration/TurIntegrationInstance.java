@@ -52,6 +52,14 @@ public class TurIntegrationInstance implements Serializable, VigletTenantOwnedIn
 	private String id;
 
 	/**
+	 * T1319 — optimistic-lock version: a console save made from an older version
+	 * is refused (409) instead of overwriting a change it never saw.
+	 */
+	@jakarta.persistence.Version
+	@jakarta.persistence.Column(name = "version")
+	private Long version;
+
+	/**
 	 * T275 / §XIV.5.1 — owning tenant for BYO infra. A non-null value is a
 	 * tenant's own instance (their key/endpoint); {@code null} is a
 	 * platform-provided GLOBAL instance every tenant may use. Deliberately

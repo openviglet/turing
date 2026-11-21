@@ -68,6 +68,14 @@ public class TurKnowledgeBase implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
 
+    /**
+     * T1319 — optimistic-lock version: a console save made from an older version
+     * is refused (409) instead of overwriting a change it never saw.
+     */
+    @jakarta.persistence.Version
+    @jakarta.persistence.Column(name = "version")
+    private Long version;
+
     @Column(nullable = false, length = 255)
     private String name;
 

@@ -47,7 +47,7 @@ class TurMicrothesaurusServiceTest {
     @Test
     void createRejectsMissingLanguage() {
         assertThatThrownBy(() -> service.create(kb,
-                new TurMicrothesaurusDto(null, "Bees", null, null, "EDUCATION", null, 0)))
+                new TurMicrothesaurusDto(null, "Bees", null, null, "EDUCATION", null, 0, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("language is required");
         verify(repository, never()).save(any());
@@ -56,7 +56,7 @@ class TurMicrothesaurusServiceTest {
     @Test
     void createRejectsBlankDomain() {
         assertThatThrownBy(() -> service.create(kb, new TurMicrothesaurusDto(
-                null, "Bees", null, Locale.forLanguageTag("pt"), "  ", null, 0)))
+                null, "Bees", null, Locale.forLanguageTag("pt"), "  ", null, 0, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("domain is required");
     }
@@ -66,7 +66,7 @@ class TurMicrothesaurusServiceTest {
         when(repository.save(any(TurMicrothesaurus.class))).thenAnswer(i -> i.getArgument(0));
 
         TurMicrothesaurusDto result = service.create(kb, new TurMicrothesaurusDto(
-                null, "Apicultura", "trees", Locale.forLanguageTag("pt"), "EDUCATION", null, 0));
+                null, "Apicultura", "trees", Locale.forLanguageTag("pt"), "EDUCATION", null, 0, null));
 
         assertThat(result.name()).isEqualTo("Apicultura");
         assertThat(result.language()).isEqualTo(Locale.forLanguageTag("pt"));

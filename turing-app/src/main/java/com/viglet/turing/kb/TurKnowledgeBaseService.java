@@ -69,6 +69,8 @@ public class TurKnowledgeBaseService {
     @Transactional
     public Optional<TurKnowledgeBaseDto> update(String id, TurKnowledgeBaseDto dto) {
         return repository.findById(id).map(entity -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), entity.getVersion(), "thesaurus");
             apply(entity, dto);
             return toDto(repository.save(entity));
         });
@@ -99,6 +101,7 @@ public class TurKnowledgeBaseService {
                 entity.getName(),
                 entity.getDescription(),
                 entity.getSource(),
-                entity.getTurMicrothesauri() == null ? 0 : entity.getTurMicrothesauri().size());
+                entity.getTurMicrothesauri() == null ? 0 : entity.getTurMicrothesauri().size(),
+                entity.getVersion());
     }
 }

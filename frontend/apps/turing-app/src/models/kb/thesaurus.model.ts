@@ -9,6 +9,8 @@ export type TurKnowledgeBaseSource =
 
 export type TurKnowledgeBase = {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description?: string | null;
   source?: TurKnowledgeBaseSource;
@@ -16,6 +18,8 @@ export type TurKnowledgeBase = {
 
 export type TurMicrothesaurus = {
   id: string;
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description?: string | null;
   language: string; // ISO code, e.g. "pt", "en"

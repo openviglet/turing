@@ -37,7 +37,7 @@ class TurKnowledgeBaseServiceTest {
     @Test
     void createRejectsBlankName() {
         assertThatThrownBy(() -> service.create(
-                new TurKnowledgeBaseDto(null, "  ", "d", null, 0)))
+                new TurKnowledgeBaseDto(null, "  ", "d", null, 0, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("name is required");
         verify(repository, never()).save(any());
@@ -48,7 +48,7 @@ class TurKnowledgeBaseServiceTest {
         when(repository.save(any(TurKnowledgeBase.class))).thenAnswer(i -> i.getArgument(0));
 
         TurKnowledgeBaseDto result = service.create(
-                new TurKnowledgeBaseDto(null, "Education KB", "desc", null, 0));
+                new TurKnowledgeBaseDto(null, "Education KB", "desc", null, 0, null));
 
         assertThat(result.name()).isEqualTo("Education KB");
         assertThat(result.source()).isEqualTo(TurKnowledgeBaseSource.USER);
@@ -60,7 +60,7 @@ class TurKnowledgeBaseServiceTest {
         when(repository.save(any(TurKnowledgeBase.class))).thenAnswer(i -> i.getArgument(0));
 
         TurKnowledgeBaseDto result = service.create(new TurKnowledgeBaseDto(
-                null, "Seed", null, TurKnowledgeBaseSource.SYSTEM_SEED, 0));
+                null, "Seed", null, TurKnowledgeBaseSource.SYSTEM_SEED, 0, null));
 
         assertThat(result.source()).isEqualTo(TurKnowledgeBaseSource.SYSTEM_SEED);
     }
@@ -68,8 +68,31 @@ class TurKnowledgeBaseServiceTest {
     @Test
     void updateReturnsEmptyWhenMissing() {
         when(repository.findById("nope")).thenReturn(Optional.empty());
-        assertThat(service.update("nope", new TurKnowledgeBaseDto(null, "x", null, null, 0)))
+        assertThat(service.update("nope", new TurKnowledgeBaseDto(null, "x", null, null, 0, null)))
                 .isEmpty();
+    }
+
+    @Test
+    void updateFromAnOlderVersionIsRefused() {
+        TurKnowledgeBase stored = new TurKnowledgeBase();
+        stored.setId("kb-1");
+        stored.setName("KB");
+        stored.setVersion(4L);
+        when(repository.findById("kb-1")).thenReturn(Optional.of(stored));
+
+        // T1319 — a save made from version 3 would overwrite a change it never saw.
+        assertThatThrownBy(() -> service.update("kb-1",
+                new TurKnowledgeBaseDto("kb-1", "Mine", null, null, 0, 3L)))
+                .isInstanceOf(com.viglet.turing.shared.exception.TurConflictException.class);
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void toDtoCarriesTheVersion() {
+        TurKnowledgeBase kb = new TurKnowledgeBase();
+        kb.setName("KB");
+        kb.setVersion(7L);
+        assertThat(TurKnowledgeBaseService.toDto(kb).version()).isEqualTo(7L);
     }
 
     @Test

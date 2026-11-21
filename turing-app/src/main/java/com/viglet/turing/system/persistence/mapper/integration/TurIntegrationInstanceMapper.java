@@ -24,5 +24,7 @@ public interface TurIntegrationInstanceMapper {
     // the create/import path (TurInfraTenantScope), not the request body.
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
+    // T1319 — the stored version is never overwritten by the payload's.
+    @Mapping(target = "version", ignore = true)
     void updateEntity(TurIntegrationInstance source, @MappingTarget TurIntegrationInstance target);
 }

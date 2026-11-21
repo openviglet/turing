@@ -76,6 +76,8 @@ public class TurMicrothesaurusService {
     @Transactional
     public Optional<TurMicrothesaurusDto> update(String id, TurMicrothesaurusDto dto) {
         return repository.findById(id).map(entity -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), entity.getVersion(), "microthesaurus");
             apply(entity, dto);
             TurMicrothesaurusDto saved = toDto(repository.save(entity));
             dictionaryService.evictAll();
@@ -120,6 +122,7 @@ public class TurMicrothesaurusService {
                 entity.getLanguage(),
                 entity.getDomain(),
                 entity.getTurKnowledgeBase() == null ? null : entity.getTurKnowledgeBase().getId(),
-                entity.getTurThesaurusTerms() == null ? 0 : entity.getTurThesaurusTerms().size());
+                entity.getTurThesaurusTerms() == null ? 0 : entity.getTurThesaurusTerms().size(),
+                entity.getVersion());
     }
 }

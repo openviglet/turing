@@ -90,9 +90,11 @@ public class TurIntegrationInstanceAPI {
 		TurIntegrationInstance source = turIntegrationInstanceMapper.toEntity(turIntegrationInstanceDto);
 		return turIntegrationInstanceRepository.findById(id).filter(tenantScope::isVisibleToTenant).map(existing -> {
 			tenantScope.assertWritable(existing);
+			// T1319 — a save made from an older version is refused, not applied.
+			com.viglet.turing.shared.exception.TurStaleVersion.refuse(source.getVersion(), existing.getVersion(), "integration");
 			turIntegrationInstanceMapper.updateEntity(source, existing);
-			turIntegrationInstanceRepository.save(existing);
-			return turIntegrationInstanceMapper.toDto(existing);
+			// T1319 — the merged copy carries the incremented version.
+			return turIntegrationInstanceMapper.toDto(turIntegrationInstanceRepository.save(existing));
 		}).orElse(new TurIntegrationInstanceDto());
 
 	}

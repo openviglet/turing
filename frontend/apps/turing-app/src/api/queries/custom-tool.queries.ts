@@ -60,7 +60,14 @@ export function useCreateCustomTool() {
 export function useUpdateCustomTool() {
   const queryClient = useQueryClient();
   return useMutation<TurCustomTool, Error, TurCustomTool>({
-    mutationFn: (tool) => service.update(tool),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (tool) => {
+      const cached = tool.id
+        ? queryClient.getQueryData<TurCustomTool>(queryKeys.customTools.detail(tool.id))
+        : undefined;
+      return service.update({ ...tool, version: cached?.version ?? tool.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.customTools.detail(saved.id), saved);

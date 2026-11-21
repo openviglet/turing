@@ -32,5 +32,7 @@ public record TurMicrothesaurusDto(
         Locale language,
         String domain,
         String knowledgeBaseId,
-        int termCount) {
+        int termCount,
+        /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+        Long version) {
 }

@@ -115,9 +115,11 @@ public class TurCustomToolAPI {
     public TurCustomToolDto update(@PathVariable String id, @RequestBody TurCustomToolDto dto) {
         TurCustomTool source = mapper.toEntity(dto);
         return repository.findById(id).map(existing -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(source.getVersion(), existing.getVersion(), "custom tool");
             mapper.updateEntity(source, existing);
-            repository.save(existing);
-            return mapper.toDto(existing);
+            // T1319 — the merged copy carries the incremented version.
+            return mapper.toDto(repository.save(existing));
         }).orElse(new TurCustomToolDto());
     }
 

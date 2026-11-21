@@ -137,6 +137,8 @@ class TurIntegrationInstanceAPITest {
         updatedInstance.setEnabled(1);
 
         when(turIntegrationInstanceRepository.findById("1")).thenReturn(Optional.of(existingInstance));
+        // T1319 — the update answers what the save returns.
+        when(turIntegrationInstanceRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(put("/api/integration/1")
                 .contentType(MediaType.APPLICATION_JSON)

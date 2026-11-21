@@ -41,7 +41,14 @@ export function useCreateKnowledgeBase() {
 export function useUpdateKnowledgeBase() {
   const qc = useQueryClient();
   return useMutation<TurKnowledgeBase, Error, TurKnowledgeBase>({
-    mutationFn: (kb) => service.updateKnowledgeBase(kb),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (kb) => {
+      const cached = kb.id
+        ? qc.getQueryData<TurKnowledgeBase>(queryKeys.thesaurus.kbDetail(kb.id))
+        : undefined;
+      return service.updateKnowledgeBase({ ...kb, version: cached?.version ?? kb.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) qc.setQueryData(queryKeys.thesaurus.kbDetail(saved.id), saved);
       qc.invalidateQueries({ queryKey: queryKeys.thesaurus.kbList() });
@@ -88,7 +95,14 @@ export function useCreateMicrothesaurus(kbId: string) {
 export function useUpdateMicrothesaurus(kbId: string) {
   const qc = useQueryClient();
   return useMutation<TurMicrothesaurus, Error, TurMicrothesaurus>({
-    mutationFn: (m) => service.updateMicrothesaurus(kbId, m),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (m) => {
+      const cached = m.id
+        ? qc.getQueryData<TurMicrothesaurus>(queryKeys.thesaurus.microDetail(kbId, m.id))
+        : undefined;
+      return service.updateMicrothesaurus(kbId, { ...m, version: cached?.version ?? m.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) qc.setQueryData(queryKeys.thesaurus.microDetail(kbId, saved.id), saved);
       qc.invalidateQueries({ queryKey: queryKeys.thesaurus.microList(kbId) });
