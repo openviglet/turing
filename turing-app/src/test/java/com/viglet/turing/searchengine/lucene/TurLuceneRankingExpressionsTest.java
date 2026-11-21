@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -38,11 +36,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition.Kind;
+import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * T1064 — ranking expressions reorder results on the embedded Lucene engine.
@@ -53,16 +51,14 @@ class TurLuceneRankingExpressionsTest {
     private static final long NOW = Instant.parse("2026-10-10T15:00:00Z").toEpochMilli();
 
     @Mock
-    private TurSNRankingExpressions expressionRepository;
-    @Mock
-    private TurSNRankingConditions conditionRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
     @Mock
     private TurSNSiteFieldExts fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
 
     private TurLuceneRankingExpressions rankingExpressions() {
-        return new TurLuceneRankingExpressions(expressionRepository, conditionRepository, fieldExtRepository);
+        return new TurLuceneRankingExpressions(siteSearchConfig, fieldExtRepository);
     }
 
     private void fields(Object... nameAndType) {
@@ -74,19 +70,21 @@ class TurLuceneRankingExpressionsTest {
         when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(fields);
     }
 
-    private TurSNRankingExpression expression(String name, float weight, String... attributeAndValue) {
-        TurSNRankingExpression expression = new TurSNRankingExpression();
-        expression.setName(name);
-        expression.setWeight(weight);
-        Set<TurSNRankingCondition> conditions = new LinkedHashSet<>();
+    private static TurSERankingExpression expression(String name, float weight, String... attributeAndValue) {
+        List<TurSERankingCondition> conditions = new ArrayList<>();
         for (int i = 0; i < attributeAndValue.length; i += 2) {
-            TurSNRankingCondition condition = new TurSNRankingCondition();
-            condition.setAttribute(attributeAndValue[i]);
-            condition.setValue(attributeAndValue[i + 1]);
-            conditions.add(condition);
+            conditions.add(new TurSERankingCondition(attributeAndValue[i], Kind.IS, attributeAndValue[i + 1]));
         }
-        when(conditionRepository.findByTurSNRankingExpression(expression)).thenReturn(conditions);
-        return expression;
+        return new TurSERankingExpression(name, weight, conditions);
+    }
+
+    private static TurSERankingExpression expression(String name, float weight, Kind kind, String attribute,
+            String value) {
+        return new TurSERankingExpression(name, weight, List.of(new TurSERankingCondition(attribute, kind, value)));
+    }
+
+    private void expressions(TurSERankingExpression... expressions) {
+        when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(expressions));
     }
 
     private static Document job(String id, String category, Instant published) {
@@ -129,8 +127,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void recencyExpressionRanksNewestFirst() throws Exception {
         fields("publicationDate", TurSEFieldType.DATE);
-        TurSNRankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(recent));
+        TurSERankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
+        expressions(recent);
 
         List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
 
@@ -140,10 +138,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void valueExpressionOutweighsRecencyWhenHeavier() throws Exception {
         fields("publicationDate", TurSEFieldType.DATE, "category", TurSEFieldType.STRING);
-        Set<TurSNRankingExpression> expressions = new LinkedHashSet<>();
-        expressions.add(expression("recent", 1f, "publicationDate", "asc"));
-        expressions.add(expression("it-first", 10f, "category", "it"));
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(expressions);
+        expressions(expression("recent", 1f, "publicationDate", "asc"),
+                expression("it-first", 10f, "category", "it"));
 
         List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
 
@@ -154,8 +150,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void conditionsWithinOneExpressionMustAllMatch() throws Exception {
         fields("publicationDate", TurSEFieldType.DATE, "category", TurSEFieldType.STRING);
-        TurSNRankingExpression recentIt = expression("recent-it", 5f, "category", "it", "publicationDate", "asc");
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(recentIt));
+        TurSERankingExpression recentIt = expression("recent-it", 5f, "category", "it", "publicationDate", "asc");
+        expressions(recentIt);
 
         List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
 
@@ -166,14 +162,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void existsConditionBoostsDocumentsThatCarryTheField() throws Exception {
         fields("salaryMin", TurSEFieldType.LONG);
-        TurSNRankingExpression hasSalary = new TurSNRankingExpression();
-        hasSalary.setName("has-salary");
-        hasSalary.setWeight(4f);
-        TurSNRankingCondition exists = new TurSNRankingCondition();
-        exists.setAttribute("salaryMin");
-        exists.setCondition(TurSNRankingCondition.EXISTS);
-        when(conditionRepository.findByTurSNRankingExpression(hasSalary)).thenReturn(Set.of(exists));
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(hasSalary));
+        TurSERankingExpression hasSalary = expression("has-salary", 4f, Kind.EXISTS, "salaryMin", null);
+        expressions(hasSalary);
 
         List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
 
@@ -184,15 +174,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void isNotConditionBoostsEveryoneButThatValue() throws Exception {
         fields("category", TurSEFieldType.STRING);
-        TurSNRankingExpression notIt = new TurSNRankingExpression();
-        notIt.setName("not-it");
-        notIt.setWeight(10f);
-        TurSNRankingCondition isNot = new TurSNRankingCondition();
-        isNot.setAttribute("category");
-        isNot.setValue("it");
-        isNot.setCondition(TurSNRankingCondition.IS_NOT);
-        when(conditionRepository.findByTurSNRankingExpression(notIt)).thenReturn(Set.of(isNot));
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(notIt));
+        TurSERankingExpression notIt = expression("not-it", 10f, Kind.IS_NOT, "category", "it");
+        expressions(notIt);
 
         List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
 
@@ -203,22 +186,15 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void isNotOnTheRecencyFormIsSkipped() {
         fields("publicationDate", TurSEFieldType.DATE);
-        TurSNRankingExpression notRecent = new TurSNRankingExpression();
-        notRecent.setName("not-recent");
-        notRecent.setWeight(2f);
-        TurSNRankingCondition isNot = new TurSNRankingCondition();
-        isNot.setAttribute("publicationDate");
-        isNot.setValue("asc");
-        isNot.setCondition(TurSNRankingCondition.IS_NOT);
-        when(conditionRepository.findByTurSNRankingExpression(notRecent)).thenReturn(Set.of(isNot));
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(notRecent));
+        TurSERankingExpression notRecent = expression("not-recent", 2f, Kind.IS_NOT, "publicationDate", "asc");
+        expressions(notRecent);
 
         assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
     }
 
     @Test
     void noExpressionsMeansNoBoosts() {
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of());
+        expressions();
 
         assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
     }
@@ -226,11 +202,10 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void anExpressionWithoutConditionsOrWithAnUnusableConditionIsSkipped() {
         fields("salary", TurSEFieldType.INT);
-        TurSNRankingExpression empty = expression("empty", 3f);
-        TurSNRankingExpression badNumber = expression("bad", 3f, "salary", "lots");
-        TurSNRankingExpression zeroWeight = expression("zero", 0f, "salary", "10");
-        when(expressionRepository.findByTurSNSite(any(), any()))
-                .thenReturn(Set.of(empty, badNumber, zeroWeight));
+        TurSERankingExpression empty = expression("empty", 3f);
+        TurSERankingExpression badNumber = expression("bad", 3f, "salary", "lots");
+        TurSERankingExpression zeroWeight = expression("zero", 0f, "salary", "10");
+        expressions(empty, badNumber, zeroWeight);
 
         assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
     }
@@ -262,8 +237,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void upcomingRanksNearestFutureFirstAndLeavesThePastUnboosted() throws Exception {
         fields("publicationDate", TurSEFieldType.DATE);
-        TurSNRankingExpression upcoming = expression("upcoming", 2f, "publicationDate", "upcoming");
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(upcoming));
+        TurSERankingExpression upcoming = expression("upcoming", 2f, "publicationDate", "upcoming");
+        expressions(upcoming);
 
         List<String> ids = new ArrayList<>();
         List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
@@ -276,8 +251,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void recencyCountsAFutureDateAsTodayInsteadOfDistance() throws Exception {
         fields("publicationDate", TurSEFieldType.DATE);
-        TurSNRankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(recent));
+        TurSERankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
+        expressions(recent);
 
         List<String> ids = new ArrayList<>();
         List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
@@ -295,15 +270,8 @@ class TurLuceneRankingExpressionsTest {
     @Test
     void isNotOnTheUpcomingFormIsSkipped() {
         fields("publicationDate", TurSEFieldType.DATE);
-        TurSNRankingExpression notUpcoming = new TurSNRankingExpression();
-        notUpcoming.setName("not-upcoming");
-        notUpcoming.setWeight(2f);
-        TurSNRankingCondition isNot = new TurSNRankingCondition();
-        isNot.setAttribute("publicationDate");
-        isNot.setValue("upcoming");
-        isNot.setCondition(TurSNRankingCondition.IS_NOT);
-        when(conditionRepository.findByTurSNRankingExpression(notUpcoming)).thenReturn(Set.of(isNot));
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of(notUpcoming));
+        TurSERankingExpression notUpcoming = expression("not-upcoming", 2f, Kind.IS_NOT, "publicationDate", "upcoming");
+        expressions(notUpcoming);
 
         assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
     }

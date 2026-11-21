@@ -20,6 +20,7 @@
  */
 package com.viglet.turing.sn.persistence.repository.ranking;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Sort;
@@ -35,4 +36,7 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 public interface TurSNRankingExpressionRepository extends JpaRepository<TurSNRankingExpression, String> {
 
 	Set<TurSNRankingExpression> findByTurSNSite(Sort language, TurSNSite turSNSite);
+
+	/** T1310 — the site's expressions by the site's id, in {@code sort} order. */
+	List<TurSNRankingExpression> findByTurSNSiteId(Sort sort, String siteId);
 }

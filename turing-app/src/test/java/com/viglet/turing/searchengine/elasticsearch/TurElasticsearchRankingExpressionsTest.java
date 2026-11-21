@@ -6,9 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,11 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition.Kind;
+import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 
@@ -36,16 +34,14 @@ class TurElasticsearchRankingExpressionsTest {
     private static final long NOW = Instant.parse("2026-10-10T15:00:00Z").toEpochMilli();
 
     @Mock
-    private TurSNRankingExpressions expressionRepository;
-    @Mock
-    private TurSNRankingConditions conditionRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
     @Mock
     private TurSNSiteFieldExts fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
 
     private TurElasticsearchRankingExpressions rankingExpressions() {
-        return new TurElasticsearchRankingExpressions(expressionRepository, conditionRepository, fieldExtRepository);
+        return new TurElasticsearchRankingExpressions(siteSearchConfig, fieldExtRepository);
     }
 
     private void fields(Object... nameAndType) {
@@ -57,24 +53,17 @@ class TurElasticsearchRankingExpressionsTest {
         when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(fields);
     }
 
-    private TurSNRankingExpression expression(String name, float weight, int condition, String... attributeAndValue) {
-        TurSNRankingExpression expression = new TurSNRankingExpression();
-        expression.setName(name);
-        expression.setWeight(weight);
-        Set<TurSNRankingCondition> conditions = new LinkedHashSet<>();
+    private static TurSERankingExpression expression(String name, float weight, Kind kind,
+            String... attributeAndValue) {
+        List<TurSERankingCondition> conditions = new ArrayList<>();
         for (int i = 0; i < attributeAndValue.length; i += 2) {
-            TurSNRankingCondition c = new TurSNRankingCondition();
-            c.setAttribute(attributeAndValue[i]);
-            c.setValue(attributeAndValue[i + 1]);
-            c.setCondition(condition);
-            conditions.add(c);
+            conditions.add(new TurSERankingCondition(attributeAndValue[i], kind, attributeAndValue[i + 1]));
         }
-        when(conditionRepository.findByTurSNRankingExpression(expression)).thenReturn(conditions);
-        return expression;
+        return new TurSERankingExpression(name, weight, conditions);
     }
 
-    private String only(TurSNRankingExpression... expressions) {
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(new LinkedHashSet<>(List.of(expressions)));
+    private String only(TurSERankingExpression... expressions) {
+        when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(expressions));
         List<Query> boosts = rankingExpressions().boostQueries(site, NOW);
         assertThat(boosts).hasSize(1);
         return boosts.getFirst().toString();
@@ -83,7 +72,7 @@ class TurElasticsearchRankingExpressionsTest {
     @Test
     void anExpressionIsAWeightedBoolOfItsConditions() {
         fields("category", TurSEFieldType.STRING, "title", TurSEFieldType.TEXT, "salary", TurSEFieldType.INT);
-        String json = only(expression("it", 8f, TurSNRankingCondition.IS, "category", "it", "title", "data engineer",
+        String json = only(expression("it", 8f, Kind.IS, "category", "it", "title", "data engineer",
                 "salary", "9000"));
 
         assertThat(json).contains("\"boost\":8.0")
@@ -95,7 +84,7 @@ class TurElasticsearchRankingExpressionsTest {
     @Test
     void isNotIsAMustNotAndExistsAnExistsQuery() {
         fields("category", TurSEFieldType.STRING, "salaryMin", TurSEFieldType.LONG);
-        assertThat(only(expression("not-it", 3f, TurSNRankingCondition.IS_NOT, "category", "it")))
+        assertThat(only(expression("not-it", 3f, Kind.IS_NOT, "category", "it")))
                 .contains("\"must_not\":[{\"term\":{\"category.keyword\":{\"value\":\"it\"}}}]")
                 .contains("\"match_all\"");
     }
@@ -103,14 +92,14 @@ class TurElasticsearchRankingExpressionsTest {
     @Test
     void existsMatchesAnyValue() {
         fields("salaryMin", TurSEFieldType.LONG);
-        assertThat(only(expression("has-salary", 4f, TurSNRankingCondition.EXISTS, "salaryMin", "")))
+        assertThat(only(expression("has-salary", 4f, Kind.EXISTS, "salaryMin", "")))
                 .contains("\"exists\":{\"field\":\"salaryMin\"}");
     }
 
     @Test
     void recencyIsADistanceFeatureFromTodayAndAFutureDateScoresAsToday() {
         fields("publicationDate", TurSEFieldType.DATE);
-        String json = only(expression("recent", 2f, TurSNRankingCondition.IS, "publicationDate", "asc"));
+        String json = only(expression("recent", 2f, Kind.IS, "publicationDate", "asc"));
 
         assertThat(json).contains("\"distance_feature\"")
                 .contains("\"origin\":\"2026-10-10T00:00:00Z\"")
@@ -123,7 +112,7 @@ class TurElasticsearchRankingExpressionsTest {
     @Test
     void upcomingBoostsOnlyTodayOrLater() {
         fields("eventEnd", TurSEFieldType.DATE);
-        String json = only(expression("upcoming", 2f, TurSNRankingCondition.IS, "eventEnd", "upcoming"));
+        String json = only(expression("upcoming", 2f, Kind.IS, "eventEnd", "upcoming"));
 
         assertThat(json).contains("\"distance_feature\"").contains("\"gte\":\"2026-10-10T00:00:00Z\"")
                 .doesNotContain("constant_score");
@@ -132,20 +121,19 @@ class TurElasticsearchRankingExpressionsTest {
     @Test
     void anExpressionThatCannotBeExpressedIsSkippedWhole() {
         fields("publicationDate", TurSEFieldType.DATE, "category", TurSEFieldType.STRING);
-        TurSNRankingExpression notRecent = expression("not-recent", 2f, TurSNRankingCondition.IS_NOT,
+        TurSERankingExpression notRecent = expression("not-recent", 2f, Kind.IS_NOT,
                 "publicationDate", "asc");
-        TurSNRankingExpression badDate = expression("bad-date", 2f, TurSNRankingCondition.IS,
+        TurSERankingExpression badDate = expression("bad-date", 2f, Kind.IS,
                 "category", "it", "publicationDate", "yesterday");
-        TurSNRankingExpression zero = expression("zero", 0f, TurSNRankingCondition.IS, "category", "it");
-        when(expressionRepository.findByTurSNSite(any(), any()))
-                .thenReturn(new LinkedHashSet<>(List.of(notRecent, badDate, zero)));
+        TurSERankingExpression zero = expression("zero", 0f, Kind.IS, "category", "it");
+        when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(notRecent, badDate, zero));
 
         assertThat(rankingExpressions().boostQueries(site, NOW)).isEmpty();
     }
 
     @Test
     void noExpressionsMeansNoBoosts() {
-        when(expressionRepository.findByTurSNSite(any(), any())).thenReturn(Set.of());
+        when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
         assertThat(rankingExpressions().boostQueries(site, NOW)).isEmpty();
     }

@@ -60,8 +60,7 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
@@ -93,10 +92,7 @@ class TurSolrTest {
     private TurSNSiteFieldService turSNSiteFieldService;
 
     @Mock
-    private TurSNRankingExpressions turSNRankingExpressionRepository;
-
-    @Mock
-    private TurSNRankingConditions turSNRankingConditionRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     @Mock
     private TurSNSites turSNSiteRepository;
@@ -702,8 +698,7 @@ class TurSolrTest {
                 turSNSiteCustomSortRepository,
                 turSNTargetingRules,
                 turSNSiteFieldService,
-                turSNRankingExpressionRepository,
-                turSNRankingConditionRepository,
+                siteSearchConfig,
                 turSNSiteRepository,
                 turSNFieldProcess,
                 turDecimalFieldNormalizer,

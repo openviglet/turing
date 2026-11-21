@@ -331,8 +331,7 @@ class TurSNEngineConformanceIT {
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
         solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository, sortRepository,
                 mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class), fieldService,
-                mock(com.viglet.turing.sn.api.TurSNRankingExpressions.class),
-                mock(com.viglet.turing.sn.api.TurSNRankingConditions.class),
+                mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class),
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),
                 new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository, customFacetRepository,
@@ -686,21 +685,14 @@ class TurSNEngineConformanceIT {
      */
     @org.junit.jupiter.api.Test
     void rankingExpressionsRankTheSameOnLuceneAndElasticsearch() throws Exception {
-        var expressionRepository = mock(
-                com.viglet.turing.sn.api.TurSNRankingExpressions.class);
-        var conditionRepository = mock(
-                com.viglet.turing.sn.api.TurSNRankingConditions.class);
-        var healthFirst = rankingExpression("health-first", 10f, "sector", "saude");
-        var recent = rankingExpression("recent", 2f, "publishedAt", "asc");
-        when(conditionRepository.findByTurSNRankingExpression(healthFirst.getKey()))
-                .thenReturn(Set.of(healthFirst.getValue()));
-        when(conditionRepository.findByTurSNRankingExpression(recent.getKey())).thenReturn(Set.of(recent.getValue()));
-        when(expressionRepository.findByTurSNSite(any(), any()))
-                .thenReturn(new java.util.LinkedHashSet<>(List.of(healthFirst.getKey(), recent.getKey())));
+        var siteSearchConfig = mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class);
+        when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(
+                rankingExpression("health-first", 10f, "sector", "saude"),
+                rankingExpression("recent", 2f, "publishedAt", "asc")));
         when(catalogFieldRepository.findByTurSNSite(any(), any())).thenReturn(catalogFields);
 
-        var luceneRanking = new com.viglet.turing.searchengine.lucene.TurLuceneRankingExpressions(expressionRepository,
-                conditionRepository, catalogFieldRepository);
+        var luceneRanking = new com.viglet.turing.searchengine.lucene.TurLuceneRankingExpressions(siteSearchConfig,
+                catalogFieldRepository);
         TurLuceneQueryBuilder rankedLucene = new TurLuceneQueryBuilder(catalogFieldRepository, catalogSortRepository,
                 null, null, luceneRanking, null);
         TurSEParameters seParams = seParameters(request(p -> {
@@ -711,7 +703,7 @@ class TurSNEngineConformanceIT {
         }
 
         var esRanking = new com.viglet.turing.searchengine.elasticsearch.TurElasticsearchRankingExpressions(
-                expressionRepository, conditionRepository, catalogFieldRepository);
+                siteSearchConfig, catalogFieldRepository);
         TurElasticsearch rankedEs = new TurElasticsearch(catalogSiteRepository, catalogFieldRepository,
                 catalogSortRepository, mock(TurLuceneCustomFacets.class), esRanking);
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
@@ -727,18 +719,11 @@ class TurSNEngineConformanceIT {
         assertThat(es).as("Elasticsearch").containsExactlyElementsOf(expected);
     }
 
-    private static Map.Entry<com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression,
-            com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition> rankingExpression(String name,
-                    float weight, String attribute, String value) {
-        var expression = new com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression();
-        expression.setId(name);
-        expression.setName(name);
-        expression.setWeight(weight);
-        var condition = new com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition();
-        condition.setAttribute(attribute);
-        condition.setValue(value);
-        condition.setCondition(com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition.IS);
-        return Map.entry(expression, condition);
+    private static com.viglet.turing.searchengine.spi.TurSERankingExpression rankingExpression(String name,
+            float weight, String attribute, String value) {
+        return new com.viglet.turing.searchengine.spi.TurSERankingExpression(name, weight,
+                List.of(new com.viglet.turing.searchengine.spi.TurSERankingCondition(attribute,
+                        com.viglet.turing.searchengine.spi.TurSERankingCondition.Kind.IS, value)));
     }
 
     static Stream<Arguments> missingPlacements() {

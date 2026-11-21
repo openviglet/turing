@@ -63,8 +63,9 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition;
+import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
@@ -83,10 +84,7 @@ class TurSolrQueryBuilderTest {
         private TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
         @Mock
-        private TurSNRankingExpressions turSNRankingExpressionRepository;
-
-        @Mock
-        private TurSNRankingConditions turSNRankingConditionRepository;
+        private TurSESiteSearchConfig siteSearchConfig;
 
         @Mock
         private TurSNTargetingRules turSNTargetingRules;
@@ -107,8 +105,21 @@ class TurSolrQueryBuilderTest {
                 return new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                                 turSNSiteCustomFacetRepository,
                                 turSNSiteCustomSortRepository,
-                                turSNRankingExpressionRepository, turSNRankingConditionRepository,
+                                siteSearchConfig,
                                 turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+        }
+
+        private static TurSERankingExpression toSpi(TurSNRankingExpression expression,
+                        TurSNRankingCondition... conditions) {
+                return new TurSERankingExpression(expression.getName(), expression.getWeight(),
+                                java.util.Arrays.stream(conditions)
+                                                .map(c -> new TurSERankingCondition(c.getAttribute(),
+                                                                switch (c.getCondition()) {
+                                                                        case TurSNRankingCondition.IS_NOT -> TurSERankingCondition.Kind.IS_NOT;
+                                                                        case TurSNRankingCondition.EXISTS -> TurSERankingCondition.Kind.EXISTS;
+                                                                        default -> TurSERankingCondition.Kind.IS;
+                                                                }, c.getValue()))
+                                                .toList());
         }
 
         private TurSNSiteSearchContext contextFrom(TurSEParameters parameters,
@@ -128,7 +139,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(List.of(mltField));
 
                 TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                                turSNSiteCustomSortRepository, siteSearchConfig, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
                 SolrQuery query = new SolrQuery();
 
                 List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
@@ -341,8 +352,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(Collections.emptyList());
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -375,8 +385,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.<TurSNRankingExpression>emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("\"hello world\"");
@@ -414,8 +423,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.<TurSNRankingExpression>emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("helo");
@@ -443,8 +451,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.<TurSNRankingExpression>emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
                 when(turSNTargetingRules.andMethod(List.of("ruleA"))).thenReturn("ruleA");
                 when(turSNTargetingRules.orMethod(List.of("ruleB"))).thenReturn("ruleB");
 
@@ -482,8 +489,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams firstParams = new TurSNSearchParams();
                 firstParams.setQ("java");
@@ -549,8 +555,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(List.of(enabledDate));
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -599,10 +604,8 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(List.of(dateField, typeField));
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Set.of(expression));
-                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
-                                .thenReturn(Set.of(dateCondition, typeCondition));
+                when(siteSearchConfig.rankingExpressions(any()))
+                                .thenReturn(List.of(toSpi(expression, dateCondition, typeCondition)));
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -635,10 +638,8 @@ class TurSolrQueryBuilderTest {
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of(
                                 TurSNSiteFieldExt.builder().name("eventEnd")
                                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE).build()));
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Set.of(expression));
-                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
-                                .thenReturn(Set.of(upcoming));
+                when(siteSearchConfig.rankingExpressions(any()))
+                                .thenReturn(List.of(toSpi(expression, upcoming)));
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -671,10 +672,8 @@ class TurSolrQueryBuilderTest {
                 isNot.setCondition(TurSNRankingCondition.IS_NOT);
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Set.of(expression));
-                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
-                                .thenReturn(Set.of(isNot));
+                when(siteSearchConfig.rankingExpressions(any()))
+                                .thenReturn(List.of(toSpi(expression, isNot)));
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -707,10 +706,8 @@ class TurSolrQueryBuilderTest {
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of(
                                 TurSNSiteFieldExt.builder().name("published")
                                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE).build()));
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Set.of(expression));
-                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
-                                .thenReturn(Set.of(isNot));
+                when(siteSearchConfig.rankingExpressions(any()))
+                                .thenReturn(List.of(toSpi(expression, isNot)));
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -764,10 +761,8 @@ class TurSolrQueryBuilderTest {
                 exists.setCondition(TurSNRankingCondition.EXISTS);
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site))).thenReturn(List.of());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Set.of(expression));
-                when(turSNRankingConditionRepository.findByTurSNRankingExpression(expression))
-                                .thenReturn(Set.of(exists));
+                when(siteSearchConfig.rankingExpressions(any()))
+                                .thenReturn(List.of(toSpi(expression, exists)));
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -919,8 +914,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("test");
@@ -962,8 +956,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("\"quoted query\"");
@@ -989,8 +982,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("\"test\"");
@@ -1118,8 +1110,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 // Non-quoted query should NOT trigger exact match
                 TurSNSearchParams searchParams = new TurSNSearchParams();
@@ -1143,8 +1134,7 @@ class TurSolrQueryBuilderTest {
 
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 searchParams.setQ("test");
@@ -1178,8 +1168,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(Collections.emptyList());
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");
@@ -1215,8 +1204,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(Collections.emptyList());
                 when(turSNSiteFieldExtRepository.findByTurSNSite(any(), eq(site)))
                                 .thenReturn(Collections.emptyList());
-                when(turSNRankingExpressionRepository.findByTurSNSite(any(), eq(site)))
-                                .thenReturn(Collections.emptySet());
+                when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
                 TurSNSearchParams params = new TurSNSearchParams();
                 params.setQ("query");

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DoublePoint;
@@ -47,13 +46,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition;
+import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -89,15 +87,12 @@ public class TurLuceneRankingExpressions {
      */
     static final long RECENCY_PIVOT_MS = Math.round(1 / 3.16e-11);
 
-    private final TurSNRankingExpressions turSNRankingExpressionRepository;
-    private final TurSNRankingConditions turSNRankingConditionRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
-    public TurLuceneRankingExpressions(TurSNRankingExpressions turSNRankingExpressionRepository,
-            TurSNRankingConditions turSNRankingConditionRepository,
+    public TurLuceneRankingExpressions(TurSESiteSearchConfig siteSearchConfig,
             TurSNSiteFieldExts turSNSiteFieldExtRepository) {
-        this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
-        this.turSNRankingConditionRepository = turSNRankingConditionRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
     }
 
@@ -107,8 +102,7 @@ public class TurLuceneRankingExpressions {
     }
 
     List<Query> boostQueries(TurSNSite turSNSite, long nowMs) {
-        Set<TurSNRankingExpression> expressions = turSNRankingExpressionRepository
-                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
+        List<TurSERankingExpression> expressions = siteSearchConfig.rankingExpressions(turSNSite.getId());
         if (expressions == null || expressions.isEmpty()) {
             return List.of();
         }
@@ -116,7 +110,7 @@ public class TurLuceneRankingExpressions {
         // Solr's NOW/DAY: the start of the current UTC day.
         long origin = Instant.ofEpochMilli(nowMs).truncatedTo(ChronoUnit.DAYS).toEpochMilli();
         List<Query> boosts = new ArrayList<>();
-        for (TurSNRankingExpression expression : expressions) {
+        for (TurSERankingExpression expression : expressions) {
             Query boost = expressionQuery(expression, fieldTypes, origin);
             if (boost != null) {
                 boosts.add(boost);
@@ -125,27 +119,26 @@ public class TurLuceneRankingExpressions {
         return boosts;
     }
 
-    private Query expressionQuery(TurSNRankingExpression expression, Map<String, TurSEFieldType> fieldTypes,
+    private Query expressionQuery(TurSERankingExpression expression, Map<String, TurSEFieldType> fieldTypes,
             long origin) {
-        Set<TurSNRankingCondition> conditions = turSNRankingConditionRepository
-                .findByTurSNRankingExpression(expression);
-        if (conditions == null || conditions.isEmpty()) {
+        List<TurSERankingCondition> conditions = expression.conditions();
+        if (conditions.isEmpty()) {
             return null;
         }
-        float weight = expression.getWeight();
+        float weight = expression.weight();
         if (!(weight > 0) || Float.isInfinite(weight)) {
             log.debug("[Lucene] ranking expression '{}' skipped: weight {} is not a positive boost",
-                    expression.getName(), weight);
+                    expression.name(), weight);
             return null;
         }
         BooleanQuery.Builder all = new BooleanQuery.Builder();
-        for (TurSNRankingCondition condition : conditions) {
-            Query query = conditionQuery(condition, fieldTypes.get(condition.getAttribute()), origin);
+        for (TurSERankingCondition condition : conditions) {
+            Query query = conditionQuery(condition, fieldTypes.get(condition.attribute()), origin);
             if (query == null) {
                 // A condition that cannot be expressed would otherwise widen the
                 // expression to documents it does not describe.
                 log.debug("[Lucene] ranking expression '{}' skipped: condition {}:{} cannot be applied",
-                        expression.getName(), condition.getAttribute(), condition.getValue());
+                        expression.name(), condition.attribute(), condition.value());
                 return null;
             }
             all.add(query, BooleanClause.Occur.MUST);
@@ -153,13 +146,13 @@ public class TurLuceneRankingExpressions {
         return new BoostQuery(all.build(), weight);
     }
 
-    private static Query conditionQuery(TurSNRankingCondition condition, TurSEFieldType type, long origin) {
-        String field = condition.getAttribute();
-        String value = condition.getValue();
+    private static Query conditionQuery(TurSERankingCondition condition, TurSEFieldType type, long origin) {
+        String field = condition.attribute();
+        String value = condition.value();
         if (!StringUtils.hasText(field)) {
             return null;
         }
-        if (condition.getCondition() == TurSNRankingCondition.EXISTS) {
+        if (condition.kind() == TurSERankingCondition.Kind.EXISTS) {
             // Every indexed type carries doc values on the field's own name
             // (TurLuceneDocumentHandler), which is what FieldExistsQuery reads.
             return new FieldExistsQuery(field);
@@ -167,7 +160,7 @@ public class TurLuceneRankingExpressions {
         if (value == null) {
             return null;
         }
-        boolean negated = condition.getCondition() == TurSNRankingCondition.IS_NOT;
+        boolean negated = condition.kind() == TurSERankingCondition.Kind.IS_NOT;
         if (negated && type == TurSEFieldType.DATE && isScoredDateForm(value)) {
             return null; // T1070 — Is not has no meaning on the recency or upcoming form
         }

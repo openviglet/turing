@@ -44,8 +44,7 @@ import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
 import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
@@ -85,8 +84,7 @@ public class TurSolr {
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
             TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
-            TurSNRankingExpressions turSNRankingExpressionRepository,
-            TurSNRankingConditions turSNRankingConditionRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurSNSites turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer,
             TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
@@ -99,7 +97,7 @@ public class TurSolr {
                 turDecimalFieldNormalizer);
         this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                 turSNSiteCustomFacetRepository, turSNSiteCustomSortRepository,
-                turSNRankingExpressionRepository, turSNRankingConditionRepository, turSNTargetingRules,
+                siteSearchConfig, turSNTargetingRules,
                 turSNSearchRuleEvaluator, turSNEnabledFacets);
         this.turSolrResultProcessor = new TurSolrResultProcessor(turSNFieldProcess,
                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, pipelineObservation);

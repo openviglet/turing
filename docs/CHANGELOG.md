@@ -1800,3 +1800,4 @@
 - **T1319d** — Custom tools, integrations, thesauri and microthesauri refuse a save from an older version with a 409, and the console sends the version it last read.
 - **T1319e** — Persona match, dialogue and research projects refuse a save from an older version with a 409; runs stamp the current row, and distillation keeps each saved LLM copy.
 - **T1319f** — Analytics intents, users and roles refuse a save from an older version with a 409, and a create ignores any version the payload carries.
+- **T1310e** — Solr, Lucene and Elasticsearch read a site's ranking expressions through TurSESiteSearchConfig, an SPI in searchengine that sn implements; searchengine's imports of sn fell from 158 to 144 (design §CLXXXIX.44 recorded in `turing-app/src/main/java/com/viglet/turing/searchengine/spi/package-info.java`).

@@ -77,8 +77,6 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperator
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
-import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
@@ -86,8 +84,9 @@ import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
 import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNRankingConditions;
-import com.viglet.turing.sn.api.TurSNRankingExpressions;
+import com.viglet.turing.searchengine.spi.TurSERankingCondition;
+import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
@@ -114,8 +113,7 @@ public class TurSolrQueryBuilder {
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
     private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
-    private final TurSNRankingExpressions turSNRankingExpressionRepository;
-    private final TurSNRankingConditions turSNRankingConditionRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSNTargetingRules turSNTargetingRules;
     private final TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
     private final TurSNEnabledFacets turSNEnabledFacets;
@@ -123,16 +121,14 @@ public class TurSolrQueryBuilder {
     public TurSolrQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
             TurSNSiteCustomSorts turSNSiteCustomSortRepository,
-            TurSNRankingExpressions turSNRankingExpressionRepository,
-            TurSNRankingConditions turSNRankingConditionRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurSNTargetingRules turSNTargetingRules,
             TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNEnabledFacets turSNEnabledFacets) {
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
         this.turSNSiteCustomSortRepository = turSNSiteCustomSortRepository;
-        this.turSNRankingExpressionRepository = turSNRankingExpressionRepository;
-        this.turSNRankingConditionRepository = turSNRankingConditionRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.turSNTargetingRules = turSNTargetingRules;
         this.turSNSearchRuleEvaluator = turSNSearchRuleEvaluator;
         this.turSNEnabledFacets = turSNEnabledFacets;
@@ -228,28 +224,22 @@ public class TurSolrQueryBuilder {
     private void prepareBoostQuery(TurSNSite turSNSite, SolrQuery query) {
         List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        Set<TurSNRankingExpression> turSNRankingExpression = turSNRankingExpressionRepository
-                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        if (hasRankingConditions(turSNRankingExpression)) {
-            String[] expressionString = turSNRankingExpression.stream()
-                    .map(expression -> {
-                        String attributes = boostQueryAttributes(expression, turSNSiteFieldExtList);
-                        return attributes == null ? null
-                                : String.format(Locale.US, "%s^%.1f", "(" + attributes + ")",
-                                        expression.getWeight());
-                    })
-                    .filter(Objects::nonNull)
-                    .toArray(String[]::new);
-            if (expressionString.length > 0) {
-                query.set(BOOST_QUERY, expressionString);
-            }
+        List<TurSERankingExpression> expressions = siteSearchConfig.rankingExpressions(turSNSite.getId());
+        if (expressions.stream().allMatch(expression -> expression.conditions().isEmpty())) {
+            return;
         }
-    }
-
-    private boolean hasRankingConditions(Set<TurSNRankingExpression> turSNRankingExpressions) {
-        return turSNRankingExpressions.stream()
-                .anyMatch(expressions -> !turSNRankingConditionRepository
-                        .findByTurSNRankingExpression(expressions).isEmpty());
+        String[] expressionString = expressions.stream()
+                .map(expression -> {
+                    String attributes = boostQueryAttributes(expression, turSNSiteFieldExtList);
+                    return attributes == null ? null
+                            : String.format(Locale.US, "%s^%.1f", "(" + attributes + ")",
+                                    expression.weight());
+                })
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
+        if (expressionString.length > 0) {
+            query.set(BOOST_QUERY, expressionString);
+        }
     }
 
     /**
@@ -257,31 +247,30 @@ public class TurSolrQueryBuilder {
      * cannot be applied (T1070: an {@code Is not} on the recency form, which has no
      * meaning), so it is left out rather than widened.
      */
-    private String boostQueryAttributes(TurSNRankingExpression expression,
+    private String boostQueryAttributes(TurSERankingExpression expression,
             List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
         List<String> clauses = new ArrayList<>();
-        for (TurSNRankingCondition condition : turSNRankingConditionRepository
-                .findByTurSNRankingExpression(expression)) {
-            if (condition.getCondition() == TurSNRankingCondition.EXISTS) {
-                clauses.add(String.format("%s:[* TO *]", condition.getAttribute()));
+        for (TurSERankingCondition condition : expression.conditions()) {
+            if (condition.kind() == TurSERankingCondition.Kind.EXISTS) {
+                clauses.add(String.format("%s:[* TO *]", condition.attribute()));
                 continue;
             }
-            boolean negated = condition.getCondition() == TurSNRankingCondition.IS_NOT;
+            boolean negated = condition.kind() == TurSERankingCondition.Kind.IS_NOT;
             TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList.stream()
-                    .filter(field -> field.getName().equals(condition.getAttribute()))
+                    .filter(field -> field.getName().equals(condition.attribute()))
                     .findFirst().orElse(TurSNSiteFieldExt.builder().build());
             String dateFunction = turSNSiteFieldExt.getType() == TurSEFieldType.DATE
-                    ? dateFunction(condition.getValue()) : null;
+                    ? dateFunction(condition.value()) : null;
             if (dateFunction != null) {
                 if (negated) {
                     log.debug("Ranking expression '{}' skipped: Is not has no meaning on the recency form",
-                            expression.getName());
+                            expression.name());
                     return null;
                 }
-                clauses.add(String.format("_query_:\"" + dateFunction + "\"", condition.getAttribute()));
+                clauses.add(String.format("_query_:\"" + dateFunction + "\"", condition.attribute()));
                 continue;
             }
-            String match = String.format("%s:\"%s\"", condition.getAttribute(), condition.getValue());
+            String match = String.format("%s:\"%s\"", condition.attribute(), condition.value());
             // T1070 — Is not: every document except the ones with that value.
             clauses.add(negated ? "(*:* -" + match + ")" : match);
         }
