@@ -202,4 +202,16 @@ class TurSNSiteSearchConfigProviderTest {
 
         assertThat(provider().coreLanguage("docs_en")).contains(java.util.Locale.US);
         assertThat(provider().coreLanguage(null)).isEmpty();
+    }
+
+    @Test
+    void aSiteIdIsFoundByNameIgnoringCase() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        site.setId("site-1");
+        when(siteRepository.findByNameIgnoreCase("Docs")).thenReturn(Optional.of(site));
+        when(siteRepository.findByNameIgnoreCase("missing")).thenReturn(Optional.empty());
+
+        assertThat(provider().siteId("Docs")).contains("site-1");
+        assertThat(provider().siteId("missing")).isEmpty();
+        assertThat(provider().siteId(null)).isEmpty();
     }}

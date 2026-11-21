@@ -71,4 +71,7 @@ public interface TurSESiteSearchConfig {
      * language; empty when none does.
      */
     Optional<Locale> coreLanguage(String core);
+
+    /** The id of the site called {@code siteName}, ignoring case; empty when there is none. */
+    Optional<String> siteId(String siteName);
 }

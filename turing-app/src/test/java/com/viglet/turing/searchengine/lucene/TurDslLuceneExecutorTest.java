@@ -57,7 +57,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
  */
 class TurDslLuceneExecutorTest {
 
-    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null, null);
+    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null);
 
     // ─────────────── Range translation ───────────────
 

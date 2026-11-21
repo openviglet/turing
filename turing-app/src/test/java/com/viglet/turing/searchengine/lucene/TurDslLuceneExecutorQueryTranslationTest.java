@@ -21,7 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  */
 class TurDslLuceneExecutorQueryTranslationTest {
 
-    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null, null);
+    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null);
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("com.viglet.turing.searchengine.dsl.TurDslQueryFixtures#named")

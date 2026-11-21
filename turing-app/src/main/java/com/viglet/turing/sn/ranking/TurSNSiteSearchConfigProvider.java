@@ -157,6 +157,14 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     }
 
     @Override
+    public Optional<String> siteId(String siteName) {
+        if (siteName == null) {
+            return Optional.empty();
+        }
+        return siteRepository.findByNameIgnoreCase(siteName).map(site -> site.getId());
+    }
+
+    @Override
     public Optional<Locale> coreLanguage(String core) {
         if (core == null) {
             return Optional.empty();

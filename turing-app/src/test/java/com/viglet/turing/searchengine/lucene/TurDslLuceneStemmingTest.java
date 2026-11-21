@@ -37,7 +37,7 @@ class TurDslLuceneStemmingTest {
     private static final Locale PT_BR = Locale.of("pt", "BR");
     private static final Map<String, TurSEFieldType> TYPES = Map.of("title", TurSEFieldType.TEXT);
 
-    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null, null);
+    private final TurDslLuceneExecutor executor = new TurDslLuceneExecutor(null, null);
 
     private Set<String> search(Locale locale, TurDslQuery query) throws Exception {
         try (Directory directory = new ByteBuffersDirectory();

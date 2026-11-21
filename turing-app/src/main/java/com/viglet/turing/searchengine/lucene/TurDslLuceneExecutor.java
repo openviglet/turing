@@ -7,9 +7,8 @@ import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -52,15 +51,12 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
 
 
     private final TurLuceneInstanceProcess turLuceneInstanceProcess;
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteFieldService turSNSiteFieldService;
+    private final TurSESiteSearchConfig siteSearchConfig;
 
     public TurDslLuceneExecutor(TurLuceneInstanceProcess turLuceneInstanceProcess,
-            TurSNSites turSNSiteRepository,
-            TurSNSiteFieldService turSNSiteFieldService) {
+            TurSESiteSearchConfig siteSearchConfig) {
         this.turLuceneInstanceProcess = turLuceneInstanceProcess;
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteFieldService = turSNSiteFieldService;
+        this.siteSearchConfig = siteSearchConfig;
     }
 
     @Override
@@ -77,12 +73,12 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
      * isn't found, in which case translation falls back to the string-term behavior.
      */
     private Map<String, TurSEFieldType> resolveFieldTypes(String siteName) {
-        return turSNSiteRepository.findByNameIgnoreCase(siteName)
-                .map(site -> {
+        return siteSearchConfig.siteId(siteName)
+                .map(siteId -> {
                     Map<String, TurSEFieldType> types = new HashMap<>();
-                    for (TurSNSiteField field : turSNSiteFieldService.toMap(site).values()) {
-                        if (field.getName() != null && field.getType() != null) {
-                            types.put(field.getName(), field.getType());
+                    for (TurSEIndexField field : siteSearchConfig.indexFields(siteId).values()) {
+                        if (field.name() != null && field.type() != null) {
+                            types.put(field.name(), field.type());
                         }
                     }
                     return types;
