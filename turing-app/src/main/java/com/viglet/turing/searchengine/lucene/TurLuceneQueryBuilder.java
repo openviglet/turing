@@ -178,7 +178,7 @@ public class TurLuceneQueryBuilder {
         // T1064 — ranking expressions raise the score of the documents they
         // describe (SHOULD beside the MUST main query), as Solr's bq does.
         if (rankingExpressions != null) {
-            rankingExpressions.boostQueries(turSNSite)
+            rankingExpressions.boostQueries(turSNSite.getId())
                     .forEach(boost -> builder.add(boost, BooleanClause.Occur.SHOULD));
         }
 
@@ -265,7 +265,7 @@ public class TurLuceneQueryBuilder {
     private Query valueQuery(TurSNSite turSNSite, String field, TurSNSiteFieldExt ext, String value,
             TurSEFieldType type, Instant now) {
         if (ext == null && customFacets != null) {
-            Optional<TurLuceneCustomFacets.ItemFilter> item = customFacets.resolveFilter(turSNSite, field, value);
+            Optional<TurLuceneCustomFacets.ItemFilter> item = customFacets.resolveFilter(turSNSite.getId(), field, value);
             if (item.isPresent()) {
                 return item.get().toLuceneQuery(now);
             }

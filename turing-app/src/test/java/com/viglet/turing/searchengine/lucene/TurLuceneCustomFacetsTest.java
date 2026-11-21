@@ -128,7 +128,7 @@ class TurLuceneCustomFacetsTest {
 
     @Test
     void countsEachItemOverTheMatchingDocuments() {
-        List<TurSEFacetResult> results = customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site,
+        List<TurSEFacetResult> results = customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site.getId(),
                 Locale.of("pt", "BR"), null);
 
         assertEquals(1, results.size());
@@ -143,8 +143,8 @@ class TurLuceneCustomFacetsTest {
 
     @Test
     void theDrillDownCountsOnlyTheNamedFacet() {
-        assertTrue(customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site, null, "brand").isEmpty());
-        assertEquals(1, customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site, null, "salaryBand")
+        assertTrue(customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site.getId(), null, "brand").isEmpty());
+        assertEquals(1, customFacets.count(searcher, MatchAllDocsQuery.INSTANCE, site.getId(), null, "salaryBand")
                 .size());
     }
 

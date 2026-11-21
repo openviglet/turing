@@ -31,7 +31,6 @@ import org.apache.lucene.search.Query;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
@@ -118,9 +117,9 @@ public class TurLuceneCustomFacets {
      * filter it stands for and its label for {@code locale}, for an engine that
      * counts them in its own request (Elasticsearch) rather than here.
      */
-    public List<Facet> facets(TurSNSite turSNSite, Locale locale) {
+    public List<Facet> facets(String siteId, Locale locale) {
         List<Facet> facets = new ArrayList<>();
-        for (TurSECustomFacet definition : definitions(turSNSite).values()) {
+        for (TurSECustomFacet definition : definitions(siteId).values()) {
             List<Item> items = definition.items().stream()
                     .map(item -> new Item(item.label(), displayLabel(item, locale), itemFilter(item)))
                     .toList();
@@ -135,8 +134,8 @@ public class TurLuceneCustomFacets {
      * The range a {@code <customFacet>:<label>} selection stands for, or empty when
      * {@code facetName} names no custom facet of the site (an ordinary field).
      */
-    public Optional<ItemFilter> resolveFilter(TurSNSite turSNSite, String facetName, String label) {
-        TurSECustomFacet definition = definitions(turSNSite).get(facetName);
+    public Optional<ItemFilter> resolveFilter(String siteId, String facetName, String label) {
+        TurSECustomFacet definition = definitions(siteId).get(facetName);
         if (definition == null) {
             return Optional.empty();
         }
@@ -151,10 +150,10 @@ public class TurLuceneCustomFacets {
      * With {@code onlyFacet} set, counts that custom facet alone (the facet
      * drill-down), and nothing when it names no custom facet.
      */
-    public List<TurSEFacetResult> count(IndexSearcher searcher, Query query, TurSNSite turSNSite,
+    public List<TurSEFacetResult> count(IndexSearcher searcher, Query query, String siteId,
             Locale locale, String onlyFacet) {
         List<TurSEFacetResult> results = new ArrayList<>();
-        for (TurSECustomFacet definition : definitions(turSNSite).values()) {
+        for (TurSECustomFacet definition : definitions(siteId).values()) {
             if (onlyFacet != null && !onlyFacet.equals(definition.name())) {
                 continue;
             }
@@ -190,9 +189,9 @@ public class TurLuceneCustomFacets {
     }
 
     /** The site's custom facets by name, in display order (T1310: through the SPI). */
-    private Map<String, TurSECustomFacet> definitions(TurSNSite turSNSite) {
+    private Map<String, TurSECustomFacet> definitions(String siteId) {
         Map<String, TurSECustomFacet> byName = new java.util.LinkedHashMap<>();
-        siteSearchConfig.customFacets(turSNSite.getId()).forEach(facet -> byName.putIfAbsent(facet.name(), facet));
+        siteSearchConfig.customFacets(siteId).forEach(facet -> byName.putIfAbsent(facet.name(), facet));
         return byName;
     }
     /** The item's label for the request locale, as {@code TurSolrResultProcessor} resolves it. */

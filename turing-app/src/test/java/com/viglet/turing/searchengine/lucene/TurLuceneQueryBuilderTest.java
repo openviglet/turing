@@ -52,7 +52,7 @@ class TurLuceneQueryBuilderTest {
         TurSNSite site = mock(TurSNSite.class);
         Query boost = new org.apache.lucene.search.BoostQuery(
                 new org.apache.lucene.search.TermQuery(new org.apache.lucene.index.Term("category", "it")), 5f);
-        when(rankingExpressions.boostQueries(site)).thenReturn(List.of(boost));
+        when(rankingExpressions.boostQueries(site.getId())).thenReturn(List.of(boost));
 
         BooleanQuery query = (BooleanQuery) queryBuilder.buildQuery(site, createParams("*"));
 

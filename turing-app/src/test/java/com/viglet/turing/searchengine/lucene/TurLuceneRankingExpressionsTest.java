@@ -125,7 +125,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression recent = expression("recent", 2f, "publicationDate", "asc");
         expressions(recent);
 
-        List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
+        List<String> ranked = rank(rankingExpressions().boostQueries(site.getId(), NOW));
 
         assertEquals(List.of("new-sales", "mid-it", "old-it"), ranked);
     }
@@ -136,7 +136,7 @@ class TurLuceneRankingExpressionsTest {
         expressions(expression("recent", 1f, "publicationDate", "asc"),
                 expression("it-first", 10f, "category", "it"));
 
-        List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
+        List<String> ranked = rank(rankingExpressions().boostQueries(site.getId(), NOW));
 
         // Both IT jobs outrank the newest sales job; recency orders the two IT jobs.
         assertEquals(List.of("mid-it", "old-it", "new-sales"), ranked);
@@ -148,7 +148,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression recentIt = expression("recent-it", 5f, "category", "it", "publicationDate", "asc");
         expressions(recentIt);
 
-        List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
+        List<String> ranked = rank(rankingExpressions().boostQueries(site.getId(), NOW));
 
         assertEquals("mid-it", ranked.getFirst());
         assertEquals("new-sales", ranked.getLast());
@@ -160,7 +160,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression hasSalary = expression("has-salary", 4f, Kind.EXISTS, "salaryMin", null);
         expressions(hasSalary);
 
-        List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
+        List<String> ranked = rank(rankingExpressions().boostQueries(site.getId(), NOW));
 
         // Only old-it carries salaryMin, so it outranks two newer jobs.
         assertEquals("old-it", ranked.getFirst());
@@ -172,7 +172,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression notIt = expression("not-it", 10f, Kind.IS_NOT, "category", "it");
         expressions(notIt);
 
-        List<String> ranked = rank(rankingExpressions().boostQueries(site, NOW));
+        List<String> ranked = rank(rankingExpressions().boostQueries(site.getId(), NOW));
 
         // T1070 — the sales job is boosted; before, Is not boosted the IT jobs instead.
         assertEquals("new-sales", ranked.getFirst());
@@ -184,14 +184,14 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression notRecent = expression("not-recent", 2f, Kind.IS_NOT, "publicationDate", "asc");
         expressions(notRecent);
 
-        assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
+        assertTrue(rankingExpressions().boostQueries(site.getId(), NOW).isEmpty());
     }
 
     @Test
     void noExpressionsMeansNoBoosts() {
         expressions();
 
-        assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
+        assertTrue(rankingExpressions().boostQueries(site.getId(), NOW).isEmpty());
     }
 
     @Test
@@ -202,7 +202,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression zeroWeight = expression("zero", 0f, "salary", "10");
         expressions(empty, badNumber, zeroWeight);
 
-        assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
+        assertTrue(rankingExpressions().boostQueries(site.getId(), NOW).isEmpty());
     }
 
     /** T1219 — three equal-text agenda events dated −7, +7 and +180 days from NOW. */
@@ -236,7 +236,7 @@ class TurLuceneRankingExpressionsTest {
         expressions(upcoming);
 
         List<String> ids = new ArrayList<>();
-        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
+        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site.getId(), NOW), ids);
 
         assertEquals(List.of("today", "next-7", "next-180", "past-7"), ids);
         // The past event still matches, with no boost: only the main query's score.
@@ -250,7 +250,7 @@ class TurLuceneRankingExpressionsTest {
         expressions(recent);
 
         List<String> ids = new ArrayList<>();
-        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site, NOW), ids);
+        List<ScoreDoc> hits = rankAgenda(rankingExpressions().boostQueries(site.getId(), NOW), ids);
 
         // Before T1219 +180 scored as 180 days old, and +7 tied with −7. Now every
         // future date scores as today, the ceiling, and the past decays from it.
@@ -268,7 +268,7 @@ class TurLuceneRankingExpressionsTest {
         TurSERankingExpression notUpcoming = expression("not-upcoming", 2f, Kind.IS_NOT, "publicationDate", "upcoming");
         expressions(notUpcoming);
 
-        assertTrue(rankingExpressions().boostQueries(site, NOW).isEmpty());
+        assertTrue(rankingExpressions().boostQueries(site.getId(), NOW).isEmpty());
     }
 
     @Test

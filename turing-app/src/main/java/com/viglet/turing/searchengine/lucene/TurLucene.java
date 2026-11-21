@@ -136,7 +136,7 @@ public class TurLucene {
         }
         try {
             List<TurSEFacetResult> custom = turLuceneCustomFacets.count(instance.getSearcher(), query,
-                    turSNSite, context.getLocale(), onlyFacet);
+                    turSNSite.getId(), context.getLocale(), onlyFacet);
             if (!custom.isEmpty()) {
                 List<TurSEFacetResult> facets = new ArrayList<>(
                         results.getFacetResults() == null ? List.of() : results.getFacetResults());

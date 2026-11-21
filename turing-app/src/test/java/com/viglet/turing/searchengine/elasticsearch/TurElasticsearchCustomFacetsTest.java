@@ -92,7 +92,7 @@ class TurElasticsearchCustomFacetsTest {
         site.setName("jobs");
         site.setFacet(1);
         when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
-        when(customFacets.facets(site, Locale.US)).thenReturn(List.of(SALARY));
+        when(customFacets.facets(site.getId(), Locale.US)).thenReturn(List.of(SALARY));
         ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
         when(client.search(request.capture(), any(Type.class))).thenThrow(new IOException("stop here"));
         TurElasticsearch engine = new TurElasticsearch(siteRepository, mock(TurSNSiteFieldExts.class),

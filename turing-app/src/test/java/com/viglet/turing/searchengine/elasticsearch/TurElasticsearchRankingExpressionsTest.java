@@ -59,7 +59,7 @@ class TurElasticsearchRankingExpressionsTest {
 
     private String only(TurSERankingExpression... expressions) {
         when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(expressions));
-        List<Query> boosts = rankingExpressions().boostQueries(site, NOW);
+        List<Query> boosts = rankingExpressions().boostQueries(site.getId(), NOW);
         assertThat(boosts).hasSize(1);
         return boosts.getFirst().toString();
     }
@@ -123,13 +123,13 @@ class TurElasticsearchRankingExpressionsTest {
         TurSERankingExpression zero = expression("zero", 0f, Kind.IS, "category", "it");
         when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(notRecent, badDate, zero));
 
-        assertThat(rankingExpressions().boostQueries(site, NOW)).isEmpty();
+        assertThat(rankingExpressions().boostQueries(site.getId(), NOW)).isEmpty();
     }
 
     @Test
     void noExpressionsMeansNoBoosts() {
         when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
 
-        assertThat(rankingExpressions().boostQueries(site, NOW)).isEmpty();
+        assertThat(rankingExpressions().boostQueries(site.getId(), NOW)).isEmpty();
     }
 }

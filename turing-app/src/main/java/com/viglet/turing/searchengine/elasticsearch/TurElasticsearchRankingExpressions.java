@@ -30,7 +30,6 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.Time;
@@ -79,18 +78,18 @@ public class TurElasticsearchRankingExpressions {
         this.siteSearchConfig = siteSearchConfig;
     }
 
-    /** The boost clauses for {@code turSNSite}'s ranking expressions; empty when it has none. */
-    public List<Query> boostQueries(TurSNSite turSNSite) {
-        return boostQueries(turSNSite, System.currentTimeMillis());
+    /** The boost clauses for site {@code siteId}'s ranking expressions; empty when it has none. */
+    public List<Query> boostQueries(String siteId) {
+        return boostQueries(siteId, System.currentTimeMillis());
     }
 
-    /** {@link #boostQueries(TurSNSite)} as of {@code nowMs}. */
-    public List<Query> boostQueries(TurSNSite turSNSite, long nowMs) {
-        List<TurSERankingExpression> expressions = siteSearchConfig.rankingExpressions(turSNSite.getId());
+    /** {@link #boostQueries(String)} as of {@code nowMs}. */
+    public List<Query> boostQueries(String siteId, long nowMs) {
+        List<TurSERankingExpression> expressions = siteSearchConfig.rankingExpressions(siteId);
         if (expressions == null || expressions.isEmpty()) {
             return List.of();
         }
-        Map<String, TurSEFieldType> fieldTypes = siteSearchConfig.fieldTypes(turSNSite.getId());
+        Map<String, TurSEFieldType> fieldTypes = siteSearchConfig.fieldTypes(siteId);
         // Solr's NOW/DAY: the start of the current UTC day.
         Instant origin = Instant.ofEpochMilli(nowMs).truncatedTo(ChronoUnit.DAYS);
         List<Query> boosts = new ArrayList<>();

@@ -398,7 +398,7 @@ public class TurElasticsearch {
         List<Query> filters = new ArrayList<>();
         TurElasticsearchFilterQueries.build(turSNSite, turSEParameters.getTurSNFilterParams(),
                 enabledFieldsByName(turSNSite),
-                (facet, label) -> customFacets.resolveFilter(turSNSite, facet, label),
+                (facet, label) -> customFacets.resolveFilter(turSNSite.getId(), facet, label),
                 Instant.now())
                 .ifPresent(filters::add);
         List<String> restrictIds = turSEParameters.getRestrictIds();
@@ -461,7 +461,7 @@ public class TurElasticsearch {
      * raise the score of matching documents and never change which match.
      */
     Query withRankingExpressions(TurSNSite turSNSite, Query text) {
-        List<Query> boosts = rankingExpressions == null ? List.of() : rankingExpressions.boostQueries(turSNSite);
+        List<Query> boosts = rankingExpressions == null ? List.of() : rankingExpressions.boostQueries(turSNSite.getId());
         if (boosts.isEmpty()) {
             return text;
         }
@@ -506,7 +506,7 @@ public class TurElasticsearch {
         if (customFacets == null || !TurSEFlags.isTrue(turSNSite.getFacet())) {
             return List.of();
         }
-        return customFacets.facets(turSNSite, locale).stream()
+        return customFacets.facets(turSNSite.getId(), locale).stream()
                 .filter(facet -> onlyFacet == null || onlyFacet.equals(facet.name()))
                 .toList();
     }

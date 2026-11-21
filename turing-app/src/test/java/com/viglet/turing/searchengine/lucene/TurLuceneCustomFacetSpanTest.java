@@ -139,7 +139,7 @@ class TurLuceneCustomFacetSpanTest {
     @Test
     void countsASpanUnderEveryItemItOverlapsAndPastAsEnded() {
         Map<String, TurSEFacetResultAttr> items = customFacets
-                .count(searcher, MatchAllDocsQuery.INSTANCE, site, null, null)
+                .count(searcher, MatchAllDocsQuery.INSTANCE, site.getId(), null, null)
                 .getFirst().getTurSEFacetResultAttr();
 
         assertEquals(2, items.get("Next 7 days").getCount());
