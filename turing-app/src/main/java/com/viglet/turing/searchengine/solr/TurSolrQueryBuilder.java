@@ -97,7 +97,7 @@ import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 import com.viglet.turing.sn.facet.TurSNFacetTypes;
 import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.sn.tr.TurSNTargetingRuleMethod;
-import com.viglet.turing.sn.TurSNQueryRelaxer;
+import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 

@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn;
+package com.viglet.turing.searchengine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

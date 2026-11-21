@@ -661,7 +661,7 @@ public class TurSNNLFilterService {
         if (!StringUtils.hasText(locale)) {
             return org.apache.lucene.analysis.CharArraySet.EMPTY_SET;
         }
-        return com.viglet.turing.sn.TurSNQueryRelaxer.stopWords(Locale.forLanguageTag(locale.replace('_', '-')));
+        return com.viglet.turing.searchengine.TurSNQueryRelaxer.stopWords(Locale.forLanguageTag(locale.replace('_', '-')));
     }
 
     // ── Source words and the leftover query ─────────────────────────────────

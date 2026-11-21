@@ -33,7 +33,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.TurSNQueryRelaxer;
+import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 
 /**
  * T1242 — a query's stop words are dropped in the core's language, so

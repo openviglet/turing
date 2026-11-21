@@ -120,7 +120,7 @@ public class TurLuceneFoldingAnalyzer extends Analyzer {
 
     /** T1242 — the stop words of {@code locale}'s language: the Snowball lists the query relaxer uses. */
     public static CharArraySet stopWordsFor(Locale locale) {
-        return com.viglet.turing.sn.TurSNQueryRelaxer.stopWords(locale);
+        return com.viglet.turing.searchengine.TurSNQueryRelaxer.stopWords(locale);
     }
 
     /** T1194 — decomposed (NFD) accents recomposed before tokenizing, index and query side alike. */

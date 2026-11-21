@@ -17,7 +17,7 @@ import java.util.Set;
 import org.apache.lucene.analysis.CharArraySet;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.sn.TurSNQueryRelaxer;
+import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 
 /**
  * T1300 — a short name a visitor says grounds to the one facet value that holds all

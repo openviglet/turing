@@ -556,7 +556,7 @@ public class TurLuceneQueryBuilder {
         // nothing; so does a quoted phrase, which asks for its words as typed (and a
         // dropped word would leave a hole the synonym graph cannot carry).
         boolean keepStopWords = queryStr.indexOf('"') >= 0
-                || com.viglet.turing.sn.TurSNQueryRelaxer.onlyStopWords(queryStr, locale);
+                || com.viglet.turing.searchengine.TurSNQueryRelaxer.onlyStopWords(queryStr, locale);
         Analyzer analyzer = synonyms ? queryAnalyzer(turSNSite, locale, keepStopWords)
                 : TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords);
         try {
@@ -624,7 +624,7 @@ public class TurLuceneQueryBuilder {
      * the engine's syntax, or a title field that holds no positions.
      */
     private Optional<Query> titlePhraseBoost(String queryStr, TurSNSite turSNSite, Locale locale) {
-        if (!com.viglet.turing.sn.TurSNQueryRelaxer.isPlainPhrase(queryStr)) {
+        if (!com.viglet.turing.searchengine.TurSNQueryRelaxer.isPlainPhrase(queryStr)) {
             return Optional.empty();
         }
         String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())

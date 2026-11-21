@@ -39,7 +39,7 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.TurSNQueryRelaxer;
+import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
