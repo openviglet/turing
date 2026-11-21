@@ -34,9 +34,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -51,20 +50,17 @@ public class TurSolrInstanceProcess {
 
     private final com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints;
     private final ConcurrentHashMap<String, SolrClient> clientCache = new ConcurrentHashMap<>();
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
-    private final TurSNSites turSNSiteRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSolrInstanceSource solrInstanceSource;
 
     public TurSolrInstanceProcess(
-            TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSites turSNSiteRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurSolrInstanceSource solrInstanceSource,
             com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
         this.seInstanceEndpoints = seInstanceEndpoints;
         System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection");
         System.setProperty("jdk.httpclient.HttpClient.version", "HTTP_1_1");
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
-        this.turSNSiteRepository = turSNSiteRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.solrInstanceSource = solrInstanceSource;
     }
 
@@ -105,18 +101,10 @@ public class TurSolrInstanceProcess {
     }
 
     public Optional<TurSolrInstance> initSolrInstance(String siteName, Locale locale) {
-        return turSNSiteRepository.findByNameIgnoreCase(siteName).flatMap(turSNSite -> this.initSolrInstance(turSNSite, locale));
-
-    }
-
-    private Optional<TurSolrInstance> initSolrInstance(TurSNSite turSNSite, Locale locale) {
-        TurSNSiteLocale turSNSiteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, locale);
-        if (turSNSiteLocale != null) {
-            return this.initSolrInstance(turSNSiteLocale);
-        } else {
-            log.warn("{} site with {} locale not found", turSNSite.getName(), locale);
-            return Optional.empty();
-        }
+        // T1310 - the site's SE instance and core come through the site search SPI.
+        return siteSearchConfig.siteCore(siteName, locale).flatMap(siteCore -> clientFor(
+                resolveEndpoint(TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints, siteCore.seInstanceId())),
+                siteCore.core()));
     }
 
     public Optional<TurSolrInstance> initSolrInstance(TurSEInstance turSEInstance, String core) {

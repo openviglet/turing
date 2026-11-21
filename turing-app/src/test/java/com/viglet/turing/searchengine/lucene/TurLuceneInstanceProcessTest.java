@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * Tests for TurLuceneInstanceProcess.
@@ -36,10 +36,7 @@ class TurLuceneInstanceProcessTest {
             new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
 
     @Mock
-    private TurSNSites turSNSiteRepository;
-
-    @Mock
-    private TurSNSiteLocales turSNSiteLocaleRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     @TempDir
     Path tempDir;
@@ -48,7 +45,7 @@ class TurLuceneInstanceProcessTest {
 
     @BeforeEach
     void setUp() {
-        process = new TurLuceneInstanceProcess(turSNSiteRepository, turSNSiteLocaleRepository, null, seInstances.endpoints());
+        process = new TurLuceneInstanceProcess(siteSearchConfig, null, seInstances.endpoints());
     }
 
     @AfterEach
@@ -99,7 +96,7 @@ class TurLuceneInstanceProcessTest {
 
     @Test
     void initLuceneInstanceByNameShouldReturnEmptyWhenSiteNotFound() {
-        when(turSNSiteRepository.findByNameIgnoreCase("missing")).thenReturn(Optional.empty());
+        when(siteSearchConfig.siteCore("missing", Locale.ENGLISH)).thenReturn(Optional.empty());
 
         Optional<TurLuceneInstance> result = process.initLuceneInstance("missing", Locale.ENGLISH);
 
@@ -107,11 +104,9 @@ class TurLuceneInstanceProcessTest {
     }
 
     @Test
-    void initLuceneInstanceByNameShouldReturnEmptyWhenLocaleNotFound() {
-        TurSNSite site = new TurSNSite();
-        site.setName("MySite");
-        when(turSNSiteRepository.findByNameIgnoreCase("MySite")).thenReturn(Optional.of(site));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(null);
+    void initLuceneInstanceByNameShouldReturnEmptyWhenTheSiteHasNoSEInstance() {
+        when(siteSearchConfig.siteCore("MySite", Locale.ENGLISH))
+                .thenReturn(Optional.of(new TurSESiteCore("MySite", null, "en-core")));
 
         Optional<TurLuceneInstance> result = process.initLuceneInstance("MySite", Locale.ENGLISH);
 
@@ -127,12 +122,8 @@ class TurLuceneInstanceProcessTest {
         site.setName("MySite");
         seInstances.attach(site, seInstance);
 
-        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        siteLocale.setCore("en-core");
-        siteLocale.setTurSNSite(site);
-
-        when(turSNSiteRepository.findByNameIgnoreCase("MySite")).thenReturn(Optional.of(site));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(siteLocale);
+        when(siteSearchConfig.siteCore("MySite", Locale.ENGLISH))
+                .thenReturn(Optional.of(new TurSESiteCore("MySite", site.getTurSEInstanceId(), "en-core")));
 
         Optional<TurLuceneInstance> result = process.initLuceneInstance("MySite", Locale.ENGLISH);
 

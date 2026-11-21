@@ -56,10 +56,19 @@ public class TurSEInstanceEndpoints {
      * through {@code this} would bypass the cache proxy.
      */
     public static String ofSite(TurSEInstanceEndpoints endpoints, TurSNSite site) {
-        if (site == null || site.getTurSEInstanceId() == null) {
+        return site == null ? null : ofInstance(endpoints, site.getTurSEInstanceId());
+    }
+
+    /**
+     * The endpoint of SE instance {@code seInstanceId}, or {@code null} when the id
+     * is null or the instance has none; static for the same reason as
+     * {@link #ofSite}.
+     */
+    public static String ofInstance(TurSEInstanceEndpoints endpoints, String seInstanceId) {
+        if (seInstanceId == null) {
             return null;
         }
-        String endpoint = endpoints.of(site.getTurSEInstanceId());
+        String endpoint = endpoints.of(seInstanceId);
         return endpoint == null || endpoint.isBlank() ? null : endpoint;
     }
 }

@@ -16,6 +16,7 @@
 package com.viglet.turing.searchengine.spi;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -58,4 +59,16 @@ public interface TurSESiteSearchConfig {
      * fields share a name, the last one read wins. Empty for a {@code null} id.
      */
     Map<String, TurSEIndexField> indexFields(String siteId);
+
+    /**
+     * The SE instance and core of the site called {@code siteName} (ignoring case)
+     * in {@code locale}; empty when there is no such site or it has no such locale.
+     */
+    Optional<TurSESiteCore> siteCore(String siteName, Locale locale);
+
+    /**
+     * The language of the first site locale whose core is {@code core} and names a
+     * language; empty when none does.
+     */
+    Optional<Locale> coreLanguage(String core);
 }

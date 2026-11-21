@@ -47,10 +47,14 @@ class TurSNSiteSearchConfigProviderTest {
     private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository fieldExtRepository;
     @Mock
     private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository fieldRepository;
+    @Mock
+    private com.viglet.turing.sn.api.TurSNSites siteRepository;
+    @Mock
+    private com.viglet.turing.sn.api.TurSNSiteLocales siteLocaleRepository;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
-                fieldExtRepository, fieldRepository);
+                fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -157,4 +161,45 @@ class TurSNSiteSearchConfigProviderTest {
     void aSiteWithoutAnIdHasNoIndexFields() {
         assertThat(provider().indexFields(null)).isEmpty();
         verifyNoInteractions(fieldRepository);
+    }
+
+    @Test
+    void aSitesCoreNamesItsSEInstanceAndTheLocalesCore() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        site.setName("Docs");
+        site.setTurSEInstanceId("se-1");
+        com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale siteLocale =
+                new com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale();
+        siteLocale.setCore("docs_en");
+        when(siteRepository.findByNameIgnoreCase("docs")).thenReturn(Optional.of(site));
+        when(siteLocaleRepository.findByTurSNSiteAndLanguage(site, java.util.Locale.US)).thenReturn(siteLocale);
+
+        assertThat(provider().siteCore("docs", java.util.Locale.US)).contains(
+                new com.viglet.turing.searchengine.spi.TurSESiteCore("Docs", "se-1", "docs_en"));
+    }
+
+    @Test
+    void aSiteWithoutTheLocaleOrUnknownHasNoCore() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        site.setName("Docs");
+        when(siteRepository.findByNameIgnoreCase("docs")).thenReturn(Optional.of(site));
+        when(siteLocaleRepository.findByTurSNSiteAndLanguage(site, java.util.Locale.FRENCH)).thenReturn(null);
+        when(siteRepository.findByNameIgnoreCase("missing")).thenReturn(Optional.empty());
+
+        assertThat(provider().siteCore("docs", java.util.Locale.FRENCH)).isEmpty();
+        assertThat(provider().siteCore("missing", java.util.Locale.US)).isEmpty();
+        assertThat(provider().siteCore(null, java.util.Locale.US)).isEmpty();
+    }
+
+    @Test
+    void aCoresLanguageIsTheFirstLocaleThatNamesOne() {
+        com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale unnamed =
+                new com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale();
+        com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale english =
+                new com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale();
+        english.setLanguage(java.util.Locale.US);
+        when(siteLocaleRepository.findByCore("docs_en")).thenReturn(List.of(unnamed, english));
+
+        assertThat(provider().coreLanguage("docs_en")).contains(java.util.Locale.US);
+        assertThat(provider().coreLanguage(null)).isEmpty();
     }}

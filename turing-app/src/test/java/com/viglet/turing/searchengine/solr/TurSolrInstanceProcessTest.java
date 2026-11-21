@@ -38,9 +38,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.properties.TurSolrProperty;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
@@ -55,10 +54,7 @@ import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 class TurSolrInstanceProcessTest {
 
     @Mock
-    private TurSNSiteLocales turSNSiteLocaleRepository;
-
-    @Mock
-    private TurSNSites turSNSiteRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     @Mock
     private TurSolrCache turSolrCache;
@@ -81,8 +77,7 @@ class TurSolrInstanceProcessTest {
         lenient().when(solrInstanceSource.isReadOnly()).thenReturn(false);
 
         turSolrInstanceProcess = new TurSolrInstanceProcess(
-                turSNSiteLocaleRepository,
-                turSNSiteRepository,
+                siteSearchConfig,
                 solrInstanceSource, new com.viglet.turing.searchengine.InMemorySNSiteSEInstances().endpoints());
     }
 
@@ -93,42 +88,37 @@ class TurSolrInstanceProcessTest {
 
     @Test
     void testInitSolrInstanceBySiteNameNotFound() {
-        when(turSNSiteRepository.findByNameIgnoreCase("nonexistent")).thenReturn(Optional.empty());
+        when(siteSearchConfig.siteCore("nonexistent", Locale.ENGLISH)).thenReturn(Optional.empty());
 
         Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance("nonexistent", Locale.ENGLISH);
 
         assertThat(result).isEmpty();
-        verify(turSNSiteRepository).findByNameIgnoreCase("nonexistent");
+        verify(siteSearchConfig).siteCore("nonexistent", Locale.ENGLISH);
     }
 
     @Test
-    void testInitSolrInstanceBySiteNameLocaleNotFound() {
-        TurSNSite turSNSite = mock(TurSNSite.class);
-        when(turSNSite.getName()).thenReturn("testSite");
-        when(turSNSiteRepository.findByNameIgnoreCase("testSite")).thenReturn(Optional.of(turSNSite));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH)).thenReturn(null);
+    void testInitSolrInstanceBySiteWithoutAnSEInstanceIsEmpty() {
+        when(siteSearchConfig.siteCore("testSite", Locale.ENGLISH))
+                .thenReturn(Optional.of(new TurSESiteCore("testSite", null, "en_core")));
 
-        Optional<TurSolrInstance> result = turSolrInstanceProcess.initSolrInstance("testSite", Locale.ENGLISH);
-
-        assertThat(result).isEmpty();
-        verify(turSNSiteRepository).findByNameIgnoreCase("testSite");
-        verify(turSNSiteLocaleRepository).findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH);
+        assertThat(turSolrInstanceProcess.initSolrInstance("testSite", Locale.ENGLISH)).isEmpty();
     }
 
     @Test
-    void testMultipleCallsWithDifferentLocales() {
-        TurSNSite turSNSite = mock(TurSNSite.class);
-        when(turSNSiteRepository.findByNameIgnoreCase("multiLocaleSite")).thenReturn(Optional.of(turSNSite));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(any(TurSNSite.class), any(Locale.class)))
-                .thenReturn(null);
+    void testInitSolrInstanceBySiteNameOpensTheSitesCore() throws Exception {
+        var seInstances = new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
+        var seInstance = new com.viglet.turing.searchengine.persistence.model.TurSEInstance();
+        seInstance.setEndpointUrl("http://localhost:8983/solr");
+        seInstances.attach(new com.viglet.turing.sn.persistence.model.TurSNSite(), seInstance);
+        TurSolrInstanceProcess process = new TurSolrInstanceProcess(siteSearchConfig, solrInstanceSource,
+                seInstances.endpoints());
+        when(siteSearchConfig.siteCore("testSite", Locale.ENGLISH))
+                .thenReturn(Optional.of(new TurSESiteCore("testSite", seInstance.getId(), "en_core")));
 
-        turSolrInstanceProcess.initSolrInstance("multiLocaleSite", Locale.ENGLISH);
-        turSolrInstanceProcess.initSolrInstance("multiLocaleSite", Locale.FRENCH);
-        turSolrInstanceProcess.initSolrInstance("multiLocaleSite", Locale.GERMAN);
+        Optional<TurSolrInstance> result = process.initSolrInstance("testSite", Locale.ENGLISH);
 
-        verify(turSNSiteRepository, times(3)).findByNameIgnoreCase("multiLocaleSite");
-        verify(turSNSiteLocaleRepository).findByTurSNSiteAndLanguage(turSNSite, Locale.ENGLISH);
-        verify(turSNSiteLocaleRepository).findByTurSNSiteAndLanguage(turSNSite, Locale.FRENCH);
-        verify(turSNSiteLocaleRepository).findByTurSNSiteAndLanguage(turSNSite, Locale.GERMAN);
+        assertThat(result).isPresent();
+        assertThat(result.get().getCore()).isEqualTo("en_core");
+        process.shutdown();
     }
 }

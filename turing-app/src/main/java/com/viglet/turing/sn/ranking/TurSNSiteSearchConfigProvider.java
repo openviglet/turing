@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,6 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+
+import lombok.extern.slf4j.Slf4j;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
@@ -48,6 +55,7 @@ import com.viglet.turing.spring.utils.TurPersistenceUtils;
  * @author Alexandre Oliveira
  * @since 2026.3.8
  */
+@Slf4j
 @Component
 @Transactional(readOnly = true)
 public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
@@ -57,14 +65,20 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNSiteCustomSortRepository customSortRepository;
     private final TurSNSiteFieldExtRepository fieldExtRepository;
     private final TurSNSiteFieldRepository fieldRepository;
+    private final TurSNSites siteRepository;
+    private final TurSNSiteLocales siteLocaleRepository;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
             TurSNSiteCustomSortRepository customSortRepository,
             TurSNSiteFieldExtRepository fieldExtRepository,
-            TurSNSiteFieldRepository fieldRepository) {
+            TurSNSiteFieldRepository fieldRepository,
+            TurSNSites siteRepository,
+            TurSNSiteLocales siteLocaleRepository) {
         this.fieldExtRepository = fieldExtRepository;
         this.fieldRepository = fieldRepository;
+        this.siteRepository = siteRepository;
+        this.siteLocaleRepository = siteLocaleRepository;
         this.expressionRepository = expressionRepository;
         this.conditionRepository = conditionRepository;
         this.customSortRepository = customSortRepository;
@@ -125,6 +139,32 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .forEach(field -> fields.put(field.getName(), new TurSEIndexField(field.getName(),
                         field.getType(), field.getMultiValued() == 1)));
         return fields;
+    }
+
+    @Override
+    public Optional<TurSESiteCore> siteCore(String siteName, Locale locale) {
+        if (siteName == null) {
+            return Optional.empty();
+        }
+        return siteRepository.findByNameIgnoreCase(siteName).flatMap(site -> {
+            TurSNSiteLocale siteLocale = siteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
+            if (siteLocale == null) {
+                log.warn("{} site with {} locale not found", site.getName(), locale);
+                return Optional.empty();
+            }
+            return Optional.of(new TurSESiteCore(site.getName(), site.getTurSEInstanceId(), siteLocale.getCore()));
+        });
+    }
+
+    @Override
+    public Optional<Locale> coreLanguage(String core) {
+        if (core == null) {
+            return Optional.empty();
+        }
+        return siteLocaleRepository.findByCore(core).stream()
+                .map(TurSNSiteLocale::getLanguage)
+                .filter(java.util.Objects::nonNull)
+                .findFirst();
     }
 
     static TurSERankingCondition toCondition(TurSNRankingCondition condition) {

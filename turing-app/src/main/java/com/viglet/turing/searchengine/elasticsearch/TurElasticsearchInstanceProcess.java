@@ -23,10 +23,8 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -51,16 +49,13 @@ public class TurElasticsearchInstanceProcess {
 
     private final ConcurrentHashMap<String, TurElasticsearchInstance> instanceCache =
             new ConcurrentHashMap<>();
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
-    private final TurSNSites turSNSiteRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
 
     public TurElasticsearchInstanceProcess(
-            TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSites turSNSiteRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
         this.seInstanceEndpoints = seInstanceEndpoints;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
-        this.turSNSiteRepository = turSNSiteRepository;
+        this.siteSearchConfig = siteSearchConfig;
     }
 
     // -------------------------------------------------------------------------
@@ -68,8 +63,12 @@ public class TurElasticsearchInstanceProcess {
     // -------------------------------------------------------------------------
 
     public Optional<TurElasticsearchInstance> initElasticsearchInstance(String siteName, Locale locale) {
-        return turSNSiteRepository.findByNameIgnoreCase(siteName)
-                .flatMap(site -> initElasticsearchInstance(site, locale));
+        // T1310 - the site's SE instance and core come through the site search SPI.
+        log.debug("initElasticsearchInstance site={} locale={}", siteName, locale);
+        return siteSearchConfig.siteCore(siteName, locale).flatMap(siteCore -> instanceFor(
+                com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
+                        siteCore.seInstanceId()),
+                siteCore.core()));
     }
 
     public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSEInstance turSEInstance,
@@ -86,19 +85,6 @@ public class TurElasticsearchInstanceProcess {
     // -------------------------------------------------------------------------
     // Internal
     // -------------------------------------------------------------------------
-
-    private Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSNSite turSNSite,
-            Locale locale) {
-        log.debug("initElasticsearchInstance site={} locale={}", turSNSite.getName(), locale);
-        TurSNSiteLocale turSNSiteLocale =
-                turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, locale);
-        if (turSNSiteLocale == null) {
-            log.warn("{} site with {} locale not found", turSNSite.getName(), locale);
-            return Optional.empty();
-        }
-        log.debug("Found locale core={}", turSNSiteLocale.getCore());
-        return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite), turSNSiteLocale.getCore());
-    }
 
     private Optional<TurElasticsearchInstance> getElasticsearchInstance(TurSEInstance turSEInstance,
             String index) {

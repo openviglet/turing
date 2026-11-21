@@ -19,8 +19,7 @@ package com.viglet.turing.searchengine.lucene;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.facet.FacetsConfig;
@@ -52,17 +51,14 @@ public class TurLuceneInstanceProcess {
     private final com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints;
 
     private final ConcurrentHashMap<String, TurLuceneInstance> instanceCache = new ConcurrentHashMap<>();
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurLuceneStorageSync storageSync;
 
-    public TurLuceneInstanceProcess(TurSNSites turSNSiteRepository,
-            TurSNSiteLocales turSNSiteLocaleRepository,
+    public TurLuceneInstanceProcess(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneStorageSync storageSync,
             com.viglet.turing.searchengine.TurSEInstanceEndpoints seInstanceEndpoints) {
         this.seInstanceEndpoints = seInstanceEndpoints;
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.storageSync = storageSync;
     }
 
@@ -70,17 +66,10 @@ public class TurLuceneInstanceProcess {
      * Initialises (or returns a cached) Lucene instance for the given site + locale.
      */
     public Optional<TurLuceneInstance> initLuceneInstance(String siteName, Locale locale) {
-        return turSNSiteRepository.findByNameIgnoreCase(siteName)
-                .flatMap(site -> initLuceneInstance(site, locale));
-    }
-
-    private Optional<TurLuceneInstance> initLuceneInstance(TurSNSite turSNSite, Locale locale) {
-        TurSNSiteLocale siteLocale = turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(turSNSite, locale);
-        if (siteLocale == null) {
-            log.warn("{} site with {} locale not found", turSNSite.getName(), locale);
-            return Optional.empty();
-        }
-        return resolveEndpoint(turSNSite).flatMap(endpoint -> instanceFor(endpoint, siteLocale.getCore()));
+        // T1310 - the site's SE instance and core come through the site search SPI.
+        return siteSearchConfig.siteCore(siteName, locale)
+                .flatMap(siteCore -> resolveEndpoint(siteCore.siteName(), siteCore.seInstanceId())
+                        .flatMap(endpoint -> instanceFor(endpoint, siteCore.core())));
     }
 
     /**
@@ -104,10 +93,14 @@ public class TurLuceneInstanceProcess {
         if (turSNSite == null) {
             return Optional.empty();
         }
+        return resolveEndpoint(turSNSite.getName(), turSNSite.getTurSEInstanceId());
+    }
+
+    private Optional<String> resolveEndpoint(String siteName, String seInstanceId) {
         Optional<String> resolved = Optional.ofNullable(
-                com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite));
+                com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints, seInstanceId));
         if (resolved.isEmpty()) {
-            log.warn("No Lucene endpoint for site '{}'", turSNSite.getName());
+            log.warn("No Lucene endpoint for site '{}'", siteName);
         }
         return resolved;
     }
@@ -195,11 +188,7 @@ public class TurLuceneInstanceProcess {
      * locale names the core.
      */
     private Locale coreLocale(String coreName) {
-        return turSNSiteLocaleRepository.findByCore(coreName).stream()
-                .map(TurSNSiteLocale::getLanguage)
-                .filter(java.util.Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        return siteSearchConfig.coreLanguage(coreName).orElse(null);
     }
 
     /** Evicts a cached instance (e.g. after a core is deleted). */
