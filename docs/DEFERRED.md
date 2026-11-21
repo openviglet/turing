@@ -34,3 +34,4 @@
 
 - ⏸ **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — set aside (Needs a choice: config SPI or SN query building moved into sn.): The engines still import sn 156 times to read site configuration. → §CLXXXIX.6
 - ⏸ **T1322** (deps: T1308 ✅, T1310 ✅, T1311 ✅, T1315 ✅) **No package declares what it exposes, so any class is reachable from any module** — set aside (Needs ADR 0005 rulings on the crossings the design section measures.): Package-info declarations should encode the ADR 0005 module map. → §CLXXXIX.18
+- ⏸ **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — set aside (Needs rulings on superclass scope and JSON field names.): Aggregates are versioned; the hand-rolled date fields still await one superclass. → §CLXXXIX.15

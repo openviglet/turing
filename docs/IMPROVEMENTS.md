@@ -2523,12 +2523,24 @@ Option 1 is the smaller step from today's code and keeps one owner per engine.
 
 ### CLXXXIX.15 Audit columns and optimistic locking (T1319)
 
-Two admins saving the same agent or SN site today overwrite each other silently, because
-no entity carries @Version. Dates are recorded ad hoc in about 20 entities and through
-Spring Data auditing in one. A TurBaseEntity mapped superclass carries the id,
-createdAt, modifiedAt, createdBy, modifiedBy and version; entities extend it, the
-console turns an OptimisticLockException into a 409 that says the record changed, and
-the domain records keep the version so a save sends it back.
+Two admins saving the same agent or SN site used to overwrite each other silently,
+because no entity carried @Version. Since T1319a-f every console-edited aggregate has a
+version, the console sends the one it last read, and a save from an older one gets a 409
+through TurStaleVersion.
+
+What is left is the dates. TurAuditable (spring.security) is already a mapped superclass
+with Spring Data auditing (createdBy, creationDate, lastModifiedBy, lastModifiedDate as
+Instant), used by TurSNSite, TurSNRankingExpression, TurSNRankingCondition and
+TurDevToken. Measured on 2026-11-21, about 30 other entities record dates by hand under
+four spellings: createdAt and updatedAt as LocalDateTime (agent, eval, chat, rag rows)
+or Instant (batch, tenant, feedback rows), and creationDate and modificationDate
+(thesaurus, gateway key, persona projects, SN spotlight and synonym). Many are
+append-only event rows, not aggregates.
+
+Two rulings are needed before the move. Which entities extend TurAuditable: the
+console-edited aggregates only, or every row with a date. And how their JSON keeps
+today's names, since ADR 0005 holds REST response shapes: per-entity @JsonProperty on
+the inherited getters, or a DTO in front of each entity that is returned directly today.
 
 ### CLXXXIX.17 The Liquibase reset (T1321)
 
