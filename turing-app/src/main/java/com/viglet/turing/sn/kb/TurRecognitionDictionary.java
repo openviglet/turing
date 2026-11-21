@@ -32,7 +32,7 @@ import java.util.Map;
  * original text.
  *
  * <p>Build it with the {@link Builder}; the compiled instance is cached per
- * (site, locale) by {@link TurMicrothesaurusDictionaryService} and is safe to
+ * (site, locale) by {@link TurSNRecognitionDictionaries} and is safe to
  * share (read-only).
  *
  * @author Alexandre Oliveira

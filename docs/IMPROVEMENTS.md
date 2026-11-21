@@ -2636,14 +2636,6 @@ module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi'
 reference is an id column. REST paths stay. Done when sn imports no agent, rag, chat,
 persona, answer or eval type.
 
-### CLXXXIX.41 kb moves above sn (T1322i)
-
-sn imports kb 20 times (sn.kb: the microthesaurus dictionary, related terms and the
-microthesaurus indexer) and kb imports sn 10 (TurSNSite, the field provisioner). ADR
-0005 section 6 places kb above sn: sn.kb and TurSNSiteRelatedTermsAPI move into kb, and
-query expansion at search time reaches the dictionary through an SPI sn declares and kb
-implements. Done when sn imports no kb type.
-
 ### CLXXXIX.42 The MCP client moves into llm (T1322j)
 
 agent imports mcp 11 times for the MCP client (TurMcpServer, its repository and domain

@@ -81,7 +81,7 @@ public class TurSNProcessQueue {
     private final TurSNHybridRankingService turSNHybridRankingService;
     private final TurSNContentFitIndexer turSNContentFitIndexer;
     private final TurSNGeminiMediaIndexer turSNGeminiMediaIndexer;
-    private final com.viglet.turing.sn.kb.TurSNMicrothesaurusIndexer turSNMicrothesaurusIndexer;
+    private final com.viglet.turing.sn.kb.TurSNThesaurusEnrichment turSNMicrothesaurusIndexer;
     /** T1228 — the people, organisations and places a document names, by the site's LLM. */
     private final com.viglet.turing.sn.entity.TurSNEntityIndexer turSNEntityIndexer;
     private final com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer;
@@ -101,7 +101,7 @@ public class TurSNProcessQueue {
             TurSNHybridRankingService turSNHybridRankingService,
             TurSNContentFitIndexer turSNContentFitIndexer,
             TurSNGeminiMediaIndexer turSNGeminiMediaIndexer,
-            com.viglet.turing.sn.kb.TurSNMicrothesaurusIndexer turSNMicrothesaurusIndexer,
+            com.viglet.turing.sn.kb.TurSNThesaurusEnrichment turSNMicrothesaurusIndexer,
             com.viglet.turing.sn.entity.TurSNEntityIndexer turSNEntityIndexer,
             com.viglet.turing.sn.checksum.TurSNChecksumIndexer turSNChecksumIndexer,
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,

@@ -28,7 +28,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.sn.kb.TurSNRecognitionDictionaries;
 import com.viglet.turing.sn.kb.TurRecognitionDictionary;
 import com.viglet.turing.sn.kb.TurRecognizedTerm;
 import com.viglet.turing.sn.kb.TurTextNormalizer;
@@ -52,7 +52,7 @@ class TurSNEntityIndexerTest {
     private final TurAIAgentRepository agentRepository = mock(TurAIAgentRepository.class);
     private final TurDefaultAgentResolver agentResolver = mock(TurDefaultAgentResolver.class);
     private final TurSNEntityExtractor extractor = mock(TurSNEntityExtractor.class);
-    private final TurMicrothesaurusDictionaryService dictionaryService = mock(TurMicrothesaurusDictionaryService.class);
+    private final TurSNRecognitionDictionaries dictionaryService = mock(TurSNRecognitionDictionaries.class);
     private final TurSNFieldProvisioner provisioner = mock(TurSNFieldProvisioner.class);
     private final TurSNEntityIndexer indexer = new TurSNEntityIndexer(genAiRepository, agentRepository,
             agentResolver, extractor, dictionaryService, provisioner, agentLlms.service());

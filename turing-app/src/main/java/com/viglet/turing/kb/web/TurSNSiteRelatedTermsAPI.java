@@ -14,7 +14,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.sn.web.search;
+package com.viglet.turing.kb.web;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.kb.persistence.dto.TurRelatedTermSuggestionDto;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
-import com.viglet.turing.sn.kb.TurRelatedTermService;
+import com.viglet.turing.kb.recognition.TurRelatedTermService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

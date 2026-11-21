@@ -14,7 +14,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.sn.kb;
+package com.viglet.turing.kb.recognition;
+
+import com.viglet.turing.sn.kb.TurRecognitionDictionary;
+import com.viglet.turing.sn.kb.TurSNRecognitionDictionaries;
+import com.viglet.turing.sn.kb.TurRecognizedTerm;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,7 +66,7 @@ import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
  * @since 2026.3.4
  */
 @Service
-public class TurMicrothesaurusDictionaryService {
+public class TurMicrothesaurusDictionaryService implements TurSNRecognitionDictionaries {
 
     /** Guards against a corrupt cyclic parent chain when walking ancestors. */
     private static final int MAX_DEPTH = 64;
@@ -86,6 +90,7 @@ public class TurMicrothesaurusDictionaryService {
     }
 
     /** Returns the compiled dictionary for (site, locale), building it on a miss. */
+    @Override
     @Transactional(readOnly = true)
     public TurRecognitionDictionary getDictionary(TurSNSite site, Locale locale) {
         return cache.computeIfAbsent(cacheKey(site, locale), k -> compile(site, locale));

@@ -51,7 +51,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.sn.kb.TurSNRecognitionDictionaries;
 import com.viglet.turing.sn.kb.TurRecognitionDictionary;
 import com.viglet.turing.sn.kb.TurRecognizedTerm;
 import com.viglet.turing.sn.kb.TurTextNormalizer;
@@ -104,7 +104,7 @@ public class TurSNEntityIndexer {
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurDefaultAgentResolver defaultAgentResolver;
     private final TurSNEntityExtractor extractor;
-    private final TurMicrothesaurusDictionaryService dictionaryService;
+    private final TurSNRecognitionDictionaries dictionaryService;
     private final TurSNFieldProvisioner fieldProvisioner;
     private final Map<String, TurSNEntities> cache = Collections.synchronizedMap(
             new LinkedHashMap<>(256, 0.75f, true) {
@@ -116,7 +116,7 @@ public class TurSNEntityIndexer {
 
     public TurSNEntityIndexer(TurSNSiteGenAiRepository turSNSiteGenAiRepository,
             TurAIAgentRepository turAIAgentRepository, TurDefaultAgentResolver defaultAgentResolver,
-            TurSNEntityExtractor extractor, TurMicrothesaurusDictionaryService dictionaryService,
+            TurSNEntityExtractor extractor, TurSNRecognitionDictionaries dictionaryService,
             TurSNFieldProvisioner fieldProvisioner,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
         this.agentLlmInstances = agentLlmInstances;

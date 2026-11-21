@@ -36,7 +36,7 @@ import com.viglet.turing.kb.persistence.model.TurThesaurusTerm;
 import com.viglet.turing.kb.persistence.model.TurThesaurusTermRelation;
 import com.viglet.turing.kb.persistence.model.TurThesaurusTermVariation;
 import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T669 / §XL (Block AQ) — CRUD over thesaurus terms, scoped to a

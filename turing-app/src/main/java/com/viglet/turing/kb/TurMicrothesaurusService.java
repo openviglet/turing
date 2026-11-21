@@ -28,7 +28,7 @@ import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
 import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
 import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
 import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusRepository;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T669 / §XL (Block AQ) — CRUD over microthesaurus trees, scoped to a

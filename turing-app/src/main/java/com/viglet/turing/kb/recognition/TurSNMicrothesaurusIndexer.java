@@ -14,7 +14,9 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.sn.kb;
+package com.viglet.turing.kb.recognition;
+
+import com.viglet.turing.sn.kb.TurRecognitionDictionary;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -33,6 +35,7 @@ import com.viglet.turing.kb.persistence.model.TurSNSiteMicrothesaurusConfig;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusConfigRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
+import com.viglet.turing.sn.kb.TurSNThesaurusEnrichment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +66,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TurSNMicrothesaurusIndexer {
+public class TurSNMicrothesaurusIndexer implements TurSNThesaurusEnrichment {
 
     private final TurSNSiteMicrothesaurusConfigRepository configRepository;
     private final TurMicrothesaurusDictionaryService dictionaryService;
@@ -73,6 +76,7 @@ public class TurSNMicrothesaurusIndexer {
      * Recognises controlled-vocabulary terms in the document and writes their
      * hierarchical paths to the configured field. No-op unless the site opted in.
      */
+    @Override
     public void enrich(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes) {
         if (turSNSite == null || attributes == null) {
             return;

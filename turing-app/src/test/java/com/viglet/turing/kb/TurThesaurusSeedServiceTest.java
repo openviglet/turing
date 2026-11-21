@@ -18,7 +18,7 @@ import com.viglet.turing.kb.persistence.dto.TurThesaurusSeedDto;
 import com.viglet.turing.kb.persistence.model.TurKnowledgeBase;
 import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
 import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T674 / §XL (Block AQ) — the seed library scans the bundled education

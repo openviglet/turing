@@ -23,7 +23,7 @@ import com.viglet.turing.kb.persistence.model.TurMicrothesaurus;
 import com.viglet.turing.kb.persistence.model.TurThesaurusRelationType;
 import com.viglet.turing.kb.persistence.model.TurThesaurusTerm;
 import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T669 / §XL (Block AQ) — unit tests for the thesaurus term CRUD service: label

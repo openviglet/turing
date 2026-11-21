@@ -37,7 +37,7 @@ import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
 import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusConfigRepository;
 import com.viglet.turing.kb.persistence.repository.TurSNSiteMicrothesaurusRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T670 / §XL (Block AQ) — per-site microthesaurus <em>selection</em> and

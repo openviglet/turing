@@ -45,7 +45,7 @@ import com.viglet.turing.kb.persistence.model.TurThesaurusTerm;
 import com.viglet.turing.kb.persistence.model.TurThesaurusTermRelation;
 import com.viglet.turing.kb.persistence.model.TurThesaurusTermVariation;
 import com.viglet.turing.kb.persistence.repository.TurMicrothesaurusRepository;
-import com.viglet.turing.sn.kb.TurMicrothesaurusDictionaryService;
+import com.viglet.turing.kb.recognition.TurMicrothesaurusDictionaryService;
 
 /**
  * T673 / §XL (Block AQ) — imports a <em>Turing Thesaurus Exchange</em>

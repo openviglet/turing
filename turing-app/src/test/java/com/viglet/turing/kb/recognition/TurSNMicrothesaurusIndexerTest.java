@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.kb;
+package com.viglet.turing.kb.recognition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

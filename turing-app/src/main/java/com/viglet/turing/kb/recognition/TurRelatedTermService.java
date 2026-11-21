@@ -14,7 +14,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.sn.kb;
+package com.viglet.turing.kb.recognition;
+
+import com.viglet.turing.sn.kb.TurRecognitionDictionary;
+import com.viglet.turing.sn.kb.TurRecognizedTerm;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
