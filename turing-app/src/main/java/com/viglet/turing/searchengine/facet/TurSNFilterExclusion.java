@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.facet;
+package com.viglet.turing.searchengine.facet;
 
 import java.util.ArrayList;
 import java.util.List;

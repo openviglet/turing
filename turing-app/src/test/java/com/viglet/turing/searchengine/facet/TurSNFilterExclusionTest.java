@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.facet;
+package com.viglet.turing.searchengine.facet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -37,7 +37,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
-import com.viglet.turing.sn.facet.TurSNFilterExclusion;
+import com.viglet.turing.searchengine.facet.TurSNFilterExclusion;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;

@@ -414,7 +414,7 @@ public class TurContentAiQueryBuilder {
             return Optional.empty();
         }
         // T1233 — Content AI has no exclusion filter: refuse rather than match nothing.
-        if (com.viglet.turing.sn.facet.TurSNFilterExclusion.isExclusion(fq)) {
+        if (com.viglet.turing.searchengine.facet.TurSNFilterExclusion.isExclusion(fq)) {
             throw new IllegalArgumentException("Content AI cannot exclude a value: '" + fq
                     + "' is a negative filter query, which this source does not support");
         }
