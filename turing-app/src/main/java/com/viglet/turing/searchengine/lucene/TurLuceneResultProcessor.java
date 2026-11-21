@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.searchengine.lucene;
 
+import com.viglet.turing.searchengine.TurSEFlags;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,6 @@ import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.sn.TurSNUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -232,7 +232,7 @@ public class TurLuceneResultProcessor {
     }
 
     static boolean isHL(TurSNSite turSNSite, List<TurSNSiteFieldExt> hlFields) {
-        return TurSNUtils.isTrue(turSNSite.getHl()) && hlFields != null && !hlFields.isEmpty();
+        return TurSEFlags.isTrue(turSNSite.getHl()) && hlFields != null && !hlFields.isEmpty();
     }
 
     // -------------------------------------------------------------------------

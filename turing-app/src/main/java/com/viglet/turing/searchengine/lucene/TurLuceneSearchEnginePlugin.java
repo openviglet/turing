@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.searchengine.lucene;
 
+import com.viglet.turing.searchengine.TurSEFlags;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.se.similar.TurSESimilarResult;
@@ -33,7 +34,6 @@ import com.viglet.turing.searchengine.TurSESynonymRule;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -132,7 +132,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         try {
             TurSNSite site = turSNSiteRepository.findByName(context.getSiteName()).orElse(null);
             String[] mltFields = resolveMltFields(site);
-            if (site == null || !TurSNUtils.isTrue(site.getMlt())
+            if (site == null || !TurSEFlags.isTrue(site.getMlt())
                     || turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1).isEmpty()) {
                 return results;
             }

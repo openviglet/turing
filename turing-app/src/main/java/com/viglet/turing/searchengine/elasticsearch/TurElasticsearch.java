@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.searchengine.elasticsearch;
 
+import com.viglet.turing.searchengine.TurSEFlags;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import java.io.IOException;
@@ -502,7 +503,7 @@ public class TurElasticsearch {
     /** The site's custom facets ({@code onlyFacet} alone when set), when the site has facets on. */
     private List<TurLuceneCustomFacets.Facet> customFacetsOf(TurSNSite turSNSite, java.util.Locale locale,
             String onlyFacet) {
-        if (customFacets == null || !com.viglet.turing.sn.TurSNUtils.isTrue(turSNSite.getFacet())) {
+        if (customFacets == null || !TurSEFlags.isTrue(turSNSite.getFacet())) {
             return List.of();
         }
         return customFacets.facets(turSNSite, locale).stream()

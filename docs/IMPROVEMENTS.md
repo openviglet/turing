@@ -2508,10 +2508,10 @@ Landed: the engines and DSL are gathered (T1310), no sn class imports an engine 
 (T1310c), the search-concept enums live in the searchengine API (T1310d), and ranking
 expressions reach the engines through the TurSESiteSearchConfig SPI in searchengine.spi
 (T1310e), as do custom sorts (T1310f), field types, index fields and site cores
-(T1310g-i); the query relaxer joined the API (T1310j).
+(T1310g-i); the query relaxer and site switches joined the API (T1310j-k).
 
 What is left is the other direction. The contract still takes TurSNSite and
-TurSNSiteLocale, and 29 engine files import sn 114 times, mostly to read a site's
+TurSNSiteLocale, and 29 engine files import sn 108 times, mostly to read a site's
 fields, facets, custom sorts, ranking expressions and targeting rules while building a
 query. Two ways out:
 

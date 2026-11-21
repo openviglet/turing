@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.searchengine.lucene;
 
+import com.viglet.turing.searchengine.TurSEFlags;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
@@ -23,7 +24,6 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
@@ -131,7 +131,7 @@ public class TurLucene {
      */
     private TurSEResults withCustomFacets(TurSEResults results, TurLuceneInstance instance, Query query,
             TurSNSite turSNSite, TurSNSiteSearchContext context, String onlyFacet) {
-        if (turLuceneCustomFacets == null || !TurSNUtils.isTrue(turSNSite.getFacet())) {
+        if (turLuceneCustomFacets == null || !TurSEFlags.isTrue(turSNSite.getFacet())) {
             return results;
         }
         try {

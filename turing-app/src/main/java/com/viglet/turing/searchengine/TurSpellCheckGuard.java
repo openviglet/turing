@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
+import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 
 /**
  * T1199 / §CLXII.8 — the guard every spell-check producer (Lucene's
@@ -34,6 +35,24 @@ import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 public final class TurSpellCheckGuard {
 
     private TurSpellCheckGuard() {
+    }
+
+    /** Whether the engine corrected the query and the correction holds text. */
+    public static boolean hasCorrectedText(TurSESpellCheckResult turSESpellCheckResult) {
+        return turSESpellCheckResult.isCorrected()
+                && org.springframework.util.StringUtils.hasText(turSESpellCheckResult.getCorrectedText());
+    }
+
+    /**
+     * T1310 — whether a search runs the corrected query: the request has not
+     * turned auto-correction off, it asks for the first page, and the site has
+     * both spell check and spell-check fixes on.
+     */
+    public static boolean isAutoCorrectionEnabled(TurSNSiteSearchContext context, Integer spellCheck,
+            Integer spellCheckFixes) {
+        return context.getTurSEParameters().getAutoCorrectionDisabled() != 1
+                && context.getTurSEParameters().getCurrentPage() == 1
+                && spellCheck == 1 && spellCheckFixes == 1;
     }
 
     /** The guarded result for {@code corrected}, the engine's answer to {@code typed}. */

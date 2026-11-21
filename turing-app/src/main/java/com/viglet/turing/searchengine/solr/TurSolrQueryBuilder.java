@@ -1,5 +1,7 @@
 package com.viglet.turing.searchengine.solr;
 
+import com.viglet.turing.searchengine.TurSEFlags;
+import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.TurSEPaging;
 
 import static com.viglet.turing.searchengine.solr.TurSolrConstants.AND;
@@ -85,7 +87,6 @@ import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
-import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
@@ -148,8 +149,8 @@ public class TurSolrQueryBuilder {
                     String.format("%s:%s", turSNSite.getExactMatchField(), turSEParameters.getQuery()));
         }
 
-        if (TurSNUtils.isAutoCorrectionEnabled(context, turSNSite)) {
-            query.setQuery(TurSNUtils.hasCorrectedText(turSESpellCheckResult)
+        if (TurSpellCheckGuard.isAutoCorrectionEnabled(context, turSNSite.getSpellCheck(), turSNSite.getSpellCheckFixes())) {
+            query.setQuery(TurSpellCheckGuard.hasCorrectedText(turSESpellCheckResult)
                     ? turSESpellCheckResult.getCorrectedText()
                     : turSEParameters.getQuery());
         } else {
@@ -974,7 +975,7 @@ public class TurSolrQueryBuilder {
     }
 
     private boolean hasMLT(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList) {
-        return TurSNUtils.isTrue(turSNSite.getMlt())
+        return TurSEFlags.isTrue(turSNSite.getMlt())
                 && !CollectionUtils.isEmpty(turSNSiteMLTFieldExtList);
     }
 
@@ -1062,7 +1063,7 @@ public class TurSolrQueryBuilder {
 
     private boolean wasFacetConfigured(TurSNSite turSNSite,
             List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
-        return TurSNUtils.isTrue(turSNSite.getFacet()) && turSNSite.getItemsPerFacet() != null
+        return TurSEFlags.isTrue(turSNSite.getFacet()) && turSNSite.getItemsPerFacet() != null
                 && !CollectionUtils.isEmpty(turSNSiteFacetFieldExtList);
     }
 }

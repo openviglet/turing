@@ -98,7 +98,7 @@ class TurSNUtilsTest {
         result.setCorrected(true);
         result.setCorrectedText("corrected query");
 
-        assertThat(TurSNUtils.hasCorrectedText(result)).isTrue();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.hasCorrectedText(result)).isTrue();
     }
 
     static Stream<Arguments> hasCorrectedTextFalseCases() {
@@ -116,14 +116,14 @@ class TurSNUtilsTest {
         result.setCorrected(corrected);
         result.setCorrectedText(correctedText);
 
-        assertThat(TurSNUtils.hasCorrectedText(result)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.hasCorrectedText(result)).isFalse();
     }
 
     @Test
     void hasCorrectedTextDefaultConstructorShouldReturnFalse() {
         TurSESpellCheckResult result = new TurSESpellCheckResult();
 
-        assertThat(TurSNUtils.hasCorrectedText(result)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.hasCorrectedText(result)).isFalse();
     }
 
     // --- isAutoCorrectionEnabled ---
@@ -134,7 +134,8 @@ class TurSNUtilsTest {
         TurSNSiteSearchContext context = createContext(params);
         TurSNSite site = createSNSite(1, 1);
 
-        assertThat(TurSNUtils.isAutoCorrectionEnabled(context, site)).isTrue();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.isAutoCorrectionEnabled(context, site.getSpellCheck(),
+                site.getSpellCheckFixes())).isTrue();
     }
 
     @Test
@@ -143,7 +144,8 @@ class TurSNUtilsTest {
         TurSNSiteSearchContext context = createContext(params);
         TurSNSite site = createSNSite(1, 1);
 
-        assertThat(TurSNUtils.isAutoCorrectionEnabled(context, site)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.isAutoCorrectionEnabled(context, site.getSpellCheck(),
+                site.getSpellCheckFixes())).isFalse();
     }
 
     @Test
@@ -152,7 +154,8 @@ class TurSNUtilsTest {
         TurSNSiteSearchContext context = createContext(params);
         TurSNSite site = createSNSite(1, 1);
 
-        assertThat(TurSNUtils.isAutoCorrectionEnabled(context, site)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.isAutoCorrectionEnabled(context, site.getSpellCheck(),
+                site.getSpellCheckFixes())).isFalse();
     }
 
     @Test
@@ -161,7 +164,8 @@ class TurSNUtilsTest {
         TurSNSiteSearchContext context = createContext(params);
         TurSNSite site = createSNSite(0, 1);
 
-        assertThat(TurSNUtils.isAutoCorrectionEnabled(context, site)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.isAutoCorrectionEnabled(context, site.getSpellCheck(),
+                site.getSpellCheckFixes())).isFalse();
     }
 
     @Test
@@ -170,7 +174,8 @@ class TurSNUtilsTest {
         TurSNSiteSearchContext context = createContext(params);
         TurSNSite site = createSNSite(1, 0);
 
-        assertThat(TurSNUtils.isAutoCorrectionEnabled(context, site)).isFalse();
+        assertThat(com.viglet.turing.searchengine.TurSpellCheckGuard.isAutoCorrectionEnabled(context, site.getSpellCheck(),
+                site.getSpellCheckFixes())).isFalse();
     }
 
     // --- addFilterQuery ---

@@ -49,7 +49,6 @@ import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.sn.TurSNFieldProcess;
-import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
@@ -267,9 +266,9 @@ public class TurSolr {
             TurSolrInstance turSolrInstance) {
         TurSESpellCheckResult turSESpellCheckResult = spellCheckTerm(turSolrInstance,
                 turSNSiteSearchContext.getTurSEParameters().getQuery());
-        if (TurSNUtils.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite)) {
+        if (TurSpellCheckGuard.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite.getSpellCheck(), turSNSite.getSpellCheckFixes())) {
             turSESpellCheckResult.setUsingCorrected(true);
-            if (TurSNUtils.hasCorrectedText(turSESpellCheckResult)) {
+            if (TurSpellCheckGuard.hasCorrectedText(turSESpellCheckResult)) {
                 turSNSiteSearchContext.setUri(
                         TurCommonsUtils.addOrReplaceParameter(turSNSiteSearchContext.getUri(),
                                 QUERY, turSESpellCheckResult.getCorrectedText(), true));

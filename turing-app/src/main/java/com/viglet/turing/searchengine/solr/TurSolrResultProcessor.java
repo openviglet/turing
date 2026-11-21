@@ -1,5 +1,6 @@
 package com.viglet.turing.searchengine.solr;
 
+import com.viglet.turing.searchengine.TurSEFlags;
 import com.viglet.turing.searchengine.TurSEPaging;
 
 import com.viglet.turing.searchengine.TurSEFieldValues;
@@ -54,7 +55,6 @@ import com.viglet.turing.searchengine.result.TurSEGroup;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNFieldProcess;
-import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 
@@ -267,7 +267,7 @@ public class TurSolrResultProcessor {
         }
 
         private boolean hasMLT(TurSNSite turSNSite, List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList) {
-                return TurSNUtils.isTrue(turSNSite.getMlt())
+                return TurSEFlags.isTrue(turSNSite.getMlt())
                                 && !CollectionUtils.isEmpty(turSNSiteMLTFieldExtList);
         }
 
@@ -293,7 +293,7 @@ public class TurSolrResultProcessor {
                         List<TurSNSiteFieldExt> turSNSiteMLTFieldExtList,
                         List<TurSESimilarResult> similarResults, SolrDocument document,
                         QueryResponse queryResponse) {
-                if (TurSNUtils.isTrue(turSNSite.getMlt()) && !turSNSiteMLTFieldExtList.isEmpty()) {
+                if (TurSEFlags.isTrue(turSNSite.getMlt()) && !turSNSiteMLTFieldExtList.isEmpty()) {
                         @SuppressWarnings("rawtypes")
                         SimpleOrderedMap mltResp = (SimpleOrderedMap) queryResponse.getResponse().get(MORE_LIKE_THIS);
                         ((SolrDocumentList) mltResp.get((String) document.get(ID)))
@@ -484,7 +484,7 @@ public class TurSolrResultProcessor {
 
         private boolean wasFacetConfigured(TurSNSite turSNSite,
                         List<TurSNSiteFieldExt> turSNSiteFacetFieldExtList) {
-                return TurSNUtils.isTrue(turSNSite.getFacet()) && turSNSite.getItemsPerFacet() != null
+                return TurSEFlags.isTrue(turSNSite.getFacet()) && turSNSite.getItemsPerFacet() != null
                                 && !CollectionUtils.isEmpty(turSNSiteFacetFieldExtList);
         }
 
@@ -562,7 +562,7 @@ public class TurSolrResultProcessor {
 
         public static boolean isHL(TurSNSite turSNSite,
                         List<TurSNSiteFieldExt> turSNSiteHlFieldExtList) {
-                return TurSNUtils.isTrue(turSNSite.getHl())
+                return TurSEFlags.isTrue(turSNSite.getHl())
                                 && !CollectionUtils.isEmpty(turSNSiteHlFieldExtList);
         }
 }

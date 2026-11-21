@@ -32,11 +32,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ForwardedHeaderUtils;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
@@ -46,7 +44,6 @@ import com.viglet.turing.commons.sn.search.TurSNParamType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.TurSEFieldValues;
 
@@ -61,7 +58,7 @@ public class TurSNUtils {
     }
 
     public static boolean isTrue(Integer value) {
-        return Integer.valueOf(1).equals(value);
+        return com.viglet.turing.searchengine.TurSEFlags.isTrue(value);
     }
 
     @NotNull
@@ -78,18 +75,6 @@ public class TurSNUtils {
         return new TurSNSiteSearchContext(siteName, turSNConfig,
                 new TurSEParameters(turSNSearchParams, turSNSitePostParamsBean), turSNSearchParams.getLocale(),
                 TurSNUtils.requestToURI(request), turSNSitePostParamsBean);
-    }
-
-    public static boolean hasCorrectedText(TurSESpellCheckResult turSESpellCheckResult) {
-        return turSESpellCheckResult.isCorrected()
-                && StringUtils.hasText(turSESpellCheckResult.getCorrectedText());
-    }
-
-    public static boolean isAutoCorrectionEnabled(TurSNSiteSearchContext context,
-            TurSNSite turSNSite) {
-        return context.getTurSEParameters().getAutoCorrectionDisabled() != 1
-                && context.getTurSEParameters().getCurrentPage() == 1
-                && turSNSite.getSpellCheck() == 1 && turSNSite.getSpellCheckFixes() == 1;
     }
 
     public static URI requestToURI(HttpServletRequest request) {
