@@ -2539,6 +2539,11 @@ a startup check refuses a database that still carries the old DATABASECHANGELOG 
 with a message naming that path. Changesets added after the baseline follow the usual
 never-edit rule again.
 
+Waits for T1322 (2026-11-21): the rulings in ADR 0005 section 6 move entities between
+modules (chat into agent, the vector stores into llm, the eval entities into eval, the
+MCP client into agent, a new answer module), so a per-module baseline written before
+those moves would file tables under the wrong owner.
+
 ### CLXXXIX.18 Declared module interfaces (T1322)
 
 Each module gets a package-info.java with @ApplicationModule naming its displayName and
