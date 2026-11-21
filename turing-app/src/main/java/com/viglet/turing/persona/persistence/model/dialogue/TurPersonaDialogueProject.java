@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.persona.persistence.model.dialogue;
 
+import com.viglet.turing.spring.security.TurAuditable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -41,7 +42,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "persona_dialogue_project")
-public class TurPersonaDialogueProject implements Serializable {
+public class TurPersonaDialogueProject extends TurAuditable<String> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -87,9 +88,11 @@ public class TurPersonaDialogueProject implements Serializable {
     @Column(name = "last_run_at")
     private Instant lastRunAt;
 
-    @Column(name = "creationDate")
-    private Instant creationDate;
-
-    @Column(name = "modificationDate")
-    private Instant modificationDate;
+    /**
+     * T1319 — the audited {@code lastModifiedDate} under the name this entity's JSON
+     * has always used (ADR 0005 section 7).
+     */
+    public Instant getModificationDate() {
+        return lastModifiedDate;
+    }
 }

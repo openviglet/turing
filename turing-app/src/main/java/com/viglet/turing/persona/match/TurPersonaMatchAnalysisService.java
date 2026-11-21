@@ -307,7 +307,6 @@ public class TurPersonaMatchAnalysisService {
         // stamp the current row so a console edit made during the run is kept.
         projectRepository.findById(project.getId()).ifPresent(current -> {
             current.setLastRunAt(now);
-            current.setModificationDate(now);
             projectRepository.save(current);
         });
         eventBus.publish(TurPersonaMatchRunEvent.done(project.getId(),

@@ -78,6 +78,12 @@ class TurResearchStudyIT extends AbstractTuringSpringIT {
                 null, null, null, null, null, null, 0, 0, null, null, null));
         String studyId = created.id();
         assertNotNull(studyId);
+        // T1319 — JPA auditing stamps the dates the service used to set by hand,
+        // and the old JSON name reads the audited column.
+        TurResearchStudy stored = studyRepository.findById(studyId).orElseThrow();
+        assertNotNull(stored.getCreationDate());
+        assertNotNull(stored.getLastModifiedDate());
+        assertEquals(stored.getLastModifiedDate(), stored.getModificationDate());
         assertEquals("CUSTOM_SCRIPT", created.protocol());
         assertEquals(2, created.questions().size());
         assertEquals("What brought you here?", created.questions().get(0));

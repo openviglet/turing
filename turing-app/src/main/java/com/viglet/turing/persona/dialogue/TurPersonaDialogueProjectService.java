@@ -9,7 +9,6 @@
  */
 package com.viglet.turing.persona.dialogue;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -94,8 +93,6 @@ public class TurPersonaDialogueProjectService {
     public TurPersonaDialogueProjectDto create(TurPersonaDialogueProjectDto dto) {
         TurPersonaDialogueProject project = new TurPersonaDialogueProject();
         apply(project, dto);
-        project.setCreationDate(Instant.now());
-        project.setModificationDate(Instant.now());
         return toDetail(projectRepository.save(project));
     }
 
@@ -106,7 +103,6 @@ public class TurPersonaDialogueProjectService {
             // T1319 — a save made from an older version is refused, not applied.
             com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), project.getVersion(), "dialogue project");
             apply(project, dto);
-            project.setModificationDate(Instant.now());
             return toDetail(projectRepository.save(project));
         });
     }

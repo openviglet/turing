@@ -17,7 +17,6 @@
 package com.viglet.turing.kb;
 
 import java.io.ByteArrayInputStream;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,7 +105,6 @@ public class TurAuthorityFileImportService {
         microthesaurus.setTurKnowledgeBase(kb);
         microthesaurus.setName(StringUtils.defaultIfBlank(childText(root, "name"), "Imported"));
         microthesaurus.setDomain(StringUtils.defaultIfBlank(domainOverride, "GENERAL"));
-        microthesaurus.setModificationDate(LocalDateTime.now());
 
         List<Element> termEls = descendantTerms(root);
         Map<String, TurThesaurusTerm> bySourceId = new HashMap<>();

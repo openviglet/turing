@@ -9,7 +9,6 @@
  */
 package com.viglet.turing.persona.match;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -114,8 +113,6 @@ public class TurPersonaMatchService {
     public TurPersonaMatchProjectDto create(TurPersonaMatchProjectDto dto) {
         TurPersonaMatchProject project = new TurPersonaMatchProject();
         apply(project, dto);
-        project.setCreationDate(Instant.now());
-        project.setModificationDate(Instant.now());
         return toDetail(projectRepository.save(project));
     }
 
@@ -125,7 +122,6 @@ public class TurPersonaMatchService {
             // T1319 — a save made from an older version is refused, not applied.
             com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), project.getVersion(), "persona match project");
             apply(project, dto);
-            project.setModificationDate(Instant.now());
             return toDetail(projectRepository.save(project));
         });
     }

@@ -2524,27 +2524,6 @@ query. Two ways out, and the choice is a person's:
 Ruled on 2026-11-21 in ADR 0005 section 6: option 1, the smaller step from today's code,
 which keeps one owner per engine.
 
-### CLXXXIX.15 Audit columns and optimistic locking (T1319)
-
-Two admins saving the same agent or SN site used to overwrite each other silently,
-because no entity carried @Version. Since T1319a-f every console-edited aggregate has a
-version, the console sends the one it last read, and a save from an older one gets a 409
-through TurStaleVersion.
-
-What is left is the dates. TurAuditable (spring.security) is already a mapped superclass
-with Spring Data auditing (createdBy, creationDate, lastModifiedBy, lastModifiedDate as
-Instant), used by TurSNSite, TurSNRankingExpression, TurSNRankingCondition and
-TurDevToken. Measured on 2026-11-21, about 30 other entities record dates by hand under
-four spellings: createdAt and updatedAt as LocalDateTime (agent, eval, chat, rag rows)
-or Instant (batch, tenant, feedback rows), and creationDate and modificationDate
-(thesaurus, gateway key, persona projects, SN spotlight and synonym). Many are
-append-only event rows, not aggregates.
-
-Ruled on 2026-11-21 in ADR 0005 section 7: only the console-edited aggregates extend
-TurAuditable, and append-only event rows keep their single creation timestamp. JSON
-keeps today's names through @JsonProperty on the subclass (an overriding getter or a
-Jackson mix-in), not a DTO in front of each entity.
-
 ### CLXXXIX.17 The Liquibase reset (T1321)
 
 db/changelog holds 205 files with every change since the project began, including

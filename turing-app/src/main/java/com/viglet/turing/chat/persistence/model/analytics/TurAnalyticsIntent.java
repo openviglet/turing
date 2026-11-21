@@ -9,10 +9,10 @@
  */
 package com.viglet.turing.chat.persistence.model.analytics;
 
+import com.viglet.turing.spring.security.TurAuditable;
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
@@ -22,8 +22,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -64,7 +62,7 @@ import lombok.Setter;
                 name = "uq_analytics_intent_agent_label",
                 columnNames = { "agent_id", "label" }))
 @EntityListeners(TurAnalyticsIntentEvictionListener.class)
-public class TurAnalyticsIntent implements Serializable {
+public class TurAnalyticsIntent extends TurAuditable<String> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -132,23 +130,15 @@ public class TurAnalyticsIntent implements Serializable {
     @JsonIgnore
     private String agentId;
 
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updatedAt", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    void prePersist() {
-        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
-        if (this.createdAt == null) {
-            this.createdAt = now;
-        }
-        this.updatedAt = now;
+    /**
+     * T1319 — the audited dates under the names this entity's JSON has always used
+     * (ADR 0005 section 7).
+     */
+    public Instant getCreatedAt() {
+        return creationDate;
     }
 
-    @PreUpdate
-    void preUpdate() {
-        this.updatedAt = LocalDateTime.now(ZoneId.systemDefault());
+    public Instant getUpdatedAt() {
+        return lastModifiedDate;
     }
 }

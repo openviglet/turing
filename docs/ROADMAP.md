@@ -30,9 +30,8 @@
 - 📋 **T1326** (deps: T1323) **No diagram shows the backend's modules or how they depend on each other** — Documenter output generated from the verified model keeps a contributor architecture page current without anyone redrawing it. → §CLXXXIX.22
 - 📋 **T1327** (deps: T1323) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
-- 📋 **T1319** (deps: T1314 ✅) **No entity has @Version and only one records created and modified dates through auditing** — Aggregates are versioned; the hand-rolled date fields still await one superclass. → §CLXXXIX.15
 - 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 144 times, for fields, facets, sorts, locales and targeting rules. → §CLXXXIX.6
-- 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 📋, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module should replace the history. → §CLXXXIX.17
+- 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module should replace the history. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a, T1322b, T1322c, T1322d, T1322e, T1322f, T1322g, T1322h, T1322i, T1322j, T1322k) **No package declares what it exposes, so any class is reachable from any module** — Package-info declarations should encode the ADR 0005 module map. → §CLXXXIX.18
 - 📋 **T1322a** (deps: T1315 ✅) **Twelve leftover top-level packages are modules of their own, and observability sits above the modules that use it** — Folding them into shared, system and auth, and making observability infrastructure, leaves only the modules ADR 0005 names. → §CLXXXIX.33
 - 📋 **T1322b** (deps: T1315 ✅) **llm, agent and persona import rag to reach the vector stores, and persona imports it for URL fetching** — Moving the stores into llm and the URL fetcher into system turns those crossings into reads of infrastructure. → §CLXXXIX.34
@@ -58,14 +57,6 @@
   TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
   violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
   into the module with the DSL types or call the plugin.
-
-## Done when — T1319
-
-- **Every console-edited aggregate refuses a save from an older version** The SN site
-  and the other aggregates the console edits carry @Version, and an update API test per
-  aggregate shows a stale save answering 409.
-- **Audit dates come from one mapped superclass** No entity declares its own createdAt
-  or modifiedAt field; a convention test fails on one that does.
 
 ## Non-goals (do NOT add as tasks)
 

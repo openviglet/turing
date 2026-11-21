@@ -16,7 +16,6 @@
  */
 package com.viglet.turing.kb;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +60,6 @@ public class TurKnowledgeBaseService {
     @Transactional
     public TurKnowledgeBaseDto create(TurKnowledgeBaseDto dto) {
         TurKnowledgeBase entity = new TurKnowledgeBase();
-        entity.setCreationDate(LocalDateTime.now());
         apply(entity, dto);
         return toDto(repository.save(entity));
     }
@@ -92,7 +90,6 @@ public class TurKnowledgeBaseService {
         entity.setName(dto.name().trim());
         entity.setDescription(dto.description());
         entity.setSource(dto.source() == null ? TurKnowledgeBaseSource.USER : dto.source());
-        entity.setModificationDate(LocalDateTime.now());
     }
 
     static TurKnowledgeBaseDto toDto(TurKnowledgeBase entity) {

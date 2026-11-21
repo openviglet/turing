@@ -292,7 +292,6 @@ public class TurResearchRunnerService {
         // stamp the current row so a console edit made during the run is kept.
         studyRepository.findById(study.getId()).ifPresent(current -> {
             current.setLastRunAt(now);
-            current.setModificationDate(now);
             studyRepository.save(current);
         });
         eventBus.publish(TurResearchRunEvent.done(study.getId(), personas.size(), now));

@@ -16,9 +16,10 @@
  */
 package com.viglet.turing.kb.persistence.model;
 
+import com.viglet.turing.spring.security.TurAuditable;
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -57,7 +58,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "kb_microthesaurus")
 @JsonIgnoreProperties({"turKnowledgeBase"})
-public class TurMicrothesaurus implements Serializable {
+public class TurMicrothesaurus extends TurAuditable<String> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -92,9 +93,6 @@ public class TurMicrothesaurus implements Serializable {
     @Column(nullable = false, length = 100)
     private String domain;
 
-    @Column
-    private LocalDateTime modificationDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "knowledge_base_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -110,5 +108,13 @@ public class TurMicrothesaurus implements Serializable {
         if (turThesaurusTerms != null) {
             this.turThesaurusTerms.addAll(turThesaurusTerms);
         }
+    }
+
+    /**
+     * T1319 — the audited {@code lastModifiedDate} under the name this entity's JSON
+     * has always used (ADR 0005 section 7).
+     */
+    public Instant getModificationDate() {
+        return lastModifiedDate;
     }
 }

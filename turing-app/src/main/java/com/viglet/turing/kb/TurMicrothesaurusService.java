@@ -16,7 +16,6 @@
  */
 package com.viglet.turing.kb;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,7 +110,6 @@ public class TurMicrothesaurusService {
         entity.setDescription(dto.description());
         entity.setLanguage(dto.language());
         entity.setDomain(dto.domain().trim());
-        entity.setModificationDate(LocalDateTime.now());
     }
 
     static TurMicrothesaurusDto toDto(TurMicrothesaurus entity) {

@@ -9,7 +9,6 @@
  */
 package com.viglet.turing.rag.research;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -98,8 +97,6 @@ public class TurResearchStudyService {
     public TurResearchStudyDto create(TurResearchStudyDto dto) {
         TurResearchStudy study = new TurResearchStudy();
         apply(study, dto);
-        study.setCreationDate(Instant.now());
-        study.setModificationDate(Instant.now());
         return toDetail(studyRepository.save(study));
     }
 
@@ -109,7 +106,6 @@ public class TurResearchStudyService {
             // T1319 — a save made from an older version is refused, not applied.
             com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), study.getVersion(), "research study");
             apply(study, dto);
-            study.setModificationDate(Instant.now());
             return toDetail(studyRepository.save(study));
         });
     }
