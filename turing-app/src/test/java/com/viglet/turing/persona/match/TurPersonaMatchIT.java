@@ -86,7 +86,7 @@ class TurPersonaMatchIT extends AbstractTuringSpringIT {
         // --- create a project ---
         TurPersonaMatchProjectDto created = service.create(new TurPersonaMatchProjectDto(
                 null, "Match IT project", "desc", true, "WEEKLY", null, null, null, 0,
-                null, null, false, null, null, 0, 0, null, null));
+                null, null, false, null, null, 0, 0, null, null, null));
         String projectId = created.id();
         assertNotNull(projectId);
         assertEquals("WEEKLY", created.schedule());
@@ -160,7 +160,7 @@ class TurPersonaMatchIT extends AbstractTuringSpringIT {
 
         TurPersonaMatchProjectDto created = service.create(new TurPersonaMatchProjectDto(
                 null, "Drift IT project", "desc", true, "DAILY", null, null, null, 0,
-                null, null, false, null, null, 0, 0, null, null));
+                null, null, false, null, null, 0, 0, null, null, null));
         String projectId = created.id();
         service.setPersonas(projectId, List.of(personaId));
 

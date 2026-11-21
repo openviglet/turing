@@ -104,7 +104,12 @@ export function useCreateMatchProject() {
 export function useUpdateMatchProject(id: string) {
   const queryClient = useQueryClient();
   return useMutation<MatchProject, Error, MatchProjectRequest>({
-    mutationFn: (body) => service.update(id, body),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (body) => {
+      const cached = queryClient.getQueryData<MatchProject>(queryKeys.personaMatch.detail(id));
+      return service.update(id, { ...body, version: cached?.version ?? body.version });
+    },
     onSuccess: (saved) => {
       queryClient.setQueryData(queryKeys.personaMatch.detail(id), saved);
       invalidateAll(queryClient);

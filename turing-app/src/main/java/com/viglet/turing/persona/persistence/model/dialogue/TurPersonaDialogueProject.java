@@ -50,6 +50,14 @@ public class TurPersonaDialogueProject implements Serializable {
     @Column(name = "id", updatable = false, nullable = false, length = 40)
     private String id;
 
+    /**
+     * T1319 — optimistic-lock version: a console save made from an older version
+     * is refused (409) instead of overwriting a change it never saw.
+     */
+    @jakarta.persistence.Version
+    @jakarta.persistence.Column(name = "version")
+    private Long version;
+
     @org.hibernate.annotations.TenantId
     @Column(name = "tenantId", length = 40)
     private String tenantId;

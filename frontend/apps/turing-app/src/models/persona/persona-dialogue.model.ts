@@ -47,6 +47,8 @@ export interface DialogueTurn {
 
 /** Project summary (list) — speakers/transcript omitted, count present. */
 export interface DialogueProjectSummary {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   id: string;
   name: string;
   description: string | null;
@@ -66,6 +68,8 @@ export interface DialogueProject extends DialogueProjectSummary {
 
 /** Create/update request body (subset the backend reads on write). */
 export interface DialogueProjectRequest {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description?: string | null;
   topic?: string | null;

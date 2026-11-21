@@ -56,6 +56,8 @@ export interface MatchCell {
 
 /** Project summary (list) — `sources`/`personas` omitted, counts present. */
 export interface MatchProjectSummary {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   id: string;
   name: string;
   description: string | null;
@@ -91,6 +93,8 @@ export interface MatchMatrix {
 
 /** Create/update request body (subset the backend reads on write). */
 export interface MatchProjectRequest {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   description?: string | null;
   enabled: boolean;

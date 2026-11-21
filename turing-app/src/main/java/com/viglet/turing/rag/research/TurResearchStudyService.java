@@ -106,6 +106,8 @@ public class TurResearchStudyService {
     @Transactional
     public Optional<TurResearchStudyDto> update(String id, TurResearchStudyDto dto) {
         return studyRepository.findById(id).map(study -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), study.getVersion(), "research study");
             apply(study, dto);
             study.setModificationDate(Instant.now());
             return toDetail(studyRepository.save(study));
@@ -215,7 +217,7 @@ public class TurResearchStudyService {
                 s.getInterviewLlmInstanceId(), s.getSynthesisLlmInstanceId(),
                 s.getSchedule().name(), s.getLastRunAt(),
                 personaJoinRepository.findByStudy_IdOrderByPositionAsc(s.getId()).size(),
-                (int) interviewRepository.countByStudy_Id(s.getId()), null, null);
+                (int) interviewRepository.countByStudy_Id(s.getId()), null, null, s.getVersion());
     }
 
     private TurResearchStudyDto toDetail(TurResearchStudy s) {
@@ -227,7 +229,7 @@ public class TurResearchStudyService {
                 llmName(s), s.getTargetAgentId(), targetAgentName(s),
                 s.getInterviewLlmInstanceId(), s.getSynthesisLlmInstanceId(),
                 s.getSchedule().name(), s.getLastRunAt(),
-                personas.size(), interviews.size(), personas, interviews);
+                personas.size(), interviews.size(), personas, interviews, s.getVersion());
     }
 
     private String llmName(TurResearchStudy s) {

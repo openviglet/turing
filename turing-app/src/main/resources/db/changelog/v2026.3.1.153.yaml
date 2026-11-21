@@ -1,0 +1,61 @@
+databaseChangeLog:
+  # --- T1319: optimistic locking on the persona projects ---
+  # The version Hibernate's @Version compares on save. Existing rows start at 0.
+  # Idempotent: each changeSet is gated by columnExists.
+  - changeSet:
+      id: v2026.3.1.153-01-persona-match-project-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: persona_match_project
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: persona_match_project
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: v2026.3.1.153-02-persona-dialogue-project-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: persona_dialogue_project
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: persona_dialogue_project
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: v2026.3.1.153-03-research-study-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: rag_research_study
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: rag_research_study
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false

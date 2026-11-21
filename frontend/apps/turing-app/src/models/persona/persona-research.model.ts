@@ -52,6 +52,8 @@ export interface ResearchInterview {
 
 /** Study summary (list) — roster/interviews omitted, counts present. */
 export interface ResearchStudySummary {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   id: string;
   name: string;
   goal?: string | null;
@@ -82,6 +84,8 @@ export interface ResearchStudy extends ResearchStudySummary {
 
 /** Create/update request body (subset the backend reads on write). */
 export interface ResearchStudyRequest {
+  /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+  version?: number;
   name: string;
   goal?: string | null;
   hypothesis?: string | null;

@@ -122,6 +122,8 @@ public class TurPersonaMatchService {
     @Transactional
     public Optional<TurPersonaMatchProjectDto> update(String id, TurPersonaMatchProjectDto dto) {
         return projectRepository.findById(id).map(project -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), project.getVersion(), "persona match project");
             apply(project, dto);
             project.setModificationDate(Instant.now());
             return toDetail(projectRepository.save(project));
@@ -337,7 +339,7 @@ public class TurPersonaMatchService {
                 p.getDriftWebhookUrl(), null,
                 StringUtils.isNotBlank(p.getDriftWebhookAuthHeader()),
                 p.getDriftWebhookAvgDrop(), p.getLastRunAt(), (int) sourceRepository.countByProject_Id(p.getId()),
-                personaJoinRepository.findByProject_Id(p.getId()).size(), null, null);
+                personaJoinRepository.findByProject_Id(p.getId()).size(), null, null, p.getVersion());
     }
 
     private TurPersonaMatchProjectDto toDetail(TurPersonaMatchProject p) {
@@ -348,7 +350,7 @@ public class TurPersonaMatchService {
                 p.getFitThreshold(), thresholdService.forProject(p),
                 p.getDriftWebhookUrl(), null,
                 StringUtils.isNotBlank(p.getDriftWebhookAuthHeader()),
-                p.getDriftWebhookAvgDrop(), p.getLastRunAt(), sources.size(), personas.size(), sources, personas);
+                p.getDriftWebhookAvgDrop(), p.getLastRunAt(), sources.size(), personas.size(), sources, personas, p.getVersion());
     }
 
     private String llmName(TurPersonaMatchProject p) {

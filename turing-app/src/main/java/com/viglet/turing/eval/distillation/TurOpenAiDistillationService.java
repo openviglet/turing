@@ -243,7 +243,8 @@ public class TurOpenAiDistillationService {
         }
 
         instance.setModelName(fineTunedModel);
-        llmInstanceRepository.save(instance);
+        // T1319 — keep the saved copy: it carries the version the next save needs.
+        instance = llmInstanceRepository.save(instance);
 
         TurAgentEvalReportDto report = evalRunnerService.runAgent(job.getAgentId());
         boolean passed = report != null && report.passed();
@@ -253,7 +254,8 @@ public class TurOpenAiDistillationService {
                     job.getId(), instance.getId(), originalModel, fineTunedModel);
         } else {
             instance.setModelName(originalModel);
-            llmInstanceRepository.save(instance);
+            // T1319 — keep the saved copy: it carries the version the next save needs.
+        instance = llmInstanceRepository.save(instance);
             job.setState(TurDistillationState.EVAL_FAILED);
             job.setErrorMessage("Eval gate did not pass on the fine-tuned candidate — model reverted");
             log.info("[Distill] job {} eval FAILED — reverted instance '{}' model to '{}'",
@@ -278,10 +280,12 @@ public class TurOpenAiDistillationService {
 
         // Candidate: swap in, score, then revert unconditionally.
         instance.setModelName(fineTunedModel);
-        llmInstanceRepository.save(instance);
+        // T1319 — keep the saved copy: it carries the version the next save needs.
+        instance = llmInstanceRepository.save(instance);
         TurAgentEvalReportDto candidateReport = evalRunnerService.runAgent(job.getAgentId());
         instance.setModelName(originalModel);
-        llmInstanceRepository.save(instance);
+        // T1319 — keep the saved copy: it carries the version the next save needs.
+        instance = llmInstanceRepository.save(instance);
 
         double candidateScore = candidateReport == null ? 0.0 : candidateReport.score();
         boolean wins = candidateReport != null && candidateReport.passed()

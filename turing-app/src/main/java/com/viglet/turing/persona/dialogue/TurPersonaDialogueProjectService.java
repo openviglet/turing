@@ -103,6 +103,8 @@ public class TurPersonaDialogueProjectService {
     public Optional<TurPersonaDialogueProjectDto> update(String id,
             TurPersonaDialogueProjectDto dto) {
         return projectRepository.findById(id).map(project -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(dto.version(), project.getVersion(), "dialogue project");
             apply(project, dto);
             project.setModificationDate(Instant.now());
             return toDetail(projectRepository.save(project));
@@ -261,14 +263,14 @@ public class TurPersonaDialogueProjectService {
         return new TurPersonaDialogueProjectDto(p.getId(), p.getName(), p.getDescription(),
                 p.getTopic(), p.getLlmInstanceId(), llmName(p), p.getTurns(), p.getLastRunAt(),
                 speakerRepository.findByProject_IdOrderBySpeakerOrderAsc(p.getId()).size(),
-                null, null);
+                null, null, p.getVersion());
     }
 
     private TurPersonaDialogueProjectDto toDetail(TurPersonaDialogueProject p) {
         List<TurPersonaDialogueSpeakerDto> speakers = speakers(p.getId());
         return new TurPersonaDialogueProjectDto(p.getId(), p.getName(), p.getDescription(),
                 p.getTopic(), p.getLlmInstanceId(), llmName(p), p.getTurns(), p.getLastRunAt(),
-                speakers.size(), speakers, transcript(p.getId()));
+                speakers.size(), speakers, transcript(p.getId()), p.getVersion());
     }
 
     private String llmName(TurPersonaDialogueProject p) {

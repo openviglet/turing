@@ -1798,3 +1798,4 @@
 - **T1319c** — LLM instances, embedding models, search engines, stores and MCP servers refuse a save from an older version with a 409 through one shared check; exports omit the version.
 - **T1337** — Solr, Elasticsearch and Lucene build their clients from an endpoint cached by SE instance id, cleared after commit by the SE instance listener, so a search reads no SE row.
 - **T1319d** — Custom tools, integrations, thesauri and microthesauri refuse a save from an older version with a 409, and the console sends the version it last read.
+- **T1319e** — Persona match, dialogue and research projects refuse a save from an older version with a 409; runs stamp the current row, and distillation keeps each saved LLM copy.

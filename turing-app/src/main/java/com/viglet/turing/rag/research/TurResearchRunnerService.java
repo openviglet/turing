@@ -288,9 +288,13 @@ public class TurResearchRunnerService {
             interviewRepository.saveAll(toSave);
         }
 
-        study.setLastRunAt(now);
-        study.setModificationDate(now);
-        studyRepository.save(study);
+        // T1319 — the study is versioned and this copy was read when the run began;
+        // stamp the current row so a console edit made during the run is kept.
+        studyRepository.findById(study.getId()).ifPresent(current -> {
+            current.setLastRunAt(now);
+            current.setModificationDate(now);
+            studyRepository.save(current);
+        });
         eventBus.publish(TurResearchRunEvent.done(study.getId(), personas.size(), now));
     }
 

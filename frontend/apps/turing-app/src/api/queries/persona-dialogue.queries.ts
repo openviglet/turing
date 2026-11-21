@@ -41,7 +41,12 @@ export function useCreateDialogueProject() {
 export function useUpdateDialogueProject(id: string) {
   const queryClient = useQueryClient();
   return useMutation<DialogueProject, Error, DialogueProjectRequest>({
-    mutationFn: (body) => service.update(id, body),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: (body) => {
+      const cached = queryClient.getQueryData<DialogueProject>(queryKeys.personaDialogue.detail(id));
+      return service.update(id, { ...body, version: cached?.version ?? body.version });
+    },
     onSuccess: (saved) => {
       queryClient.setQueryData(queryKeys.personaDialogue.detail(id), saved);
       invalidateAll(queryClient);

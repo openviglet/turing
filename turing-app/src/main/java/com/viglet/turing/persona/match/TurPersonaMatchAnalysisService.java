@@ -303,9 +303,13 @@ public class TurPersonaMatchAnalysisService {
                         c.dto().llmUsed(), c.reused(), c.hash()))
                 .toList(), now);
 
-        project.setLastRunAt(now);
-        project.setModificationDate(now);
-        projectRepository.save(project);
+        // T1319 — the project is versioned and this copy was read when the run began;
+        // stamp the current row so a console edit made during the run is kept.
+        projectRepository.findById(project.getId()).ifPresent(current -> {
+            current.setLastRunAt(now);
+            current.setModificationDate(now);
+            projectRepository.save(current);
+        });
         eventBus.publish(TurPersonaMatchRunEvent.done(project.getId(),
                 sources.size() * personas.size(), now));
     }

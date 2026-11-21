@@ -33,5 +33,7 @@ public record TurPersonaDialogueProjectDto(
         Instant lastRunAt,
         int speakerCount,
         List<TurPersonaDialogueSpeakerDto> speakers,
-        List<TurPersonaDialogueTurnDto> transcript) {
+        List<TurPersonaDialogueTurnDto> transcript,
+        /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+        Long version) {
 }

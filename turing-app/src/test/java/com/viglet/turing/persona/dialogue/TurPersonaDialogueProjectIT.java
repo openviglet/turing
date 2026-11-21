@@ -58,7 +58,7 @@ class TurPersonaDialogueProjectIT extends AbstractTuringSpringIT {
         // --- create ---
         TurPersonaDialogueProjectDto created = service.create(new TurPersonaDialogueProjectDto(
                 null, "Dialogue IT project", "desc", "Should we ship on Fridays?",
-                null, null, 6, null, 0, null, null));
+                null, null, 6, null, 0, null, null, null));
         String projectId = created.id();
         assertNotNull(projectId);
         assertEquals(6, created.turns());

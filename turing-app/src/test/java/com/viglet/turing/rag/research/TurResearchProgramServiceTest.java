@@ -53,7 +53,7 @@ class TurResearchProgramServiceTest {
             Instant lastRunAt) {
         return new TurResearchStudyDto(id, name, "goal", null, null, true, "DYNAMIC_SCRIPT", null,
                 List.of(), 6, null, null, null, null, null, null, "MANUAL", lastRunAt, personas,
-                interviews, List.of(), List.of());
+                interviews, List.of(), List.of(), null);
     }
 
     private static TurResearchReportDto report(String... titles) {
