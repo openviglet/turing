@@ -230,4 +230,11 @@ class TurAgentEvalGateServiceTest {
         return new TurAgentEvalCaseResultDto(id, id, passed, passed ? 1d : 0d,
                 "ANY", "ABANDONED", null, List.of(), "na", null, null);
     }
+
+    @Test
+    void theGateIsWhatTheChatFlowPublishConsults() {
+        // T1322f — the chat-flow API reaches this gate only through agent's SPI.
+        assertThat(com.viglet.turing.agent.flow.TurAgentPublishGate.class)
+                .isAssignableFrom(TurAgentEvalGateService.class);
+    }
 }

@@ -6,7 +6,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.llm.web.gateway;
+package com.viglet.turing.eval.web.gateway;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,7 +31,7 @@ import com.viglet.turing.eval.distillation.TurOpenAiDistillationService;
 import com.viglet.turing.eval.distillation.TurOpenAiDistillationService.DistillResult;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
-import com.viglet.turing.agent.llm.gateway.TurGatewayTrafficCaptureService;
+import com.viglet.turing.eval.gateway.TurGatewayTrafficCaptureService;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyBudgetStatus;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService.KeyUsageRow;

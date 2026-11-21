@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.web;
+package com.viglet.turing.eval.web;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.viglet.turing.agent.web;
+package com.viglet.turing.eval.web;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;

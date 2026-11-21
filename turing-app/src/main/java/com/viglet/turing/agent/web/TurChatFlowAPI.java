@@ -37,7 +37,7 @@ import com.viglet.turing.persona.authoring.AiAuthoringRequest;
 import com.viglet.turing.persona.authoring.AiAuthoringResponse;
 import com.viglet.turing.persona.authoring.chatflow.ChatFlowAuthoringSkill;
 import com.viglet.turing.persona.authoring.chatflow.ChatFlowGeneration;
-import com.viglet.turing.eval.TurAgentEvalGateService;
+import com.viglet.turing.agent.flow.TurAgentPublishGate;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowLinterService;
 import com.viglet.turing.agent.chat.analytics.TurChatFlowFunnelService;
@@ -100,7 +100,7 @@ public class TurChatFlowAPI {
     private final TurChatFlowRecipeService chatFlowRecipeService;
     private final TurChatFlowVariantService chatFlowVariantService;
     private final TurChatFlowFunnelService chatFlowFunnelService;
-    private final TurAgentEvalGateService agentEvalGateService;
+    private final java.util.List<TurAgentPublishGate> publishGates;
     private final TurFormLabelTidyService formLabelTidyService;
 
     public TurChatFlowAPI(TurChatFlowRepository turChatFlowRepository,
@@ -116,7 +116,7 @@ public class TurChatFlowAPI {
             TurChatFlowRecipeService chatFlowRecipeService,
             TurChatFlowVariantService chatFlowVariantService,
             TurChatFlowFunnelService chatFlowFunnelService,
-            TurAgentEvalGateService agentEvalGateService,
+            java.util.List<TurAgentPublishGate> publishGates,
             TurFormLabelTidyService formLabelTidyService) {
         this.turChatFlowRepository = turChatFlowRepository;
         this.turChatFlowMapper = turChatFlowMapper;
@@ -131,7 +131,7 @@ public class TurChatFlowAPI {
         this.chatFlowRecipeService = chatFlowRecipeService;
         this.chatFlowVariantService = chatFlowVariantService;
         this.chatFlowFunnelService = chatFlowFunnelService;
-        this.agentEvalGateService = agentEvalGateService;
+        this.publishGates = publishGates;
         this.formLabelTidyService = formLabelTidyService;
     }
 
@@ -578,7 +578,7 @@ public class TurChatFlowAPI {
         // blocking and the latest eval run is red/regressed, refuse the
         // publish. Default sets are non-blocking (warn-only, surfaced in the
         // Lint panel), so this never bites until an author opts in.
-        if (agentEvalGateService.shouldBlockPublish(agentId)) {
+        if (publishGates.stream().anyMatch(gate -> gate.shouldBlockPublish(agentId))) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
                     "Publish blocked: the agent's eval gate is failing. "
                             + "Fix the regression or re-run the gate to a green baseline.");

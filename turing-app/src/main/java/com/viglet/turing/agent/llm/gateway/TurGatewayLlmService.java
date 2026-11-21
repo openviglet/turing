@@ -110,7 +110,7 @@ public class TurGatewayLlmService {
     private final TurGatewayModelRouter modelRouter;
     private final TurGatewayNativeToolsService nativeToolsService;
     private final TurGatewayRouterService routerService;
-    private final TurGatewayTrafficCaptureService trafficCapture;
+    private final TurGatewayTrafficSink trafficCapture;
     private final ObjectMapper objectMapper;
 
     public TurGatewayLlmService(TurLLMInstanceRepository llmInstanceRepository,
@@ -126,7 +126,7 @@ public class TurGatewayLlmService {
             TurGatewayModelRouter modelRouter,
             TurGatewayNativeToolsService nativeToolsService,
             TurGatewayRouterService routerService,
-            TurGatewayTrafficCaptureService trafficCapture,
+            TurGatewayTrafficSink trafficCapture,
             ObjectMapper objectMapper) {
         this.llmInstanceRepository = llmInstanceRepository;
         this.llmModelFactory = llmModelFactory;

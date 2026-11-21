@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.eval.spectator;
+package com.viglet.turing.agent.event;
 
 import org.springframework.stereotype.Component;
 
@@ -55,7 +55,7 @@ public class TurChatMessageEventBus {
 
     /**
      * Publishes one completed message. Called by the post-turn telemetry seam
-     * for normal turns and by {@link TurCopilotService} for operator turns. A
+     * for normal turns and by {@link com.viglet.turing.eval.spectator.TurCopilotService} for operator turns. A
      * null event or one with a blank conversation id / content is ignored.
      */
     public void publish(TurChatMessageEvent event) {

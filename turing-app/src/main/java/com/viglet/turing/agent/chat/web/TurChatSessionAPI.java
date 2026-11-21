@@ -29,11 +29,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.ConversationStateDto;
-import com.viglet.turing.eval.spectator.TurChatMessageEvent;
-import com.viglet.turing.eval.spectator.TurChatMessageEventBus;
+import com.viglet.turing.agent.event.TurChatMessageEvent;
+import com.viglet.turing.agent.event.TurChatMessageEventBus;
 import com.viglet.turing.rag.citation.TurCitationDriftService;
-import com.viglet.turing.eval.spectator.TurCopilotService;
-import com.viglet.turing.eval.spectator.TurCopilotService.ManualTurnResult;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
 import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
 import com.viglet.turing.agent.persistence.dto.TurChatCitationDriftDto;
@@ -101,7 +99,6 @@ public class TurChatSessionAPI {
     private final TurChatSlotEventBus slotEventBus;
     private final TurWorkspaceEventBus workspaceEventBus;
     private final TurChatSlotSseRegistry slotSseRegistry;
-    private final TurCopilotService copilotService;
     private final TurCitationDriftService citationDriftService;
     /** T1334 — a conversation id is read only by a caller its tenant can see. */
     private final TurConversationAccess conversationAccess;
@@ -115,7 +112,6 @@ public class TurChatSessionAPI {
             TurChatSlotEventBus slotEventBus,
             TurWorkspaceEventBus workspaceEventBus,
             TurChatSlotSseRegistry slotSseRegistry,
-            TurCopilotService copilotService,
             TurCitationDriftService citationDriftService,
             TurConversationAccess conversationAccess) {
         this.conversationAccess = conversationAccess;
@@ -128,7 +124,6 @@ public class TurChatSessionAPI {
         this.slotEventBus = slotEventBus;
         this.workspaceEventBus = workspaceEventBus;
         this.slotSseRegistry = slotSseRegistry;
-        this.copilotService = copilotService;
         this.citationDriftService = citationDriftService;
     }
 
@@ -339,40 +334,6 @@ public class TurChatSessionAPI {
                         TurChatSlotSseRegistry.Mode.WORKSPACE))
                 .doFinally(sig -> slotSseRegistry.release(conversationId,
                         TurChatSlotSseRegistry.Mode.WORKSPACE));
-    }
-
-    /**
-     * T120 — co-pilot "take the wheel": inject an operator-authored assistant
-     * turn. Skips the LLM; the operator's {@code assistantMessage} becomes the
-     * reply and (when paired with a {@code userMessage}) the flow advances
-     * through the same path a normal turn uses, so slots/analytics stay
-     * consistent. The reply reaches the visitor and any spectator via the
-     * message bus.
-     */
-    @Operation(summary = "T120 — co-pilot manual turn. The operator's text becomes the "
-            + "assistant message (LLM skipped); the flow advances and telemetry records "
-            + "exactly as a normal turn, keeping slots and analytics consistent.")
-    @PostMapping("/{conversationId}/manual-turn")
-    @Secured({ "ROLE_ADMIN", "AI_AGENT_EDIT" })
-    public ManualTurnResult manualTurn(@PathVariable String conversationId,
-            @RequestBody ManualTurnRequest request) {
-        conversationAccess.requireVisible(conversationId);
-        return copilotService.manualTurn(conversationId,
-                request == null ? null : request.agentId(),
-                request == null ? null : request.flowId(),
-                request == null ? null : request.userMessage(),
-                request == null ? null : request.assistantMessage());
-    }
-
-    /**
-     * Body of {@code POST /{conversationId}/manual-turn}. {@code agentId} and
-     * {@code assistantMessage} are required; {@code flowId} defaults to the
-     * conversation's active flow and {@code userMessage} is the visitor message
-     * being answered (omit for a pure operator interjection that does not
-     * advance the flow).
-     */
-    public record ManualTurnRequest(String agentId, String flowId, String userMessage,
-            String assistantMessage) {
     }
 
     /** 25s comment heartbeat shared by the three spectator SSE streams. */

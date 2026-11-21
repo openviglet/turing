@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.eval.spectator;
 
+import com.viglet.turing.agent.event.TurChatMessageEvent;
+import com.viglet.turing.agent.event.TurChatMessageEventBus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -7,7 +7,8 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.eval.spectator;
+package com.viglet.turing.agent.event;
+
 
 /**
  * One message of a live conversation, broadcast on the
@@ -21,7 +22,7 @@ package com.viglet.turing.eval.spectator;
  * <p>Emitted from the single post-turn telemetry seam
  * ({@code TurChatStreamingDispatcher.recordTurnTelemetry}) for normal
  * LLM-driven turns ({@code manual=false}) and from
- * {@link TurCopilotService#manualTurn} when an operator takes the wheel
+ * {@link com.viglet.turing.eval.spectator.TurCopilotService#manualTurn} when an operator takes the wheel
  * ({@code manual=true}). The {@code type} mirrors the chat SSE discriminator
  * ({@code user} / {@code assistant}); {@code manual} lets the spectator UI badge
  * operator-authored replies distinctly from model output.

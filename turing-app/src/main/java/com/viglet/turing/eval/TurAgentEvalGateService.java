@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.eval;
 
+import com.viglet.turing.agent.flow.TurAgentPublishGate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
  * @since 2026.3.1
  */
 @Service
-public class TurAgentEvalGateService {
+public class TurAgentEvalGateService implements TurAgentPublishGate {
 
     private final TurAgentEvalSetRepository evalSetRepository;
     private final TurAgentEvalReportRepository reportRepository;
@@ -125,6 +126,7 @@ public class TurAgentEvalGateService {
      * True when a blocking gate should hard-stop a publish: at least one
      * enabled set is marked blocking AND the latest run is red/regressed.
      */
+    @Override
     public boolean shouldBlockPublish(String agentId) {
         TurAgentEvalGateDto gate = gate(agentId);
         return gate.blocking()

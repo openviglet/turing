@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.eval.spectator;
 
+import com.viglet.turing.agent.event.TurChatMessageEvent;
+import com.viglet.turing.agent.event.TurChatMessageEventBus;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;

@@ -6,7 +6,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.llm.web.gateway;
+package com.viglet.turing.eval.web.gateway;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,9 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.agent.llm.web.gateway.TurGatewayAdminAPI.CreatedKey;
-import com.viglet.turing.agent.llm.web.gateway.TurGatewayAdminAPI.KeyUpsertRequest;
-import com.viglet.turing.agent.llm.web.gateway.TurGatewayAdminAPI.KeyView;
+import com.viglet.turing.eval.web.gateway.TurGatewayAdminAPI.CreatedKey;
+import com.viglet.turing.eval.web.gateway.TurGatewayAdminAPI.KeyUpsertRequest;
+import com.viglet.turing.eval.web.gateway.TurGatewayAdminAPI.KeyView;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService.GeneratedKey;
 import com.viglet.turing.llm.gateway.TurGatewayUsageService;
@@ -50,7 +50,7 @@ class TurGatewayAdminAPITest {
     @Mock
     private TurGatewayKeyRepository keyRepository;
     @Mock
-    private com.viglet.turing.agent.llm.gateway.TurGatewayTrafficCaptureService trafficCapture;
+    private com.viglet.turing.eval.gateway.TurGatewayTrafficCaptureService trafficCapture;
     @Mock
     private com.viglet.turing.eval.distillation.TurOpenAiDistillationService distillationService;
 

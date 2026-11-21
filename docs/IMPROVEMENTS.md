@@ -2625,17 +2625,6 @@ Waits for T1322j and T1322m (2026-11-21): persona also reaches the MCP client
 (TurMcpToolCallbackService in agent, TurMcpServer in mcp) for brand context, and
 transcription for audio-derived personas; both move below persona there.
 
-### CLXXXIX.38 Eval leaves agent (T1322f)
-
-eval imports agent 138 times, mostly the eval entities that live in agent's persistence
-(TurEvalDataset, TurAgentEvalSet/Case/Report, TurEvalGraderConfig, TurAgentSuggestion)
-and the chat flow it replays; agent imports eval 19 times from the eval controllers in
-agent.web and from TurChatStreamingDispatcher's spectator and online-eval hooks. ADR
-0005 section 6: the eval controllers and eval entities move to eval; the dispatcher
-publishes a chat-message event from agent's named interface (TurChatMessageEvent moves
-there) and eval listens. sn.dsl.eval's dataset use moves with it. Done when agent
-imports no eval type.
-
 ### CLXXXIX.39 The answer module splits from rag (T1322g)
 
 rag imports agent 38 times (TurSNGenAi, TurSNAnswerService, research, deep dive,

@@ -8,6 +8,7 @@
  */
 package com.viglet.turing.agent.llm.gateway;
 
+import com.viglet.turing.eval.gateway.TurGatewayTrafficCaptureService;
 import com.viglet.turing.llm.gateway.TurGatewayGuardrailException;
 import com.viglet.turing.llm.gateway.TurGatewayKeyService;
 import com.viglet.turing.llm.gateway.TurGatewayProviderLimit;

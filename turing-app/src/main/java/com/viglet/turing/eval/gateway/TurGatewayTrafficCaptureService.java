@@ -6,13 +6,14 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.llm.gateway;
+package com.viglet.turing.eval.gateway;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.stereotype.Service;
 
+import com.viglet.turing.agent.llm.gateway.TurGatewayTrafficSink;
 import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
 import com.viglet.turing.agent.persistence.model.TurEvalDataset;
@@ -44,7 +45,7 @@ import tools.jackson.databind.node.ObjectNode;
  */
 @Slf4j
 @Service
-public class TurGatewayTrafficCaptureService {
+public class TurGatewayTrafficCaptureService implements TurGatewayTrafficSink {
 
     private static final String ROLE_ASSISTANT = "assistant";
     private static final String ROLE_SYSTEM = "system";
@@ -64,11 +65,13 @@ public class TurGatewayTrafficCaptureService {
         this.objectMapper = objectMapper;
     }
 
+    @Override
     public boolean isEnabled() {
         return gatewayProperty.isCaptureTraffic();
     }
 
     /** The capture dataset id, or {@code null} if nothing has been captured yet. */
+    @Override
     public String currentDatasetId() {
         return datasetId.get();
     }
@@ -77,6 +80,7 @@ public class TurGatewayTrafficCaptureService {
      * Captures one completed gateway turn as an eval-dataset row. No-op when
      * capture is disabled or the turn has no user content / answer. Fail-open.
      */
+    @Override
     public void capture(String model, List<WireMessage> messages, String answer,
             TurLLMInstance instance, String keyId) {
         if (!isEnabled() || answer == null || answer.isBlank()) {
