@@ -1,0 +1,306 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ */
+package com.viglet.turing.agent.llm.web.cost;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * T290 / §XVI.2 (Block L) — the live, all-provider AI-spend dashboard backend.
+ * Reads the frozen per-turn {@code cost_usd} stamped by
+ * {@link com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService} and
+ * rolls it up per agent / model / stage / tenant plus a daily time-series.
+ *
+ * <p>Complements (does not duplicate) the F.13 vendor-Usage import: where both
+ * exist, the vendor number is the source of truth and this live number is the
+ * early-warning estimate. Always-on — backed by the relational
+ * {@code llm_token_usage} table, so it works without Mongo/Redis analytics.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.4
+ */
+@RestController
+@RequestMapping("/api/v2/llm/cost")
+@Tag(name = "LLM Cost Governance", description = "Block L — live AI-spend dashboard")
+public class TurLLMCostAPI {
+
+    private static final int DEFAULT_WINDOW_DAYS = 30;
+
+    private final TurLLMTokenUsageRepository tokenUsageRepository;
+    private final TurAIAgentRepository agentRepository;
+
+    public TurLLMCostAPI(TurLLMTokenUsageRepository tokenUsageRepository,
+            TurAIAgentRepository agentRepository) {
+        this.tokenUsageRepository = tokenUsageRepository;
+        this.agentRepository = agentRepository;
+    }
+
+    public record AgentCostRow(String agentId, String agentTitle,
+            double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public record ModelCostRow(String vendorId, String modelName,
+            double costUsd, long totalTokens, long requestCount,
+            long inputTokens, long outputTokens) {
+    }
+
+    public record StageCostRow(String stage,
+            double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public record TenantCostRow(String tenantId,
+            double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public record DailyCostPoint(String date,
+            double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public record CostReport(
+            String periodStart,
+            String periodEnd,
+            double totalCostUsd,
+            long totalTokens,
+            long totalInputTokens,
+            long totalOutputTokens,
+            long totalRequests,
+            List<AgentCostRow> byAgent,
+            List<ModelCostRow> byModel,
+            List<StageCostRow> byStage,
+            List<TenantCostRow> byTenant,
+            List<SiteCostRow> bySite,
+            String site,
+            long unpricedRequests) {
+    }
+
+    /** T1127 — a Semantic Navigation site's spend in the window. */
+    public record SiteCostRow(String siteName, double costUsd, long totalTokens, long requestCount) {
+    }
+
+    public CostReport summary(String from, String to) {
+        return summary(from, to, null);
+    }
+
+    /**
+     * @param site T1127 — when set, every breakdown counts only the calls made for
+     *             that Semantic Navigation site
+     */
+    @GetMapping("/summary")
+    public CostReport summary(
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(required = false) String site) {
+
+        LocalDateTime start = parseFrom(from);
+        LocalDateTime end = parseTo(to);
+        String onlySite = site == null || site.isBlank() ? null : site.trim();
+
+        Map<String, String> agentTitles = agentRepository.findAll().stream()
+                .collect(Collectors.toMap(TurAIAgent::getId, a ->
+                        a.getTitle() == null ? a.getId() : a.getTitle(), (x, y) -> x));
+
+        List<AgentCostRow> byAgent = new ArrayList<>();
+        double totalCost = 0;
+        long totalTokens = 0;
+        long totalReqs = 0;
+        for (Object[] row : agentRows(start, end, onlySite)) {
+            String agentId = (String) row[0];
+            double cost = num(row[1]);
+            long tokens = lng(row[2]);
+            long reqs = lng(row[3]);
+            byAgent.add(new AgentCostRow(agentId,
+                    agentId == null ? "(non-agent)" : agentTitles.getOrDefault(agentId, agentId),
+                    cost, tokens, reqs));
+            // The per-agent grouping is exhaustive over all rows → use it for the totals.
+            totalCost += cost;
+            totalTokens += tokens;
+            totalReqs += reqs;
+        }
+
+        List<ModelCostRow> byModel = new ArrayList<>();
+        long totalInputTokens = 0;
+        long totalOutputTokens = 0;
+        for (Object[] row : modelRows(start, end, onlySite)) {
+            long inputTokens = lng(row[5]);
+            long outputTokens = lng(row[6]);
+            // byModel is exhaustive over all rows → its input/output sums are the grand totals.
+            totalInputTokens += inputTokens;
+            totalOutputTokens += outputTokens;
+            byModel.add(new ModelCostRow((String) row[0], (String) row[1],
+                    num(row[2]), lng(row[3]), lng(row[4]), inputTokens, outputTokens));
+        }
+
+        return new CostReport(periodLabel(from, start.toLocalDate()),
+                periodLabel(to, end.toLocalDate().minusDays(1)),
+                totalCost, totalTokens, totalInputTokens, totalOutputTokens, totalReqs,
+                byAgent, byModel, stageRows(start, end, onlySite), tenantRows(start, end, onlySite),
+                siteRows(start, end, onlySite), onlySite,
+                // T1144 — the calls whose cost is unknown, which totalCostUsd leaves out.
+                onlySite == null ? tokenUsageRepository.countUnpriced(start, end)
+                        : tokenUsageRepository.countUnpricedForSite(start, end, onlySite));
+    }
+
+    private static String periodLabel(String bound, LocalDate day) {
+        return isInstant(bound) ? bound.trim() : day.toString();
+    }
+
+    private List<StageCostRow> stageRows(LocalDateTime start, LocalDateTime end, String site) {
+        return (site == null ? tokenUsageRepository.findCostByStage(start, end)
+                : tokenUsageRepository.findCostByStageForSite(start, end, site)).stream()
+                .map(row -> new StageCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
+    }
+
+    private List<TenantCostRow> tenantRows(LocalDateTime start, LocalDateTime end, String site) {
+        return (site == null ? tokenUsageRepository.findCostByTenant(start, end)
+                : tokenUsageRepository.findCostByTenantForSite(start, end, site)).stream()
+                .map(row -> new TenantCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
+    }
+
+    /** T1127 — spend per SN site; only the asked one when {@code site} is set. */
+    private List<SiteCostRow> siteRows(LocalDateTime start, LocalDateTime end, String site) {
+        return tokenUsageRepository.findCostBySite(start, end).stream()
+                .filter(row -> site == null || site.equals(row[0]))
+                .map(row -> new SiteCostRow((String) row[0], num(row[1]), lng(row[2]), lng(row[3])))
+                .toList();
+    }
+
+    @GetMapping("/timeseries")
+    public List<DailyCostPoint> timeseries(
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to) {
+        LocalDateTime start = parseFrom(from);
+        LocalDateTime end = parseTo(to);
+        List<DailyCostPoint> points = new ArrayList<>();
+        for (Object[] row : tokenUsageRepository.findDailyCostTimeseries(start, end)) {
+            points.add(new DailyCostPoint(row[0].toString(),
+                    num(row[1]), lng(row[2]), lng(row[3])));
+        }
+        return points;
+    }
+
+    /**
+     * T184 / §X.14.d — per-agent budget status for the AI-Spend card's alert
+     * thresholds: month-to-date spend vs the agent's {@code monthlyBudgetUsd}
+     * plus a linear projection to month-end. Only agents with a positive monthly
+     * budget are returned (the gate is off otherwise). Mirrors the read the
+     * T291 turn-time {@code TurChatCostBudgetGate} does, surfaced for the UI.
+     */
+    public record AgentBudgetStatus(String agentId, String agentTitle,
+            double monthlyBudgetUsd, double monthToDateSpendUsd, double projectedMonthEndUsd,
+            boolean overBudget, boolean projectedOverBudget,
+            Double perTurnSoftCapUsd, boolean downgradeConfigured) {
+    }
+
+    @GetMapping("/budget-status")
+    public List<AgentBudgetStatus> budgetStatus() {
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        LocalDateTime monthStart = today.withDayOfMonth(1).atStartOfDay();
+        int dayOfMonth = today.getDayOfMonth();
+        int daysInMonth = today.lengthOfMonth();
+
+        List<AgentBudgetStatus> out = new ArrayList<>();
+        for (TurAIAgent agent : agentRepository.findAll()) {
+            Double budget = agent.getMonthlyBudgetUsd();
+            if (budget == null || budget <= 0) {
+                continue;
+            }
+            double spent = tokenUsageRepository.sumCostByAgentSince(agent.getId(), monthStart);
+            double projected = dayOfMonth > 0 ? spent / dayOfMonth * daysInMonth : spent;
+            String downgradeId = agent.getBudgetDowngradeLlmId();
+            out.add(new AgentBudgetStatus(agent.getId(),
+                    agent.getTitle() == null ? agent.getId() : agent.getTitle(),
+                    budget, spent, projected,
+                    spent >= budget, projected >= budget,
+                    agent.getPerTurnSoftCapUsd(),
+                    downgradeId != null && !downgradeId.isBlank()));
+        }
+        out.sort((a, b) -> Double.compare(b.monthToDateSpendUsd(), a.monthToDateSpendUsd()));
+        return out;
+    }
+
+    /** T1127 — the per-agent rows of the window, of one site when {@code site} is set. */
+    private List<Object[]> agentRows(LocalDateTime start, LocalDateTime end, String site) {
+        return site == null ? tokenUsageRepository.findCostByAgent(start, end)
+                : tokenUsageRepository.findCostByAgentForSite(start, end, site);
+    }
+
+    private List<Object[]> modelRows(LocalDateTime start, LocalDateTime end, String site) {
+        return site == null ? tokenUsageRepository.findCostByModel(start, end)
+                : tokenUsageRepository.findCostByModelForSite(start, end, site);
+    }
+
+    private LocalDateTime parseFrom(String from) {
+        if (isInstant(from)) {
+            return atServerTime(from);
+        }
+        if (from != null && !from.isBlank()) {
+            return LocalDate.parse(from, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+        }
+        return LocalDate.now(ZoneId.systemDefault()).minusDays(DEFAULT_WINDOW_DAYS).atStartOfDay();
+    }
+
+    private LocalDateTime parseTo(String to) {
+        if (isInstant(to)) {
+            return atServerTime(to);
+        }
+        // Exclusive upper bound at the START of the day AFTER `to` so the whole
+        // `to` day is included; default = start of tomorrow (covers all of today).
+        if (to != null && !to.isBlank()) {
+            return LocalDate.parse(to, DateTimeFormatter.ISO_LOCAL_DATE).plusDays(1).atTime(LocalTime.MIN);
+        }
+        return LocalDate.now(ZoneId.systemDefault()).plusDays(1).atStartOfDay();
+    }
+
+    /**
+     * T1127 — a bound may be an ISO-8601 instant ({@code 2026-10-24T13:05:00Z})
+     * instead of a date, so a window can bracket one test run. A date keeps its
+     * whole-day meaning.
+     */
+    private static boolean isInstant(String value) {
+        return value != null && value.contains("T");
+    }
+
+    /** The instant on the server's clock, the zone {@code createdAt} is stored in. */
+    private static LocalDateTime atServerTime(String instant) {
+        try {
+            return LocalDateTime.ofInstant(java.time.Instant.parse(instant.trim()), ZoneId.systemDefault());
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new IllegalArgumentException("'" + instant + "' is neither a date nor an ISO-8601 instant", e);
+        }
+    }
+
+    private static double num(Object o) {
+        return o == null ? 0.0 : ((Number) o).doubleValue();
+    }
+
+    private static long lng(Object o) {
+        return o == null ? 0L : ((Number) o).longValue();
+    }
+}

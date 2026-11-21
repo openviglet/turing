@@ -72,7 +72,7 @@ class TurAIAgentChatAPITest {
     @Mock
     private com.viglet.turing.agent.TurAgentChatExecutor agentChatExecutor;
     @Mock
-    private com.viglet.turing.llm.nativeapi.TurNativeChatExecutor nativeChatExecutor;
+    private com.viglet.turing.agent.llm.nativeapi.TurNativeChatExecutor nativeChatExecutor;
     @Mock
     private TurChatFlowRepository turChatFlowRepository;
     @Mock

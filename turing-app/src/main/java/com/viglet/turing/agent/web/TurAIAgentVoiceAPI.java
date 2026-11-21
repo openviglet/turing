@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSession;
-import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSessionService;
-import com.viglet.turing.llm.nativeapi.voice.TurRealtimeVoiceSessionService.VoiceAvailability;
+import com.viglet.turing.agent.llm.nativeapi.voice.TurRealtimeVoiceSessionService;
+import com.viglet.turing.agent.llm.nativeapi.voice.TurRealtimeVoiceSessionService.VoiceAvailability;
 import com.viglet.turing.llm.nativeapi.voice.TurVoiceTranslationService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

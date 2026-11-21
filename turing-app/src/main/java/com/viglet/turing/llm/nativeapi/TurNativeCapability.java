@@ -59,7 +59,7 @@ import com.viglet.turing.llm.nativeapi.capability.TurCapabilityProvider;
  * {@code image_generation} / {@code mcp} as one-shot server-side tools.
  * {@code computer_use} (T136) is wired separately through the multi-turn
  * screenshot/action loop in
- * {@link com.viglet.turing.llm.nativeapi.openai.computeruse.TurOpenAiComputerUseService},
+ * {@link com.viglet.turing.agent.llm.nativeapi.openai.computeruse.TurOpenAiComputerUseService},
  * driving a pluggable
  * {@link com.viglet.turing.llm.nativeapi.openai.computeruse.TurComputerUseDriver}.
  *

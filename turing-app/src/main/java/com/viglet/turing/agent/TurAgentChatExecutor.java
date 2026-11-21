@@ -112,7 +112,7 @@ public class TurAgentChatExecutor {
     private final TurChatAnalyticsService chatAnalyticsService;
     private final TurChatCohortResolver chatCohortResolver;
     private final TurChatPipelineObservation chatPipelineObservation;
-    private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
+    private final com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
     private final com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver;
     private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 
@@ -130,7 +130,7 @@ public class TurAgentChatExecutor {
             TurChatAnalyticsService chatAnalyticsService,
             TurChatCohortResolver chatCohortResolver,
             TurChatPipelineObservation chatPipelineObservation,
-            com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
+            com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
             com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver,
             com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty) {
         this.llmModelFactory = llmModelFactory;

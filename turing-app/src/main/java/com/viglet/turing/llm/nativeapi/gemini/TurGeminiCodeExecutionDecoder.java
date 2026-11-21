@@ -52,7 +52,7 @@ public final class TurGeminiCodeExecutionDecoder {
     }
 
     /** True when the part is a code-execution artifact (not plain text). */
-    static boolean isCodeExecutionPart(Part part) {
+    public static boolean isCodeExecutionPart(Part part) {
         return part != null && (part.executableCode().isPresent()
                 || part.codeExecutionResult().isPresent()
                 || part.inlineData().isPresent());

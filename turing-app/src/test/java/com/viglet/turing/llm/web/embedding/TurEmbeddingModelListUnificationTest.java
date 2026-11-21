@@ -20,6 +20,7 @@
  */
 package com.viglet.turing.llm.web.embedding;
 
+import com.viglet.turing.agent.llm.web.embedding.TurEmbeddingModelAPI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

@@ -101,7 +101,7 @@ public class TurChatStreamingDispatcher {
     private final TurChatPipelineObservation chatPipelineObservation;
     private final TurToolExecutionLoop toolExecutionLoop;
     private final TurChatMessageEventBus chatMessageEventBus;
-    private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
+    private final com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
     private final com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService;
     private final com.viglet.turing.agent.clienttool.TurClientToolService clientToolService;
     private final TurClientToolParkRegistry clientToolParkRegistry;
@@ -117,7 +117,7 @@ public class TurChatStreamingDispatcher {
             TurChatPipelineObservation chatPipelineObservation,
             TurToolExecutionLoop toolExecutionLoop,
             TurChatMessageEventBus chatMessageEventBus,
-            com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
+            com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
             com.viglet.turing.chat.analytics.TurToolCallTraceService toolCallTraceService,
             com.viglet.turing.agent.clienttool.TurClientToolService clientToolService,
             TurClientToolParkRegistry clientToolParkRegistry,

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.llm.web.chat.TurLLMChatAPI;
+import com.viglet.turing.agent.llm.web.chat.TurLLMChatAPI;
 import com.viglet.turing.agent.domain.TurAIAgentRepositoryPort;
 import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
 import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
@@ -23,7 +23,7 @@ import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurAgentChatRequest;
 import com.viglet.turing.agent.TurChatProviderErrorMapper;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
-import com.viglet.turing.llm.nativeapi.TurNativeChatExecutor;
+import com.viglet.turing.agent.llm.nativeapi.TurNativeChatExecutor;
 import com.viglet.turing.agent.tool.TurCodeInterpreterUrlSigner;
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;

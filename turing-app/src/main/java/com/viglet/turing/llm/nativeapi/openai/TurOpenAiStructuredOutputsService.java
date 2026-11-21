@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
  * set {@code additionalProperties: false} and list every property in
  * {@code required}; the caller owns that (see {@link #strictObjectSchema}).
  *
- * <p>Gated by {@link com.viglet.turing.llm.structuredoutputs.TurStructuredOutputsResolver};
+ * <p>Gated by {@link com.viglet.turing.agent.llm.structuredoutputs.TurStructuredOutputsResolver};
  * a non-OpenAI instance yields {@link Optional#empty()} so the caller can fall
  * back (or route to the Anthropic leg, T174).
  *

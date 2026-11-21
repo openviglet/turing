@@ -2612,18 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.35 Native chat execution moves into agent (T1322c)
-
-llm imports agent 91 times, persona 7 and rag 30, nearly all from code that runs an
-agent's turn: TurNativeChatExecutor and the provider services that execute with tools,
-memory scope, workspace, computer use or the editor (llm.nativeapi.anthropic, openai,
-gemini, cohere), TurGatewayModelRouter's agent routing and the llm.web.chat controllers.
-ADR 0005 section 6 moves them into agent; llm keeps the provider clients
-(TurNativeProviderClient), the capability registry and the gateway keys. Persona model
-calibration and citations then reach llm only from above. Split a class whose lower half
-is provider-only rather than moving both halves. Done when llm imports no agent, persona
-or rag type.
-
 ### CLXXXIX.36 chat merges into agent (T1322d)
 
 chat imports agent 79 times and agent imports chat 26: sessions, slots, memory

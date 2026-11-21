@@ -35,7 +35,7 @@ import com.viglet.turing.rag.catalog.TurCatalogCitation;
 import com.viglet.turing.rag.catalog.TurCatalogCopilotService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate;
+import com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.searchengine.dsl.TurDslCallerFilters;

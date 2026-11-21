@@ -8,6 +8,7 @@
  */
 package com.viglet.turing.llm.web.gateway;
 
+import com.viglet.turing.agent.llm.web.gateway.TurOpenAiCompatibleGatewayAPI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.charset.StandardCharsets;

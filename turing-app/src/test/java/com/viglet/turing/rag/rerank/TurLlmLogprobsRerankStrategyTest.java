@@ -27,7 +27,7 @@ import org.springframework.ai.document.Document;
 
 import com.openai.client.OpenAIClient;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
-import com.viglet.turing.llm.nativeapi.openai.TurOpenAiResponsesService;
+import com.viglet.turing.llm.nativeapi.openai.TurOpenAiRelevanceClassifier;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -38,7 +38,7 @@ class TurLlmLogprobsRerankStrategyTest {
     @Mock private TurGlobalSettingsService globalSettingsService;
     @Mock private TurLLMInstanceRepository llmInstanceRepository;
     @Mock private TurNativeProviderClient nativeProviderClient;
-    @Mock private TurOpenAiResponsesService responsesService;
+    @Mock private TurOpenAiRelevanceClassifier responsesService;
     @Mock private OpenAIClient openAiClient;
 
     private TurLlmLogprobsRerankStrategy strategy;

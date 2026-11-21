@@ -32,10 +32,10 @@ import tools.jackson.databind.ObjectMapper;
  * @since 2026.3.4
  */
 @Slf4j
-final class TurGatewayStreams {
+public final class TurGatewayStreams {
 
     /** How long a streamed call waits for the provider's first signal. */
-    static final Duration FIRST_SIGNAL_TIMEOUT = Duration.ofMinutes(2);
+    public static final Duration FIRST_SIGNAL_TIMEOUT = Duration.ofMinutes(2);
 
     private TurGatewayStreams() {
     }
@@ -48,7 +48,7 @@ final class TurGatewayStreams {
      * the blocking path does (429 for a provider limit). The stream is replayed,
      * so the first token still reaches the client.
      */
-    static Flux<ChatResponse> started(ChatModel chatModel, Prompt prompt) {
+    public static Flux<ChatResponse> started(ChatModel chatModel, Prompt prompt) {
         ConnectableFlux<ChatResponse> replay = chatModel.stream(prompt).replay();
         replay.connect();
         replay.next().block(FIRST_SIGNAL_TIMEOUT);
@@ -60,7 +60,7 @@ final class TurGatewayStreams {
      * ({@code data: {"error": {...}}}) so a client raises it instead of showing
      * it as assistant text.
      */
-    static ServerSentEvent<String> errorFrame(Throwable err, ObjectMapper objectMapper) {
+    public static ServerSentEvent<String> errorFrame(Throwable err, ObjectMapper objectMapper) {
         ErrorEnvelope envelope = TurGatewayProviderLimit.of(err)
                 .map(limit -> ErrorEnvelope.of(limit.message(), limit.type(), limit.code()))
                 .orElseGet(() -> ErrorEnvelope.of(err.getMessage(), "api_error", null));

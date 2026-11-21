@@ -79,7 +79,7 @@ class TurSNSiteGenAiAPITest {
     @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
     private com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
     @Mock
-    private com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
+    private com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
 
     // T1087 — the route both chat endpoints read; delegates to a real resolver
     // over the mocks above, so these tests exercise the real decision.

@@ -79,7 +79,7 @@ import lombok.extern.slf4j.Slf4j;
  * deployment's environment.
  *
  * <p><b>Ordering + gate.</b> {@code @Order(5)} runs after
- * {@link com.viglet.turing.llm.onstartup.TurDefaultRagInfraOnStartup}
+ * {@link com.viglet.turing.exchange.onstartup.TurDefaultRagInfraOnStartup}
  * ({@code @Order(4)}) so default data + SE instances already exist. It acts only
  * when the feature is enabled ({@code turing.genai.structured-feed.enabled}) and
  * a source opts in with {@code provision: true}. Fully fail-open: any per-source

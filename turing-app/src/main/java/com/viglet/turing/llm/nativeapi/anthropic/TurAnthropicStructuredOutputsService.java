@@ -48,7 +48,7 @@ import tools.jackson.databind.json.JsonMapper;
  * Anthropic counterpart to OpenAI's strict-schema reuse.
  *
  * <p>Gated by the cross-provider
- * {@link com.viglet.turing.llm.structuredoutputs.TurStructuredOutputsResolver}
+ * {@link com.viglet.turing.agent.llm.structuredoutputs.TurStructuredOutputsResolver}
  * (shared with T173). A non-Anthropic instance yields {@link Optional#empty()}
  * so the caller can fall back (or route to the OpenAI leg).
  *

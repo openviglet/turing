@@ -39,11 +39,11 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p><b>Why Chat Completions and not the Responses API:</b> {@code prediction}
  * is a Chat Completions-only parameter — {@code ResponseCreateParams} exposes no
- * equivalent. The native agent chat turn ({@link TurOpenAiResponsesService}) is
+ * equivalent. The native agent chat turn ({@link com.viglet.turing.agent.llm.nativeapi.openai.TurOpenAiResponsesService}) is
  * unaffected; this is a dedicated, self-contained service for discrete edit
  * operations that already hold a base text, not for multi-turn agent chat.
  *
- * <p>The service is gated by {@link TurPredictedOutputsResolver}: callers only
+ * <p>The service is gated by {@link com.viglet.turing.agent.llm.nativeapi.openai.TurPredictedOutputsResolver}: callers only
  * route here when the agent/instance opted in (rejected prediction tokens are
  * billed). A non-OpenAI instance yields {@link Optional#empty()} so the caller
  * can fall back to its normal path.

@@ -12,6 +12,7 @@
  */
 package com.viglet.turing.rag.rerank;
 
+import com.viglet.turing.llm.logprob.TurLogprobConfidence;
 import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.openai.client.OpenAIClient;
 import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
-import com.viglet.turing.llm.nativeapi.openai.TurOpenAiResponsesService;
+import com.viglet.turing.llm.nativeapi.openai.TurOpenAiRelevanceClassifier;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <p>For each candidate it runs a one-shot yes/no relevance classification
  * through the native OpenAI Responses path with {@code top_logprobs} on
- * ({@link TurOpenAiResponsesService#classifyRelevanceProbability}); the
+ * ({@link TurOpenAiRelevanceClassifier#classifyRelevanceProbability}); the
  * log-probability of {@code yes} vs {@code no} is the model's calibrated
  * P(relevant). {@link TurLogprobConfidence#blend} mixes that with the retrieval
  * rank, so a hedged top hit (the model wasn't sure) is demoted and a confident
@@ -68,12 +69,12 @@ public class TurLlmLogprobsRerankStrategy implements TurRagRerankStrategy {
     private final TurGlobalSettingsService globalSettingsService;
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurNativeProviderClient nativeProviderClient;
-    private final TurOpenAiResponsesService responsesService;
+    private final TurOpenAiRelevanceClassifier responsesService;
 
     public TurLlmLogprobsRerankStrategy(TurGlobalSettingsService globalSettingsService,
             TurLLMInstanceRepository llmInstanceRepository,
             TurNativeProviderClient nativeProviderClient,
-            TurOpenAiResponsesService responsesService) {
+            TurOpenAiRelevanceClassifier responsesService) {
         this.globalSettingsService = globalSettingsService;
         this.llmInstanceRepository = llmInstanceRepository;
         this.nativeProviderClient = nativeProviderClient;

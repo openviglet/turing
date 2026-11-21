@@ -8,6 +8,7 @@
  */
 package com.viglet.turing.llm.gateway;
 
+import com.viglet.turing.agent.llm.gateway.TurGatewayOptions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

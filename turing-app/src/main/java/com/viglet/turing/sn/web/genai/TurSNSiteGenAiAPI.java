@@ -115,7 +115,7 @@ public class TurSNSiteGenAiAPI {
 	private final com.viglet.turing.agent.flow.TurConversationLock conversationLock;
 	private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 	private final com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver;
-	private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
+	private final com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
 	private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 	// T790 / §LIV.1 (Block BF) — resolves whether the vectorless copilot can answer
 	// (a default LLM is configured) for the VECTORLESS_STRUCTURED readiness path.
@@ -154,7 +154,7 @@ public class TurSNSiteGenAiAPI {
 			com.viglet.turing.agent.flow.TurConversationLock conversationLock,
 			com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
 			com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver,
-			com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
+			com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
 			com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
 			com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver,
