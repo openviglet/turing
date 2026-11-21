@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.dsl.eval;
+package com.viglet.turing.eval.nlfacet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +30,12 @@ import com.viglet.turing.agent.persistence.model.TurEvalDataset;
 import com.viglet.turing.agent.persistence.model.TurEvalDatasetRow;
 import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRepository;
 import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalCase;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalPack;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport;
+import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation.ExpectedFilter;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetExpectation.ExpectedRange;
 

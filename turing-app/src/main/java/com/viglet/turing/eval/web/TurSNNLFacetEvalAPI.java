@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.sn.web.console;
+package com.viglet.turing.eval.web;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparison;
 import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparisonRequest;
 import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparisonService;
 import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
-import com.viglet.turing.sn.dsl.eval.TurNLFacetDatasetService;
+import com.viglet.turing.eval.nlfacet.TurNLFacetDatasetService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalPack;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalReport;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalService;
