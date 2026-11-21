@@ -50,6 +50,13 @@ public interface TurSNSiteCustomSortRepository extends JpaRepository<TurSNSiteCu
     Optional<TurSNSiteCustomSort> findByTurSNSiteAndName(@Param("site") TurSNSite site,
                                                           @Param("name") String name);
 
+    /** T1310 — {@link #findByTurSNSiteAndName} by the site's id, for the search-engine SPI. */
+    @Query("SELECT DISTINCT cs FROM TurSNSiteCustomSort cs " +
+           "LEFT JOIN FETCH cs.items " +
+           "WHERE cs.turSNSite.id = :siteId AND cs.name = :name")
+    Optional<TurSNSiteCustomSort> findBySiteIdAndName(@Param("siteId") String siteId,
+                                                       @Param("name") String name);
+
     @Query("SELECT DISTINCT cs FROM TurSNSiteCustomSort cs " +
            "LEFT JOIN FETCH cs.items " +
            "WHERE cs.turSNSite = :site AND cs.id = :id")

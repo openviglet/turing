@@ -16,6 +16,8 @@
  */
 package com.viglet.turing.searchengine.elasticsearch;
 
+import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -38,13 +40,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.TurSNQueryRelaxer;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -79,27 +77,27 @@ public class TurElasticsearch {
 
     private final TurSNSites turSNSiteRepository;
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurLuceneCustomFacets customFacets;
     private final TurElasticsearchRankingExpressions rankingExpressions;
 
     /** Without ranking expressions: the shape before T1222. */
     public TurElasticsearch(TurSNSites turSNSiteRepository,
             TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurLuceneCustomFacets customFacets) {
-        this(turSNSiteRepository, turSNSiteFieldExtRepository, turSNSiteCustomSortRepository, customFacets, null);
+        this(turSNSiteRepository, turSNSiteFieldExtRepository, siteSearchConfig, customFacets, null);
     }
 
     @org.springframework.beans.factory.annotation.Autowired
     public TurElasticsearch(TurSNSites turSNSiteRepository,
             TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurLuceneCustomFacets customFacets,
             TurElasticsearchRankingExpressions rankingExpressions) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
-        this.turSNSiteCustomSortRepository = turSNSiteCustomSortRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.customFacets = customFacets;
         this.rankingExpressions = rankingExpressions;
     }
@@ -633,16 +631,13 @@ public class TurElasticsearch {
                     "desc".equalsIgnoreCase(kv.get().getValue()) ? SortOrder.Desc : SortOrder.Asc, null));
             return;
         }
-        Optional<TurSNSiteCustomSort> customSort = turSNSiteCustomSortRepository.findByTurSNSiteAndName(turSNSite,
+        Optional<java.util.List<TurSECustomSortItem>> customSort = siteSearchConfig.customSort(turSNSite.getId(),
                 sort);
         if (customSort.isPresent()) {
-            customSort.get().getItems().stream()
-                    .sorted(java.util.Comparator.comparing(TurSNSiteCustomSortItem::getPosition,
-                            java.util.Comparator.nullsLast(Integer::compareTo)))
-                    .forEach(item -> searchBuilder.sort(sortOption(item.getFieldName(),
-                            fieldType(fields, item.getFieldName()),
-                            item.getSortOrder() == TurSNSiteCustomSortOrderEnum.DESC ? SortOrder.Desc : SortOrder.Asc,
-                            item.getMissing())));
+            customSort.get().forEach(item -> searchBuilder.sort(sortOption(item.fieldName(),
+                    fieldType(fields, item.fieldName()),
+                    item.descending() ? SortOrder.Desc : SortOrder.Asc,
+                    item.missing())));
             return;
         }
         addSorting(searchBuilder, sort);

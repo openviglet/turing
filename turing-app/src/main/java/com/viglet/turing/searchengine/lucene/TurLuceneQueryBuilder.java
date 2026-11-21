@@ -16,6 +16,7 @@
  */
 package com.viglet.turing.searchengine.lucene;
 
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,12 +62,9 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.facet.TurSNFilterExclusion;
@@ -89,30 +87,30 @@ public class TurLuceneQueryBuilder {
             TurSEFieldType.ARRAY);
 
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
-    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurLuceneSynonymRegistry synonymRegistry;
     private final TurLuceneRankingExpressions rankingExpressions;
     private final TurLuceneCustomFacets customFacets;
 
     public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions) {
-        this(turSNSiteFieldExtRepository, turSNSiteCustomSortRepository, turSNSiteLocaleRepository,
+        this(turSNSiteFieldExtRepository, siteSearchConfig, turSNSiteLocaleRepository,
                 synonymRegistry, rankingExpressions, null);
     }
 
     @org.springframework.beans.factory.annotation.Autowired
     public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             TurSNSiteLocales turSNSiteLocaleRepository,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions,
             TurLuceneCustomFacets customFacets) {
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
-        this.turSNSiteCustomSortRepository = turSNSiteCustomSortRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.synonymRegistry = synonymRegistry;
         this.rankingExpressions = rankingExpressions;
@@ -447,17 +445,11 @@ public class TurLuceneQueryBuilder {
         }
 
         // Custom sort name
-        return turSNSiteCustomSortRepository.findByTurSNSiteAndName(turSNSite, sortParam)
-                .map(customSort -> {
-                    List<TurSNSiteCustomSortItem> sortedItems = customSort.getItems().stream()
-                            .sorted(java.util.Comparator.comparing(TurSNSiteCustomSortItem::getPosition,
-                                    java.util.Comparator.nullsLast(Integer::compareTo)))
-                            .toList();
+        return siteSearchConfig.customSort(turSNSite.getId(), sortParam)
+                .map(sortedItems -> {
                     if (sortedItems.isEmpty()) return null;
                     org.apache.lucene.search.SortField[] fields = sortedItems.stream()
-                            .map(item -> buildSortField(item.getFieldName(),
-                                    item.getSortOrder() == TurSNSiteCustomSortOrderEnum.DESC,
-                                    item.getMissing()))
+                            .map(item -> buildSortField(item.fieldName(), item.descending(), item.missing()))
                             .toArray(org.apache.lucene.search.SortField[]::new);
                     return new org.apache.lucene.search.Sort(fields);
                 })

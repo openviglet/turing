@@ -77,13 +77,10 @@ import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperator
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
 import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
@@ -112,7 +109,6 @@ public class TurSolrQueryBuilder {
     public static final String CUSTOM_FACET_QUERY_SEPARATOR = "::";
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
-    private final TurSNSiteCustomSorts turSNSiteCustomSortRepository;
     private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSNTargetingRules turSNTargetingRules;
     private final TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
@@ -120,14 +116,12 @@ public class TurSolrQueryBuilder {
 
     public TurSolrQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurSESiteSearchConfig siteSearchConfig,
             TurSNTargetingRules turSNTargetingRules,
             TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNEnabledFacets turSNEnabledFacets) {
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
-        this.turSNSiteCustomSortRepository = turSNSiteCustomSortRepository;
         this.siteSearchConfig = siteSearchConfig;
         this.turSNTargetingRules = turSNTargetingRules;
         this.turSNSearchRuleEvaluator = turSNSearchRuleEvaluator;
@@ -953,9 +947,9 @@ public class TurSolrQueryBuilder {
     }
 
     private void applyCustomSort(TurSNSite turSNSite, SolrQuery query, String sortName) {
-        turSNSiteCustomSortRepository.findByTurSNSiteAndName(turSNSite, sortName)
-                .ifPresent(customSort -> {
-                    List<SolrQuery.SortClause> clauses = customSortClauses(customSort.getItems());
+        siteSearchConfig.customSort(turSNSite.getId(), sortName)
+                .ifPresent(items -> {
+                    List<SolrQuery.SortClause> clauses = customSortClauses(items);
                     if (!clauses.isEmpty()) {
                         query.setSorts(clauses);
                     }
@@ -963,26 +957,23 @@ public class TurSolrQueryBuilder {
     }
 
     /**
-     * The sort clauses of a custom sort, by item position. T1104 — a level that
-     * says where documents missing its field go is preceded by
+     * The sort clauses of a custom sort, whose levels arrive in position order.
+     * T1104 — a level that says where documents missing its field go is preceded by
      * {@code if(exists(field),0,1) asc} (or {@code 1,0} for first), since Solr
      * places missing values by schema, not by request.
      */
-    static List<SolrQuery.SortClause> customSortClauses(Set<TurSNSiteCustomSortItem> items) {
+    static List<SolrQuery.SortClause> customSortClauses(List<TurSECustomSortItem> items) {
         List<SolrQuery.SortClause> clauses = new ArrayList<>();
-        items.stream()
-                .sorted(java.util.Comparator.comparing(TurSNSiteCustomSortItem::getPosition,
-                        java.util.Comparator.nullsLast(Integer::compareTo)))
-                .forEach(item -> {
-                    if (item.getMissing() != null) {
-                        clauses.add(SolrQuery.SortClause.asc(item.getMissing() == TurSNSiteCustomSortMissingEnum.LAST
-                                ? "if(exists(%s),0,1)".formatted(item.getFieldName())
-                                : "if(exists(%s),1,0)".formatted(item.getFieldName())));
-                    }
-                    clauses.add(item.getSortOrder() == TurSNSiteCustomSortOrderEnum.DESC
-                            ? SolrQuery.SortClause.desc(item.getFieldName())
-                            : SolrQuery.SortClause.asc(item.getFieldName()));
-                });
+        items.forEach(item -> {
+            if (item.missing() != null) {
+                clauses.add(SolrQuery.SortClause.asc(item.missing() == TurSNSiteCustomSortMissingEnum.LAST
+                        ? "if(exists(%s),0,1)".formatted(item.fieldName())
+                        : "if(exists(%s),1,0)".formatted(item.fieldName())));
+            }
+            clauses.add(item.descending()
+                    ? SolrQuery.SortClause.desc(item.fieldName())
+                    : SolrQuery.SortClause.asc(item.fieldName()));
+        });
         return clauses;
     }
 

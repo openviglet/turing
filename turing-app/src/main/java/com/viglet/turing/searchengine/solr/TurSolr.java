@@ -42,7 +42,6 @@ import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
@@ -82,7 +81,6 @@ public class TurSolr {
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
             TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
-            TurSNSiteCustomSorts turSNSiteCustomSortRepository,
             TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
             TurSESiteSearchConfig siteSearchConfig,
             TurSNSites turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
@@ -96,7 +94,7 @@ public class TurSolr {
         this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, turSNSiteFieldUtils,
                 turDecimalFieldNormalizer);
         this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNSiteCustomFacetRepository, turSNSiteCustomSortRepository,
+                turSNSiteCustomFacetRepository,
                 siteSearchConfig, turSNTargetingRules,
                 turSNSearchRuleEvaluator, turSNEnabledFacets);
         this.turSolrResultProcessor = new TurSolrResultProcessor(turSNFieldProcess,

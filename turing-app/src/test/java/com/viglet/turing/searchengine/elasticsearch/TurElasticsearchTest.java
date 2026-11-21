@@ -74,7 +74,7 @@ class TurElasticsearchTest {
     private com.viglet.turing.sn.api.TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
     @Mock
-    private com.viglet.turing.sn.api.TurSNSiteCustomSorts turSNSiteCustomSortRepository;
+    private com.viglet.turing.searchengine.spi.TurSESiteSearchConfig turSNSiteCustomSortRepository;
 
     @Mock
     private com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets customFacets;
@@ -515,16 +515,10 @@ class TurElasticsearchTest {
         TurSNSite site = new TurSNSite();
         site.setName("site");
         when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
-        com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort closingSoonest =
-                com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort.builder()
-                        .name("closingSoonest").build();
-        closingSoonest.setItems(new java.util.HashSet<>(java.util.Set.of(
-                com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
-                        .fieldName("expiresAt").position(1)
-                        .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST)
-                        .build())));
-        when(turSNSiteCustomSortRepository.findByTurSNSiteAndName(site, "closingSoonest"))
-                .thenReturn(Optional.of(closingSoonest));
+        when(turSNSiteCustomSortRepository.customSort(site.getId(), "closingSoonest"))
+                .thenReturn(Optional.of(java.util.List.of(new com.viglet.turing.searchengine.spi.TurSECustomSortItem(
+                        "expiresAt", com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.ASC,
+                        com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST))));
         org.mockito.ArgumentCaptor<SearchRequest> request = org.mockito.ArgumentCaptor.forClass(SearchRequest.class);
         when(elasticsearchClient.search(request.capture(), any(java.lang.reflect.Type.class)))
                 .thenThrow(new IOException("connection refused"));

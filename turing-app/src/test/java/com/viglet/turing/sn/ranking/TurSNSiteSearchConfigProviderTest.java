@@ -6,7 +6,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,12 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingConditionRepository;
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
+import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
+import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
+import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
+import com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum;
+import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 
 /**
  * T1310 — sn hands the engines its ranking expressions as SPI records, so the
@@ -33,9 +41,11 @@ class TurSNSiteSearchConfigProviderTest {
     private TurSNRankingExpressionRepository expressionRepository;
     @Mock
     private TurSNRankingConditionRepository conditionRepository;
+    @Mock
+    private TurSNSiteCustomSortRepository customSortRepository;
 
     private TurSNSiteSearchConfigProvider provider() {
-        return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository);
+        return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -80,6 +90,31 @@ class TurSNSiteSearchConfigProviderTest {
     @Test
     void aSiteWithoutAnIdHasNoExpressions() {
         assertThat(provider().rankingExpressions(null)).isEmpty();
-        verifyNoInteractions(expressionRepository, conditionRepository);
+        verifyNoInteractions(expressionRepository, conditionRepository, customSortRepository);
+    }
+
+    @Test
+    void aCustomSortComesInPositionOrderWithUnpositionedLevelsLast() {
+        TurSNSiteCustomSort sort = TurSNSiteCustomSort.builder().name("closingSoonest").build();
+        sort.setItems(new HashSet<>(List.of(
+                TurSNSiteCustomSortItem.builder().fieldName("title").build(),
+                TurSNSiteCustomSortItem.builder().fieldName("publishedAt").position(2)
+                        .sortOrder(TurSNSiteCustomSortOrderEnum.DESC).build(),
+                TurSNSiteCustomSortItem.builder().fieldName("expiresAt").position(1)
+                        .missing(TurSNSiteCustomSortMissingEnum.LAST).build())));
+        when(customSortRepository.findBySiteIdAndName("site-1", "closingSoonest")).thenReturn(Optional.of(sort));
+
+        assertThat(provider().customSort("site-1", "closingSoonest")).contains(List.of(
+                new TurSECustomSortItem("expiresAt", TurSNSiteCustomSortOrderEnum.ASC,
+                        TurSNSiteCustomSortMissingEnum.LAST),
+                new TurSECustomSortItem("publishedAt", TurSNSiteCustomSortOrderEnum.DESC, null),
+                new TurSECustomSortItem("title", TurSNSiteCustomSortOrderEnum.ASC, null)));
+    }
+
+    @Test
+    void anUnknownCustomSortIsEmpty() {
+        when(customSortRepository.findBySiteIdAndName("site-1", "nope")).thenReturn(Optional.empty());
+
+        assertThat(provider().customSort("site-1", "nope")).isEmpty();
     }
 }

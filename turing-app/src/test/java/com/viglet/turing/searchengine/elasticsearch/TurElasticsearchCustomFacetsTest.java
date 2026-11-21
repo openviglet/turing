@@ -27,7 +27,7 @@ import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -96,7 +96,7 @@ class TurElasticsearchCustomFacetsTest {
         ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
         when(client.search(request.capture(), any(Type.class))).thenThrow(new IOException("stop here"));
         TurElasticsearch engine = new TurElasticsearch(siteRepository, mock(TurSNSiteFieldExts.class),
-                mock(TurSNSiteCustomSorts.class), customFacets);
+                mock(TurSESiteSearchConfig.class), customFacets);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ("*");
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),

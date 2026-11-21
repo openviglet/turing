@@ -68,7 +68,6 @@ import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
@@ -92,8 +91,6 @@ class TurSolrQueryBuilderTest {
         @Mock
         private com.viglet.turing.sn.api.TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
-        @Mock
-        private TurSNSiteCustomSorts turSNSiteCustomSortRepository;
 
         @Mock
         private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
@@ -104,7 +101,6 @@ class TurSolrQueryBuilderTest {
         private TurSolrQueryBuilder builder() {
                 return new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                                 turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository,
                                 siteSearchConfig,
                                 turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
         }
@@ -139,7 +135,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(List.of(mltField));
 
                 TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                turSNSiteCustomSortRepository, siteSearchConfig, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                                siteSearchConfig, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
                 SolrQuery query = new SolrQuery();
 
                 List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
@@ -1513,15 +1509,13 @@ class TurSolrQueryBuilderTest {
 
         @Test
         void customSortLevelWithMissingLastIsPrecededByAnExistsSort() {
-                var items = new java.util.HashSet<com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem>();
-                items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
-                                .fieldName("publishedAt").position(2)
-                                .sortOrder(com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.DESC)
-                                .build());
-                items.add(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem.builder()
-                                .fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST)
-                                .build());
+                // Levels arrive in position order from the SPI (T1310).
+                var items = java.util.List.of(
+                                new com.viglet.turing.searchengine.spi.TurSECustomSortItem("expiresAt",
+                                                com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.ASC,
+                                                com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.LAST),
+                                new com.viglet.turing.searchengine.spi.TurSECustomSortItem("publishedAt",
+                                                com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.DESC, null));
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))
                                 .extracting(c -> c.getItem() + " " + c.getOrder())
@@ -1531,10 +1525,9 @@ class TurSolrQueryBuilderTest {
 
         @Test
         void customSortLevelWithMissingFirstPutsTheUndatedFirst() {
-                var items = java.util.Set.of(com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem
-                                .builder().fieldName("expiresAt").position(1)
-                                .missing(com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.FIRST)
-                                .build());
+                var items = java.util.List.of(new com.viglet.turing.searchengine.spi.TurSECustomSortItem("expiresAt",
+                                com.viglet.turing.searchengine.TurSNSiteCustomSortOrderEnum.ASC,
+                                com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum.FIRST));
 
                 assertThat(TurSolrQueryBuilder.customSortClauses(items))
                                 .extracting(c -> c.getItem() + " " + c.getOrder())

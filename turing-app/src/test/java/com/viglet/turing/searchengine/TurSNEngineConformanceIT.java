@@ -74,11 +74,10 @@ import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
-import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
+import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -157,7 +156,7 @@ class TurSNEngineConformanceIT {
     private List<TurSNSiteFieldExt> catalogFields;
     private TurSNSiteFieldExts catalogFieldRepository;
     private TurSNSites catalogSiteRepository;
-    private TurSNSiteCustomSorts catalogSortRepository;
+    private TurSESiteSearchConfig catalogSortRepository;
     private IndexSearcher luceneSearcher;
     private DirectoryReader luceneReader;
     private TurLuceneCustomFacets catalogCustomFacets;
@@ -192,11 +191,8 @@ class TurSNEngineConformanceIT {
         return attrs;
     }
 
-    private static TurSNSiteCustomSort customSort(String name, TurSNSiteCustomSortMissingEnum missing) {
-        TurSNSiteCustomSort sort = TurSNSiteCustomSort.builder().name(name).build();
-        sort.setItems(new HashSet<>(Set.of(TurSNSiteCustomSortItem.builder().fieldName("expiresAt")
-                .sortOrder(TurSNSiteCustomSortOrderEnum.ASC).missing(missing).position(1).build())));
-        return sort;
+    private static List<TurSECustomSortItem> customSort(TurSNSiteCustomSortMissingEnum missing) {
+        return List.of(new TurSECustomSortItem("expiresAt", TurSNSiteCustomSortOrderEnum.ASC, missing));
     }
 
     @BeforeAll
@@ -220,12 +216,12 @@ class TurSNEngineConformanceIT {
         when(fieldRepository.findAll()).thenReturn(fields);
         when(fieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
                 .thenReturn(List.of());
-        TurSNSiteCustomSorts sortRepository = mock(TurSNSiteCustomSorts.class);
-        when(sortRepository.findByTurSNSiteAndName(any(), anyString())).thenReturn(Optional.empty());
-        when(sortRepository.findByTurSNSiteAndName(any(), eq("closingSoonest")))
-                .thenReturn(Optional.of(customSort("closingSoonest", TurSNSiteCustomSortMissingEnum.LAST)));
-        when(sortRepository.findByTurSNSiteAndName(any(), eq("openEndedFirst")))
-                .thenReturn(Optional.of(customSort("openEndedFirst", TurSNSiteCustomSortMissingEnum.FIRST)));
+        TurSESiteSearchConfig sortRepository = mock(TurSESiteSearchConfig.class);
+        when(sortRepository.customSort(any(), anyString())).thenReturn(Optional.empty());
+        when(sortRepository.customSort(any(), eq("closingSoonest")))
+                .thenReturn(Optional.of(customSort(TurSNSiteCustomSortMissingEnum.LAST)));
+        when(sortRepository.customSort(any(), eq("openEndedFirst")))
+                .thenReturn(Optional.of(customSort(TurSNSiteCustomSortMissingEnum.FIRST)));
         // A custom facet "posted" whose item "Recent" stands for publishedAt since Oct 15.
         TurLuceneCustomFacets customFacets = mock(TurLuceneCustomFacets.class);
         catalogCustomFacets = customFacets;
@@ -281,7 +277,7 @@ class TurSNEngineConformanceIT {
      * builder, document handler and result processor are the production ones.
      */
     private void startSolr(List<TurSNSiteFieldExt> fields, TurSNSiteFieldExts fieldRepository,
-            TurSNSiteCustomSorts sortRepository, TurSNSiteFieldService fieldService,
+            TurSESiteSearchConfig sortRepository, TurSNSiteFieldService fieldService,
             TurSNSites siteRepository) throws Exception {
         // The configset the Turing Solr image ships (containers/solr/Dockerfile copies it to
         // /var/solr/data/configsets), on the latest Solr in user-managed mode: the solr:10
@@ -327,9 +323,9 @@ class TurSNEngineConformanceIT {
                 com.viglet.turing.sn.api.TurSNSiteCustomFacets.class);
         when(customFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of(posted));
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
-        solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository, sortRepository,
+        solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository,
                 mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class), fieldService,
-                mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class),
+                sortRepository,
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),
                 new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository, customFacetRepository,
@@ -614,7 +610,7 @@ class TurSNEngineConformanceIT {
                 .thenReturn(List.of());
         TurSNSites siteRepository = mock(TurSNSites.class);
         when(siteRepository.findByNameIgnoreCase("phrase")).thenReturn(Optional.of(phraseSite));
-        TurSNSiteCustomSorts sortRepository = mock(TurSNSiteCustomSorts.class);
+        TurSESiteSearchConfig sortRepository = mock(TurSESiteSearchConfig.class);
         TurElasticsearch engine = new TurElasticsearch(siteRepository, fieldRepository, sortRepository,
                 mock(TurLuceneCustomFacets.class));
         engine.indexing(instance, phraseSite, Map.of(TurSNFieldName.ID, "guide", "title",

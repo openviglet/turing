@@ -16,6 +16,7 @@
 package com.viglet.turing.searchengine.spi;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * T1310 — the site configuration an engine reads while it builds a query, declared
@@ -35,4 +36,11 @@ public interface TurSESiteSearchConfig {
      * conditions; empty when the site has none.
      */
     List<TurSERankingExpression> rankingExpressions(String siteId);
+
+    /**
+     * The levels of the site's custom sort called {@code name}, in position order
+     * (levels without a position last); empty when the site has no sort by that
+     * name.
+     */
+    Optional<List<TurSECustomSortItem>> customSort(String siteId, String name);
 }
