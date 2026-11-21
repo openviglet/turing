@@ -36,8 +36,8 @@ import com.viglet.turing.tenant.persistence.model.TurTenantRole;
 import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
 import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
 import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTenantDeprovisionMode;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTenantDeprovisionMode;
 
 /**
  * Unit tests for {@link TurTenantDeprovisionService} (T336) — the identity

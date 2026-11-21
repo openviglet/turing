@@ -22,7 +22,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.sun.net.httpserver.HttpServer;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
 
 class TurSEStopWordTest {
 

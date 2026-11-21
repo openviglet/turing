@@ -19,7 +19,6 @@ package com.viglet.turing.searchengine;
 import java.util.List;
 import java.util.Set;
 
-import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * T663 / §XXXIX (Block AP) — the outcome of pushing synonym rules into an

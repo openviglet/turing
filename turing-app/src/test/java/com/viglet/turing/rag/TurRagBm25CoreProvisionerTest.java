@@ -64,8 +64,8 @@ class TurRagBm25CoreProvisionerTest {
 
     @BeforeEach
     void setUp() {
-        com.viglet.turing.properties.TurConfigProperties props =
-                new com.viglet.turing.properties.TurConfigProperties();
+        com.viglet.turing.system.properties.TurConfigProperties props =
+                new com.viglet.turing.system.properties.TurConfigProperties();
         com.viglet.turing.tenant.TurTenantCoreNaming coreNaming =
                 new com.viglet.turing.tenant.TurTenantCoreNaming(
                         new com.viglet.turing.tenant.TurTenantContext(props));

@@ -87,7 +87,7 @@ class TurNativeChatExecutorTest {
     // so existing assertions (no service_tier applied) are unchanged.
     private final com.viglet.turing.llm.servicetier.TurServiceTierResolver serviceTierResolver =
             new com.viglet.turing.llm.servicetier.TurServiceTierResolver(
-                    optionsParser, new com.viglet.turing.properties.TurConfigProperties());
+                    optionsParser, new com.viglet.turing.system.properties.TurConfigProperties());
 
     // Real resolver (dependency-free); a default-scope agent returns the
     // conversation id verbatim, so the existing routing assertions are unchanged.

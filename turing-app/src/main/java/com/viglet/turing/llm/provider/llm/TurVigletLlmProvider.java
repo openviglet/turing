@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
 import com.viglet.turing.llm.vigletai.TurVigletInstallIdentityService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.properties.TurVigletAiProperty;
+import com.viglet.turing.system.properties.TurVigletAiProperty;
 
 /**
  * T956 / §XIV.10.1 — <b>Viglet AI</b>, the managed LLM endpoint behind the

@@ -31,7 +31,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
-import com.viglet.turing.properties.TurVigletAiProperty;
+import com.viglet.turing.system.properties.TurVigletAiProperty;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

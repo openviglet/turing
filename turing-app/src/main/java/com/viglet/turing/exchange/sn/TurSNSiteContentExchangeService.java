@@ -49,7 +49,7 @@ import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import lombok.extern.slf4j.Slf4j;

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.properties.TurCatalogCopilotProperty;
+import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 
 /**
  * T814 / §LVIII.1 · T815 / §LVIII.2 (Block BJ) — the lexicon is now data run

@@ -39,7 +39,7 @@ import com.viglet.turing.rag.citation.TurCitationDriftService.Status;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
 import com.viglet.turing.agent.persistence.model.TurChatCitationRecord;
 import com.viglet.turing.agent.persistence.repository.TurChatCitationRecordRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import tools.jackson.databind.ObjectMapper;
 

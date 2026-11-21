@@ -16,7 +16,7 @@
  */
 package com.viglet.turing.kb.persistence.model;
 
-import com.viglet.turing.spring.security.TurAuditable;
+import com.viglet.turing.auth.security.TurAuditable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * F.7 / §X.8.e — resolves the effective {@link TurServiceTier} for an

@@ -15,7 +15,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.properties.TurGuardrailProperty;
+import com.viglet.turing.system.properties.TurGuardrailProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;

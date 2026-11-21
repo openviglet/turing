@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -18,8 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

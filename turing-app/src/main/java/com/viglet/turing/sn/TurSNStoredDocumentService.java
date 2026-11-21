@@ -78,7 +78,7 @@ public class TurSNStoredDocumentService {
         List<Map<String, Object>> documents = pluginFactory.getPluginForSite(snapshot.get().site())
                 .getStoredDocumentsByIds(siteLocale, wanted);
         // T1133 — a key bound to a partition of a shared site reads its own documents only.
-        return com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+        return com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                 .map(partition -> documents.stream()
                         .filter(document -> TurSNPartitionWriteGuard.inPartition(document.get(partition.field()),
                                 partition.value()))

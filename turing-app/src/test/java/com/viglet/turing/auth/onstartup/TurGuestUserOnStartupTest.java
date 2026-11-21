@@ -32,7 +32,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.viglet.turing.auth.persistence.model.TurUser;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurGuestConsoleProperty;
+import com.viglet.turing.system.properties.TurGuestConsoleProperty;
 
 /**
  * T1184 — the guest user is seeded, without a password, only where the guest

@@ -34,7 +34,7 @@ import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser.TurNLFacetParseException;
-import com.viglet.turing.properties.TurCatalogCopilotProperty;
+import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 import com.viglet.turing.sn.dsl.eval.TurNLRankingPlanner;
 import com.viglet.turing.sn.dsl.eval.TurRankingLexiconProvider;
 

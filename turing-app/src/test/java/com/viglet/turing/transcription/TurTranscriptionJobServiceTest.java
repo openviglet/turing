@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 
 /**
  * T692 / §XLII.6 — {@link TurTranscriptionJobService}: lifecycle transitions,

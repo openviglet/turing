@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@code internalToolExecutionEnabled(true)} flag on the assumption that
  * execution had become automatic in {@code call()}; it had not. Rather than
  * rewrite every direct-{@code call()} site onto {@code ChatClient} (which
- * would change the resilience wrapping in {@link com.viglet.turing.resilience.llm.TurResilientChatModel}),
+ * would change the resilience wrapping in {@link com.viglet.turing.llm.resilience.TurResilientChatModel}),
  * this collaborator reinstates the loop manually with a {@link ToolCallingManager},
  * keeping the existing {@code ChatModel} + resilience pipeline intact.
  *

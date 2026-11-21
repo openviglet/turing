@@ -88,7 +88,7 @@ class TurImportExchangeContentStreamTest {
                 org.mockito.Mockito.mock(com.viglet.turing.rag.TurSNGenAi.class),
                 org.mockito.Mockito.mock(com.viglet.turing.rag.TurGenAiContextFactory.class),
                 org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class),
-                new com.viglet.turing.properties.TurConfigProperties());
+                new com.viglet.turing.system.properties.TurConfigProperties());
 
         site = new TurSNSite();
         site.setId("site-1");

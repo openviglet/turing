@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.core.settings.VigletConfigVarService;
 import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
-import com.viglet.turing.transcription.TurTranscriptionProviderType;
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
 import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -340,16 +340,16 @@ public class TurGlobalSettingsService {
     }
 
     /** T518 — fallback routing mode; unknown/blank falls back to {@code PRIORITY}. */
-    public com.viglet.turing.resilience.llm.TurLlmFallbackMode getLlmFallbackMode() {
+    public com.viglet.turing.llm.resilience.TurLlmFallbackMode getLlmFallbackMode() {
         return configVars.find(TurConfigVarOnStartup.LLM_FALLBACK_MODE)
-                .map(com.viglet.turing.resilience.llm.TurLlmFallbackMode::fromValue)
-                .orElse(com.viglet.turing.resilience.llm.TurLlmFallbackMode.PRIORITY);
+                .map(com.viglet.turing.llm.resilience.TurLlmFallbackMode::fromValue)
+                .orElse(com.viglet.turing.llm.resilience.TurLlmFallbackMode.PRIORITY);
     }
 
-    public com.viglet.turing.resilience.llm.TurLlmFallbackMode updateLlmFallbackMode(
-            com.viglet.turing.resilience.llm.TurLlmFallbackMode mode) {
-        com.viglet.turing.resilience.llm.TurLlmFallbackMode value =
-                mode == null ? com.viglet.turing.resilience.llm.TurLlmFallbackMode.PRIORITY : mode;
+    public com.viglet.turing.llm.resilience.TurLlmFallbackMode updateLlmFallbackMode(
+            com.viglet.turing.llm.resilience.TurLlmFallbackMode mode) {
+        com.viglet.turing.llm.resilience.TurLlmFallbackMode value =
+                mode == null ? com.viglet.turing.llm.resilience.TurLlmFallbackMode.PRIORITY : mode;
         configVars.setRaw(TurConfigVarOnStartup.LLM_FALLBACK_MODE, value.name());
         return value;
     }

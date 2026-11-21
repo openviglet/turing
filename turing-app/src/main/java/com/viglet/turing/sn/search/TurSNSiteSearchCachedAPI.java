@@ -105,7 +105,7 @@ public class TurSNSiteSearchCachedAPI {
      */
     @Cacheable(value = TurSNSearchCacheEvictor.SEARCH_CACHE,
             key = "@turTenantCacheKey.scoped(#cacheKey)",
-            condition = "T(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext).current().isEmpty()")
+            condition = "T(com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext).current().isEmpty()")
     public TurSNSiteSearchBean searchCached(String cacheKey,
             TurSNSiteSearchContext turSNSiteSearchContext) {
         log.info("Search cache key: {}", cacheKey);

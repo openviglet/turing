@@ -1,7 +1,8 @@
 package com.viglet.turing.storage;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurStorageType;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

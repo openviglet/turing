@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

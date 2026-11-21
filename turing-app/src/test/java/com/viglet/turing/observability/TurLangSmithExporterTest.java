@@ -24,7 +24,7 @@ import com.viglet.core.webhook.VigletWebhookDeliveryResult;
 import com.viglet.core.webhook.VigletWebhookDispatcher;
 import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.core.webhook.VigletWebhookRetryPolicy;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;

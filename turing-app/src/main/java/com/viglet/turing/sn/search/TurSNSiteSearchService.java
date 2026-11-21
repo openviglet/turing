@@ -30,7 +30,7 @@ import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 

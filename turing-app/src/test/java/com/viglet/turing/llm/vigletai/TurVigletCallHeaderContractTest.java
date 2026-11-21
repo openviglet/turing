@@ -38,7 +38,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
 import com.viglet.turing.llm.provider.llm.TurVigletLlmProvider;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.properties.TurVigletAiProperty;
+import com.viglet.turing.system.properties.TurVigletAiProperty;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

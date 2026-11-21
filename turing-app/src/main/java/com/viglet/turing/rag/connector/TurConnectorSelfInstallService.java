@@ -115,21 +115,21 @@ public class TurConnectorSelfInstallService {
 
     private final TurComputerUseDriver computerUseDriver;
     private final RestClient restClient;
-    private final com.viglet.turing.spring.security.ssrf.TurSsrfGuard ssrfGuard;
+    private final com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard;
 
     @Autowired
     public TurConnectorSelfInstallService(TurComputerUseDriver computerUseDriver,
-            com.viglet.turing.spring.security.ssrf.TurSsrfGuard ssrfGuard) {
+            com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard) {
         this(computerUseDriver, ssrfGuard, defaultClient());
     }
 
     /** Test seam: lets a unit test bind a {@code MockRestServiceServer} to the client. */
     TurConnectorSelfInstallService(TurComputerUseDriver computerUseDriver, RestClient restClient) {
-        this(computerUseDriver, new com.viglet.turing.spring.security.ssrf.TurSsrfGuard(), restClient);
+        this(computerUseDriver, new com.viglet.turing.auth.security.ssrf.TurSsrfGuard(), restClient);
     }
 
     TurConnectorSelfInstallService(TurComputerUseDriver computerUseDriver,
-            com.viglet.turing.spring.security.ssrf.TurSsrfGuard ssrfGuard, RestClient restClient) {
+            com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard, RestClient restClient) {
         this.computerUseDriver = computerUseDriver;
         this.ssrfGuard = ssrfGuard;
         this.restClient = restClient;

@@ -20,7 +20,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
-import com.viglet.turing.properties.TurGatewayProperty;
+import com.viglet.turing.system.properties.TurGatewayProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

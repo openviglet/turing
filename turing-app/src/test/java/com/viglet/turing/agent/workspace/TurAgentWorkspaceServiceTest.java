@@ -37,7 +37,7 @@ import com.viglet.turing.storage.TurNoOpStorageService;
 import com.viglet.turing.storage.TurStorageContentTypes;
 import com.viglet.turing.storage.TurStorageObjectStat;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 
 import org.springframework.web.multipart.MultipartFile;
 

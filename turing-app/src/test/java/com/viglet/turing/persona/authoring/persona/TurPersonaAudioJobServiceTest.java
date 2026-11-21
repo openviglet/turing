@@ -27,8 +27,8 @@ import com.viglet.turing.transcription.TurTranscriptionProgressListener;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
 import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 
 /**
  * T715 — the async persona-from-audio job orchestration: transcribe (with a

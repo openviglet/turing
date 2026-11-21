@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

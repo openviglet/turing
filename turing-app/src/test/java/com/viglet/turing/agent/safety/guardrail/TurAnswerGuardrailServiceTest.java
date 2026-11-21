@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.properties.TurGuardrailProperty;
+import com.viglet.turing.system.properties.TurGuardrailProperty;
 
 /**
  * T516 — the fail-open / opt-in contract of {@link TurAnswerGuardrailService}.

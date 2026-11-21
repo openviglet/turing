@@ -16,7 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.document.Document;
 
-import com.viglet.turing.properties.TurRetrievalProperty;
+import com.viglet.turing.system.properties.TurRetrievalProperty;
 
 /**
  * T520 — the resolver returns an override only for an explicitly configured AND

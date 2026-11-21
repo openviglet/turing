@@ -15,7 +15,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
-import com.viglet.turing.properties.TurGatewayProperty;
+import com.viglet.turing.system.properties.TurGatewayProperty;
 
 /**
  * T743 / §XLIX — unit coverage for the opt-in gateway response cache and the

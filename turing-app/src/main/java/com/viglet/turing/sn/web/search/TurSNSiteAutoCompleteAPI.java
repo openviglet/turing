@@ -137,7 +137,7 @@ public class TurSNSiteAutoCompleteAPI {
          * partition and the engine's term suggester reads the whole index.
          */
         private static boolean hasFilterQueries(TurSNSearchParams turSNSearchParams) {
-                return com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current().isPresent()
+                return com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current().isPresent()
                                 || !CollectionUtils.isEmpty(turSNSearchParams.getFq())
                                 || !CollectionUtils.isEmpty(turSNSearchParams.getFqAnd())
                                 || !CollectionUtils.isEmpty(turSNSearchParams.getFqOr());

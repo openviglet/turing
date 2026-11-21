@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.properties.TurRetrievalProperty;
+import com.viglet.turing.system.properties.TurRetrievalProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -29,7 +29,7 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.properties.TurContentAiProperty;
+import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.node.ArrayNode;

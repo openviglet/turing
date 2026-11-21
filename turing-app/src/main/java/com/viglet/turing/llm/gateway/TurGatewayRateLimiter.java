@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
-import com.viglet.turing.spring.security.abuse.TurFixedWindowRateLimiter;
+import com.viglet.turing.auth.security.abuse.TurFixedWindowRateLimiter;
 
 /**
  * T742 / §XLIX — per-virtual-key request rate limiting for the Governed LLM

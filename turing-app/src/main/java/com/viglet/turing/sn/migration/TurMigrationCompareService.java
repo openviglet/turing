@@ -37,7 +37,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchBean;
 import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.properties.TurMigrationProperty;
+import com.viglet.turing.system.properties.TurMigrationProperty;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.migration.TurAlgoliaClient.TurAlgoliaConnection;
 import com.viglet.turing.sn.migration.TurElasticsearchClient.TurEsConnection;

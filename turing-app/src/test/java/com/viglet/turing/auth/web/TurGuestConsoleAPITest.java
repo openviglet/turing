@@ -39,9 +39,9 @@ import com.viglet.turing.auth.persistence.model.TurPrivilege;
 import com.viglet.turing.auth.persistence.model.TurUser;
 import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGuestConsoleProperty;
-import com.viglet.turing.spring.security.auth.TurGuestReadOnlyFilter;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGuestConsoleProperty;
+import com.viglet.turing.auth.security.auth.TurGuestReadOnlyFilter;
 
 /**
  * T1184 — the guest console signs in as the guest with view privileges only,

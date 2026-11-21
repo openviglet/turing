@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.rag.catalog.planning.TurCopilotPlanningComparison.StrategyOutcome;
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
-import com.viglet.turing.properties.TurCatalogCopilotProperty;
+import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalPack;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetEvalScorer;

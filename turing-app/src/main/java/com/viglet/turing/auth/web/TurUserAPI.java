@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.bean.TurCurrentUser;
+import com.viglet.turing.shared.bean.TurCurrentUser;
 import com.viglet.turing.auth.persistence.dto.TurUserDto;
 import com.viglet.turing.auth.persistence.mapper.TurUserMapper;
 import com.viglet.turing.auth.persistence.model.TurGroup;
@@ -52,7 +52,7 @@ import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
 import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;

@@ -130,7 +130,7 @@ public class TurSNSiteClickAPI {
         click.setUserId(StringUtils.trimToNull(request.userId()));
         click.setLanguage(parseLocale(request.locale()));
         // T1133 — a partitioned key's clicks are its partition's metrics.
-        com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+        com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                 .ifPresent(partition -> click.setPartitionKey(partition.key()));
         try {
             turSNSiteMetricClickRepository.save(click);

@@ -30,7 +30,7 @@ import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
 import com.viglet.turing.system.security.TurSecretCryptoService;

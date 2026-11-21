@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.agent.TurChatToolOptions;
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;

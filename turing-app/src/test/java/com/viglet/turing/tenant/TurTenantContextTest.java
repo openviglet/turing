@@ -15,7 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.tenant.persistence.model.TurTenant;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * Unit tests for {@link TurTenantContext} (T258) — the flag-aware,

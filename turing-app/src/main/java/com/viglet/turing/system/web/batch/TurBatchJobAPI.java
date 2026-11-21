@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.batch.persistence.model.TurBatchJob;
 import com.viglet.turing.batch.persistence.repository.TurBatchJobRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 

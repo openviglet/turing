@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

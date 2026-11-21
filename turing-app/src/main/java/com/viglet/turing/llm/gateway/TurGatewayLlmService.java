@@ -42,7 +42,7 @@ import com.viglet.turing.agent.safety.TurModerationService;
 import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.system.TurGlobalSettingsService;

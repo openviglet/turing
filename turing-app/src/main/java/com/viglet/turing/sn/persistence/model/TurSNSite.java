@@ -44,7 +44,7 @@ import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
 import com.viglet.turing.sn.snapshot.TurSNSiteSnapshotEvictionListener;
-import com.viglet.turing.spring.security.TurAuditable;
+import com.viglet.turing.auth.security.TurAuditable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.viglet.turing.email.TurEmailService;
+import com.viglet.turing.system.email.TurEmailService;
 import com.viglet.turing.llm.cost.lifecycle.TurLLMCatalogChangeService.ChangeNotification;
 import com.viglet.turing.llm.cost.lifecycle.TurLLMCatalogChangeService.ChangeType;
 

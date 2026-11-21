@@ -18,7 +18,7 @@ package com.viglet.turing.searchengine.lucene;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

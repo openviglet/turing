@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.springframework.ai.document.Document;
 
-import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.llm.provider.store.lucene.TurLuceneVectorStore;
 
 /**

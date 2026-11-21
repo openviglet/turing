@@ -6,9 +6,9 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 
 import lombok.extern.slf4j.Slf4j;
 

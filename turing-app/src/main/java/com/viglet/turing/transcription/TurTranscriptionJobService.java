@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;

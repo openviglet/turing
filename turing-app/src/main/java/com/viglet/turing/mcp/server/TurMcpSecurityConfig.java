@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.tenant.TurTenantResolutionFilter;
 
 import lombok.extern.slf4j.Slf4j;

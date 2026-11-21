@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.properties.TurCatalogCopilotProperty;
+import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

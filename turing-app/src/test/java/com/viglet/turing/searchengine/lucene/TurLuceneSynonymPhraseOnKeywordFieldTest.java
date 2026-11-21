@@ -38,8 +38,6 @@ import com.viglet.turing.searchengine.TurSNSynonymType;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSESynonymRule;
-import com.viglet.turing.searchengine.lucene.TurLuceneSynonymMapBuilder;
-import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
 
 /**
  * T1091 — a multi-word synonym expansion is a phrase, and a phrase on a

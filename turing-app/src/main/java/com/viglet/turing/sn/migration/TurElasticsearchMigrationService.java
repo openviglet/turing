@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.properties.TurMigrationProperty;
+import com.viglet.turing.system.properties.TurMigrationProperty;
 import com.viglet.turing.sn.migration.TurElasticsearchClient.EsHit;
 import com.viglet.turing.sn.migration.TurElasticsearchClient.EsPage;
 import com.viglet.turing.sn.migration.TurElasticsearchClient.TurEsConnection;

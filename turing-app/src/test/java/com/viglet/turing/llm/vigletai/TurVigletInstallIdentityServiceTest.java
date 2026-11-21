@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.properties.TurVigletAiProperty;
+import com.viglet.turing.system.properties.TurVigletAiProperty;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

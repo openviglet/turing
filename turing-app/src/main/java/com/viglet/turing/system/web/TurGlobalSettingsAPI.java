@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.email.TurEmailService;
+import com.viglet.turing.system.email.TurEmailService;
 import com.viglet.turing.agent.tool.TurCodeInterpreterToolService;
 import com.viglet.turing.agent.tool.TurCodeInterpreterToolService.TurDockerStatus;
 import com.viglet.turing.transcription.TurAudioChunker;

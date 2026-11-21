@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.lane.TurModelLaneService;
 import com.viglet.turing.llm.lane.TurModelStage;
 import com.viglet.turing.system.security.TurSecretCryptoService;
@@ -51,14 +51,14 @@ public class TurDefaultChatModelResolver {
     private final TurSecretCryptoService secretCryptoService;
     private final TurLlmModelFactory llmModelFactory;
     private final TurModelLaneService modelLaneService;
-    private final com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver;
+    private final com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver;
 
     public TurDefaultChatModelResolver(TurGlobalSettingsService globalSettingsService,
             TurLLMInstanceRepository llmInstanceRepository,
             TurSecretCryptoService secretCryptoService,
             TurLlmModelFactory llmModelFactory,
             TurModelLaneService modelLaneService,
-            com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver) {
+            com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver) {
         this.globalSettingsService = globalSettingsService;
         this.llmInstanceRepository = llmInstanceRepository;
         this.secretCryptoService = secretCryptoService;

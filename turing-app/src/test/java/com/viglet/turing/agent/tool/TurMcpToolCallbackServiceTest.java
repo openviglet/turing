@@ -47,8 +47,8 @@ class TurMcpToolCallbackServiceTest {
     @BeforeEach
     void setUp() {
         service = new TurMcpToolCallbackService(mcpServerRepositoryPort,
-                new com.viglet.turing.properties.TurMcpClientProperty(),
-                new com.viglet.turing.spring.security.ssrf.TurSsrfGuard(),
+                new com.viglet.turing.system.properties.TurMcpClientProperty(),
+                new com.viglet.turing.auth.security.ssrf.TurSsrfGuard(),
                 secretCryptoService);
     }
 

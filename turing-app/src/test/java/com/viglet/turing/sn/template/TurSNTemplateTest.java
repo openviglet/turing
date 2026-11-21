@@ -51,8 +51,8 @@ import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepositor
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurSolrProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurSolrProperty;
 
 /**
  * Unit tests for TurSNTemplate.

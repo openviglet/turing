@@ -31,7 +31,7 @@ import com.viglet.turing.llm.nativeapi.TurNativeProviderClient;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiEvalsPayload.EvalFixture;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;
 

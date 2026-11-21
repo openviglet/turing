@@ -40,7 +40,6 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchUtils;
 
 /**
  * T1173 — an Elasticsearch core created for a site locale stems its TEXT fields

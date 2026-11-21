@@ -40,7 +40,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

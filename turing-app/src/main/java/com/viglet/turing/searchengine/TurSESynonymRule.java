@@ -18,7 +18,6 @@ package com.viglet.turing.searchengine;
 
 import java.util.List;
 
-import com.viglet.turing.searchengine.TurSNSynonymType;
 
 /**
  * T663 / §XXXIX (Block AP) — the engine-neutral value object a search-engine

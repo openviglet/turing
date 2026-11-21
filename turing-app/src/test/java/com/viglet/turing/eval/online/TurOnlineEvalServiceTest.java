@@ -48,8 +48,8 @@ import com.viglet.turing.agent.persistence.model.TurOnlineEvalSnapshot;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.agent.persistence.repository.TurOnlineEvalSnapshotRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGenAiProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGenAiProperty;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsStore;
 
 /**

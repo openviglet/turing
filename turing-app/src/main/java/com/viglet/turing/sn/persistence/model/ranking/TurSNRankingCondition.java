@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.spring.security.TurAuditable;
+import com.viglet.turing.auth.security.TurAuditable;
 
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
 

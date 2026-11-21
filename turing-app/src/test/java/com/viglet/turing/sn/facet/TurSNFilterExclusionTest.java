@@ -12,7 +12,7 @@ import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.properties.TurContentAiProperty;
+import com.viglet.turing.system.properties.TurContentAiProperty;
 
 /**
  * T1233 — a negative filter query is read the same way everywhere: a leading

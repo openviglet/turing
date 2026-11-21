@@ -32,7 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
 import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.storage.TurStorageService;
 
 /**

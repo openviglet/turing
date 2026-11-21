@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurSolrProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurSolrProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

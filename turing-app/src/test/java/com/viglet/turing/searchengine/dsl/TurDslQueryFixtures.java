@@ -1,6 +1,5 @@
 package com.viglet.turing.searchengine.dsl;
 
-import com.viglet.turing.searchengine.dsl.TurDslQuery;
 
 import java.util.List;
 import java.util.Map;

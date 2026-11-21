@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
+
 /**
  * T687 / §XLII.1 — the effective transcription configuration for the current
  * request, merged from {@code turing.transcription.*} env props (which win when

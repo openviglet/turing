@@ -22,7 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.bean.TurCurrentUser;
+import com.viglet.turing.shared.bean.TurCurrentUser;
 import com.viglet.turing.auth.persistence.model.TurGroup;
 import com.viglet.turing.auth.persistence.model.TurPrivilege;
 import com.viglet.turing.auth.persistence.model.TurRole;
@@ -31,7 +31,7 @@ import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
 import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

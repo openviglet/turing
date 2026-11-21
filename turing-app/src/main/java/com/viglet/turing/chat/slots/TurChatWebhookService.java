@@ -95,12 +95,12 @@ public class TurChatWebhookService {
     private final TurChatWebhookRepository repository;
     private final TurSecretCryptoService cryptoService;
     private final VigletWebhookDispatcher webhookDispatcher;
-    private final com.viglet.turing.spring.security.ssrf.TurSsrfGuard ssrfGuard;
+    private final com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard;
 
     public TurChatWebhookService(TurChatWebhookRepository repository,
             TurSecretCryptoService cryptoService,
             VigletWebhookDispatcher webhookDispatcher,
-            com.viglet.turing.spring.security.ssrf.TurSsrfGuard ssrfGuard) {
+            com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard) {
         this.repository = repository;
         this.cryptoService = cryptoService;
         this.webhookDispatcher = webhookDispatcher;

@@ -2,7 +2,7 @@ package com.viglet.turing.system.web.marketplace;
 
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

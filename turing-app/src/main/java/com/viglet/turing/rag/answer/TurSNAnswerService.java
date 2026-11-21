@@ -25,7 +25,7 @@ import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.rag.TurSNGenAiChatRequest;
 import com.viglet.turing.rag.TurSNSiteVectorProbe;
 import com.viglet.turing.commons.se.TurSEPartition;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;

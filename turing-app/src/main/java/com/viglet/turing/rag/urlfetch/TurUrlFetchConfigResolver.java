@@ -14,8 +14,8 @@ import com.viglet.turing.shared.settings.TurUrlFetchMode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurUrlFetchProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurUrlFetchProperty;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

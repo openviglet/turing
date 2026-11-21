@@ -36,7 +36,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**

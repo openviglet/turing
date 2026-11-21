@@ -42,9 +42,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 
 /**
  * T1040 / §CVI.5 — asks Solr whether the queries this plugin builds mean what it
@@ -120,7 +117,7 @@ class TurSolrCursorPagingIT {
                 .thenReturn(Optional.of(instance));
 
         plugin = new TurSolrSearchEnginePlugin(mock(TurSolr.class), instanceProcess,
-                new com.viglet.turing.properties.TurConfigProperties(),
+                new com.viglet.turing.system.properties.TurConfigProperties(),
                 mock(org.springframework.core.io.ResourceLoader.class),
                 mock(com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource.class));
     }

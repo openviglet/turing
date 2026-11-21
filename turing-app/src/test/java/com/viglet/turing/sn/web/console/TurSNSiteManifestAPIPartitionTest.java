@@ -35,7 +35,7 @@ import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.sn.manifest.TurSNManifestPlan;
 import com.viglet.turing.sn.manifest.TurSNManifestRequest;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 /**
  * T1209 — a partitioned key may re-post its manifest, which keeps a connector's

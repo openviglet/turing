@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.mcp.server.TurMcpClientConfigService;
 import com.viglet.turing.mcp.server.TurMcpClientConfigService.McpClientConfig;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

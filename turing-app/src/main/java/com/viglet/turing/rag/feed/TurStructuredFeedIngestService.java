@@ -35,8 +35,8 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.properties.TurStructuredFeedProperty;
-import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

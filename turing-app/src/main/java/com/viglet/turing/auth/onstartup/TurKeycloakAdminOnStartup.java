@@ -24,7 +24,7 @@ import com.viglet.turing.auth.persistence.model.TurGroup;
 import com.viglet.turing.auth.persistence.model.TurUser;
 import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

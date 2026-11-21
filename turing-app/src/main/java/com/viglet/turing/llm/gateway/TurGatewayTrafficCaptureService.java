@@ -17,7 +17,7 @@ import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
 import com.viglet.turing.agent.persistence.model.TurEvalDataset;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.properties.TurGatewayProperty;
+import com.viglet.turing.system.properties.TurGatewayProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

@@ -69,8 +69,6 @@ import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSiteCustomSorts;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
-import com.viglet.turing.searchengine.lucene.TurLuceneSynonymAnalyzer;
-import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
 import com.viglet.turing.sn.facet.TurSNFilterExclusion;
 
 import lombok.extern.slf4j.Slf4j;

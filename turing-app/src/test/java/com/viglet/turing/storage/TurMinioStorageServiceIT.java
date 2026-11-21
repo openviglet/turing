@@ -22,9 +22,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurMinioProperty;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurMinioProperty;
+import com.viglet.turing.system.properties.TurStorageProperty;
 
 /**
  * Integration test for {@link TurMinioStorageService} that exercises the

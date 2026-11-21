@@ -378,7 +378,7 @@ public class TurSNHybridRankingService {
             // shared site's copilot neither recalls nor ranks another site's documents.
             Map<String, List<String>> vectorFilters = new LinkedHashMap<>(
                     com.viglet.turing.searchengine.dsl.TurDslCallerFilters.current());
-            com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+            com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                     .ifPresent(partition -> vectorFilters.put(partition.field(), List.of(partition.value())));
             if (!vectorFilters.isEmpty()) {
                 request.filterExpression(com.viglet.turing.rag.TurRagFilters.buildFilterExpression(vectorFilters));

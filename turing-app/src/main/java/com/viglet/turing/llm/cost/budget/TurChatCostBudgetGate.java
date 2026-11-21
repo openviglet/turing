@@ -21,7 +21,7 @@ import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
-import com.viglet.turing.properties.TurAbuseControlProperty;
+import com.viglet.turing.system.properties.TurAbuseControlProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * Unit tests for {@link TurMcpToolScopePolicy} — the T246 server-side MCP tool

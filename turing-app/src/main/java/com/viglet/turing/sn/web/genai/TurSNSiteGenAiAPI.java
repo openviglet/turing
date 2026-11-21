@@ -60,7 +60,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
 import com.viglet.turing.chat.slots.TurChatHandoffService;
 import com.viglet.turing.chat.slots.TurChatHandoffService.Channel;
@@ -116,7 +116,7 @@ public class TurSNSiteGenAiAPI {
 	private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
 	private final com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver;
 	private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
-	private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
+	private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 	// T790 / §LIV.1 (Block BF) — resolves whether the vectorless copilot can answer
 	// (a default LLM is configured) for the VECTORLESS_STRUCTURED readiness path.
 	private final com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
@@ -155,7 +155,7 @@ public class TurSNSiteGenAiAPI {
 			com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
 			com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver,
 			com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
-			com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty,
+			com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
 			com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver,
 			com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe,
@@ -355,7 +355,7 @@ public class TurSNSiteGenAiAPI {
 		Locale locale = resolveIndexedLocale(request.locale(), siteName);
 		// T1133 — read on the request thread: the deferred stream may run after it.
 		com.viglet.turing.commons.se.TurSEPartition partition =
-				com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current().orElse(null);
+				com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current().orElse(null);
 		// Defer all heavy work (RAG retrieval + prompt build + provider calls) to
 		// subscription time so the SSE handshake (200 text/event-stream) is
 		// committed before any upstream call fires. onErrorResume then turns an

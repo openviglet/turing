@@ -31,7 +31,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
 

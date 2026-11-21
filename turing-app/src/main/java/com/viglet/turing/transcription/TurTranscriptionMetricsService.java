@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;

@@ -22,7 +22,7 @@ import com.viglet.core.tenancy.VigletPlatformAdminService;
 import com.viglet.core.tenancy.VigletTenantMembershipService;
 import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantResolver;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

@@ -64,7 +64,7 @@ class TurRagBm25CoreAPITest {
         com.viglet.turing.tenant.TurTenantCoreNaming coreNaming =
                 new com.viglet.turing.tenant.TurTenantCoreNaming(
                         new com.viglet.turing.tenant.TurTenantContext(
-                                new com.viglet.turing.properties.TurConfigProperties()));
+                                new com.viglet.turing.system.properties.TurConfigProperties()));
         return new TurRagBm25CoreAPI(siteRepo, localeRepo, coreRepo, provisioner, settings, builder,
                 coreNaming, seInstanceRepository);
     }

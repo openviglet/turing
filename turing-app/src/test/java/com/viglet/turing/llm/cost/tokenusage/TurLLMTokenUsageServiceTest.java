@@ -54,14 +54,14 @@ class TurLLMTokenUsageServiceTest {
         TurLlmObservation observation = new TurLlmObservation(ObservationRegistry.NOOP, new SimpleMeterRegistry());
         com.viglet.turing.tenant.TurTenantContext tenantContext =
                 new com.viglet.turing.tenant.TurTenantContext(
-                        new com.viglet.turing.properties.TurConfigProperties());
+                        new com.viglet.turing.system.properties.TurConfigProperties());
         // No price rows configured → computeCost returns 0.0 (the local/unpriced
         // path). The cache self-proxy isn't needed in a plain unit test, so the
         // service is its own self-reference.
         TurLLMPriceService priceService = buildPriceService(priceRepository);
         // LangSmith mirror disabled by default (empty config) → exportTurn is a no-op.
         TurLangSmithExporter langSmithExporter = new TurLangSmithExporter(
-                new com.viglet.turing.properties.TurConfigProperties(),
+                new com.viglet.turing.system.properties.TurConfigProperties(),
                 new com.viglet.core.webhook.VigletWebhookDispatcher());
         service = new TurLLMTokenUsageService(tokenUsageRepository, observation, tenantContext,
                 priceService, langSmithExporter);

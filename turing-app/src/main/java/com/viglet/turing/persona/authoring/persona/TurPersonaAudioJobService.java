@@ -28,8 +28,8 @@ import com.viglet.turing.transcription.TurTranscriptionHints;
 import com.viglet.turing.transcription.TurTranscriptionResult;
 import com.viglet.turing.transcription.TurTranscriptionService;
 import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;

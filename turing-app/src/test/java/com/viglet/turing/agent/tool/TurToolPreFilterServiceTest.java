@@ -29,9 +29,9 @@ import org.springframework.ai.tool.metadata.DefaultToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
 import com.viglet.turing.observability.TurChatPipelineObservation;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGenAiProperty;
-import com.viglet.turing.properties.TurGenAiProperty.TurGenAiToolPreFilterProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGenAiProperty;
+import com.viglet.turing.system.properties.TurGenAiProperty.TurGenAiToolPreFilterProperty;
 
 /**
  * Tests for §IV.2 / T29 BM25 tool pre-filter.

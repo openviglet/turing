@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.properties.TurGuardrailProperty;
+import com.viglet.turing.system.properties.TurGuardrailProperty;
 
 import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailAction;

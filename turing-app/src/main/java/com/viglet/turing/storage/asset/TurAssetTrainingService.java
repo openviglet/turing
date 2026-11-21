@@ -1,6 +1,5 @@
 package com.viglet.turing.storage.asset;
 
-import com.viglet.turing.storage.asset.TurAssetItem;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
 import com.viglet.turing.rag.TurRagUtils;
@@ -9,7 +8,7 @@ import com.viglet.turing.storage.persistence.model.asset.TurAssetTrainingRecord;
 import com.viglet.turing.storage.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.system.TurGlobalSettingsService;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;

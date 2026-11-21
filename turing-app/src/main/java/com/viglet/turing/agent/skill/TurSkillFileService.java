@@ -31,11 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.storage.asset.TurAssetItem;
-import com.viglet.turing.agent.skill.TurSkillFileNode;
 import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurStorageKeys;
 import com.viglet.turing.storage.TurStorageService;
 
@@ -76,12 +75,12 @@ public class TurSkillFileService {
     private final TurSkillCatalogService catalogService;
     private final TurSkillFrontmatterParser frontmatterParser;
     private final TurConfigProperties configProperties;
-    private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
+    private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 
     public TurSkillFileService(TurStorageService storageService, TurSkillRepository skillRepository,
             TurSkillCatalogService catalogService, TurSkillFrontmatterParser frontmatterParser,
             TurConfigProperties configProperties,
-            com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty) {
+            com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty) {
         this.storageService = storageService;
         this.skillRepository = skillRepository;
         this.catalogService = catalogService;

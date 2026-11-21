@@ -33,11 +33,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.viglet.turing.agent.skill.TurSkillFileNode;
 import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurFilesystemStorageService;
 import com.viglet.turing.storage.TurStorageService;
 
@@ -79,7 +78,7 @@ class TurSkillFileServiceTest {
         TurSkillFrontmatterParser parser = new TurSkillFrontmatterParser();
         catalog = new TurSkillCatalogService(storage, repository, parser, configProperties);
         fileService = new TurSkillFileService(storage, repository, catalog, parser, configProperties,
-                new com.viglet.turing.properties.TurAbuseControlProperty());
+                new com.viglet.turing.system.properties.TurAbuseControlProperty());
     }
 
     @Test
@@ -249,7 +248,7 @@ class TurSkillFileServiceTest {
         TurConfigProperties props = new TurConfigProperties();
         TurSkillCatalogService inertCatalog = new TurSkillCatalogService(disabled, repository, parser, props);
         TurSkillFileService inert = new TurSkillFileService(disabled, repository, inertCatalog, parser, props,
-                new com.viglet.turing.properties.TurAbuseControlProperty());
+                new com.viglet.turing.system.properties.TurAbuseControlProperty());
 
         assertThat(inert.isEnabled()).isFalse();
         assertThat(inert.listFiles("anything")).isEmpty();

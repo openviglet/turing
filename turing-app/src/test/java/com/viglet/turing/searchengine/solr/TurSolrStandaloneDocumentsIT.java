@@ -32,9 +32,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstance;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 
 /**
  * T1262 — the standalone writes (the RAG BM25 index, the chat-analytics intent
@@ -72,7 +69,7 @@ class TurSolrStandaloneDocumentsIT {
         TurSolr turSolr = mock(TurSolr.class);
         when(turSolr.getCommitWithin()).thenReturn(200);
         plugin = new TurSolrSearchEnginePlugin(turSolr, instanceProcess,
-                new com.viglet.turing.properties.TurConfigProperties(),
+                new com.viglet.turing.system.properties.TurConfigProperties(),
                 mock(org.springframework.core.io.ResourceLoader.class),
                 mock(com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource.class));
     }

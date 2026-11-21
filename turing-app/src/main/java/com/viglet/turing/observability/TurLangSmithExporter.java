@@ -28,8 +28,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.core.webhook.VigletWebhookDispatcher;
 import com.viglet.core.webhook.VigletWebhookRequest;
 import com.viglet.core.webhook.VigletWebhookRetryPolicy;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurObservabilityProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurObservabilityProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;

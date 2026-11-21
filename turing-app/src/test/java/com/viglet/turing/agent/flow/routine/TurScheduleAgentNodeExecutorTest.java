@@ -229,8 +229,8 @@ class TurScheduleAgentNodeExecutorTest {
     }
 
     private static com.viglet.turing.tenant.TurJmsTenantPropagation noTenantPropagation() {
-        com.viglet.turing.properties.TurConfigProperties props =
-                new com.viglet.turing.properties.TurConfigProperties();
+        com.viglet.turing.system.properties.TurConfigProperties props =
+                new com.viglet.turing.system.properties.TurConfigProperties();
         return new com.viglet.turing.tenant.TurJmsTenantPropagation(
                 new com.viglet.turing.tenant.TurTenantContext(props));
     }

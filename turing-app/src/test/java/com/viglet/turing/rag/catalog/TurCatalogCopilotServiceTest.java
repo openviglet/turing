@@ -93,7 +93,7 @@ class TurCatalogCopilotServiceTest {
     // T793 / §LIV.4 — stuff-all config. Mock default isStuffAllEnabled()=false keeps
     // the existing (filtered) tests on the NL→DSL path unchanged.
     @Mock
-    private com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty;
+    private com.viglet.turing.sn.config.TurCatalogCopilotProperty copilotProperty;
     // T842 — the DETERMINISTIC planner never fans out, so this stays a bare mock.
     @Mock
     private com.viglet.turing.rag.catalog.planning.TurQueryFanOut queryFanOut;
@@ -116,7 +116,7 @@ class TurCatalogCopilotServiceTest {
                         new TurDeterministicCopilotQueryPlanner(parser,
                                 new com.viglet.turing.sn.dsl.eval.TurNLRankingPlanner(
                                         new com.viglet.turing.sn.dsl.eval.TurRankingLexiconProvider(
-                                                new com.viglet.turing.properties.TurCatalogCopilotProperty()))),
+                                                new com.viglet.turing.sn.config.TurCatalogCopilotProperty()))),
                         2));
     }
 

@@ -37,7 +37,7 @@ import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightDocumentRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightRepository;
 import com.viglet.turing.sn.persistence.repository.spotlight.TurSNSiteSpotlightTermRepository;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
 
 /**

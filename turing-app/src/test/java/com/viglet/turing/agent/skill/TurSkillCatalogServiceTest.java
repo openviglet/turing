@@ -30,8 +30,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurFilesystemStorageService;
 import com.viglet.turing.storage.TurStorageService;
 

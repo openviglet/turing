@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.properties.TurGuardrailProperty;
+import com.viglet.turing.system.properties.TurGuardrailProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

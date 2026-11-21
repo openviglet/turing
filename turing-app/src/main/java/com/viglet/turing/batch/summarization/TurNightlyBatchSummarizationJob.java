@@ -25,7 +25,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.sn.TurSNSiteInsightsPromptBuilder;
 
 import lombok.extern.slf4j.Slf4j;

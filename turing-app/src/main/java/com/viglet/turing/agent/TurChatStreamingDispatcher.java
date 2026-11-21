@@ -47,7 +47,7 @@ import com.viglet.turing.agent.persistence.model.TurAgentChatMode;
 import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.memory.TurChatMemoryService;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;

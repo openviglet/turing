@@ -69,7 +69,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.lucene.TurLuceneSearchEnginePlugin;
 import com.viglet.turing.searchengine.lucene.TurLuceneSynonymRegistry;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.tenant.TurTenantContext;
 import com.viglet.turing.tenant.TurTenantScheduledFanOut;
 

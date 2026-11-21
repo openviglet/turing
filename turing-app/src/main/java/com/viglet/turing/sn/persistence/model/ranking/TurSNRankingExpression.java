@@ -31,7 +31,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
-import com.viglet.turing.spring.security.TurAuditable;
+import com.viglet.turing.auth.security.TurAuditable;
 
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
 

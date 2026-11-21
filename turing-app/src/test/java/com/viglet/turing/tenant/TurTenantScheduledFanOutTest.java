@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.tenant.persistence.model.TurTenant;
 import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
 import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * Unit tests for {@link TurTenantScheduledFanOut} (T273).

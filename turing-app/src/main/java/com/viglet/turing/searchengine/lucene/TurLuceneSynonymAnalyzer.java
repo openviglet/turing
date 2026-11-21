@@ -19,8 +19,6 @@ package com.viglet.turing.searchengine.lucene;
 import java.io.Reader;
 import java.util.Locale;
 
-import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
-import com.viglet.turing.searchengine.lucene.TurLuceneNfcCharFilter;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;

@@ -40,7 +40,7 @@ import com.viglet.turing.sn.manifest.TurSNManifestPlan;
 import com.viglet.turing.sn.manifest.TurSNManifestProvisionResult;
 import com.viglet.turing.sn.manifest.TurSNManifestRequest;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

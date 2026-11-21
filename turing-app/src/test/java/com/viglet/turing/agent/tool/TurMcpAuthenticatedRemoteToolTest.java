@@ -76,7 +76,7 @@ class TurMcpAuthenticatedRemoteToolTest {
     private TurSecretCryptoService secretCryptoService;
 
     private TurMcpToolCallbackService service;
-    private com.viglet.turing.properties.TurMcpClientProperty clientProperty;
+    private com.viglet.turing.system.properties.TurMcpClientProperty clientProperty;
     private HttpServer server;
 
     /** Every Authorization header the client presented, in order. */
@@ -86,12 +86,12 @@ class TurMcpAuthenticatedRemoteToolTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        clientProperty = new com.viglet.turing.properties.TurMcpClientProperty();
+        clientProperty = new com.viglet.turing.system.properties.TurMcpClientProperty();
         // T1037 — retry every turn by default here, so the credential assertions
         // below are not confounded by the new backoff. Its own tests set it.
         clientProperty.setFailureBackoff(java.time.Duration.ZERO);
         service = new TurMcpToolCallbackService(mcpServerRepositoryPort, clientProperty,
-                new com.viglet.turing.spring.security.ssrf.TurSsrfGuard(),
+                new com.viglet.turing.auth.security.ssrf.TurSsrfGuard(),
                 secretCryptoService);
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/mcp", this::handle);
@@ -230,7 +230,7 @@ class TurMcpAuthenticatedRemoteToolTest {
     @Test
     @DisplayName("The default timeout is well under the 30 seconds the chat path used to pay")
     void defaultTimeoutIsShort() {
-        var defaults = new com.viglet.turing.properties.TurMcpClientProperty();
+        var defaults = new com.viglet.turing.system.properties.TurMcpClientProperty();
 
         assertThat(defaults.getRequestTimeout()).isLessThan(java.time.Duration.ofSeconds(30));
         assertThat(defaults.getFailureBackoff()).isPositive();

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.sn.persistence.model.genai.TurCopilotPlanningStrategy;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.properties.TurCatalogCopilotProperty;
+import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

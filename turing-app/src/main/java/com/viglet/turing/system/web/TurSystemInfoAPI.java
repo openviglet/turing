@@ -1,8 +1,8 @@
 package com.viglet.turing.system.web;
 
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;

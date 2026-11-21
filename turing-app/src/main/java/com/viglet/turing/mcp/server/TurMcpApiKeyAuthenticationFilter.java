@@ -24,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.viglet.turing.auth.persistence.model.devtoken.TurDevToken;
 import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
-import com.viglet.turing.spring.security.auth.TurAuthTokenHeaderFilter;
+import com.viglet.turing.auth.security.auth.TurAuthTokenHeaderFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

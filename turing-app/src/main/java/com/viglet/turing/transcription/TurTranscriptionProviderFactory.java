@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;

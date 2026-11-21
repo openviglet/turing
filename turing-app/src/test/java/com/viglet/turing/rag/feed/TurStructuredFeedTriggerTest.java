@@ -19,8 +19,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import com.viglet.turing.shared.exception.TurConflictException;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.rag.feed.TurStructuredFeedIngestService.IngestResult;
-import com.viglet.turing.properties.TurStructuredFeedProperty;
-import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty.Source;
 
 import net.javacrumbs.shedlock.core.LockConfiguration;
 import net.javacrumbs.shedlock.core.LockProvider;

@@ -1,7 +1,7 @@
 package com.viglet.turing.storage;
 
 import com.viglet.core.storage.VigletMinioStorageService;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import jakarta.annotation.PostConstruct;
 

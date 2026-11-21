@@ -121,7 +121,7 @@ public class TurCatalogCopilotService {
     private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSNHybridRankingService hybridRankingService;
     private final TurDefaultChatModelResolver chatModelResolver;
-    private final com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty;
+    private final com.viglet.turing.sn.config.TurCatalogCopilotProperty copilotProperty;
     private final com.viglet.turing.rag.catalog.planning.TurQueryFanOut queryFanOut;
     private final com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService;
 
@@ -137,7 +137,7 @@ public class TurCatalogCopilotService {
             TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNHybridRankingService hybridRankingService,
             TurDefaultChatModelResolver chatModelResolver,
-            com.viglet.turing.properties.TurCatalogCopilotProperty copilotProperty,
+            com.viglet.turing.sn.config.TurCatalogCopilotProperty copilotProperty,
             com.viglet.turing.rag.catalog.planning.TurQueryFanOut queryFanOut,
             com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService tokenUsageService) {
         this.tokenUsageService = tokenUsageService;

@@ -1,5 +1,6 @@
 package com.viglet.turing.storage;
 
+import com.viglet.turing.system.properties.TurStorageType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
@@ -17,9 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
-import com.viglet.turing.properties.TurStorageProperty.TurFilesystemProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurStorageProperty.TurFilesystemProperty;
 
 /**
  * Tests for TurFilesystemStorageService.

@@ -1,5 +1,6 @@
 package com.viglet.turing.storage;
 
+import com.viglet.turing.system.properties.TurStorageType;
 import java.util.List;
 
 import com.viglet.core.storage.VigletStorageObject;
@@ -7,9 +8,9 @@ import com.viglet.core.storage.VigletStorageObjectStat;
 import com.viglet.core.storage.VigletStorageProperties;
 import com.viglet.core.storage.VigletStorageType;
 import com.viglet.turing.storage.asset.TurAssetItem;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurMinioProperty;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurMinioProperty;
+import com.viglet.turing.system.properties.TurStorageProperty;
 
 /**
  * Maps between Turing's storage API types and the {@code viglet-core} storage

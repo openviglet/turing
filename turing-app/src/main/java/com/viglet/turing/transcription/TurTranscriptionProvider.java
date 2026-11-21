@@ -9,6 +9,8 @@
  */
 package com.viglet.turing.transcription;
 
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
+
 /**
  * Pluggable speech-to-text seam (Block AA / §XXVI.6) — the one new piece of
  * infrastructure the block needs (Spring AI 2.0.0-M2 has no transcription

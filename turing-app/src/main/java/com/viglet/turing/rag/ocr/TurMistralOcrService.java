@@ -20,8 +20,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurOcrProperty.TurMistralOcrProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurOcrProperty.TurMistralOcrProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

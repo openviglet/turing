@@ -34,7 +34,7 @@ import com.viglet.turing.agent.TurChatToolOptions;
 import com.viglet.turing.agent.TurPromptOverrides;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.agent.tool.TurCodeInterpreterToolService;
 import com.viglet.turing.agent.tool.TurDateTimeToolService;
 import com.viglet.turing.agent.tool.TurFinanceToolService;

@@ -145,7 +145,7 @@ public class TurSNSearchInsightsService {
     }
 
     private static java.util.Optional<String> partitionKey() {
-        return com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+        return com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                 .map(com.viglet.turing.commons.se.TurSEPartition::key);
     }
 

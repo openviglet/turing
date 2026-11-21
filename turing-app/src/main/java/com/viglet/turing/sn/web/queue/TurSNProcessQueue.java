@@ -44,7 +44,7 @@ import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.search.TurSNSearchCacheEvictor;
-import com.viglet.turing.logging.TurLoggingUtils;
+import com.viglet.turing.system.logging.TurLoggingUtils;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

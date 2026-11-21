@@ -39,7 +39,7 @@ import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

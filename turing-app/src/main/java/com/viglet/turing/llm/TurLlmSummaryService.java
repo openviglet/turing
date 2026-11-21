@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
 import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;

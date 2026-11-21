@@ -7,8 +7,6 @@ import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
-import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;

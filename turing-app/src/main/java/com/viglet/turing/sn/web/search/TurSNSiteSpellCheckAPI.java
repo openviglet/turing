@@ -66,7 +66,7 @@ public class TurSNSiteSpellCheckAPI {
         Locale locale = LocaleUtils.toLocale(localeRequest);
         // T1133 — the dictionary is built from the whole index, so a correction
         // could spell another partition's words: a partitioned key gets none.
-        if (com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current().isPresent()) {
+        if (com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current().isPresent()) {
             return new TurSNSiteSpellCheckBean();
         }
         return turSNSiteRepository.findByNameIgnoreCase(siteName).map(turSNSite -> {

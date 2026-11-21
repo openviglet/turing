@@ -16,7 +16,6 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

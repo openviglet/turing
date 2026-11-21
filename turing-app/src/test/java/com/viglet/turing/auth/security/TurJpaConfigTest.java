@@ -1,0 +1,22 @@
+package com.viglet.turing.auth.security;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.AuditorAware;
+
+
+class TurJpaConfigTest {
+
+    @Test
+    void shouldCreateAuditorAwareBeanBackedByTurAuditorAwareImpl() {
+        TurJpaConfig config = new TurJpaConfig();
+        AuditorAware<String> auditorAware = config.auditorAware();
+
+        assertNotNull(auditorAware);
+        assertTrue(auditorAware instanceof TurAuditorAwareImpl);
+        assertEquals("admin", auditorAware.getCurrentAuditor().orElseThrow());
+    }
+}

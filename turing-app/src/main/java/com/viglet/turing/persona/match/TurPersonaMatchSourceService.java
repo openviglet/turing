@@ -20,7 +20,7 @@ import com.viglet.turing.persona.TurPersonaSnDocResolver;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
 import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchSource;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

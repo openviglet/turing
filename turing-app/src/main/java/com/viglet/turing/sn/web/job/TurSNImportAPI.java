@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.rag.ocr.TurTikaFileAttributes;
+import com.viglet.turing.shared.utils.TurTikaFileAttributes;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -46,9 +46,9 @@ import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.TurSNPartitionWriteGuard;
 import com.viglet.turing.sn.job.TurSNImportService;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.spring.utils.TurSpringUtils;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

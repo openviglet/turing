@@ -33,8 +33,8 @@ import com.viglet.turing.rag.TurRagSource;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
 import com.viglet.turing.agent.persistence.model.TurChatCitationRecord;
 import com.viglet.turing.agent.persistence.repository.TurChatCitationRecordRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGenAiProperty.TurGenAiCitationDriftProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGenAiProperty.TurGenAiCitationDriftProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

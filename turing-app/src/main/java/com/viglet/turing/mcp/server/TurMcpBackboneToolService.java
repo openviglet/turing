@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.llm.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;

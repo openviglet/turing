@@ -440,7 +440,7 @@ public class TurSNSiteSearchAPI {
                 return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, similarRequest.getId(),
                                 similarRequest.thresholdOrDefault(), similarRequest.rowsOrDefault(),
                                 similarRequest.resolvedLocale(),
-                                com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                                com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                                                 .orElse(null),
                                 similarRequest.filters()));
         }
@@ -519,7 +519,7 @@ public class TurSNSiteSearchAPI {
                 // (T1235: fqi.op included), and
                 // T1133 — a partitioned key clusters only its partition's documents.
                 return ResponseEntity.ok(duplicateClusteringService.findCluster(siteName, id, threshold, rows,
-                                locale, com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.current()
+                                locale, com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                                                 .orElse(null),
                                 queryStringFilters(request, fqOperator, fqItemOperator)));
         }

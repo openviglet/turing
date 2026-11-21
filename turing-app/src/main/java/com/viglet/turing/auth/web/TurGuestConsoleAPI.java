@@ -40,9 +40,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.auth.persistence.model.TurPrivilege;
 import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGuestConsoleProperty;
-import com.viglet.turing.spring.security.auth.TurGuestReadOnlyFilter;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGuestConsoleProperty;
+import com.viglet.turing.auth.security.auth.TurGuestReadOnlyFilter;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

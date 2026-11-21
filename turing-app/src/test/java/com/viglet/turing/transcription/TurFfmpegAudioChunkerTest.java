@@ -16,8 +16,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.transcription.TurFfmpegAudioChunker.Segment;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTranscriptionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTranscriptionProperty;
 
 /**
  * T688 / §XLII.2 — pure-logic tests for {@link TurFfmpegAudioChunker}: the

@@ -35,8 +35,8 @@ import com.viglet.turing.agent.skill.TurSkillCatalogService;
 import com.viglet.turing.agent.skill.TurSkillFrontmatterParser;
 import com.viglet.turing.agent.persistence.model.skill.TurSkill;
 import com.viglet.turing.agent.persistence.repository.skill.TurSkillRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurFilesystemStorageService;
 import com.viglet.turing.storage.TurStorageService;
 

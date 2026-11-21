@@ -56,10 +56,10 @@ public class TurPageAPI {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final TurStorageService storageService;
-    private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
+    private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 
     public TurPageAPI(TurStorageService storageService,
-            com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty) {
+            com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty) {
         this.storageService = storageService;
         this.abuseControlProperty = abuseControlProperty;
     }

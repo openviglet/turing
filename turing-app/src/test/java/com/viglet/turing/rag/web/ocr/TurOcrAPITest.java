@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 class TurOcrAPITest {
 

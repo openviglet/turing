@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.email.TurEmailService;
+import com.viglet.turing.system.email.TurEmailService;
 import com.viglet.turing.llm.cost.lifecycle.TurLLMCatalogChangeService.ChangeNotification;
 
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

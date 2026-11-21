@@ -47,7 +47,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import com.viglet.turing.resilience.TurResilienceTimeoutException;
+import com.viglet.turing.system.resilience.TurResilienceTimeoutException;
 
 import lombok.extern.slf4j.Slf4j;
 

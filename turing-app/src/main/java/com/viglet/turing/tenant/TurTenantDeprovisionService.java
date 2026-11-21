@@ -28,9 +28,9 @@ import com.viglet.turing.tenant.persistence.model.TurTenantMembership;
 import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
 import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
 import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTenantDeprovisionMode;
-import com.viglet.turing.properties.TurTenantDeprovisionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTenantDeprovisionMode;
+import com.viglet.turing.system.properties.TurTenantDeprovisionProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -26,8 +26,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTenantDeprovisionProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTenantDeprovisionProperty;
 import com.viglet.turing.auth.keycloak.TurKeycloakUserDto;
 
 import lombok.extern.slf4j.Slf4j;

@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.auth.persistence.model.TurUser;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurGuestConsoleProperty;
+import com.viglet.turing.system.properties.TurGuestConsoleProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

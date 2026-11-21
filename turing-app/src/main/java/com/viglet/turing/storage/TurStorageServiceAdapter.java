@@ -1,5 +1,6 @@
 package com.viglet.turing.storage;
 
+import com.viglet.turing.system.properties.TurStorageType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

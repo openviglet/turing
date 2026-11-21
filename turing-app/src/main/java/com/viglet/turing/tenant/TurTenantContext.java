@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.core.tenancy.VigletTenantContext;
 import com.viglet.turing.tenant.persistence.model.TurTenant;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * T258 / §XIV.2.2 — Turing's request-scoped current-tenant holder: the

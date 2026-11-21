@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.properties.TurContentAiProperty;
+import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

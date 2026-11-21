@@ -16,8 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.system.web.TurAPIBean;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurTenancyProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurTenancyProperty;
 
 import java.util.Optional;
 

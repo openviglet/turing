@@ -2612,18 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.33 Fold the leftover packages (T1322a)
-
-ADR 0005 section 6 layers 1 and 2. bean, jpa and utils move into shared; artemis,
-logging, email, properties, swagger, tomcat, bento and the generic half of resilience
-into system; spring into auth. observability stays a module but becomes infrastructure,
-so agent and sn may import it. A class among these that imports a feature module moves
-into that module instead: the SN and LLM mail pieces of email, resilience.llm (into
-llm), the per-module property classes of properties (sn, storage, transcription),
-observability's sn and llm imports. Done when no package outside the ADR's module list
-is left at the top level and none of the moved classes imports a module above its layer.
-Mechanical moves; tests move with their classes.
-
 ### CLXXXIX.34 Vector stores move into llm (T1322b)
 
 ADR 0005 section 6 puts the vector stores in llm, as infrastructure every AI module
@@ -2724,3 +2712,24 @@ code interpreter mode and Docker status. ADR 0005 section 6: the two controllers
 agent with their REST paths unchanged, and global settings read the code interpreter
 through an SPI system declares and agent implements. Done when system imports no feature
 module.
+
+### CLXXXIX.45 The infrastructure layer imports only downward (T1322l)
+
+Measured after T1322a (2026-11-21). The three infrastructure modules of ADR 0005 section
+6 layer 2 import each other: auth reads system's properties and settings in 13 files,
+tenant reads system in 4, and the other way system imports tenant (TurMvcAsyncConfig,
+TurSecretCryptoService, TurTenantKeyResolver, TurIntegrationInstanceAPI, TurFeaturesAPI)
+and auth (TurDevTokenAPI, TurIntegrationAPI), while tenant imports auth once
+(TurKeycloakServiceAccountIdentityProvider). They also import feature modules: system's
+controllers reach storage (TurPageAPI, TurPageController, TurSystemInfoAPI,
+TurFeaturesAPI), sn (TurCacheAPI, TurEmailReportAPI), transcription, batch, exchange and
+persona; tenant reaches llm, sn and storage for quotas, counters and teardown.
+
+Proposed ruling, recorded in ADR 0005 when this ships: order layer 2 as system below
+tenant below auth, which keeps today's dominant direction (auth and tenant reading
+system's configuration). Then system's imports of tenant and auth move: the tenant key
+and async context through SPIs system declares, the dev-token and integration
+controllers into auth. Controllers in system that serve one feature move to that
+feature's module with their REST paths unchanged. Tenant's per-module counters and
+teardown become SPIs tenant declares and each module implements. Done when system
+imports only shared, tenant only system and shared, and auth only those three.

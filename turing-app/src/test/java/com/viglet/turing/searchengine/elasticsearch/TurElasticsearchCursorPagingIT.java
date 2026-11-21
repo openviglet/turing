@@ -47,10 +47,6 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearch;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstance;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchInstanceProcess;
-import com.viglet.turing.searchengine.elasticsearch.TurElasticsearchUtils;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 

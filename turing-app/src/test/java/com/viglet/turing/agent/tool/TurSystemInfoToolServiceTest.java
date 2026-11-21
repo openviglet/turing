@@ -18,11 +18,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurMinioProperty;
-import com.viglet.turing.properties.TurStorageProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurMinioProperty;
+import com.viglet.turing.system.properties.TurStorageProperty;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 
 /**
  * Tests for TurSystemInfoToolService.

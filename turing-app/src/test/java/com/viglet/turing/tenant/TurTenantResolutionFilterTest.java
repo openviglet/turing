@@ -40,7 +40,7 @@ import com.viglet.turing.tenant.persistence.model.TurTenantMembershipStatus;
 import com.viglet.turing.tenant.persistence.model.TurTenantStatus;
 import com.viglet.turing.tenant.persistence.repository.TurTenantMembershipRepository;
 import com.viglet.turing.tenant.persistence.repository.TurTenantRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * Unit tests for Turing's tenant resolution (T259). After the T396 / §XIV.9

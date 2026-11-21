@@ -1,0 +1,19 @@
+databaseChangeLog:
+  # --- T1322a: the bento layout belongs to the system module ---
+  # bento folded into system (ADR 0005 section 6), so its table takes the system_
+  # prefix under the T1317 rule. Idempotent: runs only while the old table exists
+  # and the new one does not.
+  - changeSet:
+      id: v2026.3.1.156-01-rename-bento_layout
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: bento_layout
+        - not:
+            - tableExists:
+                tableName: system_bento_layout
+      changes:
+        - renameTable:
+            oldTableName: bento_layout
+            newTableName: system_bento_layout

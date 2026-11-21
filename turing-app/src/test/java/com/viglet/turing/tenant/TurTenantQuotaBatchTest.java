@@ -32,7 +32,7 @@ import com.viglet.turing.llm.vigletai.TurVigletUpgradeTargetService;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * T981 / §XC — the batch form of the plan gate, which exists because an import

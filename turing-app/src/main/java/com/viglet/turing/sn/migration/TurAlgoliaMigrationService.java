@@ -38,7 +38,7 @@ import com.viglet.core.manifest.VigletManifestDeriver;
 import com.viglet.core.manifest.VigletManifestHeuristics;
 import com.viglet.core.manifest.VigletManifestResult;
 import com.viglet.core.manifest.VigletManifestSampleAnalyzer;
-import com.viglet.turing.properties.TurMigrationProperty;
+import com.viglet.turing.system.properties.TurMigrationProperty;
 import com.viglet.turing.sn.migration.TurAlgoliaClient.AlgoliaBrowsePage;
 import com.viglet.turing.sn.migration.TurAlgoliaClient.TurAlgoliaConnection;
 

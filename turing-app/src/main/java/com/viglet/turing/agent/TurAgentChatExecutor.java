@@ -39,7 +39,7 @@ import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.chat.analytics.TurChatAnalyticsService;
 import com.viglet.turing.chat.analytics.TurChatCohortResolver;
 import com.viglet.turing.chat.analytics.TurChatSessionRefs;
@@ -113,8 +113,8 @@ public class TurAgentChatExecutor {
     private final TurChatCohortResolver chatCohortResolver;
     private final TurChatPipelineObservation chatPipelineObservation;
     private final com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
-    private final com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver;
-    private final com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
+    private final com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver;
+    private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 
     public TurAgentChatExecutor(TurLlmModelFactory llmModelFactory,
             TurSecretCryptoService turSecretCryptoService,
@@ -131,8 +131,8 @@ public class TurAgentChatExecutor {
             TurChatCohortResolver chatCohortResolver,
             TurChatPipelineObservation chatPipelineObservation,
             com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
-            com.viglet.turing.resilience.llm.TurMetaChatModelResolver metaChatModelResolver,
-            com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty) {
+            com.viglet.turing.llm.resilience.TurMetaChatModelResolver metaChatModelResolver,
+            com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty) {
         this.llmModelFactory = llmModelFactory;
         this.turSecretCryptoService = turSecretCryptoService;
         this.toolResolver = toolResolver;

@@ -43,7 +43,7 @@ import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickRepository;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricClickTerm;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 /**
  * Click-through rates read back from the click log (T1131): per term, how often

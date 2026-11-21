@@ -19,7 +19,7 @@ import com.viglet.turing.commons.file.TurFileAttributes;
 import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;
 import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -73,11 +73,11 @@ class TurSNSiteGenAiAPITest {
     // /enabled reads configProperties.getChat().getSession() — deep-stub the chain
     // so the endpoint builds its ChatEnabledResponse without a real config bean.
     @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
-    private com.viglet.turing.properties.TurConfigProperties configProperties;
+    private com.viglet.turing.system.properties.TurConfigProperties configProperties;
 
     // The conversation endpoint's guards (message caps, the anonymous cost cap).
     @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
-    private com.viglet.turing.properties.TurAbuseControlProperty abuseControlProperty;
+    private com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
     @Mock
     private com.viglet.turing.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
 
@@ -301,7 +301,7 @@ class TurSNSiteGenAiAPITest {
         when(catalogCopilotService.isAvailable()).thenReturn(true);
         org.springframework.mock.web.MockHttpServletRequest request =
                 new org.springframework.mock.web.MockHttpServletRequest();
-        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+        request.setAttribute(com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.class.getName(),
                 new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
         org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
                 new org.springframework.web.context.request.ServletRequestAttributes(request));

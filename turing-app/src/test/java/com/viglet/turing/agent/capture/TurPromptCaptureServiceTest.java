@@ -35,7 +35,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.storage.TurStorageContentTypes;
 import com.viglet.turing.storage.TurStorageObjectStat;
 import com.viglet.turing.storage.TurStorageService;
-import com.viglet.turing.storage.TurStorageType;
+import com.viglet.turing.system.properties.TurStorageType;
 
 /**
  * Unit tests for {@link TurPromptCaptureService} (T618) — capture/read round

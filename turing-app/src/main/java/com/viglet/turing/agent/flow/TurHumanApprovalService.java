@@ -26,7 +26,7 @@ import com.viglet.turing.agent.persistence.model.TurChatFlowState;
 import com.viglet.turing.agent.persistence.model.TurChatHumanApproval;
 import com.viglet.turing.agent.persistence.model.TurHumanApprovalStatus;
 import com.viglet.turing.agent.persistence.repository.TurChatHumanApprovalRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 import lombok.extern.slf4j.Slf4j;
 

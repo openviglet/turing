@@ -34,7 +34,6 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletManifestResult;
-import com.viglet.turing.rag.feed.TurStructuredFeedIngestService;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
@@ -45,8 +44,8 @@ import com.viglet.turing.searchengine.persistence.repository.TurSEVendorReposito
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.sn.api.TurSNSiteGenAis;
-import com.viglet.turing.properties.TurStructuredFeedProperty;
-import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty.Source;
 import com.viglet.turing.sn.manifest.TurSNSiteManifestService;
 
 import lombok.extern.slf4j.Slf4j;

@@ -31,7 +31,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
-import com.viglet.turing.properties.TurAbuseControlProperty;
+import com.viglet.turing.system.properties.TurAbuseControlProperty;
 
 /**
  * T291 / §XVI.3 — unit tests for the turn-time soft budget gate.

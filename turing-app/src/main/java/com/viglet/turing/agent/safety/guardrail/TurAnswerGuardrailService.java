@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.properties.TurGuardrailProperty;
+import com.viglet.turing.system.properties.TurGuardrailProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

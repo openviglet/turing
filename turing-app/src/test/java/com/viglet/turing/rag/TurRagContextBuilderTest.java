@@ -25,7 +25,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProvider;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProviderFactory;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;

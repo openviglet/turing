@@ -192,7 +192,7 @@ class TurDslSearchServiceDispatchTest {
         var service = service("solr");
         when(solrExecutor.execute(eq(SITE), any(Locale.class), any())).thenReturn(Optional.empty());
         var request = new org.springframework.mock.web.MockHttpServletRequest();
-        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+        request.setAttribute(com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.class.getName(),
                 new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a"));
         org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
                 new org.springframework.web.context.request.ServletRequestAttributes(request));

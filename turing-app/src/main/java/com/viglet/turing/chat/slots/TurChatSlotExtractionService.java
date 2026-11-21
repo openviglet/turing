@@ -39,7 +39,7 @@ import com.viglet.turing.agent.persistence.model.TurChatSlotAuditSource;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

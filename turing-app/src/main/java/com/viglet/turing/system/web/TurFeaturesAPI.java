@@ -1,7 +1,7 @@
 package com.viglet.turing.system.web;
 
 import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.storage.git.TurGitServerService;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;

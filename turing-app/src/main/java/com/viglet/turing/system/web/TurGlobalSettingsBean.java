@@ -2,7 +2,7 @@ package com.viglet.turing.system.web;
 
 import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
 import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
-import com.viglet.turing.transcription.TurTranscriptionProviderType;
+import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import com.viglet.turing.system.TurEmailProviderType;
 import com.viglet.turing.system.TurGlobalDecimalSeparator;
 
@@ -73,7 +73,7 @@ public class TurGlobalSettingsBean {
      * @since 2026.3.4
      */
     private java.util.List<String> llmFallbackChainIds;
-    private com.viglet.turing.resilience.llm.TurLlmFallbackMode llmFallbackMode;
+    private com.viglet.turing.llm.resilience.TurLlmFallbackMode llmFallbackMode;
     /**
      * T522 — multi-provider "second opinion": when enabled, a different-vendor
      * critic LLM judges the primary answer; the agreement is surfaced as a

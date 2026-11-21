@@ -33,8 +33,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.shared.exception.TurConflictException;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.rag.feed.TurStructuredFeedIngestService.IngestResult;
-import com.viglet.turing.properties.TurStructuredFeedProperty;
-import com.viglet.turing.properties.TurStructuredFeedProperty.Source;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty;
+import com.viglet.turing.system.properties.TurStructuredFeedProperty.Source;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockConfiguration;

@@ -1,5 +1,6 @@
 package com.viglet.turing.storage;
 
+import com.viglet.turing.system.properties.TurStorageType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

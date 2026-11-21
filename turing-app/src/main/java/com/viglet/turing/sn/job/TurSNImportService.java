@@ -30,7 +30,7 @@ import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.logging.TurLoggingUtils;
+import com.viglet.turing.system.logging.TurLoggingUtils;
 import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;

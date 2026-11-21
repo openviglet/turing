@@ -33,9 +33,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.searchengine.lucene.TurLucene;
-import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
-import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 
 /**

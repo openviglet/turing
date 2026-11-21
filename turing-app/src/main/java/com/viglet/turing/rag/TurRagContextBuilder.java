@@ -17,7 +17,7 @@
 
 package com.viglet.turing.rag;
 
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.provider.llm.TurHuggingFaceEmbeddingModelFactory;
 import com.viglet.turing.llm.provider.llm.TurLocalEmbeddingModelFactory;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProvider;

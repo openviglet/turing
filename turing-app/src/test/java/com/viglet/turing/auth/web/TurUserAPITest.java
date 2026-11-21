@@ -49,7 +49,7 @@ import com.viglet.turing.auth.persistence.repository.TurGroupRepository;
 import com.viglet.turing.auth.persistence.repository.TurPrivilegeRepository;
 import com.viglet.turing.auth.persistence.repository.TurRoleRepository;
 import com.viglet.turing.auth.persistence.repository.TurUserRepository;
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 @ExtendWith(MockitoExtension.class)
 class TurUserAPITest {

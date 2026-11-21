@@ -54,7 +54,7 @@ import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowRepository;
 import com.viglet.turing.agent.persistence.repository.TurChatFlowSubmissionRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -106,7 +106,7 @@ public class TurAgentEvalRunnerService {
     private final TurSecretCryptoService secretCryptoService;
     private final com.viglet.turing.batch.TurBatchInferenceService batchInferenceService;
     private final com.viglet.turing.llm.nativeapi.openai.TurOpenAiEvalsService openAiEvalsService;
-    private final com.viglet.turing.properties.TurConfigProperties configProperties;
+    private final com.viglet.turing.system.properties.TurConfigProperties configProperties;
     private final com.viglet.turing.eval.grader.TurEvalGraderRegistry graderRegistry;
     private final TurEvalReviewTaskService reviewTaskService;
     private final com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository datasetRowRepository;
@@ -130,7 +130,7 @@ public class TurAgentEvalRunnerService {
             TurSecretCryptoService secretCryptoService,
             com.viglet.turing.batch.TurBatchInferenceService batchInferenceService,
             com.viglet.turing.llm.nativeapi.openai.TurOpenAiEvalsService openAiEvalsService,
-            com.viglet.turing.properties.TurConfigProperties configProperties,
+            com.viglet.turing.system.properties.TurConfigProperties configProperties,
             com.viglet.turing.eval.grader.TurEvalGraderRegistry graderRegistry,
             TurEvalReviewTaskService reviewTaskService,
             com.viglet.turing.agent.persistence.repository.TurEvalDatasetRowRepository datasetRowRepository,

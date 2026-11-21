@@ -41,8 +41,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurSolrProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurSolrProperty;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 
 /**

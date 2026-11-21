@@ -43,8 +43,8 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.observability.TurMeterNames;
-import com.viglet.turing.properties.TurConfigProperties;
-import com.viglet.turing.properties.TurGenAiProperty.TurGenAiToolPreFilterProperty;
+import com.viglet.turing.system.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurGenAiProperty.TurGenAiToolPreFilterProperty;
 
 import lombok.extern.slf4j.Slf4j;
 

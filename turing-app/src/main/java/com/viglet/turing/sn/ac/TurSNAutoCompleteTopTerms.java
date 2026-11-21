@@ -30,7 +30,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessRepository;
 import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricTerms;
-import com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext;
+import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
 

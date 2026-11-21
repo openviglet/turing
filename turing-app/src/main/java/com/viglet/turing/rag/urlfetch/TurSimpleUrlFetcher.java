@@ -16,7 +16,7 @@ import java.net.URL;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.utils.TurFileUtils;
+import com.viglet.turing.shared.utils.TurFileUtils;
 
 /**
  * T739 / §XLVIII — the {@code SIMPLE} fetch backend: the legacy path, a plain

@@ -89,7 +89,7 @@ class TurSNAnswerServiceTest {
     private static <T> T asPartitionedKey(java.util.function.Supplier<T> call) {
         org.springframework.mock.web.MockHttpServletRequest request =
                 new org.springframework.mock.web.MockHttpServletRequest();
-        request.setAttribute(com.viglet.turing.spring.security.auth.TurApiKeyPartitionContext.class.getName(),
+        request.setAttribute(com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.class.getName(),
                 PARTITION);
         org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
                 new org.springframework.web.context.request.ServletRequestAttributes(request));

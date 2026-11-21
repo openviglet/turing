@@ -24,10 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
-import com.viglet.turing.searchengine.lucene.TurLuceneInstanceProcess;
-import com.viglet.turing.searchengine.lucene.TurLucenePerFieldAnalyzer;
-import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;

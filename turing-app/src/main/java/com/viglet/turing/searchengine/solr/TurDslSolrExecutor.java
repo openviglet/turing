@@ -6,8 +6,6 @@ import com.viglet.turing.searchengine.dsl.TurDslQueryRequest;
 import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.searchengine.dsl.TurDslSearchEngineExecutor;
 
-import com.viglet.turing.searchengine.solr.TurSolr;
-import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;

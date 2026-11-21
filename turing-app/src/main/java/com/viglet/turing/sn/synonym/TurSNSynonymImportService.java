@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.properties.TurMigrationProperty;
+import com.viglet.turing.system.properties.TurMigrationProperty;
 import com.viglet.turing.sn.migration.TurAlgoliaClient;
 import com.viglet.turing.sn.migration.TurAlgoliaClient.TurAlgoliaConnection;
 

@@ -51,14 +51,12 @@ import org.springframework.http.HttpStatus;
 import com.sun.net.httpserver.HttpServer;
 import com.viglet.testsupport.contentai.TurContentAiSpecValidator;
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
-import com.viglet.turing.searchengine.contentai.TurContentAiClient;
-import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
-import com.viglet.turing.properties.TurContentAiProperty;
+import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;

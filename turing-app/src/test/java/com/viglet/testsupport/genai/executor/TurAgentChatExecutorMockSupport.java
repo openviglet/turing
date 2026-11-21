@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
-import com.viglet.turing.resilience.llm.TurLlmModelFactory;
+import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 
 import reactor.core.publisher.Flux;
 
@@ -129,7 +129,7 @@ public class TurAgentChatExecutorMockSupport {
 
     /**
      * Marked {@code @Primary} so Spring resolves it ahead of the production
-     * {@link com.viglet.turing.resilience.llm.TurLlmModelFactory @Component}.
+     * {@link com.viglet.turing.llm.resilience.TurLlmModelFactory @Component}.
      * The downstream {@code createChatModel(...)} always returns the same
      * harness-backed mock — tests rely on that to enqueue / inspect calls.
      */

@@ -26,7 +26,7 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.viglet.turing.properties.TurConfigProperties;
+import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**
  * Unit tests for {@link TurMcpScopeToolCallback} — verifies it consults
