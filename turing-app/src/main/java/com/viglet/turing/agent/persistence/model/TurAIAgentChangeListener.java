@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.event.TurAIAgentChangedEvent;
+import com.viglet.turing.shared.event.TurAIAgentChangedEvent;
 
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;

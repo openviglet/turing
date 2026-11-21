@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.agent.event;
+package com.viglet.turing.shared.event;
 
 /**
  * An AI agent was created, changed or deleted. Published by the agent module at

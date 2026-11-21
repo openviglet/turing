@@ -51,7 +51,8 @@ import org.springframework.stereotype.Component;
 public class TurSNSiteConfigCache {
 
     /** Cache holding the {@link TurSNSiteFieldConfigModel} per lowercased site name. */
-    public static final String FIELD_CONFIG_CACHE = "turSNSiteFieldConfig";
+    public static final String FIELD_CONFIG_CACHE =
+            com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.FIELD_CONFIG_CACHE_NAME;
 
     /**
      * Returns the cached field configuration for {@code siteNameKey}, computing

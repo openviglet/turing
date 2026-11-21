@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.agent.event.TurAIAgentChangedEvent;
+import com.viglet.turing.shared.event.TurAIAgentChangedEvent;
 
 /** T1316 — a changed agent clears the SN snapshot as any SN write does. */
 class TurSNSiteSnapshotAgentListenerTest {

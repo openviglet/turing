@@ -622,7 +622,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
         var seInstance = org.mockito.Mockito.mock(com.viglet.turing.searchengine.persistence.model.TurSEInstance.class);
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
@@ -674,7 +674,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(org.mockito.Mockito.mock(com.viglet.turing.searchengine.persistence.model.TurSEInstance.class)));
@@ -722,7 +722,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(seInstance));
@@ -792,7 +792,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstanceId("se-bound");
         org.mockito.Mockito.lenient().when(seInstanceRepository.findById("se-bound"))
                 .thenReturn(java.util.Optional.of(seInstance));
@@ -857,7 +857,7 @@ class TurRagSearchToolServiceTest {
         var binding = new com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi();
         binding.setRagBm25Fallback(true);
         binding.setRagHybridSearch(true);
-        binding.setRagBm25Source(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+        binding.setRagBm25Source(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
         binding.setRagSeInstanceId(null); // <- the misconfiguration
         when(snSiteGenAiRepository.findByTurAIAgentId("agent-1")).thenReturn(List.of(binding));
 

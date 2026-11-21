@@ -24,7 +24,7 @@ package com.viglet.turing.sn.snapshot;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.event.TurAIAgentChangedEvent;
+import com.viglet.turing.shared.event.TurAIAgentChangedEvent;
 
 /**
  * A changed agent changes the snapshot of every site that reads it, so the SN

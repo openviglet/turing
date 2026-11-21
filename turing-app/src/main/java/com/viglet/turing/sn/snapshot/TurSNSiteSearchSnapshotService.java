@@ -70,6 +70,9 @@ public class TurSNSiteSearchSnapshotService {
 
     public static final String CACHE_NAME = "turSNSiteSearchSnapshot";
 
+    /** T1322h — the agent-side SN field-config cache, named here so sn evicts it without importing agent. */
+    public static final String FIELD_CONFIG_CACHE_NAME = "turSNSiteFieldConfig";
+
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSNSiteFieldExtFacetRepository turSNSiteFieldExtFacetRepository;

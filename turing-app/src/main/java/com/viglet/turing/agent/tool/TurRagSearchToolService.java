@@ -8,7 +8,7 @@ import com.viglet.turing.rag.TurRagSource;
 import com.viglet.turing.rag.TurRagSourceCollector;
 import com.viglet.turing.storage.persistence.model.asset.TurAssetTrainingRecord;
 import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
-import com.viglet.turing.rag.persistence.model.TurRagBm25Source;
+import com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.storage.persistence.repository.asset.TurAssetTrainingRecordRepository;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;

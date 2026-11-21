@@ -253,7 +253,7 @@ class TurSNSiteAPITest {
                 existingGenAi.setRagBm25Fallback(true);
                 existingGenAi.setRagHybridSearch(true);
                 existingGenAi.setRagBm25Source(
-                                com.viglet.turing.rag.persistence.model.TurRagBm25Source.EMBEDDED);
+                                com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.EMBEDDED);
                 existing.setTurSNSiteGenAi(existingGenAi);
 
                 TurSEInstance seInstance = new TurSEInstance();
@@ -265,7 +265,7 @@ class TurSNSiteAPITest {
                 payloadGenAi.setRagBm25Fallback(false);
                 payloadGenAi.setRagHybridSearch(false);
                 payloadGenAi.setRagBm25Source(
-                                com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+                                com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
                 payloadGenAi.setRagSeInstanceId("se-1");
                 // T383 — public-search ranking mode round-trips alongside the RAG flags.
                 payloadGenAi.setSnRankingMode(
@@ -281,7 +281,7 @@ class TurSNSiteAPITest {
                 assertThat(existingGenAi.isRagBm25Fallback()).isFalse();
                 assertThat(existingGenAi.isRagHybridSearch()).isFalse();
                 assertThat(existingGenAi.getRagBm25Source())
-                                .isEqualTo(com.viglet.turing.rag.persistence.model.TurRagBm25Source.SE_INSTANCE);
+                                .isEqualTo(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.SE_INSTANCE);
                 assertThat(existingGenAi.getRagSeInstanceId()).isEqualTo("se-1");
                 assertThat(existingGenAi.getSnRankingMode())
                                 .isEqualTo(com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode.HYBRID_RRF);

@@ -21,8 +21,6 @@ package com.viglet.turing.sn.persistence.model.genai;
 import java.io.Serial;
 import java.io.Serializable;
 
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.rag.persistence.model.TurRagBm25Source;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;
@@ -43,7 +41,7 @@ import lombok.Setter;
 
 /**
  * GenAI binding for an SN site. The site delegates LLM, embedding model,
- * vector store and the RAG enabled flag to a referenced {@link TurAIAgent} —
+ * vector store and the RAG enabled flag to a referenced {@link com.viglet.turing.agent.persistence.model.TurAIAgent} —
  * only the site-specific prompts (system prompt and site description prompt)
  * remain here.
  *

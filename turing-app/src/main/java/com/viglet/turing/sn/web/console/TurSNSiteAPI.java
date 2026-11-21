@@ -224,7 +224,7 @@ public class TurSNSiteAPI {
                 turSNSiteGenAi.setRagHybridSearch(genAi.isRagHybridSearch());
                 turSNSiteGenAi.setRagBm25Source(
                         Optional.ofNullable(genAi.getRagBm25Source())
-                                .orElse(com.viglet.turing.rag.persistence.model.TurRagBm25Source.EMBEDDED));
+                                .orElse(com.viglet.turing.sn.persistence.model.genai.TurRagBm25Source.EMBEDDED));
                 // T1315 — the SE instance is held by id; keep it only when it exists.
                 turSNSiteGenAi.setRagSeInstanceId(
                         Optional.ofNullable(genAi.getRagSeInstanceId())

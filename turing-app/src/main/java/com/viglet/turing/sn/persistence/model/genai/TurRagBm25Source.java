@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.persistence.model;
+package com.viglet.turing.sn.persistence.model.genai;
 
 /**
  * T24b / §III.2 — selects where the BM25 half of the hybrid retrieval

@@ -25,7 +25,6 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;

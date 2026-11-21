@@ -17,7 +17,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -61,7 +60,7 @@ public class TurSNSnapshotCacheSweep {
 
     /** The two caches projecting the same SN site + field graph. */
     private static final List<String> SWEPT = List.of(
-            TurSNSiteSearchSnapshotService.CACHE_NAME, TurSNSiteConfigCache.FIELD_CONFIG_CACHE);
+            TurSNSiteSearchSnapshotService.CACHE_NAME, TurSNSiteSearchSnapshotService.FIELD_CONFIG_CACHE_NAME);
 
     private final CacheManager cacheManager;
 

@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
-import com.viglet.turing.agent.event.TurAIAgentChangedEvent;
+import com.viglet.turing.shared.event.TurAIAgentChangedEvent;
 
 /** T1316 — every agent write is announced as an event, carrying the agent's id. */
 class TurAIAgentChangeListenerTest {

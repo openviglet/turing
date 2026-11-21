@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.tool.TurSNSiteConfigCache;
 import com.viglet.turing.observability.TurMeterNames;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
@@ -116,7 +115,7 @@ public class TurSNSiteSnapshotEvictionListener {
         // the same SN entity graph (site + fields), so any write that evicts the
         // search snapshot must also drop the memoized field config. Coarse,
         // whole-cache clear: it rebuilds in one round-trip on the next tool call.
-        scheduler.clearOnce(TurSNSiteConfigCache.FIELD_CONFIG_CACHE);
+        scheduler.clearOnce(TurSNSiteSearchSnapshotService.FIELD_CONFIG_CACHE_NAME);
         recordEviction();
     }
 
