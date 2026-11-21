@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.sn.persistence.model.TurSNSite;

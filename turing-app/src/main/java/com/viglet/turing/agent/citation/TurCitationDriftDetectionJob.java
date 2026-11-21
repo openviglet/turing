@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.citation;
+package com.viglet.turing.agent.citation;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

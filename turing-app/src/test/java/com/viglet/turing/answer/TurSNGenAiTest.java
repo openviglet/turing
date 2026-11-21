@@ -1,7 +1,7 @@
 package com.viglet.turing.answer;
 
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagFacetExtractor;
 import com.viglet.turing.rag.TurRagReranker;

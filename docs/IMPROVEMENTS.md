@@ -2625,17 +2625,6 @@ Waits for T1322j and T1322m (2026-11-21): persona also reaches the MCP client
 (TurMcpToolCallbackService in agent, TurMcpServer in mcp) for brand context, and
 transcription for audio-derived personas; both move below persona there.
 
-### CLXXXIX.39 The answer module splits from rag (T1322g)
-
-rag imports agent 38 times (TurSNGenAi, TurSNAnswerService, research, deep dive,
-citation drift, route resolver, vector probe) and agent imports rag 22 (the RAG search
-tool, connector API, TurAgentRagInfra). ADR 0005 section 6 splits rag: retrieval
-(context building, sources, rerank, RRF, citations, ocr, multimodal, feed, connectors)
-stays in rag below agent, and a new answer module above agent takes what runs agents:
-the SN chat, answers, research, deep dive and the catalog copilot, with their
-controllers. A retrieval class that resolves the default agent takes the agent as a
-parameter instead. Done when rag imports no agent, persona or answer type.
-
 ### CLXXXIX.40 SN's GenAI surface leaves sn (T1322h)
 
 sn imports agent 42 times, rag 29, chat 12 and persona 11, almost all from its GenAI

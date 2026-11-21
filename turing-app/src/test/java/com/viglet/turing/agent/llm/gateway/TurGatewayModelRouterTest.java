@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.TurAgentChatExecutor;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.model.TurLLMVendor;

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurGenAiContextProvider;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaGroundingSource;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;
@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>The grounding reuses the existing retrieval stack:
  * <ul>
  *   <li>{@link TurPersonaGroundingSource#SN_SITE} — resolve the bound Semantic
- *       Navigation site, build its GenAI context via {@link TurGenAiContextFactory}
+ *       Navigation site, build its GenAI context via {@link com.viglet.turing.agent.TurGenAiContextFactory}
  *       and run a similarity search over that site's vector store for the user
  *       query;</li>
  *   <li>{@link TurPersonaGroundingSource#NOTEBOOK} — use the persona's Block AA
@@ -73,12 +73,12 @@ public class TurPersonaGroundingService {
 
     private final TurSNSearchProcess turSNSearchProcess;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
-    private final TurGenAiContextFactory turGenAiContextFactory;
+    private final TurGenAiContextProvider turGenAiContextFactory;
     private final TurPersonaSourceRepository turPersonaSourceRepository;
 
     public TurPersonaGroundingService(TurSNSearchProcess turSNSearchProcess,
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurGenAiContextFactory turGenAiContextFactory,
+            TurGenAiContextProvider turGenAiContextFactory,
             TurPersonaSourceRepository turPersonaSourceRepository) {
         this.turSNSearchProcess = turSNSearchProcess;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;

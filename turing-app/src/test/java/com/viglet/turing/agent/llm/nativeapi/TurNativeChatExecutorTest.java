@@ -75,7 +75,7 @@ class TurNativeChatExecutorTest {
     @Mock private com.viglet.turing.agent.TurChatToolResolver toolResolver;
     @Mock private com.viglet.turing.agent.llm.nativeapi.mcp.TurMcpFederationDirectory mcpFederationDirectory;
     @Mock private com.viglet.turing.agent.tool.TurRagSearchToolService ragSearchToolService;
-    @Mock private com.viglet.turing.rag.citation.TurCitationDriftService citationDriftService;
+    @Mock private com.viglet.turing.agent.citation.TurCitationDriftService citationDriftService;
     @Mock private com.viglet.turing.agent.llm.nativeapi.files.TurNativeDocumentGroundingService nativeDocumentGroundingService;
     @Mock private com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicContextManagement anthropicContextManagement;
     @Mock private TurGenAiLlmProvider provider;

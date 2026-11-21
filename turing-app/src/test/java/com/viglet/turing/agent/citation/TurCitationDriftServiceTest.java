@@ -7,8 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.citation;
+package com.viglet.turing.agent.citation;
 
+import com.viglet.turing.rag.citation.TurChatCitation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -33,9 +34,9 @@ import org.springframework.ai.document.Document;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.answer.TurSNGenAi;
-import com.viglet.turing.rag.citation.TurCitationDriftService.DriftVerdict;
-import com.viglet.turing.rag.citation.TurCitationDriftService.ResolvedChunk;
-import com.viglet.turing.rag.citation.TurCitationDriftService.Status;
+import com.viglet.turing.agent.citation.TurCitationDriftService.DriftVerdict;
+import com.viglet.turing.agent.citation.TurCitationDriftService.ResolvedChunk;
+import com.viglet.turing.agent.citation.TurCitationDriftService.Status;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
 import com.viglet.turing.agent.persistence.model.TurChatCitationRecord;
 import com.viglet.turing.agent.persistence.repository.TurChatCitationRecordRepository;

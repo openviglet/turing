@@ -1,6 +1,7 @@
-package com.viglet.turing.rag;
+package com.viglet.turing.agent;
 
-import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurGenAiContext;
+import com.viglet.turing.rag.TurRagContextBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -31,7 +31,7 @@ import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.ConversationStateDto;
 import com.viglet.turing.agent.event.TurChatMessageEvent;
 import com.viglet.turing.agent.event.TurChatMessageEventBus;
-import com.viglet.turing.rag.citation.TurCitationDriftService;
+import com.viglet.turing.agent.citation.TurCitationDriftService;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
 import com.viglet.turing.agent.workspace.TurWorkspaceEventBus;
 import com.viglet.turing.agent.persistence.dto.TurChatCitationDriftDto;

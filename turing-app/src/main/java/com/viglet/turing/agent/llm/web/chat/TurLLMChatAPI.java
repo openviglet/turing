@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
 import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
 import com.viglet.turing.agent.TurChatAttachmentService;
-import com.viglet.turing.agent.TurChatToolOptions;
+import com.viglet.turing.llm.TurChatToolOptions;
 import com.viglet.turing.agent.TurPromptOverrides;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;

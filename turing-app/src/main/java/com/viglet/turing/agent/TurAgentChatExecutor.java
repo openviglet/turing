@@ -13,6 +13,7 @@
 
 package com.viglet.turing.agent;
 
+import com.viglet.turing.llm.TurChatToolOptions;
 import java.util.List;
 import java.util.Optional;
 

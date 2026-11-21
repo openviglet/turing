@@ -1,6 +1,8 @@
-package com.viglet.turing.rag;
+package com.viglet.turing.agent;
 
-import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurGenAiContext;
+import com.viglet.turing.rag.TurGenAiContextProvider;
+import com.viglet.turing.rag.TurRagContextBuilder;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class TurGenAiContextFactory {
+public class TurGenAiContextFactory implements TurGenAiContextProvider {
 
     private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
@@ -50,18 +52,21 @@ public class TurGenAiContextFactory {
         this.turDefaultAgentResolver = turDefaultAgentResolver;
     }
 
+    @Override
     public TurGenAiContext build(TurSNSiteGenAi turSNSiteGenAi) {
-        return build(turSNSiteGenAi, null);
+        return TurGenAiContextProvider.super.build(turSNSiteGenAi);
     }
 
+    @Override
     public TurGenAiContext build(TurSNSiteGenAi turSNSiteGenAi, String collectionNameOverride) {
-        return build(turSNSiteGenAi, collectionNameOverride, null);
+        return TurGenAiContextProvider.super.build(turSNSiteGenAi, collectionNameOverride);
     }
 
     /**
      * @param siteName T1127 — the SN site the context answers for, so its calls are
      *                 attributed to it in the cost ledger; {@code null} for none
      */
+    @Override
     public TurGenAiContext build(TurSNSiteGenAi turSNSiteGenAi, String collectionNameOverride,
             String siteName) {
         // T622 — fall back to the global Default AI Agent when the site declares

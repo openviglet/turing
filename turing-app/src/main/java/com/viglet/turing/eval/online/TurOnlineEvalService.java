@@ -23,7 +23,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.rag.citation.TurCitationDriftService;
+import com.viglet.turing.agent.citation.TurCitationDriftService;
 import com.viglet.turing.eval.TurAgentEvalRunnerService;
 import com.viglet.turing.eval.grader.TurEvalGrader;
 import com.viglet.turing.eval.grader.TurEvalGraderConfigView;

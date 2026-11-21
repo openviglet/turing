@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.answer.TurSNGenAi;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;

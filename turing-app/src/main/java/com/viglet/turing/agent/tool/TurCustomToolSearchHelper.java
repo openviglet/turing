@@ -36,7 +36,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSiteSearchDocumentBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

@@ -70,7 +70,7 @@ class TurChatSessionExportTest {
                 mock(com.viglet.turing.agent.chat.slots.TurChatSlotEventBus.class),
                 mock(com.viglet.turing.agent.workspace.TurWorkspaceEventBus.class),
                 mock(com.viglet.turing.agent.chat.slots.TurChatSlotSseRegistry.class),
-                mock(com.viglet.turing.rag.citation.TurCitationDriftService.class),
+                mock(com.viglet.turing.agent.citation.TurCitationDriftService.class),
                 mock(TurConversationAccess.class));
     }
 

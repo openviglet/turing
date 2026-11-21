@@ -16,7 +16,7 @@
  */
 package com.viglet.turing.rag;
 
-import com.viglet.turing.agent.TurChatToolOptions;
+import com.viglet.turing.llm.TurChatToolOptions;
 
 import java.util.ArrayList;
 import java.util.Collection;

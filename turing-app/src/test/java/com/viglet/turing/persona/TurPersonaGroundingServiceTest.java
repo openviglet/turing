@@ -27,7 +27,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaGroundingSource;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;

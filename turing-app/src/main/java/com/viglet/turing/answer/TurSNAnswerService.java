@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent;
+package com.viglet.turing.llm;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;

@@ -81,7 +81,7 @@ class TurSNSiteContentPagingTest {
         service = new TurSNSiteContentExchangeService(turSNSiteRepository, turSNSiteLocaleRepository,
                 pluginFactory, turSNSiteFieldService,
                 org.mockito.Mockito.mock(com.viglet.turing.answer.TurSNGenAi.class),
-                org.mockito.Mockito.mock(com.viglet.turing.rag.TurGenAiContextFactory.class),
+                org.mockito.Mockito.mock(com.viglet.turing.agent.TurGenAiContextFactory.class),
                 org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class),
                 new com.viglet.turing.system.properties.TurConfigProperties());
 

@@ -37,7 +37,7 @@ import com.viglet.turing.agent.TurChatToolResolver;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatMessageItem;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.rag.citation.TurCitationDocument;
-import com.viglet.turing.rag.citation.TurCitationDriftService;
+import com.viglet.turing.agent.citation.TurCitationDriftService;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
 import com.viglet.turing.agent.tool.TurRagSearchToolService;
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapability;

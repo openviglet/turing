@@ -12,7 +12,6 @@
  */
 package com.viglet.turing.rag;
 
-import com.viglet.turing.agent.TurTokenBudgetService;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  * store for the entire collection (a high-{@code topK}, zero-threshold search —
  * the existing {@link VectorStore} API, no new "scan-all" plumbing), estimates
  * its size with the canonical {@code chars/4} heuristic
- * ({@link TurTokenBudgetService}'s {@code estimateTokens}), and engages full-context
+ * ({@link com.viglet.turing.agent.TurTokenBudgetService}'s {@code estimateTokens}), and engages full-context
  * only when it comfortably fits the per-site budget. Otherwise it declines and the
  * caller proceeds on the normal top-K retrieval path (and the T383 ranking mode)
  * unchanged.

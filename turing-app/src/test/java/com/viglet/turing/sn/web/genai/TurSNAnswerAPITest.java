@@ -31,7 +31,7 @@ import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.answer.TurAnswerShareService;
 import com.viglet.turing.answer.TurAnswerSignalService;
 import com.viglet.turing.answer.TurSNAnswerService;
-import com.viglet.turing.rag.citation.TurCitationDriftService;
+import com.viglet.turing.agent.citation.TurCitationDriftService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSiteView;

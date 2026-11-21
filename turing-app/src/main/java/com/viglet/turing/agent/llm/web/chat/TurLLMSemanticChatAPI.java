@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
 import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
-import com.viglet.turing.agent.TurChatToolOptions;
+import com.viglet.turing.llm.TurChatToolOptions;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;

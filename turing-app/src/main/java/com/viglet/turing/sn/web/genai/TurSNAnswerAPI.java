@@ -52,13 +52,13 @@ import reactor.core.publisher.Flux;
 public class TurSNAnswerAPI {
 
     private final TurSNAnswerService answerService;
-    private final com.viglet.turing.rag.citation.TurCitationDriftService driftService;
+    private final com.viglet.turing.agent.citation.TurCitationDriftService driftService;
     private final com.viglet.turing.answer.TurAnswerShareService answerShareService;
     private final com.viglet.turing.answer.TurAnswerSignalService answerSignalService;
     private final TurSNSiteSearchService turSNSiteSearchService;
 
     public TurSNAnswerAPI(TurSNAnswerService answerService,
-            com.viglet.turing.rag.citation.TurCitationDriftService driftService,
+            com.viglet.turing.agent.citation.TurCitationDriftService driftService,
             com.viglet.turing.answer.TurAnswerShareService answerShareService,
             com.viglet.turing.answer.TurAnswerSignalService answerSignalService,
             TurSNSiteSearchService turSNSiteSearchService) {
@@ -93,16 +93,16 @@ public class TurSNAnswerAPI {
     @Operation(summary = "Re-check whether a produced answer's cited sources have drifted")
     @org.springframework.web.bind.annotation.PostMapping(value = "/freshness",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessVerdict> freshness(
+    public List<com.viglet.turing.agent.citation.TurCitationDriftService.FreshnessVerdict> freshness(
             @PathVariable String siteName,
             @org.springframework.web.bind.annotation.RequestBody FreshnessRequest request) {
         if (request == null || request.sources() == null || request.sources().isEmpty()) {
             return List.of();
         }
-        List<com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessRef> refs =
+        List<com.viglet.turing.agent.citation.TurCitationDriftService.FreshnessRef> refs =
                 request.sources().stream()
                         .filter(java.util.Objects::nonNull)
-                        .map(s -> new com.viglet.turing.rag.citation.TurCitationDriftService.FreshnessRef(
+                        .map(s -> new com.viglet.turing.agent.citation.TurCitationDriftService.FreshnessRef(
                                 s.sourceId(), s.citedText()))
                         .toList();
         int topK = request.topK() == null ? 0 : request.topK();

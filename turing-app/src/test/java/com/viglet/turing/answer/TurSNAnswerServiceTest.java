@@ -29,7 +29,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.agent.TurGenAiContextFactory;
 import com.viglet.turing.rag.TurSNChatDisabledReason;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;

@@ -32,10 +32,9 @@
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
 - 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 131 times, for fields, facets, locales and targeting rules. → §CLXXXIX.6
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
-- 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e, T1322f ✅, T1322g ⏳, T1322h, T1322i, T1322j, T1322k, T1322l) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the ADR 0005 module map. → §CLXXXIX.18
+- 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e, T1322f ✅, T1322g ✅, T1322h, T1322i, T1322j, T1322k, T1322l) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the ADR 0005 module map. → §CLXXXIX.18
 - 📋 **T1322e** (deps: T1315 ✅, T1322j, T1322m) **agent and persona import each other 34 and 14 times, a cycle module verification would refuse** — Persona sits below agent, so the persona code that runs or resolves an agent moves into agent. → §CLXXXIX.37
-- ⏳ **T1322g** (deps: T1322b ✅, T1322c ✅) **agent and rag import each other 22 and 38 times, a cycle module verification would refuse** — rag's retrieval core still imports agent: TurGenAiContextFactory, TurRagSourceCollector, TurRagFacetExtractor, TurSNFullContextService and TurCitationDriftService. → §CLXXXIX.39
-- 📋 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ⏳) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — SN's GenAI surface moves to the modules its imports allow, and the search path calls them through SPIs sn declares. → §CLXXXIX.40
+- 📋 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — SN's GenAI surface moves to the modules its imports allow, and the search path calls them through SPIs sn declares. → §CLXXXIX.40
 - 📋 **T1322i** (deps: T1315 ✅) **sn and kb import each other 20 and 10 times, a cycle module verification would refuse** — kb sits above sn, so sn.kb moves into kb and query expansion reaches it through an SPI sn declares. → §CLXXXIX.41
 - 📋 **T1322j** (deps: T1315 ✅) **agent and mcp import each other 11 and 12 times, a cycle module verification would refuse** — The MCP client moves into llm, where agent and persona both read it, and mcp keeps the server, which sits above agent. → §CLXXXIX.42
 - 📋 **T1322k** (deps: T1322d ✅) **system imports agent and chat, though infrastructure may depend only on shared** — The parked-conversation and chat-analytics controllers move to agent, and global settings read the code interpreter through an SPI. → §CLXXXIX.43
@@ -54,12 +53,6 @@
   TurModuleReportTest reports no "non-exposed type com.viglet.turing.searchengine."
   violation: callers go through TurSearchEnginePlugin, and the DSL executors either move
   into the module with the DSL types or call the plugin.
-
-## Done when — T1322g
-
-- **rag imports no agent, persona or answer type** Counting imports between top-level
-  packages finds none from rag to agent, persona or answer; today five retrieval-core
-  classes still import agent.
 
 ## Non-goals (do NOT add as tasks)
 

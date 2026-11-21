@@ -47,7 +47,7 @@ import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.answer.TurSNGenAiChatRequest;
 import com.viglet.turing.answer.TurSNGenAi.ConversationMessage;
 import com.viglet.turing.rag.TurGenAiContext;
-import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurGenAiContextProvider;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.workspace.TurAgentWorkspace;
 import com.viglet.turing.agent.workspace.TurWorkspaceEvent;
@@ -95,7 +95,7 @@ public class TurSNSiteGenAiAPI {
 
 	private final TurSNSearchProcess turSNSearchProcess;
 	private final TurSNGenAi turGenAi;
-	private final TurGenAiContextFactory turGenAiContextFactory;
+	private final TurGenAiContextProvider turGenAiContextFactory;
 	private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
 	private final TurSNSiteSearchService turSNSiteSearchService;
 	private final TurIntentRepository turIntentRepository;
@@ -134,7 +134,7 @@ public class TurSNSiteGenAiAPI {
 
 	public TurSNSiteGenAiAPI(TurSNSearchProcess turSNSearchProcess,
 			TurSNGenAi turGenAi,
-			TurGenAiContextFactory turGenAiContextFactory,
+			TurGenAiContextProvider turGenAiContextFactory,
 			TurSNSiteLocaleRepository turSNSiteLocaleRepository,
 			TurSNSiteSearchService turSNSiteSearchService,
 			TurIntentRepository turIntentRepository,

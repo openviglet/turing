@@ -7,8 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.rag.citation;
+package com.viglet.turing.agent.citation;
 
+import com.viglet.turing.rag.citation.TurChatCitation;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
