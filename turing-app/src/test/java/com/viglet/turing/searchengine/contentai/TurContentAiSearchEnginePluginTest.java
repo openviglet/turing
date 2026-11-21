@@ -56,10 +56,10 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.system.properties.TurContentAiProperty;
@@ -139,7 +139,7 @@ class TurContentAiSearchEnginePluginTest {
     @Mock
     private TurSNSiteLocales turSNSiteLocaleRepository;
     @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     private HttpServer server;
     private final List<String> bodies = new ArrayList<>();
@@ -241,7 +241,7 @@ class TurContentAiSearchEnginePluginTest {
     }
 
     private TurContentAiSearchEnginePlugin plugin(String endpoint,
-            TurSNSiteFacetFieldEnum siteItemType, TurSNSiteFieldExt... facetFields) {
+            TurSNSiteFacetFieldEnum siteItemType, TurSEFacetField... facetFields) {
         TurSEInstance instance = new TurSEInstance();
         instance.setEndpointUrl(endpoint);
 
@@ -258,9 +258,7 @@ class TurContentAiSearchEnginePluginTest {
         when(turSNSiteRepository.findByNameIgnoreCase(SITE)).thenReturn(Optional.of(site));
         when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(any(), eq(LOCALE)))
                 .thenReturn(siteLocale);
-        when(turSNSiteFieldExtRepository
-                .findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
-                .thenReturn(List.of(facetFields));
+        when(siteSearchConfig.facetFields(any())).thenReturn(List.of(facetFields));
 
         property.setEnabled(true);
         property.setToken("adobe-token");
@@ -268,18 +266,12 @@ class TurContentAiSearchEnginePluginTest {
 
         return new TurContentAiSearchEnginePlugin(client, queryBuilder, responseMapper,
                 sourceCatalog, property, turSNSiteRepository, turSNSiteLocaleRepository,
-                turSNSiteFieldExtRepository, seInstances.service());
+                siteSearchConfig, seInstances.service());
     }
 
-    private static TurSNSiteFieldExt facetField(String name, int position,
+    private static TurSEFacetField facetField(String name, int position,
             TurSNSiteFacetFieldEnum itemType) {
-        TurSNSiteFieldExt field = new TurSNSiteFieldExt();
-        field.setName(name);
-        field.setFacet(1);
-        field.setEnabled(1);
-        field.setFacetPosition(position);
-        field.setFacetItemType(itemType);
-        return field;
+        return new TurSEFacetField(name, position, itemType);
     }
 
     private static TurSNSiteSearchContext context(String query, Integer page, Integer rows,
@@ -679,8 +671,8 @@ class TurContentAiSearchEnginePluginTest {
         String endpoint = startStub("""
                 {"totalResults": 0, "results": []}
                 """);
-        TurSNSiteFieldExt[] fields =
-                new TurSNSiteFieldExt[TurContentAiQueryBuilder.MAX_AGGREGATES + 5];
+        TurSEFacetField[] fields =
+                new TurSEFacetField[TurContentAiQueryBuilder.MAX_AGGREGATES + 5];
         for (int i = 0; i < fields.length; i++) {
             fields[i] = facetField("field_" + i, i + 1, TurSNSiteFacetFieldEnum.DEFAULT);
         }
@@ -718,7 +710,7 @@ class TurContentAiSearchEnginePluginTest {
         String endpoint = startStub("""
                 {"totalResults": 0, "results": []}
                 """);
-        TurSNSiteFieldExt[] fields = new TurSNSiteFieldExt[50];
+        TurSEFacetField[] fields = new TurSEFacetField[50];
         for (int i = 0; i < fields.length; i++) {
             fields[i] = facetField("field_" + i, i + 1, TurSNSiteFacetFieldEnum.DEFAULT);
         }
@@ -741,7 +733,7 @@ class TurContentAiSearchEnginePluginTest {
         String endpoint = startStub("""
                 {"totalResults": 0, "results": []}
                 """);
-        TurSNSiteFieldExt[] fields = new TurSNSiteFieldExt[40];
+        TurSEFacetField[] fields = new TurSEFacetField[40];
         for (int i = 0; i < fields.length; i++) {
             fields[i] = facetField("field_" + i, i + 1, TurSNSiteFacetFieldEnum.DEFAULT);
         }

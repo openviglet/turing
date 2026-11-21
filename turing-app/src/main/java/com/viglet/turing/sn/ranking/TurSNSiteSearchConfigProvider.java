@@ -30,6 +30,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSEIndexField;
 import com.viglet.turing.searchengine.spi.TurSECoreUsage;
+import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -201,6 +202,17 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .filter(field -> field.getFacetPosition() != null)
                 .forEach(field -> positions.putIfAbsent(field.getName(), field.getFacetPosition())));
         return positions;
+    }
+
+    @Override
+    public List<TurSEFacetField> facetFields(String siteId) {
+        if (siteId == null) {
+            return List.of();
+        }
+        return fieldExtRepository.findByTurSNSiteIdAndFacetAndEnabledOrderByFacetPosition(siteId, 1, 1).stream()
+                .map(field -> new TurSEFacetField(field.getName(), field.getFacetPosition(),
+                        field.getFacetItemType()))
+                .toList();
     }
 
     @Override

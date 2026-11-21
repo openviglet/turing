@@ -263,4 +263,17 @@ class TurSNSiteSearchConfigProviderTest {
         assertThat(provider().facetPositions("site-1")).containsExactly(java.util.Map.entry("type", 2));
         assertThat(provider().facetPositions("missing")).isEmpty();
         assertThat(provider().facetPositions(null)).isEmpty();
+    }
+
+    @Test
+    void facetFieldsCarryNamePositionAndItemTypeInRepositoryOrder() {
+        when(fieldExtRepository.findByTurSNSiteIdAndFacetAndEnabledOrderByFacetPosition("site-1", 1, 1))
+                .thenReturn(List.of(com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder()
+                        .name("type").facetPosition(1)
+                        .facetItemType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR).build()));
+
+        assertThat(provider().facetFields("site-1")).containsExactly(
+                new com.viglet.turing.searchengine.spi.TurSEFacetField("type", 1,
+                        com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR));
+        assertThat(provider().facetFields(null)).isEmpty();
     }}

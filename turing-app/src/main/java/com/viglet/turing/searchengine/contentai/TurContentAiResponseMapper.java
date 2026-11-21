@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.se.passage.TurSEPassage;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -151,17 +151,17 @@ public class TurContentAiResponseMapper {
      * field name, which is what {@code TurContentAiQueryBuilder} set it to.
      */
     public List<TurSEFacetResult> facetResults(JsonNode response,
-            List<TurSNSiteFieldExt> facetFields) {
+            List<TurSEFacetField> facetFields) {
         Map<String, JsonNode> byId = aggregatesById(response);
         List<TurSEFacetResult> facetResults = new ArrayList<>();
-        for (TurSNSiteFieldExt field : facetFields) {
-            JsonNode aggregate = byId.get(field.getName());
+        for (TurSEFacetField field : facetFields) {
+            JsonNode aggregate = byId.get(field.name());
             if (aggregate == null) {
-                log.debug("Content AI returned no aggregate for facet '{}'", field.getName());
+                log.debug("Content AI returned no aggregate for facet '{}'", field.name());
                 continue;
             }
-            facetResults.add(toFacetResult(field.getName(),
-                    field.getFacetPosition() != null ? field.getFacetPosition() : 0, aggregate));
+            facetResults.add(toFacetResult(field.name(),
+                    field.facetPosition() != null ? field.facetPosition() : 0, aggregate));
         }
         return facetResults;
     }

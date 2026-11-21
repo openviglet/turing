@@ -93,4 +93,7 @@ public interface TurSESiteSearchConfig {
      * order the site sorts its facets; empty when the site is unknown.
      */
     Map<String, Integer> facetPositions(String siteId);
+
+    /** The site's enabled facet fields in facet-position order; empty for a {@code null} id. */
+    List<TurSEFacetField> facetFields(String siteId);
 }

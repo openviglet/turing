@@ -33,10 +33,10 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.system.properties.TurContentAiProperty;
@@ -103,7 +103,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     private final TurContentAiProperty property;
     private final TurSNSites turSNSiteRepository;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
 
     /**
      * T1045 — endpoints whose configured source has already been diagnosed, so the
@@ -118,7 +118,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
             TurContentAiSourceCatalog sourceCatalog,
             TurContentAiProperty property, TurSNSites turSNSiteRepository,
             TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.client = client;
@@ -128,7 +128,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
         this.property = property;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
+        this.siteSearchConfig = siteSearchConfig;
     }
 
     @Override
@@ -161,7 +161,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     private Optional<TurSEResults> search(Target target, TurSEParameters params) {
-        List<TurSNSiteFieldExt> facetFields = facetFields(target.site());
+        List<TurSEFacetField> facetFields = facetFields(target.site());
         int rows = rows(params);
         int page = page(params);
 
@@ -210,7 +210,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      * carries the honest total, which is why it is returned rather than dropped.
      */
     private PagedResponse walkToPage(Target target, TurSEParameters params,
-            List<TurSNSiteFieldExt> facetFields, int rows, int page) {
+            List<TurSEFacetField> facetFields, int rows, int page) {
         int walkLimit = Math.max(1, property.getMaxPageWalk());
         if (page > walkLimit) {
             log.warn("Content AI page {} for site '{}' exceeds turing.content-ai.max-page-walk={}; "
@@ -265,7 +265,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      * listing is logged and forgotten — a diagnostic that throws would turn a
      * search returning nothing into a search returning an error.
      */
-    private void diagnoseEmptyResult(Target target, List<TurSNSiteFieldExt> facetFields) {
+    private void diagnoseEmptyResult(Target target, List<TurSEFacetField> facetFields) {
         String key = target.endpointUrl() + "\0" + target.sourceName();
         if (!diagnosed.add(key)) {
             return;
@@ -303,7 +303,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      * bucket list, so the facet renders as having no values).
      */
     private void warnOnConfigurationMismatch(Target target, TurContentAiSource source,
-            List<TurSNSiteFieldExt> facetFields) {
+            List<TurSEFacetField> facetFields) {
         String site = target.site().getName();
         if (StringUtils.isNotBlank(source.type())
                 && !source.type().equals(property.getSourceType())) {
@@ -318,7 +318,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
 
         if (!source.filterFields().isEmpty()) {
             List<String> notFilterable = facetFields.stream()
-                    .map(TurSNSiteFieldExt::getName)
+                    .map(TurSEFacetField::name)
                     .filter(name -> !source.filterFields().contains(name))
                     .toList();
             if (!notFilterable.isEmpty()) {
@@ -347,8 +347,8 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
             return Optional.empty();
         }
         return target(context.getSiteName(), context.getLocale()).flatMap(target -> {
-            TurSNSiteFieldExt facetField = facetFields(target.site()).stream()
-                    .filter(field -> facetName.equals(field.getName()))
+            TurSEFacetField facetField = facetFields(target.site()).stream()
+                    .filter(field -> facetName.equals(field.name()))
                     .findFirst()
                     .orElse(null);
             try {
@@ -477,9 +477,8 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
         return StringUtils.isNotBlank(configured) ? configured : siteLocale.getCore();
     }
 
-    private List<TurSNSiteFieldExt> facetFields(TurSNSite site) {
-        return turSNSiteFieldExtRepository
-                .findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(site, 1, 1);
+    private List<TurSEFacetField> facetFields(TurSNSite site) {
+        return siteSearchConfig.facetFields(site.getId());
     }
 
     private int rows(TurSEParameters params) {
