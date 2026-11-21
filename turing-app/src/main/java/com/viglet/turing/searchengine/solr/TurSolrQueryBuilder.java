@@ -87,7 +87,6 @@ import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.TurSNFieldType;
-import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
 import com.viglet.turing.searchengine.facet.TurSNFilterExclusion;
@@ -110,20 +109,17 @@ public class TurSolrQueryBuilder {
     private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
     private final TurSESiteSearchConfig siteSearchConfig;
     private final TurSNTargetingRules turSNTargetingRules;
-    private final TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
     private final TurSNEnabledFacets turSNEnabledFacets;
 
     public TurSolrQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
             TurSESiteSearchConfig siteSearchConfig,
             TurSNTargetingRules turSNTargetingRules,
-            TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNEnabledFacets turSNEnabledFacets) {
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
         this.siteSearchConfig = siteSearchConfig;
         this.turSNTargetingRules = turSNTargetingRules;
-        this.turSNSearchRuleEvaluator = turSNSearchRuleEvaluator;
         this.turSNEnabledFacets = turSNEnabledFacets;
     }
 
@@ -138,7 +134,7 @@ public class TurSolrQueryBuilder {
             query.set(Q_OP, OR);
             query.set(MM, RELAXED_MINIMUM_MATCH);
         }
-        turSNSearchRuleEvaluator.applyRules(turSNSite, turSEParameters, context.getLocale());
+        siteSearchConfig.applySearchRules(turSNSite.getId(), turSEParameters, context.getLocale());
         setRows(turSNSite, turSEParameters);
         setSortEntry(turSNSite, query, turSEParameters);
 

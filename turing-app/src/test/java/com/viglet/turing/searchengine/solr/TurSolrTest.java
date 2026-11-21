@@ -62,7 +62,6 @@ import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.sn.TurSNFieldProcess;
 
 /**
  * Unit tests for TurSolr.
@@ -90,13 +89,7 @@ class TurSolrTest {
     private TurSNSites turSNSiteRepository;
 
     @Mock
-    private TurSNFieldProcess turSNFieldProcess;
-
-    @Mock
     private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
-
-    @Mock
-    private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
 
     @Mock
     private com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService snapshotService;
@@ -690,9 +683,7 @@ class TurSolrTest {
                 turSNTargetingRules,
                 siteSearchConfig,
                 turSNSiteRepository,
-                turSNFieldProcess,
                 turDecimalFieldNormalizer,
-                turSNSearchRuleEvaluator,
                 new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository,
                         turSNSiteCustomFacetRepository, snapshotService),
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));

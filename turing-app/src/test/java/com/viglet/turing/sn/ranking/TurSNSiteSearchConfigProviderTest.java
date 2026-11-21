@@ -53,11 +53,15 @@ class TurSNSiteSearchConfigProviderTest {
     private com.viglet.turing.sn.api.TurSNSiteLocales siteLocaleRepository;
     @Mock
     private com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort;
+    @Mock
+    private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator searchRuleEvaluator;
+    @Mock
+    private com.viglet.turing.sn.TurSNFieldProcess fieldProcess;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
                 fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository,
-                siteLocaleRepositoryPort);
+                siteLocaleRepositoryPort, searchRuleEvaluator, fieldProcess);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -230,4 +234,33 @@ class TurSNSiteSearchConfigProviderTest {
                 new com.viglet.turing.searchengine.spi.TurSECoreUsage("site-1", "Docs", "locale-1",
                         java.util.Locale.US));
         assertThat(provider().coreInUse("core1")).isTrue();
+    }
+
+    @Test
+    void searchRulesAreAppliedBySiteId() {
+        com.viglet.turing.commons.se.TurSEParameters params =
+                org.mockito.Mockito.mock(com.viglet.turing.commons.se.TurSEParameters.class);
+
+        provider().applySearchRules("site-1", params, java.util.Locale.US);
+
+        org.mockito.Mockito.verify(searchRuleEvaluator).applyRules("site-1", params, java.util.Locale.US);
+    }
+
+    @Test
+    void facetPositionsKeepTheFirstPositionedFieldOfANameInOrder() {
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt type =
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("type")
+                        .facetPosition(2).build();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt unpositioned =
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("tags").build();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt again =
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("type")
+                        .facetPosition(5).build();
+        when(fieldProcess.getTurSNSiteFieldOrdering("site-1"))
+                .thenReturn(Optional.of(List.of(type, unpositioned, again)));
+        when(fieldProcess.getTurSNSiteFieldOrdering("missing")).thenReturn(Optional.empty());
+
+        assertThat(provider().facetPositions("site-1")).containsExactly(java.util.Map.entry("type", 2));
+        assertThat(provider().facetPositions("missing")).isEmpty();
+        assertThat(provider().facetPositions(null)).isEmpty();
     }}

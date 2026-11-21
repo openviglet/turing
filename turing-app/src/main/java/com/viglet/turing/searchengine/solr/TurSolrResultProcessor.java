@@ -54,22 +54,22 @@ import com.viglet.turing.searchengine.result.TurSEGenericResults;
 import com.viglet.turing.searchengine.result.TurSEGroup;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.facet.TurSNCustomFacetDefinition;
 import com.viglet.turing.sn.facet.TurSNFacetDefinition;
 
 public class TurSolrResultProcessor {
 
-        private final TurSNFieldProcess turSNFieldProcess;
+        private final TurSESiteSearchConfig siteSearchConfig;
         private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
         private final TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
         private final TurSearchPipelineObservation pipelineObservation;
 
-        public TurSolrResultProcessor(TurSNFieldProcess turSNFieldProcess,
+        public TurSolrResultProcessor(TurSESiteSearchConfig siteSearchConfig,
                         TurSNSiteFieldExts turSNSiteFieldExtRepository,
                         TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
                         TurSearchPipelineObservation pipelineObservation) {
-                this.turSNFieldProcess = turSNFieldProcess;
+                this.siteSearchConfig = siteSearchConfig;
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
                 this.turSNSiteCustomFacetRepository = turSNSiteCustomFacetRepository;
                 this.pipelineObservation = pipelineObservation;
@@ -325,19 +325,13 @@ public class TurSolrResultProcessor {
                 if (facetResults.isEmpty()) {
                         return;
                 }
-                turSNFieldProcess.getTurSNSiteFieldOrdering(turSNSite.getId()).ifPresent(fields -> {
-                        Map<String, Integer> positionByName = fields.stream()
-                                        .filter(f -> f.getFacetPosition() != null)
-                                        .collect(Collectors.toMap(
-                                                        TurSNSiteFieldExt::getName,
-                                                        TurSNSiteFieldExt::getFacetPosition,
-                                                        (a, b) -> a));
-                        facetResults.forEach(fr -> {
-                                Integer pos = positionByName.get(fr.getFacet());
-                                if (pos != null) {
-                                        fr.setFacetPosition(pos);
-                                }
-                        });
+                // T1310 - the site's facet positions come through the site search SPI.
+                Map<String, Integer> positionByName = siteSearchConfig.facetPositions(turSNSite.getId());
+                facetResults.forEach(fr -> {
+                        Integer pos = positionByName.get(fr.getFacet());
+                        if (pos != null) {
+                                fr.setFacetPosition(pos);
+                        }
                 });
                 turSEResults.setFacetResults(facetResults.stream()
                                 .sorted(Comparator.comparing(TurSEFacetResult::getFacetPosition,

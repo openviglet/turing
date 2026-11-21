@@ -62,7 +62,7 @@ import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEGroup;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * Tests for TurSolrResultProcessor.
@@ -74,7 +74,7 @@ import com.viglet.turing.sn.TurSNFieldProcess;
 class TurSolrResultProcessorTest {
 
         @Mock
-        private TurSNFieldProcess turSNFieldProcess;
+        private TurSESiteSearchConfig siteSearchConfig;
 
         @Mock
         private TurSNSiteFieldExts turSNSiteFieldExtRepository;
@@ -85,7 +85,7 @@ class TurSolrResultProcessorTest {
         @Test
         @SuppressWarnings("unchecked")
         void testSetFacetQueriesOrdersCustomFacetItemsByPosition() throws Exception {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -144,7 +144,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultAppliesHighlightAndRequiredFields() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt titleField = TurSNSiteFieldExt.builder()
@@ -170,7 +170,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testTurSEResultsParametersFromResults() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -203,7 +203,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testTurSEResultsParametersFromGroupResponse() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -235,7 +235,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetFieldExtMapAndRequiredFields() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -262,7 +262,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetHLAndIsHLBranches() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -290,7 +290,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetResultsProcessesMltAndGroups() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -357,7 +357,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultWithNullHighlightDoesNotFail() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt titleField = TurSNSiteFieldExt.builder()
@@ -379,7 +379,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultWithEmptyHighlightDoesNotReplace() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt titleField = TurSNSiteFieldExt.builder()
@@ -401,7 +401,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultDoesNotHighlightNonTextFields() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt intField = TurSNSiteFieldExt.builder()
@@ -454,7 +454,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testTurSEResultsParametersWithZeroResults() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -483,7 +483,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetFieldExtMapHandlesDuplicateFieldNames() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -503,7 +503,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetRequiredFieldsReturnsEmptyMapWhenNoneRequired() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -517,7 +517,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetHLReturnsNullWhenHighlightingMapIsNull() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -537,7 +537,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultHighlightsStringField() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt nameField = TurSNSiteFieldExt.builder()
@@ -557,7 +557,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultDoesNotHighlightBoolField() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt boolField = TurSNSiteFieldExt.builder()
@@ -576,7 +576,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultDoesNotHighlightDateField() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSiteFieldExt dateField = TurSNSiteFieldExt.builder()
@@ -595,7 +595,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultAddsMultipleRequiredFields() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -615,7 +615,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testCreateTurSEResultDoesNotOverrideExistingWithRequired() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -629,7 +629,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testTurSEResultsParametersWithNullResultsAndNullGroups() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -656,7 +656,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetResultsWithNoMltAndNoFacet() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -766,7 +766,7 @@ class TurSolrResultProcessorTest {
                 TurSNSiteFieldExt field = TurSNSiteFieldExt.builder().name("category").build();
 
                 boolean result = (boolean) method.invoke(
-                                new TurSolrResultProcessor(turSNFieldProcess,
+                                new TurSolrResultProcessor(siteSearchConfig,
                                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null)),
                                 site, List.of(field));
@@ -786,7 +786,7 @@ class TurSolrResultProcessorTest {
                 TurSNSiteFieldExt field = TurSNSiteFieldExt.builder().name("category").build();
 
                 boolean result = (boolean) method.invoke(
-                                new TurSolrResultProcessor(turSNFieldProcess,
+                                new TurSolrResultProcessor(siteSearchConfig,
                                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null)),
                                 site, List.of(field));
@@ -805,7 +805,7 @@ class TurSolrResultProcessorTest {
                 site.setItemsPerFacet(10);
 
                 boolean result = (boolean) method.invoke(
-                                new TurSolrResultProcessor(turSNFieldProcess,
+                                new TurSolrResultProcessor(siteSearchConfig,
                                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null)),
                                 site, Collections.emptyList());
@@ -825,7 +825,7 @@ class TurSolrResultProcessorTest {
                 TurSNSiteFieldExt field = TurSNSiteFieldExt.builder().name("category").build();
 
                 boolean result = (boolean) method.invoke(
-                                new TurSolrResultProcessor(turSNFieldProcess,
+                                new TurSolrResultProcessor(siteSearchConfig,
                                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null)),
                                 site, List.of(field));
@@ -839,7 +839,7 @@ class TurSolrResultProcessorTest {
                                 "getNumberOfPages", long.class, int.class);
                 method.setAccessible(true);
 
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
 
@@ -855,7 +855,7 @@ class TurSolrResultProcessorTest {
         @Test
         @SuppressWarnings("unchecked")
         void testSetFacetQueriesReturnsEmptyWhenFacetQueryIsNull() throws Exception {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -876,7 +876,7 @@ class TurSolrResultProcessorTest {
         @Test
         @SuppressWarnings("unchecked")
         void testSetFacetQueriesReturnsEmptyWhenFacetQueryMapIsEmpty() throws Exception {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -897,7 +897,7 @@ class TurSolrResultProcessorTest {
         @Test
         @SuppressWarnings("unchecked")
         void testSetFacetQueriesHandlesUnmatchedCustomFacetsAsFallback() throws Exception {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();
@@ -1030,7 +1030,7 @@ class TurSolrResultProcessorTest {
 
         @Test
         void testGetResultsEnrichesGroupsWithWildcardResponse() {
-                TurSolrResultProcessor processor = new TurSolrResultProcessor(turSNFieldProcess,
+                TurSolrResultProcessor processor = new TurSolrResultProcessor(siteSearchConfig,
                                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
                                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
                 TurSNSite site = new TurSNSite();

@@ -48,8 +48,6 @@ import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
-import com.viglet.turing.sn.TurSNFieldProcess;
-import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,9 +78,8 @@ public class TurSolr {
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
             TurSNTargetingRules turSNTargetingRules,
             TurSESiteSearchConfig siteSearchConfig,
-            TurSNSites turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
+            TurSNSites turSNSiteRepository,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer,
-            TurSNSearchRuleEvaluator turSNSearchRuleEvaluator,
             TurSNEnabledFacets turSNEnabledFacets,
             TurSearchPipelineObservation pipelineObservation) {
         this.isCommitEnabled = isCommitEnabled;
@@ -92,9 +89,8 @@ public class TurSolr {
                 turDecimalFieldNormalizer);
         this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                 turSNSiteCustomFacetRepository,
-                siteSearchConfig, turSNTargetingRules,
-                turSNSearchRuleEvaluator, turSNEnabledFacets);
-        this.turSolrResultProcessor = new TurSolrResultProcessor(turSNFieldProcess,
+                siteSearchConfig, turSNTargetingRules, turSNEnabledFacets);
+        this.turSolrResultProcessor = new TurSolrResultProcessor(siteSearchConfig,
                 turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, pipelineObservation);
     }
 

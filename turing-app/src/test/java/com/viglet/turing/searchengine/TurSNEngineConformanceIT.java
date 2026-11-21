@@ -323,8 +323,7 @@ class TurSNEngineConformanceIT {
         solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository,
                 mock(com.viglet.turing.searchengine.solr.TurSNTargetingRules.class),
                 sortRepository,
-                siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
-                mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),
+                siteRepository, decimalNormalizer,
                 new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository, customFacetRepository,
                         mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class)),
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));

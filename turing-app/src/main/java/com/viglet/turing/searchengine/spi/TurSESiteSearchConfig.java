@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 
 /**
@@ -80,4 +81,16 @@ public interface TurSESiteSearchConfig {
 
     /** Whether any site locale writes to {@code core}, so the core must not be deleted. */
     boolean coreInUse(String core);
+
+    /**
+     * Applies the first of the site's enabled search rules whose conditions all
+     * match {@code params} in {@code locale}, rewriting {@code params} in place.
+     */
+    void applySearchRules(String siteId, TurSEParameters params, Locale locale);
+
+    /**
+     * The facet position of each of the site's enabled facet fields by name, in the
+     * order the site sorts its facets; empty when the site is unknown.
+     */
+    Map<String, Integer> facetPositions(String siteId);
 }

@@ -35,7 +35,7 @@ public interface TurSNSiteSearchRuleRepository extends JpaRepository<TurSNSiteSe
     @Query("SELECT DISTINCT sr FROM TurSNSiteSearchRule sr " +
            "LEFT JOIN FETCH sr.conditions " +
            "LEFT JOIN FETCH sr.actions " +
-           "WHERE sr.turSNSite = :site AND sr.enabled = 1 " +
+           "WHERE sr.turSNSite.id = :siteId AND sr.enabled = 1 " +
            "ORDER BY sr.position")
-    List<TurSNSiteSearchRule> findEnabledByTurSNSite(@Param("site") TurSNSite site);
+    List<TurSNSiteSearchRule> findEnabledByTurSNSiteId(@Param("siteId") String siteId);
 }

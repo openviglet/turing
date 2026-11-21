@@ -91,8 +91,6 @@ class TurSolrQueryBuilderTest {
         private com.viglet.turing.sn.api.TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
 
-        @Mock
-        private com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator turSNSearchRuleEvaluator;
 
         @Mock
         private com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService snapshotService;
@@ -101,7 +99,7 @@ class TurSolrQueryBuilderTest {
                 return new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                                 turSNSiteCustomFacetRepository,
                                 siteSearchConfig,
-                                turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                                turSNTargetingRules, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
         }
 
         private static TurSERankingExpression toSpi(TurSNRankingExpression expression,
@@ -142,7 +140,7 @@ class TurSolrQueryBuilderTest {
                                 .thenReturn(List.of(mltField));
 
                 TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                siteSearchConfig, turSNTargetingRules, turSNSearchRuleEvaluator, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                                siteSearchConfig, turSNTargetingRules, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
                 SolrQuery query = new SolrQuery();
 
                 List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);

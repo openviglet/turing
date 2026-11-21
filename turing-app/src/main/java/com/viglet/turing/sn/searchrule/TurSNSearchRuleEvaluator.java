@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRule;
 import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleAction;
 import com.viglet.turing.sn.persistence.model.searchrule.TurSNSiteSearchRuleActionTypeEnum;
@@ -49,11 +48,11 @@ public class TurSNSearchRuleEvaluator {
         this.searchRuleRepository = searchRuleRepository;
     }
 
-    public void applyRules(TurSNSite turSNSite, TurSEParameters turSEParameters, Locale locale) {
-        List<TurSNSiteSearchRule> enabledRules = searchRuleRepository.findEnabledByTurSNSite(turSNSite);
+    public void applyRules(String siteId, TurSEParameters turSEParameters, Locale locale) {
+        List<TurSNSiteSearchRule> enabledRules = searchRuleRepository.findEnabledByTurSNSiteId(siteId);
         for (TurSNSiteSearchRule rule : enabledRules) {
             if (allGroupsMatch(rule, turSEParameters, locale)) {
-                log.debug("Search rule '{}' matched for site '{}'", rule.getName(), turSNSite.getName());
+                log.debug("Search rule '{}' matched for site '{}'", rule.getName(), siteId);
                 applyActions(rule, turSEParameters);
                 return;
             }

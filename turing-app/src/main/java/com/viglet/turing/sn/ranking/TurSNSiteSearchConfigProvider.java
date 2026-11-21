@@ -32,6 +32,9 @@ import com.viglet.turing.searchengine.spi.TurSEIndexField;
 import com.viglet.turing.searchengine.spi.TurSECoreUsage;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
+import com.viglet.turing.commons.se.TurSEParameters;
+import com.viglet.turing.sn.TurSNFieldProcess;
+import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
@@ -70,6 +73,8 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNSites siteRepository;
     private final TurSNSiteLocales siteLocaleRepository;
     private final TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort;
+    private final TurSNSearchRuleEvaluator searchRuleEvaluator;
+    private final TurSNFieldProcess fieldProcess;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
@@ -78,8 +83,12 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             TurSNSiteFieldRepository fieldRepository,
             TurSNSites siteRepository,
             TurSNSiteLocales siteLocaleRepository,
-            TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort) {
+            TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort,
+            TurSNSearchRuleEvaluator searchRuleEvaluator,
+            TurSNFieldProcess fieldProcess) {
         this.siteLocaleRepositoryPort = siteLocaleRepositoryPort;
+        this.searchRuleEvaluator = searchRuleEvaluator;
+        this.fieldProcess = fieldProcess;
         this.fieldExtRepository = fieldExtRepository;
         this.fieldRepository = fieldRepository;
         this.siteRepository = siteRepository;
@@ -175,6 +184,23 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .map(usage -> new TurSECoreUsage(usage.snSiteId(), usage.snSiteName(), usage.localeId(),
                         usage.language()))
                 .toList();
+    }
+
+    @Override
+    public void applySearchRules(String siteId, TurSEParameters params, Locale locale) {
+        searchRuleEvaluator.applyRules(siteId, params, locale);
+    }
+
+    @Override
+    public Map<String, Integer> facetPositions(String siteId) {
+        Map<String, Integer> positions = new LinkedHashMap<>();
+        if (siteId == null) {
+            return positions;
+        }
+        fieldProcess.getTurSNSiteFieldOrdering(siteId).ifPresent(fields -> fields.stream()
+                .filter(field -> field.getFacetPosition() != null)
+                .forEach(field -> positions.putIfAbsent(field.getName(), field.getFacetPosition())));
+        return positions;
     }
 
     @Override
