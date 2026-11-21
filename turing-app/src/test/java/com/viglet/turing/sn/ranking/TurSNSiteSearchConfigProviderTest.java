@@ -51,10 +51,13 @@ class TurSNSiteSearchConfigProviderTest {
     private com.viglet.turing.sn.api.TurSNSites siteRepository;
     @Mock
     private com.viglet.turing.sn.api.TurSNSiteLocales siteLocaleRepository;
+    @Mock
+    private com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
-                fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository);
+                fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository,
+                siteLocaleRepositoryPort);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -214,4 +217,17 @@ class TurSNSiteSearchConfigProviderTest {
         assertThat(provider().siteId("Docs")).contains("site-1");
         assertThat(provider().siteId("missing")).isEmpty();
         assertThat(provider().siteId(null)).isEmpty();
+    }
+
+    @Test
+    void aCoresUsageNamesEachSiteLocaleThatWritesToIt() {
+        when(siteLocaleRepositoryPort.findCoreUsage("core1")).thenReturn(List.of(
+                new com.viglet.turing.sn.domain.TurSNSiteCoreUsageDomain("locale-1", java.util.Locale.US, "site-1",
+                        "Docs")));
+        when(siteLocaleRepositoryPort.existsByCore("core1")).thenReturn(true);
+
+        assertThat(provider().coreUsage("core1")).containsExactly(
+                new com.viglet.turing.searchengine.spi.TurSECoreUsage("site-1", "Docs", "locale-1",
+                        java.util.Locale.US));
+        assertThat(provider().coreInUse("core1")).isTrue();
     }}

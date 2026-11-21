@@ -29,7 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSECoreUsage;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
@@ -67,6 +69,7 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNSiteFieldRepository fieldRepository;
     private final TurSNSites siteRepository;
     private final TurSNSiteLocales siteLocaleRepository;
+    private final TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
@@ -74,7 +77,9 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             TurSNSiteFieldExtRepository fieldExtRepository,
             TurSNSiteFieldRepository fieldRepository,
             TurSNSites siteRepository,
-            TurSNSiteLocales siteLocaleRepository) {
+            TurSNSiteLocales siteLocaleRepository,
+            TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort) {
+        this.siteLocaleRepositoryPort = siteLocaleRepositoryPort;
         this.fieldExtRepository = fieldExtRepository;
         this.fieldRepository = fieldRepository;
         this.siteRepository = siteRepository;
@@ -162,6 +167,19 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             return Optional.empty();
         }
         return siteRepository.findByNameIgnoreCase(siteName).map(site -> site.getId());
+    }
+
+    @Override
+    public List<TurSECoreUsage> coreUsage(String core) {
+        return siteLocaleRepositoryPort.findCoreUsage(core).stream()
+                .map(usage -> new TurSECoreUsage(usage.snSiteId(), usage.snSiteName(), usage.localeId(),
+                        usage.language()))
+                .toList();
+    }
+
+    @Override
+    public boolean coreInUse(String core) {
+        return siteLocaleRepositoryPort.existsByCore(core);
     }
 
     @Override

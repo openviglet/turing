@@ -74,4 +74,10 @@ public interface TurSESiteSearchConfig {
 
     /** The id of the site called {@code siteName}, ignoring case; empty when there is none. */
     Optional<String> siteId(String siteName);
+
+    /** The site locales that write to {@code core}; empty when none does. */
+    List<TurSECoreUsage> coreUsage(String core);
+
+    /** Whether any site locale writes to {@code core}, so the core must not be deleted. */
+    boolean coreInUse(String core);
 }

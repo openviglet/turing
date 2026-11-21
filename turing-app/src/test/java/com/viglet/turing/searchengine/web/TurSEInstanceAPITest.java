@@ -68,7 +68,7 @@ class TurSEInstanceAPITest {
     private TurSolr turSolr;
 
     @Mock
-    private com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort turSNSiteLocaleRepositoryPort;
+    private com.viglet.turing.searchengine.spi.TurSESiteSearchConfig siteSearchConfig;
 
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;
@@ -289,7 +289,7 @@ class TurSEInstanceAPITest {
         when(pluginFactory.getPluginForInstance(instance)).thenReturn(plugin);
         when(plugin.listIndexes(instance)).thenReturn(
                 List.of(new TurSECoreInfo("core1", 100, List.of())));
-        when(turSNSiteLocaleRepositoryPort.findCoreUsage("core1")).thenReturn(List.of());
+        when(siteSearchConfig.coreUsage("core1")).thenReturn(List.of());
 
         mockMvc.perform(get("/api/se/1/cores"))
                 .andExpect(status().isOk())
@@ -315,11 +315,11 @@ class TurSEInstanceAPITest {
         when(pluginFactory.getPluginForInstance(instance)).thenReturn(plugin);
         when(plugin.listIndexes(instance)).thenReturn(
                 List.of(new TurSECoreInfo("core1", 7, List.of())));
-        when(turSNSiteLocaleRepositoryPort.findCoreUsage("core1")).thenReturn(List.of(
-                new com.viglet.turing.sn.domain.TurSNSiteCoreUsageDomain(
-                        "locale-1", java.util.Locale.US, "site-1", "MarketingSite"),
-                new com.viglet.turing.sn.domain.TurSNSiteCoreUsageDomain(
-                        "locale-2", java.util.Locale.of("pt", "BR"), "site-2", "BlogPT")));
+        when(siteSearchConfig.coreUsage("core1")).thenReturn(List.of(
+                new com.viglet.turing.searchengine.spi.TurSECoreUsage(
+                        "site-1", "MarketingSite", "locale-1", java.util.Locale.US),
+                new com.viglet.turing.searchengine.spi.TurSECoreUsage(
+                        "site-2", "BlogPT", "locale-2", java.util.Locale.of("pt", "BR"))));
 
         mockMvc.perform(get("/api/se/1/cores"))
                 .andExpect(status().isOk())
@@ -386,7 +386,7 @@ class TurSEInstanceAPITest {
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(seInstanceSource.findById("1")).thenReturn(Optional.of(instance));
         when(pluginFactory.getPluginForInstance(instance)).thenReturn(plugin);
-        when(turSNSiteLocaleRepositoryPort.existsByCore("core1")).thenReturn(false);
+        when(siteSearchConfig.coreInUse("core1")).thenReturn(false);
 
         mockMvc.perform(delete("/api/se/1/cores/core1"))
                 .andExpect(status().isNoContent());
@@ -398,7 +398,7 @@ class TurSEInstanceAPITest {
         instance.setId("1");
 
         when(seInstanceSource.findById("1")).thenReturn(Optional.of(instance));
-        when(turSNSiteLocaleRepositoryPort.existsByCore("core1")).thenReturn(true);
+        when(siteSearchConfig.coreInUse("core1")).thenReturn(true);
 
         mockMvc.perform(delete("/api/se/1/cores/core1"))
                 .andExpect(status().isConflict());

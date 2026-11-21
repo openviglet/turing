@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.persistence.dto.TurSEInstanceDto;
 import com.viglet.turing.searchengine.persistence.mapper.TurSEInstanceMapper;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
@@ -60,21 +60,21 @@ public class TurSEInstanceAPI {
         private final TurSEInstanceMapper turSEInstanceMapper;
         private final TurSolrInstanceProcess turSolrInstanceProcess;
         private final TurSolr turSolr;
-        private final TurSNSiteLocaleRepositoryPort turSNSiteLocaleRepositoryPort;
+        private final TurSESiteSearchConfig siteSearchConfig;
         private final TurSearchEnginePluginFactory pluginFactory;
         private final TurInfraTenantScope tenantScope;
 
         public TurSEInstanceAPI(TurSolrInstanceSource seInstanceSource,
                         TurSEInstanceMapper turSEInstanceMapper,
                         TurSolrInstanceProcess turSolrInstanceProcess, TurSolr turSolr,
-                        TurSNSiteLocaleRepositoryPort turSNSiteLocaleRepositoryPort,
+                        TurSESiteSearchConfig siteSearchConfig,
                         TurSearchEnginePluginFactory pluginFactory,
                         TurInfraTenantScope tenantScope) {
                 this.seInstanceSource = seInstanceSource;
                 this.turSEInstanceMapper = turSEInstanceMapper;
                 this.turSolrInstanceProcess = turSolrInstanceProcess;
                 this.turSolr = turSolr;
-                this.turSNSiteLocaleRepositoryPort = turSNSiteLocaleRepositoryPort;
+                this.siteSearchConfig = siteSearchConfig;
                 this.pluginFactory = pluginFactory;
                 this.tenantScope = tenantScope;
         }
@@ -173,10 +173,10 @@ public class TurSEInstanceAPI {
                 return seInstanceSource.findById(id).filter(tenantScope::isVisibleToTenant).map(turSEInstance -> {
                         List<TurSECoreInfo> cores = pluginFactory.getPluginForInstance(turSEInstance).listIndexes(turSEInstance).stream()
                                         .map(core -> new TurSECoreInfo(core.name(), core.numDocs(),
-                                                        turSNSiteLocaleRepositoryPort.findCoreUsage(core.name()).stream()
+                                                        siteSearchConfig.coreUsage(core.name()).stream()
                                                                         .map(usage -> new TurSECoreSiteUsage(
-                                                                                        usage.snSiteId(),
-                                                                                        usage.snSiteName(),
+                                                                                        usage.siteId(),
+                                                                                        usage.siteName(),
                                                                                         usage.localeId(),
                                                                                         usage.language().toString()))
                                                                         .toList()))
@@ -211,7 +211,7 @@ public class TurSEInstanceAPI {
         @Secured({"ROLE_ADMIN", "SE_DELETE"})
         public ResponseEntity<Void> turSEInstanceDeleteCore(@PathVariable String id, @PathVariable String core) {
                 return seInstanceSource.findById(id).filter(tenantScope::isVisibleToTenant).map(turSEInstance -> {
-                        if (turSNSiteLocaleRepositoryPort.existsByCore(core)) {
+                        if (siteSearchConfig.coreInUse(core)) {
                                 return ResponseEntity.status(HttpStatus.CONFLICT).<Void>build();
                         }
                         pluginFactory.getPluginForInstance(turSEInstance).deleteIndex(turSEInstance, core);
