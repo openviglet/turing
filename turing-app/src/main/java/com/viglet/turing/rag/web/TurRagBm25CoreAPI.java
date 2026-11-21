@@ -247,7 +247,7 @@ public class TurRagBm25CoreAPI {
      * callers translate to a 400. Routed through {@link TurRagContextBuilder}
      * so the GenAI infra resolution path stays in one place.
      */
-    private com.viglet.turing.rag.persistence.model.store.TurStoreInstance resolveStoreInstance() {
+    private com.viglet.turing.llm.persistence.model.store.TurStoreInstance resolveStoreInstance() {
         return ragContextBuilder.buildFromGlobalSettings()
                 .map(TurRagContextBuilder.RagInfrastructure::storeInstance)
                 .orElse(null);

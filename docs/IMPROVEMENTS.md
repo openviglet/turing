@@ -2612,15 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.34 Vector stores move into llm (T1322b)
-
-ADR 0005 section 6 puts the vector stores in llm, as infrastructure every AI module
-reads. TurStoreInstance, TurStoreVendor, their repositories and the store providers
-(llm.provider.store already lives in llm and imports them from rag) move into llm, with
-TurDefaultRagInfraOnStartup's store half. urlfetch (TurUrlFetchService) moves into
-system. Done when llm, agent and persona no longer import rag for stores, and persona no
-longer imports rag at all. The entities keep their tables; only packages change.
-
 ### CLXXXIX.35 Native chat execution moves into agent (T1322c)
 
 llm imports agent 91 times, persona 7 and rag 30, nearly all from code that runs an

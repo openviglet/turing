@@ -32,7 +32,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
+import com.viglet.turing.system.urlfetch.TurUrlFetchService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.system.properties.TurStructuredFeedProperty;

@@ -34,7 +34,7 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSort;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.SerializationFeature;

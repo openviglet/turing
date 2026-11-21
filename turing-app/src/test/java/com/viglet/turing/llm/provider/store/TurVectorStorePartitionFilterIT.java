@@ -48,7 +48,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.rag.TurRagFilters;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 
 /**
  * T1133 — a partitioned key's chat and answer read only the chunks written with

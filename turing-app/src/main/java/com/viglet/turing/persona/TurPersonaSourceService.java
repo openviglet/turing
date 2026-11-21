@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.commons.file.TurFileAttributes;
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
+import com.viglet.turing.system.urlfetch.TurUrlFetchService;
 import com.viglet.turing.persona.persistence.model.TurPersonaSource;
 import com.viglet.turing.persona.persistence.model.TurPersonaSourceStatus;
 import com.viglet.turing.shared.utils.TurFileUtils;

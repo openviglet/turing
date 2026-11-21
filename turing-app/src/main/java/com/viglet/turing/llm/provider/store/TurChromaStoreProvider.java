@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.commons.exception.TurRuntimeException;
 import com.viglet.turing.llm.provider.TurProviderOptionsParser;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 
 import lombok.extern.slf4j.Slf4j;
 

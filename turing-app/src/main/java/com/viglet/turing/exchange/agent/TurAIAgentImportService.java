@@ -37,7 +37,7 @@ import com.viglet.turing.agent.persistence.model.intent.TurIntentAction;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentSlotRepository;
 import com.viglet.turing.agent.persistence.repository.TurAgentEvalSetRepository;
@@ -48,7 +48,7 @@ import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;

@@ -30,9 +30,9 @@ import com.viglet.turing.llm.provider.store.TurGenAiStoreProvider;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProviderFactory;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

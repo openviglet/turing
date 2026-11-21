@@ -30,7 +30,7 @@ import com.viglet.turing.llm.resilience.TurLlmModelFactory;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 @ExtendWith(MockitoExtension.class)

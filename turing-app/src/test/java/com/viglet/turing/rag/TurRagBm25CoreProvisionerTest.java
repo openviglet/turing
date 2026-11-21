@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.rag.persistence.model.TurRagBm25Core;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.rag.persistence.repository.TurRagBm25CoreRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;

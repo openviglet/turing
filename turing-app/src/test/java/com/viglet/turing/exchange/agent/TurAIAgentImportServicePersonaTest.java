@@ -40,7 +40,7 @@ import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 
 /**
@@ -161,8 +161,8 @@ class TurAIAgentImportServicePersonaTest {
      */
     @Test
     void importPointsThePersonaAtItsBundledStoreAndMcpServer() {
-        com.viglet.turing.rag.persistence.model.store.TurStoreInstance localStore =
-                new com.viglet.turing.rag.persistence.model.store.TurStoreInstance();
+        com.viglet.turing.llm.persistence.model.store.TurStoreInstance localStore =
+                new com.viglet.turing.llm.persistence.model.store.TurStoreInstance();
         localStore.setId("store-local");
         when(storeRepository.findById("store-exported")).thenReturn(Optional.empty());
         when(storeRepository.findByTitleIgnoreCase("Examples")).thenReturn(Optional.of(localStore));
@@ -174,8 +174,8 @@ class TurAIAgentImportServicePersonaTest {
         when(mcpServerRepository.findByTitleIgnoreCase("Brand")).thenReturn(Optional.of(localMcp));
         when(mcpServerRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        com.viglet.turing.rag.persistence.model.store.TurStoreInstance bundledStore =
-                new com.viglet.turing.rag.persistence.model.store.TurStoreInstance();
+        com.viglet.turing.llm.persistence.model.store.TurStoreInstance bundledStore =
+                new com.viglet.turing.llm.persistence.model.store.TurStoreInstance();
         bundledStore.setId("store-exported");
         bundledStore.setTitle("Examples");
         com.viglet.turing.mcp.persistence.model.TurMcpServer bundledMcp =

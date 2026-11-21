@@ -35,7 +35,7 @@ import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -51,8 +51,8 @@ class TurSNSiteVectorProbeTest {
     private final TurSNSiteLocales localeRepository = mock(TurSNSiteLocales.class);
     private final TurGenAiStoreProviderFactory providerFactory = mock(TurGenAiStoreProviderFactory.class);
     private final TurGenAiStoreProvider provider = mock(TurGenAiStoreProvider.class);
-    private final com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeRepository =
-            mock(com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository.class);
+    private final com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository storeRepository =
+            mock(com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository.class);
     private final TurSNSiteVectorProbe probe = new TurSNSiteVectorProbe(localeRepository, providerFactory,
             mock(TurSecretCryptoService.class), storeRepository);
     private final TurSNSite site = new TurSNSite();

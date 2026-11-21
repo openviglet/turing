@@ -32,9 +32,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.viglet.turing.rag.persistence.mapper.store.TurStoreInstanceMapper;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.mapper.store.TurStoreInstanceMapper;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 

@@ -40,7 +40,7 @@ import com.viglet.turing.llm.provider.store.TurStoreChunkPage;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
@@ -80,13 +80,13 @@ public class TurSNSiteVectorProbe {
     private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurGenAiStoreProviderFactory storeProviderFactory;
     private final TurSecretCryptoService secretCryptoService;
-    private final com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository;
+    private final com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository;
     private final Map<String, Cached> cache = new ConcurrentHashMap<>();
     private Clock clock = Clock.systemUTC();
 
     public TurSNSiteVectorProbe(TurSNSiteLocales turSNSiteLocaleRepository,
             TurGenAiStoreProviderFactory storeProviderFactory, TurSecretCryptoService secretCryptoService,
-            com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository) {
+            com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository storeInstanceRepository) {
         this.storeInstanceRepository = storeInstanceRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.storeProviderFactory = storeProviderFactory;

@@ -1,0 +1,33 @@
+databaseChangeLog:
+  # --- T1322b: the vector stores belong to the llm module ---
+  # TurStoreInstance and TurStoreVendor moved from rag to llm (ADR 0005 section 6), so
+  # their tables take the llm_ prefix under the T1317 rule. Idempotent: each rename runs
+  # only while the old table exists and the new one does not.
+  - changeSet:
+      id: v2026.3.1.157-01-rename-rag_store_instance
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rag_store_instance
+        - not:
+            - tableExists:
+                tableName: llm_store_instance
+      changes:
+        - renameTable:
+            oldTableName: rag_store_instance
+            newTableName: llm_store_instance
+  - changeSet:
+      id: v2026.3.1.157-02-rename-rag_store_vendor
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rag_store_vendor
+        - not:
+            - tableExists:
+                tableName: llm_store_vendor
+      changes:
+        - renameTable:
+            oldTableName: rag_store_vendor
+            newTableName: llm_store_vendor

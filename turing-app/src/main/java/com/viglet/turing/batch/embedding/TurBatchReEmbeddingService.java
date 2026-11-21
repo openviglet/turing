@@ -20,7 +20,7 @@ import com.viglet.turing.batch.TurBatchInferenceService;
 import com.viglet.turing.llm.provider.store.TurGenAiStoreProviderFactory;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 

@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 
 /**
  * Resolves an agent's RAG infrastructure (T1315). The agent holds its embedding

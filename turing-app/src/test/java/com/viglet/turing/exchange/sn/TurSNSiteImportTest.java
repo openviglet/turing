@@ -41,8 +41,8 @@ import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightDocument;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlightTerm;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMVendorRepository;
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
@@ -56,8 +56,8 @@ import com.viglet.turing.sn.api.TurSNSiteMergeProvidersAccess;
 import com.viglet.turing.sn.api.TurSNRankingConditions;
 import com.viglet.turing.sn.api.TurSNRankingExpressions;
 import com.viglet.turing.sn.api.TurSNSiteSpotlights;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreVendorRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TurSNSiteImportTest {

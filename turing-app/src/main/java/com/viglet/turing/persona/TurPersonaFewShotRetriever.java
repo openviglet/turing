@@ -22,8 +22,8 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.persona.persistence.model.TurPersona;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

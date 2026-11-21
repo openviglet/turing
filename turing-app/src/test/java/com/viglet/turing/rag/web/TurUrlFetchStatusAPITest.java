@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService;
-import com.viglet.turing.rag.urlfetch.TurUrlFetchService.TurBrowserlessStatus;
+import com.viglet.turing.system.urlfetch.TurUrlFetchService;
+import com.viglet.turing.system.urlfetch.TurUrlFetchService.TurBrowserlessStatus;
 
 /** T1311 — the probe kept its Global Settings path when it moved into rag. */
 @ExtendWith(MockitoExtension.class)

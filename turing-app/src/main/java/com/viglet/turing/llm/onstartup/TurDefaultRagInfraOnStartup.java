@@ -36,13 +36,13 @@ import com.viglet.turing.llm.provider.llm.TurLocalEmbeddingModelFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.model.store.TurStoreVendor;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.model.store.TurStoreVendor;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreVendorRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreVendorRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

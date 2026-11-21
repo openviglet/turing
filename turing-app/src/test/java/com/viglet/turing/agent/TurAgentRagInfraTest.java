@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
-import com.viglet.turing.rag.persistence.model.store.TurStoreInstance;
-import com.viglet.turing.rag.persistence.repository.store.TurStoreInstanceRepository;
+import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
+import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 
 /** T1315 — an agent's embedding model and store are read by id from their own modules. */
 class TurAgentRagInfraTest {
