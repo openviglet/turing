@@ -220,6 +220,10 @@ class TurUserAPITest {
         userEdit.setUsername("testuser");
 
         when(turUserRepository.findByUsername("testuser")).thenReturn(userEdit);
+
+        // T1319 — the update answers what the save returns.
+
+        when(turUserRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
         when(passwordEncoder.encode("newpass")).thenReturn("encodedpass");
 
         // T646 / §XXXVII.8 — password is write-only, so it is NOT serialized out
@@ -343,6 +347,10 @@ class TurUserAPITest {
         updatedInfo.setLastName("User");
 
         when(turUserRepository.findByUsername("testuser")).thenReturn(userEdit);
+
+        // T1319 — the update answers what the save returns.
+
+        when(turUserRepository.save(org.mockito.ArgumentMatchers.any())).thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(put("/api/v2/user/testuser")
                 .contentType(MediaType.APPLICATION_JSON)

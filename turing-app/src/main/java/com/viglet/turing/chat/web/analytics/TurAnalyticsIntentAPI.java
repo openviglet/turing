@@ -120,6 +120,8 @@ public class TurAnalyticsIntentAPI {
         return intentRepository.findById(id)
                 .filter(intent -> matchesAgent(intent, agentId))
                 .map(existing -> {
+                    // T1319 — a save made from an older version is refused, not applied.
+                    com.viglet.turing.shared.exception.TurStaleVersion.refuse(request.version(), existing.getVersion(), "intent");
                     existing.setLabel(request.label());
                     existing.setSamples(request.samples());
                     existing.setDescription(request.description());

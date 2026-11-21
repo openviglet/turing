@@ -36,7 +36,14 @@ export function useCreateAnalyticsIntent() {
 export function useUpdateAnalyticsIntent() {
   const queryClient = useQueryClient();
   return useMutation<TurAnalyticsIntent, Error, AnalyticsIntentMutationVars>({
-    mutationFn: ({ agentId, intent }) => service.update(agentId, intent),
+    // T1319 — send the version this console last received, so a form holding an
+    // older copy does not refuse its own follow-up save.
+    mutationFn: ({ agentId, intent }) => {
+      const cached = intent.id
+        ? queryClient.getQueryData<TurAnalyticsIntent>(queryKeys.analyticsIntents.detail(intent.id))
+        : undefined;
+      return service.update(agentId, { ...intent, version: cached?.version ?? intent.version });
+    },
     onSuccess: (saved) => {
       if (saved?.id) {
         queryClient.setQueryData(queryKeys.analyticsIntents.detail(saved.id), saved);

@@ -57,6 +57,15 @@ public class TurRole implements Serializable {
 	@Column(updatable = false, nullable = false)
 	private String id;
 
+	/**
+	 * T1319 — optimistic-lock version: a console save made from an older version
+	 * is refused (409) instead of overwriting a change it never saw.
+	 */
+	@lombok.Setter
+	@jakarta.persistence.Version
+	@jakarta.persistence.Column(name = "version")
+	private Long version;
+
 	@Setter
 	@Column(nullable = false, length = 50)
 	private String name;

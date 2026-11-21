@@ -24,7 +24,9 @@ public record TurAnalyticsIntentRequest(
         String label,
         String samples,
         String description,
-        Integer enabled) {
+        Integer enabled,
+        /** T1319 — optimistic-lock version; a save from an older one is refused with 409. */
+        Long version) {
 
     /** Effective enabled flag — defaults to 1 (the entity default) when omitted. */
     public int enabledOrDefault() {

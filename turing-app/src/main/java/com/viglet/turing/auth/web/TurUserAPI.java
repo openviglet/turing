@@ -296,6 +296,8 @@ public class TurUserAPI {
         }
         TurUser turUser = turUserMapper.toEntity(turUserDto);
         TurUser user = Optional.ofNullable(turUserRepository.findByUsername(username)).map(userEdit -> {
+            // T1319 — a save made from an older version is refused, not applied.
+            com.viglet.turing.shared.exception.TurStaleVersion.refuse(turUser.getVersion(), userEdit.getVersion(), "user");
             userEdit.setFirstName(turUser.getFirstName());
             userEdit.setLastName(turUser.getLastName());
             userEdit.setEmail(turUser.getEmail());
@@ -307,8 +309,8 @@ public class TurUserAPI {
             if (isAdmin()) {
                 userEdit.setTurGroups(turUser.getTurGroups());
             }
-            turUserRepository.save(userEdit);
-            return userEdit;
+            // T1319 — the merged copy carries the incremented version.
+            return turUserRepository.save(userEdit);
         }).orElseGet(TurUser::new);
         return ResponseEntity.ok(turUserMapper.toDto(user));
     }
@@ -329,6 +331,8 @@ public class TurUserAPI {
     @PostMapping
     public TurUserDto turUserAdd(@RequestBody TurUserDto turUserDto) {
         TurUser turUser = turUserMapper.toEntity(turUserDto);
+        // T1319 — a new row has no version yet, whatever the payload carried.
+        turUser.setVersion(null);
         if (StringUtils.hasText(turUser.getPassword())) {
             turUser.setPassword(passwordEncoder.encode(turUser.getPassword()));
             turUserRepository.save(turUser);

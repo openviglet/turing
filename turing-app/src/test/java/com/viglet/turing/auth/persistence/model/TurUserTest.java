@@ -88,7 +88,7 @@ class TurUserTest {
         Collection<TurGroup> groups = new HashSet<>();
         
         TurUser turUser = new TurUser("admin", "admin@example.com", "Admin",
-                now, "User", "pass", "realm", 1, null, groups);
+                now, "User", "pass", "realm", 1, null, groups, null);
 
         assertThat(turUser.getUsername()).isEqualTo("admin");
         assertThat(turUser.getEmail()).isEqualTo("admin@example.com");

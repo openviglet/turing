@@ -1,0 +1,61 @@
+databaseChangeLog:
+  # --- T1319: optimistic locking on intents, users and roles ---
+  # The version Hibernate's @Version compares on save. Existing rows start at 0.
+  # Idempotent: each changeSet is gated by columnExists.
+  - changeSet:
+      id: v2026.3.1.154-01-analytics-intent-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: chat_analytics_intent
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: chat_analytics_intent
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: v2026.3.1.154-02-user-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: auth_user
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: auth_user
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: v2026.3.1.154-03-role-version
+      author: alexandre-oliveira
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: auth_role
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: auth_role
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false

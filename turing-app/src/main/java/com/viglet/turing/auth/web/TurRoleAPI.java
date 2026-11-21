@@ -70,15 +70,18 @@ public class TurRoleAPI {
 	@PutMapping("/{id}")
 	public TurRoleDto turRoleUpdate(@PathVariable String id, @RequestBody TurRoleDto turRoleDto) {
 		return turRoleRepository.findById(id).map(existing -> {
+			// T1319 — a save made from an older version is refused, not applied.
+			com.viglet.turing.shared.exception.TurStaleVersion.refuse(turRoleDto.getVersion(), existing.getVersion(), "role");
 			existing.setName(turRoleDto.getName());
 			existing.setDescription(turRoleDto.getDescription());
 			existing.setTurPrivileges(turRoleMapper.toEntity(turRoleDto).getTurPrivileges());
-			turRoleRepository.save(existing);
-			return turRoleMapper.toDto(existing);
+			// T1319 — the merged copy carries the incremented version.
+			return turRoleMapper.toDto(turRoleRepository.save(existing));
 		}).orElseGet(() -> {
 			com.viglet.turing.auth.persistence.model.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
-			turRoleRepository.save(turRole);
-			return turRoleMapper.toDto(turRole);
+			// T1319 — a new row has no version yet, whatever the payload carried.
+			turRole.setVersion(null);
+			return turRoleMapper.toDto(turRoleRepository.save(turRole));
 		});
 	}
 
@@ -92,10 +95,9 @@ public class TurRoleAPI {
 	@PostMapping
 	public TurRoleDto turRoleAdd(@RequestBody TurRoleDto turRoleDto) {
 		com.viglet.turing.auth.persistence.model.TurRole turRole = turRoleMapper.toEntity(turRoleDto);
-
-		turRoleRepository.save(turRole);
-
-		return turRoleMapper.toDto(turRole);
+		// T1319 — a new row has no version yet, whatever the payload carried.
+		turRole.setVersion(null);
+		return turRoleMapper.toDto(turRoleRepository.save(turRole));
 	}
 
 	@GetMapping("/model")
