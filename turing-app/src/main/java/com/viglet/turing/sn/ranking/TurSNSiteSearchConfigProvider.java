@@ -34,6 +34,8 @@ import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.searchengine.spi.TurSECustomFacet;
 import com.viglet.turing.sn.facet.TurSNCustomFacetCatalog;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.sn.TurSNFieldProcess;
@@ -182,6 +184,38 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             return Optional.empty();
         }
         return siteRepository.findByNameIgnoreCase(siteName).map(site -> site.getId());
+    }
+
+    @Override
+    public Optional<TurSESiteSettings> siteSettings(String siteName) {
+        if (siteName == null) {
+            return Optional.empty();
+        }
+        return siteRepository.findByNameIgnoreCase(siteName).map(TurSNSiteSearchConfigProvider::toSettings);
+    }
+
+    static TurSESiteSettings toSettings(TurSNSite site) {
+        return TurSESiteSettings.builder()
+                .id(site.getId())
+                .name(site.getName())
+                .turSEInstanceId(site.getTurSEInstanceId())
+                .rowsPerPage(site.getRowsPerPage())
+                .wildcardNoResults(site.getWildcardNoResults())
+                .wildcardAlways(site.getWildcardAlways())
+                .exactMatch(site.getExactMatch())
+                .exactMatchField(site.getExactMatchField())
+                .facet(site.getFacet())
+                .itemsPerFacet(site.getItemsPerFacet())
+                .facetItemType(site.getFacetItemType())
+                .hl(site.getHl())
+                .hlPre(site.getHlPre())
+                .hlPost(site.getHlPost())
+                .mlt(site.getMlt())
+                .spellCheck(site.getSpellCheck())
+                .spellCheckFixes(site.getSpellCheckFixes())
+                .defaultTitleField(site.getDefaultTitleField())
+                .defaultDateField(site.getDefaultDateField())
+                .build();
     }
 
     @Override

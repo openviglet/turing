@@ -40,7 +40,7 @@ import org.apache.lucene.search.uhighlight.UnifiedHighlighter;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
@@ -80,7 +80,7 @@ public class TurLuceneResultProcessor {
             List<TurSNSiteFieldExt> hlFields, org.apache.lucene.search.Sort sort,
             long startTime) {
         TurLuceneInstance instance = search.instance();
-        TurSNSite turSNSite = search.turSNSite();
+        TurSESiteSettings site = search.site();
         Query query = search.query();
         TurSEParameters params = search.params();
         TurSEResults results = TurSEResults.builder().build();
@@ -92,7 +92,7 @@ public class TurLuceneResultProcessor {
             // when the request omits "rows" it arrives negative/null, so fall back to the
             // site's rowsPerPage. The offset MUST be computed from this same value —
             // otherwise (page-1)*rawRows collapses to 0 and every page shows page 1.
-            int rows = effectiveRows(params, turSNSite);
+            int rows = effectiveRows(params, site);
             int start = firstRow(params, rows);
             results.setLimit(rows);
             // Collect enough hits to support pagination — must be >= 1
@@ -120,7 +120,7 @@ public class TurLuceneResultProcessor {
 
             // Prepare highlighting
             Map<String, Map<String, String>> hlByDoc = buildHighlighting(
-                    searcher, highlightAnalyzer(instance), query, topDocs, turSNSite, hlFields);
+                    searcher, highlightAnalyzer(instance), query, topDocs, site, hlFields);
 
             // Map hits to TurSEResult (apply pagination offset)
             List<TurSEResult> resultList = new ArrayList<>();
@@ -139,7 +139,7 @@ public class TurLuceneResultProcessor {
             }
 
         } catch (IOException e) {
-            log.error("Error executing Lucene search for site '{}'", turSNSite.getName(), e);
+            log.error("Error executing Lucene search for site '{}'", site.name(), e);
         }
 
         results.setElapsedTime(System.currentTimeMillis() - startTime);
@@ -162,15 +162,15 @@ public class TurLuceneResultProcessor {
     }
 
     private Map<String, Map<String, String>> buildHighlighting(IndexSearcher searcher,
-            org.apache.lucene.analysis.Analyzer analyzer, Query query, TopDocs topDocs, TurSNSite turSNSite,
+            org.apache.lucene.analysis.Analyzer analyzer, Query query, TopDocs topDocs, TurSESiteSettings site,
             List<TurSNSiteFieldExt> hlFields) {
-        if (!isHL(turSNSite, hlFields) || topDocs.scoreDocs.length == 0) {
+        if (!isHL(site, hlFields) || topDocs.scoreDocs.length == 0) {
             return Map.of();
         }
 
         Map<String, Map<String, String>> hlByDoc = new LinkedHashMap<>();
-        String preTags = turSNSite.getHlPre() != null ? turSNSite.getHlPre() : "<em>";
-        String postTags = turSNSite.getHlPost() != null ? turSNSite.getHlPost() : "</em>";
+        String preTags = site.hlPre() != null ? site.hlPre() : "<em>";
+        String postTags = site.hlPost() != null ? site.hlPost() : "</em>";
 
         HlTagPair tags = new HlTagPair(preTags, postTags);
         try {
@@ -231,8 +231,8 @@ public class TurLuceneResultProcessor {
         }
     }
 
-    static boolean isHL(TurSNSite turSNSite, List<TurSNSiteFieldExt> hlFields) {
-        return TurSEFlags.isTrue(turSNSite.getHl()) && hlFields != null && !hlFields.isEmpty();
+    static boolean isHL(TurSESiteSettings site, List<TurSNSiteFieldExt> hlFields) {
+        return TurSEFlags.isTrue(site.hl()) && hlFields != null && !hlFields.isEmpty();
     }
 
     // -------------------------------------------------------------------------
@@ -464,12 +464,12 @@ public class TurLuceneResultProcessor {
      * arrives null/negative, so fall back to the site's {@code rowsPerPage}
      * (mirrors {@code TurSolrQueryBuilder#setRows}).
      */
-    private int effectiveRows(TurSEParameters params, TurSNSite turSNSite) {
+    private int effectiveRows(TurSEParameters params, TurSESiteSettings site) {
         Integer rows = params.getRows();
         if (rows != null && rows > 0) {
             return rows;
         }
-        Integer rowsPerPage = turSNSite.getRowsPerPage();
+        Integer rowsPerPage = site.rowsPerPage();
         return (rowsPerPage != null && rowsPerPage > 0) ? rowsPerPage : 10;
     }
 

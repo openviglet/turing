@@ -19,11 +19,11 @@ package com.viglet.turing.searchengine.lucene;
 import org.apache.lucene.search.Query;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 
 /**
  * The four inputs that define a single Lucene search execution: the open index
- * {@code instance}, the {@code turSNSite} whose schema governs field handling,
+ * {@code instance}, the {@code site} whose settings govern paging and highlighting,
  * the compiled Lucene {@code query} and the request {@code params} (paging,
  * sort hints). Bundled into one record so {@link TurLuceneResultProcessor#getResults}
  * carries only the result-shaping arguments (facet/highlight fields, sort,
@@ -34,7 +34,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
  */
 public record TurLuceneSearch(
         TurLuceneInstance instance,
-        TurSNSite turSNSite,
+        TurSESiteSettings site,
         Query query,
         TurSEParameters params) {
 }

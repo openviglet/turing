@@ -76,6 +76,51 @@ class TurSNSiteSearchConfigProviderTest {
     }
 
     @Test
+    void aSitesSettingsCarryItsOwnValues() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        site.setId("site-1");
+        site.setName("Jobs");
+        site.setTurSEInstanceId("se-1");
+        site.setRowsPerPage(15);
+        site.setWildcardNoResults(1);
+        site.setFacet(1);
+        site.setItemsPerFacet(7);
+        site.setFacetItemType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        site.setHl(1);
+        site.setHlPre("<mark>");
+        site.setHlPost("</mark>");
+        site.setExactMatchField("title_exact");
+        site.setDefaultTitleField("title");
+        site.setDefaultDateField("publishedAt");
+        when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
+
+        com.viglet.turing.searchengine.spi.TurSESiteSettings settings = provider().siteSettings("jobs").orElseThrow();
+
+        assertThat(settings.id()).isEqualTo("site-1");
+        assertThat(settings.name()).isEqualTo("Jobs");
+        assertThat(settings.turSEInstanceId()).isEqualTo("se-1");
+        assertThat(settings.rowsPerPage()).isEqualTo(15);
+        assertThat(settings.wildcardNoResults()).isEqualTo(1);
+        assertThat(settings.facet()).isEqualTo(1);
+        assertThat(settings.itemsPerFacet()).isEqualTo(7);
+        assertThat(settings.facetItemType()).isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        assertThat(settings.hl()).isEqualTo(1);
+        assertThat(settings.hlPre()).isEqualTo("<mark>");
+        assertThat(settings.hlPost()).isEqualTo("</mark>");
+        assertThat(settings.exactMatchField()).isEqualTo("title_exact");
+        assertThat(settings.defaultTitleField()).isEqualTo("title");
+        assertThat(settings.defaultDateField()).isEqualTo("publishedAt");
+    }
+
+    @Test
+    void anUnknownOrUnnamedSiteHasNoSettings() {
+        when(siteRepository.findByNameIgnoreCase("nope")).thenReturn(Optional.empty());
+
+        assertThat(provider().siteSettings("nope")).isEmpty();
+        assertThat(provider().siteSettings(null)).isEmpty();
+    }
+
+    @Test
     void expressionsComeWithTheirConditionsInRepositoryOrder() {
         TurSNRankingExpression recent = new TurSNRankingExpression();
         recent.setName("recent");

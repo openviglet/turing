@@ -28,6 +28,8 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 
 /**
  * T1226 — the Lucene engine honours a caller's {@code hlEnabled=false}, as Solr
@@ -44,16 +46,20 @@ class TurLuceneHighlightSwitchTest {
         TurLuceneQueryBuilder queryBuilder = mock(TurLuceneQueryBuilder.class);
         TurSNSites siteRepository = mock(TurSNSites.class);
         TurSNSite site = new TurSNSite();
+        site.setId("site-id");
         site.setName("site");
         site.setHl(1);
-        when(siteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
+        when(siteRepository.findById("site-id")).thenReturn(Optional.of(site));
+        TurSESiteSearchConfig siteSearchConfig = mock(TurSESiteSearchConfig.class);
+        when(siteSearchConfig.siteSettings("site")).thenReturn(Optional.of(
+                TurSESiteSettings.builder().id("site-id").name("site").hl(1).build()));
         when(queryBuilder.buildQuery(any(), any(), any())).thenReturn(MatchAllDocsQuery.INSTANCE);
         lenient().when(queryBuilder.buildWildcardQuery(any(), any())).thenReturn(MatchAllDocsQuery.INSTANCE);
         when(queryBuilder.getFacetFields(any(),
                 org.mockito.ArgumentMatchers.any(com.viglet.turing.commons.se.TurSEParameters.class)))
                 .thenReturn(List.of());
         lenient().when(queryBuilder.getHLFields(any())).thenReturn(List.of());
-        TurLucene lucene = new TurLucene(siteRepository, null, queryBuilder, null, null);
+        TurLucene lucene = new TurLucene(siteRepository, siteSearchConfig, queryBuilder, null, null);
 
         try (Directory directory = new ByteBuffersDirectory();
                 IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig())) {

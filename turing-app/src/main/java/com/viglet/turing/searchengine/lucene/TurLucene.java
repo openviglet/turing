@@ -25,6 +25,7 @@ import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
 import org.springframework.stereotype.Component;
@@ -49,6 +50,7 @@ import java.util.Optional;
 public class TurLucene {
 
     private final TurSNSites turSNSiteRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurLuceneQueryBuilder turLuceneQueryBuilder;
     private final TurLuceneResultProcessor turLuceneResultProcessor;
     private final TurLuceneDocumentHandler turLuceneDocumentHandler;
@@ -60,6 +62,7 @@ public class TurLucene {
             TurLuceneStorageSync turLuceneStorageSync,
             TurLuceneCustomFacets turLuceneCustomFacets) {
         this.turSNSiteRepository = turSNSiteRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.turLuceneQueryBuilder = turLuceneQueryBuilder;
         this.turLuceneCustomFacets = turLuceneCustomFacets;
         this.turLuceneResultProcessor = new TurLuceneResultProcessor();
@@ -77,7 +80,8 @@ public class TurLucene {
      */
     public Optional<TurSEResults> retrieveLuceneFromSN(TurLuceneInstance instance,
             TurSNSiteSearchContext context) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName()).map(turSNSite -> {
+        return siteSettings(context).map(site -> {
+            TurSNSite turSNSite = turSNSiteRepository.findById(site.id()).orElseThrow();
             long startTime = System.currentTimeMillis();
             TurSEParameters params = context.getTurSEParameters();
 
@@ -92,7 +96,7 @@ public class TurLucene {
             TurSEResults results;
             try {
                 results = turLuceneResultProcessor.getResults(
-                        new TurLuceneSearch(instance, turSNSite, query, params),
+                        new TurLuceneSearch(instance, site, query, params),
                         turLuceneQueryBuilder.getFacetFields(turSNSite, params),
                         hlFields, sort, startTime);
             } catch (org.apache.lucene.search.IndexSearcher.TooManyClauses e) {
@@ -100,10 +104,10 @@ public class TurLucene {
                 // typed would, rather than failing the search.
                 log.warn("[Lucene] query '{}' on site '{}' went past the clause limit ({}); "
                         + "searching again without the site's synonyms", params.getQuery(),
-                        turSNSite.getName(), e.getMessage());
+                        site.name(), e.getMessage());
                 query = turLuceneQueryBuilder.buildQuery(turSNSite, params, context.getLocale(), false);
                 results = turLuceneResultProcessor.getResults(
-                        new TurLuceneSearch(instance, turSNSite, query, params),
+                        new TurLuceneSearch(instance, site, query, params),
                         turLuceneQueryBuilder.getFacetFields(turSNSite, params),
                         hlFields, sort, startTime);
             }
@@ -112,15 +116,15 @@ public class TurLucene {
             // the total hits, not by the page being empty: a page past the end of the pagination
             // is empty too, and must not be retried with a wildcard.
             if (results.getNumFound() == 0
-                    && shouldApplyWildcard(turSNSite, params.getQuery())) {
+                    && shouldApplyWildcard(site, params.getQuery())) {
                 Query wildcardQuery = turLuceneQueryBuilder.buildWildcardQuery(turSNSite, params);
                 results = turLuceneResultProcessor.getResults(
-                        new TurLuceneSearch(instance, turSNSite, wildcardQuery, params),
+                        new TurLuceneSearch(instance, site, wildcardQuery, params),
                         turLuceneQueryBuilder.getFacetFields(turSNSite, params),
                         hlFields, sort, startTime);
                 query = wildcardQuery;
             }
-            return withCustomFacets(results, instance, query, turSNSite, context, null);
+            return withCustomFacets(results, instance, query, site, context, null);
         });
     }
 
@@ -130,13 +134,13 @@ public class TurLucene {
      * them from its facet queries. Only when the site has facets on.
      */
     private TurSEResults withCustomFacets(TurSEResults results, TurLuceneInstance instance, Query query,
-            TurSNSite turSNSite, TurSNSiteSearchContext context, String onlyFacet) {
-        if (turLuceneCustomFacets == null || !TurSEFlags.isTrue(turSNSite.getFacet())) {
+            TurSESiteSettings site, TurSNSiteSearchContext context, String onlyFacet) {
+        if (turLuceneCustomFacets == null || !TurSEFlags.isTrue(site.facet())) {
             return results;
         }
         try {
             List<TurSEFacetResult> custom = turLuceneCustomFacets.count(instance.getSearcher(), query,
-                    turSNSite.getId(), context.getLocale(), onlyFacet);
+                    site.id(), context.getLocale(), onlyFacet);
             if (!custom.isEmpty()) {
                 List<TurSEFacetResult> facets = new ArrayList<>(
                         results.getFacetResults() == null ? List.of() : results.getFacetResults());
@@ -144,7 +148,7 @@ public class TurLucene {
                 results.setFacetResults(facets);
             }
         } catch (IOException e) {
-            log.warn("[Lucene] custom facets for site '{}' not counted: {}", turSNSite.getName(),
+            log.warn("[Lucene] custom facets for site '{}' not counted: {}", site.name(),
                     e.getMessage());
         }
         return results;
@@ -156,15 +160,16 @@ public class TurLucene {
      */
     public Optional<TurSEResults> retrieveFacetLuceneFromSN(TurLuceneInstance instance,
             TurSNSiteSearchContext context, String facetName) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName()).map(turSNSite -> {
+        return siteSettings(context).map(site -> {
+            TurSNSite turSNSite = turSNSiteRepository.findById(site.id()).orElseThrow();
             long startTime = System.currentTimeMillis();
             TurSEParameters params = context.getTurSEParameters();
             Query query = turLuceneQueryBuilder.buildQuery(turSNSite, params, context.getLocale());
             TurSEResults results = turLuceneResultProcessor.getResults(
-                    new TurLuceneSearch(instance, turSNSite, query, params),
+                    new TurLuceneSearch(instance, site, query, params),
                     turLuceneQueryBuilder.getFacetFields(turSNSite, facetName),
                     List.of(), null, startTime);
-            return withCustomFacets(results, instance, query, turSNSite, context, facetName);
+            return withCustomFacets(results, instance, query, site, context, facetName);
         });
     }
 
@@ -206,10 +211,12 @@ public class TurLucene {
     // Wildcard helpers
     // -------------------------------------------------------------------------
 
-    private static boolean shouldApplyWildcard(TurSNSite turSNSite, String query) {
-        return turSNSite.getWildcardNoResults() != null
-                && turSNSite.getWildcardNoResults() == 1
-                && !isQueryExpression(query);
+    private Optional<TurSESiteSettings> siteSettings(TurSNSiteSearchContext context) {
+        return siteSearchConfig.siteSettings(context.getSiteName());
+    }
+
+    private static boolean shouldApplyWildcard(TurSESiteSettings site, String query) {
+        return TurSEFlags.isTrue(site.wildcardNoResults()) && !isQueryExpression(query);
     }
 
     /** Returns true when the query already ends with a wildcard or expression boundary. */
