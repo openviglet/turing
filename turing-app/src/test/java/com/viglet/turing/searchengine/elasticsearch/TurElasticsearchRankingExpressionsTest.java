@@ -15,8 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition.Kind;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
@@ -35,22 +33,19 @@ class TurElasticsearchRankingExpressionsTest {
 
     @Mock
     private TurSESiteSearchConfig siteSearchConfig;
-    @Mock
-    private TurSNSiteFieldExts fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
 
     private TurElasticsearchRankingExpressions rankingExpressions() {
-        return new TurElasticsearchRankingExpressions(siteSearchConfig, fieldExtRepository);
+        return new TurElasticsearchRankingExpressions(siteSearchConfig);
     }
 
     private void fields(Object... nameAndType) {
-        List<TurSNSiteFieldExt> fields = new ArrayList<>();
+        java.util.Map<String, TurSEFieldType> types = new java.util.LinkedHashMap<>();
         for (int i = 0; i < nameAndType.length; i += 2) {
-            fields.add(TurSNSiteFieldExt.builder().name((String) nameAndType[i])
-                    .type((TurSEFieldType) nameAndType[i + 1]).build());
+            types.put((String) nameAndType[i], (TurSEFieldType) nameAndType[i + 1]);
         }
-        when(fieldExtRepository.findByTurSNSite(any(), any())).thenReturn(fields);
+        when(siteSearchConfig.fieldTypes(any())).thenReturn(types);
     }
 
     private static TurSERankingExpression expression(String name, float weight, Kind kind,

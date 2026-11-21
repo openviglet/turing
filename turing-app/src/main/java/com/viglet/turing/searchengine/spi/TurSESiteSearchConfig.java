@@ -16,7 +16,10 @@
 package com.viglet.turing.searchengine.spi;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.viglet.turing.commons.se.field.TurSEFieldType;
 
 /**
  * T1310 — the site configuration an engine reads while it builds a query, declared
@@ -43,4 +46,10 @@ public interface TurSESiteSearchConfig {
      * name.
      */
     Optional<List<TurSECustomSortItem>> customSort(String siteId, String name);
+
+    /**
+     * The type of each of the site's fields by name; where two fields share a name,
+     * the first in name order ignoring case wins.
+     */
+    Map<String, TurSEFieldType> fieldTypes(String siteId);
 }

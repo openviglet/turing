@@ -216,15 +216,14 @@ public class TurSolrQueryBuilder {
     }
 
     private void prepareBoostQuery(TurSNSite turSNSite, SolrQuery query) {
-        List<TurSNSiteFieldExt> turSNSiteFieldExtList = turSNSiteFieldExtRepository
-                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
+        Map<String, TurSEFieldType> fieldTypes = siteSearchConfig.fieldTypes(turSNSite.getId());
         List<TurSERankingExpression> expressions = siteSearchConfig.rankingExpressions(turSNSite.getId());
         if (expressions.stream().allMatch(expression -> expression.conditions().isEmpty())) {
             return;
         }
         String[] expressionString = expressions.stream()
                 .map(expression -> {
-                    String attributes = boostQueryAttributes(expression, turSNSiteFieldExtList);
+                    String attributes = boostQueryAttributes(expression, fieldTypes);
                     return attributes == null ? null
                             : String.format(Locale.US, "%s^%.1f", "(" + attributes + ")",
                                     expression.weight());
@@ -242,7 +241,7 @@ public class TurSolrQueryBuilder {
      * meaning), so it is left out rather than widened.
      */
     private String boostQueryAttributes(TurSERankingExpression expression,
-            List<TurSNSiteFieldExt> turSNSiteFieldExtList) {
+            Map<String, TurSEFieldType> fieldTypes) {
         List<String> clauses = new ArrayList<>();
         for (TurSERankingCondition condition : expression.conditions()) {
             if (condition.kind() == TurSERankingCondition.Kind.EXISTS) {
@@ -250,10 +249,7 @@ public class TurSolrQueryBuilder {
                 continue;
             }
             boolean negated = condition.kind() == TurSERankingCondition.Kind.IS_NOT;
-            TurSNSiteFieldExt turSNSiteFieldExt = turSNSiteFieldExtList.stream()
-                    .filter(field -> field.getName().equals(condition.attribute()))
-                    .findFirst().orElse(TurSNSiteFieldExt.builder().build());
-            String dateFunction = turSNSiteFieldExt.getType() == TurSEFieldType.DATE
+            String dateFunction = fieldTypes.get(condition.attribute()) == TurSEFieldType.DATE
                     ? dateFunction(condition.value()) : null;
             if (dateFunction != null) {
                 if (negated) {

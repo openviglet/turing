@@ -43,9 +43,12 @@ class TurSNSiteSearchConfigProviderTest {
     private TurSNRankingConditionRepository conditionRepository;
     @Mock
     private TurSNSiteCustomSortRepository customSortRepository;
+    @Mock
+    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository fieldExtRepository;
 
     private TurSNSiteSearchConfigProvider provider() {
-        return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository);
+        return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
+                fieldExtRepository);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -90,7 +93,7 @@ class TurSNSiteSearchConfigProviderTest {
     @Test
     void aSiteWithoutAnIdHasNoExpressions() {
         assertThat(provider().rankingExpressions(null)).isEmpty();
-        verifyNoInteractions(expressionRepository, conditionRepository, customSortRepository);
+        verifyNoInteractions(expressionRepository, conditionRepository, customSortRepository, fieldExtRepository);
     }
 
     @Test
@@ -116,5 +119,18 @@ class TurSNSiteSearchConfigProviderTest {
         when(customSortRepository.findBySiteIdAndName("site-1", "nope")).thenReturn(Optional.empty());
 
         assertThat(provider().customSort("site-1", "nope")).isEmpty();
+    }
+
+    @Test
+    void fieldTypesKeepTheFirstFieldOfAName() {
+        when(fieldExtRepository.findByTurSNSiteId(any(), eq("site-1"))).thenReturn(List.of(
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("price")
+                        .type(com.viglet.turing.commons.se.field.TurSEFieldType.DOUBLE).build(),
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("price")
+                        .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING).build(),
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder().name("untyped").build()));
+
+        assertThat(provider().fieldTypes("site-1"))
+                .containsExactly(java.util.Map.entry("price", com.viglet.turing.commons.se.field.TurSEFieldType.DOUBLE));
     }
 }

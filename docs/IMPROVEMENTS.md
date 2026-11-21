@@ -2507,7 +2507,7 @@ stays with rag.
 Landed: the engines and DSL are gathered (T1310), no sn class imports an engine package
 (T1310c), the search-concept enums live in the searchengine API (T1310d), and ranking
 expressions reach the engines through the TurSESiteSearchConfig SPI in searchengine.spi
-(T1310e), as do custom sorts (T1310f).
+(T1310e), as do custom sorts (T1310f) and field types (T1310g).
 
 What is left is the other direction. The contract still takes TurSNSite and
 TurSNSiteLocale, and 37 engine files import sn 156 times, mostly to read a site's

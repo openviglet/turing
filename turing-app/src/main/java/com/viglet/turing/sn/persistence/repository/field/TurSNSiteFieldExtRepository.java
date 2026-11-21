@@ -36,6 +36,9 @@ public interface TurSNSiteFieldExtRepository extends JpaRepository<TurSNSiteFiel
 
 	List<TurSNSiteFieldExt> findByTurSNSite(Sort sort, TurSNSite turSNSite);
 
+	/** T1310 — the site's fields by the site's id, in {@code sort} order. */
+	List<TurSNSiteFieldExt> findByTurSNSiteId(Sort sort, String siteId);
+
 	List<TurSNSiteFieldExt> findByTurSNSiteAndName(TurSNSite turSNSite, String name);
 
 	List<TurSNSiteFieldExt> findByTurSNSiteAndEnabled(TurSNSite turSNSite, int enabled);

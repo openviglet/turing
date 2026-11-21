@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +31,6 @@ import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.Time;
@@ -78,12 +74,9 @@ public class TurElasticsearchRankingExpressions {
     static final long RECENCY_PIVOT_MS = Math.round(1 / 3.16e-11);
 
     private final TurSESiteSearchConfig siteSearchConfig;
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
 
-    public TurElasticsearchRankingExpressions(TurSESiteSearchConfig siteSearchConfig,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
+    public TurElasticsearchRankingExpressions(TurSESiteSearchConfig siteSearchConfig) {
         this.siteSearchConfig = siteSearchConfig;
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
     }
 
     /** The boost clauses for {@code turSNSite}'s ranking expressions; empty when it has none. */
@@ -97,7 +90,7 @@ public class TurElasticsearchRankingExpressions {
         if (expressions == null || expressions.isEmpty()) {
             return List.of();
         }
-        Map<String, TurSEFieldType> fieldTypes = fieldTypes(turSNSite);
+        Map<String, TurSEFieldType> fieldTypes = siteSearchConfig.fieldTypes(turSNSite.getId());
         // Solr's NOW/DAY: the start of the current UTC day.
         Instant origin = Instant.ofEpochMilli(nowMs).truncatedTo(ChronoUnit.DAYS);
         List<Query> boosts = new ArrayList<>();
@@ -211,17 +204,5 @@ public class TurElasticsearchRankingExpressions {
         }
         UntypedRangeQuery untyped = builder.build();
         return Query.of(q -> q.range(r -> r.untyped(untyped)));
-    }
-
-    private Map<String, TurSEFieldType> fieldTypes(TurSNSite turSNSite) {
-        Map<String, TurSEFieldType> types = new HashMap<>();
-        List<TurSNSiteFieldExt> fields = turSNSiteFieldExtRepository
-                .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite);
-        if (fields != null) {
-            fields.stream()
-                    .filter(field -> field.getName() != null && field.getType() != null)
-                    .forEach(field -> types.putIfAbsent(field.getName(), field.getType()));
-        }
-        return types;
     }
 }

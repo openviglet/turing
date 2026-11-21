@@ -683,10 +683,11 @@ class TurSNEngineConformanceIT {
         when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of(
                 rankingExpression("health-first", 10f, "sector", "saude"),
                 rankingExpression("recent", 2f, "publishedAt", "asc")));
-        when(catalogFieldRepository.findByTurSNSite(any(), any())).thenReturn(catalogFields);
+        java.util.Map<String, TurSEFieldType> catalogTypes = new java.util.LinkedHashMap<>();
+        catalogFields.forEach(field -> catalogTypes.putIfAbsent(field.getName(), field.getType()));
+        when(siteSearchConfig.fieldTypes(any())).thenReturn(catalogTypes);
 
-        var luceneRanking = new com.viglet.turing.searchengine.lucene.TurLuceneRankingExpressions(siteSearchConfig,
-                catalogFieldRepository);
+        var luceneRanking = new com.viglet.turing.searchengine.lucene.TurLuceneRankingExpressions(siteSearchConfig);
         TurLuceneQueryBuilder rankedLucene = new TurLuceneQueryBuilder(catalogFieldRepository, catalogSortRepository,
                 null, null, luceneRanking, null);
         TurSEParameters seParams = seParameters(request(p -> {
@@ -697,7 +698,7 @@ class TurSNEngineConformanceIT {
         }
 
         var esRanking = new com.viglet.turing.searchengine.elasticsearch.TurElasticsearchRankingExpressions(
-                siteSearchConfig, catalogFieldRepository);
+                siteSearchConfig);
         TurElasticsearch rankedEs = new TurElasticsearch(catalogSiteRepository, catalogFieldRepository,
                 catalogSortRepository, mock(TurLuceneCustomFacets.class), esRanking);
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
