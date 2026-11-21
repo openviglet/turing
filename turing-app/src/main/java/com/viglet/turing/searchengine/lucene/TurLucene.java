@@ -24,7 +24,7 @@ import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.sn.TurSNUtils;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
 import org.springframework.stereotype.Component;
@@ -55,7 +55,7 @@ public class TurLucene {
     private final TurLuceneCustomFacets turLuceneCustomFacets;
 
     public TurLucene(TurSNSites turSNSiteRepository,
-            TurSNSiteFieldService turSNSiteFieldService,
+            TurSESiteSearchConfig siteSearchConfig,
             TurLuceneQueryBuilder turLuceneQueryBuilder,
             TurLuceneStorageSync turLuceneStorageSync,
             TurLuceneCustomFacets turLuceneCustomFacets) {
@@ -63,7 +63,7 @@ public class TurLucene {
         this.turLuceneQueryBuilder = turLuceneQueryBuilder;
         this.turLuceneCustomFacets = turLuceneCustomFacets;
         this.turLuceneResultProcessor = new TurLuceneResultProcessor();
-        this.turLuceneDocumentHandler = new TurLuceneDocumentHandler(turSNSiteFieldService,
+        this.turLuceneDocumentHandler = new TurLuceneDocumentHandler(siteSearchConfig,
                 turLuceneStorageSync);
     }
 
@@ -173,7 +173,7 @@ public class TurLucene {
     // -------------------------------------------------------------------------
 
     public void indexing(TurLuceneInstance instance, TurSNSite turSNSite, Map<String, Object> attributes) {
-        turLuceneDocumentHandler.indexing(instance, turSNSite, attributes);
+        turLuceneDocumentHandler.indexing(instance, siteId(turSNSite), attributes);
     }
 
     /**
@@ -182,7 +182,11 @@ public class TurLucene {
      */
     public int indexingBatch(TurLuceneInstance instance, TurSNSite turSNSite,
             List<Map<String, Object>> documents) {
-        return turLuceneDocumentHandler.indexingBatch(instance, turSNSite, documents);
+        return turLuceneDocumentHandler.indexingBatch(instance, siteId(turSNSite), documents);
+    }
+
+    private static String siteId(TurSNSite turSNSite) {
+        return turSNSite == null ? null : turSNSite.getId();
     }
 
     public void deIndexing(TurLuceneInstance instance, String id) {

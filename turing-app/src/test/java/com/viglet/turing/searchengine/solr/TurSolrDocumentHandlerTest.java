@@ -49,9 +49,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * Tests for TurSolrDocumentHandler.
@@ -65,13 +64,12 @@ class TurSolrDocumentHandlerTest {
         private static final String LINE_SEPARATOR = System.lineSeparator();
 
         @Mock
-        private TurSNSiteFieldService turSNSiteFieldService;
+        private TurSESiteSearchConfig siteSearchConfig;
 
         @Mock
         private HttpJdkSolrClient httpJdkSolrClient;
 
-        @Mock
-        private TurSNSite turSNSite;
+        private static final String SITE_ID = "site-1";
 
         @Mock
         private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
@@ -82,7 +80,7 @@ class TurSolrDocumentHandlerTest {
 
         @BeforeEach
         void setUp() throws MalformedURLException {
-                turSolrDocumentHandler = new TurSolrDocumentHandler(1000, turSNSiteFieldService,
+                turSolrDocumentHandler = new TurSolrDocumentHandler(1000, siteSearchConfig,
                                 turDecimalFieldNormalizer);
                 capturingSolrClient = new CapturingSolrClient();
                 turSolrInstance = new TurSolrInstance(httpJdkSolrClient,
@@ -93,13 +91,13 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingBuildsDocumentWithExpectedFields() {
-                TurSNSiteField multiValuedField = TurSNSiteField.builder()
+                TurSEIndexField multiValuedField = TurSEIndexField.builder()
                                 .name("tags")
-                                .multiValued(1)
+                                .multiValued(true)
                                 .build();
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("tags", multiValuedField);
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("title", new JSONArray(List.of("first", "second")));
@@ -109,7 +107,7 @@ class TurSolrDocumentHandlerTest {
                 attributes.put(TurSolrConstants.VERSION, 3);
                 attributes.put(TurSolrConstants.BOOST, 2.5);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 List<SolrInputDocument> documents = updateRequest.getDocuments();
@@ -128,22 +126,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingFormatsCurrencyAsAmountAndIsoCode() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("preco_produto")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("preco_produto", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("preco_produto", "150.00,BRL");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -153,8 +151,8 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingRemovesScoreVersionAndBoostKeys() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("id", "1");
@@ -162,7 +160,7 @@ class TurSolrDocumentHandlerTest {
                 attributes.put(TurSolrConstants.VERSION, 99);
                 attributes.put(TurSolrConstants.BOOST, 1.5);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -178,15 +176,15 @@ class TurSolrDocumentHandlerTest {
                 // so null attributes cause a NullPointerException
                 assertThat(org.junit.jupiter.api.Assertions.assertThrows(
                                 NullPointerException.class,
-                                () -> turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, null)))
+                                () -> turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, null)))
                                 .isNotNull();
         }
 
         @Test
         void testIndexingHandlesEmptyAttributes() {
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(new HashMap<>());
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(new HashMap<>());
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, new HashMap<>());
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, new HashMap<>());
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -195,14 +193,14 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingSingleValuedJsonArrayConcatenatesValues() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                fieldMap.put("desc", TurSNSiteField.builder().name("desc").multiValued(0).build());
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                fieldMap.put("desc", TurSEIndexField.builder().name("desc").multiValued(false).build());
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("desc", new org.json.JSONArray(List.of("line1", "line2")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -214,14 +212,14 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingSingleValuedArrayListConcatenatesValues() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                fieldMap.put("body", TurSNSiteField.builder().name("body").multiValued(0).build());
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                fieldMap.put("body", TurSEIndexField.builder().name("body").multiValued(false).build());
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("body", new ArrayList<>(List.of("para1", "para2")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -233,14 +231,14 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingMultiValuedArrayListAddsEachValue() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                fieldMap.put("authors", TurSNSiteField.builder().name("authors").multiValued(1).build());
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                fieldMap.put("authors", TurSEIndexField.builder().name("authors").multiValued(true).build());
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("authors", new ArrayList<>(List.of("Alice", "Bob")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -249,13 +247,13 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingIntegerFieldPreservesType() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("count", 42);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -264,14 +262,14 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testIndexingNullAttributeValueIsSkipped() {
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("id", "1");
                 attributes.put("nullField", null);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -286,22 +284,22 @@ class TurSolrDocumentHandlerTest {
                         "amount, '100.00,brl', '100.00,BRL'"
         })
         void testCurrencyValueIsNormalizedOrSkipped(String fieldName, String input, String expected) {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name(fieldName)
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put(fieldName, currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put(fieldName, input);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -314,22 +312,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyMissingCodeIsInvalid() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", "100.00,");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -371,21 +369,21 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyNullValueIsSkipped() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", null);
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -394,22 +392,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyMultiValuedJsonArray() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("prices")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(1)
+                                .multiValued(true)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("prices", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("prices", new org.json.JSONArray(List.of("100.00,USD", "200.00,EUR")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -418,22 +416,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencySingleValuedJsonArrayUsesFirst() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", new org.json.JSONArray(List.of("50.00,GBP", "75.00,EUR")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -442,22 +440,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyEmptyJsonArrayIsSkipped() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", new org.json.JSONArray());
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -466,22 +464,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyMultiValuedArrayList() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("prices")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(1)
+                                .multiValued(true)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("prices", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("prices", new ArrayList<>(List.of("100.00,USD", "200.00,EUR")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -490,22 +488,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencySingleValuedArrayListUsesFirst() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", new ArrayList<>(List.of("50.00,GBP", "75.00,EUR")));
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -514,22 +512,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyEmptyArrayListIsSkipped() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", new ArrayList<>());
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -538,16 +536,16 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testDecimalFieldNonCurrencyUsesNormalizer() {
-                TurSNSiteField floatField = TurSNSiteField.builder()
+                TurSEIndexField floatField = TurSEIndexField.builder()
                                 .name("weight")
                                 .type(TurSEFieldType.FLOAT)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("weight", floatField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.FLOAT)).thenReturn(true);
                 when(turDecimalFieldNormalizer.normalizeNumericValue(
                                 org.mockito.ArgumentMatchers.eq(TurSEFieldType.FLOAT), org.mockito.ArgumentMatchers.any()))
@@ -556,7 +554,7 @@ class TurSolrDocumentHandlerTest {
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("weight", "3,14");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -565,16 +563,16 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testDecimalFieldInvalidValueIsSkipped() {
-                TurSNSiteField doubleField = TurSNSiteField.builder()
+                TurSEIndexField doubleField = TurSEIndexField.builder()
                                 .name("weight")
                                 .type(TurSEFieldType.DOUBLE)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("weight", doubleField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.DOUBLE)).thenReturn(true);
                 when(turDecimalFieldNormalizer.normalizeNumericValue(
                                 org.mockito.ArgumentMatchers.eq(TurSEFieldType.DOUBLE), org.mockito.ArgumentMatchers.any()))
@@ -583,7 +581,7 @@ class TurSolrDocumentHandlerTest {
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("weight", "not-a-number");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -592,23 +590,23 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyWithCommaDecimalIsNormalized() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 // "19,92,BRL" - comma decimal in amount part should be normalized to dot
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", "19,92,BRL");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -617,22 +615,22 @@ class TurSolrDocumentHandlerTest {
 
         @Test
         void testCurrencyInvalidCodeLengthIsInvalid() {
-                TurSNSiteField currencyField = TurSNSiteField.builder()
+                TurSEIndexField currencyField = TurSEIndexField.builder()
                                 .name("price")
                                 .type(TurSEFieldType.CURRENCY)
-                                .multiValued(0)
+                                .multiValued(false)
                                 .build();
 
-                Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+                Map<String, TurSEIndexField> fieldMap = new HashMap<>();
                 fieldMap.put("price", currencyField);
 
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
                 when(turDecimalFieldNormalizer.isDecimalFieldType(TurSEFieldType.CURRENCY)).thenReturn(true);
 
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("price", "100.00,ABCD");
 
-                turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+                turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes);
 
                 UpdateRequest updateRequest = (UpdateRequest) capturingSolrClient.getLastRequest();
                 SolrInputDocument document = updateRequest.getDocuments().getFirst();
@@ -644,7 +642,7 @@ class TurSolrDocumentHandlerTest {
                 // Regression guard: a swallowed Solr/IO error used to falsely report the
                 // document as "Indexed" while it was actually lost. It must now surface so
                 // the resilience layer / circuit breaker can react.
-                when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(new HashMap<>());
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(new HashMap<>());
                 turSolrInstance.setSolrClient(new ThrowingSolrClient());
 
                 Map<String, Object> attributes = new HashMap<>();
@@ -652,7 +650,7 @@ class TurSolrDocumentHandlerTest {
 
                 org.junit.jupiter.api.Assertions.assertThrows(
                                 TurSolrDocumentHandler.TurSolrIndexException.class,
-                                () -> turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes));
+                                () -> turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes));
         }
 
         @Test

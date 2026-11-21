@@ -52,4 +52,10 @@ public interface TurSESiteSearchConfig {
      * the first in name order ignoring case wins.
      */
     Map<String, TurSEFieldType> fieldTypes(String siteId);
+
+    /**
+     * The site's index fields by name, read while a document is written; where two
+     * fields share a name, the last one read wins. Empty for a {@code null} id.
+     */
+    Map<String, TurSEIndexField> indexFields(String siteId);
 }

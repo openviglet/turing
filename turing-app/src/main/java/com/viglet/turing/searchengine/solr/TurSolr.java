@@ -51,7 +51,6 @@ import com.viglet.turing.observability.TurSearchPipelineObservation;
 import com.viglet.turing.sn.TurSNFieldProcess;
 import com.viglet.turing.sn.TurSNUtils;
 import com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
@@ -81,7 +80,7 @@ public class TurSolr {
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
             TurSNSiteFieldExts turSNSiteFieldExtRepository,
             TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
-            TurSNTargetingRules turSNTargetingRules, TurSNSiteFieldService turSNSiteFieldUtils,
+            TurSNTargetingRules turSNTargetingRules,
             TurSESiteSearchConfig siteSearchConfig,
             TurSNSites turSNSiteRepository, TurSNFieldProcess turSNFieldProcess,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer,
@@ -91,7 +90,7 @@ public class TurSolr {
         this.isCommitEnabled = isCommitEnabled;
         this.commitWithin = commitWithin;
         this.turSNSiteRepository = turSNSiteRepository;
-        this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, turSNSiteFieldUtils,
+        this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, siteSearchConfig,
                 turDecimalFieldNormalizer);
         this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
                 turSNSiteCustomFacetRepository,
@@ -166,12 +165,16 @@ public class TurSolr {
 
     public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
             Map<String, Object> attributes) {
-        turSolrDocumentHandler.indexing(turSolrInstance, turSNSite, attributes);
+        turSolrDocumentHandler.indexing(turSolrInstance, siteId(turSNSite), attributes);
     }
 
     public int indexingBatch(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
             List<Map<String, Object>> documents) {
-        return turSolrDocumentHandler.indexingBatch(turSolrInstance, turSNSite, documents);
+        return turSolrDocumentHandler.indexingBatch(turSolrInstance, siteId(turSNSite), documents);
+    }
+
+    private static String siteId(TurSNSite turSNSite) {
+        return turSNSite == null ? null : turSNSite.getId();
     }
 
     public void deIndexing(TurSolrInstance turSolrInstance, String id) {

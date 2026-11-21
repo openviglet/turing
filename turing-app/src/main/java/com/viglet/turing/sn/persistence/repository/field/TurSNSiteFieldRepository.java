@@ -34,6 +34,9 @@ public interface TurSNSiteFieldRepository extends JpaRepository<TurSNSiteField, 
 
 	List<TurSNSiteField> findByTurSNSite(TurSNSite turSNSite);
 
+	/** T1310 — the same read by the site's id, for the search-engine SPI. */
+	List<TurSNSiteField> findByTurSNSiteId(String siteId);
+
 	boolean existsByTurSNSiteAndName(TurSNSite turSNSite, String name);
 
 	/**

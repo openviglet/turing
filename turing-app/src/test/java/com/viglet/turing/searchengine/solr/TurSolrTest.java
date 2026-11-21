@@ -63,7 +63,6 @@ import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.sn.TurSNFieldProcess;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
 import com.viglet.turing.sn.tr.TurSNTargetingRules;
 
 /**
@@ -84,9 +83,6 @@ class TurSolrTest {
 
     @Mock
     private TurSNTargetingRules turSNTargetingRules;
-
-    @Mock
-    private TurSNSiteFieldService turSNSiteFieldService;
 
     @Mock
     private TurSESiteSearchConfig siteSearchConfig;
@@ -693,7 +689,6 @@ class TurSolrTest {
                 turSNSiteFieldExtRepository,
                 turSNSiteCustomFacetRepository,
                 turSNTargetingRules,
-                turSNSiteFieldService,
                 siteSearchConfig,
                 turSNSiteRepository,
                 turSNFieldProcess,

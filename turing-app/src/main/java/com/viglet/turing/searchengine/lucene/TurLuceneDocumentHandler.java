@@ -19,9 +19,8 @@ package com.viglet.turing.searchengine.lucene;
 import static com.viglet.turing.searchengine.lucene.TurLuceneConstants.*;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.Term;
@@ -47,12 +46,12 @@ import java.util.stream.IntStream;
 @Slf4j
 public class TurLuceneDocumentHandler {
 
-    private final TurSNSiteFieldService turSNSiteFieldService;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurLuceneStorageSync storageSync;
 
-    public TurLuceneDocumentHandler(TurSNSiteFieldService turSNSiteFieldService,
+    public TurLuceneDocumentHandler(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneStorageSync storageSync) {
-        this.turSNSiteFieldService = turSNSiteFieldService;
+        this.siteSearchConfig = siteSearchConfig;
         this.storageSync = storageSync;
     }
 
@@ -60,13 +59,13 @@ public class TurLuceneDocumentHandler {
     // Public API
     // -------------------------------------------------------------------------
 
-    public void indexing(TurLuceneInstance instance, TurSNSite turSNSite, Map<String, Object> attributes) {
+    public void indexing(TurLuceneInstance instance, String siteId, Map<String, Object> attributes) {
         log.debug("Lucene indexing ...");
         Map<String, Object> cleaned = new LinkedHashMap<>(attributes);
         cleaned.remove(SCORE);
         cleaned.remove(VERSION);
         cleaned.remove(BOOST);
-        addDocument(instance, turSNSite, cleaned);
+        addDocument(instance, siteId, cleaned);
     }
 
     /**
@@ -84,13 +83,13 @@ public class TurLuceneDocumentHandler {
      *
      * @return the number of documents written to the writer session
      */
-    public int indexingBatch(TurLuceneInstance instance, TurSNSite turSNSite,
+    public int indexingBatch(TurLuceneInstance instance, String siteId,
             List<Map<String, Object>> documents) {
         if (documents == null || documents.isEmpty()) {
             return 0;
         }
         log.debug("Lucene batch indexing {} documents ...", documents.size());
-        Map<String, TurSNSiteField> fieldMap = turSNSiteFieldService.toMap(turSNSite);
+        Map<String, TurSEIndexField> fieldMap = siteSearchConfig.indexFields(siteId);
         int indexed = 0;
         try {
             for (Map<String, Object> attributes : documents) {
@@ -160,8 +159,8 @@ public class TurLuceneDocumentHandler {
     // Document building
     // -------------------------------------------------------------------------
 
-    private void addDocument(TurLuceneInstance instance, TurSNSite turSNSite, Map<String, Object> attributes) {
-        Document doc = buildDocument(attributes, turSNSiteFieldService.toMap(turSNSite));
+    private void addDocument(TurLuceneInstance instance, String siteId, Map<String, Object> attributes) {
+        Document doc = buildDocument(attributes, siteSearchConfig.indexFields(siteId));
 
         String docId = Optional.ofNullable(attributes == null ? null : attributes.get(ID))
                 .map(Object::toString)
@@ -185,14 +184,14 @@ public class TurLuceneDocumentHandler {
      * {@link #addDocument} path and the T804 {@link #indexingBatch} path so a
      * batched document is built byte-for-byte identically to a single one.
      */
-    private Document buildDocument(Map<String, Object> attributes, Map<String, TurSNSiteField> fieldMap) {
+    private Document buildDocument(Map<String, Object> attributes, Map<String, TurSEIndexField> fieldMap) {
         Document doc = new Document();
         Optional.ofNullable(attributes).ifPresent(attr ->
                 attr.forEach((key, value) -> {
                     if (value == null) return;
-                    TurSNSiteField siteField = fieldMap.get(key);
-                    TurSEFieldType fieldType = siteField != null ? siteField.getType() : TurSEFieldType.STRING;
-                    boolean multiValued = siteField != null && siteField.getMultiValued() == 1;
+                    TurSEIndexField siteField = fieldMap.get(key);
+                    TurSEFieldType fieldType = siteField != null ? siteField.type() : TurSEFieldType.STRING;
+                    boolean multiValued = siteField != null && siteField.multiValued();
 
                     addAttributeToDocument(doc, key, value, fieldType, multiValued);
                 }));

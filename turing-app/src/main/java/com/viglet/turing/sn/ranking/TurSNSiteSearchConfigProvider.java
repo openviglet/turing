@@ -16,6 +16,7 @@
 package com.viglet.turing.sn.ranking;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
@@ -35,6 +37,7 @@ import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingCondition
 import com.viglet.turing.sn.persistence.repository.ranking.TurSNRankingExpressionRepository;
 import com.viglet.turing.sn.persistence.repository.sort.TurSNSiteCustomSortRepository;
 import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository;
+import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository;
 import com.viglet.turing.sn.persistence.model.sort.TurSNSiteCustomSortItem;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 
@@ -53,12 +56,15 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNRankingConditionRepository conditionRepository;
     private final TurSNSiteCustomSortRepository customSortRepository;
     private final TurSNSiteFieldExtRepository fieldExtRepository;
+    private final TurSNSiteFieldRepository fieldRepository;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
             TurSNSiteCustomSortRepository customSortRepository,
-            TurSNSiteFieldExtRepository fieldExtRepository) {
+            TurSNSiteFieldExtRepository fieldExtRepository,
+            TurSNSiteFieldRepository fieldRepository) {
         this.fieldExtRepository = fieldExtRepository;
+        this.fieldRepository = fieldRepository;
         this.expressionRepository = expressionRepository;
         this.conditionRepository = conditionRepository;
         this.customSortRepository = customSortRepository;
@@ -107,6 +113,18 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .filter(field -> field.getName() != null && field.getType() != null)
                 .forEach(field -> types.putIfAbsent(field.getName(), field.getType()));
         return types;
+    }
+
+    @Override
+    public Map<String, TurSEIndexField> indexFields(String siteId) {
+        Map<String, TurSEIndexField> fields = new HashMap<>();
+        if (siteId == null) {
+            return fields;
+        }
+        fieldRepository.findByTurSNSiteId(siteId)
+                .forEach(field -> fields.put(field.getName(), new TurSEIndexField(field.getName(),
+                        field.getType(), field.getMultiValued() == 1)));
+        return fields;
     }
 
     static TurSERankingCondition toCondition(TurSNRankingCondition condition) {

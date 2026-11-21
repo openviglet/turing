@@ -27,9 +27,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,10 +45,9 @@ class TurLuceneDocumentHandlerTest {
     Path tempDir;
 
     @Mock
-    private TurSNSiteFieldService turSNSiteFieldService;
+    private TurSESiteSearchConfig siteSearchConfig;
 
-    @Mock
-    private TurSNSite turSNSite;
+    private static final String SITE_ID = "site-1";
 
     private TurLuceneDocumentHandler handler;
     private TurLuceneInstance instance;
@@ -58,7 +56,7 @@ class TurLuceneDocumentHandlerTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        handler = new TurLuceneDocumentHandler(turSNSiteFieldService, null);
+        handler = new TurLuceneDocumentHandler(siteSearchConfig, null);
         directory = new MMapDirectory(tempDir);
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
         writer = new IndexWriter(directory, config);
@@ -68,9 +66,9 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldRemoveScoreVersionAndBoostFields() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("title", TurSNSiteField.builder().name("title").type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("title", TurSEIndexField.builder().name("title").type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc1");
@@ -79,7 +77,7 @@ class TurLuceneDocumentHandlerTest {
         attrs.put("_version_", 3L);
         attrs.put("boost", 2.5);
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -94,16 +92,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleStringFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("category", TurSNSiteField.builder().name("category")
-                .type(TurSEFieldType.STRING).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("category", TurSEIndexField.builder().name("category")
+                .type(TurSEFieldType.STRING).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc2");
         attrs.put("category", "books");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -118,16 +116,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleIntFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("count", TurSNSiteField.builder().name("count")
-                .type(TurSEFieldType.INT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("count", TurSEIndexField.builder().name("count")
+                .type(TurSEFieldType.INT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc3");
         attrs.put("count", "42");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -137,16 +135,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleInvalidIntGracefully() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("count", TurSNSiteField.builder().name("count")
-                .type(TurSEFieldType.INT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("count", TurSEIndexField.builder().name("count")
+                .type(TurSEFieldType.INT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc4");
         attrs.put("count", "not-a-number");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -156,16 +154,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleLongFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("timestamp", TurSNSiteField.builder().name("timestamp")
-                .type(TurSEFieldType.LONG).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("timestamp", TurSEIndexField.builder().name("timestamp")
+                .type(TurSEFieldType.LONG).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc5");
         attrs.put("timestamp", "9999999999");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -175,16 +173,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleFloatFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("weight", TurSNSiteField.builder().name("weight")
-                .type(TurSEFieldType.FLOAT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("weight", TurSEIndexField.builder().name("weight")
+                .type(TurSEFieldType.FLOAT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc6");
         attrs.put("weight", "3.14");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -194,19 +192,19 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleDoubleAndCurrencyFieldTypes() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("amount", TurSNSiteField.builder().name("amount")
-                .type(TurSEFieldType.DOUBLE).multiValued(0).build());
-        fieldMap.put("price", TurSNSiteField.builder().name("price")
-                .type(TurSEFieldType.CURRENCY).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("amount", TurSEIndexField.builder().name("amount")
+                .type(TurSEFieldType.DOUBLE).multiValued(false).build());
+        fieldMap.put("price", TurSEIndexField.builder().name("price")
+                .type(TurSEFieldType.CURRENCY).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc7");
         attrs.put("amount", "99.99");
         attrs.put("price", "150.00,BRL");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -216,16 +214,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleDateFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("created", TurSNSiteField.builder().name("created")
-                .type(TurSEFieldType.DATE).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("created", TurSEIndexField.builder().name("created")
+                .type(TurSEFieldType.DATE).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc8");
         attrs.put("created", "2026-01-15T10:30:00Z");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -235,16 +233,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleInvalidDateGracefully() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("created", TurSNSiteField.builder().name("created")
-                .type(TurSEFieldType.DATE).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("created", TurSEIndexField.builder().name("created")
+                .type(TurSEFieldType.DATE).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc9");
         attrs.put("created", "not-a-date");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -254,16 +252,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleJsonArrayMultiValued() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("tags", TurSNSiteField.builder().name("tags")
-                .type(TurSEFieldType.STRING).multiValued(1).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("tags", TurSEIndexField.builder().name("tags")
+                .type(TurSEFieldType.STRING).multiValued(true).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc10");
         attrs.put("tags", new JSONArray(List.of("java", "spring")));
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -277,16 +275,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleJsonArraySingleValued() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("name", TurSNSiteField.builder().name("name")
-                .type(TurSEFieldType.STRING).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("name", TurSEIndexField.builder().name("name")
+                .type(TurSEFieldType.STRING).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc11");
         attrs.put("name", new JSONArray(List.of("first", "second")));
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -300,16 +298,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleArrayListMultiValued() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("authors", TurSNSiteField.builder().name("authors")
-                .type(TurSEFieldType.STRING).multiValued(1).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("authors", TurSEIndexField.builder().name("authors")
+                .type(TurSEFieldType.STRING).multiValued(true).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc12");
         attrs.put("authors", new ArrayList<>(List.of("Alice", "Bob")));
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -323,14 +321,14 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldSkipNullValues() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc14");
         attrs.put("nullfield", null);
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -340,16 +338,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldSkipEmptyStringValues() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("desc", TurSNSiteField.builder().name("desc")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("desc", TurSEIndexField.builder().name("desc")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc15");
         attrs.put("desc", "  ");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -359,16 +357,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleEmptyJsonArray() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("tags", TurSNSiteField.builder().name("tags")
-                .type(TurSEFieldType.STRING).multiValued(1).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("tags", TurSEIndexField.builder().name("tags")
+                .type(TurSEFieldType.STRING).multiValued(true).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc16");
         attrs.put("tags", new JSONArray());
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -378,16 +376,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleEmptyArrayList() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("tags", TurSNSiteField.builder().name("tags")
-                .type(TurSEFieldType.STRING).multiValued(1).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("tags", TurSEIndexField.builder().name("tags")
+                .type(TurSEFieldType.STRING).multiValued(true).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc17");
         attrs.put("tags", new ArrayList<>());
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -397,15 +395,15 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldGenerateIdWhenMissing() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("title", TurSNSiteField.builder().name("title")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("title", TurSEIndexField.builder().name("title")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("title", "No ID Document");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -415,20 +413,20 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldUpdateExistingDocumentWithSameId() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("title", TurSNSiteField.builder().name("title")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("title", TurSEIndexField.builder().name("title")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs1 = new LinkedHashMap<>();
         attrs1.put("id", "sameId");
         attrs1.put("title", "Original");
-        handler.indexing(instance, turSNSite, attrs1);
+        handler.indexing(instance, SITE_ID, attrs1);
 
         Map<String, Object> attrs2 = new LinkedHashMap<>();
         attrs2.put("id", "sameId");
         attrs2.put("title", "Updated");
-        handler.indexing(instance, turSNSite, attrs2);
+        handler.indexing(instance, SITE_ID, attrs2);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -442,15 +440,15 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void deIndexingShouldRemoveDocumentById() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("title", TurSNSiteField.builder().name("title")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("title", TurSEIndexField.builder().name("title")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "toDelete");
         attrs.put("title", "Delete Me");
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
 
         handler.deIndexing(instance, "toDelete");
 
@@ -461,15 +459,15 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void deIndexingByTypeShouldRemoveDocumentsByType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("type", TurSNSiteField.builder().name("type")
-                .type(TurSEFieldType.STRING).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("type", TurSEIndexField.builder().name("type")
+                .type(TurSEFieldType.STRING).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "typed1");
         attrs.put("type", "article");
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
 
         handler.deIndexingByType(instance, "article");
 
@@ -480,16 +478,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleBoolFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("active", TurSNSiteField.builder().name("active")
-                .type(TurSEFieldType.BOOL).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("active", TurSEIndexField.builder().name("active")
+                .type(TurSEFieldType.BOOL).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc18");
         attrs.put("active", "true");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -502,16 +500,16 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldHandleArrayFieldType() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("items", TurSNSiteField.builder().name("items")
-                .type(TurSEFieldType.ARRAY).multiValued(1).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("items", TurSEIndexField.builder().name("items")
+                .type(TurSEFieldType.ARRAY).multiValued(true).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc19");
         attrs.put("items", new ArrayList<>(List.of("a", "b", "c")));
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -525,15 +523,15 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldDefaultToStringTypeForUnknownField() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
         // No entry for "unknown" field
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc20");
         attrs.put("unknown", "somevalue");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -546,17 +544,17 @@ class TurLuceneDocumentHandlerTest {
 
     @Test
     void indexingShouldTruncateLongFacetValues() throws IOException {
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("desc", TurSNSiteField.builder().name("desc")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("desc", TurSEIndexField.builder().name("desc")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         String longValue = "x".repeat(1000);
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", "doc21");
         attrs.put("desc", longValue);
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -569,10 +567,10 @@ class TurLuceneDocumentHandlerTest {
         // Regression guard: a swallowed IOException used to falsely report the document
         // as "Indexed" while it was actually lost. It must now surface to the caller so
         // the resilience layer / circuit breaker can react.
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("title", TurSNSiteField.builder().name("title")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("title", TurSEIndexField.builder().name("title")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         IndexWriter failingWriter = mock(IndexWriter.class);
         when(failingWriter.updateDocument(any(), any())).thenThrow(new IOException("disk full"));
@@ -584,7 +582,7 @@ class TurLuceneDocumentHandlerTest {
         attrs.put("title", "Hello");
 
         assertThrows(java.io.UncheckedIOException.class,
-                () -> handler.indexing(failingInstance, turSNSite, attrs));
+                () -> handler.indexing(failingInstance, SITE_ID, attrs));
     }
 
     @Test
@@ -606,17 +604,17 @@ class TurLuceneDocumentHandlerTest {
         // `id`) never matched a path like /content/wknd/.../ski-touring-mont-blanc and the
         // feature returned empty. The primary key `id` must always be a non-analyzed keyword
         // so the whole path stays one exact term — regardless of the configured field type.
-        Map<String, TurSNSiteField> fieldMap = new HashMap<>();
-        fieldMap.put("id", TurSNSiteField.builder().name("id")
-                .type(TurSEFieldType.TEXT).multiValued(0).build());
-        when(turSNSiteFieldService.toMap(turSNSite)).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("id", TurSEIndexField.builder().name("id")
+                .type(TurSEFieldType.TEXT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
 
         String pathId = "/content/wknd/language-masters/en/adventures/ski-touring-mont-blanc";
         Map<String, Object> attrs = new LinkedHashMap<>();
         attrs.put("id", pathId);
         attrs.put("title", "Ski Touring Mont Blanc");
 
-        handler.indexing(instance, turSNSite, attrs);
+        handler.indexing(instance, SITE_ID, attrs);
         writer.commit();
 
         DirectoryReader reader = DirectoryReader.open(directory);
@@ -634,11 +632,11 @@ class TurLuceneDocumentHandlerTest {
     void indexingShouldThrowNpeForNullAttributes() {
         // The cleaned map is a new LinkedHashMap(null) which throws NPE.
         // Use a separate handler/instance to avoid unnecessary stubbing from setUp.
-        TurSNSiteFieldService localFieldService = mock(TurSNSiteFieldService.class);
-        TurLuceneDocumentHandler localHandler = new TurLuceneDocumentHandler(localFieldService, null);
+        TurSESiteSearchConfig localSiteSearchConfig = mock(TurSESiteSearchConfig.class);
+        TurLuceneDocumentHandler localHandler = new TurLuceneDocumentHandler(localSiteSearchConfig, null);
         TurLuceneInstance localInstance = mock(TurLuceneInstance.class);
 
         assertThrows(NullPointerException.class,
-                () -> localHandler.indexing(localInstance, turSNSite, null));
+                () -> localHandler.indexing(localInstance, SITE_ID, null));
     }
 }

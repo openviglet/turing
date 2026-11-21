@@ -45,10 +45,12 @@ class TurSNSiteSearchConfigProviderTest {
     private TurSNSiteCustomSortRepository customSortRepository;
     @Mock
     private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtRepository fieldExtRepository;
+    @Mock
+    private com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldRepository fieldRepository;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
-                fieldExtRepository);
+                fieldExtRepository, fieldRepository);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -93,7 +95,8 @@ class TurSNSiteSearchConfigProviderTest {
     @Test
     void aSiteWithoutAnIdHasNoExpressions() {
         assertThat(provider().rankingExpressions(null)).isEmpty();
-        verifyNoInteractions(expressionRepository, conditionRepository, customSortRepository, fieldExtRepository);
+        verifyNoInteractions(expressionRepository, conditionRepository, customSortRepository, fieldExtRepository,
+                fieldRepository);
     }
 
     @Test
@@ -133,4 +136,25 @@ class TurSNSiteSearchConfigProviderTest {
         assertThat(provider().fieldTypes("site-1"))
                 .containsExactly(java.util.Map.entry("price", com.viglet.turing.commons.se.field.TurSEFieldType.DOUBLE));
     }
-}
+
+    @Test
+    void indexFieldsCarryTypeAndMultiValuedWithTheLastFieldOfANameWinning() {
+        when(fieldRepository.findByTurSNSiteId("site-1")).thenReturn(List.of(
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteField.builder().name("tags")
+                        .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING).multiValued(0).build(),
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteField.builder().name("tags")
+                        .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING).multiValued(1).build(),
+                com.viglet.turing.sn.persistence.model.field.TurSNSiteField.builder().name("untyped").build()));
+
+        assertThat(provider().indexFields("site-1")).containsOnly(
+                java.util.Map.entry("tags", new com.viglet.turing.searchengine.spi.TurSEIndexField("tags",
+                        com.viglet.turing.commons.se.field.TurSEFieldType.STRING, true)),
+                java.util.Map.entry("untyped",
+                        new com.viglet.turing.searchengine.spi.TurSEIndexField("untyped", null, false)));
+    }
+
+    @Test
+    void aSiteWithoutAnIdHasNoIndexFields() {
+        assertThat(provider().indexFields(null)).isEmpty();
+        verifyNoInteractions(fieldRepository);
+    }}

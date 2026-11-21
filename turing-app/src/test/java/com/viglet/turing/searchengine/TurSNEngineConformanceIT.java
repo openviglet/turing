@@ -72,13 +72,12 @@ import com.viglet.turing.searchengine.lucene.TurLuceneDocumentHandler;
 import com.viglet.turing.searchengine.lucene.TurLuceneInstance;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -231,18 +230,16 @@ class TurSNEngineConformanceIT {
                         "[2026-10-15T00:00:00Z TO *]")));
 
         // Lucene, through the production document handler.
-        TurSNSiteFieldService fieldService = mock(TurSNSiteFieldService.class);
-        Map<String, TurSNSiteField> fieldMap = new LinkedHashMap<>();
-        FIELD_TYPES.forEach((name, type) -> fieldMap.put(name,
-                TurSNSiteField.builder().name(name).type(type).multiValued(0).build()));
-        when(fieldService.toMap(any())).thenReturn(fieldMap);
+        Map<String, TurSEIndexField> fieldMap = new LinkedHashMap<>();
+        FIELD_TYPES.forEach((name, type) -> fieldMap.put(name, new TurSEIndexField(name, type, false)));
+        when(sortRepository.indexFields(any())).thenReturn(fieldMap);
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()));
         TurLuceneInstance luceneInstance = mock(TurLuceneInstance.class);
         when(luceneInstance.getWriter()).thenReturn(writer);
-        TurLuceneDocumentHandler handler = new TurLuceneDocumentHandler(fieldService, null);
+        TurLuceneDocumentHandler handler = new TurLuceneDocumentHandler(sortRepository, null);
         for (Object[] job : JOBS) {
-            handler.indexing(luceneInstance, site, attributes(job));
+            handler.indexing(luceneInstance, site.getId(), attributes(job));
         }
         writer.commit();
         luceneReader = DirectoryReader.open(writer);
@@ -266,7 +263,7 @@ class TurSNEngineConformanceIT {
         }
         client.indices().refresh(r -> r.index(INDEX));
 
-        startSolr(fields, fieldRepository, sortRepository, fieldService, siteRepository);
+        startSolr(fields, fieldRepository, sortRepository, siteRepository);
     }
 
     /**
@@ -277,7 +274,7 @@ class TurSNEngineConformanceIT {
      * builder, document handler and result processor are the production ones.
      */
     private void startSolr(List<TurSNSiteFieldExt> fields, TurSNSiteFieldExts fieldRepository,
-            TurSESiteSearchConfig sortRepository, TurSNSiteFieldService fieldService,
+            TurSESiteSearchConfig sortRepository,
             TurSNSites siteRepository) throws Exception {
         // The configset the Turing Solr image ships (containers/solr/Dockerfile copies it to
         // /var/solr/data/configsets), on the latest Solr in user-managed mode: the solr:10
@@ -324,7 +321,7 @@ class TurSNEngineConformanceIT {
         when(customFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of(posted));
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
         solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository,
-                mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class), fieldService,
+                mock(com.viglet.turing.sn.tr.TurSNTargetingRules.class),
                 sortRepository,
                 siteRepository, mock(com.viglet.turing.sn.TurSNFieldProcess.class), decimalNormalizer,
                 mock(com.viglet.turing.sn.searchrule.TurSNSearchRuleEvaluator.class),

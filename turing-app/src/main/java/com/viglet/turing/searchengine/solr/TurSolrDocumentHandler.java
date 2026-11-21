@@ -22,32 +22,31 @@ import org.apache.solr.common.SolrInputDocument;
 import org.json.JSONArray;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteField;
-import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.searchengine.spi.TurSEIndexField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TurSolrDocumentHandler {
     private final int commitWithin;
-    private final TurSNSiteFieldService turSNSiteFieldUtils;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final TurDecimalFieldNormalizer turDecimalFieldNormalizer;
 
-    public TurSolrDocumentHandler(int commitWithin, TurSNSiteFieldService turSNSiteFieldUtils,
+    public TurSolrDocumentHandler(int commitWithin, TurSESiteSearchConfig siteSearchConfig,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer) {
         this.commitWithin = commitWithin;
-        this.turSNSiteFieldUtils = turSNSiteFieldUtils;
+        this.siteSearchConfig = siteSearchConfig;
         this.turDecimalFieldNormalizer = turDecimalFieldNormalizer;
     }
 
-    public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+    public void indexing(TurSolrInstance turSolrInstance, String siteId,
             Map<String, Object> attributes) {
         log.debug("Executing indexing ...");
         attributes.remove(SCORE);
         attributes.remove(VERSION);
         attributes.remove(BOOST);
-        this.addDocument(turSolrInstance, turSNSite, attributes);
+        this.addDocument(turSolrInstance, siteId, attributes);
     }
 
     /**
@@ -61,13 +60,13 @@ public class TurSolrDocumentHandler {
      *
      * @return number of documents sent to Solr.
      */
-    public int indexingBatch(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+    public int indexingBatch(TurSolrInstance turSolrInstance, String siteId,
             List<Map<String, Object>> documents) {
         if (documents == null || documents.isEmpty()) {
             return 0;
         }
         log.debug("Executing batch indexing for {} documents ...", documents.size());
-        Map<String, TurSNSiteField> turSNSiteFieldMap = turSNSiteFieldUtils.toMap(turSNSite);
+        Map<String, TurSEIndexField> indexFields = siteSearchConfig.indexFields(siteId);
         List<SolrInputDocument> solrDocs = new ArrayList<>(documents.size());
         for (Map<String, Object> attributes : documents) {
             if (attributes == null) {
@@ -77,7 +76,7 @@ public class TurSolrDocumentHandler {
             attributes.remove(VERSION);
             attributes.remove(BOOST);
             SolrInputDocument document = new SolrInputDocument();
-            attributes.forEach((key, value) -> processAttribute(turSNSiteFieldMap, document, key, value));
+            attributes.forEach((key, value) -> processAttribute(indexFields, document, key, value));
             solrDocs.add(document);
         }
         if (solrDocs.isEmpty()) {
@@ -173,44 +172,44 @@ public class TurSolrDocumentHandler {
         return sb.toString().trim();
     }
 
-    public void addDocument(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+    public void addDocument(TurSolrInstance turSolrInstance, String siteId,
             Map<String, Object> attributes) {
-        Map<String, TurSNSiteField> turSNSiteFieldMap = turSNSiteFieldUtils.toMap(turSNSite);
+        Map<String, TurSEIndexField> indexFields = siteSearchConfig.indexFields(siteId);
         SolrInputDocument document = new SolrInputDocument();
         Optional.ofNullable(attributes).ifPresent(attr -> {
-            attr.forEach((key, value) -> processAttribute(turSNSiteFieldMap, document, key, value));
+            attr.forEach((key, value) -> processAttribute(indexFields, document, key, value));
             addSolrDocument(turSolrInstance, document);
         });
 
     }
 
-    private void processAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
+    private void processAttribute(Map<String, TurSEIndexField> indexFields,
             SolrInputDocument document, String key, Object attribute) {
         Optional.ofNullable(attribute).ifPresent(attr -> {
-            TurSNSiteField turSNSiteField = turSNSiteFieldMap.get(key);
-            TurSEFieldType fieldType = Optional.ofNullable(turSNSiteField)
-                    .map(TurSNSiteField::getType)
+            TurSEIndexField indexField = indexFields.get(key);
+            TurSEFieldType fieldType = Optional.ofNullable(indexField)
+                    .map(TurSEIndexField::type)
                     .orElse(null);
 
             if (turDecimalFieldNormalizer.isDecimalFieldType(fieldType)) {
-                processDecimalAttribute(turSNSiteFieldMap, document, key, attr, fieldType);
+                processDecimalAttribute(indexFields, document, key, attr, fieldType);
                 return;
             }
 
             switch (attr) {
                 case Integer integer -> processInteger(document, key, integer);
-                case JSONArray objects -> processJSONArray(turSNSiteFieldMap, document, key,
+                case JSONArray objects -> processJSONArray(indexFields, document, key,
                         objects);
-                case ArrayList<?> arrayList -> processArrayList(turSNSiteFieldMap, document, key,
+                case ArrayList<?> arrayList -> processArrayList(indexFields, document, key,
                         arrayList);
                 default -> processOtherTypes(document, key, attribute);
             }
         });
     }
 
-    private void processDecimalAttribute(Map<String, TurSNSiteField> turSNSiteFieldMap,
+    private void processDecimalAttribute(Map<String, TurSEIndexField> indexFields,
             SolrInputDocument document, String key, Object attribute, TurSEFieldType fieldType) {
-        boolean multiValued = isMultiValued(turSNSiteFieldMap, key);
+        boolean multiValued = isMultiValued(indexFields, key);
 
         switch (attribute) {
             case JSONArray jsonArray -> {
@@ -301,10 +300,10 @@ public class TurSolrDocumentHandler {
         document.addField(key, attribute);
     }
 
-    private void processJSONArray(Map<String, TurSNSiteField> turSNSiteFieldMap,
+    private void processJSONArray(Map<String, TurSEIndexField> indexFields,
             SolrInputDocument document, String key, Object attribute) {
         JSONArray value = (JSONArray) attribute;
-        if (isMultiValued(turSNSiteFieldMap, key)) {
+        if (isMultiValued(indexFields, key)) {
             Optional.ofNullable(value).ifPresent(v -> IntStream.range(0, value.length())
                     .forEachOrdered(i -> document.addField(key, value.getString(i))));
         } else {
@@ -316,18 +315,18 @@ public class TurSolrDocumentHandler {
         }
     }
 
-    private static boolean isMultiValued(Map<String, TurSNSiteField> turSNSiteFieldMap,
+    private static boolean isMultiValued(Map<String, TurSEIndexField> indexFields,
             String key) {
-        return turSNSiteFieldMap.get(key) != null
-                && turSNSiteFieldMap.get(key).getMultiValued() == 1;
+        return indexFields.get(key) != null
+                && indexFields.get(key).multiValued();
     }
 
-    private void processArrayList(Map<String, TurSNSiteField> turSNSiteFieldMap,
+    private void processArrayList(Map<String, TurSEIndexField> indexFields,
             SolrInputDocument document, String key, Object attribute) {
         @SuppressWarnings("rawtypes")
         List attributeList = (ArrayList) attribute;
         Optional.ofNullable(attributeList).ifPresent(values -> {
-            if (isMultiValued(turSNSiteFieldMap, key)) {
+            if (isMultiValued(indexFields, key)) {
                 for (Object valueItem : values) {
                     document.addField(key, TurSEFieldValues.toText(valueItem));
                 }
