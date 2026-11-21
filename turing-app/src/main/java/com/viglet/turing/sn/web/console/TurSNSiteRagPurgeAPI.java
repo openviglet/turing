@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.rag.TurSNRagOrphanPurgeService;
+import com.viglet.turing.answer.TurSNRagOrphanPurgeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;

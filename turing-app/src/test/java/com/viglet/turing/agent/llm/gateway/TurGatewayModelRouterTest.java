@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.rag.TurGenAiContextFactory;
-import com.viglet.turing.rag.TurSNGenAi;
+
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.model.TurLLMVendor;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
@@ -50,7 +50,7 @@ class TurGatewayModelRouterTest {
     @Mock
     private TurGenAiContextFactory contextFactory;
     @Mock
-    private TurSNGenAi snGenAi;
+    private TurGatewaySiteAnswerer snGenAi;
     @Mock
     private com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
 

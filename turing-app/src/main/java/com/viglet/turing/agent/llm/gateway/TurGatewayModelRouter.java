@@ -19,10 +19,8 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurAgentChatRequest;
-import com.viglet.turing.agent.TurChatMessage;
 import com.viglet.turing.rag.TurGenAiContext;
 import com.viglet.turing.rag.TurGenAiContextFactory;
-import com.viglet.turing.rag.TurSNGenAi;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
@@ -77,7 +75,7 @@ public class TurGatewayModelRouter {
     private final TurAgentChatExecutor agentChatExecutor;
     private final TurSNSearchProcess snSearchProcess;
     private final TurGenAiContextFactory contextFactory;
-    private final TurSNGenAi snGenAi;
+    private final TurGatewaySiteAnswerer siteAnswerer;
     private final com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
 
     public TurGatewayModelRouter(TurAIAgentRepository agentRepository,
@@ -85,7 +83,7 @@ public class TurGatewayModelRouter {
             TurAgentChatExecutor agentChatExecutor,
             TurSNSearchProcess snSearchProcess,
             TurGenAiContextFactory contextFactory,
-            TurSNGenAi snGenAi,
+            TurGatewaySiteAnswerer siteAnswerer,
             com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
         this.agentLlmInstances = agentLlmInstances;
@@ -94,7 +92,7 @@ public class TurGatewayModelRouter {
         this.agentChatExecutor = agentChatExecutor;
         this.snSearchProcess = snSearchProcess;
         this.contextFactory = contextFactory;
-        this.snGenAi = snGenAi;
+        this.siteAnswerer = siteAnswerer;
         this.catalogCopilotService = catalogCopilotService;
     }
 
@@ -159,12 +157,7 @@ public class TurGatewayModelRouter {
         if (!context.isEnabled()) {
             throw new IllegalStateException("RAG is not available for SN site: " + siteName);
         }
-        List<TurSNGenAi.ConversationMessage> history = messages == null ? List.of()
-                : messages.stream()
-                        .map(m -> new TurSNGenAi.ConversationMessage(m.role(), m.content()))
-                        .toList();
-        TurChatMessage answer = snGenAi.assistantConversation(context, history);
-        return (answer == null || answer.getText() == null) ? "" : answer.getText();
+        return siteAnswerer.answer(context, messages);
     }
 
     // ---- turing-copilot (T795) -------------------------------------------

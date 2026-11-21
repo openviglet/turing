@@ -43,7 +43,7 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.domain.TurSNSiteDomain;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;

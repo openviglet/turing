@@ -9,10 +9,11 @@
  */
 package com.viglet.turing.rag.answer;
 
+
 /**
  * T839 / §LXII.8 — the retrieval provenance the answer service knows up front (the
  * site's knowledge-base mode and the rerank configuration), handed to
- * {@link TurAnswerStreamFramer} so it rides the terminal {@code trace} event. The
+ * {@link com.viglet.turing.answer.TurAnswerStreamFramer} so it rides the terminal {@code trace} event. The
  * per-source rank breakdown travels separately on the {@code citations} event
  * (each citation's {@code rankingExplanation}).
  *

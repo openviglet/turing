@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.rag.TurGenAiContextFactory;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
@@ -84,7 +84,7 @@ class TurSNSiteGenAiAPITest {
     // T1087 — the route both chat endpoints read; delegates to a real resolver
     // over the mocks above, so these tests exercise the real decision.
     @Mock
-    private com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver;
+    private com.viglet.turing.answer.TurSNChatRouteResolver chatRouteResolver;
 
     // T1292 — the resume endpoint's collaborators.
     @Mock
@@ -119,7 +119,7 @@ class TurSNSiteGenAiAPITest {
             TurSNSiteGenAi g = inv.getArgument(0);
             return g == null ? null : boundAgents.get(g.getTurAIAgentId());
         });
-        var realResolver = new com.viglet.turing.rag.TurSNChatRouteResolver(turDefaultAgentResolver,
+        var realResolver = new com.viglet.turing.answer.TurSNChatRouteResolver(turDefaultAgentResolver,
                 catalogCopilotService);
         when(chatRouteResolver.resolve(any())).thenAnswer(inv -> realResolver.resolve(inv.getArgument(0)));
         // T1189 — the locale seam chat shares with /answer, real over the mocks above.
@@ -258,7 +258,7 @@ class TurSNSiteGenAiAPITest {
                         java.util.List.of(), "", 3, null));
 
         var events = api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
+                java.util.List.of(new com.viglet.turing.answer.TurSNGenAi.ConversationMessage("user",
                         "which models?")),
                 "en_US", null, null, null, null, null))
                 .collectList().block();
@@ -284,7 +284,7 @@ class TurSNSiteGenAiAPITest {
         });
 
         api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
+                java.util.List.of(new com.viglet.turing.answer.TurSNGenAi.ConversationMessage("user",
                         "which models?")),
                 "en_US", java.util.Map.of("site_key", java.util.List.of("a")), null, null, null, null))
                 .collectList().block();
@@ -308,7 +308,7 @@ class TurSNSiteGenAiAPITest {
         java.util.List<com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse> events;
         try {
             events = api.conversation("site1", new TurSNSiteGenAiAPI.ConversationRequest(
-                    java.util.List.of(new com.viglet.turing.rag.TurSNGenAi.ConversationMessage("user",
+                    java.util.List.of(new com.viglet.turing.answer.TurSNGenAi.ConversationMessage("user",
                             "which models?")),
                     "en_US", null, null, null, null, null))
                     .collectList().block();

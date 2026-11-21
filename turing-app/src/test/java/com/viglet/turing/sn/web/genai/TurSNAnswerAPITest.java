@@ -28,9 +28,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchCachedAPI;
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.rag.answer.TurAnswerShareService;
-import com.viglet.turing.rag.answer.TurAnswerSignalService;
-import com.viglet.turing.rag.answer.TurSNAnswerService;
+import com.viglet.turing.answer.TurAnswerShareService;
+import com.viglet.turing.answer.TurAnswerSignalService;
+import com.viglet.turing.answer.TurSNAnswerService;
 import com.viglet.turing.rag.citation.TurCitationDriftService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;

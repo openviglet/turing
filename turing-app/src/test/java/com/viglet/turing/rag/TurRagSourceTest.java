@@ -9,6 +9,7 @@
  */
 package com.viglet.turing.rag;
 
+import com.viglet.turing.answer.TurSNGenAi;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.LinkedHashMap;

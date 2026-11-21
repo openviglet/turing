@@ -85,7 +85,7 @@ class TurImportExchangeContentStreamTest {
                         com.viglet.turing.sn.api.TurSNSiteLocales.class),
                 pluginFactory,
                 org.mockito.Mockito.mock(com.viglet.turing.sn.field.TurSNSiteFieldService.class),
-                org.mockito.Mockito.mock(com.viglet.turing.rag.TurSNGenAi.class),
+                org.mockito.Mockito.mock(com.viglet.turing.answer.TurSNGenAi.class),
                 org.mockito.Mockito.mock(com.viglet.turing.rag.TurGenAiContextFactory.class),
                 org.mockito.Mockito.mock(com.viglet.turing.agent.TurDefaultAgentResolver.class),
                 new com.viglet.turing.system.properties.TurConfigProperties());

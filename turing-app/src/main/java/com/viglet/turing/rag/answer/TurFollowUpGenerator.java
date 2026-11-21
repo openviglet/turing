@@ -14,7 +14,7 @@ import java.util.List;
 import com.viglet.turing.rag.citation.TurAnswerCitation;
 
 /**
- * T834 / §LXII.3 — the seam {@link TurAnswerStreamFramer} calls, once the answer
+ * T834 / §LXII.3 — the seam {@link com.viglet.turing.answer.TurAnswerStreamFramer} calls, once the answer
  * has finished streaming, to obtain the 3–5 follow-up questions for the
  * {@code followups} SSE event. Kept as a function (not a hard service dependency)
  * so the framer stays a pure, LLM-free transform: production wires it to

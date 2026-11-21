@@ -42,10 +42,10 @@ import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurChatMessage;
 import com.viglet.turing.agent.TurChatProviderErrorMapper;
 import com.viglet.turing.rag.TurSNChatDisabledReason;
-import com.viglet.turing.rag.TurSNChatRouteResolver;
-import com.viglet.turing.rag.TurSNGenAi;
-import com.viglet.turing.rag.TurSNGenAiChatRequest;
-import com.viglet.turing.rag.TurSNGenAi.ConversationMessage;
+import com.viglet.turing.answer.TurSNChatRouteResolver;
+import com.viglet.turing.answer.TurSNGenAi;
+import com.viglet.turing.answer.TurSNGenAiChatRequest;
+import com.viglet.turing.answer.TurSNGenAi.ConversationMessage;
 import com.viglet.turing.rag.TurGenAiContext;
 import com.viglet.turing.rag.TurGenAiContextFactory;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
@@ -121,9 +121,9 @@ public class TurSNSiteGenAiAPI {
 	// (a default LLM is configured) for the VECTORLESS_STRUCTURED readiness path.
 	private final com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService;
 	// T1087 — the one decision both /chat/enabled and /chat/conversation read.
-	private final com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver;
+	private final com.viglet.turing.answer.TurSNChatRouteResolver chatRouteResolver;
 	// T1133 — whether the collection holds chunks of a partitioned key's partition.
-	private final com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe;
+	private final com.viglet.turing.answer.TurSNSiteVectorProbe vectorProbe;
 
 	/** T1133 — the copilot route reads the index without the partition. */
 	static final String PARTITION_COPILOT_MESSAGE = "This API key is bound to a partition of a shared site, "
@@ -157,8 +157,8 @@ public class TurSNSiteGenAiAPI {
 			com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
 			com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,
-			com.viglet.turing.rag.TurSNChatRouteResolver chatRouteResolver,
-			com.viglet.turing.rag.TurSNSiteVectorProbe vectorProbe,
+			com.viglet.turing.answer.TurSNChatRouteResolver chatRouteResolver,
+			com.viglet.turing.answer.TurSNSiteVectorProbe vectorProbe,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
         this.agentLlmInstances = agentLlmInstances;
 		this.vectorProbe = vectorProbe;
@@ -417,7 +417,7 @@ public class TurSNSiteGenAiAPI {
 			// and is refused while the collection holds none (indexed before the
 			// chunks carried the field, until the site's vectors are reindexed).
 			if (partition != null && (collectionName == null || vectorProbe.probePartition(agent, collectionName,
-					partition) == com.viglet.turing.rag.TurSNSiteVectorProbe.Presence.ABSENT)) {
+					partition) == com.viglet.turing.answer.TurSNSiteVectorProbe.Presence.ABSENT)) {
 				return Flux.just(new TurAgentChatExecutor.ChatResponse(ASSISTANT_ROLE,
 						PARTITION_NOT_INDEXED_MESSAGE));
 			}

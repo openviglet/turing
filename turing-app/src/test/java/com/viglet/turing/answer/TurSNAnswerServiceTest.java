@@ -1,0 +1,321 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ */
+package com.viglet.turing.answer;
+
+import com.viglet.turing.rag.answer.TurFollowUpQuestionService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.codec.ServerSentEvent;
+
+import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
+import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.rag.TurGenAiContext;
+import com.viglet.turing.rag.TurGenAiContextFactory;
+import com.viglet.turing.rag.TurSNChatDisabledReason;
+import com.viglet.turing.agent.persistence.model.TurAIAgent;
+import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
+import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.sn.TurSNSearchProcess;
+
+import reactor.core.publisher.Flux;
+
+/**
+ * T833 / §LXII.2 — wiring + fail-open coverage for {@link TurSNAnswerService}.
+ * The stream re-framing itself is covered by {@link TurAnswerStreamFramerTest};
+ * here we assert the service degrades every failure to a single {@code error}
+ * event and composes the pipeline on the happy path.
+ *
+ * @author Alexandre Oliveira
+ * @since 2026.3.4
+ */
+@ExtendWith(MockitoExtension.class)
+class TurSNAnswerServiceTest {
+
+    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
+            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
+
+    @org.mockito.Spy
+    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
+    @Mock
+    private TurSNSearchProcess turSNSearchProcess;
+    @Mock
+    private TurDefaultAgentResolver turDefaultAgentResolver;
+    @Mock
+    private TurGenAiContextFactory turGenAiContextFactory;
+    @Mock
+    private TurSNSiteLocales turSNSiteLocaleRepository;
+    @Mock
+    private TurSNGenAi turGenAi;
+    @Mock
+    private TurFollowUpQuestionService followUpQuestionService;
+    @Mock
+    private com.viglet.turing.system.TurGlobalSettingsService globalSettingsService;
+    @Mock
+    private TurSNChatRouteResolver chatRouteResolver;
+    @Mock
+    private com.viglet.turing.answer.TurSNSiteVectorProbe vectorProbe;
+
+    @InjectMocks
+    private TurSNAnswerService service;
+
+    private static final com.viglet.turing.commons.se.TurSEPartition PARTITION =
+            new com.viglet.turing.commons.se.TurSEPartition("site_key", "blog-a");
+
+    /** T1133 — runs {@code call} as a request whose API key is bound to {@link #PARTITION}. */
+    private static <T> T asPartitionedKey(java.util.function.Supplier<T> call) {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.setAttribute(com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.class.getName(),
+                PARTITION);
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+        try {
+            return call.get();
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    private TurAIAgent ragSite(TurSNSite site, TurSNSiteGenAi genAi) {
+        site.setTurSNSiteGenAi(genAi);
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agentLlms.attach(agent, llm);
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sn_site1_en");
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(siteLocale);
+        return agent;
+    }
+
+    @Test
+    void aPartitionedKeyIsRefusedWhileTheCollectionHoldsNothingOfItsPartition() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        TurAIAgent agent = ragSite(site, genAi);
+        when(vectorProbe.probePartition(agent, "sn_site1_en", PARTITION))
+                .thenReturn(com.viglet.turing.answer.TurSNSiteVectorProbe.Presence.ABSENT);
+
+        List<ServerSentEvent<String>> events = asPartitionedKey(
+                () -> collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of())));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("reindex");
+        org.mockito.Mockito.verifyNoInteractions(turGenAi);
+    }
+
+    @Test
+    void aPartitionedKeyAnswersFromAContextConfinedToItsPartition() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        TurAIAgent agent = ragSite(site, genAi);
+        when(vectorProbe.probePartition(agent, "sn_site1_en", PARTITION))
+                .thenReturn(com.viglet.turing.answer.TurSNSiteVectorProbe.Presence.PRESENT);
+        when(turGenAiContextFactory.build(any(), any(), any()))
+                .thenReturn(TurGenAiContext.builder().enabled(true).build());
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "Hello", "token")));
+        lenient().when(followUpQuestionService.generate(any(), any(), any(), any())).thenReturn(List.of());
+
+        asPartitionedKey(() -> collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of())));
+
+        org.mockito.ArgumentCaptor<TurGenAiContext> context = org.mockito.ArgumentCaptor.forClass(TurGenAiContext.class);
+        org.mockito.Mockito.verify(turGenAi).assistantConversationStreaming(context.capture(), any(), any(), any());
+        assertThat(context.getValue().getPartition()).isEqualTo(PARTITION);
+    }
+
+    private static final TurSNChatRouteResolver.Decision RAG = new TurSNChatRouteResolver.Decision(
+            TurSNChatRouteResolver.Route.RAG, TurSNChatDisabledReason.NONE);
+
+    private static List<ServerSentEvent<String>> collect(Flux<ServerSentEvent<String>> flux) {
+        return flux.collectList().block();
+    }
+
+    private static List<String> eventNames(List<ServerSentEvent<String>> events) {
+        return events.stream().map(ServerSentEvent::event).toList();
+    }
+
+    @Test
+    void blankQueryDegradesToASingleErrorEvent() {
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "  ", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("No query provided");
+    }
+
+    @Test
+    void unknownSiteDegradesToASingleErrorEvent() {
+        when(turSNSearchProcess.getSNSite("ghost")).thenReturn(Optional.empty());
+
+        List<ServerSentEvent<String>> events = collect(service.answer("ghost", "q", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("Site not found");
+    }
+
+    @Test
+    void composesTheAnswerStreamOnTheHappyPath() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        site.setTurSNSiteGenAi(genAi);
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agentLlms.attach(agent, llm);
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sn_site1_en");
+
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
+                .thenReturn(siteLocale);
+        // The context factory result is opaque to the service; return a mock.
+        lenient().when(turGenAiContextFactory.build(any(), any()))
+                .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "Hello", "token")));
+        when(followUpQuestionService.generate(any(), any(), any(), any()))
+                .thenReturn(List.of("What next?"));
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        // Re-framed into the answer contract: token, then citations, the generated
+        // follow-ups, and the trace.
+        assertThat(eventNames(events)).containsExactly("token", "citations", "followups", "trace");
+        assertThat(events.get(0).data()).isEqualTo(" Hello");
+    }
+
+    @Test
+    void passesActiveFiltersToRetrieval() {
+        TurSNSite site = new TurSNSite();
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        site.setTurSNSiteGenAi(genAi);
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agentLlms.attach(agent, llm);
+
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(genAi)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(genAi)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
+                .thenReturn(indexedLocale());
+        lenient().when(turGenAiContextFactory.build(any(), any()))
+                .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "Within Anthropic.", "token")));
+        lenient().when(followUpQuestionService.generate(any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        java.util.Map<String, List<String>> filters =
+                java.util.Map.of("vendor", List.of("Anthropic"));
+        collect(service.answer("site1", "cheapest model", Locale.ENGLISH, filters));
+
+        // T838 — the answer is synthesized within the active filter set: the filters
+        // reach retrieval via the streaming request.
+        org.mockito.ArgumentCaptor<com.viglet.turing.answer.TurSNGenAiChatRequest> captor =
+                org.mockito.ArgumentCaptor.forClass(com.viglet.turing.answer.TurSNGenAiChatRequest.class);
+        org.mockito.Mockito.verify(turGenAi)
+                .assistantConversationStreaming(any(), any(), any(), captor.capture());
+        assertThat(captor.getValue().filters()).containsEntry("vendor", List.of("Anthropic"));
+    }
+
+    /**
+     * T1116 — a site with no GenAI binding answers through the Default AI Agent,
+     * as its chat does, instead of reporting AI as off.
+     */
+    @Test
+    void aSiteWithoutGenAiAnswersThroughTheDefaultAgent() {
+        TurSNSite site = new TurSNSite();
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agentLlms.attach(agent, llm);
+
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH))
+                .thenReturn(indexedLocale());
+        lenient().when(turGenAiContextFactory.build(any(), any()))
+                .thenReturn(org.mockito.Mockito.mock(TurGenAiContext.class));
+        when(turGenAi.assistantConversationStreaming(any(), any(), any(), any()))
+                .thenReturn(Flux.just(new ChatResponse("assistant", "From the default agent", "token")));
+        lenient().when(followUpQuestionService.generate(any(), any(), any(), any()))
+                .thenReturn(List.of());
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).doesNotContain("error").contains("token");
+    }
+
+    /** T1116 — a refusal names the reason {@code /chat/enabled} reports. */
+    @Test
+    void anUnavailableRouteRefusesWithTheChatReason() {
+        TurSNSite site = new TurSNSite();
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(new TurSNChatRouteResolver.Decision(
+                TurSNChatRouteResolver.Route.UNAVAILABLE, TurSNChatDisabledReason.NO_GENAI));
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("AI is not enabled for site: site1").contains("NO_GENAI");
+    }
+
+    /**
+     * T1189 — a locale the site has no index for answers the error event, and
+     * retrieval never runs with no collection (which reads the global store).
+     */
+    @Test
+    void aLocaleWithoutAnIndexNeverReachesRetrieval() {
+        TurSNSite site = new TurSNSite();
+        TurAIAgent agent = new TurAIAgent();
+        TurLLMInstance llm = new TurLLMInstance();
+        llm.setEnabled(1);
+        agentLlms.attach(agent, llm);
+        when(turSNSearchProcess.getSNSite("site1")).thenReturn(Optional.of(site));
+        when(chatRouteResolver.resolve(null)).thenReturn(RAG);
+        when(turDefaultAgentResolver.resolveEffectiveAgent(null)).thenReturn(agent);
+        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, Locale.ENGLISH)).thenReturn(null);
+
+        List<ServerSentEvent<String>> events = collect(service.answer("site1", "hi", Locale.ENGLISH, java.util.Map.of()));
+
+        assertThat(eventNames(events)).containsExactly("error");
+        assertThat(events.get(0).data()).contains("No index for locale 'en'");
+        org.mockito.Mockito.verifyNoInteractions(turGenAi);
+    }
+
+    private static TurSNSiteLocale indexedLocale() {
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setCore("sn_site1_en");
+        return siteLocale;
+    }
+}

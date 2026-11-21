@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.document.Document;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.rag.TurSNGenAi;
+import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.rag.citation.TurCitationDriftService.DriftVerdict;
 import com.viglet.turing.rag.citation.TurCitationDriftService.ResolvedChunk;
 import com.viglet.turing.rag.citation.TurCitationDriftService.Status;

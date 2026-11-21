@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
 import com.viglet.turing.commons.sn.search.TurSNParamType;
-import com.viglet.turing.rag.answer.TurSNAnswerService;
+import com.viglet.turing.answer.TurSNAnswerService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,14 +53,14 @@ public class TurSNAnswerAPI {
 
     private final TurSNAnswerService answerService;
     private final com.viglet.turing.rag.citation.TurCitationDriftService driftService;
-    private final com.viglet.turing.rag.answer.TurAnswerShareService answerShareService;
-    private final com.viglet.turing.rag.answer.TurAnswerSignalService answerSignalService;
+    private final com.viglet.turing.answer.TurAnswerShareService answerShareService;
+    private final com.viglet.turing.answer.TurAnswerSignalService answerSignalService;
     private final TurSNSiteSearchService turSNSiteSearchService;
 
     public TurSNAnswerAPI(TurSNAnswerService answerService,
             com.viglet.turing.rag.citation.TurCitationDriftService driftService,
-            com.viglet.turing.rag.answer.TurAnswerShareService answerShareService,
-            com.viglet.turing.rag.answer.TurAnswerSignalService answerSignalService,
+            com.viglet.turing.answer.TurAnswerShareService answerShareService,
+            com.viglet.turing.answer.TurAnswerSignalService answerSignalService,
             TurSNSiteSearchService turSNSiteSearchService) {
         this.turSNSiteSearchService = turSNSiteSearchService;
         this.answerService = answerService;

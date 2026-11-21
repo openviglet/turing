@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.sn.search.TurSNSiteSearchService;
-import com.viglet.turing.rag.deepdive.TurSNDeepDiveService;
+import com.viglet.turing.answer.deepdive.TurSNDeepDiveService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -59,6 +59,9 @@ import com.viglet.turing.llm.provider.store.lucene.TurLuceneVectorStore;
 public record TurRagSource(String sourceId, String title, String url,
         Integer chunkIndex, Double score, boolean keywordOnly, Integer rank, String type) {
 
+    /** The chunk metadata key naming the source document (T1322g: owned here, read by the SN chat). */
+    public static final String SOURCE_ID = "source_id";
+
     /** A numbered source with no known type. */
     public TurRagSource(String sourceId, String title, String url,
             Integer chunkIndex, Double score, boolean keywordOnly, Integer rank) {
@@ -102,7 +105,7 @@ public record TurRagSource(String sourceId, String title, String url,
 
         String objectName = str(meta.get(OBJECT_NAME));
         String sourceId = firstNonBlank(
-                str(meta.get(TurSNGenAi.SOURCE_ID)),
+                str(meta.get(SOURCE_ID)),
                 objectName,
                 doc.getId());
 
