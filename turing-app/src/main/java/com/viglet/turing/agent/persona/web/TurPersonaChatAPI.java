@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web;
+package com.viglet.turing.agent.persona.web;
 
 import java.util.List;
 import java.util.stream.Collectors;

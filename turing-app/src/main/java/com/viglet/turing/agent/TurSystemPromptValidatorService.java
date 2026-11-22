@@ -91,12 +91,12 @@ public class TurSystemPromptValidatorService {
 
     private final TurSystemPromptPreviewService previewService;
     private final TurLlmSummaryService llmSummaryService;
-    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
+    private final com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TurSystemPromptValidatorService(TurSystemPromptPreviewService previewService,
             TurLlmSummaryService llmSummaryService,
-            com.viglet.turing.persona.TurAgentPersonas agentPersonas) {
+            com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas) {
         this.previewService = previewService;
         this.llmSummaryService = llmSummaryService;
         this.agentPersonas = agentPersonas;

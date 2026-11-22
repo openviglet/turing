@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.agent.testsupport.AbstractAgentExecutorIT;
 import com.viglet.testsupport.genai.executor.TurAgentChatExecutorMockSupport;
 

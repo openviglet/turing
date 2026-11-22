@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.dialogue;
+package com.viglet.turing.agent.persona.dialogue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.viglet.turing.persona.dialogue.TurDialogueEvent;
 import com.viglet.turing.agent.TurAgentChatExecutor;
 import com.viglet.turing.agent.TurAgentChatExecutor.ChatResponse;
 import com.viglet.turing.agent.TurAgentChatRequest;

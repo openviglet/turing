@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web.dialogue;
+package com.viglet.turing.agent.persona.web.dialogue;
 
 import java.time.Duration;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.persona.dialogue.TurDialogueEvent;
-import com.viglet.turing.persona.dialogue.TurPersonaDialogueProjectService;
+import com.viglet.turing.agent.persona.dialogue.TurPersonaDialogueProjectService;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueProjectDto;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueTurnDto;

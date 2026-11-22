@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona;
+package com.viglet.turing.agent.persona;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

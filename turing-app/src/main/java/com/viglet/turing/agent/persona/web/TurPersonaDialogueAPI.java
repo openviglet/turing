@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web;
+package com.viglet.turing.agent.persona.web;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.persona.dialogue.TurDialogueEvent;
-import com.viglet.turing.persona.dialogue.TurPersonaDialogueService;
+import com.viglet.turing.agent.persona.dialogue.TurPersonaDialogueService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

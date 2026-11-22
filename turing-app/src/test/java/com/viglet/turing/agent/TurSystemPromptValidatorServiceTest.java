@@ -47,8 +47,8 @@ class TurSystemPromptValidatorServiceTest {
     private TurLlmSummaryService llmSummaryService;
 
     private TurSystemPromptValidatorService service;
-    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
-            new com.viglet.turing.persona.InMemoryAgentPersonas();
+    private final com.viglet.turing.agent.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.agent.persona.InMemoryAgentPersonas();
 
     @BeforeEach
     void setUp() {

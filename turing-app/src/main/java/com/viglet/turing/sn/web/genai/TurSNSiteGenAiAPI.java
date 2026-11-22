@@ -114,7 +114,7 @@ public class TurSNSiteGenAiAPI {
 	private final TurWorkspaceEventBus workspaceEventBus;
 	private final com.viglet.turing.agent.flow.TurConversationLock conversationLock;
 	private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
-	private final com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver;
+	private final com.viglet.turing.agent.persona.TurAgentPersonaResolver turAgentPersonaResolver;
 	private final com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate;
 	private final com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty;
 	// T790 / §LIV.1 (Block BF) — resolves whether the vectorless copilot can answer
@@ -153,7 +153,7 @@ public class TurSNSiteGenAiAPI {
 			TurWorkspaceEventBus workspaceEventBus,
 			com.viglet.turing.agent.flow.TurConversationLock conversationLock,
 			com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
-			com.viglet.turing.persona.TurAgentPersonaResolver turAgentPersonaResolver,
+			com.viglet.turing.agent.persona.TurAgentPersonaResolver turAgentPersonaResolver,
 			com.viglet.turing.agent.llm.cost.budget.TurChatCostBudgetGate costBudgetGate,
 			com.viglet.turing.system.properties.TurAbuseControlProperty abuseControlProperty,
 			com.viglet.turing.rag.catalog.TurCatalogCopilotService catalogCopilotService,

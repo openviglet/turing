@@ -2612,19 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.37 Persona's agent runners move into agent (T1322e)
-
-agent imports persona 34 times (prompt composition, calibration, authoring) and persona
-imports agent 14 (TurPersonaChatAPI, TurPersonaDialogueService, TurAgentPersonaResolver,
-TurAgentPersonas, the authoring service running an agent). ADR 0005 section 6 puts
-persona below agent, so the code in persona that runs or resolves an agent moves into
-agent; persona keeps personas, prompt composition, readability, fit and authoring
-prompts. Done when persona imports no agent type.
-
-Waits for T1322j and T1322m (2026-11-21): persona also reaches the MCP client
-(TurMcpToolCallbackService in agent, TurMcpServer in mcp) for brand context, and
-transcription for audio-derived personas; both move below persona there.
-
 ### CLXXXIX.40 SN's GenAI surface leaves sn (T1322h)
 
 sn imports agent 42 times, rag 29, chat 12 and persona 11, almost all from its GenAI

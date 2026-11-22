@@ -57,7 +57,7 @@ import com.viglet.turing.agent.llm.nativeapi.openai.TurStoredCompletionsService;
 import com.viglet.turing.agent.llm.nativeapi.openai.computeruse.TurOpenAiComputerUseService;
 import com.viglet.turing.agent.llm.nativeapi.gemini.TurGeminiComputerUseService;
 import com.viglet.turing.agent.llm.nativeapi.gemini.TurGoogleGenAiNativeService;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.persona.TurPersonaModelCalibration;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

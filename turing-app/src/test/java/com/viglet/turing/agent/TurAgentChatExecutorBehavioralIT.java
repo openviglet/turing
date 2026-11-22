@@ -179,7 +179,7 @@ class TurAgentChatExecutorBehavioralIT extends AbstractTuringSpringIT {
      * Looks up the post-walk persona by reading the engine-controlled
      * {@code __activePersonaId} variable from the persisted flow state and
      * resolving it against the agent's persona catalog. Mirrors what
-     * {@link com.viglet.turing.persona.TurAgentPersonaResolver} does
+     * {@link com.viglet.turing.agent.persona.TurAgentPersonaResolver} does
      * — by reaching for it directly here we avoid coupling to the executor
      * (and the mock factory that comes with autowiring it).
      */

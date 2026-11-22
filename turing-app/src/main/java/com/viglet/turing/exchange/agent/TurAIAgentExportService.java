@@ -100,7 +100,7 @@ public class TurAIAgentExportService {
     private final TurMcpServerRepository mcpServerRepository;
     private final TurStoreInstanceRepository storeInstanceRepository;
     private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
-    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
+    private final com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas;
     private final com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     public TurAIAgentExportService(TurAIAgentRepository agentRepository,
@@ -112,7 +112,7 @@ public class TurAIAgentExportService {
                                    TurStoreInstanceRepository storeInstanceRepository,
                                    com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository,
             com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
-            com.viglet.turing.persona.TurAgentPersonas agentPersonas,
+            com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
         this.agentLlmInstances = agentLlmInstances;
         this.agentMcpServers = agentMcpServers;

@@ -26,7 +26,7 @@ import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.ConversationStateDto;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.agent.capture.TurPromptCapture;
 import com.viglet.turing.agent.tool.TurChatToolCall;
 import com.viglet.turing.agent.prompt.TurMessageAssemblyContext;
@@ -117,7 +117,7 @@ public class TurSystemPromptPreviewService {
     private final TurToolCallTraceService toolCallTraceService;
     private final com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
     private final com.viglet.turing.agent.TurAgentMcpServers agentMcpServers;
-    private final com.viglet.turing.persona.TurAgentPersonas agentPersonas;
+    private final com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas;
 
     public TurSystemPromptPreviewService(TurPromptAssemblyPipeline promptAssemblyPipeline,
             TurMessageAssemblyPipeline messageAssemblyPipeline,
@@ -129,7 +129,7 @@ public class TurSystemPromptPreviewService {
             TurToolCallTraceService toolCallTraceService,
             com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService,
             com.viglet.turing.agent.TurAgentMcpServers agentMcpServers,
-            com.viglet.turing.persona.TurAgentPersonas agentPersonas,
+            com.viglet.turing.agent.persona.TurAgentPersonas agentPersonas,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
         this.agentLlmInstances = agentLlmInstances;
         this.agentMcpServers = agentMcpServers;
@@ -589,7 +589,7 @@ public class TurSystemPromptPreviewService {
 
     /**
      * T607 — the persona the previewed turn actually speaks with, resolved the
-     * way {@link com.viglet.turing.persona.TurAgentPersonaResolver} does at
+     * way {@link com.viglet.turing.agent.persona.TurAgentPersonaResolver} does at
      * runtime.
      *
      * @param persona        the effective persona (a valid flow override, else the
@@ -786,7 +786,7 @@ public class TurSystemPromptPreviewService {
 
     /**
      * Reconciles a flow persona override id against the agent's catalog exactly
-     * as {@link com.viglet.turing.persona.TurAgentPersonaResolver} would:
+     * as {@link com.viglet.turing.agent.persona.TurAgentPersonaResolver} would:
      * honour it only when the persona is in the catalog and usable as a speaker,
      * otherwise fall back to the default and flag the silent fallback.
      */

@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.ChatFlowNode;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.persona.TurPersonaModelCalibration;
 import com.viglet.turing.observability.TurChatPipelineObservation;
 import com.viglet.turing.observability.TurMeterNames;

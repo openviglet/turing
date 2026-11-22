@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web;
+package com.viglet.turing.agent.persona.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,8 +26,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.shared.exception.TurNotFoundException;
-import com.viglet.turing.persona.web.TurSNSitePersonaAPI.TurSNSitePersonaOption;
-import com.viglet.turing.persona.web.TurSNSitePersonaContentFitAPI.ContentFitRequest;
+import com.viglet.turing.agent.persona.web.TurSNSitePersonaAPI.TurSNSitePersonaOption;
+import com.viglet.turing.agent.persona.web.TurSNSitePersonaContentFitAPI.ContentFitRequest;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.persona.fit.TurContentFitResult;
 import com.viglet.turing.persona.fit.TurPersonaContentFitEvaluator;
@@ -63,8 +63,8 @@ class TurSNSitePersonaAPITest {
 
     @BeforeEach
     void setUp() {
-        com.viglet.turing.persona.InMemoryAgentPersonas catalog =
-                new com.viglet.turing.persona.InMemoryAgentPersonas();
+        com.viglet.turing.agent.persona.InMemoryAgentPersonas catalog =
+                new com.viglet.turing.agent.persona.InMemoryAgentPersonas();
         TurSNSiteAudiencePersonas personas = new TurSNSiteAudiencePersonas(turSNSearchProcess,
                 turDefaultAgentResolver, catalog.service());
         api = new TurSNSitePersonaAPI(personas);

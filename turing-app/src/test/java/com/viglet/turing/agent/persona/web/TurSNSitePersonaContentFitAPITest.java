@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web;
+package com.viglet.turing.agent.persona.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,7 +30,7 @@ import com.viglet.turing.shared.exception.TurApiException;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.shared.exception.TurPayloadTooLargeException;
 import com.viglet.turing.shared.exception.TurValidationException;
-import com.viglet.turing.persona.web.TurSNSitePersonaContentFitAPI.ContentFitRequest;
+import com.viglet.turing.agent.persona.web.TurSNSitePersonaContentFitAPI.ContentFitRequest;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.persona.fit.TurContentFitMisfit;
 import com.viglet.turing.persona.fit.TurContentFitResult;
@@ -66,8 +66,8 @@ class TurSNSitePersonaContentFitAPITest {
 
     @BeforeEach
     void setUp() {
-        com.viglet.turing.persona.InMemoryAgentPersonas catalog =
-                new com.viglet.turing.persona.InMemoryAgentPersonas();
+        com.viglet.turing.agent.persona.InMemoryAgentPersonas catalog =
+                new com.viglet.turing.agent.persona.InMemoryAgentPersonas();
         api = new TurSNSitePersonaContentFitAPI(
                 new TurSNSiteAudiencePersonas(turSNSearchProcess, turDefaultAgentResolver,
                         catalog.service()), evaluator);

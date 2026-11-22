@@ -23,7 +23,7 @@ import com.viglet.turing.persona.persistence.repository.dialogue.TurPersonaDialo
 /**
  * Transactional writer for a Persona Dialogue project's last-run transcript
  * (Block AU / §XLIV). Lives in its own bean <em>specifically</em> so its
- * {@link Transactional} boundary is honoured: {@link TurPersonaDialogueProjectService}
+ * {@link Transactional} boundary is honoured: {@code TurPersonaDialogueProjectService}
  * persists from the reactive {@code doOnComplete} of a running stream, which is a
  * self-invocation on that bean — self-invoked {@code @Transactional} methods
  * bypass the Spring proxy, and the {@code @Modifying} delete then runs without a

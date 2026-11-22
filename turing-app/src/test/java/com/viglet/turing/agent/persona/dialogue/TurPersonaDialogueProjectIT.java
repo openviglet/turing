@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.dialogue;
+package com.viglet.turing.agent.persona.dialogue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.viglet.turing.persona.dialogue.TurDialogueEvent;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueProjectDto;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;
 import com.viglet.turing.persona.persistence.model.TurPersona;

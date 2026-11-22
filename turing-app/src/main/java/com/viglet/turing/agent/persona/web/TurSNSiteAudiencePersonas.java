@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.web;
+package com.viglet.turing.agent.persona.web;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.persona.TurAgentPersonas;
+import com.viglet.turing.agent.persona.TurAgentPersonas;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.TurSNSearchProcess;

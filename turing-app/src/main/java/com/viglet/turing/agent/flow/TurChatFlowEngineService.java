@@ -49,7 +49,7 @@ import com.viglet.turing.agent.flow.router.TurChatFlowRouterDecisionLog;
 import com.viglet.turing.agent.flow.router.TurChatFlowRouterMethod;
 import com.viglet.turing.agent.flow.strategy.AdvanceContext;
 import com.viglet.turing.agent.flow.strategy.ChatFlowOps;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.agent.flow.strategy.TurChatFlowGuardrailStrategy;
 import com.viglet.turing.agent.persistence.dto.TurChatFlowSubmissionDto;
 import com.viglet.turing.agent.persistence.dto.TurChatSessionSlotsDto;
@@ -2906,7 +2906,7 @@ public class TurChatFlowEngineService {
      * variables already in the document.
      *
      * <p>The reserved key matches
-     * {@link com.viglet.turing.persona.TurAgentPersonaResolver#ACTIVE_PERSONA_VAR}
+     * {@link com.viglet.turing.agent.persona.TurAgentPersonaResolver#ACTIVE_PERSONA_VAR}
      * — kept as a literal here to avoid a circular dependency between the
      * engine and the resolver.
      *

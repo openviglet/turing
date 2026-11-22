@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.persona.dialogue;
+package com.viglet.turing.agent.persona.dialogue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.viglet.turing.persona.dialogue.TurDialogueEvent;
+import com.viglet.turing.persona.dialogue.TurPersonaDialogueTranscriptWriter;
 import com.viglet.turing.persona.dialogue.TurDialogueEvent.TurDialogueEventType;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueProjectDto;
 import com.viglet.turing.persona.dialogue.dto.TurPersonaDialogueSpeakerDto;

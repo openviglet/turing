@@ -29,7 +29,7 @@ import com.viglet.turing.agent.TurSystemPromptPreviewService.FlowPersonaDiagnost
 import com.viglet.turing.agent.flow.ChatFlowGraph;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService;
 import com.viglet.turing.agent.flow.TurChatFlowEngineService.ConversationStateDto;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.agent.prompt.TurMessageAssemblyPipeline;
 import com.viglet.turing.agent.prompt.TurPromptAssembly;
 import com.viglet.turing.agent.prompt.TurPromptAssemblyContext;
@@ -72,8 +72,8 @@ class TurSystemPromptPreviewServiceFlowPersonaTest {
     private com.viglet.turing.agent.capture.TurPromptCaptureService promptCaptureService;
 
     private TurSystemPromptPreviewService service;
-    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
-            new com.viglet.turing.persona.InMemoryAgentPersonas();
+    private final com.viglet.turing.agent.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.agent.persona.InMemoryAgentPersonas();
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

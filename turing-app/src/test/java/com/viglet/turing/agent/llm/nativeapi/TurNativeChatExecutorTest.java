@@ -47,7 +47,7 @@ import com.viglet.turing.agent.llm.nativeapi.anthropic.computeruse.TurAnthropicC
 import com.viglet.turing.agent.llm.nativeapi.anthropic.editor.TurAnthropicEditorService;
 import com.viglet.turing.agent.llm.nativeapi.openai.TurOpenAiResponsesService;
 import com.viglet.turing.agent.llm.nativeapi.openai.computeruse.TurOpenAiComputerUseService;
-import com.viglet.turing.persona.TurAgentPersonaResolver;
+import com.viglet.turing.agent.persona.TurAgentPersonaResolver;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

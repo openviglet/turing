@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.viglet.turing.persona.web.TurSNSitePersonaAPI;
+import com.viglet.turing.agent.persona.web.TurSNSitePersonaAPI;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.system.TurGlobalSettingsService;

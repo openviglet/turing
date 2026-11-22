@@ -77,8 +77,8 @@ class TurAIAgentExportServiceTest {
     @Mock private com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository embeddingModelRepository;
 
     private TurAIAgentExportService service;
-    private final com.viglet.turing.persona.InMemoryAgentPersonas personas =
-            new com.viglet.turing.persona.InMemoryAgentPersonas();
+    private final com.viglet.turing.agent.persona.InMemoryAgentPersonas personas =
+            new com.viglet.turing.agent.persona.InMemoryAgentPersonas();
     private Path producedZip;
 
     @BeforeEach
