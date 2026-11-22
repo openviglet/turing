@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.agent.chat.callcenter.TurCallCenterAssistService.CallAssistResult;
 import com.viglet.turing.llm.nativeapi.voice.TurVoiceTranslationService;
-import com.viglet.turing.mcp.server.TurMcpRagToolService;
+import com.viglet.turing.rag.mcp.TurMcpRagToolService;
 import com.viglet.turing.llm.TurLlmSummaryService;
 
 /**

@@ -108,8 +108,8 @@ class TurPromptAssemblyPipelineTest {
         when(agent.isSkillsEnabled()).thenReturn(withSkill);
         // Capability flags default to false on the mock → no capability segments.
         // T1315 — the agent names its servers by id; the lookup answers the rows.
-        java.util.Set<com.viglet.turing.mcp.persistence.model.TurMcpServer> servers = withMcp
-                ? java.util.Set.of(new com.viglet.turing.mcp.persistence.model.TurMcpServer())
+        java.util.Set<com.viglet.turing.llm.mcp.persistence.model.TurMcpServer> servers = withMcp
+                ? java.util.Set.of(new com.viglet.turing.llm.mcp.persistence.model.TurMcpServer())
                 : java.util.Set.of();
         when(agentMcpServers.of(agent)).thenReturn(servers);
         if (!withMcp) {

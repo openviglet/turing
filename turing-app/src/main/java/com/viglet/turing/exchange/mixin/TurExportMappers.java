@@ -23,7 +23,7 @@ package com.viglet.turing.exchange.mixin;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import tools.jackson.databind.SerializationFeature;

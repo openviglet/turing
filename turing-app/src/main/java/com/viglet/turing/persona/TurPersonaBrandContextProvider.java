@@ -14,9 +14,9 @@ import java.util.Set;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 
 /**

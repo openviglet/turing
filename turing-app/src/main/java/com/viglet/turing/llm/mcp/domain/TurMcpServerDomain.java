@@ -14,11 +14,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.mcp.domain;
+package com.viglet.turing.llm.mcp.domain;
 
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerTransportType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerTransportType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerType;
 
 /**
  * Domain entity for an MCP (Model Context Protocol) server registration —

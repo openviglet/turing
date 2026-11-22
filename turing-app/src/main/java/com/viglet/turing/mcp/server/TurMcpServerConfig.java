@@ -17,6 +17,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.viglet.turing.rag.mcp.TurMcpRagToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.system.properties.TurConfigProperties;
 

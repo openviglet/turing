@@ -30,8 +30,9 @@ import org.springframework.ai.tool.metadata.DefaultToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 /**

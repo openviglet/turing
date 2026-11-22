@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.mcp.persistence.model;
+package com.viglet.turing.llm.mcp.persistence.model;
 
 /**
  * Wire transport an HTTP MCP server speaks (T294). Only meaningful when the

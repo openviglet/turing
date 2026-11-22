@@ -1,4 +1,4 @@
-package com.viglet.turing.mcp.persistence.model;
+package com.viglet.turing.llm.mcp.persistence.model;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "mcp_server")
+@Table(name = "llm_mcp_server")
 public class TurMcpServer implements Serializable, VigletTenantOwnedInfra {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package com.viglet.turing.agent.tool;
+package com.viglet.turing.llm.mcp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.tool.ToolCallback;
 
-import com.viglet.turing.mcp.domain.TurMcpServerDomain;
-import com.viglet.turing.mcp.domain.TurMcpServerRepositoryPort;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerTransportType;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerDomain;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerRepositoryPort;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerTransportType;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

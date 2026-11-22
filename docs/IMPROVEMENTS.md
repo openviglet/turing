@@ -2636,22 +2636,6 @@ module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi'
 reference is an id column. REST paths stay. Done when sn imports no agent, rag, chat,
 persona, answer or eval type.
 
-### CLXXXIX.42 The MCP client moves into llm (T1322j)
-
-agent imports mcp 11 times for the MCP client (TurMcpServer, its repository and domain
-port, TurMcpToolCallbackService, TurAgentMcpServers) and mcp imports agent 12 times for
-the MCP server that exposes agents as tools. persona needs the same client for its brand
-context (TurPersonaBrandContextProvider, TurPersonaStaticPromptCache, TurPersonaAPI),
-and persona sits below agent.
-
-Revised 2026-11-21 while working T1322e: the client half moves into llm (llm.mcp), as
-tool-connection infrastructure every AI module reads, not into agent.
-TurMcpToolCallbackService takes the server ids it should build callbacks for instead of
-a TurAIAgent; TurAgentMcpServers stays in agent and passes them. mcp keeps the server
-and sits above agent. TurMcpServer keeps its tenancy ruling, and its table takes the
-llm_ prefix. Done when agent and persona reach the MCP client only in llm, and llm
-imports no agent type.
-
 ### CLXXXIX.43 system stops importing agent (T1322k)
 
 system imports agent 8 times and chat 4: TurParkedConversationsAPI, the chat analytics

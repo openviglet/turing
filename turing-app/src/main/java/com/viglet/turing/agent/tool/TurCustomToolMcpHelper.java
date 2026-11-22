@@ -15,8 +15,9 @@ import java.util.Set;
 import org.springframework.ai.tool.ToolCallback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 
 import lombok.extern.slf4j.Slf4j;

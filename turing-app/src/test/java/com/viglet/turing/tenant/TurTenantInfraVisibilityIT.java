@@ -23,15 +23,15 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 /**
  * T275 / §XIV.5.1 — proves the shared-infra visibility rule on
- * {@code mcp_server} (representative of all six BYO-infra tables): a tenant sees
+ * {@code llm_mcp_server} (representative of all six BYO-infra tables): a tenant sees
  * its <em>own</em> instances plus the platform {@code null}-tenant global pool,
  * but never another tenant's private instances.
  *

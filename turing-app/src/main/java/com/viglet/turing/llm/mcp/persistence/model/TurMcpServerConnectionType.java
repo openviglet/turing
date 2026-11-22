@@ -1,4 +1,4 @@
-package com.viglet.turing.mcp.persistence.model;
+package com.viglet.turing.llm.mcp.persistence.model;
 
 public enum TurMcpServerConnectionType {
     HTTP,

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.llm.nativeapi.voice.TurVoiceTranslationService;
-import com.viglet.turing.mcp.server.TurMcpRagToolService;
+import com.viglet.turing.rag.mcp.TurMcpRagToolService;
 import com.viglet.turing.llm.TurLlmSummaryService;
 
 import lombok.extern.slf4j.Slf4j;

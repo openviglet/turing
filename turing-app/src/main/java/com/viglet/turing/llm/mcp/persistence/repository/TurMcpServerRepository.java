@@ -1,4 +1,4 @@
-package com.viglet.turing.mcp.persistence.repository;
+package com.viglet.turing.llm.mcp.persistence.repository;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 
 public interface TurMcpServerRepository extends JpaRepository<TurMcpServer, String> {
 

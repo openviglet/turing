@@ -16,7 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.persona.persistence.model.TurPersonaLanguageStyle;
 import com.viglet.turing.persona.persistence.model.TurPersonaTone;

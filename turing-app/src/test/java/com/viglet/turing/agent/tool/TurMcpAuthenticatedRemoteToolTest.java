@@ -38,10 +38,11 @@ import org.mockito.quality.Strictness;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import com.viglet.turing.mcp.domain.TurMcpServerDomain;
-import com.viglet.turing.mcp.domain.TurMcpServerRepositoryPort;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerTransportType;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerDomain;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerRepositoryPort;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerTransportType;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

@@ -14,16 +14,16 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.mcp.persistence.adapter;
+package com.viglet.turing.llm.mcp.persistence.adapter;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.mcp.domain.TurMcpServerDomain;
-import com.viglet.turing.mcp.domain.TurMcpServerRepositoryPort;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerDomain;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerRepositoryPort;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 
 /**
  * Infrastructure adapter implementing {@link TurMcpServerRepositoryPort} on

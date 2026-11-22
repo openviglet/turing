@@ -26,12 +26,12 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.turing.agent.clienttool.TurClientToolService;
 import com.viglet.turing.agent.flow.ChatFlowNode;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.TurPersonaBrandContextProvider;
 import com.viglet.turing.agent.skill.activation.TurRunSkillToolCallback;
 import com.viglet.turing.agent.skill.activation.TurSkillRunnerService;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
-import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.tool.TurNativeToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.agent.tool.TurToolPreFilterService;

@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.mcp.server;
+package com.viglet.turing.rag.mcp;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

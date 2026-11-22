@@ -14,26 +14,27 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.mcp.persistence.adapter;
+package com.viglet.turing.llm.mcp.domain;
 
 import java.util.List;
-
-import org.mapstruct.Mapper;
-
-import com.viglet.turing.mcp.domain.TurMcpServerDomain;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import java.util.Optional;
 
 /**
- * MapStruct mapper for the JPA {@link TurMcpServer} entity to the
- * {@link TurMcpServerDomain} aggregate.
+ * Domain-side port for retrieving {@link TurMcpServerDomain} aggregates.
+ * Read-only <b>by design, permanently</b> — writes stay on the JPA repository
+ * ({@code @Transactional} + {@code LEFT JOIN FETCH}, per T488); ports will not
+ * grow {@code save} / {@code delete}. See
+ * {@code docs/adr/0001-domain-layer-bounded-completion.md}.
  *
  * @author Alexandre Oliveira
  * @since 2026.2.6
  */
-@Mapper(componentModel = "spring")
-public interface TurMcpServerDomainMapper {
+public interface TurMcpServerRepositoryPort {
 
-    TurMcpServerDomain toDomain(TurMcpServer entity);
+    Optional<TurMcpServerDomain> findById(String id);
 
-    List<TurMcpServerDomain> toDomainList(List<TurMcpServer> entities);
+    List<TurMcpServerDomain> findAll();
+
+    /** Return only the enabled MCP servers — useful for runtime selection. */
+    List<TurMcpServerDomain> findAllEnabled();
 }

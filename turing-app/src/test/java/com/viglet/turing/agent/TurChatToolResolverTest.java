@@ -25,9 +25,9 @@ import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.metadata.DefaultToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
-import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 
 /**
  * Tests for T424 / §XXI part (b) — trigger-boost of attached MCP tools in

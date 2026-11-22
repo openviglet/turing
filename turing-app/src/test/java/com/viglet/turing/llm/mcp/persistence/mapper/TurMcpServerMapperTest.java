@@ -1,4 +1,4 @@
-package com.viglet.turing.mcp.persistence.mapper;
+package com.viglet.turing.llm.mcp.persistence.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,10 +10,10 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.llm.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerType;
 
 /**
  * Tests for TurMcpServerMapperImpl.

@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0.
  */
-package com.viglet.turing.mcp.persistence.adapter;
+package com.viglet.turing.llm.mcp.persistence.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -18,11 +18,11 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.viglet.turing.mcp.domain.TurMcpServerDomain;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerType;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.domain.TurMcpServerDomain;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerType;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 
 /** Unit tests for {@link TurMcpServerRepositoryAdapter}. */
 @ExtendWith(MockitoExtension.class)

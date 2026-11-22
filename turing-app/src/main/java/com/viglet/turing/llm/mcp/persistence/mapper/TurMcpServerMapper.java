@@ -1,7 +1,7 @@
-package com.viglet.turing.mcp.persistence.mapper;
+package com.viglet.turing.llm.mcp.persistence.mapper;
 
-import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

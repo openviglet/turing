@@ -19,7 +19,7 @@ import com.viglet.turing.llm.domain.TurLLMInstanceDomain;
 import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.tool.TurDslToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;

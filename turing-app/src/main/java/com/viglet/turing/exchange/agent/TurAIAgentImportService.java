@@ -35,7 +35,7 @@ import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.agent.persistence.model.intent.TurIntent;
 import com.viglet.turing.agent.persistence.model.intent.TurIntentAction;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
@@ -46,7 +46,7 @@ import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRe
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 

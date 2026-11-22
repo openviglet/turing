@@ -22,10 +22,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
-import com.viglet.turing.mcp.persistence.mapper.TurMcpServerMapperImpl;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.llm.mcp.persistence.mapper.TurMcpServerMapperImpl;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.shared.exception.TurConflictException;
 import com.viglet.turing.system.security.TurSecretCryptoService;

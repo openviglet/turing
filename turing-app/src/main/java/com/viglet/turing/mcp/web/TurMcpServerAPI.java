@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.mcp.persistence.dto.TurMcpServerDto;
-import com.viglet.turing.mcp.persistence.mapper.TurMcpServerMapper;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.dto.TurMcpServerDto;
+import com.viglet.turing.llm.mcp.persistence.mapper.TurMcpServerMapper;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.system.security.TurSecretCryptoService;

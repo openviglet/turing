@@ -34,7 +34,7 @@ import com.viglet.turing.agent.persistence.mapper.TurAIAgentMapper;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.sn.api.TurSNSiteGenAis;
 
 /**

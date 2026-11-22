@@ -38,7 +38,7 @@ import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRe
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.agent.persistence.repository.intent.TurIntentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceRepository;
 import com.viglet.turing.tenant.TurInfraTenantScope;
@@ -167,8 +167,8 @@ class TurAIAgentImportServicePersonaTest {
         when(storeRepository.findById("store-exported")).thenReturn(Optional.empty());
         when(storeRepository.findByTitleIgnoreCase("Examples")).thenReturn(Optional.of(localStore));
         when(storeRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        com.viglet.turing.mcp.persistence.model.TurMcpServer localMcp =
-                new com.viglet.turing.mcp.persistence.model.TurMcpServer();
+        com.viglet.turing.llm.mcp.persistence.model.TurMcpServer localMcp =
+                new com.viglet.turing.llm.mcp.persistence.model.TurMcpServer();
         localMcp.setId("mcp-local");
         when(mcpServerRepository.findById("mcp-exported")).thenReturn(Optional.empty());
         when(mcpServerRepository.findByTitleIgnoreCase("Brand")).thenReturn(Optional.of(localMcp));
@@ -178,8 +178,8 @@ class TurAIAgentImportServicePersonaTest {
                 new com.viglet.turing.llm.persistence.model.store.TurStoreInstance();
         bundledStore.setId("store-exported");
         bundledStore.setTitle("Examples");
-        com.viglet.turing.mcp.persistence.model.TurMcpServer bundledMcp =
-                new com.viglet.turing.mcp.persistence.model.TurMcpServer();
+        com.viglet.turing.llm.mcp.persistence.model.TurMcpServer bundledMcp =
+                new com.viglet.turing.llm.mcp.persistence.model.TurMcpServer();
         bundledMcp.setId("mcp-exported");
         bundledMcp.setTitle("Brand");
 

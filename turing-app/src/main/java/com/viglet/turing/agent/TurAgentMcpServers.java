@@ -15,8 +15,8 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 
 /**
  * T1315 — the MCP servers an agent names. The agent holds them as ids (the

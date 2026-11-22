@@ -13,7 +13,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.authoring.TurAiAuthoringService;
 import com.viglet.turing.persona.persistence.dto.TurPersonaDto;
 import com.viglet.turing.persona.persistence.mapper.TurPersonaMapper;

@@ -1,7 +1,7 @@
-package com.viglet.turing.mcp.persistence.dto;
+package com.viglet.turing.llm.mcp.persistence.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -26,7 +26,7 @@ import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.agent.persistence.repository.customtool.TurCustomToolRepository;
 import com.viglet.turing.llm.persistence.repository.embedding.TurEmbeddingModelRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
-import com.viglet.turing.mcp.persistence.repository.TurMcpServerRepository;
+import com.viglet.turing.llm.mcp.persistence.repository.TurMcpServerRepository;
 import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.shared.exception.TurConflictException;
 import com.viglet.turing.sn.api.TurSNSiteGenAis;

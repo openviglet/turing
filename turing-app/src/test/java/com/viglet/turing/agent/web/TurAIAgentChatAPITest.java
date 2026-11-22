@@ -26,7 +26,7 @@ import com.viglet.turing.llm.domain.TurLLMInstanceRepositoryPort;
 import com.viglet.turing.agent.TurAgentChatRequest;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProvider;
 import com.viglet.turing.llm.provider.llm.TurGenAiLlmProviderFactory;
-import com.viglet.turing.agent.tool.TurMcpToolCallbackService;
+import com.viglet.turing.llm.mcp.TurMcpToolCallbackService;
 import com.viglet.turing.agent.tool.TurNativeToolService;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;

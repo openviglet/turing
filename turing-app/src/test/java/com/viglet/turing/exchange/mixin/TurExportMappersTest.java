@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.llm.persistence.model.embedding.TurEmbeddingModel;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.llm.persistence.model.store.TurStoreInstance;
 

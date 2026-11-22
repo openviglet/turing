@@ -25,8 +25,8 @@ import org.springframework.util.StringUtils;
 import com.viglet.turing.llm.nativeapi.TurNativeCapability;
 import com.viglet.turing.llm.nativeapi.TurNativeCapabilityService.EnabledCapability;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
-import com.viglet.turing.mcp.persistence.model.TurMcpServer;
-import com.viglet.turing.mcp.persistence.model.TurMcpServerConnectionType;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServer;
+import com.viglet.turing.llm.mcp.persistence.model.TurMcpServerConnectionType;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
