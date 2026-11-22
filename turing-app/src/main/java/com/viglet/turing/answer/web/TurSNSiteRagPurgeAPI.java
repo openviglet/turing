@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viglet.turing.sn.web.console;
+package com.viglet.turing.answer.web;
 
 import java.util.List;
 

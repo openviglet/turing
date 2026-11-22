@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.web.genai;
+package com.viglet.turing.agent.web;
 
 import java.util.List;
 

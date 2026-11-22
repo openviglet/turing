@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.web.genai;
+package com.viglet.turing.rag.web;
 
 import java.util.List;
 import java.util.Map;
