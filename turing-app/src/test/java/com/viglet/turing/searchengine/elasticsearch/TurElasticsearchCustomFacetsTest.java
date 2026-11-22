@@ -25,8 +25,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 
@@ -85,18 +84,17 @@ class TurElasticsearchCustomFacetsTest {
 
     @Test
     void theSearchRequestAsksForTheSitesCustomFacets() throws Exception {
-        TurSNSites siteRepository = mock(TurSNSites.class);
+        TurSESiteSearchConfig siteSearchConfig = mock(TurSESiteSearchConfig.class);
         TurLuceneCustomFacets customFacets = mock(TurLuceneCustomFacets.class);
         ElasticsearchClient client = mock(ElasticsearchClient.class);
         TurSNSite site = new TurSNSite();
         site.setName("jobs");
         site.setFacet(1);
-        when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
+        when(siteSearchConfig.siteSettings("jobs")).thenReturn(Optional.of(TurLuceneSpiFixtures.settings(site)));
         when(customFacets.facets(site.getId(), Locale.US)).thenReturn(List.of(SALARY));
         ArgumentCaptor<SearchRequest> request = ArgumentCaptor.forClass(SearchRequest.class);
         when(client.search(request.capture(), any(Type.class))).thenThrow(new IOException("stop here"));
-        TurElasticsearch engine = new TurElasticsearch(siteRepository, mock(TurSNSiteFieldExts.class),
-                mock(TurSESiteSearchConfig.class), customFacets);
+        TurElasticsearch engine = new TurElasticsearch(siteSearchConfig, customFacets);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ("*");
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),

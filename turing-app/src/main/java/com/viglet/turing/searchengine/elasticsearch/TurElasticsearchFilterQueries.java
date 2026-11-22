@@ -33,9 +33,8 @@ import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
 import com.viglet.turing.searchengine.TurSEDateMath;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
 import com.viglet.turing.searchengine.facet.TurSNFilterExclusion;
 
@@ -87,8 +86,8 @@ final class TurElasticsearchFilterQueries {
      * @param customFacet  resolves a {@code facet, label} pair to its item's
      *                     filter; empty when the name is no custom facet
      */
-    static Optional<Query> build(TurSNSite site, TurSNFilterParams params,
-            Map<String, TurSNSiteFieldExt> fieldsByName,
+    static Optional<Query> build(TurSNSiteFacetFieldEnum siteItemType, TurSNFilterParams params,
+            Map<String, TurSESearchField> fieldsByName,
             BiFunction<String, String, Optional<TurLuceneCustomFacets.ItemFilter>> customFacet, Instant now) {
         if (params == null) {
             return Optional.empty();
@@ -99,7 +98,7 @@ final class TurElasticsearchFilterQueries {
                 .map(exclusion -> valueQuery(exclusion.field(), fieldsByName.get(exclusion.field()),
                         exclusion.value(), customFacet, now))
                 .toList();
-        Optional<Query> selections = selections(site, params, fieldsByName, customFacet, now);
+        Optional<Query> selections = selections(siteItemType, params, fieldsByName, customFacet, now);
         if (exclusions.isEmpty()) {
             return selections;
         }
@@ -109,8 +108,8 @@ final class TurElasticsearchFilterQueries {
         })));
     }
 
-    private static Optional<Query> selections(TurSNSite site, TurSNFilterParams params,
-            Map<String, TurSNSiteFieldExt> fieldsByName,
+    private static Optional<Query> selections(TurSNSiteFacetFieldEnum siteItemType, TurSNFilterParams params,
+            Map<String, TurSESearchField> fieldsByName,
             BiFunction<String, String, Optional<TurLuceneCustomFacets.ItemFilter>> customFacet, Instant now) {
         TurSNSiteFacetFieldEnum defaultType = params.getOperator() == TurSNFilterQueryOperator.OR
                 ? TurSNSiteFacetFieldEnum.OR
@@ -125,9 +124,9 @@ final class TurElasticsearchFilterQueries {
         List<Query> intersected = new ArrayList<>();
         List<Query> united = new ArrayList<>();
         for (Group group : groups.values()) {
-            TurSNSiteFieldExt ext = fieldsByName.get(group.field());
+            TurSESearchField ext = fieldsByName.get(group.field());
             TurSNSiteFacetFieldEnum itemType = requestedItemType(params.getItemOperator())
-                    .orElseGet(() -> effectiveItemType(ext, site));
+                    .orElseGet(() -> effectiveItemType(ext, siteItemType));
             List<Query> values = group.values().stream()
                     .map(value -> valueQuery(group.field(), ext, value, customFacet, now))
                     .toList();
@@ -180,17 +179,16 @@ final class TurElasticsearchFilterQueries {
     }
 
     /** Field-level {@code facetItemType} wins over the site default; DEFAULT/null is AND. */
-    private static TurSNSiteFacetFieldEnum effectiveItemType(TurSNSiteFieldExt ext, TurSNSite site) {
-        TurSNSiteFacetFieldEnum fieldType = ext != null ? ext.getFacetItemType() : null;
+    private static TurSNSiteFacetFieldEnum effectiveItemType(TurSESearchField ext, TurSNSiteFacetFieldEnum siteType) {
+        TurSNSiteFacetFieldEnum fieldType = ext != null ? ext.facetItemType() : null;
         if (fieldType != null && fieldType != TurSNSiteFacetFieldEnum.DEFAULT) {
             return fieldType;
         }
-        TurSNSiteFacetFieldEnum siteType = site == null ? null : site.getFacetItemType();
         return siteType == null || siteType == TurSNSiteFacetFieldEnum.DEFAULT ? TurSNSiteFacetFieldEnum.AND
                 : siteType;
     }
 
-    private static Query valueQuery(String field, TurSNSiteFieldExt ext, String value,
+    private static Query valueQuery(String field, TurSESearchField ext, String value,
             BiFunction<String, String, Optional<TurLuceneCustomFacets.ItemFilter>> customFacet, Instant now) {
         if (ext == null) {
             Optional<TurLuceneCustomFacets.ItemFilter> item = customFacet.apply(field, value);
@@ -198,7 +196,7 @@ final class TurElasticsearchFilterQueries {
                 return itemQuery(item.get(), now);
             }
         }
-        return valueQuery(field, ext == null ? null : ext.getType(), value, now);
+        return valueQuery(field, ext == null ? null : ext.type(), value, now);
     }
 
     /**

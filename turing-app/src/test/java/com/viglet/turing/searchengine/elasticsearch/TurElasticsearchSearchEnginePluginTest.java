@@ -150,7 +150,7 @@ class TurElasticsearchSearchEnginePluginTest {
         boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
 
         assertTrue(result);
-        verify(turElasticsearch).indexing(instance, site, attrs);
+        verify(turElasticsearch).indexing(instance, site.getName(), attrs);
     }
 
     @Test

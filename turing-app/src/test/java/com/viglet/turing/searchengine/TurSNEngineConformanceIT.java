@@ -153,8 +153,6 @@ class TurSNEngineConformanceIT {
     private TurElasticsearchInstance esInstance;
     private TurLuceneQueryBuilder luceneQueryBuilder;
     private List<TurSNSiteFieldExt> catalogFields;
-    private TurSNSiteFieldExts catalogFieldRepository;
-    private TurSNSites catalogSiteRepository;
     private TurSESiteSearchConfig catalogSortRepository;
     private IndexSearcher luceneSearcher;
     private DirectoryReader luceneReader;
@@ -210,7 +208,6 @@ class TurSNEngineConformanceIT {
         }).toList();
         catalogFields = fields;
         TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
-        catalogFieldRepository = fieldRepository;
         when(fieldRepository.findByTurSNSiteAndEnabled(any(), anyInt())).thenReturn(fields);
         when(fieldRepository.findAll()).thenReturn(fields);
         when(fieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
@@ -258,11 +255,13 @@ class TurSNEngineConformanceIT {
         esInstance = new TurElasticsearchInstance(client, URI.create(url).toURL(), INDEX);
         TurSNSites siteRepository = mock(TurSNSites.class);
         when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
-        catalogSiteRepository = siteRepository;
         catalogSortRepository = sortRepository;
-        elasticsearch = new TurElasticsearch(siteRepository, fieldRepository, sortRepository, customFacets);
+        // The engine reads the site through the search SPI (T1310), live so a test may flip its flags.
+        when(sortRepository.siteSettings("jobs")).thenAnswer(invocation -> Optional.of(
+                com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.settings(site)));
+        elasticsearch = new TurElasticsearch(sortRepository, customFacets);
         for (Object[] job : JOBS) {
-            elasticsearch.indexing(esInstance, site, attributes(job));
+            elasticsearch.indexing(esInstance, site.getName(), attributes(job));
         }
         client.indices().refresh(r -> r.index(INDEX));
 
@@ -455,8 +454,9 @@ class TurSNEngineConformanceIT {
         Integer sectorFacet = sector.getFacet();
         site.setFacet(1);
         sector.setFacet(1);
-        when(catalogFieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
-                .thenReturn(List.of(sector));
+        when(catalogSortRepository.facetFields(any())).thenReturn(List.of(
+                new com.viglet.turing.searchengine.spi.TurSEFacetField(sector.getName(), sector.getFacetPosition(),
+                        sector.getFacetItemType())));
         try {
             java.util.function.Function<TurSNSearchParams, List<String>> facetsOf = params -> elasticsearch
                     .retrieveElasticsearchFromSN(esInstance, new TurSNSiteSearchContext("jobs", new TurSNConfig(),
@@ -473,8 +473,7 @@ class TurSNEngineConformanceIT {
         } finally {
             site.setFacet(siteFacet);
             sector.setFacet(sectorFacet);
-            when(catalogFieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(),
-                    anyInt())).thenReturn(List.of());
+            when(catalogSortRepository.facetFields(any())).thenReturn(List.of());
         }
     }
 
@@ -603,18 +602,15 @@ class TurSNEngineConformanceIT {
             ext.setType(e.getValue());
             return ext;
         }).toList();
-        TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
-        when(fieldRepository.findByTurSNSiteAndEnabled(any(), anyInt())).thenReturn(fields);
-        when(fieldRepository.findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(any(), anyInt(), anyInt()))
-                .thenReturn(List.of());
-        TurSNSites siteRepository = mock(TurSNSites.class);
-        when(siteRepository.findByNameIgnoreCase("phrase")).thenReturn(Optional.of(phraseSite));
         TurSESiteSearchConfig sortRepository = mock(TurSESiteSearchConfig.class);
-        TurElasticsearch engine = new TurElasticsearch(siteRepository, fieldRepository, sortRepository,
-                mock(TurLuceneCustomFacets.class));
-        engine.indexing(instance, phraseSite, Map.of(TurSNFieldName.ID, "guide", "title",
+        when(sortRepository.siteSettings("phrase")).thenReturn(Optional.of(
+                com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.settings(phraseSite)));
+        when(sortRepository.enabledFields(any()))
+                .thenReturn(com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.fields(fields));
+        TurElasticsearch engine = new TurElasticsearch(sortRepository, mock(TurLuceneCustomFacets.class));
+        engine.indexing(instance, phraseSite.getName(), Map.of(TurSNFieldName.ID, "guide", "title",
                 "How to choose a waterproof jacket", "text", "Ratings, breathability and fit."));
-        engine.indexing(instance, phraseSite, Map.of(TurSNFieldName.ID, "shell", "title",
+        engine.indexing(instance, phraseSite.getName(), Map.of(TurSNFieldName.ID, "shell", "title",
                 "Jacket shell, waterproof and light", "text",
                 "A waterproof jacket. This waterproof jacket is a jacket that stays waterproof."));
         client.indices().refresh(r -> r.index(index));
@@ -698,8 +694,7 @@ class TurSNEngineConformanceIT {
 
         var esRanking = new com.viglet.turing.searchengine.elasticsearch.TurElasticsearchRankingExpressions(
                 siteSearchConfig);
-        TurElasticsearch rankedEs = new TurElasticsearch(catalogSiteRepository, catalogFieldRepository,
-                catalogSortRepository, mock(TurLuceneCustomFacets.class), esRanking);
+        TurElasticsearch rankedEs = new TurElasticsearch(catalogSortRepository, mock(TurLuceneCustomFacets.class), esRanking);
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("jobs", new TurSNConfig(),
                 seParams, java.util.Locale.US, URI.create("http://localhost/search"));
         List<String> es = rankedEs.retrieveElasticsearchFromSN(esInstance, context)

@@ -236,7 +236,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         return turElasticsearchInstanceProcess
                 .initElasticsearchInstance(turSNSite.getName(), locale)
                 .map(esInstance -> {
-                    turElasticsearch.indexing(esInstance, turSNSite, attributes);
+                    turElasticsearch.indexing(esInstance, turSNSite.getName(), attributes);
                     return true;
                 }).orElse(false);
     }
@@ -570,7 +570,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
                 .map(instance -> searchSimilarDocuments(instance, like, id, rows,
                         constraints == null || siteLocale.getTurSNSite() == null ? List.of()
-                                : turElasticsearch.filters(siteLocale.getTurSNSite(), constraints)))
+                                : turElasticsearch.filters(siteLocale.getTurSNSite().getName(), constraints)))
                 .orElse(List.of());
     }
 

@@ -37,13 +37,11 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -76,28 +74,24 @@ public class TurElasticsearch {
 
     private static final String FACET_AGG_PREFIX = "facet_";
 
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSESiteSearchConfig siteSearchConfig;
     private final TurLuceneCustomFacets customFacets;
     private final TurElasticsearchRankingExpressions rankingExpressions;
 
     /** Without ranking expressions: the shape before T1222. */
-    public TurElasticsearch(TurSNSites turSNSiteRepository,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSESiteSearchConfig siteSearchConfig,
+    public TurElasticsearch(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneCustomFacets customFacets) {
-        this(turSNSiteRepository, turSNSiteFieldExtRepository, siteSearchConfig, customFacets, null);
+        this(siteSearchConfig, customFacets, null);
     }
 
+    /**
+     * T1310 — the site, its fields and its sorts are read through the search SPI,
+     * never from {@code sn}'s repositories.
+     */
     @org.springframework.beans.factory.annotation.Autowired
-    public TurElasticsearch(TurSNSites turSNSiteRepository,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSESiteSearchConfig siteSearchConfig,
+    public TurElasticsearch(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneCustomFacets customFacets,
             TurElasticsearchRankingExpressions rankingExpressions) {
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.siteSearchConfig = siteSearchConfig;
         this.customFacets = customFacets;
         this.rankingExpressions = rankingExpressions;
@@ -106,24 +100,23 @@ public class TurElasticsearch {
     public Optional<TurSEResults> retrieveElasticsearchFromSN(
             TurElasticsearchInstance elasticsearchInstance,
             TurSNSiteSearchContext context) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName())
+        return siteSearchConfig.siteSettings(context.getSiteName())
                 .flatMap(turSNSite -> {
                     try {
                         TurSEParameters turSEParameters = context.getTurSEParameters();
 
                         int rows = turSEParameters.getRows() > 0 ? turSEParameters.getRows() : 10;
                         int from = getStartPosition(turSEParameters);
-                        Query query = buildQuery(turSNSite, turSEParameters);
+                        Map<String, TurSESearchField> fields = enabledFieldsByName(turSNSite.id());
+                        Query query = buildQuery(turSNSite, fields, turSEParameters);
 
                         // T1250 — the facets the request leaves out are not aggregated.
-                        List<TurSNSiteFieldExt> facetFields = turSNSiteFieldExtRepository
-                                .findByTurSNSiteAndFacetAndEnabledOrderByFacetPosition(turSNSite, 1, 1)
-                                .stream()
-                                .filter(field -> !turSEParameters.isFacetExcluded(field.getName()))
+                        List<TurSESearchField> facetFields = facetFields(turSNSite.id(), fields).stream()
+                                .filter(field -> !turSEParameters.isFacetExcluded(field.name()))
                                 .toList();
                         log.debug("ES search index={} query={} from={} size={} facetFields={}",
                                 elasticsearchInstance.getIndex(), query, from, rows,
-                                facetFields.stream().map(TurSNSiteFieldExt::getName).toList());
+                                facetFields.stream().map(TurSESearchField::name).toList());
 
                         SearchRequest.Builder searchBuilder = new SearchRequest.Builder()
                                 .index(elasticsearchInstance.getIndex())
@@ -136,7 +129,7 @@ public class TurElasticsearch {
                         List<TurLuceneCustomFacets.Facet> siteCustomFacets = customFacetsOf(turSNSite,
                                 context.getLocale(), null);
                         addCustomFacetAggregations(searchBuilder, siteCustomFacets, Instant.now());
-                        addOptionalSorting(searchBuilder, turSNSite, turSEParameters);
+                        addOptionalSorting(searchBuilder, turSNSite, fields, turSEParameters);
 
                         SearchRequest searchRequest = searchBuilder.build();
                         SearchResponse<Map<String, Object>> response = elasticsearchInstance.getClient()
@@ -165,11 +158,12 @@ public class TurElasticsearch {
             TurElasticsearchInstance elasticsearchInstance,
             TurSNSiteSearchContext context,
             String facetName) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName())
+        return siteSearchConfig.siteSettings(context.getSiteName())
                 .flatMap(turSNSite -> {
                     try {
                         TurSEParameters turSEParameters = context.getTurSEParameters();
-                        Query query = buildQuery(turSNSite, turSEParameters);
+                        Map<String, TurSESearchField> fields = enabledFieldsByName(turSNSite.id());
+                        Query query = buildQuery(turSNSite, fields, turSEParameters);
                         // T1232 - a custom facet's drill-down counts its items.
                         List<TurLuceneCustomFacets.Facet> customFacet = customFacetsOf(turSNSite,
                                 context.getLocale(), facetName);
@@ -180,9 +174,8 @@ public class TurElasticsearch {
                         String aggName = FACET_AGG_PREFIX + facetName;
 
                         // Resolve the correct ES field name (text fields need ".keyword" sub-field)
-                        String aggField = turSNSiteFieldExtRepository
-                                .findByTurSNSiteAndNameAndFacetAndEnabled(turSNSite, facetName, 1, 1)
-                                .stream().findFirst()
+                        String aggField = Optional.ofNullable(fields.get(facetName))
+                                .filter(field -> TurSEFlags.isTrue(field.facet()))
                                 .map(TurElasticsearch::getFacetAggField)
                                 .orElse(facetName);
 
@@ -242,14 +235,14 @@ public class TurElasticsearch {
     // Indexing
     // -------------------------------------------------------------------------
 
-    public void indexing(TurElasticsearchInstance instance, TurSNSite turSNSite,
+    public void indexing(TurElasticsearchInstance instance, String siteName,
             Map<String, Object> attributes) {
-        log.debug("Elasticsearch indexing site={} index={}", turSNSite.getName(), instance.getIndex());
+        log.debug("Elasticsearch indexing site={} index={}", siteName, instance.getIndex());
         String docId = Optional.ofNullable(attributes.get(TurSNFieldName.ID))
                 .map(Object::toString)
                 .orElse(null);
         if (docId == null) {
-            log.warn("Skipping Elasticsearch document with no id for site={}", turSNSite.getName());
+            log.warn("Skipping Elasticsearch document with no id for site={}", siteName);
             return;
         }
         try {
@@ -378,10 +371,12 @@ public class TurElasticsearch {
      * semantic recall's ids when it carries them. With neither, the text query
      * goes out as it always did.
      */
-    private Query buildQuery(TurSNSite turSNSite, TurSEParameters turSEParameters) {
-        Query query = withRankingExpressions(turSNSite,
-                withTitlePhraseBoost(turSNSite, turSEParameters.getQuery(), buildTextQuery(turSEParameters)));
-        List<Query> filters = filters(turSNSite, turSEParameters);
+    private Query buildQuery(TurSESiteSettings turSNSite, Map<String, TurSESearchField> fields,
+            TurSEParameters turSEParameters) {
+        Query query = withRankingExpressions(turSNSite.id(),
+                withTitlePhraseBoost(turSNSite, fields, turSEParameters.getQuery(),
+                        buildTextQuery(turSEParameters)));
+        List<Query> filters = filters(turSNSite, fields, turSEParameters);
         if (filters.isEmpty()) {
             return query;
         }
@@ -394,11 +389,18 @@ public class TurElasticsearch {
      * T1132: public so a query that is not a search, such as similar documents,
      * filters the same way.
      */
-    public List<Query> filters(TurSNSite turSNSite, TurSEParameters turSEParameters) {
+    public List<Query> filters(String siteName, TurSEParameters turSEParameters) {
+        return siteSearchConfig.siteSettings(siteName)
+                .map(site -> filters(site, enabledFieldsByName(site.id()), turSEParameters))
+                .orElseGet(List::of);
+    }
+
+    private List<Query> filters(TurSESiteSettings turSNSite, Map<String, TurSESearchField> fields,
+            TurSEParameters turSEParameters) {
         List<Query> filters = new ArrayList<>();
-        TurElasticsearchFilterQueries.build(turSNSite, turSEParameters.getTurSNFilterParams(),
-                enabledFieldsByName(turSNSite),
-                (facet, label) -> customFacets.resolveFilter(turSNSite.getId(), facet, label),
+        TurElasticsearchFilterQueries.build(turSNSite.facetItemType(), turSEParameters.getTurSNFilterParams(),
+                fields,
+                (facet, label) -> customFacets.resolveFilter(turSNSite.id(), facet, label),
                 Instant.now())
                 .ifPresent(filters::add);
         List<String> restrictIds = turSEParameters.getRestrictIds();
@@ -410,23 +412,35 @@ public class TurElasticsearch {
         // T1133 — the partition the request's API key is bound to, read by the
         // field's type like a facet selection, but never shown as one.
         if (turSEParameters.getPartition() != null) {
-            TurElasticsearchFilterQueries.build(turSNSite,
+            TurElasticsearchFilterQueries.build(turSNSite.facetItemType(),
                     com.viglet.turing.commons.sn.bean.TurSNFilterParams.builder()
                             .defaultValues(List.of(turSEParameters.getPartition().filterQuery())).build(),
-                    enabledFieldsByName(turSNSite), (facet, label) -> Optional.empty(), Instant.now())
+                    fields, (facet, label) -> Optional.empty(), Instant.now())
                     .ifPresent(filters::add);
         }
         return filters;
     }
 
-    private Map<String, TurSNSiteFieldExt> enabledFieldsByName(TurSNSite turSNSite) {
-        Map<String, TurSNSiteFieldExt> byName = new java.util.LinkedHashMap<>();
-        turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1).forEach(ext -> {
-            if (ext.getName() != null) {
-                byName.putIfAbsent(ext.getName(), ext);
+    private Map<String, TurSESearchField> enabledFieldsByName(String siteId) {
+        Map<String, TurSESearchField> byName = new java.util.LinkedHashMap<>();
+        siteSearchConfig.enabledFields(siteId).forEach(field -> {
+            if (field.name() != null) {
+                byName.putIfAbsent(field.name(), field);
             }
         });
         return byName;
+    }
+
+    /**
+     * The site's enabled facet fields in facet-position order, each with its type
+     * from the enabled fields (a terms aggregation on a text field needs its
+     * {@code .keyword} sub-field).
+     */
+    private List<TurSESearchField> facetFields(String siteId, Map<String, TurSESearchField> fields) {
+        return siteSearchConfig.facetFields(siteId).stream()
+                .map(facet -> fields.getOrDefault(facet.name(), new TurSESearchField(facet.name(), null, 1, null,
+                        facet.facetPosition(), facet.facetItemType(), null)))
+                .toList();
     }
 
     /** T1185 — what a title holding the query as a phrase adds, as on Lucene (T1177). */
@@ -439,15 +453,16 @@ public class TurElasticsearch {
      * outranks documents matching only a synonym or its words apart. A boost only,
      * for a plain phrase ({@link TurSNQueryRelaxer#isPlainPhrase}) on a TEXT title.
      */
-    Query withTitlePhraseBoost(TurSNSite turSNSite, String queryString, Query text) {
+    Query withTitlePhraseBoost(TurSESiteSettings turSNSite, Map<String, TurSESearchField> fields,
+            String queryString, Query text) {
         if (!TurSNQueryRelaxer.isPlainPhrase(queryString)) {
             return text;
         }
-        String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
-                ? turSNSite.getDefaultTitleField()
+        String titleField = StringUtils.hasText(turSNSite.defaultTitleField())
+                ? turSNSite.defaultTitleField()
                 : TurSNFieldName.TITLE;
-        TurSNSiteFieldExt ext = enabledFieldsByName(turSNSite).get(titleField);
-        if (ext == null || ext.getType() != TurSEFieldType.TEXT) {
+        TurSESearchField ext = fields.get(titleField);
+        if (ext == null || ext.type() != TurSEFieldType.TEXT) {
             return text;
         }
         String phrase = queryString.trim();
@@ -460,8 +475,8 @@ public class TurElasticsearch {
      * text query, as Lucene adds them (T1064) and Solr sends its {@code bq}: they
      * raise the score of matching documents and never change which match.
      */
-    Query withRankingExpressions(TurSNSite turSNSite, Query text) {
-        List<Query> boosts = rankingExpressions == null ? List.of() : rankingExpressions.boostQueries(turSNSite.getId());
+    Query withRankingExpressions(String siteId, Query text) {
+        List<Query> boosts = rankingExpressions == null ? List.of() : rankingExpressions.boostQueries(siteId);
         if (boosts.isEmpty()) {
             return text;
         }
@@ -501,12 +516,12 @@ public class TurElasticsearch {
     static final String CUSTOM_FACET_AGG_PREFIX = "custom_facet_";
 
     /** The site's custom facets ({@code onlyFacet} alone when set), when the site has facets on. */
-    private List<TurLuceneCustomFacets.Facet> customFacetsOf(TurSNSite turSNSite, java.util.Locale locale,
+    private List<TurLuceneCustomFacets.Facet> customFacetsOf(TurSESiteSettings turSNSite, java.util.Locale locale,
             String onlyFacet) {
-        if (customFacets == null || !TurSEFlags.isTrue(turSNSite.getFacet())) {
+        if (customFacets == null || !TurSEFlags.isTrue(turSNSite.facet())) {
             return List.of();
         }
-        return customFacets.facets(turSNSite.getId(), locale).stream()
+        return customFacets.facets(turSNSite.id(), locale).stream()
                 .filter(facet -> onlyFacet == null || onlyFacet.equals(facet.name()))
                 .toList();
     }
@@ -594,9 +609,9 @@ public class TurElasticsearch {
     }
 
     private void addFacetAggregations(SearchRequest.Builder searchBuilder,
-            List<TurSNSiteFieldExt> facetFields) {
-        for (TurSNSiteFieldExt facetField : facetFields) {
-            String fieldName = facetField.getName();
+            List<TurSESearchField> facetFields) {
+        for (TurSESearchField facetField : facetFields) {
+            String fieldName = facetField.name();
             String aggField = getFacetAggField(facetField);
             searchBuilder.aggregations(FACET_AGG_PREFIX + fieldName,
                     a -> a.terms(t -> t.field(aggField).size(100)));
@@ -609,15 +624,14 @@ public class TurElasticsearch {
      * older {@code field dir}), or the name of one of the site's custom sorts,
      * applied level by level with each level's missing placement.
      */
-    private void addOptionalSorting(SearchRequest.Builder searchBuilder, TurSNSite turSNSite,
-            TurSEParameters turSEParameters) {
+    private void addOptionalSorting(SearchRequest.Builder searchBuilder, TurSESiteSettings turSNSite,
+            Map<String, TurSESearchField> fields, TurSEParameters turSEParameters) {
         String sort = turSEParameters.getSort();
         if (!StringUtils.hasText(sort) || "relevance".equalsIgnoreCase(sort)) {
             return;
         }
-        Map<String, TurSNSiteFieldExt> fields = enabledFieldsByName(turSNSite);
         if ("newest".equalsIgnoreCase(sort) || "oldest".equalsIgnoreCase(sort)) {
-            String dateField = turSNSite.getDefaultDateField();
+            String dateField = turSNSite.defaultDateField();
             if (StringUtils.hasText(dateField)) {
                 searchBuilder.sort(sortOption(dateField, fieldType(fields, dateField),
                         "newest".equalsIgnoreCase(sort) ? SortOrder.Desc : SortOrder.Asc, null));
@@ -632,7 +646,7 @@ public class TurElasticsearch {
                     "desc".equalsIgnoreCase(kv.get().getValue()) ? SortOrder.Desc : SortOrder.Asc, null));
             return;
         }
-        Optional<java.util.List<TurSECustomSortItem>> customSort = siteSearchConfig.customSort(turSNSite.getId(),
+        Optional<java.util.List<TurSECustomSortItem>> customSort = siteSearchConfig.customSort(turSNSite.id(),
                 sort);
         if (customSort.isPresent()) {
             customSort.get().forEach(item -> searchBuilder.sort(sortOption(item.fieldName(),
@@ -644,9 +658,9 @@ public class TurElasticsearch {
         addSorting(searchBuilder, sort);
     }
 
-    private static TurSEFieldType fieldType(Map<String, TurSNSiteFieldExt> fields, String name) {
-        TurSNSiteFieldExt ext = fields.get(name);
-        return ext == null ? null : ext.getType();
+    private static TurSEFieldType fieldType(Map<String, TurSESearchField> fields, String name) {
+        TurSESearchField ext = fields.get(name);
+        return ext == null ? null : ext.type();
     }
 
     /**
@@ -696,7 +710,7 @@ public class TurElasticsearch {
     }
 
     private TurSEResults buildTurSEResults(@UnknownNullability SearchResponse<Map<String, Object>> response,
-            TurSEParameters turSEParameters, List<TurSNSiteFieldExt> facetFields) {
+            TurSEParameters turSEParameters, List<TurSESearchField> facetFields) {
         var total = response.hits().total();
         long numFound = total != null ? total.value() : 0L;
         int rows = turSEParameters.getRows() > 0 ? turSEParameters.getRows() : 10;
@@ -739,30 +753,30 @@ public class TurElasticsearch {
      * natively
      * and can be aggregated directly.
      */
-    private static String getFacetAggField(TurSNSiteFieldExt facetField) {
+    private static String getFacetAggField(TurSESearchField facetField) {
         // TEXT, STRING and ARRAY are all stored as "text" in ES (either via dynamic
         // mapping
         // on existing indexes, or explicit mapping with "keyword" analyzer for
         // STRING/ARRAY).
         // Both have a ".keyword" sub-field that must be used for terms aggregations.
-        TurSEFieldType type = facetField.getType();
+        TurSEFieldType type = facetField.type();
         if (type == TurSEFieldType.TEXT || type == TurSEFieldType.STRING
                 || type == TurSEFieldType.ARRAY || type == TurSEFieldType.CURRENCY) {
-            return facetField.getName() + ".keyword";
+            return facetField.name() + ".keyword";
         }
-        return facetField.getName();
+        return facetField.name();
     }
 
     private List<TurSEFacetResult> buildFacetResults(SearchResponse<Map<String, Object>> response,
-            List<TurSNSiteFieldExt> facetFields) {
+            List<TurSESearchField> facetFields) {
         List<TurSEFacetResult> facetResults = new ArrayList<>();
         Map<String, co.elastic.clients.elasticsearch._types.aggregations.Aggregate> aggregations = response
                 .aggregations();
         if (aggregations == null || facetFields.isEmpty()) {
             return facetResults;
         }
-        for (TurSNSiteFieldExt facetField : facetFields) {
-            String fieldName = facetField.getName();
+        for (TurSESearchField facetField : facetFields) {
+            String fieldName = facetField.name();
             String aggName = FACET_AGG_PREFIX + fieldName;
             var agg = aggregations.get(aggName);
             if (agg == null) {
@@ -775,12 +789,12 @@ public class TurElasticsearch {
         return facetResults;
     }
 
-    private TurSEFacetResult createFacetResult(TurSNSiteFieldExt facetField, String fieldName,
+    private TurSEFacetResult createFacetResult(TurSESearchField facetField, String fieldName,
             co.elastic.clients.elasticsearch._types.aggregations.Aggregate agg) {
         TurSEFacetResult facetResult = new TurSEFacetResult();
         facetResult.setFacet(fieldName);
-        facetResult.setFacetPosition(facetField.getFacetPosition() != null
-                ? facetField.getFacetPosition()
+        facetResult.setFacetPosition(facetField.facetPosition() != null
+                ? facetField.facetPosition()
                 : 1);
 
         if (agg.isSterms()) {

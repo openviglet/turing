@@ -29,9 +29,8 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.searchengine.lucene.TurLuceneCustomFacets;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
 import com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery;
 
@@ -49,20 +48,21 @@ class TurElasticsearchFilterQueriesTest {
 
     private static final Instant NOW = Instant.parse("2026-10-23T12:00:00Z");
 
-    private static TurSNSiteFieldExt field(String name, TurSEFieldType type) {
-        TurSNSiteFieldExt ext = new TurSNSiteFieldExt();
-        ext.setName(name);
-        ext.setType(type);
-        return ext;
+    private static TurSESearchField field(String name, TurSEFieldType type) {
+        return field(name, type, null);
     }
 
-    private static final Map<String, TurSNSiteFieldExt> FIELDS = Map.of(
+    private static TurSESearchField field(String name, TurSEFieldType type, TurSNSiteFacetFieldEnum itemType) {
+        return new TurSESearchField(name, type, 0, 0, null, itemType, null);
+    }
+
+    private static final Map<String, TurSESearchField> FIELDS = Map.of(
             "sector", field("sector", TurSEFieldType.STRING),
             "salary", field("salary", TurSEFieldType.INT),
             "publishedAt", field("publishedAt", TurSEFieldType.DATE));
 
     private static Optional<Query> build(TurSNFilterParams params) {
-        return TurElasticsearchFilterQueries.build(new TurSNSite(), params, FIELDS,
+        return TurElasticsearchFilterQueries.build(null, params, FIELDS,
                 (facet, label) -> Optional.empty(), NOW);
     }
 
@@ -98,10 +98,9 @@ class TurElasticsearchFilterQueriesTest {
 
     @Test
     void aMultiSelectFieldUnionsItsValuesWithoutAnOperator() {
-        TurSNSiteFieldExt sector = field("sector", TurSEFieldType.STRING);
-        sector.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+        TurSESearchField sector = field("sector", TurSEFieldType.STRING, TurSNSiteFacetFieldEnum.OR);
 
-        Query query = TurElasticsearchFilterQueries.build(new TurSNSite(),
+        Query query = TurElasticsearchFilterQueries.build(null,
                 TurSNFilterParams.builder().defaultValues(List.of("sector:educacao", "sector:saude")).build(),
                 Map.of("sector", sector), (facet, label) -> Optional.empty(), NOW).orElseThrow();
 
@@ -146,7 +145,7 @@ class TurElasticsearchFilterQueriesTest {
 
     @Test
     void aCustomFacetSelectionStandsForItsItemRange() {
-        Query query = TurElasticsearchFilterQueries.build(new TurSNSite(),
+        Query query = TurElasticsearchFilterQueries.build(null,
                 TurSNFilterParams.builder().defaultValues(List.of("postedSince:Last 7 days")).build(), FIELDS,
                 (facet, label) -> "postedSince".equals(facet) && "Last 7 days".equals(label)
                         ? Optional.of(new TurLuceneCustomFacets.ItemFilter("publishedAt", TurSEFieldType.DATE,
@@ -164,7 +163,7 @@ class TurElasticsearchFilterQueriesTest {
                 "[NOW/DAY TO NOW/DAY+7DAYS]", List.of(
                         new com.viglet.turing.searchengine.facet.TurSECustomFacetSpan.Clause("startsAt", "[* TO NOW/DAY+7DAYS]"),
                         new com.viglet.turing.searchengine.facet.TurSECustomFacetSpan.Clause("endsAt", "[NOW/DAY TO *]")));
-        Query query = TurElasticsearchFilterQueries.build(new TurSNSite(),
+        Query query = TurElasticsearchFilterQueries.build(null,
                 TurSNFilterParams.builder().defaultValues(List.of("agenda:Next 7 days")).build(), FIELDS,
                 (facet, label) -> Optional.of(new TurLuceneCustomFacets.ItemFilter("startsAt", TurSEFieldType.DATE,
                         "[NOW/DAY TO NOW/DAY+7DAYS]", span)),
