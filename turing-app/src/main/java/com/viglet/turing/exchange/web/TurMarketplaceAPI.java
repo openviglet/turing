@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web.marketplace;
+package com.viglet.turing.exchange.web;
 
 import com.viglet.turing.exchange.TurImportExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;

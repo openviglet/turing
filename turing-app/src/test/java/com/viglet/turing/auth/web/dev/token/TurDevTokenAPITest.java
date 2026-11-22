@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web.dev.token;
+package com.viglet.turing.auth.web.dev.token;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;

@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.system.web.dev.token;
+package com.viglet.turing.auth.web.dev.token;
 
 import java.util.List;
 import java.util.UUID;

@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.system.web.batch;
+package com.viglet.turing.batch.web;
 
 import java.time.Instant;
 import java.util.List;

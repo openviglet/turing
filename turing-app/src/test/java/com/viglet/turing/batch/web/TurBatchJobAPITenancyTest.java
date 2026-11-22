@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web.batch;
+package com.viglet.turing.batch.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

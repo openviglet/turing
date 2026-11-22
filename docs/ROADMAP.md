@@ -32,10 +32,10 @@
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
 - 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 67 times, mostly for site, locale, field and facet entities. → §CLXXXIX.6
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
-- 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
+- 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l ⏳) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
 - 📋 **T1322e** (deps: T1315 ✅, T1322j ✅, T1322m) **agent and persona import each other 34 and 14 times, a cycle module verification would refuse** — Persona sits below agent, so the persona code that runs or resolves an agent moves into agent. → §CLXXXIX.37
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 15 sn classes of the GenAI surface still import agent, rag, answer or persona: genai controllers, indexers, content fit, hybrid ranking, imports. → §CLXXXIX.40
-- 📋 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — Ordering the infrastructure layer as system, tenant, auth and moving feature controllers and counters behind SPIs leaves it importing only downward. → §CLXXXIX.45
+- ⏳ **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system still imports tenant, storage, sn and transcription, and tenant and auth import feature modules; the tenant key, async context, counters and teardown need SPIs. → §CLXXXIX.45
 - 📋 **T1322m** (deps: T1315 ✅) **transcription sits on the top layer, so persona's audio derivation cannot use it, and it reads kb's thesaurus directly** — Transcription is a provider layer: placed beside llm, with its kb keyword read behind an SPI, every AI module may use it. → §CLXXXIX.47
 
 ## Done when — T1184
@@ -56,6 +56,12 @@
 - **sn imports no agent, rag, persona, answer or eval type** Counting imports between
   top-level packages finds none from sn to agent, rag, persona, answer or eval; after
   the entity-graph slice, 22 sn classes still import one of them directly.
+
+## Done when — T1322l
+
+- **system imports only shared, tenant only system and shared** A grep of the system and
+  tenant packages finds no import of another module beyond those named, and auth imports
+  only system, tenant and shared.
 
 ## Non-goals (do NOT add as tasks)
 

@@ -1829,3 +1829,4 @@
 - **T1310u** — Lucene's query builder, result processor and TurLucene read a site's enabled fields, settings and cores through the search SPI and no longer import sn; sort types come from the site's own fields.
 - **T1322o** — The answer, research and RAG purge controllers live in answer, the catalog copilot controller in rag and the user memory controller in agent, REST paths unchanged.
 - **T1322k** — system imports no agent type: the chat analytics and parked-conversation controllers live in agent, the execution-mode enum in system, and Docker status and RAG readiness reach system through SPIs.
+- **T1322l (feature controllers out of system)** — The dev-token and integration controllers live in auth, batch jobs in batch, marketplace in exchange and the page controllers in storage, REST paths unchanged.

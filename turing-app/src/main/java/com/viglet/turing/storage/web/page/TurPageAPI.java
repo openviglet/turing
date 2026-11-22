@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.system.web.page;
+package com.viglet.turing.storage.web.page;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.storage.asset.TurAssetItem;

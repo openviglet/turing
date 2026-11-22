@@ -14,7 +14,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.viglet.turing.system.web.integration;
+package com.viglet.turing.auth.web.integration;
 
 import com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository;
 

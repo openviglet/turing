@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web.integration;
+package com.viglet.turing.auth.web.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
