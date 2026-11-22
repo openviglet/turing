@@ -1831,3 +1831,4 @@
 - **T1322k** — system imports no agent type: the chat analytics and parked-conversation controllers live in agent, the execution-mode enum in system, and Docker status and RAG readiness reach system through SPIs.
 - **T1322l (feature controllers out of system)** — The dev-token and integration controllers live in auth, batch jobs in batch, marketplace in exchange and the page controllers in storage, REST paths unchanged.
 - **T1310v** — The Lucene plugin reads a site's MoreLikeThis fields, mlt flag and autocomplete site id through the search SPI (new mltFields) and no longer injects sn's site or field repositories.
+- **T1322p** — The anonymous site persona list, content-fit endpoint and their audience-persona resolver moved from sn.web.genai to persona.web; REST paths are unchanged.
