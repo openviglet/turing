@@ -53,7 +53,7 @@ class TurLuceneStoredDocumentsTest {
 
         TurLuceneInstanceProcess instanceProcess = mock(TurLuceneInstanceProcess.class);
         when(instanceProcess.initLuceneInstance(any(TurSNSiteLocale.class))).thenReturn(Optional.of(instance));
-        plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, null, null, null, null, null);
+        plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, null, null, null, null);
     }
 
     @AfterEach

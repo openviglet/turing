@@ -50,9 +50,8 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**
@@ -69,7 +68,7 @@ class TurLuceneSearchEnginePluginTest {
     @Mock
     private TurLuceneInstanceProcess turLuceneInstanceProcess;
     @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     @InjectMocks
     private TurLuceneSearchEnginePlugin plugin;
@@ -574,14 +573,10 @@ class TurLuceneSearchEnginePluginTest {
         writer.commit();
         TurLuceneInstance instance = new TurLuceneInstance(writer, dir, Path.of("mem-index"), new FacetsConfig());
         TurSNSite site = new TurSNSite();
+        site.setId("site-mlt");
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setTurSNSite(site);
-        List<TurSNSiteFieldExt> mltFields = List.of("description", "title").stream().map(name -> {
-            TurSNSiteFieldExt field = new TurSNSiteFieldExt();
-            field.setName(name);
-            return field;
-        }).toList();
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1)).thenReturn(mltFields);
+        when(siteSearchConfig.mltFields("site-mlt")).thenReturn(List.of("description", "title"));
         when(turLuceneInstanceProcess.initLuceneInstance(siteLocale)).thenReturn(Optional.of(instance));
 
         var similar = plugin.getSimilarDocuments(siteLocale, "probe-a", 5);

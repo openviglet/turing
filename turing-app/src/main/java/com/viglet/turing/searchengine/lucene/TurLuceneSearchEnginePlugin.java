@@ -24,10 +24,8 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -75,23 +73,20 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     private final TurLucene turLucene;
     private final TurLuceneInstanceProcess turLuceneInstanceProcess;
     private final TurLuceneQueryBuilder turLuceneQueryBuilder;
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final com.viglet.turing.searchengine.lucene.TurLuceneStorageSync storageSync;
     private final TurLuceneSynonymRegistry synonymRegistry;
 
     public TurLuceneSearchEnginePlugin(TurLucene turLucene,
             TurLuceneInstanceProcess turLuceneInstanceProcess,
             TurLuceneQueryBuilder turLuceneQueryBuilder,
-            TurSNSites turSNSiteRepository,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository,
+            TurSESiteSearchConfig siteSearchConfig,
             com.viglet.turing.searchengine.lucene.TurLuceneStorageSync storageSync,
             TurLuceneSynonymRegistry synonymRegistry) {
         this.turLucene = turLucene;
         this.turLuceneInstanceProcess = turLuceneInstanceProcess;
         this.turLuceneQueryBuilder = turLuceneQueryBuilder;
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.storageSync = storageSync;
         this.synonymRegistry = synonymRegistry;
     }
@@ -130,13 +125,15 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             return results;
         }
         try {
-            TurSNSite site = turSNSiteRepository.findByName(context.getSiteName()).orElse(null);
-            String[] mltFields = resolveMltFields(site);
-            if (site == null || !TurSEFlags.isTrue(site.getMlt())
-                    || turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1).isEmpty()) {
+            var site = siteSearchConfig.siteSettings(context.getSiteName()).orElse(null);
+            if (site == null || !TurSEFlags.isTrue(site.mlt())) {
                 return results;
             }
-            results.setSimilarResults(collectMoreLikeThis(instance, docs, mltFields));
+            List<String> configured = siteSearchConfig.mltFields(site.id());
+            if (configured.isEmpty()) {
+                return results;
+            }
+            results.setSimilarResults(collectMoreLikeThis(instance, docs, configured.toArray(new String[0])));
         } catch (Exception e) {
             log.warn("[Lucene] MoreLikeThis enrichment for site '{}' failed: {}",
                     context.getSiteName(), e.getMessage());
@@ -494,11 +491,11 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             return List.of();
         }
         var optInstance = turLuceneInstanceProcess.initLuceneInstance(siteName, locale);
-        var optSite = turSNSiteRepository.findByNameIgnoreCase(siteName);
-        if (optInstance.isEmpty() || optSite.isEmpty()) {
+        var optSiteId = siteSearchConfig.siteId(siteName);
+        if (optInstance.isEmpty() || optSiteId.isEmpty()) {
             return List.of();
         }
-        return executeAutoComplete(optInstance.get(), optSite.get(), term, rows);
+        return executeAutoComplete(optInstance.get(), optSiteId.get(), term, rows);
     }
 
     /**
@@ -515,17 +512,17 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
      * </ol>
      */
     private List<String> executeAutoComplete(TurLuceneInstance instance,
-            TurSNSite turSNSite, String term, long rows) {
+            String siteId, String term, long rows) {
         try {
             var searcher = instance.getSearcher();
             int maxHits = rows > 0 ? (int) rows : 20;
 
-            var query = turLuceneQueryBuilder.buildAutoCompleteQuery(turSNSite.getId(), term);
+            var query = turLuceneQueryBuilder.buildAutoCompleteQuery(siteId, term);
             var topDocs = searcher.search(query, maxHits * 5);
             // T1076 — suggest only from the fields the query side matched on, so a
             // slug, URL or id stored on the same document never becomes a suggestion.
             Set<String> suggestionFields = Set.of(
-                    turLuceneQueryBuilder.resolveAutoCompleteFields(turSNSite.getId()));
+                    turLuceneQueryBuilder.resolveAutoCompleteFields(siteId));
 
             // Split query: leading completed words + last partial token
             String[] queryTokens = term.trim().toLowerCase().split("\\s+");
@@ -710,7 +707,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             return List.of();
         }
         TurSNSite site = siteLocale == null ? null : siteLocale.getTurSNSite();
-        String[] mltFields = resolveMltFields(site);
+        String[] mltFields = resolveMltFields(siteId(site));
         Query filter = constraints == null || site == null ? null
                 : turLuceneQueryBuilder.buildQueryForSite(site.getName(), constraints);
         return turLuceneInstanceProcess.initLuceneInstance(siteLocale)
@@ -779,18 +776,9 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
      * {@link #SIMILAR_MLT_FIELDS} when the site is unknown or has no MLT field
      * configured, so behaviour is unchanged for sites that never set the flag.
      */
-    private String[] resolveMltFields(TurSNSite site) {
-        if (site != null) {
-            List<String> configured = turSNSiteFieldExtRepository
-                    .findByTurSNSiteAndMltAndEnabled(site, 1, 1).stream()
-                    .map(TurSNSiteFieldExt::getName)
-                    .filter(name -> name != null && !name.isBlank())
-                    .toList();
-            if (!configured.isEmpty()) {
-                return configured.toArray(new String[0]);
-            }
-        }
-        return SIMILAR_MLT_FIELDS;
+    private String[] resolveMltFields(String siteId) {
+        List<String> configured = siteSearchConfig.mltFields(siteId);
+        return configured.isEmpty() ? SIMILAR_MLT_FIELDS : configured.toArray(new String[0]);
     }
 
     /**

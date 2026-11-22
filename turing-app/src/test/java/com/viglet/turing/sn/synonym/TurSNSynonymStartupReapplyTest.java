@@ -129,7 +129,7 @@ class TurSNSynonymStartupReapplyTest {
     }
 
     private static TurLuceneSearchEnginePlugin lucene(TurLuceneSynonymRegistry registry) {
-        return new TurLuceneSearchEnginePlugin(null, null, null, null, null, null, registry);
+        return new TurLuceneSearchEnginePlugin(null, null, null, null, null, registry);
     }
 
     private void stubSite(TurSNSite site, TurSearchEnginePlugin plugin) {

@@ -85,6 +85,12 @@ public interface TurSESiteSearchConfig {
     /** The site's enabled fields; empty when the site is unknown or the id {@code null}. */
     List<TurSESearchField> enabledFields(String siteId);
 
+    /**
+     * The names of the site's enabled fields flagged for MoreLikeThis; empty when
+     * the site is unknown, has none, or the id is {@code null}.
+     */
+    List<String> mltFields(String siteId);
+
     /** The site locales that write to {@code core}; empty when none does. */
     List<TurSECoreUsage> coreUsage(String core);
 

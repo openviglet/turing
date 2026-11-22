@@ -208,6 +208,19 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .orElseGet(List::of);
     }
 
+    @Override
+    public List<String> mltFields(String siteId) {
+        if (siteId == null) {
+            return List.of();
+        }
+        return siteRepository.findById(siteId)
+                .map(site -> fieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1).stream()
+                        .map(TurSNSiteFieldExt::getName)
+                        .filter(name -> name != null && !name.isBlank())
+                        .toList())
+                .orElseGet(List::of);
+    }
+
     /** One of a site's fields as the engines read it. */
     public static TurSESearchField toSearchField(TurSNSiteFieldExt field) {
         return TurSESearchField.builder()

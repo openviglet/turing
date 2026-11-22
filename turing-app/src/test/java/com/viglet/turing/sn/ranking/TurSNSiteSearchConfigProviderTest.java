@@ -135,6 +135,24 @@ class TurSNSiteSearchConfigProviderTest {
     }
 
     @Test
+    void aSitesMltFieldsAreTheNamedEnabledMltFields() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt title =
+                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt();
+        title.setName("title");
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt blank =
+                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt();
+        blank.setName(" ");
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(siteRepository.findById("nope")).thenReturn(Optional.empty());
+        when(fieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1)).thenReturn(List.of(title, blank));
+
+        assertThat(provider().mltFields("site-1")).containsExactly("title");
+        assertThat(provider().mltFields("nope")).isEmpty();
+        assertThat(provider().mltFields(null)).isEmpty();
+    }
+
+    @Test
     void anUnknownOrUnnamedSiteHasNoSettings() {
         when(siteRepository.findByNameIgnoreCase("nope")).thenReturn(Optional.empty());
 

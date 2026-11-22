@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
@@ -64,14 +63,13 @@ class TurLuceneAutoCompleteTest {
         site = new TurSNSite();
         site.setName("vagas");
         fieldRepository = mock(TurSESiteSearchConfig.class);
-        TurSNSites siteRepository = mock(TurSNSites.class);
-        when(siteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(fieldRepository.siteId("vagas")).thenReturn(Optional.of("vagas-id"));
         TurLuceneInstanceProcess instanceProcess = mock(TurLuceneInstanceProcess.class);
         when(instanceProcess.initLuceneInstance(any(String.class), any(Locale.class))).thenReturn(Optional.of(instance));
 
         TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(fieldRepository, null, null);
-        plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, queryBuilder, siteRepository,
-                mock(com.viglet.turing.sn.api.TurSNSiteFieldExts.class), null, null);
+        plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, queryBuilder, fieldRepository,
+                null, null);
     }
 
     @AfterEach
