@@ -11,56 +11,28 @@ package com.viglet.turing.transcription;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.viglet.turing.kb.persistence.repository.TurThesaurusTermRepository;
-
-import lombok.extern.slf4j.Slf4j;
-
 /**
- * T847 / §LXIII.2 — sources the transcription {@code keywords} hint from a
- * vocabulary Turing already curates: the Thesaurus (Block AQ). The same terms
- * the search engine expands are handed to the ASR, which is what stops product
- * names, model ids and jargon from being transcribed phonetically.
+ * T847 / §LXIII.2 — the source of the transcription {@code keywords} hint: a
+ * vocabulary Turing already curates, handed to the ASR so product names, model
+ * ids and jargon are not transcribed phonetically.
+ *
+ * <p>T1322m — declared here and implemented by the module that owns the
+ * vocabulary (kb's Thesaurus), so transcription sits beside llm and imports no
+ * kb type (ADR 0005 section 6).
  *
  * <p><b>Opt-in and bounded</b> by design ({@code turing.transcription.keywords-from-thesaurus},
- * default {@code false}): only enabled preferred-term labels, broadest
- * descriptors first, capped at {@link TurTranscriptionHints#MAX_KEYWORDS}. A
- * keyword list is a hint, not a dictionary dump — and an install with no
- * Thesaurus simply gets an empty list, never an error.
+ * default {@code false}): a keyword list is a hint, not a dictionary dump.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
-@Slf4j
-@Component
-public class TurTranscriptionKeywordSource {
-
-    private final TurThesaurusTermRepository thesaurusTermRepository;
-
-    public TurTranscriptionKeywordSource(TurThesaurusTermRepository thesaurusTermRepository) {
-        this.thesaurusTermRepository = thesaurusTermRepository;
-    }
+public interface TurTranscriptionKeywordSource {
 
     /**
-     * Up to {@code limit} Thesaurus terms, broadest first. Fail-open: any read
-     * problem yields an empty list so transcription still runs — a missing hint
-     * costs accuracy, never the transcript.
+     * Up to {@code limit} terms (capped at {@link TurTranscriptionHints#MAX_KEYWORDS}),
+     * broadest first. Fail-open: any read problem yields an empty list so
+     * transcription still runs — a missing hint costs accuracy, never the
+     * transcript.
      */
-    @Transactional(readOnly = true)
-    public List<String> keywords(int limit) {
-        int capped = Math.clamp(limit, 0, TurTranscriptionHints.MAX_KEYWORDS);
-        if (capped == 0) {
-            return List.of();
-        }
-        try {
-            return thesaurusTermRepository.findEnabledLabelsBroadestFirst(
-                    PageRequest.of(0, capped));
-        } catch (RuntimeException e) {
-            log.debug("[Transcription] could not read Thesaurus keywords: {}", e.getMessage());
-            return List.of();
-        }
-    }
+    List<String> keywords(int limit);
 }

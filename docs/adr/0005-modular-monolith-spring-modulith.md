@@ -154,15 +154,16 @@ The layers, bottom to top, replacing the direction paragraph of §1 where they d
    per-module property class) moves into that feature module.
 3. `searchengine`, `llm`. **`llm` also owns the vector stores** (store instances, vendors
    and providers), which `rag`, `agent` and `persona` all read as infrastructure.
-4. `sn`, `storage`.
+4. `sn`, `storage`, **`transcription`** (moved down from layer 8 by T1322m: it is a
+   speech-to-text provider layer that `persona`'s audio derivation needs; it reads `llm`'s
+   instances, so it sits above `llm` rather than beside it).
 5. `kb` (**moved above `sn`**: thesaurus configuration is per SN site), `rag` retrieval
    (context building, sources, rerank, citations, ocr, multimodal, feed, connectors).
 6. `persona`.
 7. `agent` (**absorbs `chat`**: sessions, slots, memory, webhooks and call-center assist
    are the agent's conversation state and their entities already live in `agent`).
 8. `answer` (**new**, split from `rag`: the SN chat `TurSNGenAi`, answers, research,
-   deep dive and the catalog copilot, which run agents), `eval`, `mcp`, `batch`,
-   `transcription`.
+   deep dive and the catalog copilot, which run agents), `eval`, `mcp`, `batch`.
 9. `exchange`.
 
 A module depends only on lower layers, never sideways inside its own layer.
@@ -180,6 +181,7 @@ A module depends only on lower layers, never sideways inside its own layer.
 | `agent` ↔ `mcp` 11 / 12 | **Move.** The MCP client (`TurMcpServer`, its repository, `TurMcpToolCallbackService`) moves to `agent`; `mcp` keeps the server and sits above `agent`. |
 | `system` → `agent` 8, `chat` 4 | **Move.** Parked-conversation and chat-analytics controllers move to `agent`; global settings read the code interpreter through a `system` SPI. |
 | `agent`, `sn` → `observability` | **Amend**: `observability` is infrastructure (layer 2). |
+| `persona` → `transcription`, `transcription` → `kb` 1 | **Amend + move** (T1322m): `transcription` sits in layer 4; its Thesaurus keyword hint is `TurTranscriptionKeywordSource`, an SPI `transcription` declares and `kb` implements. |
 
 ### 7. Audit dates (T1319)
 

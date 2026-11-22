@@ -2657,17 +2657,3 @@ controllers into auth. Controllers in system that serve one feature move to that
 feature's module with their REST paths unchanged. Tenant's per-module counters and
 teardown become SPIs tenant declares and each module implements. Done when system
 imports only shared, tenant only system and shared, and auth only those three.
-
-### CLXXXIX.47 transcription moves beside llm (T1322m)
-
-Measured 2026-11-21 while working T1322e. ADR 0005 section 6 put transcription on the
-top layer beside eval and batch, but it is a speech-to-text provider layer: it imports
-system 21 times, llm twice and kb once (TurTranscriptionKeywordSource reads thesaurus
-terms as recognition hints), and persona's audio derivation
-(TurPersonaAudioDeriveService, TurPersonaAudioJobService) needs it while sitting below
-it.
-
-Move transcription to layer 3 beside llm, recorded in ADR 0005 section 6 when this
-ships. The kb read becomes an SPI transcription declares (a keyword-hint provider) and
-kb implements, so transcription imports only infrastructure and llm. Done when
-transcription imports no kb type and the layer table in the ADR says layer 3.
