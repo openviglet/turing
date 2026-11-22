@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.web.genai;
+package com.viglet.turing.answer.web;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

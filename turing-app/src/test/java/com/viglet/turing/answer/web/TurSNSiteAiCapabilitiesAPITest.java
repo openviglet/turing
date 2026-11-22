@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.web.genai;
+package com.viglet.turing.answer.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

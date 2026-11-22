@@ -1837,3 +1837,4 @@
 - **T1322e** — Persona imports no agent type: the persona resolver and catalog, dialogue runner and projects, persona chat API and site persona endpoints moved into agent.persona, REST paths unchanged (design §CLXXXIX.37 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`).
 - **T1310w** — The Elasticsearch plugin types a new index's fields from the site's enabled fields through the search SPI and no longer injects sn's field repository.
 - **T1310x** — TurElasticsearch reads the site, its enabled and facet fields and its sorts through TurSESiteSearchConfig, and its filter queries take SPI field records; neither imports sn.
+- **T1322r** — TurSNSiteAiCapabilitiesAPI moved to answer.web; its path /api/sn/{siteName}/ai/capabilities is unchanged and sn loses six upward imports.
