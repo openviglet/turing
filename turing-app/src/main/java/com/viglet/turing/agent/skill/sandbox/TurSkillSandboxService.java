@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.system.email.TurEmailService;
-import com.viglet.turing.agent.tool.TurCodeInterpreterToolService;
-import com.viglet.turing.agent.tool.TurCodeInterpreterToolService.TurDockerStatus;
+import com.viglet.turing.system.TurCodeInterpreterDockerProbe;
+import com.viglet.turing.system.TurDockerStatus;
 import com.viglet.turing.transcription.TurAudioChunker;
 import com.viglet.turing.transcription.TurAudioChunker.TurFfmpegStatus;
 import com.viglet.turing.system.TurGlobalSettingsService;
@@ -26,12 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 public class TurGlobalSettingsAPI {
     private final TurGlobalSettingsService turGlobalSettingsService;
     private final TurEmailService turEmailService;
-    private final TurCodeInterpreterToolService turCodeInterpreterToolService;
+    private final TurCodeInterpreterDockerProbe turCodeInterpreterToolService;
     private final TurAudioChunker turAudioChunker;
 
     public TurGlobalSettingsAPI(TurGlobalSettingsService turGlobalSettingsService,
             TurEmailService turEmailService,
-            TurCodeInterpreterToolService turCodeInterpreterToolService,
+            TurCodeInterpreterDockerProbe turCodeInterpreterToolService,
             TurAudioChunker turAudioChunker) {
         this.turGlobalSettingsService = turGlobalSettingsService;
         this.turEmailService = turEmailService;

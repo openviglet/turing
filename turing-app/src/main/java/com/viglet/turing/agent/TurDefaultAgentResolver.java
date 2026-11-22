@@ -58,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class TurDefaultAgentResolver {
+public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefaultRagReadiness {
 
     private final TurGlobalSettingsService globalSettingsService;
     private final TurAIAgentRepository turAIAgentRepository;
@@ -168,6 +168,7 @@ public class TurDefaultAgentResolver {
      *
      * @since 2026.3.4
      */
+    @Override
     public boolean isDefaultRagReady() {
         return isAgentRagReady(resolveDefaultAgent());
     }

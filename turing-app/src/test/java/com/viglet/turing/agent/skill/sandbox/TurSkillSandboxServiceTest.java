@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 /**

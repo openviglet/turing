@@ -1,4 +1,4 @@
-package com.viglet.turing.agent.tool;
+package com.viglet.turing.system;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

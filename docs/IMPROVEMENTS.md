@@ -2637,15 +2637,6 @@ module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi'
 reference is an id column. REST paths stay. Done when sn imports no agent, rag, chat,
 persona, answer or eval type.
 
-### CLXXXIX.43 system stops importing agent (T1322k)
-
-system imports agent 8 times and chat 4: TurParkedConversationsAPI, the chat analytics
-API, and TurGlobalSettingsService, TurGlobalSettingsBean and TurFeaturesAPI reading the
-code interpreter mode and Docker status. ADR 0005 section 6: the two controllers move to
-agent with their REST paths unchanged, and global settings read the code interpreter
-through an SPI system declares and agent implements. Done when system imports no feature
-module.
-
 ### CLXXXIX.45 The infrastructure layer imports only downward (T1322l)
 
 Measured after T1322a (2026-11-21). The three infrastructure modules of ADR 0005 section

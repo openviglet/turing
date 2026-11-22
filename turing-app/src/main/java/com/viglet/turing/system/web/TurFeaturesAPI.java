@@ -1,6 +1,6 @@
 package com.viglet.turing.system.web;
 
-import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.system.TurDefaultRagReadiness;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.storage.git.TurGitServerService;
 import com.viglet.turing.storage.TurStorageService;
@@ -32,7 +32,7 @@ public class TurFeaturesAPI {
     private final TurSearchEngineReadOnlySource solrInstanceSource;
     private final TurTenantContext tenantContext;
     private final TurPlatformAdminService platformAdminService;
-    private final TurDefaultAgentResolver defaultAgentResolver;
+    private final TurDefaultRagReadiness defaultAgentResolver;
     private final String loggingEngine;
 
     public TurFeaturesAPI(TurStorageService storageService, TurGlobalSettingsService globalSettingsService,
@@ -40,7 +40,7 @@ public class TurFeaturesAPI {
                           TurSearchEngineReadOnlySource solrInstanceSource,
                           TurTenantContext tenantContext,
                           TurPlatformAdminService platformAdminService,
-                          TurDefaultAgentResolver defaultAgentResolver,
+                          TurDefaultRagReadiness defaultAgentResolver,
                           @Value("${turing.logging.engine:none}") String loggingEngine) {
         this.storageService = storageService;
         this.globalSettingsService = globalSettingsService;

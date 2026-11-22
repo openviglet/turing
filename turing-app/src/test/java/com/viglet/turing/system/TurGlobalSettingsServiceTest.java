@@ -38,7 +38,7 @@ class TurGlobalSettingsServiceTest {
     void getCodeInterpreterExecutionModeShouldDefaultToNative() {
         when(turConfigVarRepository.findById(TurConfigVarOnStartup.CODE_INTERPRETER_EXECUTION_MODE))
                 .thenReturn(Optional.empty());
-        assertEquals(com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode.NATIVE,
+        assertEquals(com.viglet.turing.system.TurCodeInterpreterExecutionMode.NATIVE,
                 service.getCodeInterpreterExecutionMode());
     }
 
@@ -48,7 +48,7 @@ class TurGlobalSettingsServiceTest {
         configVar.setValue("DOCKER");
         when(turConfigVarRepository.findById(TurConfigVarOnStartup.CODE_INTERPRETER_EXECUTION_MODE))
                 .thenReturn(Optional.of(configVar));
-        assertEquals(com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode.DOCKER,
+        assertEquals(com.viglet.turing.system.TurCodeInterpreterExecutionMode.DOCKER,
                 service.getCodeInterpreterExecutionMode());
     }
 
@@ -58,7 +58,7 @@ class TurGlobalSettingsServiceTest {
         configVar.setValue("NONSENSE");
         when(turConfigVarRepository.findById(TurConfigVarOnStartup.CODE_INTERPRETER_EXECUTION_MODE))
                 .thenReturn(Optional.of(configVar));
-        assertEquals(com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode.NATIVE,
+        assertEquals(com.viglet.turing.system.TurCodeInterpreterExecutionMode.NATIVE,
                 service.getCodeInterpreterExecutionMode());
     }
 
@@ -68,7 +68,7 @@ class TurGlobalSettingsServiceTest {
                 .thenReturn(Optional.empty());
         ArgumentCaptor<TurConfigVar> captor = ArgumentCaptor.forClass(TurConfigVar.class);
         service.updateCodeInterpreterExecutionMode(
-                com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode.DOCKER);
+                com.viglet.turing.system.TurCodeInterpreterExecutionMode.DOCKER);
         verify(turConfigVarRepository).save(captor.capture());
         assertEquals("DOCKER", captor.getValue().getValue());
         assertEquals(TurConfigVarOnStartup.CODE_INTERPRETER_EXECUTION_MODE, captor.getValue().getId());

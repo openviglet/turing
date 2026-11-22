@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web.chatanalytics;
+package com.viglet.turing.agent.web.chatanalytics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -24,7 +24,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.tool.TurCodeInterpreterToolService.TurDockerStatus;
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.system.TurDockerStatus;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import lombok.extern.slf4j.Slf4j;

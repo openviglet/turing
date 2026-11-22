@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.viglet.core.settings.VigletConfigVarService;
 import com.viglet.turing.shared.settings.TurRagRerankStrategyType;
-import com.viglet.turing.agent.tool.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.system.properties.TurTranscriptionProviderType;
 import com.viglet.turing.system.onstartup.TurConfigVarOnStartup;
 import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;

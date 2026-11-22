@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 class TurCodeInterpreterToolServiceTest {
@@ -661,7 +662,7 @@ class TurCodeInterpreterToolServiceTest {
                 System.getProperty("java.io.tmpdir") + "/definitely-not-docker-xyz");
         setField(svc, "dockerProbeTimeoutSeconds", 5);
 
-        TurCodeInterpreterToolService.TurDockerStatus status = svc.checkDocker();
+        com.viglet.turing.system.TurDockerStatus status = svc.checkDocker();
         assertThat(status.available()).isFalse();
         assertThat(status.error()).isNotBlank();
     }

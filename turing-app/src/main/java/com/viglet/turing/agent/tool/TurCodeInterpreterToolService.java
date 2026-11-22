@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.viglet.turing.system.TurCodeInterpreterExecutionMode;
+import com.viglet.turing.system.TurCodeInterpreterDockerProbe;
+import com.viglet.turing.system.TurDockerStatus;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
@@ -27,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class TurCodeInterpreterToolService {
+public class TurCodeInterpreterToolService implements TurCodeInterpreterDockerProbe {
 
     private static final int TIMEOUT_SECONDS = 30;
     private static final int MAX_OUTPUT_LENGTH = 15_000;
@@ -926,6 +929,7 @@ public class TurCodeInterpreterToolService {
      * throws — failures (binary missing, daemon down, timeout) come back as
      * {@code available=false} with an {@code error} message.
      */
+    @Override
     public TurDockerStatus checkDocker() {
         try {
             ProcessBuilder pb = new ProcessBuilder(
@@ -960,13 +964,6 @@ public class TurCodeInterpreterToolService {
         }
     }
 
-    /**
-     * Result of {@link #checkDocker()}. {@code available} true means the
-     * daemon answered and {@code serverVersion} is populated; otherwise
-     * {@code error} explains why.
-     */
-    public record TurDockerStatus(boolean available, String serverVersion, String error) {
-    }
 
     /**
      * One file produced by an execution (T83). {@code url} is the (optionally
