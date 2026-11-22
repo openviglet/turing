@@ -1,4 +1,4 @@
-package com.viglet.turing.system.web;
+package com.viglet.turing.sn.web.report;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

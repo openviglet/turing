@@ -1832,3 +1832,4 @@
 - **T1322l (feature controllers out of system)** — The dev-token and integration controllers live in auth, batch jobs in batch, marketplace in exchange and the page controllers in storage, REST paths unchanged.
 - **T1310v** — The Lucene plugin reads a site's MoreLikeThis fields, mlt flag and autocomplete site id through the search SPI (new mltFields) and no longer injects sn's site or field repositories.
 - **T1322p** — The anonymous site persona list, content-fit endpoint and their audience-persona resolver moved from sn.web.genai to persona.web; REST paths are unchanged.
+- **T1322q** — TurEmailReportAPI moved from system.web to sn.web.report, so system no longer imports sn's weekly search report; /api/system/email-report is unchanged.
