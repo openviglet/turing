@@ -35,6 +35,8 @@ import com.viglet.turing.searchengine.spi.TurSECustomFacet;
 import com.viglet.turing.sn.facet.TurSNCustomFacetCatalog;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.searchengine.spi.TurSESiteSettings;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
+import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.domain.TurSNSiteLocaleRepositoryPort;
 import com.viglet.turing.commons.se.TurSEParameters;
@@ -194,7 +196,33 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
         return siteRepository.findByNameIgnoreCase(siteName).map(TurSNSiteSearchConfigProvider::toSettings);
     }
 
-    static TurSESiteSettings toSettings(TurSNSite site) {
+    @Override
+    public List<TurSESearchField> enabledFields(String siteId) {
+        if (siteId == null) {
+            return List.of();
+        }
+        return siteRepository.findById(siteId)
+                .map(site -> fieldExtRepository.findByTurSNSiteAndEnabled(site, 1).stream()
+                        .map(TurSNSiteSearchConfigProvider::toSearchField)
+                        .toList())
+                .orElseGet(List::of);
+    }
+
+    /** One of a site's fields as the engines read it. */
+    public static TurSESearchField toSearchField(TurSNSiteFieldExt field) {
+        return TurSESearchField.builder()
+                .name(field.getName())
+                .type(field.getType())
+                .facet(field.getFacet())
+                .hl(field.getHl())
+                .facetPosition(field.getFacetPosition())
+                .facetItemType(field.getFacetItemType())
+                .searchWeight(field.getSearchWeight())
+                .build();
+    }
+
+    /** A site's settings as the engines read them. */
+    public static TurSESiteSettings toSettings(TurSNSite site) {
         return TurSESiteSettings.builder()
                 .id(site.getId())
                 .name(site.getName())

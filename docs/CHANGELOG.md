@@ -1826,3 +1826,4 @@
 - **T1322n** — The NL-to-facet eval controller (REST path unchanged) and its dataset service moved from sn to the eval module, so sn no longer imports agent or rag for them.
 - **T1322i** — sn imports no kb type: the thesaurus dictionary, related terms, index-time enrichment and related-terms API live in kb, which serves sn through two SPIs sn declares in sn.kb.
 - **T1322j** — The MCP client (server registry, its table now llm_mcp_server, and the tool callback service) lives in llm.mcp and the RAG answer tool in rag, so agent and persona no longer import mcp.
+- **T1310u** — Lucene's query builder, result processor and TurLucene read a site's enabled fields, settings and cores through the search SPI and no longer import sn; sort types come from the site's own fields.

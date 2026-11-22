@@ -35,8 +35,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSNSynonymType;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**
@@ -53,9 +52,7 @@ class TurLuceneSynonymPhraseOnKeywordFieldTest {
     private static final Locale PT_BR = Locale.of("pt", "BR");
 
     @Mock
-    private TurSNSiteFieldExts fieldExtRepository;
-    @Mock
-    private TurSNSiteLocales localeRepository;
+    private TurSESiteSearchConfig fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;
@@ -68,9 +65,9 @@ class TurLuceneSynonymPhraseOnKeywordFieldTest {
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
                         List.of("caixa", "operador de caixa"))))
                 .map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        when(fieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 TurSNSiteFieldExt.builder().name("id").type(TurSEFieldType.STRING).build(),
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT).build(),
                 TurSNSiteFieldExt.builder().name("contract").type(TurSEFieldType.STRING).build(),
@@ -78,7 +75,8 @@ class TurLuceneSynonymPhraseOnKeywordFieldTest {
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setLanguage(PT_BR);
         locale.setCore("jobs_pt");
-        when(localeRepository.findByTurSNSite(any())).thenReturn(List.of(locale));
+        org.mockito.Mockito.lenient().when(fieldExtRepository.siteCore(any(), org.mockito.ArgumentMatchers.eq(locale.getLanguage())))
+                .thenReturn(java.util.Optional.of(new com.viglet.turing.searchengine.spi.TurSESiteCore(null, null, locale.getCore())));
     }
 
     private static Document job(String id, String title, String contract, String tag) {
@@ -93,7 +91,7 @@ class TurLuceneSynonymPhraseOnKeywordFieldTest {
     private List<String> search(String q) throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        Query query = queryBuilder.buildQuery(site,
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site),
                 new TurSEParameters(params, new TurSNSitePostParamsBean()), PT_BR);
         try (Directory dir = new ByteBuffersDirectory()) {
             try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {

@@ -43,8 +43,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSNSynonymType;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**
@@ -64,9 +63,7 @@ class TurLuceneSynonymClauseLimitTest {
     private static final int TEXT_FIELDS = 16;
 
     @Mock
-    private TurSNSiteFieldExts fieldExtRepository;
-    @Mock
-    private TurSNSiteLocales localeRepository;
+    private TurSESiteSearchConfig fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;
@@ -77,17 +74,18 @@ class TurLuceneSynonymClauseLimitTest {
         registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
                         List.of("fespsp", "fundação escola de sociologia e política")))).map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
         List<TurSNSiteFieldExt> fields = new ArrayList<>();
         for (int i = 0; i < TEXT_FIELDS; i++) {
             fields.add(TurSNSiteFieldExt.builder().name(field(i)).type(TurSEFieldType.TEXT).build());
         }
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(fields);
+        when(fieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(fields));
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setLanguage(PT_BR);
         locale.setCore("fespsp_pt");
-        org.mockito.Mockito.lenient().when(localeRepository.findByTurSNSite(any())).thenReturn(List.of(locale));
+        org.mockito.Mockito.lenient().when(fieldExtRepository.siteCore(any(), org.mockito.ArgumentMatchers.eq(locale.getLanguage())))
+                .thenReturn(java.util.Optional.of(new com.viglet.turing.searchengine.spi.TurSESiteCore(null, null, locale.getCore())));
     }
 
     private static String field(int i) {
@@ -119,7 +117,7 @@ class TurLuceneSynonymClauseLimitTest {
         registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
                         List.of("fespsp", "fundação escola sociologia política paulista")))).map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
         assertThat(search("fundação escola sociologia política paulista")).contains("acronym");
     }
@@ -134,7 +132,7 @@ class TurLuceneSynonymClauseLimitTest {
         registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
                         List.of("fespsp", "fundação escola de sociologia e política"))), PT_BR).map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
         assertThat(search("fundação escola de sociologia e política")).contains("acronym", "fullname");
         assertThat(search("fespsp")).contains("acronym", "fullname");
@@ -145,7 +143,7 @@ class TurLuceneSynonymClauseLimitTest {
     void aQueryBuiltWithoutSynonymsDoesNotExpand() throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ("fespsp");
-        Query plain = queryBuilder.buildQuery(site, new TurSEParameters(params, new TurSNSitePostParamsBean()),
+        Query plain = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params, new TurSNSitePostParamsBean()),
                 PT_BR, false);
         assertThat(plain.toString()).doesNotContain("sociologia");
     }
@@ -155,7 +153,7 @@ class TurLuceneSynonymClauseLimitTest {
         TurLuceneSynonymRegistry registry = new TurLuceneSynonymRegistry();
         registry.put("fespsp_pt", TurLuceneSynonymMapBuilder.build(List.of(
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null, List.of("pós", "especialização")))).map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
         assertThat(search("pós")).contains("plural");
     }
@@ -163,7 +161,7 @@ class TurLuceneSynonymClauseLimitTest {
     private List<String> search(String q) throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        Query query = queryBuilder.buildQuery(site, new TurSEParameters(params, new TurSNSitePostParamsBean()), PT_BR);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params, new TurSNSitePostParamsBean()), PT_BR);
         try (Directory dir = new ByteBuffersDirectory()) {
             try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new TurLuceneFoldingAnalyzer(PT_BR)))) {
                 writer.addDocument(doc("acronym", "Feira de Extensão FESPSP"));

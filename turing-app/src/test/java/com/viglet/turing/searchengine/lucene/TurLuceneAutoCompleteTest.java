@@ -27,7 +27,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * Autocomplete on the Lucene engine draws its suggestions only from the
@@ -42,7 +42,7 @@ class TurLuceneAutoCompleteTest {
     private Directory directory;
     private TurLuceneInstance instance;
     private TurLuceneSearchEnginePlugin plugin;
-    private TurSNSiteFieldExts fieldRepository;
+    private TurSESiteSearchConfig fieldRepository;
     private TurSNSite site;
 
     @BeforeEach
@@ -63,16 +63,15 @@ class TurLuceneAutoCompleteTest {
 
         site = new TurSNSite();
         site.setName("vagas");
-        fieldRepository = mock(TurSNSiteFieldExts.class);
+        fieldRepository = mock(TurSESiteSearchConfig.class);
         TurSNSites siteRepository = mock(TurSNSites.class);
         when(siteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
         TurLuceneInstanceProcess instanceProcess = mock(TurLuceneInstanceProcess.class);
         when(instanceProcess.initLuceneInstance(any(String.class), any(Locale.class))).thenReturn(Optional.of(instance));
 
-        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(fieldRepository, null, null,
-                null, null);
+        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(fieldRepository, null, null);
         plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, queryBuilder, siteRepository,
-                fieldRepository, null, null);
+                mock(com.viglet.turing.sn.api.TurSNSiteFieldExts.class), null, null);
     }
 
     @AfterEach
@@ -97,7 +96,7 @@ class TurLuceneAutoCompleteTest {
 
     @Test
     void suggestsOnlyWordsOfTextFields() {
-        when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        when(fieldRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 field("id", TurSEFieldType.STRING),
                 field("title", TurSEFieldType.TEXT),
                 field("occupation", TurSEFieldType.STRING),
@@ -108,7 +107,7 @@ class TurLuceneAutoCompleteTest {
 
     @Test
     void fallsBackToTitleWhenTheSiteHasNoTextField() {
-        when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        when(fieldRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 field("occupation", TurSEFieldType.STRING)));
 
         assertEquals(List.of("motorista"), plugin.autoComplete("vagas", "moto", Locale.of("pt", "BR"), 10));

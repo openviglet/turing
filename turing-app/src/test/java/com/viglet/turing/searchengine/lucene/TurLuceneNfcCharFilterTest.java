@@ -37,7 +37,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * T1194 — a title stored with decomposed accents (Unicode NFD) is found by the
@@ -53,16 +53,16 @@ class TurLuceneNfcCharFilterTest {
     private static final String NFD_TITLE = "Jaqueta impermeável do dia a dia Borrowdale";
     private static final String NFC_TITLE = "Jaqueta impermeável do dia a dia Borrowdale";
 
-    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
+    private final TurSESiteSearchConfig fieldRepository = mock(TurSESiteSearchConfig.class);
     private final TurLuceneQueryBuilder queryBuilder =
-            new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
+            new TurLuceneQueryBuilder(fieldRepository, null, null);
     private final TurSNSite site = new TurSNSite();
 
     TurLuceneNfcCharFilterTest() {
         TurSNSiteFieldExt text = new TurSNSiteFieldExt();
         text.setName("text");
         text.setType(TurSEFieldType.TEXT);
-        when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(text));
+        when(fieldRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(text));
     }
 
     private static List<String> terms(Analyzer analyzer, String text) throws Exception {
@@ -118,7 +118,7 @@ class TurLuceneNfcCharFilterTest {
         params.setQ(q);
         params.setRows(10);
         params.setP(1);
-        return queryBuilder.buildQuery(site, new TurSEParameters(params));
+        return queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params));
     }
 
     private static void add(IndexWriter writer, String id, String text) throws Exception {

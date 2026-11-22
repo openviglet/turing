@@ -34,7 +34,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * T1080 — an accented and an unaccented spelling match each other on the
@@ -46,16 +46,16 @@ import com.viglet.turing.sn.api.TurSNSiteFieldExts;
  */
 class TurLuceneAccentFoldingTest {
 
-    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
+    private final TurSESiteSearchConfig fieldRepository = mock(TurSESiteSearchConfig.class);
     private final TurLuceneQueryBuilder queryBuilder =
-            new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
+            new TurLuceneQueryBuilder(fieldRepository, null, null);
     private final TurSNSite site = new TurSNSite();
 
     TurLuceneAccentFoldingTest() {
         TurSNSiteFieldExt text = new TurSNSiteFieldExt();
         text.setName("text");
         text.setType(TurSEFieldType.TEXT);
-        when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(text));
+        when(fieldRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(text));
     }
 
     private Set<String> search(Analyzer indexAnalyzer, String q) throws Exception {
@@ -80,7 +80,7 @@ class TurLuceneAccentFoldingTest {
         params.setQ(q);
         params.setRows(10);
         params.setP(1);
-        return queryBuilder.buildQuery(site, new TurSEParameters(params));
+        return queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params));
     }
 
     private static void add(IndexWriter writer, String id, String text) throws Exception {

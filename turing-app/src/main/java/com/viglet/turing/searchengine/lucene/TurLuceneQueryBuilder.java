@@ -60,13 +60,12 @@ import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.TurSNSiteCustomSortMissingEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.TurSEFlags;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.facet.TurSNFilterExclusion;
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,32 +85,23 @@ public class TurLuceneQueryBuilder {
     private static final Set<TurSEFieldType> TEXT_FIELD_TYPES = EnumSet.of(TurSEFieldType.TEXT, TurSEFieldType.STRING,
             TurSEFieldType.ARRAY);
 
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
     private final TurSESiteSearchConfig siteSearchConfig;
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurLuceneSynonymRegistry synonymRegistry;
     private final TurLuceneRankingExpressions rankingExpressions;
     private final TurLuceneCustomFacets customFacets;
 
-    public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSESiteSearchConfig siteSearchConfig,
-            TurSNSiteLocales turSNSiteLocaleRepository,
+    public TurLuceneQueryBuilder(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions) {
-        this(turSNSiteFieldExtRepository, siteSearchConfig, turSNSiteLocaleRepository,
-                synonymRegistry, rankingExpressions, null);
+        this(siteSearchConfig, synonymRegistry, rankingExpressions, null);
     }
 
     @org.springframework.beans.factory.annotation.Autowired
-    public TurLuceneQueryBuilder(TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSESiteSearchConfig siteSearchConfig,
-            TurSNSiteLocales turSNSiteLocaleRepository,
+    public TurLuceneQueryBuilder(TurSESiteSearchConfig siteSearchConfig,
             TurLuceneSynonymRegistry synonymRegistry,
             TurLuceneRankingExpressions rankingExpressions,
             TurLuceneCustomFacets customFacets) {
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.siteSearchConfig = siteSearchConfig;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.synonymRegistry = synonymRegistry;
         this.rankingExpressions = rankingExpressions;
         this.customFacets = customFacets;
@@ -125,38 +115,46 @@ public class TurLuceneQueryBuilder {
      * Builds the primary Lucene {@link Query} from the search context.
      * Includes the user's query string and any active filter queries.
      */
-    public Query buildQuery(TurSNSite turSNSite, TurSEParameters params) {
-        return buildQuery(turSNSite, params, null);
+    public Query buildQuery(TurSESiteSettings site, TurSEParameters params) {
+        return buildQuery(site, params, null);
     }
 
     /**
-     * T665 — same as {@link #buildQuery(TurSNSite, TurSEParameters)} but with the
+     * T1310 — as {@link #buildQuery(TurSESiteSettings, TurSEParameters)} for the
+     * site called {@code siteName}; {@code null} when there is no such site.
+     */
+    public Query buildQueryForSite(String siteName, TurSEParameters params) {
+        return siteSearchConfig.siteSettings(siteName).map(site -> buildQuery(site, params)).orElse(null);
+    }
+
+    /**
+     * T665 — same as {@link #buildQuery(TurSESiteSettings, TurSEParameters)} but with the
      * search {@code locale}, so the main query is analyzed with the site's
      * query-time synonym map (when one is registered for that locale's core).
      */
-    public Query buildQuery(TurSNSite turSNSite, TurSEParameters params, Locale locale) {
-        return buildQuery(turSNSite, params, locale, true);
+    public Query buildQuery(TurSESiteSettings site, TurSEParameters params, Locale locale) {
+        return buildQuery(site, params, locale, true);
     }
 
     /**
-     * T1304 — as {@link #buildQuery(TurSNSite, TurSEParameters, Locale)}, with the
+     * T1304 — as {@link #buildQuery(TurSESiteSettings, TurSEParameters, Locale)}, with the
      * site's synonyms left out when {@code synonyms} is {@code false}: the retry for
      * a query whose expansion went past the clause limit.
      */
-    public Query buildQuery(TurSNSite turSNSite, TurSEParameters params, Locale locale, boolean synonyms) {
+    public Query buildQuery(TurSESiteSettings site, TurSEParameters params, Locale locale, boolean synonyms) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
 
         // Main user query
-        Query mainQuery = buildMainQuery(params.getQuery(), turSNSite, locale, params.isRelaxedMatch(), synonyms);
+        Query mainQuery = buildMainQuery(params.getQuery(), site, locale, params.isRelaxedMatch(), synonyms);
         builder.add(mainQuery, BooleanClause.Occur.MUST);
         // T1177 — the title holding the query as typed, as a phrase, ranks first.
-        titlePhraseBoost(params.getQuery(), turSNSite, locale)
+        titlePhraseBoost(params.getQuery(), site, locale)
                 .ifPresent(boost -> builder.add(boost, BooleanClause.Occur.SHOULD));
 
         // Filter queries (facet selections, fqAnd/fqOr and their operators)
         TurSNFilterParams filterParams = params.getTurSNFilterParams();
         if (filterParams != null && hasFilterQueries(filterParams)) {
-            addFilterQueries(builder, turSNSite, filterParams);
+            addFilterQueries(builder, site, filterParams);
         }
 
         // T1103 — semantic recall's id restriction, apart from the facet filters.
@@ -170,15 +168,15 @@ public class TurLuceneQueryBuilder {
         // field's type like a facet selection, but never shown as one.
         if (params.getPartition() != null) {
             String field = params.getPartition().field();
-            TurSNSiteFieldExt ext = enabledFieldsByName(turSNSite).get(field);
+            TurSESearchField ext = enabledFieldsByName(site).get(field);
             builder.add(TurLuceneFilterQueries.build(field, params.getPartition().value(),
-                    ext != null ? ext.getType() : null, Instant.now()), BooleanClause.Occur.FILTER);
+                    ext != null ? ext.type() : null, Instant.now()), BooleanClause.Occur.FILTER);
         }
 
         // T1064 — ranking expressions raise the score of the documents they
         // describe (SHOULD beside the MUST main query), as Solr's bq does.
         if (rankingExpressions != null) {
-            rankingExpressions.boostQueries(turSNSite.getId())
+            rankingExpressions.boostQueries(site.id())
                     .forEach(boost -> builder.add(boost, BooleanClause.Occur.SHOULD));
         }
 
@@ -211,21 +209,21 @@ public class TurLuceneQueryBuilder {
      * operator. The intersected groups are then OR'd with the union groups,
      * which is the shape {@code TurSolrQueryBuilder#setFilterQueryString} builds.
      */
-    private void addFilterQueries(BooleanQuery.Builder builder, TurSNSite turSNSite,
+    private void addFilterQueries(BooleanQuery.Builder builder, TurSESiteSettings site,
             TurSNFilterParams filterParams) {
         TurSNSiteFacetFieldEnum defaultFacetType = filterParams.getOperator() == TurSNFilterQueryOperator.OR ? TurSNSiteFacetFieldEnum.OR : TurSNSiteFacetFieldEnum.AND;
         Map<String, FilterGroup> groups = new LinkedHashMap<>();
         collectFilterGroups(groups, filterParams.getDefaultValues(), defaultFacetType);
         collectFilterGroups(groups, filterParams.getAnd(), TurSNSiteFacetFieldEnum.AND);
         collectFilterGroups(groups, filterParams.getOr(), TurSNSiteFacetFieldEnum.OR);
-        Map<String, TurSNSiteFieldExt> fieldsByName = enabledFieldsByName(turSNSite);
+        Map<String, TurSESearchField> fieldsByName = enabledFieldsByName(site);
         Instant now = Instant.now();
         // T1233 — an exclusion always narrows, whatever fqOr or fqItemOperator say.
         TurSNFilterExclusion.in(filterParams.getDefaultValues(), filterParams.getAnd(), filterParams.getOr())
                 .forEach(exclusion -> {
-                    TurSNSiteFieldExt ext = fieldsByName.get(exclusion.field());
-                    builder.add(valueQuery(turSNSite, exclusion.field(), ext, exclusion.value(),
-                            ext != null ? ext.getType() : null, now), BooleanClause.Occur.MUST_NOT);
+                    TurSESearchField ext = fieldsByName.get(exclusion.field());
+                    builder.add(valueQuery(site, exclusion.field(), ext, exclusion.value(),
+                            ext != null ? ext.type() : null, now), BooleanClause.Occur.MUST_NOT);
                 });
         if (groups.isEmpty()) {
             return;
@@ -234,12 +232,12 @@ public class TurLuceneQueryBuilder {
         List<Query> intersected = new ArrayList<>();
         List<Query> united = new ArrayList<>();
         groups.values().forEach(group -> {
-            TurSNSiteFieldExt ext = fieldsByName.get(group.field());
+            TurSESearchField ext = fieldsByName.get(group.field());
             TurSNSiteFacetFieldEnum itemType = requestedItemType(filterParams.getItemOperator())
-                    .orElseGet(() -> effectiveFacetItemType(ext, turSNSite));
-            TurSEFieldType type = ext != null ? ext.getType() : null;
+                    .orElseGet(() -> effectiveFacetItemType(ext, site));
+            TurSEFieldType type = ext != null ? ext.type() : null;
             Query query = buildFieldFilterQuery(group.values(),
-                    value -> valueQuery(turSNSite, group.field(), ext, value, type, now), itemType);
+                    value -> valueQuery(site, group.field(), ext, value, type, now), itemType);
             (group.facetType() == TurSNSiteFacetFieldEnum.OR ? united : intersected).add(query);
         });
 
@@ -262,10 +260,10 @@ public class TurLuceneQueryBuilder {
      * facet's {@code <facet>:<label>}: it stands for the item's range on the field
      * the custom facet belongs to, as on Solr.
      */
-    private Query valueQuery(TurSNSite turSNSite, String field, TurSNSiteFieldExt ext, String value,
+    private Query valueQuery(TurSESiteSettings site, String field, TurSESearchField ext, String value,
             TurSEFieldType type, Instant now) {
         if (ext == null && customFacets != null) {
-            Optional<TurLuceneCustomFacets.ItemFilter> item = customFacets.resolveFilter(turSNSite.getId(), field, value);
+            Optional<TurLuceneCustomFacets.ItemFilter> item = customFacets.resolveFilter(site.id(), field, value);
             if (item.isPresent()) {
                 return item.get().toLuceneQuery(now);
             }
@@ -327,26 +325,30 @@ public class TurLuceneQueryBuilder {
         return builder.build();
     }
 
+    private List<TurSESearchField> enabledFields(TurSESiteSettings site) {
+        return siteSearchConfig.enabledFields(site.id());
+    }
+
     /** Enabled fields keyed by name, for resolving a selection's facet type. */
-    private Map<String, TurSNSiteFieldExt> enabledFieldsByName(TurSNSite turSNSite) {
-        Map<String, TurSNSiteFieldExt> map = new LinkedHashMap<>();
-        turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1)
+    private Map<String, TurSESearchField> enabledFieldsByName(TurSESiteSettings site) {
+        Map<String, TurSESearchField> map = new LinkedHashMap<>();
+        enabledFields(site)
                 .forEach(ext -> {
-                    if (ext.getName() != null) {
-                        map.putIfAbsent(ext.getName(), ext);
+                    if (ext.name() != null) {
+                        map.putIfAbsent(ext.name(), ext);
                     }
                 });
         return map;
     }
 
     /** Field-level {@code facetItemType} wins over the site default; DEFAULT/null → AND. */
-    private static TurSNSiteFacetFieldEnum effectiveFacetItemType(TurSNSiteFieldExt ext,
-            TurSNSite turSNSite) {
-        TurSNSiteFacetFieldEnum fieldType = ext != null ? ext.getFacetItemType() : null;
+    private static TurSNSiteFacetFieldEnum effectiveFacetItemType(TurSESearchField ext,
+            TurSESiteSettings site) {
+        TurSNSiteFacetFieldEnum fieldType = ext != null ? ext.facetItemType() : null;
         if (fieldType != null && fieldType != TurSNSiteFacetFieldEnum.DEFAULT) {
             return fieldType;
         }
-        return normalize(turSNSite.getFacetItemType());
+        return normalize(site.facetItemType());
     }
 
     private static TurSNSiteFacetFieldEnum normalize(TurSNSiteFacetFieldEnum value) {
@@ -358,49 +360,49 @@ public class TurLuceneQueryBuilder {
     /**
      * Returns the list of enabled facet fields for the given site.
      */
-    public List<TurSNSiteFieldExt> getFacetFields(TurSNSite turSNSite) {
-        List<TurSNSiteFieldExt> all = turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1);
-        List<TurSNSiteFieldExt> facets = all.stream()
-                .filter(ext -> ext.getFacet() == 1)
+    public List<TurSESearchField> getFacetFields(TurSESiteSettings site) {
+        List<TurSESearchField> all = enabledFields(site);
+        List<TurSESearchField> facets = all.stream()
+                .filter(ext -> TurSEFlags.isTrue(ext.facet()))
                 .sorted(java.util.Comparator.comparingInt(
-                        ext -> ext.getFacetPosition() != null ? ext.getFacetPosition() : Integer.MAX_VALUE))
+                        ext -> ext.facetPosition() != null ? ext.facetPosition() : Integer.MAX_VALUE))
                 .toList();
         log.debug("[Lucene] site='{}' totalEnabledFields={} facetFields={} names={}",
-                turSNSite.getName(), all.size(), facets.size(),
-                facets.stream().map(TurSNSiteFieldExt::getName).toList());
+                site.name(), all.size(), facets.size(),
+                facets.stream().map(TurSESearchField::name).toList());
         return facets;
     }
 
     /** T1250 — the site's facet fields without those the request leaves out. */
-    public List<TurSNSiteFieldExt> getFacetFields(TurSNSite turSNSite, TurSEParameters params) {
-        List<TurSNSiteFieldExt> facets = getFacetFields(turSNSite);
+    public List<TurSESearchField> getFacetFields(TurSESiteSettings site, TurSEParameters params) {
+        List<TurSESearchField> facets = getFacetFields(site);
         if (params == null || params.getExcludedFacets() == null || params.getExcludedFacets().isEmpty()) {
             return facets;
         }
-        return facets.stream().filter(ext -> !params.isFacetExcluded(ext.getName())).toList();
+        return facets.stream().filter(ext -> !params.isFacetExcluded(ext.name())).toList();
     }
 
     /**
      * Returns facet fields limited to a single named facet (used by
      * {@code retrieveFacetResults}).
      */
-    public List<TurSNSiteFieldExt> getFacetFields(TurSNSite turSNSite, String facetName) {
-        return getFacetFields(turSNSite).stream()
-                .filter(ext -> facetName.equals(ext.getName()))
+    public List<TurSESearchField> getFacetFields(TurSESiteSettings site, String facetName) {
+        return getFacetFields(site).stream()
+                .filter(ext -> facetName.equals(ext.name()))
                 .toList();
     }
 
     /**
      * Returns the list of enabled highlight fields for the given site.
      */
-    public List<TurSNSiteFieldExt> getHLFields(TurSNSite turSNSite) {
+    public List<TurSESearchField> getHLFields(TurSESiteSettings site) {
         // T707 — never highlight identifier/URL fields even if a field is
         // (mis)configured with hl=1: a <mark> injected into `id` corrupts the
         // value clients feed back to /search/similar, silently breaking "Related".
-        return turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(turSNSite, 1, 1)
-                .stream()
+        return enabledFields(site).stream()
+                .filter(field -> TurSEFlags.isTrue(field.hl()))
                 .filter(field -> !com.viglet.turing.commons.sn.field.TurSNFieldName
-                        .isNonHighlightable(field.getName()))
+                        .isNonHighlightable(field.name()))
                 .toList();
     }
 
@@ -410,14 +412,14 @@ public class TurLuceneQueryBuilder {
      *
      * @return null for relevance (default score sort), or a Sort object
      */
-    public org.apache.lucene.search.Sort buildSort(TurSNSite turSNSite, TurSEParameters params) {
+    public org.apache.lucene.search.Sort buildSort(TurSESiteSettings site, TurSEParameters params) {
         String sortParam = params.getSort();
         if (sortParam == null || sortParam.isBlank() || sortParam.equalsIgnoreCase("relevance")) {
             return null; // default score sort
         }
 
         if (sortParam.equalsIgnoreCase(TurLuceneConstants.NEWEST)) {
-            String dateField = turSNSite.getDefaultDateField();
+            String dateField = site.defaultDateField();
             if (dateField != null) {
                 return new org.apache.lucene.search.Sort(
                         new org.apache.lucene.search.SortField(dateField,
@@ -427,7 +429,7 @@ public class TurLuceneQueryBuilder {
         }
 
         if (sortParam.equalsIgnoreCase(TurLuceneConstants.OLDEST)) {
-            String dateField = turSNSite.getDefaultDateField();
+            String dateField = site.defaultDateField();
             if (dateField != null) {
                 return new org.apache.lucene.search.Sort(
                         new org.apache.lucene.search.SortField(dateField,
@@ -441,36 +443,31 @@ public class TurLuceneQueryBuilder {
         if (kv.isPresent()) {
             boolean reverse = kv.get().getValue().equalsIgnoreCase("desc");
             return new org.apache.lucene.search.Sort(
-                    buildSortField(kv.get().getKey(), reverse));
+                    buildSortField(site, kv.get().getKey(), reverse));
         }
 
         // Custom sort name
-        return siteSearchConfig.customSort(turSNSite.getId(), sortParam)
+        return siteSearchConfig.customSort(site.id(), sortParam)
                 .map(sortedItems -> {
                     if (sortedItems.isEmpty()) return null;
                     org.apache.lucene.search.SortField[] fields = sortedItems.stream()
-                            .map(item -> buildSortField(item.fieldName(), item.descending(), item.missing()))
+                            .map(item -> buildSortField(site, item.fieldName(), item.descending(), item.missing()))
                             .toArray(org.apache.lucene.search.SortField[]::new);
                     return new org.apache.lucene.search.Sort(fields);
                 })
                 .orElse(null);
     }
 
-    private org.apache.lucene.search.SortField buildSortField(String fieldName, boolean reverse) {
-        return buildSortField(fieldName, reverse, null);
+    private org.apache.lucene.search.SortField buildSortField(TurSESiteSettings site, String fieldName,
+            boolean reverse) {
+        return buildSortField(site, fieldName, reverse, null);
     }
 
-    private org.apache.lucene.search.SortField buildSortField(String fieldName, boolean reverse,
-            TurSNSiteCustomSortMissingEnum missing) {
-        // Determine the SortField type based on the field's configured type
-        List<TurSNSiteFieldExt> allFields = turSNSiteFieldExtRepository.findAll();
-        for (TurSNSiteFieldExt ext : allFields) {
-            if (fieldName.equals(ext.getName()) && ext.getType() != null) {
-                return sortField(fieldName, ext.getType(), reverse, missing);
-            }
-        }
-        // Unknown field — use SortedSetSortField (works with SortedSetDocValuesField from addFacetField)
-        return sortField(fieldName, null, reverse, missing);
+    private org.apache.lucene.search.SortField buildSortField(TurSESiteSettings site, String fieldName,
+            boolean reverse, TurSNSiteCustomSortMissingEnum missing) {
+        // The SortField type follows the type the site gave the field; an unknown
+        // field uses SortedSetSortField (works with SortedSetDocValuesField from addFacetField)
+        return sortField(fieldName, siteSearchConfig.fieldTypes(site.id()).get(fieldName), reverse, missing);
     }
 
     /**
@@ -515,9 +512,9 @@ public class TurLuceneQueryBuilder {
      * {@code *_ac} fields. The query is analyzed with {@link StandardAnalyzer}
      * (lowercase, tokenize) and matched against the ngram tokens in the index.
      */
-    public Query buildAutoCompleteQuery(TurSNSite turSNSite, String term) {
+    public Query buildAutoCompleteQuery(String siteId, String term) {
         // Map to _ac suffixed fields for ngram matching
-        String[] acFields = java.util.Arrays.stream(resolveAutoCompleteFields(turSNSite))
+        String[] acFields = java.util.Arrays.stream(resolveAutoCompleteFields(siteId))
                 .map(f -> f + TurLuceneConstants.AC_SUFFIX)
                 .toArray(String[]::new);
         try {
@@ -535,29 +532,29 @@ public class TurLuceneQueryBuilder {
     /**
      * Builds a wildcard-appended version of the query (for no-results fallback).
      */
-    public Query buildWildcardQuery(TurSNSite turSNSite, TurSEParameters params) {
+    public Query buildWildcardQuery(TurSESiteSettings site, TurSEParameters params) {
         String wildcardQuery = params.getQuery().trim() + "*";
         params.setQuery(wildcardQuery);
-        return buildQuery(turSNSite, params);
+        return buildQuery(site, params);
     }
 
     // -------------------------------------------------------------------------
     // Internals
     // -------------------------------------------------------------------------
 
-    private Query buildMainQuery(String queryStr, TurSNSite turSNSite, Locale locale, boolean relaxedMatch,
+    private Query buildMainQuery(String queryStr, TurSESiteSettings site, Locale locale, boolean relaxedMatch,
             boolean synonyms) {
         if (!StringUtils.hasText(queryStr) || queryStr.equals("*") || queryStr.equals("*:*")) {
             return new FieldExistsQuery(TurLuceneConstants.ID);
         }
 
-        String[] textFields = resolveTextFields(turSNSite);
+        String[] textFields = resolveTextFields(site);
         // T1242 — a query made only of stop words keeps them, or it would search for
         // nothing; so does a quoted phrase, which asks for its words as typed (and a
         // dropped word would leave a hole the synonym graph cannot carry).
         boolean keepStopWords = queryStr.indexOf('"') >= 0
                 || com.viglet.turing.searchengine.TurSNQueryRelaxer.onlyStopWords(queryStr, locale);
-        Analyzer analyzer = synonyms ? queryAnalyzer(turSNSite, locale, keepStopWords)
+        Analyzer analyzer = synonyms ? queryAnalyzer(site, locale, keepStopWords)
                 : TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords);
         try {
             if (textFields.length == 0) {
@@ -567,7 +564,7 @@ public class TurLuceneQueryBuilder {
             }
             // T1065 — a field's search weight multiplies its clause, so a title
             // match can outweigh the same word in body text.
-            Map<String, Float> weights = searchWeights(turSNSite);
+            Map<String, Float> weights = searchWeights(site);
             MultiFieldQueryParser parser = weights.isEmpty()
                     ? new MultiFieldQueryParser(textFields, analyzer)
                     : new MultiFieldQueryParser(textFields, analyzer, weights);
@@ -600,7 +597,7 @@ public class TurLuceneQueryBuilder {
                         .add(plain, BooleanClause.Occur.SHOULD)
                         .build();
             }
-            return phrasesOnPositionalFieldsOnly(main, positionalFields(turSNSite));
+            return phrasesOnPositionalFieldsOnly(main, positionalFields(site));
         } catch (ParseException e) {
             log.warn("Failed to parse Lucene query '{}', falling back to MatchAllDocsQuery: {}", queryStr,
                     e.getMessage());
@@ -623,14 +620,14 @@ public class TurLuceneQueryBuilder {
      * typed). A boost only, never a filter. Not for a single word, a query using
      * the engine's syntax, or a title field that holds no positions.
      */
-    private Optional<Query> titlePhraseBoost(String queryStr, TurSNSite turSNSite, Locale locale) {
+    private Optional<Query> titlePhraseBoost(String queryStr, TurSESiteSettings site, Locale locale) {
         if (!com.viglet.turing.searchengine.TurSNQueryRelaxer.isPlainPhrase(queryStr)) {
             return Optional.empty();
         }
-        String titleField = StringUtils.hasText(turSNSite.getDefaultTitleField())
-                ? turSNSite.getDefaultTitleField()
+        String titleField = StringUtils.hasText(site.defaultTitleField())
+                ? site.defaultTitleField()
                 : TurLuceneConstants.TITLE;
-        if (!positionalFields(turSNSite).contains(titleField)) {
+        if (!positionalFields(site).contains(titleField)) {
             return Optional.empty();
         }
         try {
@@ -672,7 +669,7 @@ public class TurLuceneQueryBuilder {
      * overhead for sites without synonyms — the registry short-circuits and no
      * locale/core lookup runs.
      */
-    private Analyzer queryAnalyzer(TurSNSite turSNSite, Locale locale, boolean keepStopWords) {
+    private Analyzer queryAnalyzer(TurSESiteSettings site, Locale locale, boolean keepStopWords) {
         // T1080 — both analyzers add the accent-folded form of each token, as the
         // index side does, so "saude" and "saúde" find each other. T1170 — and the
         // stem in the search locale's language, so "jackets" finds "jacket".
@@ -680,10 +677,8 @@ public class TurLuceneQueryBuilder {
         if (locale == null || synonymRegistry == null || synonymRegistry.isEmpty()) {
             return TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords);
         }
-        String core = turSNSiteLocaleRepository.findByTurSNSite(turSNSite).stream()
-                .filter(l -> locale.equals(l.getLanguage()))
-                .map(TurSNSiteLocale::getCore)
-                .findFirst()
+        String core = siteSearchConfig.siteCore(site.name(), locale)
+                .map(TurSESiteCore::core)
                 .orElse(null);
         SynonymMap map = core == null ? null : synonymRegistry.get(core);
         return map == null ? TurLuceneFoldingAnalyzer.forQuery(locale, keepStopWords)
@@ -730,12 +725,12 @@ public class TurLuceneQueryBuilder {
      * and the {@code id} (always, see {@code TurLuceneDocumentHandler}) are a
      * {@code StringField} with no position data.
      */
-    private Set<String> positionalFields(TurSNSite turSNSite) {
+    private Set<String> positionalFields(TurSESiteSettings site) {
         Set<String> fields = new HashSet<>();
-        turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1).forEach(ext -> {
-            if (ext.getType() == TurSEFieldType.TEXT && ext.getName() != null
-                    && !TurLuceneConstants.ID.equals(ext.getName())) {
-                fields.add(ext.getName());
+        enabledFields(site).forEach(ext -> {
+            if (ext.type() == TurSEFieldType.TEXT && ext.name() != null
+                    && !TurLuceneConstants.ID.equals(ext.name())) {
+                fields.add(ext.name());
             }
         });
         return fields;
@@ -788,12 +783,12 @@ public class TurLuceneQueryBuilder {
     }
 
     /** Enabled fields whose search weight differs from 1, keyed by name. */
-    private Map<String, Float> searchWeights(TurSNSite turSNSite) {
+    private Map<String, Float> searchWeights(TurSESiteSettings site) {
         Map<String, Float> weights = new LinkedHashMap<>();
-        turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1).forEach(ext -> {
-            Float weight = ext.getSearchWeight();
-            if (ext.getName() != null && weight != null && weight > 0 && weight != 1f) {
-                weights.putIfAbsent(ext.getName(), weight);
+        enabledFields(site).forEach(ext -> {
+            Float weight = ext.searchWeight();
+            if (ext.name() != null && weight != null && weight > 0 && weight != 1f) {
+                weights.putIfAbsent(ext.name(), weight);
             }
         });
         return weights;
@@ -805,11 +800,11 @@ public class TurLuceneQueryBuilder {
      * keyword ones (STRING/ARRAY hold slugs, codes and URLs nobody types) nor
      * {@code id}/{@code url}. Falls back to {@code title} when the site has none.
      */
-    public String[] resolveAutoCompleteFields(TurSNSite turSNSite) {
-        String[] fields = turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1)
+    public String[] resolveAutoCompleteFields(String siteId) {
+        String[] fields = siteSearchConfig.enabledFields(siteId)
                 .stream()
-                .filter(ext -> ext.getType() == TurSEFieldType.TEXT && ext.getName() != null)
-                .map(TurSNSiteFieldExt::getName)
+                .filter(ext -> ext.type() == TurSEFieldType.TEXT && ext.name() != null)
+                .map(TurSESearchField::name)
                 .filter(name -> !TurLuceneConstants.ID.equals(name)
                         && !TurLuceneConstants.URL.equals(name))
                 .distinct()
@@ -817,11 +812,11 @@ public class TurLuceneQueryBuilder {
         return fields.length > 0 ? fields : new String[] { TurLuceneConstants.TITLE };
     }
 
-    private String[] resolveTextFields(TurSNSite turSNSite) {
-        return turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(turSNSite, 1)
+    private String[] resolveTextFields(TurSESiteSettings site) {
+        return enabledFields(site)
                 .stream()
-                .filter(ext -> ext.getType() != null && TEXT_FIELD_TYPES.contains(ext.getType()))
-                .map(TurSNSiteFieldExt::getName)
+                .filter(ext -> ext.type() != null && TEXT_FIELD_TYPES.contains(ext.type()))
+                .map(TurSESearchField::name)
                 .distinct()
                 .toArray(String[]::new);
     }

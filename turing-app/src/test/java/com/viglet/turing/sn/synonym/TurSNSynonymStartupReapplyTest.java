@@ -53,6 +53,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
+import com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -215,13 +216,21 @@ class TurSNSynonymStartupReapplyTest {
 
     private List<String> search(TurLuceneSynonymRegistry registry, TurSNSite site, String q)
             throws Exception {
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        // T1310 — the engine reads the site's fields and cores through the search SPI.
+        com.viglet.turing.searchengine.spi.TurSESiteSearchConfig siteSearchConfig =
+                org.mockito.Mockito.mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class);
+        when(siteSearchConfig.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT).build()));
-        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(new com.viglet.turing.sn.api.TurSNSiteFieldExts(fieldExtRepository), null,
-                new com.viglet.turing.sn.api.TurSNSiteLocales(siteLocaleRepository), registry, null);
+        when(siteSearchConfig.siteCore(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.eq(EN)))
+                .thenAnswer(invocation -> siteLocaleRepository.findByTurSNSite(site).stream()
+                        .filter(siteLocale -> EN.equals(siteLocale.getLanguage()))
+                        .findFirst()
+                        .map(siteLocale -> new com.viglet.turing.searchengine.spi.TurSESiteCore(site.getName(), null,
+                                siteLocale.getCore())));
+        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(siteSearchConfig, registry, null);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        Query query = queryBuilder.buildQuery(site,
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site),
                 new TurSEParameters(params, new TurSNSitePostParamsBean()), EN);
         try (Directory dir = new ByteBuffersDirectory()) {
             try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {

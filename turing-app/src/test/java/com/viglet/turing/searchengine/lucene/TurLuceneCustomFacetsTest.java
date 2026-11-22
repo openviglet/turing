@@ -62,7 +62,12 @@ class TurLuceneCustomFacetsTest {
             new com.viglet.turing.sn.facet.TurSNCustomFacetCatalog(fieldRepository, customFacetRepository);
     private final com.viglet.turing.searchengine.spi.TurSESiteSearchConfig siteSearchConfig =
             mock(com.viglet.turing.searchengine.spi.TurSESiteSearchConfig.class,
-                    inv -> "customFacets".equals(inv.getMethod().getName()) ? catalog.customFacets(this.site) : null);
+                    inv -> switch (inv.getMethod().getName()) {
+                        case "customFacets" -> catalog.customFacets(this.site);
+                        case "enabledFields" -> TurLuceneSpiFixtures.fields(
+                                fieldRepository.findByTurSNSiteAndEnabled(this.site, 1));
+                        default -> null;
+                    });
     private final TurLuceneCustomFacets customFacets = new TurLuceneCustomFacets(siteSearchConfig);
     private final TurSNSite site = new TurSNSite();
 
@@ -150,7 +155,7 @@ class TurLuceneCustomFacetsTest {
 
     @Test
     void clickingAnItemFiltersByItsRange() throws Exception {
-        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(fieldRepository, null, null, null, null,
+        TurLuceneQueryBuilder queryBuilder = new TurLuceneQueryBuilder(siteSearchConfig, null, null,
                 customFacets);
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ("*");
@@ -158,7 +163,7 @@ class TurLuceneCustomFacetsTest {
         params.setP(1);
         params.setFq(List.of("salaryBand:over 3000"));
 
-        Query query = queryBuilder.buildQuery(site, new TurSEParameters(params));
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params));
 
         Set<String> ids = new TreeSet<>();
         for (ScoreDoc hit : searcher.search(query, 10).scoreDocs) {

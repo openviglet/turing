@@ -41,7 +41,7 @@ import org.apache.lucene.search.uhighlight.UnifiedHighlighter;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.spi.TurSESiteSettings;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.facet.TurSEFacetResultAttr;
 import com.viglet.turing.searchengine.result.TurSEResult;
@@ -76,8 +76,8 @@ public class TurLuceneResultProcessor {
      * index segments; facet values are then counted directly from per-field
      * {@link SortedSetDocValues} without relying on FacetsConfig internals.
      */
-    public TurSEResults getResults(TurLuceneSearch search, List<TurSNSiteFieldExt> facetFields,
-            List<TurSNSiteFieldExt> hlFields, org.apache.lucene.search.Sort sort,
+    public TurSEResults getResults(TurLuceneSearch search, List<TurSESearchField> facetFields,
+            List<TurSESearchField> hlFields, org.apache.lucene.search.Sort sort,
             long startTime) {
         TurLuceneInstance instance = search.instance();
         TurSESiteSettings site = search.site();
@@ -163,7 +163,7 @@ public class TurLuceneResultProcessor {
 
     private Map<String, Map<String, String>> buildHighlighting(IndexSearcher searcher,
             org.apache.lucene.analysis.Analyzer analyzer, Query query, TopDocs topDocs, TurSESiteSettings site,
-            List<TurSNSiteFieldExt> hlFields) {
+            List<TurSESearchField> hlFields) {
         if (!isHL(site, hlFields) || topDocs.scoreDocs.length == 0) {
             return Map.of();
         }
@@ -185,11 +185,11 @@ public class TurLuceneResultProcessor {
                     .withMaxNoHighlightPassages(0)
                     .build();
 
-            for (TurSNSiteFieldExt hlField : hlFields) {
-                if (hlField.getType() == null || !HL_FIELD_TYPES.contains(hlField.getType())) {
+            for (TurSESearchField hlField : hlFields) {
+                if (hlField.type() == null || !HL_FIELD_TYPES.contains(hlField.type())) {
                     continue;
                 }
-                highlightField(highlighter, hlField.getName(), query, topDocs, searcher, hlByDoc, tags);
+                highlightField(highlighter, hlField.name(), query, topDocs, searcher, hlByDoc, tags);
             }
         } catch (Exception e) {
             log.warn("Error building highlighting: {}", e.getMessage());
@@ -231,7 +231,7 @@ public class TurLuceneResultProcessor {
         }
     }
 
-    static boolean isHL(TurSESiteSettings site, List<TurSNSiteFieldExt> hlFields) {
+    static boolean isHL(TurSESiteSettings site, List<TurSESearchField> hlFields) {
         return TurSEFlags.isTrue(site.hl()) && hlFields != null && !hlFields.isEmpty();
     }
 
@@ -240,7 +240,7 @@ public class TurLuceneResultProcessor {
     // -------------------------------------------------------------------------
 
     TurSEResult createTurSEResult(Document doc, float score,
-            Map<String, String> docHL, List<TurSNSiteFieldExt> hlFields) {
+            Map<String, String> docHL, List<TurSESearchField> hlFields) {
         Map<String, Object> fields = new LinkedHashMap<>();
         Map<String, TurSEFieldType> hlFieldTypes = buildHlFieldTypes(hlFields);
 
@@ -263,12 +263,12 @@ public class TurLuceneResultProcessor {
         return TurSEResult.builder().fields(fields).build();
     }
 
-    private static Map<String, TurSEFieldType> buildHlFieldTypes(List<TurSNSiteFieldExt> hlFields) {
+    private static Map<String, TurSEFieldType> buildHlFieldTypes(List<TurSESearchField> hlFields) {
         Map<String, TurSEFieldType> hlFieldTypes = new LinkedHashMap<>();
         if (hlFields != null) {
-            for (TurSNSiteFieldExt f : hlFields) {
-                if (f.getType() != null) {
-                    hlFieldTypes.put(f.getName(), f.getType());
+            for (TurSESearchField f : hlFields) {
+                if (f.type() != null) {
+                    hlFieldTypes.put(f.name(), f.type());
                 }
             }
         }
@@ -317,13 +317,13 @@ public class TurLuceneResultProcessor {
      * updates and Lucene version differences.
      */
     private List<TurSEFacetResult> computeFacets(FacetsCollector fc,
-            List<TurSNSiteFieldExt> facetFields) {
+            List<TurSESearchField> facetFields) {
         List<TurSEFacetResult> out = new ArrayList<>();
         List<FacetsCollector.MatchingDocs> matchingDocsList = fc.getMatchingDocs();
         log.debug("[Lucene] computeFacets: {} facet fields, {} matching segments",
                 facetFields.size(), matchingDocsList.size());
 
-        for (TurSNSiteFieldExt fieldExt : facetFields) {
+        for (TurSESearchField fieldExt : facetFields) {
             TurSEFacetResult turFacet = processFacetField(fieldExt, matchingDocsList);
             if (turFacet != null) {
                 out.add(turFacet);
@@ -341,12 +341,12 @@ public class TurLuceneResultProcessor {
      * @param matchingDocsList list of matching docs from all segments
      * @return a {@link TurSEFacetResult} or null if no facet values found
      */
-    private TurSEFacetResult processFacetField(TurSNSiteFieldExt fieldExt,
+    private TurSEFacetResult processFacetField(TurSESearchField fieldExt,
             List<FacetsCollector.MatchingDocs> matchingDocsList) {
-        String fieldName = fieldExt.getName();
+        String fieldName = fieldExt.name();
         // Numeric types (INT, LONG, FLOAT, DOUBLE, DATE) store SortedSetDocValues under a
         // _sf-suffixed field to avoid conflict with their NumericDocValuesField.
-        TurSEFieldType type = fieldExt.getType();
+        TurSEFieldType type = fieldExt.type();
         String docValuesFieldName = usesNumericDocValues(type)
                 ? fieldName + TurLuceneConstants.SORTED_SET_FACET_SUFFIX
                 : fieldName;
@@ -360,7 +360,7 @@ public class TurLuceneResultProcessor {
         TurSEFacetResult turFacet = new TurSEFacetResult();
         turFacet.setFacet(fieldName);
         turFacet.setFacetPosition(
-                fieldExt.getFacetPosition() != null ? fieldExt.getFacetPosition() : 0);
+                fieldExt.facetPosition() != null ? fieldExt.facetPosition() : 0);
 
         counts.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())

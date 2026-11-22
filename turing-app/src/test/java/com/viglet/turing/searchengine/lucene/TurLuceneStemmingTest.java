@@ -33,7 +33,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * T1170 — a plural query finds the singular-titled document (and the reverse) on
@@ -46,16 +46,16 @@ class TurLuceneStemmingTest {
 
     private static final Locale PT_BR = Locale.of("pt", "BR");
 
-    private final TurSNSiteFieldExts fieldRepository = mock(TurSNSiteFieldExts.class);
+    private final TurSESiteSearchConfig fieldRepository = mock(TurSESiteSearchConfig.class);
     private final TurLuceneQueryBuilder queryBuilder =
-            new TurLuceneQueryBuilder(fieldRepository, null, null, null, null);
+            new TurLuceneQueryBuilder(fieldRepository, null, null);
     private final TurSNSite site = new TurSNSite();
 
     TurLuceneStemmingTest() {
         TurSNSiteFieldExt text = new TurSNSiteFieldExt();
         text.setName("text");
         text.setType(TurSEFieldType.TEXT);
-        when(fieldRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(text));
+        when(fieldRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(text));
     }
 
     private static final Map<String, String> CATALOG = Map.of(
@@ -74,7 +74,7 @@ class TurLuceneStemmingTest {
         params.setQ(q);
         params.setRows(10);
         params.setP(1);
-        return search(indexAnalyzer, queryBuilder.buildQuery(site, new TurSEParameters(params), locale));
+        return search(indexAnalyzer, queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params), locale));
     }
 
     static Set<String> search(Analyzer indexAnalyzer, Query query) throws Exception {

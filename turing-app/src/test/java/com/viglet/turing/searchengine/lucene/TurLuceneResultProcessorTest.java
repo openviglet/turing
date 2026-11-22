@@ -469,10 +469,9 @@ class TurLuceneResultProcessorTest {
         TurLuceneInstance instance = new TurLuceneInstance(writer, directory,
                 java.nio.file.Path.of("test-index"), new org.apache.lucene.facet.FacetsConfig());
         com.viglet.turing.searchengine.spi.TurSESiteSettings site = com.viglet.turing.searchengine.spi.TurSESiteSettings.builder().rowsPerPage(10).hl(1).build();
-        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt textField =
-                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt();
-        textField.setName("text");
-        textField.setType(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT);
+        com.viglet.turing.searchengine.spi.TurSESearchField textField =
+                com.viglet.turing.searchengine.spi.TurSESearchField.builder().name("text")
+                        .type(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT).hl(1).build();
         try {
             return processor.getResults(new TurLuceneSearch(instance, site, query, paramsForPage(1)),
                     List.of(), List.of(textField), null, 0L);

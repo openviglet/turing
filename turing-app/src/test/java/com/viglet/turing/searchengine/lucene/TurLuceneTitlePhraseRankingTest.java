@@ -35,8 +35,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSNSynonymType;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 
 /**
@@ -51,9 +50,7 @@ import com.viglet.turing.searchengine.TurSESynonymRule;
 class TurLuceneTitlePhraseRankingTest {
 
     @Mock
-    private TurSNSiteFieldExts fieldExtRepository;
-    @Mock
-    private TurSNSiteLocales localeRepository;
+    private TurSESiteSearchConfig fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;
@@ -68,15 +65,16 @@ class TurLuceneTitlePhraseRankingTest {
                 new TurSESynonymRule(TurSNSynonymType.REGULAR, null,
                         List.of("puffer", "down jacket", "insulated jacket"))))
                 .map());
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, localeRepository, registry, null);
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, registry, null);
 
-        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        when(fieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT).build(),
                 TurSNSiteFieldExt.builder().name("text").type(TurSEFieldType.TEXT).build()));
         TurSNSiteLocale locale = new TurSNSiteLocale();
         locale.setLanguage(Locale.US);
         locale.setCore("demo_en");
-        lenient().when(localeRepository.findByTurSNSite(any())).thenReturn(List.of(locale));
+        org.mockito.Mockito.lenient().when(fieldExtRepository.siteCore(any(), org.mockito.ArgumentMatchers.eq(locale.getLanguage())))
+                .thenReturn(java.util.Optional.of(new com.viglet.turing.searchengine.spi.TurSESiteCore(null, null, locale.getCore())));
     }
 
     private static Document doc(String id, String title, String text) {
@@ -90,7 +88,7 @@ class TurLuceneTitlePhraseRankingTest {
     private List<String> search(String q) throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        Query query = queryBuilder.buildQuery(site,
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site),
                 new TurSEParameters(params, new TurSNSitePostParamsBean()), Locale.US);
         try (Directory dir = new ByteBuffersDirectory()) {
             try (IndexWriter writer = new IndexWriter(dir,

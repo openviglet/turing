@@ -162,7 +162,7 @@ class TurLuceneSearchEnginePluginTest {
         boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
 
         assertTrue(result);
-        verify(turLucene).indexing(instance, site, attrs);
+        verify(turLucene).indexing(instance, site.getId(), attrs);
     }
 
     // ---- indexDocuments (T804 bulk override) ---------------------------------
@@ -178,12 +178,12 @@ class TurLuceneSearchEnginePluginTest {
 
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
-        when(turLucene.indexingBatch(instance, site, docs)).thenReturn(3);
+        when(turLucene.indexingBatch(instance, site.getId(), docs)).thenReturn(3);
 
         int indexed = plugin.indexDocuments(site, Locale.ENGLISH, docs);
 
         assertEquals(3, indexed);
-        verify(turLucene).indexingBatch(instance, site, docs);
+        verify(turLucene).indexingBatch(instance, site.getId(), docs);
     }
 
     @Test
@@ -228,7 +228,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
         org.mockito.Mockito.doThrow(new IllegalArgumentException("some other error"))
-                .when(turLucene).indexing(instance, site, attrs);
+                .when(turLucene).indexing(instance, site.getId(), attrs);
 
         boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
 
@@ -250,13 +250,13 @@ class TurLuceneSearchEnginePluginTest {
                 .thenReturn(Optional.of(freshInstance));
 
         org.mockito.Mockito.doThrow(new IllegalArgumentException("doc values type mismatch"))
-                .when(turLucene).indexing(instance, site, attrs);
+                .when(turLucene).indexing(instance, site.getId(), attrs);
 
         boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
 
         assertTrue(result);
         verify(turLuceneInstanceProcess).resetInstance(Path.of("/tmp/test-index"));
-        verify(turLucene).indexing(freshInstance, site, attrs);
+        verify(turLucene).indexing(freshInstance, site.getId(), attrs);
     }
 
     // ---- deIndex --------------------------------------------------------------

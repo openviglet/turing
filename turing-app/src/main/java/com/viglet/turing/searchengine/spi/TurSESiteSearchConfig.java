@@ -82,6 +82,9 @@ public interface TurSESiteSearchConfig {
      */
     Optional<TurSESiteSettings> siteSettings(String siteName);
 
+    /** The site's enabled fields; empty when the site is unknown or the id {@code null}. */
+    List<TurSESearchField> enabledFields(String siteId);
+
     /** The site locales that write to {@code core}; empty when none does. */
     List<TurSECoreUsage> coreUsage(String core);
 

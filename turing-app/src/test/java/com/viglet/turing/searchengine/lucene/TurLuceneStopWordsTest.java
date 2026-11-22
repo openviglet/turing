@@ -32,7 +32,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSNQueryRelaxer;
 
 /**
@@ -50,7 +50,7 @@ class TurLuceneStopWordsTest {
     private static final Locale PT_BR = Locale.of("pt", "BR");
 
     @Mock
-    private TurSNSiteFieldExts fieldExtRepository;
+    private TurSESiteSearchConfig fieldExtRepository;
 
     private final TurSNSite site = new TurSNSite();
     private TurLuceneQueryBuilder queryBuilder;
@@ -58,8 +58,8 @@ class TurLuceneStopWordsTest {
     @BeforeEach
     void setUp() {
         site.setDefaultTitleField("title");
-        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, null, null, null);
-        lenient().when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        queryBuilder = new TurLuceneQueryBuilder(fieldExtRepository, null, null);
+        lenient().when(fieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT).build(),
                 TurSNSiteFieldExt.builder().name("text").type(TurSEFieldType.TEXT).build()));
     }
@@ -67,7 +67,7 @@ class TurLuceneStopWordsTest {
     private Query query(String q, Locale locale) {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        return queryBuilder.buildQuery(site, new TurSEParameters(params, new TurSNSitePostParamsBean()), locale);
+        return queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params, new TurSNSitePostParamsBean()), locale);
     }
 
     /** The ids that match {@code q}, and the highlighted body of each, against an index in {@code locale}. */

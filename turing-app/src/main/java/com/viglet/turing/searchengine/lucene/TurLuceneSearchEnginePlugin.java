@@ -315,7 +315,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
                 .map(luceneInstance -> {
                     try {
-                        turLucene.indexing(luceneInstance, turSNSite, attributes);
+                        turLucene.indexing(luceneInstance, siteId(turSNSite), attributes);
                         return true;
                     } catch (IllegalArgumentException e) {
                         if (e.getMessage() != null && isSchemaConflict(e.getMessage())) {
@@ -325,7 +325,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
                             return turLuceneInstanceProcess
                                     .initLuceneInstance(turSNSite.getName(), locale)
                                     .map(fresh -> {
-                                        turLucene.indexing(fresh, turSNSite, attributes);
+                                        turLucene.indexing(fresh, siteId(turSNSite), attributes);
                                         return true;
                                     }).orElse(false);
                         }
@@ -342,7 +342,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
                                 luceneInstance.getIndexPath().getFileName(), e.getMessage());
                         return turLuceneInstanceProcess.rebuildInstance(luceneInstance.getIndexPath())
                                 .map(fresh -> {
-                                    turLucene.indexing(fresh, turSNSite, attributes);
+                                    turLucene.indexing(fresh, siteId(turSNSite), attributes);
                                     return true;
                                 }).orElse(false);
                     }
@@ -373,7 +373,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             return 0;
         }
         return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
-                .map(luceneInstance -> turLucene.indexingBatch(luceneInstance, turSNSite, documents))
+                .map(luceneInstance -> turLucene.indexingBatch(luceneInstance, siteId(turSNSite), documents))
                 .orElse(0);
     }
 
@@ -520,12 +520,12 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
             var searcher = instance.getSearcher();
             int maxHits = rows > 0 ? (int) rows : 20;
 
-            var query = turLuceneQueryBuilder.buildAutoCompleteQuery(turSNSite, term);
+            var query = turLuceneQueryBuilder.buildAutoCompleteQuery(turSNSite.getId(), term);
             var topDocs = searcher.search(query, maxHits * 5);
             // T1076 — suggest only from the fields the query side matched on, so a
             // slug, URL or id stored on the same document never becomes a suggestion.
             Set<String> suggestionFields = Set.of(
-                    turLuceneQueryBuilder.resolveAutoCompleteFields(turSNSite));
+                    turLuceneQueryBuilder.resolveAutoCompleteFields(turSNSite.getId()));
 
             // Split query: leading completed words + last partial token
             String[] queryTokens = term.trim().toLowerCase().split("\\s+");
@@ -712,7 +712,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         TurSNSite site = siteLocale == null ? null : siteLocale.getTurSNSite();
         String[] mltFields = resolveMltFields(site);
         Query filter = constraints == null || site == null ? null
-                : turLuceneQueryBuilder.buildQuery(site, constraints);
+                : turLuceneQueryBuilder.buildQueryForSite(site.getName(), constraints);
         return turLuceneInstanceProcess.initLuceneInstance(siteLocale)
                 .map(instance -> {
                     Map<String, Collection<Object>> like = seedFields(instance, id, mltFields);
@@ -1133,5 +1133,9 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         info.put("version", org.apache.lucene.util.Version.LATEST.toString());
         info.put("indexPath", seInstance.getEndpointUrl());
         return info;
+    }
+
+    private static String siteId(TurSNSite turSNSite) {
+        return turSNSite == null ? null : turSNSite.getId();
     }
 }

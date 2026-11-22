@@ -74,10 +74,10 @@ import com.viglet.turing.searchengine.lucene.TurLuceneQueryBuilder;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSECustomSortItem;
 import com.viglet.turing.searchengine.spi.TurSEIndexField;
-import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -233,6 +233,10 @@ class TurSNEngineConformanceIT {
         Map<String, TurSEIndexField> fieldMap = new LinkedHashMap<>();
         FIELD_TYPES.forEach((name, type) -> fieldMap.put(name, new TurSEIndexField(name, type, false)));
         when(sortRepository.indexFields(any())).thenReturn(fieldMap);
+        // The engine reads the same fields through the search SPI (T1310).
+        when(sortRepository.enabledFields(any()))
+                .thenAnswer(invocation -> com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.fields(fields));
+        when(sortRepository.fieldTypes(any())).thenReturn(new LinkedHashMap<>(FIELD_TYPES));
         ByteBuffersDirectory directory = new ByteBuffersDirectory();
         IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()));
         TurLuceneInstance luceneInstance = mock(TurLuceneInstance.class);
@@ -244,8 +248,7 @@ class TurSNEngineConformanceIT {
         writer.commit();
         luceneReader = DirectoryReader.open(writer);
         luceneSearcher = new IndexSearcher(luceneReader);
-        luceneQueryBuilder = new TurLuceneQueryBuilder(fieldRepository, sortRepository, null, null, null,
-                customFacets);
+        luceneQueryBuilder = new TurLuceneQueryBuilder(sortRepository, null, null, customFacets);
 
         // Elasticsearch, through Turing's own mapping and indexing calls.
         ES.start();
@@ -381,8 +384,8 @@ class TurSNEngineConformanceIT {
 
     private List<String> lucene(TurSNSearchParams params, boolean relaxed) throws Exception {
         TurSEParameters seParams = seParameters(params, relaxed);
-        Sort sort = luceneQueryBuilder.buildSort(site, seParams);
-        var query = luceneQueryBuilder.buildQuery(site, seParams);
+        Sort sort = luceneQueryBuilder.buildSort(com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.settings(site), seParams);
+        var query = luceneQueryBuilder.buildQuery(com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.settings(site), seParams);
         ScoreDoc[] hits = sort == null ? luceneSearcher.search(query, 10).scoreDocs
                 : luceneSearcher.search(query, 10, sort).scoreDocs;
         List<String> ids = new ArrayList<>();
@@ -684,12 +687,12 @@ class TurSNEngineConformanceIT {
         when(siteSearchConfig.fieldTypes(any())).thenReturn(catalogTypes);
 
         var luceneRanking = new com.viglet.turing.searchengine.lucene.TurLuceneRankingExpressions(siteSearchConfig);
-        TurLuceneQueryBuilder rankedLucene = new TurLuceneQueryBuilder(catalogFieldRepository, catalogSortRepository,
-                null, null, luceneRanking, null);
+        TurLuceneQueryBuilder rankedLucene = new TurLuceneQueryBuilder(catalogSortRepository, null,
+                luceneRanking, null);
         TurSEParameters seParams = seParameters(request(p -> {
         }), false);
         List<String> lucene = new ArrayList<>();
-        for (ScoreDoc hit : luceneSearcher.search(rankedLucene.buildQuery(site, seParams), 10).scoreDocs) {
+        for (ScoreDoc hit : luceneSearcher.search(rankedLucene.buildQuery(com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.settings(site), seParams), 10).scoreDocs) {
             lucene.add(luceneSearcher.storedFields().document(hit.doc).get(TurSNFieldName.ID));
         }
 

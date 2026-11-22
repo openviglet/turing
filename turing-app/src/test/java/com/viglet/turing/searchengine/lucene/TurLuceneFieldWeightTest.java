@@ -31,7 +31,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * T1065 — a field's search weight lets a title match outrank the same word in
@@ -41,7 +41,7 @@ import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 class TurLuceneFieldWeightTest {
 
     @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private TurSESiteSearchConfig turSNSiteFieldExtRepository;
 
     @InjectMocks
     private TurLuceneQueryBuilder queryBuilder;
@@ -49,7 +49,7 @@ class TurLuceneFieldWeightTest {
     private final TurSNSite site = new TurSNSite();
 
     private void fields(Float titleWeight) {
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(
                 TurSNSiteFieldExt.builder().name("title").type(TurSEFieldType.TEXT)
                         .searchWeight(titleWeight).build(),
                 TurSNSiteFieldExt.builder().name("text").type(TurSEFieldType.TEXT).build()));
@@ -66,7 +66,7 @@ class TurLuceneFieldWeightTest {
     private List<String> search(String q) throws Exception {
         TurSNSearchParams params = new TurSNSearchParams();
         params.setQ(q);
-        Query query = queryBuilder.buildQuery(site, new TurSEParameters(params, new TurSNSitePostParamsBean()));
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), new TurSEParameters(params, new TurSNSitePostParamsBean()));
         try (Directory dir = new ByteBuffersDirectory()) {
             try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
                 // The body names java three times; the other mentions it once, in the title.

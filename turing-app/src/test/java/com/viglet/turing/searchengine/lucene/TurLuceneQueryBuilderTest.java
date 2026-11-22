@@ -25,7 +25,7 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
 /**
  * Tests for TurLuceneQueryBuilder.
@@ -37,7 +37,7 @@ import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 class TurLuceneQueryBuilderTest {
 
     @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private TurSESiteSearchConfig turSNSiteFieldExtRepository;
 
     @Mock
     private TurLuceneRankingExpressions rankingExpressions;
@@ -54,7 +54,7 @@ class TurLuceneQueryBuilderTest {
                 new org.apache.lucene.search.TermQuery(new org.apache.lucene.index.Term("category", "it")), 5f);
         when(rankingExpressions.boostQueries(site.getId())).thenReturn(List.of(boost));
 
-        BooleanQuery query = (BooleanQuery) queryBuilder.buildQuery(site, createParams("*"));
+        BooleanQuery query = (BooleanQuery) queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), createParams("*"));
 
         assertTrue(query.clauses().stream().anyMatch(clause -> clause.query() == boost
                 && clause.occur() == BooleanClause.Occur.SHOULD));
@@ -72,15 +72,15 @@ class TurLuceneQueryBuilderTest {
         when(urlField.getName()).thenReturn("url");
         TurSNSiteFieldExt titleField = mock(TurSNSiteFieldExt.class);
         when(titleField.getName()).thenReturn("title");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
-                .thenReturn(List.of(idField, urlField, titleField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.hlFields(idField, urlField, titleField));
 
-        List<TurSNSiteFieldExt> hlFields = queryBuilder.getHLFields(site);
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> hlFields = queryBuilder.getHLFields(TurLuceneSpiFixtures.settings(site));
 
         // Only the genuine text field survives — a <mark> in `id` would corrupt the
         // value the SDK feeds back to /search/similar and silently break "Related".
         assertEquals(1, hlFields.size());
-        assertEquals("title", hlFields.getFirst().getName());
+        assertEquals("title", hlFields.getFirst().name());
     }
 
     // ---- buildQuery: wildcard / match-all inputs ----
@@ -90,7 +90,7 @@ class TurLuceneQueryBuilderTest {
     void buildQueryShouldReturnMatchAllDocsForWildcardInputs(String queryStr) {
         TurSNSite site = mock(TurSNSite.class);
         TurSEParameters params = createParams(queryStr);
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
         assertInstanceOf(FieldExistsQuery.class, extractMainClause(query));
     }
@@ -101,7 +101,7 @@ class TurLuceneQueryBuilderTest {
     void buildQueryShouldReturnMatchAllDocsForBlankOrNullQuery(String queryStr) {
         TurSNSite site = mock(TurSNSite.class);
         TurSEParameters params = createParams(queryStr == null ? "" : queryStr);
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -113,16 +113,16 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt textField = mock(TurSNSiteFieldExt.class);
         when(textField.getType()).thenReturn(TurSEFieldType.TEXT);
         when(textField.getName()).thenReturn("title");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(textField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(textField));
 
         TurSEParameters strict = createParams("need two days hills");
-        BooleanQuery all = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(site, strict));
+        BooleanQuery all = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), strict));
         assertTrue(all.clauses().stream().allMatch(c -> c.occur() == BooleanClause.Occur.MUST));
 
         TurSEParameters relaxed = createParams("need two days hills");
         relaxed.setRelaxedMatch(true);
-        BooleanQuery half = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(site, relaxed));
+        BooleanQuery half = (BooleanQuery) extractMainClause(queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), relaxed));
         assertTrue(half.clauses().stream().allMatch(c -> c.occur() == BooleanClause.Occur.SHOULD));
         assertEquals(4, half.clauses().size());
         assertEquals(2, half.getMinimumNumberShouldMatch());
@@ -136,11 +136,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt textField = mock(TurSNSiteFieldExt.class);
         when(textField.getType()).thenReturn(TurSEFieldType.TEXT);
         when(textField.getName()).thenReturn("title");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(textField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(textField));
 
         TurSEParameters params = createParams("hello world");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -150,11 +150,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt stringField = mock(TurSNSiteFieldExt.class);
         when(stringField.getType()).thenReturn(TurSEFieldType.STRING);
         when(stringField.getName()).thenReturn("category");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(stringField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(stringField));
 
         TurSEParameters params = createParams("books");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -164,11 +164,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt arrayField = mock(TurSNSiteFieldExt.class);
         when(arrayField.getType()).thenReturn(TurSEFieldType.ARRAY);
         when(arrayField.getName()).thenReturn("tags");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(arrayField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(arrayField));
 
         TurSEParameters params = createParams("java");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -177,11 +177,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSite site = mock(TurSNSite.class);
         TurSNSiteFieldExt intField = mock(TurSNSiteFieldExt.class);
         when(intField.getType()).thenReturn(TurSEFieldType.INT);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(intField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(intField));
 
         TurSEParameters params = createParams("42");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -190,22 +190,22 @@ class TurLuceneQueryBuilderTest {
         TurSNSite site = mock(TurSNSite.class);
         TurSNSiteFieldExt nullTypeField = mock(TurSNSiteFieldExt.class);
         when(nullTypeField.getType()).thenReturn(null);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(nullTypeField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(nullTypeField));
 
         TurSEParameters params = createParams("test");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
     @Test
     void buildQueryWithNoFieldsShouldFallbackToIdField() {
         TurSNSite site = mock(TurSNSite.class);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
 
         TurSEParameters params = createParams("test");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -217,11 +217,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt textField = mock(TurSNSiteFieldExt.class);
         when(textField.getType()).thenReturn(TurSEFieldType.TEXT);
         when(textField.getName()).thenReturn("title");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(textField));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(textField));
 
         TurSEParameters params = createParamsWithFilters("hello", List.of("category:books"));
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
         assertInstanceOf(BooleanQuery.class, query);
         BooleanQuery bq = (BooleanQuery) query;
@@ -232,23 +232,23 @@ class TurLuceneQueryBuilderTest {
     @Test
     void buildQueryWithEmptyFilterQueryShouldSkipIt() {
         TurSNSite site = mock(TurSNSite.class);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
 
         TurSEParameters params = createParamsWithFilters("test", List.of("", "  "));
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
     @Test
     void buildQueryWithInvalidFilterQueryShouldSkipIt() {
         TurSNSite site = mock(TurSNSite.class);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
 
         // Malformed query that may cause ParseException
         TurSEParameters params = createParamsWithFilters("test", List.of("field:[invalid"));
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -260,14 +260,14 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt category = mock(TurSNSiteFieldExt.class);
         when(category.getName()).thenReturn("category");
         when(category.getFacetItemType()).thenReturn(TurSNSiteFacetFieldEnum.OR);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(category));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(category));
 
         // Two values of the same OR facet must union (OR), not intersect (AND) —
         // otherwise mutually-exclusive categories collapse to zero hits.
         TurSEParameters params = createParamsWithFilters("*",
                 List.of("category:Search", "category:Integrations"));
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
 
         BooleanQuery bq = (BooleanQuery) query;
         BooleanQuery filter = (BooleanQuery) filterClause(bq);
@@ -284,13 +284,13 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt tags = mock(TurSNSiteFieldExt.class);
         when(tags.getName()).thenReturn("tags");
         when(tags.getFacetItemType()).thenReturn(TurSNSiteFacetFieldEnum.DEFAULT);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(tags));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(tags));
 
         // Default (non-OR) facet keeps the historic AND (intersect) semantics.
         TurSEParameters params = createParamsWithFilters("*",
                 List.of("tags:java", "tags:spring"));
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
 
         BooleanQuery bq = (BooleanQuery) query;
         BooleanQuery filter = (BooleanQuery) filterClause(bq);
@@ -306,14 +306,14 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt publishedAt = mock(TurSNSiteFieldExt.class);
         when(publishedAt.getName()).thenReturn("publishedAt");
         when(publishedAt.getType()).thenReturn(com.viglet.turing.commons.se.field.TurSEFieldType.DATE);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(publishedAt));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(publishedAt));
 
         // T1075 — a DATE field is indexed as a LongPoint, so a range must be a
         // point range query, not a TermQuery on the literal "[NOW-7DAYS TO *]".
         TurSEParameters params = createParamsWithFilters("*",
                 List.of("publishedAt:[NOW-7DAYS TO *]"));
-        Query filter = filterClause((BooleanQuery) queryBuilder.buildQuery(site, params));
+        Query filter = filterClause((BooleanQuery) queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params));
 
         assertInstanceOf(org.apache.lucene.search.PointRangeQuery.class, filter);
     }
@@ -338,12 +338,12 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt nonFaceted = mock(TurSNSiteFieldExt.class);
         when(nonFaceted.getFacet()).thenReturn(0);
 
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(faceted, nonFaceted));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(faceted, nonFaceted));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site);
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site));
         assertEquals(1, result.size());
-        assertEquals("category", result.get(0).getName());
+        assertEquals("category", result.get(0).name());
     }
 
     @Test
@@ -351,10 +351,10 @@ class TurLuceneQueryBuilderTest {
         TurSNSite site = mock(TurSNSite.class);
         TurSNSiteFieldExt nonFaceted = mock(TurSNSiteFieldExt.class);
         when(nonFaceted.getFacet()).thenReturn(0);
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(nonFaceted));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(nonFaceted));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site);
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site));
         assertTrue(result.isEmpty());
     }
 
@@ -371,13 +371,13 @@ class TurLuceneQueryBuilderTest {
         when(f2.getFacetPosition()).thenReturn(1);
         when(f2.getName()).thenReturn("first");
 
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(f1, f2));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1, f2));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site);
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site));
         assertEquals(2, result.size());
-        assertEquals("first", result.get(0).getName());
-        assertEquals("second", result.get(1).getName());
+        assertEquals("first", result.get(0).name());
+        assertEquals("second", result.get(1).name());
     }
 
     @Test
@@ -393,13 +393,13 @@ class TurLuceneQueryBuilderTest {
         when(f2.getFacetPosition()).thenReturn(1);
         when(f2.getName()).thenReturn("positioned");
 
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(f1, f2));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1, f2));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site);
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site));
         assertEquals(2, result.size());
-        assertEquals("positioned", result.get(0).getName());
-        assertEquals("noposition", result.get(1).getName());
+        assertEquals("positioned", result.get(0).name());
+        assertEquals("noposition", result.get(1).name());
     }
 
     // ---- getFacetFields(site, facetName) ----
@@ -416,12 +416,12 @@ class TurLuceneQueryBuilderTest {
         when(f2.getFacetPosition()).thenReturn(2);
         when(f2.getName()).thenReturn("type");
 
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(f1, f2));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1, f2));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site, "category");
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site), "category");
         assertEquals(1, result.size());
-        assertEquals("category", result.get(0).getName());
+        assertEquals("category", result.get(0).name());
     }
 
     @Test
@@ -431,10 +431,10 @@ class TurLuceneQueryBuilderTest {
         when(f1.getFacet()).thenReturn(1);
         when(f1.getName()).thenReturn("category");
 
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(f1));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site, "nonexistent");
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site), "nonexistent");
         assertTrue(result.isEmpty());
     }
 
@@ -450,16 +450,16 @@ class TurLuceneQueryBuilderTest {
         when(f2.getFacet()).thenReturn(1);
         when(f2.getFacetPosition()).thenReturn(2);
         when(f2.getName()).thenReturn("year");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(f1, f2));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any())).thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1, f2));
         com.viglet.turing.commons.sn.bean.TurSNSearchParams searchParams =
                 new com.viglet.turing.commons.sn.bean.TurSNSearchParams();
         searchParams.setExf(List.of("year", "unknown"));
 
-        List<TurSNSiteFieldExt> result = queryBuilder.getFacetFields(site,
+        List<com.viglet.turing.searchengine.spi.TurSESearchField> result = queryBuilder.getFacetFields(TurLuceneSpiFixtures.settings(site),
                 new com.viglet.turing.commons.se.TurSEParameters(searchParams));
 
         assertEquals(1, result.size());
-        assertEquals("category", result.get(0).getName());
+        assertEquals("category", result.get(0).name());
     }
 
     // ---- buildWildcardQuery ----
@@ -468,9 +468,9 @@ class TurLuceneQueryBuilderTest {
     void buildWildcardQueryShouldAppendWildcard() {
         TurSNSite site = mock(TurSNSite.class);
         TurSEParameters params = createParams("test");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
-        queryBuilder.buildWildcardQuery(site, params);
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
+        queryBuilder.buildWildcardQuery(TurLuceneSpiFixtures.settings(site), params);
         assertTrue(params.getQuery().endsWith("*"));
     }
 
@@ -478,9 +478,9 @@ class TurLuceneQueryBuilderTest {
     void buildWildcardQueryShouldTrimBeforeAppending() {
         TurSNSite site = mock(TurSNSite.class);
         TurSEParameters params = createParams("  test  ");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
-        queryBuilder.buildWildcardQuery(site, params);
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
+        queryBuilder.buildWildcardQuery(TurLuceneSpiFixtures.settings(site), params);
         assertEquals("test*", params.getQuery());
     }
 
@@ -488,9 +488,9 @@ class TurLuceneQueryBuilderTest {
     void buildWildcardQueryShouldReturnNonNull() {
         TurSNSite site = mock(TurSNSite.class);
         TurSEParameters params = createParams("search");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(Collections.emptyList());
-        Query result = queryBuilder.buildWildcardQuery(site, params);
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(Collections.emptyList()));
+        Query result = queryBuilder.buildWildcardQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(result);
     }
 
@@ -505,11 +505,11 @@ class TurLuceneQueryBuilderTest {
         TurSNSiteFieldExt f2 = mock(TurSNSiteFieldExt.class);
         when(f2.getType()).thenReturn(TurSEFieldType.TEXT);
         when(f2.getName()).thenReturn("title");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(f1, f2));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(f1, f2));
 
         TurSEParameters params = createParams("test");
-        Query query = queryBuilder.buildQuery(site, params);
+        Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
         assertNotNull(query);
     }
 
@@ -559,7 +559,7 @@ class TurLuceneQueryBuilderTest {
             try (org.apache.lucene.index.DirectoryReader reader =
                     org.apache.lucene.index.DirectoryReader.open(writer)) {
                 org.apache.lucene.search.IndexSearcher searcher = new org.apache.lucene.search.IndexSearcher(reader);
-                Query query = queryBuilder.buildQuery(site, params);
+                Query query = queryBuilder.buildQuery(TurLuceneSpiFixtures.settings(site), params);
                 java.util.Set<String> ids = new java.util.TreeSet<>();
                 for (org.apache.lucene.search.ScoreDoc hit : searcher.search(query, 10).scoreDocs) {
                     ids.add(searcher.storedFields().document(hit.doc).get("id"));
@@ -575,8 +575,8 @@ class TurLuceneQueryBuilderTest {
         when(id.getName()).thenReturn("id");
         TurSNSiteFieldExt category = mock(TurSNSiteFieldExt.class);
         when(category.getName()).thenReturn("category");
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(List.of(id, category));
+        when(turSNSiteFieldExtRepository.enabledFields(org.mockito.ArgumentMatchers.any()))
+                .thenAnswer(invocation -> TurLuceneSpiFixtures.fields(id, category));
         return site;
     }
 

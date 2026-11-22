@@ -113,6 +113,28 @@ class TurSNSiteSearchConfigProviderTest {
     }
 
     @Test
+    void aSitesEnabledFieldsCarryWhatTheEngineReads() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt title =
+                new com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt();
+        title.setName("title");
+        title.setType(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT);
+        title.setFacet(1);
+        title.setHl(1);
+        title.setFacetPosition(2);
+        title.setFacetItemType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        title.setSearchWeight(3f);
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(title));
+
+        assertThat(provider().enabledFields("site-1")).containsExactly(
+                new com.viglet.turing.searchengine.spi.TurSESearchField("title",
+                        com.viglet.turing.commons.se.field.TurSEFieldType.TEXT, 1, 1, 2,
+                        com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR, 3f));
+        assertThat(provider().enabledFields(null)).isEmpty();
+    }
+
+    @Test
     void anUnknownOrUnnamedSiteHasNoSettings() {
         when(siteRepository.findByNameIgnoreCase("nope")).thenReturn(Optional.empty());
 
