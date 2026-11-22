@@ -39,7 +39,7 @@ import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResults;
 
 /**
@@ -56,7 +56,7 @@ class TurElasticsearchSearchEnginePluginTest {
     @Mock
     private TurElasticsearchInstanceProcess turElasticsearchInstanceProcess;
     @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     @InjectMocks
     private TurElasticsearchSearchEnginePlugin plugin;
@@ -350,6 +350,25 @@ class TurElasticsearchSearchEnginePluginTest {
 
         assertDoesNotThrow(() ->
                 plugin.createIndex(seInstance, siteLocale, "my-index", Collections.emptyMap()));
+    }
+
+    /** T1310 — the site's field types come through the search SPI. */
+    @Test
+    void shouldReadTheSitesEnabledFieldsThroughTheSpiWhenEmpty() {
+        TurSEInstance seInstance = new TurSEInstance();
+        seInstance.setEndpointUrl("http://localhost:19200");
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        site.setId("site-es");
+        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
+        siteLocale.setLanguage(Locale.ENGLISH);
+        siteLocale.setTurSNSite(site);
+        org.mockito.Mockito.when(siteSearchConfig.enabledFields("site-es")).thenReturn(java.util.List.of(
+                com.viglet.turing.searchengine.spi.TurSESearchField.builder()
+                        .name("title").type(TurSEFieldType.TEXT).build()));
+
+        assertDoesNotThrow(() ->
+                plugin.createIndex(seInstance, siteLocale, "my-index", Collections.emptyMap()));
+        org.mockito.Mockito.verify(siteSearchConfig).enabledFields("site-es");
     }
 
     // ---- deleteIndex ---------------------------------------------------------

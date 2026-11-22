@@ -22,9 +22,9 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -87,15 +87,15 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
 
     private final TurElasticsearch turElasticsearch;
     private final TurElasticsearchInstanceProcess turElasticsearchInstanceProcess;
-    private final TurSNSiteFieldExts turSNSiteFieldExtRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
 
     public TurElasticsearchSearchEnginePlugin(
             TurElasticsearch turElasticsearch,
             TurElasticsearchInstanceProcess turElasticsearchInstanceProcess,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository) {
+            TurSESiteSearchConfig siteSearchConfig) {
         this.turElasticsearch = turElasticsearch;
         this.turElasticsearchInstanceProcess = turElasticsearchInstanceProcess;
-        this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
+        this.siteSearchConfig = siteSearchConfig;
     }
 
     @Override
@@ -141,13 +141,13 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         if (siteLocale == null || siteLocale.getTurSNSite() == null) {
             return Collections.emptyMap();
         }
-        return turSNSiteFieldExtRepository
-                .findByTurSNSiteAndEnabled(siteLocale.getTurSNSite(), 1)
+        return siteSearchConfig
+                .enabledFields(siteLocale.getTurSNSite().getId())
                 .stream()
-                .filter(f -> f.getType() != null)
+                .filter(f -> f.type() != null)
                 .collect(Collectors.toMap(
-                        TurSNSiteFieldExt::getName,
-                        TurSNSiteFieldExt::getType,
+                        TurSESearchField::name,
+                        TurSESearchField::type,
                         (a, b) -> a));
     }
 
