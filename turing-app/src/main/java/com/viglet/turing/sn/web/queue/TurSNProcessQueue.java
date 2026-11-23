@@ -328,6 +328,15 @@ public class TurSNProcessQueue {
         Map<String, List<TurSEDroppedValues.Dropped>> dropped;
         try {
             processed = processJob(turSNSite, turSNJobItem);
+        } catch (com.viglet.turing.searchengine.TurSEDocumentRefusedException e) {
+            // T1343 — the engine refused this one document: say so on its indexing-log
+            // entry and go on with the rest of the batch (retrying cannot help).
+            log.warn("Object ID '{}' of '{}' SN Site ({}) was refused by the search engine: {}",
+                    turSNJobItem.getId(), turSNSite.getName(), turSNJobItem.getLocale(), e.getMessage());
+            TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.NOT_PROCESSED,
+                    "refused by the search engine: " + e.getMessage());
+            TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.FINISHED);
+            return;
         } finally {
             dropped = TurSEDroppedValues.end();
         }

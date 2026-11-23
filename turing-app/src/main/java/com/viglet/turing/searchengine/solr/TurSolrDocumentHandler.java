@@ -342,6 +342,14 @@ public class TurSolrDocumentHandler {
             updateRequest.add(document);
             updateRequest.setCommitWithin(commitWithin);
             updateRequest.process(turSolrInstance.getUpdateClient(), turSolrInstance.getCore());
+        } catch (org.apache.solr.common.SolrException e) {
+            // T1343 — a 4xx is Solr refusing this document (a value its field type
+            // cannot parse, an unknown field): name it, since retrying cannot help.
+            if (e.code() >= 400 && e.code() < 500) {
+                throw new com.viglet.turing.searchengine.TurSEDocumentRefusedException(
+                        String.valueOf(document.getFieldValue("id")), e.getMessage(), e);
+            }
+            throw e;
         } catch (SolrServerException | IOException e) {
             // Propagate instead of swallowing: a logged-and-ignored error here would
             // falsely report the document as "Indexed" while it was actually lost. Letting

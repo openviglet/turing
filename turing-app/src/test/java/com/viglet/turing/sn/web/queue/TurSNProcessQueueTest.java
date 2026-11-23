@@ -312,6 +312,45 @@ class TurSNProcessQueueTest {
         verify(plugin, times(2)).indexDocument(eq(site), eq(Locale.US), anyMap());
     }
 
+    /**
+     * T1343 — a document the engine refuses is an ERROR on its own indexing-log
+     * entry, and the rest of the batch still indexes.
+     */
+    @Test
+    void aRefusedDocumentIsLoggedAsAnErrorAndTheNextOneStillIndexes() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        jobItems.add(createItem("1"));
+        jobItems.add(createItem("2"));
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(any())).thenReturn(false);
+        when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
+                .thenAnswer(invocation -> invocation.getArgument(1));
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
+        when(plugin.indexDocuments(eq(site), eq(Locale.US), anyList())).thenThrow(new RuntimeException("bulk refused"));
+        when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap()))
+                .thenThrow(new com.viglet.turing.searchengine.TurSEDocumentRefusedException("1",
+                        "Invalid Date String:'2017T00:00:00Z'", null))
+                .thenReturn(true);
+
+        try (var logging = org.mockito.Mockito.mockStatic(com.viglet.turing.system.logging.TurLoggingUtils.class)) {
+            processQueue.processIndexingQueue(jobItems);
+
+            logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setErrorStatus(
+                    org.mockito.ArgumentMatchers.argThat(item -> "1".equals(item.getId())),
+                    eq(com.viglet.turing.commons.indexing.TurIndexingStatus.NOT_PROCESSED),
+                    eq("refused by the search engine: Invalid Date String:'2017T00:00:00Z'")));
+            logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setLoggingStatus(
+                    org.mockito.ArgumentMatchers.argThat(item -> "2".equals(item.getId())),
+                    eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),
+                    eq(com.viglet.turing.commons.indexing.TurLoggingStatus.SUCCESS),
+                    org.mockito.ArgumentMatchers.isNull()));
+        }
+        verify(plugin, times(2)).indexDocument(eq(site), eq(Locale.US), anyMap());
+    }
+
     @Test
     void testRemoveDuplicateTerms() {
         Map<String, Object> attrs = new HashMap<>();

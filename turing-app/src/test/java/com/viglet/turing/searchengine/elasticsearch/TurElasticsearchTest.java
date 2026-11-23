@@ -288,24 +288,42 @@ class TurElasticsearchTest {
         org.mockito.Mockito.verify(elasticsearchClient).index(any(IndexRequest.class));
     }
 
+    /**
+     * T1343 — a 400 is the index refusing this document (it used to be logged and
+     * swallowed, so the indexing log said INDEXED for a document that was not there).
+     */
     @Test
-    void testIndexingHandlesElasticsearchException() throws Exception {
+    void testIndexingNamesADocumentTheIndexRefuses() throws Exception {
         TurElasticsearch service = new TurElasticsearch(siteSearchConfig, customFacets);
-        TurSNSite site = new TurSNSite();
-        site.setName("testSite");
-
         ErrorResponse errorResponse = ErrorResponse.of(e -> e
                 .error(err -> err.type("mapper_parsing_exception").reason("failed to parse"))
                 .status(400));
         when(elasticsearchClient.index(any(IndexRequest.class)))
                 .thenThrow(new co.elastic.clients.elasticsearch._types.ElasticsearchException(
                         "es-error", errorResponse));
+        TurElasticsearchInstance instance = new TurElasticsearchInstance(elasticsearchClient,
+                URI.create("http://localhost:9200").toURL(), "index");
 
+        var refused = org.junit.jupiter.api.Assertions.assertThrows(
+                com.viglet.turing.searchengine.TurSEDocumentRefusedException.class,
+                () -> service.indexing(instance, "testSite", Map.of("id", "doc-2", "title", "Test")));
+        org.assertj.core.api.Assertions.assertThat(refused.getDocId()).isEqualTo("doc-2");
+    }
+
+    @Test
+    void testIndexingStillLogsAServerError() throws Exception {
+        TurElasticsearch service = new TurElasticsearch(siteSearchConfig, customFacets);
+        ErrorResponse errorResponse = ErrorResponse.of(e -> e
+                .error(err -> err.type("internal").reason("shard failure"))
+                .status(500));
+        when(elasticsearchClient.index(any(IndexRequest.class)))
+                .thenThrow(new co.elastic.clients.elasticsearch._types.ElasticsearchException(
+                        "es-error", errorResponse));
         TurElasticsearchInstance instance = new TurElasticsearchInstance(elasticsearchClient,
                 URI.create("http://localhost:9200").toURL(), "index");
 
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(
-                () -> service.indexing(instance, site.getName(), Map.of("id", "doc-2", "title", "Test")));
+                () -> service.indexing(instance, "testSite", Map.of("id", "doc-2", "title", "Test")));
     }
 
     @Test

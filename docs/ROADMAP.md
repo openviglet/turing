@@ -37,7 +37,7 @@
 
 ## Block DA — One bad document never costs the rest of an import
 
-- ⏳ **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — Left: confirm Solr and Elasticsearch refusals reach the indexing log the same way, and a per-site dropped-values count the console can flag. → §CXC.2
+- 🛠 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — Left: a per-site count of dropped and refused values from the last import, shown on the site's console page. → §CXC.2
 
 ## Block CB — LLM gateway parity with the OpenAI wire
 
@@ -70,9 +70,6 @@
 
 ## Done when — T1343
 
-- **Solr and Elasticsearch report a refused value in the indexing log too** Importing a
-  malformed DATE into a Solr and an Elasticsearch site leaves an indexing-log entry
-  naming the document and the field, as Lucene's does.
 - **The console shows how many values a site's last import dropped** A site whose last
   run dropped values shows the count on its console page, without anyone reading the
   indexing log.

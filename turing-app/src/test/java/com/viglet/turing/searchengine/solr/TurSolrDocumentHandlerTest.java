@@ -653,6 +653,37 @@ class TurSolrDocumentHandlerTest {
                                 () -> turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes));
         }
 
+        /** T1343 — a 400 is Solr refusing this document, named so the queue logs it. */
+        @Test
+        void testIndexingNamesADocumentSolrRefuses() {
+                when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(new HashMap<>());
+                turSolrInstance.setSolrClient(new RefusingSolrClient());
+
+                Map<String, Object> attributes = new HashMap<>();
+                attributes.put("id", "doc-bad-date");
+
+                var refused = org.junit.jupiter.api.Assertions.assertThrows(
+                                com.viglet.turing.searchengine.TurSEDocumentRefusedException.class,
+                                () -> turSolrDocumentHandler.indexing(turSolrInstance, SITE_ID, attributes));
+                org.assertj.core.api.Assertions.assertThat(refused.getDocId()).isEqualTo("doc-bad-date");
+                org.assertj.core.api.Assertions.assertThat(refused.getMessage()).contains("Invalid Date String");
+        }
+
+        /** Solr client stub that refuses every request with a 400. */
+        private static final class RefusingSolrClient extends SolrClient {
+                @Override
+                public NamedList<Object> request(SolrRequest<?> request, String collection) {
+                        throw new org.apache.solr.common.SolrException(
+                                        org.apache.solr.common.SolrException.ErrorCode.BAD_REQUEST,
+                                        "Invalid Date String:'2017T00:00:00Z'");
+                }
+
+                @Override
+                public void close() {
+                        // No resources to close for this test stub.
+                }
+        }
+
         @Test
         void testDeIndexingPropagatesIoFailureInsteadOfSwallowing() {
                 turSolrInstance.setSolrClient(new ThrowingSolrClient());

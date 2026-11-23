@@ -254,6 +254,12 @@ public class TurElasticsearch {
             log.debug("Elasticsearch indexed doc id={} index={} result={}", docId,
                     instance.getIndex(), response.result());
         } catch (co.elastic.clients.elasticsearch._types.ElasticsearchException e) {
+            // T1343 — a 4xx is the index refusing this document; it was logged and
+            // swallowed, so the indexing log said INDEXED for a document not there.
+            if (e.status() >= 400 && e.status() < 500) {
+                throw new com.viglet.turing.searchengine.TurSEDocumentRefusedException(docId,
+                        e.getMessage(), e);
+            }
             log.error("Elasticsearch server error indexing doc id={} index={}: {}",
                     docId, instance.getIndex(), e.getMessage(), e);
         } catch (IOException e) {
