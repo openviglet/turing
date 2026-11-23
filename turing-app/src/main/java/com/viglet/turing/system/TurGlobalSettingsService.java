@@ -340,16 +340,16 @@ public class TurGlobalSettingsService {
     }
 
     /** T518 — fallback routing mode; unknown/blank falls back to {@code PRIORITY}. */
-    public com.viglet.turing.llm.resilience.TurLlmFallbackMode getLlmFallbackMode() {
+    public com.viglet.turing.system.TurLlmFallbackMode getLlmFallbackMode() {
         return configVars.find(TurConfigVarOnStartup.LLM_FALLBACK_MODE)
-                .map(com.viglet.turing.llm.resilience.TurLlmFallbackMode::fromValue)
-                .orElse(com.viglet.turing.llm.resilience.TurLlmFallbackMode.PRIORITY);
+                .map(com.viglet.turing.system.TurLlmFallbackMode::fromValue)
+                .orElse(com.viglet.turing.system.TurLlmFallbackMode.PRIORITY);
     }
 
-    public com.viglet.turing.llm.resilience.TurLlmFallbackMode updateLlmFallbackMode(
-            com.viglet.turing.llm.resilience.TurLlmFallbackMode mode) {
-        com.viglet.turing.llm.resilience.TurLlmFallbackMode value =
-                mode == null ? com.viglet.turing.llm.resilience.TurLlmFallbackMode.PRIORITY : mode;
+    public com.viglet.turing.system.TurLlmFallbackMode updateLlmFallbackMode(
+            com.viglet.turing.system.TurLlmFallbackMode mode) {
+        com.viglet.turing.system.TurLlmFallbackMode value =
+                mode == null ? com.viglet.turing.system.TurLlmFallbackMode.PRIORITY : mode;
         configVars.setRaw(TurConfigVarOnStartup.LLM_FALLBACK_MODE, value.name());
         return value;
     }

@@ -73,7 +73,7 @@ public class TurGlobalSettingsBean {
      * @since 2026.3.4
      */
     private java.util.List<String> llmFallbackChainIds;
-    private com.viglet.turing.llm.resilience.TurLlmFallbackMode llmFallbackMode;
+    private com.viglet.turing.system.TurLlmFallbackMode llmFallbackMode;
     /**
      * T522 — multi-provider "second opinion": when enabled, a different-vendor
      * critic LLM judges the primary answer; the agreement is surfaced as a

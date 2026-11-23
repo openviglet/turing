@@ -30,7 +30,7 @@ import reactor.core.publisher.Flux;
  * the next candidate, and so on — only throwing when every candidate is down.
  *
  * <p>The candidate order encodes the routing policy
- * ({@link TurLlmFallbackMode}): {@code PRIORITY} = configured order,
+ * ({@link com.viglet.turing.system.TurLlmFallbackMode}): {@code PRIORITY} = configured order,
  * {@code CHEAPEST} = price-ascending, both resolved by the caller before
  * constructing this model.
  *

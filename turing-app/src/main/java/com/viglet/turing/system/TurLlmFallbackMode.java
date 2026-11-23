@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.llm.resilience;
+package com.viglet.turing.system;
 
 import java.util.Locale;
 
@@ -22,6 +22,9 @@ import java.util.Locale;
  *       routing): the least-expensive instance serves, the dearer ones are
  *       failover. Uses the F.13 / T289 per-model pricing.</li>
  * </ul>
+ *
+ * <p>T1322l — a value the global settings store, so it lives in system and llm
+ * reads it from there; system no longer imports llm (ADR 0005 section 6).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4

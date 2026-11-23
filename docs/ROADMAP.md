@@ -34,7 +34,7 @@
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e ✅, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l 🛠) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 7 sn classes of the GenAI surface still import agent, rag or persona 45 times: genai controllers, entity indexing, content fit, hybrid ranking, synonym mining. → §CLXXXIX.40
-- 🛠 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system still imports llm in its global settings, and tenant and auth import feature modules; tenant's counters and teardown need SPIs. → §CLXXXIX.45
+- 🛠 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system now imports only shared; tenant and auth still import feature modules, and tenant's counters and teardown need SPIs. → §CLXXXIX.45
 
 ## Block CI — API errors name what the caller sent wrong
 

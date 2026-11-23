@@ -22,6 +22,7 @@ import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.cost.price.TurLLMPriceService;
 import com.viglet.turing.system.TurGlobalSettingsService;
+import com.viglet.turing.system.TurLlmFallbackMode;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.system.TurGlobalSettingsService;
+import com.viglet.turing.system.TurLlmFallbackMode;
 import com.viglet.turing.testutil.AbstractTuringSpringIT;
 
 import reactor.core.publisher.Flux;

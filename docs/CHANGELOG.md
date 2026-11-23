@@ -1849,6 +1849,7 @@
 - **T1322y** — TurSsrfGuard moved from auth to shared.security.ssrf, so system's federation proxy and shared's file utils stop importing auth; every caller is unchanged.
 - **T1340** — T1310 slice: the plugin factory resolves by SE instance id (getPluginForSeInstance), and sn passes TurSNSites.seInstanceIdOf(site); the factory imports no sn type.
 - **T1322z** — The import service and process queue write the site's vector store through TurSNSiteEmbeddings, which sn declares and TurSNGenAi implements; neither imports answer.
+- **T1342** — T1322l slice: TurLlmFallbackMode moved from llm.resilience into system, so system imports only shared and libraries; llm reads the enum from system.
 
 ## Block DA — One bad document never costs the rest of an import
 
