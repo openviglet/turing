@@ -66,7 +66,9 @@ class TurSNContentFitCoverageServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new TurSNContentFitCoverageService(snSiteLocaleRepository, personaRepository,
+        service = new TurSNContentFitCoverageService(snSiteLocaleRepository,
+                new com.viglet.turing.persona.TurPersonaAudienceFit(personaRepository,
+                        new com.viglet.turing.persona.readability.TurReadabilityScorer()),
                 pluginFactory);
         site = new TurSNSite();
         site.setId("s1");

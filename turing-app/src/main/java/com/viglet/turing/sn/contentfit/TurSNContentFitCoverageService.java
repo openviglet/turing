@@ -21,11 +21,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.sn.api.TurSNAudienceFit;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
@@ -55,7 +54,7 @@ public class TurSNContentFitCoverageService {
     public static final int GOOD_THRESHOLD = 70;
 
     private final TurSNSiteLocaleRepository snSiteLocaleRepository;
-    private final TurPersonaRepository personaRepository;
+    private final TurSNAudienceFit audienceFit;
     private final TurSearchEnginePluginFactory pluginFactory;
 
     public TurSNContentFitReport coverage(TurSNSite site) {
@@ -99,7 +98,7 @@ public class TurSNContentFitCoverageService {
         if (StringUtils.isBlank(personaId)) {
             return null;
         }
-        return personaRepository.findById(personaId).map(TurPersona::getName).orElse(null);
+        return audienceFit.personaName(personaId).orElse(null);
     }
 
     private long sumOverLocales(List<TurSNSiteLocale> locales, LocaleCount count) {

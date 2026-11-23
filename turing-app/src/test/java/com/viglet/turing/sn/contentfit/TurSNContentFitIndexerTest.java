@@ -62,7 +62,8 @@ class TurSNContentFitIndexerTest {
 
     @BeforeEach
     void setUp() {
-        indexer = new TurSNContentFitIndexer(new TurReadabilityScorer(), personaRepository,
+        indexer = new TurSNContentFitIndexer(
+                new com.viglet.turing.persona.TurPersonaAudienceFit(personaRepository, new TurReadabilityScorer()),
                 fieldProvisioner);
     }
 

@@ -26,11 +26,9 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.persona.readability.TurReadabilityScorer;
-import com.viglet.turing.persona.persistence.model.TurPersona;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
+import com.viglet.turing.sn.api.TurSNAudienceFit;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
  * Semantic Navigation signal. When a site opts in
  * ({@link TurSNSiteGenAi#contentFitIndexingEnabled} with a resolvable
  * target-audience persona), every document is scored as it is indexed by the
- * pure {@link TurReadabilityScorer} against that persona's audience facet, and
+ * pure {@code TurReadabilityScorer} against that persona's audience facet, and
  * the resulting 0–100 readability/fit score is stored in the
  * {@value #FIELD_NAME} SN field. {@link TurSNContentFitCoverageService} then
  * surfaces "content too complex for its audience" alongside the T388
@@ -70,8 +68,7 @@ public class TurSNContentFitIndexer {
     /** SN field that carries the per-document audience-fit score (0–100, INT). */
     public static final String FIELD_NAME = "content_fit_score";
 
-    private final TurReadabilityScorer readabilityScorer;
-    private final TurPersonaRepository personaRepository;
+    private final TurSNAudienceFit audienceFit;
     private final TurSNFieldProvisioner fieldProvisioner;
 
     /**
@@ -89,9 +86,8 @@ public class TurSNContentFitIndexer {
                     || StringUtils.isBlank(genAi.getContentFitPersonaId())) {
                 return;
             }
-            TurPersona persona = personaRepository.findById(genAi.getContentFitPersonaId())
-                    .orElse(null);
-            if (persona == null || !persona.isUsableAsAudience()) {
+            String personaId = genAi.getContentFitPersonaId();
+            if (!audienceFit.isAudience(personaId)) {
                 log.debug("[T472] content-fit enabled on site '{}' but persona '{}' is "
                         + "missing or not an AUDIENCE persona — skipping",
                         turSNSite.getName(), genAi.getContentFitPersonaId());
@@ -102,12 +98,15 @@ public class TurSNContentFitIndexer {
                 // T381 — absent text must not be scored as a misleading neutral 50.
                 return;
             }
-            int score = (int) Math.round(
-                    readabilityScorer.score(text, persona.getAudience()).fitScore());
+            var fit = audienceFit.fitScore(personaId, text);
+            if (fit.isEmpty()) {
+                return;
+            }
+            int score = (int) Math.round(fit.getAsDouble());
             ensureField(turSNSite);
             attributes.put(FIELD_NAME, score);
             log.debug("[T472] content-fit score {} for a document on site '{}' (audience '{}')",
-                    score, turSNSite.getName(), persona.getName());
+                    score, turSNSite.getName(), personaId);
         } catch (Exception e) {
             // Never let a scoring problem block indexing.
             log.warn("[T472] content-fit scoring failed on site '{}': {}",
