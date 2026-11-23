@@ -1838,3 +1838,4 @@
 - **T1310w** — The Elasticsearch plugin types a new index's fields from the site's enabled fields through the search SPI and no longer injects sn's field repository.
 - **T1310x** — TurElasticsearch reads the site, its enabled and facet fields and its sorts through TurSESiteSearchConfig, and its filter queries take SPI field records; neither imports sn.
 - **T1322r** — TurSNSiteAiCapabilitiesAPI moved to answer.web; its path /api/sn/{siteName}/ai/capabilities is unchanged and sn loses six upward imports.
+- **T1322s** — TurCacheAPI clears and reloads bean-held caches through TurReloadableCache, an SPI system declares and the ranking lexicon provider implements; system imports no sn type and the paths are unchanged.

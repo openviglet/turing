@@ -1,5 +1,6 @@
 package com.viglet.turing.system.web;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,13 +14,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-import com.viglet.turing.sn.dsl.eval.TurRankingLexiconProvider;
+import com.viglet.turing.shared.exception.TurNotFoundException;
+import com.viglet.turing.system.cache.TurReloadableCache;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,15 +36,16 @@ class TurCacheAPITest {
     @Mock
     private Cache cacheB;
     // T942 / §LVIII.7 — the compiled ranking lexicons live in a bean, not in the
-    // CacheManager, so clearing "all caches" has to reach them explicitly.
+    // CacheManager, so clearing "all caches" has to reach them explicitly; since
+    // T1322l through the TurReloadableCache SPI, so system imports no sn type.
     @Mock
-    private TurRankingLexiconProvider rankingLexiconProvider;
+    private TurReloadableCache rankingLexicons;
 
-    @InjectMocks
     private TurCacheAPI api;
 
     @BeforeEach
     void setUp() {
+        api = new TurCacheAPI(cacheManager, List.of(rankingLexicons));
         mockMvc = MockMvcBuilders.standaloneSetup(api).build();
     }
 
@@ -66,7 +68,8 @@ class TurCacheAPITest {
         when(cacheManager.getCache("a-cache")).thenReturn(cacheA);
         when(cacheManager.getCache("b-cache")).thenReturn(cacheB);
         when(cacheManager.getCache("missing-cache")).thenReturn(null);
-        when(rankingLexiconProvider.reload()).thenReturn(4);
+        when(rankingLexicons.name()).thenReturn("rankingLexicons");
+        when(rankingLexicons.reload()).thenReturn(4);
 
         mockMvc.perform(post("/api/system/cache/clear"))
                 .andExpect(status().isOk())
@@ -85,6 +88,7 @@ class TurCacheAPITest {
     @Test
     void shouldReturnSuccessWhenThereAreNoCaches() throws Exception {
         when(cacheManager.getCacheNames()).thenReturn(List.of());
+        when(rankingLexicons.name()).thenReturn("rankingLexicons");
 
         mockMvc.perform(post("/api/system/cache/clear"))
                 .andExpect(status().isOk())
@@ -98,7 +102,9 @@ class TurCacheAPITest {
     void shouldReloadTheRankingLexiconsWithoutFlushingEveryOtherCache() throws Exception {
         // The targeted door: an operator who edited a file under lexicon-dir should not
         // have to evict every Spring cache in the application to see it take effect.
-        when(rankingLexiconProvider.reload()).thenReturn(2);
+        when(rankingLexicons.path()).thenReturn("ranking-lexicons");
+        when(rankingLexicons.name()).thenReturn("rankingLexicons");
+        when(rankingLexicons.reload()).thenReturn(2);
 
         mockMvc.perform(post("/api/system/cache/ranking-lexicons/reload"))
                 .andExpect(status().isOk())
@@ -106,5 +112,13 @@ class TurCacheAPITest {
                 .andExpect(jsonPath("$.rankingLexicons").value(2));
 
         verify(cacheManager, never()).getCacheNames();
+    }
+
+    @Test
+    void anUnknownReloadableCacheIsNotFound() {
+        when(rankingLexicons.path()).thenReturn("ranking-lexicons");
+
+        assertThatThrownBy(() -> api.reloadCache("nope")).isInstanceOf(TurNotFoundException.class);
+        verify(rankingLexicons, never()).reload();
     }
 }

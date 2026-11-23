@@ -2633,8 +2633,9 @@ TurSecretCryptoService, TurTenantKeyResolver, TurIntegrationInstanceAPI, TurFeat
 and auth (TurDevTokenAPI, TurIntegrationAPI), while tenant imports auth once
 (TurKeycloakServiceAccountIdentityProvider). They also import feature modules: system's
 controllers reach storage (TurPageAPI, TurPageController, TurSystemInfoAPI,
-TurFeaturesAPI), sn (TurCacheAPI, TurEmailReportAPI), transcription, batch, exchange and
-persona; tenant reaches llm, sn and storage for quotas, counters and teardown.
+TurFeaturesAPI), sn (TurEmailReportAPI, moved by T1322q; TurCacheAPI, now through the
+TurReloadableCache SPI, T1322s), transcription, batch, exchange and persona; tenant
+reaches llm, sn and storage for quotas, counters and teardown.
 
 Proposed ruling, recorded in ADR 0005 when this ships: order layer 2 as system below
 tenant below auth, which keeps today's dominant direction (auth and tenant reading

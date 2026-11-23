@@ -6,11 +6,13 @@ import java.util.Map;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.sn.dsl.eval.TurRankingLexiconProvider;
+import com.viglet.turing.shared.exception.TurNotFoundException;
+import com.viglet.turing.system.cache.TurReloadableCache;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,15 +23,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TurCacheAPI {
 
     private static final String SUCCESS = "success";
-    private static final String RANKING_LEXICONS = "rankingLexicons";
 
     private final CacheManager cacheManager;
-    private final TurRankingLexiconProvider rankingLexiconProvider;
+    /** T1322l — the caches feature modules hold in beans, reached through an SPI system declares. */
+    private final List<TurReloadableCache> reloadableCaches;
 
-    public TurCacheAPI(CacheManager cacheManager,
-            TurRankingLexiconProvider rankingLexiconProvider) {
+    public TurCacheAPI(CacheManager cacheManager, List<TurReloadableCache> reloadableCaches) {
         this.cacheManager = cacheManager;
-        this.rankingLexiconProvider = rankingLexiconProvider;
+        this.reloadableCaches = List.copyOf(reloadableCaches);
     }
 
     @Operation(summary = "List all application caches")
@@ -62,7 +63,7 @@ public class TurCacheAPI {
         // the CacheManager, so "clear all caches" used to leave them standing. An
         // admin who clears everything and still sees stale ranking vocabulary has no
         // way left to tell the difference between a cache and a bug.
-        result.put(RANKING_LEXICONS, rankingLexiconProvider.reload());
+        reloadableCaches.forEach(cache -> result.put(cache.name(), cache.reload()));
         return result;
     }
 
@@ -72,12 +73,16 @@ public class TurCacheAPI {
      * {@code turing.genai.copilot.ranking.lexicon-dir} does not have to flush every
      * other cache (or restart) to see it take effect.
      */
-    @Operation(summary = "Reload the copilot ranking lexicons from resources and lexicon-dir")
-    @PostMapping("/ranking-lexicons/reload")
-    public Map<String, Object> reloadRankingLexicons() {
+    @Operation(summary = "Reload one bean-held cache, e.g. the copilot ranking lexicons (ranking-lexicons)")
+    @PostMapping("/{path}/reload")
+    public Map<String, Object> reloadCache(@PathVariable String path) {
+        TurReloadableCache cache = reloadableCaches.stream()
+                .filter(candidate -> candidate.path().equals(path))
+                .findFirst()
+                .orElseThrow(() -> TurNotFoundException.of("Reloadable cache", path));
         Map<String, Object> result = new LinkedHashMap<>();
         result.put(SUCCESS, true);
-        result.put(RANKING_LEXICONS, rankingLexiconProvider.reload());
+        result.put(cache.name(), cache.reload());
         return result;
     }
 }

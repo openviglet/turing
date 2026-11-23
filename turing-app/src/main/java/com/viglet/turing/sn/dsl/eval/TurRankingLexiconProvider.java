@@ -25,6 +25,8 @@ import org.springframework.util.StringUtils;
 
 import com.viglet.turing.sn.config.TurCatalogCopilotProperty;
 
+import com.viglet.turing.system.cache.TurReloadableCache;
+
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -54,7 +56,7 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @Slf4j
 @Component
-public class TurRankingLexiconProvider {
+public class TurRankingLexiconProvider implements TurReloadableCache {
 
     private static final String RESOURCE_PATTERN = "ranking/lexicon-%s.json";
     private static final String FILE_PATTERN = "lexicon-%s.json";
@@ -109,12 +111,25 @@ public class TurRankingLexiconProvider {
      *
      * @return how many compiled lexicons were dropped
      */
+    @Override
     public int reload() {
         int dropped = byLanguage.size() + byOverride.size();
         byLanguage.clear();
         byOverride.clear();
         log.info("[RankingLexicon] reloaded — {} compiled lexicon(s) dropped", dropped);
         return dropped;
+    }
+
+    /** T1322l — reported under this key when the system cache API clears every cache. */
+    @Override
+    public String name() {
+        return "rankingLexicons";
+    }
+
+    /** T1322l — reloaded alone at {@code /api/system/cache/ranking-lexicons/reload}. */
+    @Override
+    public String path() {
+        return "ranking-lexicons";
     }
 
     /** The default ({@code en}) lexicon — what T811's hardcoded sets became. */
