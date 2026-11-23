@@ -184,15 +184,15 @@ mvn package
 
 ## Database migrations with Liquibase
 
-Viglet Turing uses **[Liquibase](https://www.liquibase.org/)** (v5.0.2) for database schema management. All schema changes (tables, columns, indexes, foreign keys) are tracked as versioned changelogs and applied automatically on startup. This ensures every environment (dev, staging, production) runs the exact same schema, regardless of the database platform.
+Viglet Turing uses **[Liquibase](https://www.liquibase.org/)** (v5.0.4) for database schema management. All schema changes (tables, columns, indexes, foreign keys) are tracked as versioned changelogs and applied automatically on startup. This ensures every environment (dev, staging, production) runs the exact same schema, regardless of the database platform.
 
 ### How it works
 
 When Viglet Turing starts, Spring Boot runs Liquibase before the application context is fully initialized. Liquibase reads the master changelog, compares it against the `DATABASECHANGELOG` tracking table, and applies any pending changesets. This means:
 
-- **First startup**: all migrations run, creating the full schema from scratch
-- **Upgrades**: only new changesets (added since the last startup) are applied
-- **Rollbacks**: changesets already applied are skipped (`DATABASECHANGELOG` tracks what has run)
+- **First startup**: the per-module baselines run, creating the full schema from scratch
+- **Later startups**: only changesets added since the last startup are applied
+- **A database from before the baseline** (one built by a version older than the 2026.3 schema baseline) is refused before anything runs; it is moved by export and import, as [Upgrading to 2026.3](/docs/upgrading/) describes
 
 ### Configuration
 
@@ -208,61 +208,36 @@ spring:
 
 ### Changelog structure
 
-All changelogs are in **YAML format** under `turing-app/src/main/resources/db/changelog/`:
+Each backend module owns its tables (named `<module>_<entity>`) and keeps its changelogs in its own folder under `turing-app/src/main/resources/db/changelog/`:
 
 ```text
 db/changelog/
-├── db.changelog-master.yaml          ← master file, includes all others
-├── v2025.3_baseline.yaml             ← initial schema (full baseline)
-├── v2026.1_update.yaml               ← major version update
-├── v2026.1_type_enum_fix.yaml        ← type/enum corrections
-├── v2026.1.11.yaml                   ← incremental patch
-├── v2026.1.11.1.yaml                 ← incremental patch
-├── v2026.1.12.yaml                   ← incremental patch
-├── v2026.1.14.0.yaml                 ← incremental patch
-├── v2026.1.14.1.yaml                 ← ...
+├── db.changelog-master.yaml     ← includes the guard, then each module in layer order
+├── baseline-guard.yaml          ← refuses a database built before the baseline
+├── system/baseline.yaml
+├── tenant/baseline.yaml
+├── auth/baseline.yaml
 ├── ...
-└── v2026.1.14.8.yaml
+├── sn/baseline.yaml
+├── ...
+└── agent/baseline.yaml
 ```
 
-The **master changelog** (`db.changelog-master.yaml`) includes all files in sequential order:
-
-```yaml
-databaseChangeLog:
-  - include:
-      file: db/changelog/v2025.3_baseline.yaml
-  - include:
-      file: db/changelog/v2026.1_update.yaml
-  - include:
-      file: db/changelog/v2026.1_type_enum_fix.yaml
-  - include:
-      file: db/changelog/v2026.1.11.yaml
-  # ... incremental patches follow
-```
-
-### Naming convention
-
-| Pattern | Example | Usage |
-|---|---|---|
-| `v{version}_baseline.yaml` | `v2025.3_baseline.yaml` | Full schema baseline for a major version |
-| `v{version}_update.yaml` | `v2026.1_update.yaml` | Generated diff between two versions |
-| `v{version}.yaml` | `v2026.1.12.yaml` | Incremental patch for a specific release |
+A module's `baseline.yaml` holds one changeset per table (the table, its unique constraints and its indexes), then the module's foreign keys, then any seed rows. The master includes the modules from the lowest layer up, so a foreign key always finds the table it points to.
 
 ### Writing a new migration
 
-When adding a new table, column, or index, create a new changelog file following the naming convention and add it to the master changelog.
+When adding a table, column or index, create a new file in the owning module's folder, named after the release (`v{version}.{n}.yaml`, for example `sn/v2026.3.9.0.yaml`), and add it to the master right after that module's last include.
 
 **Example, adding a column to an existing table:**
 
 ```yaml
 databaseChangeLog:
   - changeSet:
-      id: v2026.1.15-01-add-priority-to-spotlight
+      id: v2026.3.9.0-add-priority-to-spotlight
       author: viglet-team
       preConditions:
         - onFail: MARK_RAN
-        - tableExists:
-            tableName: sn_site_spotlight
         - not:
             - columnExists:
                 tableName: sn_site_spotlight
@@ -273,33 +248,20 @@ databaseChangeLog:
             columns:
               - column:
                   name: priority
-                  type: INT
+                  type: int
                   defaultValueNumeric: 0
 ```
 
 Key rules:
 
-- **Always use preconditions** with `onFail: MARK_RAN` to make changesets idempotent: safe to re-run if the change was already applied manually
-- **Changeset IDs** use the format `v{version}-{sequence}-{description}` (e.g., `v2026.1.14-01-add-default-label-to-custom-facet`)
-- **Authors** use `viglet-team` for manual migrations or `{name} (generated)` for auto-generated diffs
-- **Never modify** an already-released changeset: always create a new one
-
-### Generating a diff changelog
-
-The Liquibase Maven plugin can auto-generate a diff between two database versions:
-
-```shell
-cd turing-app
-mvn liquibase:diff
-```
-
-This compares the reference database (current code) against the target database (previous version) and writes a changelog to `src/main/resources/db/changelog/v2026.1_update.yaml`. The diff tracks: tables, columns, indexes, foreign keys, and primary keys.
-
-The plugin configuration is in `turing-app/pom.xml` and uses `liquibase.properties` for connection settings.
+- **Use lowercase portable types** (`varchar(n)`, `int`, `boolean`, `longtext`, `timestamp`): a unit test refuses database-specific ones such as `CLOB`
+- **Always use preconditions** with `onFail: MARK_RAN` so a changeset is safe on a database where the change is already in place
+- **Name columns exactly as the entity field** (camelCase maps literally) and tables `<module>_<entity>`
+- **Never modify** a changeset that may have run: a fix is a new changeset
 
 ### Database platform support
 
-Liquibase abstracts SQL differences across platforms. The same changelogs work on all supported databases:
+Liquibase abstracts SQL differences across platforms. The same changelogs work on all supported databases; the baselines are tested on H2, MySQL and PostgreSQL:
 
 | Database | Driver | Notes |
 |---|---|---|

@@ -1,0 +1,758 @@
+# T1321 / ADR 0005 — the persona module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: persona
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: system_instruction
+            type: longtext
+        - column:
+            name: tone
+            type: varchar(16)
+        - column:
+            name: verbosity
+            type: int
+            defaultValueNumeric: '3'
+            constraints:
+              nullable: false
+        - column:
+            name: language_style
+            type: varchar(16)
+        - column:
+            name: mandatory_terms
+            type: longtext
+        - column:
+            name: forbidden_terms
+            type: longtext
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: few_shot_store_id
+            type: varchar(40)
+        - column:
+            name: brand_context_mcp_server_id
+            type: varchar(40)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: persona_kind
+            type: varchar(16)
+            defaultValue: SPEAKER
+            constraints:
+              nullable: false
+        - column:
+            name: reading_level
+            type: varchar(16)
+        - column:
+            name: domain_expertise
+            type: varchar(16)
+        - column:
+            name: vocabulary_ceiling
+            type: longtext
+        - column:
+            name: comprehension_notes
+            type: longtext
+        - column:
+            name: accessibility_notes
+            type: longtext
+        - column:
+            name: primary_language
+            type: varchar(8)
+        - column:
+            name: calibrate_model_params
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: openness
+            type: int
+        - column:
+            name: conscientiousness
+            type: int
+        - column:
+            name: extraversion
+            type: int
+        - column:
+            name: agreeableness
+            type: int
+        - column:
+            name: neuroticism
+            type: int
+        - column:
+            name: grounding_source
+            type: varchar(16)
+            defaultValue: NONE
+            constraints:
+              nullable: false
+        - column:
+            name: grounding_sn_site
+            type: varchar(255)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: persona_audience_apply_log
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_audience_apply_log
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_audience_apply_log
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: project_id
+            type: varchar(40)
+        - column:
+            name: field
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: old_value
+            type: longtext
+        - column:
+            name: new_value
+            type: longtext
+        - column:
+            name: rationale
+            type: longtext
+        - column:
+            name: llm_used
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: applied_at
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: applied_by
+            type: varchar(255)
+    - createIndex:
+        tableName: persona_audience_apply_log
+        indexName: idx_persona_audience_apply_persona
+        columns:
+        - column:
+            name: persona_id
+    - createIndex:
+        tableName: persona_audience_apply_log
+        indexName: idx_persona_audience_apply_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_dialogue_project
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_dialogue_project
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_dialogue_project
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(2000)
+        - column:
+            name: topic
+            type: varchar(2000)
+        - column:
+            name: llmInstanceId
+            type: varchar(40)
+        - column:
+            name: turns
+            type: int
+            defaultValueNumeric: '10'
+            constraints:
+              nullable: false
+        - column:
+            name: last_run_at
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+- changeSet:
+    id: persona_dialogue_speaker
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_dialogue_speaker
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_dialogue_speaker
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: speaker_order
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: persona_dialogue_speaker
+        indexName: idx_persona_dialogue_speaker_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_dialogue_turn
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_dialogue_turn
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_dialogue_turn
+              nullable: false
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: turn_index
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+        - column:
+            name: persona_name
+            type: varchar(200)
+        - column:
+            name: content
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+    - createIndex:
+        tableName: persona_dialogue_turn
+        indexName: idx_persona_dialogue_turn_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_match_cell
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_match_cell
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_match_cell
+              nullable: false
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: source_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: fit_score
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: readability_score
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: summary
+            type: varchar(1000)
+        - column:
+            name: fits_json
+            type: longtext
+        - column:
+            name: misfits_json
+            type: longtext
+        - column:
+            name: llm_used
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: content_hash
+            type: varchar(40)
+        - column:
+            name: evaluated_at
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: previous_fit_score
+            type: double
+        - column:
+            name: previous_evaluated_at
+            type: timestamp
+    - addUniqueConstraint:
+        tableName: persona_match_cell
+        columnNames: project_id, source_id, persona_id
+        constraintName: uk_persona_match_cell
+    - createIndex:
+        tableName: persona_match_cell
+        indexName: idx_persona_match_cell_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_match_cell_history
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_match_cell_history
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_match_cell_history
+              nullable: false
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: source_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: fit_score
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: readability_score
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: llm_used
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: reused
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: content_hash
+            type: varchar(40)
+        - column:
+            name: evaluated_at
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+    - createIndex:
+        tableName: persona_match_cell_history
+        indexName: idx_persona_match_hist_cell
+        columns:
+        - column:
+            name: project_id
+        - column:
+            name: source_id
+        - column:
+            name: persona_id
+    - createIndex:
+        tableName: persona_match_cell_history
+        indexName: idx_persona_match_hist_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_match_persona
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_match_persona
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_match_persona
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: persona_match_persona
+        indexName: idx_persona_match_persona_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_match_project
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_match_project
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_match_project
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(2000)
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: llmInstanceId
+            type: varchar(40)
+        - column:
+            name: schedule
+            type: varchar(16)
+            defaultValue: MANUAL
+            constraints:
+              nullable: false
+        - column:
+            name: last_run_at
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: fitThreshold
+            type: double
+        - column:
+            name: driftWebhookUrl
+            type: varchar(1000)
+        - column:
+            name: driftWebhookAuthHeader
+            type: varchar(500)
+        - column:
+            name: driftWebhookAvgDrop
+            type: double
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+- changeSet:
+    id: persona_match_source
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_match_source
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_match_source
+              nullable: false
+        - column:
+            name: type
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: source_name
+            type: varchar(200)
+        - column:
+            name: ref
+            type: varchar(1000)
+        - column:
+            name: site_name
+            type: varchar(100)
+        - column:
+            name: cached_text
+            type: longtext
+        - column:
+            name: content_hash
+            type: varchar(40)
+        - column:
+            name: extracted_at
+            type: timestamp
+        - column:
+            name: extraction_status
+            type: varchar(16)
+            defaultValue: PENDING
+            constraints:
+              nullable: false
+        - column:
+            name: extraction_error
+            type: varchar(500)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: project_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: persona_match_source
+        indexName: idx_persona_match_source_project
+        columns:
+        - column:
+            name: project_id
+- changeSet:
+    id: persona_source
+    author: turing
+    changes:
+    - createTable:
+        tableName: persona_source
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_persona_source
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: persona_id
+            type: varchar(40)
+        - column:
+            name: type
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: source_name
+            type: varchar(200)
+        - column:
+            name: ref
+            type: varchar(1000)
+        - column:
+            name: site_name
+            type: varchar(100)
+        - column:
+            name: cached_text
+            type: longtext
+        - column:
+            name: extracted_at
+            type: timestamp
+        - column:
+            name: extraction_status
+            type: varchar(16)
+            defaultValue: PENDING
+            constraints:
+              nullable: false
+        - column:
+            name: extraction_error
+            type: varchar(500)
+    - createIndex:
+        tableName: persona_source
+        indexName: idx_persona_source_persona
+        columns:
+        - column:
+            name: persona_id
+- changeSet:
+    id: persona-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: persona
+        baseColumnNames: brand_context_mcp_server_id
+        constraintName: fk_persona_brand_context_mcp
+        referencedTableName: llm_mcp_server
+        referencedColumnNames: id
+        onDelete: SET NULL
+    - addForeignKeyConstraint:
+        baseTableName: persona
+        baseColumnNames: few_shot_store_id
+        constraintName: fk_persona_few_shot_store
+        referencedTableName: llm_store_instance
+        referencedColumnNames: id
+        onDelete: SET NULL
+    - addForeignKeyConstraint:
+        baseTableName: persona_dialogue_speaker
+        baseColumnNames: project_id
+        constraintName: fk_persona_dialogue_speaker_project
+        referencedTableName: persona_dialogue_project
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: persona_match_persona
+        baseColumnNames: project_id
+        constraintName: fk_persona_match_persona_project
+        referencedTableName: persona_match_project
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: persona_match_source
+        baseColumnNames: project_id
+        constraintName: fk_persona_match_source_project
+        referencedTableName: persona_match_project
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: persona_source
+        baseColumnNames: persona_id
+        constraintName: fk_persona_source_persona
+        referencedTableName: persona
+        referencedColumnNames: id
+        onDelete: CASCADE

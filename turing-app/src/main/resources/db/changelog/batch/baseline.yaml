@@ -1,0 +1,95 @@
+# T1321 / ADR 0005 — the batch module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: batch_job
+    author: turing
+    changes:
+    - createTable:
+        tableName: batch_job
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_batch_job
+              nullable: false
+        - column:
+            name: instanceId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: pluginType
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: vendorBatchId
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: purpose
+            type: varchar(64)
+            constraints:
+              nullable: false
+        - column:
+            name: state
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: totalRequests
+            type: bigint
+        - column:
+            name: completedRequests
+            type: bigint
+        - column:
+            name: failedRequests
+            type: bigint
+        - column:
+            name: contextJson
+            type: longtext
+        - column:
+            name: resultsCollected
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: errorMessage
+            type: varchar(1024)
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: lastPolledAt
+            type: timestamp
+        - column:
+            name: completedAt
+            type: timestamp
+        - column:
+            name: jobKind
+            type: varchar(16)
+            defaultValue: CHAT
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: batch_job
+        indexName: ix_batch_job_open
+        columns:
+        - column:
+            name: resultsCollected
+        - column:
+            name: state
+    - createIndex:
+        tableName: batch_job
+        indexName: ix_batch_job_purpose
+        columns:
+        - column:
+            name: purpose

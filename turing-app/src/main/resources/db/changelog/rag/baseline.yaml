@@ -1,0 +1,450 @@
+# T1321 / ADR 0005 — the rag module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: rag_answer_share
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_answer_share
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_answer_share
+              nullable: false
+        - column:
+            name: site_name
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: query
+            type: varchar(2000)
+            constraints:
+              nullable: false
+        - column:
+            name: filters_json
+            type: longtext
+        - column:
+            name: answer_text
+            type: longtext
+        - column:
+            name: sources_json
+            type: longtext
+        - column:
+            name: citations_json
+            type: longtext
+        - column:
+            name: answered_at
+            type: timestamp
+        - column:
+            name: creation_date
+            type: timestamp
+- changeSet:
+    id: rag_answer_signal
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_answer_signal
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_answer_signal
+              nullable: false
+        - column:
+            name: agentId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: siteName
+            type: varchar(255)
+        - column:
+            name: conversationId
+            type: varchar(128)
+        - column:
+            name: query
+            type: longtext
+        - column:
+            name: signal
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: relevanceMiss
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: rag_answer_signal
+        indexName: ix_tur_answer_signal_agent
+        columns:
+        - column:
+            name: agentId
+- changeSet:
+    id: rag_bm25_core
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_bm25_core
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_bm25_core
+              nullable: false
+        - column:
+            name: store_instance_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: se_instance_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: locale
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: core_name
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: status
+            type: varchar(16)
+            defaultValue: NOT_PROVISIONED
+            constraints:
+              nullable: false
+        - column:
+            name: doc_count
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: last_error
+            type: varchar(2000)
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: updatedAt
+            type: timestamp
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: rag_bm25_core
+        columnNames: store_instance_id, locale
+        constraintName: uq_rag_bm25_core_store_locale
+- changeSet:
+    id: rag_research_insight_snapshot
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_research_insight_snapshot
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_research_insight_snapshot
+              nullable: false
+        - column:
+            name: captured_at
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: interview_count
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: total_unique_themes
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: adequate_at_n
+            type: int
+            defaultValueNumeric: '-1'
+            constraints:
+              nullable: false
+        - column:
+            name: saturated
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: study_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: rag_research_insight_snapshot
+        indexName: idx_research_snapshot_study
+        columns:
+        - column:
+            name: study_id
+- changeSet:
+    id: rag_research_interview
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_research_interview
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_research_interview
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: status
+            type: varchar(16)
+            defaultValue: PENDING
+            constraints:
+              nullable: false
+        - column:
+            name: transcript_json
+            type: longtext
+        - column:
+            name: turn_count
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: content_hash
+            type: varchar(40)
+        - column:
+            name: error
+            type: varchar(500)
+        - column:
+            name: started_at
+            type: timestamp
+        - column:
+            name: completed_at
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: study_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: rag_research_interview
+        columnNames: study_id, persona_id
+        constraintName: uk_research_interview
+    - createIndex:
+        tableName: rag_research_interview
+        indexName: idx_research_interview_study
+        columns:
+        - column:
+            name: study_id
+- changeSet:
+    id: rag_research_study
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_research_study
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_research_study
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: goal
+            type: longtext
+        - column:
+            name: hypothesis
+            type: longtext
+        - column:
+            name: description
+            type: varchar(2000)
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: protocol
+            type: varchar(16)
+            defaultValue: DYNAMIC_SCRIPT
+            constraints:
+              nullable: false
+        - column:
+            name: concept_text
+            type: longtext
+        - column:
+            name: questions_json
+            type: longtext
+        - column:
+            name: max_questions
+            type: int
+            defaultValueNumeric: '6'
+            constraints:
+              nullable: false
+        - column:
+            name: llmInstanceId
+            type: varchar(40)
+        - column:
+            name: last_run_at
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: target_agent_id
+            type: varchar(40)
+        - column:
+            name: interview_llm_instance_id
+            type: varchar(40)
+        - column:
+            name: synthesis_llm_instance_id
+            type: varchar(40)
+        - column:
+            name: schedule
+            type: varchar(16)
+            defaultValue: MANUAL
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+- changeSet:
+    id: rag_research_study_persona
+    author: turing
+    changes:
+    - createTable:
+        tableName: rag_research_study_persona
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_rag_research_study_persona
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: position
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: study_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: rag_research_study_persona
+        indexName: idx_research_study_persona_study
+        columns:
+        - column:
+            name: study_id
+- changeSet:
+    id: rag-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: rag_bm25_core
+        baseColumnNames: se_instance_id
+        constraintName: fk_rag_bm25_core_se_instance
+        referencedTableName: se_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: rag_bm25_core
+        baseColumnNames: store_instance_id
+        constraintName: fk_rag_bm25_core_store_instance
+        referencedTableName: llm_store_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: rag_research_insight_snapshot
+        baseColumnNames: study_id
+        constraintName: fk_research_snapshot_study
+        referencedTableName: rag_research_study
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: rag_research_interview
+        baseColumnNames: study_id
+        constraintName: fk_research_interview_study
+        referencedTableName: rag_research_study
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: rag_research_study_persona
+        baseColumnNames: study_id
+        constraintName: fk_research_study_persona_study
+        referencedTableName: rag_research_study
+        referencedColumnNames: id
+        onDelete: CASCADE

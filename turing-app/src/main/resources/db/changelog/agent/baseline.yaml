@@ -1,0 +1,2287 @@
+# T1321 / ADR 0005 — the agent module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: agent
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: system_prompt
+            type: longtext
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: nativeTools
+            type: varchar(2000)
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: rag_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: embedding_model_instance_id
+            type: varchar(255)
+        - column:
+            name: store_instance_id
+            type: varchar(255)
+        - column:
+            name: systemPromptMetaPrompt
+            type: longtext
+        - column:
+            name: chat_memory_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_flush_interval_minutes
+            type: int
+            defaultValueNumeric: '5'
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_max_messages
+            type: int
+            defaultValueNumeric: '100'
+            constraints:
+              nullable: false
+        - column:
+            name: default_persona_id
+            type: varchar(40)
+        - column:
+            name: pythonRequirements
+            type: longtext
+        - column:
+            name: chatMode
+            type: varchar(16)
+            defaultValue: CALL
+            constraints:
+              nullable: false
+        - column:
+            name: analytics_se_instance_id
+            type: varchar(36)
+        - column:
+            name: chat_memory_relevance_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_relevance_top_k
+            type: int
+            defaultValueNumeric: '5'
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_recent_n
+            type: int
+            defaultValueNumeric: '10'
+            constraints:
+              nullable: false
+        - column:
+            name: max_prompt_tokens
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: over_budget_behavior
+            type: varchar(16)
+            defaultValue: WARN
+            constraints:
+              nullable: false
+        - column:
+            name: submission_retention
+            type: varchar(20)
+            defaultValue: RETAIN_FOREVER
+            constraints:
+              nullable: false
+        - column:
+            name: submission_retention_days
+            type: int
+        - column:
+            name: rich_content_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_compression_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_compression_threshold_tokens
+            type: int
+            defaultValueNumeric: '8192'
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_compression_llm_id
+            type: varchar(36)
+        - column:
+            name: chat_memory_compression_interval
+            type: varchar(32)
+            defaultValue: PT1H
+            constraints:
+              nullable: false
+        - column:
+            name: chat_memory_compression_async
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: skills_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: monthly_budget_usd
+            type: double
+        - column:
+            name: per_turn_soft_cap_usd
+            type: double
+        - column:
+            name: budget_downgrade_llm_id
+            type: varchar(255)
+        - column:
+            name: nativeCapabilities
+            type: varchar(2000)
+        - column:
+            name: requestOptionsJson
+            type: longtext
+        - column:
+            name: mcp_native_federation
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: tool_call_events_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: client_tools_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: client_tools_json
+            type: longtext
+        - column:
+            name: answer_as_app_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: co_browse_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: proactive_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: proactive_threshold_signals
+            type: int
+            defaultValueNumeric: '3'
+            constraints:
+              nullable: false
+        - column:
+            name: user_memory_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: self_tuning_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: agent_handoff_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: specialist_agent_ids
+            type: varchar(2000)
+        - column:
+            name: action_widget_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: memory_scope
+            type: varchar(20)
+            defaultValue: CONVERSATION
+            constraints:
+              nullable: false
+        - column:
+            name: live_answers_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: call_center_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: connector_setup_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: overnight_improvement_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: prompt_capture_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: online_eval_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: online_eval_grader_stack_id
+            type: varchar(36)
+        - column:
+            name: grounding_mode
+            type: varchar(20)
+            defaultValue: OPEN
+            constraints:
+              nullable: false
+        - column:
+            name: disclose_knowledge_cutoff
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: agent_analytics_intent
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_analytics_intent
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_analytics_intent
+              nullable: false
+        - column:
+            name: label
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: samples
+            type: longtext
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: longtext
+        - column:
+            name: agent_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: creationDate
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+    - addUniqueConstraint:
+        tableName: agent_analytics_intent
+        columnNames: agent_id, label
+        constraintName: uq_analytics_intent_agent_label
+- changeSet:
+    id: agent_chat_citation_record
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_citation_record
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_citation_record
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: agentId
+            type: varchar(36)
+        - column:
+            name: question
+            type: longtext
+        - column:
+            name: sourceId
+            type: varchar(512)
+            constraints:
+              nullable: false
+        - column:
+            name: documentTitle
+            type: varchar(512)
+        - column:
+            name: url
+            type: longtext
+        - column:
+            name: citedText
+            type: longtext
+        - column:
+            name: topK
+            type: int
+        - column:
+            name: answerProducedAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: citationStale
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: staleReason
+            type: varchar(512)
+        - column:
+            name: lastCheckedAt
+            type: timestamp
+        - column:
+            name: driftDetectedAt
+            type: timestamp
+    - createIndex:
+        tableName: agent_chat_citation_record
+        indexName: ix_chat_citation_record_conversation
+        columns:
+        - column:
+            name: conversationId
+    - createIndex:
+        tableName: agent_chat_citation_record
+        indexName: ix_chat_citation_record_scan
+        columns:
+        - column:
+            name: citationStale
+        - column:
+            name: answerProducedAt
+- changeSet:
+    id: agent_chat_flow
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_flow
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_flow
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: longtext
+        - column:
+            name: definitionJson
+            type: longtext
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: agent_id
+            type: varchar(40)
+        - column:
+            name: guardrailMethod
+            type: varchar(32)
+            defaultValue: HEURISTIC
+            constraints:
+              nullable: false
+        - column:
+            name: triggerDescription
+            type: longtext
+        - column:
+            name: triggerMode
+            type: varchar(16)
+            defaultValue: ONCE
+            constraints:
+              nullable: false
+        - column:
+            name: experimentKey
+            type: varchar(64)
+        - column:
+            name: variantLabel
+            type: varchar(64)
+        - column:
+            name: trafficWeight
+            type: int
+        - column:
+            name: experimentStartsAt
+            type: timestamp
+        - column:
+            name: experimentEndsAt
+            type: timestamp
+        - column:
+            name: triggerLanguage
+            type: varchar(8)
+            defaultValue: AUTO
+            constraints:
+              nullable: false
+        - column:
+            name: slotInheritanceJson
+            type: longtext
+        - column:
+            name: installedFromRecipe
+            type: varchar(64)
+        - column:
+            name: installedRecipeVersion
+            type: varchar(32)
+        - column:
+            name: banditEnabled
+            type: boolean
+        - column:
+            name: captureMode
+            type: varchar(32)
+            defaultValue: VALIDATE_THEN_CAPTURE
+            constraints:
+              nullable: false
+        - column:
+            name: autoPromote
+            type: boolean
+        - column:
+            name: abandonHandoffMessage
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: experimentSuccessMetric
+            type: varchar(32)
+    - createIndex:
+        tableName: agent_chat_flow
+        indexName: idx_chat_flow_agent_experiment
+        columns:
+        - column:
+            name: agent_id
+        - column:
+            name: experimentKey
+- changeSet:
+    id: agent_chat_flow_state
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_flow_state
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_flow_state
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: flow_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: currentNodeId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: variablesJson
+            type: longtext
+        - column:
+            name: updatedAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: parentStateId
+            type: varchar(36)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: nodeVisitPath
+            type: longtext
+    - addUniqueConstraint:
+        tableName: agent_chat_flow_state
+        columnNames: conversationId, flow_id
+        constraintName: uq_chat_flow_state_conversation_flow
+- changeSet:
+    id: agent_chat_flow_submission
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_flow_submission
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_flow_submission
+              nullable: false
+        - column:
+            name: flow_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: variablesJson
+            type: longtext
+        - column:
+            name: completedAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: userId
+            type: varchar(100)
+        - column:
+            name: endNodeId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: nodeVisitPath
+            type: longtext
+    - createIndex:
+        tableName: agent_chat_flow_submission
+        indexName: ix_chat_flow_submission_conversation
+        columns:
+        - column:
+            name: conversationId
+    - createIndex:
+        tableName: agent_chat_flow_submission
+        indexName: ix_chat_flow_submission_flow_completed
+        columns:
+        - column:
+            name: flow_id
+        - column:
+            name: completedAt
+- changeSet:
+    id: agent_chat_human_approval
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_human_approval
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_human_approval
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: resumeToken
+            type: varchar(64)
+            constraints:
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: nodeId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: flowId
+            type: varchar(40)
+        - column:
+            name: approvalSlot
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: channel
+            type: varchar(20)
+        - column:
+            name: target
+            type: varchar(500)
+        - column:
+            name: promptText
+            type: longtext
+        - column:
+            name: status
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: decision
+            type: varchar(500)
+        - column:
+            name: timeoutBehavior
+            type: varchar(20)
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: expiresAt
+            type: timestamp
+        - column:
+            name: decidedAt
+            type: timestamp
+    - createIndex:
+        tableName: agent_chat_human_approval
+        indexName: ix_chat_human_approval_token
+        columns:
+        - column:
+            name: resumeToken
+        unique: true
+    - createIndex:
+        tableName: agent_chat_human_approval
+        indexName: ix_chat_human_approval_conv_node
+        columns:
+        - column:
+            name: conversationId
+        - column:
+            name: nodeId
+    - createIndex:
+        tableName: agent_chat_human_approval
+        indexName: ix_chat_human_approval_status_expires
+        columns:
+        - column:
+            name: status
+        - column:
+            name: expiresAt
+- changeSet:
+    id: agent_chat_slot_write_log
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_slot_write_log
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_slot_write_log
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: slotName
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: oldValue
+            type: longtext
+        - column:
+            name: newValue
+            type: longtext
+        - column:
+            name: source
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: originDetail
+            type: varchar(256)
+        - column:
+            name: ts
+            type: timestamp
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: agent_chat_slot_write_log
+        indexName: ix_chat_slot_write_log_conversation_ts
+        columns:
+        - column:
+            name: conversationId
+        - column:
+            name: ts
+    - createIndex:
+        tableName: agent_chat_slot_write_log
+        indexName: ix_chat_slot_write_log_slot
+        columns:
+        - column:
+            name: slotName
+        - column:
+            name: ts
+- changeSet:
+    id: agent_chat_webhook
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_chat_webhook
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_chat_webhook
+              nullable: false
+        - column:
+            name: name
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(512)
+        - column:
+            name: targetUrl
+            type: varchar(1024)
+            constraints:
+              nullable: false
+        - column:
+            name: slotTrigger
+            type: varchar(128)
+        - column:
+            name: includeSlots
+            type: varchar(1024)
+        - column:
+            name: authHeader
+            type: varchar(2048)
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+        - column:
+            name: updatedAt
+            type: timestamp
+        - column:
+            name: payloadTemplate
+            type: longtext
+        - column:
+            name: httpMethod
+            type: varchar(8)
+            defaultValue: POST
+            constraints:
+              nullable: false
+        - column:
+            name: headersJson
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: signingSecret
+            type: varchar(2048)
+        - column:
+            name: signatureHeader
+            type: varchar(128)
+    - addUniqueConstraint:
+        tableName: agent_chat_webhook
+        columnNames: name
+        constraintName: uq_agent_chat_webhook_name
+    - createIndex:
+        tableName: agent_chat_webhook
+        indexName: ix_tur_chat_webhook_slot_trigger
+        columns:
+        - column:
+            name: slotTrigger
+- changeSet:
+    id: agent_custom_tool
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_custom_tool
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_custom_tool
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: llmDescription
+            type: varchar(2000)
+            constraints:
+              nullable: false
+        - column:
+            name: groovyScript
+            type: longtext
+            constraints:
+              nullable: false
+        - column:
+            name: parametersJson
+            type: longtext
+        - column:
+            name: returnType
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: descriptionMetaPrompt
+            type: longtext
+        - column:
+            name: llmDescriptionMetaPrompt
+            type: longtext
+        - column:
+            name: groovyMetaPrompt
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: agent_custom_tool_link
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_custom_tool_link
+        columns:
+        - column:
+            name: agent_id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_custom_tool_link
+              nullable: false
+        - column:
+            name: custom_tool_id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_custom_tool_link
+              nullable: false
+- changeSet:
+    id: agent_eval_case
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_case
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_case
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(1000)
+        - column:
+            name: seedTurnsJson
+            type: longtext
+        - column:
+            name: expectedSlotsJson
+            type: longtext
+        - column:
+            name: expectedOutcome
+            type: varchar(16)
+            defaultValue: ANY
+            constraints:
+              nullable: false
+        - column:
+            name: expectedNodeId
+            type: varchar(200)
+        - column:
+            name: rubric
+            type: longtext
+        - column:
+            name: sortOrder
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: eval_set_id
+            type: varchar(36)
+- changeSet:
+    id: agent_eval_dataset
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_dataset
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_dataset
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(1000)
+        - column:
+            name: version
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+        - column:
+            name: updatedAt
+            type: timestamp
+        - column:
+            name: metadataJson
+            type: longtext
+- changeSet:
+    id: agent_eval_dataset_row
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_dataset_row
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_dataset_row
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+        - column:
+            name: seedTurnsJson
+            type: longtext
+        - column:
+            name: expectedSlotsJson
+            type: longtext
+        - column:
+            name: expectedOutcome
+            type: varchar(16)
+            defaultValue: ANY
+            constraints:
+              nullable: false
+        - column:
+            name: expectedNodeId
+            type: varchar(200)
+        - column:
+            name: rubric
+            type: longtext
+        - column:
+            name: referenceAnswer
+            type: longtext
+        - column:
+            name: tags
+            type: varchar(500)
+        - column:
+            name: metadataJson
+            type: longtext
+        - column:
+            name: sortOrder
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: dataset_id
+            type: varchar(36)
+- changeSet:
+    id: agent_eval_dataset_snapshot
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_dataset_snapshot
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_dataset_snapshot
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: dataset_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: rowsJson
+            type: longtext
+    - createIndex:
+        tableName: agent_eval_dataset_snapshot
+        indexName: ix_eval_dataset_snapshot_dataset_version
+        columns:
+        - column:
+            name: dataset_id
+        - column:
+            name: version
+- changeSet:
+    id: agent_eval_grader_config
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_grader_config
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_grader_config
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+        - column:
+            name: kind
+            type: varchar(16)
+        - column:
+            name: graderId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: configJson
+            type: longtext
+        - column:
+            name: weight
+            type: double
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: threshold
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: blocking
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: sortOrder
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: caseId
+            type: varchar(36)
+        - column:
+            name: eval_set_id
+            type: varchar(36)
+        - column:
+            name: stack_id
+            type: varchar(36)
+- changeSet:
+    id: agent_eval_grader_stack
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_grader_stack
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_grader_stack
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(1000)
+- changeSet:
+    id: agent_eval_report
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_report
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_report
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: passed
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: score
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: caseCount
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: passedCount
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: baseline
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: regressed
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: resultsJson
+            type: longtext
+        - column:
+            name: agent_id
+            type: varchar(36)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: pendingReview
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: datasetId
+            type: varchar(36)
+        - column:
+            name: datasetVersion
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: agent_eval_report
+        indexName: ix_agent_eval_report_agent_created
+        columns:
+        - column:
+            name: agent_id
+        - column:
+            name: createdAt
+- changeSet:
+    id: agent_eval_review_task
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_review_task
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_review_task
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: agent_id
+            type: varchar(36)
+        - column:
+            name: caseId
+            type: varchar(36)
+        - column:
+            name: caseName
+            type: varchar(200)
+        - column:
+            name: graderId
+            type: varchar(100)
+        - column:
+            name: transcript
+            type: longtext
+        - column:
+            name: expectedSummary
+            type: longtext
+        - column:
+            name: status
+            type: varchar(16)
+            defaultValue: PENDING
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: reviewedPass
+            type: boolean
+        - column:
+            name: reviewedScore
+            type: double
+        - column:
+            name: reviewerNotes
+            type: longtext
+        - column:
+            name: reviewedBy
+            type: varchar(200)
+        - column:
+            name: reviewedAt
+            type: timestamp
+        - column:
+            name: taskType
+            type: varchar(16)
+            defaultValue: DEFERRED
+            constraints:
+              nullable: false
+        - column:
+            name: requiredReviewers
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: modelPass
+            type: boolean
+        - column:
+            name: modelScore
+            type: double
+    - createIndex:
+        tableName: agent_eval_review_task
+        indexName: ix_eval_review_task_agent_status
+        columns:
+        - column:
+            name: agent_id
+        - column:
+            name: status
+- changeSet:
+    id: agent_eval_review_verdict
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_review_verdict
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_review_verdict
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: reviewTaskId
+            type: varchar(36)
+        - column:
+            name: reviewer
+            type: varchar(200)
+        - column:
+            name: reviewedPass
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: reviewedScore
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: notes
+            type: longtext
+        - column:
+            name: reviewedAt
+            type: timestamp
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: agent_eval_review_verdict
+        indexName: ix_eval_review_verdict_task
+        columns:
+        - column:
+            name: reviewTaskId
+- changeSet:
+    id: agent_eval_set
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_eval_set
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_eval_set
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(1000)
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: blocking
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: agent_id
+            type: varchar(36)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: datasetId
+            type: varchar(36)
+        - column:
+            name: graderStackId
+            type: varchar(36)
+    - addUniqueConstraint:
+        tableName: agent_eval_set
+        columnNames: agent_id, name
+        constraintName: uq_agent_eval_set_agent_name
+- changeSet:
+    id: agent_intent
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_intent
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_intent
+              nullable: false
+        - column:
+            name: title
+            type: varchar(150)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: sortOrder
+            type: int
+            defaultValueNumeric: '0'
+        - column:
+            name: agent_id
+            type: varchar(255)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+- changeSet:
+    id: agent_intent_action
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_intent_action
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_intent_action
+              nullable: false
+        - column:
+            name: label
+            type: varchar(150)
+            constraints:
+              nullable: false
+        - column:
+            name: prompt
+            type: longtext
+        - column:
+            name: sortOrder
+            type: int
+            defaultValueNumeric: '0'
+        - column:
+            name: intent_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: agent_llm_instance
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_llm_instance
+        columns:
+        - column:
+            name: agent_id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_llm_instance
+              nullable: false
+        - column:
+            name: llm_instance_id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_llm_instance
+              nullable: false
+- changeSet:
+    id: agent_mcp_server
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_mcp_server
+        columns:
+        - column:
+            name: agent_id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_mcp_server
+              nullable: false
+        - column:
+            name: mcp_server_id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_mcp_server
+              nullable: false
+- changeSet:
+    id: agent_online_eval_snapshot
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_online_eval_snapshot
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_online_eval_snapshot
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: agentId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: windowStart
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: windowEnd
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: sampledSessions
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: gradedSessions
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: graderStackId
+            type: varchar(36)
+        - column:
+            name: meanScore
+            type: double
+            defaultValueNumeric: '-1'
+            constraints:
+              nullable: false
+        - column:
+            name: passRate
+            type: double
+            defaultValueNumeric: '-1'
+            constraints:
+              nullable: false
+        - column:
+            name: negativeSentimentRate
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: staleCitationRate
+            type: double
+            defaultValueNumeric: '-1'
+            constraints:
+              nullable: false
+        - column:
+            name: failingSessionRate
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: baseline
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: driftDetected
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: driftReason
+            type: longtext
+    - createIndex:
+        tableName: agent_online_eval_snapshot
+        indexName: idx_online_eval_agent
+        columns:
+        - column:
+            name: agentId
+- changeSet:
+    id: agent_persona
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_persona
+        columns:
+        - column:
+            name: agent_id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_persona
+              nullable: false
+        - column:
+            name: persona_id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_persona
+              nullable: false
+- changeSet:
+    id: agent_routine
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_routine
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_routine
+              nullable: false
+        - column:
+            name: name
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(512)
+        - column:
+            name: kind
+            type: varchar(16)
+            defaultValue: NATIVE
+            constraints:
+              nullable: false
+        - column:
+            name: nativeToolName
+            type: varchar(128)
+        - column:
+            name: defaultTimeoutMs
+            type: int
+            defaultValueNumeric: '60000'
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+        - column:
+            name: updatedAt
+            type: timestamp
+        - column:
+            name: groovyScript
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: agent_routine
+        columnNames: name
+        constraintName: uq_tur_routine_name
+- changeSet:
+    id: agent_skill
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_skill
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_skill
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: longtext
+        - column:
+            name: version
+            type: varchar(32)
+        - column:
+            name: author
+            type: varchar(150)
+        - column:
+            name: path
+            type: varchar(500)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: agent_skill
+        columnNames: path
+        constraintName: uq_skill_path
+- changeSet:
+    id: agent_slot
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_slot
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_slot
+              nullable: false
+        - column:
+            name: agent_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: type
+            type: varchar(16)
+            defaultValue: STRING
+            constraints:
+              nullable: false
+        - column:
+            name: extract_from_document
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: validation_pattern
+            type: varchar(500)
+    - addUniqueConstraint:
+        tableName: agent_slot
+        columnNames: agent_id, name
+        constraintName: uq_ai_agent_slot_agent_name
+- changeSet:
+    id: agent_suggestion
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_suggestion
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_suggestion
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: agentId
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: kind
+            type: varchar(30)
+            constraints:
+              nullable: false
+        - column:
+            name: currentValue
+            type: longtext
+        - column:
+            name: proposedValue
+            type: longtext
+        - column:
+            name: rationale
+            type: longtext
+        - column:
+            name: baselineScore
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: proposedScore
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: status
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: decidedAt
+            type: bigint
+    - createIndex:
+        tableName: agent_suggestion
+        indexName: idx_agent_suggestion_agent_status
+        columns:
+        - column:
+            name: agentId
+        - column:
+            name: status
+- changeSet:
+    id: agent_user_memory
+    author: turing
+    changes:
+    - createTable:
+        tableName: agent_user_memory
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_agent_user_memory
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: userId
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: agentId
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: memoryKey
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: content
+            type: longtext
+        - column:
+            name: createdAt
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: updatedAt
+            type: bigint
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: agent_user_memory
+        indexName: idx_user_memory_user_agent
+        columns:
+        - column:
+            name: userId
+        - column:
+            name: agentId
+- changeSet:
+    id: agent-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: agent
+        baseColumnNames: analytics_se_instance_id
+        constraintName: fk_ai_agent_analytics_se_instance
+        referencedTableName: se_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent
+        baseColumnNames: default_persona_id
+        constraintName: fk_ai_agent_default_persona
+        referencedTableName: persona
+        referencedColumnNames: id
+        onDelete: SET NULL
+    - addForeignKeyConstraint:
+        baseTableName: agent
+        baseColumnNames: embedding_model_instance_id
+        constraintName: fk_ai_agent_embedding_model
+        referencedTableName: llm_embedding_model
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent
+        baseColumnNames: store_instance_id
+        constraintName: fk_ai_agent_store_instance
+        referencedTableName: llm_store_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_analytics_intent
+        baseColumnNames: agent_id
+        constraintName: fk_analytics_intent_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_chat_flow
+        baseColumnNames: agent_id
+        constraintName: fk_chat_flow_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_chat_flow_state
+        baseColumnNames: flow_id
+        constraintName: fk_chat_flow_state_flow
+        referencedTableName: agent_chat_flow
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_chat_flow_submission
+        baseColumnNames: flow_id
+        constraintName: fk_chat_flow_submission_flow
+        referencedTableName: agent_chat_flow
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_custom_tool_link
+        baseColumnNames: agent_id
+        constraintName: fk_ai_agent_custom_tool_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_custom_tool_link
+        baseColumnNames: custom_tool_id
+        constraintName: fk_ai_agent_custom_tool_tool
+        referencedTableName: agent_custom_tool
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_case
+        baseColumnNames: eval_set_id
+        constraintName: fk_agent_eval_case_set
+        referencedTableName: agent_eval_set
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_dataset_row
+        baseColumnNames: dataset_id
+        constraintName: fk_eval_dataset_row_dataset
+        referencedTableName: agent_eval_dataset
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_grader_config
+        baseColumnNames: eval_set_id
+        constraintName: fk_eval_grader_config_set
+        referencedTableName: agent_eval_set
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_grader_config
+        baseColumnNames: stack_id
+        constraintName: fk_eval_grader_config_stack
+        referencedTableName: agent_eval_grader_stack
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_report
+        baseColumnNames: agent_id
+        constraintName: fk_agent_eval_report_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_review_task
+        baseColumnNames: agent_id
+        constraintName: fk_eval_review_task_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_review_verdict
+        baseColumnNames: reviewTaskId
+        constraintName: fk_eval_review_verdict_task
+        referencedTableName: agent_eval_review_task
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_eval_set
+        baseColumnNames: agent_id
+        constraintName: fk_agent_eval_set_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_intent
+        baseColumnNames: agent_id
+        constraintName: fk_intent_ai_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_intent_action
+        baseColumnNames: intent_id
+        constraintName: fk_intent_action_intent
+        referencedTableName: agent_intent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_llm_instance
+        baseColumnNames: agent_id
+        constraintName: fk_ai_agent_llm_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_llm_instance
+        baseColumnNames: llm_instance_id
+        constraintName: fk_ai_agent_llm_instance
+        referencedTableName: llm_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_mcp_server
+        baseColumnNames: agent_id
+        constraintName: fk_ai_agent_mcp_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_mcp_server
+        baseColumnNames: mcp_server_id
+        constraintName: fk_ai_agent_mcp_server
+        referencedTableName: llm_mcp_server
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: agent_persona
+        baseColumnNames: agent_id
+        constraintName: fk_ai_agent_persona_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_persona
+        baseColumnNames: persona_id
+        constraintName: fk_ai_agent_persona_persona
+        referencedTableName: persona
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: agent_slot
+        baseColumnNames: agent_id
+        constraintName: fk_ai_agent_slot_agent
+        referencedTableName: agent
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_genai
+        baseColumnNames: agent_id
+        constraintName: fk_sn_site_genai_ai_agent
+        referencedTableName: agent
+        referencedColumnNames: id

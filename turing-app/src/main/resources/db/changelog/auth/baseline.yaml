@@ -1,0 +1,276 @@
+# T1321 / ADR 0005 — the auth module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: auth_dev_token
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_dev_token
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_auth_dev_token
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: token
+            type: varchar(255)
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: expiresAt
+            type: timestamp
+        - column:
+            name: partitionField
+            type: varchar(255)
+        - column:
+            name: partitionValue
+            type: varchar(255)
+- changeSet:
+    id: auth_group
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_group
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_auth_group
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: name
+            type: varchar(255)
+- changeSet:
+    id: auth_group_role
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_group_role
+        columns:
+        - column:
+            name: turGroups_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: turRoles_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: auth_privilege
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_privilege
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_auth_privilege
+              nullable: false
+        - column:
+            name: name
+            type: varchar(255)
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: category
+            type: varchar(50)
+- changeSet:
+    id: auth_role
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_role
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_auth_role
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: auth_role_privilege
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_role_privilege
+        columns:
+        - column:
+            name: role_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: privilege_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: auth_user
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_user
+        columns:
+        - column:
+            name: username
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_auth_user
+              nullable: false
+        - column:
+            name: email
+            type: varchar(255)
+        - column:
+            name: enabled
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: password
+            type: varchar(255)
+        - column:
+            name: realm
+            type: varchar(255)
+        - column:
+            name: firstName
+            type: varchar(255)
+        - column:
+            name: lastLogin
+            type: timestamp
+        - column:
+            name: lastName
+            type: varchar(255)
+        - column:
+            name: avatarUrl
+            type: varchar(1024)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: auth_user_group
+    author: turing
+    changes:
+    - createTable:
+        tableName: auth_user_group
+        columns:
+        - column:
+            name: turUsers_username
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: turGroups_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: auth-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: auth_group_role
+        baseColumnNames: turRoles_id
+        constraintName: FK4ltm75nevup9btxvdgxrxktpd
+        referencedTableName: auth_role
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: auth_group_role
+        baseColumnNames: turGroups_id
+        constraintName: FKh7xwcy783ovfb7i9442rblty
+        referencedTableName: auth_group
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: auth_role_privilege
+        baseColumnNames: privilege_id
+        constraintName: FKkpb35opk78u4nscunry4edn5u
+        referencedTableName: auth_privilege
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: auth_role_privilege
+        baseColumnNames: role_id
+        constraintName: FKt7d7j5cjcafsl8qjs91rhbse5
+        referencedTableName: auth_role
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: auth_user_group
+        baseColumnNames: turUsers_username
+        constraintName: FKbk7431c81jxpl7t6o4w3flf7n
+        referencedTableName: auth_user
+        referencedColumnNames: username
+    - addForeignKeyConstraint:
+        baseTableName: auth_user_group
+        baseColumnNames: turGroups_id
+        constraintName: FKmp229e6vibmhk8hoe0brsbv7q
+        referencedTableName: auth_group
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: system_integration_instance
+        baseColumnNames: apiToken
+        constraintName: fk_integration_instance_api_token
+        referencedTableName: auth_dev_token
+        referencedColumnNames: id

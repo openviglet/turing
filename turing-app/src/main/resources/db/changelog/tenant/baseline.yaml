@@ -1,0 +1,143 @@
+# T1321 / ADR 0005 — the tenant module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: tenant
+    author: turing
+    changes:
+    - createTable:
+        tableName: tenant
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_tenant
+              nullable: false
+        - column:
+            name: slug
+            type: varchar(63)
+            constraints:
+              nullable: false
+        - column:
+            name: name
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: status
+            type: varchar(16)
+            defaultValue: ACTIVE
+            constraints:
+              nullable: false
+        - column:
+            name: plan
+            type: varchar(50)
+            defaultValue: FREE
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            defaultValueComputed: CURRENT_TIMESTAMP
+            constraints:
+              nullable: false
+        - column:
+            name: isolationMode
+            type: varchar(16)
+            defaultValue: SHARED
+            constraints:
+              nullable: false
+        - column:
+            name: suspendedAt
+            type: timestamp
+    - addUniqueConstraint:
+        tableName: tenant
+        columnNames: slug
+        constraintName: uq_tenant_slug
+- changeSet:
+    id: tenant_membership
+    author: turing
+    changes:
+    - createTable:
+        tableName: tenant_membership
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_tenant_membership
+              nullable: false
+        - column:
+            name: tenant_id
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: username
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: role
+            type: varchar(16)
+            defaultValue: MEMBER
+            constraints:
+              nullable: false
+        - column:
+            name: status
+            type: varchar(16)
+            defaultValue: ACTIVE
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            defaultValueComputed: CURRENT_TIMESTAMP
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: tenant_membership
+        columnNames: tenant_id, username
+        constraintName: uq_tenant_membership
+- changeSet:
+    id: tenant-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: tenant_membership
+        baseColumnNames: tenant_id
+        constraintName: fk_tenant_membership_tenant
+        referencedTableName: tenant
+        referencedColumnNames: id
+- changeSet:
+    id: tenant-seed
+    author: turing
+    changes:
+    - insert:
+        tableName: tenant
+        columns:
+        - column:
+            name: id
+            value: DEFAULT
+        - column:
+            name: slug
+            value: default
+        - column:
+            name: name
+            value: Default
+        - column:
+            name: status
+            value: ACTIVE
+        - column:
+            name: plan
+            value: FREE
+        - column:
+            name: createdAt
+            valueComputed: CURRENT_TIMESTAMP
+        - column:
+            name: isolationMode
+            value: SHARED

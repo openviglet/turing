@@ -1,0 +1,1451 @@
+# T1321 / ADR 0005 — the sn module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: sn_ranking_condition
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_ranking_condition
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_ranking_condition
+              nullable: false
+        - column:
+            name: attribute
+            type: varchar(255)
+        - column:
+            name: condition
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: VALUE
+            type: varchar(255)
+        - column:
+            name: ranking_exp_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+- changeSet:
+    id: sn_ranking_expression
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_ranking_expression
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_ranking_expression
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: name
+            type: varchar(50)
+        - column:
+            name: weight
+            type: real
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+- changeSet:
+    id: sn_site
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site
+              nullable: false
+        - column:
+            name: defaulturlfield
+            type: varchar(255)
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: facet
+            type: int
+        - column:
+            name: hl
+            type: int
+        - column:
+            name: mlt
+            type: int
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: thesaurus
+            type: int
+        - column:
+            name: se_instance_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: defaultDateField
+            type: varchar(255)
+        - column:
+            name: defaultDescriptionField
+            type: varchar(255)
+        - column:
+            name: defaultField
+            type: varchar(255)
+        - column:
+            name: defaultImageField
+            type: varchar(255)
+        - column:
+            name: defaultTextField
+            type: varchar(255)
+        - column:
+            name: defaultTitleField
+            type: varchar(255)
+        - column:
+            name: exactMatch
+            type: int
+        - column:
+            name: exactMatchField
+            type: varchar(255)
+        - column:
+            name: facetItemType
+            type: tinyint
+        - column:
+            name: facetSort
+            type: tinyint
+        - column:
+            name: facetType
+            type: tinyint
+        - column:
+            name: hlPost
+            type: varchar(50)
+        - column:
+            name: hlPre
+            type: varchar(50)
+        - column:
+            name: itemsPerFacet
+            type: int
+        - column:
+            name: rowsPerPage
+            type: int
+        - column:
+            name: spellCheck
+            type: int
+        - column:
+            name: spellCheckFixes
+            type: int
+        - column:
+            name: spotlightWithResults
+            type: int
+        - column:
+            name: wildcardAlways
+            type: int
+        - column:
+            name: wildcardNoResults
+            type: int
+        - column:
+            name: turSNSiteGenAi_id
+            type: varchar(255)
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: searchTemplate
+            type: varchar(255)
+        - column:
+            name: apiAuthMode
+            type: varchar(16)
+            defaultValue: PUBLIC
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false
+        - column:
+            name: relaxNoResults
+            type: int
+            defaultValueNumeric: '0'
+        - column:
+            name: autocompleteTopTerms
+            type: int
+            defaultValueNumeric: '0'
+        - column:
+            name: metricsMaskPersonalData
+            type: int
+        - column:
+            name: timeZone
+            type: varchar(64)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: sn_site
+        indexName: UK8ng1cahgj3f9x4nwkjqib2c5e_INDEX_8
+        columns:
+        - column:
+            name: turSNSiteGenAi_id
+        unique: true
+- changeSet:
+    id: sn_site_custom_facet
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_facet
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet
+              nullable: false
+        - column:
+            name: field_ext_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: facet_position
+            type: int
+        - column:
+            name: default_label
+            type: varchar(255)
+        - column:
+            name: facet_type
+            type: tinyint
+        - column:
+            name: facet_item_type
+            type: tinyint
+        - column:
+            name: end_field
+            type: varchar(255)
+    - createIndex:
+        tableName: sn_site_custom_facet
+        indexName: idx_sn_site_custom_facet_name
+        columns:
+        - column:
+            name: name
+- changeSet:
+    id: sn_site_custom_facet_item
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_facet_item
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet_item
+              nullable: false
+        - column:
+            name: custom_facet_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: label
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: range_start
+            type: decimal(19, 6)
+        - column:
+            name: range_end
+            type: decimal(19, 6)
+        - column:
+            name: facet_item_position
+            type: int
+        - column:
+            name: range_start_date
+            type: timestamp
+        - column:
+            name: range_end_date
+            type: timestamp
+        - column:
+            name: operator
+            type: varchar(30)
+        - column:
+            name: range_start_expression
+            type: varchar(64)
+        - column:
+            name: range_end_expression
+            type: varchar(64)
+- changeSet:
+    id: sn_site_custom_facet_item_label
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_facet_item_label
+        columns:
+        - column:
+            name: custom_facet_item_id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet_item_label
+              nullable: false
+        - column:
+            name: locale
+            type: varchar(20)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet_item_label
+              nullable: false
+        - column:
+            name: label
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_custom_facet_label
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_facet_label
+        columns:
+        - column:
+            name: custom_facet_id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet_label
+              nullable: false
+        - column:
+            name: locale
+            type: varchar(20)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_facet_label
+              nullable: false
+        - column:
+            name: label
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_custom_sort
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_sort
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_sort
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_custom_sort_item
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_custom_sort_item
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_custom_sort_item
+              nullable: false
+        - column:
+            name: field_name
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: sort_order
+            type: varchar(10)
+            constraints:
+              nullable: false
+        - column:
+            name: position
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: custom_sort_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: missing_placement
+            type: varchar(8)
+- changeSet:
+    id: sn_site_field
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_field
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_field
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: type
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: multiValued
+            type: int
+- changeSet:
+    id: sn_site_field_ext
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_field_ext
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_field_ext
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+        - column:
+            name: facet
+            type: int
+        - column:
+            name: hl
+            type: int
+        - column:
+            name: mlt
+            type: int
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: required
+            type: int
+        - column:
+            name: type
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: defaultValue
+            type: varchar(50)
+        - column:
+            name: externalId
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: facetItemType
+            type: tinyint
+        - column:
+            name: facetName
+            type: varchar(50)
+        - column:
+            name: facetPosition
+            type: int
+        - column:
+            name: facetRange
+            type: tinyint
+        - column:
+            name: facetSort
+            type: tinyint
+        - column:
+            name: facetType
+            type: tinyint
+        - column:
+            name: multiValued
+            type: int
+        - column:
+            name: secondaryFacet
+            type: boolean
+        - column:
+            name: showAllFacetItems
+            type: boolean
+        - column:
+            name: snType
+            type: tinyint
+            constraints:
+              nullable: false
+        - column:
+            name: searchWeight
+            type: double
+- changeSet:
+    id: sn_site_field_ext_facet
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_field_ext_facet
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_field_ext_facet
+              nullable: false
+        - column:
+            name: label
+            type: varchar(255)
+        - column:
+            name: locale
+            type: varchar(255)
+        - column:
+            name: field_ext_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_genai
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_genai
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_genai
+              nullable: false
+        - column:
+            name: sitePrompt
+            type: longtext
+        - column:
+            name: agent_id
+            type: varchar(255)
+        - column:
+            name: ragBm25Fallback
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: ragHybridSearch
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: ragBm25Source
+            type: varchar(16)
+            defaultValue: EMBEDDED
+            constraints:
+              nullable: false
+        - column:
+            name: rag_se_instance_id
+            type: varchar(36)
+        - column:
+            name: snRankingMode
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: contentFitIndexingEnabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: contentFitPersonaId
+            type: varchar(40)
+        - column:
+            name: fullContextAnsweringEnabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: fullContextTokenBudget
+            type: int
+            defaultValueNumeric: '800000'
+            constraints:
+              nullable: false
+        - column:
+            name: mediaUnderstandingIndexingEnabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: embeddingModelId
+            type: varchar(40)
+        - column:
+            name: knowledgeBaseMode
+            type: varchar(32)
+            defaultValue: VECTOR
+            constraints:
+              nullable: false
+        - column:
+            name: copilotPlanningStrategy
+            type: varchar(32)
+        - column:
+            name: copilotPlanningMaxPasses
+            type: int
+        - column:
+            name: rankingLexicon
+            type: longtext
+        - column:
+            name: snSemanticRecall
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: snSemanticRecallMinScore
+            type: double
+        - column:
+            name: snHybridVectorWeight
+            type: double
+        - column:
+            name: snEmbeddedFields
+            type: varchar(1024)
+        - column:
+            name: followupQueryMode
+            type: varchar(16)
+            defaultValue: LATEST_ONLY
+            constraints:
+              nullable: false
+        - column:
+            name: entityExtraction
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_locale
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_locale
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_locale
+              nullable: false
+        - column:
+            name: core
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: language
+            type: varchar(5)
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: position
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_merge_provider
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_merge_provider
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_merge_provider
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: locale
+            type: varchar(5)
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: providerFrom
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: providerTo
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: relationFrom
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: relationTo
+            type: varchar(50)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_merge_provider_field
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_merge_provider_field
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_merge_provider_field
+              nullable: false
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_merge_id
+            type: varchar(255)
+- changeSet:
+    id: sn_site_metric_access
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_metric_access
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_metric_access
+              nullable: false
+        - column:
+            name: language
+            type: varchar(255)
+        - column:
+            name: term
+            type: varchar(255)
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: accessDate
+            type: timestamp
+        - column:
+            name: numFound
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: sanatizedTerm
+            type: varchar(255)
+        - column:
+            name: userId
+            type: varchar(50)
+        - column:
+            name: partitionKey
+            type: varchar(512)
+- changeSet:
+    id: sn_site_metric_access_trs
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_metric_access_trs
+        columns:
+        - column:
+            name: tr_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: targetingRules
+            type: varchar(255)
+- changeSet:
+    id: sn_site_metric_click
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_metric_click
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_metric_click
+              nullable: false
+        - column:
+            name: accessDate
+            type: timestamp
+        - column:
+            name: userId
+            type: varchar(50)
+        - column:
+            name: term
+            type: varchar(255)
+        - column:
+            name: sanatizedTerm
+            type: varchar(255)
+        - column:
+            name: language
+            type: varchar(20)
+        - column:
+            name: documentId
+            type: varchar(255)
+        - column:
+            name: position
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: partitionKey
+            type: varchar(512)
+    - createIndex:
+        tableName: sn_site_metric_click
+        indexName: idx_sn_site_metric_click_access_date
+        columns:
+        - column:
+            name: accessDate
+    - createIndex:
+        tableName: sn_site_metric_click
+        indexName: idx_sn_site_metric_click_site_date
+        columns:
+        - column:
+            name: sn_site_id
+        - column:
+            name: accessDate
+    - createIndex:
+        tableName: sn_site_metric_click
+        indexName: idx_sn_site_metric_click_term
+        columns:
+        - column:
+            name: sanatizedTerm
+- changeSet:
+    id: sn_site_search_rule
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_search_rule
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_search_rule
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: position
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_search_rule_action
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_search_rule_action
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_search_rule_action
+              nullable: false
+        - column:
+            name: actionType
+            type: varchar(30)
+            constraints:
+              nullable: false
+        - column:
+            name: VALUE
+            type: varchar(1000)
+            constraints:
+              nullable: false
+        - column:
+            name: search_rule_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_search_rule_condition
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_search_rule_condition
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_search_rule_condition
+              nullable: false
+        - column:
+            name: parameter
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: operator
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: fieldName
+            type: varchar(255)
+        - column:
+            name: VALUE
+            type: varchar(500)
+        - column:
+            name: logicOperator
+            type: varchar(5)
+            defaultValue: AND
+        - column:
+            name: search_rule_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_spotlight
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_spotlight
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_spotlight
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: language
+            type: varchar(255)
+        - column:
+            name: managed
+            type: int
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: provider
+            type: varchar(255)
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: modificationDate
+            type: timestamp
+        - column:
+            name: unmanagedId
+            type: varchar(255)
+        - column:
+            name: partitionField
+            type: varchar(255)
+        - column:
+            name: partitionValue
+            type: varchar(255)
+- changeSet:
+    id: sn_site_spotlight_document
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_spotlight_document
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_spotlight_document
+              nullable: false
+        - column:
+            name: content
+            type: varchar(2000)
+        - column:
+            name: link
+            type: varchar(255)
+        - column:
+            name: position
+            type: int
+        - column:
+            name: title
+            type: varchar(255)
+        - column:
+            name: type
+            type: varchar(255)
+        - column:
+            name: spotlight_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: referenceId
+            type: varchar(255)
+- changeSet:
+    id: sn_site_spotlight_term
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_spotlight_term
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_spotlight_term
+              nullable: false
+        - column:
+            name: name
+            type: varchar(255)
+        - column:
+            name: spotlight_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_site_synonym
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_synonym
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_site_synonym
+              nullable: false
+        - column:
+            name: name
+            type: varchar(100)
+        - column:
+            name: type
+            type: varchar(32)
+            defaultValue: REGULAR
+            constraints:
+              nullable: false
+        - column:
+            name: language
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: input
+            type: varchar(2000)
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: modificationDate
+            type: timestamp
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: sn_site_synonym
+        indexName: idx_sn_site_synonym_site_lang
+        columns:
+        - column:
+            name: sn_site_id
+        - column:
+            name: language
+- changeSet:
+    id: sn_site_synonym_term
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_site_synonym_term
+        columns:
+        - column:
+            name: synonym_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: term
+            type: varchar(2000)
+        - column:
+            name: termOrder
+            type: int
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn_source_type
+    author: turing
+    changes:
+    - createTable:
+        tableName: sn_source_type
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_sn_source_type
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+            constraints:
+              nullable: false
+        - column:
+            name: name
+            type: varchar(50)
+            constraints:
+              nullable: false
+- changeSet:
+    id: sn-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: sn_ranking_condition
+        baseColumnNames: ranking_exp_id
+        constraintName: FKjd5c7fcjc9e7af9l76m47xiex
+        referencedTableName: sn_ranking_expression
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_ranking_expression
+        baseColumnNames: sn_site_id
+        constraintName: FKbt3odaebxo2yvjv7kxwvp0vyh
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site
+        baseColumnNames: se_instance_id
+        constraintName: FK89lv2ps1mkivotym4ac0mm9wg
+        referencedTableName: se_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site
+        baseColumnNames: turSNSiteGenAi_id
+        constraintName: FKl4us4sdje9583cibml428v46h
+        referencedTableName: sn_site_genai
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_facet
+        baseColumnNames: field_ext_id
+        constraintName: fk_sn_site_custom_facet_field_ext
+        referencedTableName: sn_site_field_ext
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_facet_item
+        baseColumnNames: custom_facet_id
+        constraintName: fk_sn_site_custom_facet_item_custom_facet
+        referencedTableName: sn_site_custom_facet
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_facet_item_label
+        baseColumnNames: custom_facet_item_id
+        constraintName: fk_sn_site_custom_facet_item_label_item
+        referencedTableName: sn_site_custom_facet_item
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_facet_label
+        baseColumnNames: custom_facet_id
+        constraintName: fk_sn_site_custom_facet_label_custom_facet
+        referencedTableName: sn_site_custom_facet
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_sort
+        baseColumnNames: sn_site_id
+        constraintName: fk_custom_sort_sn_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_custom_sort_item
+        baseColumnNames: custom_sort_id
+        constraintName: fk_custom_sort_item_custom_sort
+        referencedTableName: sn_site_custom_sort
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_field
+        baseColumnNames: sn_site_id
+        constraintName: FKtlp91rh7ynu1in0g0qul5mmvt
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_field_ext
+        baseColumnNames: sn_site_id
+        constraintName: FKia1tfhhodjt2ntrvjyh3bhtqr
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_field_ext_facet
+        baseColumnNames: field_ext_id
+        constraintName: FKnrv01mw2l3kk9v8pogd8q7gnd
+        referencedTableName: sn_site_field_ext
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_genai
+        baseColumnNames: rag_se_instance_id
+        constraintName: fk_sn_site_genai_rag_se_instance
+        referencedTableName: se_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_locale
+        baseColumnNames: sn_site_id
+        constraintName: FKax5ehkvma2x907eklvw5oys3v
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_merge_provider
+        baseColumnNames: sn_site_id
+        constraintName: FKhlecb9e124y4vffssrt1x2mx1
+        referencedTableName: sn_site
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_merge_provider_field
+        baseColumnNames: sn_site_merge_id
+        constraintName: FKrdmpm3x4wfwibxsbx7liob07q
+        referencedTableName: sn_site_merge_provider
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_metric_access
+        baseColumnNames: sn_site_id
+        constraintName: FK97apj3np65x7xu6ryrh684ydi
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_metric_access_trs
+        baseColumnNames: tr_id
+        constraintName: FKcjsrxor3qjq7vn2mqp3wkm4sr
+        referencedTableName: sn_site_metric_access
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_metric_click
+        baseColumnNames: sn_site_id
+        constraintName: fk_sn_site_metric_click_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_search_rule
+        baseColumnNames: sn_site_id
+        constraintName: fk_search_rule_sn_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_search_rule_action
+        baseColumnNames: search_rule_id
+        constraintName: fk_search_rule_action_rule
+        referencedTableName: sn_site_search_rule
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_search_rule_condition
+        baseColumnNames: search_rule_id
+        constraintName: fk_search_rule_condition_rule
+        referencedTableName: sn_site_search_rule
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_spotlight
+        baseColumnNames: sn_site_id
+        constraintName: FK8ykx0xv8bds40ytrfqeglatue
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_spotlight_document
+        baseColumnNames: spotlight_id
+        constraintName: FKoii6hgv1kftdq1jy7sdtk1902
+        referencedTableName: sn_site_spotlight
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_spotlight_term
+        baseColumnNames: spotlight_id
+        constraintName: FKmp0uhn751f4t94ay3y2hdkkn0
+        referencedTableName: sn_site_spotlight
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_synonym
+        baseColumnNames: sn_site_id
+        constraintName: fk_sn_site_synonym_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sn_site_synonym_term
+        baseColumnNames: synonym_id
+        constraintName: fk_sn_site_synonym_term_synonym
+        referencedTableName: sn_site_synonym
+        referencedColumnNames: id
+        onDelete: CASCADE

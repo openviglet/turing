@@ -33,9 +33,14 @@ description: Turing JPA + Liquibase persistence rules — column naming (no impl
   have run breaks Liquibase checksums. Fix follow-ups with a new changelog file
   instead of changing the prior one.
 
-- **Always create a new file** — never modify existing changelog files
-- Naming: `v{currentVersion}.{subversion}.yaml` with incremental subversion (e.g., if current version is `2026.1.14` and `v2026.1.14.0.yaml` exists, the next file is `v2026.1.14.1.yaml`)
-- Include in `db.changelog-master.yaml`
+- **Always create a new file** — never modify existing changelog files (a module's
+  `baseline.yaml` included)
+- **Per module (T1321)**: the schema starts from `db/changelog/<module>/baseline.yaml`, one
+  per module. A new change goes in the owning module's folder (the module of the table's
+  entity), named `v{currentVersion}.{subversion}.yaml` with incremental subversion (e.g.
+  `sn/v2026.3.9.0.yaml`, then `sn/v2026.3.9.1.yaml`)
+- Include it in `db.changelog-master.yaml` right after that module's last include (the
+  master lists modules in layer order, after `baseline-guard.yaml`)
 - Use `preconditions` with `onFail: MARK_RAN` for idempotent changesets
 - Column size changes: use `modifyDataType`; new data: use `insert`
 - **Column names must match the JPA field name exactly** (camelCase) — see "JPA & Database Column Naming" above
@@ -45,7 +50,10 @@ description: Turing JPA + Liquibase persistence rules — column naming (no impl
 - Use lowercase portable Liquibase types (`boolean`, `longtext`), not uppercase
   `BOOLEAN`/`CLOB`; `TurLiquibaseChangelogAgnosticTest` checks this.
 
-- Liquibase changelogs live in `turing-app/src/main/resources/db/changelog/`.
+- Liquibase changelogs live in `turing-app/src/main/resources/db/changelog/<module>/`.
+  A database built before the baseline (its `DATABASECHANGELOG` lists the old root
+  `db/changelog/v*.yaml` files) is refused by `baseline-guard.yaml`; locally, start on a
+  new H2 file instead of the old `store/db`.
 - Liquibase updates on reused local H2 files can fail with `Duplicate column name`;
   make changeSets idempotent with `preConditions` (`columnExists` + `onFail: MARK_RAN`).
 

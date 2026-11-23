@@ -31,7 +31,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(properties = "spring.jmx.enabled=true")
 @TestInstance(Lifecycle.PER_CLASS)
-class TuringTests {
+// T1321 - the temporary database of the IT base class, not the dev store: the
+// baseline guard refuses a store a pre-baseline build created.
+class TuringTests extends com.viglet.turing.testutil.AbstractTuringSpringIT {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 

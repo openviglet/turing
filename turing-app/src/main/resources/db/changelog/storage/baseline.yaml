@@ -1,0 +1,50 @@
+# T1321 / ADR 0005 — the storage module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: storage_asset_training_record
+    author: turing
+    changes:
+    - createTable:
+        tableName: storage_asset_training_record
+        columns:
+        - column:
+            name: objectName
+            type: varchar(768)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_storage_asset_training_record
+              nullable: false
+        - column:
+            name: objectPath
+            type: varchar(512)
+        - column:
+            name: fileName
+            type: varchar(255)
+        - column:
+            name: contentType
+            type: varchar(100)
+        - column:
+            name: fileSize
+            type: bigint
+        - column:
+            name: chunkCount
+            type: int
+        - column:
+            name: trainedAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: embeddingModelId
+            type: varchar(255)
+        - column:
+            name: embeddingStoreId
+            type: varchar(255)
+        - column:
+            name: tenantId
+            type: varchar(40)
+            defaultValue: DEFAULT
+            constraints:
+              nullable: false

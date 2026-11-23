@@ -1,0 +1,17 @@
+# T1321 / ADR 0005 section 2 — the schema starts from the per-module baselines, and a
+# database built by the pre-baseline history is not migrated in place. Such a database
+# still lists the old db/changelog/v*.yaml files in DATABASECHANGELOG; this refuses it
+# before any baseline runs, naming the upgrade path.
+databaseChangeLog:
+  - preConditions:
+      - onFail: HALT
+      - onError: HALT
+      - onFailMessage: >-
+          This database was created by a Turing version before the 2026.3 schema
+          baseline and cannot be upgraded in place. Export your sites, agents and
+          settings from the old version (Exchange > Export), start 2026.3 on an empty
+          database and import the export there. See the Upgrading page of the
+          documentation.
+      - sqlCheck:
+          expectedResult: 0
+          sql: select count(*) from DATABASECHANGELOG where FILENAME like '%db/changelog/v%'

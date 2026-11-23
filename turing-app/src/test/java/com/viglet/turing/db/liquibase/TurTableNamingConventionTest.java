@@ -49,8 +49,11 @@ class TurTableNamingConventionTest {
     private static final String BASE_PACKAGE = "com.viglet.turing";
     private static final Map<String, String> PREFIX_BY_MODULE = Map.of("searchengine", "se");
 
-    /** Table name to the entity that maps it, for every table the model names. */
-    private static Map<String, Class<?>> mappedTables() throws ClassNotFoundException {
+    /**
+     * Table name to the entity that maps it, for every table the model names. Also read
+     * by {@link TurBaselineChangelogIT}.
+     */
+    static Map<String, Class<?>> mappedTables() throws ClassNotFoundException {
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Entity.class));

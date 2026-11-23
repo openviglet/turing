@@ -1,0 +1,1042 @@
+# T1321 / ADR 0005 — the llm module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: llm_embedding_model
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_embedding_model
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_embedding_model
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: providerType
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: llm_instance_id
+            type: varchar(36)
+        - column:
+            name: modelName
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: modelReference
+            type: varchar(255)
+        - column:
+            name: batchSize
+            type: int
+        - column:
+            name: modelPath
+            type: varchar(500)
+        - column:
+            name: tokenizerPath
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: llm_gateway_batch_file
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_gateway_batch_file
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_gateway_batch_file
+              nullable: false
+        - column:
+            name: keyId
+            type: varchar(36)
+        - column:
+            name: filename
+            type: varchar(255)
+        - column:
+            name: purpose
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: bytes
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: lineCount
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: content
+            type: longtext
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+- changeSet:
+    id: llm_gateway_key
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_gateway_key
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_gateway_key
+              nullable: false
+        - column:
+            name: name
+            type: varchar(150)
+            constraints:
+              nullable: false
+        - column:
+            name: key_prefix
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: key_hash
+            type: varchar(64)
+            constraints:
+              nullable: false
+        - column:
+            name: secret_encrypted
+            type: longtext
+        - column:
+            name: allowed_models
+            type: varchar(2000)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '1'
+            constraints:
+              nullable: false
+        - column:
+            name: expires_at
+            type: timestamp
+        - column:
+            name: creation_date
+            type: timestamp
+        - column:
+            name: modification_date
+            type: timestamp
+        - column:
+            name: monthly_budget_usd
+            type: double
+        - column:
+            name: budget_downgrade_llm_id
+            type: varchar(40)
+        - column:
+            name: hard_monthly_cap_usd
+            type: double
+        - column:
+            name: rate_limit_per_minute
+            type: int
+    - addUniqueConstraint:
+        tableName: llm_gateway_key
+        columnNames: key_hash
+        constraintName: uq_llm_gateway_key_key_hash
+- changeSet:
+    id: llm_instance
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_instance
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_instance
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: seed
+            type: int
+        - column:
+            name: stop
+            type: varchar(255)
+        - column:
+            name: temperature
+            type: double
+        - column:
+            name: timeout
+            type: varchar(255)
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: topk
+            type: int
+        - column:
+            name: topp
+            type: double
+        - column:
+            name: url
+            type: varchar(255)
+        - column:
+            name: llm_vendor_id
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: maxRetries
+            type: int
+        - column:
+            name: modelName
+            type: varchar(255)
+        - column:
+            name: numPredict
+            type: int
+        - column:
+            name: repeatPenalty
+            type: double
+        - column:
+            name: responseFormat
+            type: varchar(255)
+        - column:
+            name: supportedCapabilities
+            type: varchar(255)
+        - column:
+            name: providerOptionsJson
+            type: longtext
+        - column:
+            name: apiKeyEncrypted
+            type: varchar(4096)
+        - column:
+            name: context_window
+            type: int
+            defaultValueNumeric: '128000'
+        - column:
+            name: tools_enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: file_upload_enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: modelNames
+            type: longtext
+        - column:
+            name: embeddingModelName
+            type: varchar(255)
+        - column:
+            name: rerankModelName
+            type: varchar(255)
+        - column:
+            name: embeddingModelPath
+            type: varchar(500)
+        - column:
+            name: embeddingTokenizerPath
+            type: varchar(500)
+        - column:
+            name: embeddingBatchSize
+            type: int
+        - column:
+            name: embeddingDimensions
+            type: int
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: llm_instance
+        indexName: FK6p80ubeofka7up7hvxa8xct2d_INDEX_3
+        columns:
+        - column:
+            name: llm_vendor_id
+- changeSet:
+    id: llm_instance_capability
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_instance_capability
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_instance_capability
+              nullable: false
+        - column:
+            name: instanceId
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: capabilityKey
+            type: varchar(64)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: configJson
+            type: longtext
+    - addUniqueConstraint:
+        tableName: llm_instance_capability
+        columnNames: instanceId, capabilityKey
+        constraintName: uq_llm_instance_capability
+- changeSet:
+    id: llm_mcp_server
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_mcp_server
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_mcp_server
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: url
+            type: varchar(255)
+        - column:
+            name: command
+            type: varchar(255)
+        - column:
+            name: args
+            type: varchar(1000)
+        - column:
+            name: type
+            type: varchar(10)
+            constraints:
+              nullable: false
+        - column:
+            name: connection_type
+            type: varchar(10)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: llmInstructions
+            type: longtext
+        - column:
+            name: llmInstructionsMetaPrompt
+            type: longtext
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: transport_type
+            type: varchar(20)
+        - column:
+            name: auth_token_encrypted
+            type: longtext
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: llm_price
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_price
+              nullable: false
+        - column:
+            name: vendor_id
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: model_name
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: input_price_per_million
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: output_price_per_million
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: currency
+            type: varchar(3)
+            defaultValue: USD
+            constraints:
+              nullable: false
+        - column:
+            name: updated_at
+            type: timestamp
+        - column:
+            name: source
+            type: varchar(10)
+            defaultValue: MANUAL
+            constraints:
+              nullable: false
+        - column:
+            name: indicative
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: price_provenance
+            type: varchar(100)
+        - column:
+            name: last_verified
+            type: varchar(40)
+    - addUniqueConstraint:
+        tableName: llm_price
+        columnNames: vendor_id, model_name
+        constraintName: uk_llm_price_vendor_model
+- changeSet:
+    id: llm_store_instance
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_store_instance
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_store_instance
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: url
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: store_vendor_id
+            type: varchar(10)
+            constraints:
+              nullable: false
+        - column:
+            name: collectionName
+            type: varchar(255)
+        - column:
+            name: providerOptionsJson
+            type: longtext
+        - column:
+            name: credentialEncrypted
+            type: varchar(4096)
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: llm_store_vendor
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_store_vendor
+        columns:
+        - column:
+            name: id
+            type: varchar(10)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_store_vendor
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: plugin
+            type: varchar(255)
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: website
+            type: varchar(255)
+- changeSet:
+    id: llm_token_usage
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_token_usage
+        columns:
+        - column:
+            name: id
+            type: varchar(50)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_token_usage
+              nullable: false
+        - column:
+            name: llm_instance_id
+            type: varchar(50)
+            constraints:
+              nullable: false
+        - column:
+            name: vendor_id
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: model_name
+            type: varchar(100)
+        - column:
+            name: username
+            type: varchar(255)
+        - column:
+            name: input_tokens
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: output_tokens
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: total_tokens
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: created_at
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: agent_id
+            type: varchar(255)
+        - column:
+            name: stage
+            type: varchar(40)
+        - column:
+            name: cost_usd
+            type: double
+            defaultValueNumeric: '0'
+        - column:
+            name: key_id
+            type: varchar(40)
+        - column:
+            name: site_name
+            type: varchar(255)
+    - createIndex:
+        tableName: llm_token_usage
+        indexName: idx_token_usage_created_at
+        columns:
+        - column:
+            name: created_at
+    - createIndex:
+        tableName: llm_token_usage
+        indexName: idx_token_usage_instance_date
+        columns:
+        - column:
+            name: llm_instance_id
+        - column:
+            name: created_at
+- changeSet:
+    id: llm_usage_daily
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_usage_daily
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_usage_daily
+              nullable: false
+        - column:
+            name: usage_date
+            type: date
+            constraints:
+              nullable: false
+        - column:
+            name: vendor_id
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: workspace_id
+            type: varchar(255)
+        - column:
+            name: model_name
+            type: varchar(100)
+        - column:
+            name: service_tier
+            type: varchar(40)
+        - column:
+            name: input_tokens
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: output_tokens
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: cost_usd
+            type: double
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: created_at
+            type: timestamp
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: llm_usage_daily
+        indexName: idx_ai_usage_daily_vendor_date
+        columns:
+        - column:
+            name: vendor_id
+        - column:
+            name: usage_date
+- changeSet:
+    id: llm_vendor
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_vendor
+        columns:
+        - column:
+            name: id
+            type: varchar(20)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_vendor
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: plugin
+            type: varchar(255)
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: website
+            type: varchar(255)
+- changeSet:
+    id: llm_vendor_file
+    author: turing
+    changes:
+    - createTable:
+        tableName: llm_vendor_file
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_llm_vendor_file
+              nullable: false
+        - column:
+            name: pluginType
+            type: varchar(32)
+            constraints:
+              nullable: false
+        - column:
+            name: instanceId
+            type: varchar(40)
+            constraints:
+              nullable: false
+        - column:
+            name: contentHash
+            type: varchar(64)
+            constraints:
+              nullable: false
+        - column:
+            name: vendorFileId
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: fileName
+            type: varchar(512)
+        - column:
+            name: contentType
+            type: varchar(128)
+        - column:
+            name: sizeBytes
+            type: bigint
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: expiresAt
+            type: timestamp
+        - column:
+            name: accountKey
+            type: varchar(64)
+    - addUniqueConstraint:
+        tableName: llm_vendor_file
+        columnNames: pluginType, instanceId, contentHash
+        constraintName: uq_llm_vendor_file
+    - addUniqueConstraint:
+        tableName: llm_vendor_file
+        columnNames: pluginType, accountKey, contentHash
+        constraintName: uq_llm_vendor_file_acct
+- changeSet:
+    id: llm-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: llm_embedding_model
+        baseColumnNames: llm_instance_id
+        constraintName: fk_embedding_model_llm_instance
+        referencedTableName: llm_instance
+        referencedColumnNames: id
+        onDelete: SET NULL
+    - addForeignKeyConstraint:
+        baseTableName: llm_instance
+        baseColumnNames: llm_vendor_id
+        constraintName: fk_llm_instance_vendor_id
+        referencedTableName: llm_vendor
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: llm_instance_capability
+        baseColumnNames: instanceId
+        constraintName: fk_llm_instance_capability_instance
+        referencedTableName: llm_instance
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: llm_store_instance
+        baseColumnNames: store_vendor_id
+        constraintName: FKdtflf741shsk7x28fdrwj90ay
+        referencedTableName: llm_store_vendor
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: llm_token_usage
+        baseColumnNames: llm_instance_id
+        constraintName: fk_token_usage_llm_instance
+        referencedTableName: llm_instance
+        referencedColumnNames: id
+- changeSet:
+    id: llm_price-seed
+    author: turing
+    changes:
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-openai-gpt-4o
+        - column:
+            name: vendor_id
+            value: openai
+        - column:
+            name: model_name
+            value: gpt-4o
+        - column:
+            name: input_price_per_million
+            valueNumeric: 2.5
+        - column:
+            name: output_price_per_million
+            valueNumeric: 10.0
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-openai-gpt-4o-mini
+        - column:
+            name: vendor_id
+            value: openai
+        - column:
+            name: model_name
+            value: gpt-4o-mini
+        - column:
+            name: input_price_per_million
+            valueNumeric: 0.15
+        - column:
+            name: output_price_per_million
+            valueNumeric: 0.6
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-openai-gpt-4-turbo
+        - column:
+            name: vendor_id
+            value: openai
+        - column:
+            name: model_name
+            value: gpt-4-turbo
+        - column:
+            name: input_price_per_million
+            valueNumeric: 10.0
+        - column:
+            name: output_price_per_million
+            valueNumeric: 30.0
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-anthropic-claude-3-5-sonnet
+        - column:
+            name: vendor_id
+            value: anthropic
+        - column:
+            name: model_name
+            value: claude-3-5-sonnet
+        - column:
+            name: input_price_per_million
+            valueNumeric: 3.0
+        - column:
+            name: output_price_per_million
+            valueNumeric: 15.0
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-anthropic-claude-3-5-haiku
+        - column:
+            name: vendor_id
+            value: anthropic
+        - column:
+            name: model_name
+            value: claude-3-5-haiku
+        - column:
+            name: input_price_per_million
+            valueNumeric: 0.8
+        - column:
+            name: output_price_per_million
+            valueNumeric: 4.0
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-gemini-1-5-pro
+        - column:
+            name: vendor_id
+            value: gemini
+        - column:
+            name: model_name
+            value: gemini-1.5-pro
+        - column:
+            name: input_price_per_million
+            valueNumeric: 1.25
+        - column:
+            name: output_price_per_million
+            valueNumeric: 5.0
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false
+    - insert:
+        tableName: llm_price
+        columns:
+        - column:
+            name: id
+            value: price-gemini-1-5-flash
+        - column:
+            name: vendor_id
+            value: gemini
+        - column:
+            name: model_name
+            value: gemini-1.5-flash
+        - column:
+            name: input_price_per_million
+            valueNumeric: 0.075
+        - column:
+            name: output_price_per_million
+            valueNumeric: 0.3
+        - column:
+            name: currency
+            value: USD
+        - column:
+            name: source
+            value: MANUAL
+        - column:
+            name: indicative
+            valueBoolean: false

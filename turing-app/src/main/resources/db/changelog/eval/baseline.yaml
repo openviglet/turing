@@ -1,0 +1,133 @@
+# T1321 / ADR 0005 — the eval module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: eval_chat_turn_feedback
+    author: turing
+    changes:
+    - createTable:
+        tableName: eval_chat_turn_feedback
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_eval_chat_turn_feedback
+              nullable: false
+        - column:
+            name: agentId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: conversationId
+            type: varchar(128)
+        - column:
+            name: userPrompt
+            type: longtext
+            constraints:
+              nullable: false
+        - column:
+            name: assistantAnswer
+            type: longtext
+            constraints:
+              nullable: false
+        - column:
+            name: rating
+            type: varchar(8)
+            constraints:
+              nullable: false
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: eval_chat_turn_feedback
+        indexName: ix_chat_turn_feedback_agent
+        columns:
+        - column:
+            name: agentId
+- changeSet:
+    id: eval_distillation_job
+    author: turing
+    changes:
+    - createTable:
+        tableName: eval_distillation_job
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_eval_distillation_job
+              nullable: false
+        - column:
+            name: agentId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: instanceId
+            type: varchar(36)
+            constraints:
+              nullable: false
+        - column:
+            name: baseModel
+            type: varchar(128)
+            constraints:
+              nullable: false
+        - column:
+            name: trainingFileId
+            type: varchar(128)
+        - column:
+            name: fineTuneJobId
+            type: varchar(128)
+        - column:
+            name: fineTunedModel
+            type: varchar(128)
+        - column:
+            name: originalModel
+            type: varchar(128)
+        - column:
+            name: exampleCount
+            type: int
+        - column:
+            name: state
+            type: varchar(24)
+            constraints:
+              nullable: false
+        - column:
+            name: errorMessage
+            type: varchar(1024)
+        - column:
+            name: createdAt
+            type: timestamp
+            constraints:
+              nullable: false
+        - column:
+            name: lastPolledAt
+            type: timestamp
+        - column:
+            name: completedAt
+            type: timestamp
+        - column:
+            name: proposeOnly
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: eval_distillation_job
+        indexName: ix_distillation_job_agent
+        columns:
+        - column:
+            name: agentId
+    - createIndex:
+        tableName: eval_distillation_job
+        indexName: ix_distillation_job_open
+        columns:
+        - column:
+            name: state

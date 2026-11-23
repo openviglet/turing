@@ -2495,26 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.17 The Liquibase reset (T1321)
-
-db/changelog holds 205 files with every change since the project began, including
-changesets for tables and columns that no longer exist, and no module owns its part. It
-is replaced by one squashed baseline per module (db/changelog/<module>/), generated from
-the final entity model after the association, naming, tenant, audit and large-text
-tasks, written in portable lowercase types under the turing-persistence rules and
-checked against H2, MySQL and PostgreSQL. The old tree is deleted, which also drops
-orphan tables no entity maps. A fresh install creates the schema from the baselines
-only. An existing 2026.2 database is not migrated: the release notes and the upgrade
-page say to export with the exchange module and import into a fresh 2026.3 install, and
-a startup check refuses a database that still carries the old DATABASECHANGELOG rows,
-with a message naming that path. Changesets added after the baseline follow the usual
-never-edit rule again.
-
-Waits for T1322 (2026-11-21): the rulings in ADR 0005 section 6 move entities between
-modules (chat into agent, the vector stores into llm, the eval entities into eval, the
-MCP client into agent, a new answer module), so a per-module baseline written before
-those moves would file tables under the wrong owner.
-
 ### CLXXXIX.19 Module verification as a gate (T1323)
 
 The report test becomes ApplicationModules.verify() in mvn test, so a cycle, a call into

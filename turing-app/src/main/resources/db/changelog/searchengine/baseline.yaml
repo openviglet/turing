@@ -1,0 +1,91 @@
+# T1321 / ADR 0005 — the searchengine module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: se_instance
+    author: turing
+    changes:
+    - createTable:
+        tableName: se_instance
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_se_instance
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: se_vendor_id
+            type: varchar(10)
+            constraints:
+              nullable: false
+        - column:
+            name: endpoint_url
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: se_vendor
+    author: turing
+    changes:
+    - createTable:
+        tableName: se_vendor
+        columns:
+        - column:
+            name: id
+            type: varchar(10)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_se_vendor
+              nullable: false
+        - column:
+            name: description
+            type: varchar(255)
+        - column:
+            name: plugin
+            type: varchar(255)
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: website
+            type: varchar(255)
+- changeSet:
+    id: searchengine-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: se_instance
+        baseColumnNames: se_vendor_id
+        constraintName: FKiss7849oscxvhac2gofthw6wh
+        referencedTableName: se_vendor
+        referencedColumnNames: id

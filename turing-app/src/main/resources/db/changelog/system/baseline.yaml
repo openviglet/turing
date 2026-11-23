@@ -1,0 +1,149 @@
+# T1321 / ADR 0005 — the system module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: system_bento_layout
+    author: turing
+    changes:
+    - createTable:
+        tableName: system_bento_layout
+        columns:
+        - column:
+            name: id
+            type: varchar(40)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_system_bento_layout
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: scope
+            type: varchar(16)
+            constraints:
+              nullable: false
+        - column:
+            name: ownerId
+            type: varchar(200)
+            constraints:
+              nullable: false
+        - column:
+            name: listId
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: layoutJson
+            type: longtext
+        - column:
+            name: createdAt
+            type: bigint
+            constraints:
+              nullable: false
+        - column:
+            name: updatedAt
+            type: bigint
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: system_bento_layout
+        indexName: ux_bento_layout_scope_owner_list
+        columns:
+        - column:
+            name: tenantId
+        - column:
+            name: scope
+        - column:
+            name: ownerId
+        - column:
+            name: listId
+        unique: true
+- changeSet:
+    id: system_configuration
+    author: turing
+    changes:
+    - createTable:
+        tableName: system_configuration
+        columns:
+        - column:
+            name: id
+            type: varchar(50)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_system_configuration
+              nullable: false
+        - column:
+            name: path
+            type: varchar(255)
+        - column:
+            name: VALUE
+            type: varchar(255)
+- changeSet:
+    id: system_integration_instance
+    author: turing
+    changes:
+    - createTable:
+        tableName: system_integration_instance
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_system_integration_instance
+              nullable: false
+        - column:
+            name: description
+            type: varchar(500)
+        - column:
+            name: enabled
+            type: int
+            constraints:
+              nullable: false
+        - column:
+            name: endpoint
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: title
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: icon
+            type: varchar(150)
+        - column:
+            name: apiToken
+            type: varchar(255)
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+- changeSet:
+    id: system_locale
+    author: turing
+    changes:
+    - createTable:
+        tableName: system_locale
+        columns:
+        - column:
+            name: initials
+            type: varchar(5)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_system_locale
+              nullable: false
+        - column:
+            name: en
+            type: varchar(255)
+        - column:
+            name: pt
+            type: varchar(255)

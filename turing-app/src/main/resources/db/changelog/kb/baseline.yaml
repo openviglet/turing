@@ -1,0 +1,395 @@
+# T1321 / ADR 0005 — the kb module's schema baseline: the squash of the 2026.3
+# history, generated from a fresh replay of it. Changes after the baseline go in new
+# files next to this one and are never edited once they may have run.
+databaseChangeLog:
+- changeSet:
+    id: kb_knowledge_base
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_knowledge_base
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_knowledge_base
+              nullable: false
+        - column:
+            name: name
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(2000)
+        - column:
+            name: source
+            type: varchar(20)
+            defaultValue: USER
+            constraints:
+              nullable: false
+        - column:
+            name: tenantId
+            type: varchar(40)
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+- changeSet:
+    id: kb_microthesaurus
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_microthesaurus
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_microthesaurus
+              nullable: false
+        - column:
+            name: name
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: description
+            type: varchar(2000)
+        - column:
+            name: language
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: domain
+            type: varchar(100)
+            constraints:
+              nullable: false
+        - column:
+            name: lastModifiedDate
+            type: timestamp
+        - column:
+            name: knowledge_base_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: version
+            type: bigint
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: creationDate
+            type: timestamp
+        - column:
+            name: createdBy
+            type: varchar(255)
+        - column:
+            name: lastModifiedBy
+            type: varchar(255)
+    - createIndex:
+        tableName: kb_microthesaurus
+        indexName: idx_kb_microthesaurus_lang_domain
+        columns:
+        - column:
+            name: language
+        - column:
+            name: domain
+- changeSet:
+    id: kb_sn_site_microthesaurus
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_sn_site_microthesaurus
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_sn_site_microthesaurus
+              nullable: false
+        - column:
+            name: microthesaurusId
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: kb_sn_site_microthesaurus
+        columnNames: sn_site_id, microthesaurusId
+        constraintName: uk_sn_site_microthesaurus
+    - createIndex:
+        tableName: kb_sn_site_microthesaurus
+        indexName: idx_sn_site_microthesaurus_site
+        columns:
+        - column:
+            name: sn_site_id
+- changeSet:
+    id: kb_sn_site_microthesaurus_config
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_sn_site_microthesaurus_config
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_sn_site_microthesaurus_config
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: fieldName
+            type: varchar(100)
+            defaultValue: microthesaurus_terms
+            constraints:
+              nullable: false
+        - column:
+            name: boost
+            type: double
+            defaultValueNumeric: '0.8'
+            constraints:
+              nullable: false
+        - column:
+            name: includeSynonyms
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: sn_site_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: pathFacetEnabled
+            type: boolean
+            defaultValueBoolean: false
+            constraints:
+              nullable: false
+        - column:
+            name: pathFieldName
+            type: varchar(100)
+            defaultValue: microthesaurus_path
+            constraints:
+              nullable: false
+    - addUniqueConstraint:
+        tableName: kb_sn_site_microthesaurus_config
+        columnNames: sn_site_id
+        constraintName: uk_sn_site_microthesaurus_config_site
+- changeSet:
+    id: kb_thesaurus_term
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_thesaurus_term
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_thesaurus_term
+              nullable: false
+        - column:
+            name: label
+            type: varchar(1000)
+            constraints:
+              nullable: false
+        - column:
+            name: enabled
+            type: boolean
+            defaultValueBoolean: true
+            constraints:
+              nullable: false
+        - column:
+            name: termOrder
+            type: int
+            defaultValueNumeric: '0'
+            constraints:
+              nullable: false
+        - column:
+            name: scopeNote
+            type: varchar(4000)
+        - column:
+            name: externalId
+            type: varchar(255)
+        - column:
+            name: parentTermId
+            type: varchar(255)
+        - column:
+            name: modificationDate
+            type: timestamp
+        - column:
+            name: microthesaurus_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: kb_thesaurus_term
+        indexName: idx_kb_term_microthesaurus
+        columns:
+        - column:
+            name: microthesaurus_id
+    - createIndex:
+        tableName: kb_thesaurus_term
+        indexName: idx_kb_term_parent
+        columns:
+        - column:
+            name: parentTermId
+- changeSet:
+    id: kb_thesaurus_term_relation
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_thesaurus_term_relation
+        columns:
+        - column:
+            name: id
+            type: varchar(255)
+            constraints:
+              primaryKey: true
+              primaryKeyName: pk_kb_thesaurus_term_relation
+              nullable: false
+        - column:
+            name: type
+            type: varchar(20)
+            constraints:
+              nullable: false
+        - column:
+            name: directionality
+            type: varchar(20)
+            defaultValue: UNIDIRECTIONAL
+            constraints:
+              nullable: false
+        - column:
+            name: targetTermId
+            type: varchar(255)
+        - column:
+            name: source_term_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+    - createIndex:
+        tableName: kb_thesaurus_term_relation
+        indexName: idx_kb_term_relation_source
+        columns:
+        - column:
+            name: source_term_id
+- changeSet:
+    id: kb_thesaurus_term_variation
+    author: turing
+    changes:
+    - createTable:
+        tableName: kb_thesaurus_term_variation
+        columns:
+        - column:
+            name: term_id
+            type: varchar(255)
+            constraints:
+              nullable: false
+        - column:
+            name: surfaceForm
+            type: varchar(1000)
+        - column:
+            name: weight
+            type: double
+            defaultValueNumeric: '100'
+        - column:
+            name: caseSensitive
+            type: boolean
+            defaultValueBoolean: false
+        - column:
+            name: accentSensitive
+            type: boolean
+            defaultValueBoolean: true
+        - column:
+            name: language
+            type: varchar(20)
+        - column:
+            name: variationOrder
+            type: int
+            constraints:
+              nullable: false
+- changeSet:
+    id: kb-foreign-keys
+    author: turing
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: kb_microthesaurus
+        baseColumnNames: knowledge_base_id
+        constraintName: fk_kb_microthesaurus_kb
+        referencedTableName: kb_knowledge_base
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: kb_sn_site_microthesaurus
+        baseColumnNames: sn_site_id
+        constraintName: fk_sn_site_microthesaurus_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: kb_sn_site_microthesaurus_config
+        baseColumnNames: sn_site_id
+        constraintName: fk_sn_site_microthesaurus_config_site
+        referencedTableName: sn_site
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: kb_thesaurus_term
+        baseColumnNames: microthesaurus_id
+        constraintName: fk_kb_term_microthesaurus
+        referencedTableName: kb_microthesaurus
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: kb_thesaurus_term_relation
+        baseColumnNames: source_term_id
+        constraintName: fk_kb_term_relation_source
+        referencedTableName: kb_thesaurus_term
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: kb_thesaurus_term_variation
+        baseColumnNames: term_id
+        constraintName: fk_kb_term_variation_term
+        referencedTableName: kb_thesaurus_term
+        referencedColumnNames: id
+        onDelete: CASCADE

@@ -88,6 +88,14 @@ An existing installation upgrades from 2026.2 (and from a 2026.3 build that pred
 squash) by **exporting its sites, agents and settings and importing them** into the new
 version, not by migrating the database in place.
 
+Done by T1321 (2026-11-23): `db/changelog/<module>/baseline.yaml` per module, generated
+from a fresh replay of the old 220-file tree and checked equal to it on H2 (columns,
+keys, constraints, indexes, seed rows), applied on MySQL 8 and PostgreSQL 16 by
+`TurBaselineChangelogIT`. The master includes the modules in layer order; a foreign key
+from a lower module's table to a higher one's lives in the higher module's file. Before
+any baseline runs, `baseline-guard.yaml` halts on a `DATABASECHANGELOG` that still lists
+an old `db/changelog/v*.yaml` file, with a message naming the export and import path.
+
 **Not waived**, and held by tests through the whole block:
 
 - REST paths, request and response shapes (`/api/sn/**`, `/api/v2/**`, the console API);
