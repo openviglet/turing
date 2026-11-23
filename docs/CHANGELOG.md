@@ -1866,6 +1866,7 @@
 - **T1325** — A module integration test can boot its module and declared dependencies only (@TuringModuleTest), as storage and transcription now do, and the first slices surfaced the webhook dispatcher only agent defined, now in system (design §CLXXXIX.21 recorded in `.claude/skills/turing-integration-tests/SKILL.md`)
 - **T1326** — The module list and dependency graph in docs/architecture/modules.md and the C4 diagrams and canvases in the build are generated from the verified model, and a stale page fails the build (design §CLXXXIX.22 recorded in `docs/architecture/modules.md`)
 - **T1327** — With turing.observability.modules.enabled a call entering a module becomes a span named after it, so a trace shows the time per module, and servlet filters stay unwrapped for Spring Security
+- **T1328** — agents.md and the persistence, domain-layer, search and IT skills describe the module layout, and no hand-written lint was dropped because each guards rules inside a module or stricter than the verifier (design §CLXXXIX.24 recorded in `agents.md`)
 
 ## Block DA — One bad document never costs the rest of an import
 

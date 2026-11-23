@@ -22,10 +22,6 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
-## Block CZ — Backend modules with verified boundaries
-
-- 📋 **T1328** (deps: T1323 ✅) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CZ — Backend modules with verified boundaries
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2494,15 +2492,6 @@ build that fails on a boundary violation. Compatibility is waived for packages, 
 mappings, table names and the Liquibase history, so the schema is reset to one baseline
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
-
-### CLXXXIX.24 Conventions follow the module layout (T1328)
-
-agents.md (key paths, project structure), the turing-persistence, turing-domain-layer,
-turing-search-lucene and turing-integration-tests skills describe api, persistence and
-service as top-level packages. They are rewritten for the module layout. Hand-written
-checks the verifier now covers (the dependency rules in TurDomainLayerConventionsTest)
-are removed; rules it does not cover (annotation-free records, cache annotations, bulk
-writes, the new naming, tenant and @Lob tests) stay.
 
 ## CXC One bad document never costs the rest of an import
 

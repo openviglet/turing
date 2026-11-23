@@ -27,6 +27,19 @@ description: Turing JPA + Liquibase persistence rules — column naming (no impl
 - `TurTableNamingConventionTest` fails on a table outside the rule, and on a mapped table
   the master changelog does not leave in place on a fresh H2.
 
+## Entities belong to their module (ADR 0005)
+
+- An entity lives in its module's `persistence.model` package and its repository in
+  `persistence.repository`; the table is named after that module (above).
+- **A JPA association never crosses a module line** (T1315): a row of another module is
+  held as an id column (`String turAIAgentId`) and resolved through that module's API, an
+  SPI or a read port, never as `@ManyToOne` to its entity.
+- An entity names only listeners of its own module or the shared kernel
+  (`TurEntityListenerModuleTest`); another module that caches the data listens to an event
+  the owning module publishes. An asynchronous listener in another module is an
+  `@ApplicationModuleListener`, which the event publication registry makes at-least-once
+  (T1324).
+
 ## Liquibase Conventions
 
 - The user may run the app between turns; editing a changeset that may already
