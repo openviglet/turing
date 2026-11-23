@@ -2495,13 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.22 Generated module diagrams (T1326)
-
-Documenter writes C4 component diagrams and module canvases from the verified model. A
-test generates them into the build, and an architecture page for contributors embeds the
-output. It is internal documentation, not the end-user site, so COVERAGE.md gets a
-deliberately-internal row for the block.
-
 ### CLXXXIX.23 Per-module tracing (T1327)
 
 spring-modulith-observability wraps calls that enter a module through its named

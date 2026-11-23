@@ -33,7 +33,10 @@ The backend becomes a modular monolith: each module a direct sub-package of
 call through `@NamedInterface` packages, and verified in the unit suite (T1323: `TurModuleReportTest`
 runs `ApplicationModules.verify()` on every `mvn test`, over a model that leaves out the
 library jars sharing the base package: turing-commons' `commons` and `se`,
-turing-java-sdk's `client`, turing-spring's `spring`). Modules
+turing-java-sdk's `client`, turing-spring's `spring`). The module list and its
+dependency graph are [docs/architecture/modules.md](../architecture/modules.md),
+regenerated from the verified model by `TurModuleDocumentationTest` (T1326), which also
+writes the C4 diagrams and module canvases into `turing-app/target/spring-modulith-docs`). Modules
 own their entities, repositories, DTOs, mappers and controllers; nothing is shared by
 layer.
 
