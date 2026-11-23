@@ -32,8 +32,6 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-## Block CI — API errors name what the caller sent wrong
-
 ## Block DA — One bad document never costs the rest of an import
 
 ## Block CB — LLM gateway parity with the OpenAI wire

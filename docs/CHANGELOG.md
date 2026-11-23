@@ -1652,6 +1652,7 @@
 
 - **T1154** — A parameter of the wrong type, or one Tomcat cannot decode as UTF-8, now answers a 400 validation problem naming it in `detail` and `parameter`, logged at WARN without a stack trace (design §CLVI.1 recorded in `turing-app/src/main/java/com/viglet/turing/api/exception/TurGlobalExceptionHandler.java`).
 - **T1333** — A ResponseStatusException reaches the caller with its own status and reason as a ProblemDetail; the T372 403 and the 404s no longer read as server errors.
+- **T1339** — A JSON body field Jackson cannot bind answers a 400 validation problem naming its JSON path, the type it needs and, for an enum, the accepted values and the value sent.
 
 ## Block CJ — Releases ship from the repository the README names
 

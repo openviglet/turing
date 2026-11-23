@@ -36,10 +36,6 @@
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 7 sn classes of the GenAI surface still import agent, rag or persona 45 times: genai controllers, entity indexing, content fit, hybrid ranking, synonym mining. → §CLXXXIX.40
 - 🛠 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system now imports only shared; tenant and auth still import feature modules, and tenant's counters and teardown need SPIs. → §CLXXXIX.45
 
-## Block CI — API errors name what the caller sent wrong
-
-- 📋 **T1339** (deps: —) **A request body with an unknown enum value answers 400 'missing or malformed' naming no field or accepted values** — The caller cannot tell which field is wrong or what it takes without reading Turing's source or another project's code. → §CXCI.1
-
 ## Block DA — One bad document never costs the rest of an import
 
 - 📋 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — A client sending malformed dates or numbers gets 200 and INDEXED and learns of the loss only by reading Turing's server log. → §CXC.2

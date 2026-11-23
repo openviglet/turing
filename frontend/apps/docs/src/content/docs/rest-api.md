@@ -101,6 +101,19 @@ Explore and test every endpoint interactively:
 
 ---
 
+## Errors
+
+An error answers with an RFC 9457 problem body: `status`, `title`, `detail`, a `type` URI under `tag:viglet.com,2026:errors/`, a `correlationId` to quote when you report it, and a `timestamp`. Two `400` answers name what to change:
+
+| Mistake | `type` ends in | Extra properties |
+|---|---|---|
+| A query parameter is missing or does not convert (`?page=abc`) | `validation` | `parameter`: its name |
+| A JSON body field does not bind: an enum value the type does not have, or a string where a number goes | `validation` | `field`: its JSON path, such as `[0].type`; `expected`: the type it needs; for an enum, `accepted` (the values it takes) and `value` (what was sent, up to 100 characters) |
+
+A body that is not JSON at all, or is missing, answers `400` with a `type` ending in `malformed-request` and no `field`.
+
+---
+
 ## Semantic Navigation API
 
 ### Search

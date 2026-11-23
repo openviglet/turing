@@ -158,8 +158,31 @@ public class TurGlobalExceptionHandler {
         return badParameter(ex.getName(), "Parameter '" + ex.getName() + "' must be of type " + expected + ".");
     }
 
+    /**
+     * A body that is not JSON (or is missing) stays "missing or malformed". T1339 —
+     * well-formed JSON with one field Jackson cannot bind (an unknown enum constant,
+     * a string where a number goes) is a validation problem naming that field's
+     * JSON path in {@code field}, the type it needs in {@code expected}, and for an
+     * enum the values it takes in {@code accepted} and the value sent in
+     * {@code value} (capped at 100 characters).
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ProblemDetail> handleNotReadable(HttpMessageNotReadableException ex) {
+        var unbindable = TurUnbindableBodyField.of(ex);
+        if (unbindable.isPresent()) {
+            TurUnbindableBodyField field = unbindable.get();
+            ProblemDetail problem = build(HttpStatus.BAD_REQUEST, TurErrorTypes.VALIDATION, field.detail());
+            problem.setProperty("field", field.field());
+            problem.setProperty("expected", field.expected());
+            if (!field.accepted().isEmpty()) {
+                problem.setProperty("accepted", field.accepted());
+            }
+            if (field.value() != null) {
+                problem.setProperty("value", field.value());
+            }
+            log.warn("[GlobalEx] Unbindable body field: {}", field.field());
+            return ResponseEntity.badRequest().body(problem);
+        }
         ProblemDetail problem = build(HttpStatus.BAD_REQUEST, TurErrorTypes.MALFORMED_REQUEST,
                 "Request body is missing or malformed.");
         return ResponseEntity.badRequest().body(problem);

@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -262,9 +264,55 @@ class TurGlobalExceptionHandlerTest {
                 });
     }
 
+    /** T1339 — the synonym batch call that met this: an enum constant the type does not have. */
+    @Test
+    void anUnknownEnumInABodyNamesTheFieldTheValueAndTheAcceptedValues() throws Exception {
+        mvc.perform(post("/test/synonyms")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("[{\"name\": \"jogarei-t\", \"type\": \"EQUIVALENT\"}]"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.type", startsWith("tag:viglet.com,2026:errors/validation")))
+                .andExpect(jsonPath("$.field", equalTo("[0].type")))
+                .andExpect(jsonPath("$.value", equalTo("EQUIVALENT")))
+                .andExpect(jsonPath("$.accepted[0]", equalTo("REGULAR")))
+                .andExpect(jsonPath("$.accepted[1]", equalTo("ONE_WAY")))
+                .andExpect(jsonPath("$.detail", equalTo("Field '[0].type' must be one of REGULAR, ONE_WAY.")));
+    }
+
+    @Test
+    void aWrongScalarTypeInABodyNamesTheFieldAndTheTypeItNeeds() throws Exception {
+        mvc.perform(post("/test/synonyms")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("[{\"name\": \"n\", \"type\": \"REGULAR\", \"weight\": \"heavy\"}]"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field", equalTo("[0].weight")))
+                .andExpect(jsonPath("$.expected", equalTo("int")))
+                .andExpect(jsonPath("$.accepted").doesNotExist());
+    }
+
+    @Test
+    void aBodyThatIsNotJsonIsStillMalformed() throws Exception {
+        mvc.perform(post("/test/synonyms")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("[{not json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.type", startsWith("tag:viglet.com,2026:errors/malformed-request")))
+                .andExpect(jsonPath("$.field").doesNotExist());
+    }
+
+    enum TestSynonymType { REGULAR, ONE_WAY }
+
+    record TestSynonym(String name, TestSynonymType type, int weight) {
+    }
+
     @RestController
     @RequestMapping("/test")
     static class TestController {
+
+        @org.springframework.web.bind.annotation.PostMapping("/synonyms")
+        public int synonyms(@org.springframework.web.bind.annotation.RequestBody List<TestSynonym> synonyms) {
+            return synonyms.size();
+        }
 
         @GetMapping("/status-forbidden")
         public void statusForbidden() {

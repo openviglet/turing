@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CZ — Backend modules with verified boundaries
 
-## Block CI — API errors name what the caller sent wrong
-
 ## Block DA — One bad document never costs the rest of an import
 
 ## Block CB — LLM gateway parity with the OpenAI wire
@@ -2711,25 +2709,3 @@ Out of scope: validating values in the import controller before queueing. The ty
 field is the site's, resolved at index time, and the import path stays asynchronous.
 
 ## CXCI API errors name what the caller sent wrong
-
-### CXCI.1 Body binding errors name the field and accepted values (T1339)
-
-Met in jogarei (JO66, 2026-11-23), local Turing from `ghcr.io/openviglet/turing:latest`.
-
-The call: `POST /api/sn/{siteId}/synonym/batch` with `[{"name": "jogarei-t", "type":
-"EQUIVALENT", "language": "pt_BR", "input": null, "terms": ["roguelike", "roguelite"],
-"enabled": true}]`. What came back: 400 with `{"detail": "Request body is missing or
-malformed.", "type": "tag:viglet.com,2026:errors/malformed-request"}`. The body was
-well-formed JSON; the only problem was `type`, whose accepted values are `REGULAR` and
-`ONE_WAY`. Nothing in the answer named the field or the values it takes, so the fix came
-from reading another project's code (trabalharei's `src/lib/synonyms.ts`).
-
-T1154 made a wrong query parameter answer with its name in `detail` and `parameter`; a
-body that deserializes into an enum it does not know still collapses into the generic
-"malformed" answer.
-
-Expected: a 400 validation problem that names the JSON path (`[0].type`), the value sent
-(`EQUIVALENT`) and the values accepted (`REGULAR`, `ONE_WAY`), as T1154 does for
-parameters, for every request body Jackson cannot bind, not only synonyms.
-
-Workaround: none needed beyond sending `REGULAR` (jogarei `turing.py`).
