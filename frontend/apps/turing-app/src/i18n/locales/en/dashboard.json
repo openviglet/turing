@@ -30,6 +30,8 @@
         "title": "Semantic Navigation Sites",
         "docs": "docs",
         "queued": "queued",
+        "indexingIssues": "{{count}} indexing issues in 24h",
+        "indexingIssuesTitle": "{{dropped}} field values dropped and {{refused}} documents refused in the last 24 hours. The indexing log names each one.",
         "noSites": "No sites configured yet.",
         "createFirst": "Create your first site"
       },

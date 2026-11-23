@@ -88,6 +88,8 @@ class TurSNProcessQueueTest {
     private TurSNProcessQueue self;
     @Mock
     private com.viglet.turing.sn.api.TurSNSiteEmbeddings turSNGenAi;
+    @org.mockito.Spy
+    private TurSNIndexingIssues indexingIssues = new TurSNIndexingIssues();
     @InjectMocks
     private TurSNProcessQueue processQueue;
 
@@ -249,6 +251,8 @@ class TurSNProcessQueueTest {
                     eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),
                     eq(com.viglet.turing.commons.indexing.TurLoggingStatus.SUCCESS),
                     eq("indexed; dropped releaseDate '2017T00:00:00Z' (not a DATE)")));
+            org.assertj.core.api.Assertions.assertThat(indexingIssues.countsFor("site1"))
+                    .isEqualTo(new TurSNIndexingIssues.Counts(1, 0));
             logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setLoggingStatus(
                     org.mockito.ArgumentMatchers.argThat(item -> "1".equals(item.getId())),
                     eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),
@@ -342,6 +346,8 @@ class TurSNProcessQueueTest {
                     org.mockito.ArgumentMatchers.argThat(item -> "1".equals(item.getId())),
                     eq(com.viglet.turing.commons.indexing.TurIndexingStatus.NOT_PROCESSED),
                     eq("refused by the search engine: Invalid Date String:'2017T00:00:00Z'")));
+            org.assertj.core.api.Assertions.assertThat(indexingIssues.countsFor("SITE1"))
+                    .isEqualTo(new TurSNIndexingIssues.Counts(0, 1));
             logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setLoggingStatus(
                     org.mockito.ArgumentMatchers.argThat(item -> "2".equals(item.getId())),
                     eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),

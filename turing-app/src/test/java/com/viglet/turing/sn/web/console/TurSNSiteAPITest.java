@@ -95,7 +95,8 @@ class TurSNSiteAPITest {
                                 template, queue, pluginFactory, siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class));
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class),
+                                new com.viglet.turing.sn.web.queue.TurSNIndexingIssues());
         }
 
         @Test
@@ -111,7 +112,8 @@ class TurSNSiteAPITest {
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class),
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
-                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), resolver);
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), resolver,
+                                new com.viglet.turing.sn.web.queue.TurSNIndexingIssues());
                 TurSNSite site = new TurSNSite();
                 site.setId("site");
                 site.setTurSNSiteGenAi(new TurSNSiteGenAi());
@@ -156,7 +158,8 @@ class TurSNSiteAPITest {
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
                                 mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class),
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
-                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), siteAgents);
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), siteAgents,
+                                new com.viglet.turing.sn.web.queue.TurSNIndexingIssues());
                 TurSNSite ready = siteWithAgent("ready", "agent-rag");
                 TurSNSite notReady = siteWithAgent("not-ready", "agent-off");
                 TurSNSite noGenAi = new TurSNSite();
@@ -282,7 +285,8 @@ class TurSNSiteAPITest {
                                 mock(TurSearchEnginePluginFactory.class), siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class));
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class),
+                                new com.viglet.turing.sn.web.queue.TurSNIndexingIssues());
 
                 TurSNSite existing = new TurSNSite();
                 TurSNSiteGenAi existingGenAi = new TurSNSiteGenAi();

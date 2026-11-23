@@ -30,6 +30,8 @@
         "title": "Sites de Navegação Semântica",
         "docs": "documentos",
         "queued": "na fila",
+        "indexingIssues": "{{count}} problemas de indexação em 24h",
+        "indexingIssuesTitle": "{{dropped}} valores de campo descartados e {{refused}} documentos recusados nas últimas 24 horas. O log de indexação nomeia cada um.",
         "noSites": "Nenhum site configurado.",
         "createFirst": "Criar primeiro site"
       },

@@ -1859,5 +1859,5 @@
 ## Block DA — One bad document never costs the rest of an import
 
 - **T1338** — A Lucene field value its type cannot parse is dropped from that one document with a WARN naming document and field; the batch indexes and the index is never recreated.
-- **T1343 (Lucene drops in the indexing log)** — A value the Lucene engine drops is named on that document's INDEXED indexing-log entry, on the bulk and per-item paths, via TurSEDroppedValues.
+- **T1343** — Dropped values and refused documents reach each document's indexing-log entry on every engine, and the dashboard flags a site with issues in the last 24 hours.
 - **T1347** — T1343 slice: a 4xx refusal from Solr or Elasticsearch is an ERROR on that document's indexing-log entry naming the reason, and the rest of the batch indexes.

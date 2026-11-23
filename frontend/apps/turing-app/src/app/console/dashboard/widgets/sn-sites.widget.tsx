@@ -60,6 +60,19 @@ export function SNSitesWidget({ onHide, colSpan }: SNSitesWidgetProps) {
                     <span className="text-[10px] text-muted-foreground tabular-nums">
                       {status.documents.toLocaleString()} {t("dashboard.widgets.snSites.docs")}
                     </span>
+                    {(status.droppedValues ?? 0) + (status.refusedDocuments ?? 0) > 0 && (
+                      <span
+                        className="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded px-1.5 py-0.5"
+                        title={t("dashboard.widgets.snSites.indexingIssuesTitle", {
+                          dropped: status.droppedValues ?? 0,
+                          refused: status.refusedDocuments ?? 0,
+                        })}
+                      >
+                        {t("dashboard.widgets.snSites.indexingIssues", {
+                          count: (status.droppedValues ?? 0) + (status.refusedDocuments ?? 0),
+                        })}
+                      </span>
+                    )}
                     {status.queue > 0 && (
                       <span className="text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 rounded px-1.5 py-0.5">
                         {status.queue} {t("dashboard.widgets.snSites.queued")}

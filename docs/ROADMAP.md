@@ -35,10 +35,6 @@
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e ✅, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l ✅) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 6 sn classes of the GenAI surface still import agent, rag or persona 44 times: genai controllers, entity indexing, content fit, hybrid ranking. → §CLXXXIX.40
 
-## Block DA — One bad document never costs the rest of an import
-
-- 🛠 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — Left: a per-site count of dropped and refused values from the last import, shown on the site's console page. → §CXC.2
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
@@ -57,12 +53,6 @@
 - **sn imports no agent, rag, persona, answer or eval type** Counting imports between
   top-level packages finds none from sn to agent, rag, persona, answer or eval; after
   the entity-graph slice, 22 sn classes still import one of them directly.
-
-## Done when — T1343
-
-- **The console shows how many values a site's last import dropped** A site whose last
-  run dropped values shows the count on its console page, without anyone reading the
-  indexing log.
 
 ## Non-goals (do NOT add as tasks)
 

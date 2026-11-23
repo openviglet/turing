@@ -98,6 +98,7 @@ public class TurSNSiteAPI {
     private final ApplicationEventPublisher eventPublisher;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
     private final com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
+    private final com.viglet.turing.sn.web.queue.TurSNIndexingIssues indexingIssues;
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping
@@ -489,6 +490,9 @@ public class TurSNSiteAPI {
             }
             turSNSiteMonitoringStatusBean.setDocuments((int) documentTotal);
             turSNSiteMonitoringStatusBean.setSearchEngineAvailable(searchEngineAvailable);
+            var issues = indexingIssues.countsFor(turSNSite.getName());
+            turSNSiteMonitoringStatusBean.setDroppedValues(issues.droppedValues());
+            turSNSiteMonitoringStatusBean.setRefusedDocuments(issues.refusedDocuments());
             return turSNSiteMonitoringStatusBean;
         }).orElse(new TurSNSiteMonitoringStatusBean());
     }

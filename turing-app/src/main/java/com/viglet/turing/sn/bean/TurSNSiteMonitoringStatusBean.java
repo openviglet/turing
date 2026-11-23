@@ -37,4 +37,8 @@ public class TurSNSiteMonitoringStatusBean {
 	private int documents;
 	/** When false, the search engine was unreachable (circuit breaker open or error) and {@code documents} is best-effort/partial. */
 	private boolean searchEngineAvailable = true;
+	/** T1343 - field values the engine dropped from this site's documents in the last 24 hours. */
+	private long droppedValues;
+	/** T1343 - documents of this site the engine refused in the last 24 hours. */
+	private long refusedDocuments;
 }

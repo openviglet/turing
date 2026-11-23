@@ -69,6 +69,7 @@ import tools.jackson.databind.json.JsonMapper;
 public class TurSNProcessQueue {
 
     private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
+    private final TurSNIndexingIssues indexingIssues;
     public static final String INDEXED = "Indexed";
     public static final String DEINDEXED = "Deindexed";
     private final TurSearchEnginePluginFactory pluginFactory;
@@ -108,8 +109,10 @@ public class TurSNProcessQueue {
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,
             @org.springframework.context.annotation.Lazy TurSNProcessQueue self,
             @org.springframework.context.annotation.Lazy com.viglet.turing.sn.api.TurSNSiteEmbeddings siteEmbeddings,
-            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances,
+            TurSNIndexingIssues indexingIssues) {
         this.snSiteSEInstances = snSiteSEInstances;
+        this.indexingIssues = indexingIssues;
         this.siteEmbeddings = siteEmbeddings;
         this.pluginFactory = pluginFactory;
         this.turSNSiteRepository = turSNSiteRepository;
@@ -273,8 +276,9 @@ public class TurSNProcessQueue {
             // T383 — side-write the document embedding for HYBRID_RRF sites (no-op
             // for vectorless / legacy sites, the case this block optimizes).
             turSNHybridRankingService.indexDocument(turSNSite, locale, documents.get(i));
-            processQueueInfo(turSNSite, items.get(i),
-                    TurSEDroppedValues.detail(dropped.get(items.get(i).getId())));
+            var droppedHere = dropped.get(items.get(i).getId());
+            indexingIssues.droppedValues(turSNSite.getName(), droppedHere == null ? 0 : droppedHere.size());
+            processQueueInfo(turSNSite, items.get(i), TurSEDroppedValues.detail(droppedHere));
             TurLoggingUtils.setSuccessStatus(items.get(i), TurIndexingStatus.FINISHED);
         }
         log.info("Bulk-indexed {} documents into '{}' ({}) in a single pass",
@@ -335,13 +339,16 @@ public class TurSNProcessQueue {
                     turSNJobItem.getId(), turSNSite.getName(), turSNJobItem.getLocale(), e.getMessage());
             TurLoggingUtils.setErrorStatus(turSNJobItem, TurIndexingStatus.NOT_PROCESSED,
                     "refused by the search engine: " + e.getMessage());
+            indexingIssues.refusedDocument(turSNSite.getName());
             TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.FINISHED);
             return;
         } finally {
             dropped = TurSEDroppedValues.end();
         }
         if (processed) {
-            processQueueInfo(turSNSite, turSNJobItem, TurSEDroppedValues.detail(dropped.get(turSNJobItem.getId())));
+            var droppedHere = dropped.get(turSNJobItem.getId());
+            indexingIssues.droppedValues(turSNSite.getName(), droppedHere == null ? 0 : droppedHere.size());
+            processQueueInfo(turSNSite, turSNJobItem, TurSEDroppedValues.detail(droppedHere));
         } else {
             noProcessedWarning(turSNSite, turSNJobItem);
         }

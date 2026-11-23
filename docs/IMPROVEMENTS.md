@@ -37,8 +37,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CZ — Backend modules with verified boundaries
 
-## Block DA — One bad document never costs the rest of an import
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2629,29 +2627,5 @@ view (siteAgentOf, T1322w); extend it before adding another agent-facing SPI. RE
 stay. Done when sn imports no agent, rag, chat, persona, answer or eval type.
 
 ## CXC One bad document never costs the rest of an import
-
-### CXC.2 Dropped values reach the indexing log (T1343)
-
-Since T1338 the Lucene document handler drops a value its field type cannot parse (a
-DATE that is not ISO-8601, an INT, LONG, FLOAT, DOUBLE or CURRENCY that is not a number)
-from that one document and logs a WARN naming the document id and the field. The rest of
-the document and the batch index. What the client never learns is that a value was
-dropped: the import answers 200 before indexing runs (it is queued), and the
-per-document indexing log records the document as INDEXED.
-
-Proposal: TurLuceneDocumentHandler collects the dropped (field, value) pairs per
-document while it builds it and returns them with the batch result. TurSNProcessQueue
-passes them to TurLoggingUtils.setSuccessStatus as the entry's details, so the indexing
-log, which the console and the connectors already read per document, shows "indexed;
-dropped releaseDate '2017T00:00:00Z' (not a DATE)". A counter per site (dropped values
-in the last run) lets the console flag a client that sends malformed data without anyone
-reading logs.
-
-Solr and Elasticsearch refuse such a document instead of dropping the value; whether
-their refusals already reach the indexing log should be checked first, so the three
-engines report the same way.
-
-Out of scope: validating values in the import controller before queueing. The type of a
-field is the site's, resolved at index time, and the import path stays asynchronous.
 
 ## CXCI API errors name what the caller sent wrong
