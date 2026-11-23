@@ -9,17 +9,16 @@
  */
 package com.viglet.turing.tenant;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletResourceCounter;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
-import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
-import com.viglet.turing.sn.api.TurSNSites;
 
 /**
  * T396 / §XIV.9 — the {@link VigletResourceCounter} SPI feeding the shared
@@ -28,10 +27,10 @@ import com.viglet.turing.sn.api.TurSNSites;
  *
  * <p>The resource keys are the opaque contract between this counter and the
  * Turing quota call sites: {@value #AGENTS}, {@value #SITES},
- * {@value #MONTHLY_TOKENS}. Agent and site counts come from the
- * {@code @TenantId}-filtered repositories (so {@code count()} is already scoped to
- * the current tenant); token usage is summed from the per-tenant attribution
- * added in T276.
+ * {@value #MONTHLY_TOKENS}. T1322l — each is counted by the module that owns it,
+ * through {@link TurTenantResourceCount}: agents and sites from their
+ * {@code @TenantId}-filtered repositories, tokens from T276's per-tenant
+ * attribution.
  *
  * <p>Plan mapping (lifted from {@code TurTenantPlanLimits}): the {@code FREE} plan
  * is bounded (3 agents, 2 sites, 100k monthly tokens); any other plan is unlimited
@@ -52,26 +51,18 @@ public class TurVigletResourceCounter implements VigletResourceCounter {
     private static final VigletPlanLimits FREE = VigletPlanLimits.of(
             AGENTS, 3L, SITES, 2L, MONTHLY_TOKENS, 100_000L);
 
-    private final TurAIAgentRepository agentRepository;
-    private final TurSNSites snSiteRepository;
-    private final TurLLMTokenUsageRepository tokenUsageRepository;
+    private final Map<String, TurTenantResourceCount> counts;
 
-    public TurVigletResourceCounter(TurAIAgentRepository agentRepository,
-            TurSNSites snSiteRepository,
-            TurLLMTokenUsageRepository tokenUsageRepository) {
-        this.agentRepository = agentRepository;
-        this.snSiteRepository = snSiteRepository;
-        this.tokenUsageRepository = tokenUsageRepository;
+    /** T1322l — each resource is counted by the module that owns it. */
+    public TurVigletResourceCounter(List<TurTenantResourceCount> counts) {
+        this.counts = counts.stream().collect(Collectors.toMap(TurTenantResourceCount::resourceKey,
+                Function.identity()));
     }
 
     @Override
     public long count(String tenantId, String resourceKey) {
-        return switch (resourceKey) {
-            case AGENTS -> agentRepository.count();
-            case SITES -> snSiteRepository.count();
-            case MONTHLY_TOKENS -> monthlyTokens(tenantId);
-            default -> 0L;
-        };
+        TurTenantResourceCount count = counts.get(resourceKey);
+        return count == null ? 0L : count.count(tenantId);
     }
 
     @Override
@@ -80,15 +71,5 @@ public class TurVigletResourceCounter implements VigletResourceCounter {
             return FREE;
         }
         return VigletPlanLimits.UNLIMITED;
-    }
-
-    /** Tokens consumed by {@code tenantId} so far this calendar month (T276 attribution). */
-    private long monthlyTokens(String tenantId) {
-        LocalDateTime monthStart = LocalDateTime.now(ZoneId.systemDefault())
-                .withDayOfMonth(1).toLocalDate().atStartOfDay();
-        return tokenUsageRepository.findUsageByTenant(monthStart, monthStart.plusMonths(1)).stream()
-                .filter(row -> tenantId != null && tenantId.equals(row[0]))
-                .mapToLong(row -> ((Number) row[3]).longValue())
-                .sum();
     }
 }

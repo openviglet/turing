@@ -1853,6 +1853,7 @@
 - **T1322z** — The import service and process queue write the site's vector store through TurSNSiteEmbeddings, which sn declares and TurSNGenAi implements; neither imports answer.
 - **T1342** — T1322l slice: TurLlmFallbackMode moved from llm.resilience into system, so system imports only shared and libraries; llm reads the enum from system.
 - **T1344** — T1322h slice: synonym mining reads the default embedding model through TurSNDefaultEmbeddingModel, which sn declares and rag's TurRagContextBuilder implements.
+- **T1345** — T1322l slice: agents, sites and monthly tokens are counted through TurTenantResourceCount, which tenant declares and agent, sn and llm implement; the counter imports none of them.
 
 ## Block DA — One bad document never costs the rest of an import
 

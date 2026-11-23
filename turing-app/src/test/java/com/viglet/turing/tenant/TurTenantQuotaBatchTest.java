@@ -66,8 +66,10 @@ class TurTenantQuotaBatchTest {
         TurConfigProperties props = new TurConfigProperties();
         props.getTenancy().setEnabled(tenancyEnabled);
         context = new TurTenantContext(props);
-        TurVigletResourceCounter counter = new TurVigletResourceCounter(agentRepository,
-                snSiteRepository, tokenUsageRepository);
+        TurVigletResourceCounter counter = new TurVigletResourceCounter(java.util.List.of(
+                new com.viglet.turing.agent.TurAgentTenantCount(agentRepository),
+                new com.viglet.turing.sn.TurSNSiteTenantCount(snSiteRepository),
+                new com.viglet.turing.llm.cost.tokenusage.TurMonthlyTokenTenantCount(tokenUsageRepository)));
         VigletQuotaService quota = new VigletQuotaService(context, store, counter);
         lenient().when(upgradeTargetService.upgradeUrl(org.mockito.ArgumentMatchers.any(),
                 org.mockito.ArgumentMatchers.anyString())).thenReturn(Optional.empty());
