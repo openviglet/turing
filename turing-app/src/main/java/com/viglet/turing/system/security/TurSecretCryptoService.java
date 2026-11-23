@@ -6,7 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.viglet.core.crypto.VigletSecretCryptoService;
-import com.viglet.turing.tenant.TurTenantContext;
+import com.viglet.core.tenancy.VigletTenantContext;
 
 /**
  * Turing's secret-crypto bean: the {@code viglet-core} AES/GCM primitive
@@ -36,7 +36,7 @@ public class TurSecretCryptoService extends VigletSecretCryptoService {
     @Autowired
     public TurSecretCryptoService(Environment environment,
             @Value("${turing.ai.crypto.key:}") String configuredKey,
-            TurTenantContext tenantContext) {
+            VigletTenantContext tenantContext) {
         super(new TurCryptoKeyMaterial(environment, configuredKey), LEGACY_SALT_PREFIX,
                 new TurTenantKeyResolver(tenantContext));
     }

@@ -2642,8 +2642,9 @@ reaches llm, sn and storage for quotas, counters and teardown.
 Proposed ruling, recorded in ADR 0005 when this ships: order layer 2 as system below
 tenant below auth, which keeps today's dominant direction (auth and tenant reading
 system's configuration). Then system's imports of tenant and auth move: the tenant key
-and async context through SPIs system declares, the dev-token and integration
-controllers into auth. Controllers in system that serve one feature move to that
-feature's module with their REST paths unchanged. Tenant's per-module counters and
-teardown become SPIs tenant declares and each module implements. Done when system
-imports only shared, tenant only system and shared, and auth only those three.
+and async context through viglet-core's tenancy types (done, T1322u: no SPI was needed),
+the dev-token and integration controllers into auth. Controllers in system that serve
+one feature move to that feature's module with their REST paths unchanged. Tenant's
+per-module counters and teardown become SPIs tenant declares and each module implements.
+Done when system imports only shared, tenant only system and shared, and auth only those
+three.

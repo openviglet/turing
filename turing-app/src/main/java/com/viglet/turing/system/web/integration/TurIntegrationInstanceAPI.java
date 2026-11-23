@@ -37,7 +37,7 @@ import com.viglet.turing.system.persistence.mapper.integration.TurIntegrationIns
 import com.viglet.turing.system.persistence.model.integration.TurIntegrationInstance;
 import com.viglet.turing.system.persistence.repository.integration.TurIntegrationInstanceRepository;
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
-import com.viglet.turing.tenant.TurInfraTenantScope;
+import com.viglet.core.tenancy.VigletInfraTenantScope;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,11 +48,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TurIntegrationInstanceAPI {
 	private final TurIntegrationInstanceRepository turIntegrationInstanceRepository;
 	private final TurIntegrationInstanceMapper turIntegrationInstanceMapper;
-	private final TurInfraTenantScope tenantScope;
+	private final VigletInfraTenantScope tenantScope;
 
 	public TurIntegrationInstanceAPI(TurIntegrationInstanceRepository turIntegrationInstanceRepository,
 			TurIntegrationInstanceMapper turIntegrationInstanceMapper,
-			TurInfraTenantScope tenantScope) {
+			VigletInfraTenantScope tenantScope) {
 		this.turIntegrationInstanceRepository = turIntegrationInstanceRepository;
 		this.turIntegrationInstanceMapper = turIntegrationInstanceMapper;
 		this.tenantScope = tenantScope;

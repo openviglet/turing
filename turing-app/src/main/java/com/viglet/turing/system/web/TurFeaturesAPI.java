@@ -6,8 +6,8 @@ import com.viglet.turing.storage.git.TurGitServerService;
 import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;
 import com.viglet.turing.system.TurGlobalSettingsService;
-import com.viglet.turing.tenant.TurPlatformAdminService;
-import com.viglet.turing.tenant.TurTenantContext;
+import com.viglet.core.tenancy.VigletPlatformAdminService;
+import com.viglet.core.tenancy.VigletTenantContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,16 +30,16 @@ public class TurFeaturesAPI {
     private final TurGitServerService gitServerService;
     private final TurConfigProperties configProperties;
     private final TurSearchEngineReadOnlySource solrInstanceSource;
-    private final TurTenantContext tenantContext;
-    private final TurPlatformAdminService platformAdminService;
+    private final VigletTenantContext tenantContext;
+    private final VigletPlatformAdminService platformAdminService;
     private final TurDefaultRagReadiness defaultAgentResolver;
     private final String loggingEngine;
 
     public TurFeaturesAPI(TurStorageService storageService, TurGlobalSettingsService globalSettingsService,
                           TurGitServerService gitServerService, TurConfigProperties configProperties,
                           TurSearchEngineReadOnlySource solrInstanceSource,
-                          TurTenantContext tenantContext,
-                          TurPlatformAdminService platformAdminService,
+                          VigletTenantContext tenantContext,
+                          VigletPlatformAdminService platformAdminService,
                           TurDefaultRagReadiness defaultAgentResolver,
                           @Value("${turing.logging.engine:none}") String loggingEngine) {
         this.storageService = storageService;

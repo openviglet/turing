@@ -7,9 +7,11 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.tenant;
+package com.viglet.turing.system.config;
 
 import org.springframework.core.task.TaskDecorator;
+
+import com.viglet.core.tenancy.VigletTenantContext;
 
 /**
  * T274 / §XIV.4.8 — propagates the current tenant across {@code @Async} /
@@ -17,14 +19,17 @@ import org.springframework.core.task.TaskDecorator;
  * restoring it on the worker thread (clearing afterwards so a pooled worker
  * never leaks a tenant into the next task).
  *
+ * <p>T1322l — lives in system, typed on viglet-core's {@link VigletTenantContext},
+ * so system's MVC executor uses it without importing tenant (ADR 0005 section 6).
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.1
  */
 public class TurTenantTaskDecorator implements TaskDecorator {
 
-    private final TurTenantContext tenantContext;
+    private final VigletTenantContext tenantContext;
 
-    public TurTenantTaskDecorator(TurTenantContext tenantContext) {
+    public TurTenantTaskDecorator(VigletTenantContext tenantContext) {
         this.tenantContext = tenantContext;
     }
 

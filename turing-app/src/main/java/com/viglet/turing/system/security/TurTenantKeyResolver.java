@@ -1,25 +1,36 @@
 package com.viglet.turing.system.security;
 
 import com.viglet.core.crypto.VigletTenantKeyResolver;
-import com.viglet.turing.tenant.persistence.model.TurTenant;
-import com.viglet.turing.tenant.TurTenantContext;
+import com.viglet.core.tenancy.VigletTenantContext;
 
 /**
- * Bridges Turing's {@link TurTenantContext} onto the {@code viglet-core}
+ * Bridges the tenant context onto the {@code viglet-core}
  * {@link VigletTenantKeyResolver} so the lifted crypto primitive can derive
  * per-tenant keys without depending on any Turing type (Block Q / T368).
  *
- * <p>The default tenant ({@link TurTenant#DEFAULT_TENANT_ID}) maps to the legacy
- * global key; every other tenant gets its own derived key.
+ * <p>The default tenant maps to the legacy global key; every other tenant gets
+ * its own derived key.
+ *
+ * <p>T1322l — typed on viglet-core's {@link VigletTenantContext} rather than the
+ * tenant module's subclass, so system does not import tenant (ADR 0005 section
+ * 6: tenant sits above system). The tenant module's bean is that subclass, so
+ * the wiring is unchanged.
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
 public class TurTenantKeyResolver implements VigletTenantKeyResolver {
 
-    private final TurTenantContext tenantContext;
+    /**
+     * The default tenant's id when no context is wired (tests, non-tenant
+     * contexts). Equal to {@code TurTenant.DEFAULT_TENANT_ID}, which
+     * {@code TurTenantKeyResolverDefaultIdTest} pins.
+     */
+    static final String DEFAULT_TENANT_ID = "DEFAULT";
 
-    public TurTenantKeyResolver(TurTenantContext tenantContext) {
+    private final VigletTenantContext tenantContext;
+
+    public TurTenantKeyResolver(VigletTenantContext tenantContext) {
         this.tenantContext = tenantContext;
     }
 
@@ -30,6 +41,8 @@ public class TurTenantKeyResolver implements VigletTenantKeyResolver {
 
     @Override
     public boolean isDefaultTenant(String tenantId) {
-        return TurTenant.DEFAULT_TENANT_ID.equals(tenantId);
+        String defaultTenantId = tenantContext != null ? tenantContext.getDefaultTenantId()
+                : DEFAULT_TENANT_ID;
+        return defaultTenantId.equals(tenantId);
     }
 }

@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import com.viglet.turing.system.config.TurTenantTaskDecorator;
 import com.viglet.turing.system.properties.TurConfigProperties;
 
 /**

@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
 
+import com.viglet.turing.system.config.TurTenantTaskDecorator;
+
 import io.micrometer.context.ContextRegistry;
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Hooks;

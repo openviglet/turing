@@ -14,8 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.viglet.turing.tenant.TurTenantContext;
-import com.viglet.turing.tenant.TurTenantTaskDecorator;
+import com.viglet.core.tenancy.VigletTenantContext;
 
 /**
  * Provides the {@link AsyncTaskExecutor} used by Spring MVC for asynchronous
@@ -45,7 +44,7 @@ public class TurMvcAsyncConfig {
     public static final String EXECUTOR_BEAN = "turMvcAsyncTaskExecutor";
 
     @Bean(EXECUTOR_BEAN)
-    AsyncTaskExecutor turMvcAsyncTaskExecutor(TurTenantContext tenantContext) {
+    AsyncTaskExecutor turMvcAsyncTaskExecutor(VigletTenantContext tenantContext) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(8);
         executor.setMaxPoolSize(50);
