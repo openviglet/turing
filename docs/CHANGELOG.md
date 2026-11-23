@@ -1853,3 +1853,4 @@
 
 ## Block DA — One bad document never costs the rest of an import
 
+- **T1338** — A Lucene field value its type cannot parse is dropped from that one document with a WARN naming document and field; the batch indexes and the index is never recreated.

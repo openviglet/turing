@@ -186,6 +186,9 @@ public class TurLuceneDocumentHandler {
      */
     private Document buildDocument(Map<String, Object> attributes, Map<String, TurSEIndexField> fieldMap) {
         Document doc = new Document();
+        // T1338 — named in the WARN when a typed value is dropped.
+        String docId = Optional.ofNullable(attributes == null ? null : attributes.get(ID))
+                .map(Object::toString).orElse("?");
         Optional.ofNullable(attributes).ifPresent(attr ->
                 attr.forEach((key, value) -> {
                     if (value == null) return;
@@ -193,7 +196,7 @@ public class TurLuceneDocumentHandler {
                     TurSEFieldType fieldType = siteField != null ? siteField.type() : TurSEFieldType.STRING;
                     boolean multiValued = siteField != null && siteField.multiValued();
 
-                    addAttributeToDocument(doc, key, value, fieldType, multiValued);
+                    addAttributeToDocument(doc, docId, key, value, fieldType, multiValued);
                 }));
         return doc;
     }
@@ -209,38 +212,38 @@ public class TurLuceneDocumentHandler {
     // Field-type dispatch
     // -------------------------------------------------------------------------
 
-    private void addAttributeToDocument(Document doc, String key, Object value,
+    private void addAttributeToDocument(Document doc, String docId, String key, Object value,
             TurSEFieldType fieldType, boolean multiValued) {
         switch (value) {
-            case JSONArray jsonArray -> addJsonArrayToDocument(doc, key, jsonArray, fieldType, multiValued);
-            case ArrayList<?> list -> addListToDocument(doc, key, list, fieldType, multiValued);
-            default -> addSingleValueToDocument(doc, key, value, fieldType);
+            case JSONArray jsonArray -> addJsonArrayToDocument(doc, docId, key, jsonArray, fieldType, multiValued);
+            case ArrayList<?> list -> addListToDocument(doc, docId, key, list, fieldType, multiValued);
+            default -> addSingleValueToDocument(doc, docId, key, value, fieldType);
         }
     }
 
-    private void addJsonArrayToDocument(Document doc, String key, JSONArray jsonArray,
+    private void addJsonArrayToDocument(Document doc, String docId, String key, JSONArray jsonArray,
             TurSEFieldType fieldType, boolean multiValued) {
         if (jsonArray.isEmpty()) return;
         if (multiValued) {
             IntStream.range(0, jsonArray.length())
                     .mapToObj(jsonArray::get)
-                    .forEach(item -> addSingleValueToDocument(doc, key, item, fieldType));
+                    .forEach(item -> addSingleValueToDocument(doc, docId, key, item, fieldType));
         } else {
-            addSingleValueToDocument(doc, key, jsonArray.get(0), fieldType);
+            addSingleValueToDocument(doc, docId, key, jsonArray.get(0), fieldType);
         }
     }
 
-    private void addListToDocument(Document doc, String key, List<?> list,
+    private void addListToDocument(Document doc, String docId, String key, List<?> list,
             TurSEFieldType fieldType, boolean multiValued) {
         if (list.isEmpty()) return;
         if (multiValued) {
-            list.forEach(item -> addSingleValueToDocument(doc, key, item, fieldType));
+            list.forEach(item -> addSingleValueToDocument(doc, docId, key, item, fieldType));
         } else {
-            addSingleValueToDocument(doc, key, list.getFirst(), fieldType);
+            addSingleValueToDocument(doc, docId, key, list.getFirst(), fieldType);
         }
     }
 
-    private void addSingleValueToDocument(Document doc, String key, Object value,
+    private void addSingleValueToDocument(Document doc, String docId, String key, Object value,
             TurSEFieldType fieldType) {
         String strValue = value != null ? value.toString().trim() : "";
         if (strValue.isEmpty()) return;
@@ -260,11 +263,11 @@ public class TurLuceneDocumentHandler {
         switch (fieldType) {
             case TEXT -> addTextField(doc, key, strValue);
             case STRING, ARRAY, BOOL -> addStringField(doc, key, strValue);
-            case INT -> addIntField(doc, key, strValue);
-            case LONG -> addLongField(doc, key, strValue);
-            case FLOAT -> addFloatField(doc, key, strValue);
-            case DOUBLE, CURRENCY -> addDoubleField(doc, key, strValue);
-            case DATE -> addDateField(doc, key, strValue);
+            case INT -> addIntField(doc, docId, key, strValue);
+            case LONG -> addLongField(doc, docId, key, strValue);
+            case FLOAT -> addFloatField(doc, docId, key, strValue);
+            case DOUBLE, CURRENCY -> addDoubleField(doc, docId, key, strValue);
+            case DATE -> addDateField(doc, docId, key, strValue);
         }
     }
 
@@ -285,49 +288,49 @@ public class TurLuceneDocumentHandler {
         doc.add(new TextField(key + TurLuceneConstants.AC_SUFFIX, strValue, Field.Store.NO));
     }
 
-    private void addIntField(Document doc, String key, String strValue) {
+    private void addIntField(Document doc, String docId, String key, String strValue) {
         try {
             int intVal = Integer.parseInt(strValue);
             doc.add(new IntPoint(key, intVal));
             doc.add(new StoredField(key, intVal));
             doc.add(new NumericDocValuesField(key, intVal));
         } catch (NumberFormatException e) {
-            log.warn("Cannot parse INT value '{}' for field '{}'", strValue, key);
-            doc.add(new StringField(key, strValue, Field.Store.YES));
+            dropUnparsable(docId, key, "INT", strValue);
+            return;
         }
         // Use _sf suffix to avoid conflict with NumericDocValuesField on same field name
         addFacetField(doc, key + SORTED_SET_FACET_SUFFIX, strValue);
     }
 
-    private void addLongField(Document doc, String key, String strValue) {
+    private void addLongField(Document doc, String docId, String key, String strValue) {
         try {
             long longVal = Long.parseLong(strValue);
             doc.add(new LongPoint(key, longVal));
             doc.add(new StoredField(key, longVal));
             doc.add(new NumericDocValuesField(key, longVal));
         } catch (NumberFormatException e) {
-            log.warn("Cannot parse LONG value '{}' for field '{}'", strValue, key);
-            doc.add(new StringField(key, strValue, Field.Store.YES));
+            dropUnparsable(docId, key, "LONG", strValue);
+            return;
         }
         // Use _sf suffix to avoid conflict with NumericDocValuesField on same field name
         addFacetField(doc, key + SORTED_SET_FACET_SUFFIX, strValue);
     }
 
-    private void addFloatField(Document doc, String key, String strValue) {
+    private void addFloatField(Document doc, String docId, String key, String strValue) {
         try {
             float floatVal = Float.parseFloat(strValue);
             doc.add(new FloatPoint(key, floatVal));
             doc.add(new StoredField(key, floatVal));
             doc.add(new NumericDocValuesField(key, Float.floatToRawIntBits(floatVal)));
         } catch (NumberFormatException e) {
-            log.warn("Cannot parse FLOAT value '{}' for field '{}'", strValue, key);
-            doc.add(new StringField(key, strValue, Field.Store.YES));
+            dropUnparsable(docId, key, "FLOAT", strValue);
+            return;
         }
         // Use _sf suffix to avoid conflict with NumericDocValuesField on same field name
         addFacetField(doc, key + SORTED_SET_FACET_SUFFIX, strValue);
     }
 
-    private void addDoubleField(Document doc, String key, String strValue) {
+    private void addDoubleField(Document doc, String docId, String key, String strValue) {
         // CURRENCY is stored as its numeric amount (comma-separated ISO 4217 handled externally)
         String numPart = strValue.contains(",") ? strValue.substring(0, strValue.lastIndexOf(',')) : strValue;
         try {
@@ -336,25 +339,36 @@ public class TurLuceneDocumentHandler {
             doc.add(new StoredField(key, doubleVal));
             doc.add(new NumericDocValuesField(key, Double.doubleToRawLongBits(doubleVal)));
         } catch (NumberFormatException e) {
-            log.warn("Cannot parse DOUBLE/CURRENCY value '{}' for field '{}'", strValue, key);
-            doc.add(new StringField(key, strValue, Field.Store.YES));
+            dropUnparsable(docId, key, "DOUBLE/CURRENCY", strValue);
+            return;
         }
         // Use _sf suffix to avoid conflict with NumericDocValuesField on same field name
         addFacetField(doc, key + SORTED_SET_FACET_SUFFIX, strValue);
     }
 
-    private void addDateField(Document doc, String key, String strValue) {
+    private void addDateField(Document doc, String docId, String key, String strValue) {
         Long epochMs = parseDateToEpochMs(strValue);
-        if (epochMs != null) {
-            doc.add(new LongPoint(key, epochMs));
-            doc.add(new StoredField(key, epochMs));
-            doc.add(new NumericDocValuesField(key, epochMs));
-        } else {
-            log.warn("Cannot parse DATE value '{}' for field '{}'", strValue, key);
-            doc.add(new StringField(key, strValue, Field.Store.YES));
+        if (epochMs == null) {
+            dropUnparsable(docId, key, "DATE", strValue);
+            return;
         }
+        doc.add(new LongPoint(key, epochMs));
+        doc.add(new StoredField(key, epochMs));
+        doc.add(new NumericDocValuesField(key, epochMs));
         // Use _sf suffix to avoid conflict with NumericDocValuesField on same field name
         addFacetField(doc, key + SORTED_SET_FACET_SUFFIX, strValue);
+    }
+
+    /**
+     * T1338 — a value a typed field cannot parse is dropped from this one document,
+     * with nothing else written under the field's name. It used to be indexed as a
+     * {@link StringField} under the same name as the field's points and doc values,
+     * which Lucene refuses as an inconsistent schema; the plugin then recreated the
+     * whole site index, and the next batch carrying the value did it again.
+     */
+    private void dropUnparsable(String docId, String key, String type, String strValue) {
+        log.warn("Dropped unparsable {} value '{}' for field '{}' of document '{}'; "
+                + "the rest of the document is indexed", type, strValue, key, docId);
     }
 
     /**

@@ -42,7 +42,7 @@
 
 ## Block DA — One bad document never costs the rest of an import
 
-- 📋 **T1338** (deps: —) **One unparsable DATE value in an import makes the Lucene engine recreate the whole SN site index, again and again** — A single malformed field in one document wipes every document of the site and leaves search empty while the import returns 200. → §CXC.1
+- 📋 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — A client sending malformed dates or numbers gets 200 and INDEXED and learns of the loss only by reading Turing's server log. → §CXC.2
 
 ## Block CB — LLM gateway parity with the OpenAI wire
 

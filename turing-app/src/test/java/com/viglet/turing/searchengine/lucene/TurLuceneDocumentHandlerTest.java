@@ -5,10 +5,13 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -248,6 +251,66 @@ class TurLuceneDocumentHandlerTest {
         DirectoryReader reader = DirectoryReader.open(directory);
         assertThat(reader.numDocs()).isEqualTo(1);
         reader.close();
+    }
+
+    /**
+     * T1338 — one unparsable DATE among valid ones used to be written as a string
+     * under the date field's name, which Lucene refuses as an inconsistent schema
+     * (and the plugin answered by recreating the whole index). Now the bad value is
+     * dropped from that one document and the batch indexes in full.
+     */
+    @Test
+    void anUnparsableDateAmongValidOnesIsDroppedAndTheBatchIndexes() throws IOException {
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("releaseDate", TurSEIndexField.builder().name("releaseDate")
+                .type(TurSEFieldType.DATE).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
+
+        List<Map<String, Object>> batch = List.of(
+                Map.of("id", "good-1", "title", "A", "releaseDate", "2016-05-01T00:00:00Z"),
+                Map.of("id", "bad", "title", "B", "releaseDate", "2017T00:00:00Z"),
+                Map.of("id", "good-2", "title", "C", "releaseDate", "2018-03-10T00:00:00Z"));
+
+        assertThat(handler.indexingBatch(instance, SITE_ID, batch)).isEqualTo(3);
+
+        try (DirectoryReader reader = DirectoryReader.open(directory)) {
+            IndexSearcher searcher = new IndexSearcher(reader);
+            assertThat(reader.numDocs()).isEqualTo(3);
+            // The two valid dates stay range-searchable as points.
+            assertThat(searcher.count(LongPoint.newRangeQuery("releaseDate",
+                    Instant.parse("2015-01-01T00:00:00Z").toEpochMilli(),
+                    Instant.parse("2019-01-01T00:00:00Z").toEpochMilli()))).isEqualTo(2);
+            TopDocs bad = searcher.search(new TermQuery(new Term("id", "bad")), 1);
+            Document badDoc = searcher.storedFields().document(bad.scoreDocs[0].doc);
+            assertThat(badDoc.get("releaseDate")).isNull();
+            assertThat(badDoc.get("title")).isEqualTo("B");
+        }
+    }
+
+    /** T1338 — the same for the numeric types, which shared the string fallback. */
+    @Test
+    void anUnparsableNumberAmongValidOnesIsDroppedAndTheBatchIndexes() throws IOException {
+        Map<String, TurSEIndexField> fieldMap = new HashMap<>();
+        fieldMap.put("price", TurSEIndexField.builder().name("price")
+                .type(TurSEFieldType.DOUBLE).multiValued(false).build());
+        fieldMap.put("count", TurSEIndexField.builder().name("count")
+                .type(TurSEFieldType.INT).multiValued(false).build());
+        when(siteSearchConfig.indexFields(SITE_ID)).thenReturn(fieldMap);
+
+        List<Map<String, Object>> batch = List.of(
+                Map.of("id", "good", "price", "9.99", "count", "3"),
+                Map.of("id", "bad", "price", "nine", "count", "three"));
+
+        assertThat(handler.indexingBatch(instance, SITE_ID, batch)).isEqualTo(2);
+
+        try (DirectoryReader reader = DirectoryReader.open(directory)) {
+            IndexSearcher searcher = new IndexSearcher(reader);
+            TopDocs bad = searcher.search(new TermQuery(new Term("id", "bad")), 1);
+            Document badDoc = searcher.storedFields().document(bad.scoreDocs[0].doc);
+            assertThat(badDoc.get("price")).isNull();
+            assertThat(badDoc.get("count")).isNull();
+            assertThat(searcher.count(IntPoint.newExactQuery("count", 3))).isEqualTo(1);
+        }
     }
 
     @Test
