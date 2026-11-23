@@ -24,7 +24,6 @@ package com.viglet.turing.sn.job;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.agent.TurDefaultAgentResolver;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
@@ -33,6 +32,7 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.system.logging.TurLoggingUtils;
 import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.sn.TurSNConstants;
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.tenant.TurJmsTenantPropagation;
 
@@ -54,18 +54,18 @@ public class TurSNImportService {
     private final TurSNSiteRepositoryPort turSNSiteRepositoryPort;
     private final TurSNGenAi turGenAi;
     private final TurJmsTenantPropagation turJmsTenantPropagation;
-    private final TurDefaultAgentResolver turDefaultAgentResolver;
+    private final TurSNSiteAgents siteAgents;
 
     public TurSNImportService(JmsMessagingTemplate jmsMessagingTemplate,
             TurSNSiteRepositoryPort turSNSiteRepositoryPort,
             TurSNGenAi turGenAi,
             TurJmsTenantPropagation turJmsTenantPropagation,
-            TurDefaultAgentResolver turDefaultAgentResolver) {
+            TurSNSiteAgents siteAgents) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
         this.turSNSiteRepositoryPort = turSNSiteRepositoryPort;
         this.turGenAi = turGenAi;
         this.turJmsTenantPropagation = turJmsTenantPropagation;
-        this.turDefaultAgentResolver = turDefaultAgentResolver;
+        this.siteAgents = siteAgents;
     }
 
     public void send(TurSNJobItems turSNJobItems) {
@@ -97,7 +97,7 @@ public class TurSNImportService {
             Object objectId = turJobItem.getAttributes().get(TurSNFieldName.ID);
             for (String siteName : turJobItem.getSiteNames()) {
                 // T1147 — the effective agent, so a site on the Default AI Agent is embedded too.
-                if (turDefaultAgentResolver.isRagReadyForSiteName(siteName)) {
+                if (siteAgents.isRagReadyForSiteName(siteName)) {
                     log.debug("RAG enabled for Object ID '{}' of SN Site '{}': routing to vector store",
                             objectId, siteName);
                     anyRagSite = true;

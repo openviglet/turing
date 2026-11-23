@@ -1840,3 +1840,4 @@
 - **T1322r** — TurSNSiteAiCapabilitiesAPI moved to answer.web; its path /api/sn/{siteName}/ai/capabilities is unchanged and sn loses six upward imports.
 - **T1322s** — TurCacheAPI clears and reloads bean-held caches through TurReloadableCache, an SPI system declares and the ranking lexicon provider implements; system imports no sn type and the paths are unchanged.
 - **T1310y** — The Content AI plugin, DSL executor and query builder read the site and its core through TurSESiteSearchConfig and endpoints from TurSEInstanceEndpoints; none imports an sn repository.
+- **T1322t** — The site console, manifest converger and import paths ask about agents through TurSNSiteAgents, which sn declares in its api and the agent module implements.

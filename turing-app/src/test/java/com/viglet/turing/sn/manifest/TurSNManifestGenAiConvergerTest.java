@@ -41,7 +41,7 @@ import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 
 /**
@@ -55,7 +55,7 @@ import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepositor
 class TurSNManifestGenAiConvergerTest {
 
     @Mock
-    private TurAIAgentRepository turAIAgentRepository;
+    private TurSNSiteAgents siteAgents;
     @Mock
     private TurSNSiteGenAiRepository turSNSiteGenAiRepository;
     @InjectMocks
@@ -97,7 +97,7 @@ class TurSNManifestGenAiConvergerTest {
 
     @Test
     void aNamedAgentAndModeAreBound() {
-        when(turAIAgentRepository.existsById("a1")).thenReturn(true);
+        when(siteAgents.agentExists("a1")).thenReturn(true);
         when(turSNSiteGenAiRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         converger.converge(site, new TurSNManifestGenAi("a1", TurSNKnowledgeBaseMode.HYBRID));
@@ -191,7 +191,7 @@ class TurSNManifestGenAiConvergerTest {
 
     @Test
     void anUnknownAgentIsRefused() {
-        when(turAIAgentRepository.existsById("ghost")).thenReturn(false);
+        when(siteAgents.agentExists("ghost")).thenReturn(false);
 
         assertThatThrownBy(() -> converger.validate(new TurSNManifestGenAi("ghost", null)))
                 .isInstanceOf(IllegalArgumentException.class)

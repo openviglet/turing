@@ -90,24 +90,22 @@ class TurSNSiteAPITest {
                         TurSearchEnginePluginFactory pluginFactory,
                         TurSNSiteMapper siteMapper) {
                 return new TurSNSiteAPI(siteRepository, localeRepository, genAiRepository,
-                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class),
                                 export, mock(TurSNSiteContentExchangeService.class),
                                 template, queue, pluginFactory, siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class));
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class));
         }
 
         @Test
         void aSiteOnTheDefaultAgentCanStartAReindex() {
                 // T1151 — the gate reads the effective agent, as the reindex does.
                 TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
-                com.viglet.turing.agent.TurDefaultAgentResolver resolver =
-                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class);
+                com.viglet.turing.sn.api.TurSNSiteAgents resolver =
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
                                 mock(TurSNSiteGenAiRepository.class),
-                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class),
                                 mock(TurSNSiteExport.class), mock(TurSNSiteContentExchangeService.class),
                                 mock(TurSNTemplate.class), mock(TurSNQueue.class),
@@ -143,6 +141,45 @@ class TurSNSiteAPITest {
                 List<TurSNSiteListDto> result = api.turSNSiteList();
 
                 assertThat(result).hasSize(1);
+        }
+
+        @Test
+        void theListingFlagsASiteWhoseAgentTheSiteAgentsSpiNamesAsRagEnabled() {
+                // T1322h — the agents are checked once, through sn's SPI, not by agent's repository.
+                TurSNSiteRepository siteRepository = mock(TurSNSiteRepository.class);
+                com.viglet.turing.sn.api.TurSNSiteAgents siteAgents =
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class);
+                TurSNSiteAPI api = new TurSNSiteAPI(siteRepository, mock(TurSNSiteLocaleRepository.class),
+                                mock(TurSNSiteGenAiRepository.class),
+                                mock(com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository.class),
+                                mock(TurSNSiteExport.class), mock(TurSNSiteContentExchangeService.class),
+                                mock(TurSNTemplate.class), mock(TurSNQueue.class),
+                                mock(TurSearchEnginePluginFactory.class), Mappers.getMapper(TurSNSiteMapper.class),
+                                mock(org.springframework.context.ApplicationEventPublisher.class),
+                                mock(com.viglet.turing.tenant.TurTenantQuotaService.class), siteAgents);
+                TurSNSite ready = siteWithAgent("ready", "agent-rag");
+                TurSNSite notReady = siteWithAgent("not-ready", "agent-off");
+                TurSNSite noGenAi = new TurSNSite();
+                noGenAi.setName("plain");
+                when(siteRepository.findAllForListing()).thenReturn(List.of(ready, notReady, noGenAi));
+                when(siteAgents.ragEnabledAgentIds(java.util.Set.of("agent-rag", "agent-off")))
+                                .thenReturn(java.util.Set.of("agent-rag"));
+
+                List<TurSNSiteListDto> result = api.turSNSiteList();
+
+                assertThat(result).extracting(TurSNSiteListDto::name, TurSNSiteListDto::genAiEnabled)
+                                .containsExactly(org.assertj.core.groups.Tuple.tuple("ready", true),
+                                                org.assertj.core.groups.Tuple.tuple("not-ready", false),
+                                                org.assertj.core.groups.Tuple.tuple("plain", false));
+        }
+
+        private static TurSNSite siteWithAgent(String name, String agentId) {
+                TurSNSite site = new TurSNSite();
+                site.setName(name);
+                TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+                genAi.setTurAIAgentId(agentId);
+                site.setTurSNSiteGenAi(genAi);
+                return site;
         }
 
         @Test
@@ -238,7 +275,6 @@ class TurSNSiteAPITest {
                 TurSNSiteMapper siteMapper = Mappers.getMapper(TurSNSiteMapper.class);
                 TurSNSiteAPI api = new TurSNSiteAPI(siteRepository,
                                 mock(TurSNSiteLocaleRepository.class), genAiRepository,
-                                mock(com.viglet.turing.agent.persistence.repository.TurAIAgentRepository.class),
                                 seRepo,
                                 mock(TurSNSiteExport.class),
                                 mock(TurSNSiteContentExchangeService.class),
@@ -246,7 +282,7 @@ class TurSNSiteAPITest {
                                 mock(TurSearchEnginePluginFactory.class), siteMapper,
                                 mock(org.springframework.context.ApplicationEventPublisher.class),
                                 mock(com.viglet.turing.tenant.TurTenantQuotaService.class),
-                                mock(com.viglet.turing.agent.TurDefaultAgentResolver.class));
+                                mock(com.viglet.turing.sn.api.TurSNSiteAgents.class));
 
                 TurSNSite existing = new TurSNSite();
                 TurSNSiteGenAi existingGenAi = new TurSNSiteGenAi();

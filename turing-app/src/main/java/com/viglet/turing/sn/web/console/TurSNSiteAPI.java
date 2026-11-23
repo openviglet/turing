@@ -58,7 +58,6 @@ import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
@@ -89,7 +88,6 @@ public class TurSNSiteAPI {
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
-    private final TurAIAgentRepository turAIAgentRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
     private final TurSNSiteExport turSNSiteExport;
     private final TurSNSiteContentExchangeService contentExchangeService;
@@ -99,7 +97,7 @@ public class TurSNSiteAPI {
     private final TurSNSiteMapper turSNSiteMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
-    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+    private final com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
 
     @Operation(summary = "Semantic Navigation Site List")
     @GetMapping
@@ -118,11 +116,8 @@ public class TurSNSiteAPI {
                 .map(TurSNSiteGenAi::getTurAIAgentId)
                 .filter(java.util.Objects::nonNull)
                 .collect(java.util.stream.Collectors.toSet());
-        java.util.Set<String> ragReady = agentIds.isEmpty() ? java.util.Set.of()
-                : turAIAgentRepository.findAllById(agentIds).stream()
-                        .filter(agent -> agent.getEnabled() == 1 && agent.isRagEnabled())
-                        .map(com.viglet.turing.agent.persistence.model.TurAIAgent::getId)
-                        .collect(java.util.stream.Collectors.toSet());
+        // T1322h - which of them are enabled with RAG on comes through sn's SPI.
+        java.util.Set<String> ragReady = siteAgents.ragEnabledAgentIds(agentIds);
         return sites.stream()
                 .map(site -> turSNSiteMapper.toListDto(site, site.getTurSNSiteGenAi() != null
                         && ragReady.contains(site.getTurSNSiteGenAi().getTurAIAgentId())))
@@ -210,7 +205,7 @@ public class TurSNSiteAPI {
                 // T1315 — the agent is held by id; keep it only when it exists.
                 turSNSiteGenAi.setTurAIAgentId(
                         Optional.ofNullable(genAi.getTurAIAgentId())
-                                .filter(turAIAgentRepository::existsById)
+                                .filter(siteAgents::agentExists)
                                 .orElse(null));
                 turSNSiteGenAi.setSitePrompt(genAi.getSitePrompt());
                 // T19 / T24 / T24b — RAG retrieval flags. Previously dropped
@@ -409,7 +404,7 @@ public class TurSNSiteAPI {
                 .map(site -> {
                     // T1151 — the effective agent, as the reindex itself resolves it, so a
                     // site on the Default AI Agent can be reindexed into its store.
-                    if (!turDefaultAgentResolver.isRagReady(site.getTurSNSiteGenAi())) {
+                    if (!siteAgents.isRagReady(site.getTurSNSiteGenAi())) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                                 .<Map<String, String>>body(Map.of(ERROR, "RAG is not enabled on this site"));
                     }

@@ -32,7 +32,7 @@ import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.agent.TurDefaultAgentResolver;
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 
 /**
  * T807 / §LV.5 (Block BG) — deterministic coverage for the opt-in direct
@@ -48,7 +48,7 @@ class TurSNBulkImportServiceTest {
     @Mock
     private TurSNProcessQueue turSNProcessQueue;
     @Mock
-    private TurDefaultAgentResolver turDefaultAgentResolver;
+    private TurSNSiteAgents turDefaultAgentResolver;
 
     private TurSNBulkImportService service;
 

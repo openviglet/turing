@@ -118,6 +118,30 @@ class TurDefaultAgentResolverTest {
     }
 
     @Test
+    void ragEnabledAgentIdsKeepsOnlyEnabledAgentsWithRagOn() {
+        // T1322h — the site listing's flag, answered for sn through TurSNSiteAgents.
+        TurAIAgent ready = ragReadyAgent();
+        ready.setId("ready");
+        TurAIAgent disabled = ragReadyAgent();
+        disabled.setId("disabled");
+        disabled.setEnabled(0);
+        TurAIAgent noRag = ragReadyAgent();
+        noRag.setId("no-rag");
+        noRag.setRagEnabled(false);
+        java.util.Set<String> ids = java.util.Set.of("ready", "disabled", "no-rag", "gone");
+        when(turAIAgentRepository.findAllById(ids)).thenReturn(java.util.List.of(ready, disabled, noRag));
+
+        org.assertj.core.api.Assertions.assertThat(resolver.ragEnabledAgentIds(ids))
+                .containsExactly("ready");
+    }
+
+    @Test
+    void ragEnabledAgentIdsReadsNothingForNoIds() {
+        org.assertj.core.api.Assertions.assertThat(resolver.ragEnabledAgentIds(java.util.Set.of())).isEmpty();
+        verifyNoInteractions(turAIAgentRepository);
+    }
+
+    @Test
     void isRagReadyTrueForRagReadyOwnAgent() {
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         bind(genAi, ragReadyAgent());

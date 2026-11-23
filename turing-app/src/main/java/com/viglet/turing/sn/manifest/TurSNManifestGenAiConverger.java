@@ -25,9 +25,9 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TurSNManifestGenAiConverger {
 
-    private final TurAIAgentRepository turAIAgentRepository;
+    private final TurSNSiteAgents siteAgents;
     private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
 
     /** Refuses an agent id that names no agent. */
@@ -59,7 +59,7 @@ public class TurSNManifestGenAiConverger {
         if (genAi == null || genAi.ownAgentId() == null) {
             return;
         }
-        if (!turAIAgentRepository.existsById(genAi.ownAgentId())) {
+        if (!siteAgents.agentExists(genAi.ownAgentId())) {
             throw new IllegalArgumentException("Manifest genAi names agent '" + genAi.ownAgentId()
                     + "', which does not exist; name an agent id or \""
                     + TurSNManifestGenAi.DEFAULT_AGENT + "\"");
@@ -92,7 +92,7 @@ public class TurSNManifestGenAiConverger {
         TurSNSiteGenAi target = live != null ? live : new TurSNSiteGenAi();
         if (live == null || !genAi.keepsLiveAgent()) {
             String agentId = genAi.ownAgentId();
-            if (agentId != null && !turAIAgentRepository.existsById(agentId)) {
+            if (agentId != null && !siteAgents.agentExists(agentId)) {
                 throw new IllegalArgumentException(
                         "Manifest genAi names agent '" + agentId + "', which does not exist");
             }

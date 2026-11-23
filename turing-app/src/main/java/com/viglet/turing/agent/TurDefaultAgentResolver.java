@@ -58,7 +58,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefaultRagReadiness {
+public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefaultRagReadiness,
+        com.viglet.turing.sn.api.TurSNSiteAgents {
 
     private final TurGlobalSettingsService globalSettingsService;
     private final TurAIAgentRepository turAIAgentRepository;
@@ -123,6 +124,7 @@ public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefa
      *         RAG turned on
      * @since 2026.3.4
      */
+    @Override
     public boolean isRagReady(TurSNSiteGenAi turSNSiteGenAi) {
         // T790 / §LIV.1 (Block BF) — a site explicitly in VECTORLESS_STRUCTURED has
         // no vectors by design, so every vector-dependent surface gated by this
@@ -142,10 +144,35 @@ public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefa
      *
      * @since 2026.3.6
      */
+    @Override
     public boolean isRagReadyForSiteName(String siteName) {
         return turSNSiteRepository.findByNameWithGenAi(siteName)
                 .map(site -> isRagReady(site.getTurSNSiteGenAi()))
                 .orElse(false);
+    }
+
+    /**
+     * T1322h — the site listing's GenAI flag: the named agents loaded once, kept
+     * when enabled with RAG on. Unlike {@link #isRagReady} there is no Default AI
+     * Agent fallback, which is what the listing has always shown.
+     *
+     * @since 2026.3.8
+     */
+    @Override
+    public java.util.Set<String> ragEnabledAgentIds(java.util.Collection<String> agentIds) {
+        if (agentIds == null || agentIds.isEmpty()) {
+            return java.util.Set.of();
+        }
+        return turAIAgentRepository.findAllById(agentIds).stream()
+                .filter(agent -> agent.getEnabled() == 1 && agent.isRagEnabled())
+                .map(TurAIAgent::getId)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /** T1322h — for sn's site console and manifest converger, which hold agents by id. */
+    @Override
+    public boolean agentExists(String agentId) {
+        return agentId != null && turAIAgentRepository.existsById(agentId);
     }
 
     /**

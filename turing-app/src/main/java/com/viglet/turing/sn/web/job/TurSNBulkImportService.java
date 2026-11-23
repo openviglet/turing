@@ -22,10 +22,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 import com.viglet.turing.sn.web.queue.TurSNProcessQueue;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.agent.TurDefaultAgentResolver;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNBulkImportService {
 
     private final TurSNProcessQueue turSNProcessQueue;
-    private final TurDefaultAgentResolver turDefaultAgentResolver;
+    private final TurSNSiteAgents siteAgents;
 
     /** Master switch for the direct fast path. Default {@code false} (off). */
     @Value("${turing.sn.import.bulk-direct.enabled:false}")
@@ -73,9 +73,9 @@ public class TurSNBulkImportService {
     private int batchSize;
 
     public TurSNBulkImportService(TurSNProcessQueue turSNProcessQueue,
-            TurDefaultAgentResolver turDefaultAgentResolver) {
+            TurSNSiteAgents siteAgents) {
         this.turSNProcessQueue = turSNProcessQueue;
-        this.turDefaultAgentResolver = turDefaultAgentResolver;
+        this.siteAgents = siteAgents;
     }
 
     /**
@@ -92,7 +92,7 @@ public class TurSNBulkImportService {
                 continue;
             }
             for (String siteName : item.getSiteNames()) {
-                if (turDefaultAgentResolver.isRagReadyForSiteName(siteName)) {
+                if (siteAgents.isRagReadyForSiteName(siteName)) {
                     return false;
                 }
             }
