@@ -50,7 +50,7 @@ class TurSNProcessQueueTest {
             new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
 
     @org.mockito.Spy
-    private com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances = seInstances.service();
+    private com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances = seInstances.service();
 
     @Mock
     private TurSearchEnginePluginFactory pluginFactory;

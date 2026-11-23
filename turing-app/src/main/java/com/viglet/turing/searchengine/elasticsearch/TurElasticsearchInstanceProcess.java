@@ -78,7 +78,8 @@ public class TurElasticsearchInstanceProcess {
 
     public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSNSiteLocale turSNSiteLocale) {
         // T1337 — only the endpoint is needed, and it is cached by SE instance id.
-        return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSiteLocale.getTurSNSite()),
+        return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
+                turSNSiteLocale.getTurSNSite() == null ? null : turSNSiteLocale.getTurSNSite().getTurSEInstanceId()),
                 turSNSiteLocale.getCore());
     }
 

@@ -58,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TurSNSynonymApplyService {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
 
     private final TurSearchEnginePluginFactory pluginFactory;
     private final TurSNSynonymService synonymService;
@@ -69,7 +69,7 @@ public class TurSNSynonymApplyService {
             TurSNSynonymService synonymService,
             TurSNSiteRepository siteRepository,
             TurSNSiteLocaleRepository siteLocaleRepository,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.pluginFactory = pluginFactory;
         this.synonymService = synonymService;

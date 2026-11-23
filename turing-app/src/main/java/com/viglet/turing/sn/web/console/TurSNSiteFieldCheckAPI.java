@@ -56,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Semantic Navigation Field Check Ext", description = "Semantic Navigation Field Check Ext API")
 public class TurSNSiteFieldCheckAPI {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
         private final TurSNSiteRepository turSNSiteRepository;
         private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
         private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
@@ -66,7 +66,7 @@ public class TurSNSiteFieldCheckAPI {
                         TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
                         TurSNSiteLocaleRepository turSNSiteLocaleRepository,
                         TurSearchEnginePluginFactory pluginFactory,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
                 this.turSNSiteRepository = turSNSiteRepository;
                 this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;

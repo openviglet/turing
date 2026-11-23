@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**
  * T1337 — the endpoint URL an SE instance serves, by the instance's id. The
@@ -51,18 +50,9 @@ public class TurSEInstanceEndpoints {
     }
 
     /**
-     * The endpoint of the site's SE instance, or {@code null} when it names none
-     * or none is set. Static and given the bean, because a call to {@link #of}
-     * through {@code this} would bypass the cache proxy.
-     */
-    public static String ofSite(TurSEInstanceEndpoints endpoints, TurSNSite site) {
-        return site == null ? null : ofInstance(endpoints, site.getTurSEInstanceId());
-    }
-
-    /**
      * The endpoint of SE instance {@code seInstanceId}, or {@code null} when the id
-     * is null or the instance has none; static for the same reason as
-     * {@link #ofSite}.
+     * is null or the instance has none. Static and given the bean, because a call
+     * to {@link #of} through {@code this} would bypass the cache proxy.
      */
     public static String ofInstance(TurSEInstanceEndpoints endpoints, String seInstanceId) {
         if (seInstanceId == null) {

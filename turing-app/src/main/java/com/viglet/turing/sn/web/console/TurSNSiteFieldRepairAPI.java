@@ -67,7 +67,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class TurSNSiteFieldRepairAPI {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
     private final TurSNSiteRepository turSNSiteRepository;
     private final TurSNSiteFieldExtRepository turSNSiteFieldExtRepository;
     private final TurSEInstanceRepository turSEInstanceRepository;
@@ -77,7 +77,7 @@ public class TurSNSiteFieldRepairAPI {
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSEInstanceRepository turSEInstanceRepository,
             TurSearchEnginePluginFactory pluginFactory,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;

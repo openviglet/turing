@@ -118,7 +118,8 @@ public class TurSolrInstanceProcess {
 
     private Optional<TurSolrInstance> getSolrClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
         // T1337 — only the endpoint is needed, and it is cached by SE instance id.
-        return clientFor(resolveEndpoint(TurSEInstanceEndpoints.ofSite(seInstanceEndpoints, turSNSite)),
+        return clientFor(resolveEndpoint(TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
+                turSNSite == null ? null : turSNSite.getTurSEInstanceId())),
                 turSNSiteLocale.getCore());
     }
 

@@ -30,7 +30,7 @@ public class TurSNSiteDataCollectorService {
     private final TurSearchEnginePluginFactory pluginFactory;
     private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
     private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
 
     public String collectSiteData(TurSNSite site) {
         StringBuilder sb = new StringBuilder();

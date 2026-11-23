@@ -67,7 +67,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Slf4j
 public class TurSNProcessQueue {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
     public static final String INDEXED = "Indexed";
     public static final String DEINDEXED = "Deindexed";
     private final TurSearchEnginePluginFactory pluginFactory;
@@ -107,7 +107,7 @@ public class TurSNProcessQueue {
             TurSNSearchCacheEvictor turSNSearchCacheEvictor,
             @org.springframework.context.annotation.Lazy TurSNProcessQueue self,
             @org.springframework.context.annotation.Lazy com.viglet.turing.answer.TurSNGenAi turSNGenAi,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.turSNGenAi = turSNGenAi;
         this.pluginFactory = pluginFactory;

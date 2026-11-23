@@ -22,6 +22,7 @@ import org.mockito.quality.Strictness;
 
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
+import com.viglet.turing.sn.api.TurSNSiteSEInstances;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 
 /**

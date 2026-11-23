@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.searchengine;
+package com.viglet.turing.sn.api;
 
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
  * T1315 — the SE instance an SN site names. The site holds it by id (the
  * instance belongs to this module); this loads the row. {@code null} when the
  * site names none or the instance is gone.
+ *
+ * <p>T1310z — lives in sn's api, since it reads an sn entity: searchengine no
+ * longer imports sn for it (ADR 0005 section 6).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.8

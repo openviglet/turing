@@ -44,7 +44,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Service
 public class TurSNSiteExportFileService {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
 
     private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
 
@@ -140,7 +140,7 @@ public class TurSNSiteExportFileService {
 								  com.viglet.turing.agent.TurAgentRagInfra agentRagInfra,
 								  com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver,
             com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.agentLlmInstances = agentLlmInstances;
 		this.turDefaultAgentResolver = turDefaultAgentResolver;

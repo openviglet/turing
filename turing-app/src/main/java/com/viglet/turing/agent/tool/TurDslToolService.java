@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class TurDslToolService {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
 
     private final TurSNSites turSNSiteRepository;
     private final TurSNSiteLocales turSNSiteLocaleRepository;
@@ -58,7 +58,7 @@ public class TurDslToolService {
                               TurDslSearchService turDslSearchService,
                               TurSearchEnginePluginFactory pluginFactory,
                               TurSNSiteConfigCache configCache,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
+            com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances) {
         this.snSiteSEInstances = snSiteSEInstances;
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
