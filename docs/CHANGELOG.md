@@ -1863,6 +1863,7 @@
 - **T1321** — The schema starts from one Liquibase baseline per module, equal on H2 to the old 220-file history and applied on MySQL and PostgreSQL, and a database from before the baseline is refused at startup with the export and import path (design §CLXXXIX.17 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
 - **T1323** — Every mvn test now runs ApplicationModules.verify() over the application's own modules, so a cycle, a call into another module's internal package or an undeclared dependency fails the build (design §CLXXXIX.19 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
 - **T1324** — An asynchronous cross-module listener's event is stored with the transaction that publishes it, carries its tenant, and is delivered again by one node under ShedLock until the listener completes (design §CLXXXIX.20 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
+- **T1325** — A module integration test can boot its module and declared dependencies only (@TuringModuleTest), as storage and transcription now do, and the first slices surfaced the webhook dispatcher only agent defined, now in system (design §CLXXXIX.21 recorded in `.claude/skills/turing-integration-tests/SKILL.md`)
 
 ## Block DA — One bad document never costs the rest of an import
 

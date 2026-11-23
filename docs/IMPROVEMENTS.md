@@ -2495,15 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.21 Module slice integration tests (T1325)
-
-Integration tests extend AbstractTuringSpringIT and boot the whole application. For
-modules with few dependencies (kb, transcription, storage, exchange, mcp),
-@ApplicationModuleTest boots the module and its declared dependencies only, with the JMX
-and Artemis settings the turing-integration-tests skill requires, and the skill gains a
-section on when a slice is enough. A slice that cannot start without an undeclared bean
-shows a dependency the module map does not list.
-
 ### CLXXXIX.22 Generated module diagrams (T1326)
 
 Documenter writes C4 component diagrams and module canvases from the verified model. A

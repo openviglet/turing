@@ -5,7 +5,8 @@ description: Requirements for writing Turing backend integration tests (*IT.java
 
 # Integration test (`*IT.java`) `@SpringBootTest` requirements
 
-Every new IT that boots the full Spring context **must** either:
+An IT that only needs one module can boot a slice instead (see *Module slice ITs*
+below). Every new IT that boots the full Spring context **must** either:
 
 1. **Extend `AbstractTuringSpringIT`** ([turing-app/src/test/java/com/viglet/turing/testutil/AbstractTuringSpringIT.java](turing-app/src/test/java/com/viglet/turing/testutil/AbstractTuringSpringIT.java)) — gives you an ephemeral H2 datasource, snapshot seeding, JMX enabled, **per-JVM Artemis data directory**, and proper cleanup. **Preferred**. The subclass **must NOT redeclare `@SpringBootTest`** — that would override (not merge with) the parent's annotation and silently drop `spring.jmx.enabled=true`:
 
@@ -44,6 +45,28 @@ directory and block for minutes on `FileLockNodeManager`.
 component scan (`com.viglet.turing.*`). Put reusable test config under
 `com.viglet.testsupport.*`; otherwise a mock can leak into every
 `@SpringBootTest`.
+
+## Module slice ITs (T1325): when one module is enough
+
+An IT about **one module's own behaviour** can boot that module and the modules it
+declares, not the whole application: annotate the class with `@TuringModuleTest` and
+extend `AbstractTuringModuleIT` (both in `testutil`). The class must sit in the module's
+package, since Spring Modulith reads the module from the annotated class. Examples:
+`storage/TurStorageModuleIT`, `transcription/TurTranscriptionModuleIT`.
+
+- **When a slice is enough**: the module sits low in the ADR 0005 layers (storage,
+  transcription, searchengine, llm) and the test exercises its own beans. Modules high
+  in the layers (mcp, exchange, answer, kb) bootstrap most of the application anyway;
+  keep their ITs on `AbstractTuringSpringIT`.
+- **A bean the slice is missing** is the point of the exercise: either a dependency the
+  module does not declare (fix the code or ADR 0005), or one Modulith cannot see, because
+  it is taken as a `@Bean` method parameter. Name the second kind in
+  `@TuringModuleTest(extraIncludes = "tenant")`.
+- **An SPI a lower module declares and a module outside the slice implements** (system's
+  `TurDefaultRagReadiness`, shared's `TurSearchEngineReadOnlySource`, tenant's
+  `TurTenantUpgradeTarget`, ...) is stood in with a `@MockitoBean` field on the test.
+- `@TuringModuleTest` turns module verification off (`TurModuleReportTest` verifies the
+  whole model) and leaves the GraphQL endpoint out, whose scalars sn wires.
 
 ## Container ITs (Testcontainers)
 
