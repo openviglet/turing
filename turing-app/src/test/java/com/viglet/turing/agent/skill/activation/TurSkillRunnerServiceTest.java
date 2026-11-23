@@ -33,7 +33,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.tool.ToolCallback;
 
-import com.viglet.turing.agent.TurToolExecutionLoop;
+import com.viglet.turing.llm.tool.TurToolExecutionLoop;
 import com.viglet.turing.agent.tool.TurDslToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;

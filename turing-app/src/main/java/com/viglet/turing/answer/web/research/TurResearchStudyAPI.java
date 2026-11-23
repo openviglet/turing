@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.shared.exception.TurNotFoundException;
 import com.viglet.turing.answer.research.TurResearchConceptFitService;
 import com.viglet.turing.answer.research.TurResearchDriftService;
-import com.viglet.turing.answer.research.TurResearchEvalBridgeService;
 import com.viglet.turing.rag.research.TurResearchEventBus;
 import com.viglet.turing.answer.research.TurResearchInsightsService;
 import com.viglet.turing.rag.research.TurResearchRunEvent;
@@ -42,8 +41,6 @@ import com.viglet.turing.rag.research.dto.TurResearchReportDto;
 import com.viglet.turing.rag.research.dto.TurResearchSaturationResultDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyDto;
 import com.viglet.turing.rag.research.dto.TurResearchStudyPersonaRefDto;
-import com.viglet.turing.agent.persistence.dto.TurEvalDatasetDto;
-import com.viglet.turing.agent.persistence.model.TurEvalDataset;
 import com.viglet.turing.tenant.TurTenantContext;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,7 +71,6 @@ public class TurResearchStudyAPI {
     private final TurResearchStudyService service;
     private final TurResearchRunnerService runnerService;
     private final TurResearchInsightsService insightsService;
-    private final TurResearchEvalBridgeService evalBridgeService;
     private final TurResearchConceptFitService conceptFitService;
     private final TurResearchDriftService driftService;
     private final TurResearchEventBus eventBus;
@@ -83,7 +79,6 @@ public class TurResearchStudyAPI {
     public TurResearchStudyAPI(TurResearchStudyService service,
             TurResearchRunnerService runnerService,
             TurResearchInsightsService insightsService,
-            TurResearchEvalBridgeService evalBridgeService,
             TurResearchConceptFitService conceptFitService,
             TurResearchDriftService driftService,
             TurResearchEventBus eventBus,
@@ -91,7 +86,6 @@ public class TurResearchStudyAPI {
         this.service = service;
         this.runnerService = runnerService;
         this.insightsService = insightsService;
-        this.evalBridgeService = evalBridgeService;
         this.conceptFitService = conceptFitService;
         this.driftService = driftService;
         this.eventBus = eventBus;
@@ -188,19 +182,7 @@ public class TurResearchStudyAPI {
         return insightsService.graph(id);
     }
 
-    // ---- studies -> eval bridge (Phase 4, T725) ----------------------------
-
-    @Operation(summary = "Promote the study's completed interviews into a reusable eval "
-            + "dataset (agent-QA harness); the studio deep-links the returned id into /bento/eval")
-    @PostMapping("/{id}/promote-to-dataset")
-    public TurEvalDatasetDto promoteToDataset(@PathVariable String id,
-            @RequestParam(required = false) String name) {
-        if (service.get(id).isEmpty()) {
-            throw TurNotFoundException.of("Research study", id);
-        }
-        TurEvalDataset dataset = evalBridgeService.promoteToDataset(id, name);
-        return TurEvalDatasetDto.summary(dataset, dataset.getRows().size());
-    }
+    // ---- studies -> eval bridge (Phase 4, T725): eval's TurResearchEvalBridgeAPI (T1322) --
 
     // ---- concept-test <-> Persona Match bridge (Phase 4, T727) -------------
 

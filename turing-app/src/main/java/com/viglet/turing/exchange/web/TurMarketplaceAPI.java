@@ -1,7 +1,7 @@
 package com.viglet.turing.exchange.web;
 
 import com.viglet.turing.exchange.TurImportExchange;
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.system.properties.TurConfigProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

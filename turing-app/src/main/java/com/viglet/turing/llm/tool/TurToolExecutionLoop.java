@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent;
+package com.viglet.turing.llm.tool;
 
 import java.util.Set;
 
@@ -19,7 +19,6 @@ import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.stereotype.Component;
 
-import com.viglet.turing.agent.clienttool.TurClientToolParkException;
 
 import lombok.extern.slf4j.Slf4j;
 

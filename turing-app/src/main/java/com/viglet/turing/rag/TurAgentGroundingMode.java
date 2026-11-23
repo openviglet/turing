@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.persistence.model;
+package com.viglet.turing.rag;
 
 /**
  * Per-agent grounding policy. Decides whether an agent is a general-purpose
@@ -22,8 +22,11 @@ package com.viglet.turing.agent.persistence.model;
  * to the system prompt at runtime (the configured prompt becomes additive), the
  * same way retrieved content is always fenced by the untrusted-content guard.
  *
- * <p>Stored as a {@code STRING} column (see {@link TurAIAgent#groundingMode}) so
+ * <p>Stored as a {@code STRING} column (see {@code TurAIAgent#groundingMode}) so
  * adding modes later never risks ordinal drift.
+ *
+ * <p>T1322 — declared in rag, whose answer path enforces it, so rag reads it
+ * without importing agent (ADR 0005 section 6: rag sits below agent).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4

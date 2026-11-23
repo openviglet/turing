@@ -68,7 +68,7 @@ public class TurAiAuthoringService {
     private final TurLLMInstanceRepository llmRepository;
     private final TurLlmModelFactory llmModelFactory;
     private final TurSecretCryptoService secretCryptoService;
-    private final com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop;
+    private final com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop;
     private final TurOpenAiStructuredOutputsService openAiStructured;
     private final TurAnthropicStructuredOutputsService anthropicStructured;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -78,7 +78,7 @@ public class TurAiAuthoringService {
             TurLLMInstanceRepository llmRepository,
             TurLlmModelFactory llmModelFactory,
             TurSecretCryptoService secretCryptoService,
-            com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop,
+            com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop,
             TurOpenAiStructuredOutputsService openAiStructured,
             TurAnthropicStructuredOutputsService anthropicStructured) {
         this.globalSettings = globalSettings;

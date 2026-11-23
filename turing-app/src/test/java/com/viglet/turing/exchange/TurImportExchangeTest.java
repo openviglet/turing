@@ -21,7 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExchange;
 import com.viglet.turing.exchange.sn.TurSNSiteImport;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;

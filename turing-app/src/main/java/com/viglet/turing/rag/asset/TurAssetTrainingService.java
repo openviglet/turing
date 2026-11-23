@@ -1,4 +1,4 @@
-package com.viglet.turing.storage.asset;
+package com.viglet.turing.rag.asset;
 
 import com.viglet.turing.rag.TurRagContextBuilder;
 import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import com.viglet.turing.storage.asset.TurAssetItem;
 
 /**
  * Orchestrates training (embedding indexing) of all MinIO assets into a Vector Store.

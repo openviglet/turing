@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.llm.provider.llm.TurHuggingFaceEmbeddingModelFactory;
 import com.viglet.turing.llm.provider.llm.TurLocalEmbeddingModelFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

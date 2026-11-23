@@ -20,7 +20,7 @@ import com.viglet.turing.sn.job.TurSNImportService;
 import com.viglet.turing.client.sn.job.TurSNJobAction;
 import com.viglet.turing.client.sn.job.TurSNJobItem;
 import com.viglet.turing.client.sn.job.TurSNJobItems;
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 

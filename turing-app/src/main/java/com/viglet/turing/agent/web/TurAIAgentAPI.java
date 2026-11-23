@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viglet.turing.exchange.agent.TurAIAgentExportService;
 import com.viglet.turing.agent.persistence.dto.TurAIAgentDto;
 import com.viglet.turing.agent.persistence.mapper.TurAIAgentMapper;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;
@@ -34,16 +31,8 @@ import com.viglet.turing.llm.persistence.repository.store.TurStoreInstanceReposi
 import com.viglet.turing.spring.utils.TurPersistenceUtils;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
-import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,7 +54,6 @@ public class TurAIAgentAPI {
     private final TurPersonaRepository turPersonaRepository;
     private final TurSNSiteGenAis turSNSiteGenAiRepository;
     private final TurGlobalSettingsService turGlobalSettingsService;
-    private final TurAIAgentExportService turAIAgentExportService;
     private final com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService;
 
     public TurAIAgentAPI(TurAIAgentRepository turAIAgentRepository,
@@ -79,7 +67,6 @@ public class TurAIAgentAPI {
             TurPersonaRepository turPersonaRepository,
             TurSNSiteGenAis turSNSiteGenAiRepository,
             TurGlobalSettingsService turGlobalSettingsService,
-            TurAIAgentExportService turAIAgentExportService,
             com.viglet.turing.tenant.TurTenantQuotaService turTenantQuotaService) {
         this.turAIAgentRepository = turAIAgentRepository;
         this.turAIAgentMapper = turAIAgentMapper;
@@ -92,7 +79,6 @@ public class TurAIAgentAPI {
         this.turPersonaRepository = turPersonaRepository;
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
         this.turGlobalSettingsService = turGlobalSettingsService;
-        this.turAIAgentExportService = turAIAgentExportService;
         this.turTenantQuotaService = turTenantQuotaService;
     }
 
@@ -102,44 +88,6 @@ public class TurAIAgentAPI {
     public List<TurAIAgentDto> turAIAgentList() {
         return turAIAgentMapper
                 .toDtoList(this.turAIAgentRepository.findAll(TurPersistenceUtils.orderByTitleIgnoreCase()));
-    }
-
-    @Operation(summary = "Export an AI Agent as a ZIP bundle",
-            description = "Produces a ZIP containing agent.json (TurExchange envelope), one " +
-                    "chat-flows/{slug}.chat-flow.json per chat flow, and one tools/{slug}.groovy " +
-                    "per custom tool. API keys (LLM apiKey/apiKeyEncrypted) are never serialized.")
-    @GetMapping(value = "/{id}/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @Secured({"ROLE_ADMIN", "AI_AGENT_VIEW"})
-    public StreamingResponseBody turAIAgentExport(@PathVariable String id,
-            HttpServletResponse response) {
-        TurAIAgent agent = turAIAgentRepository.findById(id).orElse(null);
-        if (agent == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AI Agent not found: " + id);
-        }
-        Path zipPath = turAIAgentExportService.exportAgentToZip(id);
-        String filename = "agent-" + safeFilenamePart(agent.getTitle(), id) + ".zip";
-        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + encodedFilename);
-        return output -> {
-            try {
-                Files.copy(zipPath, output);
-                output.flush();
-            } catch (IOException e) {
-                log.error("Failed to stream agent export for {}: {}", id, e.getMessage(), e);
-            } finally {
-                turAIAgentExportService.cleanup(zipPath);
-            }
-        };
-    }
-
-    private static String safeFilenamePart(String name, String id) {
-        String base = (name == null ? "untitled" : name)
-                .toLowerCase()
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("(^-)|(-$)", "");
-        if (base.isEmpty()) base = "untitled";
-        return base + "-" + (id == null ? "" : id.substring(0, Math.min(8, id.length())));
     }
 
     @Operation(summary = "AI Agent structure")

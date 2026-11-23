@@ -1,4 +1,4 @@
-package com.viglet.turing.storage.asset;
+package com.viglet.turing.rag.asset;
 
 /**
  * @author Alexandre Oliveira

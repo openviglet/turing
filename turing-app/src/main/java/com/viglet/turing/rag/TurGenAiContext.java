@@ -41,7 +41,7 @@ public class TurGenAiContext {
      * guard to the system prompt. {@code null} is treated as {@code OPEN} (e.g.
      * the {@link #disabled()} context), so it never forces grounding by accident.
      */
-    private final com.viglet.turing.agent.persistence.model.TurAgentGroundingMode groundingMode;
+    private final com.viglet.turing.rag.TurAgentGroundingMode groundingMode;
     private final RagInfrastructure ragInfrastructure;
     /**
      * T500 / §X.19 — per-site full-context (retrieval-free) answering opt-in.

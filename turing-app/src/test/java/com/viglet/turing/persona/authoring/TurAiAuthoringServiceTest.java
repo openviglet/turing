@@ -30,7 +30,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.core.ParameterizedTypeReference;
 
-import com.viglet.turing.agent.TurToolExecutionLoop;
+import com.viglet.turing.llm.tool.TurToolExecutionLoop;
 import com.viglet.turing.llm.nativeapi.anthropic.TurAnthropicStructuredOutputsService;
 import com.viglet.turing.llm.nativeapi.openai.TurOpenAiStructuredOutputsService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;

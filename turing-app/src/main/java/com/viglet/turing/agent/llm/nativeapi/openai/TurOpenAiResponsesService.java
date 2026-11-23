@@ -90,7 +90,7 @@ public class TurOpenAiResponsesService {
 
     /**
      * T433 — hard ceiling on tool-execution rounds for a single turn, mirroring
-     * {@link com.viglet.turing.agent.TurToolExecutionLoop#MAX_TOOL_ITERATIONS}.
+     * {@link com.viglet.turing.llm.tool.TurToolExecutionLoop#MAX_TOOL_ITERATIONS}.
      * A misbehaving model must not spin forever holding the request thread.
      */
     static final int MAX_TOOL_ITERATIONS = 10;

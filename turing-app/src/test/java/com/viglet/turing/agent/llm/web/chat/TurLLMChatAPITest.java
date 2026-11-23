@@ -99,7 +99,7 @@ class TurLLMChatAPITest {
                 loggingToolService, integrationMonitoringToolService,
                 systemInfoToolService, iconifyToolService,
                 chatAttachmentService,
-                new com.viglet.turing.agent.TurToolExecutionLoop());
+                new com.viglet.turing.llm.tool.TurToolExecutionLoop());
     }
 
     private static TurLLMInstanceDomain llmDomain(String id, Integer contextWindow) {

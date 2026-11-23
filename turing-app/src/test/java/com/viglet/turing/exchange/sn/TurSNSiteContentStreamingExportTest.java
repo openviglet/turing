@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.persistence.model.TurSEVendor;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.answer.exchange.TurSNSiteContentPages;
 
 /**
  * T1033 / §D.13 — the export writes the content file from page iterators now, so

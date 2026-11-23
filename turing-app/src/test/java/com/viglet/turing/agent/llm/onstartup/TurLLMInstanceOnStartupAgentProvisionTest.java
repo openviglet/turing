@@ -97,7 +97,7 @@ class TurLLMInstanceOnStartupAgentProvisionTest {
         // The auto-provisioned default agent backs the zero-config public demo's
         // SN chat (T622 fallback), so it ships grounded to the site's content.
         assertThat(created.getGroundingMode())
-                .isEqualTo(com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG);
+                .isEqualTo(com.viglet.turing.rag.TurAgentGroundingMode.STRICT_RAG);
         // T1004 — and streams that chat rather than emitting the whole answer as
         // one SSE event. AUTO, not STREAM: the same agent is reachable from the
         // admin surfaces, where a turn carrying tools must still be a CALL.

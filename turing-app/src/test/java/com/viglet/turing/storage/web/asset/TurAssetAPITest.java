@@ -28,9 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.viglet.turing.storage.asset.TurAssetEvent;
-import com.viglet.turing.storage.asset.TurAssetTrainingService;
-import com.viglet.turing.storage.asset.TurAssetTrainingState;
-import com.viglet.turing.storage.asset.TurAssetTrainingStatus;
 import com.viglet.turing.storage.TurStorageService;
 
 /**
@@ -46,9 +43,6 @@ class TurAssetAPITest {
 
         @Mock
         private TurStorageService storageService;
-
-        @Mock
-        private TurAssetTrainingService turAssetTrainingService;
 
         @Mock
         private ApplicationEventPublisher eventPublisher;
@@ -102,49 +96,6 @@ class TurAssetAPITest {
 
                 verify(storageService, times(1)).deleteObject("test.pdf");
                 verify(eventPublisher, times(1)).publishEvent(any(TurAssetEvent.class));
-        }
-
-        @Test
-        void testStartTrainingRunning() throws Exception {
-                TurAssetTrainingStatus runningStatus = new TurAssetTrainingStatus(
-                                TurAssetTrainingState.RUNNING, 10, 0, 0, "2026-01-01", "", "");
-                when(turAssetTrainingService.startTraining()).thenReturn(runningStatus);
-
-                mockMvc.perform(post("/api/asset/train"))
-                                .andExpect(status().isAccepted())
-                                .andExpect(jsonPath("$.state").value("RUNNING"));
-        }
-
-        @Test
-        void testStartTrainingConflict() throws Exception {
-                TurAssetTrainingStatus failedStatus = new TurAssetTrainingStatus(
-                                TurAssetTrainingState.FAILED, 0, 0, 0, "", "", "RAG not enabled");
-                when(turAssetTrainingService.startTraining()).thenReturn(failedStatus);
-
-                mockMvc.perform(post("/api/asset/train"))
-                                .andExpect(status().isConflict())
-                                .andExpect(jsonPath("$.state").value("FAILED"));
-        }
-
-        @Test
-        void testGetTrainingStatus() throws Exception {
-                TurAssetTrainingStatus idleStatus = TurAssetTrainingStatus.idle();
-                when(turAssetTrainingService.getStatus()).thenReturn(idleStatus);
-
-                mockMvc.perform(get("/api/asset/train/status"))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.state").value("IDLE"));
-        }
-
-        @Test
-        void testGetTrainingRecords() throws Exception {
-                when(turAssetTrainingService.getTrainedAtMap(List.of("file1.pdf", "file2.pdf")))
-                                .thenReturn(java.util.Map.of("file1.pdf", "2026-01-01T00:00:00Z"));
-
-                mockMvc.perform(get("/api/asset/train/records")
-                                .param("objectNames", "file1.pdf", "file2.pdf"))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.['file1.pdf']").value("2026-01-01T00:00:00Z"));
         }
 
         @Test

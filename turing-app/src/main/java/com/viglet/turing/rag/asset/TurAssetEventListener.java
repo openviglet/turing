@@ -1,4 +1,4 @@
-package com.viglet.turing.storage.asset;
+package com.viglet.turing.rag.asset;
 
 import com.viglet.turing.system.TurGlobalSettingsService;
 import org.slf4j.Logger;
@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import com.viglet.turing.storage.asset.TurAssetEvent;
 
 /**
  * Listens for asset upload/delete events and triggers automatic

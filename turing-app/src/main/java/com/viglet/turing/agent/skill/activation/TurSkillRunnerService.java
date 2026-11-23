@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.viglet.turing.llm.TurChatToolOptions;
-import com.viglet.turing.agent.TurToolExecutionLoop;
+import com.viglet.turing.llm.tool.TurToolExecutionLoop;
 import com.viglet.turing.agent.tool.TurCustomToolCallbackService;
 import com.viglet.turing.agent.tool.TurDslToolService;
 import com.viglet.turing.agent.tool.TurToolCallbackPipeline;

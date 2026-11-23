@@ -99,7 +99,7 @@ public class TurAnthropicMessagesService {
 
     /**
      * T433 — hard ceiling on tool-execution rounds for a single turn, mirroring
-     * {@link com.viglet.turing.agent.TurToolExecutionLoop#MAX_TOOL_ITERATIONS}.
+     * {@link com.viglet.turing.llm.tool.TurToolExecutionLoop#MAX_TOOL_ITERATIONS}.
      */
     static final int MAX_TOOL_ITERATIONS = 10;
 

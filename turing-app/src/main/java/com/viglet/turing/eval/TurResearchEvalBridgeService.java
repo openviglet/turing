@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.answer.research;
+package com.viglet.turing.eval;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.rag.research.dto.TurResearchReportDto;
 import com.viglet.turing.rag.research.dto.TurResearchTurnDto;
 import com.viglet.turing.agent.persistence.model.TurEvalDataset;
@@ -40,6 +39,7 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
+import com.viglet.turing.answer.research.TurResearchInsightsService;
 
 /**
  * T725 / §XLVI.4 — the studies → evaluation bridge, the first of Block AW's two

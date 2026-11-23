@@ -49,7 +49,7 @@ public class TurAIAgentExchange {
     // Per-agent grounding policy. Carried so STRICT_RAG survives an export/import
     // round-trip (e.g. the public demo ships its agent locked to site content).
     // Null on a pre-existing export that omits it → import falls back to OPEN.
-    private com.viglet.turing.agent.persistence.model.TurAgentGroundingMode groundingMode;
+    private com.viglet.turing.rag.TurAgentGroundingMode groundingMode;
     // T1004 — per-agent chat mode. Carried for the same reason as groundingMode:
     // a seeded demo agent that is meant to stream its answer has to arrive that
     // way, and without this field the import silently produced the CALL default

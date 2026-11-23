@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.env.MockEnvironment;
 
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.llm.provider.llm.TurHuggingFaceEmbeddingModelFactory;
 import com.viglet.turing.llm.provider.llm.TurLocalEmbeddingModelFactory;
 import com.viglet.turing.agent.persistence.model.TurAIAgent;

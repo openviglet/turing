@@ -357,7 +357,7 @@ public class TurLLMInstanceOnStartup implements ApplicationRunner {
         // off-topic tasks). This only affects the SN RAG path; general agent
         // chat / MCP ignore the mode, so reusing this agent elsewhere is
         // unaffected. Operators can flip it to OPEN in the UI.
-        agent.setGroundingMode(com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG);
+        agent.setGroundingMode(com.viglet.turing.rag.TurAgentGroundingMode.STRICT_RAG);
         // T1004 — and for the same reason, AUTO rather than the CALL default.
         // This agent answers the public SN chat, where the whole answer used to
         // arrive as one SSE event: a consumer reading the body with a stream

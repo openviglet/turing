@@ -65,7 +65,7 @@ class TurLLMSemanticChatAPITest {
                 llmProviderFactory, llmModelFactory, turSecretCryptoService,
                 dslToolService, catalogCopilotToolService, rankingExplainToolService,
                 mcpToolCallbackService, toolCallbackPipeline, tokenUsageService,
-                new com.viglet.turing.agent.TurToolExecutionLoop());
+                new com.viglet.turing.llm.tool.TurToolExecutionLoop());
     }
 
     private static TurLLMInstanceDomain llmDomain(String id, Integer contextWindow) {

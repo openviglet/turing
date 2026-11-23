@@ -35,7 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.viglet.turing.exchange.TurExchange;
 import com.viglet.turing.exchange.TurImportExchange;
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.exchange.sn.TurSNSiteExportValidator;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

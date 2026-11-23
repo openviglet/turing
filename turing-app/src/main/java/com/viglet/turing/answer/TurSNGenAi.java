@@ -1290,7 +1290,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      */
     /**
      * Non-removable grounding guard prefixed to the system prompt when the agent
-     * runs in {@link com.viglet.turing.agent.persistence.model.TurAgentGroundingMode#STRICT_RAG}.
+     * runs in {@link com.viglet.turing.rag.TurAgentGroundingMode#STRICT_RAG}.
      * Unlike {@link #DEFAULT_BEHAVIOR_PROMPT} (a fallback the operator can replace
      * entirely), this text is always prepended ahead of the configured prompt, so
      * a permissive or accidentally-weakened custom prompt cannot relax the
@@ -1321,7 +1321,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
 
     /**
      * Builds the SN chat system prompt. When {@code strictRag} is set (the
-     * agent's {@link com.viglet.turing.agent.persistence.model.TurAgentGroundingMode#STRICT_RAG}
+     * agent's {@link com.viglet.turing.rag.TurAgentGroundingMode#STRICT_RAG}
      * policy), the non-removable {@link #STRICT_RAG_GUARD} is prefixed ahead of
      * the configured/default behavior prompt: the operator's prompt is still
      * applied but only additively (tone / domain framing) and cannot relax the
@@ -1372,7 +1372,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
     private static boolean isStrictRag(TurGenAiContext context) {
         return context != null
                 && context.getGroundingMode()
-                        == com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.STRICT_RAG;
+                        == com.viglet.turing.rag.TurAgentGroundingMode.STRICT_RAG;
     }
 
     /**

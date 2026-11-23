@@ -155,19 +155,28 @@ The layers, bottom to top, replacing the direction paragraph of §1 where they d
    order is `system`, then `tenant`, then `auth`** (T1322l): `system` imports only
    `shared`, `tenant` only `system` and `shared`, `auth` only those three, which keeps the
    dominant direction (auth and tenant read system's configuration). What a lower one
-   needs from a higher one is an SPI the lower one declares.
+   needs from a higher one is an SPI the lower one declares. **`storage`** (object
+   storage, assets and the Git server) also sits here, above `tenant` whose
+   `TurTenantObjectStore` it implements (moved down from layer 4 by T1322: the Lucene
+   engine syncs its index through it and SN serves stored files, so it is infrastructure
+   for layer 3 and up; asset training, which embeds into stores, moved to `rag`).
+   `observability` reads only `system` and `shared`.
 3. `searchengine`, `llm`. **`llm` also owns the vector stores** (store instances, vendors
    and providers), which `rag`, `agent` and `persona` all read as infrastructure.
-4. `sn`, `storage`, **`transcription`** (moved down from layer 8 by T1322m: it is a
+4. `sn`, **`transcription`** (moved down from layer 8 by T1322m: it is a
    speech-to-text provider layer that `persona`'s audio derivation needs; it reads `llm`'s
    instances, so it sits above `llm` rather than beside it).
 5. `kb` (**moved above `sn`**: thesaurus configuration is per SN site), `rag` retrieval
    (context building, sources, rerank, citations, ocr, multimodal, feed, connectors).
-6. `persona`.
+6. `persona`, **`batch`** (moved down from layer 8 by T1322: the batch tier reads `llm`,
+   `sn` and `rag`, and the gateway in `agent` and the eval runner submit to it).
 7. `agent` (**absorbs `chat`**: sessions, slots, memory, webhooks and call-center assist
    are the agent's conversation state and their entities already live in `agent`).
 8. `answer` (**new**, split from `rag`: the SN chat `TurSNGenAi`, answers, research,
-   deep dive and the catalog copilot, which run agents), `eval`, `mcp`, `batch`.
+   deep dive and the catalog copilot, which run agents), `eval`, `mcp`. **Inside the layer
+   the order is `answer`, then `eval`, then `mcp`** (T1322): eval promotes research
+   studies into datasets, and the MCP write tools reindex a site through answer's
+   content exchange.
 9. `exchange`.
 
 A module depends only on lower layers, never sideways inside its own layer.
@@ -186,6 +195,7 @@ A module depends only on lower layers, never sideways inside its own layer.
 | `system` → `agent` 8, `chat` 4 | **Move.** Parked-conversation and chat-analytics controllers move to `agent`; global settings read the code interpreter through a `system` SPI. |
 | `agent`, `sn` → `observability` | **Amend**: `observability` is infrastructure (layer 2). |
 | `system` ↔ `tenant` ↔ `auth`, and layer 2 → feature modules | **Amend + move** (T1322l): ordered `system` < `tenant` < `auth`. System reads the tenant context through viglet-core's tenancy types, and storage and Git status through `TurStorageStatus`/`TurGitServerStatus`. Tenant counts plan resources through `TurTenantResourceCount`, purges through `TurTenantObjectStore` and finds upgrade URLs through `TurTenantUpgradeTarget`, each implemented by the owning module. Single-feature controllers moved to their feature with REST paths unchanged. |
+| Residual crossings after T1322a–l, measured 2026-11-23 | **Move + amend** (T1322): the tool-execution loop and its park exception moved to `llm.tool`, the grounding-mode enum to `rag`, asset training to `rag.asset`, the SN content exchange to `answer.exchange`, the research eval bridge and the agent suggestion API to `eval`. Endpoints that call up were split into a controller in the upper module with the same paths: SN export and reindex and the agent export (`exchange.web`), asset training (`rag.web.asset`), promote-to-dataset (`eval.web`), store batch re-embedding (`batch.web`). |
 | `persona` → `transcription`, `transcription` → `kb` 1 | **Amend + move** (T1322m): `transcription` sits in layer 4; its Thesaurus keyword hint is `TurTranscriptionKeywordSource`, an SPI `transcription` declares and `kb` implements. |
 
 ### 7. Audit dates (T1319)

@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.viglet.turing.exchange.sn;
+package com.viglet.turing.answer.exchange;
 
 import java.util.ArrayList;
 import java.util.Iterator;

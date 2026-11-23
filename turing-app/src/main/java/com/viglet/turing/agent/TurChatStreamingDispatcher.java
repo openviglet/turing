@@ -59,6 +59,7 @@ import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
+import com.viglet.turing.llm.tool.TurToolExecutionLoop;
 
 /**
  * Owns the post-setup dispatch of the per-turn chat pipeline:
@@ -449,7 +450,7 @@ public class TurChatStreamingDispatcher {
             org.springframework.ai.chat.model.ChatResponse response;
             try {
                 response = toolExecutionLoop.callWithClientTools(chatModel, prompt, clientToolNames);
-            } catch (com.viglet.turing.agent.clienttool.TurClientToolParkException park) {
+            } catch (com.viglet.turing.llm.tool.TurClientToolParkException park) {
                 return parkClientTool(turn, chatModel, initialOptions, flowContext,
                         effectivePersona, park);
             }
@@ -630,7 +631,7 @@ public class TurChatStreamingDispatcher {
      */
     private AssistantTurn parkClientTool(TurChatTurnContext turn, ChatModel chatModel,
             ChatOptions initialOptions, TurAgentChatFlowContext flowContext, TurPersona persona,
-            com.viglet.turing.agent.clienttool.TurClientToolParkException park) {
+            com.viglet.turing.llm.tool.TurClientToolParkException park) {
         org.springframework.ai.chat.messages.AssistantMessage.ToolCall call = park.toolCall();
         String callId = call.id() != null && !call.id().isBlank()
                 ? call.id()

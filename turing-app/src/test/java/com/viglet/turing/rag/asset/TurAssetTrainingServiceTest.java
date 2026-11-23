@@ -1,4 +1,4 @@
-package com.viglet.turing.storage.asset;
+package com.viglet.turing.rag.asset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

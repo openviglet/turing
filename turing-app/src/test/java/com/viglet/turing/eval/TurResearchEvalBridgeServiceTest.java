@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.answer.research;
+package com.viglet.turing.eval;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.viglet.turing.eval.TurEvalDatasetImportService;
 import com.viglet.turing.rag.research.dto.TurResearchReportDto;
 import com.viglet.turing.agent.persistence.model.TurAgentEvalExpectedOutcome;
 import com.viglet.turing.agent.persistence.model.TurEvalDataset;
@@ -41,6 +40,7 @@ import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchInterviewRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyPersonaRepository;
 import com.viglet.turing.rag.persistence.repository.research.TurResearchStudyRepository;
+import com.viglet.turing.answer.research.TurResearchInsightsService;
 
 /**
  * T725 / §XLVI.4 — promoting a completed Synthetic User Research study into a

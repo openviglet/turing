@@ -424,7 +424,7 @@ public class TurAIAgentImportService {
         // export that omits the field keeps the entity default (OPEN) instead of
         // nulling a non-null column.
         agent.setGroundingMode(a.getGroundingMode() == null
-                ? com.viglet.turing.agent.persistence.model.TurAgentGroundingMode.OPEN
+                ? com.viglet.turing.rag.TurAgentGroundingMode.OPEN
                 : a.getGroundingMode());
         // T1004 — chat mode travels with the agent, null-guarded the same way: a
         // bundle written before this field existed keeps CALL, and one that asks

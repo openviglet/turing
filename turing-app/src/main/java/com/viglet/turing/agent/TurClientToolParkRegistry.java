@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * ("client") tool result.
  *
  * <p>When the model calls a declared client tool, the dispatcher catches the
- * {@link com.viglet.turing.agent.clienttool.TurClientToolParkException}, parks
+ * {@link com.viglet.turing.llm.tool.TurClientToolParkException}, parks
  * everything needed to resume here, and emits a {@code client_tool_call} SSE
  * event. The browser runs the tool and POSTs the result to
  * {@code /api/v2/chat/client-tool-result}; the dispatcher {@link #take(String, String)}s

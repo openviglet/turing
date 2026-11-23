@@ -7,7 +7,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.agent.clienttool;
+package com.viglet.turing.llm.tool;
 
 import java.util.List;
 

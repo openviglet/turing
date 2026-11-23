@@ -87,7 +87,7 @@ public class TurLLMSemanticChatAPI {
     private final TurMcpToolCallbackService mcpToolCallbackService;
     private final TurToolCallbackPipeline toolCallbackPipeline;
     private final TurLLMTokenUsageService tokenUsageService;
-    private final com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop;
+    private final com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop;
 
     public TurLLMSemanticChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurLLMInstanceRepositoryPort turLLMInstanceRepositoryPort,
@@ -100,7 +100,7 @@ public class TurLLMSemanticChatAPI {
             TurMcpToolCallbackService mcpToolCallbackService,
             TurToolCallbackPipeline toolCallbackPipeline,
             TurLLMTokenUsageService tokenUsageService,
-            com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop) {
+            com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.turLLMInstanceRepositoryPort = turLLMInstanceRepositoryPort;
         this.llmProviderFactory = llmProviderFactory;

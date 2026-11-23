@@ -113,7 +113,7 @@ public class TurLLMChatAPI {
     private final TurSystemInfoToolService systemInfoToolService;
     private final TurIconifyToolService iconifyToolService;
     private final TurChatAttachmentService chatAttachmentService;
-    private final com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop;
+    private final com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop;
 
     public TurLLMChatAPI(TurLLMInstanceRepository turLLMInstanceRepository,
             TurLLMInstanceRepositoryPort turLLMInstanceRepositoryPort,
@@ -134,7 +134,7 @@ public class TurLLMChatAPI {
             TurSystemInfoToolService systemInfoToolService,
             TurIconifyToolService iconifyToolService,
             TurChatAttachmentService chatAttachmentService,
-            com.viglet.turing.agent.TurToolExecutionLoop toolExecutionLoop) {
+            com.viglet.turing.llm.tool.TurToolExecutionLoop toolExecutionLoop) {
         this.turLLMInstanceRepository = turLLMInstanceRepository;
         this.turLLMInstanceRepositoryPort = turLLMInstanceRepositoryPort;
         this.llmProviderFactory = llmProviderFactory;

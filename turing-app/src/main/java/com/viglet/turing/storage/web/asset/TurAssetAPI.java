@@ -4,7 +4,6 @@ import com.viglet.turing.storage.asset.TurAssetItem;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.viglet.turing.storage.asset.TurAssetEvent;
-import com.viglet.turing.storage.asset.TurAssetTrainingService;
-import com.viglet.turing.storage.asset.TurAssetTrainingState;
-import com.viglet.turing.storage.asset.TurAssetTrainingStatus;
 import com.viglet.turing.storage.TurStorageObjectStat;
 import com.viglet.turing.storage.TurStorageService;
 
@@ -48,13 +44,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Assets", description = "Asset Management API (MinIO)")
 public class TurAssetAPI {
 	private final TurStorageService storageService;
-	private final TurAssetTrainingService turAssetTrainingService;
 	private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
-	public TurAssetAPI(TurStorageService storageService, TurAssetTrainingService turAssetTrainingService,
+	/** T1322 — AI training from assets is rag's {@code TurAssetTrainingAPI}, on the same paths. */
+	public TurAssetAPI(TurStorageService storageService,
 			org.springframework.context.ApplicationEventPublisher eventPublisher) {
 		this.storageService = storageService;
-		this.turAssetTrainingService = turAssetTrainingService;
 		this.eventPublisher = eventPublisher;
 	}
 
@@ -128,28 +123,6 @@ public class TurAssetAPI {
 		storageService.deleteObject(objectName);
 		eventPublisher.publishEvent(TurAssetEvent.deleted(objectName));
 		return ResponseEntity.ok().build();
-	}
-
-	@Operation(summary = "Start AI training from assets")
-	@PostMapping("/train")
-	public ResponseEntity<TurAssetTrainingStatus> startTraining() {
-		TurAssetTrainingStatus result = turAssetTrainingService.startTraining();
-		if (result.state() == TurAssetTrainingState.RUNNING) {
-			return ResponseEntity.accepted().body(result);
-		}
-		return ResponseEntity.status(org.springframework.http.HttpStatus.CONFLICT).body(result);
-	}
-
-	@Operation(summary = "Get AI training status")
-	@GetMapping("/train/status")
-	public TurAssetTrainingStatus getTrainingStatus() {
-		return turAssetTrainingService.getStatus();
-	}
-
-	@Operation(summary = "Get training status for a list of assets")
-	@GetMapping("/train/records")
-	public Map<String, String> getTrainingRecords(@RequestParam List<String> objectNames) {
-		return turAssetTrainingService.getTrainedAtMap(objectNames);
 	}
 
 	private String extractFileName(String objectName) {

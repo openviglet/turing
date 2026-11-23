@@ -47,6 +47,7 @@ import com.viglet.turing.sn.api.TurSNSiteLocales;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 
 /**
  * T1033 / §D.13 — the paging rule behind the export. What matters is which call

@@ -41,7 +41,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.viglet.turing.exchange.sn.TurSNSiteContentExchangeService;
+import com.viglet.turing.answer.exchange.TurSNSiteContentExchangeService;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
@@ -456,8 +456,8 @@ class TurImportExchangeContentStreamTest {
                 .map(run -> run.stream().map(Map.Entry::getValue).toList())
                 .toList();
         var iterator = pages.iterator();
-        var content = new com.viglet.turing.exchange.sn.TurSNSiteContentPages("Catalog",
-                List.of(new com.viglet.turing.exchange.sn.TurSNSiteContentPages.LocalePages(
+        var content = new com.viglet.turing.answer.exchange.TurSNSiteContentPages("Catalog",
+                List.of(new com.viglet.turing.answer.exchange.TurSNSiteContentPages.LocalePages(
                         "en_US", iterator)));
 
         java.nio.file.Path zipPath = exportService.exportSNSitesToZip(List.of(exported), content,
