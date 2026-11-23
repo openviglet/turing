@@ -50,7 +50,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Component
-public class TurRagContextBuilder {
+public class TurRagContextBuilder implements com.viglet.turing.sn.api.TurSNDefaultEmbeddingModel {
 
     private final TurLlmModelFactory llmModelFactory;
     private final TurLocalEmbeddingModelFactory localEmbeddingModelFactory;
@@ -274,6 +274,12 @@ public class TurRagContextBuilder {
      */
     public Optional<RagInfrastructure> buildFromGlobalSettings() {
         return buildFromGlobalSettings(null);
+    }
+
+    /** T1322h — the default embedding model, for sn's synonym mining. */
+    @Override
+    public Optional<EmbeddingModel> defaultEmbeddingModel() {
+        return buildFromGlobalSettings().map(RagInfrastructure::embeddingModel);
     }
 
     /**

@@ -1852,6 +1852,7 @@
 - **T1340** — T1310 slice: the plugin factory resolves by SE instance id (getPluginForSeInstance), and sn passes TurSNSites.seInstanceIdOf(site); the factory imports no sn type.
 - **T1322z** — The import service and process queue write the site's vector store through TurSNSiteEmbeddings, which sn declares and TurSNGenAi implements; neither imports answer.
 - **T1342** — T1322l slice: TurLlmFallbackMode moved from llm.resilience into system, so system imports only shared and libraries; llm reads the enum from system.
+- **T1344** — T1322h slice: synonym mining reads the default embedding model through TurSNDefaultEmbeddingModel, which sn declares and rag's TurRagContextBuilder implements.
 
 ## Block DA — One bad document never costs the rest of an import
 

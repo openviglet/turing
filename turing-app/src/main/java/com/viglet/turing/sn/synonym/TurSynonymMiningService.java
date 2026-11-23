@@ -26,7 +26,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.viglet.turing.rag.TurRagContextBuilder;
+import com.viglet.turing.sn.api.TurSNDefaultEmbeddingModel;
 import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSynonymType;
@@ -58,12 +58,12 @@ public class TurSynonymMiningService {
     private static final double DEFAULT_THRESHOLD = 0.82;
     private static final int MAX_CLUSTER_SIZE = 12;
 
-    private final TurRagContextBuilder ragContextBuilder;
+    private final TurSNDefaultEmbeddingModel defaultEmbeddingModel;
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
 
-    public TurSynonymMiningService(TurRagContextBuilder ragContextBuilder,
+    public TurSynonymMiningService(TurSNDefaultEmbeddingModel defaultEmbeddingModel,
             TurSNSiteMetricAccessRepository metricAccessRepository) {
-        this.ragContextBuilder = ragContextBuilder;
+        this.defaultEmbeddingModel = defaultEmbeddingModel;
         this.metricAccessRepository = metricAccessRepository;
     }
 
@@ -77,9 +77,7 @@ public class TurSynonymMiningService {
      * @return disabled candidate synonym sets for human review (never persisted)
      */
     public List<TurSNSynonymDto> mine(TurSNSite site, Locale locale, int limit, double threshold) {
-        EmbeddingModel embeddingModel = ragContextBuilder.buildFromGlobalSettings()
-                .map(TurRagContextBuilder.RagInfrastructure::embeddingModel)
-                .orElse(null);
+        EmbeddingModel embeddingModel = defaultEmbeddingModel.defaultEmbeddingModel().orElse(null);
         if (embeddingModel == null) {
             // No default embedding model configured — nothing to mine against.
             log.debug("Synonym mining skipped: no default embedding model configured.");

@@ -37,8 +37,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.embedding.EmbeddingModel;
 
-import com.viglet.turing.rag.TurRagContextBuilder;
-import com.viglet.turing.rag.TurRagContextBuilder.RagInfrastructure;
+import com.viglet.turing.sn.api.TurSNDefaultEmbeddingModel;
 import com.viglet.turing.sn.persistence.dto.synonym.TurSNSynonymDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSynonymType;
@@ -67,12 +66,11 @@ class TurSynonymMiningServiceTest {
 
     @Test
     void minesClustersFromQueryLogAsDisabledProposals() {
-        TurRagContextBuilder ragBuilder = mock(TurRagContextBuilder.class);
+        TurSNDefaultEmbeddingModel ragBuilder = mock(TurSNDefaultEmbeddingModel.class);
         TurSNSiteMetricAccessRepository repo = mock(TurSNSiteMetricAccessRepository.class);
         EmbeddingModel embed = mock(EmbeddingModel.class);
 
-        when(ragBuilder.buildFromGlobalSettings())
-                .thenReturn(Optional.of(new RagInfrastructure(null, embed, null, null, null, null)));
+        when(ragBuilder.defaultEmbeddingModel()).thenReturn(Optional.of(embed));
         when(embed.embed(anyString())).thenAnswer(inv -> VECTORS.get(inv.getArgument(0)));
         when(repo.topTerms(any(), any())).thenReturn(List.of(
                 term("tv"), term("television"), term("telly"), term("laptop"), term("notebook")));
@@ -90,9 +88,9 @@ class TurSynonymMiningServiceTest {
 
     @Test
     void returnsEmptyWhenNoDefaultEmbeddingModel() {
-        TurRagContextBuilder ragBuilder = mock(TurRagContextBuilder.class);
+        TurSNDefaultEmbeddingModel ragBuilder = mock(TurSNDefaultEmbeddingModel.class);
         TurSNSiteMetricAccessRepository repo = mock(TurSNSiteMetricAccessRepository.class);
-        when(ragBuilder.buildFromGlobalSettings()).thenReturn(Optional.empty());
+        when(ragBuilder.defaultEmbeddingModel()).thenReturn(Optional.empty());
 
         TurSynonymMiningService service = new TurSynonymMiningService(ragBuilder, repo);
         assertTrue(service.mine(mock(TurSNSite.class), Locale.ENGLISH, 100, 0.9).isEmpty());
