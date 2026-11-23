@@ -24,6 +24,5 @@
         "storage :: *", "searchengine", "searchengine :: *", "llm", "llm :: *", "sn",
         "sn :: *", "transcription", "transcription :: *", "kb", "kb :: *", "rag", "rag :: *",
         "persona", "persona :: *", "batch", "batch :: *", "agent", "agent :: *", "answer",
-        "answer :: *", "commons", "commons :: *", "se", "se :: *", "client", "client :: *",
-        "spring", "spring :: *" })
+        "answer :: *" })
 package com.viglet.turing.eval;

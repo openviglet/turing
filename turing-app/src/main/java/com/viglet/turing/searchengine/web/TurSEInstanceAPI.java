@@ -44,8 +44,8 @@ import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.searchengine.solr.TurSolr;
 import com.viglet.turing.searchengine.solr.TurSolrInstanceProcess;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreSiteUsage;
+import com.viglet.turing.searchengine.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreSiteUsage;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 import com.viglet.turing.tenant.TurInfraTenantScope;
 

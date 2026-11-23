@@ -2495,21 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.19 Module verification as a gate (T1323)
-
-The report test becomes ApplicationModules.verify() in mvn test, so a cycle, a call into
-another module's internal package or an undeclared dependency fails the build. The test
-has no exemption list: a violation is fixed or ADR 0005 is changed.
-
-Measured 2026-11-23, after T1322 declared the modules: no cycle, no undeclared
-dependency and no call into another application module's internal package. All 3,278
-violations left point into the library jars that share the base package and that
-Modulith reads as modules (commons from turing-commons, client from turing-java-sdk,
-spring from turing-spring; sn and searchengine account for most). Before verify() can
-run, those jars leave the model, either by building ApplicationModules with them
-excluded or by opening them as libraries; declaring them in their own Maven modules
-would put the modulith dependency on published artifacts, so that is the one ruled out.
-
 ### CLXXXIX.20 Durable module events (T1324)
 
 Asynchronous cross-module listeners (indexing after a site change, analytics,

@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 
 /**
  * Tests for TurLuceneUtils.

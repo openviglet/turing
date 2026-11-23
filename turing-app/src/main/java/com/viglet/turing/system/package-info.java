@@ -20,6 +20,5 @@
  */
 @org.springframework.modulith.ApplicationModule(displayName = "System",
         allowedDependencies = {
-        "shared", "shared :: *", "commons", "commons :: *", "se", "se :: *", "client",
-        "client :: *", "spring", "spring :: *" })
+        "shared", "shared :: *" })
 package com.viglet.turing.system;

@@ -42,7 +42,6 @@ import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.spi.TurSESite;
 import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 
 /**
  * Unit tests for TurSearchEnginePlugin interface.

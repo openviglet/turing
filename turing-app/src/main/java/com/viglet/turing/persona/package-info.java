@@ -22,7 +22,5 @@
         "shared", "shared :: *", "system", "system :: *", "observability",
         "observability :: *", "tenant", "tenant :: *", "auth", "auth :: *", "storage",
         "storage :: *", "searchengine", "searchengine :: *", "llm", "llm :: *", "sn",
-        "sn :: *", "transcription", "transcription :: *", "kb", "kb :: *", "rag", "rag :: *",
-        "commons", "commons :: *", "se", "se :: *", "client", "client :: *", "spring",
-        "spring :: *" })
+        "sn :: *", "transcription", "transcription :: *", "kb", "kb :: *", "rag", "rag :: *" })
 package com.viglet.turing.persona;

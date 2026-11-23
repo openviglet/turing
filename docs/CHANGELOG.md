@@ -1861,6 +1861,7 @@
 - **T1351** — T1310 slice: the Solr query builder, result processor and TurSolr read the site through TurSESiteSearchConfig, with facet-type rules in searchengine and three facet enums moved there.
 - **T1322** — Every module declares @ApplicationModule with the lower layers as its allowed dependencies, and the packages other modules use are named interfaces, leaving only the library jars in the module report (design §CLXXXIX.18 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
 - **T1321** — The schema starts from one Liquibase baseline per module, equal on H2 to the old 220-file history and applied on MySQL and PostgreSQL, and a database from before the baseline is refused at startup with the export and import path (design §CLXXXIX.17 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
+- **T1323** — Every mvn test now runs ApplicationModules.verify() over the application's own modules, so a cycle, a call into another module's internal package or an undeclared dependency fails the build (design §CLXXXIX.19 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
 
 ## Block DA — One bad document never costs the rest of an import
 

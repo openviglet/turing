@@ -19,6 +19,5 @@
  */
 @org.springframework.modulith.ApplicationModule(displayName = "Storage",
         allowedDependencies = {
-        "shared", "shared :: *", "system", "system :: *", "tenant", "tenant :: *", "commons",
-        "commons :: *", "se", "se :: *", "client", "client :: *", "spring", "spring :: *" })
+        "shared", "shared :: *", "system", "system :: *", "tenant", "tenant :: *" })
 package com.viglet.turing.storage;

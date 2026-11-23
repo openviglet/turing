@@ -43,7 +43,7 @@ import com.viglet.turing.system.properties.TurContentAiProperty;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;

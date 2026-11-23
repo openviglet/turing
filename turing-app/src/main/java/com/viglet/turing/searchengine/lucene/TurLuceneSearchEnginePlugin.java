@@ -32,7 +32,7 @@ import com.viglet.turing.searchengine.TurSESynonymRule;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;

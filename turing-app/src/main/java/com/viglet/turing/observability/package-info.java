@@ -19,6 +19,5 @@
  */
 @org.springframework.modulith.ApplicationModule(displayName = "Observability",
         allowedDependencies = {
-        "shared", "shared :: *", "system", "system :: *", "commons", "commons :: *", "se",
-        "se :: *", "client", "client :: *", "spring", "spring :: *" })
+        "shared", "shared :: *", "system", "system :: *" })
 package com.viglet.turing.observability;

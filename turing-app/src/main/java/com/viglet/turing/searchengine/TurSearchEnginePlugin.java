@@ -22,7 +22,6 @@ import com.viglet.turing.searchengine.spi.TurSESite;
 import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 
 import java.util.List;
 import java.util.Locale;

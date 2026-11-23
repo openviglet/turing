@@ -23,6 +23,5 @@
         "observability :: *", "tenant", "tenant :: *", "auth", "auth :: *", "storage",
         "storage :: *", "searchengine", "searchengine :: *", "llm", "llm :: *", "sn",
         "sn :: *", "transcription", "transcription :: *", "kb", "kb :: *", "rag", "rag :: *",
-        "persona", "persona :: *", "batch", "batch :: *", "agent", "agent :: *", "commons",
-        "commons :: *", "se", "se :: *", "client", "client :: *", "spring", "spring :: *" })
+        "persona", "persona :: *", "batch", "batch :: *", "agent", "agent :: *" })
 package com.viglet.turing.answer;

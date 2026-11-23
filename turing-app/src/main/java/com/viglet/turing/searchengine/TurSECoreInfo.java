@@ -1,4 +1,4 @@
-package com.viglet.turing.searchengine.solr.bean;
+package com.viglet.turing.searchengine;
 
 import java.util.List;
 

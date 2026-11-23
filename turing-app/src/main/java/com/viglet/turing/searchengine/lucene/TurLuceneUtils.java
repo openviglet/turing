@@ -28,7 +28,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.store.FSDirectory;
 
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 
 import lombok.extern.slf4j.Slf4j;
 

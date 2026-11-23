@@ -62,7 +62,7 @@ import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;

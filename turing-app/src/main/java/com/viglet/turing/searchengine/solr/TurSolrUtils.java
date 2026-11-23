@@ -50,7 +50,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.searchengine.result.TurSEResult;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 import com.viglet.turing.searchengine.solr.bean.TurSolrFieldBean;
 
 import lombok.extern.slf4j.Slf4j;

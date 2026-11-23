@@ -13,13 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.ApplicationModule;
-import org.springframework.modulith.core.ApplicationModules;
-
-import com.viglet.turing.TuringES;
 
 /**
  * T1322 / ADR 0005 — every module of the application declares itself: its base
@@ -32,24 +28,14 @@ import com.viglet.turing.TuringES;
  */
 class TurModuleDeclarationTest {
 
-    /**
-     * The library jars that share the base package (turing-commons, turing-java-sdk,
-     * turing-spring); they are not modules of this application and are declared
-     * nowhere here.
-     */
-    private static final Set<String> LIBRARIES = Set.of("commons", "se", "client", "spring");
-
     @Test
     void everyApplicationModuleDeclaresItsAllowedDependencies() {
-        ApplicationModules modules = ApplicationModules.of(TuringES.class);
+        var modules = TurModules.model();
         List<String> undeclared = new ArrayList<>();
         List<String> checked = new ArrayList<>();
 
         for (var module : modules) {
             String id = module.getIdentifier().toString();
-            if (LIBRARIES.contains(id)) {
-                continue;
-            }
             checked.add(id);
             ApplicationModule declaration = declarationOf(module.getBasePackage().getName());
             if (declaration == null) {

@@ -29,7 +29,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
 import com.viglet.turing.searchengine.result.TurSEResults;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

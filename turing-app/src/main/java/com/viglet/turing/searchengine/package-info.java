@@ -22,6 +22,5 @@
         allowedDependencies = {
         "shared", "shared :: *", "system", "system :: *", "observability",
         "observability :: *", "tenant", "tenant :: *", "auth", "auth :: *", "storage",
-        "storage :: *", "commons", "commons :: *", "se", "se :: *", "client", "client :: *",
-        "spring", "spring :: *" })
+        "storage :: *" })
 package com.viglet.turing.searchengine;

@@ -27,7 +27,7 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.lucene.TurLuceneFoldingAnalyzer;
 import com.viglet.turing.searchengine.lucene.TurLuceneNfcCharFilter;
-import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
+import com.viglet.turing.searchengine.TurSECoreInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
