@@ -30,7 +30,6 @@ import com.viglet.core.tenancy.VigletTenantRef;
 import com.viglet.core.tenancy.VigletTenantStatus;
 import com.viglet.core.tenancy.VigletTenantStore;
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
-import com.viglet.turing.llm.vigletai.TurVigletUpgradeTargetService;
 import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.llm.persistence.repository.TurLLMTokenUsageRepository;
 import com.viglet.turing.sn.api.TurSNSites;
@@ -58,7 +57,7 @@ class TurTenantQuotaServiceTest {
     @Mock
     private TurLLMTokenUsageRepository tokenUsageRepository;
     @Mock
-    private TurVigletUpgradeTargetService upgradeTargetService;
+    private TurTenantUpgradeTarget upgradeTargetService;
 
     private TurTenantContext context;
 

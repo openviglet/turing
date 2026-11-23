@@ -28,7 +28,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.properties.TurTenantDeprovisionProperty;
-import com.viglet.turing.auth.keycloak.TurKeycloakUserDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,8 +101,8 @@ public class TurKeycloakServiceAccountIdentityProvider implements TurTenantOwner
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
             headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
-            TurKeycloakUserDto[] users = restTemplate
-                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), TurKeycloakUserDto[].class)
+            KeycloakUser[] users = restTemplate
+                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), KeycloakUser[].class)
                     .getBody();
             if (users == null || users.length == 0) {
                 return TurIdentityStatus.ABSENT;
@@ -174,5 +173,13 @@ public class TurKeycloakServiceAccountIdentityProvider implements TurTenantOwner
         int realmsIdx = path.indexOf(REALMS);
         String realm = path.substring(realmsIdx + REALMS.length());
         return realm.endsWith("/") ? realm.substring(0, realm.length() - 1) : realm;
+    }
+
+    /**
+     * T1322l — the one field of a Keycloak user this reads; its own record so tenant
+     * does not import auth's DTO (ADR 0005 section 6).
+     */
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    record KeycloakUser(Boolean enabled) {
     }
 }

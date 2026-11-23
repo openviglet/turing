@@ -22,7 +22,6 @@ import com.viglet.core.tenancy.VigletPlanLimits;
 import com.viglet.core.tenancy.VigletQuotaService;
 import com.viglet.core.tenancy.VigletTenantContext;
 import com.viglet.turing.shared.exception.TurQuotaExhaustedException;
-import com.viglet.turing.llm.vigletai.TurVigletUpgradeTargetService;
 
 /**
  * T277 / §XIV.5.3 — enforces plan-based quotas at resource-create time and at
@@ -60,12 +59,12 @@ public class TurTenantQuotaService {
     private final VigletQuotaService quotaService;
     private final VigletTenantContext tenantContext;
     private final TurVigletResourceCounter resourceCounter;
-    private final TurVigletUpgradeTargetService upgradeTargetService;
+    private final TurTenantUpgradeTarget upgradeTargetService;
 
     public TurTenantQuotaService(VigletQuotaService quotaService,
             VigletTenantContext tenantContext,
             TurVigletResourceCounter resourceCounter,
-            TurVigletUpgradeTargetService upgradeTargetService) {
+            TurTenantUpgradeTarget upgradeTargetService) {
         this.quotaService = quotaService;
         this.tenantContext = tenantContext;
         this.resourceCounter = resourceCounter;

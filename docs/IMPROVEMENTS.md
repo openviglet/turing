@@ -2659,29 +2659,6 @@ TurDefaultAgentResolver, answers agent existence, RAG readiness and the site age
 view (siteAgentOf, T1322w); extend it before adding another agent-facing SPI. REST paths
 stay. Done when sn imports no agent, rag, chat, persona, answer or eval type.
 
-### CLXXXIX.45 The infrastructure layer imports only downward (T1322l)
-
-Measured after T1322a (2026-11-21). The three infrastructure modules of ADR 0005 section
-6 layer 2 import each other: auth reads system's properties and settings in 13 files,
-tenant reads system in 4, and the other way system imports tenant (TurMvcAsyncConfig,
-TurSecretCryptoService, TurTenantKeyResolver, TurIntegrationInstanceAPI, TurFeaturesAPI)
-and auth (TurDevTokenAPI, TurIntegrationAPI), while tenant imports auth once
-(TurKeycloakServiceAccountIdentityProvider). They also import feature modules: system's
-controllers reach storage (TurPageAPI, TurPageController, TurSystemInfoAPI,
-TurFeaturesAPI), sn (TurEmailReportAPI, moved by T1322q; TurCacheAPI, now through the
-TurReloadableCache SPI, T1322s), transcription, batch, exchange and persona; tenant
-reaches llm, sn and storage for quotas, counters and teardown.
-
-Proposed ruling, recorded in ADR 0005 when this ships: order layer 2 as system below
-tenant below auth, which keeps today's dominant direction (auth and tenant reading
-system's configuration). Then system's imports of tenant and auth move: the tenant key
-and async context through viglet-core's tenancy types (done, T1322u: no SPI was needed),
-the dev-token and integration controllers into auth. Controllers in system that serve
-one feature move to that feature's module with their REST paths unchanged. Tenant's
-per-module counters and teardown become SPIs tenant declares and each module implements.
-Done when system imports only shared, tenant only system and shared, and auth only those
-three.
-
 ## CXC One bad document never costs the rest of an import
 
 ### CXC.2 Dropped values reach the indexing log (T1343)

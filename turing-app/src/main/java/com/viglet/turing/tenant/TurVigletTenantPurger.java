@@ -17,7 +17,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import com.viglet.core.tenancy.VigletTenantPurger;
-import com.viglet.turing.storage.TurStorageService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,10 +42,10 @@ public class TurVigletTenantPurger implements VigletTenantPurger {
 
     private static final String LUCENE_BASE = "./store/lucene-vector";
 
-    private final TurStorageService storageService;
+    private final TurTenantObjectStore storageService;
     private final CacheManager cacheManager;
 
-    public TurVigletTenantPurger(TurStorageService storageService, CacheManager cacheManager) {
+    public TurVigletTenantPurger(TurTenantObjectStore storageService, CacheManager cacheManager) {
         this.storageService = storageService;
         this.cacheManager = cacheManager;
     }

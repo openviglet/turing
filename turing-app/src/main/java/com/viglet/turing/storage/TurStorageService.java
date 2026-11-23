@@ -13,7 +13,8 @@ import java.util.List;
  * @author Alexandre Oliveira
  * @since 2026.2.4
  */
-public interface TurStorageService extends com.viglet.turing.system.TurStorageStatus {
+public interface TurStorageService extends com.viglet.turing.system.TurStorageStatus,
+        com.viglet.turing.tenant.TurTenantObjectStore {
 
     @Override
     TurStorageType getType();
@@ -35,6 +36,7 @@ public interface TurStorageService extends com.viglet.turing.system.TurStorageSt
 
     void uploadStream(String objectName, InputStream inputStream, long size, String contentType);
 
+    @Override
     void deleteObjectsWithPrefix(String prefix);
 
     void deleteObject(String objectName);

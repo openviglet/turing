@@ -71,7 +71,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class TurVigletUpgradeTargetService {
+public class TurVigletUpgradeTargetService implements com.viglet.turing.tenant.TurTenantUpgradeTarget {
 
     private static final String PAYLOAD_PREFIX = "v1";
     private static final String PRODUCT = "turing";
@@ -102,6 +102,7 @@ public class TurVigletUpgradeTargetService {
      * @param resource which limit was reached ({@code agents}, {@code sites},
      *                 {@code monthlyTokens})
      */
+    @Override
     public Optional<String> upgradeUrl(String tenantId, String resource) {
         String baseUrl = vigletAiProperty.getUpgradeBaseUrl();
         if (!StringUtils.hasText(baseUrl)) {

@@ -151,7 +151,11 @@ The layers, bottom to top, replacing the direction paragraph of §1 where they d
    `auth` (absorbs `spring`), and **`observability`**, moved down from the top: every
    module records meters and observations, so it is infrastructure. A class in these
    packages that imports a feature module (an SN mail template, an LLM retry policy, a
-   per-module property class) moves into that feature module.
+   per-module property class) moves into that feature module. **Inside the layer the
+   order is `system`, then `tenant`, then `auth`** (T1322l): `system` imports only
+   `shared`, `tenant` only `system` and `shared`, `auth` only those three, which keeps the
+   dominant direction (auth and tenant read system's configuration). What a lower one
+   needs from a higher one is an SPI the lower one declares.
 3. `searchengine`, `llm`. **`llm` also owns the vector stores** (store instances, vendors
    and providers), which `rag`, `agent` and `persona` all read as infrastructure.
 4. `sn`, `storage`, **`transcription`** (moved down from layer 8 by T1322m: it is a
@@ -181,6 +185,7 @@ A module depends only on lower layers, never sideways inside its own layer.
 | `agent` ↔ `mcp` 11 / 12 | **Move.** The MCP client (`TurMcpServer`, its repository, `TurMcpToolCallbackService`) moves to `agent`; `mcp` keeps the server and sits above `agent`. |
 | `system` → `agent` 8, `chat` 4 | **Move.** Parked-conversation and chat-analytics controllers move to `agent`; global settings read the code interpreter through a `system` SPI. |
 | `agent`, `sn` → `observability` | **Amend**: `observability` is infrastructure (layer 2). |
+| `system` ↔ `tenant` ↔ `auth`, and layer 2 → feature modules | **Amend + move** (T1322l): ordered `system` < `tenant` < `auth`. System reads the tenant context through viglet-core's tenancy types, and storage and Git status through `TurStorageStatus`/`TurGitServerStatus`. Tenant counts plan resources through `TurTenantResourceCount`, purges through `TurTenantObjectStore` and finds upgrade URLs through `TurTenantUpgradeTarget`, each implemented by the owning module. Single-feature controllers moved to their feature with REST paths unchanged. |
 | `persona` → `transcription`, `transcription` → `kb` 1 | **Amend + move** (T1322m): `transcription` sits in layer 4; its Thesaurus keyword hint is `TurTranscriptionKeywordSource`, an SPI `transcription` declares and `kb` implements. |
 
 ### 7. Audit dates (T1319)
