@@ -7,7 +7,9 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.sn.ranking;
+package com.viglet.turing.rag.ranking;
+
+import com.viglet.turing.sn.ranking.TurSNScoredNeighbor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +60,7 @@ import com.viglet.turing.system.TurGlobalSettingsService;
  * @since 2026.3.1
  */
 @ExtendWith(MockitoExtension.class)
-class TurSNHybridRankingServiceTest {
+class TurRagHybridRankingServiceTest {
 
     @Mock
     private TurRagContextBuilder ragContextBuilder;
@@ -73,11 +75,11 @@ class TurSNHybridRankingServiceTest {
     @Mock
     private com.viglet.turing.auth.persistence.repository.devtoken.TurDevTokenRepository devTokenRepository;
 
-    private TurSNHybridRankingService service;
+    private TurRagHybridRankingService service;
 
     @BeforeEach
     void setUp() {
-        service = new TurSNHybridRankingService(ragContextBuilder, globalSettingsService,
+        service = new TurRagHybridRankingService(ragContextBuilder, globalSettingsService,
                 reranker, defaultChatModelResolver, devTokenRepository);
         lenient().when(globalSettingsService.getDefaultEmbeddingModelId()).thenReturn("emb-1");
         lenient().when(globalSettingsService.getDefaultEmbeddingStoreId()).thenReturn("store-1");
@@ -468,7 +470,7 @@ class TurSNHybridRankingServiceTest {
         when(ragContextBuilder.build(anyString(), anyString(), anyString()))
                 .thenReturn(Optional.of(infra()));
         List<Document> hits = new ArrayList<>();
-        for (int i = 0; i < TurSNHybridRankingService.RECALL_MAX + 5; i++) {
+        for (int i = 0; i < TurRagHybridRankingService.RECALL_MAX + 5; i++) {
             hits.add(hit("doc-" + i, 0.9));
         }
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(hits);
@@ -477,8 +479,8 @@ class TurSNHybridRankingServiceTest {
         List<TurSEResult> fused = service.fuse(recallSite(null), Locale.ENGLISH, "query",
                 List.of(), hydrator(asked));
 
-        assertThat(fused).hasSize(TurSNHybridRankingService.RECALL_MAX);
-        assertThat(asked.get(0)).hasSize(TurSNHybridRankingService.RECALL_MAX).startsWith("doc-0");
+        assertThat(fused).hasSize(TurRagHybridRankingService.RECALL_MAX);
+        assertThat(asked.get(0)).hasSize(TurRagHybridRankingService.RECALL_MAX).startsWith("doc-0");
     }
 
     @Test
@@ -558,8 +560,8 @@ class TurSNHybridRankingServiceTest {
         List<Document> vector = List.of(hit("C", null), hit("A", null));
         List<Document> lexical = List.of(hit("A", null), hit("B", null), hit("C", null));
 
-        List<Document> weighted = TurSNHybridRankingService.weightedFuse(vector, lexical,
-                TurSNHybridRankingService.DEFAULT_VECTOR_WEIGHT, 3);
+        List<Document> weighted = TurRagHybridRankingService.weightedFuse(vector, lexical,
+                TurRagHybridRankingService.DEFAULT_VECTOR_WEIGHT, 3);
         List<Document> plain = com.viglet.turing.rag.TurRagRrf.fuse(vector, lexical, 3);
 
         assertThat(weighted).extracting(Document::getId)
@@ -569,11 +571,11 @@ class TurSNHybridRankingServiceTest {
     @Test
     void anUnsetOrOutOfRangeWeightFallsBackSafely() {
         TurSNSite site = siteWithMode(TurSNRankingMode.HYBRID_RRF);
-        assertThat(TurSNHybridRankingService.vectorWeight(site)).isEqualTo(0.5);
+        assertThat(TurRagHybridRankingService.vectorWeight(site)).isEqualTo(0.5);
         site.getTurSNSiteGenAi().setSnHybridVectorWeight(7.0);
-        assertThat(TurSNHybridRankingService.vectorWeight(site)).isEqualTo(1.0);
+        assertThat(TurRagHybridRankingService.vectorWeight(site)).isEqualTo(1.0);
         site.getTurSNSiteGenAi().setSnHybridVectorWeight(-1.0);
-        assertThat(TurSNHybridRankingService.vectorWeight(site)).isEqualTo(0.0);
+        assertThat(TurRagHybridRankingService.vectorWeight(site)).isEqualTo(0.0);
     }
 
     @Test
@@ -594,7 +596,7 @@ class TurSNHybridRankingServiceTest {
 
     @Test
     void namedFieldsAreEmbeddedInTheSiteOrder() {
-        String content = TurSNHybridRankingService.buildContent(Map.of(
+        String content = TurRagHybridRankingService.buildContent(Map.of(
                 TurSNFieldName.TITLE, "Babá",
                 "skills", List.of("primeiros socorros", "recreação"),
                 TurSNFieldName.TEXT, "ignored"), List.of("skills", TurSNFieldName.TITLE));
@@ -605,9 +607,9 @@ class TurSNHybridRankingServiceTest {
     @Test
     void embeddedFieldsParseTheCommaSeparatedSetting() {
         TurSNSite site = siteWithMode(TurSNRankingMode.HYBRID_RRF);
-        assertThat(TurSNHybridRankingService.embeddedFields(site)).isEmpty();
+        assertThat(TurRagHybridRankingService.embeddedFields(site)).isEmpty();
         site.getTurSNSiteGenAi().setSnEmbeddedFields("title, description,,title ,skills");
-        assertThat(TurSNHybridRankingService.embeddedFields(site))
+        assertThat(TurRagHybridRankingService.embeddedFields(site))
                 .containsExactly("title", "description", "skills");
     }
 
@@ -793,7 +795,7 @@ class TurSNHybridRankingServiceTest {
 
     @Test
     void buildContentPrefersTitleAbstractText() {
-        String content = TurSNHybridRankingService.buildContent(Map.of(
+        String content = TurRagHybridRankingService.buildContent(Map.of(
                 TurSNFieldName.ID, "x",
                 TurSNFieldName.TITLE, "Course",
                 TurSNFieldName.ABSTRACT, "Short",
@@ -803,7 +805,7 @@ class TurSNHybridRankingServiceTest {
 
     @Test
     void buildContentFallsBackToOtherFieldsWhenNoMainText() {
-        String content = TurSNHybridRankingService.buildContent(Map.of(
+        String content = TurRagHybridRankingService.buildContent(Map.of(
                 TurSNFieldName.ID, "x",
                 TurSNFieldName.URL, "http://ignored",
                 TurSNFieldName.AUTHOR, "Ada"));
@@ -812,7 +814,7 @@ class TurSNHybridRankingServiceTest {
 
     @Test
     void buildContentJoinsListValues() {
-        String content = TurSNHybridRankingService.buildContent(Map.of(
+        String content = TurRagHybridRankingService.buildContent(Map.of(
                 TurSNFieldName.TITLE, List.of("A", "B")));
         assertThat(content).isEqualTo("A B");
     }
