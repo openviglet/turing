@@ -73,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @Component
@@ -756,7 +757,7 @@ public class TurSNSiteImport {
 			if (!plugin.indexExists(seInstance, locale.getCore())) {
 				log.info("Index '{}' does not exist in SE Instance '{}'. Creating it...",
 						locale.getCore(), seInstance.getTitle());
-				plugin.createIndex(seInstance, locale, locale.getCore(), Map.of());
+				plugin.createIndex(seInstance, TurSNSiteRefs.toSE(locale), locale.getCore(), Map.of());
 				log.info("Index '{}' created successfully.", locale.getCore());
 			} else {
 				log.info("Index '{}' already exists in SE Instance '{}'.",

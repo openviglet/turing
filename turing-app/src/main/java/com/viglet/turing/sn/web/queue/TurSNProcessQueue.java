@@ -63,6 +63,7 @@ import com.viglet.turing.sn.spotlight.TurSNSpotlightProcess;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.json.JsonMapper;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Component
 @Slf4j
@@ -256,7 +257,7 @@ public class TurSNProcessQueue {
         Map<String, List<TurSEDroppedValues.Dropped>> dropped;
         TurSEDroppedValues.begin();
         try {
-            indexed = plugin.indexDocuments(turSNSite, locale, documents);
+            indexed = plugin.indexDocuments(TurSNSiteRefs.toSE(turSNSite), locale, documents);
         } catch (RuntimeException e) {
             TurSEDroppedValues.end();
             log.warn("Bulk index of {} docs on site '{}' failed ({}) — falling back to per-item",
@@ -271,7 +272,7 @@ public class TurSNProcessQueue {
             items.forEach(item -> processJobItemForSite(siteName, item, ensuredCores));
             return;
         }
-        plugin.commit(turSNSite, locale);
+        plugin.commit(TurSNSiteRefs.toSE(turSNSite), locale);
         for (int i = 0; i < items.size(); i++) {
             // T383 — side-write the document embedding for HYBRID_RRF sites (no-op
             // for vectorless / legacy sites, the case this block optimizes).
@@ -385,7 +386,7 @@ public class TurSNProcessQueue {
     }
 
     private boolean commitJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
-        return pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)).commit(turSNSite, turSNJobItem.getLocale());
+        return pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)).commit(TurSNSiteRefs.toSE(turSNSite), turSNJobItem.getLocale());
     }
 
     private boolean deleteJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
@@ -433,7 +434,7 @@ public class TurSNProcessQueue {
         log.debug("DeIndex");
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
         if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.ID)) {
-            boolean deIndexed = plugin.deIndex(turSNSite, turSNJobItem.getLocale(), turSNJobItem.getId());
+            boolean deIndexed = plugin.deIndex(TurSNSiteRefs.toSE(turSNSite), turSNJobItem.getLocale(), turSNJobItem.getId());
             if (deIndexed) {
                 // T383 — mirror the removal into the per-site hybrid vector collection.
                 turSNHybridRankingService.deIndex(turSNSite, turSNJobItem.getId());
@@ -445,7 +446,7 @@ public class TurSNProcessQueue {
             return deIndexed;
         } else if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.TYPE)) {
             String type = (String) turSNJobItem.getAttributes().get(TurSNFieldName.TYPE);
-            boolean deIndexed = plugin.deIndexByType(turSNSite, turSNJobItem.getLocale(), type);
+            boolean deIndexed = plugin.deIndexByType(TurSNSiteRefs.toSE(turSNSite), turSNJobItem.getLocale(), type);
             if (deIndexed) {
                 turSNHybridRankingService.deIndexByType(turSNSite, type);
                 removeRagChunks(turSNSite, turSNJobItem, Map.of(TurSNFieldName.TYPE, type));
@@ -457,7 +458,7 @@ public class TurSNProcessQueue {
             // collection keeps its points: hydration through the engine drops them.
             Map<String, String> fields = new java.util.LinkedHashMap<>();
             turSNJobItem.getAttributes().forEach((field, value) -> fields.put(field, String.valueOf(value)));
-            boolean deIndexed = plugin.deIndexByFields(turSNSite, turSNJobItem.getLocale(), fields);
+            boolean deIndexed = plugin.deIndexByFields(TurSNSiteRefs.toSE(turSNSite), turSNJobItem.getLocale(), fields);
             if (deIndexed) {
                 // T1158 — the RAG chunks are cited directly, so they must go too.
                 removeRagChunks(turSNSite, turSNJobItem, fields);
@@ -478,7 +479,7 @@ public class TurSNProcessQueue {
         createMissingFields(turSNSite, turSNJobItem.getSpecs());
         Map<String, Object> attributes = buildIndexAttributes(turSNSite, turSNJobItem);
         boolean indexed = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
-                .indexDocument(turSNSite, turSNJobItem.getLocale(), attributes);
+                .indexDocument(TurSNSiteRefs.toSE(turSNSite), turSNJobItem.getLocale(), attributes);
         if (indexed) {
             // T383 — side-write the document embedding for HYBRID_RRF sites (no-op otherwise).
             turSNHybridRankingService.indexDocument(turSNSite, turSNJobItem.getLocale(), attributes);
@@ -555,7 +556,7 @@ public class TurSNProcessQueue {
                 if (!plugin.indexExists(instance, core)) {
                     log.info("[T335] Core '{}' missing on SE Instance '{}' — provisioning on demand",
                             core, instance.getTitle());
-                    plugin.createIndex(instance, turSNSiteLocale, core, Map.of());
+                    plugin.createIndex(instance, TurSNSiteRefs.toSE(turSNSiteLocale), core, Map.of());
                 }
             } catch (Exception e) {
                 log.error("[T335] Failed to provision core '{}' on demand on SE Instance '{}': {}",

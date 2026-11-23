@@ -2495,35 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.6 One searchengine module (T1310)
-
-plugins, se, solr, lucene, elasticsearch and contentai together implement
-TurSearchEnginePlugin. They become one searchengine module whose named interface is the
-plugin contract and its factory; the Solr, Lucene, Elasticsearch and Content AI
-implementations become internal. sn and genai depend only on the interface, which the
-turing-search-lucene skill already names as the seam. The embedded Lucene vector store
-stays with rag.
-
-Landed: the engines and DSL are gathered (T1310), no sn class imports an engine package
-(T1310c), the search-concept enums live in the searchengine API (T1310d), and ranking
-expressions reach the engines through the TurSESiteSearchConfig SPI in searchengine.spi
-(T1310e), as do custom sorts (T1310f), field types, index fields, site cores, settings
-and enabled fields (T1310g-i, n-z, T1340); engine-only helpers moved into searchengine
-(T1310j-m).
-
-What is left is the other direction. The contract still takes TurSNSite and
-TurSNSiteLocale, and 8 engine files import sn 15 times, only for the contract's
-TurSNSite and TurSNSiteLocale parameters. Two ways out:
-
-1. An SPI in searchengine (a site search configuration record and a provider interface)
-   that sn implements and the engines read. The engines keep building queries; sn owns
-   the configuration. Larger contract, no code moves between modules.
-2. Move SN query building (retrieveSearchResults and the facet and ranking translation)
-   into sn, leaving searchengine with index lifecycle, documents and raw queries. Smaller
-   contract, but each engine's query builder splits in two.
-
-Ruled on 2026-11-21 in ADR 0005 section 6: option 1, the smaller step from today's code.
-
 ### CLXXXIX.17 The Liquibase reset (T1321)
 
 db/changelog holds 205 files with every change since the project began, including

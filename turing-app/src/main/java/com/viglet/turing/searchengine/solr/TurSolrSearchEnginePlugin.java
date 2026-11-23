@@ -21,8 +21,8 @@ import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
 import com.viglet.turing.searchengine.TurSESynonymRule;
@@ -137,10 +137,10 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Index lifecycle -------------------------------------------------
 
     @Override
-    public void createIndex(TurSEInstance seInstance, TurSNSiteLocale siteLocale, String indexName,
+    public void createIndex(TurSEInstance seInstance, TurSESiteLocale siteLocale, String indexName,
             Map<String, TurSEFieldType> fieldTypes) {
         seInstance = effective(seInstance);
-        String configSet = siteLocale.getLanguage().getLanguage();
+        String configSet = siteLocale.language().getLanguage();
         String[] locales = {"en", "es", "pt"};
         if (!Arrays.asList(locales).contains(configSet)) {
             configSet = "en";
@@ -301,14 +301,14 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Document operations ---------------------------------------------
 
     /** T1310 — the id {@link TurSolr} writes a site's documents under; {@code null} without a site. */
-    private static String siteId(TurSNSite turSNSite) {
-        return turSNSite == null ? null : turSNSite.getId();
+    private static String siteId(TurSESite turSNSite) {
+        return turSNSite == null ? null : turSNSite.id();
     }
 
     @Override
-    public boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes) {
+    public boolean indexDocument(TurSESite turSNSite, Locale locale, Map<String, Object> attributes) {
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolrInstance -> {
                     turSolr.indexing(turSolrInstance, siteId(turSNSite), attributes);
                     return true;
@@ -316,21 +316,21 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public int indexDocuments(TurSNSite turSNSite, Locale locale,
+    public int indexDocuments(TurSESite turSNSite, Locale locale,
             List<Map<String, Object>> documents) {
         if (documents == null || documents.isEmpty()) {
             return 0;
         }
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolrInstance -> turSolr.indexingBatch(turSolrInstance, siteId(turSNSite), documents))
                 .orElse(0);
     }
 
     @Override
-    public boolean deIndex(TurSNSite turSNSite, Locale locale, String id) {
+    public boolean deIndex(TurSESite turSNSite, Locale locale, String id) {
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolrInstance -> {
                     turSolr.deIndexing(turSolrInstance, id);
                     return true;
@@ -338,9 +338,9 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type) {
+    public boolean deIndexByType(TurSESite turSNSite, Locale locale, String type) {
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolrInstance -> {
                     turSolr.deIndexingByType(turSolrInstance, type);
                     return true;
@@ -348,9 +348,9 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+    public boolean deIndexByFields(TurSESite turSNSite, Locale locale, Map<String, String> fields) {
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolrInstance -> {
                     turSolr.deIndexingByFields(turSolrInstance, fields);
                     return true;
@@ -358,9 +358,9 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean commit(TurSNSite turSNSite, Locale locale) {
+    public boolean commit(TurSESite turSNSite, Locale locale) {
         return turSolrInstanceProcess
-                .initSolrInstance(turSNSite.getName(), locale)
+                .initSolrInstance(turSNSite.name(), locale)
                 .map(turSolr::commit).orElse(false);
     }
 
@@ -663,7 +663,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     private static final int SIMILAR_MAX_SEED_CHARS = 1_000;
 
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows) {
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows) {
         return getSimilarDocuments(siteLocale, id, rows, null);
     }
 
@@ -672,12 +672,12 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
      * both the MLT handler and the BM25 fallback.
      */
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows,
             com.viglet.turing.commons.se.TurSEParameters constraints) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
-        TurSNSite site = siteLocale == null ? null : siteLocale.getTurSNSite();
+        TurSESite site = siteLocale == null ? null : siteLocale.site();
         return turSolrInstanceProcess.initSolrInstance(siteLocale)
                 .map(instance -> {
                     List<TurSESimilarResult> mltHits = trySimilarMltHandler(instance, id, rows, constraints, site);
@@ -692,10 +692,10 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     /** Solr {@code /mlt} handler keyed by {@code id:<id>} — the proper MoreLikeThis path. */
     private List<TurSESimilarResult> trySimilarMltHandler(
             com.viglet.turing.searchengine.solr.TurSolrInstance instance, String id, int rows,
-            com.viglet.turing.commons.se.TurSEParameters constraints, TurSNSite site) {
+            com.viglet.turing.commons.se.TurSEParameters constraints, TurSESite site) {
         try {
             SolrQuery query = new SolrQuery();
-            turSolr.prepareConstraints(constraints, query, site == null ? null : site.getName());
+            turSolr.prepareConstraints(constraints, query, site == null ? null : site.name());
             query.set("qt", "/mlt");
             query.setQuery(TurSNFieldName.ID + ":" + solrQuotedTerm(id));
             query.set("mlt.fl", SIMILAR_MLT_FIELDS);
@@ -719,7 +719,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     /** When the {@code /mlt} handler isn't reachable, emulate MLT with a BM25 disjunction over the seed text. */
     private List<TurSESimilarResult> trySimilarBm25Fallback(
             com.viglet.turing.searchengine.solr.TurSolrInstance instance, String id, int rows,
-            com.viglet.turing.commons.se.TurSEParameters constraints, TurSNSite site) {
+            com.viglet.turing.commons.se.TurSEParameters constraints, TurSESite site) {
         List<Map<String, Object>> seed = fetchByIds(instance, List.of(id));
         if (seed.isEmpty()) {
             return List.of();
@@ -734,7 +734,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                     TurSNFieldName.TITLE, escaped, TurSNFieldName.ABSTRACT, escaped,
                     TurSNFieldName.TEXT, escaped);
             SolrQuery query = new SolrQuery().setQuery(q);
-            turSolr.prepareConstraints(constraints, query, site == null ? null : site.getName());
+            turSolr.prepareConstraints(constraints, query, site == null ? null : site.name());
             query.setFields(TurSNFieldName.ID, TurSNFieldName.TITLE, TurSNFieldName.TYPE,
                     TurSNFieldName.URL);
             query.setRows(rows + 1);
@@ -748,7 +748,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public List<Map<String, Object>> getDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -758,7 +758,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public List<Map<String, Object>> getStoredDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getStoredDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -909,7 +909,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     private static final java.util.Set<String> ALWAYS_EXPORT_FIELDS = java.util.Set.of("id", "type");
 
     @Override
-    public List<Map<String, Object>> retrieveDocumentPage(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPage(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, int start, int rows) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(instance -> {
@@ -937,7 +937,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, String afterId, int rows) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(instance -> {
@@ -985,8 +985,8 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     private static boolean isFieldMultiValued(Map<String, ?> siteFieldMap, String fieldName) {
         Object field = siteFieldMap.get(fieldName);
-        if (field instanceof com.viglet.turing.sn.persistence.model.field.TurSNSiteField f) {
-            return f.getMultiValued() == 1;
+        if (field instanceof com.viglet.turing.searchengine.spi.TurSEIndexField f) {
+            return f.multiValued();
         }
         return false;
     }
@@ -995,7 +995,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     @Override
     public com.viglet.turing.searchengine.TurSEInventoryPage retrieveInventoryPage(
-            TurSNSiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
+            TurSESiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(instance -> {
                     SolrQuery query = new SolrQuery()
@@ -1051,20 +1051,20 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Monitoring ------------------------------------------------------
 
     @Override
-    public long getDocumentTotal(TurSNSiteLocale turSNSiteLocale) {
+    public long getDocumentTotal(TurSESiteLocale turSNSiteLocale) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(turSolr::getDocumentTotal).orElse(0L);
     }
 
     @Override
-    public long getDocumentCountWithField(TurSNSiteLocale turSNSiteLocale, String fieldName) {
+    public long getDocumentCountWithField(TurSESiteLocale turSNSiteLocale, String fieldName) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(instance -> turSolr.getDocumentTotalWithField(instance, fieldName))
                 .orElse(-1L);
     }
 
     @Override
-    public long getDocumentCountWithFieldBelow(TurSNSiteLocale turSNSiteLocale, String fieldName,
+    public long getDocumentCountWithFieldBelow(TurSESiteLocale turSNSiteLocale, String fieldName,
             int threshold) {
         return turSolrInstanceProcess.initSolrInstance(turSNSiteLocale)
                 .map(instance -> turSolr.getDocumentTotalWithFieldBelow(instance, fieldName, threshold))
@@ -1162,23 +1162,23 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Stop words and document lookup (T1310) ---------------------------
 
     @Override
-    public List<String> stopWords(TurSNSite turSNSite, Locale locale) {
-        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+    public List<String> stopWords(TurSESite turSNSite, Locale locale) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.name(), locale)
                 .map(new TurSEStopWord(resourceLoader)::getStopWords)
                 .orElse(List.of());
     }
 
     @Override
     public Optional<com.viglet.turing.searchengine.result.TurSEResult> findById(
-            TurSNSiteSearchContext context, TurSNSite turSNSite, String id) {
+            TurSNSiteSearchContext context, TurSESite turSNSite, String id) {
         return turSolrInstanceProcess.initSolrInstance(context.getSiteName(), context.getLocale())
-                .map(instance -> turSolr.findById(instance, turSNSite == null ? null : turSNSite.getName(), id, context));
+                .map(instance -> turSolr.findById(instance, turSNSite == null ? null : turSNSite.name(), id, context));
     }
 
     @Override
-    public List<Map<String, Object>> findByFieldValues(TurSNSite turSNSite, Locale locale,
+    public List<Map<String, Object>> findByFieldValues(TurSESite turSNSite, Locale locale,
             Map<String, Object> fieldValues) {
-        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.name(), locale)
                 .map(instance -> turSolr.solrResultAnd(instance, fieldValues).stream()
                         .map(document -> TurSolrUtils.createTurSEResultFromDocument(document)
                                 .getFields())
@@ -1187,8 +1187,8 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public Optional<String> nativeJsonQuery(TurSNSite turSNSite, Locale locale, String json) {
-        return turSolrInstanceProcess.initSolrInstance(turSNSite.getName(), locale)
+    public Optional<String> nativeJsonQuery(TurSESite turSNSite, Locale locale, String json) {
+        return turSolrInstanceProcess.initSolrInstance(turSNSite.name(), locale)
                 .map(instance -> turSolr.dslQuery(instance, json));
     }
 

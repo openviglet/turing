@@ -16,6 +16,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @Service
@@ -78,7 +79,7 @@ public class TurSNSiteDataCollectorService {
         for (var locale : locales) {
             try {
                 var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
-                long count = plugin.getDocumentTotal(locale);
+                long count = plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale));
                 sb.append("- ").append(locale.getLanguage()).append(": ").append(count).append(" documents\n");
             } catch (Exception e) {
                 sb.append("- ").append(locale.getLanguage()).append(": unavailable\n");

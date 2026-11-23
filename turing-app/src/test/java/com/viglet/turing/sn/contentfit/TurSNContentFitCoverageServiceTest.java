@@ -38,6 +38,7 @@ import com.viglet.turing.persona.persistence.repository.TurPersonaRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Unit tests for {@link TurSNContentFitCoverageService} — the bucket math
@@ -88,11 +89,11 @@ class TurSNContentFitCoverageServiceTest {
         TurPersona persona = new TurPersona();
         persona.setName("Elementary Reader");
         when(personaRepository.findById("p1")).thenReturn(Optional.of(persona));
-        when(plugin.getDocumentTotal(locale)).thenReturn(100L);
-        when(plugin.getDocumentCountWithField(locale, FIELD)).thenReturn(80L);
-        when(plugin.getDocumentCountWithFieldBelow(locale, FIELD,
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale))).thenReturn(100L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(locale), FIELD)).thenReturn(80L);
+        when(plugin.getDocumentCountWithFieldBelow(TurSNSiteRefs.toSE(locale), FIELD,
                 TurSNContentFitCoverageService.TOO_COMPLEX_THRESHOLD)).thenReturn(10L);
-        when(plugin.getDocumentCountWithFieldBelow(locale, FIELD,
+        when(plugin.getDocumentCountWithFieldBelow(TurSNSiteRefs.toSE(locale), FIELD,
                 TurSNContentFitCoverageService.GOOD_THRESHOLD)).thenReturn(30L);
 
         TurSNContentFitReport report = service.coverage(site);
@@ -111,8 +112,8 @@ class TurSNContentFitCoverageServiceTest {
     @Test
     void reportsUnsupportedWhenEngineCannotRangeCount() {
         lenient().when(personaRepository.findById("p1")).thenReturn(Optional.empty());
-        when(plugin.getDocumentTotal(locale)).thenReturn(100L);
-        when(plugin.getDocumentCountWithField(locale, FIELD)).thenReturn(-1L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale))).thenReturn(100L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(locale), FIELD)).thenReturn(-1L);
 
         TurSNContentFitReport report = service.coverage(site);
 
@@ -125,11 +126,11 @@ class TurSNContentFitCoverageServiceTest {
     @Test
     void zeroScoredYieldsZeroPercentNotDivideByZero() {
         lenient().when(personaRepository.findById(any())).thenReturn(Optional.empty());
-        when(plugin.getDocumentTotal(locale)).thenReturn(0L);
-        when(plugin.getDocumentCountWithField(locale, FIELD)).thenReturn(0L);
-        when(plugin.getDocumentCountWithFieldBelow(locale, FIELD,
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale))).thenReturn(0L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(locale), FIELD)).thenReturn(0L);
+        when(plugin.getDocumentCountWithFieldBelow(TurSNSiteRefs.toSE(locale), FIELD,
                 TurSNContentFitCoverageService.TOO_COMPLEX_THRESHOLD)).thenReturn(0L);
-        when(plugin.getDocumentCountWithFieldBelow(locale, FIELD,
+        when(plugin.getDocumentCountWithFieldBelow(TurSNSiteRefs.toSE(locale), FIELD,
                 TurSNContentFitCoverageService.GOOD_THRESHOLD)).thenReturn(0L);
 
         TurSNContentFitReport report = service.coverage(site);

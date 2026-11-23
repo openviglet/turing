@@ -30,6 +30,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1029 / §XX.16 — answers "what does the SN index hold for this source", the
@@ -116,7 +117,7 @@ public class TurSNIndexInventoryService {
             String after, int rows) {
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         try {
-            return plugin.retrieveInventoryPage(target, source, after, rows);
+            return plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(target), source, after, rows);
         } catch (Exception e) {
             // An unreachable index is not an empty one: report unsupported so a
             // caller never reads the silence as "nothing is indexed" and

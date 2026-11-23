@@ -1,0 +1,40 @@
+/*
+ * Copyright (C) 2016-2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.viglet.turing.searchengine.spi;
+
+import java.util.Locale;
+
+/**
+ * T1310 — one locale of a site as a search-engine plugin sees it: the site, the
+ * locale's language and the core (or index) that holds its documents. The site
+ * module builds it from its own entity, so the plugin contract takes no sn type.
+ *
+ * @param site     the site the locale belongs to; {@code null} when it has none
+ * @param language the locale's language
+ * @param core     the locale's core or index name
+ * @author Alexandre Oliveira
+ * @since 2026.3.8
+ */
+public record TurSESiteLocale(TurSESite site, Locale language, String core) {
+
+    /**
+     * A locale that belongs to no site, carrying only its language: what a
+     * standalone index is created with.
+     */
+    public static TurSESiteLocale ofLanguage(Locale language) {
+        return new TurSESiteLocale(null, language, null);
+    }
+}

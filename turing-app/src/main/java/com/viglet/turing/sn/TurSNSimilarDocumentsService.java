@@ -34,6 +34,7 @@ import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T384 / §XX.4 — public "documents similar to this id" retrieval for Semantic
@@ -127,7 +128,7 @@ public class TurSNSimilarDocumentsService {
         // the whole site, so the lexical query, which takes the filter, answers;
         // T1132's request filters take the same path.
         Optional<TurSEPartition> partition = TurApiKeyPartitionContext.current();
-        if (partition.isPresent() && plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
+        if (partition.isPresent() && plugin.getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of(id)).stream()
                 .noneMatch(seed -> TurSNPartitionWriteGuard.inPartition(seed.get(partition.get().field()),
                         partition.get().value()))) {
             return List.of();
@@ -137,7 +138,7 @@ public class TurSNSimilarDocumentsService {
             constraints.setQuery("*");
             constraints.setTurSNFilterParams(filters);
             constraints.setPartition(partition.orElse(null));
-            return plugin.getSimilarDocuments(siteLocale, id, limit, constraints);
+            return plugin.getSimilarDocuments(TurSNSiteRefs.toSE(siteLocale), id, limit, constraints);
         }
 
         boolean hybrid = hybridRankingService.isEnabled(site);
@@ -153,12 +154,12 @@ public class TurSNSimilarDocumentsService {
             log.debug("[SN-SIMILAR] vector neighbors empty for id '{}' on '{}' — using lexical MLT",
                     id, siteName);
         }
-        return plugin.getSimilarDocuments(siteLocale, id, limit);
+        return plugin.getSimilarDocuments(TurSNSiteRefs.toSE(siteLocale), id, limit);
     }
 
     private List<TurSESimilarResult> vectorNeighbors(TurSNSite site, TurSNSiteLocale siteLocale,
             TurSearchEnginePlugin plugin, String id, int rows) {
-        List<Map<String, Object>> seed = plugin.getDocumentsByIds(siteLocale, List.of(id));
+        List<Map<String, Object>> seed = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of(id));
         if (seed.isEmpty()) {
             return List.of();
         }
@@ -166,7 +167,7 @@ public class TurSNSimilarDocumentsService {
         if (neighborIds.isEmpty()) {
             return List.of();
         }
-        List<Map<String, Object>> docs = plugin.getDocumentsByIds(siteLocale, neighborIds);
+        List<Map<String, Object>> docs = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), neighborIds);
         List<TurSESimilarResult> results = new ArrayList<>(docs.size());
         for (Map<String, Object> doc : docs) {
             String docId = asString(doc.get(TurSNFieldName.ID));

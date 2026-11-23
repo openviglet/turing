@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1077 — a document read by id on the Lucene engine carries every stored
@@ -52,7 +53,7 @@ class TurLuceneStoredDocumentsTest {
         instance = new TurLuceneInstance(writer, directory, Path.of("stored-index"), new FacetsConfig());
 
         TurLuceneInstanceProcess instanceProcess = mock(TurLuceneInstanceProcess.class);
-        when(instanceProcess.initLuceneInstance(any(TurSNSiteLocale.class))).thenReturn(Optional.of(instance));
+        when(instanceProcess.initLuceneInstance(any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class))).thenReturn(Optional.of(instance));
         plugin = new TurLuceneSearchEnginePlugin(null, instanceProcess, null, null, null, null);
     }
 
@@ -74,7 +75,7 @@ class TurLuceneStoredDocumentsTest {
 
     @Test
     void returnsEveryStoredFieldWhole() {
-        List<Map<String, Object>> docs = plugin.getStoredDocumentsByIds(siteLocale,
+        List<Map<String, Object>> docs = plugin.getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale),
                 List.of("fx-motorista-campinas"));
 
         assertEquals(1, docs.size());
@@ -87,7 +88,7 @@ class TurLuceneStoredDocumentsTest {
 
     @Test
     void keepsTheAskedOrderAndDropsUnknownIds() {
-        List<Map<String, Object>> docs = plugin.getStoredDocumentsByIds(siteLocale,
+        List<Map<String, Object>> docs = plugin.getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale),
                 List.of("missing", "entregador-sp", "fx-motorista-campinas"));
 
         assertEquals(List.of("entregador-sp", "fx-motorista-campinas"),

@@ -36,6 +36,7 @@ import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @RestController
@@ -58,7 +59,7 @@ public class TurSNSiteQueryAPI {
             @RequestBody String json) {
         return turSNSiteRepository.findByNameIgnoreCase(siteName)
                 .flatMap(turSNSite -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
-                        .nativeJsonQuery(turSNSite, LocaleUtils.toLocale(localeRequest), json))
+                        .nativeJsonQuery(TurSNSiteRefs.toSE(turSNSite), LocaleUtils.toLocale(localeRequest), json))
                 .orElse("{}");
     }
 

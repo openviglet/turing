@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -95,7 +96,7 @@ class TurImportExchangeContentStreamTest {
         site.setName("Catalog");
         when(turSNSiteRepository.findByNameIgnoreCase("Catalog")).thenReturn(Optional.of(site));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.indexDocuments(eq(site), any(), any())).thenAnswer(call -> {
+        when(plugin.indexDocuments(eq(TurSNSiteRefs.toSE(site)), any(), any())).thenAnswer(call -> {
             Locale locale = call.getArgument(1);
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> chunk = call.getArgument(2);
@@ -239,20 +240,20 @@ class TurImportExchangeContentStreamTest {
     void everyChunkIsCommitted() {
         feed(localeRun("en_US", CHUNK + 1, 0), CHUNK + 1);
 
-        verify(plugin, org.mockito.Mockito.times(2)).commit(eq(site), any());
+        verify(plugin, org.mockito.Mockito.times(2)).commit(eq(TurSNSiteRefs.toSE(site)), any());
     }
 
     @Test
     @DisplayName("A batch failure falls back to per-document indexing, as the map path did")
     void batchFailureFallsBackPerDocument() {
-        when(plugin.indexDocuments(eq(site), any(), any()))
+        when(plugin.indexDocuments(eq(TurSNSiteRefs.toSE(site)), any(), any()))
                 .thenThrow(new IllegalStateException("engine refused the batch"));
-        when(plugin.indexDocument(eq(site), any(), any())).thenReturn(true);
+        when(plugin.indexDocument(eq(TurSNSiteRefs.toSE(site)), any(), any())).thenReturn(true);
 
         int indexed = feed(localeRun("en_US", 3, 0), 3);
 
         assertThat(indexed).isEqualTo(3);
-        verify(plugin, org.mockito.Mockito.times(3)).indexDocument(eq(site), any(), any());
+        verify(plugin, org.mockito.Mockito.times(3)).indexDocument(eq(TurSNSiteRefs.toSE(site)), any(), any());
     }
 
     @Test
@@ -280,7 +281,7 @@ class TurImportExchangeContentStreamTest {
     @DisplayName("The chunk handed to the engine is a copy, so the sink's buffer cannot mutate it")
     void chunksAreCopied() {
         List<List<Map<String, Object>>> captured = new ArrayList<>();
-        when(plugin.indexDocuments(eq(site), any(), any())).thenAnswer(call -> {
+        when(plugin.indexDocuments(eq(TurSNSiteRefs.toSE(site)), any(), any())).thenAnswer(call -> {
             List<Map<String, Object>> chunk = call.getArgument(2);
             captured.add(chunk);
             return chunk.size();
@@ -396,7 +397,7 @@ class TurImportExchangeContentStreamTest {
     @DisplayName("A document that spans more than the chunk boundary keeps every field")
     void documentFieldsSurviveTheStream() throws Exception {
         List<Map<String, Object>> captured = new ArrayList<>();
-        when(plugin.indexDocuments(eq(site), any(), any())).thenAnswer(call -> {
+        when(plugin.indexDocuments(eq(TurSNSiteRefs.toSE(site)), any(), any())).thenAnswer(call -> {
             List<Map<String, Object>> chunk = call.getArgument(2);
             captured.addAll(chunk);
             return chunk.size();

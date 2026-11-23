@@ -68,6 +68,7 @@ import com.viglet.turing.searchengine.TurSEPaging;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * @author Alexandre Oliveira
@@ -351,7 +352,7 @@ public class TurSNSpotlightProcess {
 				List<TurSNSiteSpotlightDocument> turSNSiteSpotlightDocuments = turSNSiteSpotlightDocumentMap
 						.get(currentPositionFromCurrentPage);
 				for (TurSNSiteSpotlightDocument document : turSNSiteSpotlightDocuments) {
-					TurSEResult turSEResult = plugin.findById(context, turSNSite, document.getReferenceId())
+					TurSEResult turSEResult = plugin.findById(context, TurSNSiteRefs.toSE(turSNSite), document.getReferenceId())
 							.orElse(null);
 					// T1209 — findById is confined to the search's partition, so a
 					// pinned document of another partition comes back empty: it is

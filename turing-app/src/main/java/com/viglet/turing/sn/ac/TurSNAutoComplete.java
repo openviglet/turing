@@ -43,6 +43,7 @@ import com.viglet.turing.sn.TurSNUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @Component
@@ -184,7 +185,7 @@ public class TurSNAutoComplete {
                 numberOfWordsFromQuery++;
             }
 
-            List<String> stopWords = plugin.stopWords(turSNSite, locale);
+            List<String> stopWords = plugin.stopWords(TurSNSiteRefs.toSE(turSNSite), locale);
             TurSNSuggestionFilter suggestionFilter = new TurSNSuggestionFilter(stopWords);
             suggestionFilter.automatonStrategyConfig(numberOfWordsFromQuery);
             List<String> filtered = suggestionFilter.filter(rawSuggestions);

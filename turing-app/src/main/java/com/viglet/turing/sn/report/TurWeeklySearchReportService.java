@@ -38,6 +38,7 @@ import com.viglet.turing.llm.TurLlmCacheService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @Service
@@ -263,7 +264,7 @@ public class TurWeeklySearchReportService {
             return snSiteLocaleRepository.findByTurSNSite(site).stream()
                     .mapToLong(locale -> {
                         try {
-                            return plugin.getDocumentTotal(locale);
+                            return plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale));
                         } catch (Exception e) {
                             log.warn("Could not get document count for site {} locale {}",
                                     site.getName(), locale.getLanguage(), e);

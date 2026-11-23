@@ -72,6 +72,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 @Slf4j
 @RestController
@@ -479,7 +480,7 @@ public class TurSNSiteAPI {
             for (TurSNSiteLocale turSNSiteLocale : turSNSiteLocaleRepository
                     .findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), turSNSite)) {
                 try {
-                    documentTotal += plugin.getDocumentTotal(turSNSiteLocale);
+                    documentTotal += plugin.getDocumentTotal(TurSNSiteRefs.toSE(turSNSiteLocale));
                 } catch (RuntimeException e) {
                     // Search engine is down or circuit breaker is open — degrade gracefully
                     // so the monitoring page still renders queue size and other DB-backed data.

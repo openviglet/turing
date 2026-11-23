@@ -38,6 +38,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Unit tests for TurElasticsearchInstanceProcess.
@@ -143,7 +144,7 @@ class TurElasticsearchInstanceProcessTest {
         siteLocale.setTurSNSite(site);
         siteLocale.setCore("locale-core");
 
-        Optional<TurElasticsearchInstance> result = process.initElasticsearchInstance(siteLocale);
+        Optional<TurElasticsearchInstance> result = process.initElasticsearchInstance(TurSNSiteRefs.toSE(siteLocale));
 
         assertThat(result).isPresent();
         assertThat(result.get().getIndex()).isEqualTo("locale-core");

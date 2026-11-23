@@ -93,6 +93,7 @@ import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * @author Alexandre Oliveira
@@ -370,7 +371,7 @@ public class TurSNSearchProcess {
                 if (siteLocale == null) {
                         return null;
                 }
-                return ids -> plugin.getStoredDocumentsByIds(siteLocale, ids).stream()
+                return ids -> plugin.getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), ids).stream()
                                 .map(fields -> TurSEResult.builder().fields(fields).build())
                                 .toList();
         }

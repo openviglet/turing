@@ -39,8 +39,8 @@ import com.viglet.turing.commons.sn.TurSNConfig;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 
@@ -179,7 +179,7 @@ class TurSearchEnginePluginTest {
 
         // Test stub methods - not implemented for unit testing purposes
         @Override
-        public void createIndex(TurSEInstance s, TurSNSiteLocale l, String n, Map<String, TurSEFieldType> f) {
+        public void createIndex(TurSEInstance s, TurSESiteLocale l, String n, Map<String, TurSEFieldType> f) {
             // Stub: not needed for this unit test
         }
 
@@ -220,27 +220,27 @@ class TurSearchEnginePluginTest {
         }
 
         @Override
-        public boolean indexDocument(TurSNSite site, Locale l, Map<String, Object> a) {
+        public boolean indexDocument(TurSESite site, Locale l, Map<String, Object> a) {
             return false;
         }
 
         @Override
-        public boolean deIndex(TurSNSite site, Locale l, String id) {
+        public boolean deIndex(TurSESite site, Locale l, String id) {
             return false;
         }
 
         @Override
-        public boolean deIndexByType(TurSNSite site, Locale l, String t) {
+        public boolean deIndexByType(TurSESite site, Locale l, String t) {
             return false;
         }
 
         @Override
-        public boolean commit(TurSNSite site, Locale l) {
+        public boolean commit(TurSESite site, Locale l) {
             return false;
         }
 
         @Override
-        public long getDocumentTotal(TurSNSiteLocale locale) {
+        public long getDocumentTotal(TurSESiteLocale locale) {
             return 0L;
         }
     }
@@ -263,7 +263,7 @@ class TurSearchEnginePluginTest {
 
         // Test stub methods - not implemented for unit testing purposes
         @Override
-        public void createIndex(TurSEInstance s, TurSNSiteLocale l, String n, Map<String, TurSEFieldType> f) {
+        public void createIndex(TurSEInstance s, TurSESiteLocale l, String n, Map<String, TurSEFieldType> f) {
             // Stub: not needed for this unit test
         }
 
@@ -304,27 +304,27 @@ class TurSearchEnginePluginTest {
         }
 
         @Override
-        public boolean indexDocument(TurSNSite site, Locale l, Map<String, Object> a) {
+        public boolean indexDocument(TurSESite site, Locale l, Map<String, Object> a) {
             return false;
         }
 
         @Override
-        public boolean deIndex(TurSNSite site, Locale l, String id) {
+        public boolean deIndex(TurSESite site, Locale l, String id) {
             return false;
         }
 
         @Override
-        public boolean deIndexByType(TurSNSite site, Locale l, String t) {
+        public boolean deIndexByType(TurSESite site, Locale l, String t) {
             return false;
         }
 
         @Override
-        public boolean commit(TurSNSite site, Locale l) {
+        public boolean commit(TurSESite site, Locale l) {
             return false;
         }
 
         @Override
-        public long getDocumentTotal(TurSNSiteLocale locale) {
+        public long getDocumentTotal(TurSESiteLocale locale) {
             return 0L;
         }
     }
@@ -347,7 +347,7 @@ class TurSearchEnginePluginTest {
 
         // Test stub methods - not implemented for unit testing purposes
         @Override
-        public void createIndex(TurSEInstance s, TurSNSiteLocale l, String n, Map<String, TurSEFieldType> f) {
+        public void createIndex(TurSEInstance s, TurSESiteLocale l, String n, Map<String, TurSEFieldType> f) {
             // Not implemented: test stub only tests search and facet retrieval methods
         }
 
@@ -391,31 +391,31 @@ class TurSearchEnginePluginTest {
         }
 
         @Override
-        public boolean indexDocument(TurSNSite site, Locale l, Map<String, Object> a) {
+        public boolean indexDocument(TurSESite site, Locale l, Map<String, Object> a) {
             // Not implemented: test stub only tests search and facet retrieval methods
             return false;
         }
 
         @Override
-        public boolean deIndex(TurSNSite site, Locale l, String id) {
+        public boolean deIndex(TurSESite site, Locale l, String id) {
             // Not implemented: test stub only tests search and facet retrieval methods
             return false;
         }
 
         @Override
-        public boolean deIndexByType(TurSNSite site, Locale l, String t) {
+        public boolean deIndexByType(TurSESite site, Locale l, String t) {
             // Not implemented: test stub only tests search and facet retrieval methods
             return false;
         }
 
         @Override
-        public boolean commit(TurSNSite site, Locale l) {
+        public boolean commit(TurSESite site, Locale l) {
             // Not implemented: test stub only tests search and facet retrieval methods
             return false;
         }
 
         @Override
-        public long getDocumentTotal(TurSNSiteLocale locale) {
+        public long getDocumentTotal(TurSESiteLocale locale) {
             // Not implemented: test stub only tests search and facet retrieval methods
             return 0L;
         }
@@ -439,7 +439,7 @@ class TurSearchEnginePluginTest {
 
         // Test stub methods - not implemented for unit testing purposes
         @Override
-        public void createIndex(TurSEInstance s, TurSNSiteLocale l, String n, Map<String, TurSEFieldType> f) {
+        public void createIndex(TurSEInstance s, TurSESiteLocale l, String n, Map<String, TurSEFieldType> f) {
             // Not implemented: test stub only tests search and facet retrieval methods
         }
 
@@ -482,27 +482,27 @@ class TurSearchEnginePluginTest {
         }
 
         @Override
-        public boolean indexDocument(TurSNSite site, Locale l, Map<String, Object> a) {
+        public boolean indexDocument(TurSESite site, Locale l, Map<String, Object> a) {
             return false;
         }
 
         @Override
-        public boolean deIndex(TurSNSite site, Locale l, String id) {
+        public boolean deIndex(TurSESite site, Locale l, String id) {
             return false;
         }
 
         @Override
-        public boolean deIndexByType(TurSNSite site, Locale l, String t) {
+        public boolean deIndexByType(TurSESite site, Locale l, String t) {
             return false;
         }
 
         @Override
-        public boolean commit(TurSNSite site, Locale l) {
+        public boolean commit(TurSESite site, Locale l) {
             return false;
         }
 
         @Override
-        public long getDocumentTotal(TurSNSiteLocale locale) {
+        public long getDocumentTotal(TurSESiteLocale locale) {
             return 0L;
         }
     }

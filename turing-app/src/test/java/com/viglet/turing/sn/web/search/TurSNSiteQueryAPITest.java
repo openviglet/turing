@@ -23,6 +23,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /** The DSL query reaches the site's engine through the plugin contract (T1310). */
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +49,7 @@ class TurSNSiteQueryAPITest {
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.nativeJsonQuery(site, Locale.US, "{\"query\":\"test\"}"))
+        when(plugin.nativeJsonQuery(TurSNSiteRefs.toSE(site), Locale.US, "{\"query\":\"test\"}"))
                 .thenReturn(Optional.of("{\"result\":\"ok\"}"));
 
         mockMvc.perform(post("/api/sn/site1/query")

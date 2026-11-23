@@ -17,8 +17,8 @@
 package com.viglet.turing.searchengine.lucene;
 
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -79,21 +79,21 @@ public class TurLuceneInstanceProcess {
         return getLuceneInstance(turSEInstance, coreName);
     }
 
-    public Optional<TurLuceneInstance> initLuceneInstance(TurSNSiteLocale turSNSiteLocale) {
-        return resolveEndpoint(turSNSiteLocale.getTurSNSite())
-                .flatMap(endpoint -> instanceFor(endpoint, turSNSiteLocale.getCore()));
+    public Optional<TurLuceneInstance> initLuceneInstance(TurSESiteLocale turSNSiteLocale) {
+        return resolveEndpoint(turSNSiteLocale.site())
+                .flatMap(endpoint -> instanceFor(endpoint, turSNSiteLocale.core()));
     }
 
     /**
-     * T1078 — the site a {@link TurSNSiteLocale} carries may be the transient one the
+     * T1078 — the site a {@link TurSESiteLocale} carries may be the transient one the
      * search snapshot rebuilds; since T1315 it names its SE instance by id, whose
      * endpoint (cached by id since T1337) is all the index path needs.
      */
-    private Optional<String> resolveEndpoint(TurSNSite turSNSite) {
+    private Optional<String> resolveEndpoint(TurSESite turSNSite) {
         if (turSNSite == null) {
             return Optional.empty();
         }
-        return resolveEndpoint(turSNSite.getName(), turSNSite.getTurSEInstanceId());
+        return resolveEndpoint(turSNSite.name(), turSNSite.seInstanceId());
     }
 
     private Optional<String> resolveEndpoint(String siteName, String seInstanceId) {

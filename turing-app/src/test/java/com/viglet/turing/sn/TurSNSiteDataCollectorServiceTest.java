@@ -29,6 +29,7 @@ import com.viglet.turing.sn.persistence.repository.metric.TurSNSiteMetricAccessR
 import com.viglet.turing.sn.api.TurSNSiteMetricAccessTerm;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurSNSiteDataCollectorService.
@@ -216,7 +217,7 @@ class TurSNSiteDataCollectorServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(searchEnginePlugin);
-        when(searchEnginePlugin.getDocumentTotal(enLocale)).thenReturn(500L);
+        when(searchEnginePlugin.getDocumentTotal(TurSNSiteRefs.toSE(enLocale))).thenReturn(500L);
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
@@ -522,9 +523,9 @@ class TurSNSiteDataCollectorServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site))
                 .thenReturn(List.of(enLocale, ptLocale, esLocale));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(searchEnginePlugin);
-        when(searchEnginePlugin.getDocumentTotal(enLocale)).thenReturn(1000L);
-        when(searchEnginePlugin.getDocumentTotal(ptLocale)).thenReturn(500L);
-        when(searchEnginePlugin.getDocumentTotal(esLocale)).thenReturn(250L);
+        when(searchEnginePlugin.getDocumentTotal(TurSNSiteRefs.toSE(enLocale))).thenReturn(1000L);
+        when(searchEnginePlugin.getDocumentTotal(TurSNSiteRefs.toSE(ptLocale))).thenReturn(500L);
+        when(searchEnginePlugin.getDocumentTotal(TurSNSiteRefs.toSE(esLocale))).thenReturn(250L);
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());

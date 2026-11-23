@@ -21,8 +21,8 @@ import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESearchField;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
@@ -127,22 +127,22 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     // ---- Index lifecycle -------------------------------------------------
 
     @Override
-    public void createIndex(TurSEInstance seInstance, TurSNSiteLocale siteLocale, String indexName,
+    public void createIndex(TurSEInstance seInstance, TurSESiteLocale siteLocale, String indexName,
             Map<String, TurSEFieldType> fieldTypes) {
         Map<String, TurSEFieldType> resolved = fieldTypes.isEmpty()
                 ? buildFieldTypesFromSite(siteLocale)
                 : fieldTypes;
         // T1173 — TEXT fields stem in the site locale's language, as on Lucene.
         TurElasticsearchUtils.createIndex(seInstance.getEndpointUrl(), indexName, resolved,
-                siteLocale == null ? null : siteLocale.getLanguage());
+                siteLocale == null ? null : siteLocale.language());
     }
 
-    private Map<String, TurSEFieldType> buildFieldTypesFromSite(TurSNSiteLocale siteLocale) {
-        if (siteLocale == null || siteLocale.getTurSNSite() == null) {
+    private Map<String, TurSEFieldType> buildFieldTypesFromSite(TurSESiteLocale siteLocale) {
+        if (siteLocale == null || siteLocale.site() == null) {
             return Collections.emptyMap();
         }
         return siteSearchConfig
-                .enabledFields(siteLocale.getTurSNSite().getId())
+                .enabledFields(siteLocale.site().id())
                 .stream()
                 .filter(f -> f.type() != null)
                 .collect(Collectors.toMap(
@@ -232,19 +232,19 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     // ---- Document operations ---------------------------------------------
 
     @Override
-    public boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes) {
+    public boolean indexDocument(TurSESite turSNSite, Locale locale, Map<String, Object> attributes) {
         return turElasticsearchInstanceProcess
-                .initElasticsearchInstance(turSNSite.getName(), locale)
+                .initElasticsearchInstance(turSNSite.name(), locale)
                 .map(esInstance -> {
-                    turElasticsearch.indexing(esInstance, turSNSite.getName(), attributes);
+                    turElasticsearch.indexing(esInstance, turSNSite.name(), attributes);
                     return true;
                 }).orElse(false);
     }
 
     @Override
-    public boolean deIndex(TurSNSite turSNSite, Locale locale, String id) {
+    public boolean deIndex(TurSESite turSNSite, Locale locale, String id) {
         return turElasticsearchInstanceProcess
-                .initElasticsearchInstance(turSNSite.getName(), locale)
+                .initElasticsearchInstance(turSNSite.name(), locale)
                 .map(esInstance -> {
                     turElasticsearch.deIndexing(esInstance, id);
                     return true;
@@ -252,9 +252,9 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
-    public boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type) {
+    public boolean deIndexByType(TurSESite turSNSite, Locale locale, String type) {
         return turElasticsearchInstanceProcess
-                .initElasticsearchInstance(turSNSite.getName(), locale)
+                .initElasticsearchInstance(turSNSite.name(), locale)
                 .map(esInstance -> {
                     turElasticsearch.deIndexingByType(esInstance, type);
                     return true;
@@ -262,9 +262,9 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
-    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+    public boolean deIndexByFields(TurSESite turSNSite, Locale locale, Map<String, String> fields) {
         return turElasticsearchInstanceProcess
-                .initElasticsearchInstance(turSNSite.getName(), locale)
+                .initElasticsearchInstance(turSNSite.name(), locale)
                 .map(esInstance -> {
                     turElasticsearch.deIndexingByFields(esInstance, fields);
                     return true;
@@ -272,7 +272,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
-    public boolean commit(TurSNSite turSNSite, Locale locale) {
+    public boolean commit(TurSESite turSNSite, Locale locale) {
         // Elasticsearch commits are synchronous — nothing extra needed
         return true;
     }
@@ -545,7 +545,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     private static final int SIMILAR_MAX_SEED_CHARS = 1_000;
 
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows) {
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows) {
         return getSimilarDocuments(siteLocale, id, rows, null);
     }
 
@@ -554,7 +554,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
      * own filters beside {@code more_like_this}.
      */
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows,
             com.viglet.turing.commons.se.TurSEParameters constraints) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
@@ -569,8 +569,8 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
         }
         return turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale)
                 .map(instance -> searchSimilarDocuments(instance, like, id, rows,
-                        constraints == null || siteLocale.getTurSNSite() == null ? List.of()
-                                : turElasticsearch.filters(siteLocale.getTurSNSite().getName(), constraints)))
+                        constraints == null || siteLocale.site() == null ? List.of()
+                                : turElasticsearch.filters(siteLocale.site().name(), constraints)))
                 .orElse(List.of());
     }
 
@@ -624,7 +624,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
-    public List<Map<String, Object>> getDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -642,7 +642,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
      * {@code _source}, where {@link #getDocumentsByIds} keeps the standard fields.
      */
     @Override
-    public List<Map<String, Object>> getStoredDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getStoredDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -760,7 +760,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     // ---- Content export ---------------------------------------------------
 
     @Override
-    public List<Map<String, Object>> retrieveDocumentPage(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPage(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, int start, int rows) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(instance -> {
@@ -802,7 +802,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     }
 
     @Override
-    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, String afterId, int rows) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(instance -> {
@@ -863,7 +863,7 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
 
     @Override
     public com.viglet.turing.searchengine.TurSEInventoryPage retrieveInventoryPage(
-            TurSNSiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
+            TurSESiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(instance -> {
                     try {
@@ -943,20 +943,20 @@ public class TurElasticsearchSearchEnginePlugin implements TurSearchEnginePlugin
     // ---- Monitoring ------------------------------------------------------
 
     @Override
-    public long getDocumentTotal(TurSNSiteLocale turSNSiteLocale) {
+    public long getDocumentTotal(TurSESiteLocale turSNSiteLocale) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(turElasticsearch::getDocumentTotal).orElse(0L);
     }
 
     @Override
-    public long getDocumentCountWithField(TurSNSiteLocale turSNSiteLocale, String fieldName) {
+    public long getDocumentCountWithField(TurSESiteLocale turSNSiteLocale, String fieldName) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(instance -> turElasticsearch.getDocumentTotalWithField(instance, fieldName))
                 .orElse(-1L);
     }
 
     @Override
-    public long getDocumentCountWithFieldBelow(TurSNSiteLocale turSNSiteLocale, String fieldName,
+    public long getDocumentCountWithFieldBelow(TurSESiteLocale turSNSiteLocale, String fieldName,
             int threshold) {
         return turElasticsearchInstanceProcess.initElasticsearchInstance(turSNSiteLocale)
                 .map(instance -> turElasticsearch.getDocumentTotalWithFieldBelow(instance, fieldName,

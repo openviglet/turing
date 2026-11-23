@@ -32,9 +32,9 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESite;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.TurSEInstanceEndpoints;
@@ -367,19 +367,19 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Monitoring ------------------------------------------------------
 
     @Override
-    public long getDocumentTotal(TurSNSiteLocale turSNSiteLocale) {
-        if (turSNSiteLocale == null || turSNSiteLocale.getTurSNSite() == null) {
+    public long getDocumentTotal(TurSESiteLocale turSNSiteLocale) {
+        if (turSNSiteLocale == null || turSNSiteLocale.site() == null) {
             return 0L;
         }
-        TurSNSite site = turSNSiteLocale.getTurSNSite();
+        TurSESite site = turSNSiteLocale.site();
         try {
-            JsonNode response = client.search(endpointUrl(site.getTurSEInstanceId()),
+            JsonNode response = client.search(endpointUrl(site.seInstanceId()),
                     queryBuilder.buildCountRequest(
-                            sourceName(site.getName(), turSNSiteLocale.getCore()), property),
+                            sourceName(site.name(), turSNSiteLocale.core()), property),
                     property);
             return responseMapper.totalResults(response);
         } catch (TurContentAiClient.TurContentAiException e) {
-            log.error("Content AI document count failed for site '{}'", site.getName(), e);
+            log.error("Content AI document count failed for site '{}'", site.name(), e);
             return 0L;
         }
     }
@@ -489,7 +489,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Everything Turing does not own ----------------------------------
 
     @Override
-    public void createIndex(TurSEInstance seInstance, TurSNSiteLocale siteLocale, String indexName,
+    public void createIndex(TurSEInstance seInstance, TurSESiteLocale siteLocale, String indexName,
             Map<String, TurSEFieldType> fieldTypes) {
         throw readOnly("createIndex");
     }
@@ -578,18 +578,18 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean indexDocument(TurSNSite turSNSite, Locale locale,
+    public boolean indexDocument(TurSESite turSNSite, Locale locale,
             Map<String, Object> attributes) {
         throw readOnly("indexDocument");
     }
 
     @Override
-    public boolean deIndex(TurSNSite turSNSite, Locale locale, String id) {
+    public boolean deIndex(TurSESite turSNSite, Locale locale, String id) {
         throw readOnly("deIndex");
     }
 
     @Override
-    public boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type) {
+    public boolean deIndexByType(TurSESite turSNSite, Locale locale, String type) {
         throw readOnly("deIndexByType");
     }
 
@@ -599,7 +599,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      * turn every read-only site's request into an error.
      */
     @Override
-    public boolean commit(TurSNSite turSNSite, Locale locale) {
+    public boolean commit(TurSESite turSNSite, Locale locale) {
         return true;
     }
 

@@ -27,6 +27,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Autocomplete on the Lucene engine draws its suggestions only from the
@@ -87,9 +88,9 @@ class TurLuceneAutoCompleteTest {
     /** T1310 — the stop words autocomplete filters are the ones the query analyzer drops. */
     @Test
     void stopWordsAreTheLanguageListTheQueryAnalyzerDrops() {
-        List<String> portuguese = plugin.stopWords(site, Locale.of("pt", "BR"));
+        List<String> portuguese = plugin.stopWords(TurSNSiteRefs.toSE(site), Locale.of("pt", "BR"));
         org.assertj.core.api.Assertions.assertThat(portuguese).contains("para", "uma");
-        org.assertj.core.api.Assertions.assertThat(plugin.stopWords(site, Locale.of("ja"))).isEmpty();
+        org.assertj.core.api.Assertions.assertThat(plugin.stopWords(TurSNSiteRefs.toSE(site), Locale.of("ja"))).isEmpty();
     }
 
     @Test

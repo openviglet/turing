@@ -22,6 +22,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurLuceneInstanceProcess.
@@ -144,7 +145,7 @@ class TurLuceneInstanceProcessTest {
         siteLocale.setCore("locale-core");
         siteLocale.setTurSNSite(site);
 
-        Optional<TurLuceneInstance> result = process.initLuceneInstance(siteLocale);
+        Optional<TurLuceneInstance> result = process.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale));
 
         assertThat(result).isPresent();
     }
@@ -166,7 +167,7 @@ class TurLuceneInstanceProcessTest {
         siteLocale.setCore("snapshot-core");
         siteLocale.setTurSNSite(snapshotSite);
 
-        assertThat(process.initLuceneInstance(siteLocale)).isPresent();
+        assertThat(process.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale))).isPresent();
     }
 
     @Test
@@ -179,7 +180,7 @@ class TurLuceneInstanceProcessTest {
         siteLocale.setCore("core");
         siteLocale.setTurSNSite(site);
 
-        assertThat(process.initLuceneInstance(siteLocale)).isEmpty();
+        assertThat(process.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale))).isEmpty();
     }
 
     // --- evict Tests ---

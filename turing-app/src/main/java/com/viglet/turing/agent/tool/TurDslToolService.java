@@ -19,6 +19,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Elasticsearch-compatible DSL Tool Calling service for Semantic Navigation.
@@ -268,7 +269,7 @@ public class TurDslToolService {
         // Get document count via plugin
         long docCount;
         try {
-            docCount = plugin.getDocumentTotal(locale);
+            docCount = plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale));
         } catch (Exception e) {
             docCount = -1;
         }

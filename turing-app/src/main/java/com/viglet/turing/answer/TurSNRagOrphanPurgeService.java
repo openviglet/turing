@@ -40,6 +40,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1158 — removes the RAG chunks of documents the search engine no longer holds:
@@ -122,12 +123,12 @@ public class TurSNRagOrphanPurgeService {
 
     /** {@code null} when the engine resolves a live id; otherwise why the purge cannot trust it. */
     private static String probe(TurSearchEnginePlugin plugin, TurSNSiteLocale siteLocale) {
-        List<Map<String, Object>> page = plugin.retrieveDocumentPage(siteLocale, Map.of(), 0, 1);
+        List<Map<String, Object>> page = plugin.retrieveDocumentPage(TurSNSiteRefs.toSE(siteLocale), Map.of(), 0, 1);
         String liveId = page.isEmpty() ? null : idOf(page.getFirst());
         if (liveId == null) {
             return "the search engine returned no document to verify against";
         }
-        boolean resolves = plugin.getDocumentsByIds(siteLocale, List.of(liveId)).stream()
+        boolean resolves = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of(liveId)).stream()
                 .map(TurSNRagOrphanPurgeService::idOf)
                 .anyMatch(liveId::equals);
         return resolves ? null : "the search engine cannot read documents by id";
@@ -174,7 +175,7 @@ public class TurSNRagOrphanPurgeService {
         for (int from = 0; from < all.size(); from += ID_BATCH) {
             List<String> batch = all.subList(from, Math.min(all.size(), from + ID_BATCH));
             Set<String> held = new HashSet<>();
-            for (Map<String, Object> doc : plugin.getDocumentsByIds(siteLocale, batch)) {
+            for (Map<String, Object> doc : plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), batch)) {
                 String id = idOf(doc);
                 if (id != null) {
                     held.add(id);

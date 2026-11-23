@@ -23,7 +23,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -76,11 +76,11 @@ public class TurElasticsearchInstanceProcess {
         return getElasticsearchInstance(turSEInstance, index);
     }
 
-    public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSNSiteLocale turSNSiteLocale) {
+    public Optional<TurElasticsearchInstance> initElasticsearchInstance(TurSESiteLocale turSNSiteLocale) {
         // T1337 — only the endpoint is needed, and it is cached by SE instance id.
         return instanceFor(com.viglet.turing.searchengine.TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
-                turSNSiteLocale.getTurSNSite() == null ? null : turSNSiteLocale.getTurSNSite().getTurSEInstanceId()),
-                turSNSiteLocale.getCore());
+                turSNSiteLocale.site() == null ? null : turSNSiteLocale.site().seInstanceId()),
+                turSNSiteLocale.core());
     }
 
     // -------------------------------------------------------------------------

@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,9 +101,9 @@ class TurSNRagOrphanPurgeServiceTest {
         for (String id : ids) {
             docs.add(Map.of("id", id));
         }
-        when(plugin.retrieveDocumentPage(eq(siteLocale), anyMap(), eq(0), eq(1)))
+        when(plugin.retrieveDocumentPage(eq(TurSNSiteRefs.toSE(siteLocale)), anyMap(), eq(0), eq(1)))
                 .thenReturn(docs.isEmpty() ? List.of() : List.of(docs.getFirst()));
-        when(plugin.getDocumentsByIds(eq(siteLocale), anyList())).thenAnswer(invocation -> {
+        when(plugin.getDocumentsByIds(eq(TurSNSiteRefs.toSE(siteLocale)), anyList())).thenAnswer(invocation -> {
             List<String> asked = invocation.getArgument(1);
             return docs.stream().filter(d -> asked.contains(d.get("id"))).toList();
         });
@@ -137,7 +138,7 @@ class TurSNRagOrphanPurgeServiceTest {
     @Test
     void refusesWhenTheEngineCannotReadDocumentsById() {
         storeHolds(chunk("live", "Sample"));
-        when(plugin.retrieveDocumentPage(eq(siteLocale), anyMap(), eq(0), eq(1)))
+        when(plugin.retrieveDocumentPage(eq(TurSNSiteRefs.toSE(siteLocale)), anyMap(), eq(0), eq(1)))
                 .thenReturn(List.of(Map.of("id", "live")));
         when(plugin.getDocumentsByIds(any(), anyList())).thenReturn(List.of());
 

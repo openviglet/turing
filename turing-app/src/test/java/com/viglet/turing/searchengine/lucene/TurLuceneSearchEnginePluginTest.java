@@ -53,6 +53,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResults;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurLuceneSearchEnginePlugin.
@@ -158,7 +159,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, attrs);
 
         assertTrue(result);
         verify(turLucene).indexing(instance, site.getId(), attrs);
@@ -179,7 +180,7 @@ class TurLuceneSearchEnginePluginTest {
                 .thenReturn(Optional.of(instance));
         when(turLucene.indexingBatch(instance, site.getId(), docs)).thenReturn(3);
 
-        int indexed = plugin.indexDocuments(site, Locale.ENGLISH, docs);
+        int indexed = plugin.indexDocuments(TurSNSiteRefs.toSE(site), Locale.ENGLISH, docs);
 
         assertEquals(3, indexed);
         verify(turLucene).indexingBatch(instance, site.getId(), docs);
@@ -189,7 +190,7 @@ class TurLuceneSearchEnginePluginTest {
     void shouldReturnZeroForEmptyBulkIndex() {
         TurSNSite site = new TurSNSite();
         site.setName("site-lc");
-        assertEquals(0, plugin.indexDocuments(site, Locale.ENGLISH, List.of()));
+        assertEquals(0, plugin.indexDocuments(TurSNSiteRefs.toSE(site), Locale.ENGLISH, List.of()));
     }
 
     @Test
@@ -199,7 +200,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        int indexed = plugin.indexDocuments(site, Locale.ENGLISH, List.of(Map.of("id", "1")));
+        int indexed = plugin.indexDocuments(TurSNSiteRefs.toSE(site), Locale.ENGLISH, List.of(Map.of("id", "1")));
 
         assertEquals(0, indexed);
     }
@@ -212,7 +213,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, Collections.emptyMap());
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, Collections.emptyMap());
 
         assertFalse(result);
     }
@@ -229,7 +230,7 @@ class TurLuceneSearchEnginePluginTest {
         org.mockito.Mockito.doThrow(new IllegalArgumentException("some other error"))
                 .when(turLucene).indexing(instance, site.getId(), attrs);
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, attrs);
 
         assertFalse(result);
     }
@@ -251,7 +252,7 @@ class TurLuceneSearchEnginePluginTest {
         org.mockito.Mockito.doThrow(new IllegalArgumentException("doc values type mismatch"))
                 .when(turLucene).indexing(instance, site.getId(), attrs);
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, attrs);
 
         assertTrue(result);
         verify(turLuceneInstanceProcess).resetInstance(Path.of("/tmp/test-index"));
@@ -269,7 +270,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-789");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-789");
 
         assertTrue(result);
         verify(turLucene).deIndexing(instance, "doc-789");
@@ -283,7 +284,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-789");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-789");
 
         assertFalse(result);
     }
@@ -299,7 +300,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "news");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "news");
 
         assertTrue(result);
         verify(turLucene).deIndexingByType(instance, "news");
@@ -313,7 +314,7 @@ class TurLuceneSearchEnginePluginTest {
         when(turLuceneInstanceProcess.initLuceneInstance("site-lc", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "news");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "news");
 
         assertFalse(result);
     }
@@ -325,7 +326,7 @@ class TurLuceneSearchEnginePluginTest {
         TurSNSite site = new TurSNSite();
         site.setName("site-lc");
 
-        assertTrue(plugin.commit(site, Locale.ENGLISH));
+        assertTrue(plugin.commit(TurSNSiteRefs.toSE(site), Locale.ENGLISH));
     }
 
     // ---- getDocumentTotal ----------------------------------------------------
@@ -336,7 +337,7 @@ class TurLuceneSearchEnginePluginTest {
         IndexWriter writer = mock(IndexWriter.class);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
         when(instance.getWriter()).thenReturn(writer);
         var ctor = org.apache.lucene.index.IndexWriter.DocStats.class.getDeclaredConstructors()[0];
@@ -344,7 +345,7 @@ class TurLuceneSearchEnginePluginTest {
         var docStats = (org.apache.lucene.index.IndexWriter.DocStats) ctor.newInstance(0, 55);
         when(writer.getDocStats()).thenReturn(docStats);
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(55L, total);
     }
@@ -353,10 +354,10 @@ class TurLuceneSearchEnginePluginTest {
     void shouldReturnZeroWhenDocumentTotalInstanceUnavailable() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.empty());
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(0L, total);
     }
@@ -366,11 +367,11 @@ class TurLuceneSearchEnginePluginTest {
         TurLuceneInstance instance = mock(TurLuceneInstance.class);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
         when(instance.getWriter()).thenThrow(new RuntimeException("index closed"));
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(0L, total);
     }
@@ -423,7 +424,7 @@ class TurLuceneSearchEnginePluginTest {
 
         // Static calls to TurLuceneUtils - just ensure no exception
         assertDoesNotThrow(() ->
-                plugin.createIndex(seInstance, siteLocale, "my-core", Collections.emptyMap()));
+                plugin.createIndex(seInstance, TurSNSiteRefs.toSE(siteLocale), "my-core", Collections.emptyMap()));
     }
 
     @Test
@@ -523,10 +524,10 @@ class TurLuceneSearchEnginePluginTest {
     void shouldFetchDocumentsByIdsPreservingOrderAndDroppingMisses() throws Exception {
         TurLuceneInstance instance = inMemoryInstance();
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
 
-        var docs = plugin.getDocumentsByIds(siteLocale, List.of("doc3", "missing", "doc1"));
+        var docs = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of("doc3", "missing", "doc1"));
 
         assertEquals(2, docs.size());
         assertEquals("doc3", docs.get(0).get("id"));
@@ -537,18 +538,18 @@ class TurLuceneSearchEnginePluginTest {
     @Test
     void shouldReturnEmptyDocumentsByIdsWhenBlank() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        assertTrue(plugin.getDocumentsByIds(siteLocale, List.of()).isEmpty());
-        assertTrue(plugin.getDocumentsByIds(siteLocale, Collections.singletonList("  ")).isEmpty());
+        assertTrue(plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of()).isEmpty());
+        assertTrue(plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), Collections.singletonList("  ")).isEmpty());
     }
 
     @Test
     void shouldReturnSimilarDocumentsExcludingSeed() throws Exception {
         TurLuceneInstance instance = inMemoryInstance();
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
 
-        var similar = plugin.getSimilarDocuments(siteLocale, "doc1", 5);
+        var similar = plugin.getSimilarDocuments(TurSNSiteRefs.toSE(siteLocale), "doc1", 5);
 
         // doc2 (space mission) is similar; the cooking doc is not; seed excluded.
         assertFalse(similar.isEmpty());
@@ -577,9 +578,9 @@ class TurLuceneSearchEnginePluginTest {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
         siteLocale.setTurSNSite(site);
         when(siteSearchConfig.mltFields("site-mlt")).thenReturn(List.of("description", "title"));
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale)).thenReturn(Optional.of(instance));
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale))).thenReturn(Optional.of(instance));
 
-        var similar = plugin.getSimilarDocuments(siteLocale, "probe-a", 5);
+        var similar = plugin.getSimilarDocuments(TurSNSiteRefs.toSE(siteLocale), "probe-a", 5);
 
         assertEquals(List.of("probe-b"), similar.stream().map(r -> r.getId()).toList());
     }
@@ -588,10 +589,10 @@ class TurLuceneSearchEnginePluginTest {
     void shouldReturnEmptySimilarWhenSeedMissing() throws Exception {
         TurLuceneInstance instance = inMemoryInstance();
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
 
-        assertTrue(plugin.getSimilarDocuments(siteLocale, "nope", 5).isEmpty());
+        assertTrue(plugin.getSimilarDocuments(TurSNSiteRefs.toSE(siteLocale), "nope", 5).isEmpty());
     }
 
     // ---- Spell check (T686) over a real in-memory index ----------------------

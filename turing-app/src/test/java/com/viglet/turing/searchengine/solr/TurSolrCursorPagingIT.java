@@ -42,6 +42,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1040 / §CVI.5 — asks Solr whether the queries this plugin builds mean what it
@@ -113,7 +114,7 @@ class TurSolrCursorPagingIT {
 
         TurSolrInstanceProcess instanceProcess = mock(TurSolrInstanceProcess.class);
         siteLocale = new TurSNSiteLocale();
-        when(instanceProcess.initSolrInstance(any(TurSNSiteLocale.class)))
+        when(instanceProcess.initSolrInstance(any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class)))
                 .thenReturn(Optional.of(instance));
 
         plugin = new TurSolrSearchEnginePlugin(mock(TurSolr.class), instanceProcess,
@@ -132,7 +133,7 @@ class TurSolrCursorPagingIT {
         List<String> ids = new ArrayList<>();
         String cursor = null;
         for (int guard = 0; guard < 100; guard++) {
-            var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, cursor, rows);
+            var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, cursor, rows);
             assertThat(page.supported()).isTrue();
             if (page.entries().isEmpty()) {
                 break;
@@ -152,7 +153,7 @@ class TurSolrCursorPagingIT {
         String cursor = null;
         for (int guard = 0; guard < 100; guard++) {
             List<Map<String, Object>> page =
-                    plugin.retrieveDocumentPageAfter(siteLocale, siteFieldMap(), cursor, rows);
+                    plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), siteFieldMap(), cursor, rows);
             if (page.isEmpty()) {
                 break;
             }
@@ -211,7 +212,7 @@ class TurSolrCursorPagingIT {
         List<String> sorted = IDS.stream().sorted().toList();
         String third = sorted.get(2);
 
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, third, 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, third, 50);
 
         assertThat(page.entries()).extracting("id")
                 .doesNotContain(third)
@@ -223,7 +224,7 @@ class TurSolrCursorPagingIT {
     void spacedCursorDoesNotEndTheSweep() {
         // The exact T1039 regression: before the fix this returned an empty page,
         // which the caller read as "fully enumerated".
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, "my doc", 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, "my doc", 50);
 
         assertThat(page.entries()).isNotEmpty();
         assertThat(page.entries()).extracting("id").containsExactly("ns:doc", "plain");
@@ -232,7 +233,7 @@ class TurSolrCursorPagingIT {
     @Test
     @DisplayName("A cursor on a path with spaces continues too — the AEM id shape")
     void pathLikeCursorContinues() {
-        var page = plugin.retrieveInventoryPage(siteLocale,
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale),
                 SOURCE, "/content/wknd/ski touring mont blanc", 50);
 
         assertThat(page.entries()).extracting("id")
@@ -243,8 +244,8 @@ class TurSolrCursorPagingIT {
     @Test
     @DisplayName("A source name containing a space filters, rather than matching nothing")
     void sourceFilterHandlesASpace() {
-        var matching = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
-        var other = plugin.retrieveInventoryPage(siteLocale, "AEM Publish", null, 50);
+        var matching = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
+        var other = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), "AEM Publish", null, 50);
 
         assertThat(matching.entries()).hasSize(IDS.size());
         assertThat(other.entries()).isEmpty();
@@ -253,7 +254,7 @@ class TurSolrCursorPagingIT {
     @Test
     @DisplayName("The indexed checksum comes back on every row")
     void checksumIsReported() {
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
 
         assertThat(page.entries()).allSatisfy(entry ->
                 assertThat(entry.checksum()).isNotBlank().startsWith("sum-"));
@@ -262,10 +263,10 @@ class TurSolrCursorPagingIT {
     @Test
     @DisplayName("A cursor past the last id ends the sweep, and the count is the source total")
     void cursorPastTheEndTerminates() {
-        var first = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
+        var first = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
         assertThat(first.remaining()).isEqualTo(IDS.size());
 
-        var past = plugin.retrieveInventoryPage(siteLocale, SOURCE, "zzz", 50);
+        var past = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, "zzz", 50);
         assertThat(past.entries()).isEmpty();
         assertThat(past.supported()).isTrue();
     }

@@ -39,6 +39,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.ranking.TurSNHybridRankingService;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T384 / §XX.4 — unit coverage for the public similar-documents orchestrator:
@@ -112,16 +113,16 @@ class TurSNSimilarDocumentsServiceTest {
 
         service.findSimilar(SITE, SEED, 10, Locale.ENGLISH, null);
 
-        org.mockito.ArgumentCaptor<com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale>
+        org.mockito.ArgumentCaptor<com.viglet.turing.searchengine.spi.TurSESiteLocale>
                 captor = org.mockito.ArgumentCaptor.forClass(
-                        com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
+                        com.viglet.turing.searchengine.spi.TurSESiteLocale.class);
         verify(plugin).getSimilarDocuments(captor.capture(), eq(SEED), eq(10));
 
         assertThat(captor.getValue()).satisfies(siteLocale -> {
-            assertThat(siteLocale.getLanguage()).isEqualTo(Locale.ENGLISH);
-            assertThat(siteLocale.getCore()).isEqualTo("core");
-            assertThat(siteLocale.getTurSNSite()).isNotNull();
-            assertThat(siteLocale.getTurSNSite().getName()).isEqualTo(SITE);
+            assertThat(siteLocale.language()).isEqualTo(Locale.ENGLISH);
+            assertThat(siteLocale.core()).isEqualTo("core");
+            assertThat(siteLocale.site()).isNotNull();
+            assertThat(siteLocale.site().name()).isEqualTo(SITE);
         });
     }
 

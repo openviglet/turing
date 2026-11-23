@@ -31,6 +31,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProvidersField;
 import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersRepository;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Merge providers reach the site's engine only through the plugin contract (T1310).
@@ -97,7 +98,7 @@ class TurSNMergeProvidersProcessTest {
                 attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
                 attrs.put("relFrom", "value1");
 
-                when(plugin.findByFieldValues(eq(site), any(Locale.class), anyMap())).thenReturn(List.of());
+                when(plugin.findByFieldValues(eq(TurSNSiteRefs.toSE(site)), any(Locale.class), anyMap())).thenReturn(List.of());
 
                 Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
                 assertEquals(attrs, result);
@@ -113,7 +114,7 @@ class TurSNMergeProvidersProcessTest {
                 attrs.put("relTo", "value1");
                 attrs.put(TurSNFieldName.ID, "1");
 
-                when(plugin.findByFieldValues(eq(site), any(Locale.class), anyMap())).thenReturn(List.of());
+                when(plugin.findByFieldValues(eq(TurSNSiteRefs.toSE(site)), any(Locale.class), anyMap())).thenReturn(List.of());
 
                 Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
                 assertEquals(attrs, result);
@@ -131,7 +132,7 @@ class TurSNMergeProvidersProcessTest {
 
                 Map<String, Object> fromAndTo = Map.of(TurSNFieldName.ID, "doc-1",
                                 TurSNFieldName.SOURCE_APPS, List.of("providerB"), "title", "search-title");
-                when(plugin.findByFieldValues(eq(site), eq(Locale.US), anyMap()))
+                when(plugin.findByFieldValues(eq(TurSNSiteRefs.toSE(site)), eq(Locale.US), anyMap()))
                                 .thenReturn(List.of(), List.of(), List.of(fromAndTo));
 
                 Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
@@ -156,7 +157,7 @@ class TurSNMergeProvidersProcessTest {
 
                 Map<String, Object> fromDoc = Map.of(TurSNFieldName.ID, "old-id", "headline", "merged headline",
                                 TurSNFieldName.SOURCE_APPS, "providerA");
-                when(plugin.findByFieldValues(eq(site), eq(Locale.US), anyMap()))
+                when(plugin.findByFieldValues(eq(TurSNSiteRefs.toSE(site)), eq(Locale.US), anyMap()))
                                 .thenReturn(List.of(fromDoc), List.of());
 
                 Map<String, Object> result = process.mergeDocuments(site, attrs, Locale.US);
@@ -166,7 +167,7 @@ class TurSNMergeProvidersProcessTest {
                 List<String> providers = (List<String>) result.get(TurSNFieldName.SOURCE_APPS);
                 assertTrue(providers.contains("providerA"));
                 assertTrue(providers.contains("providerB"));
-                verify(plugin).deIndex(site, Locale.US, "old-id");
+                verify(plugin).deIndex(TurSNSiteRefs.toSE(site), Locale.US, "old-id");
         }
 
         @Test
@@ -178,11 +179,11 @@ class TurSNMergeProvidersProcessTest {
                 attrs.put(TurSNFieldName.SOURCE_APPS, "providerA");
                 attrs.put("relFrom", "value1");
 
-                when(plugin.findByFieldValues(eq(site), eq(Locale.CANADA_FRENCH), anyMap())).thenReturn(List.of());
+                when(plugin.findByFieldValues(eq(TurSNSiteRefs.toSE(site)), eq(Locale.CANADA_FRENCH), anyMap())).thenReturn(List.of());
 
                 Map<String, Object> result = process.mergeDocuments(site, attrs, null);
 
                 assertEquals(attrs, result);
-                verify(plugin, times(3)).findByFieldValues(eq(site), eq(Locale.CANADA_FRENCH), anyMap());
+                verify(plugin, times(3)).findByFieldValues(eq(TurSNSiteRefs.toSE(site)), eq(Locale.CANADA_FRENCH), anyMap());
         }
 }

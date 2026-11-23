@@ -42,6 +42,7 @@ import com.viglet.turing.searchengine.TurSEInventoryEntry;
 import com.viglet.turing.searchengine.TurSEInventoryPage;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1029 / §XX.16 — the audit loop's Turing half. What matters here is that the
@@ -109,7 +110,7 @@ class TurSNIndexInventoryServiceTest {
         assertThat(response.entries()).hasSize(1);
         assertThat(response.nextCursor()).isEqualTo("a");
         assertThat(response.supported()).isTrue();
-        verify(plugin).retrieveInventoryPage(eq(enLocale), eq("aem"), eq(null),
+        verify(plugin).retrieveInventoryPage(eq(TurSNSiteRefs.toSE(enLocale)), eq("aem"), eq(null),
                 eq(TurSNIndexInventoryService.DEFAULT_ROWS));
     }
 
@@ -124,7 +125,7 @@ class TurSNIndexInventoryServiceTest {
         var response = service.inventory(site, "pt-BR", null, null, 50);
 
         assertThat(response.locale()).isEqualTo("pt-BR");
-        verify(plugin).retrieveInventoryPage(eq(ptLocale), eq(null), eq(null), eq(50));
+        verify(plugin).retrieveInventoryPage(eq(TurSNSiteRefs.toSE(ptLocale)), eq(null), eq(null), eq(50));
     }
 
     @Test
@@ -172,7 +173,7 @@ class TurSNIndexInventoryServiceTest {
 
         assertThat(response.locale()).isEqualTo("en");
         assertThat(response.source()).isNull();
-        verify(plugin).retrieveInventoryPage(eq(enLocale), eq(null), eq(null), eq(10));
+        verify(plugin).retrieveInventoryPage(eq(TurSNSiteRefs.toSE(enLocale)), eq(null), eq(null), eq(10));
     }
 
     @Test
@@ -205,6 +206,6 @@ class TurSNIndexInventoryServiceTest {
         assertThat(response.nextCursor()).isEqualTo("b");
         assertThat(response.siteId()).isEqualTo("site-1");
         assertThat(response.siteName()).isEqualTo("Sample");
-        verify(plugin).retrieveInventoryPage(eq(enLocale), eq(null), eq("previous"), eq(2));
+        verify(plugin).retrieveInventoryPage(eq(TurSNSiteRefs.toSE(enLocale)), eq(null), eq("previous"), eq(2));
     }
 }

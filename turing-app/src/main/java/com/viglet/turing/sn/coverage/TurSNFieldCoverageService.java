@@ -32,6 +32,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T388 — computes per-field coverage / completeness observability for a
@@ -101,7 +102,7 @@ public class TurSNFieldCoverageService {
         long total = 0L;
         for (TurSNSiteLocale locale : locales) {
             try {
-                total += Math.max(0L, plugin.getDocumentTotal(locale));
+                total += Math.max(0L, plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale)));
             } catch (Exception e) {
                 log.warn("[T388] Could not read document total for locale {}: {}",
                         locale.getLanguage(), e.getMessage());
@@ -121,7 +122,7 @@ public class TurSNFieldCoverageService {
         for (TurSNSiteLocale locale : locales) {
             long localeCount;
             try {
-                localeCount = plugin.getDocumentCountWithField(locale, fieldName);
+                localeCount = plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(locale), fieldName);
             } catch (Exception e) {
                 log.warn("[T388] Could not count field '{}' for locale {}: {}",
                         fieldName, locale.getLanguage(), e.getMessage());

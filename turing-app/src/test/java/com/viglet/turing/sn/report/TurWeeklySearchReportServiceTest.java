@@ -29,6 +29,7 @@ import com.viglet.turing.system.TurGlobalSettingsService;
 import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.llm.TurLlmCacheService;
 import com.viglet.turing.system.security.TurSecretCryptoService;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurWeeklySearchReportService.
@@ -507,11 +508,14 @@ class TurWeeklySearchReportServiceTest {
         var enLocale = mock(com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
         var ptLocale = mock(com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale.class);
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale, ptLocale));
+        // T1310 - the plugin takes value records, so the two locales differ by core.
+        when(enLocale.getCore()).thenReturn("multi_en");
+        when(ptLocale.getCore()).thenReturn("multi_pt");
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(enLocale)).thenReturn(1000L);
-        when(plugin.getDocumentTotal(ptLocale)).thenReturn(500L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(enLocale))).thenReturn(1000L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(ptLocale))).thenReturn(500L);
 
         when(emailService.loadTemplate("templates/email/weekly-search-report-site-card.html"))
                 .thenReturn("{{siteDocumentCount}}");
@@ -539,7 +543,7 @@ class TurWeeklySearchReportServiceTest {
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(enLocale)).thenThrow(new RuntimeException("Solr down"));
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(enLocale))).thenThrow(new RuntimeException("Solr down"));
 
         when(emailService.loadTemplate("templates/email/weekly-search-report-site-card.html"))
                 .thenReturn("{{siteDocumentCount}}");

@@ -23,8 +23,8 @@ import com.viglet.turing.commons.se.similar.TurSESimilarResult;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSESynonymApplyResult;
@@ -221,7 +221,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Index lifecycle -------------------------------------------------
 
     @Override
-    public void createIndex(TurSEInstance seInstance, TurSNSiteLocale siteLocale, String indexName,
+    public void createIndex(TurSEInstance seInstance, TurSESiteLocale siteLocale, String indexName,
             Map<String, TurSEFieldType> fieldTypes) {
         TurLuceneUtils.createCore(seInstance.getEndpointUrl(), indexName);
     }
@@ -308,8 +308,8 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Document operations ---------------------------------------------
 
     @Override
-    public boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes) {
-        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+    public boolean indexDocument(TurSESite turSNSite, Locale locale, Map<String, Object> attributes) {
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.name(), locale)
                 .map(luceneInstance -> {
                     try {
                         turLucene.indexing(luceneInstance, siteId(turSNSite), attributes);
@@ -320,7 +320,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
                                     e.getMessage());
                             turLuceneInstanceProcess.resetInstance(luceneInstance.getIndexPath());
                             return turLuceneInstanceProcess
-                                    .initLuceneInstance(turSNSite.getName(), locale)
+                                    .initLuceneInstance(turSNSite.name(), locale)
                                     .map(fresh -> {
                                         turLucene.indexing(fresh, siteId(turSNSite), attributes);
                                         return true;
@@ -364,19 +364,19 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
      * @since 2026.3.4
      */
     @Override
-    public int indexDocuments(TurSNSite turSNSite, Locale locale,
+    public int indexDocuments(TurSESite turSNSite, Locale locale,
             List<Map<String, Object>> documents) {
         if (documents == null || documents.isEmpty()) {
             return 0;
         }
-        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.name(), locale)
                 .map(luceneInstance -> turLucene.indexingBatch(luceneInstance, siteId(turSNSite), documents))
                 .orElse(0);
     }
 
     @Override
-    public boolean deIndex(TurSNSite turSNSite, Locale locale, String id) {
-        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+    public boolean deIndex(TurSESite turSNSite, Locale locale, String id) {
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.name(), locale)
                 .map(luceneInstance -> {
                     turLucene.deIndexing(luceneInstance, id);
                     return true;
@@ -384,8 +384,8 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type) {
-        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+    public boolean deIndexByType(TurSESite turSNSite, Locale locale, String type) {
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.name(), locale)
                 .map(luceneInstance -> {
                     turLucene.deIndexingByType(luceneInstance, type);
                     return true;
@@ -393,8 +393,8 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
-        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.getName(), locale)
+    public boolean deIndexByFields(TurSESite turSNSite, Locale locale, Map<String, String> fields) {
+        return turLuceneInstanceProcess.initLuceneInstance(turSNSite.name(), locale)
                 .map(luceneInstance -> {
                     turLucene.deIndexingByFields(luceneInstance, fields);
                     return true;
@@ -402,7 +402,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public boolean commit(TurSNSite turSNSite, Locale locale) {
+    public boolean commit(TurSESite turSNSite, Locale locale) {
         // Lucene commits are synchronous — nothing extra needed
         return true;
     }
@@ -410,10 +410,10 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Content export ---------------------------------------------------
 
     @Override
-    public List<Map<String, Object>> retrieveDocumentPage(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPage(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, int start, int rows) {
         log.info("[Lucene] retrieveDocumentPage locale={} start={} rows={} siteFields={}",
-                turSNSiteLocale.getLanguage(), start, rows, siteFieldMap.size());
+                turSNSiteLocale.language(), start, rows, siteFieldMap.size());
         return turLuceneInstanceProcess.initLuceneInstance(turSNSiteLocale)
                 .map(instance -> {
                     try {
@@ -477,7 +477,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
 
     /** T1310 — the language's stop words, the list the query analyzer drops (T1242). */
     @Override
-    public List<String> stopWords(TurSNSite turSNSite, Locale locale) {
+    public List<String> stopWords(TurSESite turSNSite, Locale locale) {
         List<String> words = new ArrayList<>();
         for (Object word : TurLuceneFoldingAnalyzer.stopWordsFor(locale)) {
             words.add(word instanceof char[] chars ? new String(chars) : String.valueOf(word));
@@ -604,7 +604,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     private static final int MLT_ROWS_PER_SEED = 5;
 
     @Override
-    public List<Map<String, Object>> getDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -618,7 +618,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public List<Map<String, Object>> getStoredDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    public List<Map<String, Object>> getStoredDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
@@ -691,7 +691,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows) {
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows) {
         return getSimilarDocuments(siteLocale, id, rows, null);
     }
 
@@ -701,15 +701,15 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
      * builder so a filter reads its field's type as it does on search.
      */
     @Override
-    public List<TurSESimilarResult> getSimilarDocuments(TurSNSiteLocale siteLocale, String id, int rows,
+    public List<TurSESimilarResult> getSimilarDocuments(TurSESiteLocale siteLocale, String id, int rows,
             com.viglet.turing.commons.se.TurSEParameters constraints) {
         if (id == null || id.isBlank() || rows < 1) {
             return List.of();
         }
-        TurSNSite site = siteLocale == null ? null : siteLocale.getTurSNSite();
+        TurSESite site = siteLocale == null ? null : siteLocale.site();
         String[] mltFields = resolveMltFields(siteId(site));
         Query filter = constraints == null || site == null ? null
-                : turLuceneQueryBuilder.buildQueryForSite(site.getName(), constraints);
+                : turLuceneQueryBuilder.buildQueryForSite(site.name(), constraints);
         return turLuceneInstanceProcess.initLuceneInstance(siteLocale)
                 .map(instance -> {
                     Map<String, Collection<Object>> like = seedFields(instance, id, mltFields);
@@ -903,7 +903,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
      * matter how far into the index the page sits.
      */
     @Override
-    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSNSiteLocale turSNSiteLocale,
+    public List<Map<String, Object>> retrieveDocumentPageAfter(TurSESiteLocale turSNSiteLocale,
             Map<String, ?> siteFieldMap, String afterId, int rows) {
         return turLuceneInstanceProcess.initLuceneInstance(turSNSiteLocale)
                 .map(instance -> {
@@ -942,7 +942,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
 
     @Override
     public com.viglet.turing.searchengine.TurSEInventoryPage retrieveInventoryPage(
-            TurSNSiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
+            TurSESiteLocale turSNSiteLocale, String sourceApp, String after, int rows) {
         return turLuceneInstanceProcess.initLuceneInstance(turSNSiteLocale)
                 .map(instance -> {
                     try {
@@ -1081,7 +1081,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     // ---- Monitoring ------------------------------------------------------
 
     @Override
-    public long getDocumentTotal(TurSNSiteLocale turSNSiteLocale) {
+    public long getDocumentTotal(TurSESiteLocale turSNSiteLocale) {
         return turLuceneInstanceProcess.initLuceneInstance(turSNSiteLocale)
                 .map(instance -> {
                     try {
@@ -1094,7 +1094,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
     }
 
     @Override
-    public long getDocumentCountWithField(TurSNSiteLocale turSNSiteLocale, String fieldName) {
+    public long getDocumentCountWithField(TurSESiteLocale turSNSiteLocale, String fieldName) {
         return turLuceneInstanceProcess.initLuceneInstance(turSNSiteLocale)
                 .map(instance -> {
                     try {
@@ -1123,7 +1123,7 @@ public class TurLuceneSearchEnginePlugin implements TurSearchEnginePlugin {
         return info;
     }
 
-    private static String siteId(TurSNSite turSNSite) {
-        return turSNSite == null ? null : turSNSite.getId();
+    private static String siteId(TurSESite turSNSite) {
+        return turSNSite == null ? null : turSNSite.id();
     }
 }

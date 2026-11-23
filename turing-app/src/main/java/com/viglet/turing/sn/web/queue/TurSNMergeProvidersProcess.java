@@ -40,6 +40,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * @author Alexandre Oliveira
@@ -173,13 +174,13 @@ public class TurSNMergeProvidersProcess {
 
     private void deIndexDocuments(TurSearchEnginePlugin plugin, TurSNSiteMergeProviders turSNSiteMergeProviders,
             List<Map<String, Object>> results) {
-        results.forEach(result -> plugin.deIndex(turSNSiteMergeProviders.getTurSNSite(),
+        results.forEach(result -> plugin.deIndex(TurSNSiteRefs.toSE(turSNSiteMergeProviders.getTurSNSite()),
                 turSNSiteMergeProviders.getLocale(), result.get(TurSNFieldName.ID).toString()));
     }
 
     private List<Map<String, Object>> resultAnd(TurSearchEnginePlugin plugin,
             TurSNSiteMergeProviders turSNSiteMergeProviders, Map<String, Object> attributes, Locale locale) {
-        return plugin.findByFieldValues(turSNSiteMergeProviders.getTurSNSite(),
+        return plugin.findByFieldValues(TurSNSiteRefs.toSE(turSNSiteMergeProviders.getTurSNSite()),
                 Optional.ofNullable(locale).orElse(turSNSiteMergeProviders.getLocale()), attributes);
     }
 

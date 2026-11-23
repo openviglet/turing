@@ -18,8 +18,8 @@ package com.viglet.turing.searchengine;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
@@ -57,7 +57,7 @@ public interface TurSearchEnginePlugin {
      * Creates an index/core for the given SE instance.
      * Solr uses the locale language to pick the configSet; Lucene/ES ignore siteLocale.
      */
-    void createIndex(TurSEInstance seInstance, TurSNSiteLocale siteLocale, String indexName,
+    void createIndex(TurSEInstance seInstance, TurSESiteLocale siteLocale, String indexName,
             Map<String, TurSEFieldType> fieldTypes);
 
     /**
@@ -70,9 +70,7 @@ public interface TurSearchEnginePlugin {
      * @param indexName  the name for the new index/core
      */
     default void createStandaloneIndex(TurSEInstance seInstance, Locale language, String indexName) {
-        TurSNSiteLocale tempLocale = new TurSNSiteLocale();
-        tempLocale.setLanguage(language);
-        createIndex(seInstance, tempLocale, indexName, Map.of());
+        createIndex(seInstance, TurSESiteLocale.ofLanguage(language), indexName, Map.of());
     }
 
     void deleteIndex(TurSEInstance seInstance, String indexName);
@@ -121,7 +119,7 @@ public interface TurSearchEnginePlugin {
 
     // ---- Document operations (plugin resolves instance via site+locale) --
 
-    boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes);
+    boolean indexDocument(TurSESite site, Locale locale, Map<String, Object> attributes);
 
     /**
      * Indexes a batch of documents in a single round-trip to the search engine
@@ -133,20 +131,20 @@ public interface TurSearchEnginePlugin {
      * @return number of documents successfully indexed.
      * @since 2026.2.7
      */
-    default int indexDocuments(TurSNSite turSNSite, Locale locale,
+    default int indexDocuments(TurSESite site, Locale locale,
             List<Map<String, Object>> documents) {
         int indexed = 0;
         for (Map<String, Object> doc : documents) {
-            if (indexDocument(turSNSite, locale, doc)) {
+            if (indexDocument(site, locale, doc)) {
                 indexed++;
             }
         }
         return indexed;
     }
 
-    boolean deIndex(TurSNSite turSNSite, Locale locale, String id);
+    boolean deIndex(TurSESite site, Locale locale, String id);
 
-    boolean deIndexByType(TurSNSite turSNSite, Locale locale, String type);
+    boolean deIndexByType(TurSESite site, Locale locale, String type);
 
     /**
      * T1112 — deletes every document of the site's locale whose fields hold all of
@@ -159,17 +157,17 @@ public interface TurSearchEnginePlugin {
      * @return {@code true} when the delete was sent
      * @since 2026.3.6
      */
-    default boolean deIndexByFields(TurSNSite turSNSite, Locale locale, Map<String, String> fields) {
+    default boolean deIndexByFields(TurSESite site, Locale locale, Map<String, String> fields) {
         throw new UnsupportedOperationException("deIndexByFields not supported by " + getPluginType());
     }
 
-    boolean commit(TurSNSite turSNSite, Locale locale);
+    boolean commit(TurSESite site, Locale locale);
 
-    // ---- Standalone index ops (T24b / §III.2 — RAG BM25 cores not tied to a TurSNSite) ----
+    // ---- Standalone index ops (T24b / §III.2 — RAG BM25 cores not tied to a TurSESite) ----
 
     /**
      * T24b — index a document into a standalone index/core that doesn't
-     * belong to any {@link TurSNSite}. Used by the RAG hybrid path to push
+     * belong to any {@link TurSESite}. Used by the RAG hybrid path to push
      * chunks into per-locale BM25 cores created via
      * {@link #createStandaloneIndex(TurSEInstance, Locale, String)}.
      *
@@ -239,7 +237,7 @@ public interface TurSearchEnginePlugin {
 
     /**
      * T24b — flush pending writes to a standalone index/core. The standard
-     * (SN site) {@link #commit(TurSNSite, Locale)} path inherits per-locale
+     * (SN site) {@link #commit(TurSESite, Locale)} path inherits per-locale
      * routing from the site; standalone cores don't have that wrapper, so
      * we expose a sibling commit by index name. Plugins that auto-commit
      * (ES with refresh policy, Solr in soft-commit mode) can no-op.
@@ -358,12 +356,12 @@ public interface TurSearchEnginePlugin {
      * @since 2026.3.4
      */
     default List<com.viglet.turing.commons.se.similar.TurSESimilarResult> getSimilarDocuments(
-            TurSNSiteLocale siteLocale, String id, int rows) {
+            TurSESiteLocale siteLocale, String id, int rows) {
         return List.of();
     }
 
     /**
-     * T1133 / T1132 — {@link #getSimilarDocuments(TurSNSiteLocale, String, int)}
+     * T1133 / T1132 — {@link #getSimilarDocuments(TurSESiteLocale, String, int)}
      * confined by {@code constraints}: their facet filters ({@code fq},
      * {@code fqAnd}, {@code fqOr} with search's semantics) and the request key's
      * partition, inside the query so {@code rows} counts what passes. {@code null}
@@ -375,7 +373,7 @@ public interface TurSearchEnginePlugin {
      * @since 2026.3.6
      */
     default List<com.viglet.turing.commons.se.similar.TurSESimilarResult> getSimilarDocuments(
-            TurSNSiteLocale siteLocale, String id, int rows,
+            TurSESiteLocale siteLocale, String id, int rows,
             com.viglet.turing.commons.se.TurSEParameters constraints) {
         return constraints == null ? getSimilarDocuments(siteLocale, id, rows) : List.of();
     }
@@ -409,7 +407,7 @@ public interface TurSearchEnginePlugin {
      * @return one field map per resolved id, in {@code ids} order
      * @since 2026.3.4
      */
-    default List<Map<String, Object>> getDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    default List<Map<String, Object>> getDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         return List.of();
     }
 
@@ -423,7 +421,7 @@ public interface TurSearchEnginePlugin {
      *
      * @since 2026.3.4
      */
-    default List<Map<String, Object>> getStoredDocumentsByIds(TurSNSiteLocale siteLocale, List<String> ids) {
+    default List<Map<String, Object>> getStoredDocumentsByIds(TurSESiteLocale siteLocale, List<String> ids) {
         return getDocumentsByIds(siteLocale, ids);
     }
 
@@ -521,13 +519,14 @@ public interface TurSearchEnginePlugin {
      * Only returns fields defined in the SN Site field map, respecting
      * multiValued settings (single-value fields are flattened from arrays).
      *
-     * @param turSNSiteLocale  the site locale to query
-     * @param siteFieldMap     field definitions from TurSNSiteFieldService.toMap()
+     * @param siteLocale  the site locale to query
+     * @param siteFieldMap     the site's fields by name; a {@link com.viglet.turing.searchengine.spi.TurSEIndexField}
+     *                         value tells whether the field is multi-valued
      * @param start            pagination offset
      * @param rows             number of documents per page
      * @return list of documents as maps
      */
-    default List<Map<String, Object>> retrieveDocumentPage(TurSNSiteLocale turSNSiteLocale,
+    default List<Map<String, Object>> retrieveDocumentPage(TurSESiteLocale siteLocale,
             Map<String, ?> siteFieldMap, int start, int rows) {
         return List.of();
     }
@@ -571,7 +570,7 @@ public interface TurSearchEnginePlugin {
      *                beginning
      * @since 2026.3.4
      */
-    default List<Map<String, Object>> retrieveDocumentPageAfter(TurSNSiteLocale turSNSiteLocale,
+    default List<Map<String, Object>> retrieveDocumentPageAfter(TurSESiteLocale siteLocale,
             Map<String, ?> siteFieldMap, String afterId, int rows) {
         return List.of();
     }
@@ -605,7 +604,7 @@ public interface TurSearchEnginePlugin {
      * empty page a caller would read as "the index holds nothing" and act on by
      * republishing the whole source.
      *
-     * @param turSNSiteLocale the (site, locale) index to enumerate
+     * @param siteLocale the (site, locale) index to enumerate
      * @param sourceApp       the {@code source_apps} value to filter by, or
      *                        {@code null}/blank for every document
      * @param after           the last id from the previous page; {@code null}
@@ -614,7 +613,7 @@ public interface TurSearchEnginePlugin {
      * @return the page; never {@code null}
      * @since 2026.3.4
      */
-    default TurSEInventoryPage retrieveInventoryPage(TurSNSiteLocale turSNSiteLocale,
+    default TurSEInventoryPage retrieveInventoryPage(TurSESiteLocale siteLocale,
             String sourceApp, String after, int rows) {
         return TurSEInventoryPage.unsupported();
     }
@@ -640,7 +639,7 @@ public interface TurSearchEnginePlugin {
      * locale, which the autocomplete filter drops from a suggestion's edges.
      * Engines without a list of their own keep the default and filter nothing.
      */
-    default List<String> stopWords(TurSNSite turSNSite, Locale locale) {
+    default List<String> stopWords(TurSESite site, Locale locale) {
         return List.of();
     }
 
@@ -652,7 +651,7 @@ public interface TurSearchEnginePlugin {
      * found none or cannot look a document up by id.
      */
     default Optional<com.viglet.turing.searchengine.result.TurSEResult> findById(
-            TurSNSiteSearchContext context, TurSNSite turSNSite, String id) {
+            TurSNSiteSearchContext context, TurSESite site, String id) {
         return Optional.empty();
     }
 
@@ -662,7 +661,7 @@ public interface TurSearchEnginePlugin {
      * merge provider's relation can carry the engine's own syntax. Engines that
      * cannot answer it return nothing.
      */
-    default List<Map<String, Object>> findByFieldValues(TurSNSite turSNSite, Locale locale,
+    default List<Map<String, Object>> findByFieldValues(TurSESite site, Locale locale,
             Map<String, Object> fieldValues) {
         return List.of();
     }
@@ -672,7 +671,7 @@ public interface TurSearchEnginePlugin {
      * returns the engine's response body. Empty when the engine has no such
      * syntax or the site has no index for the locale.
      */
-    default Optional<String> nativeJsonQuery(TurSNSite turSNSite, Locale locale, String json) {
+    default Optional<String> nativeJsonQuery(TurSESite site, Locale locale, String json) {
         return Optional.empty();
     }
 
@@ -711,7 +710,7 @@ public interface TurSearchEnginePlugin {
 
     // ---- Monitoring ------------------------------------------------------
 
-    long getDocumentTotal(TurSNSiteLocale turSNSiteLocale);
+    long getDocumentTotal(TurSESiteLocale siteLocale);
 
     /**
      * T388 — counts the documents in the site's index (for the given locale)
@@ -730,13 +729,13 @@ public interface TurSearchEnginePlugin {
      * <em>unknown</em> (not zero) so the UI can degrade gracefully instead of
      * reporting a misleading 0% coverage.
      *
-     * @param turSNSiteLocale the site locale whose index/core to query
+     * @param siteLocale the site locale whose index/core to query
      * @param fieldName       the field whose presence to count
      * @return number of documents populating the field, or {@code -1} if the
      *         engine does not support field-presence counting
      * @since 2026.3.1
      */
-    default long getDocumentCountWithField(TurSNSiteLocale turSNSiteLocale, String fieldName) {
+    default long getDocumentCountWithField(TurSESiteLocale siteLocale, String fieldName) {
         return -1L;
     }
 
@@ -754,14 +753,14 @@ public interface TurSearchEnginePlugin {
      * counts"; callers should treat a negative result as <em>unknown</em> and
      * degrade gracefully (mirrors {@link #getDocumentCountWithField}).
      *
-     * @param turSNSiteLocale the site locale whose index/core to query
+     * @param siteLocale the site locale whose index/core to query
      * @param fieldName       the numeric field to range over
      * @param threshold       exclusive upper bound
      * @return number of documents with {@code fieldName < threshold}, or
      *         {@code -1} if the engine does not support range counting
      * @since 2026.3.4
      */
-    default long getDocumentCountWithFieldBelow(TurSNSiteLocale turSNSiteLocale, String fieldName,
+    default long getDocumentCountWithFieldBelow(TurSESiteLocale siteLocale, String fieldName,
             int threshold) {
         return -1L;
     }

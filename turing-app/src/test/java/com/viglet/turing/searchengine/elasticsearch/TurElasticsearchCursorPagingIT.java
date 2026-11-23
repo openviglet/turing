@@ -49,6 +49,7 @@ import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1040 / §CVI.5 — the Elasticsearch half: asks the engine the same two questions
@@ -137,7 +138,7 @@ class TurElasticsearchCursorPagingIT {
         client.indices().refresh(r -> r.index(INDEX.toLowerCase()));
 
         var instanceProcess = mock(TurElasticsearchInstanceProcess.class);
-        when(instanceProcess.initElasticsearchInstance(any(TurSNSiteLocale.class)))
+        when(instanceProcess.initElasticsearchInstance(any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class)))
                 .thenReturn(Optional.of(new TurElasticsearchInstance(client,
                         URI.create(url).toURL(), INDEX.toLowerCase())));
 
@@ -155,7 +156,7 @@ class TurElasticsearchCursorPagingIT {
         List<String> ids = new ArrayList<>();
         String cursor = null;
         for (int guard = 0; guard < 100; guard++) {
-            var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, cursor, rows);
+            var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, cursor, rows);
             if (page.entries().isEmpty()) {
                 break;
             }
@@ -185,7 +186,7 @@ class TurElasticsearchCursorPagingIT {
     @Test
     @DisplayName("The first inventory page is not empty, and reports the source total")
     void firstPageIsNotEmpty() {
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
 
         assertThat(page.supported()).isTrue();
         assertThat(page.entries()).hasSize(IDS.size());
@@ -204,7 +205,7 @@ class TurElasticsearchCursorPagingIT {
         List<String> sorted = IDS.stream().sorted().toList();
         String third = sorted.get(2);
 
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, third, 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, third, 50);
 
         assertThat(page.entries()).extracting("id")
                 .doesNotContain(third)
@@ -214,7 +215,7 @@ class TurElasticsearchCursorPagingIT {
     @Test
     @DisplayName("A cursor on an id containing a space continues instead of ending the sweep")
     void spacedCursorDoesNotEndTheSweep() {
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, "my doc", 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, "my doc", 50);
 
         assertThat(page.entries()).extracting("id").containsExactly("ns:doc", "plain");
     }
@@ -222,8 +223,8 @@ class TurElasticsearchCursorPagingIT {
     @Test
     @DisplayName("A source name containing a space filters, rather than matching everything")
     void sourceFilterHandlesASpace() {
-        var matching = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
-        var other = plugin.retrieveInventoryPage(siteLocale, "AEM Publish", null, 50);
+        var matching = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
+        var other = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), "AEM Publish", null, 50);
 
         assertThat(matching.entries()).hasSize(IDS.size());
         assertThat(other.entries()).isEmpty();
@@ -236,7 +237,7 @@ class TurElasticsearchCursorPagingIT {
         String cursor = null;
         for (int guard = 0; guard < 100; guard++) {
             List<Map<String, Object>> page =
-                    plugin.retrieveDocumentPageAfter(siteLocale, siteFieldMap(), cursor, 3);
+                    plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), siteFieldMap(), cursor, 3);
             if (page.isEmpty()) {
                 break;
             }
@@ -268,7 +269,7 @@ class TurElasticsearchCursorPagingIT {
         client.indices().refresh(r -> r.index(INDEX.toLowerCase()));
 
         try {
-            var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
+            var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
             assertThat(page.entries()).extracting("id").contains(longId);
             assertThat(page.remaining()).isEqualTo(IDS.size() + 1L);
         } finally {
@@ -280,7 +281,7 @@ class TurElasticsearchCursorPagingIT {
     @Test
     @DisplayName("The indexed checksum comes back on every row")
     void checksumIsReported() {
-        var page = plugin.retrieveInventoryPage(siteLocale, SOURCE, null, 50);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), SOURCE, null, 50);
 
         assertThat(page.entries()).allSatisfy(entry ->
                 assertThat(entry.checksum()).isNotBlank().startsWith("sum-"));

@@ -154,7 +154,7 @@ class TurSNTemplateTest {
         verify(localeRepository).save(any(TurSNSiteLocale.class));
         verify(fieldRepository, times(13)).save(any(TurSNSiteField.class));
         verify(fieldExtRepository, times(13)).save(any(TurSNSiteFieldExt.class));
-        verify(plugin).createIndex(eq(instance), any(TurSNSiteLocale.class), eq("my_site_en_US"), eq(Map.of()));
+        verify(plugin).createIndex(eq(instance), any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class), eq("my_site_en_US"), eq(Map.of()));
     }
 
     @Test
@@ -182,7 +182,7 @@ class TurSNTemplateTest {
         String coreName = template.createSolrCore(locale, "alex");
 
         assertThat(coreName).isEqualTo("existing_core");
-        verify(plugin).createIndex(eq(instance), any(TurSNSiteLocale.class), eq("existing_core"), eq(Map.of()));
+        verify(plugin).createIndex(eq(instance), any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class), eq("existing_core"), eq(Map.of()));
     }
 
     @Test
@@ -212,7 +212,7 @@ class TurSNTemplateTest {
         String coreName = template.createSolrCore(locale, "alex");
 
         assertThat(coreName).isEqualTo("my_site_pt_BR");
-        verify(plugin).createIndex(eq(instance), any(TurSNSiteLocale.class), eq("my_site_pt_BR"), eq(Map.of()));
+        verify(plugin).createIndex(eq(instance), any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class), eq("my_site_pt_BR"), eq(Map.of()));
     }
 
     @Test
@@ -237,7 +237,7 @@ class TurSNTemplateTest {
         template.createLocale(site, "alex", Locale.of("es", "ES"));
 
         verify(localeRepository).save(any(TurSNSiteLocale.class));
-        verify(plugin).createIndex(eq(instance), any(TurSNSiteLocale.class), eq("my_site_es_ES"), eq(Map.of()));
+        verify(plugin).createIndex(eq(instance), any(com.viglet.turing.searchengine.spi.TurSESiteLocale.class), eq("my_site_es_ES"), eq(Map.of()));
     }
 
     @Test

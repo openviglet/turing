@@ -36,6 +36,7 @@ import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T390 / §XX.10 — multi-source duplicate clustering for Semantic Navigation.
@@ -142,13 +143,13 @@ public class TurSNDuplicateClusteringService {
             return empty(id);
         }
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
-        List<Map<String, Object>> seed = plugin.getDocumentsByIds(siteLocale, List.of(id));
+        List<Map<String, Object>> seed = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of(id));
         if (seed.isEmpty()) {
             return empty(id);
         }
         Map<String, Object> seedDoc = seed.get(0);
         // The standard fields leave the partition field out, so read the seed whole.
-        if (partition != null && plugin.getStoredDocumentsByIds(siteLocale, List.of(id)).stream()
+        if (partition != null && plugin.getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), List.of(id)).stream()
                 .noneMatch(stored -> inPartition(stored, partition))) {
             return empty(id);
         }
@@ -258,7 +259,7 @@ public class TurSNDuplicateClusteringService {
             }
             // Pass 2: hydrate all neighbors in a single engine call, index by id.
             Map<String, Map<String, Object>> docById = new LinkedHashMap<>();
-            for (Map<String, Object> doc : plugin.getDocumentsByIds(siteLocale,
+            for (Map<String, Object> doc : plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale),
                     new ArrayList<>(allNeighborIds))) {
                 String docId = asString(doc.get(TurSNFieldName.ID));
                 if (docId != null) {
@@ -304,7 +305,7 @@ public class TurSNDuplicateClusteringService {
         for (TurSNScoredNeighbor neighbor : neighbors) {
             scoreById.putIfAbsent(neighbor.id(), neighbor.score());
         }
-        List<Map<String, Object>> docs = plugin.getDocumentsByIds(siteLocale,
+        List<Map<String, Object>> docs = plugin.getDocumentsByIds(TurSNSiteRefs.toSE(siteLocale),
                 new ArrayList<>(scoreById.keySet()));
 
         List<TurSNDuplicateClusterMember> members = new ArrayList<>(docs.size() + 1);

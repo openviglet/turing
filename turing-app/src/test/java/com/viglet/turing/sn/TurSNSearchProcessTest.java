@@ -557,8 +557,8 @@ class TurSNSearchProcessTest {
 
                 assertThat(bean.getResults().getDocument()).hasSize(1);
                 verify(plugin).getStoredDocumentsByIds(
-                                argThat(locale -> Locale.US.equals(locale.getLanguage())
-                                                && "core".equals(locale.getCore())),
+                                argThat(locale -> Locale.US.equals(locale.language())
+                                                && "core".equals(locale.core())),
                                 eq(List.of("auxiliar-de-creche")));
                 // The engine counted nothing; the recalled document is counted.
                 assertThat(bean.getQueryContext().getCount()).isEqualTo(1);

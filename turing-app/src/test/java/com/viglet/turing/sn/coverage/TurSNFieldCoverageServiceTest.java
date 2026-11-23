@@ -38,6 +38,7 @@ import com.viglet.turing.sn.persistence.repository.field.TurSNSiteFieldExtReposi
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Unit tests for {@link TurSNFieldCoverageService} (T388).
@@ -100,11 +101,11 @@ class TurSNFieldCoverageServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(en)).thenReturn(4000L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(en))).thenReturn(4000L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
                 .thenReturn(List.of(price, title));
-        when(plugin.getDocumentCountWithField(en, "price")).thenReturn(1000L);   // 25%
-        when(plugin.getDocumentCountWithField(en, "title")).thenReturn(4000L);   // 100%
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(en), "price")).thenReturn(1000L);   // 25%
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(en), "title")).thenReturn(4000L);   // 100%
 
         TurSNFieldCoverageReport report = service.coverage(site);
 
@@ -130,11 +131,11 @@ class TurSNFieldCoverageServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en, pt));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(en)).thenReturn(600L);
-        when(plugin.getDocumentTotal(pt)).thenReturn(400L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(en))).thenReturn(600L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(pt))).thenReturn(400L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
-        when(plugin.getDocumentCountWithField(en, "mensalidade")).thenReturn(300L);
-        when(plugin.getDocumentCountWithField(pt, "mensalidade")).thenReturn(430L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(en), "mensalidade")).thenReturn(300L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(pt), "mensalidade")).thenReturn(430L);
 
         TurSNFieldCoverageReport report = service.coverage(site);
 
@@ -151,9 +152,9 @@ class TurSNFieldCoverageServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(en)).thenReturn(100L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(en))).thenReturn(100L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
-        when(plugin.getDocumentCountWithField(en, "body")).thenReturn(-1L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(en), "body")).thenReturn(-1L);
 
         TurSNFieldCoverageReport report = service.coverage(site);
 
@@ -171,9 +172,9 @@ class TurSNFieldCoverageServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(en)).thenReturn(0L);
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(en))).thenReturn(0L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
-        when(plugin.getDocumentCountWithField(en, "title")).thenReturn(0L);
+        when(plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(en), "title")).thenReturn(0L);
 
         TurSNFieldCoverageReport report = service.coverage(site);
 
@@ -189,7 +190,7 @@ class TurSNFieldCoverageServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
         when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-        when(plugin.getDocumentTotal(en)).thenThrow(new RuntimeException("index down"));
+        when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(en))).thenThrow(new RuntimeException("index down"));
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of());
 
         TurSNFieldCoverageReport report = service.coverage(site);

@@ -31,6 +31,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T472 / §XXVI.9 — builds the audience content-fit coverage report for an SN
@@ -66,14 +67,14 @@ public class TurSNContentFitCoverageService {
         List<TurSNSiteLocale> locales = snSiteLocaleRepository.findByTurSNSite(site);
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
 
-        long total = sumOverLocales(locales, locale -> plugin.getDocumentTotal(locale));
+        long total = sumOverLocales(locales, locale -> plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale)));
         // -1 from any locale ⇒ engine can't report this measure for the whole site.
         long scored = sumSupported(locales,
-                locale -> plugin.getDocumentCountWithField(locale, TurSNContentFitIndexer.FIELD_NAME));
+                locale -> plugin.getDocumentCountWithField(TurSNSiteRefs.toSE(locale), TurSNContentFitIndexer.FIELD_NAME));
         long belowTooComplex = sumSupported(locales, locale -> plugin.getDocumentCountWithFieldBelow(
-                locale, TurSNContentFitIndexer.FIELD_NAME, TOO_COMPLEX_THRESHOLD));
+                TurSNSiteRefs.toSE(locale), TurSNContentFitIndexer.FIELD_NAME, TOO_COMPLEX_THRESHOLD));
         long belowGood = sumSupported(locales, locale -> plugin.getDocumentCountWithFieldBelow(
-                locale, TurSNContentFitIndexer.FIELD_NAME, GOOD_THRESHOLD));
+                TurSNSiteRefs.toSE(locale), TurSNContentFitIndexer.FIELD_NAME, GOOD_THRESHOLD));
 
         boolean supported = scored >= 0 && belowTooComplex >= 0 && belowGood >= 0;
         if (!supported) {

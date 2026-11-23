@@ -53,6 +53,7 @@ import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.sn.field.TurSNSiteFieldService;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Service for exporting and importing indexed content from SN sites.
@@ -207,7 +208,7 @@ public class TurSNSiteContentExchangeService {
                     turSNSite.getName(), plugin.getClass().getSimpleName(),
                     plugin.supportsCursorPaging(), locales.size(), siteFieldMap.size());
             for (TurSNSiteLocale locale : locales) {
-                long localeCount = plugin.getDocumentTotal(locale);
+                long localeCount = plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale));
                 log.info("  Locale '{}' (core='{}'): {} documents", locale.getLanguage(), locale.getCore(), localeCount);
                 totalDocs += localeCount;
             }
@@ -250,6 +251,9 @@ public class TurSNSiteContentExchangeService {
     private Iterator<List<Map<String, Object>>> documentPages(TurSearchEnginePlugin plugin,
             TurSNSiteLocale locale, Map<String, TurSNSiteField> siteFieldMap,
             java.util.function.Consumer<List<Map<String, Object>>> onPage) {
+        // T1310 - the engine takes the site and its fields as search-engine records.
+        com.viglet.turing.searchengine.spi.TurSESiteLocale seLocale = TurSNSiteRefs.toSE(locale);
+        Map<String, com.viglet.turing.searchengine.spi.TurSEIndexField> seFields = TurSNSiteRefs.toSE(siteFieldMap);
         return new Iterator<>() {
             private List<Map<String, Object>> nextPage;
             private boolean exhausted;
@@ -276,9 +280,9 @@ public class TurSNSiteContentExchangeService {
 
             private void fetch() {
                 List<Map<String, Object>> page = plugin.supportsCursorPaging()
-                        ? plugin.retrieveDocumentPageAfter(locale, siteFieldMap, cursor,
+                        ? plugin.retrieveDocumentPageAfter(seLocale, seFields, cursor,
                                 EXPORT_PAGE_SIZE)
-                        : plugin.retrieveDocumentPage(locale, siteFieldMap, offset,
+                        : plugin.retrieveDocumentPage(seLocale, seFields, offset,
                                 EXPORT_PAGE_SIZE);
                 if (page.isEmpty()) {
                     exhausted = true;
@@ -396,7 +400,7 @@ public class TurSNSiteContentExchangeService {
             indexed += indexChunk(plugin, turSNSite, currentLocale, chunk);
             feedChunkToVectorStore(turSNSite, currentLocale, chunk);
             processed += chunk.size();
-            plugin.commit(turSNSite, currentLocale);
+            plugin.commit(TurSNSiteRefs.toSE(turSNSite), currentLocale);
             publishProgress(currentLocaleKey);
         }
 
@@ -444,7 +448,7 @@ public class TurSNSiteContentExchangeService {
                     totalIndexed += indexChunk(plugin, turSNSite, locale, chunk);
                     feedChunkToVectorStore(turSNSite, locale, chunk);
                     processedSoFar += chunk.size();
-                    plugin.commit(turSNSite, locale);
+                    plugin.commit(TurSNSiteRefs.toSE(turSNSite), locale);
 
                     progressMap.put(taskId, new ContentExchangeProgress(
                             totalDocs, processedSoFar, localeEntry.getKey(), INDEXING, startTime));
@@ -469,14 +473,14 @@ public class TurSNSiteContentExchangeService {
     private int indexChunk(TurSearchEnginePlugin plugin, TurSNSite turSNSite, Locale locale,
             List<Map<String, Object>> chunk) {
         try {
-            return plugin.indexDocuments(turSNSite, locale, chunk);
+            return plugin.indexDocuments(TurSNSiteRefs.toSE(turSNSite), locale, chunk);
         } catch (Exception batchFailure) {
             log.warn("Batch indexing of {} document(s) failed after retries; falling back to per-document indexing: {}",
                     chunk.size(), batchFailure.getMessage());
             int indexedInChunk = 0;
             for (Map<String, Object> doc : chunk) {
                 try {
-                    if (plugin.indexDocument(turSNSite, locale, doc)) {
+                    if (plugin.indexDocument(TurSNSiteRefs.toSE(turSNSite), locale, doc)) {
                         indexedInChunk++;
                     }
                 } catch (Exception perDocFailure) {
@@ -563,7 +567,7 @@ public class TurSNSiteContentExchangeService {
 
         long totalDocs = 0;
         for (TurSNSiteLocale locale : locales) {
-            totalDocs += plugin.getDocumentTotal(locale);
+            totalDocs += plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale));
         }
         log.debug("RAG reindex starting for site '{}': locales={}, totalDocuments={}",
                 turSNSite.getName(), locales.size(), totalDocs);

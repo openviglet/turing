@@ -32,8 +32,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.searchengine.spi.TurSESite;
+import com.viglet.turing.searchengine.spi.TurSESiteLocale;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 
@@ -111,16 +111,16 @@ public class TurSolrInstanceProcess {
         return this.getSolrClient(turSEInstance, core);
     }
 
-    public Optional<TurSolrInstance> initSolrInstance(TurSNSiteLocale turSNSiteLocale) {
-        return this.getSolrClient(turSNSiteLocale.getTurSNSite(), turSNSiteLocale);
+    public Optional<TurSolrInstance> initSolrInstance(TurSESiteLocale turSNSiteLocale) {
+        return this.getSolrClient(turSNSiteLocale.site(), turSNSiteLocale);
 
     }
 
-    private Optional<TurSolrInstance> getSolrClient(TurSNSite turSNSite, TurSNSiteLocale turSNSiteLocale) {
+    private Optional<TurSolrInstance> getSolrClient(TurSESite turSNSite, TurSESiteLocale turSNSiteLocale) {
         // T1337 — only the endpoint is needed, and it is cached by SE instance id.
         return clientFor(resolveEndpoint(TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
-                turSNSite == null ? null : turSNSite.getTurSEInstanceId())),
-                turSNSiteLocale.getCore());
+                turSNSite == null ? null : turSNSite.seInstanceId())),
+                turSNSiteLocale.core());
     }
 
     private String resolveEndpoint(String instanceEndpoint) {

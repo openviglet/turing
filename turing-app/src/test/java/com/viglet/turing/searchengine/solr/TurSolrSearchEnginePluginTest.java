@@ -43,6 +43,7 @@ import com.viglet.turing.system.properties.TurConfigProperties;
 import com.viglet.turing.system.properties.TurSolrProperty;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.searchengine.solr.source.TurSolrInstanceSource;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurSolrSearchEnginePlugin.
@@ -191,7 +192,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.of(instance));
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, attrs);
 
         assertTrue(result);
         verify(turSolr).indexing(instance, site.getId(), attrs);
@@ -204,7 +205,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.empty());
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, Collections.emptyMap());
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, Collections.emptyMap());
 
         assertFalse(result);
     }
@@ -219,7 +220,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-123");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-123");
 
         assertTrue(result);
         verify(turSolr).deIndexing(instance, "doc-123");
@@ -232,7 +233,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-123");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-123");
 
         assertFalse(result);
     }
@@ -247,7 +248,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "page");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "page");
 
         assertTrue(result);
         verify(turSolr).deIndexingByType(instance, "page");
@@ -260,7 +261,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "page");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "page");
 
         assertFalse(result);
     }
@@ -276,7 +277,7 @@ class TurSolrSearchEnginePluginTest {
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.of(instance));
         when(turSolr.commit(instance)).thenReturn(true);
 
-        boolean result = plugin.commit(site, Locale.ENGLISH);
+        boolean result = plugin.commit(TurSNSiteRefs.toSE(site), Locale.ENGLISH);
 
         assertTrue(result);
         verify(turSolr).commit(instance);
@@ -289,7 +290,7 @@ class TurSolrSearchEnginePluginTest {
 
         when(turSolrInstanceProcess.initSolrInstance("site-a", Locale.ENGLISH)).thenReturn(Optional.empty());
 
-        boolean result = plugin.commit(site, Locale.ENGLISH);
+        boolean result = plugin.commit(TurSNSiteRefs.toSE(site), Locale.ENGLISH);
 
         assertFalse(result);
     }
@@ -301,10 +302,10 @@ class TurSolrSearchEnginePluginTest {
         TurSolrInstance instance = mock(TurSolrInstance.class);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turSolrInstanceProcess.initSolrInstance(siteLocale)).thenReturn(Optional.of(instance));
+        when(turSolrInstanceProcess.initSolrInstance(TurSNSiteRefs.toSE(siteLocale))).thenReturn(Optional.of(instance));
         when(turSolr.getDocumentTotal(instance)).thenReturn(42L);
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(42L, total);
     }
@@ -313,9 +314,9 @@ class TurSolrSearchEnginePluginTest {
     void shouldReturnZeroWhenDocumentTotalInstanceUnavailable() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turSolrInstanceProcess.initSolrInstance(siteLocale)).thenReturn(Optional.empty());
+        when(turSolrInstanceProcess.initSolrInstance(TurSNSiteRefs.toSE(siteLocale))).thenReturn(Optional.empty());
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(0L, total);
     }

@@ -41,6 +41,7 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.searchengine.result.TurSEResults;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Tests for TurElasticsearchSearchEnginePlugin.
@@ -147,7 +148,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, attrs);
 
         assertTrue(result);
         verify(turElasticsearch).indexing(instance, site.getName(), attrs);
@@ -161,7 +162,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.indexDocument(site, Locale.ENGLISH, Collections.emptyMap());
+        boolean result = plugin.indexDocument(TurSNSiteRefs.toSE(site), Locale.ENGLISH, Collections.emptyMap());
 
         assertFalse(result);
     }
@@ -177,7 +178,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-456");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-456");
 
         assertTrue(result);
         verify(turElasticsearch).deIndexing(instance, "doc-456");
@@ -191,7 +192,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndex(site, Locale.ENGLISH, "doc-456");
+        boolean result = plugin.deIndex(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "doc-456");
 
         assertFalse(result);
     }
@@ -207,7 +208,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.of(instance));
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "article");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "article");
 
         assertTrue(result);
         verify(turElasticsearch).deIndexingByType(instance, "article");
@@ -221,7 +222,7 @@ class TurElasticsearchSearchEnginePluginTest {
         when(turElasticsearchInstanceProcess.initElasticsearchInstance("site-es", Locale.ENGLISH))
                 .thenReturn(Optional.empty());
 
-        boolean result = plugin.deIndexByType(site, Locale.ENGLISH, "article");
+        boolean result = plugin.deIndexByType(TurSNSiteRefs.toSE(site), Locale.ENGLISH, "article");
 
         assertFalse(result);
     }
@@ -234,7 +235,7 @@ class TurElasticsearchSearchEnginePluginTest {
         site.setName("site-es");
 
         // Elasticsearch commits are synchronous — always returns true
-        boolean result = plugin.commit(site, Locale.ENGLISH);
+        boolean result = plugin.commit(TurSNSiteRefs.toSE(site), Locale.ENGLISH);
 
         assertTrue(result);
     }
@@ -246,11 +247,11 @@ class TurElasticsearchSearchEnginePluginTest {
         TurElasticsearchInstance instance = mock(TurElasticsearchInstance.class);
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale))
+        when(turElasticsearchInstanceProcess.initElasticsearchInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
         when(turElasticsearch.getDocumentTotal(instance)).thenReturn(99L);
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(99L, total);
     }
@@ -259,10 +260,10 @@ class TurElasticsearchSearchEnginePluginTest {
     void shouldReturnZeroWhenDocumentTotalInstanceUnavailable() {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
 
-        when(turElasticsearchInstanceProcess.initElasticsearchInstance(siteLocale))
+        when(turElasticsearchInstanceProcess.initElasticsearchInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.empty());
 
-        long total = plugin.getDocumentTotal(siteLocale);
+        long total = plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale));
 
         assertEquals(0L, total);
     }
@@ -337,7 +338,7 @@ class TurElasticsearchSearchEnginePluginTest {
         Map<String, TurSEFieldType> fieldTypes = Map.of("title", TurSEFieldType.TEXT);
 
         assertDoesNotThrow(() ->
-                plugin.createIndex(seInstance, siteLocale, "my-index", fieldTypes));
+                plugin.createIndex(seInstance, TurSNSiteRefs.toSE(siteLocale), "my-index", fieldTypes));
     }
 
     @Test
@@ -349,7 +350,7 @@ class TurElasticsearchSearchEnginePluginTest {
         siteLocale.setTurSNSite(null);
 
         assertDoesNotThrow(() ->
-                plugin.createIndex(seInstance, siteLocale, "my-index", Collections.emptyMap()));
+                plugin.createIndex(seInstance, TurSNSiteRefs.toSE(siteLocale), "my-index", Collections.emptyMap()));
     }
 
     /** T1310 — the site's field types come through the search SPI. */
@@ -367,7 +368,7 @@ class TurElasticsearchSearchEnginePluginTest {
                         .name("title").type(TurSEFieldType.TEXT).build()));
 
         assertDoesNotThrow(() ->
-                plugin.createIndex(seInstance, siteLocale, "my-index", Collections.emptyMap()));
+                plugin.createIndex(seInstance, TurSNSiteRefs.toSE(siteLocale), "my-index", Collections.emptyMap()));
         org.mockito.Mockito.verify(siteSearchConfig).enabledFields("site-es");
     }
 

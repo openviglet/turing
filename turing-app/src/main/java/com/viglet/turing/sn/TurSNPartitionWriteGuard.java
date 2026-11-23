@@ -39,6 +39,7 @@ import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1133 — keeps a partitioned key's writes inside its partition. A document is
@@ -101,7 +102,7 @@ public class TurSNPartitionWriteGuard {
             if (siteLocale == null) {
                 return;
             }
-            searchEnginePluginFactory.getPlugin(snap.pluginType()).getStoredDocumentsByIds(siteLocale, ids)
+            searchEnginePluginFactory.getPlugin(snap.pluginType()).getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), ids)
                     .stream()
                     .filter(stored -> !inPartition(stored.get(partition.field()), partition.value()))
                     .findFirst()

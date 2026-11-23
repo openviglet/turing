@@ -27,6 +27,7 @@ import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshot;
 import com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1077 — reads stored documents of a site by id, whole: every stored field,
@@ -76,7 +77,7 @@ public class TurSNStoredDocumentService {
             return List.of();
         }
         List<Map<String, Object>> documents = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(snapshot.get().site()))
-                .getStoredDocumentsByIds(siteLocale, wanted);
+                .getStoredDocumentsByIds(TurSNSiteRefs.toSE(siteLocale), wanted);
         // T1133 — a key bound to a partition of a shared site reads its own documents only.
         return com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()
                 .map(partition -> documents.stream()

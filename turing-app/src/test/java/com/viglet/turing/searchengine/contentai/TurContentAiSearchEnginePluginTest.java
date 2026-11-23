@@ -66,6 +66,7 @@ import com.viglet.turing.searchengine.solr.bean.TurSECoreInfo;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1031 / §XX.18 — stands Adobe's Content AI search endpoint in miniature and
@@ -1082,7 +1083,7 @@ class TurContentAiSearchEnginePluginTest {
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
 
-        assertThatThrownBy(() -> plugin.indexDocument(site, LOCALE, Map.of("id", "1")))
+        assertThatThrownBy(() -> plugin.indexDocument(TurSNSiteRefs.toSE(site), LOCALE, Map.of("id", "1")))
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessageContaining("read-only")
                 .hasMessageContaining("indexDocument");
@@ -1092,14 +1093,14 @@ class TurContentAiSearchEnginePluginTest {
                 .isInstanceOf(UnsupportedOperationException.class);
         assertThatThrownBy(() -> plugin.clearIndex(instance, CORE))
                 .isInstanceOf(UnsupportedOperationException.class);
-        assertThatThrownBy(() -> plugin.deIndex(site, LOCALE, "1"))
+        assertThatThrownBy(() -> plugin.deIndex(TurSNSiteRefs.toSE(site), LOCALE, "1"))
                 .isInstanceOf(UnsupportedOperationException.class);
-        assertThatThrownBy(() -> plugin.deIndexByType(site, LOCALE, "Page"))
+        assertThatThrownBy(() -> plugin.deIndexByType(TurSNSiteRefs.toSE(site), LOCALE, "Page"))
                 .isInstanceOf(UnsupportedOperationException.class);
 
         // Nothing was written, so there is nothing to flush; the SN pipeline
         // commits unconditionally and must not see an error here.
-        assertThat(plugin.commit(site, LOCALE)).isTrue();
+        assertThat(plugin.commit(TurSNSiteRefs.toSE(site), LOCALE)).isTrue();
         assertThat(plugin.getPluginType())
                 .isEqualTo(TurContentAiSearchEnginePlugin.PLUGIN_TYPE);
     }
@@ -1121,7 +1122,7 @@ class TurContentAiSearchEnginePluginTest {
         siteLocale.setTurSNSite(site);
         siteLocale.setCore(CORE);
 
-        assertThat(plugin.getDocumentTotal(siteLocale)).isEqualTo(1234L);
+        assertThat(plugin.getDocumentTotal(TurSNSiteRefs.toSE(siteLocale))).isEqualTo(1234L);
         assertThat(lastBody().get("queryOptions").get("pagination").get("limit").asInt()).isZero();
     }
 

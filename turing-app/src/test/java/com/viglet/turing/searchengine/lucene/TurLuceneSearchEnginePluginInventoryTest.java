@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * T1029 / §XX.16 — the Lucene inventory scan walks the {@code id} term
@@ -59,7 +60,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
 
     private TurSNSiteLocale givenIndex(TurLuceneInstance instance) {
         TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        when(turLuceneInstanceProcess.initLuceneInstance(siteLocale))
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(siteLocale)))
                 .thenReturn(Optional.of(instance));
         return siteLocale;
     }
@@ -96,7 +97,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void enumeratesEverythingInIdOrder() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, null, 10);
 
         assertThat(page.supported()).isTrue();
         assertThat(page.entries()).extracting("id").containsExactly("a-page", "b-page", "c-asset");
@@ -114,7 +115,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void filtersBySource() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, "aem", null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), "aem", null, 10);
 
         assertThat(page.entries()).extracting("id").containsExactly("a-page", "b-page");
         assertThat(page.remaining()).isEqualTo(2L);
@@ -126,12 +127,12 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void cursorResumesWithoutRepeating() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var first = plugin.retrieveInventoryPage(siteLocale, null, null, 2);
+        var first = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, null, 2);
         assertThat(first.entries()).extracting("id").containsExactly("a-page", "b-page");
         assertThat(first.hasMore()).isTrue();
         assertThat(first.nextCursor()).isEqualTo("b-page");
 
-        var second = plugin.retrieveInventoryPage(siteLocale, null, first.nextCursor(), 2);
+        var second = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, first.nextCursor(), 2);
         assertThat(second.entries()).extracting("id").containsExactly("c-asset");
         assertThat(second.remaining()).isEqualTo(1L);
         assertThat(second.hasMore()).isFalse();
@@ -142,7 +143,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void cursorPastTheEndTerminates() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, "z-last", 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, "z-last", 10);
 
         assertThat(page.entries()).isEmpty();
         assertThat(page.hasMore()).isFalse();
@@ -154,7 +155,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void cursorNeedNotBeAnExistingId() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, "b", 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, "b", 10);
 
         assertThat(page.entries()).extracting("id").containsExactly("b-page", "c-asset");
     }
@@ -167,7 +168,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
         instance.getWriter().commit();
         var siteLocale = givenIndex(instance);
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, null, 10);
 
         assertThat(page.entries()).extracting("id").containsExactly("a-page", "c-asset");
         assertThat(page.remaining()).isEqualTo(2L);
@@ -180,7 +181,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void inventoryReportsTheChecksum() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, null, 10);
 
         assertThat(page.entries()).extracting("id", "checksum").containsExactly(
                 org.assertj.core.groups.Tuple.tuple("a-page", "sha256:aaa"),
@@ -194,7 +195,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void checksumCarriesADocumentWithNoDate() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveInventoryPage(siteLocale, "sharepoint", null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), "sharepoint", null, 10);
 
         var entry = page.entries().get(0);
         assertThat(entry.id()).isEqualTo("c-asset");
@@ -209,7 +210,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void exportPageIsIdAscending() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveDocumentPageAfter(siteLocale, java.util.Map.of(), null, 10);
+        var page = plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), java.util.Map.of(), null, 10);
 
         assertThat(page).extracting(doc -> doc.get("id"))
                 .containsExactly("a-page", "b-page", "c-asset");
@@ -221,13 +222,13 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void exportCursorResumes() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var first = plugin.retrieveDocumentPageAfter(siteLocale, java.util.Map.of(), null, 2);
+        var first = plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), java.util.Map.of(), null, 2);
         assertThat(first).extracting(doc -> doc.get("id")).containsExactly("a-page", "b-page");
 
-        var second = plugin.retrieveDocumentPageAfter(siteLocale, java.util.Map.of(), "b-page", 2);
+        var second = plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), java.util.Map.of(), "b-page", 2);
         assertThat(second).extracting(doc -> doc.get("id")).containsExactly("c-asset");
 
-        assertThat(plugin.retrieveDocumentPageAfter(siteLocale, java.util.Map.of(), "c-asset", 2))
+        assertThat(plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), java.util.Map.of(), "c-asset", 2))
                 .isEmpty();
     }
 
@@ -236,7 +237,7 @@ class TurLuceneSearchEnginePluginInventoryTest {
     void exportPageProjectsDeclaredFieldsOnly() throws Exception {
         var siteLocale = givenIndex(inMemoryInstance());
 
-        var page = plugin.retrieveDocumentPageAfter(siteLocale, java.util.Map.of(), null, 1);
+        var page = plugin.retrieveDocumentPageAfter(TurSNSiteRefs.toSE(siteLocale), java.util.Map.of(), null, 1);
 
         // source_apps is indexed but not declared on the site, so it is left out.
         assertThat(page.get(0)).containsOnlyKeys("id", "type");
@@ -257,12 +258,12 @@ class TurLuceneSearchEnginePluginInventoryTest {
         var siteLocale = givenIndex(
                 new TurLuceneInstance(writer, dir, Path.of("mem-empty"), new FacetsConfig()));
 
-        var page = plugin.retrieveInventoryPage(siteLocale, null, null, 10);
+        var page = plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(siteLocale), null, null, 10);
         assertThat(page.entries()).isEmpty();
         assertThat(page.supported()).isTrue();
 
         var missing = new TurSNSiteLocale();
-        when(turLuceneInstanceProcess.initLuceneInstance(missing)).thenReturn(Optional.empty());
-        assertThat(plugin.retrieveInventoryPage(missing, null, null, 10).supported()).isFalse();
+        when(turLuceneInstanceProcess.initLuceneInstance(TurSNSiteRefs.toSE(missing))).thenReturn(Optional.empty());
+        assertThat(plugin.retrieveInventoryPage(TurSNSiteRefs.toSE(missing), null, null, 10).supported()).isFalse();
     }
 }

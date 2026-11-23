@@ -63,6 +63,7 @@ import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNFieldType;
 
 import lombok.extern.slf4j.Slf4j;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * @author Alexandre Oliveira
@@ -139,7 +140,7 @@ public class TurSNTemplate {
                                 .findById(turSNSiteLocale.getTurSNSite().getTurSEInstanceId())
                                 .ifPresent(instance ->
                                         pluginFactory.getPluginForInstance(instance)
-                                                .createIndex(instance, turSNSiteLocale, coreName, Map.of())
+                                                .createIndex(instance, TurSNSiteRefs.toSE(turSNSiteLocale), coreName, Map.of())
                                 );
                 return coreName;
         }

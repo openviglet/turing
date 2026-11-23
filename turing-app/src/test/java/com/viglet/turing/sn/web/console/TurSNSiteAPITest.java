@@ -68,6 +68,7 @@ import com.viglet.turing.sn.TurSNQueue;
 import com.viglet.turing.sn.template.TurSNTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
+import com.viglet.turing.sn.api.TurSNSiteRefs;
 
 /**
  * Unit tests for TurSNSiteAPI.
@@ -462,7 +463,7 @@ class TurSNSiteAPITest {
                                 .thenReturn(List.of(locale));
                 when(queue.getQueueSize()).thenReturn(2);
                 when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
-                when(plugin.getDocumentTotal(locale)).thenReturn(5L);
+                when(plugin.getDocumentTotal(TurSNSiteRefs.toSE(locale))).thenReturn(5L);
 
                 TurSNSiteMonitoringStatusBean result = api.turSNSiteMonitoringStatus("site");
 
