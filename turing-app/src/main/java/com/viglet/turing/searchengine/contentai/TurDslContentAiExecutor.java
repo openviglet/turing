@@ -34,11 +34,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
-import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.TurSEInstanceEndpoints;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -106,8 +104,6 @@ import tools.jackson.databind.node.ObjectNode;
 @Component
 public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<ObjectNode, JsonNode> {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
-
     private static final String ENGINE = TurContentAiSearchEnginePlugin.PLUGIN_TYPE;
 
     private static final String FIELD_TYPE = "type";
@@ -143,20 +139,17 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
     private final TurContentAiClient client;
     private final TurContentAiQueryBuilder queryBuilder;
     private final TurContentAiProperty property;
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
+    private final TurSEInstanceEndpoints seInstanceEndpoints;
 
     public TurDslContentAiExecutor(TurContentAiClient client,
             TurContentAiQueryBuilder queryBuilder, TurContentAiProperty property,
-            TurSNSites turSNSiteRepository,
-            TurSNSiteLocales turSNSiteLocaleRepository,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
-        this.snSiteSEInstances = snSiteSEInstances;
+            TurSESiteSearchConfig siteSearchConfig, TurSEInstanceEndpoints seInstanceEndpoints) {
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.property = property;
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
+        this.siteSearchConfig = siteSearchConfig;
+        this.seInstanceEndpoints = seInstanceEndpoints;
     }
 
     @Override
@@ -174,17 +167,13 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
                     + "false", ENGINE);
             return Optional.empty();
         }
-        return turSNSiteRepository.findByNameIgnoreCase(siteName).flatMap(site -> {
-            TurSNSiteLocale siteLocale =
-                    turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
-            if (siteLocale == null) {
-                log.warn("Site '{}' has no '{}' locale", siteName, locale);
-                return Optional.empty();
-            }
+        // T1310 - the site's SE instance and core come through the site search SPI,
+        // which logs a missing locale itself.
+        return siteSearchConfig.siteCore(siteName, locale).flatMap(siteCore -> {
             long startedAt = System.nanoTime();
             try {
-                JsonNode response = client.search(endpointUrl(site),
-                        buildBody(site, siteLocale, request), property);
+                JsonNode response = client.search(endpointUrl(siteCore.seInstanceId()),
+                        buildBody(siteCore, request), property);
                 long elapsedMs = (System.nanoTime() - startedAt) / 1_000_000L;
                 return Optional.of(buildResponse(response, request, elapsedMs));
             } catch (TurContentAiClient.TurContentAiException e) {
@@ -198,10 +187,9 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
      * The full search body: content source, the translated query, pagination and
      * any {@code terms} aggregations.
      */
-    private ObjectNode buildBody(TurSNSite site, TurSNSiteLocale siteLocale,
-            TurDslQueryRequest request) {
+    private ObjectNode buildBody(TurSESiteCore siteCore, TurDslQueryRequest request) {
         ObjectNode body = nodes.objectNode();
-        body.set("contentSource", contentSource(site, siteLocale));
+        body.set("contentSource", contentSource(siteCore));
         body.set("query", translateQuery(request.query()));
         body.set("queryOptions", queryOptions(request));
         ArrayNode aggregates = translateAggregations(request.aggs());
@@ -211,10 +199,10 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
         return body;
     }
 
-    private ObjectNode contentSource(TurSNSite site, TurSNSiteLocale siteLocale) {
-        String configured = property.getSources().get(site.getName());
+    private ObjectNode contentSource(TurSESiteCore siteCore) {
+        String configured = property.getSources().get(siteCore.siteName());
         ObjectNode source = nodes.objectNode();
-        source.put("name", StringUtils.isNotBlank(configured) ? configured : siteLocale.getCore());
+        source.put("name", StringUtils.isNotBlank(configured) ? configured : siteCore.core());
         if (StringUtils.isNotBlank(property.getSourceType())) {
             source.put(FIELD_TYPE, property.getSourceType());
         }
@@ -771,9 +759,9 @@ public class TurDslContentAiExecutor implements TurDslSearchEngineExecutor<Objec
         return sort(sortEntries).orElse(null);
     }
 
-    private String endpointUrl(TurSNSite site) {
-        return Optional.ofNullable(snSiteSEInstances.of(site))
-                .map(TurSEInstance::getEndpointUrl)
-                .orElse("");
+    /** The site's SE instance endpoint, or {@code ""} when it names none. */
+    private String endpointUrl(String seInstanceId) {
+        return Optional.ofNullable(TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
+                seInstanceId)).orElse("");
     }
 }

@@ -11,7 +11,7 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.searchengine.contentai.TurContentAiQueryBuilder;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 
 /**
@@ -58,7 +58,7 @@ class TurSNFilterExclusionTest {
         params.setTurSNFilterParams(TurSNFilterParams.builder()
                 .defaultValues(List.of("-source_apps:wordpress")).build());
 
-        assertThatThrownBy(() -> new TurContentAiQueryBuilder().buildSearchRequest("aem", new TurSNSite(),
+        assertThatThrownBy(() -> new TurContentAiQueryBuilder().buildSearchRequest("aem", TurSESiteSettings.builder().build(),
                 params, List.of(), null, 10, new TurContentAiProperty()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("-source_apps:wordpress");

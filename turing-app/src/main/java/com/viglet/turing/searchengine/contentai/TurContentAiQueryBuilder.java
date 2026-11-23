@@ -26,9 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.viglet.turing.commons.se.TurSEParameters;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -126,7 +126,7 @@ public class TurContentAiQueryBuilder {
      * @param cursor      the cursor from the previous page, or {@code null} for the first
      * @param limit       rows to ask for; clamped to {@link #MAX_LIMIT}
      */
-    public ObjectNode buildSearchRequest(String sourceName, TurSNSite site, TurSEParameters params,
+    public ObjectNode buildSearchRequest(String sourceName, TurSESiteSettings site, TurSEParameters params,
             List<TurSEFacetField> facetFields, String cursor, int limit,
             TurContentAiProperty property) {
         ObjectNode body = nodes.objectNode();
@@ -152,7 +152,7 @@ public class TurContentAiQueryBuilder {
      * and filters, {@code limit: 0} so Adobe computes buckets without returning
      * documents, and a single aggregate for the named field.
      */
-    public ObjectNode buildFacetRequest(String sourceName, TurSNSite site, TurSEParameters params,
+    public ObjectNode buildFacetRequest(String sourceName, TurSESiteSettings site, TurSEParameters params,
             String facetName, TurSEFacetField facetField, TurContentAiProperty property) {
         ObjectNode body = nodes.objectNode();
         body.set("contentSource", contentSource(sourceName, property));
@@ -165,7 +165,7 @@ public class TurContentAiQueryBuilder {
         if (facetField == null) {
             log.debug("Content AI facet '{}' is not a declared field on site '{}'; "
                     + "asking anyway — Adobe returns an empty bucket list for an "
-                    + "unindexed field", facetName, site != null ? site.getName() : "?");
+                    + "unindexed field", facetName, site != null ? site.name() : "?");
         }
         return body;
     }
@@ -205,7 +205,7 @@ public class TurContentAiQueryBuilder {
         return source;
     }
 
-    private ObjectNode buildQuery(TurSNSite site, TurSEParameters params,
+    private ObjectNode buildQuery(TurSESiteSettings site, TurSEParameters params,
             Map<String, TurSEFacetField> facetFieldsByName, TurContentAiProperty property) {
         String raw = params != null ? params.getQuery() : null;
         String text = raw != null ? raw.trim() : "";
@@ -330,7 +330,7 @@ public class TurContentAiQueryBuilder {
      * intersect — a selection in one field narrows another, which is what
      * faceted navigation promises and what the counts on screen claim.
      */
-    private ObjectNode buildFilter(TurSNSite site, TurSEParameters params,
+    private ObjectNode buildFilter(TurSESiteSettings site, TurSEParameters params,
             Map<String, TurSEFacetField> facetFieldsByName) {
         if (params == null || params.getTurSNFilterParams() == null) {
             return null;
@@ -399,13 +399,13 @@ public class TurContentAiQueryBuilder {
      * setting wins, {@code DEFAULT} falls back to the site's, and a site that
      * declares nothing intersects.
      */
-    private boolean itemTypeIsUnion(TurSNSite site, TurSEFacetField facetField) {
+    private boolean itemTypeIsUnion(TurSESiteSettings site, TurSEFacetField facetField) {
         TurSNSiteFacetFieldEnum fieldType =
                 facetField != null ? facetField.facetItemType() : null;
         if (fieldType != null && fieldType != TurSNSiteFacetFieldEnum.DEFAULT) {
             return fieldType == TurSNSiteFacetFieldEnum.OR;
         }
-        TurSNSiteFacetFieldEnum siteType = site != null ? site.getFacetItemType() : null;
+        TurSNSiteFacetFieldEnum siteType = site != null ? site.facetItemType() : null;
         return siteType == TurSNSiteFacetFieldEnum.OR;
     }
 

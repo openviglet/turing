@@ -23,8 +23,6 @@ import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -53,9 +51,8 @@ import com.viglet.testsupport.contentai.TurContentAiSpecValidator;
 import com.viglet.turing.shared.exception.TurUnsupportedEngineException;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
+import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 
 import tools.jackson.databind.JsonNode;
@@ -90,9 +87,7 @@ class TurDslContentAiExecutorTest {
     private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
     @Mock
-    private TurSNSites turSNSiteRepository;
-    @Mock
-    private TurSNSiteLocales turSNSiteLocaleRepository;
+    private TurSESiteSearchConfig siteSearchConfig;
 
     private HttpServer server;
     private final List<String> bodies = new ArrayList<>();
@@ -139,22 +134,17 @@ class TurDslContentAiExecutorTest {
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
         seInstances.attach(site, instance);
-        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        siteLocale.setTurSNSite(site);
-        siteLocale.setLanguage(LOCALE);
-        siteLocale.setCore(CORE);
 
-        when(turSNSiteRepository.findByNameIgnoreCase(SITE))
-                .thenReturn(java.util.Optional.of(site));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(any(), eq(LOCALE)))
-                .thenReturn(siteLocale);
+        // T1310 - the executor reads the site's core through the site search SPI.
+        when(siteSearchConfig.siteCore(SITE, LOCALE)).thenReturn(
+                java.util.Optional.of(new TurSESiteCore(SITE, site.getTurSEInstanceId(), CORE)));
 
         property.setEnabled(true);
         property.setToken("adobe-token");
         property.getSources().put(SITE, SOURCE);
 
         executor = new TurDslContentAiExecutor(client, queryBuilder, property,
-                turSNSiteRepository, turSNSiteLocaleRepository, seInstances.service());
+                siteSearchConfig, seInstances.endpoints());
     }
 
     @AfterEach
@@ -701,8 +691,8 @@ class TurDslContentAiExecutorTest {
     @Test
     @DisplayName("An unknown locale on a known site is empty, not a refusal")
     void unknownLocaleIsEmpty() {
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(any(), eq(Locale.FRENCH)))
-                .thenReturn(null);
+        when(siteSearchConfig.siteCore(SITE, Locale.FRENCH))
+                .thenReturn(java.util.Optional.empty());
 
         assertThat(executor.execute(SITE, Locale.FRENCH, request(new TurDslQuery.MatchAll())))
                 .isEmpty();

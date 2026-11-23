@@ -35,9 +35,9 @@ import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
+import com.viglet.turing.searchengine.TurSEInstanceEndpoints;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 import com.viglet.turing.searchengine.facet.TurSEFacetResult;
@@ -85,8 +85,6 @@ import tools.jackson.databind.JsonNode;
 @Component
 public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
 
-    private final com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances;
-
     public static final String PLUGIN_TYPE = "contentai";
 
     private static final int DEFAULT_ROWS = 10;
@@ -101,9 +99,8 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     private final TurContentAiResponseMapper responseMapper;
     private final TurContentAiSourceCatalog sourceCatalog;
     private final TurContentAiProperty property;
-    private final TurSNSites turSNSiteRepository;
-    private final TurSNSiteLocales turSNSiteLocaleRepository;
     private final TurSESiteSearchConfig siteSearchConfig;
+    private final TurSEInstanceEndpoints seInstanceEndpoints;
 
     /**
      * T1045 — endpoints whose configured source has already been diagnosed, so the
@@ -116,19 +113,15 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
     public TurContentAiSearchEnginePlugin(TurContentAiClient client,
             TurContentAiQueryBuilder queryBuilder, TurContentAiResponseMapper responseMapper,
             TurContentAiSourceCatalog sourceCatalog,
-            TurContentAiProperty property, TurSNSites turSNSiteRepository,
-            TurSNSiteLocales turSNSiteLocaleRepository,
-            TurSESiteSearchConfig siteSearchConfig,
-            com.viglet.turing.searchengine.TurSNSiteSEInstances snSiteSEInstances) {
-        this.snSiteSEInstances = snSiteSEInstances;
+            TurContentAiProperty property, TurSESiteSearchConfig siteSearchConfig,
+            TurSEInstanceEndpoints seInstanceEndpoints) {
         this.client = client;
         this.queryBuilder = queryBuilder;
         this.responseMapper = responseMapper;
         this.sourceCatalog = sourceCatalog;
         this.property = property;
-        this.turSNSiteRepository = turSNSiteRepository;
-        this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.siteSearchConfig = siteSearchConfig;
+        this.seInstanceEndpoints = seInstanceEndpoints;
     }
 
     @Override
@@ -196,7 +189,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
                     .groups(Collections.emptyList())
                     .build());
         } catch (TurContentAiClient.TurContentAiException e) {
-            log.error("Content AI search failed for site '{}' source '{}'", target.site().getName(),
+            log.error("Content AI search failed for site '{}' source '{}'", target.site().name(),
                     target.sourceName(), e);
             return Optional.empty();
         }
@@ -215,7 +208,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
         if (page > walkLimit) {
             log.warn("Content AI page {} for site '{}' exceeds turing.content-ai.max-page-walk={}; "
                     + "returning an empty page with the true total rather than {} round trips",
-                    page, target.site().getName(), walkLimit, page);
+                    page, target.site().name(), walkLimit, page);
             JsonNode first = client.search(target.endpointUrl(), queryBuilder.buildSearchRequest(
                     target.sourceName(), target.site(), params, facetFields, null, rows, property),
                     property);
@@ -234,7 +227,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
             cursor = responseMapper.cursor(response);
             if (cursor == null) {
                 log.debug("Content AI ran out of cursors at page {} of {} for site '{}'", current,
-                        page, target.site().getName());
+                        page, target.site().name());
                 return new PagedResponse(response, false);
             }
         }
@@ -281,9 +274,9 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
                 log.warn("Content AI site '{}' searches source '{}', which this tenant does not "
                         + "have — an empty result set here is a configuration error, not an empty "
                         + "index. Available sources: {}. Set turing.content-ai.sources.{} to one "
-                        + "of them.", target.site().getName(), target.sourceName(),
+                        + "of them.", target.site().name(), target.sourceName(),
                         available.stream().map(TurContentAiSource::name).toList(),
-                        target.site().getName());
+                        target.site().name());
                 return;
             }
             warnOnConfigurationMismatch(target, resolved.get(), facetFields);
@@ -291,7 +284,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
             // Allow a retry: the listing failing is not evidence about the source.
             diagnosed.remove(key);
             log.warn("Content AI site '{}' returned no results and the content-source listing "
-                    + "could not be read to say why: {}", target.site().getName(), e.getMessage());
+                    + "could not be read to say why: {}", target.site().name(), e.getMessage());
         }
     }
 
@@ -304,7 +297,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      */
     private void warnOnConfigurationMismatch(Target target, TurContentAiSource source,
             List<TurSEFacetField> facetFields) {
-        String site = target.site().getName();
+        String site = target.site().name();
         if (StringUtils.isNotBlank(source.type())
                 && !source.type().equals(property.getSourceType())) {
             log.warn("Content AI source '{}' is of type {} but turing.content-ai.source-type is "
@@ -365,7 +358,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
                         .build());
             } catch (TurContentAiClient.TurContentAiException e) {
                 log.error("Content AI facet '{}' failed for site '{}'", facetName,
-                        target.site().getName(), e);
+                        target.site().name(), e);
                 return Optional.empty();
             }
         });
@@ -380,8 +373,9 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
         }
         TurSNSite site = turSNSiteLocale.getTurSNSite();
         try {
-            JsonNode response = client.search(endpointUrl(site),
-                    queryBuilder.buildCountRequest(sourceName(site, turSNSiteLocale), property),
+            JsonNode response = client.search(endpointUrl(site.getTurSEInstanceId()),
+                    queryBuilder.buildCountRequest(
+                            sourceName(site.getName(), turSNSiteLocale.getCore()), property),
                     property);
             return responseMapper.totalResults(response);
         } catch (TurContentAiClient.TurContentAiException e) {
@@ -450,21 +444,18 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
                     + "false; refusing to query Adobe", PLUGIN_TYPE);
             return Optional.empty();
         }
-        return turSNSiteRepository.findByNameIgnoreCase(siteName).flatMap(site -> {
-            TurSNSiteLocale siteLocale =
-                    turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(site, locale);
-            if (siteLocale == null) {
-                log.warn("Site '{}' has no '{}' locale", siteName, locale);
-                return Optional.empty();
-            }
-            return Optional.of(new Target(site, endpointUrl(site), sourceName(site, siteLocale)));
-        });
+        // T1310 - the site and its (site, locale) core come through the site search SPI;
+        // the SPI logs a missing locale itself.
+        return siteSearchConfig.siteSettings(siteName).flatMap(site -> siteSearchConfig
+                .siteCore(siteName, locale)
+                .map(siteCore -> new Target(site, endpointUrl(siteCore.seInstanceId()),
+                        sourceName(site.name(), siteCore.core()))));
     }
 
-    private String endpointUrl(TurSNSite site) {
-        return Optional.ofNullable(snSiteSEInstances.of(site))
-                .map(TurSEInstance::getEndpointUrl)
-                .orElse("");
+    /** The site's SE instance endpoint, or {@code ""} when it names none. */
+    private String endpointUrl(String seInstanceId) {
+        return Optional.ofNullable(TurSEInstanceEndpoints.ofInstance(seInstanceEndpoints,
+                seInstanceId)).orElse("");
     }
 
     /**
@@ -472,13 +463,13 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
      * one, else the (site, locale) core name — which is what a source created to
      * mirror a Turing site would be named.
      */
-    private String sourceName(TurSNSite site, TurSNSiteLocale siteLocale) {
-        String configured = property.getSources().get(site.getName());
-        return StringUtils.isNotBlank(configured) ? configured : siteLocale.getCore();
+    private String sourceName(String siteName, String core) {
+        String configured = property.getSources().get(siteName);
+        return StringUtils.isNotBlank(configured) ? configured : core;
     }
 
-    private List<TurSEFacetField> facetFields(TurSNSite site) {
-        return siteSearchConfig.facetFields(site.getId());
+    private List<TurSEFacetField> facetFields(TurSESiteSettings site) {
+        return siteSearchConfig.facetFields(site.id());
     }
 
     private int rows(TurSEParameters params) {
@@ -492,7 +483,7 @@ public class TurContentAiSearchEnginePlugin implements TurSearchEnginePlugin {
         return requested != null && requested > 0 ? requested : 1;
     }
 
-    private record Target(TurSNSite site, String endpointUrl, String sourceName) {
+    private record Target(TurSESiteSettings site, String endpointUrl, String sourceName) {
     }
 
     // ---- Everything Turing does not own ----------------------------------

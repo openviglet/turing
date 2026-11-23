@@ -18,9 +18,7 @@ package com.viglet.turing.searchengine.contentai;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -58,9 +56,9 @@ import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
-import com.viglet.turing.sn.api.TurSNSites;
+import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
-import com.viglet.turing.sn.api.TurSNSiteLocales;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.system.properties.TurContentAiProperty;
 import com.viglet.turing.searchengine.result.TurSEResults;
@@ -134,10 +132,6 @@ class TurContentAiSearchEnginePluginTest {
             }
             """;
 
-    @Mock
-    private TurSNSites turSNSiteRepository;
-    @Mock
-    private TurSNSiteLocales turSNSiteLocaleRepository;
     @Mock
     private TurSESiteSearchConfig siteSearchConfig;
 
@@ -248,25 +242,20 @@ class TurContentAiSearchEnginePluginTest {
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
         seInstances.attach(site, instance);
-        site.setFacetItemType(siteItemType);
 
-        TurSNSiteLocale siteLocale = new TurSNSiteLocale();
-        siteLocale.setTurSNSite(site);
-        siteLocale.setLanguage(LOCALE);
-        siteLocale.setCore(CORE);
-
-        when(turSNSiteRepository.findByNameIgnoreCase(SITE)).thenReturn(Optional.of(site));
-        when(turSNSiteLocaleRepository.findByTurSNSiteAndLanguage(any(), eq(LOCALE)))
-                .thenReturn(siteLocale);
-        when(siteSearchConfig.facetFields(any())).thenReturn(List.of(facetFields));
+        // T1310 - the plugin reads the site and its core through the site search SPI.
+        when(siteSearchConfig.siteSettings(SITE)).thenReturn(Optional.of(TurSESiteSettings
+                .builder().id("site-1").name(SITE).facetItemType(siteItemType).build()));
+        when(siteSearchConfig.siteCore(SITE, LOCALE)).thenReturn(
+                Optional.of(new TurSESiteCore(SITE, site.getTurSEInstanceId(), CORE)));
+        when(siteSearchConfig.facetFields("site-1")).thenReturn(List.of(facetFields));
 
         property.setEnabled(true);
         property.setToken("adobe-token");
         property.getSources().put(SITE, SOURCE);
 
         return new TurContentAiSearchEnginePlugin(client, queryBuilder, responseMapper,
-                sourceCatalog, property, turSNSiteRepository, turSNSiteLocaleRepository,
-                siteSearchConfig, seInstances.service());
+                sourceCatalog, property, siteSearchConfig, seInstances.endpoints());
     }
 
     private static TurSEFacetField facetField(String name, int position,
