@@ -16,6 +16,7 @@
 package com.viglet.turing.searchengine.facet;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * T1224 — a custom facet item's filter over a span that starts at {@code field}
@@ -28,6 +29,17 @@ import java.util.List;
  * @since 2026.3.8
  */
 public record TurSECustomFacetSpan(String field, String endField, String point, List<Clause> overlap) {
+
+    /**
+     * T1310 — the span filter in Solr syntax: the point on {@code field} where
+     * {@code endField} is empty, or every overlap clause.
+     */
+    public String filterQuery() {
+        String clauses = overlap.stream()
+                .map(clause -> "+" + clause.field() + ":" + clause.value())
+                .collect(Collectors.joining(" "));
+        return String.format("((+%s:%s -%s:[* TO *]) OR (%s))", field, point, endField, clauses);
+    }
 
     /** One condition of a span filter: {@code field} holds {@code value}, a range. */
     public record Clause(String field, String value) {

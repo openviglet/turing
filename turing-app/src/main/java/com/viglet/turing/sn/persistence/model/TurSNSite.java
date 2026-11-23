@@ -20,6 +20,8 @@
  */
 package com.viglet.turing.sn.persistence.model;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;

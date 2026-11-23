@@ -21,6 +21,8 @@
 
 package com.viglet.turing.sn.persistence.model.field;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum;
+
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 import java.io.Serial;
@@ -36,7 +38,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum;
 import com.viglet.core.jpa.VigletAssignableUuidGenerator;
 import com.viglet.turing.sn.TurSNFieldType;
 import com.viglet.turing.sn.snapshot.TurSNSearchCacheEvictionListener;

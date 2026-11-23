@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.persistence.model.field;
+package com.viglet.turing.searchengine;
 
 public enum TurSNSiteFacetFieldSortEnum {
     DEFAULT,

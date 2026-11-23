@@ -25,7 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.customFacets;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.field;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.fields;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.names;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.settings;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -54,20 +60,20 @@ import com.viglet.turing.commons.sn.bean.TurSNSitePostParamsBean;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingCondition;
 import com.viglet.turing.sn.persistence.model.ranking.TurSNRankingExpression;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSERankingCondition;
 import com.viglet.turing.searchengine.spi.TurSERankingExpression;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.sn.TurSNFieldType;
-import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 
 /**
  * Tests for TurSolrQueryBuilder.
@@ -79,27 +85,38 @@ import com.viglet.turing.sn.facet.TurSNFacetTypeContext;
 class TurSolrQueryBuilderTest {
 
         @Mock
-        private TurSNSiteFieldExts turSNSiteFieldExtRepository;
-
-        @Mock
         private TurSESiteSearchConfig siteSearchConfig;
 
         @Mock
         private TurSNTargetingRules turSNTargetingRules;
 
-        @Mock
-        private com.viglet.turing.sn.api.TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
+        /**
+         * T1310 — the site's enabled fields and custom facets as the SPI answers them,
+         * derived the way sn's provider derives them from the store: the facet plan's
+         * facets are the fields that facet on their own or through a custom facet.
+         * Lenient, as each search path reads only the lists it needs.
+         */
+        private void givenEnabledFields(TurSNSite site, List<TurSNSiteFieldExt> fields) {
+                givenEnabledFields(site, fields, List.of());
+        }
 
-
-
-        @Mock
-        private com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService snapshotService;
+        private void givenEnabledFields(TurSNSite site, List<TurSNSiteFieldExt> fields,
+                        List<TurSNSiteCustomFacet> customFacets) {
+                Set<String> fieldIdsWithCustomFacets = customFacets.stream()
+                                .map(customFacet -> customFacet.getTurSNSiteFieldExt().getId())
+                                .collect(java.util.stream.Collectors.toSet());
+                lenient().when(siteSearchConfig.enabledFields(site.getId())).thenReturn(fields(fields));
+                lenient().when(siteSearchConfig.facetPlanFields(site.getId())).thenReturn(fields(fields));
+                lenient().when(siteSearchConfig.facetPlanFacets(site.getId())).thenReturn(fields(fields.stream()
+                                .filter(field -> field.getFacet() == 1
+                                                || fieldIdsWithCustomFacets.contains(field.getId()))
+                                .toList()));
+                lenient().when(siteSearchConfig.fieldCustomFacets(site.getId()))
+                                .thenReturn(customFacets(customFacets, fields));
+        }
 
         private TurSolrQueryBuilder builder() {
-                return new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                                turSNSiteCustomFacetRepository,
-                                siteSearchConfig,
-                                turSNTargetingRules, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                return new TurSolrQueryBuilder(siteSearchConfig, turSNTargetingRules);
         }
 
         private static TurSERankingExpression toSpi(TurSNRankingExpression expression,
@@ -136,16 +153,15 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setMlt(1);
                 TurSNSiteFieldExt mltField = TurSNSiteFieldExt.builder().name("body").build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1))
-                                .thenReturn(List.of(mltField));
+                when(siteSearchConfig.mltFields(site.getId()))
+                                .thenReturn(names(List.of(mltField)));
 
-                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository,
-                                siteSearchConfig, turSNTargetingRules, new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, snapshotService));
+                TurSolrQueryBuilder builder = new TurSolrQueryBuilder(siteSearchConfig, turSNTargetingRules);
                 SolrQuery query = new SolrQuery();
 
-                List<TurSNSiteFieldExt> result = builder.prepareQueryMLT(site, query);
+                List<String> result = builder.prepareQueryMLT(settings(site), query);
 
-                assertThat(result).containsExactly(mltField);
+                assertThat(result).containsExactly(mltField.getName());
                 assertThat(query.getBool(MoreLikeThisParams.MLT)).isTrue();
                 assertThat(query.get(MoreLikeThisParams.SIMILARITY_FIELDS)).isEqualTo("body");
         }
@@ -154,11 +170,11 @@ class TurSolrQueryBuilderTest {
         void testPrepareQueryMLTDoesNothingWhenDisabledOrNoFields() {
                 TurSNSite site = new TurSNSite();
                 site.setMlt(0);
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1))
-                                .thenReturn(Collections.emptyList());
+                when(siteSearchConfig.mltFields(site.getId()))
+                                .thenReturn(List.of());
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> result = builder().prepareQueryMLT(site, query);
+                List<String> result = builder().prepareQueryMLT(settings(site), query);
 
                 assertThat(result).isEmpty();
                 assertThat(query.get(MoreLikeThisParams.MLT)).isNull();
@@ -170,8 +186,8 @@ class TurSolrQueryBuilderTest {
                 site.setHlPre("<mark>");
                 site.setHlPost("</mark>");
                 TurSNSiteFieldExt hlField = TurSNSiteFieldExt.builder().name("content").build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
-                                .thenReturn(List.of(hlField));
+                when(siteSearchConfig.hlFields(site.getId()))
+                                .thenReturn(names(List.of(hlField)));
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 TurSEParameters parameters = new TurSEParameters(searchParams);
@@ -181,7 +197,7 @@ class TurSolrQueryBuilderTest {
                                 parameters, Locale.US, URI.create("http://localhost/search"));
 
                 SolrQuery enabledQuery = new SolrQuery();
-                builder().prepareQueryHL(site, enabledQuery, enabledContext);
+                builder().prepareQueryHL(settings(site), enabledQuery, enabledContext);
 
                 assertThat(enabledQuery.getBool(HighlightParams.HIGHLIGHT)).isTrue();
                 assertThat(enabledQuery.get(HighlightParams.FIELDS)).isEqualTo("content");
@@ -190,7 +206,7 @@ class TurSolrQueryBuilderTest {
                 TurSNSiteSearchContext disabledContext = new TurSNSiteSearchContext("site", config,
                                 parameters, Locale.US, URI.create("http://localhost/search"));
                 SolrQuery disabledQuery = new SolrQuery();
-                builder().prepareQueryHL(site, disabledQuery, disabledContext);
+                builder().prepareQueryHL(settings(site), disabledQuery, disabledContext);
                 assertThat(disabledQuery.get(HighlightParams.FIELDS)).isNull();
         }
 
@@ -208,15 +224,14 @@ class TurSolrQueryBuilderTest {
                                 .facet(1)
                                 .enabled(1)
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
-                                .facetSort(com.viglet.turing.sn.persistence.model.field.TurSNSiteFacetFieldSortEnum.DEFAULT)
+                                .facetSort(com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(facet));
+                givenEnabledFields(site, List.of(facet));
 
                 SolrQuery query = new SolrQuery();
                 TurSNFilterParams params = TurSNFilterParams.builder().build();
-                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query, params, (com.viglet.turing.commons.se.TurSEParameters) null);
+                List<TurSESearchField> facets = builder().prepareQueryFacet(settings(site), query, params, (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 assertThat(facets).hasSize(1);
                 assertThat(query.getBool("facet")).isTrue();
@@ -249,13 +264,10 @@ class TurSolrQueryBuilderTest {
                                 .build();
                 customFacet.setTurSNSiteFieldExt(nonFacetField);
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(nonFacetField));
-                when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any()))
-                                .thenReturn(List.of(customFacet));
+                givenEnabledFields(site, List.of(nonFacetField), List.of(customFacet));
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                List<TurSESearchField> facets = builder().prepareQueryFacet(settings(site), query,
                                 TurSNFilterParams.builder().build(), (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 assertThat(facets).hasSize(1);
@@ -289,10 +301,7 @@ class TurSolrQueryBuilderTest {
                                 .turSNSiteFieldExt(nonFacetField)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(nonFacetField));
-                when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any()))
-                                .thenReturn(List.of(customFacet));
+                givenEnabledFields(site, List.of(nonFacetField), List.of(customFacet));
 
                 SolrQuery query = new SolrQuery();
                 TurSNFilterParams params = TurSNFilterParams.builder()
@@ -301,7 +310,7 @@ class TurSolrQueryBuilderTest {
                                 .itemOperator(TurSNFilterQueryOperator.NONE)
                                 .build();
 
-                builder().prepareQueryFacet(site, query, params, (com.viglet.turing.commons.se.TurSEParameters) null);
+                builder().prepareQueryFacet(settings(site), query, params, (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 assertThat(query.getFacetQuery()).isNotEmpty();
                 assertThat(List.of(query.getFacetQuery()))
@@ -344,13 +353,9 @@ class TurSolrQueryBuilderTest {
                                 .build();
                 customFacet.setTurSNSiteFieldExt(field);
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(field));
-                when(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(any()))
-                                .thenReturn(List.of(customFacet));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
-                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
-                                .thenReturn(Collections.emptyList());
+                givenEnabledFields(site, List.of(field), List.of(customFacet));
+                when(siteSearchConfig.dateFacetFields(site.getId()))
+                                .thenReturn(List.of());
                 when(siteSearchConfig.fieldTypes(any()))
                                 .thenReturn(fieldTypes(Collections.emptyList()));
                 when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
@@ -362,7 +367,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getFilterQueries())
@@ -402,7 +407,7 @@ class TurSolrQueryBuilderTest {
                                 List.of("segment:vip")))
                                 .thenReturn("segment:\"vip\"");
 
-                SolrQuery query = builder().prepareSolrQuery(contextFrom(parameters, post), site,
+                SolrQuery query = builder().prepareSolrQuery(contextFrom(parameters, post), settings(site),
                                 parameters, spell);
 
                 assertThat(query.getQuery()).isEqualTo("title_exact:\"hello world\"");
@@ -436,7 +441,7 @@ class TurSolrQueryBuilderTest {
                 TurSESpellCheckResult spell = new TurSESpellCheckResult(true, "hello");
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, spell);
 
                 assertThat(query.getQuery()).isEqualTo("hello");
@@ -473,7 +478,7 @@ class TurSolrQueryBuilderTest {
 
                 TurSEParameters parameters = new TurSEParameters(searchParams, post);
 
-                SolrQuery query = builder().prepareSolrQuery(contextFrom(parameters, post), site,
+                SolrQuery query = builder().prepareSolrQuery(contextFrom(parameters, post), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getFilterQueries()).isNotEmpty();
@@ -499,7 +504,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters first = new TurSEParameters(firstParams, new TurSNSitePostParamsBean());
 
                 SolrQuery firstQuery = builder().prepareSolrQuery(
-                                contextFrom(first, new TurSNSitePostParamsBean()), site,
+                                contextFrom(first, new TurSNSitePostParamsBean()), settings(site),
                                 first, new TurSESpellCheckResult(false, ""));
 
                 assertThat(first.getRows()).isEqualTo(10);
@@ -512,7 +517,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters newest = new TurSEParameters(newestParams, new TurSNSitePostParamsBean());
 
                 SolrQuery newestQuery = builder().prepareSolrQuery(
-                                contextFrom(newest, new TurSNSitePostParamsBean()), site,
+                                contextFrom(newest, new TurSNSitePostParamsBean()), settings(site),
                                 newest, new TurSESpellCheckResult(false, ""));
 
                 assertThat(newestQuery.getSortField()).contains("publishedDate desc");
@@ -524,7 +529,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters oldest = new TurSEParameters(oldestParams, new TurSNSitePostParamsBean());
 
                 SolrQuery oldestQuery = builder().prepareSolrQuery(
-                                contextFrom(oldest, new TurSNSitePostParamsBean()), site,
+                                contextFrom(oldest, new TurSNSitePostParamsBean()), settings(site),
                                 oldest, new TurSESpellCheckResult(false, ""));
 
                 assertThat(oldestQuery.getSortField()).contains("publishedDate asc");
@@ -549,11 +554,9 @@ class TurSolrQueryBuilderTest {
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(enabledDate, enabledCategory));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
-                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
-                                .thenReturn(List.of(enabledDate));
+                givenEnabledFields(site, List.of(enabledDate, enabledCategory));
+                when(siteSearchConfig.dateFacetFields(site.getId()))
+                                .thenReturn(fields(List.of(enabledDate)));
                 when(siteSearchConfig.fieldTypes(any()))
                                 .thenReturn(fieldTypes(Collections.emptyList()));
                 when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
@@ -565,7 +568,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getFilterQueries()).hasSize(1);
@@ -614,7 +617,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getParams("bq")).isNotNull();
@@ -648,7 +651,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 // T1219 — today or later on the recency curve, nearest most; the past scores 0.
@@ -682,7 +685,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 // T1070 — before, Is not wrote type:"news" and boosted exactly what it meant to bury.
@@ -716,7 +719,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getParams("bq")).isNull();
@@ -729,7 +732,7 @@ class TurSolrQueryBuilderTest {
                 site.setSpellCheck(0);
                 site.setSpellCheckFixes(0);
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                givenEnabledFields(site, List.of(
                                 TurSNSiteFieldExt.builder().name("title").searchWeight(3f).build(),
                                 TurSNSiteFieldExt.builder().name("text").searchWeight(1f).build(),
                                 TurSNSiteFieldExt.builder().name("summary").build()));
@@ -740,7 +743,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 // Weight 3 adds the query on title worth 2; weight 1 and no weight add nothing.
@@ -771,7 +774,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getParams("bq")).containsExactly("(salaryMin:[* TO *])^2.0");
@@ -805,16 +808,15 @@ class TurSolrQueryBuilderTest {
                                 .facetSort(TurSNSiteFacetFieldSortEnum.ALPHABETICAL)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(dateFacet, entityFacet));
+                givenEnabledFields(site, List.of(dateFacet, entityFacet));
 
                 SolrQuery dateQuery = new SolrQuery();
-                builder().prepareQueryFacetWithOneFacet(site, dateQuery, TurSNFilterParams.builder().build(),
+                builder().prepareQueryFacetWithOneFacet(settings(site), dateQuery, TurSNFilterParams.builder().build(),
                                 "publishDate");
                 assertThat(dateQuery.getParams("facet.range")).isNotNull();
 
                 SolrQuery entityQuery = new SolrQuery();
-                builder().prepareQueryFacetWithOneFacet(site, entityQuery, TurSNFilterParams.builder().build(),
+                builder().prepareQueryFacetWithOneFacet(settings(site), entityQuery, TurSNFilterParams.builder().build(),
                                 "person");
                 assertThat(entityQuery.getFacetFields()).isNotEmpty();
                 assertThat(String.join(",", entityQuery.getFacetFields())).contains("person").doesNotContain("turing_entity");
@@ -852,15 +854,14 @@ class TurSolrQueryBuilderTest {
                                 .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(f1, f2));
+                givenEnabledFields(site, List.of(f1, f2));
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                List<TurSESearchField> facets = builder().prepareQueryFacet(settings(site), query,
                                 TurSNFilterParams.builder().build(), (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 assertThat(facets).hasSize(2);
-                assertThat(facets).extracting(TurSNSiteFieldExt::getName)
+                assertThat(facets).extracting(TurSESearchField::name)
                                 .containsExactlyInAnyOrder("category", "type");
                 assertThat(query.getBool("facet")).isTrue();
         }
@@ -880,17 +881,17 @@ class TurSolrQueryBuilderTest {
                 TurSNSiteFieldExt f2 = TurSNSiteFieldExt.builder().name("year").facet(1).enabled(1)
                                 .facetPosition(1).type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT).build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(f1, f2));
+                givenEnabledFields(site, List.of(f1, f2));
                 com.viglet.turing.commons.sn.bean.TurSNSearchParams searchParams =
                                 new com.viglet.turing.commons.sn.bean.TurSNSearchParams();
                 searchParams.setExf(List.of("year"));
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                List<TurSESearchField> facets = builder().prepareQueryFacet(settings(site), query,
                                 TurSNFilterParams.builder().build(),
                                 new com.viglet.turing.commons.se.TurSEParameters(searchParams));
 
-                assertThat(facets).extracting(TurSNSiteFieldExt::getName).containsExactly("category");
+                assertThat(facets).extracting(TurSESearchField::name).containsExactly("category");
                 assertThat(String.join(",", query.getFacetFields())).doesNotContain("year");
         }
 
@@ -900,7 +901,7 @@ class TurSolrQueryBuilderTest {
                 site.setFacet(0);
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> facets = builder().prepareQueryFacet(site, query,
+                List<TurSESearchField> facets = builder().prepareQueryFacet(settings(site), query,
                                 TurSNFilterParams.builder().build(), (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 assertThat(facets).isEmpty();
@@ -924,7 +925,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getQuery()).isEqualTo("test");
@@ -935,14 +936,14 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setMlt(0);
                 TurSNSiteFieldExt mltField = TurSNSiteFieldExt.builder().name("body").build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndMltAndEnabled(site, 1, 1))
-                                .thenReturn(List.of(mltField));
+                when(siteSearchConfig.mltFields(site.getId()))
+                                .thenReturn(names(List.of(mltField)));
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> result = builder().prepareQueryMLT(site, query);
+                List<String> result = builder().prepareQueryMLT(settings(site), query);
 
                 // Fields are always returned from the repository
-                assertThat(result).containsExactly(mltField);
+                assertThat(result).containsExactly(mltField.getName());
                 // But the query is NOT configured with MLT params when mlt is disabled
                 assertThat(query.get(MoreLikeThisParams.MLT)).isNull();
         }
@@ -965,7 +966,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 // Without exact match, the query should not be prefixed
@@ -991,7 +992,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 // ExactMatchField is blank so exact match should NOT apply
@@ -1003,7 +1004,7 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setFacet(1);
                 site.setItemsPerFacet(10);
-                site.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.COUNT);
+                site.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.COUNT);
                 site.setFacetType(TurSNSiteFacetFieldEnum.AND);
                 site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
 
@@ -1015,11 +1016,10 @@ class TurSolrQueryBuilderTest {
                                 .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(facet));
+                givenEnabledFields(site, List.of(facet));
 
                 SolrQuery query = new SolrQuery();
-                builder().prepareQueryFacet(site, query, TurSNFilterParams.builder().build(), null);
+                builder().prepareQueryFacet(settings(site), query, TurSNFilterParams.builder().build(), null);
 
                 assertThat(query.get("facet.sort")).isEqualTo("count");
         }
@@ -1029,7 +1029,7 @@ class TurSolrQueryBuilderTest {
                 TurSNSite site = new TurSNSite();
                 site.setFacet(1);
                 site.setItemsPerFacet(10);
-                site.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.ALPHABETICAL);
+                site.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.ALPHABETICAL);
                 site.setFacetType(TurSNSiteFacetFieldEnum.AND);
                 site.setFacetItemType(TurSNSiteFacetFieldEnum.AND);
 
@@ -1041,11 +1041,10 @@ class TurSolrQueryBuilderTest {
                                 .facetSort(TurSNSiteFacetFieldSortEnum.DEFAULT)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(facet));
+                givenEnabledFields(site, List.of(facet));
 
                 SolrQuery query = new SolrQuery();
-                builder().prepareQueryFacet(site, query, TurSNFilterParams.builder().build(), null);
+                builder().prepareQueryFacet(settings(site), query, TurSNFilterParams.builder().build(), null);
 
                 assertThat(query.get("facet.sort")).isEqualTo("index");
         }
@@ -1058,8 +1057,8 @@ class TurSolrQueryBuilderTest {
 
                 TurSNSiteFieldExt hlField1 = TurSNSiteFieldExt.builder().name("title").build();
                 TurSNSiteFieldExt hlField2 = TurSNSiteFieldExt.builder().name("body").build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
-                                .thenReturn(List.of(hlField1, hlField2));
+                when(siteSearchConfig.hlFields(site.getId()))
+                                .thenReturn(names(List.of(hlField1, hlField2)));
 
                 TurSNSearchParams searchParams = new TurSNSearchParams();
                 TurSEParameters parameters = new TurSEParameters(searchParams);
@@ -1069,7 +1068,7 @@ class TurSolrQueryBuilderTest {
                                 parameters, Locale.US, URI.create("http://localhost/search"));
 
                 SolrQuery query = new SolrQuery();
-                List<TurSNSiteFieldExt> result = builder().prepareQueryHL(site, query, context);
+                List<String> result = builder().prepareQueryHL(settings(site), query, context);
 
                 assertThat(result).hasSize(2);
                 assertThat(query.get(HighlightParams.FIELDS)).isEqualTo("title,body");
@@ -1089,11 +1088,10 @@ class TurSolrQueryBuilderTest {
                                 .enabled(1)
                                 .build();
 
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(facet));
+                givenEnabledFields(site, List.of(facet));
 
                 SolrQuery query = new SolrQuery();
-                builder().prepareQueryFacet(site, query,
+                builder().prepareQueryFacet(settings(site), query,
                                 TurSNFilterParams.builder().build(), (com.viglet.turing.commons.se.TurSEParameters) null);
 
                 // itemsPerFacet is null so wasFacetConfigured returns false
@@ -1120,7 +1118,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getQuery()).isEqualTo("hello world");
@@ -1143,7 +1141,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters parameters = new TurSEParameters(searchParams, new TurSNSitePostParamsBean());
 
                 builder().prepareSolrQuery(
-                                contextFrom(parameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(parameters, new TurSNSitePostParamsBean()), settings(site),
                                 parameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(parameters.getRows()).isEqualTo(25);
@@ -1162,11 +1160,9 @@ class TurSolrQueryBuilderTest {
                                 .name("category")
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(categoryField));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
-                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
-                                .thenReturn(Collections.emptyList());
+                givenEnabledFields(site, List.of(categoryField));
+                when(siteSearchConfig.dateFacetFields(site.getId()))
+                                .thenReturn(List.of());
                 when(siteSearchConfig.fieldTypes(any()))
                                 .thenReturn(fieldTypes(Collections.emptyList()));
                 when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
@@ -1178,7 +1174,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 assertThat(query.getFilterQueries()).isNotEmpty();
@@ -1198,11 +1194,9 @@ class TurSolrQueryBuilderTest {
                                 .name("temas-secundarios")
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .build();
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                                .thenReturn(List.of(topicField));
-                when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
-                                com.viglet.turing.commons.se.field.TurSEFieldType.DATE))
-                                .thenReturn(Collections.emptyList());
+                givenEnabledFields(site, List.of(topicField));
+                when(siteSearchConfig.dateFacetFields(site.getId()))
+                                .thenReturn(List.of());
                 when(siteSearchConfig.fieldTypes(any()))
                                 .thenReturn(fieldTypes(Collections.emptyList()));
                 when(siteSearchConfig.rankingExpressions(any())).thenReturn(List.of());
@@ -1215,7 +1209,7 @@ class TurSolrQueryBuilderTest {
                 TurSEParameters seParameters = new TurSEParameters(params, new TurSNSitePostParamsBean());
 
                 SolrQuery query = builder().prepareSolrQuery(
-                                contextFrom(seParameters, new TurSNSitePostParamsBean()), site,
+                                contextFrom(seParameters, new TurSNSitePostParamsBean()), settings(site),
                                 seParameters, new TurSESpellCheckResult(false, ""));
 
                 // T1233 — the exclusion is a filter query of its own, so it always
@@ -1228,17 +1222,14 @@ class TurSolrQueryBuilderTest {
                                 .doesNotContain("excluded-page");
         }
 
-        // --- buildFilterQueryByOperator (via reflection) ---
+        // --- buildFilterQueryByOperator (sn's TurSNCustomFacetFilterQuery.byOperator since T1310) ---
 
         private static String invokeBuildFilterQueryByOperator(
                         com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum op,
                         String field, String start, String end) throws Exception {
-                Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "buildFilterQueryByOperator", String.class,
-                                com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetOperatorEnum.class,
-                                String.class, String.class);
-                method.setAccessible(true);
-                return (String) method.invoke(null, field, op, start, end);
+                // T1310 — the operator's filter query is sn's (the Solr builder reads each
+                // item's filter query through the SPI), so these cases run on it directly.
+                return com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery.byOperator(field, op, start, end);
         }
 
         @Test
@@ -1433,20 +1424,20 @@ class TurSolrQueryBuilderTest {
         @Test
         void testFacetSortIsEmptyOrCount() throws Exception {
                 Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "facetSortIsEmptyOrCount", TurSNSite.class);
+                                "facetSortIsEmptyOrCount", TurSESiteSettings.class);
                 method.setAccessible(true);
 
                 TurSNSite nullSort = new TurSNSite();
                 nullSort.setFacetSort(null);
-                assertThat((boolean) method.invoke(null, nullSort)).isTrue();
+                assertThat((boolean) method.invoke(null, settings(nullSort))).isTrue();
 
                 TurSNSite countSort = new TurSNSite();
-                countSort.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.COUNT);
-                assertThat((boolean) method.invoke(null, countSort)).isTrue();
+                countSort.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.COUNT);
+                assertThat((boolean) method.invoke(null, settings(countSort))).isTrue();
 
                 TurSNSite alphaSort = new TurSNSite();
-                alphaSort.setFacetSort(com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum.ALPHABETICAL);
-                assertThat((boolean) method.invoke(null, alphaSort)).isFalse();
+                alphaSort.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.ALPHABETICAL);
+                assertThat((boolean) method.invoke(null, settings(alphaSort))).isFalse();
         }
 
         // --- isNerOrThesaurus (via reflection) ---
@@ -1456,32 +1447,32 @@ class TurSolrQueryBuilderTest {
         @Test
         void testIsDateRangeFacet() throws Exception {
                 Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "isDateRangeFacet", TurSNSiteFieldExt.class);
+                                "isDateRangeFacet", TurSESearchField.class);
                 method.setAccessible(true);
 
                 TurSNSiteFieldExt dateRangeField = TurSNSiteFieldExt.builder()
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
                                 .facetRange(TurSNSiteFacetRangeEnum.MONTH)
                                 .build();
-                assertThat((boolean) method.invoke(null, dateRangeField)).isTrue();
+                assertThat((boolean) method.invoke(null, field(dateRangeField))).isTrue();
 
                 TurSNSiteFieldExt dateDisabledField = TurSNSiteFieldExt.builder()
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
                                 .facetRange(TurSNSiteFacetRangeEnum.DISABLED)
                                 .build();
-                assertThat((boolean) method.invoke(null, dateDisabledField)).isFalse();
+                assertThat((boolean) method.invoke(null, field(dateDisabledField))).isFalse();
 
                 TurSNSiteFieldExt dateNullRange = TurSNSiteFieldExt.builder()
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.DATE)
                                 .facetRange(null)
                                 .build();
-                assertThat((boolean) method.invoke(null, dateNullRange)).isFalse();
+                assertThat((boolean) method.invoke(null, field(dateNullRange))).isFalse();
 
                 TurSNSiteFieldExt stringField = TurSNSiteFieldExt.builder()
                                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING)
                                 .facetRange(TurSNSiteFacetRangeEnum.MONTH)
                                 .build();
-                assertThat((boolean) method.invoke(null, stringField)).isFalse();
+                assertThat((boolean) method.invoke(null, field(stringField))).isFalse();
         }
 
         // --- isFacetEnabled (via reflection) ---
@@ -1489,14 +1480,14 @@ class TurSolrQueryBuilderTest {
         @Test
         void testIsFacetEnabled() throws Exception {
                 Method method = TurSolrQueryBuilder.class.getDeclaredMethod(
-                                "isFacetEnabled", TurSNSiteFieldExt.class);
+                                "isFacetEnabled", TurSESearchField.class);
                 method.setAccessible(true);
 
                 TurSNSiteFieldExt enabled = TurSNSiteFieldExt.builder().facet(1).build();
-                assertThat((boolean) method.invoke(null, enabled)).isTrue();
+                assertThat((boolean) method.invoke(null, field(enabled))).isTrue();
 
                 TurSNSiteFieldExt disabled = TurSNSiteFieldExt.builder().facet(0).build();
-                assertThat((boolean) method.invoke(null, disabled)).isFalse();
+                assertThat((boolean) method.invoke(null, field(disabled))).isFalse();
         }
 
         // ---- T1111: an exclusive-start range is an expression, never a phrase ----

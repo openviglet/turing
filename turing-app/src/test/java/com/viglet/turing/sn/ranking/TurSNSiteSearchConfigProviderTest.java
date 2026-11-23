@@ -59,12 +59,14 @@ class TurSNSiteSearchConfigProviderTest {
     private com.viglet.turing.sn.TurSNFieldProcess fieldProcess;
     @Mock
     private com.viglet.turing.sn.facet.TurSNCustomFacetCatalog customFacetCatalog;
+    @Mock
+    private com.viglet.turing.sn.facet.TurSNEnabledFacets enabledFacets;
 
     private TurSNSiteSearchConfigProvider provider() {
         return new TurSNSiteSearchConfigProvider(expressionRepository, conditionRepository, customSortRepository,
                 fieldExtRepository, fieldRepository, siteRepository, siteLocaleRepository,
                 siteLocaleRepositoryPort, searchRuleEvaluator, fieldProcess,
-                customFacetCatalog);
+                customFacetCatalog, enabledFacets);
     }
 
     private static TurSNRankingCondition condition(String attribute, int kind, String value) {
@@ -92,6 +94,8 @@ class TurSNSiteSearchConfigProviderTest {
         site.setExactMatchField("title_exact");
         site.setDefaultTitleField("title");
         site.setDefaultDateField("publishedAt");
+        site.setFacetType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        site.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.ALPHABETICAL);
         when(siteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(site));
 
         com.viglet.turing.searchengine.spi.TurSESiteSettings settings = provider().siteSettings("jobs").orElseThrow();
@@ -110,6 +114,8 @@ class TurSNSiteSearchConfigProviderTest {
         assertThat(settings.exactMatchField()).isEqualTo("title_exact");
         assertThat(settings.defaultTitleField()).isEqualTo("title");
         assertThat(settings.defaultDateField()).isEqualTo("publishedAt");
+        assertThat(settings.facetType()).isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        assertThat(settings.facetSort()).isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetSortEnum.ALPHABETICAL);
     }
 
     @Test
@@ -124,13 +130,20 @@ class TurSNSiteSearchConfigProviderTest {
         title.setFacetPosition(2);
         title.setFacetItemType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
         title.setSearchWeight(3f);
+        title.setId("field-title");
+        title.setFacetType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.AND);
+        title.setFacetSort(com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum.ALPHABETICAL);
+        title.setFacetRange(com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum.MONTH);
         when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
         when(fieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(title));
 
         assertThat(provider().enabledFields("site-1")).containsExactly(
                 new com.viglet.turing.searchengine.spi.TurSESearchField("title",
                         com.viglet.turing.commons.se.field.TurSEFieldType.TEXT, 1, 1, 2,
-                        com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR, 3f));
+                        com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR, 3f, "field-title",
+                        com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.AND,
+                        com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum.ALPHABETICAL,
+                        com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum.MONTH));
         assertThat(provider().enabledFields(null)).isEmpty();
     }
 
@@ -378,4 +391,136 @@ class TurSNSiteSearchConfigProviderTest {
         assertThat(provider().customFacets("site-1")).isEqualTo(facets);
         assertThat(provider().customFacets("missing")).isEmpty();
         assertThat(provider().customFacets(null)).isEmpty();
-    }}
+    }
+    // ---- T1310: what the Solr engine reads through the SPI ----
+
+    private static com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt field(String id, String name,
+            int facet) {
+        return com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt.builder()
+                .id(id).name(name).facet(facet)
+                .type(com.viglet.turing.commons.se.field.TurSEFieldType.STRING).build();
+    }
+
+    @Test
+    void theFacetPlanReadsTheEnabledFieldsAndFacetsSnHandsTheSearch() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        var category = field("f-1", "category", 1);
+        var price = field("f-2", "price", 0);
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(siteRepository.findById("missing")).thenReturn(Optional.empty());
+        when(enabledFacets.enabledFields(site)).thenReturn(List.of(category, price));
+        when(enabledFacets.enabledFacets(site)).thenReturn(List.of(category));
+
+        assertThat(provider().facetPlanFields("site-1"))
+                .extracting(com.viglet.turing.searchengine.spi.TurSESearchField::id)
+                .containsExactly("f-1", "f-2");
+        assertThat(provider().facetPlanFacets("site-1"))
+                .extracting(com.viglet.turing.searchengine.spi.TurSESearchField::name)
+                .containsExactly("category");
+        assertThat(provider().facetPlanFields("missing")).isEmpty();
+        assertThat(provider().facetPlanFacets(null)).isEmpty();
+    }
+
+    @Test
+    void fieldCustomFacetsComeFromTheCatalogOverTheFacetPlanFields() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        var price = field("f-2", "price", 0);
+        List<com.viglet.turing.searchengine.spi.TurSECustomFacet> facets = List.of(
+                new com.viglet.turing.searchengine.spi.TurSECustomFacet("salary", 1, List.of()));
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(enabledFacets.enabledFields(site)).thenReturn(List.of(price));
+        when(customFacetCatalog.fieldCustomFacets(List.of(price))).thenReturn(facets);
+
+        assertThat(provider().fieldCustomFacets("site-1")).isEqualTo(facets);
+        assertThat(provider().fieldCustomFacets(null)).isEmpty();
+    }
+
+    @Test
+    void aFieldCustomFacetCarriesItsFieldTypesAndEveryItemInStoreOrder() {
+        var price = field("f-2", "price", 0);
+        price.setType(com.viglet.turing.commons.se.field.TurSEFieldType.INT);
+        var unlabelled = com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem.builder()
+                .label(" ").position(2).rangeStart(new java.math.BigDecimal("5")).build();
+        var cheap = com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem.builder()
+                .label("Cheap").position(1).rangeStart(java.math.BigDecimal.ZERO)
+                .rangeEnd(new java.math.BigDecimal("10.000000")).build();
+        var facet = com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet.builder()
+                .name("salary").facetPosition(3).endField("priceEnd")
+                .facetType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR)
+                .facetItemType(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.AND)
+                .turSNSiteFieldExt(price).build();
+        facet.setItems(new java.util.LinkedHashSet<>(List.of(unlabelled, cheap)));
+
+        var mapped = com.viglet.turing.sn.facet.TurSNCustomFacetCatalog.toFieldCustomFacets(List.of(facet),
+                List.of(price));
+
+        assertThat(mapped).hasSize(1);
+        var spi = mapped.getFirst();
+        assertThat(spi.name()).isEqualTo("salary");
+        assertThat(spi.position()).isEqualTo(3);
+        assertThat(spi.fieldId()).isEqualTo("f-2");
+        assertThat(spi.endField()).isEqualTo("priceEnd");
+        assertThat(spi.facetType()).isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.OR);
+        assertThat(spi.facetItemType()).isEqualTo(com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum.AND);
+        // Nothing dropped or sorted: the blank item stays, in the order the facet holds them.
+        List<com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem> stored =
+                List.copyOf(facet.getItems());
+        assertThat(spi.items()).extracting(com.viglet.turing.searchengine.spi.TurSECustomFacet.Item::label)
+                .containsExactlyElementsOf(stored.stream()
+                        .map(com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem::getLabel)
+                        .toList());
+        assertThat(spi.items()).extracting(com.viglet.turing.searchengine.spi.TurSECustomFacet.Item::position)
+                .containsExactlyElementsOf(stored.stream()
+                        .map(com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem::getPosition)
+                        .toList());
+        // The item's filter query is the one sn's own filter query writes for it.
+        assertThat(spi.items().get(stored.indexOf(cheap)).filterQuery()).isEqualTo(
+                com.viglet.turing.sn.facet.TurSNCustomFacetFilterQuery.of("price", "priceEnd",
+                        com.viglet.turing.commons.se.field.TurSEFieldType.INT, cheap));
+    }
+
+    @Test
+    void anItemWithoutAnEndFieldFiltersItsFieldAlone() {
+        var price = field("f-2", "price", 0);
+        price.setType(com.viglet.turing.commons.se.field.TurSEFieldType.INT);
+        var cheap = com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacetItem.builder()
+                .label("Cheap").rangeStart(java.math.BigDecimal.ZERO)
+                .rangeEnd(new java.math.BigDecimal("10")).build();
+        var facet = com.viglet.turing.sn.persistence.model.field.TurSNSiteCustomFacet.builder()
+                .name("salary").turSNSiteFieldExt(price).build();
+        facet.setItems(new java.util.HashSet<>(List.of(cheap)));
+
+        var item = com.viglet.turing.sn.facet.TurSNCustomFacetCatalog.toFieldCustomFacets(List.of(facet),
+                List.of(price)).getFirst().items().getFirst();
+
+        assertThat(item.filterQuery()).isEqualTo("price:[0 TO 10]");
+    }
+
+    @Test
+    void dateFacetsHighlightsAndRequiredFieldsAreTheStoresOwnLists() {
+        com.viglet.turing.sn.persistence.model.TurSNSite site = new com.viglet.turing.sn.persistence.model.TurSNSite();
+        var published = field("f-3", "published", 1);
+        published.setType(com.viglet.turing.commons.se.field.TurSEFieldType.DATE);
+        var title = field("f-1", "title", 0);
+        var type = field("f-4", "type", 0);
+        type.setDefaultValue("doc");
+        var typeAgain = field("f-5", "type", 0);
+        typeAgain.setDefaultValue("page");
+        when(siteRepository.findById("site-1")).thenReturn(Optional.of(site));
+        when(fieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
+                com.viglet.turing.commons.se.field.TurSEFieldType.DATE)).thenReturn(List.of(published));
+        when(fieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1)).thenReturn(List.of(title));
+        when(fieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
+                .thenReturn(List.of(type, typeAgain));
+
+        assertThat(provider().dateFacetFields("site-1"))
+                .extracting(com.viglet.turing.searchengine.spi.TurSESearchField::name)
+                .containsExactly("published");
+        assertThat(provider().hlFields("site-1")).containsExactly("title");
+        // The last field of a name wins, as the engines' own lookup did.
+        assertThat(provider().requiredFields("site-1")).containsExactly(java.util.Map.entry("type", "page"));
+        assertThat(provider().dateFacetFields(null)).isEmpty();
+        assertThat(provider().hlFields(null)).isEmpty();
+        assertThat(provider().requiredFields(null)).isEmpty();
+    }
+}

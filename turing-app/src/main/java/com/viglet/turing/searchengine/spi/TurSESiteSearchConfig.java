@@ -117,4 +117,47 @@ public interface TurSESiteSearchConfig {
      * the site is unknown or has none.
      */
     List<TurSECustomFacet> customFacets(String siteId);
+
+    /**
+     * T1310 — the site's enabled fields as a search plans its facets and filter
+     * queries: from the site's cached search snapshot when there is one, else from
+     * the store. Empty when the site is unknown or the id {@code null}.
+     */
+    List<TurSESearchField> facetPlanFields(String siteId);
+
+    /**
+     * T1310 — the {@link #facetPlanFields} that facet, on their own or through a
+     * custom facet. Empty when the site is unknown or the id {@code null}.
+     */
+    List<TurSESearchField> facetPlanFacets(String siteId);
+
+    /**
+     * T1310 — every custom facet on the site's {@link #facetPlanFields}, in the
+     * store's order, each with its field id, end field, facet types and all of
+     * its items in the store's order (unlike {@link #customFacets}, nothing is
+     * dropped, merged or sorted). Empty when the site is unknown or the id
+     * {@code null}.
+     */
+    List<TurSECustomFacet> fieldCustomFacets(String siteId);
+
+    /**
+     * T1310 — the site's enabled DATE fields that facet, whose filters a date
+     * range facet widens to its bucket. Empty when the site is unknown or the id
+     * {@code null}.
+     */
+    List<TurSESearchField> dateFacetFields(String siteId);
+
+    /**
+     * T1310 — the names of the site's enabled fields flagged for highlighting.
+     * Empty when the site is unknown or the id {@code null}.
+     */
+    List<String> hlFields(String siteId);
+
+    /**
+     * T1310 — the default value of each of the site's enabled required fields by
+     * name, which a result that lacks the field is given; where two fields share
+     * a name the last one read wins. Empty when the site is unknown or the id
+     * {@code null}.
+     */
+    Map<String, String> requiredFields(String siteId);
 }

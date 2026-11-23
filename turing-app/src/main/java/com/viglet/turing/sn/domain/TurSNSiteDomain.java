@@ -16,7 +16,7 @@
  */
 package com.viglet.turing.sn.domain;
 
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 /**

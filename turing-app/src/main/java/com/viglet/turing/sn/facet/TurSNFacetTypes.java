@@ -16,18 +16,15 @@
  */
 package com.viglet.turing.sn.facet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.KeyValue;
-
 import com.viglet.turing.commons.sn.bean.TurSNFilterParams;
 import com.viglet.turing.commons.sn.search.TurSNFilterQueryOperator;
-import com.viglet.turing.commons.utils.TurCommonsUtils;
 import com.viglet.turing.sn.persistence.dto.field.TurSNSiteFieldExtDto;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.facet.TurSEFacetTypes;
 
 /**
  * Which AND/OR a facet and its items combine with, resolved from the request's
@@ -41,16 +38,16 @@ import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 public final class TurSNFacetTypes {
 
     /** The {@link #typeAndItemType} value of an OR facet whose items OR together. */
-    public static final String OR_OR = "OR-OR";
+    public static final String OR_OR = TurSEFacetTypes.OR_OR;
     /** The {@link #typeAndItemType} value of an OR facet whose items AND together. */
-    public static final String OR_AND = "OR-AND";
+    public static final String OR_AND = TurSEFacetTypes.OR_AND;
 
     private TurSNFacetTypes() {
     }
 
     /** The facet type and the item type, joined as {@code AND-OR}. */
     public static String typeAndItemType(TurSNFacetTypeContext context) {
-        return facetType(context).toString() + "-" + facetItemType(context).toString();
+        return TurSEFacetTypes.typeAndItemType(facetType(context), facetItemType(context));
     }
 
     public static TurSNSiteFacetFieldEnum facetType(TurSNFacetTypeContext context) {
@@ -63,8 +60,8 @@ public final class TurSNFacetTypes {
     public static TurSNSiteFacetFieldEnum facetType(TurSNFacetTypeContext context,
             TurSNSiteFacetFieldEnum configured) {
         TurSNFilterQueryOperator operator = context.getTurSNFilterParams().getOperator();
-        if (operatorIsNotEmpty(operator)) {
-            return fromOperator(operator);
+        if (TurSEFacetTypes.operatorIsNotEmpty(operator)) {
+            return TurSEFacetTypes.fromOperator(operator);
         }
         if (context.isSpecificField() && !isDefault(configured)) {
             return configured;
@@ -82,8 +79,8 @@ public final class TurSNFacetTypes {
     public static TurSNSiteFacetFieldEnum facetItemType(TurSNFacetTypeContext context,
             TurSNSiteFacetFieldEnum configured) {
         TurSNFilterQueryOperator itemOperator = context.getTurSNFilterParams().getItemOperator();
-        if (operatorIsNotEmpty(itemOperator)) {
-            return fromOperator(itemOperator);
+        if (TurSEFacetTypes.operatorIsNotEmpty(itemOperator)) {
+            return TurSEFacetTypes.fromOperator(itemOperator);
         }
         if (context.isSpecificField() && !isDefault(configured)) {
             return configured;
@@ -92,56 +89,32 @@ public final class TurSNFacetTypes {
     }
 
     public static TurSNSiteFacetFieldEnum facetItemTypeFromSite(TurSNSite turSNSite) {
-        return switch (turSNSite.getFacetItemType()) {
-            case OR -> TurSNSiteFacetFieldEnum.OR;
-            case null, default -> TurSNSiteFacetFieldEnum.AND;
-        };
+        return TurSEFacetTypes.fromSite(turSNSite.getFacetItemType());
     }
 
     public static boolean isDefault(TurSNSiteFacetFieldEnum turSNSiteFacetFieldEnum) {
-        return turSNSiteFacetFieldEnum == null
-                || turSNSiteFacetFieldEnum.equals(TurSNSiteFacetFieldEnum.DEFAULT);
+        return TurSEFacetTypes.isDefault(turSNSiteFacetFieldEnum);
     }
 
     /** Whether the request or the site makes this an OR selection. */
     public static boolean isOr(TurSNFacetTypeContext context) {
-        TurSNFilterQueryOperator operator = context.getTurSNFilterParams().getOperator();
-        return (context.getTurSNSite().getFacetItemType().equals(TurSNSiteFacetFieldEnum.OR)
-                && !operator.equals(TurSNFilterQueryOperator.AND))
-                || operator.equals(TurSNFilterQueryOperator.OR);
+        return TurSEFacetTypes.isOr(context.getTurSNFilterParams(), context.getTurSNSite().getFacetItemType());
     }
 
     /** The field name of every {@code field:value} filter the request carries. */
     public static List<String> fqFields(TurSNFilterParams turSNFilterParams) {
-        List<String> fqFields = new ArrayList<>();
-        fqFields.addAll(fqFields(turSNFilterParams.getDefaultValues()));
-        fqFields.addAll(fqFields(turSNFilterParams.getAnd()));
-        fqFields.addAll(fqFields(turSNFilterParams.getOr()));
-        return fqFields;
-    }
-
-    private static List<String> fqFields(List<String> filterQueries) {
-        return Optional.ofNullable(filterQueries)
-                .map(fqOpt -> fqOpt.stream()
-                        .map(fq -> TurCommonsUtils.getKeyValueFromColon(fq)
-                                .map(KeyValue::getKey).orElse(null))
-                        .toList())
-                .orElseGet(ArrayList::new);
+        return TurSEFacetTypes.fqFields(turSNFilterParams);
     }
 
     static TurSNSiteFacetFieldEnum facetTypeFromSite(TurSNSite turSNSite) {
-        return switch (turSNSite.getFacetType()) {
-            case OR -> TurSNSiteFacetFieldEnum.OR;
-            case null, default -> TurSNSiteFacetFieldEnum.AND;
-        };
+        return TurSEFacetTypes.fromSite(turSNSite.getFacetType());
     }
 
     static TurSNSiteFacetFieldEnum fromOperator(TurSNFilterQueryOperator operator) {
-        return operator.equals(TurSNFilterQueryOperator.OR) ? TurSNSiteFacetFieldEnum.OR
-                : TurSNSiteFacetFieldEnum.AND;
+        return TurSEFacetTypes.fromOperator(operator);
     }
 
     static boolean operatorIsNotEmpty(TurSNFilterQueryOperator operator) {
-        return operator != null && !operator.equals(TurSNFilterQueryOperator.NONE);
+        return TurSEFacetTypes.operatorIsNotEmpty(operator);
     }
 }

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 
 /**
  * Unit tests for TurSolrQueryContext.
@@ -46,25 +46,25 @@ class TurSolrQueryContextTest {
         SolrQuery query = new SolrQuery("test");
         TurSEParameters params = new TurSEParameters(new TurSNSearchParams());
         TurSESpellCheckResult spellCheck = new TurSESpellCheckResult();
-        List<TurSNSiteFieldExt> mltFields = List.of(TurSNSiteFieldExt.builder().name("mlt").build());
-        List<TurSNSiteFieldExt> facetFields = List.of(TurSNSiteFieldExt.builder().name("facet").build());
-        List<TurSNSiteFieldExt> hlFields = List.of(TurSNSiteFieldExt.builder().name("hl").build());
+        List<String> mltFields = List.of("mlt");
+        List<TurSESearchField> facetFields = List.of(TurSESearchField.builder().name("facet").build());
+        List<String> hlFields = List.of("hl");
 
         TurSolrQueryContext context = TurSolrQueryContext.builder()
                 .query(query)
                 .turSEParameters(params)
-                .mltFieldExtList(mltFields)
-                .facetFieldExtList(facetFields)
-                .hlFieldExtList(hlFields)
+                .mltFields(mltFields)
+                .facetFields(facetFields)
+                .hlFields(hlFields)
                 .spellCheckResult(spellCheck)
                 .queryToRenderFacet(true)
                 .build();
 
         assertThat(context.getQuery()).isSameAs(query);
         assertThat(context.getTurSEParameters()).isSameAs(params);
-        assertThat(context.getMltFieldExtList()).isEqualTo(mltFields);
-        assertThat(context.getFacetFieldExtList()).isEqualTo(facetFields);
-        assertThat(context.getHlFieldExtList()).isEqualTo(hlFields);
+        assertThat(context.getMltFields()).isEqualTo(mltFields);
+        assertThat(context.getFacetFields()).isEqualTo(facetFields);
+        assertThat(context.getHlFields()).isEqualTo(hlFields);
         assertThat(context.getSpellCheckResult()).isSameAs(spellCheck);
         assertThat(context.isQueryToRenderFacet()).isTrue();
     }

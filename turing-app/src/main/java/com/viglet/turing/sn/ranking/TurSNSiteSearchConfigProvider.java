@@ -33,6 +33,7 @@ import com.viglet.turing.searchengine.spi.TurSECoreUsage;
 import com.viglet.turing.searchengine.spi.TurSEFacetField;
 import com.viglet.turing.searchengine.spi.TurSECustomFacet;
 import com.viglet.turing.sn.facet.TurSNCustomFacetCatalog;
+import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 import com.viglet.turing.searchengine.spi.TurSESiteCore;
 import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.spi.TurSESearchField;
@@ -83,6 +84,7 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
     private final TurSNSearchRuleEvaluator searchRuleEvaluator;
     private final TurSNFieldProcess fieldProcess;
     private final TurSNCustomFacetCatalog customFacetCatalog;
+    private final TurSNEnabledFacets enabledFacets;
 
     public TurSNSiteSearchConfigProvider(TurSNRankingExpressionRepository expressionRepository,
             TurSNRankingConditionRepository conditionRepository,
@@ -94,8 +96,10 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             TurSNSiteLocaleRepositoryPort siteLocaleRepositoryPort,
             TurSNSearchRuleEvaluator searchRuleEvaluator,
             TurSNFieldProcess fieldProcess,
-            TurSNCustomFacetCatalog customFacetCatalog) {
+            TurSNCustomFacetCatalog customFacetCatalog,
+            TurSNEnabledFacets enabledFacets) {
         this.customFacetCatalog = customFacetCatalog;
+        this.enabledFacets = enabledFacets;
         this.siteLocaleRepositoryPort = siteLocaleRepositoryPort;
         this.searchRuleEvaluator = searchRuleEvaluator;
         this.fieldProcess = fieldProcess;
@@ -231,6 +235,10 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .facetPosition(field.getFacetPosition())
                 .facetItemType(field.getFacetItemType())
                 .searchWeight(field.getSearchWeight())
+                .id(field.getId())
+                .facetType(field.getFacetType())
+                .facetSort(field.getFacetSort())
+                .facetRange(field.getFacetRange())
                 .build();
     }
 
@@ -256,6 +264,8 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
                 .spellCheckFixes(site.getSpellCheckFixes())
                 .defaultTitleField(site.getDefaultTitleField())
                 .defaultDateField(site.getDefaultDateField())
+                .facetType(site.getFacetType())
+                .facetSort(site.getFacetSort())
                 .build();
     }
 
@@ -301,6 +311,68 @@ public class TurSNSiteSearchConfigProvider implements TurSESiteSearchConfig {
             return List.of();
         }
         return siteRepository.findById(siteId).map(customFacetCatalog::customFacets).orElseGet(List::of);
+    }
+
+    @Override
+    public List<TurSESearchField> facetPlanFields(String siteId) {
+        return siteById(siteId)
+                .map(site -> enabledFacets.enabledFields(site).stream()
+                        .map(TurSNSiteSearchConfigProvider::toSearchField)
+                        .toList())
+                .orElseGet(List::of);
+    }
+
+    @Override
+    public List<TurSESearchField> facetPlanFacets(String siteId) {
+        return siteById(siteId)
+                .map(site -> enabledFacets.enabledFacets(site).stream()
+                        .map(TurSNSiteSearchConfigProvider::toSearchField)
+                        .toList())
+                .orElseGet(List::of);
+    }
+
+    @Override
+    public List<TurSECustomFacet> fieldCustomFacets(String siteId) {
+        return siteById(siteId)
+                .map(site -> customFacetCatalog.fieldCustomFacets(enabledFacets.enabledFields(site)))
+                .orElseGet(List::of);
+    }
+
+    @Override
+    public List<TurSESearchField> dateFacetFields(String siteId) {
+        return siteById(siteId)
+                .map(site -> fieldExtRepository.findByTurSNSiteAndFacetAndEnabledAndType(site, 1, 1,
+                        TurSEFieldType.DATE).stream()
+                        .map(TurSNSiteSearchConfigProvider::toSearchField)
+                        .toList())
+                .orElseGet(List::of);
+    }
+
+    @Override
+    public List<String> hlFields(String siteId) {
+        return siteById(siteId)
+                .map(site -> fieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1).stream()
+                        .map(TurSNSiteFieldExt::getName)
+                        .toList())
+                .orElseGet(List::of);
+    }
+
+    /**
+     * {@inheritDoc} A required field with no default value fails the read, as the
+     * engines' own lookup did before T1310.
+     */
+    @Override
+    public Map<String, String> requiredFields(String siteId) {
+        return siteById(siteId)
+                .map(site -> fieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1).stream()
+                        .filter(java.util.Objects::nonNull)
+                        .collect(java.util.stream.Collectors.toMap(TurSNSiteFieldExt::getName,
+                                TurSNSiteFieldExt::getDefaultValue, (a, b) -> b)))
+                .orElseGet(HashMap::new);
+    }
+
+    private Optional<TurSNSite> siteById(String siteId) {
+        return siteId == null ? Optional.empty() : siteRepository.findById(siteId);
     }
 
     @Override

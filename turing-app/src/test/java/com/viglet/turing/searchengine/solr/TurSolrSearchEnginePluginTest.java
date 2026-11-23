@@ -194,7 +194,7 @@ class TurSolrSearchEnginePluginTest {
         boolean result = plugin.indexDocument(site, Locale.ENGLISH, attrs);
 
         assertTrue(result);
-        verify(turSolr).indexing(instance, site, attrs);
+        verify(turSolr).indexing(instance, site.getId(), attrs);
     }
 
     @Test

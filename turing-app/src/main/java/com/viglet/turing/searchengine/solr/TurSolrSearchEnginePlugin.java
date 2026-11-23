@@ -300,12 +300,17 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
 
     // ---- Document operations ---------------------------------------------
 
+    /** T1310 — the id {@link TurSolr} writes a site's documents under; {@code null} without a site. */
+    private static String siteId(TurSNSite turSNSite) {
+        return turSNSite == null ? null : turSNSite.getId();
+    }
+
     @Override
     public boolean indexDocument(TurSNSite turSNSite, Locale locale, Map<String, Object> attributes) {
         return turSolrInstanceProcess
                 .initSolrInstance(turSNSite.getName(), locale)
                 .map(turSolrInstance -> {
-                    turSolr.indexing(turSolrInstance, turSNSite, attributes);
+                    turSolr.indexing(turSolrInstance, siteId(turSNSite), attributes);
                     return true;
                 }).orElse(false);
     }
@@ -318,7 +323,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
         }
         return turSolrInstanceProcess
                 .initSolrInstance(turSNSite.getName(), locale)
-                .map(turSolrInstance -> turSolr.indexingBatch(turSolrInstance, turSNSite, documents))
+                .map(turSolrInstance -> turSolr.indexingBatch(turSolrInstance, siteId(turSNSite), documents))
                 .orElse(0);
     }
 
@@ -690,7 +695,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
             com.viglet.turing.commons.se.TurSEParameters constraints, TurSNSite site) {
         try {
             SolrQuery query = new SolrQuery();
-            turSolr.prepareConstraints(constraints, query, site);
+            turSolr.prepareConstraints(constraints, query, site == null ? null : site.getName());
             query.set("qt", "/mlt");
             query.setQuery(TurSNFieldName.ID + ":" + solrQuotedTerm(id));
             query.set("mlt.fl", SIMILAR_MLT_FIELDS);
@@ -729,7 +734,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
                     TurSNFieldName.TITLE, escaped, TurSNFieldName.ABSTRACT, escaped,
                     TurSNFieldName.TEXT, escaped);
             SolrQuery query = new SolrQuery().setQuery(q);
-            turSolr.prepareConstraints(constraints, query, site);
+            turSolr.prepareConstraints(constraints, query, site == null ? null : site.getName());
             query.setFields(TurSNFieldName.ID, TurSNFieldName.TITLE, TurSNFieldName.TYPE,
                     TurSNFieldName.URL);
             query.setRows(rows + 1);
@@ -1167,7 +1172,7 @@ public class TurSolrSearchEnginePlugin implements TurSearchEnginePlugin {
     public Optional<com.viglet.turing.searchengine.result.TurSEResult> findById(
             TurSNSiteSearchContext context, TurSNSite turSNSite, String id) {
         return turSolrInstanceProcess.initSolrInstance(context.getSiteName(), context.getLocale())
-                .map(instance -> turSolr.findById(instance, turSNSite, id, context));
+                .map(instance -> turSolr.findById(instance, turSNSite == null ? null : turSNSite.getName(), id, context));
     }
 
     @Override

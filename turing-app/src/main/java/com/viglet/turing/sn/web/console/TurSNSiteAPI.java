@@ -54,7 +54,7 @@ import com.viglet.turing.sn.persistence.dto.TurSNSiteDto;
 import com.viglet.turing.sn.persistence.dto.TurSNSiteListDto;
 import com.viglet.turing.sn.persistence.mapper.TurSNSiteMapper;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;

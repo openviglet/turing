@@ -16,6 +16,7 @@
 package com.viglet.turing.searchengine.spi;
 
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
 
 import lombok.Builder;
 
@@ -36,6 +37,9 @@ import lombok.Builder;
  * @param facet             whether the site returns facets
  * @param itemsPerFacet     how many items each facet lists
  * @param facetItemType     how the selected items of a facet combine by default
+ * @param facetType         how the site's facets combine with each other by default
+ *                          (T1310: Solr's filter query and facet exclusion read it)
+ * @param facetSort         how a facet's items are ordered when the field sets no order
  * @param hl                whether the site highlights matches
  * @param hlPre             the tag before a highlighted match
  * @param hlPost            the tag after a highlighted match
@@ -52,5 +56,6 @@ public record TurSESiteSettings(String id, String name, String turSEInstanceId, 
         Integer wildcardNoResults, Integer wildcardAlways, Integer exactMatch, String exactMatchField,
         Integer facet, Integer itemsPerFacet, TurSNSiteFacetFieldEnum facetItemType, Integer hl,
         String hlPre, String hlPost, Integer mlt, Integer spellCheck, Integer spellCheckFixes,
-        String defaultTitleField, String defaultDateField) {
+        String defaultTitleField, String defaultDateField, TurSNSiteFacetFieldEnum facetType,
+        TurSNSiteFacetSortEnum facetSort) {
 }

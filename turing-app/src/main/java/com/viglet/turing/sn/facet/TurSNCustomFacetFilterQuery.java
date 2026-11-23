@@ -21,7 +21,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
@@ -68,12 +67,7 @@ public final class TurSNCustomFacetFilterQuery {
         if (endField == null || endField.isBlank()) {
             return of(fieldName, fieldType, item);
         }
-        TurSECustomFacetSpan span = span(fieldName, endField, fieldType, item);
-        String overlap = span.overlap().stream()
-                .map(clause -> "+" + clause.field() + ":" + clause.value())
-                .collect(Collectors.joining(" "));
-        return String.format("((+%s:%s -%s:[* TO *]) OR (%s))", span.field(), span.point(),
-                span.endField(), overlap);
+        return span(fieldName, endField, fieldType, item).filterQuery();
     }
 
     /**

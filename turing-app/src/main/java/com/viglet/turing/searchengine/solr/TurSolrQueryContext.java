@@ -7,7 +7,7 @@ import org.apache.solr.client.solrj.request.SolrQuery;
 
 import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
-import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
+import com.viglet.turing.searchengine.spi.TurSESearchField;
 
 import lombok.Builder;
 import lombok.Data;
@@ -27,14 +27,14 @@ public class TurSolrQueryContext {
     /** Search parameters */
     private TurSEParameters turSEParameters;
 
-    /** MLT (More Like This) field extensions */
-    private List<TurSNSiteFieldExt> mltFieldExtList;
+    /** The names of the MLT (More Like This) fields */
+    private List<String> mltFields;
 
-    /** Facet field extensions */
-    private List<TurSNSiteFieldExt> facetFieldExtList;
+    /** The fields faceted on (T1310: SPI fields, not sn entities) */
+    private List<TurSESearchField> facetFields;
 
-    /** Highlighting field extensions */
-    private List<TurSNSiteFieldExt> hlFieldExtList;
+    /** The names of the highlighted fields */
+    private List<String> hlFields;
 
     /** Spell check result */
     private TurSESpellCheckResult spellCheckResult;

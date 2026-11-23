@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.TurSNSiteApiAuthMode;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetSortEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 import com.viglet.turing.sn.persistence.model.genai.TurSNKnowledgeBaseMode;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;

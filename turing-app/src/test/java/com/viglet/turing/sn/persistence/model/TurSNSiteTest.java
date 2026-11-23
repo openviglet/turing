@@ -21,6 +21,8 @@
 
 package com.viglet.turing.sn.persistence.model;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetSortEnum;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;

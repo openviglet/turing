@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.persistence.model;
+package com.viglet.turing.searchengine;
 
 public enum TurSNSiteFacetRangeEnum {
     DISABLED,

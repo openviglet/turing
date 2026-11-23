@@ -2512,8 +2512,8 @@ and enabled fields (T1310g-i, n-z, T1340); engine-only helpers moved into search
 (T1310j-m).
 
 What is left is the other direction. The contract still takes TurSNSite and
-TurSNSiteLocale, and 12 engine files import sn 46 times, mostly to read a site's fields,
-facets, custom facets and search rules while building a query. Two ways out:
+TurSNSiteLocale, and 8 engine files import sn 15 times, only for the contract's
+TurSNSite and TurSNSiteLocale parameters. Two ways out:
 
 1. An SPI in searchengine (a site search configuration record and a provider interface)
    that sn implements and the engines read. The engines keep building queries; sn owns

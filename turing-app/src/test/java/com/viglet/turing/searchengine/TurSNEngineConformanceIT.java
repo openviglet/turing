@@ -322,18 +322,26 @@ class TurSNEngineConformanceIT {
                 com.viglet.turing.sn.api.TurSNSiteCustomFacets.class);
         when(customFacetRepository.findByFieldExtsWithDetails(any())).thenReturn(List.of(posted));
         var decimalNormalizer = mock(com.viglet.turing.searchengine.solr.TurDecimalFieldNormalizer.class);
-        solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0, fieldRepository, customFacetRepository,
+        // T1310 — Solr reads the fields and the custom facet through the search SPI, mapped
+        // from the stored rows by sn's own catalog.
+        var enabledFacets = new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository,
+                customFacetRepository, mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class));
+        when(sortRepository.facetPlanFields(any())).thenAnswer(invocation ->
+                com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.fields(enabledFacets.enabledFields(site)));
+        when(sortRepository.facetPlanFacets(any())).thenAnswer(invocation ->
+                com.viglet.turing.searchengine.lucene.TurLuceneSpiFixtures.fields(enabledFacets.enabledFacets(site)));
+        when(sortRepository.fieldCustomFacets(any())).thenAnswer(invocation ->
+                new com.viglet.turing.sn.facet.TurSNCustomFacetCatalog(fieldRepository, customFacetRepository)
+                        .fieldCustomFacets(fields));
+        solr = new com.viglet.turing.searchengine.solr.TurSolr(false, 0,
                 mock(com.viglet.turing.searchengine.solr.TurSNTargetingRules.class),
-                sortRepository,
-                siteRepository, decimalNormalizer,
-                new com.viglet.turing.sn.facet.TurSNEnabledFacets(fieldRepository, customFacetRepository,
-                        mock(com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService.class)),
+                sortRepository, decimalNormalizer,
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
         var solrClient = new org.apache.solr.client.solrj.impl.HttpJdkSolrClient.Builder(host + "/solr").build();
         solrInstance = new com.viglet.turing.searchengine.solr.TurSolrInstance(solrClient, new java.net.URL(host + "/solr"),
                 SOLR_CORE);
         for (Object[] job : JOBS) {
-            solr.indexing(solrInstance, site, attributes(job));
+            solr.indexing(solrInstance, site.getId(), attributes(job));
         }
         solrClient.commit(SOLR_CORE);
     }
@@ -643,11 +651,11 @@ class TurSNEngineConformanceIT {
         var solrClient = new org.apache.solr.client.solrj.impl.HttpJdkSolrClient.Builder(host + "/solr").build();
         var instance = new com.viglet.turing.searchengine.solr.TurSolrInstance(solrClient, new java.net.URL(host + "/solr"), core);
         // indexing() adds fields to the map it is given, so each document is a mutable copy.
-        solr.indexing(instance, site, new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "guide", "title",
+        solr.indexing(instance, site.getId(), new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "guide", "title",
                 "How to choose a waterproof jacket for walking in the hills in every season of the year",
                 "text", "Ratings, breathability, fit, hoods, pockets, zips, weight and the price you pay.")));
         for (String colour : List.of("slate", "moss", "ember", "sky")) {
-            solr.indexing(instance, site, new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "catbells-" + colour,
+            solr.indexing(instance, site.getId(), new LinkedHashMap<>(Map.of(TurSNFieldName.ID, "catbells-" + colour,
                     "title", "Rain jacket " + colour, "text",
                     "Rain jacket with waterproof seams. A rain jacket, waterproof; the rain jacket packs small.")));
         }

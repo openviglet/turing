@@ -23,7 +23,7 @@ package com.viglet.turing.sn.persistence.dto.field;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExtFacet;

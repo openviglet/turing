@@ -39,16 +39,12 @@ import com.viglet.turing.commons.se.TurSEParameters;
 import com.viglet.turing.commons.se.result.spellcheck.TurSESpellCheckResult;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.commons.utils.TurCommonsUtils;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.TurSpellCheckGuard;
 import com.viglet.turing.searchengine.result.TurSEResult;
 import com.viglet.turing.searchengine.result.TurSEResults;
 import com.viglet.turing.observability.TurSearchPipelineObservation;
-import com.viglet.turing.sn.facet.TurSNEnabledFacets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +60,7 @@ public class TurSolr {
     private static final Pattern SPELL_CHECK_SPECIAL_CHARS =
             Pattern.compile("[+\\-!(){}\\[\\]^~*?:\\\\/&|]");
 
-    private final TurSNSites turSNSiteRepository;
+    private final TurSESiteSearchConfig siteSearchConfig;
     private final boolean isCommitEnabled;
     private final TurSolrDocumentHandler turSolrDocumentHandler;
     private final TurSolrQueryBuilder turSolrQueryBuilder;
@@ -74,24 +70,18 @@ public class TurSolr {
 
     public TurSolr(@Value("${turing.solr.commit.enabled:false}") boolean isCommitEnabled,
             @Value("${turing.solr.commit.within:10000}") int commitWithin,
-            TurSNSiteFieldExts turSNSiteFieldExtRepository,
-            TurSNSiteCustomFacets turSNSiteCustomFacetRepository,
             TurSNTargetingRules turSNTargetingRules,
             TurSESiteSearchConfig siteSearchConfig,
-            TurSNSites turSNSiteRepository,
             TurDecimalFieldNormalizer turDecimalFieldNormalizer,
-            TurSNEnabledFacets turSNEnabledFacets,
             TurSearchPipelineObservation pipelineObservation) {
         this.isCommitEnabled = isCommitEnabled;
         this.commitWithin = commitWithin;
-        this.turSNSiteRepository = turSNSiteRepository;
+        this.siteSearchConfig = siteSearchConfig;
         this.turSolrDocumentHandler = new TurSolrDocumentHandler(commitWithin, siteSearchConfig,
                 turDecimalFieldNormalizer);
-        this.turSolrQueryBuilder = new TurSolrQueryBuilder(turSNSiteFieldExtRepository,
-                turSNSiteCustomFacetRepository,
-                siteSearchConfig, turSNTargetingRules, turSNEnabledFacets);
-        this.turSolrResultProcessor = new TurSolrResultProcessor(siteSearchConfig,
-                turSNSiteFieldExtRepository, turSNSiteCustomFacetRepository, pipelineObservation);
+        // T1310 — the builder and the processor read the site only through the site search SPI.
+        this.turSolrQueryBuilder = new TurSolrQueryBuilder(siteSearchConfig, turSNTargetingRules);
+        this.turSolrResultProcessor = new TurSolrResultProcessor(siteSearchConfig, pipelineObservation);
     }
 
     /** T1262 — how soon (ms) a write becomes visible: {@code turing.solr.commit.within}. */
@@ -157,18 +147,16 @@ public class TurSolr {
         }
     }
 
-    public void indexing(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+    /** T1310 — {@code siteId} is the site's id, or {@code null} when the write has no site. */
+    public void indexing(TurSolrInstance turSolrInstance, String siteId,
             Map<String, Object> attributes) {
-        turSolrDocumentHandler.indexing(turSolrInstance, siteId(turSNSite), attributes);
+        turSolrDocumentHandler.indexing(turSolrInstance, siteId, attributes);
     }
 
-    public int indexingBatch(TurSolrInstance turSolrInstance, TurSNSite turSNSite,
+    /** T1310 — {@code siteId} is the site's id, or {@code null} when the write has no site. */
+    public int indexingBatch(TurSolrInstance turSolrInstance, String siteId,
             List<Map<String, Object>> documents) {
-        return turSolrDocumentHandler.indexingBatch(turSolrInstance, siteId(turSNSite), documents);
-    }
-
-    private static String siteId(TurSNSite turSNSite) {
-        return turSNSite == null ? null : turSNSite.getId();
+        return turSolrDocumentHandler.indexingBatch(turSolrInstance, siteId, documents);
     }
 
     public void deIndexing(TurSolrInstance turSolrInstance, String id) {
@@ -179,10 +167,14 @@ public class TurSolr {
         turSolrDocumentHandler.deIndexingByType(turSolrInstance, type);
     }
 
-    /** T1132 — the search's filters and partition on a query that is not a search. */
+    /**
+     * T1132 — the search's filters and partition on a query that is not a search.
+     * T1310 — the site is named, and read through the site search SPI.
+     */
     public void prepareConstraints(com.viglet.turing.commons.se.TurSEParameters constraints, SolrQuery query,
-            TurSNSite turSNSite) {
-        turSolrQueryBuilder.prepareConstraints(constraints, query, turSNSite);
+            String siteName) {
+        turSolrQueryBuilder.prepareConstraints(constraints, query,
+                siteSearchConfig.siteSettings(siteName).orElse(null));
     }
 
     /** T1112 — deletes the documents whose fields hold all of these values. */
@@ -237,7 +229,15 @@ public class TurSolr {
         return SPELL_CHECK_SPECIAL_CHARS.matcher(term.replace("\"", EMPTY)).replaceAll("\\\\$0");
     }
 
-    public TurSEResult findById(TurSolrInstance turSolrInstance, TurSNSite turSNSite, String id,
+    /** T1310 — the site is named, and read through the site search SPI. */
+    public TurSEResult findById(TurSolrInstance turSolrInstance, String siteName, String id,
+            TurSNSiteSearchContext context) {
+        return siteSearchConfig.siteSettings(siteName)
+                .map(turSNSite -> findById(turSolrInstance, turSNSite, id, context))
+                .orElse(TurSEResult.builder().build());
+    }
+
+    private TurSEResult findById(TurSolrInstance turSolrInstance, TurSESiteSettings turSNSite, String id,
             TurSNSiteSearchContext context) {
         SolrQuery query = new SolrQuery().setQuery(ID + ": \"" + id + "\"");
         // T1209 — a partitioned search reads only its partition's documents by id too.
@@ -257,11 +257,11 @@ public class TurSolr {
     }
 
     private TurSESpellCheckResult prepareQueryAutoCorrection(
-            TurSNSiteSearchContext turSNSiteSearchContext, TurSNSite turSNSite,
+            TurSNSiteSearchContext turSNSiteSearchContext, TurSESiteSettings turSNSite,
             TurSolrInstance turSolrInstance) {
         TurSESpellCheckResult turSESpellCheckResult = spellCheckTerm(turSolrInstance,
                 turSNSiteSearchContext.getTurSEParameters().getQuery());
-        if (TurSpellCheckGuard.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite.getSpellCheck(), turSNSite.getSpellCheckFixes())) {
+        if (TurSpellCheckGuard.isAutoCorrectionEnabled(turSNSiteSearchContext, turSNSite.spellCheck(), turSNSite.spellCheckFixes())) {
             turSESpellCheckResult.setUsingCorrected(true);
             if (TurSpellCheckGuard.hasCorrectedText(turSESpellCheckResult)) {
                 turSNSiteSearchContext.setUri(
@@ -310,7 +310,7 @@ public class TurSolr {
 
     public Optional<TurSEResults> retrieveSolrFromSN(TurSolrInstance turSolrInstance,
             TurSNSiteSearchContext context) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName()).map(turSNSite -> {
+        return siteSearchConfig.siteSettings(context.getSiteName()).map(turSNSite -> {
             TurSESpellCheckResult turSESpellCheckResult = prepareQueryAutoCorrection(context, turSNSite,
                     turSolrInstance);
             TurSEParameters turSEParameters = context.getTurSEParameters();
@@ -323,10 +323,10 @@ public class TurSolr {
             TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
                     .query(query)
                     .turSEParameters(turSEParameters)
-                    .mltFieldExtList(turSolrQueryBuilder.prepareQueryMLT(turSNSite, query))
-                    .facetFieldExtList(turSolrQueryBuilder.prepareQueryFacet(turSNSite, query,
+                    .mltFields(turSolrQueryBuilder.prepareQueryMLT(turSNSite, query))
+                    .facetFields(turSolrQueryBuilder.prepareQueryFacet(turSNSite, query,
                             turSEParameters.getTurSNFilterParams(), turSEParameters))
-                    .hlFieldExtList(turSolrQueryBuilder.prepareQueryHL(turSNSite, query, context))
+                    .hlFields(turSolrQueryBuilder.prepareQueryHL(turSNSite, query, context))
                     .spellCheckResult(turSESpellCheckResult)
                     .queryToRenderFacet(false)
                     .locale(context.getLocale())
@@ -338,7 +338,7 @@ public class TurSolr {
 
     public Optional<TurSEResults> retrieveFacetSolrFromSN(TurSolrInstance turSolrInstance,
             TurSNSiteSearchContext context, String facetName) {
-        return turSNSiteRepository.findByNameIgnoreCase(context.getSiteName()).map(turSNSite -> {
+        return siteSearchConfig.siteSettings(context.getSiteName()).map(turSNSite -> {
             TurSEParameters turSEParameters = context.getTurSEParameters();
             SolrQuery query = turSolrQueryBuilder.prepareSolrQuery(context, turSNSite, turSEParameters,
                     new TurSESpellCheckResult());
@@ -346,10 +346,10 @@ public class TurSolr {
             TurSolrQueryContext queryContext = TurSolrQueryContext.builder()
                     .query(query)
                     .turSEParameters(turSEParameters)
-                    .mltFieldExtList(Collections.emptyList())
-                    .facetFieldExtList(turSolrQueryBuilder.prepareQueryFacetWithOneFacet(turSNSite, query,
+                    .mltFields(Collections.emptyList())
+                    .facetFields(turSolrQueryBuilder.prepareQueryFacetWithOneFacet(turSNSite, query,
                             turSEParameters.getTurSNFilterParams(), facetName))
-                    .hlFieldExtList(Collections.emptyList())
+                    .hlFields(Collections.emptyList())
                     .spellCheckResult(new TurSESpellCheckResult())
                     .queryToRenderFacet(true)
                     .locale(context.getLocale())
@@ -360,7 +360,7 @@ public class TurSolr {
     }
 
     private Optional<TurSEResults> executeSolrQueryFromSN(TurSolrInstance turSolrInstance,
-            TurSNSite turSNSite, TurSolrQueryContext queryContext) {
+            TurSESiteSettings turSNSite, TurSolrQueryContext queryContext) {
         SolrQuery query = queryContext.getQuery();
         boolean isQueryToRenderFacet = queryContext.isQueryToRenderFacet();
 
@@ -377,7 +377,7 @@ public class TurSolr {
     }
 
     private static QueryResponse getQueryResponseModified(TurSolrInstance turSolrInstance,
-            TurSNSite turSNSite, SolrQuery query, QueryResponse queryResponse,
+            TurSESiteSettings turSNSite, SolrQuery query, QueryResponse queryResponse,
             boolean isQueryToRenderFacet) {
         return whenNoResultsUseWildcard(turSNSite, query, queryResponse, isQueryToRenderFacet)
                 ? executeSolrQuery(turSolrInstance, query).orElse(queryResponse)
@@ -413,7 +413,7 @@ public class TurSolr {
         query.setQuery(query.getQuery().trim() + "*");
     }
 
-    private static boolean whenNoResultsUseWildcard(TurSNSite turSNSite, SolrQuery query,
+    private static boolean whenNoResultsUseWildcard(TurSESiteSettings turSNSite, SolrQuery query,
             QueryResponse queryResponse, boolean isQueryToRenderFacet) {
         if (!isQueryToRenderFacet && !enabledWildcardAlways(turSNSite)
                 && enabledWildcardNoResults(turSNSite) && isNotQueryExpression(query)
@@ -425,12 +425,12 @@ public class TurSolr {
         }
     }
 
-    public static boolean enabledWildcardNoResults(TurSNSite turSNSite) {
-        return turSNSite.getWildcardNoResults() != null && turSNSite.getWildcardNoResults() == 1;
+    public static boolean enabledWildcardNoResults(TurSESiteSettings turSNSite) {
+        return turSNSite.wildcardNoResults() != null && turSNSite.wildcardNoResults() == 1;
     }
 
-    private static boolean enabledWildcardAlways(TurSNSite turSNSite) {
-        return turSNSite.getWildcardAlways() != null && turSNSite.getWildcardAlways() == 1;
+    private static boolean enabledWildcardAlways(TurSESiteSettings turSNSite) {
+        return turSNSite.wildcardAlways() != null && turSNSite.wildcardAlways() == 1;
     }
 
     public static boolean isNotQueryExpression(SolrQuery query) {

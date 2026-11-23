@@ -21,6 +21,8 @@
 
 package com.viglet.turing.sn.persistence.model.field;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldSortEnum;
+
 import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
-import com.viglet.turing.sn.persistence.model.TurSNSiteFacetRangeEnum;
+import com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum;
 import com.viglet.turing.sn.TurSNFieldType;
 
 /**

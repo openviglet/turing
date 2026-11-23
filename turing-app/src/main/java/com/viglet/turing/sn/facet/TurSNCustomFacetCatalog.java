@@ -76,11 +76,53 @@ public class TurSNCustomFacetCatalog {
         return List.copyOf(byName.values());
     }
 
+    /**
+     * T1310 — every custom facet on {@code enabledFields}, in the store's order,
+     * with all of its items in the store's order: what Solr plans its facet and
+     * filter queries from, matching each facet to its field among
+     * {@code enabledFields} by id.
+     */
+    public List<TurSECustomFacet> fieldCustomFacets(List<TurSNSiteFieldExt> enabledFields) {
+        if (enabledFields == null || enabledFields.isEmpty()) {
+            return List.of();
+        }
+        return toFieldCustomFacets(turSNSiteCustomFacetRepository.findByFieldExtsWithDetails(enabledFields),
+                enabledFields);
+    }
+
+    /**
+     * T1310 — {@code facets} as {@link #fieldCustomFacets} answers them, each matched
+     * to its field among {@code enabledFields} by id (else the field it names).
+     */
+    public static List<TurSECustomFacet> toFieldCustomFacets(List<TurSNSiteCustomFacet> facets,
+            List<TurSNSiteFieldExt> enabledFields) {
+        Map<String, TurSNSiteFieldExt> fieldById = enabledFields.stream()
+                .filter(field -> field.getId() != null)
+                .collect(Collectors.toMap(TurSNSiteFieldExt::getId, Function.identity(), (a, b) -> a));
+        return facets.stream()
+                .map(facet -> {
+                    TurSNSiteFieldExt field = facet.getTurSNSiteFieldExt() == null ? null
+                            : fieldById.getOrDefault(facet.getTurSNSiteFieldExt().getId(),
+                                    facet.getTurSNSiteFieldExt());
+                    List<TurSNSiteCustomFacetItem> items = facet.getItems() == null ? List.of()
+                            : List.copyOf(facet.getItems());
+                    return toCustomFacet(facet, field, items);
+                })
+                .toList();
+    }
+
     private static TurSECustomFacet toCustomFacet(TurSNSiteCustomFacet facet, TurSNSiteFieldExt field) {
-        List<TurSECustomFacet.Item> items = orderedItems(facet).stream()
+        return toCustomFacet(facet, field, orderedItems(facet));
+    }
+
+    private static TurSECustomFacet toCustomFacet(TurSNSiteCustomFacet facet, TurSNSiteFieldExt field,
+            List<TurSNSiteCustomFacetItem> facetItems) {
+        List<TurSECustomFacet.Item> items = field == null ? List.of() : facetItems.stream()
                 .map(item -> toItem(facet, field, item))
                 .toList();
-        return new TurSECustomFacet(facet.getName(), facet.getFacetPosition(), items);
+        return new TurSECustomFacet(facet.getName(), facet.getFacetPosition(), items,
+                field == null ? null : field.getId(), facet.getEndField(), facet.getFacetType(),
+                facet.getFacetItemType());
     }
 
     private static TurSECustomFacet.Item toItem(TurSNSiteCustomFacet facet, TurSNSiteFieldExt field,
@@ -90,7 +132,7 @@ public class TurSNCustomFacetCatalog {
         TurSECustomFacetSpan span = endField == null || endField.isBlank() ? null
                 : TurSNCustomFacetFilterQuery.span(field.getName(), endField, field.getType(), item);
         return new TurSECustomFacet.Item(item.getLabel(), item.getLabels(), field.getName(), field.getType(),
-                fq.substring(fq.indexOf(':') + 1), span);
+                fq.substring(fq.indexOf(':') + 1), span, item.getPosition());
     }
 
     private static int position(TurSNSiteCustomFacet facet) {

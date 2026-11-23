@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
 
 /**
@@ -28,10 +29,22 @@ import com.viglet.turing.searchengine.facet.TurSECustomFacetSpan;
  * @param name     the facet's name, which a {@code <name>:<label>} filter names
  * @param position the facet's position; {@code null} when the site set none
  * @param items    the items with a label, by position then label
+ * @param fieldId       the id of the field the facet ranges over
+ * @param endField      the field a span ends on (T1224), or {@code null}
+ * @param facetType     how the facet combines with the others; {@code null} or
+ *                      {@code DEFAULT} defers to the site
+ * @param facetItemType how the facet's selected items combine; {@code null} or
+ *                      {@code DEFAULT} defers to the site
  * @author Alexandre Oliveira
  * @since 2026.3.8
  */
-public record TurSECustomFacet(String name, Integer position, List<Item> items) {
+public record TurSECustomFacet(String name, Integer position, List<Item> items, String fieldId,
+        String endField, TurSNSiteFacetFieldEnum facetType, TurSNSiteFacetFieldEnum facetItemType) {
+
+    /** A facet with no field id, end field or facet types, as the engines that need none read it. */
+    public TurSECustomFacet(String name, Integer position, List<Item> items) {
+        this(name, position, items, null, null, null, null);
+    }
 
     /**
      * One item: its label, its translated labels by locale key, and the range it
@@ -43,9 +56,24 @@ public record TurSECustomFacet(String name, Integer position, List<Item> items) 
      * @param field  the field the range is on
      * @param type   the field's type
      * @param value  the range, in Solr range syntax
-     * @param span   the span filter, or {@code null}
+     * @param span     the span filter, or {@code null}
+     * @param position the item's position; {@code null} when the site set none
      */
     public record Item(String label, Map<String, String> labels, String field, TurSEFieldType type,
-            String value, TurSECustomFacetSpan span) {
+            String value, TurSECustomFacetSpan span, Integer position) {
+
+        /** An item with no position. */
+        public Item(String label, Map<String, String> labels, String field, TurSEFieldType type,
+                String value, TurSECustomFacetSpan span) {
+            this(label, labels, field, type, value, span, null);
+        }
+
+        /**
+         * The item's filter query in Solr syntax: {@code field:value}, or the span
+         * filter when the facet names an end field.
+         */
+        public String filterQuery() {
+            return span != null ? span.filterQuery() : field + ":" + value;
+        }
     }
 }

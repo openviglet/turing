@@ -1,5 +1,7 @@
 package com.viglet.turing.sn.persistence.model;
 
+import com.viglet.turing.searchengine.TurSNSiteFacetRangeEnum;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;

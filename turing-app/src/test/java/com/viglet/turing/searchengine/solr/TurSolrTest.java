@@ -29,10 +29,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.fields;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.names;
+import static com.viglet.turing.searchengine.solr.TurSolrSpiFixtures.settings;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -57,10 +61,8 @@ import com.viglet.turing.commons.sn.bean.TurSNSearchParams;
 import com.viglet.turing.commons.sn.search.TurSNSiteSearchContext;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
-import com.viglet.turing.sn.api.TurSNSites;
-import com.viglet.turing.sn.api.TurSNSiteCustomFacets;
-import com.viglet.turing.sn.api.TurSNSiteFieldExts;
 import com.viglet.turing.searchengine.spi.TurSESiteSearchConfig;
+import com.viglet.turing.searchengine.spi.TurSESiteSettings;
 import com.viglet.turing.searchengine.result.TurSEResult;
 
 /**
@@ -72,11 +74,6 @@ import com.viglet.turing.searchengine.result.TurSEResult;
 @ExtendWith(MockitoExtension.class)
 class TurSolrTest {
 
-    @Mock
-    private TurSNSiteFieldExts turSNSiteFieldExtRepository;
-
-    @Mock
-    private TurSNSiteCustomFacets turSNSiteCustomFacetRepository;
 
 
     @Mock
@@ -85,14 +82,10 @@ class TurSolrTest {
     @Mock
     private TurSESiteSearchConfig siteSearchConfig;
 
-    @Mock
-    private TurSNSites turSNSiteRepository;
 
     @Mock
     private TurDecimalFieldNormalizer turDecimalFieldNormalizer;
 
-    @Mock
-    private com.viglet.turing.sn.snapshot.TurSNSiteSearchSnapshotService snapshotService;
 
     @Mock
     private HttpJdkSolrClient httpJdkSolrClient;
@@ -120,13 +113,11 @@ class TurSolrTest {
 
     @Test
     void testEnabledWildcardNoResults() {
-        TurSNSite turSNSite = mock(TurSNSite.class);
-        when(turSNSite.getWildcardNoResults()).thenReturn(1);
+        assertThat(TurSolr.enabledWildcardNoResults(TurSESiteSettings.builder().wildcardNoResults(1).build()))
+                .isTrue();
 
-        assertThat(TurSolr.enabledWildcardNoResults(turSNSite)).isTrue();
-
-        when(turSNSite.getWildcardNoResults()).thenReturn(null);
-        assertThat(TurSolr.enabledWildcardNoResults(turSNSite)).isFalse();
+        assertThat(TurSolr.enabledWildcardNoResults(TurSESiteSettings.builder().wildcardNoResults(null).build()))
+                .isFalse();
     }
 
     @Test
@@ -343,12 +334,13 @@ class TurSolrTest {
 
         TurSNSiteFieldExt hlField = TurSNSiteFieldExt.builder().name("title")
                 .type(com.viglet.turing.commons.se.field.TurSEFieldType.TEXT).build();
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndHlAndEnabled(site, 1, 1))
-                .thenReturn(java.util.List.of(hlField));
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
-                .thenReturn(java.util.List.of(hlField));
-        when(turSNSiteFieldExtRepository.findByTurSNSiteAndRequiredAndEnabled(site, 1, 1))
-                .thenReturn(java.util.List.of());
+        when(siteSearchConfig.siteSettings(site.getName())).thenReturn(Optional.of(settings(site)));
+        when(siteSearchConfig.hlFields(site.getId()))
+                .thenReturn(names(hlField));
+        when(siteSearchConfig.enabledFields(site.getId()))
+                .thenReturn(fields(hlField));
+        when(siteSearchConfig.requiredFields(site.getId()))
+                .thenReturn(Map.of());
 
         QueryResponse response = mock(QueryResponse.class);
         SolrDocumentList docs = new SolrDocumentList();
@@ -367,7 +359,7 @@ class TurSolrTest {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
                 new TurSNConfig(), parameters, java.util.Locale.US, URI.create("http://localhost/search"));
 
-        TurSEResult result = turSolr.findById(turSolrInstance, site, "abc", context);
+        TurSEResult result = turSolr.findById(turSolrInstance, site.getName(), "abc", context);
 
         assertThat(result.getFields()).containsEntry("id", "abc");
         assertThat(result.getFields()).containsEntry("title", "<em>highlighted</em>");
@@ -475,8 +467,7 @@ class TurSolrTest {
 
     @Test
     void testEnabledWildcardNoResultsReturnsFalseForZero() {
-        TurSNSite site = mock(TurSNSite.class);
-        when(site.getWildcardNoResults()).thenReturn(0);
+        TurSESiteSettings site = TurSESiteSettings.builder().wildcardNoResults(0).build();
         assertThat(TurSolr.enabledWildcardNoResults(site)).isFalse();
     }
 
@@ -608,6 +599,7 @@ class TurSolrTest {
         TurSolr turSolr = buildTurSolr(false);
         TurSNSite site = new TurSNSite();
         site.setHl(0);
+        when(siteSearchConfig.siteSettings(site.getName())).thenReturn(Optional.of(settings(site)));
 
         QueryResponse response = mock(QueryResponse.class);
         SolrDocumentList docs = new SolrDocumentList();
@@ -621,7 +613,7 @@ class TurSolrTest {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
                 new TurSNConfig(), parameters, java.util.Locale.US, java.net.URI.create("http://localhost/search"));
 
-        TurSEResult result = turSolr.findById(turSolrInstance, site, "nonexistent", context);
+        TurSEResult result = turSolr.findById(turSolrInstance, site.getName(), "nonexistent", context);
         assertThat(result).isNotNull();
         assertThat(result.getFields()).isNull();
     }
@@ -631,6 +623,7 @@ class TurSolrTest {
         TurSolr turSolr = buildTurSolr(false);
         TurSNSite site = new TurSNSite();
         site.setHl(0);
+        when(siteSearchConfig.siteSettings(site.getName())).thenReturn(Optional.of(settings(site)));
 
         when(solrClient.query(org.mockito.ArgumentMatchers.eq("core"), any(SolrQuery.class)))
                 .thenThrow(new SolrServerException("error"));
@@ -641,7 +634,7 @@ class TurSolrTest {
         TurSNSiteSearchContext context = new TurSNSiteSearchContext("site",
                 new TurSNConfig(), parameters, java.util.Locale.US, java.net.URI.create("http://localhost/search"));
 
-        TurSEResult result = turSolr.findById(turSolrInstance, site, "abc", context);
+        TurSEResult result = turSolr.findById(turSolrInstance, site.getName(), "abc", context);
         assertThat(result).isNotNull();
         assertThat(result.getFields()).isNull();
     }
@@ -652,7 +645,7 @@ class TurSolrTest {
         // This tests that the delegation to turSolrDocumentHandler works;
         // the actual indexing is tested in TurSolrDocumentHandlerTest
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(
-                () -> turSolr.indexing(turSolrInstance, new TurSNSite(), new java.util.HashMap<>()));
+                () -> turSolr.indexing(turSolrInstance, new TurSNSite().getId(), new java.util.HashMap<>()));
     }
 
     @Test
@@ -678,14 +671,9 @@ class TurSolrTest {
 
     private TurSolr buildTurSolr(boolean commitEnabled) {
         return new TurSolr(commitEnabled, 500,
-                turSNSiteFieldExtRepository,
-                turSNSiteCustomFacetRepository,
                 turSNTargetingRules,
                 siteSearchConfig,
-                turSNSiteRepository,
                 turDecimalFieldNormalizer,
-                new com.viglet.turing.sn.facet.TurSNEnabledFacets(turSNSiteFieldExtRepository,
-                        turSNSiteCustomFacetRepository, snapshotService),
                 new com.viglet.turing.observability.TurSearchPipelineObservation(null));
     }
 }
