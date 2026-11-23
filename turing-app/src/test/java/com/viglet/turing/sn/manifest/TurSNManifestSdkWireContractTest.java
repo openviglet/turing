@@ -25,6 +25,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.viglet.core.manifest.VigletFacetItemType;
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletFieldType;
@@ -32,7 +33,9 @@ import com.viglet.core.manifest.VigletManifestDiff;
 import com.viglet.core.manifest.VigletManifestFieldChange;
 import com.viglet.core.manifest.VigletManifestMigrationAction;
 import com.viglet.core.manifest.VigletManifestResult;
+import com.viglet.turing.client.sn.job.TurSNFacetItemType;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.client.sn.manifest.TurSNManifest;
 // The SDK's custom facet types, imported so they shadow the server's same-named records in this package
 import com.viglet.turing.client.sn.manifest.TurSNManifestCustomFacet;
@@ -90,6 +93,7 @@ class TurSNManifestSdkWireContractTest {
                         .multiValued(true)
                         .facet(true)
                         .facetName(Map.of("en", "Brand", "pt", "Marca"))
+                        .facetItemType(TurSNFacetItemType.OR)
                         .build())
                 .recreate("brand")
                 .customFacet(TurSNManifestCustomFacet.of("publishedAt", "postedSince", "Posted", List.of(
@@ -304,6 +308,9 @@ class TurSNManifestSdkWireContractTest {
 
         VigletFieldSpec brand = bound.fields().get(1);
         assertThat(brand.searchWeight()).isNull();
+        // T1223 — the field's facet item type, and its absence on the other field
+        assertThat(brand.facetItemType()).isEqualTo(VigletFacetItemType.OR);
+        assertThat(sku.facetItemType()).isNull();
         assertThat(brand.multiValued()).isTrue();
         assertThat(brand.facet()).isTrue();
         assertThat(brand.facetName()).containsEntry("en", "Brand").containsEntry("pt", "Marca");
@@ -328,6 +335,17 @@ class TurSNManifestSdkWireContractTest {
         for (TurSEFieldType type : TurSEFieldType.values()) {
             assertThat(VigletFieldType.valueOf(type.name())).isNotNull();
         }
+    }
+
+    @Test
+    @DisplayName("T1223 - the SDK's, the neutral and the site field's facet item types share their names")
+    void everyFacetItemTypeMaps() {
+        for (TurSNFacetItemType type : TurSNFacetItemType.values()) {
+            VigletFacetItemType neutral = VigletFacetItemType.valueOf(type.name());
+            assertThat(TurSNManifestMapper.toFacetItemType(neutral).name()).isEqualTo(type.name());
+        }
+        assertThat(VigletFacetItemType.values()).hasSameSizeAs(TurSNSiteFacetFieldEnum.values());
+        assertThat(TurSNManifestMapper.toFacetItemType(null)).isNull();
     }
 
     @Test

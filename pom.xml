@@ -42,7 +42,7 @@
         <spring-boot.version>4.1.2</spring-boot.version>
         <!-- viglet-core is now an external project (github.com/openviglet/viglet-core),
              published to GitHub Packages and versioned independently from Turing. -->
-        <viglet-core.version>2026.3.13</viglet-core.version>
+        <viglet-core.version>2026.3.14</viglet-core.version>
         <!-- T1306 / ADR 0005 — the Spring Modulith line that pairs with Spring Boot 4.1. -->
         <spring-modulith.version>2.1.3</spring-modulith.version>
         <maven.deploy.skip>true</maven.deploy.skip>

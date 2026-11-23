@@ -155,6 +155,33 @@ class TurSNManifestClientTest {
     }
 
     @Test
+    @DisplayName("A field's facetItemType is sent by its name, and a field without one sends none (T1223)")
+    void provisionSendsTheFacetItemType() {
+        var manifest = TurSNManifest.builder()
+                .name("Posts")
+                .locale("en-US")
+                .field(TurSNJobAttributeSpec.builder()
+                        .name("site_key")
+                        .type(TurSEFieldType.STRING)
+                        .facet(true)
+                        .facetItemType(com.viglet.turing.client.sn.job.TurSNFacetItemType.OR)
+                        .build())
+                .field(TurSNJobAttributeSpec.builder()
+                        .name("category")
+                        .type(TurSEFieldType.STRING)
+                        .facet(true)
+                        .build())
+                .build();
+
+        new TurSNManifestClient(server()).provision(manifest);
+
+        var fields = new tools.jackson.databind.ObjectMapper().readTree(lastBody.get()).get("fields");
+        assertThat(fields.get(0).get("facetItemType").asString()).isEqualTo("OR");
+        var undeclared = fields.get(1).get("facetItemType");
+        assertThat(undeclared == null || undeclared.isNull()).isTrue();
+    }
+
+    @Test
     @DisplayName("plan posts to the /plan sub-path and reads the diff back")
     void planPostsToThePlanPath() {
         responseBody.set(DIFF_JSON);

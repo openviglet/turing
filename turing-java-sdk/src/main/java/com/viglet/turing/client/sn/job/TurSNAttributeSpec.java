@@ -30,6 +30,7 @@ public class TurSNAttributeSpec extends TurSNJobAttributeSpec {
                 ", facet=" + facet +
                 ", facetName='" + facetName + '\'' +
                 ", searchWeight=" + searchWeight +
+                ", facetItemType=" + facetItemType +
                 ", className='" + className + '\'' +
                 '}';
     }

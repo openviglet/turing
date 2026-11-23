@@ -34,11 +34,23 @@ public class TurSNJobAttributeSpec implements Serializable {
      * it is. Turing refuses a value outside the range.
      */
     protected Float searchWeight;
+    /**
+     * T1223 — how two values picked in this field's facet combine, sent with a
+     * manifest so one field (a site key, say) can take alternatives while the
+     * others keep intersecting; {@code null} leaves the site's setting as it is.
+     */
+    protected TurSNFacetItemType facetItemType;
 
     /** The constructor this class had before {@link #searchWeight}, kept for existing callers. */
     public TurSNJobAttributeSpec(String name, TurSEFieldType type, boolean mandatory, boolean multiValued,
             String description, boolean facet, Map<String, String> facetName) {
-        this(name, type, mandatory, multiValued, description, facet, facetName, null);
+        this(name, type, mandatory, multiValued, description, facet, facetName, null, null);
+    }
+
+    /** The constructor this class had before {@link #facetItemType}, kept for existing callers. */
+    public TurSNJobAttributeSpec(String name, TurSEFieldType type, boolean mandatory, boolean multiValued,
+            String description, boolean facet, Map<String, String> facetName, Float searchWeight) {
+        this(name, type, mandatory, multiValued, description, facet, facetName, searchWeight, null);
     }
 
     @Override
@@ -52,6 +64,7 @@ public class TurSNJobAttributeSpec implements Serializable {
                 ", facet=" + facet +
                 ", facetName='" + facetName + '\'' +
                 ", searchWeight=" + searchWeight +
+                ", facetItemType=" + facetItemType +
                 '}';
     }
 }

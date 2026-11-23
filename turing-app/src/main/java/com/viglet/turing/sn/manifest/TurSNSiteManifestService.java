@@ -41,6 +41,7 @@ import com.viglet.core.manifest.VigletManifestResult;
 import com.viglet.turing.sn.field.TurSNSearchWeight;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -291,21 +292,31 @@ public class TurSNSiteManifestService {
     }
 
     /**
-     * Converges each declared search weight (T1072) onto the site field. A weight
-     * changes ranking, not the schema, so it never needs a migration; a field that
-     * declares none keeps whatever weight the console gave it.
+     * Converges each declared search weight (T1072) and facet item type (T1223)
+     * onto the site field. Both act at query time, not on the schema, so neither
+     * needs a migration, and both follow the manifest whatever {@code convergeFields}
+     * says; a field that declares neither keeps what the console gave it.
      */
     private void applySearchWeights(TurSNSite site, VigletFieldManifest manifest) {
         if (manifest.fields() == null) {
             return;
         }
         for (VigletFieldSpec field : manifest.fields()) {
-            if (field.searchWeight() == null) {
+            TurSNSiteFacetFieldEnum itemType = TurSNManifestMapper.toFacetItemType(field.facetItemType());
+            if (field.searchWeight() == null && itemType == null) {
                 continue;
             }
             for (TurSNSiteFieldExt ext : turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, field.name())) {
-                if (!field.searchWeight().equals(ext.getSearchWeight())) {
+                boolean changed = false;
+                if (field.searchWeight() != null && !field.searchWeight().equals(ext.getSearchWeight())) {
                     ext.setSearchWeight(field.searchWeight());
+                    changed = true;
+                }
+                if (itemType != null && itemType != ext.getFacetItemType()) {
+                    ext.setFacetItemType(itemType);
+                    changed = true;
+                }
+                if (changed) {
                     turSNSiteFieldExtRepository.save(ext);
                 }
             }

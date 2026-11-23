@@ -2272,37 +2272,6 @@ here of what already works.
 
 ## CLXIX What the SN site manifest cannot declare
 
-### CLXIX.1 A manifest field's facet item type (D303) (T1223)
-
-**Where it came from.** Dumont D303 (the WordPress plugin): several WordPress sites
-share one SN site (Dumont D148) and one searches its own key plus its siblings', sending
-`fq[]=site_key:a&fq[]=site_key:b`.
-
-**What happens.** `TurLuceneQueryBuilder#addFilterQueries` (and the Solr builder)
-combine one field's values by `fqItemOperator`, else the field's `facetItemType`, else
-the site's (default AND), so the keys intersect to nothing. The ways out fail:
-
-- `fqItemOperator=OR` is request-wide (a visitor's two picks in another facet become OR),
-  and the JS SDK's GET search (`api.ts` line 98) drops `fqOperator`/`fqItemOperator`,
-  though `SearchParams` types them.
-- The site-wide `facetItemType` changes every facet; the field's own (`TurSNSiteFieldExt`)
-  is set only by the console. `fqOr[]` unions across fields, not values within one.
-
-**What Turing should do.**
-1. The manifest field spec carries an optional `facetItemType` (`AND`/`OR`/`DEFAULT`),
-   converged like `facetName`; absent keeps today's value. `VigletFieldSpec` lives in
-   viglet-core-manifest (its own repo): the field lands there first, then in the Java
-   SDK's `TurSNJobAttributeSpec` with the old constructor kept, as T1082 did `searchWeight`,
-   then `TurSNManifestMapper#toJobSpec` and the field ext.
-2. Landed (SDK half): `fetchSearch` in both SDKs sends them as `fq.and[]`, `fq.or[]`, `fq.op`, `fqi.op`.
-
-**Workaround in Dumont.** None: D303 waits on this line.
-
-**Done when:** a manifest declaring `site_key` with `facetItemType: OR` makes
-`fq[]=site_key:a&fq[]=site_key:b` return both sites' documents while two values of
-another AND facet still intersect, on Solr, Lucene and Elasticsearch; and an SDK search
-with `fqItemOperator` sends it.
-
 ## CLXX People, themes and places extracted at import, as facets
 
 ## CLXXI Autocomplete inside a filtered scope

@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import com.viglet.core.manifest.VigletFacetItemType;
 import com.viglet.core.manifest.VigletFieldManifest;
 import com.viglet.core.manifest.VigletFieldMigration;
 import com.viglet.core.manifest.VigletFieldSpec;
@@ -35,6 +36,7 @@ import com.viglet.core.manifest.VigletManifestMigrationAction;
 import com.viglet.core.manifest.VigletManifestResult;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.sn.domain.SnSiteIndexInvalidatedEvent;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.field.TurSNSiteFieldExt;
@@ -235,6 +237,58 @@ class TurSNSiteManifestServiceTest {
 
         assertEquals(5f, live.getSearchWeight());
         verify(turSNSiteFieldExtRepository).save(live);
+    }
+
+    /** T1223 — a declared facet item type converges onto an existing field; the weight is left alone. */
+    @Test
+    void provisionConvergesDeclaredFacetItemType() {
+        TurSNSite existing = new TurSNSite();
+        existing.setName("posts");
+        VigletFieldSpec siteKey = VigletFieldSpec.builder()
+                .name("site_key").type(VigletFieldType.STRING).facet(true)
+                .facetItemType(VigletFacetItemType.OR).build();
+        VigletFieldManifest manifest = new VigletFieldManifest(
+                "posts", null, null, null, List.of(siteKey));
+        TurSNSiteFieldExt live = new TurSNSiteFieldExt();
+        live.setName("site_key");
+        live.setSearchWeight(4f);
+
+        when(turSNSiteRepository.findByNameIgnoreCase("posts")).thenReturn(Optional.of(existing));
+        when(turSNSiteRepository.findByIdWithGenAi(any())).thenReturn(Optional.of(existing));
+        when(turSNManifestPlanner.diff(manifest, existing)).thenReturn(cleanDiff());
+        when(turSNFieldProvisioner.ensureField(eq(existing), named("site_key"))).thenReturn(false);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(existing, "site_key")).thenReturn(List.of(live));
+
+        service.provision(manifest);
+
+        assertEquals(TurSNSiteFacetFieldEnum.OR, live.getFacetItemType());
+        assertEquals(4f, live.getSearchWeight());
+        verify(turSNSiteFieldExtRepository).save(live);
+    }
+
+    /** T1223 — a field already at the declared item type is not saved again. */
+    @Test
+    void provisionDoesNotSaveAFieldAlreadyAtTheDeclaredItemType() {
+        TurSNSite existing = new TurSNSite();
+        existing.setName("posts");
+        VigletFieldSpec siteKey = VigletFieldSpec.builder()
+                .name("site_key").type(VigletFieldType.STRING).facet(true)
+                .facetItemType(VigletFacetItemType.OR).build();
+        VigletFieldManifest manifest = new VigletFieldManifest(
+                "posts", null, null, null, List.of(siteKey));
+        TurSNSiteFieldExt live = new TurSNSiteFieldExt();
+        live.setName("site_key");
+        live.setFacetItemType(TurSNSiteFacetFieldEnum.OR);
+
+        when(turSNSiteRepository.findByNameIgnoreCase("posts")).thenReturn(Optional.of(existing));
+        when(turSNSiteRepository.findByIdWithGenAi(any())).thenReturn(Optional.of(existing));
+        when(turSNManifestPlanner.diff(manifest, existing)).thenReturn(cleanDiff());
+        when(turSNFieldProvisioner.ensureField(eq(existing), named("site_key"))).thenReturn(false);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(existing, "site_key")).thenReturn(List.of(live));
+
+        service.provision(manifest);
+
+        verify(turSNSiteFieldExtRepository, never()).save(any());
     }
 
     @Test

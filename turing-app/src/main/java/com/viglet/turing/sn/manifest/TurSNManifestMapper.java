@@ -21,10 +21,13 @@
 
 package com.viglet.turing.sn.manifest;
 
+import com.viglet.core.manifest.VigletFacetItemType;
 import com.viglet.core.manifest.VigletFieldSpec;
 import com.viglet.core.manifest.VigletFieldType;
+import com.viglet.turing.client.sn.job.TurSNFacetItemType;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
+import com.viglet.turing.searchengine.TurSNSiteFacetFieldEnum;
 
 /**
  * Maps the product-neutral manifest field model (viglet-core, T393) to Turing's
@@ -55,6 +58,14 @@ public final class TurSNManifestMapper {
         return type == null ? null : VigletFieldType.valueOf(type.name());
     }
 
+    /**
+     * Neutral facet item type → Turing's per-field facet item type (by name, T1223);
+     * {@code null} stays {@code null}, meaning "not declared".
+     */
+    public static TurSNSiteFacetFieldEnum toFacetItemType(VigletFacetItemType type) {
+        return type == null ? null : TurSNSiteFacetFieldEnum.valueOf(type.name());
+    }
+
     /** Neutral manifest field spec → Turing's index-time attribute spec. */
     public static TurSNJobAttributeSpec toJobSpec(VigletFieldSpec spec) {
         if (spec == null) {
@@ -68,6 +79,9 @@ public final class TurSNManifestMapper {
                 .description(spec.description())
                 .facet(spec.facet())
                 .facetName(spec.facetName())
+                .searchWeight(spec.searchWeight())
+                .facetItemType(spec.facetItemType() == null ? null
+                        : TurSNFacetItemType.valueOf(spec.facetItemType().name()))
                 .build();
     }
 }

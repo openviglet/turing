@@ -233,6 +233,14 @@ POST /api/sn/manifest
 
 Each key is optional, and one you leave out keeps the site's current setting. A manifest without `facets` does not touch them. The response says `facetSettingsChanged: true` when a setting changed, and the [plan](#dry-run-the-diff) says `facetSettingsToChange`. From Java, `.facets(TurSNManifestFacets.multiSelect())` or `.facets(TurSNManifestFacets.drillDown().withItemsPerFacet(20))`.
 
+One field can combine its values differently from the rest of the site. Give that field a `facetItemType` of `OR`, `AND` or `DEFAULT` (which follows the site's `itemType`). Several WordPress sites that share one Semantic Navigation site, for example, filter by more than one `site_key` at a time, while every other facet still narrows:
+
+```json
+{ "name": "site_key", "type": "STRING", "facet": true, "facetItemType": "OR" }
+```
+
+Two `site_key` filters then return the documents of either site instead of none. The value goes to the field on every provision, like `searchWeight`, and a field that leaves it out keeps its current one. A request's own `fqi.op` still overrides it. From Java, `.facetItemType(TurSNFacetItemType.OR)` on the field's `TurSNJobAttributeSpec`.
+
 ### Time zone
 
 `timeZone` is the site's IANA time zone (`"timeZone": "America/Sao_Paulo"`), or an offset such as `-03:00`. Filters read from a sentence resolve "today" and "tomorrow" in it. A manifest without `timeZone` leaves the site's as it is, and a name that is not a time zone is refused with HTTP 400 before anything changes. From Java, `.timeZone("America/Sao_Paulo")`. The WordPress plugin sends the zone under **Settings → General**.
@@ -256,11 +264,11 @@ Additive changes (new field, new locale) are safe and silent. But changing an **
 | `customFacetsToChange` | [Custom facets](#custom-facets) that provisioning would create or rewrite |
 | `fieldsToChange` | With `convergeFields`, each existing field whose facet, mandatory, description or facet labels would change, with the attributes that differ |
 
-Facet / mandatory / description tweaks are **not** breaking: they don't require a reindex. Neither is a `searchWeight` change: it changes ranking at query time, not the schema. Whether provisioning applies them to a field that already exists depends on `convergeFields`, below.
+Facet / mandatory / description tweaks are **not** breaking: they don't require a reindex. Neither is a `searchWeight` or `facetItemType` change: each acts at query time, not on the schema. Whether provisioning applies them to a field that already exists depends on `convergeFields`, below.
 
 ### Converging an existing field
 
-By default a field that already exists keeps its `facet`, `mandatory`, `description` and facet labels: only its `searchWeight` follows the manifest. That protects a facet someone switched on in the console, since a manifest cannot leave `facet` unsaid (an omitted `facet` reads as `false`).
+By default a field that already exists keeps its `facet`, `mandatory`, `description` and facet labels: only its `searchWeight` and `facetItemType` follow the manifest. That protects a facet someone switched on in the console, since a manifest cannot leave `facet` unsaid (an omitted `facet` reads as `false`).
 
 Send `"convergeFields": true` when the manifest is the whole truth for the fields it declares, as a connector's mapping usually is. Each provision then applies those attributes in place: a field turned from facet on to off stops being a facet, and a relabelled facet shows its new name, with no reindex. A `description` or a `facetName` the manifest leaves out is kept; a `facetName` it carries replaces the field's per-locale labels. Fields the manifest does not declare are never touched. The provision result lists the fields it changed in `fieldsChanged`, and they no longer appear in `fieldsSkipped`.
 
