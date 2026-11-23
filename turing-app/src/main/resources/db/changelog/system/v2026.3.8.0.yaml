@@ -1,0 +1,76 @@
+# T1324 / ADR 0005 — Spring Modulith's event publication registry. Each publication of
+# an event to an asynchronous cross-module listener is stored in the transaction that
+# publishes it and marked complete when the listener succeeds; an incomplete one is
+# republished by TurEventPublicationJob. The table and columns are the ones Spring
+# Modulith's JPA entity (JpaEventPublication) maps: Modulith's own schema
+# initialization stays off. Its id is a java.util.UUID, which Hibernate binds as a
+# native uuid on H2 and PostgreSQL and as binary(16) on MySQL and MariaDB.
+databaseChangeLog:
+  - property:
+      name: event_publication_id_type
+      value: binary(16)
+      dbms: mysql, mariadb
+  - property:
+      name: event_publication_id_type
+      value: uuid
+      dbms: "!mysql, !mariadb"
+  - changeSet:
+      id: v2026.3.8.0-event-publication
+      author: turing
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: EVENT_PUBLICATION
+      changes:
+        - createTable:
+            tableName: EVENT_PUBLICATION
+            columns:
+              - column:
+                  name: id
+                  type: ${event_publication_id_type}
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_event_publication
+                    nullable: false
+              - column:
+                  name: publicationDate
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: listenerId
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serializedEvent
+                  type: longtext
+                  constraints:
+                    nullable: false
+              - column:
+                  name: eventType
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: completionDate
+                  type: timestamp
+              - column:
+                  name: lastResubmissionDate
+                  type: timestamp
+              - column:
+                  name: completionAttempts
+                  type: int
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
+        - createIndex:
+            tableName: EVENT_PUBLICATION
+            indexName: ix_event_publication_completion
+            columns:
+              - column:
+                  name: completionDate

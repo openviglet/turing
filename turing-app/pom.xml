@@ -390,6 +390,13 @@
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-api</artifactId>
         </dependency>
+        <!-- T1324 / ADR 0005 — the event publication registry: an asynchronous
+             cross-module listener's event is stored with the transaction that
+             publishes it and republished until the listener completes. -->
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-jpa</artifactId>
+        </dependency>
         <!-- T1306 / ADR 0005 — Spring Modulith's module model and verification. -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>

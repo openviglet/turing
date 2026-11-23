@@ -2495,17 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.20 Durable module events (T1324)
-
-Asynchronous cross-module listeners (indexing after a site change, analytics,
-notifications) lose their event if the node dies between commit and delivery.
-spring-modulith-starter-jpa stores each publication in an event_publication table. The
-table is created by a changeset in the baseline (Modulith schema initialization stays
-off), carries the tenant id under Block J rules, and incomplete publications are
-republished by one node at a time under a ShedLock-guarded @Scheduled job, so a cluster
-does not deliver twice. Completed publications are purged on a schedule. The synchronous
-cache-eviction listeners stay outside the registry.
-
 ### CLXXXIX.21 Module slice integration tests (T1325)
 
 Integration tests extend AbstractTuringSpringIT and boot the whole application. For

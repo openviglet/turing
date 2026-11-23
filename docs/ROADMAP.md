@@ -24,7 +24,6 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 📋 **T1324** (deps: T1316 ✅, T1321 ✅) **A module event lost to a crash between commit and listener is never delivered** — The JPA event publication registry, its table in the Liquibase baseline, tenant-aware and republished by one node under ShedLock, makes cross-module listeners at-least-once. → §CLXXXIX.20
 - 📋 **T1325** (deps: T1323 ✅) **Every integration test boots the whole context, even for one module's behaviour** — Module slice tests boot one module with its declared dependencies, so module ITs start faster and fail when a hidden dependency appears. → §CLXXXIX.21
 - 📋 **T1326** (deps: T1323 ✅) **No diagram shows the backend's modules or how they depend on each other** — Documenter output generated from the verified model keeps a contributor architecture page current without anyone redrawing it. → §CLXXXIX.22
 - 📋 **T1327** (deps: T1323 ✅) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23

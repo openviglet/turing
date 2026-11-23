@@ -47,6 +47,9 @@ class TurAssetAPITest {
         @Mock
         private ApplicationEventPublisher eventPublisher;
 
+        @Mock
+        private com.viglet.core.tenancy.VigletTenantContext tenantContext;
+
         @InjectMocks
         private TurAssetAPI turAssetAPI;
 

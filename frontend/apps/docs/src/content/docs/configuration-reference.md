@@ -823,6 +823,17 @@ Spring cron expressions, with seconds first.
 | `turing.self-tuning.cron` | `0 0 2 * * *` | Self-tuning run |
 | `turing.tenancy.deprovision.cron` | `0 25 3 * * *` | Removes deprovisioned [tenants](/docs/multi-tenancy/) |
 
+#### Background event delivery
+
+Work that one part of Turing hands to another after a save, such as indexing an uploaded asset into RAG, is recorded in the database with the save and marked done when it finishes. If the server stops first, or the work fails, one node of the cluster delivers it again.
+
+| Property | Default | What it controls |
+|---|---|---|
+| `turing.events.republish-interval` | `PT1M` | How often unfinished work is checked for |
+| `turing.events.republish-after` | `PT5M` | How long work may stay unfinished before it is delivered again |
+| `turing.events.completed-retention` | `P7D` | How long finished work stays recorded |
+| `turing.events.purge-cron` | `0 20 4 * * *` | When finished work older than the retention is deleted |
+
 ---
 
 ## Common production overrides

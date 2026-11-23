@@ -72,7 +72,12 @@ Rules the verification enforces:
 - **No shared entities.** A JPA association never crosses a module line; the other
   module's row is an id column resolved through that module (T1315). A module learns
   about another's changes from events published after commit (T1316), made
-  at-least-once by the event publication registry (T1324).
+  at-least-once by the event publication registry (T1324: Spring Modulith's JPA
+  registry, its `EVENT_PUBLICATION` table created by `system/v2026.3.8.0.yaml`; an
+  asynchronous module listener is an `@ApplicationModuleListener`, its event carries the
+  tenant it was published under, and `TurEventPublicationJob` republishes what is
+  incomplete and purges what is old, one node at a time under ShedLock. The synchronous
+  cache-eviction listeners stay outside the registry).
 - **Seeders and controllers live with their module.** `onstartup` and `api` are emptied
   into the modules whose data and endpoints they are.
 

@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import com.viglet.turing.storage.TurStorageService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.viglet.core.tenancy.VigletTenantContext;
 
 /**
  * REST API for managing assets stored in MinIO.
@@ -45,12 +47,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TurAssetAPI {
 	private final TurStorageService storageService;
 	private final org.springframework.context.ApplicationEventPublisher eventPublisher;
+	private final VigletTenantContext tenantContext;
 
-	/** T1322 — AI training from assets is rag's {@code TurAssetTrainingAPI}, on the same paths. */
+	/**
+	 * T1322 — AI training from assets is rag's {@code TurAssetTrainingAPI}, on the same paths.
+	 * T1324 — an upload or delete publishes its {@link TurAssetEvent} inside a transaction,
+	 * so the event publication registry stores it and delivers it again if the node dies
+	 * before rag has indexed the asset.
+	 */
 	public TurAssetAPI(TurStorageService storageService,
-			org.springframework.context.ApplicationEventPublisher eventPublisher) {
+			org.springframework.context.ApplicationEventPublisher eventPublisher,
+			VigletTenantContext tenantContext) {
 		this.storageService = storageService;
 		this.eventPublisher = eventPublisher;
+		this.tenantContext = tenantContext;
 	}
 
 	@Operation(summary = "List assets in a folder")
@@ -98,6 +108,7 @@ public class TurAssetAPI {
 	}
 
 	@Operation(summary = "Upload assets")
+	@Transactional
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> upload(@RequestParam("files") List<MultipartFile> files,
 			@RequestParam(defaultValue = "") String prefix) {
@@ -105,7 +116,8 @@ public class TurAssetAPI {
 			storageService.uploadObject(file, prefix);
 			String objectName = (prefix != null && !prefix.isBlank() ? prefix : "") + file.getOriginalFilename();
 			String contentType = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
-			eventPublisher.publishEvent(TurAssetEvent.uploaded(objectName, contentType, file.getSize()));
+			eventPublisher.publishEvent(TurAssetEvent.uploaded(objectName, contentType, file.getSize(),
+					tenantContext.getCurrentTenant()));
 		}
 		return ResponseEntity.ok().build();
 	}
@@ -118,10 +130,11 @@ public class TurAssetAPI {
 	}
 
 	@Operation(summary = "Delete an asset")
+	@Transactional
 	@DeleteMapping
 	public ResponseEntity<Void> delete(@RequestParam String objectName) {
 		storageService.deleteObject(objectName);
-		eventPublisher.publishEvent(TurAssetEvent.deleted(objectName));
+		eventPublisher.publishEvent(TurAssetEvent.deleted(objectName, tenantContext.getCurrentTenant()));
 		return ResponseEntity.ok().build();
 	}
 

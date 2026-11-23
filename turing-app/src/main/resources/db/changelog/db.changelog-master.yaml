@@ -6,6 +6,8 @@ databaseChangeLog:
 - include:
     file: db/changelog/system/baseline.yaml
 - include:
+    file: db/changelog/system/v2026.3.8.0.yaml
+- include:
     file: db/changelog/tenant/baseline.yaml
 - include:
     file: db/changelog/auth/baseline.yaml

@@ -154,6 +154,7 @@ _Not a page: it sits outside `src/content/docs`, so Starlight never renders it. 
 |---|---|---|
 | Installation | [installation-guide](./src/content/docs/installation-guide.md) | ✅ |
 | **Block CZ** (T1321): the schema starts from one Liquibase baseline per module, and a database built by the pre-baseline history is refused at startup and moved by export and import | [upgrading](./src/content/docs/upgrading.md) · [developer-guide § Database migrations with Liquibase](./src/content/docs/developer-guide.md#database-migrations-with-liquibase) | ✅ |
+| **Block CZ** (T1324): background work one module hands another after a save (asset indexing) is recorded with the save and delivered again by one node when unfinished, under `turing.events.*` | [configuration-reference § Background event delivery](./src/content/docs/configuration-reference.md#background-event-delivery) | 🧩 |
 | **Block CH** (T1113): every release publishes the Docker image and moves `latest` to it, a version branch publishes as `<branch>-snapshot`, and `GET /api/discovery` reports the answering build's `version` and `commit` | [installation-guide § Option 1: Docker](./src/content/docs/installation-guide.md#option-1-docker-fastest) | 🧩 |
 | Configuration (`application.yaml`) | [configuration-reference](./src/content/docs/configuration-reference.md) | ✅ |
 | **Block F / F.16**: GenAI overview + Gemini native primitives | [genai-llm](./src/content/docs/genai-llm.md) | ✅ |
