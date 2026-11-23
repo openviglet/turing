@@ -41,7 +41,7 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNRankingMode;
  *       {@code snHybridVectorWeight} + {@code snEmbeddedFields}), so those are
  *       carried and the rest is not.</li>
  *   <li>{@code turSEInstanceId} — a plain id since T1315, carried as is;
- *       {@code TurSearchEnginePluginFactory#getPluginForSite} turns it into the
+ *       {@code TurSearchEnginePluginFactory#getPluginForSeInstance} turns it into the
  *       plugin type through the cached {@code TurSEInstancePluginTypes}, the same
  *       answer the snapshot records as {@code pluginType}. Nothing else on this path
  *       touches the SE instance — {@code TurSolrInstanceProcess} loads its own

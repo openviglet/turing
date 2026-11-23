@@ -120,7 +120,7 @@ public class TurSNSimilarDocumentsService {
         if (siteLocale == null) {
             return List.of();
         }
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
 
         // T1133 — a key bound to a partition of a shared site gets neighbours from
         // its partition only, of a seed in its partition. The vector store holds

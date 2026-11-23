@@ -84,10 +84,10 @@ class TurSearchEnginePluginFactoryTest {
         assertSame(es, factory.getPlugin("ELASTICSEARCH"));
     }
 
-    // --- getPluginForSite ---
+    // --- getPluginForSeInstance ---
 
     @Test
-    void getPluginForSiteShouldResolveBySEVendorPlugin() {
+    void getPluginForSeInstanceShouldResolveBySEVendorPlugin() {
         TurSearchEnginePlugin lucene = mock(TurSearchEnginePlugin.class);
         when(lucene.getPluginType()).thenReturn("lucene");
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
@@ -101,31 +101,31 @@ class TurSearchEnginePluginFactoryTest {
         when(seInstance.getId()).thenReturn("se-1");
         TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
-        assertSame(lucene, factory.getPluginForSite(site));
+        assertSame(lucene, factory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site)));
     }
 
     @Test
-    void getPluginForSiteShouldFallbackToSolrForNullSite() {
+    void getPluginForSeInstanceShouldFallbackToSolrForNullSite() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
-        assertSame(solr, factory.getPluginForSite(null));
+        assertSame(solr, factory.getPluginForSeInstance(null));
     }
 
     @Test
-    void getPluginForSiteShouldFallbackToSolrWhenNoSEInstance() {
+    void getPluginForSeInstanceShouldFallbackToSolrWhenNoSEInstance() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
 
         TurSNSite site = new TurSNSite();
 
-        assertSame(solr, factory.getPluginForSite(site));
+        assertSame(solr, factory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site)));
     }
 
     @Test
-    void getPluginForSiteShouldFallbackToSolrWhenNoVendor() {
+    void getPluginForSeInstanceShouldFallbackToSolrWhenNoVendor() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
@@ -135,11 +135,11 @@ class TurSearchEnginePluginFactoryTest {
         when(seInstance.getId()).thenReturn("se-1");
         TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
-        assertSame(solr, factory.getPluginForSite(site));
+        assertSame(solr, factory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site)));
     }
 
     @Test
-    void getPluginForSiteShouldUseVendorIdWhenPluginBlank() {
+    void getPluginForSeInstanceShouldUseVendorIdWhenPluginBlank() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
@@ -152,11 +152,11 @@ class TurSearchEnginePluginFactoryTest {
         when(seInstance.getId()).thenReturn("se-1");
         TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
-        assertSame(solr, factory.getPluginForSite(site));
+        assertSame(solr, factory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site)));
     }
 
     @Test
-    void getPluginForSiteShouldUseVendorIdWhenPluginNull() {
+    void getPluginForSeInstanceShouldUseVendorIdWhenPluginNull() {
         TurSearchEnginePlugin solr = mock(TurSearchEnginePlugin.class);
         when(solr.getPluginType()).thenReturn("solr");
         TurSearchEnginePluginFactory factory = new TurSearchEnginePluginFactory(List.of(solr), seInstances::pluginTypeOf);
@@ -169,7 +169,7 @@ class TurSearchEnginePluginFactoryTest {
         when(seInstance.getId()).thenReturn("se-1");
         TurSNSite site = seInstances.attach(new TurSNSite(), seInstance);
 
-        assertSame(solr, factory.getPluginForSite(site));
+        assertSame(solr, factory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site)));
     }
 
     // --- getPluginForInstance ---

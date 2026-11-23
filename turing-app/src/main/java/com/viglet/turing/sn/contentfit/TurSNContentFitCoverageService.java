@@ -65,7 +65,7 @@ public class TurSNContentFitCoverageService {
         String personaName = resolvePersonaName(personaId);
 
         List<TurSNSiteLocale> locales = snSiteLocaleRepository.findByTurSNSite(site);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
 
         long total = sumOverLocales(locales, locale -> plugin.getDocumentTotal(locale));
         // -1 from any locale ⇒ engine can't report this measure for the whole site.

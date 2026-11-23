@@ -80,10 +80,10 @@ public class TurSNMergeProvidersProcess {
 
                 if (queueDocumentProviders.contains(turSNSiteMergeProviders.getProviderFrom())) {
                     return mergeFrom(queueDocumentAttrs, turSNSiteMergeProviders, locale,
-                            pluginFactory.getPluginForSite(turSNSite));
+                            pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)));
                 } else if (queueDocumentProviders.contains(turSNSiteMergeProviders.getProviderTo())) {
                     return mergeTo(queueDocumentAttrs, turSNSiteMergeProviders, locale,
-                            pluginFactory.getPluginForSite(turSNSite));
+                            pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)));
                 }
             }
         }

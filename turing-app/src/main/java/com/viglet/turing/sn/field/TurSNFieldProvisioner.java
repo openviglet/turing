@@ -248,9 +248,9 @@ public class TurSNFieldProvisioner {
         }
         turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId()).ifPresent(seInstance ->
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite).stream()
-                        .filter(locale -> pluginFactory.getPluginForSite(turSNSite)
+                        .filter(locale -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                                 .fieldExists(seInstance, locale.getCore(), name))
-                        .forEach(locale -> pluginFactory.getPluginForSite(turSNSite)
+                        .forEach(locale -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                                 .deleteField(seInstance, locale.getCore(), name, liveType)));
     }
 
@@ -302,7 +302,7 @@ public class TurSNFieldProvisioner {
     private void createFieldInSearchEngine(TurSNSite turSNSite, String coreName,
             TurSNSiteField turSNSiteField) {
         turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
-                .ifPresent(seInstance -> pluginFactory.getPluginForSite(turSNSite)
+                .ifPresent(seInstance -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                         .addOrUpdateField(seInstance, coreName, turSNSiteField.getName(),
                                 turSNSiteField.getType(), true, turSNSiteField.getMultiValued() == 1, true));
     }
@@ -312,7 +312,7 @@ public class TurSNFieldProvisioner {
             return false;
         }
         return turSEInstanceRepository.findById(turSNSite.getTurSEInstanceId())
-                .map(seInstance -> pluginFactory.getPluginForSite(turSNSite)
+                .map(seInstance -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                         .fieldExists(seInstance, coreName, name))
                 .orElse(false);
     }

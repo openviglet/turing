@@ -81,7 +81,7 @@ public class TurSNSynonymApplyService {
     @Transactional(readOnly = true)
     public TurSNSynonymSupportDto support(String siteId) {
         TurSNSite site = siteRepository.findById(siteId).orElse(null);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         return new TurSNSynonymSupportDto(plugin.getPluginType(), plugin.supportsSynonyms());
     }
 
@@ -93,7 +93,7 @@ public class TurSNSynonymApplyService {
     public boolean losesSynonymsOnRestart(String siteId) {
         return siteRepository.findById(siteId)
                 .map(site -> {
-                    TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+                    TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
                     return plugin.supportsSynonyms() && !plugin.synonymsSurviveRestart();
                 })
                 .orElse(false);
@@ -136,7 +136,7 @@ public class TurSNSynonymApplyService {
                     List.of("Site has no search engine instance; cannot apply synonyms."));
         }
         List<TurSESynonymRule> rules = synonymService.rulesForApply(site, locale.getLanguage());
-        TurSESynonymApplyResult result = pluginFactory.getPluginForSite(site)
+        TurSESynonymApplyResult result = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))
                 .applySynonyms(seInstance, locale.getCore(), locale.getLanguage(), rules);
         log.info("Applied {} synonym rule(s) to core '{}' ({}) — supported={}, unsupportedTypes={}",
                 result.applied(), locale.getCore(), locale.getLanguage(), result.supported(),

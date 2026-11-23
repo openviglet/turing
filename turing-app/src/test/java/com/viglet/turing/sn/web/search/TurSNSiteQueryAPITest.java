@@ -47,7 +47,7 @@ class TurSNSiteQueryAPITest {
         TurSNSite site = new TurSNSite();
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.nativeJsonQuery(site, Locale.US, "{\"query\":\"test\"}"))
                 .thenReturn(Optional.of("{\"result\":\"ok\"}"));
 
@@ -64,7 +64,7 @@ class TurSNSiteQueryAPITest {
         TurSNSite site = new TurSNSite();
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.nativeJsonQuery(any(), any(), any())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/sn/site1/query")

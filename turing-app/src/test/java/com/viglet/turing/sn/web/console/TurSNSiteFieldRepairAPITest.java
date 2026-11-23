@@ -66,7 +66,7 @@ class TurSNSiteFieldRepairAPITest {
 
     TurSNSiteFieldRepairAPITest() {
         TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
-        when(factory.getPluginForSite(any())).thenReturn(plugin);
+        when(factory.getPluginForSeInstance(any())).thenReturn(plugin);
         api = new TurSNSiteFieldRepairAPI(siteRepository, fieldExtRepository, instanceRepository, factory, seInstances.service());
     }
 

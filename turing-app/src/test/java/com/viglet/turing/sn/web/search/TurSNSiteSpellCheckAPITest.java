@@ -81,7 +81,7 @@ class TurSNSiteSpellCheckAPITest {
         site.setName("site");
 
         when(siteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         TurSESpellCheckResult spellCheckResult = new TurSESpellCheckResult(true, "hello");
         spellCheckResult.setUsingCorrected(true);
         when(plugin.spellCheck(eq("site"), eq("helo"), any(Locale.class)))
@@ -109,7 +109,7 @@ class TurSNSiteSpellCheckAPITest {
         site.setName("site");
 
         when(siteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.spellCheck(eq("site"), eq("query"), any(Locale.class)))
                 .thenReturn(new TurSESpellCheckResult(false, ""));
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://example.com/api"));

@@ -141,7 +141,7 @@ public class TurSNDuplicateClusteringService {
         if (siteLocale == null) {
             return empty(id);
         }
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         List<Map<String, Object>> seed = plugin.getDocumentsByIds(siteLocale, List.of(id));
         if (seed.isEmpty()) {
             return empty(id);

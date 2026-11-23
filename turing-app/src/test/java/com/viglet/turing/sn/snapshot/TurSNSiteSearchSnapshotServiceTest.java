@@ -446,7 +446,7 @@ class TurSNSiteSearchSnapshotServiceTest {
 
     @Test
     void theRebuiltSiteAnswersThePluginLookupIdentically() {
-        // T1315 — getPluginForSite resolves the plugin from the site's SE instance
+        // T1315 — getPluginForSeInstance resolves the plugin from the site's SE instance
         // id, so the rebuilt site must keep that id or every search silently falls
         // back to Solr.
         TurSNSite original = site();

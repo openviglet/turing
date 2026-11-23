@@ -261,7 +261,7 @@ public class TurDslToolService {
 
     /** Builds the cat-shards style row for one site+locale (doc count + store size via the SE plugin). */
     private Map<String, Object> buildShardRow(TurSNSite site, TurSNSiteLocale locale) {
-        var plugin = pluginFactory.getPluginForSite(site);
+        var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         var seInstance = snSiteSEInstances.of(site);
         String coreName = locale.getCore();
 

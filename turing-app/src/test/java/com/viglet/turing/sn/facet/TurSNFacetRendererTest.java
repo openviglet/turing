@@ -254,7 +254,7 @@ class TurSNFacetRendererTest {
         Map<String, TurSNSiteFieldExtDto> facetMap = singleFacetMap("category", true);
         // AND-OR on an applied facet re-queries it without its own filter; an engine with
         // nothing to add leaves the facet the main search returned.
-        when(searchEnginePluginFactory.getPluginForSite(any()))
+        when(searchEnginePluginFactory.getPluginForSeInstance(any()))
                 .thenReturn(org.mockito.Mockito.mock(com.viglet.turing.searchengine.TurSearchEnginePlugin.class));
 
         List<TurSNSiteSearchFacetBean> result = renderer.responseSecondaryFacet(

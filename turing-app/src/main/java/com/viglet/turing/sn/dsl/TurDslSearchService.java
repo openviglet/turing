@@ -83,7 +83,7 @@ public class TurDslSearchService {
         Locale parsedLocale = LocaleUtils.toLocale(locale);
         return turSNSiteRepository.findByNameIgnoreCase(siteName)
                 .flatMap(site -> {
-                    String engineType = pluginFactory.getPluginForSite(site)
+                    String engineType = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))
                             .getPluginType().toLowerCase();
                     TurDslSearchEngineExecutor<?, ?> executor = executorMap.get(engineType);
                     if (executor == null) {

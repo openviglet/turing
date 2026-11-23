@@ -158,7 +158,7 @@ class TurSNSiteFieldExtAPITest {
                         TurSEInstanceRepository instanceRepository,
                         TurSNTemplate template) {
                 TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
-                Mockito.lenient().when(factory.getPluginForSite(any())).thenReturn(plugin);
+                Mockito.lenient().when(factory.getPluginForSeInstance(any())).thenReturn(plugin);
                 return new TurSNSiteFieldExtAPI(siteRepository, fieldExtRepository, facetRepository, fieldRepository,
                                 instanceRepository, template, createFieldExtMapper(), factory);
         }

@@ -176,7 +176,7 @@ public class TurSNAutoComplete {
             return Collections.emptyList();
         }
         return turSNSiteRepository.findByNameIgnoreCase(siteName).map(turSNSite -> {
-            var plugin = pluginFactory.getPluginForSite(turSNSite);
+            var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
             List<String> rawSuggestions = plugin.autoComplete(siteName, q, locale, rows);
 
             int numberOfWordsFromQuery = q.split(SPACE_CHAR).length;

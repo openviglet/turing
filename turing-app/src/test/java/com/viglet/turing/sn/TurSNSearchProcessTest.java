@@ -734,7 +734,7 @@ class TurSNSearchProcessTest {
                 when(turSNSiteFieldExtRepository.findByTurSNSiteAndFacetAndEnabled(site, 1, 1))
                                 .thenReturn(List.of(facetField));
                 when(turSNEnabledFacets.facetFieldsInFilterQuery(any())).thenReturn(List.of("category"));
-                when(searchEnginePluginFactory.getPluginForSite(any())).thenReturn(plugin);
+                when(searchEnginePluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
 
                 TurSEFacetResult facetResult = new TurSEFacetResult();
                 facetResult.setFacet("category");

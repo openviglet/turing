@@ -77,7 +77,7 @@ class TurSNContentFitCoverageServiceTest {
         site.setTurSNSiteGenAi(genAi);
         locale = new TurSNSiteLocale();
 
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
     }
 

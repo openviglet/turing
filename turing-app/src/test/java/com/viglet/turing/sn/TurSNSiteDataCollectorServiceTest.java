@@ -193,7 +193,7 @@ class TurSNSiteDataCollectorServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site))
                 .thenReturn(List.of(enLocale, ptLocale));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(searchEnginePlugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(searchEnginePlugin);
         when(searchEnginePlugin.getDocumentTotal(any())).thenReturn(100L);
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
@@ -215,7 +215,7 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSiteLocale enLocale = createLocale(site, "en", "en_core");
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(searchEnginePlugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(searchEnginePlugin);
         when(searchEnginePlugin.getDocumentTotal(enLocale)).thenReturn(500L);
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
@@ -236,7 +236,7 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSiteLocale enLocale = createLocale(site, "en", "en_core");
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale));
-        when(pluginFactory.getPluginForSite(site)).thenThrow(new RuntimeException("Connection failed"));
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenThrow(new RuntimeException("Connection failed"));
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
@@ -521,7 +521,7 @@ class TurSNSiteDataCollectorServiceTest {
 
         when(snSiteLocaleRepository.findByTurSNSite(site))
                 .thenReturn(List.of(enLocale, ptLocale, esLocale));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(searchEnginePlugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(searchEnginePlugin);
         when(searchEnginePlugin.getDocumentTotal(enLocale)).thenReturn(1000L);
         when(searchEnginePlugin.getDocumentTotal(ptLocale)).thenReturn(500L);
         when(searchEnginePlugin.getDocumentTotal(esLocale)).thenReturn(250L);

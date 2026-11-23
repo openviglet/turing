@@ -103,7 +103,7 @@ public class TurSNRagOrphanPurgeService {
         if (infra == null) {
             return Result.refused(locale, "RAG is not enabled for the site");
         }
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         String probeFailure = probe(plugin, siteLocale);
         if (probeFailure != null) {
             return Result.refused(locale, probeFailure);

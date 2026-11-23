@@ -99,7 +99,7 @@ class TurSNFieldCoverageServiceTest {
         TurSNSiteFieldExt title = field("title", TurSEFieldType.TEXT, 0, 0);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(en)).thenReturn(4000L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1))
                 .thenReturn(List.of(price, title));
@@ -129,7 +129,7 @@ class TurSNFieldCoverageServiceTest {
         TurSNSiteFieldExt field = field("mensalidade", TurSEFieldType.STRING, 0, 0);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en, pt));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(en)).thenReturn(600L);
         when(plugin.getDocumentTotal(pt)).thenReturn(400L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
@@ -150,7 +150,7 @@ class TurSNFieldCoverageServiceTest {
         TurSNSiteFieldExt field = field("body", TurSEFieldType.TEXT, 0, 0);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(en)).thenReturn(100L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
         when(plugin.getDocumentCountWithField(en, "body")).thenReturn(-1L);
@@ -170,7 +170,7 @@ class TurSNFieldCoverageServiceTest {
         TurSNSiteFieldExt field = field("title", TurSEFieldType.TEXT, 0, 0);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(en)).thenReturn(0L);
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(field));
         when(plugin.getDocumentCountWithField(en, "title")).thenReturn(0L);
@@ -188,7 +188,7 @@ class TurSNFieldCoverageServiceTest {
         TurSNSiteLocale en = locale(site, "en");
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(en));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(en)).thenThrow(new RuntimeException("index down"));
         when(snSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of());
 

@@ -69,7 +69,7 @@ class TurSNSiteFieldCheckAPITest {
         lenient().when(plugin.indexExists(any(), any())).thenReturn(indexExists);
         lenient().when(plugin.hasFieldSchema()).thenReturn(hasSchema);
         TurSearchEnginePluginFactory factory = mock(TurSearchEnginePluginFactory.class);
-        lenient().when(factory.getPluginForSite(any())).thenReturn(plugin);
+        lenient().when(factory.getPluginForSeInstance(any())).thenReturn(plugin);
         return new TurSNSiteFieldCheckAPI(siteRepository, fieldExtRepository, localeRepository, factory, seInstances.service());
     }
 

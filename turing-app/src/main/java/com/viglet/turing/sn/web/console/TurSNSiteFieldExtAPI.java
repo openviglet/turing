@@ -421,7 +421,7 @@ public class TurSNSiteFieldExtAPI {
                 // Elasticsearch site has no Solr to talk to, and an env-configured Solr
                 // is reached through the plugin's effective instance.
                 .ifPresent(turSEInstance -> turSNSite.getTurSNSiteLocales().forEach(
-                        locale -> pluginFactory.getPluginForSite(turSNSite).deleteField(
+                        locale -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)).deleteField(
                                 turSEInstance,
                                 locale.getCore(),
                                 field.getName(),
@@ -436,7 +436,7 @@ public class TurSNSiteFieldExtAPI {
                 .ifPresent(turSEInstance -> {
                     // T1243 — through the site's engine; a field the core already holds
                     // is replaced, so a changed type or cardinality takes effect.
-                    var plugin = pluginFactory.getPluginForSite(turSNSite);
+                    var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
                     turSNSite.getTurSNSiteLocales().forEach(locale -> plugin.addOrUpdateField(
                             turSEInstance,
                             locale.getCore(),

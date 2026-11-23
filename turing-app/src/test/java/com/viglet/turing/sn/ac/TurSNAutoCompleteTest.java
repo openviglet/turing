@@ -92,7 +92,7 @@ class TurSNAutoCompleteTest {
                 site.setAutocompleteTopTerms(1);
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
                 TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 when(plugin.autoComplete("site", "barr", Locale.US, 10)).thenReturn(List.of("barraca"));
                 when(metricRepository.termsBetweenDatesForLocale(eq(site), any(), any(), eq(Locale.US), isNull(),
                                 any())).thenReturn(new java.util.ArrayList<>(List.of(
@@ -114,7 +114,7 @@ class TurSNAutoCompleteTest {
                 TurSNSite site = new TurSNSite();
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
                 TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 when(plugin.autoComplete("site", "barr", Locale.US, 10)).thenReturn(List.of("barraca"));
 
                 assertThat(autoComplete.autoComplete("site", "barr", Locale.US, 10)).containsExactly("barraca");
@@ -150,7 +150,7 @@ class TurSNAutoCompleteTest {
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
 
                 TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 when(plugin.autoComplete("site", "hello", Locale.US, 10))
                                 .thenReturn(List.of("helloworld", "hellothere"));
 
@@ -216,7 +216,7 @@ class TurSNAutoCompleteTest {
                 TurSNSite site = new TurSNSite();
                 when(turSNSiteRepository.findByNameIgnoreCase("site")).thenReturn(Optional.of(site));
                 TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 when(plugin.autoComplete(eq("site"), eq(q), eq(Locale.US), anyLong())).thenReturn(suggestions);
         }
 

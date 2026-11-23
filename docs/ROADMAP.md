@@ -30,7 +30,7 @@
 - 📋 **T1326** (deps: T1323) **No diagram shows the backend's modules or how they depend on each other** — Documenter output generated from the verified model keeps a contributor architecture page current without anyone redrawing it. → §CLXXXIX.22
 - 📋 **T1327** (deps: T1323) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
-- 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 47 times, mostly for site, locale, field and facet entities. → §CLXXXIX.6
+- 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 46 times, mostly for site, locale, field and facet entities. → §CLXXXIX.6
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e ✅, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l 🛠) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 8 sn classes of the GenAI surface still import agent, rag, answer or persona 46 times: genai controllers, indexers, content fit, hybrid ranking, import service. → §CLXXXIX.40
@@ -43,6 +43,10 @@
 ## Block DA — One bad document never costs the rest of an import
 
 - 📋 **T1338** (deps: —) **One unparsable DATE value in an import makes the Lucene engine recreate the whole SN site index, again and again** — A single malformed field in one document wipes every document of the site and leaves search empty while the import returns 200. → §CXC.1
+
+## Block CB — LLM gateway parity with the OpenAI wire
+
+- 📋 **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Turing already batches its own jobs at half price (T156), but a gateway client generating thousands of texts waits an hour and pays double. → §CXIII.6
 
 ## Done when — T1184
 

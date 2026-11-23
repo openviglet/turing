@@ -134,7 +134,7 @@ class TurSNSynonymStartupReapplyTest {
 
     private void stubSite(TurSNSite site, TurSearchEnginePlugin plugin) {
         when(siteRepository.findById(site.getId())).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
     }
 
     @Test

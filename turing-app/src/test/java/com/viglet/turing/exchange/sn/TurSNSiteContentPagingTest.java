@@ -93,7 +93,7 @@ class TurSNSiteContentPagingTest {
 
         when(turSNSiteRepository.findById("site-1")).thenReturn(Optional.of(site));
         when(turSNSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(locale));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(turSNSiteFieldService.toMap(site)).thenReturn(Map.of());
         when(plugin.getDocumentTotal(any())).thenReturn(0L);
     }

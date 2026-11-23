@@ -199,7 +199,7 @@ public class TurSNSiteContentExchangeService {
     public Optional<TurSNSiteContentPages> openContentExport(String siteId, String taskId) {
         return turSNSiteRepository.findById(siteId).map(turSNSite -> {
             List<TurSNSiteLocale> locales = turSNSiteLocaleRepository.findByTurSNSite(turSNSite);
-            TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+            TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
             Map<String, TurSNSiteField> siteFieldMap = turSNSiteFieldService.toMap(turSNSite);
 
             long totalDocs = 0;
@@ -352,7 +352,7 @@ public class TurSNSiteContentExchangeService {
             this.turSNSite = turSNSite;
             this.taskId = taskId;
             this.totalDocuments = Math.max(totalDocuments, 0);
-            this.plugin = pluginFactory.getPluginForSite(turSNSite);
+            this.plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
             publishProgress("");
         }
 
@@ -428,7 +428,7 @@ public class TurSNSiteContentExchangeService {
             progressMap.put(taskId, new ContentExchangeProgress(
                     totalDocs, 0, "", INDEXING, startTime));
 
-            TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+            TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
 
             for (var localeEntry : localeContent.entrySet()) {
                 Locale locale = Locale.forLanguageTag(localeEntry.getKey().replace("_", "-"));
@@ -558,7 +558,7 @@ public class TurSNSiteContentExchangeService {
         }
 
         List<TurSNSiteLocale> locales = turSNSiteLocaleRepository.findByTurSNSite(turSNSite);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
         Map<String, TurSNSiteField> siteFieldMap = turSNSiteFieldService.toMap(turSNSite);
 
         long totalDocs = 0;

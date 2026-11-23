@@ -73,7 +73,7 @@ class TurSNMergeProvidersProcessTest {
                 mergeProviders.setOverwrittenFields(new HashSet<>(Collections.singletonList(field)));
                 when(turSNSiteMergeProvidersRepository.findByTurSNSite(site))
                                 .thenReturn(Collections.singletonList(mergeProviders));
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 return mergeProviders;
         }
 

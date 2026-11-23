@@ -57,7 +57,7 @@ public class TurSNSiteQueryAPI {
             @RequestParam(name = TurSNParamType.LOCALE) String localeRequest,
             @RequestBody String json) {
         return turSNSiteRepository.findByNameIgnoreCase(siteName)
-                .flatMap(turSNSite -> pluginFactory.getPluginForSite(turSNSite)
+                .flatMap(turSNSite -> pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                         .nativeJsonQuery(turSNSite, LocaleUtils.toLocale(localeRequest), json))
                 .orElse("{}");
     }

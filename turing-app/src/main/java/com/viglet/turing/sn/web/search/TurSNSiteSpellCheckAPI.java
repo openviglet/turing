@@ -84,7 +84,7 @@ public class TurSNSiteSpellCheckAPI {
             TurSNSiteSearchContext turSNSiteSearchContext = new TurSNSiteSearchContext(siteName,
                     turSNConfig, turSEParameters, locale, TurSNUtils.requestToURI(request));
             return new TurSNSiteSpellCheckBean(turSNSiteSearchContext,
-                    pluginFactory.getPluginForSite(turSNSite).spellCheck(siteName, q, locale));
+                    pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)).spellCheck(siteName, q, locale));
         }).orElse(null);
     }
 }

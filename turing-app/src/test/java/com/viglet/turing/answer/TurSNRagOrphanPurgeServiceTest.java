@@ -69,7 +69,7 @@ class TurSNRagOrphanPurgeServiceTest {
         when(context.isEnabled()).thenReturn(true);
         when(context.getRagInfrastructure()).thenReturn(infra);
         when(contextFactory.build(any(), eq("sample_en"))).thenReturn(context);
-        when(pluginFactory.getPluginForSite(any())).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
         when(ragContextBuilder.deleteByMetadata(eq(infra), anyMap())).thenReturn(true);
 
         site = new TurSNSite();

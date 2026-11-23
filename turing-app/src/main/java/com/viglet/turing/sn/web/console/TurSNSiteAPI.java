@@ -474,7 +474,7 @@ public class TurSNSiteAPI {
             turSNSiteMonitoringStatusBean.setQueue(turSNQueue.getQueueSize());
             long documentTotal = 0L;
             boolean searchEngineAvailable = true;
-            var plugin = pluginFactory.getPluginForSite(turSNSite);
+            var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
             for (TurSNSiteLocale turSNSiteLocale : turSNSiteLocaleRepository
                     .findByTurSNSite(TurPersistenceUtils.orderByLanguageIgnoreCase(), turSNSite)) {
                 try {

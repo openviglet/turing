@@ -89,7 +89,7 @@ public class TurSNSiteFieldCheckAPI {
                 TurSEInstance turSEInstance = snSiteSEInstances.of(turSNSite);
                 List<TurSNSiteLocale> siteLocales = turSNSiteLocaleRepository.findByTurSNSite(turSNSite);
                 // T1243 — the site's engine answers, not Solr directly.
-                TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+                TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
 
                 turSNSiteFieldExtRepository
                                 .findByTurSNSite(TurPersistenceUtils.orderByNameIgnoreCase(), turSNSite)
@@ -175,7 +175,7 @@ public class TurSNSiteFieldCheckAPI {
         }
         private List<TurSolrCoreExists> coresExist(TurSNSite turSNSite) {
                 List<TurSolrCoreExists> coresExist = new ArrayList<>();
-                var plugin = pluginFactory.getPluginForSite(turSNSite);
+                var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
                 turSNSiteLocaleRepository.findByTurSNSite(turSNSite)
                                 .forEach(turSNSiteLocale -> coresExist.add(TurSolrCoreExists.builder()
                                                 .name(turSNSiteLocale.getCore())

@@ -94,7 +94,7 @@ class TurImportExchangeContentStreamTest {
         site.setId("site-1");
         site.setName("Catalog");
         when(turSNSiteRepository.findByNameIgnoreCase("Catalog")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocuments(eq(site), any(), any())).thenAnswer(call -> {
             Locale locale = call.getArgument(1);
             @SuppressWarnings("unchecked")

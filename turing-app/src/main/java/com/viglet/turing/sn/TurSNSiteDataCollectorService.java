@@ -77,7 +77,7 @@ public class TurSNSiteDataCollectorService {
         sb.append("## Document Counts\n");
         for (var locale : locales) {
             try {
-                var plugin = pluginFactory.getPluginForSite(site);
+                var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
                 long count = plugin.getDocumentTotal(locale);
                 sb.append("- ").append(locale.getLanguage()).append(": ").append(count).append(" documents\n");
             } catch (Exception e) {

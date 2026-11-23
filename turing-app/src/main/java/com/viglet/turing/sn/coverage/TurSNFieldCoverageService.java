@@ -63,7 +63,7 @@ public class TurSNFieldCoverageService {
      */
     public TurSNFieldCoverageReport coverage(TurSNSite site) {
         List<TurSNSiteLocale> locales = snSiteLocaleRepository.findByTurSNSite(site);
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
 
         long totalDocuments = totalDocuments(plugin, locales);
 

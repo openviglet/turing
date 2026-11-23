@@ -117,7 +117,7 @@ class TurSNProcessQueueTest {
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US))).thenReturn(attrs);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -145,7 +145,7 @@ class TurSNProcessQueueTest {
 
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.deIndex(site, Locale.US, "1")).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -173,7 +173,7 @@ class TurSNProcessQueueTest {
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
 
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.commit(site, Locale.US)).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -210,7 +210,7 @@ class TurSNProcessQueueTest {
         when(turSNSpotlightProcess.isSpotlightJob(any())).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
                 .thenAnswer(invocation -> invocation.getArgument(1));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocuments(eq(site), eq(Locale.US), anyList())).thenReturn(2);
 
         processQueue.processIndexingQueue(jobItems);
@@ -244,7 +244,7 @@ class TurSNProcessQueueTest {
         when(turSNSpotlightProcess.isSpotlightJob(any())).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
                 .thenAnswer(invocation -> invocation.getArgument(1));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocuments(eq(site), eq(Locale.US), anyList())).thenReturn(2);
 
         processQueue.processIndexingQueue(jobItems);
@@ -267,7 +267,7 @@ class TurSNProcessQueueTest {
         when(turSNSpotlightProcess.isSpotlightJob(any())).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
                 .thenAnswer(invocation -> invocation.getArgument(1));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocuments(eq(site), eq(Locale.US), anyList()))
                 .thenThrow(new RuntimeException("boom"));
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
@@ -314,7 +314,7 @@ class TurSNProcessQueueTest {
         processQueue.processIndexingQueue(jobItems);
 
         verify(turSNSpotlightProcess).createUnmanagedSpotlight(item, site);
-        verify(pluginFactory, never()).getPluginForSite(any());
+        verify(pluginFactory, never()).getPluginForSeInstance(any());
     }
 
     @Test
@@ -336,7 +336,7 @@ class TurSNProcessQueueTest {
         processQueue.processIndexingQueue(jobItems);
 
         verify(turSNSpotlightProcess).deleteUnmanagedSpotlight(item, site);
-        verify(pluginFactory, never()).getPluginForSite(any());
+        verify(pluginFactory, never()).getPluginForSeInstance(any());
     }
 
     @Test
@@ -356,7 +356,7 @@ class TurSNProcessQueueTest {
 
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.deIndexByType(site, Locale.US, "news")).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -385,7 +385,7 @@ class TurSNProcessQueueTest {
 
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.deIndexByFields(site, Locale.US, Map.of("site_key", "a.example.org"))).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -413,7 +413,7 @@ class TurSNProcessQueueTest {
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
 
         when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.commit(site, Locale.US)).thenReturn(false);
 
         processQueue.processIndexingQueue(jobItems);
@@ -500,7 +500,7 @@ class TurSNProcessQueueTest {
         // so the captured map is exactly what conservative grounding kept.
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
                 .thenAnswer(invocation -> invocation.getArgument(1));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -550,7 +550,7 @@ class TurSNProcessQueueTest {
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
                 .thenReturn(new HashMap<>(item.getAttributes()));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -596,7 +596,7 @@ class TurSNProcessQueueTest {
         when(plugin.indexExists(seInstance, "t1234abcd_site1_en")).thenReturn(false);
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US))).thenReturn(attrs);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);
@@ -641,7 +641,7 @@ class TurSNProcessQueueTest {
         when(plugin.indexExists(seInstance, "core_en")).thenReturn(true);
         when(turSNSpotlightProcess.isSpotlightJob(item)).thenReturn(false);
         when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US))).thenReturn(attrs);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.indexDocument(eq(site), eq(Locale.US), anyMap())).thenReturn(true);
 
         processQueue.processIndexingQueue(jobItems);

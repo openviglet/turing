@@ -90,7 +90,7 @@ class TurSNIndexInventoryServiceTest {
     }
 
     private void givenPage(TurSEInventoryPage page) {
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.retrieveInventoryPage(any(), any(), any(), anyInt())).thenReturn(page);
     }
 
@@ -179,7 +179,7 @@ class TurSNIndexInventoryServiceTest {
     @DisplayName("An unreachable index reports unsupported, never an empty page")
     void engineFailureIsReportedAsUnsupported() {
         givenLocales(enLocale);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.retrieveInventoryPage(any(), any(), any(), anyInt()))
                 .thenThrow(new IllegalStateException("connection refused"));
 

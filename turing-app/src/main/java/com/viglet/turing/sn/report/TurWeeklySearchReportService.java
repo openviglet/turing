@@ -259,7 +259,7 @@ public class TurWeeklySearchReportService {
 
     private long getDocumentCount(TurSNSite site) {
         try {
-            var plugin = pluginFactory.getPluginForSite(site);
+            var plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
             return snSiteLocaleRepository.findByTurSNSite(site).stream()
                     .mapToLong(locale -> {
                         try {

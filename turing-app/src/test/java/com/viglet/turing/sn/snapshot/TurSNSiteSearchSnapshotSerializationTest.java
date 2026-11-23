@@ -130,7 +130,7 @@ class TurSNSiteSearchSnapshotSerializationTest {
         assertThat(back.getTurSNSiteGenAi().getEmbeddingModelId()).isEqualTo("emb-1");
         assertThat(back.getTurSNSiteGenAi().getSnRankingMode())
                 .isEqualTo(TurSNRankingMode.HYBRID_RRF);
-        // T1315 — getPluginForSite resolves the plugin from the SE instance id.
+        // T1315 — getPluginForSeInstance resolves the plugin from the SE instance id.
         assertThat(back.getTurSEInstanceId()).isEqualTo("se-1");
     }
 

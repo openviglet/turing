@@ -88,7 +88,7 @@ class TurDslSearchServiceDispatchTest {
         TurSNSite site = new TurSNSite();
         site.setName(SITE);
         when(turSNSiteRepository.findByNameIgnoreCase(SITE)).thenReturn(Optional.of(site));
-        when(pluginFactory.getPluginForSite(any())).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
         when(plugin.getPluginType()).thenReturn(siteEngine);
         when(solrExecutor.getEngineType()).thenReturn("solr");
         when(luceneExecutor.getEngineType()).thenReturn("lucene");

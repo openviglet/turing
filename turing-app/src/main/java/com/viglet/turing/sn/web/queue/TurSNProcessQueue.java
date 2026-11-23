@@ -247,7 +247,7 @@ public class TurSNProcessQueue {
         for (TurSNJobItem item : items) {
             documents.add(buildIndexAttributes(turSNSite, item));
         }
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
         int indexed;
         try {
             indexed = plugin.indexDocuments(turSNSite, locale, documents);
@@ -354,7 +354,7 @@ public class TurSNProcessQueue {
     }
 
     private boolean commitJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
-        return pluginFactory.getPluginForSite(turSNSite).commit(turSNSite, turSNJobItem.getLocale());
+        return pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)).commit(turSNSite, turSNJobItem.getLocale());
     }
 
     private boolean deleteJob(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
@@ -399,7 +399,7 @@ public class TurSNProcessQueue {
 
     public boolean deIndex(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
         log.debug("DeIndex");
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(turSNSite);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
         if (turSNJobItem.getAttributes().containsKey(TurSNFieldName.ID)) {
             boolean deIndexed = plugin.deIndex(turSNSite, turSNJobItem.getLocale(), turSNJobItem.getId());
             if (deIndexed) {
@@ -445,7 +445,7 @@ public class TurSNProcessQueue {
     private boolean index(TurSNJobItem turSNJobItem, TurSNSite turSNSite) {
         createMissingFields(turSNSite, turSNJobItem.getSpecs());
         Map<String, Object> attributes = buildIndexAttributes(turSNSite, turSNJobItem);
-        boolean indexed = pluginFactory.getPluginForSite(turSNSite)
+        boolean indexed = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite))
                 .indexDocument(turSNSite, turSNJobItem.getLocale(), attributes);
         if (indexed) {
             // T383 — side-write the document embedding for HYBRID_RRF sites (no-op otherwise).

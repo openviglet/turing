@@ -48,6 +48,15 @@ public class TurSNSites {
         this.turSNSiteRepository = turSNSiteRepository;
     }
 
+    /**
+     * T1310 — the id of the SE instance {@code site} names, or {@code null} for a
+     * {@code null} site; what the search-engine plugin factory resolves a plugin
+     * by, so it takes no sn entity.
+     */
+    public static String seInstanceIdOf(TurSNSite site) {
+        return site == null ? null : site.getTurSEInstanceId();
+    }
+
     public Optional<TurSNSite> findById(String id) {
         return turSNSiteRepository.findById(id);
     }

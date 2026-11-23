@@ -93,7 +93,7 @@ public class TurSNSiteFieldRepairAPI {
                 .ifPresent(turSNSite -> turSNSiteFieldExtRepository.findById(payload.getId())
                         .ifPresent(fieldExt -> resolveInstance(turSNSite)
                                 .ifPresent(turSEInstance -> applyRepair(payload, fieldExt,
-                                        new Engine(pluginFactory.getPluginForSite(turSNSite), turSEInstance,
+                                        new Engine(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite)), turSEInstance,
                                                 payload.getCore())))));
         return "ok";
     }

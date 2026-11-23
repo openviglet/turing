@@ -69,7 +69,7 @@ class TurSNSimilarDocumentsServiceTest {
     void setUp() {
         service = new TurSNSimilarDocumentsService(snapshotService, pluginFactory,
                 hybridRankingService);
-        lenient().when(pluginFactory.getPluginForSite(any())).thenReturn(plugin);
+        lenient().when(pluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
     }
 
     private TurSNSite site() {

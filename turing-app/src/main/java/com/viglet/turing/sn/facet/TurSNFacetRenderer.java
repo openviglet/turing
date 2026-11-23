@@ -269,7 +269,7 @@ public class TurSNFacetRenderer {
                 && TurSNFacetTypes.fqFields(typeContext.getTurSNFilterParams())
                         .contains(facetName)) {
             TurSearchEnginePlugin plugin = searchEnginePluginFactory
-                    .getPluginForSite(typeContext.getTurSNSite());
+                    .getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(typeContext.getTurSNSite()));
             TurSEFacetResult turSEFacetResult = plugin
                     .retrieveFacetResults(getContextSearchFacet(context, facetName), facetName)
                     .map(turSEFacetResults -> turSEFacetResults.getFacetResults().stream()

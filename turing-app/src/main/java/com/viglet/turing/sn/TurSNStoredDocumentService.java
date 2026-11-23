@@ -75,7 +75,7 @@ public class TurSNStoredDocumentService {
         if (siteLocale == null) {
             return List.of();
         }
-        List<Map<String, Object>> documents = pluginFactory.getPluginForSite(snapshot.get().site())
+        List<Map<String, Object>> documents = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(snapshot.get().site()))
                 .getStoredDocumentsByIds(siteLocale, wanted);
         // T1133 — a key bound to a partition of a shared site reads its own documents only.
         return com.viglet.turing.auth.security.auth.TurApiKeyPartitionContext.current()

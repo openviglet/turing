@@ -343,7 +343,7 @@ class TurSNSiteAPITest {
                 boolean result = api.turSNSiteDelete("site");
 
                 assertThat(result).isTrue();
-                verify(pluginFactory, never()).getPluginForSite(any());
+                verify(pluginFactory, never()).getPluginForSeInstance(any());
                 verify(siteRepository).delete(site);
         }
 
@@ -386,7 +386,7 @@ class TurSNSiteAPITest {
                 assertThat(site.getTurSNRankingExpressions()).isEmpty();
                 assertThat(site.getTurSNSiteMergeProviders()).isEmpty();
                 assertThat(site.getTurSNSiteGenAi()).isNull();
-                verify(pluginFactory, never()).getPluginForSite(any());
+                verify(pluginFactory, never()).getPluginForSeInstance(any());
 
                 InOrder inOrder = inOrder(siteRepository);
                 inOrder.verify(siteRepository).flush();
@@ -457,7 +457,7 @@ class TurSNSiteAPITest {
                                 org.mockito.ArgumentMatchers.eq(site)))
                                 .thenReturn(List.of(locale));
                 when(queue.getQueueSize()).thenReturn(2);
-                when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+                when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
                 when(plugin.getDocumentTotal(locale)).thenReturn(5L);
 
                 TurSNSiteMonitoringStatusBean result = api.turSNSiteMonitoringStatus("site");

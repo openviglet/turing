@@ -18,7 +18,6 @@ package com.viglet.turing.searchengine;
 
 import com.viglet.turing.observability.TurSearchObservation;
 import com.viglet.turing.searchengine.persistence.model.TurSEInstance;
-import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.system.resilience.TurResilienceExecutor;
 import com.viglet.turing.system.resilience.TurResilienceRegistry;
 import com.viglet.turing.system.resilience.TurResilienceRegistry.Kind;
@@ -163,15 +162,16 @@ public class TurSearchEnginePluginFactory {
     }
 
     /**
-     * Resolves the search engine plugin for the given SN site by inspecting its
-     * SE instance vendor plugin type.
+     * Resolves the search engine plugin for the SE instance an SN site names, by
+     * that instance's vendor plugin type. T1310 — takes the instance id rather
+     * than the site, so searchengine needs no sn entity; sn passes
+     * {@code TurSNSites.seInstanceIdOf(site)}.
      *
-     * @param turSNSite the SN site whose SE instance defines the engine
+     * @param seInstanceId the SE instance id, or {@code null} for none
      * @return the matching plugin, or Solr as fallback
      */
-    public TurSearchEnginePlugin getPluginForSite(TurSNSite turSNSite) {
-        // T1315 — the site names its SE instance by id; the plugin type is cached by id.
-        String seInstanceId = turSNSite == null ? null : turSNSite.getTurSEInstanceId();
+    public TurSearchEnginePlugin getPluginForSeInstance(String seInstanceId) {
+        // T1315 — the plugin type is cached by SE instance id.
         String pluginType = seInstanceId == null || pluginTypeOfSeInstance == null
                 ? TurSEInstancePluginTypes.DEFAULT_PLUGIN_TYPE
                 : pluginTypeOfSeInstance.apply(seInstanceId);

@@ -114,7 +114,7 @@ public class TurSNIndexInventoryService {
 
     private TurSEInventoryPage readPage(TurSNSite site, TurSNSiteLocale target, String source,
             String after, int rows) {
-        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSite(site);
+        TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site));
         try {
             return plugin.retrieveInventoryPage(target, source, after, rows);
         } catch (Exception e) {

@@ -98,7 +98,7 @@ class TurSNFieldProvisionerTest {
         });
         when(turSNSiteFieldExtRepository.save(any(TurSNSiteFieldExt.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.fieldExists(seInstance, "core_en", "customField")).thenReturn(false);
 
         boolean created = provisioner.ensureField(site, spec);

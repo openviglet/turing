@@ -128,7 +128,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
 
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
@@ -162,7 +162,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(any())).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(any())).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(any(), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -186,7 +186,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -210,7 +210,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
 
         TurSNSiteMetricAccessTerm term = new TurSNSiteMetricAccessTerm("java", 3, 10.0);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
@@ -235,7 +235,7 @@ class TurWeeklySearchReportServiceTest {
         when(globalSettingsService.getDefaultLlmId()).thenReturn("");
         when(metricAccessRepository.countTermsByPeriod(eq(site), any(), any())).thenReturn(0);
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
-        when(pluginFactory.getPluginForSite(site)).thenThrow(new RuntimeException("plugin error"));
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenThrow(new RuntimeException("plugin error"));
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -259,7 +259,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -309,7 +309,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -353,7 +353,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -409,7 +409,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -466,7 +466,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
 
         // 3 terms to test first/middle/last border-radius logic
         TurSNSiteMetricAccessTerm term1 = new TurSNSiteMetricAccessTerm("java", 10, 50.0);
@@ -509,7 +509,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale, ptLocale));
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(enLocale)).thenReturn(1000L);
         when(plugin.getDocumentTotal(ptLocale)).thenReturn(500L);
 
@@ -538,7 +538,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(List.of(enLocale));
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(plugin.getDocumentTotal(enLocale)).thenThrow(new RuntimeException("Solr down"));
 
         when(emailService.loadTemplate("templates/email/weekly-search-report-site-card.html"))
@@ -580,7 +580,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -630,7 +630,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(site)).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(eq(site), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -679,7 +679,7 @@ class TurWeeklySearchReportServiceTest {
         when(snSiteLocaleRepository.findByTurSNSite(any())).thenReturn(Collections.emptyList());
 
         TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
-        when(pluginFactory.getPluginForSite(any())).thenReturn(plugin);
+        when(pluginFactory.getPluginForSeInstance(any())).thenReturn(plugin);
         when(metricAccessRepository.topTermsBetweenDates(any(), any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
