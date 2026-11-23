@@ -2414,24 +2414,6 @@ citations event arrives after the block has drawn the list.
 test covers an answer with no citations, and the story video's chapter 2 is recorded
 again with it.
 
-### CLXXXII.12 Answer citations say when the answer cited nothing (from T1261) (T1265)
-
-T1261 found it while fixing the WordPress plugin's answer panel. The answer engine's
-trailing `citations` event comes from TurAnswerStreamFramer.trailingEvents, which calls
-TurAnswerCitationNumberer.renumberByMarkers with failOpenTopK = every source. When the
-answer text carries no `[n]` marker, the event therefore lists every retrieved source,
-positionally numbered, and a client cannot tell "the answer cited these" from "the
-answer cited nothing". The plugin now trusts only sources whose number appears in the
-text; the SDK's own answer UI and any other client still show retrieval as citations.
-
-Two halves. First, why a plain product question ("uma barraca para duas pessoas" on the
-Recanto da Serra demo) is answered with no marker at all: whether the RAG system prompt
-the answer path uses asks for `[n]` footnotes on a short answer, and whether the catalog
-path (T1212) does. Second, the event says what it is: shipped as `trace.cited` (the
-per-site opt-in that would have emptied the citations was dropped: a client that wants
-none drops them when `cited` is false). Done when the demo question returns a marker in
-the answer, and a marker-less answer on an opted-in site sends no citations.
-
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
