@@ -194,6 +194,96 @@ test( 'an answer that cites nothing is never drawn', async ( {
 	await expect( panel( page ) ).toBeHidden();
 } );
 
+// What Turing sends when the answer's text carries no [n] marker (T1261, Turing T1265): the
+// trailing citations fail open to every retrieved document, numbered by position.
+const retrieved = [
+	{
+		sourceId: 'localhost:post:9',
+		title: 'Workshop on facets',
+		url: 'http://localhost:8080/?p=9',
+		footnote: 1,
+	},
+	{
+		sourceId: 'localhost:post:10',
+		title: 'Seminar on search',
+		url: 'http://localhost:8080/?p=10',
+		footnote: 2,
+	},
+	{
+		sourceId: 'localhost:post:11',
+		title: 'Unrelated post',
+		url: 'http://localhost:8080/?p=11',
+		footnote: 3,
+	},
+];
+const failOpen = retrieved.map( ( { title, url }, i ) => ( {
+	rank: i + 1,
+	title,
+	url,
+} ) );
+
+test( 'an answer with no [n] marker is not drawn, though Turing lists every source as cited', async ( {
+	page,
+	seed,
+} ) => {
+	await page.route( answerRoute, ( route ) =>
+		route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body: stream( [
+				[ 'sources', JSON.stringify( retrieved ) ],
+				[ 'token', 'The Workshop on facets covers them.' ],
+				[ 'citations', JSON.stringify( failOpen ) ],
+			] ),
+		} )
+	);
+	await page.goto(
+		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent(
+			'which workshop covers facets?'
+		) }`
+	);
+	await expect( page.locator( '.viglet-turing-search__summary' ) ).toHaveText(
+		/results/
+	);
+	await page.waitForLoadState( 'networkidle' );
+	await expect( panel( page ) ).toBeHidden();
+} );
+
+test( 'an answer lists only the sources its text cites, not every one Turing retrieved', async ( {
+	page,
+	seed,
+} ) => {
+	await page.route( answerRoute, ( route ) =>
+		route.fulfill( {
+			status: 200,
+			contentType: 'text/event-stream',
+			body: stream( [
+				[ 'sources', JSON.stringify( retrieved ) ],
+				[
+					'token',
+					'Search is the subject of the Seminar on search [2].',
+				],
+				[ 'citations', JSON.stringify( failOpen ) ],
+			] ),
+		} )
+	);
+	await page.goto(
+		`/?page_id=${ seed.askPageId }&q=${ encodeURIComponent(
+			'which seminar covers search?'
+		) }`
+	);
+	await expect( panel( page ) ).toBeVisible();
+	const links = panel( page ).getByRole( 'link', {
+		name: /Workshop on facets|Seminar on search|Unrelated post/,
+	} );
+	await expect( links ).toHaveCount( 1 );
+	await expect( links ).toHaveText( /Seminar on search/ );
+	await expect( links ).toHaveAttribute(
+		'href',
+		'http://localhost:8080/?p=10'
+	);
+} );
+
 test( 'a site whose AI is off shows no panel and no error', async ( {
 	page,
 	seed,
