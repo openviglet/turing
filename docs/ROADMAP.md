@@ -42,7 +42,7 @@
 
 ## Block CB — LLM gateway parity with the OpenAI wire
 
-- 📋 **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Turing already batches its own jobs at half price (T156), but a gateway client generating thousands of texts waits an hour and pays double. → §CXIII.6
+- ⏳ **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Left: run lines synchronously for a vendor with no batch tier, and charge batch usage to the key's budget and rate limit at the batch price. → §CXIII.6
 
 ## Done when — T1184
 
@@ -68,6 +68,15 @@
 - **system imports only shared, tenant only system and shared** A grep of the system and
   tenant packages finds no import of another module beyond those named, and auth imports
   only system, tenant and shared.
+
+## Done when — T1341
+
+- **A batch on a vendor with no batch tier still completes** POST /v1/batches on an
+  Ollama or Bedrock instance answers a batch that runs its lines synchronously and
+  serves the same output JSONL, instead of 400.
+- **Batch usage counts against the key's budget at the batch price** A completed gateway
+  batch records its token usage for the key at the vendor's batch price, and a key over
+  its hard cap or rate limit is refused at POST /v1/batches.
 
 ## Non-goals (do NOT add as tasks)
 

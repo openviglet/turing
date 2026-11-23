@@ -24,6 +24,8 @@ Base URL: `https://<your-turing-host>/v1`
 | `POST /v1/chat/completions` | Chat completions: blocking, or streamed when `"stream": true` (OpenAI `data:` chunks, terminated by `data: [DONE]`) |
 | `POST /v1/embeddings` | Embeddings |
 | `GET /v1/models` | Lists the models the gateway advertises (every enabled LLM instance) |
+| `POST /v1/files`, `GET /v1/files/{id}`, `GET /v1/files/{id}/content` | Upload a batch input file and read a batch's output (see [Batch](#batch)) |
+| `POST /v1/batches`, `GET /v1/batches/{id}`, `POST /v1/batches/{id}/cancel` | Run chat completions as a batch at the vendor's batch price (see [Batch](#batch)) |
 
 Because the wire format is OpenAI's, the official SDKs work unchanged:
 
@@ -111,6 +113,47 @@ providers (Anthropic, Gemini native, Ollama, Bedrock, …), the `turing-agent:`,
 `turing-sn:` and copilot routes, and `x-turing-tools` turns. With
 `x-turing-cache: semantic`, a JSON-mode answer is cached apart from the plain-text
 answer to the same prompt.
+
+## Batch
+
+A bulk job that does not need its answers now (thousands of descriptions, a
+weekly re-summarisation) can run through OpenAI's batch wire instead of one
+synchronous call per line, and pays the vendor's batch price, about half. The
+calls are OpenAI's, so the SDK's `files` and `batches` work unchanged:
+
+```python
+batch_file = client.files.create(file=open("requests.jsonl", "rb"), purpose="batch")
+batch = client.batches.create(input_file_id=batch_file.id,
+                              endpoint="/v1/chat/completions", completion_window="24h")
+# later
+batch = client.batches.retrieve(batch.id)
+if batch.status == "completed":
+    output = client.files.content(batch.output_file_id).text
+```
+
+Each line of `requests.jsonl` is one chat completion with a unique `custom_id`:
+
+```json
+{"custom_id": "celeste", "method": "POST", "url": "/v1/chat/completions",
+ "body": {"model": "gpt-4o-mini", "max_tokens": 300,
+          "messages": [{"role": "system", "content": "Write in pt-BR."},
+                       {"role": "user", "content": "Describe Celeste."}]}}
+```
+
+The output file has one line per input line, matched by `custom_id`: a `response`
+with the `chat.completion` body, or an `error`. A line the key may not use (a
+model outside its allow-list) or that a batch cannot carry is an error line in the
+output; the rest of the batch runs.
+
+What a batch needs and takes:
+
+- The batch tier is on (`turing.batch.enabled=true`) and the model's provider has
+  one: OpenAI, Anthropic or Gemini. Otherwise `POST /v1/batches` answers 400.
+- Every line of a batch uses the same model.
+- A line carries system messages and one user message; a line with earlier
+  assistant turns is answered as an error line.
+- A file and a batch belong to the key that created them; another key gets 404.
+- Batch lines are not yet counted against the key's budget or rate limit.
 
 ## Cross-cutting headers
 

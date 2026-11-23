@@ -86,6 +86,8 @@ class TurTenancyRulingConventionTest {
         owners.put("TurLLMInstanceCapability", "TurLLMInstance");
         owners.put("TurVendorFile", "TurLLMInstance");
         owners.put("TurBatchJob", "TurLLMInstance");
+        // T1341 — a gateway batch input file belongs to the key that uploaded it.
+        owners.put("TurGatewayBatchFile", "TurGatewayKey");
         owners.put("TurRagBm25Core", "TurStoreInstance");
         return owners;
     }
