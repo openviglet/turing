@@ -36,7 +36,7 @@ public class TurMcpClientProperty {
 
     /**
      * When {@code true}, an HTTP MCP-client URL that resolves to a private /
-     * loopback / link-local address is refused (via {@link com.viglet.turing.auth.security.ssrf.TurSsrfGuard}).
+     * loopback / link-local address is refused (via {@code TurSsrfGuard}).
      * Default {@code false} because a legitimate MCP server often lives on an
      * internal network — turn on for an internet-only egress posture.
      */

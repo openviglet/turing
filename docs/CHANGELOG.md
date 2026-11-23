@@ -1842,3 +1842,4 @@
 - **T1310y** — The Content AI plugin, DSL executor and query builder read the site and its core through TurSESiteSearchConfig and endpoints from TurSEInstanceEndpoints; none imports an sn repository.
 - **T1322t** — The site console, manifest converger and import paths ask about agents through TurSNSiteAgents, which sn declares in its api and the agent module implements.
 - **T1322u** — system reads the tenant context, platform admin and infra scope through viglet-core's tenancy types, and the tenant task decorator moved into system; system imports no tenant type.
+- **T1322v** — The ffmpeg probe moved to transcription and the startup seed import to exchange, both unchanged in behaviour and path; system no longer imports transcription, exchange, rag or observability.

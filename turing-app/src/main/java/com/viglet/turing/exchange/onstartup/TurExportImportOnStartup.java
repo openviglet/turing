@@ -18,9 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.viglet.turing.system.onstartup;
+package com.viglet.turing.exchange.onstartup;
 
 import com.viglet.turing.exchange.TurImportExchange;
+import com.viglet.turing.system.onstartup.TurOnStartup;
 import com.viglet.turing.system.persistence.model.TurConfigVar;
 import com.viglet.turing.system.persistence.repository.TurConfigVarRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ import java.util.Arrays;
  * {@code export/} folder before the first launch.
  * <p>
  * Runs after {@link TurOnStartup} (which creates default data) via {@code @Order(2)}.
+ * T1322v — lives in exchange, beside the import it runs, so system does not
+ * import exchange (ADR 0005 section 6).
  *
  * <h2>What "done" means (T949 / §XIV.8.8)</h2>
  *

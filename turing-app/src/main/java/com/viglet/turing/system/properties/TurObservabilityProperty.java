@@ -50,7 +50,7 @@ public class TurObservabilityProperty {
 
     /**
      * T129 — chat-pipeline OpenTelemetry span export. When {@code enabled},
-     * {@link com.viglet.turing.observability.TurChatPipelineObservation#record}
+     * {@code TurChatPipelineObservation.record}
      * wraps each stage in a Micrometer {@code Observation}, producing an OTel
      * span (via the bridge) in addition to the existing timer metric.
      */

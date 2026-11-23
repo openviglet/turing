@@ -85,7 +85,7 @@ import lombok.extern.slf4j.Slf4j;
  * endpoint set on a Gemini boot is logged as ignored rather than silently dropped.
  *
  * <p>
- * Runs after {@link com.viglet.turing.system.onstartup.TurExportImportOnStartup}
+ * Runs after {@link com.viglet.turing.exchange.onstartup.TurExportImportOnStartup}
  * ({@code @Order(2)}) via {@code @Order(3)} so a seeded export ZIP (which may
  * bring its
  * own LLM instance) is imported first.

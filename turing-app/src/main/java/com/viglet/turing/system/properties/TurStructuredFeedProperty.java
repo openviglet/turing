@@ -23,7 +23,7 @@ import lombok.Setter;
 /**
  * T791 / §LIV.2 (Block BF) — configuration for the scheduled
  * <strong>structured-feed pull ingester</strong>
- * ({@link com.viglet.turing.rag.feed.TurStructuredFeedIngestService}): the
+ * ({@code TurStructuredFeedIngestService}): the
  * "pull" side of ingestion for a Vectorless (Structured-Data) RAG knowledge base.
  *
  * <p>Opt-in and off by default: {@link #enabled} gates the scheduler, and with an

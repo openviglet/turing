@@ -82,7 +82,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * <b>Ordering.</b> {@code @Order(4)} runs after {@link TurLLMInstanceOnStartup}
  * ({@code @Order(3)}) so the Default AI Agent already exists to wire onto, and
- * after {@link com.viglet.turing.system.onstartup.TurExportImportOnStartup}
+ * after {@link com.viglet.turing.exchange.onstartup.TurExportImportOnStartup}
  * ({@code @Order(2)}) so the seed content is already imported into the search
  * engine (the reindex source).
  *

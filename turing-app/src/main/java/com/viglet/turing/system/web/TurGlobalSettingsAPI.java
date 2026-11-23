@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.system.email.TurEmailService;
 import com.viglet.turing.system.TurCodeInterpreterDockerProbe;
 import com.viglet.turing.system.TurDockerStatus;
-import com.viglet.turing.transcription.TurAudioChunker;
-import com.viglet.turing.transcription.TurAudioChunker.TurFfmpegStatus;
 import com.viglet.turing.system.TurGlobalSettingsService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,16 +25,13 @@ public class TurGlobalSettingsAPI {
     private final TurGlobalSettingsService turGlobalSettingsService;
     private final TurEmailService turEmailService;
     private final TurCodeInterpreterDockerProbe turCodeInterpreterToolService;
-    private final TurAudioChunker turAudioChunker;
 
     public TurGlobalSettingsAPI(TurGlobalSettingsService turGlobalSettingsService,
             TurEmailService turEmailService,
-            TurCodeInterpreterDockerProbe turCodeInterpreterToolService,
-            TurAudioChunker turAudioChunker) {
+            TurCodeInterpreterDockerProbe turCodeInterpreterToolService) {
         this.turGlobalSettingsService = turGlobalSettingsService;
         this.turEmailService = turEmailService;
         this.turCodeInterpreterToolService = turCodeInterpreterToolService;
-        this.turAudioChunker = turAudioChunker;
     }
 
     @Operation(summary = "Get global settings")
@@ -305,19 +300,8 @@ public class TurGlobalSettingsAPI {
         return turCodeInterpreterToolService.checkDocker();
     }
 
-    /**
-     * T688 — probes whether the {@code ffmpeg} toolchain is reachable from the
-     * running server. Chunking audio above a backend's per-request limit requires
-     * ffmpeg; small clips do not. Lets the admin validate the host before relying
-     * on large-file transcription. Never sends anything sensitive — only an
-     * availability flag, the ffmpeg version banner, and an error string when
-     * unavailable.
-     */
-    @Operation(summary = "Check whether ffmpeg is available for large-audio transcription chunking")
-    @GetMapping("/transcription/ffmpeg/status")
-    public TurFfmpegStatus getFfmpegStatus() {
-        return turAudioChunker.checkFfmpeg();
-    }
+    // T1322v — GET /transcription/ffmpeg/status moved to transcription's
+    // TurTranscriptionFfmpegStatusAPI, at the same path.
 
     @Operation(summary = "Send a test email to validate email configuration")
     @PostMapping("/email/test")
