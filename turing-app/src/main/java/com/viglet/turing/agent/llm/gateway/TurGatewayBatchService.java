@@ -45,7 +45,9 @@ import com.viglet.turing.llm.gateway.TurOpenAiWire.ChatCompletion;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.Choice;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.Usage;
 import com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage;
+import com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
+import com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository;
 import com.viglet.turing.llm.persistence.model.gateway.TurGatewayBatchFile;
 import com.viglet.turing.llm.persistence.model.gateway.TurGatewayKey;
 import com.viglet.turing.llm.persistence.repository.gateway.TurGatewayBatchFileRepository;
@@ -82,6 +84,8 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     static final String PURPOSE = "gateway";
     static final String CHAT_ENDPOINT = "/v1/chat/completions";
     static final String WINDOW = "24h";
+    static final String STAGE_BATCH = "gateway.batch";
+    private static final String GATEWAY_USER = "gateway";
     private static final String FILE_PREFIX = "file-";
     private static final String OUTPUT_PREFIX = "file-out-";
     private static final String BATCH_PREFIX = "batch_";
@@ -93,15 +97,20 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     private final TurBatchInferenceService batchInferenceService;
     private final TurGatewayKeyService gatewayKeyService;
     private final TurGatewayLlmService gatewayLlmService;
+    private final TurLLMInstanceRepository llmInstanceRepository;
+    private final TurLLMTokenUsageService tokenUsageService;
 
     public TurGatewayBatchService(TurGatewayBatchFileRepository fileRepository,
             TurBatchJobRepository jobRepository, TurBatchInferenceService batchInferenceService,
-            TurGatewayKeyService gatewayKeyService, TurGatewayLlmService gatewayLlmService) {
+            TurGatewayKeyService gatewayKeyService, TurGatewayLlmService gatewayLlmService,
+            TurLLMInstanceRepository llmInstanceRepository, TurLLMTokenUsageService tokenUsageService) {
         this.fileRepository = fileRepository;
         this.jobRepository = jobRepository;
         this.batchInferenceService = batchInferenceService;
         this.gatewayKeyService = gatewayKeyService;
         this.gatewayLlmService = gatewayLlmService;
+        this.llmInstanceRepository = llmInstanceRepository;
+        this.tokenUsageService = tokenUsageService;
     }
 
     /** A line of the output that never reached the vendor, and why. */
@@ -167,7 +176,9 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
             throw new IllegalArgumentException("The batch tier is off on this Turing (turing.batch.enabled)");
         }
         TurGatewayBatchFile file = ownedFile(request.input_file_id());
-        TurGatewayKey key = TurGatewayContext.get();
+        // A batch is one call against the key's rate limit and hard cap, as a
+        // synchronous completion is; its lines are charged when it completes.
+        TurGatewayKey key = gatewayLlmService.applyPerKeyPreCall();
 
         List<TurBatchChatRequest> accepted = new ArrayList<>();
         List<Refused> refused = new ArrayList<>();
@@ -238,9 +249,26 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
         return PURPOSE;
     }
 
+    /**
+     * Charges the completed lines to the key that submitted the batch, at the
+     * vendor's batch price ({@link TurLLMTokenUsageService#BATCH_PRICE_FACTOR}), so
+     * the key's spend, budget and monthly cap see them.
+     */
     @Override
     public void onBatchComplete(TurBatchJob job, List<TurBatchChatResult> results) {
-        log.info("[Gateway] batch {} completed: {} result(s)", job.getId(), results.size());
+        TurLLMInstance instance = llmInstanceRepository.findById(job.getInstanceId()).orElse(null);
+        String keyId = context(job).keyId();
+        double cost = 0;
+        for (TurBatchChatResult result : results) {
+            if (result.success()) {
+                cost += tokenUsageService.recordBatchUsage(instance,
+                        result.inputTokens() == null ? 0 : result.inputTokens(),
+                        result.outputTokens() == null ? 0 : result.outputTokens(),
+                        GATEWAY_USER, STAGE_BATCH, keyId);
+            }
+        }
+        log.info("[Gateway] batch {} completed: {} result(s), ${} booked to key {}",
+                job.getId(), results.size(), cost, keyId);
     }
 
     // ---- Internals --------------------------------------------------------

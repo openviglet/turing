@@ -1590,6 +1590,7 @@
 - **T1100** — A streamed gateway call answers a provider refusal before the first token with the blocking path's status (429 for limits), and later failures arrive as OpenAI error events (design §CXIII.4 recorded in `turing-app/src/main/java/com/viglet/turing/genai/gateway/TurGatewayStreams.java`).
 - **T1102** — /api/v2/llm/{id}/chat takes per-call temperature, topP, maxTokens, stop and a JSON response format, through the TurPromptOverrides the gateway now shares (design §CXIII.5 recorded in `turing-app/src/main/java/com/viglet/turing/genai/TurPromptOverrides.java`).
 - **T1341 (batch wire on batch-tier vendors)** — /v1/files and /v1/batches run a key's chat lines through T156's batch tier on OpenAI, Anthropic and Gemini, with refused lines as output error lines.
+- **T1346** — T1341 slice: creating a gateway batch passes the key's rate limit and hard cap, and its completed lines are booked to the key at half the price (recordBatchUsage).
 
 ## Block CC — Lucene engine search with synonyms
 

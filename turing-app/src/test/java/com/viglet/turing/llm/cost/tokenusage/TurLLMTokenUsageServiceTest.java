@@ -145,6 +145,30 @@ class TurLLMTokenUsageServiceTest {
         assertThat(returned).isEqualTo(0.75);
     }
 
+    @Test
+    void aBatchLineIsBookedAtHalfThePriceToItsKey() {
+        // T1341 — a vendor batch bills half the synchronous price.
+        when(priceRepository.findByVendorIdAndModelName("openai", "gpt-4"))
+                .thenReturn(java.util.Optional.of(price(0.15, 0.6)));
+
+        double returned = service.recordBatchUsage(instance, 1_000_000, 1_000_000, "gateway",
+                "gateway.batch", "key-1");
+
+        TurLLMTokenUsage saved = saved();
+        assertThat(saved.getCostUsd()).isEqualTo(0.375);
+        assertThat(returned).isEqualTo(0.375);
+        assertThat(saved.getKeyId()).isEqualTo("key-1");
+        assertThat(saved.getStage()).isEqualTo("gateway.batch");
+        assertThat(saved.getTotalTokens()).isEqualTo(2_000_000L);
+    }
+
+    @Test
+    void aBatchLineWithNoTokensOrNoInstanceBooksNothing() {
+        assertThat(service.recordBatchUsage(instance, 0, 0, "gateway", "gateway.batch", "k")).isZero();
+        assertThat(service.recordBatchUsage(null, 10, 10, "gateway", "gateway.batch", "k")).isZero();
+        org.mockito.Mockito.verifyNoInteractions(tokenUsageRepository);
+    }
+
     private void stubUsage(int input, int output) {
         when(chatResponse.getMetadata()).thenReturn(metadata);
         when(metadata.getUsage()).thenReturn(usage);

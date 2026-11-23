@@ -117,6 +117,9 @@ public class TurOpenAiBatchGatewayAPI {
     private ResponseEntity<?> answer(Supplier<Object> call) {
         try {
             return ResponseEntity.ok(call.get());
+        } catch (com.viglet.turing.llm.gateway.TurGatewayLimitException e) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(ErrorEnvelope.of(e.getMessage(), e.getType(), e.getType()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ErrorEnvelope.of(e.getMessage(), INVALID_REQUEST, "not_found"));

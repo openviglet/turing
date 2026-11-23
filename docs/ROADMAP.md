@@ -41,7 +41,7 @@
 
 ## Block CB — LLM gateway parity with the OpenAI wire
 
-- ⏳ **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Left: run lines synchronously for a vendor with no batch tier, and charge batch usage to the key's budget and rate limit at the batch price. → §CXIII.6
+- 🛠 **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Left: run lines synchronously for a vendor with no batch tier, so the batch wire answers for every model. → §CXIII.6
 
 ## Done when — T1184
 
@@ -67,9 +67,6 @@
 - **A batch on a vendor with no batch tier still completes** POST /v1/batches on an
   Ollama or Bedrock instance answers a batch that runs its lines synchronously and
   serves the same output JSONL, instead of 400.
-- **Batch usage counts against the key's budget at the batch price** A completed gateway
-  batch records its token usage for the key at the vendor's batch price, and a key over
-  its hard cap or rate limit is refused at POST /v1/batches.
 
 ## Done when — T1343
 

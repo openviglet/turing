@@ -56,8 +56,12 @@ class TurGatewayBatchServiceTest {
     private final TurBatchInferenceService batches = mock(TurBatchInferenceService.class);
     private final TurGatewayKeyService keys = mock(TurGatewayKeyService.class);
     private final TurGatewayLlmService llm = mock(TurGatewayLlmService.class);
+    private final com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository instances =
+            mock(com.viglet.turing.llm.persistence.repository.TurLLMInstanceRepository.class);
+    private final com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService usage =
+            mock(com.viglet.turing.llm.cost.tokenusage.TurLLMTokenUsageService.class);
     private final TurGatewayBatchService service =
-            new TurGatewayBatchService(files, jobs, batches, keys, llm);
+            new TurGatewayBatchService(files, jobs, batches, keys, llm, instances, usage);
 
     private final TurGatewayKey key = new TurGatewayKey();
     private final TurLLMInstance instance = new TurLLMInstance();
@@ -76,6 +80,7 @@ class TurGatewayBatchServiceTest {
         TurGatewayContext.set(key);
         instance.setId("gpt-4o-mini");
         when(llm.resolveChatInstance(anyString())).thenReturn(instance);
+        when(llm.applyPerKeyPreCall()).thenAnswer(inv -> TurGatewayContext.get());
         when(keys.isModelAllowed(eq(key), anyString())).thenReturn(true);
         when(batches.isEnabled()).thenReturn(true);
         when(batches.isSupported(instance)).thenReturn(true);
@@ -216,5 +221,30 @@ class TurGatewayBatchServiceTest {
         assertThat(service.batch("batch_j1").output_file_id()).isNull();
         assertThatThrownBy(() -> service.fileContent("file-out-j1"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("validating");
+    }
+
+    @Test
+    void aKeyOverItsLimitCannotCreateABatch() {
+        stored(line("a", "gpt-4o-mini", SYSTEM_AND_USER));
+        when(llm.applyPerKeyPreCall()).thenThrow(com.viglet.turing.llm.gateway.TurGatewayLimitException.quotaExceeded());
+
+        assertThatThrownBy(() -> service.create(new BatchCreateRequest("file-f1", "/v1/chat/completions", "24h", null)))
+                .isInstanceOf(com.viglet.turing.llm.gateway.TurGatewayLimitException.class);
+        org.mockito.Mockito.verify(batches, org.mockito.Mockito.never()).submit(any(), anyString(), anyList(), anyString());
+    }
+
+    @Test
+    void aCompletedBatchChargesItsLinesToTheKeyAtTheBatchPrice() {
+        stored(line("a", "gpt-4o-mini", SYSTEM_AND_USER) + "\n" + line("b", "gpt-4o-mini", SYSTEM_AND_USER));
+        TurBatchJob job = submittedJob();
+        service.create(new BatchCreateRequest("file-f1", "/v1/chat/completions", "24h", null));
+        job.setInstanceId("gpt-4o-mini");
+        when(instances.findById("gpt-4o-mini")).thenReturn(Optional.of(instance));
+
+        service.onBatchComplete(job, List.of(TurBatchChatResult.ok("a", "x", 100L, 20L),
+                TurBatchChatResult.failed("b", "vendor error")));
+
+        org.mockito.Mockito.verify(usage).recordBatchUsage(instance, 100L, 20L, "gateway", "gateway.batch", "key-1");
+        org.mockito.Mockito.verifyNoMoreInteractions(usage);
     }
 }

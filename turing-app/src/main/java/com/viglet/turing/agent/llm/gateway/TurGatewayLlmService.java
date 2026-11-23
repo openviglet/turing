@@ -258,7 +258,7 @@ public class TurGatewayLlmService {
      * soft-budget downgrade. Throws {@link TurGatewayLimitException} (→ 429) when a
      * limit is hit.
      */
-    private TurGatewayKey applyPerKeyPreCall() {
+    TurGatewayKey applyPerKeyPreCall() {
         TurGatewayKey key = TurGatewayContext.get();
         if (key != null) {
             if (!gatewayRateLimiter.tryAcquire(key)) {

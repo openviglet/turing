@@ -153,7 +153,9 @@ What a batch needs and takes:
 - A line carries system messages and one user message; a line with earlier
   assistant turns is answered as an error line.
 - A file and a batch belong to the key that created them; another key gets 404.
-- Batch lines are not yet counted against the key's budget or rate limit.
+- Creating a batch counts as one call against the key's rate limit and hard cap; a
+  key over either is refused with 429. When the batch completes, its lines are booked
+  to the key at half the synchronous price, so they count toward its spend and budget.
 
 ## Cross-cutting headers
 

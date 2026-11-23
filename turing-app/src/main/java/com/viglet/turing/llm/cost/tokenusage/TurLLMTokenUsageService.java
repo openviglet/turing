@@ -102,13 +102,52 @@ public class TurLLMTokenUsageService {
             if (totalTokens == 0 && inputTokens == 0 && outputTokens == 0) {
                 return 0.0;
             }
+            return persist(instance, inputTokens, outputTokens, totalTokens, username, agentId, stage,
+                    keyId, siteName, 1.0);
+        } catch (Exception e) {
+            log.warn("[TokenUsage] Failed to record token usage: {}", e.getMessage());
+            return 0.0;
+        }
+    }
 
+    /**
+     * T1341 — the share of the synchronous price a vendor batch bills: OpenAI,
+     * Anthropic and Gemini all price their batch tier at half.
+     */
+    public static final double BATCH_PRICE_FACTOR = 0.5;
+
+    /**
+     * T1341 — records a completed batch line, which carries token counts but no
+     * {@link ChatResponse}, at {@link #BATCH_PRICE_FACTOR} of the synchronous price,
+     * attributed to the gateway key that submitted it.
+     *
+     * @return the USD cost booked, or {@code 0.0} when nothing was recorded
+     */
+    public double recordBatchUsage(TurLLMInstance instance, long inputTokens, long outputTokens,
+            String username, String stage, String keyId) {
+        if (instance == null || (inputTokens == 0 && outputTokens == 0)) {
+            return 0.0;
+        }
+        try {
+            return persist(instance, inputTokens, outputTokens, inputTokens + outputTokens, username,
+                    null, stage, keyId, null, BATCH_PRICE_FACTOR);
+        } catch (Exception e) {
+            log.warn("[TokenUsage] Failed to record batch token usage: {}", e.getMessage());
+            return 0.0;
+        }
+    }
+
+    private double persist(TurLLMInstance instance, long inputTokens, long outputTokens, long totalTokens,
+            String username, String agentId, String stage, String keyId, String siteName,
+            double priceFactor) {
+        {
             String vendorId = instance.getTurLLMVendor() != null
                     ? instance.getTurLLMVendor().getId()
                     : "unknown";
             // T1144 — null when the model has no price row: booked as unpriced, not $0.
-            Double bookedCost = priceService.callCost(
+            Double listCost = priceService.callCost(
                     vendorId, instance.getModelName(), inputTokens, outputTokens);
+            Double bookedCost = listCost == null ? null : listCost * priceFactor;
             double costUsd = bookedCost == null ? 0.0 : bookedCost;
 
             TurLLMTokenUsage turLLMTokenUsage = new TurLLMTokenUsage();
@@ -147,9 +186,6 @@ public class TurLLMTokenUsageService {
                     instance.getId(), instance.getModelName(),
                     inputTokens, outputTokens, turLLMTokenUsage.getTotalTokens(), costUsd, username);
             return costUsd;
-        } catch (Exception e) {
-            log.warn("[TokenUsage] Failed to record token usage: {}", e.getMessage());
-            return 0.0;
         }
     }
 }
