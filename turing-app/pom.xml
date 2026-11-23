@@ -397,6 +397,13 @@
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-jpa</artifactId>
         </dependency>
+        <!-- T1327 / ADR 0005 — per-module tracing: calls entering a module through its
+             API become Micrometer observations. Opt-in with
+             turing.observability.modules.enabled (TurModuleObservabilityConfig). -->
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-observability-core</artifactId>
+        </dependency>
         <!-- T1306 / ADR 0005 — Spring Modulith's module model and verification. -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>

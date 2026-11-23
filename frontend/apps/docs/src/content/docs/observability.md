@@ -281,6 +281,19 @@ Sampling at 1.0 (every request) is fine for low-traffic deployments and during i
 
 When tracing is on, every LLM call, search, and snapshot lookup gets a span with the same low-cardinality tags as the metrics. You can pivot between *"how slow is this in aggregate"* (Grafana) and *"why was this specific request slow"* (Jaeger) without changing instrumentation.
 
+### Time per module
+
+A slow chat request spends its time across several parts of the backend: the LLM call, retrieval, the SN site's search and the search engine. To see that split in a trace, turn on per-module tracing:
+
+```yaml
+turing:
+  observability:
+    modules:
+      enabled: true
+```
+
+Each call that one part of the backend makes into another then becomes its own span, named after the part it enters (`llm`, `rag`, `sn`, `searchengine` and so on). It is off by default because it wraps several hundred internal services in a proxy and reads the module structure at startup, which adds a few seconds there and a little time to each call. Turn it on while you investigate latency, or keep it on where traces are sampled. It stays off when `management.tracing.enabled` is `false`.
+
 ---
 
 ## When to add custom metrics

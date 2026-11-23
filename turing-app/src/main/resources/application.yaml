@@ -619,6 +619,10 @@ turing:
 # Spring
 # ---------------------------------------------------------------------------
 spring:
+  # T1327 — Spring Modulith's per-module tracing is opt-in: TurModuleObservabilityConfig
+  # imports it when turing.observability.modules.enabled=true.
+  autoconfigure:
+    exclude: org.springframework.modulith.observability.autoconfigure.ModuleObservabilityAutoConfiguration
   datasource.hikari:
     maximum-pool-size: 20
     minimum-idle: 5

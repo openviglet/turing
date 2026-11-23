@@ -38,9 +38,11 @@ import org.springframework.test.context.TestPropertySource;
 @Documented
 @ApplicationModuleTest(mode = BootstrapMode.DIRECT_DEPENDENCIES, verifyAutomatically = false)
 // GraphQL reads every module's schema files but its scalars are wired by sn, so a slice
-// leaves the GraphQL endpoint out.
+// leaves the GraphQL endpoint out; the list replaces application.yaml's, so it repeats
+// the module tracing exclusion.
 @TestPropertySource(properties = {"spring.jmx.enabled=true",
-        "spring.autoconfigure.exclude=org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration"})
+        "spring.autoconfigure.exclude=org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration,"
+                + "org.springframework.modulith.observability.autoconfigure.ModuleObservabilityAutoConfiguration"})
 public @interface TuringModuleTest {
 
     /**

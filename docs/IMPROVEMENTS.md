@@ -2495,13 +2495,6 @@ mappings, table names and the Liquibase history, so the schema is reset to one b
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
 
-### CLXXXIX.23 Per-module tracing (T1327)
-
-spring-modulith-observability wraps calls that enter a module through its named
-interface in Micrometer observations. With the existing tracing setup, a slow chat
-request shows how much time went to llm, rag, sn and searchengine instead of one
-undivided span.
-
 ### CLXXXIX.24 Conventions follow the module layout (T1328)
 
 agents.md (key paths, project structure), the turing-persistence, turing-domain-layer,

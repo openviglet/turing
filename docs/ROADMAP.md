@@ -24,7 +24,6 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
-- 📋 **T1327** (deps: T1323 ✅) **Traces do not show which module a request crossed or where its time went** — Module observability wraps calls into each module's named interface in Micrometer observations, so the existing tracing shows time per module. → §CLXXXIX.23
 - 📋 **T1328** (deps: T1323 ✅) **agents.md, skills and hand-written lints still describe the old layered package layout** — Rewriting agents.md and the persistence, domain-layer, search and IT skills for modules, and dropping lint rules the verifier now enforces, keeps one source per rule. → §CLXXXIX.24
 
 ## Done when — T1184
