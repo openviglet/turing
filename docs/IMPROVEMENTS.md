@@ -2612,20 +2612,6 @@ checks the verifier now covers (the dependency rules in TurDomainLayerConvention
 are removed; rules it does not cover (annotation-free records, cache annotations, bulk
 writes, the new naming, tenant and @Lob tests) stay.
 
-### CLXXXIX.40 SN's GenAI surface leaves sn (T1322h)
-
-sn imports agent 42 times, rag 29, chat 12 and persona 11, almost all from its GenAI
-surface: sn.web.genai, the LLM entity extractor and indexer, the manifest GenAI
-converger, sn.dsl.eval, sn.contentfit, the snapshot agent listeners and hybrid ranking.
-ADR 0005 section 6 moves each to the module whose layer allows its imports (answer, rag,
-eval, persona). Where the search path itself must call up (hybrid ranking, entity
-extraction at index time), sn declares an SPI in its named interface and the upper
-module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi's agent
-reference is an id column. sn.api.TurSNSiteAgents (T1322t), implemented by
-TurDefaultAgentResolver, answers agent existence, RAG readiness and the site agent's
-view (siteAgentOf, T1322w); extend it before adding another agent-facing SPI. REST paths
-stay. Done when sn imports no agent, rag, chat, persona, answer or eval type.
-
 ## CXC One bad document never costs the rest of an import
 
 ## CXCI API errors name what the caller sent wrong

@@ -41,7 +41,7 @@ import lombok.Setter;
 
 /**
  * GenAI binding for an SN site. The site delegates LLM, embedding model,
- * vector store and the RAG enabled flag to a referenced {@link com.viglet.turing.agent.persistence.model.TurAIAgent} —
+ * vector store and the RAG enabled flag to a referenced {@code TurAIAgent} —
  * only the site-specific prompts (system prompt and site description prompt)
  * remain here.
  *
@@ -88,7 +88,7 @@ public class TurSNSiteGenAi implements Serializable {
      * T19 / §III.3 (repositioned 2026.2.7) — opt-out for the BM25 emergency
      * fallback in {@code search_knowledge_base}. When {@code true} (default),
      * if the vector top-1 cosine score is below {@code MIN_VECTOR_CONFIDENCE},
-     * {@link com.viglet.turing.agent.tool.TurRagSearchToolService} retries
+     * {@code TurRagSearchToolService} retries
      * the query as BM25 and prepends a keyword-only warning header. When
      * {@code false}, vector misses return "no results" directly.
      *
@@ -162,11 +162,11 @@ public class TurSNSiteGenAi implements Serializable {
      * lexical-only ranking — existing sites need no revalidation.
      * {@link TurSNRankingMode#HYBRID_RRF} fuses the lexical (BM25) ranking with
      * a vector ranking of the same documents via Reciprocal Rank Fusion
-     * ({@code k=60}), reusing {@link com.viglet.turing.rag.TurRagRrf} and
+     * ({@code k=60}), reusing {@code TurRagRrf} and
      * the embedded vector store the RAG path already builds. Effective only when
      * the request sort is relevance; facet counts and pagination stay BM25-derived.
      * {@link TurSNRankingMode#HYBRID_RRF_RERANK} (T389) additionally re-orders the
-     * fused page through the Block N {@link com.viglet.turing.rag.TurRagReranker}
+     * fused page through the Block N {@code TurRagReranker}
      * strategy seam.
      *
      * @since 2026.3.1
@@ -260,7 +260,7 @@ public class TurSNSiteGenAi implements Serializable {
      * {@code true} (and {@link #contentFitPersonaId} resolves to an
      * {@code AUDIENCE}/{@code BOTH} persona), each document is scored at index
      * time by the deterministic
-     * {@link com.viglet.turing.persona.readability.TurReadabilityScorer}
+     * {@code TurReadabilityScorer}
      * against that audience and the 0–100 fit score is stored as the
      * {@code content_fit_score} SN field. The
      * {@code GET /api/sn/{id}/content-fit} coverage report then surfaces "content

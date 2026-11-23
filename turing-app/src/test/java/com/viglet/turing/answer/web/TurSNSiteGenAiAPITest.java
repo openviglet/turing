@@ -1,4 +1,4 @@
-package com.viglet.turing.sn.web.genai;
+package com.viglet.turing.answer.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

@@ -25,14 +25,14 @@ import java.util.Locale;
  *   <li>{@link #HYBRID_RRF} — opt-in. When the effective sort is relevance, the
  *       lexical (BM25) ranking and a vector (semantic) ranking of the same
  *       documents are fused via Reciprocal Rank Fusion ({@code k=60}, the same
- *       {@link com.viglet.turing.rag.TurRagRrf} the RAG path uses) and the
+ *       {@code TurRagRrf} the RAG path uses) and the
  *       result page is reordered. Facet counts, pagination and explicit
  *       non-relevance sorts are left untouched — the conservative,
  *       objective-ranking-preserving choice for a public catalog.</li>
  *   <li>{@link #HYBRID_RRF_RERANK} — T389 / §XX.9. The full pluggable
  *       {@code retrieve → fuse → rerank} pipeline: everything {@link #HYBRID_RRF}
  *       does, then the fused page is re-ordered once more by the Block N
- *       {@link com.viglet.turing.rag.TurRagReranker} strategy seam
+ *       {@code TurRagReranker} strategy seam
  *       (LLM | CROSS_ENCODER | COHERE, selected in Global Settings). Like the
  *       rest of the pipeline it is fail-open: a missing/failing reranker leaves
  *       the RRF-fused order in place. Still objective-signal-only — no commercial

@@ -38,7 +38,7 @@ import jakarta.persistence.PostUpdate;
  * service or controller saved the entity.
  *
  * <p>It also drops the T487 Semantic Navigation field-config read-model cache
- * ({@link com.viglet.turing.agent.tool.TurSNSiteConfigCache#FIELD_CONFIG_CACHE})
+ * ({@code TurSNSiteConfigCache#FIELD_CONFIG_CACHE})
  * on the same events — that cache projects the same SN site + field graph, so it
  * must invalidate whenever the snapshot does.
  *
