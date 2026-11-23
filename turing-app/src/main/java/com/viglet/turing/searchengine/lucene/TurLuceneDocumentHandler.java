@@ -369,6 +369,8 @@ public class TurLuceneDocumentHandler {
     private void dropUnparsable(String docId, String key, String type, String strValue) {
         log.warn("Dropped unparsable {} value '{}' for field '{}' of document '{}'; "
                 + "the rest of the document is indexed", type, strValue, key, docId);
+        // T1343 — and for the indexing log of the caller that indexed it.
+        com.viglet.turing.searchengine.TurSEDroppedValues.record(docId, key, type, strValue);
     }
 
     /**

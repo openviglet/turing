@@ -290,7 +290,7 @@ For the full interface reference (all methods across search, index management, s
 |---|---|
 | **Delete core in use** | Blocked: the UI displays a list of SN Sites and locales currently using the core |
 | **Delete instance in use** | Should be avoided: removing an instance with active sites will break indexing and search for those sites |
-| **A value its field type cannot parse** (Lucene) | A `DATE` that is not an ISO-8601 instant, or an `INT`, `LONG`, `FLOAT`, `DOUBLE` or `CURRENCY` that is not a number, is dropped from that one document, and a warning in the log names the document id and the field. The rest of the document and the rest of the import are indexed |
+| **A value its field type cannot parse** (Lucene) | A `DATE` that is not an ISO-8601 instant, or an `INT`, `LONG`, `FLOAT`, `DOUBLE` or `CURRENCY` that is not a number, is dropped from that one document. The rest of the document and the rest of the import are indexed, and the document's entry in the indexing log reads `indexed; dropped releaseDate '2017T00:00:00Z' (not a DATE)`, so a connector reading the log sees what was lost |
 
 Repository-level **caching** is enabled for search engine instances to avoid repeated database reads during high-frequency searches.
 

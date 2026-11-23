@@ -222,6 +222,41 @@ class TurSNProcessQueueTest {
         verify(turSNHybridRankingService, times(2)).indexDocument(eq(site), eq(Locale.US), anyMap());
     }
 
+    /** T1343 — a value the engine dropped is named on that document's INDEXED log entry. */
+    @Test
+    void aValueTheEngineDroppedIsNamedOnTheDocumentsIndexedEntry() {
+        TurSNJobItems jobItems = new TurSNJobItems();
+        jobItems.add(createItem("1"));
+        jobItems.add(createItem("2"));
+        TurSNSite site = new TurSNSite();
+        site.setName("site1");
+        TurSearchEnginePlugin plugin = mock(TurSearchEnginePlugin.class);
+        when(turSNSiteRepository.findByNameIgnoreCase("site1")).thenReturn(Optional.of(site));
+        when(turSNSpotlightProcess.isSpotlightJob(any())).thenReturn(false);
+        when(turSNMergeProvidersProcess.mergeDocuments(eq(site), anyMap(), eq(Locale.US)))
+                .thenAnswer(invocation -> invocation.getArgument(1));
+        when(pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(site))).thenReturn(plugin);
+        when(plugin.indexDocuments(eq(site), eq(Locale.US), anyList())).thenAnswer(invocation -> {
+            com.viglet.turing.searchengine.TurSEDroppedValues.record("2", "releaseDate", "DATE", "2017T00:00:00Z");
+            return 2;
+        });
+
+        try (var logging = org.mockito.Mockito.mockStatic(com.viglet.turing.system.logging.TurLoggingUtils.class)) {
+            processQueue.processIndexingQueue(jobItems);
+
+            logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setLoggingStatus(
+                    org.mockito.ArgumentMatchers.argThat(item -> "2".equals(item.getId())),
+                    eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),
+                    eq(com.viglet.turing.commons.indexing.TurLoggingStatus.SUCCESS),
+                    eq("indexed; dropped releaseDate '2017T00:00:00Z' (not a DATE)")));
+            logging.verify(() -> com.viglet.turing.system.logging.TurLoggingUtils.setLoggingStatus(
+                    org.mockito.ArgumentMatchers.argThat(item -> "1".equals(item.getId())),
+                    eq(com.viglet.turing.commons.indexing.TurIndexingStatus.INDEXED),
+                    eq(com.viglet.turing.commons.indexing.TurLoggingStatus.SUCCESS),
+                    org.mockito.ArgumentMatchers.isNull()));
+        }
+    }
+
     @Test
     void testReceiveIndexingQueue_BatchConvergesFieldUnionOnce() {
         // T805 / §LV.3 — the union of the batch's specs is converged once per

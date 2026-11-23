@@ -271,7 +271,12 @@ class TurLuceneDocumentHandlerTest {
                 Map.of("id", "bad", "title", "B", "releaseDate", "2017T00:00:00Z"),
                 Map.of("id", "good-2", "title", "C", "releaseDate", "2018-03-10T00:00:00Z"));
 
+        com.viglet.turing.searchengine.TurSEDroppedValues.begin();
         assertThat(handler.indexingBatch(instance, SITE_ID, batch)).isEqualTo(3);
+        // T1343 — the caller that indexed the batch learns which value was dropped.
+        var dropped = com.viglet.turing.searchengine.TurSEDroppedValues.end();
+        assertThat(dropped).containsOnlyKeys("bad");
+        assertThat(dropped.get("bad").getFirst().describe()).isEqualTo("releaseDate '2017T00:00:00Z' (not a DATE)");
 
         try (DirectoryReader reader = DirectoryReader.open(directory)) {
             IndexSearcher searcher = new IndexSearcher(reader);

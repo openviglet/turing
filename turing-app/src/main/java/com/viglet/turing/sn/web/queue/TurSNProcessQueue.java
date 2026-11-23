@@ -51,6 +51,7 @@ import com.viglet.turing.sn.persistence.model.locale.TurSNSiteLocale;
 import com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.locale.TurSNSiteLocaleRepository;
+import com.viglet.turing.searchengine.TurSEDroppedValues;
 import com.viglet.turing.searchengine.TurSearchEnginePlugin;
 import com.viglet.turing.searchengine.TurSearchEnginePluginFactory;
 import com.viglet.turing.sn.TurSNConstants;
@@ -249,14 +250,18 @@ public class TurSNProcessQueue {
         }
         TurSearchEnginePlugin plugin = pluginFactory.getPluginForSeInstance(com.viglet.turing.sn.api.TurSNSites.seInstanceIdOf(turSNSite));
         int indexed;
+        Map<String, List<TurSEDroppedValues.Dropped>> dropped;
+        TurSEDroppedValues.begin();
         try {
             indexed = plugin.indexDocuments(turSNSite, locale, documents);
         } catch (RuntimeException e) {
+            TurSEDroppedValues.end();
             log.warn("Bulk index of {} docs on site '{}' failed ({}) — falling back to per-item",
                     items.size(), siteName, e.getMessage());
             items.forEach(item -> processJobItemForSite(siteName, item, ensuredCores));
             return;
         }
+        dropped = TurSEDroppedValues.end();
         if (indexed < documents.size()) {
             log.warn("Bulk index reported {}/{} docs on site '{}' — falling back to per-item",
                     indexed, documents.size(), siteName);
@@ -268,7 +273,8 @@ public class TurSNProcessQueue {
             // T383 — side-write the document embedding for HYBRID_RRF sites (no-op
             // for vectorless / legacy sites, the case this block optimizes).
             turSNHybridRankingService.indexDocument(turSNSite, locale, documents.get(i));
-            processQueueInfo(turSNSite, items.get(i));
+            processQueueInfo(turSNSite, items.get(i),
+                    TurSEDroppedValues.detail(dropped.get(items.get(i).getId())));
             TurLoggingUtils.setSuccessStatus(items.get(i), TurIndexingStatus.FINISHED);
         }
         log.info("Bulk-indexed {} documents into '{}' ({}) in a single pass",
@@ -316,8 +322,17 @@ public class TurSNProcessQueue {
         if (turSNJobItem.getTurSNJobAction() == TurSNJobAction.CREATE) {
             ensureCoreExists(turSNSite, turSNJobItem.getLocale(), ensuredCores);
         }
-        if (processJob(turSNSite, turSNJobItem)) {
-            processQueueInfo(turSNSite, turSNJobItem);
+        // T1343 — values the engine dropped from this document reach its INDEXED entry.
+        TurSEDroppedValues.begin();
+        boolean processed;
+        Map<String, List<TurSEDroppedValues.Dropped>> dropped;
+        try {
+            processed = processJob(turSNSite, turSNJobItem);
+        } finally {
+            dropped = TurSEDroppedValues.end();
+        }
+        if (processed) {
+            processQueueInfo(turSNSite, turSNJobItem, TurSEDroppedValues.detail(dropped.get(turSNJobItem.getId())));
         } else {
             noProcessedWarning(turSNSite, turSNJobItem);
         }
@@ -369,12 +384,13 @@ public class TurSNProcessQueue {
                 : index(turSNJobItem, turSNSite);
     }
 
-    private void processQueueInfo(TurSNSite turSNSite, TurSNJobItem turSNJobItem) {
+    private void processQueueInfo(TurSNSite turSNSite, TurSNJobItem turSNJobItem, String droppedDetail) {
         if (ObjectUtils.allNotNull(turSNSite, turSNJobItem)
                 && turSNJobItem.getAttributes() != null) {
             if (Objects.requireNonNull(turSNJobItem.getTurSNJobAction()) == TurSNJobAction.CREATE) {
                 logCrudObject(turSNSite, turSNJobItem, INDEXED);
-                TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.INDEXED);
+                TurLoggingUtils.setLoggingStatus(turSNJobItem, TurIndexingStatus.INDEXED,
+                        com.viglet.turing.commons.indexing.TurLoggingStatus.SUCCESS, droppedDetail);
             } else if (turSNJobItem.getTurSNJobAction() == TurSNJobAction.DELETE) {
                 logCrudObject(turSNSite, turSNJobItem, DEINDEXED);
                 TurLoggingUtils.setSuccessStatus(turSNJobItem, TurIndexingStatus.DEINDEXED);

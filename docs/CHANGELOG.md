@@ -1856,3 +1856,4 @@
 ## Block DA — One bad document never costs the rest of an import
 
 - **T1338** — A Lucene field value its type cannot parse is dropped from that one document with a WARN naming document and field; the batch indexes and the index is never recreated.
+- **T1343 (Lucene drops in the indexing log)** — A value the Lucene engine drops is named on that document's INDEXED indexing-log entry, on the bulk and per-item paths, via TurSEDroppedValues.

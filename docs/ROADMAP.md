@@ -38,7 +38,7 @@
 
 ## Block DA — One bad document never costs the rest of an import
 
-- 📋 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — A client sending malformed dates or numbers gets 200 and INDEXED and learns of the loss only by reading Turing's server log. → §CXC.2
+- ⏳ **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — Left: confirm Solr and Elasticsearch refusals reach the indexing log the same way, and a per-site dropped-values count the console can flag. → §CXC.2
 
 ## Block CB — LLM gateway parity with the OpenAI wire
 
@@ -77,6 +77,15 @@
 - **Batch usage counts against the key's budget at the batch price** A completed gateway
   batch records its token usage for the key at the vendor's batch price, and a key over
   its hard cap or rate limit is refused at POST /v1/batches.
+
+## Done when — T1343
+
+- **Solr and Elasticsearch report a refused value in the indexing log too** Importing a
+  malformed DATE into a Solr and an Elasticsearch site leaves an indexing-log entry
+  naming the document and the field, as Lucene's does.
+- **The console shows how many values a site's last import dropped** A site whose last
+  run dropped values shows the count on its console page, without anyone reading the
+  indexing log.
 
 ## Non-goals (do NOT add as tasks)
 
