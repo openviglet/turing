@@ -2,10 +2,10 @@ package com.viglet.turing.system.web;
 
 import com.viglet.turing.system.TurDefaultRagReadiness;
 import com.viglet.turing.system.properties.TurConfigProperties;
-import com.viglet.turing.storage.git.TurGitServerService;
-import com.viglet.turing.storage.TurStorageService;
 import com.viglet.turing.shared.infra.TurSearchEngineReadOnlySource;
+import com.viglet.turing.system.TurGitServerStatus;
 import com.viglet.turing.system.TurGlobalSettingsService;
+import com.viglet.turing.system.TurStorageStatus;
 import com.viglet.core.tenancy.VigletPlatformAdminService;
 import com.viglet.core.tenancy.VigletTenantContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Features", description = "Feature flags API")
 public class TurFeaturesAPI {
 
-    private final TurStorageService storageService;
+    private final TurStorageStatus storageService;
     private final TurGlobalSettingsService globalSettingsService;
-    private final TurGitServerService gitServerService;
+    private final TurGitServerStatus gitServerService;
     private final TurConfigProperties configProperties;
     private final TurSearchEngineReadOnlySource solrInstanceSource;
     private final VigletTenantContext tenantContext;
@@ -35,8 +35,8 @@ public class TurFeaturesAPI {
     private final TurDefaultRagReadiness defaultAgentResolver;
     private final String loggingEngine;
 
-    public TurFeaturesAPI(TurStorageService storageService, TurGlobalSettingsService globalSettingsService,
-                          TurGitServerService gitServerService, TurConfigProperties configProperties,
+    public TurFeaturesAPI(TurStorageStatus storageService, TurGlobalSettingsService globalSettingsService,
+                          TurGitServerStatus gitServerService, TurConfigProperties configProperties,
                           TurSearchEngineReadOnlySource solrInstanceSource,
                           VigletTenantContext tenantContext,
                           VigletPlatformAdminService platformAdminService,

@@ -13,10 +13,12 @@ import java.util.List;
  * @author Alexandre Oliveira
  * @since 2026.2.4
  */
-public interface TurStorageService {
+public interface TurStorageService extends com.viglet.turing.system.TurStorageStatus {
 
+    @Override
     TurStorageType getType();
 
+    @Override
     boolean isEnabled();
 
     List<TurAssetItem> listObjects(String prefix);

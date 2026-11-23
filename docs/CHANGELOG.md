@@ -1845,3 +1845,4 @@
 - **T1322v** — The ffmpeg probe moved to transcription and the startup seed import to exchange, both unchanged in behaviour and path; system no longer imports transcription, exchange, rag or observability.
 - **T1310z** — The site SE-instance lookup moved into sn.api and the endpoint cache resolves by instance id only; the searchengine root imports sn just for the plugin contract and its factory.
 - **T1322w** — Site insights and Gemini media indexing read the site's agent title, RAG flag and LLM instances through TurSNSiteAgents.siteAgentOf; neither imports an agent type.
+- **T1322x** — The features and system-info endpoints read storage and Git server status through TurStorageStatus and TurGitServerStatus, which system declares and storage implements.

@@ -1,7 +1,7 @@
 package com.viglet.turing.system.web;
 
 import com.viglet.turing.system.properties.TurConfigProperties;
-import com.viglet.turing.storage.TurStorageService;
+import com.viglet.turing.system.TurStorageStatus;
 import com.viglet.turing.system.properties.TurStorageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,13 +31,13 @@ public class TurSystemInfoAPI {
 
     private static final String UNKNOWN = "Unknown";
     private final DataSource dataSource;
-    private final TurStorageService storageService;
+    private final TurStorageStatus storageService;
     private final TurConfigProperties turConfigProperties;
     private final boolean mongoEnabled;
     private final String mongoUri;
 
     public TurSystemInfoAPI(DataSource dataSource,
-                            TurStorageService storageService,
+                            TurStorageStatus storageService,
                             TurConfigProperties turConfigProperties,
                             @Value("${turing.mongodb.enabled:false}") boolean mongoEnabled,
                             @Value("${turing.mongodb.uri:mongodb://localhost:27017}") String mongoUri) {

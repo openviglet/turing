@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2026.2.4
  */
 @Service
-public class TurGitServerService {
+public class TurGitServerService implements com.viglet.turing.system.TurGitServerStatus {
 
     private static final Logger log = LoggerFactory.getLogger(TurGitServerService.class);
     public static final String REPOSITORIES_DIR = "repositories";
@@ -58,6 +58,7 @@ public class TurGitServerService {
     }
 
     /** Returns true when git server is enabled (no longer requires storage to be active). */
+    @Override
     public boolean isEnabled() {
         return configProperties.getGit() != null && configProperties.getGit().isServer();
     }
