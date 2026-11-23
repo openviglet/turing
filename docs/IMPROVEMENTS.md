@@ -2515,30 +2515,20 @@ modules (chat into agent, the vector stores into llm, the eval entities into eva
 MCP client into agent, a new answer module), so a per-module baseline written before
 those moves would file tables under the wrong owner.
 
-### CLXXXIX.18 Declared module interfaces (T1322)
-
-Each module gets a package-info.java with @ApplicationModule naming its displayName and
-allowedDependencies, and the types other modules may use carry @NamedInterface or live
-in the module's base package. Everything else is internal by package. The allowed
-dependencies come from ADR 0005; one the code needs and the ADR does not list is a
-design question answered in the ADR first.
-
-Measured on 2026-11-20, after T1315 (import counts between top-level packages): the code
-needs many dependencies the ADR's direction rules forbid. llm imports agent 119 times,
-rag 37 and persona 7; sn imports agent 71, rag 58, chat 30, kb 20 and persona 15;
-searchengine imports sn 163 (the deferred T1310); agent, chat and eval form a cycle
-(chat to agent 90, eval to agent 161, agent to chat 43 and eval 21); system imports chat
-21 and agent 13. Twelve leftover top-level packages (artemis, bean, bento, email, jpa,
-logging, properties, resilience, spring, swagger, tomcat, utils) are still modules of
-their own, where the ADR folds them into shared and system. Ruled on 2026-11-21 in ADR
-0005 section 6, which replaces the direction rules with nine layers; the moves are
-T1322a to T1322k, and the declarations land after them.
-
 ### CLXXXIX.19 Module verification as a gate (T1323)
 
 The report test becomes ApplicationModules.verify() in mvn test, so a cycle, a call into
 another module's internal package or an undeclared dependency fails the build. The test
 has no exemption list: a violation is fixed or ADR 0005 is changed.
+
+Measured 2026-11-23, after T1322 declared the modules: no cycle, no undeclared
+dependency and no call into another application module's internal package. All 3,278
+violations left point into the library jars that share the base package and that
+Modulith reads as modules (commons from turing-commons, client from turing-java-sdk,
+spring from turing-spring; sn and searchengine account for most). Before verify() can
+run, those jars leave the model, either by building ApplicationModules with them
+excluded or by opening them as libraries; declaring them in their own Maven modules
+would put the modulith dependency on published artifacts, so that is the one ruled out.
 
 ### CLXXXIX.20 Durable module events (T1324)
 

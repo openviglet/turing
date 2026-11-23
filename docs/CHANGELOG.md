@@ -1859,7 +1859,7 @@
 - **T1349** — T1322h slice: entity indexing reads the site or default agent's LLM through TurSNSiteAgents, and the LLM entity extractor moved into agent.entity, implementing sn's extractor SPI.
 - **T1350** — T1322h slice: TurSNHybridRankingService is now the interface sn calls, and its implementation moved to rag as TurRagHybridRankingService; callers are unchanged.
 - **T1351** — T1310 slice: the Solr query builder, result processor and TurSolr read the site through TurSESiteSearchConfig, with facet-type rules in searchengine and three facet enums moved there.
-- **T1322 (residual crossings removed)** — Every module now imports only lower layers: the tool loop sits in llm, grounding mode and asset training in rag, the SN content exchange in answer, the research bridge and suggestions in eval, and ADR 0005 puts storage in layer 2, batch in layer 6 and orders answer, eval, mcp
+- **T1322** — Every module declares @ApplicationModule with the lower layers as its allowed dependencies, and the packages other modules use are named interfaces, leaving only the library jars in the module report (design §CLXXXIX.18 recorded in `docs/adr/0005-modular-monolith-spring-modulith.md`)
 
 ## Block DA — One bad document never costs the rest of an import
 

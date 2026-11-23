@@ -18,5 +18,10 @@
  * @author Alexandre Oliveira
  * @since 2026.3.8
  */
-@org.springframework.modulith.ApplicationModule(displayName = "Search engines")
+@org.springframework.modulith.ApplicationModule(displayName = "Search engines",
+        allowedDependencies = {
+        "shared", "shared :: *", "system", "system :: *", "observability",
+        "observability :: *", "tenant", "tenant :: *", "auth", "auth :: *", "storage",
+        "storage :: *", "commons", "commons :: *", "se", "se :: *", "client", "client :: *",
+        "spring", "spring :: *" })
 package com.viglet.turing.searchengine;
