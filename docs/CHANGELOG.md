@@ -1844,3 +1844,4 @@
 - **T1322u** — system reads the tenant context, platform admin and infra scope through viglet-core's tenancy types, and the tenant task decorator moved into system; system imports no tenant type.
 - **T1322v** — The ffmpeg probe moved to transcription and the startup seed import to exchange, both unchanged in behaviour and path; system no longer imports transcription, exchange, rag or observability.
 - **T1310z** — The site SE-instance lookup moved into sn.api and the endpoint cache resolves by instance id only; the searchengine root imports sn just for the plugin contract and its factory.
+- **T1322w** — Site insights and Gemini media indexing read the site's agent title, RAG flag and LLM instances through TurSNSiteAgents.siteAgentOf; neither imports an agent type.

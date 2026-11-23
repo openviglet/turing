@@ -35,6 +35,14 @@ public interface TurSNSiteAgents {
     boolean agentExists(String agentId);
 
     /**
+     * The agent the binding itself names (no Default AI Agent fallback), or empty
+     * when it names none or the agent is gone.
+     *
+     * @param turSNSiteGenAi the site's GenAI binding (may be {@code null})
+     */
+    java.util.Optional<TurSNSiteAgent> siteAgentOf(TurSNSiteGenAi turSNSiteGenAi);
+
+    /**
      * The ids among {@code agentIds} whose agent exists and is enabled with RAG
      * on, in one read; empty for an empty input.
      */

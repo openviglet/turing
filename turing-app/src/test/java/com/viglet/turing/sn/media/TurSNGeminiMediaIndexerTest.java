@@ -33,7 +33,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService.VideoUnderstanding;
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
@@ -49,17 +48,11 @@ import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
 @ExtendWith(MockitoExtension.class)
 class TurSNGeminiMediaIndexerTest {
 
-    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
-            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
-
-    @org.mockito.Spy
-    private com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances = agentLlms.service();
-
     @Mock
     private TurGeminiVideoUnderstandingService videoUnderstanding;
 
     @Mock
-    private com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+    private com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
 
     @InjectMocks
     private TurSNGeminiMediaIndexer indexer;
@@ -73,13 +66,12 @@ class TurSNGeminiMediaIndexerTest {
         llm.setId("gemini-1");
         llm.setEnabled(1);
 
-        TurAIAgent agent = new TurAIAgent();
-        agentLlms.attach(agent, llm);
-
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setMediaUnderstandingIndexingEnabled(true);
         genAi.setTurAIAgentId("agent-1");
-        org.mockito.Mockito.lenient().when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
+        // T1322h — the site's agent is read through sn's SPI.
+        org.mockito.Mockito.lenient().when(siteAgents.siteAgentOf(genAi)).thenReturn(java.util.Optional.of(
+                new com.viglet.turing.sn.api.TurSNSiteAgent("Agent", false, List.of(llm))));
 
         site = new TurSNSite();
         site.setName("media-site");

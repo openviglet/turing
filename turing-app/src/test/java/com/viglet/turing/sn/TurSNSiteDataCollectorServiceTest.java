@@ -43,9 +43,6 @@ class TurSNSiteDataCollectorServiceTest {
     private final com.viglet.turing.searchengine.InMemorySNSiteSEInstances seInstances =
             new com.viglet.turing.searchengine.InMemorySNSiteSEInstances();
 
-    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
-            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
-
     @Mock
     private TurSNSiteLocaleRepository snSiteLocaleRepository;
 
@@ -59,7 +56,7 @@ class TurSNSiteDataCollectorServiceTest {
     private TurSearchEnginePlugin searchEnginePlugin;
 
     @Mock
-    private com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
+    private com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
 
     private TurSNSiteDataCollectorService service;
 
@@ -69,7 +66,7 @@ class TurSNSiteDataCollectorServiceTest {
                 snSiteLocaleRepository,
                 metricAccessRepository,
                 pluginFactory,
-                turDefaultAgentResolver, agentLlms.service(), seInstances.service());
+                siteAgents, seInstances.service());
     }
 
     private TurSNSite createSite(String name) {
@@ -364,17 +361,13 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSite site = createSite("GenAiSite");
         site.setRowsPerPage(10);
 
-        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
-                new com.viglet.turing.agent.persistence.model.TurAIAgent();
-        agent.setEnabled(1);
-        agent.setRagEnabled(true);
         TurLLMInstance llmInstance = new TurLLMInstance();
         llmInstance.setTitle("GPT-4");
-        agentLlms.attach(agent, llmInstance);
 
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setTurAIAgentId("agent-1");
-        when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
+        when(siteAgents.siteAgentOf(genAi)).thenReturn(java.util.Optional.of(
+                new com.viglet.turing.sn.api.TurSNSiteAgent("Agent", true, java.util.List.of(llmInstance))));
         site.setTurSNSiteGenAi(genAi);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());
@@ -395,15 +388,11 @@ class TurSNSiteDataCollectorServiceTest {
         TurSNSite site = createSite("GenAiNoLLM");
         site.setRowsPerPage(10);
 
-        com.viglet.turing.agent.persistence.model.TurAIAgent agent =
-                new com.viglet.turing.agent.persistence.model.TurAIAgent();
-        agent.setEnabled(1);
-        agent.setRagEnabled(true);
         // No LLM attached to the agent.
-
         TurSNSiteGenAi genAi = new TurSNSiteGenAi();
         genAi.setTurAIAgentId("agent-1");
-        when(turDefaultAgentResolver.siteAgent(genAi)).thenReturn(agent);
+        when(siteAgents.siteAgentOf(genAi)).thenReturn(java.util.Optional.of(
+                new com.viglet.turing.sn.api.TurSNSiteAgent("Agent", true, java.util.List.of())));
         site.setTurSNSiteGenAi(genAi);
 
         when(snSiteLocaleRepository.findByTurSNSite(site)).thenReturn(Collections.emptyList());

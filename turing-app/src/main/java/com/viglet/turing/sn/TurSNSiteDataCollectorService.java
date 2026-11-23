@@ -28,8 +28,7 @@ public class TurSNSiteDataCollectorService {
     private final TurSNSiteLocaleRepository snSiteLocaleRepository;
     private final TurSNSiteMetricAccessRepository metricAccessRepository;
     private final TurSearchEnginePluginFactory pluginFactory;
-    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
-    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
     private final com.viglet.turing.sn.api.TurSNSiteSEInstances snSiteSEInstances;
 
     public String collectSiteData(TurSNSite site) {
@@ -133,17 +132,15 @@ public class TurSNSiteDataCollectorService {
     }
 
     private void appendGenAiConfigurationSection(StringBuilder sb, TurSNSite site) {
-        var genAi = site.getTurSNSiteGenAi();
-        var agent = turDefaultAgentResolver.siteAgent(genAi);
+        // T1322h - the site's agent is read through sn's SPI, not agent's types.
+        var agent = siteAgents.siteAgentOf(site.getTurSNSiteGenAi())
+                .filter(com.viglet.turing.sn.api.TurSNSiteAgent::ragEnabled);
         sb.append("## Generative AI Configuration\n");
-        if (agent != null && agent.getEnabled() == 1 && agent.isRagEnabled()) {
+        if (agent.isPresent()) {
             sb.append("- Enabled: yes\n");
-            sb.append("- AI Agent: ").append(agent.getTitle()).append("\n");
-            if (!agent.getLlmInstanceIds().isEmpty()) {
-                sb.append("- LLM: ")
-                        .append(agentLlmInstances.of(agent).iterator().next().getTitle())
-                        .append("\n");
-            }
+            sb.append("- AI Agent: ").append(agent.get().title()).append("\n");
+            agent.get().llmInstances().stream().findFirst().ifPresent(
+                    llm -> sb.append("- LLM: ").append(llm.getTitle()).append("\n"));
         } else {
             sb.append("- Enabled: no\n");
         }

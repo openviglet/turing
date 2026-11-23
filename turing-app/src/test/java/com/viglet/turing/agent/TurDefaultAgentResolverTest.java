@@ -55,8 +55,41 @@ class TurDefaultAgentResolverTest {
     @Mock
     private TurSNSites turSNSiteRepository;
 
+    private final InMemoryAgentLlmInstances agentLlms = new InMemoryAgentLlmInstances();
+    @org.mockito.Spy
+    private TurAgentLlmInstances agentLlmInstances = agentLlms.service();
+
     @InjectMocks
     private TurDefaultAgentResolver resolver;
+
+    @Test
+    void siteAgentOfCarriesTheTitleRagFlagAndLlmInstancesInIdOrder() {
+        // T1322h — what sn reads about its site's agent, through TurSNSiteAgents.
+        com.viglet.turing.llm.persistence.model.TurLLMInstance second =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
+        second.setId("llm-b");
+        com.viglet.turing.llm.persistence.model.TurLLMInstance first =
+                new com.viglet.turing.llm.persistence.model.TurLLMInstance();
+        first.setId("llm-a");
+        TurAIAgent agent = ragReadyAgent();
+        agent.setTitle("Support agent");
+        agentLlms.attach(agent, second, first);
+        TurSNSiteGenAi genAi = new TurSNSiteGenAi();
+        bind(genAi, agent);
+
+        var view = resolver.siteAgentOf(genAi).orElseThrow();
+
+        org.assertj.core.api.Assertions.assertThat(view.title()).isEqualTo("Support agent");
+        org.assertj.core.api.Assertions.assertThat(view.ragEnabled()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(view.llmInstances()).containsExactly(first, second);
+    }
+
+    @Test
+    void siteAgentOfIsEmptyWithoutAnAgentAndIgnoresTheDefault() {
+        org.assertj.core.api.Assertions.assertThat(resolver.siteAgentOf(new TurSNSiteGenAi())).isEmpty();
+        org.assertj.core.api.Assertions.assertThat(resolver.siteAgentOf(null)).isEmpty();
+        verifyNoInteractions(globalSettingsService);
+    }
 
     @Test
     void siteOwnAgentWinsAndNoDefaultLookupHappens() {

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService;
 import com.viglet.turing.llm.nativeapi.gemini.TurGeminiVideoUnderstandingService.VideoUnderstanding;
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
@@ -65,8 +64,7 @@ public class TurSNGeminiMediaIndexer {
     static final String MEDIA_URL_ATTR = "media_url";
 
     private final TurGeminiVideoUnderstandingService videoUnderstanding;
-    private final com.viglet.turing.agent.TurDefaultAgentResolver turDefaultAgentResolver;
-    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
+    private final com.viglet.turing.sn.api.TurSNSiteAgents siteAgents;
 
     /**
      * Runs understanding on the document's media asset and appends the transcript
@@ -113,14 +111,10 @@ public class TurSNGeminiMediaIndexer {
 
     /** The GenAI agent's active LLM instance (first enabled, else first), or null. */
     private TurLLMInstance resolveLlmInstance(TurSNSiteGenAi genAi) {
-        TurAIAgent agent = turDefaultAgentResolver.siteAgent(genAi);
-        if (agent == null || agent.getLlmInstanceIds().isEmpty()) {
-            return null;
-        }
-        return agentLlmInstances.of(agent).stream()
-                .filter(l -> l.getEnabled() == 1)
-                .findFirst()
-                .orElseGet(() -> agentLlmInstances.of(agent).stream().findFirst().orElse(null));
+        // T1322h - the site's agent is read through sn's SPI, not agent's types.
+        return siteAgents.siteAgentOf(genAi)
+                .flatMap(com.viglet.turing.sn.api.TurSNSiteAgent::activeLlmInstance)
+                .orElse(null);
     }
 
     /** The {@value #MEDIA_URL_ATTR} attribute when present, else the {@code url} field. */

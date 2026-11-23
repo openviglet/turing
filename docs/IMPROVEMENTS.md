@@ -2622,9 +2622,9 @@ eval, persona). Where the search path itself must call up (hybrid ranking, entit
 extraction at index time), sn declares an SPI in its named interface and the upper
 module implements it, the pattern T1310 uses for search engines. TurSNSiteGenAi's agent
 reference is an id column. sn.api.TurSNSiteAgents (T1322t), implemented by
-TurDefaultAgentResolver, answers agent existence and RAG readiness; extend it before
-adding another agent-facing SPI. REST paths stay. Done when sn imports no agent, rag,
-chat, persona, answer or eval type.
+TurDefaultAgentResolver, answers agent existence, RAG readiness and the site agent's
+view (siteAgentOf, T1322w); extend it before adding another agent-facing SPI. REST paths
+stay. Done when sn imports no agent, rag, chat, persona, answer or eval type.
 
 ### CLXXXIX.45 The infrastructure layer imports only downward (T1322l)
 

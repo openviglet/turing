@@ -64,12 +64,15 @@ public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefa
     private final TurGlobalSettingsService globalSettingsService;
     private final TurAIAgentRepository turAIAgentRepository;
     private final TurSNSites turSNSiteRepository;
+    private final TurAgentLlmInstances agentLlmInstances;
 
     public TurDefaultAgentResolver(TurGlobalSettingsService globalSettingsService,
-            TurAIAgentRepository turAIAgentRepository, TurSNSites turSNSiteRepository) {
+            TurAIAgentRepository turAIAgentRepository, TurSNSites turSNSiteRepository,
+            TurAgentLlmInstances agentLlmInstances) {
         this.globalSettingsService = globalSettingsService;
         this.turAIAgentRepository = turAIAgentRepository;
         this.turSNSiteRepository = turSNSiteRepository;
+        this.agentLlmInstances = agentLlmInstances;
     }
 
     /**
@@ -94,6 +97,16 @@ public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefa
             return null;
         }
         return turAIAgentRepository.findById(turSNSiteGenAi.getTurAIAgentId()).orElse(null);
+    }
+
+    /** T1322h — {@link #siteAgent} as sn reads it, with the agent's LLM instances. */
+    @Override
+    public java.util.Optional<com.viglet.turing.sn.api.TurSNSiteAgent> siteAgentOf(
+            TurSNSiteGenAi turSNSiteGenAi) {
+        return java.util.Optional.ofNullable(siteAgent(turSNSiteGenAi))
+                .map(agent -> new com.viglet.turing.sn.api.TurSNSiteAgent(agent.getTitle(),
+                        agent.getEnabled() == 1 && agent.isRagEnabled(),
+                        java.util.List.copyOf(agentLlmInstances.of(agent))));
     }
 
     /**
