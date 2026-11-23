@@ -1848,6 +1848,7 @@
 - **T1322x** — The features and system-info endpoints read storage and Git server status through TurStorageStatus and TurGitServerStatus, which system declares and storage implements.
 - **T1322y** — TurSsrfGuard moved from auth to shared.security.ssrf, so system's federation proxy and shared's file utils stop importing auth; every caller is unchanged.
 - **T1340** — T1310 slice: the plugin factory resolves by SE instance id (getPluginForSeInstance), and sn passes TurSNSites.seInstanceIdOf(site); the factory imports no sn type.
+- **T1322z** — The import service and process queue write the site's vector store through TurSNSiteEmbeddings, which sn declares and TurSNGenAi implements; neither imports answer.
 
 ## Block DA — One bad document never costs the rest of an import
 

@@ -30,9 +30,9 @@ import com.viglet.turing.client.sn.job.TurSNJobItems;
 import com.viglet.turing.commons.indexing.TurIndexingStatus;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
 import com.viglet.turing.system.logging.TurLoggingUtils;
-import com.viglet.turing.answer.TurSNGenAi;
 import com.viglet.turing.sn.TurSNConstants;
 import com.viglet.turing.sn.api.TurSNSiteAgents;
+import com.viglet.turing.sn.api.TurSNSiteEmbeddings;
 import com.viglet.turing.sn.domain.TurSNSiteRepositoryPort;
 import com.viglet.turing.tenant.TurJmsTenantPropagation;
 
@@ -52,18 +52,18 @@ import lombok.extern.slf4j.Slf4j;
 public class TurSNImportService {
     private final JmsMessagingTemplate jmsMessagingTemplate;
     private final TurSNSiteRepositoryPort turSNSiteRepositoryPort;
-    private final TurSNGenAi turGenAi;
+    private final TurSNSiteEmbeddings siteEmbeddings;
     private final TurJmsTenantPropagation turJmsTenantPropagation;
     private final TurSNSiteAgents siteAgents;
 
     public TurSNImportService(JmsMessagingTemplate jmsMessagingTemplate,
             TurSNSiteRepositoryPort turSNSiteRepositoryPort,
-            TurSNGenAi turGenAi,
+            TurSNSiteEmbeddings siteEmbeddings,
             TurJmsTenantPropagation turJmsTenantPropagation,
             TurSNSiteAgents siteAgents) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
         this.turSNSiteRepositoryPort = turSNSiteRepositoryPort;
-        this.turGenAi = turGenAi;
+        this.siteEmbeddings = siteEmbeddings;
         this.turJmsTenantPropagation = turJmsTenantPropagation;
         this.siteAgents = siteAgents;
     }
@@ -111,7 +111,7 @@ public class TurSNImportService {
             return;
         }
         try {
-            turGenAi.addDocuments(turSNJobItems);
+            siteEmbeddings.addDocuments(turSNJobItems);
         } catch (RuntimeException e) {
             log.error("RAG embedding of the batch failed; its documents are still indexed for search: {}",
                     e.getMessage(), e);

@@ -87,7 +87,7 @@ class TurSNProcessQueueTest {
     @Mock
     private TurSNProcessQueue self;
     @Mock
-    private com.viglet.turing.answer.TurSNGenAi turSNGenAi;
+    private com.viglet.turing.sn.api.TurSNSiteEmbeddings turSNGenAi;
     @InjectMocks
     private TurSNProcessQueue processQueue;
 

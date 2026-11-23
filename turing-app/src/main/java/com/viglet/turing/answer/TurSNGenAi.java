@@ -85,7 +85,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class TurSNGenAi {
+public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings {
 
     // --- S1192: extracted duplicated literals ---
     private static final String AI_CONFIGURATION_IS_NOT_ENABLED = "AI configuration is not enabled";
@@ -1728,6 +1728,7 @@ public class TurSNGenAi {
      *
      * @return how many document/site embeddings failed
      */
+    @Override
     public int addDocuments(TurSNJobItems turSNJobItems) {
         log.debug("RAG addDocuments called with {} document(s)", turSNJobItems.getTuringDocuments().size());
         int[] failed = {0};
@@ -1758,6 +1759,7 @@ public class TurSNGenAi {
      *
      * @return {@code true} when the store was asked to delete the chunks
      */
+    @Override
     public boolean removeDocument(TurSNSite turSNSite, Locale locale, String id) {
         if (id == null || id.isBlank()) {
             return false;
@@ -1775,6 +1777,7 @@ public class TurSNGenAi {
      *
      * @return {@code true} when the store was asked to delete the chunks
      */
+    @Override
     public boolean removeDocuments(TurSNSite turSNSite, Locale locale, Map<String, String> match) {
         if (turSNSite == null || turSNSite.getTurSNSiteGenAi() == null || match == null || match.isEmpty()) {
             return false;
