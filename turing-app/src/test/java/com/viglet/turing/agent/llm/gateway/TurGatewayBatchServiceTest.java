@@ -187,15 +187,76 @@ class TurGatewayBatchServiceTest {
     }
 
     @Test
-    void aBatchIsRefusedWhenTheTierIsOffOrTheVendorHasNone() {
-        stored(line("a", "gpt-4o-mini", SYSTEM_AND_USER));
-        var request = new BatchCreateRequest("file-f1", "/v1/chat/completions", "24h", null);
-
+    void aVendorWithNoBatchTierStillAnswersTheBatchWireByRunningTheLinesItself() {
+        // T1341 — the gateway runs the lines one ordinary call at a time and stores the output.
+        stored(line("a", "llama3", SYSTEM_AND_USER) + "\n" + line("b", "llama3", SYSTEM_AND_USER) + "\n"
+                + line("denied", "gpt-5", SYSTEM_AND_USER));
+        when(keys.isModelAllowed(key, "gpt-5")).thenReturn(false);
         when(batches.isSupported(instance)).thenReturn(false);
-        assertThatThrownBy(() -> service.create(request)).hasMessageContaining("no batch tier");
+        service.syncRunner = Runnable::run;
+        java.util.Map<String, TurBatchJob> saved = new java.util.HashMap<>();
+        when(jobs.save(any())).thenAnswer(inv -> {
+            TurBatchJob job = inv.getArgument(0);
+            if (job.getId() == null) {
+                job.setId("s1");
+            }
+            saved.put(job.getId(), job);
+            return job;
+        });
+        when(jobs.findById("s1")).thenAnswer(inv -> Optional.ofNullable(saved.get("s1")));
+        java.util.Map<String, TurGatewayBatchFile> outputs = new java.util.HashMap<>();
+        org.mockito.Mockito.doAnswer(inv -> {
+            TurGatewayBatchFile file = inv.getArgument(0);
+            file.setId("out-1");
+            outputs.put("out-1", file);
+            return file;
+        }).when(files).save(any());
+        when(files.findById("out-1")).thenAnswer(inv -> Optional.ofNullable(outputs.get("out-1")));
+        when(llm.completeBatchLine(eq(instance), any(), eq("key-1")))
+                .thenReturn(new com.viglet.turing.llm.gateway.TurOpenAiWire.ChatCompletion("c1", "chat.completion", 1L,
+                        "llama3", List.of(new com.viglet.turing.llm.gateway.TurOpenAiWire.Choice(0,
+                                new com.viglet.turing.llm.gateway.TurOpenAiWire.WireMessage("assistant", "Celeste é..."),
+                                "stop")),
+                        new com.viglet.turing.llm.gateway.TurOpenAiWire.Usage(30, 12, 42)))
+                .thenThrow(new RuntimeException("model offline"));
 
+        var batch = service.create(new BatchCreateRequest("file-f1", "/v1/chat/completions", "24h", null));
+
+        org.mockito.Mockito.verify(batches, org.mockito.Mockito.never()).submit(any(), anyString(), anyList(), anyString());
+        var done = service.batch(batch.id());
+        assertThat(done.status()).isEqualTo("completed");
+        assertThat(done.request_counts().completed()).isEqualTo(1);
+        assertThat(done.request_counts().failed()).isEqualTo(2);
+        String output = service.fileContent(done.output_file_id());
+        assertThat(output.lines()).hasSize(3);
+        assertThat(output).contains("\"custom_id\":\"a\"").contains("Celeste é...")
+                .contains("\"custom_id\":\"b\"").contains("model offline")
+                .contains("\"custom_id\":\"denied\"").contains("model_not_permitted");
+    }
+
+    @Test
+    void aSynchronousBatchCanBeCancelledBetweenLines() {
+        stored(line("a", "llama3", SYSTEM_AND_USER));
         when(batches.isEnabled()).thenReturn(false);
-        assertThatThrownBy(() -> service.create(request)).hasMessageContaining("turing.batch.enabled");
+        java.util.List<Runnable> pending = new java.util.ArrayList<>();
+        service.syncRunner = pending::add;
+        java.util.Map<String, TurBatchJob> saved = new java.util.HashMap<>();
+        when(jobs.save(any())).thenAnswer(inv -> {
+            TurBatchJob job = inv.getArgument(0);
+            if (job.getId() == null) {
+                job.setId("s2");
+            }
+            saved.put(job.getId(), job);
+            return job;
+        });
+        when(jobs.findById("s2")).thenAnswer(inv -> Optional.ofNullable(saved.get("s2")));
+
+        var batch = service.create(new BatchCreateRequest("file-f1", "/v1/chat/completions", "24h", null));
+        assertThat(service.cancel(batch.id()).status()).isEqualTo("cancelled");
+        pending.forEach(Runnable::run);
+
+        org.mockito.Mockito.verify(llm, org.mockito.Mockito.never()).completeBatchLine(any(), any(), any());
+        assertThat(service.batch(batch.id()).status()).isEqualTo("cancelled");
     }
 
     @Test

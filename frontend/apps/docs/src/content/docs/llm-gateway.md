@@ -147,15 +147,18 @@ output; the rest of the batch runs.
 
 What a batch needs and takes:
 
-- The batch tier is on (`turing.batch.enabled=true`) and the model's provider has
-  one: OpenAI, Anthropic or Gemini. Otherwise `POST /v1/batches` answers 400.
+- When the batch tier is on (`turing.batch.enabled=true`) and the model's provider
+  has one (OpenAI, Anthropic or Gemini), the provider runs the batch at its batch
+  price. Otherwise Viglet Turing runs the lines itself, one ordinary call at a time
+  in the background, and answers the same wire; those lines cost the normal price.
 - Every line of a batch uses the same model.
 - A line carries system messages and one user message; a line with earlier
   assistant turns is answered as an error line.
 - A file and a batch belong to the key that created them; another key gets 404.
 - Creating a batch counts as one call against the key's rate limit and hard cap; a
-  key over either is refused with 429. When the batch completes, its lines are booked
-  to the key at half the synchronous price, so they count toward its spend and budget.
+  key over either is refused with 429. Its lines are booked to the key (at half the
+  synchronous price when the provider ran the batch), so they count toward its spend
+  and budget.
 
 ## Cross-cutting headers
 

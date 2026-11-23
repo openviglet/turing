@@ -39,8 +39,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block DA — One bad document never costs the rest of an import
 
-## Block CB — LLM gateway parity with the OpenAI wire
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2153,35 +2151,6 @@ silently. Found while building trabalharei's local Turing and import proof.
 ## CXII SDK & frontend surface
 
 ## CXIII LLM gateway parity with the OpenAI wire
-
-### CXIII.6 The OpenAI batch wire on the gateway (T1341)
-
-Met in jogarei (JO63, 2026-11-23): a crawler step writes one pt-BR description per game,
-3669 games, through the local Turing's gateway (`POST /v1/chat/completions`, model
-gpt-4o-mini, a gateway key capped per month). Each call waits for its answer, so the run
-takes about an hour with six workers and pays the full synchronous price, though nothing
-about it is urgent: the texts are cached and the run happens weekly.
-
-Turing already has the batch tier inside: T156's `TurBatchInferenceService`
-(`turing-app/src/main/java/com/viglet/turing/batch/`) drives OpenAI's Files-then-Batch
-flow and Anthropic Message Batches at half price, and T157–T159 use it for Turing's own
-jobs. The OpenAI-compatible gateway (`TurOpenAiCompatibleGatewayAPI`) exposes only
-`/v1/chat/completions`, `/v1/embeddings` and `/v1/models`, so a client of the gateway
-cannot reach that tier.
-
-Expected: OpenAI's batch wire on the gateway: `POST /v1/files` (purpose `batch`, a JSONL
-of `/v1/chat/completions` requests with a `custom_id` each), `POST /v1/batches`
-(input_file_id, endpoint, completion_window `24h`), `GET /v1/batches/{id}` (status and
-counts), `GET /v1/files/{id}/content` (the output JSONL), and `POST
-/v1/batches/{id}/cancel`. Behind it, `TurBatchInferenceService` on the vendor of the
-key's instance; on a vendor with no batch tier the gateway runs the lines itself and
-still answers the same wire. The key's model allowlist applies to every line, and its
-monthly cap and token budget are charged at the batch price when the batch completes.
-Errors follow T1092: a refused line is an error line in the output, not a failed batch.
-
-Workaround in jogarei: none. It runs synchronous calls with six workers
-(`crawler/src/jogarei_crawler/describe.py`) and will switch to the batch wire when this
-ships.
 
 ## CXIV Lucene engine search with synonyms
 

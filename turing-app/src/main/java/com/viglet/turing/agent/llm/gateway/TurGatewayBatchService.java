@@ -91,6 +91,10 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     private static final String BATCH_PREFIX = "batch_";
     private static final String BATCH_PURPOSE = "batch";
     private static final JsonMapper JSON = JsonMapper.builder().build();
+    /** {@code batch_job.pluginType} of a batch the gateway runs itself (no vendor batch tier). */
+    static final String SYNC_PLUGIN = "gateway-sync";
+    private static final java.util.concurrent.ExecutorService SYNC_RUNNER =
+            java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor();
 
     private final TurGatewayBatchFileRepository fileRepository;
     private final TurBatchJobRepository jobRepository;
@@ -99,6 +103,8 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     private final TurGatewayLlmService gatewayLlmService;
     private final TurLLMInstanceRepository llmInstanceRepository;
     private final TurLLMTokenUsageService tokenUsageService;
+    /** Where a synchronous batch runs; package-visible so a test can run it inline. */
+    java.util.concurrent.Executor syncRunner = SYNC_RUNNER;
 
     public TurGatewayBatchService(TurGatewayBatchFileRepository fileRepository,
             TurBatchJobRepository jobRepository, TurBatchInferenceService batchInferenceService,
@@ -119,7 +125,11 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
 
     /** What a {@code batch_job} row carries for the gateway, in {@code contextJson}. */
     record Context(String keyId, String inputFileId, String endpoint, String completionWindow,
-            Map<String, String> metadata, List<Refused> refused) {
+            Map<String, String> metadata, List<Refused> refused, String outputFileId) {
+
+        Context withOutputFileId(String id) {
+            return new Context(keyId, inputFileId, endpoint, completionWindow, metadata, refused, id);
+        }
     }
 
     // ---- Files ------------------------------------------------------------
@@ -172,9 +182,6 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
         if (request.completion_window() != null && !WINDOW.equals(request.completion_window())) {
             throw new IllegalArgumentException("completion_window must be " + WINDOW);
         }
-        if (!batchInferenceService.isEnabled()) {
-            throw new IllegalArgumentException("The batch tier is off on this Turing (turing.batch.enabled)");
-        }
         TurGatewayBatchFile file = ownedFile(request.input_file_id());
         // A batch is one call against the key's rate limit and hard cap, as a
         // synchronous completion is; its lines are charged when it completes.
@@ -205,11 +212,11 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
         if (instance == null || accepted.isEmpty()) {
             throw new IllegalArgumentException("No line of " + request.input_file_id() + " can be batched");
         }
-        if (!batchInferenceService.isSupported(instance)) {
-            throw new IllegalArgumentException("The vendor of " + instance.getId() + " has no batch tier");
-        }
         Context context = new Context(key == null ? null : key.getId(), request.input_file_id(),
-                CHAT_ENDPOINT, WINDOW, request.metadata(), refused);
+                CHAT_ENDPOINT, WINDOW, request.metadata(), refused, null);
+        if (!batchInferenceService.isEnabled() || !batchInferenceService.isSupported(instance)) {
+            return runSynchronously(instance, accepted, context);
+        }
         TurBatchJob job = batchInferenceService
                 .submit(instance, PURPOSE, accepted, JSON.writeValueAsString(context))
                 .orElseThrow(() -> new IllegalStateException("The vendor refused the batch"));
@@ -219,7 +226,7 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     /** {@code GET /v1/batches/{id}}: refreshes an open batch from the vendor first. */
     public BatchObject batch(String batchId) {
         TurBatchJob job = ownedJob(stripBatchPrefix(batchId));
-        if (!job.getState().isTerminal()) {
+        if (!job.getState().isTerminal() && !SYNC_PLUGIN.equals(job.getPluginType())) {
             try {
                 batchInferenceService.refresh(job);
             } catch (RuntimeException e) {
@@ -233,8 +240,14 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
     public BatchObject cancel(String batchId) {
         TurBatchJob job = ownedJob(stripBatchPrefix(batchId));
         if (!job.getState().isTerminal()) {
-            batchInferenceService.cancel(job);
-            batchInferenceService.refresh(job);
+            if (SYNC_PLUGIN.equals(job.getPluginType())) {
+                job.setState(TurBatchState.CANCELLED);
+                job.setCompletedAt(java.time.Instant.now());
+                jobRepository.save(job);
+            } else {
+                batchInferenceService.cancel(job);
+                batchInferenceService.refresh(job);
+            }
         }
         return toBatchObject(job, context(job));
     }
@@ -269,6 +282,86 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
         }
         log.info("[Gateway] batch {} completed: {} result(s), ${} booked to key {}",
                 job.getId(), results.size(), cost, keyId);
+    }
+
+    // ---- Synchronous fallback ---------------------------------------------
+
+    /**
+     * T1341 - a model whose vendor has no batch tier (or a Turing with the tier
+     * off) still answers the batch wire: the gateway runs the lines itself, one
+     * ordinary call at a time, in the background, and stores the output JSONL. The
+     * job row is collected from the start, so the vendor poller never touches it.
+     */
+    private BatchObject runSynchronously(TurLLMInstance instance, List<TurBatchChatRequest> accepted,
+            Context context) {
+        TurBatchJob job = new TurBatchJob();
+        job.setInstanceId(instance.getId());
+        job.setPluginType(SYNC_PLUGIN);
+        job.setVendorBatchId(SYNC_PLUGIN);
+        job.setPurpose(PURPOSE);
+        job.setState(TurBatchState.IN_PROGRESS);
+        job.setTotalRequests(accepted.size());
+        job.setResultsCollected(true);
+        job.setContextJson(JSON.writeValueAsString(context));
+        TurBatchJob saved = jobRepository.save(job);
+        syncRunner.execute(() -> runLines(saved, instance, accepted, context));
+        return toBatchObject(saved, context);
+    }
+
+    /** Runs each line, then stores the output JSONL; stops at a cancel between lines. */
+    void runLines(TurBatchJob job, TurLLMInstance instance, List<TurBatchChatRequest> lines, Context context) {
+        List<TurBatchChatResult> results = new ArrayList<>();
+        long completed = 0;
+        long failed = 0;
+        for (TurBatchChatRequest line : lines) {
+            if (cancelled(job.getId())) {
+                return;
+            }
+            try {
+                var completion = gatewayLlmService.completeBatchLine(instance, chatRequest(instance, line),
+                        context.keyId());
+                String text = completion.choices().isEmpty() ? ""
+                        : completion.choices().getFirst().message().content();
+                var usage = completion.usage();
+                results.add(TurBatchChatResult.ok(line.customId(), text,
+                        usage == null ? null : usage.prompt_tokens(),
+                        usage == null ? null : usage.completion_tokens()));
+                completed++;
+            } catch (RuntimeException e) {
+                results.add(TurBatchChatResult.failed(line.customId(), e.getMessage()));
+                failed++;
+            }
+        }
+        String jsonl = outputLines(job, results, context.refused());
+        TurGatewayBatchFile output = new TurGatewayBatchFile();
+        output.setKeyId(context.keyId());
+        output.setFilename("batch_output.jsonl");
+        output.setPurpose("batch_output");
+        output.setContent(jsonl);
+        output.setBytes(jsonl.getBytes(StandardCharsets.UTF_8).length);
+        output.setLineCount(results.size() + (context.refused() == null ? 0 : context.refused().size()));
+        TurGatewayBatchFile stored = fileRepository.save(output);
+        job.setContextJson(JSON.writeValueAsString(context.withOutputFileId(stored.getId())));
+        job.setCompletedRequests(completed);
+        job.setFailedRequests(failed);
+        job.setState(TurBatchState.COMPLETED);
+        job.setCompletedAt(java.time.Instant.now());
+        jobRepository.save(job);
+    }
+
+    private boolean cancelled(String jobId) {
+        return jobRepository.findById(jobId).map(j -> j.getState() == TurBatchState.CANCELLED).orElse(true);
+    }
+
+    private static com.viglet.turing.llm.gateway.TurOpenAiWire.ChatCompletionRequest chatRequest(
+            TurLLMInstance instance, TurBatchChatRequest line) {
+        List<WireMessage> messages = new ArrayList<>();
+        if (line.systemPrompt() != null) {
+            messages.add(new WireMessage("system", line.systemPrompt()));
+        }
+        messages.add(new WireMessage("user", line.userPrompt()));
+        return new com.viglet.turing.llm.gateway.TurOpenAiWire.ChatCompletionRequest(instance.getId(),
+                messages, false, line.temperature(), null, line.maxTokens(), null, null);
     }
 
     // ---- Internals --------------------------------------------------------
@@ -338,9 +431,18 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
                     + "; its output exists once it is completed");
         }
         Context context = context(job);
+        if (context.outputFileId() != null) {
+            return fileRepository.findById(context.outputFileId()).map(TurGatewayBatchFile::getContent)
+                    .orElse("");
+        }
+        return outputLines(job, batchInferenceService.fetchResults(job), context.refused());
+    }
+
+    /** The output JSONL: one line per result, then one error line per refused line. */
+    private static String outputLines(TurBatchJob job, List<TurBatchChatResult> results, List<Refused> refused) {
         StringBuilder out = new StringBuilder();
         int n = 0;
-        for (TurBatchChatResult result : batchInferenceService.fetchResults(job)) {
+        for (TurBatchChatResult result : results) {
             Map<String, Object> line = new LinkedHashMap<>();
             line.put("id", "batch_req_" + (++n));
             line.put("custom_id", result.customId());
@@ -360,7 +462,7 @@ public class TurGatewayBatchService implements TurBatchCompletionHandler {
             }
             out.append(JSON.writeValueAsString(line)).append('\n');
         }
-        for (Refused r : context.refused() == null ? List.<Refused>of() : context.refused()) {
+        for (Refused r : refused == null ? List.<Refused>of() : refused) {
             Map<String, Object> line = new LinkedHashMap<>();
             line.put("id", "batch_req_" + (++n));
             line.put("custom_id", r.customId());

@@ -434,6 +434,23 @@ public class TurGatewayLlmService {
         return completionOf(request.model(), text, extractUsage(response));
     }
 
+    /**
+     * T1341 — one line of a gateway batch run synchronously, for a vendor with no
+     * batch tier. The batch was admitted against the key's rate limit and hard cap
+     * once, when it was created, so a line is not gated again; its usage is booked
+     * to the key at the full price, since it ran as an ordinary call.
+     */
+    ChatCompletion completeBatchLine(TurLLMInstance instance, ChatCompletionRequest request,
+            String keyId) {
+        ChatModel chatModel = buildChatModel(instance);
+        Prompt prompt = TurGatewayPromptOptions.apply(
+                new Prompt(buildPromptMessages(request.messages(), TurGatewayOptions.none())), chatModel,
+                request);
+        ChatResponse response = chatModel.call(prompt);
+        tokenUsageService.recordUsage(instance, response, "gateway", null, "gateway.batch", keyId);
+        return completionOf(request.model(), extractText(response), extractUsage(response));
+    }
+
     private ChatCompletion completionOf(String model, String text, Usage usage) {
         Choice choice = new Choice(0, new WireMessage(ROLE_ASSISTANT, text), FINISH_STOP);
         return new ChatCompletion("chatcmpl-" + UUID.randomUUID(), OBJ_CHAT_COMPLETION,

@@ -39,10 +39,6 @@
 
 - 🛠 **T1343** (deps: —) **A value the engine drops at index time is logged on the server only; the client and the indexing log never see it** — Left: a per-site count of dropped and refused values from the last import, shown on the site's console page. → §CXC.2
 
-## Block CB — LLM gateway parity with the OpenAI wire
-
-- 🛠 **T1341** (deps: —) **The LLM gateway has no /v1/files and /v1/batches, so a bulk job pays full price one synchronous call at a time** — Left: run lines synchronously for a vendor with no batch tier, so the batch wire answers for every model. → §CXIII.6
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
@@ -61,12 +57,6 @@
 - **sn imports no agent, rag, persona, answer or eval type** Counting imports between
   top-level packages finds none from sn to agent, rag, persona, answer or eval; after
   the entity-graph slice, 22 sn classes still import one of them directly.
-
-## Done when — T1341
-
-- **A batch on a vendor with no batch tier still completes** POST /v1/batches on an
-  Ollama or Bedrock instance answers a batch that runs its lines synchronously and
-  serves the same output JSONL, instead of 400.
 
 ## Done when — T1343
 
