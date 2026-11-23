@@ -92,7 +92,7 @@ class TurMcpAuthenticatedRemoteToolTest {
         // below are not confounded by the new backoff. Its own tests set it.
         clientProperty.setFailureBackoff(java.time.Duration.ZERO);
         service = new TurMcpToolCallbackService(mcpServerRepositoryPort, clientProperty,
-                new com.viglet.turing.auth.security.ssrf.TurSsrfGuard(),
+                new com.viglet.turing.shared.security.ssrf.TurSsrfGuard(),
                 secretCryptoService);
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/mcp", this::handle);

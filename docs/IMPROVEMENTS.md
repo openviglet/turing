@@ -37,6 +37,10 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CZ — Backend modules with verified boundaries
 
+## Block CI — API errors name what the caller sent wrong
+
+## Block DA — One bad document never costs the rest of an import
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2648,3 +2652,56 @@ one feature move to that feature's module with their REST paths unchanged. Tenan
 per-module counters and teardown become SPIs tenant declares and each module implements.
 Done when system imports only shared, tenant only system and shared, and auth only those
 three.
+
+## CXC One bad document never costs the rest of an import
+
+### CXC.1 A bad field value drops that value, never the index (T1338)
+
+Met in jogarei (JO66, 2026-11-23), on a local Turing from
+`ghcr.io/openviglet/turing:latest` (embedded H2, Lucene, Artemis), SN site
+`jogarei-jogos` with a `releaseDate` field of type DATE declared through
+`/api/sn/manifest`.
+
+The call: `POST /api/sn/import` with `{"turingDocuments": [...]}`, 3669 documents in
+batches of 200. 42 of them carried `releaseDate: "2017T00:00:00Z"` (a release known only
+by its year, badly formatted by the client). What came back: 200 for every batch. What
+happened: `TurLuceneDocumentHandler` logged "Cannot parse DATE value '2017T00:00:00Z'
+for field 'releaseDate'", then `TurLuceneSearchEnginePlugin` logged "Schema conflict
+detected (cannot change field "releaseDate" from index options=DOCS to inconsistent
+index options=NONE). Recreating index", over and over, and `TurSNProcessQueue` logged
+"Bulk index of 200 docs failed (Inconsistency of field data structures across documents
+for field [releaseDate])". The site's document count swung between 5 and 267 for
+minutes: one bad value in one document wiped the whole index, again and again.
+
+Expected: a value that cannot be parsed is dropped from that one document (or the one
+document is refused), with a WARN that names the document id and the field. The rest of
+the batch indexes, and the index is never recreated because of one value. The run record
+or the import answer should list the refused values.
+
+Workaround in jogarei: the client now normalizes partial dates and omits anything else
+(`crawler/src/jogarei_crawler/turing.py`, `iso_date`). The engine still has the failure
+for any other client.
+
+## CXCI API errors name what the caller sent wrong
+
+### CXCI.1 Body binding errors name the field and accepted values (T1339)
+
+Met in jogarei (JO66, 2026-11-23), local Turing from `ghcr.io/openviglet/turing:latest`.
+
+The call: `POST /api/sn/{siteId}/synonym/batch` with `[{"name": "jogarei-t", "type":
+"EQUIVALENT", "language": "pt_BR", "input": null, "terms": ["roguelike", "roguelite"],
+"enabled": true}]`. What came back: 400 with `{"detail": "Request body is missing or
+malformed.", "type": "tag:viglet.com,2026:errors/malformed-request"}`. The body was
+well-formed JSON; the only problem was `type`, whose accepted values are `REGULAR` and
+`ONE_WAY`. Nothing in the answer named the field or the values it takes, so the fix came
+from reading another project's code (trabalharei's `src/lib/synonyms.ts`).
+
+T1154 made a wrong query parameter answer with its name in `detail` and `parameter`; a
+body that deserializes into an enum it does not know still collapses into the generic
+"malformed" answer.
+
+Expected: a 400 validation problem that names the JSON path (`[0].type`), the value sent
+(`EQUIVALENT`) and the values accepted (`REGULAR`, `ONE_WAY`), as T1154 does for
+parameters, for every request body Jackson cannot bind, not only synonyms.
+
+Workaround: none needed beyond sending `REGULAR` (jogarei `turing.py`).

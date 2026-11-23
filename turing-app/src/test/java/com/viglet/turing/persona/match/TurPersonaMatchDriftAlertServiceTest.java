@@ -35,7 +35,7 @@ import com.viglet.core.webhook.VigletWebhookRetryPolicy;
 import com.viglet.turing.persona.match.dto.TurPersonaMatchDriftDto;
 import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchProject;
 import com.viglet.turing.persona.persistence.model.match.TurPersonaMatchSchedule;
-import com.viglet.turing.auth.security.ssrf.TurSsrfGuard;
+import com.viglet.turing.shared.security.ssrf.TurSsrfGuard;
 import com.viglet.turing.system.security.TurSecretCryptoService;
 
 /**

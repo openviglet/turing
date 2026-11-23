@@ -49,8 +49,8 @@ class TurConnectorSelfInstallServiceTest {
     private MockRestServiceServer server;
 
     /** Permissive guard so the HTTP-probe tests stay hermetic (no real DNS). */
-    private static final com.viglet.turing.auth.security.ssrf.TurSsrfGuard ALLOW_ALL_GUARD =
-            new com.viglet.turing.auth.security.ssrf.TurSsrfGuard() {
+    private static final com.viglet.turing.shared.security.ssrf.TurSsrfGuard ALLOW_ALL_GUARD =
+            new com.viglet.turing.shared.security.ssrf.TurSsrfGuard() {
                 @Override
                 public boolean isAllowedUrl(String urlString) {
                     return true;
@@ -160,7 +160,7 @@ class TurConnectorSelfInstallServiceTest {
     @Test
     void testConnectionBlockedBySsrfGuard() {
         // A guard that blocks everything → no HTTP call, failed result (T643).
-        var blockingGuard = new com.viglet.turing.auth.security.ssrf.TurSsrfGuard() {
+        var blockingGuard = new com.viglet.turing.shared.security.ssrf.TurSsrfGuard() {
             @Override
             public boolean isAllowedUrl(String urlString) {
                 return false;

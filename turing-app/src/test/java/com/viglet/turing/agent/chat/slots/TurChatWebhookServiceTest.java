@@ -55,7 +55,7 @@ class TurChatWebhookServiceTest {
     @Mock
     private com.viglet.core.webhook.VigletWebhookDispatcher webhookDispatcher;
     @Mock
-    private com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard;
+    private com.viglet.turing.shared.security.ssrf.TurSsrfGuard ssrfGuard;
     @InjectMocks
     private TurChatWebhookService service;
 

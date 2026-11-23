@@ -34,7 +34,15 @@
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e ✅, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l 🛠) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
 - 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 8 sn classes of the GenAI surface still import agent, rag, answer or persona 46 times: genai controllers, indexers, content fit, hybrid ranking, import service. → §CLXXXIX.40
-- 🛠 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system still imports llm and auth, and tenant and auth import feature modules; tenant's counters and teardown need SPIs. → §CLXXXIX.45
+- 🛠 **T1322l** (deps: T1322a ✅) **system, tenant and auth import each other and reach into storage, sn, llm and other feature modules** — system still imports llm in its global settings, and tenant and auth import feature modules; tenant's counters and teardown need SPIs. → §CLXXXIX.45
+
+## Block CI — API errors name what the caller sent wrong
+
+- 📋 **T1339** (deps: —) **A request body with an unknown enum value answers 400 'missing or malformed' naming no field or accepted values** — The caller cannot tell which field is wrong or what it takes without reading Turing's source or another project's code. → §CXCI.1
+
+## Block DA — One bad document never costs the rest of an import
+
+- 📋 **T1338** (deps: —) **One unparsable DATE value in an import makes the Lucene engine recreate the whole SN site index, again and again** — A single malformed field in one document wipes every document of the site and leaves search empty while the import returns 200. → §CXC.1
 
 ## Done when — T1184
 

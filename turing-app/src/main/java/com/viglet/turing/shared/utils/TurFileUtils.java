@@ -302,13 +302,13 @@ public class TurFileUtils {
 
     /**
      * T643 / §XXXVII.5 — delegates to the single hardened validator
-     * {@link com.viglet.turing.auth.security.ssrf.TurSsrfGuard} so this
+     * {@link com.viglet.turing.shared.security.ssrf.TurSsrfGuard} so this
      * long-standing download-path guard also blocks IPv6 ULA ({@code fc00::/7}),
      * closing the gap where {@code isSiteLocalAddress()} only matched the
      * deprecated {@code fec0::/10}.
      */
     public static boolean isSafe(InetAddress address) {
-        return com.viglet.turing.auth.security.ssrf.TurSsrfGuard.isSafeAddress(address);
+        return com.viglet.turing.shared.security.ssrf.TurSsrfGuard.isSafeAddress(address);
     }
 
     private static boolean isRedirectResponse(int responseCode) {

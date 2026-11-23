@@ -6,7 +6,7 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  */
-package com.viglet.turing.auth.security.ssrf;
+package com.viglet.turing.shared.security.ssrf;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -41,6 +41,10 @@ import lombok.extern.slf4j.Slf4j;
  * on every redirect hop / immediately before connecting. Pinning the exact
  * resolved IP into the connection is the strongest defense and is applied by
  * {@code TurFileUtils} for the download path.
+ *
+ * <p>T1322y — lives in shared, since it depends on nothing in Turing and every
+ * layer calls it; it was in auth, which system and shared may not import (ADR
+ * 0005 section 6).
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4

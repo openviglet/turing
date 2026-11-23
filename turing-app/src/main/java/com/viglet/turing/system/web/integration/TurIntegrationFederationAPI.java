@@ -59,11 +59,11 @@ public class TurIntegrationFederationAPI {
 
     private final TurIntegrationInstanceRepository integrationInstanceRepository;
     private final CloseableHttpClient proxyHttpClient;
-    private final com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard;
+    private final com.viglet.turing.shared.security.ssrf.TurSsrfGuard ssrfGuard;
 
     TurIntegrationFederationAPI(TurIntegrationInstanceRepository integrationInstanceRepository,
             CloseableHttpClient proxyHttpClient,
-            com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard) {
+            com.viglet.turing.shared.security.ssrf.TurSsrfGuard ssrfGuard) {
         this.integrationInstanceRepository = integrationInstanceRepository;
         this.proxyHttpClient = proxyHttpClient;
         this.ssrfGuard = ssrfGuard;

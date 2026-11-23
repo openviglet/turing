@@ -42,7 +42,7 @@ public class TurMcpToolCallbackService {
 
     private final TurMcpServerRepositoryPort mcpServerRepositoryPort;
     private final com.viglet.turing.system.properties.TurMcpClientProperty mcpClientProperty;
-    private final com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard;
+    private final com.viglet.turing.shared.security.ssrf.TurSsrfGuard ssrfGuard;
     private final com.viglet.turing.system.security.TurSecretCryptoService secretCryptoService;
     private final ConcurrentHashMap<String, CachedClient> clientCache = new ConcurrentHashMap<>();
 
@@ -56,7 +56,7 @@ public class TurMcpToolCallbackService {
 
     public TurMcpToolCallbackService(TurMcpServerRepositoryPort mcpServerRepositoryPort,
             com.viglet.turing.system.properties.TurMcpClientProperty mcpClientProperty,
-            com.viglet.turing.auth.security.ssrf.TurSsrfGuard ssrfGuard,
+            com.viglet.turing.shared.security.ssrf.TurSsrfGuard ssrfGuard,
             com.viglet.turing.system.security.TurSecretCryptoService secretCryptoService) {
         this.mcpServerRepositoryPort = mcpServerRepositoryPort;
         this.mcpClientProperty = mcpClientProperty;
