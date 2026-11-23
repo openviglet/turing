@@ -33,7 +33,7 @@
 - 🛠 **T1310** (deps: T1306 ✅) **Search-engine code is spread over plugins, se, solr, lucene, elasticsearch and contentai** — The engines still import sn 46 times, mostly for site, locale, field and facet entities. → §CLXXXIX.6
 - 📋 **T1321** (deps: T1315 ✅, T1317 ✅, T1318 ✅, T1319 ✅, T1320 ✅, T1322) **One Liquibase tree of 205 files replays the whole history and no module owns its tables** — A squashed baseline per module replaces the history once T1322 settles which module owns each table. → §CLXXXIX.17
 - 📋 **T1322** (deps: T1308 ✅, T1310 🛠, T1311 ✅, T1315 ✅, T1322a ✅, T1322b ✅, T1322c ✅, T1322d ✅, T1322e ✅, T1322f ✅, T1322g ✅, T1322h 🛠, T1322i ✅, T1322j ✅, T1322k ✅, T1322l ✅) **No package declares what it exposes, so any class is reachable from any module** — Package-info files declare the modules. → §CLXXXIX.18
-- 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 4 sn classes still import agent or rag 39 times: the genai console controller, LLM entity indexing and extraction, and hybrid ranking. → §CLXXXIX.40
+- 🛠 **T1322h** (deps: T1322d ✅, T1322f ✅, T1322g ✅) **sn imports agent, rag, chat and persona about 90 times, though they sit above it** — 2 sn classes still import agent or rag 34 times: the genai console controller and hybrid ranking. → §CLXXXIX.40
 
 ## Done when — T1184
 

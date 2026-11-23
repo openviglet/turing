@@ -85,6 +85,20 @@ class TurDefaultAgentResolverTest {
     }
 
     @Test
+    void defaultAgentIsTheGlobalDefaultAsSnReadsItOrEmpty() {
+        TurAIAgent defaultAgent = ragReadyAgent();
+        defaultAgent.setTitle("Default");
+        when(globalSettingsService.getDefaultAiAgentId()).thenReturn("def-1");
+        when(turAIAgentRepository.findById("def-1")).thenReturn(Optional.of(defaultAgent));
+
+        org.assertj.core.api.Assertions.assertThat(resolver.defaultAgent()).get()
+                .extracting(com.viglet.turing.sn.api.TurSNSiteAgent::title).isEqualTo("Default");
+
+        when(globalSettingsService.getDefaultAiAgentId()).thenReturn("");
+        org.assertj.core.api.Assertions.assertThat(resolver.defaultAgent()).isEmpty();
+    }
+
+    @Test
     void siteAgentOfIsEmptyWithoutAnAgentAndIgnoresTheDefault() {
         org.assertj.core.api.Assertions.assertThat(resolver.siteAgentOf(new TurSNSiteGenAi())).isEmpty();
         org.assertj.core.api.Assertions.assertThat(resolver.siteAgentOf(null)).isEmpty();

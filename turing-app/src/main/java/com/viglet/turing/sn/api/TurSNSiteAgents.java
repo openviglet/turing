@@ -42,6 +42,9 @@ public interface TurSNSiteAgents {
      */
     java.util.Optional<TurSNSiteAgent> siteAgentOf(TurSNSiteGenAi turSNSiteGenAi);
 
+    /** The Global Settings' Default AI Agent, or empty when none is set or it is gone. */
+    java.util.Optional<TurSNSiteAgent> defaultAgent();
+
     /**
      * The ids among {@code agentIds} whose agent exists and is enabled with RAG
      * on, in one read; empty for an empty input.

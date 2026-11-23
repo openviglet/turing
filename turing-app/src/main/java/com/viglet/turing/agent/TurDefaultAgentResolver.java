@@ -103,10 +103,18 @@ public class TurDefaultAgentResolver implements com.viglet.turing.system.TurDefa
     @Override
     public java.util.Optional<com.viglet.turing.sn.api.TurSNSiteAgent> siteAgentOf(
             TurSNSiteGenAi turSNSiteGenAi) {
-        return java.util.Optional.ofNullable(siteAgent(turSNSiteGenAi))
-                .map(agent -> new com.viglet.turing.sn.api.TurSNSiteAgent(agent.getTitle(),
-                        agent.getEnabled() == 1 && agent.isRagEnabled(),
-                        java.util.List.copyOf(agentLlmInstances.of(agent))));
+        return java.util.Optional.ofNullable(siteAgent(turSNSiteGenAi)).map(this::view);
+    }
+
+    /** T1322h — {@link #resolveDefaultAgent} as sn reads it. */
+    @Override
+    public java.util.Optional<com.viglet.turing.sn.api.TurSNSiteAgent> defaultAgent() {
+        return java.util.Optional.ofNullable(resolveDefaultAgent()).map(this::view);
+    }
+
+    private com.viglet.turing.sn.api.TurSNSiteAgent view(TurAIAgent agent) {
+        return new com.viglet.turing.sn.api.TurSNSiteAgent(agent.getTitle(),
+                agent.getEnabled() == 1 && agent.isRagEnabled(), java.util.List.copyOf(agentLlmInstances.of(agent)));
     }
 
     /**

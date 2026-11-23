@@ -1856,6 +1856,7 @@
 - **T1344** — T1322h slice: synonym mining reads the default embedding model through TurSNDefaultEmbeddingModel, which sn declares and rag's TurRagContextBuilder implements.
 - **T1345** — T1322l slice: agents, sites and monthly tokens are counted through TurTenantResourceCount, which tenant declares and agent, sn and llm implement; the counter imports none of them.
 - **T1348** — T1322h slice: content-fit scoring and the coverage report read the audience persona through TurSNAudienceFit, which sn declares and persona implements.
+- **T1349** — T1322h slice: entity indexing reads the site or default agent's LLM through TurSNSiteAgents, and the LLM entity extractor moved into agent.entity, implementing sn's extractor SPI.
 
 ## Block DA — One bad document never costs the rest of an import
 

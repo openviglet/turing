@@ -19,7 +19,10 @@
  * under the License.
  */
 
-package com.viglet.turing.sn.entity;
+package com.viglet.turing.agent.entity;
+
+import com.viglet.turing.sn.entity.TurSNEntities;
+import com.viglet.turing.sn.entity.TurSNEntityExtractor;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;

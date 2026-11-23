@@ -27,7 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -43,12 +42,10 @@ import org.springframework.stereotype.Component;
 import com.viglet.turing.client.sn.job.TurSNJobAttributeSpec;
 import com.viglet.turing.commons.se.field.TurSEFieldType;
 import com.viglet.turing.commons.sn.field.TurSNFieldName;
-import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
+import com.viglet.turing.sn.api.TurSNSiteAgents;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 import com.viglet.turing.sn.kb.TurSNRecognitionDictionaries;
@@ -89,8 +86,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TurSNEntityIndexer {
 
-    private final com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances;
-
     /** The facet field of each entity kind. */
     public static final String PERSON_FIELD = "entity_person";
     public static final String ORGANIZATION_FIELD = "entity_organization";
@@ -101,8 +96,7 @@ public class TurSNEntityIndexer {
     private static final int MAX_VALUES_PER_KIND = 30;
 
     private final TurSNSiteGenAiRepository turSNSiteGenAiRepository;
-    private final TurAIAgentRepository turAIAgentRepository;
-    private final TurDefaultAgentResolver defaultAgentResolver;
+    private final TurSNSiteAgents siteAgents;
     private final TurSNEntityExtractor extractor;
     private final TurSNRecognitionDictionaries dictionaryService;
     private final TurSNFieldProvisioner fieldProvisioner;
@@ -114,15 +108,11 @@ public class TurSNEntityIndexer {
                 }
             });
 
-    public TurSNEntityIndexer(TurSNSiteGenAiRepository turSNSiteGenAiRepository,
-            TurAIAgentRepository turAIAgentRepository, TurDefaultAgentResolver defaultAgentResolver,
+    public TurSNEntityIndexer(TurSNSiteGenAiRepository turSNSiteGenAiRepository, TurSNSiteAgents siteAgents,
             TurSNEntityExtractor extractor, TurSNRecognitionDictionaries dictionaryService,
-            TurSNFieldProvisioner fieldProvisioner,
-            com.viglet.turing.agent.TurAgentLlmInstances agentLlmInstances) {
-        this.agentLlmInstances = agentLlmInstances;
+            TurSNFieldProvisioner fieldProvisioner) {
         this.turSNSiteGenAiRepository = turSNSiteGenAiRepository;
-        this.turAIAgentRepository = turAIAgentRepository;
-        this.defaultAgentResolver = defaultAgentResolver;
+        this.siteAgents = siteAgents;
         this.extractor = extractor;
         this.dictionaryService = dictionaryService;
         this.fieldProvisioner = fieldProvisioner;
@@ -234,12 +224,9 @@ public class TurSNEntityIndexer {
 
     /** The site agent's LLM (lowest id, as agent chat picks it), else the Default AI Agent's. */
     private TurLLMInstance llm(TurSNSiteGenAi genAi) {
-        TurAIAgent agent = genAi.getTurAIAgentId() == null ? defaultAgentResolver.resolveDefaultAgent()
-                : turAIAgentRepository.findById(genAi.getTurAIAgentId()).orElse(null);
-        if (agent == null || agent.getLlmInstanceIds().isEmpty()) {
-            return null;
-        }
-        return agentLlmInstances.of(agent).stream().min(Comparator.comparing(TurLLMInstance::getId)).orElse(null);
+        // T1322h - the agents are read through sn's SPI; their LLMs come in id order.
+        var agent = genAi.getTurAIAgentId() == null ? siteAgents.defaultAgent() : siteAgents.siteAgentOf(genAi);
+        return agent.flatMap(view -> view.llmInstances().stream().findFirst()).orElse(null);
     }
 
     private static String extractText(TurSNSite turSNSite, Map<String, Object> attributes) {

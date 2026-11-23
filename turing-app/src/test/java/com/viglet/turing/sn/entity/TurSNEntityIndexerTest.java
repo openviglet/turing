@@ -20,12 +20,9 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.viglet.turing.agent.TurDefaultAgentResolver;
-import com.viglet.turing.agent.persistence.model.TurAIAgent;
 import com.viglet.turing.llm.persistence.model.TurLLMInstance;
 import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.genai.TurSNSiteGenAi;
-import com.viglet.turing.agent.persistence.repository.TurAIAgentRepository;
 import com.viglet.turing.sn.persistence.repository.genai.TurSNSiteGenAiRepository;
 import com.viglet.turing.sn.field.TurSNFieldProvisioner;
 import com.viglet.turing.sn.kb.TurSNRecognitionDictionaries;
@@ -43,19 +40,16 @@ import com.viglet.turing.sn.kb.TurTextNormalizer;
  */
 class TurSNEntityIndexerTest {
 
-    private final com.viglet.turing.agent.InMemoryAgentLlmInstances agentLlms =
-            new com.viglet.turing.agent.InMemoryAgentLlmInstances();
-
     private static final String TEXT = "Bruno Bosso and Antonio Prado spoke at USP in São Paulo.";
 
     private final TurSNSiteGenAiRepository genAiRepository = mock(TurSNSiteGenAiRepository.class);
-    private final TurAIAgentRepository agentRepository = mock(TurAIAgentRepository.class);
-    private final TurDefaultAgentResolver agentResolver = mock(TurDefaultAgentResolver.class);
+    private final com.viglet.turing.sn.api.TurSNSiteAgents siteAgents =
+            mock(com.viglet.turing.sn.api.TurSNSiteAgents.class);
     private final TurSNEntityExtractor extractor = mock(TurSNEntityExtractor.class);
     private final TurSNRecognitionDictionaries dictionaryService = mock(TurSNRecognitionDictionaries.class);
     private final TurSNFieldProvisioner provisioner = mock(TurSNFieldProvisioner.class);
-    private final TurSNEntityIndexer indexer = new TurSNEntityIndexer(genAiRepository, agentRepository,
-            agentResolver, extractor, dictionaryService, provisioner, agentLlms.service());
+    private final TurSNEntityIndexer indexer = new TurSNEntityIndexer(genAiRepository, siteAgents,
+            extractor, dictionaryService, provisioner);
 
     private final TurSNSite site = new TurSNSite();
     private final TurSNSiteGenAi genAi = new TurSNSiteGenAi();
@@ -67,10 +61,9 @@ class TurSNEntityIndexerTest {
         site.setName("portal");
         site.setTurSNSiteGenAi(genAi);
         llm.setId("llm-1");
-        TurAIAgent agent = new TurAIAgent();
-        agentLlms.attach(agent, llm);
         when(genAiRepository.findById("genai-1")).thenReturn(Optional.of(genAi));
-        when(agentResolver.resolveDefaultAgent()).thenReturn(agent);
+        when(siteAgents.defaultAgent()).thenReturn(Optional.of(
+                new com.viglet.turing.sn.api.TurSNSiteAgent("Default", true, List.of(llm))));
         when(dictionaryService.getDictionary(any(), any())).thenReturn(TurRecognitionDictionary.builder()
                 .add("Bosso, Bruno", false, false, new TurRecognizedTerm("t1", "Bruno Bosso", List.of("Bruno Bosso")))
                 .add("Bruno Bosso", false, false, new TurRecognizedTerm("t1", "Bruno Bosso", List.of("Bruno Bosso")))
