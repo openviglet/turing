@@ -20,6 +20,12 @@ public interface TurSNSiteFieldMapper {
 
     Set<TurSNSiteFieldDto> toDtoSet(Set<TurSNSiteField> entities);
 
+    /**
+     * T1355 — the site is not the payload's to change: an update keeps the field's
+     * own, managed site, and the payload's (an id with no lock version, read as
+     * unsaved since T1319) never reaches the entity.
+     */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "turSNSite", ignore = true)
     void updateEntity(TurSNSiteField source, @MappingTarget TurSNSiteField target);
 }

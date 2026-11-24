@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viglet.turing.commons.se.TurSEPartition;
 import com.viglet.turing.sn.persistence.dto.spotlight.TurSNSiteSpotlightDto;
 import com.viglet.turing.sn.persistence.mapper.spotlight.TurSNSiteSpotlightMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.spotlight.TurSNSiteSpotlight;
 import com.viglet.turing.sn.spotlight.TurSpotlightCache;
 import com.viglet.turing.system.cache.TurCacheEvictionScheduler;
@@ -155,7 +156,9 @@ public class TurSNSiteSpotlightAPI {
             turSNSiteSpotlightEdit.setModificationDate(turSNSiteSpotlight.getModificationDate());
             turSNSiteSpotlightEdit.setName(turSNSiteSpotlight.getName());
             turSNSiteSpotlightEdit.setProvider(turSNSiteSpotlight.getProvider());
-            turSNSiteSpotlightEdit.setTurSNSite(turSNSiteSpotlight.getTurSNSite());
+            // T1355 — the body's site has no lock version; a body without one keeps the current.
+            Optional.ofNullable(TurSNSite.referenceTo(turSNSiteSpotlight.getTurSNSite(), null))
+                    .ifPresent(turSNSiteSpotlightEdit::setTurSNSite);
             Set<TurSNSiteSpotlightTerm> terms = new HashSet<>();
             for (TurSNSiteSpotlightTerm term : turSNSiteSpotlight.getTurSNSiteSpotlightTerms()) {
                 term.setTurSNSiteSpotlight(turSNSiteSpotlight);
@@ -204,6 +207,8 @@ public class TurSNSiteSpotlightAPI {
             @PathVariable String ignoredSnSiteId) {
         clearSpotlightCaches();
         TurSNSiteSpotlight turSNSiteSpotlight = turSNSiteSpotlightMapper.toEntity(turSNSiteSpotlightDto);
+        // T1355 — the body's site, else the path's, as a reference with a lock version.
+        turSNSiteSpotlight.setTurSNSite(TurSNSite.referenceTo(turSNSiteSpotlight.getTurSNSite(), ignoredSnSiteId));
         // T1209 — a partitioned key's spotlight is its partition's: it shows only
         // in that partition's searches. Without one it is site-wide, as before.
         turSNSiteSpotlight.bindTo(TurApiKeyPartitionContext.current().orElse(null));

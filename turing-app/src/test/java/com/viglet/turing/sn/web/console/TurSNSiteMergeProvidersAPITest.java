@@ -95,7 +95,9 @@ class TurSNSiteMergeProvidersAPITest {
 
     @Test
     void shouldUpdateMergeProviderAndPersistOverwrittenFields() {
+        // A request body names its site by id, with no lock version (T1355).
         TurSNSite site = new TurSNSite();
+        site.setId("site-1");
         TurSNSiteMergeProviders existing = new TurSNSiteMergeProviders();
         existing.setOverwrittenFields(new java.util.HashSet<>(Set.of(new TurSNSiteMergeProvidersField())));
 
@@ -122,7 +124,9 @@ class TurSNSiteMergeProvidersAPITest {
         assertThat(result.getRelationTo()).isEqualTo("to");
         assertThat(result.getDescription()).isEqualTo("updated");
         assertThat(result.getLocale()).isEqualTo(Locale.CANADA);
-        assertThat(result.getTurSNSite()).isNotNull();
+        assertThat(result.getTurSNSite().getId()).isEqualTo("site-1");
+        // T1355 — bound as a reference that reads as existing, not the body's unsaved site.
+        assertThat(existing.getTurSNSite().getVersion()).isNotNull();
 
         verify(turSNSiteMergeRepository).save(existing);
         verify(turSNSiteMergeFieldRepository).save(firstField);

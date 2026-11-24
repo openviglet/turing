@@ -96,10 +96,11 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 
 	/**
 	 * T1353 — a site that stands for an existing row by its id alone, to bind as a
-	 * query parameter. Since {@link #version} is a wrapper, a site with a null
-	 * version reads as unsaved, and Hibernate refuses an unsaved entity as a
-	 * parameter; any version marks it as existing, and only the id is bound.
-	 * Never save or merge one: the version is not the row's.
+	 * query parameter or to point a child's foreign key at (T1355). Since
+	 * {@link #version} is a wrapper, a site with a null version reads as unsaved,
+	 * and Hibernate refuses an unsaved entity in either place; any version marks it
+	 * as existing, and only the id is used. Never save or merge one: the version is
+	 * not the row's.
 	 *
 	 * @param id the site's id
 	 * @return a detached site carrying only {@code id}
@@ -109,6 +110,21 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 		site.setId(id);
 		site.setVersion(0L);
 		return site;
+	}
+
+	/**
+	 * T1355 — the site a request body names for a child (a spotlight, a merge
+	 * provider), as a {@link #reference(String)}: Jackson builds that body's site
+	 * from its id alone, with no version. With no site in the body, the
+	 * {@code fallbackId} (the path's site); {@code null} when neither names one.
+	 *
+	 * @param fromBody   the site the request body carried, or {@code null}
+	 * @param fallbackId the site id to use when the body names none
+	 * @return a reference to the named site, or {@code null}
+	 */
+	public static TurSNSite referenceTo(TurSNSite fromBody, String fallbackId) {
+		String id = fromBody != null && fromBody.getId() != null ? fromBody.getId() : fallbackId;
+		return id == null ? null : reference(id);
 	}
 
 	/**

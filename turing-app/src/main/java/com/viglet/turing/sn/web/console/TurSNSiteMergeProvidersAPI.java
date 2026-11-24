@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viglet.turing.sn.persistence.dto.merge.TurSNSiteMergeProvidersDto;
 import com.viglet.turing.sn.persistence.mapper.merge.TurSNSiteMergeProvidersMapper;
+import com.viglet.turing.sn.persistence.model.TurSNSite;
 import com.viglet.turing.sn.persistence.model.merge.TurSNSiteMergeProviders;
 import com.viglet.turing.sn.persistence.repository.TurSNSiteRepository;
 import com.viglet.turing.sn.persistence.repository.merge.TurSNSiteMergeProvidersFieldRepository;
@@ -108,7 +109,9 @@ public class TurSNSiteMergeProvidersAPI {
 			turSNSiteMergeEdit.setRelationTo(turSNSiteMerge.getRelationTo());
 			turSNSiteMergeEdit.setDescription(turSNSiteMerge.getDescription());
 			turSNSiteMergeEdit.setLocale(turSNSiteMerge.getLocale());
-			turSNSiteMergeEdit.setTurSNSite(turSNSiteMerge.getTurSNSite());
+			// T1355 — the body's site has no lock version; a body without one keeps the current.
+			Optional.ofNullable(TurSNSite.referenceTo(turSNSiteMerge.getTurSNSite(), null))
+					.ifPresent(turSNSiteMergeEdit::setTurSNSite);
 			turSNSiteMergeEdit.getOverwrittenFields().clear();
 			turSNSiteMergeRepository.save(turSNSiteMergeEdit);
 
@@ -134,6 +137,8 @@ public class TurSNSiteMergeProvidersAPI {
 	public TurSNSiteMergeProvidersDto turSNSiteMergeAdd(@RequestBody TurSNSiteMergeProvidersDto turSNSiteMergeDto,
 			@PathVariable String ignoredSnSiteId) {
 		TurSNSiteMergeProviders turSNSiteMerge = turSNSiteMergeProvidersMapper.toEntity(turSNSiteMergeDto);
+		// T1355 — the body's site, else the path's, as a reference with a lock version.
+		turSNSiteMerge.setTurSNSite(TurSNSite.referenceTo(turSNSiteMerge.getTurSNSite(), ignoredSnSiteId));
 		turSNSiteMergeRepository.save(turSNSiteMerge);
 		turSNSiteMerge.getOverwrittenFields().forEach(field -> {
 			field.setTurSNSiteMergeProviders(turSNSiteMerge);
