@@ -107,9 +107,18 @@ class TurSNResearchStreamIT extends AbstractTuringSpringIT {
         registry.add("spring.jmx.unique-names", () -> "true");
     }
 
+    @Autowired
+    private com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
+
     @BeforeAll
     void seed() throws IOException {
         luceneDir = Files.createTempDirectory("turing-research-it-lucene");
+        // An import keeps an SE instance that already exists, endpoint and all: point the
+        // shared fixture's Lucene instance at this IT's own directory, as TurSdkContractIT does.
+        seInstanceRepository.findById("00000000-0000-0000-0000-lucene000001").ifPresent(se -> {
+            se.setEndpointUrl(luceneDir.toString().replace('\\', '/'));
+            seInstanceRepository.save(se);
+        });
         MockMultipartFile bundle = new MockMultipartFile("file", SITE + ".zip", "application/zip",
                 importZip(luceneDir));
         importExchange.importFromMultipartFile(bundle, true, false, null, true);

@@ -212,9 +212,22 @@ class TurSdkContractIT extends AbstractTuringSpringIT {
      * Imports the {@code mythical-creatures} Lucene sample (structure + content)
      * once for the class, pointing the Lucene index at a throwaway temp dir.
      */
+    /** The Lucene instance {@code /sdk-it/export.json} declares, shared with {@code TurSNResearchStreamIT}. */
+    static final String LUCENE_SE_ID = "00000000-0000-0000-0000-lucene000001";
+
+    @Autowired
+    private com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
+
     @BeforeAll
     void importLuceneSampleSite() throws IOException {
         luceneDir = Files.createTempDirectory("turing-sdk-it-lucene");
+        // An import keeps an SE instance that already exists, endpoint and all, so after
+        // TurSNResearchStreamIT this IT indexed into that IT's directory, whose writer a
+        // cached context still held: every search here came back empty. Point it at ours.
+        seInstanceRepository.findById(LUCENE_SE_ID).ifPresent(se -> {
+            se.setEndpointUrl(luceneDir.toString().replace('\\', '/'));
+            seInstanceRepository.save(se);
+        });
 
         byte[] zip = buildImportZip(luceneDir);
         MockMultipartFile bundle = new MockMultipartFile(
