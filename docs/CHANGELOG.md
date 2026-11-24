@@ -1739,6 +1739,7 @@
 - **T1303** — The plugin stores a time that lands exactly on midnight UTC one second later, so cards, the instant search and expiry read it as a time on its local day, never as an all-day date (design §CLXXXII.20 superseded: neither option it weighed was needed: no all-day marker and no card-side zone guess, one second at indexing keeps midnight UTC meaning a day).
 - **T1329** — Each SN site chooses whether personal data in its stored search terms is masked (Hide, Keep as typed, or the server's setting), in the console's Behavior tab, export and import (design §CLXXXII.21 superseded: no manifest key: the console and site export carry the setting, and the WordPress plugin has no use for it yet).
 - **T1352** — GET /api/sn lists a site whose GenAI has no agent as not GenAI-enabled instead of failing with 500; the listing test carries one.
+- **T1353** — SN search answers again: the snapshot view carries the site's lock version, and the six id-only stubs bound as query parameters use TurSNSite.reference, which reads as existing.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

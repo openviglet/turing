@@ -344,6 +344,9 @@ class TurSNSiteSearchSnapshotServiceTest {
         if (type == Float.class) {
             return nth + 1.5f;
         }
+        if (type == Long.class) {
+            return nth + 1_001L;
+        }
         if (type.isEnum()) {
             Object[] constants = type.getEnumConstants();
             if (nth >= constants.length) {
@@ -401,17 +404,17 @@ class TurSNSiteSearchSnapshotServiceTest {
                     || declared.getType() == TurSNSiteGenAi.class) {
                 continue; // the GenAI association is asserted separately below
             }
-            if (declared.isAnnotationPresent(jakarta.persistence.Version.class)) {
-                continue; // T1319 — the lock version is not content; the rebuilt copy is never saved
-            }
+            // T1353 — the lock version is carried too: a rebuilt site with a null
+            // version reads as unsaved, and Hibernate refuses it as a query parameter.
             declared.setAccessible(true);
             int nth = seenPerType.merge(declared.getType(), 1, Integer::sum) - 1;
             declared.set(original, sampleFor(declared.getType(), declared.getName(), nth));
             scalars.add(declared);
         }
         // T1329 — metricsMaskPersonalData is the 35th; T1330 — timeZone the 36th;
-        // T1315 — turSEInstanceId, an id since the association went, the 37th.
-        assertThat(scalars).as("the site must still have scalars to copy").hasSize(37);
+        // T1315 — turSEInstanceId, an id since the association went, the 37th;
+        // T1353 — version (T1319) the 38th.
+        assertThat(scalars).as("the site must still have scalars to copy").hasSize(38);
 
         TurSNSite rebuilt = TurSNSiteSearchSiteView.from(original, "solr").toEntity();
 

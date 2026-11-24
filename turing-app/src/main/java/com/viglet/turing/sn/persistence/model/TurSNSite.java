@@ -95,6 +95,23 @@ public class TurSNSite extends TurAuditable<String> implements Serializable {
 	private Long version;
 
 	/**
+	 * T1353 — a site that stands for an existing row by its id alone, to bind as a
+	 * query parameter. Since {@link #version} is a wrapper, a site with a null
+	 * version reads as unsaved, and Hibernate refuses an unsaved entity as a
+	 * parameter; any version marks it as existing, and only the id is bound.
+	 * Never save or merge one: the version is not the row's.
+	 *
+	 * @param id the site's id
+	 * @return a detached site carrying only {@code id}
+	 */
+	public static TurSNSite reference(String id) {
+		TurSNSite site = new TurSNSite();
+		site.setId(id);
+		site.setVersion(0L);
+		return site;
+	}
+
+	/**
 	 * T260 / §XIV.2.4 — multi-tenancy discriminator. Hibernate's native
 	 * {@code @TenantId} stamps this on insert from the
 	 * {@code CurrentTenantIdentifierResolver} (which reads

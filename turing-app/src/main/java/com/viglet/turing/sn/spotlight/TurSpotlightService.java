@@ -28,8 +28,7 @@ public class TurSpotlightService {
         // JPA-managed reference — use a stub built from the domain id.
         return turSNSiteRepositoryPort.findByNameIgnoreCase(snSite)
                 .map(site -> {
-                    TurSNSite stub = new TurSNSite();
-                    stub.setId(site.id());
+                    TurSNSite stub = TurSNSite.reference(site.id());
                     return turSNSiteSpotlightRepository.findByTurSNSiteAndLanguage(stub, language);
                 })
                 .orElse(Collections.emptyList());

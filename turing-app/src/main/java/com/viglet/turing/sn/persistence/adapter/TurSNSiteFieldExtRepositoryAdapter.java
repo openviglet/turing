@@ -94,8 +94,6 @@ public class TurSNSiteFieldExtRepositoryAdapter implements TurSNSiteFieldExtRepo
     }
 
     private static TurSNSite stub(String id) {
-        TurSNSite stub = new TurSNSite();
-        stub.setId(id);
-        return stub;
+        return TurSNSite.reference(id);
     }
 }

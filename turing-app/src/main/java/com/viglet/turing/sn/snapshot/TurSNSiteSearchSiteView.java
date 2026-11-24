@@ -69,6 +69,9 @@ public record TurSNSiteSearchSiteView(
         Integer spellCheck, Integer spellCheckFixes, Integer spotlightWithResults,
         String searchTemplate, TurSNSiteApiAuthMode apiAuthMode, Integer relaxNoResults,
         Integer autocompleteTopTerms, Integer metricsMaskPersonalData, String timeZone,
+        // T1353 — the T1319 lock version: without it the rebuilt site reads as unsaved,
+        // and Hibernate refuses it as a query parameter (every search answered 500).
+        Long version,
         // ---- the two associations, denormalised to what is read ----
         String genAiId, TurSNKnowledgeBaseMode knowledgeBaseMode, String embeddingModelId,
         TurSNRankingMode snRankingMode, boolean snSemanticRecall, Double snSemanticRecallMinScore,
@@ -95,6 +98,7 @@ public record TurSNSiteSearchSiteView(
                 site.getSpotlightWithResults(), site.getSearchTemplate(),
                 site.getApiAuthMode(), site.getRelaxNoResults(), site.getAutocompleteTopTerms(),
                 site.getMetricsMaskPersonalData(), site.getTimeZone(),
+                site.getVersion(),
                 genAi == null ? null : genAi.getId(),
                 genAi == null ? null : genAi.getKnowledgeBaseMode(),
                 genAi == null ? null : genAi.getEmbeddingModelId(),
@@ -150,6 +154,7 @@ public record TurSNSiteSearchSiteView(
         site.setAutocompleteTopTerms(autocompleteTopTerms);
         site.setMetricsMaskPersonalData(metricsMaskPersonalData);
         site.setTimeZone(timeZone);
+        site.setVersion(version);
         site.setTurSNSiteGenAi(genAiOrNull());
         site.setTurSEInstanceId(seInstanceId);
         return site;

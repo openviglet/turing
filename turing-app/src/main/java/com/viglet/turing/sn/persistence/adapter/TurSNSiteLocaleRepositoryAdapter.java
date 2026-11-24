@@ -59,8 +59,7 @@ public class TurSNSiteLocaleRepositoryAdapter implements TurSNSiteLocaleReposito
 
     @Override
     public boolean existsBySnSiteIdAndLanguage(String snSiteId, Locale language) {
-        TurSNSite stub = new TurSNSite();
-        stub.setId(snSiteId);
+        TurSNSite stub = TurSNSite.reference(snSiteId);
         return turSNSiteLocaleRepository.existsByTurSNSiteAndLanguage(stub, language);
     }
 
@@ -77,8 +76,7 @@ public class TurSNSiteLocaleRepositoryAdapter implements TurSNSiteLocaleReposito
 
     @Override
     public List<TurSNSiteLocaleDomain> findBySnSiteIdOrderedByPosition(String snSiteId) {
-        TurSNSite stub = new TurSNSite();
-        stub.setId(snSiteId);
+        TurSNSite stub = TurSNSite.reference(snSiteId);
         return mapper.toDomainList(
                 turSNSiteLocaleRepository.findByTurSNSiteOrderByPositionAsc(stub));
     }
@@ -86,8 +84,7 @@ public class TurSNSiteLocaleRepositoryAdapter implements TurSNSiteLocaleReposito
     @Override
     public Optional<TurSNSiteLocaleDomain> findFirstLocaleBySnSiteIdOrderByPosition(
             String snSiteId) {
-        TurSNSite stub = new TurSNSite();
-        stub.setId(snSiteId);
+        TurSNSite stub = TurSNSite.reference(snSiteId);
         return Optional.ofNullable(
                 turSNSiteLocaleRepository.findFirstByTurSNSiteOrderByPositionAsc(stub))
                 .map(mapper::toDomain);
