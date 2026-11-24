@@ -1725,7 +1725,7 @@
 - **T1257 (transcript, docs and readme)** — The video's transcript, generated from the narration script, is on the site and docs pages; the docs page and readme.txt link the video and the demo store.
 - **T1258** — The search answer opens the Site assistant with that exchange as its first turns, and an assistant answer citing over three posts links to the results page (design §CLXXXII.8 superseded: the type filter needs chat sources to carry a type, filed as T1264).
 - **T1259 (assistant renders flows)** — The Site assistant shows a chat flow's choices as buttons and its forms as native labelled fields sent on submit, and New conversation resets the flow.
-- **T1261 (only footnoted sources)** — The search answer lists only the sources its text cites by [n]; an answer that cites none stays hidden, as the block's setting says.
+- **T1261** — The search answer lists only the sources its text cites by [n], with e2e cases for none and some cited; the pt-BR story's chapter 2 was recorded again showing one cited source.
 - **T1264** — Chat and answer sources carry the document's type, and the assistant's link to all results filters to it when every listed post shares one.
 - **T1265** — Measured on a T1301 build: the demo's tent question cites [1] in 3 of 3 runs, citations name only that tent, and trace.cited tells a cited answer from the fallback.
 - **T1266** — The plugin README and the WordPress docs page send installs to the Viglet Turing releases (wordpress-v<version> tags) and say how to build the zip before a version is released.
