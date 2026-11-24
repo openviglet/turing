@@ -718,7 +718,8 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
         }
         return switch (type) {
             case INT -> intRangeQuery(field, gte, gt, lte, lt);
-            case LONG, DATE -> longRangeQuery(field, gte, gt, lte, lt);
+            case LONG -> longRangeQuery(field, gte, gt, lte, lt);
+            case DATE -> dateRangeQuery(field, gte, gt, lte, lt, java.time.Instant.now());
             case FLOAT -> floatRangeQuery(field, gte, gt, lte, lt);
             case DOUBLE, CURRENCY -> doubleRangeQuery(field, gte, gt, lte, lt);
             default -> stringRangeQuery(field, gte, gt, lte, lt);
@@ -763,6 +764,55 @@ public class TurDslLuceneExecutor implements TurDslSearchEngineExecutor<Query, T
             hi = Long.MAX_VALUE;
         }
         return LongPoint.newRangeQuery(field, lo, hi);
+    }
+
+    /**
+     * T1354 — a DATE field is indexed as epoch millis, but a DSL bound is usually
+     * a date: an ISO instant, a {@code yyyy-MM-dd} day or Solr date math, read by
+     * {@link com.viglet.turing.searchengine.TurSEDateMath}; a number stays millis.
+     * As Elasticsearch reads the same DSL, a day as an upper bound ({@code lte}) or
+     * an exclusive lower one ({@code gt}) covers the whole day, so
+     * {@code lte: "2027-07-31"} keeps the 31st.
+     */
+    static Query dateRangeQuery(String field, Object gte, Object gt, Object lte, Object lt,
+            java.time.Instant now) {
+        long lo;
+        if (gte != null) {
+            lo = toMillis(gte, now);
+        } else if (gt != null) {
+            lo = isDay(gt) ? nextDayMillis(gt, now) : Math.addExact(toMillis(gt, now), 1);
+        } else {
+            lo = Long.MIN_VALUE;
+        }
+        long hi;
+        if (lte != null) {
+            hi = isDay(lte) ? nextDayMillis(lte, now) - 1 : toMillis(lte, now);
+        } else if (lt != null) {
+            hi = Math.addExact(toMillis(lt, now), -1);
+        } else {
+            hi = Long.MAX_VALUE;
+        }
+        return LongPoint.newRangeQuery(field, lo, hi);
+    }
+
+    private static final java.util.regex.Pattern DAY = java.util.regex.Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+    private static final java.util.regex.Pattern MILLIS = java.util.regex.Pattern.compile("-?\\d+");
+
+    private static boolean isDay(Object v) {
+        return !(v instanceof Number) && DAY.matcher(v.toString().trim()).matches();
+    }
+
+    private static long toMillis(Object v, java.time.Instant now) {
+        if (v instanceof Number n) {
+            return n.longValue();
+        }
+        String s = v.toString().trim();
+        return MILLIS.matcher(s).matches() ? Long.parseLong(s)
+                : com.viglet.turing.searchengine.TurSEDateMath.parse(s, now).toEpochMilli();
+    }
+
+    private static long nextDayMillis(Object day, java.time.Instant now) {
+        return Math.addExact(toMillis(day, now), java.time.Duration.ofDays(1).toMillis());
     }
 
     private static Query floatRangeQuery(String field, Object gte, Object gt, Object lte, Object lt) {

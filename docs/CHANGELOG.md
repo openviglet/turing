@@ -1740,6 +1740,7 @@
 - **T1329** — Each SN site chooses whether personal data in its stored search terms is masked (Hide, Keep as typed, or the server's setting), in the console's Behavior tab, export and import (design §CLXXXII.21 superseded: no manifest key: the console and site export carry the setting, and the WordPress plugin has no use for it yet).
 - **T1352** — GET /api/sn lists a site whose GenAI has no agent as not GenAI-enabled instead of failing with 500; the listing test carries one.
 - **T1353** — SN search answers again: the snapshot view carries the site's lock version, and the six id-only stubs bound as query parameters use TurSNSite.reference, which reads as existing.
+- **T1354** — A DSL date range on a Lucene DATE field reads ISO, day and date-math bounds (a day as lte keeps the whole day), and the facet parse no longer dates items by a trip's month.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

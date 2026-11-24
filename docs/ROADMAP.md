@@ -21,7 +21,6 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1354** (deps: —) **A DSL date range on a Lucene DATE field throws NumberFormatException: an ISO bound is parsed as a long** — The catalog kit silently drops a need when the LLM filters by date, and a trip's month becomes a publication_date filter. → §CLXXXII.22
 
 ## Done when — T1184
 

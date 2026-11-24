@@ -144,6 +144,11 @@ public class TurLlmNLFacetParser implements TurNLFacetParser {
                 - Resolve a relative date ("last year", "this month", "since March") \
                   against TODAY, never against your own knowledge of the date. If a \
                   date cannot be resolved from the query and TODAY, OMIT the range.
+                - Range a date field only on the date that field records (when an \
+                  item was published, posted, starts or ends, per its name and \
+                  DESCRIPTION). A date the user plans around ("a trip in July", "for \
+                  winter", "next weekend") is not the item's date: OMIT the range and \
+                  keep those words in the free-text part.
                 - Facet/term values are matched case-insensitively, so casing need \
                   not be exact; still prefer the value as written in the query.
 

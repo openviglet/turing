@@ -2389,18 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.22 A date range on a Lucene site fails as a number (from the shopper story's kit) (T1354)
-
-Seen in the pt-BR shopper story's Plan a kit on recanto-da-serra (2026-11-24). The plan
-"Dois dias atravessando a montanha em julho" made the copilot's LLM facet parse add a
-publication_date filter from 2027-07-01 to 2027-07-31.
-TurDslLuceneExecutor.buildRangeQuery sends a DATE field through longRangeQuery, and
-toLong("2027-07-01") throws NumberFormatException, so the gap returns no hits. Two
-things to fix: the Lucene DSL executor should parse an ISO date bound for a DATE field
-(the field is indexed as epoch millis), and the facet parse should not read a trip's
-month as the products' publication date, which no catalog search means. The kit survives
-today because the failure is caught per gap; the need is silently dropped.
-
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report

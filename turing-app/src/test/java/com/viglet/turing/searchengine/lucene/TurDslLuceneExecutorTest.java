@@ -101,6 +101,43 @@ class TurDslLuceneExecutorTest {
         assertThat(executor.translateQuery(range)).isInstanceOf(TermRangeQuery.class);
     }
 
+    // ─────────────── T1354: date bounds on a DATE field ───────────────
+
+    @Test
+    void aDateRangeReadsDayAndIsoBoundsAgainstEpochMillis() throws IOException {
+        // A DATE field is indexed as epoch millis; the DSL bound was parsed as a long
+        // ("2027-07-01" → NumberFormatException) before T1354.
+        try (Directory dir = new ByteBuffersDirectory()) {
+            try (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()))) {
+                for (String instant : List.of("2027-06-30T12:00:00Z", "2027-07-01T00:00:00Z",
+                        "2027-07-31T18:00:00Z", "2027-08-01T00:00:00Z")) {
+                    Document doc = new Document();
+                    doc.add(new StringField("id", instant, Field.Store.YES));
+                    doc.add(new org.apache.lucene.document.LongPoint("publication_date",
+                            java.time.Instant.parse(instant).toEpochMilli()));
+                    writer.addDocument(doc);
+                }
+            }
+            try (DirectoryReader reader = DirectoryReader.open(dir)) {
+                IndexSearcher searcher = new IndexSearcher(reader);
+                Map<String, TurSEFieldType> types = Map.of("publication_date", TurSEFieldType.DATE);
+
+                // A day as lte keeps the whole day, as Elasticsearch reads it: July 1 and 31.
+                assertThat(searcher.count(executor.translateQuery(new TurDslQuery.Range(
+                        "publication_date", "2027-07-01", null, "2027-07-31", null), types))).isEqualTo(2);
+                // A day as gt leaves the whole day out; lt stops before the day starts.
+                assertThat(searcher.count(executor.translateQuery(new TurDslQuery.Range(
+                        "publication_date", null, "2027-06-30", null, "2027-08-01"), types))).isEqualTo(2);
+                // An ISO instant is exact, and a number is still read as millis.
+                assertThat(searcher.count(executor.translateQuery(new TurDslQuery.Range(
+                        "publication_date", "2027-07-31T18:00:00Z", null, null, null), types))).isEqualTo(2);
+                long julyFirst = java.time.Instant.parse("2027-07-01T00:00:00Z").toEpochMilli();
+                assertThat(searcher.count(executor.translateQuery(new TurDslQuery.Range(
+                        "publication_date", null, null, julyFirst, null), types))).isEqualTo(2);
+            }
+        }
+    }
+
     // ─────────────── Sort translation ───────────────
 
     @Test
