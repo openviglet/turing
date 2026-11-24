@@ -131,7 +131,10 @@ class TurSNSiteAPITest {
                 TurSNSite notReady = siteWithAgent("not-ready", "agent-off");
                 TurSNSite noGenAi = new TurSNSite();
                 noGenAi.setName("plain");
-                when(siteRepository.findAllForListing()).thenReturn(List.of(ready, notReady, noGenAi));
+                // GenAI with no agent: its null id must not reach contains() on the
+                // immutable set the SPI returns (NullPointerException, a 500 on GET /api/sn).
+                TurSNSite noAgent = siteWithAgent("no-agent", null);
+                when(siteRepository.findAllForListing()).thenReturn(List.of(ready, notReady, noGenAi, noAgent));
                 when(siteAgents.ragEnabledAgentIds(java.util.Set.of("agent-rag", "agent-off")))
                                 .thenReturn(java.util.Set.of("agent-rag"));
 
@@ -140,7 +143,8 @@ class TurSNSiteAPITest {
                 assertThat(result).extracting(TurSNSiteListDto::name, TurSNSiteListDto::genAiEnabled)
                                 .containsExactly(org.assertj.core.groups.Tuple.tuple("ready", true),
                                                 org.assertj.core.groups.Tuple.tuple("not-ready", false),
-                                                org.assertj.core.groups.Tuple.tuple("plain", false));
+                                                org.assertj.core.groups.Tuple.tuple("plain", false),
+                                                org.assertj.core.groups.Tuple.tuple("no-agent", false));
         }
 
         private static TurSNSite siteWithAgent(String name, String agentId) {

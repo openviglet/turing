@@ -112,9 +112,18 @@ public class TurSNSiteAPI {
         // T1322h - which of them are enabled with RAG on comes through sn's SPI.
         java.util.Set<String> ragReady = siteAgents.ragEnabledAgentIds(agentIds);
         return sites.stream()
-                .map(site -> turSNSiteMapper.toListDto(site, site.getTurSNSiteGenAi() != null
-                        && ragReady.contains(site.getTurSNSiteGenAi().getTurAIAgentId())))
+                .map(site -> turSNSiteMapper.toListDto(site, isRagReady(site, ragReady)))
                 .toList();
+    }
+
+    /**
+     * A site with GenAI but no agent has a null agent id, and {@code contains(null)}
+     * throws on the immutable set the SPI may return, so the id is checked first.
+     */
+    private static boolean isRagReady(TurSNSite site, java.util.Set<String> ragReady) {
+        TurSNSiteGenAi genAi = site.getTurSNSiteGenAi();
+        return genAi != null && genAi.getTurAIAgentId() != null
+                && ragReady.contains(genAi.getTurAIAgentId());
     }
 
     @Operation(summary = "Semantic Navigation Site structure")

@@ -1738,6 +1738,7 @@
 - **T1301** — SN chat and /answer number each passage by its source and always ask for [n] markers, after a custom prompt too; the plugin's assistant lists only the sources the answer cites, as the search block does (design §CLXXXII.19 superseded: the -Pllm-it check against a real OpenAI model was not run; the numbering and the instruction are covered by unit tests, and the e2e fixture now cites by [1]).
 - **T1303** — The plugin stores a time that lands exactly on midnight UTC one second later, so cards, the instant search and expiry read it as a time on its local day, never as an all-day date (design §CLXXXII.20 superseded: neither option it weighed was needed: no all-day marker and no card-side zone guess, one second at indexing keeps midnight UTC meaning a day).
 - **T1329** — Each SN site chooses whether personal data in its stored search terms is masked (Hide, Keep as typed, or the server's setting), in the console's Behavior tab, export and import (design §CLXXXII.21 superseded: no manifest key: the console and site export carry the setting, and the WordPress plugin has no use for it yet).
+- **T1352** — GET /api/sn lists a site whose GenAI has no agent as not GenAI-enabled instead of failing with 500; the listing test carries one.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 
