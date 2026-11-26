@@ -89,6 +89,61 @@ final class TuningTest extends PluginTestCase {
 		);
 	}
 
+	/**
+	 * The posts a spotlight may name: 1 public, 2 a draft, 3 behind a password.
+	 */
+	private function spotlight_posts(): void {
+		$posts = array(
+			1 => new \WP_Post(
+				array(
+					'ID'         => 1,
+					'post_title' => 'Public',
+				)
+			),
+			2 => new \WP_Post(
+				array(
+					'ID'          => 2,
+					'post_title'  => 'Draft',
+					'post_status' => 'draft',
+				)
+			),
+			3 => new \WP_Post(
+				array(
+					'ID'            => 3,
+					'post_title'    => 'Protected',
+					'post_password' => 'secret',
+				)
+			),
+		);
+		Functions\when( 'get_post' )->alias( static fn ( $id ) => $posts[ $id ] ?? null );
+		Functions\when( 'is_post_publicly_viewable' )->alias( static fn ( $post ) => 'publish' === $post->post_status );
+		Functions\when( 'get_the_title' )->alias( static fn ( $post ) => $post->post_title );
+		Functions\when( 'get_the_excerpt' )->justReturn( 'An excerpt' );
+		Functions\when( 'wp_strip_all_tags' )->returnArg();
+		Functions\when( 'get_permalink' )->alias( static fn ( $post ) => 'https://example.com/?p=' . $post->ID );
+	}
+
+	public function test_a_spotlight_promotes_only_posts_a_visitor_can_open(): void {
+		$this->spotlight_posts();
+
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_spotlight( 'workshop', array( 2, 3, 1 ) );
+
+		$this->assertTrue( $result );
+		$this->assertSame( array( 'GET /api/sn', 'POST /api/sn/s1/spotlight' ), $this->calls() );
+		$documents = $this->body( 1 )['turSNSiteSpotlightDocuments'];
+		$this->assertSame( array( 'Public' ), array_column( $documents, 'title' ), 'a draft and a protected post never reach the search' );
+		$this->assertSame( 1, $documents[0]['position'] );
+	}
+
+	public function test_a_spotlight_of_no_public_post_sends_nothing(): void {
+		$this->spotlight_posts();
+
+		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_spotlight( 'workshop', array( 2, 3 ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( array(), $this->calls() );
+	}
+
 	public function test_one_word_is_not_a_synonym_and_nothing_is_sent(): void {
 		$result = ( new Viglet_Turing_Tuning( $this->settings() ) )->add_synonym( array( 'talk' ) );
 

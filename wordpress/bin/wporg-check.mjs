@@ -80,6 +80,22 @@ const getReads = {};
 const publicRoutes = {};
 for ( const file of phpFiles( src ) ) {
 	const name = relative( root, file ).replace( /\\/g, '/' );
+	// The review of 26 Nov 2026: a spotlight sends each post's title and excerpt to public
+	// search results, so the code that builds one must keep out what a visitor cannot open.
+	const whole = readFileSync( file, 'utf8' );
+	if (
+		whole.includes( 'turSNSiteSpotlightDocuments' ) &&
+		! (
+			whole.includes( 'is_post_publicly_viewable(' ) &&
+			/post_password/.test( whole )
+		)
+	) {
+		find(
+			file,
+			0,
+			'a spotlight promotes posts without checking them: keep only is_post_publicly_viewable() posts with no password'
+		);
+	}
 	readFileSync( file, 'utf8' )
 		.split( '\n' )
 		.forEach( ( text, n ) => {

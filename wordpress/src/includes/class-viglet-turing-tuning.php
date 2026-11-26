@@ -178,7 +178,19 @@ class Viglet_Turing_Tuning {
 	 */
 	public function add_spotlight( string $query, array $post_ids ) {
 		$query = trim( $query );
-		$posts = array_slice( array_filter( array_map( 'get_post', array_map( 'intval', $post_ids ) ) ), 0, 3 );
+		// A promoted result shows its title and excerpt to every visitor who searches, so
+		// only a post a visitor can open qualifies: published in a public post type and
+		// not behind a password. A draft, a private post or a protected one is left out.
+		$posts = array_slice(
+			array_filter(
+				array_map( 'get_post', array_map( 'intval', $post_ids ) ),
+				static fn ( $post ) => $post instanceof WP_Post
+					&& is_post_publicly_viewable( $post )
+					&& '' === $post->post_password
+			),
+			0,
+			3
+		);
 		if ( '' === $query || ! $posts ) {
 			return new WP_Error( 'viglet_turing_spotlight', __( 'Name a search and at least one post.', 'viglet-turing-search' ) );
 		}
