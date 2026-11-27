@@ -866,7 +866,8 @@ class Viglet_Turing_Native_Search {
 					array_slice( $items, 0, self::FACET_VALUES_SHOWN )
 				),
 				'hasMore'       => count( $items ) > self::FACET_VALUES_SHOWN,
-				'more'          => count( $items ) - self::FACET_VALUES_SHOWN,
+				// What is left behind "show more", never below zero (T1366).
+				'more'          => max( 0, count( $items ) - self::FACET_VALUES_SHOWN ),
 				'selectedCount' => 0,
 			);
 		}//end foreach

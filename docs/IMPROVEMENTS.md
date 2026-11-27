@@ -2389,27 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.26 Show more only when there is more (T1366)
-
-**Where it happened.** fespsp-base FB93, the `viglet-turing/search` block on the
-fespsp-institucional search lab (image b64a3b0), query "palestra", facets with 1, 1 and
-3 values.
-
-**What came back.** Each facet's hidden "show more" button reads `Mostrar mais -4`,
-`Mostrar mais -4` and `Mostrar mais -2`. The count is `more`, the item count minus
-FACET_VALUES_SHOWN with no floor, in `Viglet_Turing_Native_Search` and in
-search-block.js alike. The label itself is the client's `moreLabel` getter: PHP never
-draws it, so the text appears once the script runs. The button keeps `hidden` through
-`!facet.hasMore`, which also keeps it out of the accessibility tree; the negative number
-shows where a theme's display rule beats `[hidden]`, and to anything reading the DOM.
-
-**What it should do.** `more` never goes below zero, in PHP and JS. The button stays in
-the facet's template (a `data-wp-each` item cannot drop it per facet) and stays hidden
-while `hasMore` is false. A test with a facet shorter than the limit expects `more` 0
-and a hidden button whose label has no negative number.
-
-**Workaround.** None.
-
 ### CLXXXII.27 A result says its type in the markup (T1367)
 
 **Where it happened.** fespsp-base FB112 (the design inventory for search, memory and AI

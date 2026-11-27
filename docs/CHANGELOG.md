@@ -1745,6 +1745,7 @@
 - **T1356** — A mapped DATE range facet takes an Ends on field (range_end), sent as the custom facet's endField, so a running event sits under Today and Upcoming, not Past (design §CLXXXII.23 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/indexing.md`).
 - **T1357** — The manifest takes retiredCustomFacets, and the WordPress plugin retires the range facets its mapping dropped, so a moved period facet leaves one facet live, not two (design §CLXXXII.24 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
 - **T1365** — Search cards show the ancestors' titles from a new crumb field (custom type listing, parent pages; a PDF's post), host first for a sibling site; older documents keep the URL path (design §CLXXXII.25 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/indexing.md`).
+- **T1366** — A facet's count of values behind show-more never goes below zero, in the server's first page and in the script, so a short facet no longer reads Mostrar mais -4.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

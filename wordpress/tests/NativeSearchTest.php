@@ -644,6 +644,9 @@ final class NativeSearchTest extends PluginTestCase {
 		$this->assertCount( 2, $page['pages'], 'the page links, not Next' );
 		$this->assertSame( array( '40' ), array_column( $page['facets'][0]['items'], 'label' ), 'a value with no results dropped' );
 		$this->assertSame( 'seats:40', $page['facets'][0]['items'][0]['target']['filterQuery'] );
+		// T1366: a facet shorter than the limit hides "show more" and has nothing left, not -4.
+		$this->assertFalse( $page['facets'][0]['hasMore'] );
+		$this->assertSame( 0, $page['facets'][0]['more'] );
 	}
 
 	/**

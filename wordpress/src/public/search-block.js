@@ -1999,7 +1999,8 @@ function facets( everything, applied ) {
 					extra: index >= facetValuesShown && ! item.selected,
 				} ) ),
 				hasMore: items.length > facetValuesShown,
-				more: items.length - facetValuesShown,
+				// What is left behind "show more", never below zero (T1366).
+				more: Math.max( 0, items.length - facetValuesShown ),
 				selectedCount: items.filter( ( item ) => item.selected ).length,
 			};
 		} )
