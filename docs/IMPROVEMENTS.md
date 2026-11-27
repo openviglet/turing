@@ -2391,69 +2391,72 @@ first, so the directory never sees the old option keys.
 
 ### CLXXXII.25 A crumb of titles, not slugs (T1365)
 
-**Where it happened.** fespsp-base FB93 (the search design), rendering
-`viglet-turing/search` on the fespsp-institucional search lab (image b64a3b0, plugin
-from `turing/latest/wordpress/src`), query "palestra".
+**Where it happened.** fespsp-base FB93, `viglet-turing/search` on the
+fespsp-institucional search lab (image b64a3b0), query "palestra".
 
-**What came back.** Every result's `.viglet-turing-search__crumb` is the URL path, slug
-by slug: "eventos › desigualdade-sa-e-o-poder-politico", "eventos ›
-palestra-celso-furtado-e-o-desenvolvimento", "eventos". The last segment repeats the
-title in slug form, and the others are slugs a visitor never sees on the site ("eventos"
-for the page titled "Eventos", "trabalhe-conosco" for "Trabalhe conosco").
+**What came back.** Each `.viglet-turing-search__crumb` is the URL path, slug by slug:
+"eventos › desigualdade-sa-e-o-poder-politico". The last segment repeats the title, the
+others are slugs the site never shows. Both builders split the URL:
+`Viglet_Turing_Native_Search::crumb()` for the first page and `crumb()` in
+search-block.js, so every site with pretty permalinks gets this.
 
-**What it should do.** The crumb is the trail a visitor would read: the titles of the
-ancestors (the parent pages of a page; the archive or listing page of a custom type,
-e.g. "Eventos" for an `evento`, which a mapping or the type's `has_archive`/page setting
-can name), without the document's own title, which is right below. Sent at index time as
-a field, so the card does not parse URLs. A post with no ancestors shows no crumb.
+**What it should do.** The crumb is the trail a visitor reads: the titles of the
+ancestors (a page's parents; a custom type's archive or listing page, e.g. "Eventos" for
+an `evento`), without the document's own title. The indexer sends it as a field, added
+to the mapping's manifest and to its RESERVED and NOT_CARD_FIELDS lists; both builders
+read it instead of parsing the URL. A PDF's trail is its parent post's, then that post's
+title. A sibling site's result keeps its host first (D263). A document with no ancestors
+shows no crumb; one indexed before this ships has no field and keeps today's URL crumb
+until the next reindex.
 
-**Workaround.** None. The base design (docs/busca/README.md in fespsp-base) styles the
-crumb as it is and names this line.
+**Tests.** A nested page, a custom type with an archive, a post with no ancestors, a
+document without the field, a sibling-site result.
 
 ### CLXXXII.26 Show more only when there is more (T1366)
 
 **Where it happened.** fespsp-base FB93, the `viglet-turing/search` block on the
-fespsp-institucional search lab (image b64a3b0), query "palestra", facets "Tipo de
-evento" (1 value), "Local" (1 value) and "Quando" (3 values).
+fespsp-institucional search lab (image b64a3b0), query "palestra", facets with 1, 1 and
+3 values.
 
-**What came back.** The server-rendered markup of each facet's "show more" button reads
-`Mostrar mais -4`, `Mostrar mais -4` and `Mostrar mais -2` (`<button
-class="viglet-turing-search__link" hidden data-wp-text="state.moreLabel">`). The button
-is hidden, so a sighted visitor does not see it, but the label is computed as the
-facet's limit minus its item count, which goes negative when a facet has fewer items
-than the limit; a screen reader that reads hidden-by-CSS content, a theme that shows the
-link, or a no-JS render shows a negative number.
+**What came back.** Each facet's hidden "show more" button reads `Mostrar mais -4`,
+`Mostrar mais -4` and `Mostrar mais -2`. The count is `more`, the item count minus
+FACET_VALUES_SHOWN with no floor, in `Viglet_Turing_Native_Search` and in
+search-block.js alike. The label itself is the client's `moreLabel` getter: PHP never
+draws it, so the text appears once the script runs. The button keeps `hidden` through
+`!facet.hasMore`, which also keeps it out of the accessibility tree; the negative number
+shows where a theme's display rule beats `[hidden]`, and to anything reading the DOM.
 
-**What it should do.** The label counts what is left to show (never below zero), and the
-button is not rendered at all when there is nothing more, in the server render as in the
-client. A test with a facet shorter than its limit expects no "more" button.
+**What it should do.** `more` never goes below zero, in PHP and JS. The button stays in
+the facet's template (a `data-wp-each` item cannot drop it per facet) and stays hidden
+while `hasMore` is false. A test with a facet shorter than the limit expects `more` 0
+and a hidden button whose label has no negative number.
 
 **Workaround.** None.
 
 ### CLXXXII.27 A result says its type in the markup (T1367)
 
 **Where it happened.** fespsp-base FB112 (the design inventory for search, memory and AI
-screens), reading the markup `viglet-turing/search` renders on the fespsp-institucional
-search lab (image b64a3b0), and the overlay's (`public/overlay.js`).
+screens), reading the markup of the fespsp-institucional search lab (image b64a3b0).
 
-**What the markup gives a theme.** Each search result is `<li
-class="viglet-turing-search__result">`, the same for a page, a post, an event, a job, a
-book or a PDF; the type is only the text of `.viglet-turing-search__type` ("Evento",
-"Página"). The overlay's results are `.viglet-turing-overlay__result`, with
-`--with-image` as the only modifier. The related block's items are
-`.viglet-turing-related__item`.
+**What the markup gives a theme.** A search result is `<li
+class="viglet-turing-search__result">` for a page, an event, a book or a PDF alike; the
+type is only the translated text of `.viglet-turing-search__type`, and `card()` in
+search-block.js keeps nothing else. The overlay's results (`overlay.js` `optionFor()`)
+have `--with-image` as their only modifier, the related block's items
+(`viglet-turing-related__item`, local and remote) nothing, and the classic-theme
+template (`templates/search-results.php`, `.vd-result`) nothing either.
 
-**What a theme cannot do with that.** The FESPSP design system shows a book with its
-cover in A4 portrait (`.fespsp-cover-a4`), a historical photo larger, a PDF with the
-document icon of its `doc-item`, an audio clip with a player line. With no per-type
-hook, the only way is matching the translated type label, which changes with the locale
-and the site's own labels, or reading the URL.
+**What a theme cannot do with that.** Show a book with its A4 cover, a PDF with a
+document icon, an audio clip with a player line, except by matching a label that changes
+with the locale and the site's own labels, or by reading the URL.
 
-**What it should do.** Every result element carries its post type (or Turing document
-type: `pdf`, a sibling site's type) as a modifier and a data attribute, e.g.
-`viglet-turing-search__result--livro` and `data-type="livro"`, on the search block's
-results, the overlay's results and the related block's items, server render and client
-render alike. Escaped as a class token. Documented in the plugin's theming notes.
+**What it should do.** Every result element carries `data-type` with the raw type key:
+the post type, `pdf`, a sibling site's type, sanitized as a key. One contract on all
+four surfaces: the search block (server first page and client, through a `typeKey`
+beside the translated `type`, bound with `data-wp-bind--data-type`), the overlay, the
+related block and the classic template. A modifier class is left out on purpose: the
+Interactivity API toggles only fixed class names. Documented in the plugin's theming
+notes, with a test per surface.
 
 **Workaround.** None. FB121 in fespsp-base styles the per-type cards once this ships.
 
@@ -2463,21 +2466,23 @@ render alike. Escaped as a class token. Documented in the plugin's theming notes
 what the failed URL names ("/noticias/2019/05/abertas-inscricoes-pos.html" → "abertas
 inscricoes pos") and show the results on the 404 itself, keeping the 404 status.
 
-**What the plugin offers.** `viglet-turing/search` reads its query only from the
-request: `Viglet_Turing_Search_Block::query()` is `$_GET['q'] ?? $_GET['s']`, and
-`render.php` puts it in the state and draws the first page from it (D209). There is no
-block attribute and no filter for the query. Setting `$_GET['q']` from the theme before
-the render would draw the first page, but `search-block.js` then calls `readUrl()` on
-init whenever `state.query` is set, reads `q` from the address bar (absent on a 404
-URL), and searches `*` — the visitor sees every document replace the right ones.
-Redirecting the 404 to the search page loses the 404 status and the URL that failed.
+**What the plugin offers.** `Viglet_Turing_Search_Block::query()` is `$_GET['q'] ??
+$_GET['s']`, and `render.php` draws the first page from it (D209). There is no filter.
+Setting `$_GET['q']` from the theme draws that page, but search-block.js's init calls
+`readUrl()` whenever `state.query` is set, reads no `q` from the 404's address bar and
+searches `*`: every document replaces the right ones. Redirecting to the search page
+loses the status and the failed URL.
 
-**What it should do.** The block takes an initial query from the server, as an attribute
-(`query`) or a filter (`viglet_turing_search_initial_query`), drawn in the first page
-and kept by the script: on init, an address bar with no `q`/`s` leaves the server's
-query and results as they are (and does not write `?q=` into a 404's URL). A search from
-that state on goes on as usual. A test renders the block with an initial query on a URL
-without `q` and expects the server's results to stay after the script starts.
+**What it should do.** One seam: a filter `viglet_turing_search_initial_query` applied
+in `query()`, given the request's query and the block's attributes, so the first page
+and the state carry what it returns. A block attribute is left out: a 404's query
+changes per request. The state marks a query that did not come from the address bar; on
+init, an address bar with no `q`/`s` then leaves that query and its results as they are,
+and nothing writes `?q=` into the URL. A search from there goes on as usual, and Back to
+the first entry restores the server's query rather than searching `*`.
+
+**Tests.** The block rendered with the filter on a URL without `q` keeps the server's
+results after the script starts; Back after a new search returns to them.
 
 **Workaround.** None; FB122 in fespsp-base waits on this.
 
