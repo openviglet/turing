@@ -35,6 +35,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
+## Block CY — Filters from a sentence say what visitors say
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2424,3 +2426,60 @@ module boundaries files here.
 ## CXCI API errors name what the caller sent wrong
 
 ## CXCII Filters from a sentence say what visitors say
+
+### CXCII.3 q and fq that a search can run (T1361)
+
+**Where it happened.** fespsp-institucional FI146, search lab, image a35a636
+(`sha256:42effd87…`), after T1359 and T1360. SN site `fespsp`, pt_BR, `gpt-4o-mini`. The
+`evento` type has `tipo_evento` (facet) and the range facet `evento_inicio_range` on
+`evento_inicio` with `endField` `evento_ate` (T1356). Today 2026-11-27.
+
+**The calls and what came back.**
+- `POST /api/sn/fespsp/nl-filters` `{"text":"palestras sobre democracia em novembro","locale":"pt_BR"}`
+  → `q: "palestras sobre democracia em novembro"`, fq
+  `["tipo_evento:Palestra","evento_inicio:[* TO 2026-11-30]","evento_ate:[2026-11-01 TO *]","evento_ate:[2026-11-01 TO 2026-11-30]"]`.
+- `{"text":"o que tem esta semana"}` → `q: "o que tem"`, fq
+  `["evento_inicio:[* TO 2026-11-29]","evento_ate:[2026-11-23 TO *]"]`.
+
+Through `/search` as returned, **both give 0 results**; with `q=*` the same fq give the
+right documents (four lectures; this week's five events, the running exhibition among
+them). Three defects:
+1. `q` keeps the consumed words: before T1359 "em novembro" left `q`, now the whole
+   sentence stays and matches nothing.
+2. `q` keeps a sentence with no content ("o que tem"), which matches pages, never the
+   filtered events. Only filters should come back as `q: "*"`.
+3. "em novembro" adds a fourth filter, `evento_ate:[2026-11-01 TO 2026-11-30]`, a
+   closed range on the end field that drops a span running past November. The overlap
+   pair before it is the whole meaning.
+
+**What it should do.** Consumed words leave `q`, a `q` of only stopwords becomes `*`,
+and a period over a field with an `endField` yields the overlap pair and nothing else. A
+test runs the returned `q` and `fq` through `/search` and expects the documents.
+
+**Workaround.** None. FI146 waits on this line.
+
+### CXCII.4 The answer grounds in the period (T1362)
+
+**Where it happened.** fespsp-institucional FI146, search lab, image a35a636, after
+T1360 ("chat and /answer ground in the period's documents from the site search"). SN
+site `fespsp`, pt_BR, `gpt-4o-mini`, HYBRID_RRF, time zone sent by the WordPress plugin
+(T1330). Today 2026-11-27; the index holds five events overlapping this week.
+
+**The call.** `GET /api/sn/fespsp/answer?q=o que tem esta semana na
+FESPSP?&_setlocale=pt_BR` with `Accept: text/event-stream` and the site's API key.
+
+**What came back.** "Desculpe, mas essa informação não está disponível na base de dados
+do site." with sources `[]` and metadata
+`{"sourceCount":0,"kbMode":"VECTOR","rerankEnabled":false,"cited":false}`. Same answer
+as before T1360. `nl-filters` on the same sentence now returns the week's overlap pair,
+and `/search?q=*` with that fq lists the five events, so the period and the documents
+are there; `/answer` does not use them. A concrete question on the same endpoint
+("Quando e onde é o Sarau de domingo no Casarão?") answers right with the source cited.
+
+**What it should do.** `/answer` and chat read the date phrase as `nl-filters` does and
+retrieve within that filter (from the site search, as T1360 says), so "o que tem esta
+semana?" lists the week's events with their sources. If `kbMode: VECTOR` is the path
+that skips it, the period grounding has to reach that path too, or the metadata should
+say the period was not applied.
+
+**Workaround.** None. FI146 waits on this line.

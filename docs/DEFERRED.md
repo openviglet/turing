@@ -25,3 +25,6 @@
 - ⏸ **T1256** (deps: T1252 ✅) **The Playground demo store loads its blueprint and zips from dumont.viglet.org/playground** — set aside (Needs a push and a Pages deploy.): Deploy Pages once, check /wp-demo boots the store and searches, then remove Dumont's copy. → §CLXXXII.5
 - ⏸ **T1257** (deps: T1251 ✅, T1254 ✅, T1255 ✅) **The plugin video is not on the plugin docs, the README or the release, and no page carries its transcript** — set aside (Needs GitHub's web editor.): Left: the README player, via GitHub's editor, and the videos and captions on the release. → §CLXXXII.7
 - ⏸ **T1259** (deps: T1252 ✅) **The plugin's Site assistant renders only text and citations, so chat flow choices, forms and slots cannot run in it** — set aside (Needs a chat flow in the demo's Turing.): A Playwright flow case against the demo store, once its Turing has a chat flow. → §CLXXXII.9
+
+## Block CY — Filters from a sentence say what visitors say
+
