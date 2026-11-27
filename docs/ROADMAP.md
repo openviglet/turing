@@ -25,7 +25,7 @@
 ## Block CY — Filters from a sentence say what visitors say
 
 - 📋 **T1363** (deps: —) **A dated answer prints event times in UTC, so a 19h event on a Sao Paulo site is announced at 22h** — A visitor who trusts the assistant arrives three hours late, and the site's time zone is already on Turing. → §CXCII.5
-- 📋 **T1364** (deps: —) **What is on this week lists the top five sources by vector score, so a Sunday event drops out for ones already over** — The answer to an agenda question is a list, and the period's own order is what completes it. → §CXCII.6
+- 📋 **T1364** (deps: —) **What is on this week leaves out an event inside the week while listing ones already over** — The answer to an agenda question is a list, and the period's own order is what completes it. → §CXCII.6
 
 ## Done when — T1184
 
