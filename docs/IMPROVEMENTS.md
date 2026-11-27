@@ -2389,33 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.23 Range facets over a start-to-end span (T1356)
-
-**Where it happened.** fespsp-institucional FI146, the search lab (`docker/turing/`),
-the `evento` mapping in `docker/turing/mapping.json`. An event has a start
-(`fespsp_evento_inicio`, mapped to `evento_inicio`, DATE) and a last day
-(`_fespsp_evento_ate`, mapped to `evento_ate`, DATE). An exhibition opened four days ago
-and runs for 76 more days.
-
-**What came back.** With `"range": true, "periods": "agenda"` on `evento_inicio`, the
-"Quando" facet puts the running exhibition under Past. Moved to `evento_ate`, Past is
-right but "Next 7 days" and "Today" lose it: it is on today, and it does not end this
-week. A range on one field cannot say "is happening during this period".
-
-**What Turing already has.** T1224: a custom facet's `endField` buckets a start-to-end
-span by overlap, from the manifest. `Viglet_Turing_Mapping::range_facet()` never sends
-it: the mapped field has no key for an end field, and nothing in the plugin, its admin
-mapping screen or its tests names `endField`.
-
-**What the plugin should do.** A DATE field with `range` takes `range_end` (another
-mapped DATE field of the same type), sent as the custom facet's `endField`; the admin
-mapping screen offers it beside the period set; the agenda periods then read as
-"happening today / in the next 7 days / this month", Upcoming as "not ended" and Past as
-"ended". A test covers the manifest it sends.
-
-**Workaround.** None. The lab keeps the facet on `evento_ate` (Past and Upcoming right,
-Today and Next 7 days by end date) and FI146 depends on this line.
-
 ### CLXXXII.24 Range facets the mapping dropped (T1357)
 
 **Where it happened.** fespsp-institucional FI146, the search lab. The `evento` mapping

@@ -825,6 +825,71 @@ final class MappingTest extends PluginTestCase {
 		$this->assertSame( 'past', $fields[2]['periods'], 'only a date has periods' );
 	}
 
+	/**
+	 * A date's range facet can end on another DATE field of its type (T1356), sent as Turing's
+	 * `endField` (T1224), so a running exhibition is on Today and not under Past. An end field
+	 * the type does not map as a DATE, the field itself, or one without a range is dropped.
+	 */
+	public function test_a_date_range_facet_sends_its_end_field_as_a_span(): void {
+		$this->store(
+			array(
+				array(
+					'source'    => 'meta:inicio',
+					'field'     => 'evento_inicio',
+					'type'      => 'DATE',
+					'range'     => true,
+					'periods'   => 'agenda',
+					'range_end' => 'evento_ate',
+				),
+				array(
+					'source' => 'meta:ate',
+					'field'  => 'evento_ate',
+					'type'   => 'DATE',
+				),
+				array(
+					'source'    => 'meta:abertura',
+					'field'     => 'abertura',
+					'type'      => 'DATE',
+					'range'     => true,
+					'range_end' => 'seats',
+				),
+				array(
+					'source'    => 'meta:prazo',
+					'field'     => 'prazo',
+					'type'      => 'DATE',
+					'range'     => true,
+					'range_end' => 'prazo',
+				),
+				array(
+					'source'    => 'meta:fim',
+					'field'     => 'fim',
+					'type'      => 'DATE',
+					'range_end' => 'evento_ate',
+				),
+				array(
+					'source'    => 'meta:seats',
+					'field'     => 'seats',
+					'type'      => 'INT',
+					'range'     => true,
+					'ranges'    => array( array( 'from' => 1 ) ),
+					'range_end' => 'evento_ate',
+				),
+			)
+		);
+
+		$facets = array_column( $this->mapping()->manifest()['customFacets'], null, 'field' );
+
+		$this->assertSame( 'evento_ate', $facets['evento_inicio']['endField'] );
+		$this->assertSame( array( 'Today', 'Next 7 days', 'This month', 'Upcoming', 'Past' ), array_column( $facets['evento_inicio']['items'], 'label' ) );
+		$this->assertArrayNotHasKey( 'endField', $facets['abertura'], 'an end field must be a DATE the type maps' );
+		$this->assertArrayNotHasKey( 'endField', $facets['prazo'], 'a field cannot end on itself' );
+		$this->assertArrayNotHasKey( 'endField', $facets['seats'], 'only a date spans' );
+
+		$fields = array_column( $this->mapping()->all()['evento']['fields'], 'range_end', 'field' );
+		$this->assertSame( '', $fields['fim'], 'a field without a range keeps no end' );
+		$this->assertSame( '', $fields['seats'] );
+	}
+
 	public function test_without_a_range_the_manifest_declares_no_custom_facet(): void {
 		$this->store(
 			array(

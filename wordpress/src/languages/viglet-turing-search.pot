@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-19T20:59:20+00:00\n"
+"POT-Creation-Date: 2026-11-27T11:39:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: viglet-turing-search\n"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:901
+#: assets/admin/mapping.js:943
 #: assets/admin/tuning.js:276
 #: assets/admin/tuning.js:409
 msgid "Actions"
@@ -970,9 +970,9 @@ msgid "Understood: %s"
 msgstr ""
 
 #: src/blocks/search/render.php:116
-#: assets/admin/mapping.js:292
-#: assets/admin/mapping.js:545
-#: assets/admin/mapping.js:882
+#: assets/admin/mapping.js:330
+#: assets/admin/mapping.js:587
+#: assets/admin/mapping.js:924
 msgid "Type"
 msgstr ""
 
@@ -981,7 +981,7 @@ msgid "Published"
 msgstr ""
 
 #: src/blocks/search/render.php:119
-#: src/includes/class-viglet-turing-mapping.php:456
+#: src/includes/class-viglet-turing-mapping.php:458
 #: src/includes/class-viglet-turing-native-search.php:886
 msgid "Site"
 msgstr ""
@@ -1381,40 +1381,40 @@ msgstr ""
 msgid "%1$d sent, %2$d failed."
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:69
+#: src/includes/class-viglet-turing-compare.php:71
 #: src/includes/class-viglet-turing-search-block.php:202
 #: src/includes/class-viglet-turing-woocommerce.php:106
 #: src/includes/class-viglet-turing-woocommerce.php:138
 msgid "Price"
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:70
+#: src/includes/class-viglet-turing-compare.php:72
 msgid "Availability"
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:71
-#: assets/admin/mapping.js:891
+#: src/includes/class-viglet-turing-compare.php:73
+#: assets/admin/mapping.js:933
 msgid "Weight"
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:72
+#: src/includes/class-viglet-turing-compare.php:74
 msgid "Dimensions"
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:73
+#: src/includes/class-viglet-turing-compare.php:75
 msgid "Rating"
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:118
+#: src/includes/class-viglet-turing-compare.php:120
 msgid "Two products or more are needed to compare."
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:144
+#: src/includes/class-viglet-turing-compare.php:146
 #: src/includes/class-viglet-turing-insights.php:160
 msgid "Viglet Turing wrote no summary."
 msgstr ""
 
-#: src/includes/class-viglet-turing-compare.php:150
+#: src/includes/class-viglet-turing-compare.php:152
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr ""
 
@@ -1507,17 +1507,17 @@ msgid "Nothing is listening at %s on that port: Viglet Turing is down, or the po
 msgstr ""
 
 #: src/includes/class-viglet-turing-entities.php:84
-#: assets/admin/mapping.js:674
+#: assets/admin/mapping.js:716
 msgid "People"
 msgstr ""
 
 #: src/includes/class-viglet-turing-entities.php:85
-#: assets/admin/mapping.js:679
+#: assets/admin/mapping.js:721
 msgid "Organisations"
 msgstr ""
 
 #: src/includes/class-viglet-turing-entities.php:86
-#: assets/admin/mapping.js:684
+#: assets/admin/mapping.js:726
 msgid "Places"
 msgstr ""
 
@@ -1639,105 +1639,105 @@ msgstr ""
 msgid "All search insights"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:468
+#: src/includes/class-viglet-turing-mapping.php:470
 msgid "Author"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:642
+#: src/includes/class-viglet-turing-mapping.php:654
 msgid "Today"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:647
+#: src/includes/class-viglet-turing-mapping.php:659
 msgid "Next 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:652
+#: src/includes/class-viglet-turing-mapping.php:664
 msgid "This month"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:657
-#: src/includes/class-viglet-turing-mapping.php:671
+#: src/includes/class-viglet-turing-mapping.php:669
+#: src/includes/class-viglet-turing-mapping.php:683
 msgid "Upcoming"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:662
+#: src/includes/class-viglet-turing-mapping.php:674
 msgid "Past"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:676
+#: src/includes/class-viglet-turing-mapping.php:688
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:681
+#: src/includes/class-viglet-turing-mapping.php:693
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:686
+#: src/includes/class-viglet-turing-mapping.php:698
 msgid "This year"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:691
+#: src/includes/class-viglet-turing-mapping.php:703
 msgid "Before this year"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:716
+#: src/includes/class-viglet-turing-mapping.php:728
 msgid "No mapped field to provision."
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:726
+#: src/includes/class-viglet-turing-mapping.php:738
 msgid "The fields are already provisioned."
 msgstr ""
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-turing-mapping.php:797
+#: src/includes/class-viglet-turing-mapping.php:809
 #, php-format
 msgid "%1$s is %2$s in Viglet Turing, %3$s here"
 msgstr ""
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-turing-mapping.php:826
+#: src/includes/class-viglet-turing-mapping.php:838
 #, php-format
 msgid "Taxonomy: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:842
+#: src/includes/class-viglet-turing-mapping.php:854
 #, php-format
 msgid "Meta: %s"
 msgstr ""
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:850
+#: src/includes/class-viglet-turing-mapping.php:862
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr ""
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-turing-mapping.php:858
+#: src/includes/class-viglet-turing-mapping.php:870
 #, php-format
 msgid "Post: %s"
 msgstr ""
 
-#: src/includes/class-viglet-turing-mapping.php:863
+#: src/includes/class-viglet-turing-mapping.php:875
 msgid "Featured image URL"
 msgstr ""
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1205
+#: src/includes/class-viglet-turing-mapping.php:1238
 #, php-format
 msgid "Up to %s"
 msgstr ""
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-turing-mapping.php:1209
+#: src/includes/class-viglet-turing-mapping.php:1242
 #, php-format
 msgid "%s or more"
 msgstr ""
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1213
+#: src/includes/class-viglet-turing-mapping.php:1246
 #, php-format
 msgid "%1$s – %2$s"
 msgstr ""
@@ -1911,19 +1911,19 @@ msgstr ""
 msgid "A synonym needs two words or more."
 msgstr ""
 
-#: src/includes/class-viglet-turing-tuning.php:183
+#: src/includes/class-viglet-turing-tuning.php:195
 msgid "Name a search and at least one post."
 msgstr ""
 
-#: src/includes/class-viglet-turing-tuning.php:294
+#: src/includes/class-viglet-turing-tuning.php:306
 msgid "newer first"
 msgstr ""
 
-#: src/includes/class-viglet-turing-tuning.php:297
+#: src/includes/class-viglet-turing-tuning.php:309
 msgid "sticky posts first"
 msgstr ""
 
-#: src/includes/class-viglet-turing-tuning.php:418
+#: src/includes/class-viglet-turing-tuning.php:430
 msgid "Only what this plugin added can be removed here; change the rest in Viglet Turing's console."
 msgstr ""
 
@@ -2410,8 +2410,8 @@ msgid "Every search that found results led to a click."
 msgstr ""
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:764
-#: assets/admin/mapping.js:894
+#: assets/admin/mapping.js:806
+#: assets/admin/mapping.js:936
 msgid "In Viglet Turing"
 msgstr ""
 
@@ -2424,7 +2424,7 @@ msgid "Conflict"
 msgstr ""
 
 #: assets/admin/mapping.js:72
-#: assets/admin/mapping.js:328
+#: assets/admin/mapping.js:366
 msgid "Ranges"
 msgstr ""
 
@@ -2433,235 +2433,247 @@ msgid "Leave a bound empty for an open end, and a label empty to name the range 
 msgstr ""
 
 #: assets/admin/mapping.js:83
-#: assets/admin/mapping.js:194
-#: assets/admin/mapping.js:344
-#: assets/admin/mapping.js:548
+#: assets/admin/mapping.js:224
+#: assets/admin/mapping.js:382
+#: assets/admin/mapping.js:590
 msgid "Label"
 msgstr ""
 
 #: assets/admin/mapping.js:89
-#: assets/admin/mapping.js:202
+#: assets/admin/mapping.js:232
 msgid "From"
 msgstr ""
 
 #: assets/admin/mapping.js:98
-#: assets/admin/mapping.js:211
+#: assets/admin/mapping.js:241
 msgid "To"
 msgstr ""
 
 #: assets/admin/mapping.js:112
-#: assets/admin/mapping.js:227
+#: assets/admin/mapping.js:257
 msgid "Remove range"
 msgstr ""
 
 #: assets/admin/mapping.js:126
-#: assets/admin/mapping.js:242
+#: assets/admin/mapping.js:272
 msgid "Add range"
 msgstr ""
 
-#: assets/admin/mapping.js:154
+#: assets/admin/mapping.js:158
 msgid "Periods"
 msgstr ""
 
-#: assets/admin/mapping.js:158
+#: assets/admin/mapping.js:162
 msgid "Past: last 7 and 30 days, this year, before (and upcoming)"
 msgstr ""
 
-#: assets/admin/mapping.js:165
+#: assets/admin/mapping.js:169
 msgid "Agenda: today, next 7 days, this month, upcoming, past"
 msgstr ""
 
-#: assets/admin/mapping.js:172
+#: assets/admin/mapping.js:176
 msgid "My own"
 msgstr ""
 
-#: assets/admin/mapping.js:181
+#: assets/admin/mapping.js:186
+msgid "Ends on"
+msgstr ""
+
+#: assets/admin/mapping.js:187
+msgid "For something that runs over several days, the field holding its last day: a period then shows what is on during it."
+msgstr ""
+
+#: assets/admin/mapping.js:194
+msgid "Nothing: one day each"
+msgstr ""
+
+#: assets/admin/mapping.js:211
 msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR and moved with +7DAYS, -1MONTH and so on. Leave one empty for an open end. Up to 8."
 msgstr ""
 
-#: assets/admin/mapping.js:270
-#: assets/admin/mapping.js:873
+#: assets/admin/mapping.js:308
+#: assets/admin/mapping.js:915
 msgid "Source"
 msgstr ""
 
-#: assets/admin/mapping.js:280
-#: assets/admin/mapping.js:752
-#: assets/admin/mapping.js:876
+#: assets/admin/mapping.js:318
+#: assets/admin/mapping.js:794
+#: assets/admin/mapping.js:918
 msgid "Viglet Turing field"
 msgstr ""
 
-#: assets/admin/mapping.js:304
-#: assets/admin/mapping.js:885
+#: assets/admin/mapping.js:342
+#: assets/admin/mapping.js:927
 msgid "Multiple"
 msgstr ""
 
-#: assets/admin/mapping.js:310
+#: assets/admin/mapping.js:348
 msgid "Show on result cards"
 msgstr ""
 
-#: assets/admin/mapping.js:321
-#: assets/admin/mapping.js:888
+#: assets/admin/mapping.js:359
+#: assets/admin/mapping.js:930
 msgid "Facet"
 msgstr ""
 
-#: assets/admin/mapping.js:340
-#: assets/admin/mapping.js:758
+#: assets/admin/mapping.js:378
+#: assets/admin/mapping.js:800
 msgid "Facet label"
 msgstr ""
 
-#: assets/admin/mapping.js:355
+#: assets/admin/mapping.js:393
 msgid "Search weight"
 msgstr ""
 
-#: assets/admin/mapping.js:385
+#: assets/admin/mapping.js:423
 msgid "Remove field"
 msgstr ""
 
-#: assets/admin/mapping.js:387
+#: assets/admin/mapping.js:425
 #: assets/admin/tuning.js:54
 msgid "Remove"
 msgstr ""
 
-#: assets/admin/mapping.js:432
-#: assets/admin/mapping.js:551
+#: assets/admin/mapping.js:474
+#: assets/admin/mapping.js:593
 msgid "Date shown on cards"
 msgstr ""
 
-#: assets/admin/mapping.js:436
-#: assets/admin/mapping.js:621
+#: assets/admin/mapping.js:478
+#: assets/admin/mapping.js:663
 msgid "Publication date"
 msgstr ""
 
-#: assets/admin/mapping.js:448
-#: assets/admin/mapping.js:557
+#: assets/admin/mapping.js:490
+#: assets/admin/mapping.js:599
 msgid "Image on cards"
 msgstr ""
 
-#: assets/admin/mapping.js:452
+#: assets/admin/mapping.js:494
 msgid "Featured image"
 msgstr ""
 
-#: assets/admin/mapping.js:468
+#: assets/admin/mapping.js:510
 msgid "Leaves search on"
 msgstr ""
 
-#: assets/admin/mapping.js:469
+#: assets/admin/mapping.js:511
 msgid "A post leaves search once this date has passed, and comes back if it moves forward."
 msgstr ""
 
-#: assets/admin/mapping.js:476
+#: assets/admin/mapping.js:518
 msgid "Never"
 msgstr ""
 
-#: assets/admin/mapping.js:531
+#: assets/admin/mapping.js:573
 msgid "Types from other sources"
 msgstr ""
 
-#: assets/admin/mapping.js:536
+#: assets/admin/mapping.js:578
 msgid "Documents another source sent under this site key, such as a catalog, carry types no post type has. Name each one as its result badge reads, and choose the fields its cards show as the date and the image. This changes how they show, never what is indexed."
 msgstr ""
 
 #. translators: %d: how many documents of the type were read.
-#: assets/admin/mapping.js:578
+#: assets/admin/mapping.js:620
 #, js-format
 msgid "Documents read: %d"
 msgstr ""
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:594
+#: assets/admin/mapping.js:636
 #, js-format
 msgid "Label for %s"
 msgstr ""
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:611
+#: assets/admin/mapping.js:653
 #, js-format
 msgid "Date shown on %s cards"
 msgstr ""
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:638
+#: assets/admin/mapping.js:680
 #, js-format
 msgid "Image on %s cards"
 msgstr ""
 
-#: assets/admin/mapping.js:648
+#: assets/admin/mapping.js:690
 msgid "Its image field"
 msgstr ""
 
-#: assets/admin/mapping.js:712
+#: assets/admin/mapping.js:754
 msgid "Off: turn on \"Find people, organisations and places in posts\" under Settings › Generative AI. Until then nothing is found and these facets are not offered."
 msgstr ""
 
-#: assets/admin/mapping.js:717
+#: assets/admin/mapping.js:759
 msgid "Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered."
 msgstr ""
 
-#: assets/admin/mapping.js:727
+#: assets/admin/mapping.js:769
 msgid "People, organisations and places"
 msgstr ""
 
-#: assets/admin/mapping.js:735
+#: assets/admin/mapping.js:777
 msgid "Viglet Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
 msgstr ""
 
-#: assets/admin/mapping.js:744
+#: assets/admin/mapping.js:786
 msgid "Open Settings"
 msgstr ""
 
-#: assets/admin/mapping.js:761
+#: assets/admin/mapping.js:803
 msgid "Offered"
 msgstr ""
 
 #. translators: %s: the Turing field, e.g. entity_person.
-#: assets/admin/mapping.js:786
+#: assets/admin/mapping.js:828
 #, js-format
 msgid "Facet label for %s"
 msgstr ""
 
 #. translators: %s: a facet's label, e.g. People.
-#: assets/admin/mapping.js:802
+#: assets/admin/mapping.js:844
 #, js-format
 msgid "Offer %s"
 msgstr ""
 
-#: assets/admin/mapping.js:850
+#: assets/admin/mapping.js:892
 msgid "Leave this type out of search"
 msgstr ""
 
-#: assets/admin/mapping.js:863
+#: assets/admin/mapping.js:905
 msgid "Only the standard fields are sent for this type."
 msgstr ""
 
-#: assets/admin/mapping.js:950
+#: assets/admin/mapping.js:998
 msgid "Add field"
 msgstr ""
 
-#: assets/admin/mapping.js:953
+#: assets/admin/mapping.js:1001
 msgid "Preview document"
 msgstr ""
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:966
+#: assets/admin/mapping.js:1014
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr ""
 
-#: assets/admin/mapping.js:1057
+#: assets/admin/mapping.js:1105
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Viglet Turing; run a reindex afterwards so existing posts carry them."
 msgstr ""
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:1071
+#: assets/admin/mapping.js:1119
 #, js-format
 msgid "Viglet Turing did not say where the fields stand: %s"
 msgstr ""
 
-#: assets/admin/mapping.js:1081
+#: assets/admin/mapping.js:1129
 msgid "Saving also turns generative AI on for this site in Viglet Turing, answering through its Default AI Agent until an agent is chosen in Viglet Turing's console."
 msgstr ""
 
-#: assets/admin/mapping.js:1128
+#: assets/admin/mapping.js:1176
 msgid "Save and send to Viglet Turing"
 msgstr ""
 

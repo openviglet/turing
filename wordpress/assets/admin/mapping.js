@@ -133,11 +133,15 @@ function RangeRows( { ranges, onChange } ) {
  * A date's range facet periods (D307): the past (publication dates), an agenda's (dates to
  * come), or its own, each bound written in Turing's date math.
  *
+ * With an end field (T1356) a period holds what runs during it: an event that opened last
+ * week and closes next month is on Today, not Past.
+ *
  * @param {Object}                                             props       The field and its setter.
  * @param {Object}                                             props.field The mapped field.
+ * @param {Object[]}                                           props.dates The type's other DATE fields.
  * @param {(key: string) => (v: string|Object[]|null) => void} props.set   Sets one of its keys.
  */
-function DatePeriods( { field, set } ) {
+function DatePeriods( { field, dates = [], set } ) {
 	const periods = field.periods || 'past';
 	const ranges = field.ranges || [];
 	const setRange = ( index, key, value ) =>
@@ -175,6 +179,32 @@ function DatePeriods( { field, set } ) {
 				] }
 				onChange={ set( 'periods' ) }
 			/>
+			{ dates.length > 0 && (
+				<SelectControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					label={ __( 'Ends on', 'viglet-turing-search' ) }
+					help={ __(
+						'For something that runs over several days, the field holding its last day: a period then shows what is on during it.',
+						'viglet-turing-search'
+					) }
+					value={ field.range_end || '' }
+					options={ [
+						{
+							label: __(
+								'Nothing: one day each',
+								'viglet-turing-search'
+							),
+							value: '',
+						},
+						...dates.map( ( f ) => ( {
+							label: f.facet_label || f.field,
+							value: f.field,
+						} ) ),
+					] }
+					onChange={ set( 'range_end' ) }
+				/>
+			) }
 			{ 'custom' === periods && (
 				<>
 					<p className="description">
@@ -248,7 +278,15 @@ function DatePeriods( { field, set } ) {
 	);
 }
 
-function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
+function FieldRow( {
+	field,
+	dates = [],
+	sources,
+	types,
+	status,
+	onChange,
+	onRemove,
+} ) {
 	const set = ( key ) => ( value ) =>
 		onChange( { ...field, [ key ]: value } );
 	const rangeable = RANGE_TYPES.includes( field.type );
@@ -401,7 +439,11 @@ function FieldRow( { field, sources, types, status, onChange, onRemove } ) {
 			{ field.range && 'DATE' === field.type && (
 				<tr>
 					<td colSpan={ 8 }>
-						<DatePeriods field={ field } set={ set } />
+						<DatePeriods
+							field={ field }
+							dates={ dates }
+							set={ set }
+						/>
 					</td>
 				</tr>
 			) }
@@ -911,6 +953,12 @@ function TypeCard( { postType, value, sources, types, status, onChange } ) {
 								<FieldRow
 									key={ index }
 									field={ field }
+									dates={ fields.filter(
+										( f ) =>
+											'DATE' === f.type &&
+											f.field &&
+											f.field !== field.field
+									) }
 									sources={ sources }
 									types={ types }
 									status={ status }

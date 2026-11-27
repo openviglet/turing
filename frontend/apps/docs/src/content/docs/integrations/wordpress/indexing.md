@@ -43,8 +43,12 @@ custom fields can be added on the Settings page.
   than the calendar week. Viglet Turing includes a range's end, and a day-only date is stored at
   midnight UTC, so each agenda period ends a second before the next one starts: an event
   today is never under **Past**, and one tomorrow is never under **Today**. A period of your
-  own that should end where another starts needs the same `-1SECOND`. A period buckets the one field, so an event is placed by its start
-  date even when it runs for weeks. A number lists its own ranges, each with a label
+  own that should end where another starts needs the same `-1SECOND`. On its own, a period
+  buckets the one field, so an event is placed by its start date even when it runs for weeks.
+  **Ends on** names another `DATE` field of the same type that holds the last day: a period
+  then holds what is on during it, so an exhibition that opened last week and closes next
+  month is under **Today** and **Upcoming**, and only one whose last day has passed is under
+  **Past**. A number lists its own ranges, each with a label
   and a **From** and **To**; an empty bound is an open end, and an empty label is written
   from the bounds ("20 – 50", "Up to 20", "50 or more").
 - **Show on result cards** adds the field to each result in the **Viglet Turing search** block,

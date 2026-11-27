@@ -42,7 +42,7 @@ msgstr "Busca"
 
 #: src/admin/views/settings-page.php:52
 #: assets/admin/insights.js:175
-#: assets/admin/mapping.js:901
+#: assets/admin/mapping.js:943
 #: assets/admin/tuning.js:276
 #: assets/admin/tuning.js:409
 msgid "Actions"
@@ -653,44 +653,44 @@ msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
 
 #: src/blocks/search/render.php:119
-#: src/includes/class-viglet-turing-mapping.php:456
+#: src/includes/class-viglet-turing-mapping.php:458
 #: src/includes/class-viglet-turing-native-search.php:886
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-turing-mapping.php:716
+#: src/includes/class-viglet-turing-mapping.php:728
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-turing-mapping.php:726
+#: src/includes/class-viglet-turing-mapping.php:738
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-turing-mapping.php:797
+#: src/includes/class-viglet-turing-mapping.php:809
 #, php-format
 msgid "%1$s is %2$s in Viglet Turing, %3$s here"
 msgstr "%1$s é %2$s no Viglet Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-turing-mapping.php:826
+#: src/includes/class-viglet-turing-mapping.php:838
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:842
+#: src/includes/class-viglet-turing-mapping.php:854
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-turing-mapping.php:858
+#: src/includes/class-viglet-turing-mapping.php:870
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-turing-mapping.php:863
+#: src/includes/class-viglet-turing-mapping.php:875
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -907,8 +907,8 @@ msgid "Nothing has been sent yet."
 msgstr "Nada foi enviado ainda."
 
 #: assets/admin/mapping.js:32
-#: assets/admin/mapping.js:764
-#: assets/admin/mapping.js:894
+#: assets/admin/mapping.js:806
+#: assets/admin/mapping.js:936
 msgid "In Viglet Turing"
 msgstr "No Viglet Turing"
 
@@ -920,90 +920,90 @@ msgstr "Entra no próximo salvamento"
 msgid "Conflict"
 msgstr "Conflito"
 
-#: assets/admin/mapping.js:270
-#: assets/admin/mapping.js:873
+#: assets/admin/mapping.js:308
+#: assets/admin/mapping.js:915
 msgid "Source"
 msgstr "Origem"
 
-#: assets/admin/mapping.js:280
-#: assets/admin/mapping.js:752
-#: assets/admin/mapping.js:876
+#: assets/admin/mapping.js:318
+#: assets/admin/mapping.js:794
+#: assets/admin/mapping.js:918
 msgid "Viglet Turing field"
 msgstr "Campo no Viglet Turing"
 
 #: src/blocks/search/render.php:116
-#: assets/admin/mapping.js:292
-#: assets/admin/mapping.js:545
-#: assets/admin/mapping.js:882
+#: assets/admin/mapping.js:330
+#: assets/admin/mapping.js:587
+#: assets/admin/mapping.js:924
 msgid "Type"
 msgstr "Tipo"
 
-#: assets/admin/mapping.js:304
-#: assets/admin/mapping.js:885
+#: assets/admin/mapping.js:342
+#: assets/admin/mapping.js:927
 msgid "Multiple"
 msgstr "Múltiplo"
 
-#: assets/admin/mapping.js:321
-#: assets/admin/mapping.js:888
+#: assets/admin/mapping.js:359
+#: assets/admin/mapping.js:930
 msgid "Facet"
 msgstr "Faceta"
 
-#: assets/admin/mapping.js:340
-#: assets/admin/mapping.js:758
+#: assets/admin/mapping.js:378
+#: assets/admin/mapping.js:800
 msgid "Facet label"
 msgstr "Rótulo da faceta"
 
-#: assets/admin/mapping.js:355
+#: assets/admin/mapping.js:393
 msgid "Search weight"
 msgstr "Peso na busca"
 
-#: assets/admin/mapping.js:385
+#: assets/admin/mapping.js:423
 msgid "Remove field"
 msgstr "Remover campo"
 
-#: assets/admin/mapping.js:387
+#: assets/admin/mapping.js:425
 #: assets/admin/tuning.js:54
 msgid "Remove"
 msgstr "Remover"
 
-#: assets/admin/mapping.js:850
+#: assets/admin/mapping.js:892
 msgid "Leave this type out of search"
 msgstr "Deixar este tipo fora da busca"
 
-#: assets/admin/mapping.js:863
+#: assets/admin/mapping.js:905
 msgid "Only the standard fields are sent for this type."
 msgstr "Este tipo envia apenas os campos padrão."
 
-#: src/includes/class-viglet-turing-compare.php:71
-#: assets/admin/mapping.js:891
+#: src/includes/class-viglet-turing-compare.php:73
+#: assets/admin/mapping.js:933
 msgid "Weight"
 msgstr "Peso"
 
-#: assets/admin/mapping.js:950
+#: assets/admin/mapping.js:998
 msgid "Add field"
 msgstr "Adicionar campo"
 
-#: assets/admin/mapping.js:953
+#: assets/admin/mapping.js:1001
 msgid "Preview document"
 msgstr "Pré-visualizar documento"
 
 #. translators: %s: the post's title.
-#: assets/admin/mapping.js:966
+#: assets/admin/mapping.js:1014
 #, js-format
 msgid "What \"%s\" sends, as saved (unsaved changes are not in it):"
 msgstr "O que \"%s\" envia, como está salvo (alterações não salvas não aparecem):"
 
-#: assets/admin/mapping.js:1057
+#: assets/admin/mapping.js:1105
 msgid "Each post type always sends its title, text, URL, dates, author, categories and tags. Add the taxonomies and custom fields that should become their own fields, typed, and mark the ones to filter by as facets. Saving sends the fields to Viglet Turing; run a reindex afterwards so existing posts carry them."
 msgstr "Todo tipo de post sempre envia título, texto, URL, datas, autor, categorias e tags. Adicione as taxonomias e os campos personalizados que devem virar campos próprios, com tipo, e marque como faceta os que servem de filtro. Salvar envia os campos ao Viglet Turing; depois, rode uma reindexação para que os posts existentes os tenham."
 
 #. translators: %s: why Turing could not say where each field stands.
-#: assets/admin/mapping.js:1071
+#: assets/admin/mapping.js:1119
 #, js-format
 msgid "Viglet Turing did not say where the fields stand: %s"
 msgstr "O Viglet Turing não informou a situação dos campos: %s"
 
-#: assets/admin/mapping.js:1128
+#: assets/admin/mapping.js:1176
 msgid "Save and send to Viglet Turing"
 msgstr "Salvar e enviar ao Viglet Turing"
 
@@ -1533,11 +1533,11 @@ msgstr "O Viglet Turing não tem um site SN chamado %s."
 msgid "A synonym needs two words or more."
 msgstr "Um sinônimo precisa de duas palavras ou mais."
 
-#: src/includes/class-viglet-turing-tuning.php:183
+#: src/includes/class-viglet-turing-tuning.php:195
 msgid "Name a search and at least one post."
 msgstr "Informe uma busca e pelo menos um post."
 
-#: src/includes/class-viglet-turing-tuning.php:418
+#: src/includes/class-viglet-turing-tuning.php:430
 msgid "Only what this plugin added can be removed here; change the rest in Viglet Turing's console."
 msgstr "Só o que este plugin adicionou pode ser removido aqui; altere o resto no console do Viglet Turing."
 
@@ -1626,11 +1626,11 @@ msgstr "Tirar"
 msgid "Promote"
 msgstr "Destacar"
 
-#: src/includes/class-viglet-turing-tuning.php:294
+#: src/includes/class-viglet-turing-tuning.php:306
 msgid "newer first"
 msgstr "mais recentes primeiro"
 
-#: src/includes/class-viglet-turing-tuning.php:297
+#: src/includes/class-viglet-turing-tuning.php:309
 msgid "sticky posts first"
 msgstr "posts fixos primeiro"
 
@@ -1890,49 +1890,49 @@ msgctxt "block description"
 msgid "The Viglet Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Viglet Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-turing-mapping.php:657
-#: src/includes/class-viglet-turing-mapping.php:671
+#: src/includes/class-viglet-turing-mapping.php:669
+#: src/includes/class-viglet-turing-mapping.php:683
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-turing-mapping.php:676
+#: src/includes/class-viglet-turing-mapping.php:688
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:681
+#: src/includes/class-viglet-turing-mapping.php:693
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:686
+#: src/includes/class-viglet-turing-mapping.php:698
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-turing-mapping.php:691
+#: src/includes/class-viglet-turing-mapping.php:703
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1205
+#: src/includes/class-viglet-turing-mapping.php:1238
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-turing-mapping.php:1209
+#: src/includes/class-viglet-turing-mapping.php:1242
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1213
+#: src/includes/class-viglet-turing-mapping.php:1246
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
 
 #: assets/admin/mapping.js:72
-#: assets/admin/mapping.js:328
+#: assets/admin/mapping.js:366
 msgid "Ranges"
 msgstr "Faixas"
 
@@ -1941,29 +1941,29 @@ msgid "Leave a bound empty for an open end, and a label empty to name the range 
 msgstr "Deixe um limite vazio para uma ponta aberta, e o rótulo vazio para nomear a faixa pelos seus limites."
 
 #: assets/admin/mapping.js:83
-#: assets/admin/mapping.js:194
-#: assets/admin/mapping.js:344
-#: assets/admin/mapping.js:548
+#: assets/admin/mapping.js:224
+#: assets/admin/mapping.js:382
+#: assets/admin/mapping.js:590
 msgid "Label"
 msgstr "Rótulo"
 
 #: assets/admin/mapping.js:89
-#: assets/admin/mapping.js:202
+#: assets/admin/mapping.js:232
 msgid "From"
 msgstr "De"
 
 #: assets/admin/mapping.js:98
-#: assets/admin/mapping.js:211
+#: assets/admin/mapping.js:241
 msgid "To"
 msgstr "Até"
 
 #: assets/admin/mapping.js:112
-#: assets/admin/mapping.js:227
+#: assets/admin/mapping.js:257
 msgid "Remove range"
 msgstr "Remover faixa"
 
 #: assets/admin/mapping.js:126
-#: assets/admin/mapping.js:242
+#: assets/admin/mapping.js:272
 msgid "Add range"
 msgstr "Adicionar faixa"
 
@@ -2019,7 +2019,7 @@ msgstr "Rascunhar um resumo"
 msgid "Written by Viglet Turing’s language model from the saved post. Nothing changes until you use it and save."
 msgstr "Escrito pelo modelo de linguagem do Viglet Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
-#: src/includes/class-viglet-turing-compare.php:69
+#: src/includes/class-viglet-turing-compare.php:71
 #: src/includes/class-viglet-turing-search-block.php:202
 #: src/includes/class-viglet-turing-woocommerce.php:106
 #: src/includes/class-viglet-turing-woocommerce.php:138
@@ -2319,7 +2319,7 @@ msgstr "O Viglet Turing não está guardando métricas de busca, então nenhuma 
 msgid "There are no searches in this period to summarize."
 msgstr "Não há buscas neste período para resumir."
 
-#: src/includes/class-viglet-turing-compare.php:144
+#: src/includes/class-viglet-turing-compare.php:146
 #: src/includes/class-viglet-turing-insights.php:160
 msgid "Viglet Turing wrote no summary."
 msgstr "O Viglet Turing não escreveu um resumo."
@@ -2381,15 +2381,15 @@ msgstr "Comparar %d produtos"
 msgid "Compare %s"
 msgstr "Comparar %s"
 
-#: src/includes/class-viglet-turing-compare.php:70
+#: src/includes/class-viglet-turing-compare.php:72
 msgid "Availability"
 msgstr "Disponibilidade"
 
-#: src/includes/class-viglet-turing-compare.php:72
+#: src/includes/class-viglet-turing-compare.php:74
 msgid "Dimensions"
 msgstr "Dimensões"
 
-#: src/includes/class-viglet-turing-compare.php:73
+#: src/includes/class-viglet-turing-compare.php:75
 msgid "Rating"
 msgstr "Avaliação"
 
@@ -2426,11 +2426,11 @@ msgstr "produtos"
 msgid "Summary written by AI from the table below"
 msgstr "Resumo escrito por IA a partir da tabela abaixo"
 
-#: src/includes/class-viglet-turing-compare.php:118
+#: src/includes/class-viglet-turing-compare.php:120
 msgid "Two products or more are needed to compare."
 msgstr "São necessários dois produtos ou mais para comparar."
 
-#: src/includes/class-viglet-turing-compare.php:150
+#: src/includes/class-viglet-turing-compare.php:152
 msgid "The summary named a figure the table does not hold, so it is not shown."
 msgstr "O resumo citou um número que a tabela não tem, por isso não é mostrado."
 
@@ -2503,7 +2503,7 @@ msgstr "Em relação ao período anterior"
 msgid "Sent with the fields: on the next indexing run, or when the Fields screen is saved. An agent chosen for this site in Viglet Turing's console is kept; a site with none answers through the Default AI Agent. Turning it off here later leaves Viglet Turing's setting as it is."
 msgstr "Enviado com os campos: na próxima indexação, ou quando a tela Campos é salva. Um agente escolhido para este site no console do Viglet Turing é mantido; um site sem agente responde pelo Agente de IA padrão. Desligar aqui depois deixa a configuração do Viglet Turing como está."
 
-#: assets/admin/mapping.js:1081
+#: assets/admin/mapping.js:1129
 msgid "Saving also turns generative AI on for this site in Viglet Turing, answering through its Default AI Agent until an agent is chosen in Viglet Turing's console."
 msgstr "Salvar também liga a IA generativa deste site no Viglet Turing, respondendo pelo Agente de IA padrão até que um agente seja escolhido no console do Viglet Turing."
 
@@ -2874,26 +2874,26 @@ msgstr "O agente de IA do site SN não tem modelo de embedding."
 msgid "The SN site’s AI agent has no vector store."
 msgstr "O agente de IA do site SN não tem repositório vetorial."
 
-#: assets/admin/mapping.js:310
+#: assets/admin/mapping.js:348
 msgid "Show on result cards"
 msgstr "Mostrar nos cards de resultado"
 
-#: assets/admin/mapping.js:432
-#: assets/admin/mapping.js:551
+#: assets/admin/mapping.js:474
+#: assets/admin/mapping.js:593
 msgid "Date shown on cards"
 msgstr "Data mostrada nos cards"
 
-#: assets/admin/mapping.js:436
-#: assets/admin/mapping.js:621
+#: assets/admin/mapping.js:478
+#: assets/admin/mapping.js:663
 msgid "Publication date"
 msgstr "Data de publicação"
 
-#: assets/admin/mapping.js:448
-#: assets/admin/mapping.js:557
+#: assets/admin/mapping.js:490
+#: assets/admin/mapping.js:599
 msgid "Image on cards"
 msgstr "Imagem nos cards"
 
-#: assets/admin/mapping.js:452
+#: assets/admin/mapping.js:494
 msgid "Featured image"
 msgstr "Imagem destacada"
 
@@ -2915,39 +2915,39 @@ msgstr "Em %s"
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
 
-#: src/includes/class-viglet-turing-mapping.php:642
+#: src/includes/class-viglet-turing-mapping.php:654
 msgid "Today"
 msgstr "Hoje"
 
-#: src/includes/class-viglet-turing-mapping.php:647
+#: src/includes/class-viglet-turing-mapping.php:659
 msgid "Next 7 days"
 msgstr "Próximos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:652
+#: src/includes/class-viglet-turing-mapping.php:664
 msgid "This month"
 msgstr "Este mês"
 
-#: src/includes/class-viglet-turing-mapping.php:662
+#: src/includes/class-viglet-turing-mapping.php:674
 msgid "Past"
 msgstr "Passados"
 
-#: assets/admin/mapping.js:154
+#: assets/admin/mapping.js:158
 msgid "Periods"
 msgstr "Períodos"
 
-#: assets/admin/mapping.js:158
+#: assets/admin/mapping.js:162
 msgid "Past: last 7 and 30 days, this year, before (and upcoming)"
 msgstr "Passado: últimos 7 e 30 dias, este ano, antes (e próximos)"
 
-#: assets/admin/mapping.js:165
+#: assets/admin/mapping.js:169
 msgid "Agenda: today, next 7 days, this month, upcoming, past"
 msgstr "Agenda: hoje, próximos 7 dias, este mês, próximos, passados"
 
-#: assets/admin/mapping.js:172
+#: assets/admin/mapping.js:176
 msgid "My own"
 msgstr "Os meus"
 
-#: assets/admin/mapping.js:181
+#: assets/admin/mapping.js:211
 msgid "Each bound is NOW or a yyyy-mm-dd day, rounded with /DAY, /MONTH or /YEAR and moved with +7DAYS, -1MONTH and so on. Leave one empty for an open end. Up to 8."
 msgstr "Cada limite é NOW ou um dia aaaa-mm-dd, arredondado com /DAY, /MONTH ou /YEAR e deslocado com +7DAYS, -1MONTH e assim por diante. Deixe um vazio para um extremo aberto. Até 8."
 
@@ -2961,15 +2961,15 @@ msgstr "Fora da busca: a data já passou"
 msgid "Leaves search on %s"
 msgstr "Sai da busca em %s"
 
-#: assets/admin/mapping.js:468
+#: assets/admin/mapping.js:510
 msgid "Leaves search on"
 msgstr "Sai da busca em"
 
-#: assets/admin/mapping.js:469
+#: assets/admin/mapping.js:511
 msgid "A post leaves search once this date has passed, and comes back if it moves forward."
 msgstr "Um post sai da busca quando esta data passa, e volta se ela for adiada."
 
-#: assets/admin/mapping.js:476
+#: assets/admin/mapping.js:518
 msgid "Never"
 msgstr "Nunca"
 
@@ -2986,7 +2986,7 @@ msgid "The files could not be packed for Viglet Turing."
 msgstr "Não foi possível empacotar os arquivos para o Viglet Turing."
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:850
+#: src/includes/class-viglet-turing-mapping.php:862
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr "Texto do PDF no meta: %s"
@@ -3152,42 +3152,42 @@ msgctxt "block keyword"
 msgid "ask"
 msgstr "perguntar"
 
-#: src/includes/class-viglet-turing-mapping.php:468
+#: src/includes/class-viglet-turing-mapping.php:470
 msgid "Author"
 msgstr "Autor"
 
-#: assets/admin/mapping.js:531
+#: assets/admin/mapping.js:573
 msgid "Types from other sources"
 msgstr "Tipos de outras fontes"
 
-#: assets/admin/mapping.js:536
+#: assets/admin/mapping.js:578
 msgid "Documents another source sent under this site key, such as a catalog, carry types no post type has. Name each one as its result badge reads, and choose the fields its cards show as the date and the image. This changes how they show, never what is indexed."
 msgstr "Documentos que outra fonte enviou com a chave deste site, como um catálogo, trazem tipos que nenhum tipo de post tem. Dê a cada um o nome que o selo do resultado mostra e escolha os campos que os cards dele mostram como data e imagem. Isso muda como aparecem, nunca o que é indexado."
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:594
+#: assets/admin/mapping.js:636
 #, js-format
 msgid "Label for %s"
 msgstr "Rótulo de %s"
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:611
+#: assets/admin/mapping.js:653
 #, js-format
 msgid "Date shown on %s cards"
 msgstr "Data mostrada nos cards de %s"
 
 #. translators: %s: a document type, e.g. Article.
-#: assets/admin/mapping.js:638
+#: assets/admin/mapping.js:680
 #, js-format
 msgid "Image on %s cards"
 msgstr "Imagem nos cards de %s"
 
-#: assets/admin/mapping.js:648
+#: assets/admin/mapping.js:690
 msgid "Its image field"
 msgstr "O campo de imagem dele"
 
 #. translators: %d: how many documents of the type were read.
-#: assets/admin/mapping.js:578
+#: assets/admin/mapping.js:620
 #, js-format
 msgid "Documents read: %d"
 msgstr "Documentos lidos: %d"
@@ -3420,17 +3420,17 @@ msgstr[0] "%1$d nome salvo no Viglet Turing há %2$s."
 msgstr[1] "%1$d nomes salvos no Viglet Turing há %2$s."
 
 #: src/includes/class-viglet-turing-entities.php:84
-#: assets/admin/mapping.js:674
+#: assets/admin/mapping.js:716
 msgid "People"
 msgstr "Pessoas"
 
 #: src/includes/class-viglet-turing-entities.php:85
-#: assets/admin/mapping.js:679
+#: assets/admin/mapping.js:721
 msgid "Organisations"
 msgstr "Organizações"
 
 #: src/includes/class-viglet-turing-entities.php:86
-#: assets/admin/mapping.js:684
+#: assets/admin/mapping.js:726
 msgid "Places"
 msgstr "Lugares"
 
@@ -3442,38 +3442,38 @@ msgstr "O Viglet Turing não criou o tesauro."
 msgid "Viglet Turing refused to write the name variants (HTTP 403). An API key bound to a partition of a shared SN site cannot write the Thesaurus; save them with a key that is not, or add them in Viglet Turing's Thesaurus."
 msgstr "O Viglet Turing recusou gravar as variantes de nomes (HTTP 403). Uma chave de API vinculada a uma partição de um site SN compartilhado não pode gravar no Tesauro; salve-as com uma chave que não seja, ou adicione-as no Tesauro do Viglet Turing."
 
-#: assets/admin/mapping.js:712
+#: assets/admin/mapping.js:754
 msgid "Off: turn on \"Find people, organisations and places in posts\" under Settings › Generative AI. Until then nothing is found and these facets are not offered."
 msgstr "Desligado: ligue \"Encontrar pessoas, organizações e lugares nos posts\" em Configurações › IA generativa. Até lá nada é encontrado e estas facetas não são oferecidas."
 
-#: assets/admin/mapping.js:717
+#: assets/admin/mapping.js:759
 msgid "Off: finding names needs generative AI, which is off under Settings › Generative AI. Until it is on, nothing is found and these facets are not offered."
 msgstr "Desligado: encontrar nomes exige a IA generativa, que está desligada em Configurações › IA generativa. Até que seja ligada, nada é encontrado e estas facetas não são oferecidas."
 
-#: assets/admin/mapping.js:727
+#: assets/admin/mapping.js:769
 msgid "People, organisations and places"
 msgstr "Pessoas, organizações e lugares"
 
-#: assets/admin/mapping.js:735
+#: assets/admin/mapping.js:777
 msgid "Viglet Turing's language model finds the people, organisations and places each post names as it is indexed, and keeps only the names the text holds. Label each facet as the search block shows it, and choose which ones it offers."
 msgstr "O modelo de linguagem do Viglet Turing encontra as pessoas, organizações e lugares que cada post cita ao indexá-lo, e mantém só os nomes que o texto contém. Dê a cada faceta o rótulo que o bloco de busca mostra e escolha quais ele oferece."
 
-#: assets/admin/mapping.js:744
+#: assets/admin/mapping.js:786
 msgid "Open Settings"
 msgstr "Abrir Configurações"
 
-#: assets/admin/mapping.js:761
+#: assets/admin/mapping.js:803
 msgid "Offered"
 msgstr "Oferecida"
 
 #. translators: %s: the Turing field, e.g. entity_person.
-#: assets/admin/mapping.js:786
+#: assets/admin/mapping.js:828
 #, js-format
 msgid "Facet label for %s"
 msgstr "Rótulo da faceta de %s"
 
 #. translators: %s: a facet's label, e.g. People.
-#: assets/admin/mapping.js:802
+#: assets/admin/mapping.js:844
 #, js-format
 msgid "Offer %s"
 msgstr "Oferecer %s"
@@ -3543,3 +3543,15 @@ msgid "%d search holding personal data (an e-mail, a CPF or a long number) is hi
 msgid_plural "%d searches holding personal data (an e-mail, a CPF or a long number) are hidden."
 msgstr[0] "%d busca com dado pessoal (um e-mail, um CPF ou um número longo) está oculta."
 msgstr[1] "%d buscas com dado pessoal (um e-mail, um CPF ou um número longo) estão ocultas."
+
+#: assets/admin/mapping.js:186
+msgid "Ends on"
+msgstr "Termina em"
+
+#: assets/admin/mapping.js:187
+msgid "For something that runs over several days, the field holding its last day: a period then shows what is on during it."
+msgstr "Para algo que dura vários dias, o campo com o último dia: um período passa a mostrar o que está acontecendo nele."
+
+#: assets/admin/mapping.js:194
+msgid "Nothing: one day each"
+msgstr "Nenhum: um dia cada"

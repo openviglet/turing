@@ -1742,6 +1742,7 @@
 - **T1353** — SN search answers again: the snapshot view carries the site's lock version, and the six id-only stubs bound as query parameters use TurSNSite.reference, which reads as existing.
 - **T1354** — A DSL date range on a Lucene DATE field reads ISO, day and date-math bounds (a day as lte keeps the whole day), and the facet parse no longer dates items by a trip's month.
 - **T1355** — Spotlight and merge-provider saves bind the body's site as a TurSNSite.referenceTo, and locale and field updates keep their own site: a body naming its site by id saves again.
+- **T1356** — A mapped DATE range facet takes an Ends on field (range_end), sent as the custom facet's endField, so a running event sits under Today and Upcoming, not Past (design §CLXXXII.23 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/indexing.md`).
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

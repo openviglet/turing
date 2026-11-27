@@ -32,7 +32,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * `range` gives a DATE or number field a range facet as well, declared as a Turing custom
  * facet named `<field>_range`: a fixed set of periods for a date, and for a number the
- * `ranges` it lists, each `{label, from, to}` with either bound open.
+ * `ranges` it lists, each `{label, from, to}` with either bound open. A date's `range_end`
+ * names another DATE field of its type where a span ends (an event's last day), so a period
+ * holds what runs during it rather than what starts in it.
  */
 class Viglet_Turing_Mapping {
 
@@ -577,7 +579,7 @@ class Viglet_Turing_Mapping {
 	 *
 	 * @param array  $field  A sanitized mapped field.
 	 * @param string $locale The site's locale.
-	 * @return array{field: string, name: string, defaultLabel: string, label: array, items: array}|null
+	 * @return array{field: string, name: string, defaultLabel: string, label: array, items: array, endField?: string}|null
 	 */
 	public static function range_facet( array $field, string $locale ): ?array {
 		if ( empty( $field['range'] ) ) {
@@ -617,13 +619,20 @@ class Viglet_Turing_Mapping {
 
 		$label = '' !== $field['facet_label'] ? $field['facet_label'] : $field['field'];
 
-		return array(
+		$facet = array(
 			'field'        => $field['field'],
 			'name'         => self::range_facet_name( $field['field'] ),
 			'defaultLabel' => $label,
 			'label'        => array( $locale => $label ),
 			'items'        => $items,
 		);
+		// A span from this field to its end field (Turing T1224): a period holds what runs
+		// during it, an open start holds what has ended, an open end what has not.
+		if ( 'DATE' === $field['type'] && '' !== ( $field['range_end'] ?? '' ) ) {
+			$facet['endField'] = $field['range_end'];
+		}
+
+		return $facet;
 	}
 
 	/**
@@ -1063,6 +1072,15 @@ class Viglet_Turing_Mapping {
 		);
 		$pick  = static fn ( string $key, array $allowed ) => in_array( (string) ( $type_mapping[ $key ] ?? '' ), $allowed, true ) ? (string) $type_mapping[ $key ] : '';
 
+		// A span's end names another DATE field of the same type (T1356); anything else is dropped.
+		$dates = $typed( array( 'DATE' ) );
+		foreach ( $fields as $index => $field ) {
+			$end = $field['range_end'];
+			if ( '' !== $end && ( ! $field['range'] || $end === $field['field'] || ! in_array( $end, $dates, true ) ) ) {
+				$fields[ $index ]['range_end'] = '';
+			}
+		}
+
 		return array(
 			// The mapping's own flag (a post type left out), not a WP_Query argument.
 			'exclude'    => ! empty( $type_mapping['exclude'] ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
@@ -1124,6 +1142,9 @@ class Viglet_Turing_Mapping {
 			'range'       => $rangeable && ! empty( $field['range'] ),
 			'ranges'      => $ranges,
 			'periods'     => $periods,
+			// The DATE field a span ends on (Turing T1224), so the range facet buckets an event
+			// by the days it runs. Kept only when its type maps that field as a DATE too.
+			'range_end'   => 'DATE' === $type ? preg_replace( '/[^A-Za-z0-9_]/', '', (string) ( $field['range_end'] ?? '' ) ) : '',
 		);
 	}
 
