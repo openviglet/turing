@@ -97,7 +97,7 @@ function PersonaJsonLd() {
  * companion is "The Persona Book" in the docs.
  */
 export function PersonaPage() {
-  const { PERSONA_COLUMNS, PERSONA_FAQ, PERSONA_MATRIX, PERSONA_STEPS, PERSONA_SURFACES, PERSONA_VOICES } = usePages();
+  const { PERSONA_COLUMNS, PERSONA_FAQ, PERSONA_MATRIX, PERSONA_STEPS, PERSONA_SURFACES, PERSONA_VOICES, PERSONA_PAGE: t } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <PersonaJsonLd />
@@ -105,14 +105,14 @@ export function PersonaPage() {
       <main className="flex-1">
         {/* hero */}
         <PageHero
-          eyebrow={<>Personas · brand voice for AI</>}
-          title={<>Your customer doesn't want to talk to an LLM. They want to talk to your company.</>}
-          description={<>A generic AI voice is indistinguishable from the next ten companies that asked the same model the same thing, and it quotes prices you never approved. A Persona is the voice profile of your AI: define it once in Viglet Turing, attach it to any agent, and every reply sounds like your company. Swap the LLM or the tools and the voice stays. Open source, Apache 2.0.</>}
+          eyebrow={<>{t.eyebrow}</>}
+          title={<>{t.title}</>}
+          description={<>{t.description}</>}
           actions={
             <>
               <Button asChild size="lg">
                 <a href={withBase("/#playground")}>
-                  Try it live <ArrowRight className="size-4" />
+                  {`${t.tryCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button
@@ -121,7 +121,7 @@ export function PersonaPage() {
                 variant="outline"
               >
                 <a href={PERSONA_BOOK_URL} target="_blank" rel="noreferrer">
-                  Read the Persona Book
+                  {t.bookCta}
                 </a>
               </Button>
             </>
@@ -133,17 +133,13 @@ export function PersonaPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                Live · a persona as an audience
+                {t.matchEyebrow}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Does this content fit its reader?
+                {t.matchTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                A persona can also be a reader you measure
-                content against. Pick an audience, paste some text, and get a
-                fit verdict: a readability score plus a text-grounded AI review
-                that flags the exact spans that miss, each with a rewrite
-                suggestion. This runs live against the demo backend.
+                {t.matchLead}
               </p>
             </div>
             <div className="mx-auto max-w-2xl">
@@ -157,14 +153,13 @@ export function PersonaPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                One model, three voices
+                {t.voicesTitle}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Same question: “is the annual plan worth it?”
+                {t.voicesQuestion}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The same AI, the same model, the same question. Only the persona
-                changes, and with it how your company sounds.
+                {t.voicesLead}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
@@ -191,14 +186,13 @@ export function PersonaPage() {
           <Container>
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                How it works
+                {t.howEyebrow}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Define once, govern everywhere
+                {t.howTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                A persona is decoupled from the model and the tools, so it's the
-                one place your brand voice lives.
+                {t.howLead}
               </p>
             </div>
             <ol className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2">
@@ -224,11 +218,10 @@ export function PersonaPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                More than a system prompt
+                {t.surfacesTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                A Persona is something you operate directly: a voice, an
-                audience, and a research participant, all reusable.
+                {t.surfacesLead}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -257,11 +250,10 @@ export function PersonaPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Why not just write a good prompt?
+                {t.matrixTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                You can get part-way with prompt engineering. Reuse, enforcement
-                and measurement are where a governed Persona pulls ahead.
+                {t.matrixLead}
               </p>
             </div>
             <div className="overflow-x-auto">
@@ -304,9 +296,7 @@ export function PersonaPage() {
               </table>
             </div>
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              “Prompt engineering” = hand-written system prompts maintained per
-              agent; “off-the-shelf chatbot” = a hosted assistant with a single
-              system prompt. High-level, as of 2026.
+              {t.matrixNote}
             </p>
           </Container>
         </section>
@@ -316,11 +306,10 @@ export function PersonaPage() {
           <Container className="max-w-3xl">
             <div className="mb-10 text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Teams ask us
+                {t.faqTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The questions worth raising before you give your AI a brand voice,
-                with direct answers.
+                {t.faqLead}
               </p>
             </div>
             <dl className="divide-y divide-border">
@@ -341,21 +330,19 @@ export function PersonaPage() {
           <Container>
             <Card className="mx-auto mt-16 max-w-3xl gap-0 border-primary/20 bg-primary/5 p-8 text-center sm:p-10">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                Give every agent one voice: yours
+                {t.ctaTitle}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                Self-host under Apache 2.0, define a persona in the admin UI, and
-                attach it to any AI Agent. The full walkthrough, with a worked
-                example for every feature, is in the Persona Book.
+                {t.ctaBody}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg">
                   <a href={PERSONA_BOOK_URL} target="_blank" rel="noreferrer">
-                    Read the Persona Book <ArrowRight className="size-4" />
+                    {`${t.bookCta} `}<ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href={LINKS.docs}>Get started</a>
+                  <a href={LINKS.docs}>{t.getStartedCta}</a>
                 </Button>
               </div>
             </Card>

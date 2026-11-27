@@ -81,7 +81,7 @@ function WordPressJsonLd() {
  * loads before consent. The embed is youtube-nocookie.
  */
 function VideoFacade() {
-  const { WORDPRESS_VIDEOS } = usePages();
+  const { WORDPRESS_VIDEOS, WORDPRESS_VIDEO: t } = usePages();
   // The browser's language picks the cut after hydration, until the visitor chooses one.
   const browserLang = useSyncExternalStore(noSubscription, browserVideoLang, serverVideoLang);
   const [chosen, setLang] = useState<WordPressVideoLang | null>(null);
@@ -105,7 +105,7 @@ function VideoFacade() {
             type="button"
             onClick={() => setPlaying(true)}
             className="group absolute inset-0 size-full"
-            aria-label={`Play the video: ${video.title}`}
+            aria-label={`${t.play} ${video.title}`}
           >
             <img
               src={withBase(`/wordpress/video-${lang}.jpg`)}
@@ -122,7 +122,7 @@ function VideoFacade() {
       </div>
       {PUBLISHED.length > 1 && (
         <fieldset className="mt-3 flex gap-2">
-          <legend className="sr-only">Video language</legend>
+          <legend className="sr-only">{t.languages}</legend>
           {PUBLISHED.map((option) => (
             <button
               key={option}
@@ -143,7 +143,7 @@ function VideoFacade() {
         </fieldset>
       )}
       <p className="mt-3 text-xs text-[#7f8bbd]">
-        Plays from YouTube (youtube-nocookie.com) after you press play.
+        {t.privacy}
       </p>
       {/* T1257: what Ana says in this cut, as text for readers, search and assistants. */}
       <details className="mt-3 text-sm text-[#aeb7d4]">
@@ -166,7 +166,7 @@ function VideoFacade() {
  * to Turing directly, so its page lives here; Dumont is linked for the other sources.
  */
 export function WordPressPage() {
-  const { WORDPRESS_FAQ, WORDPRESS_STORY } = usePages();
+  const { WORDPRESS_FAQ, WORDPRESS_STORY, WORDPRESS_PAGE: t } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <WordPressJsonLd />
@@ -174,14 +174,14 @@ export function WordPressPage() {
       <main className="flex-1">
         {/* hero */}
         <PageHero
-          eyebrow={<>Viglet Turing for WordPress and WooCommerce</>}
-          title={<>Search that understands what a shopper means, answered from your own catalog</>}
-          description={<>A WordPress plugin that indexes posts, pages and WooCommerce products into Viglet Turing, then puts search as you type, filters, cited answers, a shopping copilot and search insights on the site. Open source, Apache 2.0.</>}
+          eyebrow={<>{t.eyebrow}</>}
+          title={<>{t.title}</>}
+          description={<>{t.description}</>}
           actions={
             <>
               <Button asChild size="lg">
                 <a href={LINKS.wordpressDocs}>
-                  Install the plugin <ArrowRight className="size-4" />
+                  {`${t.installCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button
@@ -190,7 +190,7 @@ export function WordPressPage() {
                 variant="outline"
               >
                 <a href={LINKS.wordpressDemo} target="_blank" rel="noreferrer">
-                  Try the demo store in your browser
+                  {t.demoCta}
                 </a>
               </Button>
             </>
@@ -203,15 +203,13 @@ export function WordPressPage() {
           <Container>
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                One shopper, one visit
+                {t.storyEyebrow}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Her first two days on the fells, in eight steps
+                {t.storyTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Tarnfell is a demo outdoor shop: every product and guide is invented, and
-                everything else is the plugin and Viglet Turing running. Each picture is taken from
-                the recorded story.
+                {t.storyLead}
               </p>
             </div>
             <ol className="space-y-16">
@@ -219,7 +217,7 @@ export function WordPressPage() {
                 <li key={c.title} className="grid items-center gap-8 lg:grid-cols-5 [&>*]:min-w-0">
                   <div className={i % 2 ? "lg:order-2 lg:col-span-2" : "lg:col-span-2"}>
                     <p className="font-mono text-sm font-bold text-primary">
-                      Chapter {i + 1} · {c.title}
+                      {`${t.chapter} `}{i + 1} · {c.title}
                     </p>
                     <h3 className="mt-2 text-2xl font-extrabold tracking-tight">{c.feature}</h3>
                     <p className="mt-3 leading-relaxed text-muted-foreground">{c.body}</p>
@@ -242,25 +240,22 @@ export function WordPressPage() {
         <section className="border-y border-border bg-muted/40 py-16 lg:py-20">
           <Container className="max-w-3xl text-center">
             <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-              On your own store
+              {t.installEyebrow}
             </p>
             <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Install it, point it at Viglet Turing, reindex
+              {t.installTitle}
             </h2>
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-              The plugin indexes posts, pages, custom post types and WooCommerce products,
-              provisions their fields as facets, and keeps the index in step as content
-              changes. The answers, the copilot and the assistant use the language model
-              configured in Viglet Turing, and stay hidden on a Viglet Turing that has none.
+              {t.installBody}
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg">
                 <a href={LINKS.wordpressDocs}>
-                  Read the plugin's docs <ArrowRight className="size-4" />
+                  {`${t.docsCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href={LINKS.docs}>Run Viglet Turing</a>
+                <a href={LINKS.docs}>{t.runCta}</a>
               </Button>
             </div>
           </Container>
@@ -270,7 +265,7 @@ export function WordPressPage() {
         <section id="faq" className="scroll-mt-24 py-16 lg:py-20">
           <Container className="max-w-3xl">
             <h2 className="mb-8 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">
-              WordPress teams ask us
+              {t.faqTitle}
             </h2>
             <dl className="divide-y divide-border">
               {WORDPRESS_FAQ.map((item) => (
@@ -287,20 +282,18 @@ export function WordPressPage() {
         <section id="beyond" className="scroll-mt-24 pb-16">
           <Container>
             <Card className="mx-auto max-w-3xl gap-0 border-primary/20 bg-primary/5 p-8 text-center sm:p-10">
-              <h2 className="text-2xl font-extrabold tracking-tight">Beyond WordPress</h2>
+              <h2 className="text-2xl font-extrabold tracking-tight">{t.beyondTitle}</h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                Search more than one site? Viglet Dumont indexes Adobe Experience Manager,
-                databases, file shares and any REST source into the same Viglet Turing, so one
-                answer can cite a product, a policy PDF and a page together.
+                {t.beyondBody}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg">
                   <a href={LINKS.dumont} target="_blank" rel="noreferrer">
-                    Viglet Dumont <ArrowRight className="size-4" />
+                    {`${t.dumontCta} `}<ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href={withBase("/aem-search/")}>AEM AI Search</a>
+                  <a href={withBase("/aem-search/")}>{t.aemCta}</a>
                 </Button>
               </div>
             </Card>

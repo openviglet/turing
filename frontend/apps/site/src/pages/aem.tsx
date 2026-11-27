@@ -94,7 +94,7 @@ function AemJsonLd() {
  * dependency-free routing via plain <a href> full loads, FAQPage JSON-LD.
  */
 export function AemPage() {
-  const { AEM_CODE, AEM_COLUMNS, AEM_DEPTH, AEM_FAQ, AEM_MATRIX, AEM_STEPS } = usePages();
+  const { AEM_CODE, AEM_COLUMNS, AEM_DEPTH, AEM_FAQ, AEM_MATRIX, AEM_STEPS, AEM_PAGE: t } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <AemJsonLd />
@@ -102,14 +102,14 @@ export function AemPage() {
       <main className="flex-1">
         {/* hero */}
         <PageHero
-          eyebrow={<>Viglet Turing for Adobe Experience Manager</>}
-          title={<>AEM search with AI: a search engine and search component for AEM</>}
-          description={<>The AEM-native pitch is “Cloud-Service-native.” That's also its limit. Viglet Turing gives AEM the same cited, streaming AI answers, and more: it searches beyond AEM, adds agents, tools, skills and MCP, runs on the LLM provider you choose and on Solr, Elasticsearch or embedded Lucene, and keeps every page and query in your own infrastructure. Open source, Apache 2.0.</>}
+          eyebrow={<>{t.eyebrow}</>}
+          title={<>{t.title}</>}
+          description={<>{t.description}</>}
           actions={
             <>
               <Button asChild size="lg">
                 <a href="#demo">
-                  Try it live <ArrowRight className="size-4" />
+                  {`${t.tryCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button
@@ -118,7 +118,7 @@ export function AemPage() {
                 variant="outline"
               >
                 <a href={LINKS.aemConnector} target="_blank" rel="noreferrer">
-                  AEM connector docs
+                  {t.connectorCta}
                 </a>
               </Button>
             </>
@@ -130,17 +130,13 @@ export function AemPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                Live on real AEM content
+                {t.demoEyebrow}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Search and ask Adobe's WKND site
+                {t.demoTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                This is the Adobe WKND reference site, its pages and assets
-                indexed live via the Viglet Dumont AEM connector. Search it with facets
-                and typo tolerance, or ask a question and get a grounded, cited
-                answer. Every result and citation links back to the public WKND
-                site. Same SDK, same corpus, two views.
+                {t.demoLead}
               </p>
             </div>
             <WkndPlayground />
@@ -152,15 +148,13 @@ export function AemPage() {
           <Container className="grid gap-10 lg:grid-cols-2 lg:items-start">
             <div className="min-w-0">
               <p className="text-xs font-extrabold tracking-[0.12em] text-primary uppercase">
-                How it plugs in
+                {t.howEyebrow}
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Sits alongside AEM, no re-platforming
+                {t.howTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                AEM stays your content source of truth. Viglet Turing connects, indexes
-                into the engine you choose, and drops a cited-answer UI wherever
-                your users are.
+                {t.howLead}
               </p>
               <ul className="mt-8 space-y-6">
                 {AEM_STEPS.map((s) => (
@@ -189,11 +183,10 @@ export function AemPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Everything an AEM AI search does, and the parts it can't
+                {t.matrixTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Viglet Turing matches a Cloud-Service-native add-on on the core
-                AI-answer story. The depth gap opens on everything around it.
+                {t.matrixLead}
               </p>
             </div>
             <TableScroll fadeClassName="from-muted">
@@ -238,10 +231,7 @@ export function AemPage() {
               </table>
             </TableScroll>
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              High-level comparison as of 2026; verify current vendor
-              capabilities. “AEM-native AI add-on” = a Cloud-Service-native AI
-              search product; “Adobe native search” = built-in Query
-              Builder / Omnisearch.
+              {t.matrixNote}
             </p>
           </Container>
         </section>
@@ -251,10 +241,10 @@ export function AemPage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                We have more depth
+                {t.depthTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Where an AEM-only add-on reaches its ceiling, Viglet Turing keeps going.
+                {t.depthLead}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -283,11 +273,10 @@ export function AemPage() {
           <Container className="max-w-3xl">
             <div className="mb-10 text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                AEM teams ask us
+                {t.faqTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The objections worth raising before you add AI search to AEM,
-                with direct answers.
+                {t.faqLead}
               </p>
             </div>
             <dl className="divide-y divide-border">
@@ -308,21 +297,19 @@ export function AemPage() {
           <Container>
             <Card className="mx-auto max-w-3xl gap-0 border-primary/20 bg-primary/5 p-8 text-center sm:p-10">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                Add AI search to AEM on your own infrastructure
+                {t.ctaTitle}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                Self-host under Apache 2.0, connect your AEM tier in a session,
-                bring your own LLM and search engine, and keep every page and
-                query in your infrastructure.
+                {t.ctaBody}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg">
                   <a href={LINKS.docs}>
-                    Get started <ArrowRight className="size-4" />
+                    {`${t.getStartedCta} `}<ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href={withBase("/compare/")}>Compare the alternatives</a>
+                  <a href={withBase("/compare/")}>{t.compareCta}</a>
                 </Button>
               </div>
             </Card>

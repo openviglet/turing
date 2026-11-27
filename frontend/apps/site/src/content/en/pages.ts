@@ -412,6 +412,36 @@ export const WORDPRESS_FAQ: { q: string; a: string }[] = [
 /* Security & data residency page (/security)                                 */
 /* -------------------------------------------------------------------------- */
 
+/** T1378: the words of /wordpress/ around its story, video and questions. */
+export const WORDPRESS_PAGE = {
+  demoCta: "Try the demo store in your browser",
+  storyEyebrow: "One shopper, one visit",
+  storyTitle: "Her first two days on the fells, in eight steps",
+  storyLead: "Tarnfell is a demo outdoor shop: every product and guide is invented, and everything else is the plugin and Viglet Turing running. Each picture is taken from the recorded story.",
+  installEyebrow: "On your own store",
+  installTitle: "Install it, point it at Viglet Turing, reindex",
+  installBody: "The plugin indexes posts, pages, custom post types and WooCommerce products, provisions their fields as facets, and keeps the index in step as content changes. The answers, the copilot and the assistant use the language model configured in Viglet Turing, and stay hidden on a Viglet Turing that has none.",
+  faqTitle: "WordPress teams ask us",
+  beyondBody: "Search more than one site? Viglet Dumont indexes Adobe Experience Manager, databases, file shares and any REST source into the same Viglet Turing, so one answer can cite a product, a policy PDF and a page together.",
+  eyebrow: "Viglet Turing for WordPress and WooCommerce",
+  title: "Search that understands what a shopper means, answered from your own catalog",
+  description: "A WordPress plugin that indexes posts, pages and WooCommerce products into Viglet Turing, then puts search as you type, filters, cited answers, a shopping copilot and search insights on the site. Open source, Apache 2.0.",
+  installCta: "Install the plugin",
+  docsCta: "Read the plugin's docs",
+  runCta: "Run Viglet Turing",
+  dumontCta: "Viglet Dumont",
+  aemCta: "AEM AI Search",
+  chapter: "Chapter",
+  beyondTitle: "Beyond WordPress",
+};
+
+/** T1378: the words around /wordpress/'s video. */
+export const WORDPRESS_VIDEO = {
+  privacy: "Plays from YouTube (youtube-nocookie.com) after you press play.",
+  play: "Play the video:",
+  languages: "Video language",
+};
+
 export interface SecurityPoint {
   icon: LucideIcon;
   iconClass: string;
@@ -1245,6 +1275,60 @@ export const FAQ: FaqItem[] = [
 /* LLM and engine, self-hosted data residency, open source. Honest & defensible:   */
 /* where the AEM-native add-on genuinely matches, we say so.                   */
 /* -------------------------------------------------------------------------- */
+
+/** T1378: the words of /aem-search/ around its demo, steps, matrix and questions. */
+export const AEM_PAGE = {
+  connectorCta: "AEM connector docs",
+  demoEyebrow: "Live on real AEM content",
+  demoTitle: "Search and ask Adobe's WKND site",
+  demoLead: "This is the Adobe WKND reference site, its pages and assets indexed live via the Viglet Dumont AEM connector. Search it with facets and typo tolerance, or ask a question and get a grounded, cited answer. Every result and citation links back to the public WKND site. Same SDK, same corpus, two views.",
+  howEyebrow: "How it plugs in",
+  howTitle: "Sits alongside AEM, no re-platforming",
+  howLead: "AEM stays your content source of truth. Viglet Turing connects, indexes into the engine you choose, and drops a cited-answer UI wherever your users are.",
+  matrixTitle: "Everything an AEM AI search does, and the parts it can't",
+  matrixLead: "Viglet Turing matches a Cloud-Service-native add-on on the core AI-answer story. The depth gap opens on everything around it.",
+  matrixNote: "High-level comparison as of 2026; verify current vendor capabilities. “AEM-native AI add-on” = a Cloud-Service-native AI search product; “Adobe native search” = built-in Query Builder / Omnisearch.",
+  depthTitle: "We have more depth",
+  depthLead: "Where an AEM-only add-on reaches its ceiling, Viglet Turing keeps going.",
+  faqTitle: "AEM teams ask us",
+  faqLead: "The objections worth raising before you add AI search to AEM, with direct answers.",
+  ctaTitle: "Add AI search to AEM on your own infrastructure",
+  ctaBody: "Self-host under Apache 2.0, connect your AEM tier in a session, bring your own LLM and search engine, and keep every page and query in your infrastructure.",
+  eyebrow: "Viglet Turing for Adobe Experience Manager",
+  title: "AEM search with AI: a search engine and search component for AEM",
+  description: "The AEM-native pitch is “Cloud-Service-native.” That's also its limit. Viglet Turing gives AEM the same cited, streaming AI answers, and more: it searches beyond AEM, adds agents, tools, skills and MCP, runs on the LLM provider you choose and on Solr, Elasticsearch or embedded Lucene, and keeps every page and query in your own infrastructure. Open source, Apache 2.0.",
+  tryCta: "Try it live",
+  getStartedCta: "Get started",
+  compareCta: "Compare the alternatives",
+};
+
+/** T1378: the words of /persona/ around its demo, voices, steps and questions. */
+export const PERSONA_PAGE = {
+  matchEyebrow: "Live · a persona as an audience",
+  matchTitle: "Does this content fit its reader?",
+  matchLead: "A persona can also be a reader you measure content against. Pick an audience, paste some text, and get a fit verdict: a readability score plus a text-grounded AI review that flags the exact spans that miss, each with a rewrite suggestion. This runs live against the demo backend.",
+  voicesTitle: "One model, three voices",
+  voicesQuestion: "Same question: “is the annual plan worth it?”",
+  voicesLead: "The same AI, the same model, the same question. Only the persona changes, and with it how your company sounds.",
+  howEyebrow: "How it works",
+  howTitle: "Define once, govern everywhere",
+  howLead: "A persona is decoupled from the model and the tools, so it's the one place your brand voice lives.",
+  surfacesTitle: "More than a system prompt",
+  surfacesLead: "A Persona is something you operate directly: a voice, an audience, and a research participant, all reusable.",
+  matrixTitle: "Why not just write a good prompt?",
+  matrixLead: "You can get part-way with prompt engineering. Reuse, enforcement and measurement are where a governed Persona pulls ahead.",
+  matrixNote: "“Prompt engineering” = hand-written system prompts maintained per agent; “off-the-shelf chatbot” = a hosted assistant with a single system prompt. High-level, as of 2026.",
+  faqTitle: "Teams ask us",
+  faqLead: "The questions worth raising before you give your AI a brand voice, with direct answers.",
+  ctaTitle: "Give every agent one voice: yours",
+  ctaBody: "Self-host under Apache 2.0, define a persona in the admin UI, and attach it to any AI Agent. The full walkthrough, with a worked example for every feature, is in the Persona Book.",
+  eyebrow: "Personas · brand voice for AI",
+  title: "Your customer doesn't want to talk to an LLM. They want to talk to your company.",
+  description: "A generic AI voice is indistinguishable from the next ten companies that asked the same model the same thing, and it quotes prices you never approved. A Persona is the voice profile of your AI: define it once in Viglet Turing, attach it to any agent, and every reply sounds like your company. Swap the LLM or the tools and the voice stays. Open source, Apache 2.0.",
+  tryCta: "Try it live",
+  bookCta: "Read the Persona Book",
+  getStartedCta: "Get started",
+};
 
 export interface AemMatrixRow {
   /** The capability, phrased vendor-neutrally. */
