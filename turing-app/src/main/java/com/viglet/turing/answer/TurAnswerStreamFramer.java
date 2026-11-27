@@ -10,6 +10,7 @@
 package com.viglet.turing.answer;
 
 import com.viglet.turing.rag.answer.TurAnswerProvenance;
+import com.viglet.turing.rag.answer.TurAnswerRetrieval;
 import com.viglet.turing.rag.answer.TurAnswerTraceEvent;
 import com.viglet.turing.rag.answer.TurFollowUpGenerator;
 import java.util.ArrayList;
@@ -73,6 +74,8 @@ public final class TurAnswerStreamFramer {
     private static final String UPSTREAM_CLIENT_TOOL_CALL = "client_tool_call";
     /** A runtime tool-call start/end — the raw material for the research trace (T436/T843). */
     private static final String UPSTREAM_TOOL_CALL = "tool_call";
+    /** T1370 — what each retrieval pass returned, folded into the {@code trace} event. */
+    static final String UPSTREAM_RETRIEVAL = "retrieval";
 
     /** Mirrors the catalog backstop so a runaway answer can't flood the client. */
     private static final int MAX_RETURNED_CITATIONS = 24;
@@ -114,10 +117,28 @@ public final class TurAnswerStreamFramer {
         // accumulators are only ever touched from one thread at a time.
         StringBuilder answer = new StringBuilder();
         List<TurRagSource> numberedSources = new ArrayList<>();
+        java.util.concurrent.atomic.AtomicReference<TurAnswerRetrieval> retrieval =
+                new java.util.concurrent.atomic.AtomicReference<>();
         return upstream
-                .concatMap(response -> mapEvent(response, answer, numberedSources))
+                .concatMap(response -> {
+                    if (UPSTREAM_RETRIEVAL.equals(response.type())) {
+                        retrieval.set(parseRetrieval(response.content()));
+                        return Flux.<ServerSentEvent<String>>empty();
+                    }
+                    return mapEvent(response, answer, numberedSources);
+                })
                 .concatWith(Flux.defer(
-                        () -> trailingEvents(answer.toString(), numberedSources, generator, prov)));
+                        () -> trailingEvents(answer.toString(), numberedSources, generator, prov,
+                                retrieval.get())));
+    }
+
+    /** T1370 — the upstream retrieval counts; {@code null} when unreadable. */
+    private static TurAnswerRetrieval parseRetrieval(String json) {
+        try {
+            return json == null ? null : MAPPER.readValue(json, TurAnswerRetrieval.class);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     /** Builds the terminal {@code error} event carrying a user-facing message. */
@@ -178,7 +199,7 @@ public final class TurAnswerStreamFramer {
 
     private static Flux<ServerSentEvent<String>> trailingEvents(String answerText,
             List<TurRagSource> numberedSources, TurFollowUpGenerator followUpGenerator,
-            TurAnswerProvenance provenance) {
+            TurAnswerProvenance provenance, TurAnswerRetrieval retrieval) {
         List<TurAnswerCitation> projected = numberedSources.stream()
                 .map(TurAnswerCitation::fromRagSource)
                 .toList();
@@ -194,7 +215,7 @@ public final class TurAnswerStreamFramer {
         ServerSentEvent<String> traceEvent = event(EVENT_TRACE,
                 toJson(new TurAnswerTraceEvent(numberedSources.size(), answerText.length(),
                         provenance.kbMode(), provenance.rerankStrategy(), provenance.rerankEnabled(),
-                        aligned.cited())));
+                        aligned.cited(), retrieval)));
         // Emit citations immediately (instant), then the follow-ups — which cost an
         // LLM call and are generated lazily here so they never delay the citations —
         // then the trace. Follow-up generation is fail-open to no chips.

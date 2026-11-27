@@ -83,6 +83,37 @@ class TurSNGenAiLexicalRecallTest {
                 .contains("source_id").contains("bali-1").contains("bali-2");
     }
 
+    /** T1370 — the counts name each pass: five lexical hits, two of which had chunks. */
+    @Test
+    void theCountsNameWhatTheLexicalPassReturned() {
+        when(dslSearchService.search(eq("wknd"), eq("en_US"), any()))
+                .thenReturn(Optional.of(hits("bali-1", "bali-2", "bali-3", "bali-4", "bali-5")));
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(
+                chunk("b1-a", "bali-1"), chunk("b1-b", "bali-1"), chunk("b2-a", "bali-2")));
+        TurSNGenAi.RetrievalCounts counts = new TurSNGenAi.RetrievalCounts();
+
+        genAi.withLexicalRecall(context(null), "surf camps", EN, null, List.of(chunk("sd-1", "san-diego")), counts);
+
+        assertThat(counts.toRetrieval()).isEqualTo(
+                new com.viglet.turing.rag.answer.TurAnswerRetrieval(0, 5, 2, 0, null));
+    }
+
+    /** T1370 — a pass that did not run says so, apart from one that found nothing. */
+    @Test
+    void theCountsTellALexicalPassThatDidNotRunFromOneThatFoundNothing() {
+        TurSNGenAi.RetrievalCounts skipped = new TurSNGenAi.RetrievalCounts();
+        genAi.withLexicalRecall(context(null), "surf camps", EN, null,
+                List.of(chunk("a", "d1"), chunk("b", "d2"), chunk("c", "d3")), skipped);
+        assertThat(skipped.lexicalHits).isEqualTo(-1);
+        assertThat(skipped.lexicalDocuments).isEqualTo(-1);
+
+        when(dslSearchService.search(eq("wknd"), eq("en_US"), any())).thenReturn(Optional.of(hits()));
+        TurSNGenAi.RetrievalCounts empty = new TurSNGenAi.RetrievalCounts();
+        genAi.withLexicalRecall(context(null), "surf camps", EN, null, List.of(), empty);
+        assertThat(empty.lexicalHits).isZero();
+        assertThat(empty.lexicalDocuments).isZero();
+    }
+
     @Test
     void theLexicalChunksStayInsideTheFiltersAndThePartition() {
         when(dslSearchService.search(eq("wknd"), eq("en_US"), any()))

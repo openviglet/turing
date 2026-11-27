@@ -40,7 +40,7 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
-- ⏳ **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — The answer's metadata does not say what each retrieval pass returned, so a sourceless long-page answer on fespsp is unconfirmed as fixed. → §CXCII.7
+- 🛠 **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — No IT asks /answer about one sentence of a long indexed page, so the fix is unproven end to end and on fespsp. → §CXCII.7
 
 ## Done when — T1184
 

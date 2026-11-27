@@ -28,6 +28,8 @@ package com.viglet.turing.rag.answer;
  * @param cited          T1265 — whether the {@code citations} event lists what the answer's
  *                       {@code [n]} markers name ({@code true}) or, the answer naming none,
  *                       the retrieved sources it fell back to ({@code false})
+ * @param retrieval      T1370 — what each retrieval pass returned, or {@code null} when
+ *                       the stream did not report it
  *
  * @author Alexandre Oliveira
  * @since 2026.3.4
@@ -38,11 +40,18 @@ public record TurAnswerTraceEvent(
         String kbMode,
         String rerankStrategy,
         boolean rerankEnabled,
-        boolean cited) {
+        boolean cited,
+        TurAnswerRetrieval retrieval) {
 
     /** A trace for an answer whose citations its markers name. */
     public TurAnswerTraceEvent(int sourceCount, int answerLength, String kbMode,
             String rerankStrategy, boolean rerankEnabled) {
-        this(sourceCount, answerLength, kbMode, rerankStrategy, rerankEnabled, true);
+        this(sourceCount, answerLength, kbMode, rerankStrategy, rerankEnabled, true, null);
+    }
+
+    /** The trace before T1370's retrieval counts. */
+    public TurAnswerTraceEvent(int sourceCount, int answerLength, String kbMode,
+            String rerankStrategy, boolean rerankEnabled, boolean cited) {
+        this(sourceCount, answerLength, kbMode, rerankStrategy, rerankEnabled, cited, null);
     }
 }

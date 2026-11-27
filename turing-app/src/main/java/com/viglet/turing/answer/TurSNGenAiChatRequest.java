@@ -55,7 +55,19 @@ public record TurSNGenAiChatRequest(
         String personaId,
         String siteName,
         boolean includeFilters,
-        String documentId) {
+        String documentId,
+        boolean includeRetrieval) {
+
+    /**
+     * The request before T1370's {@code includeRetrieval}: the stream sends no
+     * {@code retrieval} event, which only the answer endpoint folds into its trace.
+     */
+    public TurSNGenAiChatRequest(List<ConversationMessage> history, Map<String, List<String>> filters,
+            String conversationId, String flowId, String forcedVariant, Locale locale, String personaId,
+            String siteName, boolean includeFilters, String documentId) {
+        this(history, filters, conversationId, flowId, forcedVariant, locale, personaId, siteName,
+                includeFilters, documentId, false);
+    }
 
     /**
      * The request before T1085, kept for callers that name no site: their list-style

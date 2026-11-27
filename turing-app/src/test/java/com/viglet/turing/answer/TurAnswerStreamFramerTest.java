@@ -164,6 +164,29 @@ class TurAnswerStreamFramerTest {
         assertThat(trace.rerankStrategy()).isEqualTo("COHERE");
         assertThat(trace.rerankEnabled()).isTrue();
         assertThat(trace.sourceCount()).isEqualTo(1);
+        assertThat(trace.retrieval()).isNull();
+    }
+
+    /**
+     * T1370 — a refused answer's trace says which pass came back empty: here the
+     * vectors found two pages, the site's search five, none of which had chunks.
+     */
+    @Test
+    void traceCarriesWhatEachRetrievalPassReturned() {
+        Flux<ChatResponse> upstream = Flux.just(
+                new ChatResponse("assistant", "{\"vectorDocuments\":2,\"lexicalHits\":5,"
+                        + "\"lexicalDocuments\":0,\"documents\":2,\"answerable\":false}", "retrieval"),
+                token("Essa informação não está disponível."));
+
+        List<ServerSentEvent<String>> events = TurAnswerStreamFramer.frame(upstream,
+                TurFollowUpGenerator.NONE).collectList().block();
+
+        assertThat(events).extracting(ServerSentEvent::event).containsExactly("token", "citations", "trace");
+        TurAnswerTraceEvent trace = MAPPER.readValue(byEvent(events, "trace").data(),
+                TurAnswerTraceEvent.class);
+        assertThat(trace.sourceCount()).isZero();
+        assertThat(trace.retrieval()).isEqualTo(
+                new com.viglet.turing.rag.answer.TurAnswerRetrieval(2, 5, 0, 2, false));
     }
 
     @Test

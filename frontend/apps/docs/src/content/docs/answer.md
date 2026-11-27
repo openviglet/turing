@@ -43,7 +43,7 @@ The response is `text/event-stream`. Each frame carries a named event; a client 
 | `token` | A fragment of the answer text | Repeatedly, in order. Concatenate them. |
 | `citations` | The `[n]` → source mapping | After the answer completes. |
 | `followups` | Grounded follow-up questions | After the answer, when follow-ups are enabled. |
-| `trace` | Why this answer: knowledge-base mode, whether reranking ran and with which strategy, and `cited` | After the answer. |
+| `trace` | Why this answer: knowledge-base mode, whether reranking ran and with which strategy, `cited`, and `retrieval` | After the answer. |
 | `trace_step` | One step of the retrieval/generation trace | During, when step tracing is on. |
 | `artifact` | A rich artifact produced by a tool | During, when the agent emits one. |
 | `error` | `{"message": "..."}` | Instead of an answer. |
@@ -53,6 +53,16 @@ The `[n]` markers inside the `token` text refer to the entries of the `sources` 
 The markers come from the model being told to write them, on every provider: each passage of the retrieved content reaches the model after its source's number (`[1]`, `[2]`, in the order of the `sources` event, two passages of one page under one number), and the prompt asks for that number after every sentence that uses it. The instruction follows the agent's system prompt, a custom one included, so changing the prompt does not turn citations off. The SN chat conversation endpoint gets the same numbering, so its answers carry markers too.
 
 An answer written without any `[n]` marker still gets a `citations` event: the top retrieved sources, numbered in order. `trace.cited` tells the two apart. It is `true` when `citations` lists what the answer's markers name, and `false` when the answer named nothing and `citations` is the retrieval it fell back to. A client that promises "only the sources the answer cites" (the WordPress plugin's answer panel does) shows no source list when `cited` is `false`.
+
+`trace.retrieval` says what each retrieval pass returned, so an answer that came back with no sources shows where they were lost:
+
+| Field | Meaning |
+|---|---|
+| `vectorDocuments` | Distinct pages the vector search returned. |
+| `lexicalHits` | Pages the site's own search returned when the vector search found fewer than three; `-1` when it did not run. |
+| `lexicalDocuments` | How many of those pages had chunks in the AI index; `-1` when the site's search did not run. |
+| `documents` | Distinct pages the answer was grounded on. |
+| `answerable` | Under strict grounding, whether the check that the retrieved text answers the question said yes; `null` when it did not run. `false` means the answer was refused although pages were found. |
 
 ### When you get an `error` instead
 

@@ -426,13 +426,18 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         String period = extracted != null && extracted.containsKey(SOURCE_ID)
                 ? periodNote(nlFilters, siteToday(request.siteName())) + cutNote(dated) : "";
         // T1364 — the period's documents in date order, each with at least one chunk.
+        // T1370 — what each pass returns, for the answer endpoint's trace.
+        RetrievalCounts counts = request.includeRetrieval() ? new RetrievalCounts() : null;
         Pinned found = pinDocument(context, searchQuery, request.documentId(),
                 inPeriodOrder(context, searchQuery, extracted,
-                        retrieveDocuments(context, searchQuery, filters, extracted, locale)));
+                        retrieveDocuments(context, searchQuery, filters, extracted, locale, counts)));
         // T1363 — the judge, the answer, the caveat and the follow-ups read the
         // chunks' times in the site's wall clock, not the UTC they are indexed in.
         Pinned pinned = new Pinned(inSiteTime(context, found.documents()), found.pinnedCount());
         List<Document> relevantDocuments = pinned.documents();
+        if (counts != null) {
+            counts.documents = distinctSources(relevantDocuments).size();
+        }
 
         // T329 — deterministic "not in this site" refusal. When the relevance
         // gate (T328) leaves nothing to ground the answer, short-circuit to the
@@ -451,9 +456,9 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         if (relevantDocuments.isEmpty() && !chatFlowEngineService.hasActiveFlow(conversationId)) {
             log.debug("RAG chat streaming: 0 documents passed the relevance gate and no active "
                     + "flow — returning deterministic refusal (locale={})", locale);
-            return prependFiltersEvent(reactor.core.publisher.Flux.just(
+            return prependRetrievalEvent(prependFiltersEvent(reactor.core.publisher.Flux.just(
                     new TurAgentChatExecutor.ChatResponse(ASSISTANT, localizedRefusal(locale))),
-                    request, nlFilters);
+                    request, nlFilters), counts);
         }
 
         // STRICT_RAG hard grounding gate. Prompt-only grounding leaks on weak
@@ -465,13 +470,18 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // actually contains the answer. If not, refuse deterministically (same
         // contract as T329) instead of generating. Skipped when a chat flow
         // governs the turn (the message is flow input, not a site question).
-        if (isStrictRag(context) && !chatFlowEngineService.hasActiveFlow(conversationId)
-                && !canAnswerFromRetrievedContent(context, searchQuery, relevantDocuments, period)) {
-            log.debug("RAG chat streaming (STRICT_RAG): retrieved content does not answer '{}' — "
-                    + "deterministic refusal (locale={})", searchQuery, locale);
-            return prependFiltersEvent(reactor.core.publisher.Flux.just(
-                    new TurAgentChatExecutor.ChatResponse(ASSISTANT, localizedRefusal(locale))),
-                    request, nlFilters);
+        if (isStrictRag(context) && !chatFlowEngineService.hasActiveFlow(conversationId)) {
+            boolean answerable = canAnswerFromRetrievedContent(context, searchQuery, relevantDocuments, period);
+            if (counts != null) {
+                counts.answerable = answerable;
+            }
+            if (!answerable) {
+                log.debug("RAG chat streaming (STRICT_RAG): retrieved content does not answer '{}' — "
+                        + "deterministic refusal (locale={})", searchQuery, locale);
+                return prependRetrievalEvent(prependFiltersEvent(reactor.core.publisher.Flux.just(
+                        new TurAgentChatExecutor.ChatResponse(ASSISTANT, localizedRefusal(locale))),
+                        request, nlFilters), counts);
+            }
         }
 
         String information = pinned.information();
@@ -498,9 +508,47 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
                 appendGroundednessCaveat(answer, context, searchQuery, relevantDocuments, locale);
         reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> withSources =
                 prependSourcesEvent(grounded, relevantDocuments);
-        return prependFiltersEvent(
+        return prependRetrievalEvent(prependFiltersEvent(
                 appendFollowupsEvent(withSources, context, searchQuery, relevantDocuments),
-                request, nlFilters);
+                request, nlFilters), counts);
+    }
+
+    /**
+     * T1370 — what each retrieval pass of one answer returned, gathered as it runs.
+     * The lexical counts stay {@code -1} when that pass did not run.
+     */
+    static final class RetrievalCounts {
+        int vectorDocuments;
+        int lexicalHits = -1;
+        int lexicalDocuments = -1;
+        int documents;
+        Boolean answerable;
+
+        com.viglet.turing.rag.answer.TurAnswerRetrieval toRetrieval() {
+            return new com.viglet.turing.rag.answer.TurAnswerRetrieval(vectorDocuments, lexicalHits,
+                    lexicalDocuments, documents, answerable);
+        }
+    }
+
+    /**
+     * T1370 — leads {@code stream} with a {@code retrieval} event carrying
+     * {@code counts}; {@code stream} as it is when nobody asked for them.
+     */
+    private reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> prependRetrievalEvent(
+            reactor.core.publisher.Flux<TurAgentChatExecutor.ChatResponse> stream, RetrievalCounts counts) {
+        if (counts == null) {
+            return stream;
+        }
+        try {
+            return reactor.core.publisher.Flux.concat(reactor.core.publisher.Flux.just(
+                    new TurAgentChatExecutor.ChatResponse(ASSISTANT,
+                            SOURCES_MAPPER.writeValueAsString(counts.toRetrieval()),
+                            TurAnswerStreamFramer.UPSTREAM_RETRIEVAL)),
+                    stream);
+        } catch (tools.jackson.core.JacksonException e) {
+            log.warn("RAG chat could not serialize the retrieval counts: {}", e.getMessage());
+            return stream;
+        }
     }
 
     /**
@@ -1199,6 +1247,16 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             java.util.Map<String, List<String>> filters,
             java.util.Map<String, List<String>> preExtracted,
             Locale locale) {
+        return retrieveDocuments(context, latestUserQuery, filters, preExtracted, locale, null);
+    }
+
+    /** @param counts T1370 — gathers what each pass returned; {@code null} gathers nothing */
+    private List<Document> retrieveDocuments(TurGenAiContext context,
+            String latestUserQuery,
+            java.util.Map<String, List<String>> filters,
+            java.util.Map<String, List<String>> preExtracted,
+            Locale locale,
+            RetrievalCounts counts) {
         // T500 — full-context (retrieval-free) answering: only on the unfiltered
         // conversational path (an explicit facet filter is a deliberate narrowing
         // we must respect). When the site opted in and the whole corpus fits the
@@ -1211,6 +1269,9 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             java.util.Optional<List<Document>> fullCorpus =
                     fullContextService.tryFullContext(context, latestUserQuery);
             if (fullCorpus.isPresent()) {
+                if (counts != null) {
+                    counts.vectorDocuments = distinctSources(fullCorpus.get()).size();
+                }
                 return fullCorpus.get();
             }
         }
@@ -1241,8 +1302,11 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // T1294 — the vector pass can keep one off-topic page (ten chunks of it
         // collapse to one source) while the site's own search ranks the matching
         // documents first; a thin pass is topped up with those, never replaced.
+        if (counts != null) {
+            counts.vectorDocuments = distinctSources(relevantDocuments).size();
+        }
         relevantDocuments = withLexicalRecall(context, latestUserQuery, locale,
-                resolved.filters(), relevantDocuments);
+                resolved.filters(), relevantDocuments, counts);
 
         // T328 — optional LLM reranker: narrow the candidate pool to the
         // highest-precision top-k before stuffing. Opt-in (default off);
@@ -1270,6 +1334,12 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      */
     List<Document> withLexicalRecall(TurGenAiContext context, String query, Locale locale,
             java.util.Map<String, List<String>> filters, List<Document> vectorHits) {
+        return withLexicalRecall(context, query, locale, filters, vectorHits, null);
+    }
+
+    /** @param counts T1370 — gathers the lexical hits and documents; {@code null} gathers nothing */
+    List<Document> withLexicalRecall(TurGenAiContext context, String query, Locale locale,
+            java.util.Map<String, List<String>> filters, List<Document> vectorHits, RetrievalCounts counts) {
         if (dslSearchService == null || locale == null || !StringUtils.hasText(context.getSiteName())
                 || !StringUtils.hasText(query) || distinctSources(vectorHits).size() >= MIN_DISTINCT_DOCUMENTS) {
             return vectorHits;
@@ -1280,6 +1350,10 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             List<String> allowed = filters == null ? null : filters.get(SOURCE_ID);
             if (allowed != null) {
                 lexicalIds = lexicalIds.stream().filter(allowed::contains).toList();
+            }
+            if (counts != null) {
+                counts.lexicalHits = lexicalIds.size();
+                counts.lexicalDocuments = 0;
             }
             if (lexicalIds.isEmpty()) {
                 return vectorHits;
@@ -1295,6 +1369,9 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
                     .similarityThreshold(0.0)
                     .filterExpression(TurRagFilters.buildFilterExpression(confined(context, byId)))
                     .build());
+            if (counts != null) {
+                counts.lexicalDocuments = distinctSources(lexicalChunks).size();
+            }
             if (lexicalChunks == null || lexicalChunks.isEmpty()) {
                 return vectorHits;
             }

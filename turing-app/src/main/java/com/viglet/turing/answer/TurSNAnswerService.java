@@ -170,13 +170,14 @@ public class TurSNAnswerService {
         if (partition != null) {
             context = context.withPartition(partition);
         }
+        // T1370 — the stream reports what each retrieval pass returned, for the trace.
         // T838 — steerable answers: the active facet filters reach retrieval so the
         // answer is synthesized within the narrowed candidate set (empty = whole KB).
         Map<String, List<String>> effectiveFilters =
                 (filters == null || filters.isEmpty()) ? null : filters;
         TurSNGenAiChatRequest request = new TurSNGenAiChatRequest(
                 List.of(new TurSNGenAi.ConversationMessage(USER_ROLE, query)),
-                effectiveFilters, null, null, null, locale, null, site.getName(), false);
+                effectiveFilters, null, null, null, locale, null, site.getName(), false, null, true);
         Flux<TurAgentChatExecutor.ChatResponse> upstream =
                 turGenAi.assistantConversationStreaming(context, agent, llmInstance, request);
         return TurAnswerStreamFramer.frame(upstream,
