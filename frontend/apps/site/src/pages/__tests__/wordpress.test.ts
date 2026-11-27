@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { videoLangFor } from "@/lib/wordpress-video";
-import { WORDPRESS_STORY, WORDPRESS_VIDEOS } from "@/lib/site-content";
+import { WORDPRESS_STORY, WORDPRESS_VIDEOS } from "@/content/en/pages";
 import { routes } from "@/entry-server";
 
 /** T1251 — the WordPress page of Turing's own. */

@@ -1,6 +1,6 @@
 import { ArrowRight, Check, Minus } from "lucide-react";
 import { Container, SectionHeader, TableScroll } from "@/components/brand";
-import { COMPARISON, COMPARISON_COLUMNS } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
@@ -21,6 +21,7 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 }
 
 export function Comparison() {
+  const { COMPARISON, COMPARISON_COLUMNS } = usePages();
   return (
     <section id="why" className="bg-muted/40 py-20">
       <Container>

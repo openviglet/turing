@@ -1,8 +1,8 @@
 import { renderToString } from "react-dom/server";
 import App from "./App.tsx";
 import { ThemeProvider } from "@/components/theme-provider";
-import { FEATURE_DETAILS, FEATURE_SLUGS } from "@/lib/site-content";
-import { EDUCACAO_META } from "@/lib/educacao-content";
+import { FEATURE_DETAILS, FEATURE_SLUGS } from "@/content/en/pages";
+import { EDUCACAO_META } from "@/content/pt-BR/educacao";
 import { BR_ROUTES, PT_BR_PREFIX, localeOf, type Locale } from "@/lib/i18n";
 
 export interface PrerenderRoute {

@@ -27,7 +27,8 @@ import {
   TuringResultList,
   type TuringResolvedDocument,
 } from "@viglet/turing-react-ui";
-import { SEARCH_DOCS, type SearchDoc } from "@/lib/site-content";
+import type { SearchDoc } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
 
@@ -641,7 +642,7 @@ function LiveSearchDemo({
 function SampleSearchDemo({
   bare,
   onAskAbout,
-  docs = SEARCH_DOCS,
+  docs: givenDocs,
   placeholder,
 }: Readonly<{
   bare: boolean;
@@ -649,6 +650,8 @@ function SampleSearchDemo({
   docs?: SearchDoc[];
   placeholder?: string;
 }>) {
+  const { SEARCH_DOCS } = usePages();
+  const docs = givenDocs ?? SEARCH_DOCS;
   const [query, setQuery] = useState("");
   const [type, setType] = useState("All");
 

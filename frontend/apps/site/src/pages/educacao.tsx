@@ -20,7 +20,7 @@ import {
   EDUCACAO_PRIVACY,
   EDUCACAO_PROBLEM,
   EDUCACAO_STEPS,
-} from "@/lib/educacao-content";
+} from "@/content/pt-BR/educacao";
 import { siteUrl } from "@/lib/site-url";
 
 /** The viglet.org contact form, tagged with this page's campaign, opened at the form. */

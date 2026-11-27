@@ -3,7 +3,8 @@ import { MessageSquare, Search } from "lucide-react";
 import { SearchDemo } from "@/components/sections/search-demo";
 import { ChatDemo, type ChatScriptEntry } from "@/components/sections/chat-demo";
 import { useTuringDemo } from "@/lib/turing-demo";
-import { WKND_DEMO_SITE, WKND_SEARCH_DOCS } from "@/lib/site-content";
+import { WKND_DEMO_SITE } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 
 /**
@@ -92,6 +93,7 @@ function TabButton({
 }
 
 export function WkndPlayground() {
+  const { WKND_SEARCH_DOCS } = usePages();
   const { live } = useTuringDemo(WKND_DEMO_SITE);
   const [tab, setTab] = useState<Tab>("search");
   const [seed, setSeed] = useState<

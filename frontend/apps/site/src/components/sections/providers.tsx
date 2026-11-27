@@ -1,7 +1,8 @@
 import { Container } from "@/components/brand";
-import { PROVIDERS } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
 
 export function Providers() {
+  const { PROVIDERS } = usePages();
   return (
     <section className="border-b border-border py-10">
       <Container>

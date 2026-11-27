@@ -12,7 +12,7 @@ import {
   WORDPRESS_STORY,
   WORDPRESS_VIDEOS,
   type WordPressVideoLang,
-} from "@/lib/site-content";
+} from "@/content/en/pages";
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 import { PUBLISHED_VIDEO_LANGS as PUBLISHED, videoLangFor } from "@/lib/wordpress-video";

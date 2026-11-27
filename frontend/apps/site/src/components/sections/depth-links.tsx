@@ -1,7 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { Container, SectionHeader } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import { MARKETPLACE } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
+import type { PagesContent } from "@/content/pages";
 import { withBase } from "@/lib/site-url";
 
 /**
@@ -11,12 +12,13 @@ import { withBase } from "@/lib/site-url";
  * detail. Each card keeps its old anchor id, so a link to /#how, /#developers,
  * /#native-tools, /#cli or /#marketplace still lands on its subject.
  */
-const CARDS: {
+function cards(marketplace: PagesContent["MARKETPLACE"]): {
   id: string;
   title: string;
   body: string;
   links: { label: string; href: string }[];
-}[] = [
+}[] {
+  return [
   {
     id: "how",
     title: "How it answers a question",
@@ -48,11 +50,13 @@ const CARDS: {
     id: "marketplace",
     title: "Start from a working example",
     body: "Three example search sites, each with its own data and front end.",
-    links: MARKETPLACE.map((m) => ({ label: m.title, href: m.href })),
+    links: marketplace.map((m) => ({ label: m.title, href: m.href })),
   },
-];
+  ];
+}
 
 export function DepthLinks() {
+  const CARDS = cards(usePages().MARKETPLACE);
   return (
     <section className="border-t border-border py-16 lg:py-20">
       <Container>

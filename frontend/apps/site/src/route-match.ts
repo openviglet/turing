@@ -5,7 +5,7 @@
  * the app. It is this site's whole routing rule, and it belongs in a module
  * rather than beside the component that happens to call it.
  */
-import { FEATURE_DETAILS } from "@/lib/site-content";
+import { FEATURE_DETAILS } from "@/content/en/pages";
 import { splitLocale, type Locale } from "@/lib/i18n";
 
 /**

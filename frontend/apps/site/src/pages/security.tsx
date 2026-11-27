@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import { SECURITY_FAQ, SECURITY_POINTS } from "@/lib/site-content";
+import { SECURITY_FAQ, SECURITY_POINTS } from "@/content/en/pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 

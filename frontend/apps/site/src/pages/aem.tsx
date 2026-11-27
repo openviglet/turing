@@ -15,7 +15,7 @@ import {
   AEM_FAQ,
   AEM_MATRIX,
   AEM_STEPS,
-} from "@/lib/site-content";
+} from "@/content/en/pages";
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 

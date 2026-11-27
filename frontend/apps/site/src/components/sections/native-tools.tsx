@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Container, SectionHeader } from "@/components/brand";
-import { NATIVE_TOOLS } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
 import { withBase } from "@/lib/site-url";
 
 /** Brand dots for the provider badges on each tool card. */
@@ -18,6 +18,7 @@ const PROVIDER_COLOR: Record<string, string> = {
  * omitted (on that page itself) renders the grid without the CTA.
  */
 export function NativeTools({ teaser = false }: Readonly<{ teaser?: boolean }>) {
+  const { NATIVE_TOOLS } = usePages();
   return (
     <section id="native-tools" className="bg-muted/40 py-20">
       <Container>

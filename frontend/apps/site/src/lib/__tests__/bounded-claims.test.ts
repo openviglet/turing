@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import * as siteContent from "@/lib/site-content";
-import * as educacaoContent from "@/lib/educacao-content";
+import * as siteContent from "@/content/en/pages";
+import * as educacaoContent from "@/content/pt-BR/educacao";
 import { CONTENT } from "@/content";
 import llmsTxt from "../../../public/llms.txt?raw";
 import aemSearchMd from "../../../public/aem-search.md?raw";

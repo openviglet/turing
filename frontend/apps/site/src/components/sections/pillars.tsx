@@ -1,11 +1,12 @@
 import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Container, SectionHeader } from "@/components/brand";
-import { PILLARS } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
 export function Pillars() {
+  const { PILLARS } = usePages();
   return (
     <section id="features" className="py-20">
       <Container>

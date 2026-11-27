@@ -1,4 +1,4 @@
-import { WORDPRESS_VIDEOS, type WordPressVideoLang } from "@/lib/site-content";
+import { WORDPRESS_VIDEOS, type WordPressVideoLang } from "@/content/en/pages";
 
 /**
  * T1251 — which cut of the WordPress plugin video a visitor gets.

@@ -13,7 +13,7 @@ import {
   MIGRATION_COLUMNS,
   MIGRATION_MAP,
   MIGRATION_OUTCOMES,
-} from "@/lib/site-content";
+} from "@/content/en/pages";
 import { withBase } from "@/lib/site-url";
 
 /**

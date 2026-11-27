@@ -11,7 +11,7 @@ import {
   FEATURE_DETAILS,
   FEATURE_SLUGS,
   type FeatureDetail,
-} from "@/lib/site-content";
+} from "@/content/en/pages";
 import { withBase } from "@/lib/site-url";
 
 /** FAQPage JSON-LD for the page's own questions, prerendered to static HTML. */

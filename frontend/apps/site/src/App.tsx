@@ -9,7 +9,7 @@ import { SecurityPage } from "@/pages/security";
 import { WordPressPage } from "@/pages/wordpress";
 import { EducacaoPage } from "@/pages/educacao";
 import { ConsentBanner } from "@/components/consent-banner";
-import { FEATURE_DETAILS } from "@/lib/site-content";
+import { FEATURE_DETAILS } from "@/content/en/pages";
 import { LocaleProvider } from "@/lib/locale";
 import { resolveRoute } from "./route-match";
 

@@ -13,7 +13,7 @@ import {
   COVEO_LUCIDWORKS_MATRIX,
   COVEO_LUCIDWORKS_POST,
   FAQ,
-} from "@/lib/site-content";
+} from "@/content/en/pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 

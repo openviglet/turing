@@ -2,7 +2,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Container, SectionHeader } from "@/components/brand";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AUDIENCES } from "@/lib/site-content";
+import { usePages } from "@/content/use-pages";
 
 /**
  * Audience split: the site talks to two very different readers (a developer
@@ -10,6 +10,7 @@ import { AUDIENCES } from "@/lib/site-content";
  * path instead of leaving them to guess which parts are for them.
  */
 export function Audiences() {
+  const { AUDIENCES } = usePages();
   return (
     <section className="border-t border-border bg-muted/40 py-20">
       <Container>
