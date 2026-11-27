@@ -730,7 +730,7 @@ class Viglet_Turing_Native_Search {
 				'type'        => $state['typeLabels'][ $type ] ?? $type,
 				'date'        => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
-				'crumb'       => self::crumb( $url ),
+				'crumb'       => self::crumb( $url, $fields['crumb'] ?? null ),
 				'image'       => $image,
 				'snippet'     => self::snippet( (string) $field( $fields, 'description', 'abstract' ) ),
 				// The snippet as plain text, so the server draws it at its height; the script then
@@ -895,13 +895,15 @@ class Viglet_Turing_Native_Search {
 	}
 
 	/**
-	 * Where a result lives, as a reader scans it: the path's segments, after the host only when
-	 * the result is on another site (D263). A shopper on this site needs no domain, and a demo's
-	 * localhost would read as one.
+	 * Where a result lives, as a reader scans it: its ancestors' titles from the document's
+	 * `crumb` field (T1365), after the host only when the result is on another site (D263). A
+	 * shopper on this site needs no domain, and a demo's localhost would read as one. A document
+	 * indexed before the field existed keeps the URL's path segments.
 	 *
-	 * @param string $url The result's URL.
+	 * @param string $url   The result's URL.
+	 * @param mixed  $trail The document's `crumb` field, its own title last; null when absent.
 	 */
-	public static function crumb( string $url ): string {
+	public static function crumb( string $url, $trail = null ): string {
 		$parts = wp_parse_url( $url );
 		$home  = wp_parse_url( home_url( '/' ) );
 		$here  = is_array( $home ) ? (string) ( $home['host'] ?? '' ) : '';
@@ -910,7 +912,13 @@ class Viglet_Turing_Native_Search {
 			$host .= ':' . $parts['port'];
 		}
 		$own   = '' === $host || strtolower( (string) ( $parts['host'] ?? '' ) ) === strtolower( $here );
-		$crumb = array_merge( $own ? array() : array( $host ), explode( '/', (string) ( $parts['path'] ?? '' ) ) );
+		$path  = null === $trail
+			? explode( '/', (string) ( $parts['path'] ?? '' ) )
+			: array_map(
+				static fn ( $title ): string => html_entity_decode( wp_strip_all_tags( (string) $title ) ),
+				array_slice( array_values( (array) $trail ), 0, -1 )
+			);
+		$crumb = array_merge( $own ? array() : array( $host ), $path );
 
 		return implode( ' › ', array_filter( $crumb, static fn ( string $part ): bool => '' !== $part ) );
 	}
@@ -984,7 +992,7 @@ class Viglet_Turing_Native_Search {
 				'type'      => $labels['typeLabels'][ $type ] ?? $type,
 				'date'      => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'       => $timestamp ? gmdate( 'c', $timestamp ) : '',
-				'crumb'     => self::crumb( $url ),
+				'crumb'     => self::crumb( $url, $fields['crumb'] ?? null ),
 				'image'     => (string) ( self::card_override( $fields, $looks['image'] ) ?? $fields['image'] ?? '' ),
 				'fields'    => $values,
 				'hasFields' => array() !== $values,

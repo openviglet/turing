@@ -305,10 +305,13 @@ class Viglet_Turing_Pdf {
 	public function document( WP_Post $attachment ): array {
 		$indexer = new Viglet_Turing_Indexer( $this->settings );
 		$parent  = $this->holder( $attachment );
+		$title   = '' !== $attachment->post_title ? $attachment->post_title : basename( (string) get_attached_file( $attachment->ID ) );
 
 		return array(
 			'id'                => $indexer->build_doc_id( $attachment->ID ),
-			'title'             => '' !== $attachment->post_title ? $attachment->post_title : basename( (string) get_attached_file( $attachment->ID ) ),
+			'title'             => $title,
+			// The post that holds it, by its own trail (T1365), then the PDF's title.
+			'crumb'             => array_merge( $parent instanceof WP_Post ? Viglet_Turing_Indexer::crumb( $parent ) : array(), array( $title ) ),
 			'text'              => 'file://' . self::file_name( $attachment ),
 			'abstract'          => wp_strip_all_tags( (string) $attachment->post_excerpt ),
 			'url'               => (string) wp_get_attachment_url( $attachment->ID ),

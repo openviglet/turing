@@ -42,6 +42,7 @@ Every filter the plugin applies, alphabetically.
 
 | Filter | Arguments | Default | What it changes |
 |---|---|---|---|
+| `viglet_turing_crumb` | `$trail`, `$post` | Parent titles, after a custom type's listing | The trail a post's search result shows, outermost first |
 | `viglet_turing_document` | `$document`, `$post` | | A document just before it is sent |
 | `viglet_turing_http_timeout` | `$timeout`, `$documents` | 2 seconds a document, at least 30 | How long an import request to Viglet Turing may take |
 | `viglet_turing_mapping` | `$mapping`, `$settings` | The **Fields** mapping | The field mapping, set in code |

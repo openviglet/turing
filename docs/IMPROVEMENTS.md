@@ -2389,29 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.25 A crumb of titles, not slugs (T1365)
-
-**Where it happened.** fespsp-base FB93, `viglet-turing/search` on the
-fespsp-institucional search lab (image b64a3b0), query "palestra".
-
-**What came back.** Each `.viglet-turing-search__crumb` is the URL path, slug by slug:
-"eventos › desigualdade-sa-e-o-poder-politico". The last segment repeats the title, the
-others are slugs the site never shows. Both builders split the URL:
-`Viglet_Turing_Native_Search::crumb()` for the first page and `crumb()` in
-search-block.js, so every site with pretty permalinks gets this.
-
-**What it should do.** The crumb is the trail a visitor reads: the titles of the
-ancestors (a page's parents; a custom type's archive or listing page, e.g. "Eventos" for
-an `evento`), without the document's own title. The indexer sends it as a field, added
-to the mapping's manifest and to its RESERVED and NOT_CARD_FIELDS lists; both builders
-read it instead of parsing the URL. A PDF's trail is its parent post's, then that post's
-title. A sibling site's result keeps its host first (D263). A document with no ancestors
-shows no crumb; one indexed before this ships has no field and keeps today's URL crumb
-until the next reindex.
-
-**Tests.** A nested page, a custom type with an archive, a post with no ancestors, a
-document without the field, a sibling-site result.
-
 ### CLXXXII.26 Show more only when there is more (T1366)
 
 **Where it happened.** fespsp-base FB93, the `viglet-turing/search` block on the

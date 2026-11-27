@@ -12,9 +12,17 @@ first, see [WordPress](/docs/integrations/wordpress/).
 
 Every post sends a fixed document: `id`, `title`, `text` (the rendered body without
 markup, shortcodes or hidden UI text), `abstract`, `url`, `type`, `author`,
-`publication_date`, `modification_date`, `site`, `image`, `site_key`, `source_apps`, plus
-`categories` / `section` and `tags` when those options are on. Approved comments and named
-custom fields can be added on the Settings page.
+`publication_date`, `modification_date`, `site`, `image`, `site_key`, `source_apps`,
+`crumb`, plus `categories` / `section` and `tags` when those options are on. Approved
+comments and named custom fields can be added on the Settings page.
+
+`crumb` is the trail a search result shows above its snippet: the titles of the post's
+parent pages, outermost first, and for a custom post type its listing first (the archive's
+name, or the title of the page at the type's slug, such as *Events*). Its last value is the
+post's own title, which the card leaves out, so a post with no parents shows no trail. A
+PDF's trail is its post's, then that post's title. The `viglet_turing_crumb` filter
+(`$trail`, `$post`) changes the titles before the post's own is added. Results indexed by
+an earlier version have no `crumb` and show their address's path until the next reindex.
 
 ## Fields and facets
 

@@ -98,6 +98,7 @@ final class PdfTest extends PluginTestCase {
 		$this->assertSame( 'file://20.pdf', $document['text'] );
 		$this->assertSame( 'pdf', $document['type'] );
 		$this->assertSame( 'Academic office', $document['section'] );
+		$this->assertSame( array( 'Academic office', 'Regulations' ), $document['crumb'], 'its post\'s trail, then its own title (T1365)' );
 	}
 
 	/** The zip carries export.json, whose items name the file it also carries. */

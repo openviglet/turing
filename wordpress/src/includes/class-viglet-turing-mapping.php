@@ -55,7 +55,7 @@ class Viglet_Turing_Mapping {
 	private const FOREIGN_PAGES = 20;
 
 	/** A document's fields that are never a card's date or image. */
-	private const NOT_CARD_FIELDS = array( 'id', 'title', 'text', 'abstract', 'description', 'url', 'type', 'site', 'site_key', 'source_apps', 'score', 'publication_date', 'image', 'author', 'categories', 'section', 'tags' );
+	private const NOT_CARD_FIELDS = array( 'id', 'title', 'text', 'abstract', 'description', 'url', 'type', 'site', 'site_key', 'source_apps', 'score', 'publication_date', 'image', 'author', 'categories', 'section', 'tags', 'crumb' );
 
 	/** The option recording the last manifest sent: its hash, when, and the error if any. */
 	public const PROVISIONED_OPTION = 'viglet_turing_provisioned';
@@ -76,7 +76,7 @@ class Viglet_Turing_Mapping {
 	private const CORE_SOURCES = array( 'excerpt', 'slug', 'menu_order', 'parent' );
 
 	/** Fields the indexer always sends; a mapping cannot take their names. */
-	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key', 'entity_person', 'entity_organization', 'entity_place' );
+	private const RESERVED = array( 'id', 'title', 'text', 'abstract', 'url', 'type', 'author', 'publication_date', 'modification_date', 'site', 'image', 'categories', 'section', 'tags', 'comments', 'source_apps', 'site_key', 'entity_person', 'entity_organization', 'entity_place', 'crumb' );
 
 	/**
 	 * The plugin settings this mapping was built with.
@@ -475,6 +475,14 @@ class Viglet_Turing_Mapping {
 				'type'        => 'STRING',
 				'mandatory'   => false,
 				'multiValued' => false,
+				'facet'       => false,
+			),
+			// The trail a search card shows (T1365): ancestors' titles, the document's own last.
+			'crumb'    => array(
+				'name'        => 'crumb',
+				'type'        => 'STRING',
+				'mandatory'   => false,
+				'multiValued' => true,
 				'facet'       => false,
 			),
 		);

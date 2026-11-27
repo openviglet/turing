@@ -836,6 +836,23 @@ final class NativeSearchTest extends PluginTestCase {
 	}
 
 	/**
+	 * T1365: a document's crumb field gives the ancestors' titles, never its own; a sibling's
+	 * keeps its host first, one with no ancestors shows none, and one without the field keeps
+	 * the URL's path.
+	 */
+	public function test_crumb_reads_the_ancestors_titles_from_the_document(): void {
+		Functions\when( 'wp_strip_all_tags' )->alias( 'strip_tags' );
+		$url = 'https://site.example.org/eventos/desigualdade-e-o-poder-politico/';
+
+		$this->assertSame( 'Eventos', Viglet_Turing_Native_Search::crumb( $url, array( 'Eventos', 'Desigualdade e o poder político' ) ) );
+		$this->assertSame( 'About & us › Board', Viglet_Turing_Native_Search::crumb( $url, array( 'About &amp; us', 'Board', 'Minutes' ) ) );
+		$this->assertSame( '', Viglet_Turing_Native_Search::crumb( $url, array( 'Desigualdade' ) ), 'no ancestors, no crumb' );
+		$this->assertSame( '', Viglet_Turing_Native_Search::crumb( $url, 'Desigualdade' ), 'a single value reads as a list of one' );
+		$this->assertSame( 'other.example › Journal', Viglet_Turing_Native_Search::crumb( 'https://other.example/journal/hut/', array( 'Journal', 'Hut' ) ) );
+		$this->assertSame( 'eventos › desigualdade-e-o-poder-politico', Viglet_Turing_Native_Search::crumb( $url ), 'indexed before the field' );
+	}
+
+	/**
 	 * D239: an index built by another WordPress links this site's own posts there; the card
 	 * opens them here by id, and asks for the picture that WordPress served by id too.
 	 */

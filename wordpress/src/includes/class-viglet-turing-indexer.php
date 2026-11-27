@@ -492,6 +492,60 @@ class Viglet_Turing_Indexer {
 	}
 
 	/**
+	 * A post's trail as a reader would walk to it (T1365): its type's listing for a custom type
+	 * (the archive's name, or the page at the type's slug), its parents' titles, then its own
+	 * title last. A search card shows all but the last; the own title is always there, so a
+	 * document indexed with no ancestors still carries the field, and one without the field is
+	 * one indexed before it existed.
+	 *
+	 * @param WP_Post $post The post.
+	 * @return string[]
+	 */
+	public static function crumb( WP_Post $post ): array {
+		$trail = array();
+		if ( ! in_array( $post->post_type, array( 'post', 'page' ), true ) ) {
+			$trail[] = self::type_listing( $post->post_type );
+		}
+		foreach ( array_reverse( get_post_ancestors( $post ) ) as $ancestor ) {
+			$trail[] = (string) get_post_field( 'post_title', $ancestor );
+		}
+		$trail = array_values( array_filter( array_map( 'strval', $trail ), static fn ( string $title ): bool => '' !== $title ) );
+
+		/**
+		 * Filters the ancestors' titles a post's search card shows as its crumb, outermost first.
+		 *
+		 * @param string[] $trail The titles; empty shows no crumb.
+		 * @param WP_Post  $post  The post.
+		 */
+		$trail = (array) apply_filters( 'viglet_turing_crumb', $trail, $post );
+
+		$trail[] = '' !== $post->post_title ? $post->post_title : (string) $post->ID;
+
+		return array_values( array_map( 'strval', $trail ) );
+	}
+
+	/**
+	 * The title a custom type's listing goes by: its archive's name, else the title of the page
+	 * at the type's slug (a theme that lists the type on a page), else empty.
+	 *
+	 * @param string $post_type The post type.
+	 */
+	private static function type_listing( string $post_type ): string {
+		$type = get_post_type_object( $post_type );
+		if ( ! is_object( $type ) ) {
+			return '';
+		}
+		if ( ! empty( $type->has_archive ) ) {
+			return (string) ( $type->labels->name ?? '' );
+		}
+		$slug = is_array( $type->rewrite ) && ! empty( $type->rewrite['slug'] ) ? (string) $type->rewrite['slug'] : $post_type;
+		// get_page_by_path() is cached by WordPress, so a reindex asks the database once per type.
+		$page = get_page_by_path( $slug );
+
+		return $page instanceof WP_Post ? (string) $page->post_title : '';
+	}
+
+	/**
 	 * Build document attributes from a WordPress post.
 	 * Maps to Turing's standard TurSNFieldName constants.
 	 *
@@ -519,6 +573,8 @@ class Viglet_Turing_Indexer {
 			'image'             => $this->get_post_thumbnail_url( $post->ID ),
 			// What Search tuning's "sticky posts first" boost matches (D172).
 			'sticky'            => 'post' === $post->post_type && is_sticky( $post->ID ) ? 'true' : 'false',
+			// The trail a search card shows (T1365): the ancestors' titles, then the post's own.
+			'crumb'             => self::crumb( $post ),
 		);
 
 		if ( $this->settings['index_categories'] ) {

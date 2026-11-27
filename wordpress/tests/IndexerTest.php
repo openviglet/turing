@@ -82,6 +82,67 @@ final class IndexerTest extends PluginTestCase {
 		$this->assertSame( 'News', $attributes['section'] );
 		$this->assertSame( array( 'jobs' ), $attributes['tags'] );
 		$this->assertSame( 'wordpress', $attributes['source_apps'] );
+		$this->assertSame( array( 'Open call' ), $attributes['crumb'], 'a post with no ancestors carries its own title alone' );
+	}
+
+	/**
+	 * T1365: a nested page's crumb is its parents' titles, outermost first, then its own.
+	 */
+	public function test_a_nested_page_carries_its_parents_titles(): void {
+		Functions\when( 'get_post_ancestors' )->justReturn( array( 12, 11 ) );
+		Functions\when( 'get_post_field' )->alias(
+			static fn ( $field, $id ) => array(
+				11 => 'Institutional',
+				12 => 'About us',
+			)[ $id ]
+		);
+		$page = new WP_Post(
+			array(
+				'ID'         => 13,
+				'post_title' => 'Board',
+				'post_type'  => 'page',
+			)
+		);
+
+		$this->assertSame( array( 'Institutional', 'About us', 'Board' ), Viglet_Turing_Indexer::crumb( $page ) );
+	}
+
+	/**
+	 * T1365: a custom type starts at its archive's name, or at the page found at its slug.
+	 */
+	public function test_a_custom_type_starts_at_its_listing(): void {
+		$event = new WP_Post(
+			array(
+				'ID'         => 20,
+				'post_title' => 'Inequality and political power',
+				'post_type'  => 'evento',
+			)
+		);
+		Functions\when( 'get_post_type_object' )->justReturn(
+			(object) array(
+				'has_archive' => true,
+				'labels'      => (object) array( 'name' => 'Eventos' ),
+				'rewrite'     => array( 'slug' => 'eventos' ),
+			)
+		);
+		$this->assertSame( array( 'Eventos', 'Inequality and political power' ), Viglet_Turing_Indexer::crumb( $event ) );
+
+		Functions\when( 'get_post_type_object' )->justReturn(
+			(object) array(
+				'has_archive' => false,
+				'labels'      => (object) array( 'name' => 'Events' ),
+				'rewrite'     => array( 'slug' => 'agenda' ),
+			)
+		);
+		Functions\when( 'get_page_by_path' )->alias(
+			static fn ( $path ) => 'agenda' === $path ? new WP_Post(
+				array(
+					'ID'         => 5,
+					'post_title' => 'Agenda',
+				)
+			) : null
+		);
+		$this->assertSame( array( 'Agenda', 'Inequality and political power' ), Viglet_Turing_Indexer::crumb( $event ), 'the listing page names it' );
 	}
 
 	public function test_categories_and_tags_are_left_out_when_disabled(): void {

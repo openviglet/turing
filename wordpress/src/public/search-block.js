@@ -1813,14 +1813,24 @@ function highlighted( html ) {
 }
 
 /**
- * Where a result lives, as a reader scans it: the host, then the path's segments.
+ * Where a result lives, as a reader scans it: the host, then its ancestors' titles from the
+ * document's `crumb` field (T1365), whose last value is the document's own title. A document
+ * indexed before the field existed keeps the URL's path segments.
  *
- * @param {string} url The result's URL.
+ * @param {string}                    url   The result's URL.
+ * @param {string|string[]|undefined} trail The document's `crumb` field.
  */
-function crumb( url ) {
+function crumb( url, trail ) {
 	try {
 		const { host, pathname } = new URL( url, window.location.href );
-		const path = pathname.split( '/' ).filter( Boolean );
+		const path =
+			trail === undefined || trail === null
+				? pathname.split( '/' ).filter( Boolean )
+				: []
+						.concat( trail )
+						.slice( 0, -1 )
+						.map( ( title ) => plain( String( title ) ) )
+						.filter( Boolean );
 		// A result on this very site needs no domain: the shopper is already here (D263).
 		// One from another site sharing the SN site keeps it, so it says where it leads.
 		return (
@@ -1864,7 +1874,7 @@ function card( d, position ) {
 		type: state.typeLabels[ type ] || type,
 		date: valid ? formatCardDate( at ) : '',
 		iso: valid ? at.toISOString() : '',
-		crumb: crumb( url ),
+		crumb: crumb( url, fields.crumb ),
 		image: siteImage(
 			String(
 				cardOverride( fields, config.cardTypes?.[ type ]?.image ) ??

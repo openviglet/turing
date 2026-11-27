@@ -639,6 +639,13 @@ final class MappingTest extends PluginTestCase {
 						'facet'       => false,
 					),
 					array(
+						'name'        => 'crumb',
+						'type'        => 'STRING',
+						'mandatory'   => false,
+						'multiValued' => true,
+						'facet'       => false,
+					),
+					array(
 						'name'         => 'area',
 						'type'         => 'STRING',
 						'mandatory'    => false,
@@ -930,7 +937,7 @@ final class MappingTest extends PluginTestCase {
 		$this->assertFalse( $second['sent'] );
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'https://turing.example.org/api/sn/manifest', $this->requests[0][0] );
-		$this->assertSame( array( 'site_key', 'author', 'sticky', 'seats' ), array_column( $this->body()['fields'], 'name' ) );
+		$this->assertSame( array( 'site_key', 'author', 'sticky', 'crumb', 'seats' ), array_column( $this->body()['fields'], 'name' ) );
 
 		$this->mapping()->provision( $client, true );
 		$this->assertCount( 2, $this->requests );
@@ -1011,7 +1018,7 @@ final class MappingTest extends PluginTestCase {
 		$result = $this->mapping()->provision( new Viglet_Turing_API_Client( $this->settings() ) );
 
 		$this->assertTrue( $result['sent'] );
-		$this->assertSame( array( 'site_key', 'author', 'sticky' ), array_column( $this->body()['fields'], 'name' ) );
+		$this->assertSame( array( 'site_key', 'author', 'sticky', 'crumb' ), array_column( $this->body()['fields'], 'name' ) );
 	}
 
 	public function test_author_is_declared_as_the_archive_sources_declare_it(): void {

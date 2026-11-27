@@ -44,6 +44,10 @@ abstract class PluginTestCase extends TestCase {
 				'rest_url'                          => static fn ( $path = '' ) => 'https://site.example.org/wp-json/' . ltrim( $path, '/' ),
 				'wp_parse_url'                      => static fn ( $url ) => parse_url( $url ),
 				'is_sticky'                         => false,
+				// T1365: a post's crumb; no parents and no custom type listing by default.
+				'get_post_ancestors'                => array(),
+				'get_post_type_object'              => null,
+				'get_page_by_path'                  => null,
 				// D308: indexing schedules a post's leaving search; nothing is scheduled by default.
 				'wp_clear_scheduled_hook'           => 0,
 				'wp_timezone'                       => static fn () => new \DateTimeZone( 'UTC' ),
