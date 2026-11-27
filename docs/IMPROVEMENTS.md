@@ -37,6 +37,8 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CZ — Backend modules with verified boundaries
 
+## Block CY — Filters from a sentence say what visitors say
+
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2452,3 +2454,59 @@ id beside it, until a release fixes the default.
 ## CXC One bad document never costs the rest of an import
 
 ## CXCI API errors name what the caller sent wrong
+
+## CXCII Filters from a sentence say what visitors say
+
+### CXCII.1 Nouns that name a facet value (T1359)
+
+**Where it happened.** fespsp-institucional FI146, the search lab (`docker/turing/`), on
+the d5ce6ee image with OpenAI `gpt-4o-mini` as the site's LLM. SN site `fespsp`, locale
+pt_BR. The `evento` type is indexed with a facet `tipo_evento` (STRING, values such as
+`Palestra`, `Debate`, `Lançamento`), the `type` facet (`evento`, `post`, `page`,
+`livro`, `vaga`), and a range facet `evento_inicio_range` on `evento_inicio` with
+`endField` `evento_ate` (T1356).
+
+**The call.** `POST /api/sn/fespsp/nl-filters` with `{"text":"palestras sobre democracia
+em novembro","locale":"pt_BR"}`.
+
+**What came back.** `{"q":"palestras sobre
+democracia","filters":[{"field":"evento_inicio","rangeStart":"2026-11-01","rangeEnd":"2026-11-30","sourceWords":["em
+novembro"],...}],"fq":["evento_inicio:[2026-11-01 TO 2026-11-30]"],"dropped":[]}`. Only
+the month was read. "palestras" stayed in `q`, though `Palestra` is a value of
+`tipo_evento` and an event is the only type with it, so the visitor gets every document
+mentioning "palestra" instead of the lectures. The month went to a raw `evento_inicio`
+range, not to the site's range facet, so a span that started in October and runs through
+November is left out, the opposite of what the facet does.
+
+**What it should do.** Ground a noun against the facet values the site has, plural and
+case folded ("palestras" → `tipo_evento: Palestra`), and add the `type` it implies
+(`type: evento`), each in `filters` with its `sourceWords`. A date phrase over a field
+that has a range facet with an `endField` resolves to that facet's overlap, the same
+buckets a click would apply.
+
+**Workaround.** None. FI146 waits on this line.
+
+### CXCII.2 This week, read from a sentence and an answer (T1360)
+
+**Where it happened.** fespsp-institucional FI146, the search lab, same site as the line
+before (`fespsp`, pt_BR, `gpt-4o-mini`, time zone sent by the WordPress plugin per
+T1330). Today 2026-11-27; the index holds events today, tomorrow, on Sunday and next
+week, and an exhibition running from four days ago for 76 more days.
+
+**The calls.**
+- `POST /api/sn/fespsp/nl-filters` with `{"text":"o que tem esta semana","locale":"pt_BR"}`
+  answered `{"filters":[],"fq":[],"dropped":[]}`: "esta semana" read as nothing.
+- `GET /api/sn/fespsp/answer?q=o que tem esta semana na FESPSP?&_setlocale=pt_BR` answered
+  "Desculpe, mas essa informação não está disponível na base de dados do site." with
+  `sourceCount: 0`, `kbMode: VECTOR`. The same endpoint answers "Quando e onde é o Sarau
+  de domingo no Casarão?" correctly with the right source cited, so retrieval works; it is
+  the time-relative question that finds nothing, because nothing scopes the retrieval to
+  the week and a vector match on "esta semana" hits no document.
+
+**What it should do.** "esta semana", "este fim de semana", "próxima semana", "hoje à
+noite" resolve in the site's time zone like "hoje" and "amanhã" do since T1330 (on a
+field with an `endField`, by overlap). `/answer` and chat run the sentence through the
+same reading and retrieve within the date filter it yields, so "o que tem esta semana?"
+lists this week's events with their sources.
+
+**Workaround.** None. FI146 waits on this line.

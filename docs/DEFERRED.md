@@ -28,3 +28,5 @@
 
 ## Block CZ — Backend modules with verified boundaries
 
+## Block CY — Filters from a sentence say what visitors say
+
