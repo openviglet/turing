@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CY — Filters from a sentence say what visitors say
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2426,30 +2424,3 @@ module boundaries files here.
 ## CXCI API errors name what the caller sent wrong
 
 ## CXCII Filters from a sentence say what visitors say
-
-### CXCII.4 The answer grounds in the period (T1362)
-
-**Where it happened.** fespsp-institucional FI146, search lab, image a35a636, after
-T1360. SN site `fespsp`, pt_BR, `gpt-4o-mini`, HYBRID_RRF, time zone from the WordPress
-plugin (T1330). Today 2026-11-27; five events overlap this week.
-
-**The call.** `GET /api/sn/fespsp/answer?q=o que tem esta semana na FESPSP?` (SSE, site
-API key) answers "Desculpe, mas essa informação não está disponível na base de dados do
-site." with sources `[]`. `nl-filters` on the same sentence returns the week's overlap
-pair, and `/search?q=*` with it lists the five events. A concrete question ("Quando e
-onde é o Sarau de domingo no Casarão?") answers with its source.
-
-**Cause in the code.** `/answer` reads the period: its chat request names the site, so
-`siteNlFilters` runs and T1360 confines retrieval to the period's documents. `kbMode:
-VECTOR` is only provenance. Two gates give that sentence: the T329 empty gate and the
-STRICT_RAG judge (`canAnswerFromRetrievedContent`). Neither the judge nor the answer
-prompt is told today's date or the resolved period, so "this week" beside events dated
-28 November reads as unanswerable.
-
-**What it should do.** A question naming a relative period states the resolved dates
-("today is 2026-11-27; this week is 2026-11-23 to 2026-11-29") in the judge and the
-answer prompt, for chat and `/answer` alike. The first test reproduces the refusal with
-STRICT_RAG on and names the gate. Edge case: an empty confined vector pass must not fall
-back (T707) to the whole site, which answers outside the period.
-
-**Workaround.** None. FI146 waits on this line.

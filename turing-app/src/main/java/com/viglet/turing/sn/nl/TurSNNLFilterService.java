@@ -695,6 +695,15 @@ public class TurSNNLFilterService {
         return spelledInText ? LITERAL : INFERRED;
     }
 
+    /**
+     * T1362 — today on the site's calendar, the day its relative dates resolve
+     * against: in the site's time zone, else the server's.
+     */
+    @Transactional(readOnly = true)
+    public LocalDate today(String siteName) {
+        return LocalDate.now(clock.withZone(siteZone(siteName)));
+    }
+
     /** T1330 — the site's time zone, or the clock's when the site names none. */
     private java.time.ZoneId siteZone(String siteName) {
         if (!StringUtils.hasText(siteName)) {

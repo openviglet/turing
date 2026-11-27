@@ -157,6 +157,62 @@ class TurSNGenAiDatedRetrievalTest {
         assertThat(TurSNGenAi.namesADate(null)).isFalse();
     }
 
+    @Test
+    @DisplayName("T1362: the period note states today and the period an overlap pair spans, with its words")
+    void thePeriodNoteStatesTodayAndThePeriod() {
+        String note = TurSNGenAi.periodNote(thisWeek(""), java.time.LocalDate.of(2026, 11, 27));
+
+        assertThat(note).contains("today is 2026-11-27")
+                .contains("the period from 2026-11-23 to 2026-11-29")
+                .contains("(\"esta semana\")");
+        TurSNNLFilters values = new TurSNNLFilters(true, "palestras", "", List.of(new TurSNNLFilters.Filter(
+                "tipo_evento", List.of("Palestra"), null, null, List.of("palestras"), 1.0, true),
+                new TurSNNLFilters.Filter("price", List.of(), "100", "200", List.of(), 1.0, false)),
+                List.of(), List.of());
+        assertThat(TurSNGenAi.periodNote(values, java.time.LocalDate.of(2026, 11, 27))).isEmpty();
+        assertThat(TurSNGenAi.periodNote(null, java.time.LocalDate.of(2026, 11, 27))).isEmpty();
+    }
+
+    @Test
+    @DisplayName("T1362: the STRICT_RAG judge is asked with the period, and its NO is still the refusal gate")
+    void theJudgeIsToldThePeriod() {
+        TurGenAiContext context = mock(TurGenAiContext.class);
+        org.springframework.ai.chat.model.ChatModel chatModel = mock(org.springframework.ai.chat.model.ChatModel.class);
+        when(context.getChatModel()).thenReturn(chatModel);
+        ArgumentCaptor<org.springframework.ai.chat.prompt.Prompt> asked =
+                ArgumentCaptor.forClass(org.springframework.ai.chat.prompt.Prompt.class);
+        when(chatModel.call(asked.capture())).thenReturn(new org.springframework.ai.chat.model.ChatResponse(List.of(
+                new org.springframework.ai.chat.model.Generation(
+                        new org.springframework.ai.chat.messages.AssistantMessage("NO")))));
+        String note = TurSNGenAi.periodNote(thisWeek(""), java.time.LocalDate.of(2026, 11, 27));
+
+        boolean answerable = genAi.canAnswerFromRetrievedContent(context, "o que tem esta semana na FESPSP?",
+                List.of(new Document("Sarau no Casarão, 29 de novembro")), note);
+
+        assertThat(answerable).isFalse();
+        assertThat(asked.getValue().getContents()).contains(note)
+                .containsSubsequence("DATE CONTEXT", "QUESTION: o que tem esta semana", "CONTEXT:");
+    }
+
+    @Test
+    @DisplayName("T1362: the answer prompt states the period ahead of the website content")
+    void theAnswerPromptStatesThePeriod() {
+        String note = TurSNGenAi.periodNote(thisWeek(""), java.time.LocalDate.of(2026, 11, 27));
+
+        String prompt = genAi.buildSystemPrompt(null, "[1] Sarau", true, true, note);
+
+        assertThat(prompt).containsSubsequence("STRICT GROUNDING", note, "<untrusted_website_content>");
+        assertThat(genAi.buildSystemPrompt(null, "[1] Sarau", true, true)).doesNotContain("DATE CONTEXT");
+    }
+
+    @Test
+    @DisplayName("T1362: an empty pass confined to a period is not widened to the whole site")
+    void aPeriodPassIsNotWidened() {
+        assertThat(TurSNGenAi.widensOnEmpty(true, Map.of("tipo_evento", List.of("Palestra")))).isTrue();
+        assertThat(TurSNGenAi.widensOnEmpty(true, Map.of(TurSNGenAi.SOURCE_ID, List.of("expo")))).isFalse();
+        assertThat(TurSNGenAi.widensOnEmpty(false, Map.of("city", List.of("Santos")))).isFalse();
+    }
+
     private static Document chunk(String id, String source) {
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put(TurSNGenAi.SOURCE_ID, source);

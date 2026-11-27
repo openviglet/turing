@@ -22,10 +22,6 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 
-## Block CY — Filters from a sentence say what visitors say
-
-- 📋 **T1362** (deps: —) **The answer to what is on this week still finds no source, though nl-filters now dates the same sentence** — T1360 confines /answer to the period, but the STRICT_RAG judge and the answer prompt never learn it, so the agenda question still gets an apology. → §CXCII.4
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

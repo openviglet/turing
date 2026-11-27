@@ -418,10 +418,14 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // can send them back in the filters event, so a partitioned caller skips it.
         com.viglet.turing.sn.nl.TurSNNLFilters nlFilters = context.getPartition() != null ? null
                 : siteNlFilters(request, filters, searchQuery);
+        java.util.Map<String, List<String>> extracted = nlFilters == null ? null
+                : retrievalFilters(request.siteName(), locale, nlFilters);
+        // T1362 — a question confined to a period's documents tells the judge and the
+        // answer what today and that period are, or "this week" reads as unanswerable.
+        String period = extracted != null && extracted.containsKey(SOURCE_ID)
+                ? periodNote(nlFilters, siteToday(request.siteName())) : "";
         Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
-                retrieveDocuments(context, searchQuery, filters,
-                        nlFilters == null ? null : retrievalFilters(request.siteName(), locale, nlFilters),
-                        locale));
+                retrieveDocuments(context, searchQuery, filters, extracted, locale));
         List<Document> relevantDocuments = pinned.documents();
 
         // T329 — deterministic "not in this site" refusal. When the relevance
@@ -456,7 +460,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // contract as T329) instead of generating. Skipped when a chat flow
         // governs the turn (the message is flow input, not a site question).
         if (isStrictRag(context) && !chatFlowEngineService.hasActiveFlow(conversationId)
-                && !canAnswerFromRetrievedContent(context, searchQuery, relevantDocuments)) {
+                && !canAnswerFromRetrievedContent(context, searchQuery, relevantDocuments, period)) {
             log.debug("RAG chat streaming (STRICT_RAG): retrieved content does not answer '{}' — "
                     + "deterministic refusal (locale={})", searchQuery, locale);
             return prependFiltersEvent(reactor.core.publisher.Flux.just(
@@ -467,7 +471,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         String information = pinned.information();
         // T1301 — this path sends a sources event, so the answer cites by [n].
         String augmentedSystemPrompt = buildSystemPrompt(
-                context.getSystemPrompt(), information, isStrictRag(context), true);
+                context.getSystemPrompt(), information, isStrictRag(context), true, period);
 
         var mapped = history.stream()
                 .map(m -> new TurAgentChatExecutor.ChatMessageItem(
@@ -530,6 +534,77 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             }
         }
         return filters;
+    }
+
+    /**
+     * T707 — whether an empty filtered pass retries with no filter: only for
+     * auto-extracted filters, and (T1362) never for retrieval confined to a period's
+     * documents, which widened to the whole site answers outside the period.
+     */
+    static boolean widensOnEmpty(boolean autoExtracted, java.util.Map<String, List<String>> filters) {
+        return autoExtracted && (filters == null || !filters.containsKey(SOURCE_ID));
+    }
+
+    /** T1362 — today on the site's calendar, else the server's. */
+    private java.time.LocalDate siteToday(String siteName) {
+        if (nlFilterService != null) {
+            try {
+                return nlFilterService.today(siteName);
+            } catch (RuntimeException e) {
+                log.debug("RAG chat: today of site '{}' not read: {}", siteName, e.getMessage());
+            }
+        }
+        return java.time.LocalDate.now();
+    }
+
+    /**
+     * T1362 — the date context a dated question is judged and answered in: today,
+     * and the period its ranges resolved to, the earliest date bound to the latest
+     * (an overlap pair spells the period across its two fields). Empty when no
+     * range carries a date. Without it a model reads "this week" beside events
+     * dated the 28th as a question the context does not answer.
+     */
+    static String periodNote(com.viglet.turing.sn.nl.TurSNNLFilters nlFilters, java.time.LocalDate today) {
+        if (nlFilters == null) {
+            return "";
+        }
+        java.time.LocalDate start = null;
+        java.time.LocalDate end = null;
+        java.util.Set<String> words = new java.util.LinkedHashSet<>();
+        for (com.viglet.turing.sn.nl.TurSNNLFilters.Filter filter : nlFilters.filters()) {
+            if (!filter.isRange()) {
+                continue;
+            }
+            java.time.LocalDate from = day(filter.rangeStart());
+            java.time.LocalDate to = day(filter.rangeEnd());
+            if (from == null && to == null) {
+                continue;
+            }
+            start = from == null || (start != null && start.isBefore(from)) ? start : from;
+            end = to == null || (end != null && end.isAfter(to)) ? end : to;
+            words.addAll(filter.sourceWords());
+        }
+        if (start == null && end == null) {
+            return "";
+        }
+        String period = start != null && end != null ? "the period from " + start + " to " + end
+                : start != null ? "the period from " + start : "the period until " + end;
+        String named = words.isEmpty() ? "" : " (\"" + String.join("\", \"", words) + "\")";
+        return "DATE CONTEXT: today is " + today + ". The question asks about " + period + named
+                + ". The website content was selected because its dates fall in or overlap that period, so an "
+                + "item it lists answers the question even when it does not repeat the period's name.";
+    }
+
+    /** The calendar day a range bound names, or {@code null} when it names none. */
+    private static java.time.LocalDate day(String bound) {
+        if (bound == null || bound.length() < 10) {
+            return null;
+        }
+        try {
+            return java.time.LocalDate.parse(bound.substring(0, 10));
+        } catch (java.time.format.DateTimeParseException e) {
+            return null;
+        }
     }
 
     /** T1360 — at most this many documents of a dated question's period reach retrieval. */
@@ -1004,7 +1079,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // not erase an existing document. Retry once with plain similarity (no
         // filter). Caller-supplied filters are a deliberate narrowing and are
         // NOT widened — only the auto-extracted guess is dropped.
-        if (relevantDocuments.isEmpty() && resolved.autoExtracted()) {
+        if (relevantDocuments.isEmpty() && widensOnEmpty(resolved.autoExtracted(), resolved.filters())) {
             log.info("RAG chat auto-extracted filter returned 0 documents for '{}' — "
                     + "retrying without filter (fallback)", latestUserQuery);
             relevantDocuments = similaritySearch(context, latestUserQuery, null);
@@ -1412,11 +1487,23 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      * numbered, and only a path that sends a {@code sources} event asks for markers.
      */
     String buildSystemPrompt(String configuredPrompt, String information, boolean strictRag, boolean cite) {
+        return buildSystemPrompt(configuredPrompt, information, strictRag, cite, "");
+    }
+
+    /**
+     * T1362 — with a {@link #periodNote}, the answer is told today and the period
+     * its content was selected for, after the behavior text and ahead of the content.
+     */
+    String buildSystemPrompt(String configuredPrompt, String information, boolean strictRag, boolean cite,
+            String period) {
         String behavior = (configuredPrompt == null || configuredPrompt.isBlank())
                 ? DEFAULT_BEHAVIOR_PROMPT
                 : configuredPrompt;
         if (strictRag) {
             behavior = STRICT_RAG_GUARD + "\n\n" + behavior;
+        }
+        if (StringUtils.hasText(period)) {
+            behavior = behavior + "\n\n" + period;
         }
         if (!information.isBlank()) {
             if (cite) {
@@ -1504,6 +1591,12 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
     // Package-visible for the STRICT_RAG answerability-gate test.
     boolean canAnswerFromRetrievedContent(TurGenAiContext context, String query,
             List<Document> documents) {
+        return canAnswerFromRetrievedContent(context, query, documents, "");
+    }
+
+    /** @param period T1362 — a {@link #periodNote}, put ahead of the question; blank for none */
+    boolean canAnswerFromRetrievedContent(TurGenAiContext context, String query,
+            List<Document> documents, String period) {
         if (documents == null || documents.isEmpty()) {
             // No content to ground on — treat as not answerable so strict mode
             // refuses. (In practice the T329 empty gate already handled this.)
@@ -1526,11 +1619,11 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
                     Reply with exactly one word on the first line: YES or NO.
                     Answer YES only if the CONTEXT contains the specific information needed to answer the QUESTION.
                     Answer NO if the CONTEXT is about different topics — even if the question is generally answerable from world knowledge.
-
+                    %s
                     QUESTION: %s
 
                     CONTEXT:
-                    %s""".formatted(query, snippets);
+                    %s""".formatted(StringUtils.hasText(period) ? "\n" + period + "\n" : "", query, snippets);
             String raw = callAndRecord(context, new Prompt(prompt), STAGE_SN_CHECK)
                     .getResult().getOutput().getText();
             if (raw == null || raw.isBlank()) {
