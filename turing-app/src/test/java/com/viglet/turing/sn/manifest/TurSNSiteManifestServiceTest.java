@@ -469,6 +469,32 @@ class TurSNSiteManifestServiceTest {
     }
 
     @Test
+    void provisionRequestRetiresTheFacetsTheClientNoLongerDeclares() {
+        TurSNSite existing = new TurSNSite();
+        existing.setName("jobs");
+        List<TurSNManifestRetiredCustomFacet> retired = List.of(
+                new TurSNManifestRetiredCustomFacet("publishedAt", "publishedAt_range"));
+        TurSNManifestRequest request = new TurSNManifestRequest("jobs", null, null, null, null,
+                List.of(field("publishedAt")), null, List.of(postedSince()), null, null, null, null, null,
+                retired);
+        VigletFieldManifest manifest = request.toManifest();
+
+        when(turSNSiteRepository.findByNameIgnoreCase("jobs")).thenReturn(Optional.of(existing));
+        when(turSNSiteRepository.findByIdWithGenAi(any())).thenReturn(Optional.of(existing));
+        when(turSNManifestPlanner.diff(manifest, existing)).thenReturn(cleanDiff());
+        when(turSNFieldProvisioner.ensureField(eq(existing), named("publishedAt"))).thenReturn(false);
+        when(turSNManifestCustomFacetConverger.converge(existing, request.customFacets()))
+                .thenReturn(List.of("postedSince"));
+        when(turSNManifestCustomFacetConverger.retire(existing, retired))
+                .thenReturn(List.of("publishedAt_range"));
+
+        TurSNManifestProvisionResult result = service.provisionRequest(request);
+
+        assertEquals(List.of("postedSince", "publishedAt_range"), result.customFacetsChanged());
+        verify(turSNManifestCustomFacetConverger).validateRetired(request.customFacets(), retired);
+    }
+
+    @Test
     void provisionRequestRefusesAnInvalidCustomFacetBeforeTouchingTheSite() {
         TurSNManifestRequest request = new TurSNManifestRequest("jobs", null, null, null, null,
                 List.of(field("publishedAt")), null, List.of(postedSince()), null);

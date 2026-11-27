@@ -280,4 +280,60 @@ class TurSNManifestCustomFacetConvergerTest {
 
         assertThat(converger.plan(null, manifestWithDateField(), List.of(facet))).containsExactly("postedSince");
     }
+
+    private TurSNSiteCustomFacet liveFacetNamed(String name) {
+        TurSNSiteCustomFacet live = TurSNSiteCustomFacet.builder().name(name).turSNSiteFieldExt(publishedAt).build();
+        publishedAt.getCustomFacets().add(live);
+        return live;
+    }
+
+    @Test
+    @DisplayName("T1357: a retired facet the site has is planned and removed; others on the field stay")
+    void retiresAFacetTheSiteHas() {
+        fieldIsLive();
+        TurSNSiteCustomFacet stale = liveFacetNamed("publishedAt_range");
+        TurSNSiteCustomFacet console = liveFacetNamed("fromTheConsole");
+        when(turSNSiteCustomFacetRepository.findByFieldExtWithDetails(publishedAt))
+                .thenReturn(List.of(stale, console));
+        List<TurSNManifestRetiredCustomFacet> retired = List.of(
+                new TurSNManifestRetiredCustomFacet("publishedAt", "publishedAt_range"));
+
+        assertThat(converger.planRetired(site, retired)).containsExactly("publishedAt_range");
+        assertThat(converger.retire(site, retired)).containsExactly("publishedAt_range");
+
+        assertThat(publishedAt.getCustomFacets()).containsExactly(console);
+        verify(turSNSiteFieldExtRepository).save(publishedAt);
+    }
+
+    @Test
+    @DisplayName("T1357: retiring a facet or a field the site does not have changes nothing")
+    void retiringWhatIsAbsentIsANoOp() {
+        fieldIsLive();
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndName(site, "gone")).thenReturn(List.of());
+        when(turSNSiteCustomFacetRepository.findByFieldExtWithDetails(publishedAt)).thenReturn(List.of());
+        List<TurSNManifestRetiredCustomFacet> retired = List.of(
+                new TurSNManifestRetiredCustomFacet("publishedAt", "publishedAt_range"),
+                new TurSNManifestRetiredCustomFacet("gone", "gone_range"));
+
+        assertThat(converger.planRetired(site, retired)).isEmpty();
+        assertThat(converger.planRetired(null, retired)).isEmpty();
+        assertThat(converger.retire(site, retired)).isEmpty();
+        verify(turSNSiteFieldExtRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("T1357: a retired facet needs a field and a name, and cannot also be declared")
+    void refusesAnIncompleteOrDeclaredRetirement() {
+        TurSNManifestCustomFacet declared = postedSince(since("Week", "NOW-7DAYS"));
+
+        assertThatThrownBy(() -> converger.validateRetired(List.of(),
+                List.of(new TurSNManifestRetiredCustomFacet("publishedAt", " "))))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> converger.validateRetired(List.of(declared),
+                List.of(new TurSNManifestRetiredCustomFacet("publishedAt", "postedSince"))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("both declared and retired");
+        converger.validateRetired(List.of(declared),
+                List.of(new TurSNManifestRetiredCustomFacet("publishedAt", "publishedAt_range")));
+    }
 }

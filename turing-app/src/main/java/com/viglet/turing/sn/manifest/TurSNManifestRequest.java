@@ -44,6 +44,10 @@ import com.viglet.core.manifest.VigletFieldSpec;
  * which "today" and "tomorrow" in filters read from a sentence are resolved in.
  * Absent, the site keeps the zone it has.
  *
+ * <p>T1357 — {@code retiredCustomFacets}: custom facets, by field and name, that
+ * the client provisioned before and no longer declares, removed from the site.
+ * One the site does not have is skipped; one also declared is refused.
+ *
  * @author Alexandre Oliveira
  * @since 2026.3.4
  */
@@ -51,7 +55,17 @@ public record TurSNManifestRequest(String name, String description, String seIns
         String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
         List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
         List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
-        Boolean convergeFields, String timeZone) {
+        Boolean convergeFields, String timeZone, List<TurSNManifestRetiredCustomFacet> retiredCustomFacets) {
+
+    /** The request as it was before {@link #retiredCustomFacets}, kept for existing callers. */
+    public TurSNManifestRequest(String name, String description, String seInstanceId,
+            String schemaVersion, List<String> locales, List<VigletFieldSpec> fields,
+            List<VigletFieldMigration> migrations, List<TurSNManifestCustomFacet> customFacets,
+            List<TurSNManifestCustomSort> customSorts, TurSNManifestGenAi genAi, TurSNManifestFacets facets,
+            Boolean convergeFields, String timeZone) {
+        this(name, description, seInstanceId, schemaVersion, locales, fields, migrations,
+                customFacets, customSorts, genAi, facets, convergeFields, timeZone, null);
+    }
 
     /** The request as it was before {@link #timeZone}, kept for existing callers. */
     public TurSNManifestRequest(String name, String description, String seInstanceId,
@@ -113,5 +127,9 @@ public record TurSNManifestRequest(String name, String description, String seIns
 
     public List<TurSNManifestCustomFacet> customFacetsOrEmpty() {
         return customFacets == null ? List.of() : customFacets;
+    }
+
+    public List<TurSNManifestRetiredCustomFacet> retiredCustomFacetsOrEmpty() {
+        return retiredCustomFacets == null ? List.of() : retiredCustomFacets;
     }
 }

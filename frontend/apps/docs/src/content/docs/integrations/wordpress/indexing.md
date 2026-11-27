@@ -48,7 +48,9 @@ custom fields can be added on the Settings page.
   **Ends on** names another `DATE` field of the same type that holds the last day: a period
   then holds what is on during it, so an exhibition that opened last week and closes next
   month is under **Today** and **Upcoming**, and only one whose last day has passed is under
-  **Past**. A number lists its own ranges, each with a label
+  **Past**. Turn **Ranges** off on a field, or remove the field, and the next provisioning
+  removes its range facet from Viglet Turing, so moving a period facet to another field
+  never leaves two facets with the same label. A number lists its own ranges, each with a label
   and a **From** and **To**; an empty bound is an open end, and an empty label is written
   from the bounds ("20 – 50", "Up to 20", "50 or more").
 - **Show on result cards** adds the field to each result in the **Viglet Turing search** block,

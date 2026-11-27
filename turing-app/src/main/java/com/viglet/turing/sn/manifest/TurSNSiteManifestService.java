@@ -118,12 +118,19 @@ public class TurSNSiteManifestService {
         VigletManifestDiff diff = plan(manifest);
         TurSNSite site = turSNSiteRepository.findByNameIgnoreCase(manifest.name()).orElse(null);
         turSNManifestCustomFacetConverger.validate(site, manifest, request.customFacetsOrEmpty());
+        turSNManifestCustomFacetConverger.validateRetired(request.customFacetsOrEmpty(),
+                request.retiredCustomFacetsOrEmpty());
         turSNManifestCustomSortConverger.validate(site, manifest, request.customSortsOrEmpty());
         turSNManifestGenAiConverger.validate(request.genAi());
         turSNManifestFacetsConverger.validate(request.facets());
         com.viglet.turing.sn.nl.TurSiteTimeZone.validated(request.timeZone());
+        // T1357 — a facet to remove is a change too, under the same list.
+        List<String> customFacetsToChange = new ArrayList<>(
+                turSNManifestCustomFacetConverger.plan(site, manifest, request.customFacetsOrEmpty()));
+        customFacetsToChange.addAll(
+                turSNManifestCustomFacetConverger.planRetired(site, request.retiredCustomFacetsOrEmpty()));
         return new TurSNManifestPlan(diff,
-                turSNManifestCustomFacetConverger.plan(site, manifest, request.customFacetsOrEmpty()),
+                customFacetsToChange,
                 turSNManifestCustomSortConverger.plan(site, request.customSortsOrEmpty()),
                 turSNManifestGenAiConverger.plan(site, request.genAi()),
                 turSNManifestFacetsConverger.plan(site, request.facets()),
@@ -167,6 +174,7 @@ public class TurSNSiteManifestService {
         List<TurSNManifestCustomSort> customSorts = request.customSortsOrEmpty();
         TurSNSite liveSite = turSNSiteRepository.findByNameIgnoreCase(manifest.name()).orElse(null);
         turSNManifestCustomFacetConverger.validate(liveSite, manifest, customFacets);
+        turSNManifestCustomFacetConverger.validateRetired(customFacets, request.retiredCustomFacetsOrEmpty());
         turSNManifestCustomSortConverger.validate(liveSite, manifest, customSorts);
         turSNManifestGenAiConverger.validate(request.genAi());
         turSNManifestFacetsConverger.validate(request.facets());
@@ -209,7 +217,11 @@ public class TurSNSiteManifestService {
         applyFieldChanges(site, manifest, fieldsMigrated, fieldsCreated,
                 request.convergesFields() ? fieldsChanged : null, fieldsSkipped);
         applySearchWeights(site, manifest);
-        List<String> customFacetsChanged = turSNManifestCustomFacetConverger.converge(site, customFacets);
+        List<String> customFacetsChanged = new ArrayList<>(
+                turSNManifestCustomFacetConverger.converge(site, customFacets));
+        // T1357 — the facets the client made before and no longer declares go.
+        customFacetsChanged.addAll(
+                turSNManifestCustomFacetConverger.retire(site, request.retiredCustomFacetsOrEmpty()));
         List<String> customSortsChanged = turSNManifestCustomSortConverger.converge(site, customSorts);
         boolean genAiChanged = turSNManifestGenAiConverger.converge(site, request.genAi());
         boolean facetSettingsChanged = turSNManifestFacetsConverger.converge(site, request.facets());

@@ -59,7 +59,8 @@ import lombok.RequiredArgsConstructor;
  * is created; present with other labels or buckets, its labels and buckets are
  * replaced by the declared ones; equal, it is left alone, so re-posting a
  * manifest is a no-op. A facet the manifest does not declare is never touched,
- * the same additive rule the manifest applies to fields.
+ * the same additive rule the manifest applies to fields, unless the manifest
+ * names it under {@code retiredCustomFacets} (T1357), which removes it.
  *
  * <p>Buckets are built by {@link TurSNCustomFacetItems}, the conversion the
  * console uses, so a date-math bound ({@code NOW-7DAYS}) is validated and stored
@@ -102,6 +103,59 @@ public class TurSNManifestCustomFacetConverger {
             desiredItems(facet, type);
             validateEndField(site, manifest, facet, type);
         }
+    }
+
+    /**
+     * T1357 — every retired facet names a field and a facet, and none is also
+     * declared: a manifest cannot both converge and remove the same facet.
+     */
+    public void validateRetired(List<TurSNManifestCustomFacet> customFacets,
+            List<TurSNManifestRetiredCustomFacet> retired) {
+        Set<String> declared = customFacets.stream().map(TurSNManifestCustomFacetConverger::key)
+                .collect(Collectors.toSet());
+        for (TurSNManifestRetiredCustomFacet facet : retired) {
+            if (facet == null || !StringUtils.hasText(facet.field()) || !StringUtils.hasText(facet.name())) {
+                throw new IllegalArgumentException("Every retired custom facet must declare 'field' and 'name'");
+            }
+            if (declared.contains(facet.field() + "\u0000" + facet.name())) {
+                throw new IllegalArgumentException("Custom facet '" + facet.name() + "' on field '"
+                        + facet.field() + "' is both declared and retired");
+            }
+        }
+    }
+
+    /** T1357 — the retired facets the site still has, which {@link #retire} would remove. Read-only. */
+    public List<String> planRetired(TurSNSite site, List<TurSNManifestRetiredCustomFacet> retired) {
+        List<String> present = new ArrayList<>();
+        if (site == null) {
+            return present;
+        }
+        for (TurSNManifestRetiredCustomFacet facet : retired) {
+            TurSNSiteFieldExt fieldExt = liveField(site, facet.field());
+            if (fieldExt != null && liveFacet(fieldExt, facet.name()) != null) {
+                present.add(facet.name());
+            }
+        }
+        return present;
+    }
+
+    /**
+     * T1357 — removes each retired facet the site has; one it does not have, or
+     * on a field it does not have, is skipped.
+     *
+     * @return the names of the facets removed
+     */
+    public List<String> retire(TurSNSite site, List<TurSNManifestRetiredCustomFacet> retired) {
+        List<String> removed = new ArrayList<>();
+        for (TurSNManifestRetiredCustomFacet facet : retired) {
+            TurSNSiteFieldExt fieldExt = liveField(site, facet.field());
+            if (fieldExt != null && fieldExt.getCustomFacets()
+                    .removeIf(live -> facet.name().equals(live.getName()))) {
+                turSNSiteFieldExtRepository.save(fieldExt);
+                removed.add(facet.name());
+            }
+        }
+        return removed;
     }
 
     /**

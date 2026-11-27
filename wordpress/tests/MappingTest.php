@@ -936,6 +936,54 @@ final class MappingTest extends PluginTestCase {
 		$this->assertCount( 2, $this->requests );
 	}
 
+	/**
+	 * A range facet the mapping stops declaring is retired on Turing (T1357), so search never
+	 * shows two "When" facets: one whose field lost its range, and one whose field left the
+	 * mapping, which only the record of the last provisioning still knows.
+	 */
+	public function test_a_range_facet_the_mapping_drops_is_retired(): void {
+		$start  = array(
+			'source' => 'meta:inicio',
+			'field'  => 'evento_inicio',
+			'type'   => 'DATE',
+		);
+		$end    = array(
+			'source' => 'meta:ate',
+			'field'  => 'evento_ate',
+			'type'   => 'DATE',
+		);
+		$ranged = array(
+			'range'       => true,
+			'periods'     => 'agenda',
+			'facet_label' => 'Quando',
+		);
+		$client = new Viglet_Turing_API_Client( $this->settings() );
+
+		$this->store( array( $start + $ranged, $end ) );
+		$this->mapping()->provision( $client );
+		$this->assertSame(
+			array(
+				array(
+					'field' => 'evento_ate',
+					'name'  => 'evento_ate_range',
+				),
+			),
+			$this->body( 0 )['retiredCustomFacets']
+		);
+		$this->assertSame( array( 'evento_inicio' ), $this->options[ Viglet_Turing_Mapping::PROVISIONED_OPTION ]['range_facets'] );
+
+		$this->store( array( $start, $end + $ranged ) );
+		$this->mapping()->provision( $client );
+		$this->assertSame( array( 'evento_ate_range' ), array_column( $this->body( 1 )['customFacets'], 'name' ) );
+		$this->assertSame( array( 'evento_inicio_range' ), array_column( $this->body( 1 )['retiredCustomFacets'], 'name' ) );
+
+		$this->store( array( $start ) );
+		$this->mapping()->provision( $client );
+		$this->assertArrayNotHasKey( 'customFacets', $this->body( 2 ) );
+		$this->assertSame( array( 'evento_ate_range', 'evento_inicio_range' ), array_column( $this->body( 2 )['retiredCustomFacets'], 'name' ) );
+		$this->assertSame( array(), $this->options[ Viglet_Turing_Mapping::PROVISIONED_OPTION ]['range_facets'] );
+	}
+
 	public function test_a_refused_manifest_is_recorded_and_sent_again_next_time(): void {
 		$this->status = 409;
 		$this->store(

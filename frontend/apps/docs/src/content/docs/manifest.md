@@ -127,6 +127,23 @@ An event that runs over several days, such as an exhibition from 1 to 30 Novembe
 
 With an end field, a bucket holds an event when the event starts by the bucket's end and ends on or after the bucket's start. A bucket with no start, such as *Past*, holds the events that have **ended** by its end, so an exhibition that is still running is not listed there. An event with no end date is read as the single day it starts. The end field must be another field of the same type as `field`. Leave `endField` out and the facet buckets `field` alone. Solr, Lucene and Elasticsearch count the buckets and filter by them with the same rule. In Java, call `withEndField("endsAt")` on a `TurSNManifestCustomFacet`; in the console, pick it under **End field** on a date facet.
 
+#### Removing a facet the manifest made
+
+A facet the manifest stops declaring stays on the site, so moving the *agenda* facet from `startsAt` to `endsAt` leaves the old one live beside the new one. Name the old one under `retiredCustomFacets`, by `field` and `name`, and provisioning removes it:
+
+```json
+{
+  "name": "events",
+  "customFacets": [ {
+    "field": "endsAt", "name": "endsAt_range", "defaultLabel": "When",
+    "items": [ { "label": "Upcoming", "rangeStartDate": "NOW/DAY" } ]
+  } ],
+  "retiredCustomFacets": [ { "field": "startsAt", "name": "startsAt_range" } ]
+}
+```
+
+A retired facet the site does not have is skipped, so the same manifest can be posted again. A facet both declared and retired is refused with HTTP 400. The plan lists a retired facet the site still has under `customFacetsToChange`, and the response lists the one it removed under `customFacetsChanged`. Nothing outside the list is removed: a facet made in the console stays. The WordPress plugin sends the list for the range facets its mapping no longer declares.
+
 ### Custom sorts
 
 A manifest can declare **custom sorts** the same way: named, multi-level sort options a search selects by passing the name as `sort`. A job site that wants "closing soonest" sorts by the expiry date ascending and puts jobs with no expiry date last:

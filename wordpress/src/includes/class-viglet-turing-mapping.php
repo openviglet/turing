@@ -482,6 +482,8 @@ class Viglet_Turing_Mapping {
 		// "offered" reach it; a mapped field cannot take their names.
 		$fields = array_merge( $fields, ( new Viglet_Turing_Entities( $this->settings ) )->manifest_fields( $locale ) );
 		$custom = array();
+		// Mapped fields that could carry a range facet and do not (T1357).
+		$unranged = array();
 
 		foreach ( $this->all() as $type_mapping ) {
 			if ( $type_mapping['exclude'] ) {
@@ -494,6 +496,8 @@ class Viglet_Turing_Mapping {
 				$range = self::range_facet( $field, $locale );
 				if ( null !== $range ) {
 					$custom[] = $range;
+				} elseif ( in_array( $field['type'], self::RANGE_TYPES, true ) ) {
+					$unranged[] = $field['field'];
 				}
 				$spec = array(
 					'name'        => $field['field'],
@@ -536,6 +540,10 @@ class Viglet_Turing_Mapping {
 		if ( ! empty( $custom ) ) {
 			$manifest['customFacets'] = $custom;
 		}
+		$retired = self::retired_range_facets( array_column( $custom, 'field' ), $unranged );
+		if ( ! empty( $retired ) ) {
+			$manifest['retiredCustomFacets'] = $retired;
+		}
 		// Declaring the block is what turns the site's GenAI on (Turing T1116). With no agent
 		// named, Turing keeps the agent an admin chose in its console and binds the Default AI
 		// Agent only to a site that has none (Turing T1146, D214). An object, so `{}` in JSON.
@@ -563,6 +571,32 @@ class Viglet_Turing_Mapping {
 	 */
 	public static function declares_generative_ai( array $settings ): bool {
 		return ! empty( $settings['generative_ai'] );
+	}
+
+	/**
+	 * The range facets the plugin made before and the mapping no longer declares (T1357), for
+	 * Turing to remove (its T1357 `retiredCustomFacets`): those the last provisioning sent, and
+	 * the `<field>_range` of each mapped field that has no range now, which also clears one an
+	 * earlier plugin left before it kept that record. A facet made in the console under another
+	 * name stays, and so does one on a field the mapping does not name.
+	 *
+	 * @param string[] $ranged   The fields whose range facet this manifest declares.
+	 * @param string[] $unranged The mapped fields that could have one and do not.
+	 * @return array<int, array{field: string, name: string}>
+	 */
+	private static function retired_range_facets( array $ranged, array $unranged ): array {
+		$last     = get_option( self::PROVISIONED_OPTION, array() );
+		$recorded = is_array( $last ) && is_array( $last['range_facets'] ?? null ) ? $last['range_facets'] : array();
+		$fields   = array_diff( array_unique( array_merge( $recorded, $unranged ) ), $ranged );
+		sort( $fields );
+
+		return array_map(
+			static fn ( $field ) => array(
+				'field' => (string) $field,
+				'name'  => self::range_facet_name( (string) $field ),
+			),
+			$fields
+		);
 	}
 
 	/**
@@ -742,14 +776,19 @@ class Viglet_Turing_Mapping {
 		$result = $client->provision( $manifest );
 		Viglet_Turing_Events::record( 'provision', $result['success'], $result['note'] );
 		$sent = is_array( $manifest['genAi'] ?? null ) ? $manifest['genAi']['entityExtraction'] : null;
+		// The fields whose range facet Turing holds for the plugin (T1357): what this manifest
+		// declared once it went through, else what it held before, so the retirement is retried.
+		$held   = is_array( $last ) && is_array( $last['range_facets'] ?? null ) ? $last['range_facets'] : array();
+		$ranges = $result['success'] ? array_column( $manifest['customFacets'] ?? array(), 'field' ) : $held;
 		update_option(
 			self::PROVISIONED_OPTION,
 			array(
-				'hash'     => $hash,
-				'at'       => time(),
-				'error'    => $result['success'] ? '' : $result['message'],
+				'hash'         => $hash,
+				'at'           => time(),
+				'error'        => $result['success'] ? '' : $result['message'],
 				// Whether Turing was last told to find entities (D310), until it hears otherwise.
-				'entities' => null === $sent || ! $result['success'] ? is_array( $last ) && ! empty( $last['entities'] ) : $sent,
+				'entities'     => null === $sent || ! $result['success'] ? is_array( $last ) && ! empty( $last['entities'] ) : $sent,
+				'range_facets' => $ranges,
 			),
 			false
 		);

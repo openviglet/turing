@@ -2389,31 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.24 Range facets the mapping dropped (T1357)
-
-**Where it happened.** fespsp-institucional FI146, the search lab. The `evento` mapping
-moved `"range": true, "periods": "agenda", "facet_label": "Quando"` from `evento_inicio`
-to `evento_ate`, and `wp turing reindex` provisioned the site again.
-
-**What came back.** The search answer carries two facets labelled "Quando": the new
-`evento_ate_range` and the old `evento_inicio_range`, still bucketing by start date. A
-visitor sees two "Quando" facets that disagree (the running exhibition is Upcoming in
-one and Past in the other).
-
-**Why.** The custom facet converger (T1084) never touches a facet the manifest does not
-declare, and the plugin's manifest stops declaring a range facet once the mapping drops
-it. `convergeFields` makes fields follow the mapping, but nothing does the same for the
-plugin's own range facets.
-
-**What the plugin should do.** Range facets are the plugin's: their names come from
-`range_facet_name()` (`<field>_range`). On provisioning, remove a `<field>_range` facet
-the plugin made before and the mapping no longer declares (record what it provisioned,
-as it already does in `PROVISIONED_OPTION`), or have Turing take a flag to converge
-custom facets by owner. A facet made in the console stays.
-
-**Workaround.** None; the stale facet stays in the lab until this ships, or until the
-lab volume is reset.
-
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
