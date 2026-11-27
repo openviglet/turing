@@ -25,7 +25,7 @@
 ## Block CY — Filters from a sentence say what visitors say
 
 - 📋 **T1361** (deps: —) **nl-filters keeps the consumed words in q and adds a closed end-date range, so its own q and fq return nothing** — A sentence the reader turned into the right filters still empties the page, since T1359 and T1360. → §CXCII.3
-- 📋 **T1362** (deps: —) **The answer to what is on this week still finds no source, though nl-filters now dates the same sentence** — T1360 grounded the period in the filter reader but not in /answer, so the agenda question still gets an apology. → §CXCII.4
+- 📋 **T1362** (deps: —) **The answer to what is on this week still finds no source, though nl-filters now dates the same sentence** — T1360 confines /answer to the period, but the STRICT_RAG judge and the answer prompt never learn it, so the agenda question still gets an apology. → §CXCII.4
 
 ## Done when — T1184
 
