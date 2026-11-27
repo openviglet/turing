@@ -2187,6 +2187,93 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
+### CXV.10 Locale routing under /br/ (T1376)
+
+English stays at the root and every current URL keeps working. Portuguese lives under
+/br/ with the same paths below it (/br/, /br/features/search/, /br/wordpress/).
+matchRoute strips the /br prefix and returns the locale with the route; entry-server
+lists every route once per locale and the prerender writes html lang and og:locale from
+it. A LocaleProvider context replaces the locale prop the chrome takes since T1371, and
+a localeHref helper beside withBase prefixes site paths, so a link from a /br/ page
+stays in Portuguese. The prefix is /br/, chosen by the owner over /pt-br/; the language
+itself is declared by hreflang and html lang, which is what search engines read. The
+docs stay English only.
+
+### CXV.11 One typed dictionary per locale (T1377)
+
+site-content.ts (about 1500 lines) becomes content/en/*.ts, and content/pt-BR/*.ts must
+satisfy the same type, so tsc refuses a missing key. A useContent() hook reads the
+active locale from the LocaleProvider. No i18n library: the site is static, prerendered
+and zero-runtime by choice, and a typed module is lookup-free. The chrome map from T1371
+(lib/i18n.ts) and educacao-content.ts fold into it. Destination labels get a pt-BR
+column, and a link into the docs from a pt-BR page carries the marker (em ingles) since
+the docs stay English. The naming and bounded-claims tests read every locale.
+
+### CXV.12 Inline copy moves into the dictionary (T1378)
+
+Measured on 2026-11-27: aem, persona, wordpress, compare and security hold 17 to 25
+inline sentences each, search-demo 20, self-host and migrate 13, hero, playground and
+chat-demo about 9. Each moves into content/en without changing the English page: the
+prerendered HTML of every English route is byte-identical before and after, which is the
+check. Aria labels and alt text move too; code samples and product identifiers stay in
+the components.
+
+### CXV.13 hreflang, canonicals and sitemap per locale (T1379)
+
+Every prerendered page links rel=alternate hreflang en, pt-BR and x-default (the English
+URL), and its canonical is its own locale URL. sitemap.xml is generated from the route
+list with xhtml:link alternates instead of being kept by hand. check-contract.mjs fails
+a page whose alternates are not reciprocal or point at a page that was not built, and
+llms.txt names the Portuguese pages.
+
+### CXV.14 Language switcher (T1380)
+
+A switcher in the nav (and the mobile menu) links to the current path in the other
+locale, EN and PT. No automatic redirect by Accept-Language: the host is static, a
+redirect hides pages from crawlers, and a visitor following a shared link must land
+where it points. The choice is not stored; the URL is the state.
+
+### CXV.15 Portuguese home and feature pages (T1381)
+
+Translate the landing page sections and the four /features/ pages into content/pt-BR,
+written for a Brazilian reader rather than word for word, with the same bounded-claims
+rule (no universal or delivery-time claim) and the full product names. Meta titles and
+descriptions are written for Portuguese searches.
+
+### CXV.16 Portuguese solution pages (T1382)
+
+Translate aem, persona, wordpress, security, compare and migrate into content/pt-BR. The
+WordPress page plays its pt-BR video cut first on /br/ and opens the Portuguese
+transcript. FAQ structured data is emitted in the page language.
+
+### CXV.17 The education page joins /br/ (T1383)
+
+Move it to /br/educacao/ and leave /educacao/ as a redirect stub (the meta refresh
+pattern of /aem/ and /wp-demo/), so links already published keep working. Decide whether
+it gets an English twin at /education/ or stays Portuguese only; without a twin its
+hreflang lists pt-BR alone.
+
+### CXV.18 Portuguese share image and static files (T1384)
+
+og-image.mjs renders a pt-BR og.png from a translated og.svg, and /br/ pages point
+og:image and twitter:image at it. The machine-readable files (aem-search.md, persona.md)
+get Portuguese versions only if the pages they mirror do.
+
+### CXV.19 Playground in Portuguese (T1385)
+
+On /br/, the search and chat demos show Portuguese placeholders, labels and suggested
+questions, and say the corpus is the English documentation. A Portuguese question to the
+chat is answered over the English corpus; check that the answer comes back in Portuguese
+before promising it.
+
+### CXV.20 Translation drift guard (T1386)
+
+A test fails when a route has no /br/ twin (unless listed as English-only with a
+reason), when a pt-BR string equals its English source outside an allowlist of names, or
+when a rendered /br/ page contains a sentence from the English dictionary. The
+turing-roadmap-docs rule for shipping a user-facing page gains: write both locales in
+the same commit.
+
 ## CLIII The quality gate stops at the package boundary
 
 ## CLIV Persona as a first-class actionable surface (§XXXII)
