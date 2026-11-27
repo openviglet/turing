@@ -6,7 +6,9 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.ai.document.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +45,8 @@ class TurRagSearchToolServiceTest {
     private com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver;
     @Mock
     private com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
+    @Mock
+    private com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
 
     private TurRagSearchToolService service;
 
@@ -54,7 +58,21 @@ class TurRagSearchToolServiceTest {
                 .thenReturn(java.util.Optional.empty());
         service = new TurRagSearchToolService(globalSettingsService, ragContextBuilder, trainingRecordRepository,
                 snSiteGenAiRepository, ragBm25CoreRepository, searchEnginePluginFactory, retrievalBackendResolver,
-                seInstanceRepository);
+                seInstanceRepository, nlFilterService);
+    }
+
+    /** T1363 — the tool's text reads a site chunk's times in that site's wall clock. */
+    @Test
+    void siteChunkTimesAreInTheSiteWallClock() {
+        org.mockito.Mockito.when(nlFilterService.timeZone("fespsp"))
+                .thenReturn(java.util.Optional.of(java.time.ZoneId.of("America/Sao_Paulo")));
+        Document chunk = new Document("# Dialogos sobre o SUS\nstartDate: 2026-11-24T22:00:00Z",
+                Map.of("sites", List.of("fespsp")));
+        Document asset = new Document("uploaded 2026-11-24T22:00:00Z", Map.of());
+
+        Map<String, java.util.Optional<java.time.ZoneId>> zones = new java.util.HashMap<>();
+        assertThat(service.inSiteTime(chunk, zones).getText()).contains("startDate: 2026-11-24 19:00");
+        assertThat(service.inSiteTime(asset, zones).getText()).isEqualTo("uploaded 2026-11-24T22:00:00Z");
     }
 
     @Test

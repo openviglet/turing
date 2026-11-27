@@ -424,8 +424,11 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // answer what today and that period are, or "this week" reads as unanswerable.
         String period = extracted != null && extracted.containsKey(SOURCE_ID)
                 ? periodNote(nlFilters, siteToday(request.siteName())) : "";
-        Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
+        Pinned found = pinDocument(context, searchQuery, request.documentId(),
                 retrieveDocuments(context, searchQuery, filters, extracted, locale));
+        // T1363 — the judge, the answer, the caveat and the follow-ups read the
+        // chunks' times in the site's wall clock, not the UTC they are indexed in.
+        Pinned pinned = new Pinned(inSiteTime(context, found.documents()), found.pinnedCount());
         List<Document> relevantDocuments = pinned.documents();
 
         // T329 — deterministic "not in this site" refusal. When the relevance
@@ -543,6 +546,26 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      */
     static boolean widensOnEmpty(boolean autoExtracted, java.util.Map<String, List<String>> filters) {
         return autoExtracted && (filters == null || !filters.containsKey(SOURCE_ID));
+    }
+
+    /**
+     * T1363 — {@code documents} with their UTC instants in the context site's wall
+     * clock, so every prompt built from them reads the time the visitor's clock
+     * shows; as they are when the site names no time zone.
+     */
+    List<Document> inSiteTime(TurGenAiContext context, List<Document> documents) {
+        if (nlFilterService == null || documents == null || documents.isEmpty()
+                || !StringUtils.hasText(context.getSiteName())) {
+            return documents;
+        }
+        try {
+            return nlFilterService.timeZone(context.getSiteName())
+                    .map(zone -> com.viglet.turing.sn.nl.TurSiteWallClock.localize(documents, zone))
+                    .orElse(documents);
+        } catch (RuntimeException e) {
+            log.debug("RAG chat: time zone of site '{}' not read: {}", context.getSiteName(), e.getMessage());
+            return documents;
+        }
     }
 
     /** T1362 — today on the site's calendar, else the server's. */
@@ -1330,8 +1353,8 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // Shared retrieval (T328): auto-extracts filters, applies the
         // config-driven relevance gate on the filtered path, and runs the
         // optional reranker. Returns chunks with metadata intact.
-        List<Document> relevantDocuments = retrieveDocuments(context,
-                standaloneQuery(context, history, latestUserQuery), filters, null, locale);
+        List<Document> relevantDocuments = inSiteTime(context, retrieveDocuments(context,
+                standaloneQuery(context, history, latestUserQuery), filters, null, locale));
         logRetrievedDocuments(relevantDocuments, context.getVectorStore().getClass().getSimpleName());
         String information = relevantDocuments.stream()
                 .map(Document::getText)
@@ -1647,7 +1670,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         // similaritySearch. Passing null filters keeps its historical behavior
         // for plain lookups while inheriting the reliability fixes.
         // T1302 — and the lexical top-up, given the request's locale.
-        List<Document> relevantDocuments = retrieveDocuments(context, q, null, null, locale);
+        List<Document> relevantDocuments = inSiteTime(context, retrieveDocuments(context, q, null, null, locale));
         logRetrievedDocuments(relevantDocuments, context.getVectorStore().getClass().getSimpleName());
 
         String information = relevantDocuments.stream()

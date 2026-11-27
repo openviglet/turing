@@ -1090,6 +1090,53 @@ class TurSNGenAiTest {
         verifyNoInteractions(nlFilterService);
     }
 
+    /** T1363 — a 22:00Z event on a Sao Paulo site reaches the answer prompt as 19:00. */
+    @Test
+    void aDatedAnswerReadsEventTimesInTheSiteWallClock() {
+        var nlFilterService = mock(com.viglet.turing.sn.nl.TurSNNLFilterService.class);
+        when(nlFilterService.timeZone("fespsp"))
+                .thenReturn(java.util.Optional.of(java.time.ZoneId.of("America/Sao_Paulo")));
+        TurSNGenAi withService = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
+                ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
+                chatFlowEngineService, moderationService, new TurSNFullContextService(), nlFilterService);
+        VectorStore vectorStore = mock(VectorStore.class);
+        Document chunk = new Document("# Dialogos sobre o SUS\nstartDate: 2026-11-24T22:00:00Z",
+                Map.of(TurSNGenAi.SOURCE_ID, "sus-1"));
+        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(chunk));
+        when(agentChatExecutor.execute(any(TurAgentChatRequest.class), any()))
+                .thenReturn(reactor.core.publisher.Flux.empty());
+        TurGenAiContext context = TurGenAiContext.builder().enabled(true).vectorStore(vectorStore)
+                .siteName("fespsp").build();
+        List<TurSNGenAi.ConversationMessage> history =
+                List.of(new TurSNGenAi.ConversationMessage("user", "when is the SUS talk"));
+
+        withService.assistantConversationStreaming(context,
+                mock(com.viglet.turing.agent.persistence.model.TurAIAgent.class),
+                mock(com.viglet.turing.llm.persistence.model.TurLLMInstance.class),
+                new TurSNGenAiChatRequest(history, null, "conv-1", null, null, Locale.ENGLISH, null, null,
+                        true, null))
+                .collectList().block();
+
+        ArgumentCaptor<TurAgentChatRequest> executed = ArgumentCaptor.forClass(TurAgentChatRequest.class);
+        verify(agentChatExecutor).execute(executed.capture(), any());
+        assertTrue(executed.getValue().systemPromptOverride().contains("startDate: 2026-11-24 19:00"));
+        assertFalse(executed.getValue().systemPromptOverride().contains("22:00:00Z"));
+    }
+
+    /** T1363 — a site with no time zone keeps the chunks as they are. */
+    @Test
+    void aSiteWithNoTimeZoneKeepsItsChunks() {
+        var nlFilterService = mock(com.viglet.turing.sn.nl.TurSNNLFilterService.class);
+        when(nlFilterService.timeZone("plain")).thenReturn(java.util.Optional.empty());
+        TurSNGenAi withService = new TurSNGenAi(turSNSearchProcess, contextFactory, localeRepository,
+                ragContextBuilder, facetExtractor, agentChatExecutor, globalSettingsService, ragReranker,
+                chatFlowEngineService, moderationService, new TurSNFullContextService(), nlFilterService);
+        List<Document> documents = List.of(new Document("at 2026-11-24T22:00:00Z"));
+
+        assertSame(documents, withService.inSiteTime(
+                TurGenAiContext.builder().siteName("plain").build(), documents));
+    }
+
     // ---- T707: enumeration-intent gate + fallback-on-empty ----
 
     @Test

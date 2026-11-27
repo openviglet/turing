@@ -75,6 +75,8 @@ public class TurRagSearchToolService {
     private final com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository;
     private final TurSearchEnginePluginFactory searchEnginePluginFactory;
     private final com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver;
+    /** T1363 — reads the time zone of the site a chunk was indexed from; {@code null} leaves UTC. */
+    private final com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService;
 
     public TurRagSearchToolService(TurGlobalSettingsService globalSettingsService,
                                     TurRagContextBuilder ragContextBuilder,
@@ -83,7 +85,10 @@ public class TurRagSearchToolService {
                                     TurRagBm25CoreRepository ragBm25CoreRepository,
                                     TurSearchEnginePluginFactory searchEnginePluginFactory,
                                     com.viglet.turing.rag.backend.TurRetrievalBackendResolver retrievalBackendResolver,
-                                    com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository) {
+                                    com.viglet.turing.searchengine.persistence.repository.TurSEInstanceRepository seInstanceRepository,
+                                    @org.springframework.context.annotation.Lazy
+                                    com.viglet.turing.sn.nl.TurSNNLFilterService nlFilterService) {
+        this.nlFilterService = nlFilterService;
         this.seInstanceRepository = seInstanceRepository;
         this.globalSettingsService = globalSettingsService;
         this.ragContextBuilder = ragContextBuilder;
@@ -367,9 +372,11 @@ public class TurRagSearchToolService {
         // (when the chat executor published one). Drained by the streaming
         // dispatcher into the `sources[]` SSE event after the tool loop.
         TurRagSourceCollector sourceCollector = resolveSourceCollector(toolContext);
+        Map<String, Optional<java.time.ZoneId>> zones = new java.util.HashMap<>();
 
         for (int i = 0; i < results.size(); i++) {
-            Document doc = results.get(i);
+            // T1363 — the chunk's times in its site's wall clock, as the SN answer reads them.
+            Document doc = inSiteTime(results.get(i), zones);
             String objectName = doc.getMetadata().getOrDefault(OBJECT_NAME_FIELD, "").toString();
             String contentType = doc.getMetadata().getOrDefault("contentType", "").toString();
 
@@ -400,6 +407,42 @@ public class TurRagSearchToolService {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * T1363 — {@code doc} with its UTC instants in the wall clock of the SN site its
+     * {@code sites} metadata names (the first, for a chunk shared by several); as it
+     * is for an asset chunk, a site with no time zone, or a zone that cannot be read.
+     * {@code zones} keeps each site's answer for the rest of the call.
+     */
+    Document inSiteTime(Document doc, Map<String, Optional<java.time.ZoneId>> zones) {
+        if (nlFilterService == null || doc == null || doc.getMetadata() == null) {
+            return doc;
+        }
+        String site = firstSite(doc.getMetadata().get("sites"));
+        if (site == null) {
+            return doc;
+        }
+        Optional<java.time.ZoneId> zone = zones.computeIfAbsent(site, name -> {
+            try {
+                return nlFilterService.timeZone(name);
+            } catch (RuntimeException e) {
+                log.debug("[RAG] time zone of site '{}' not read: {}", name, e.getMessage());
+                return Optional.empty();
+            }
+        });
+        return zone.map(z -> com.viglet.turing.sn.nl.TurSiteWallClock.localize(doc, z)).orElse(doc);
+    }
+
+    private static String firstSite(Object sites) {
+        Object first = sites instanceof java.util.Collection<?> collection
+                ? collection.stream().filter(java.util.Objects::nonNull).findFirst().orElse(null)
+                : sites;
+        if (first == null) {
+            return null;
+        }
+        String name = first.toString().strip();
+        return name.isEmpty() ? null : name;
     }
 
     /**

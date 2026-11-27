@@ -1769,6 +1769,7 @@
 - **T1360** — Esta semana dates a request: today, tonight and this week resolve, land on the date facet as an overlap, and chat and /answer ground in the period's documents from the site search.
 - **T1361** — nl-filters takes each filter's words out of q, also from the parse's free text, empties a stop-word-only q, and turns an end-field date range into the span's overlap pair (design §CXCII.3 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
 - **T1362** — A dated question tells the STRICT_RAG judge and the answer prompt today and its resolved period, and an empty period-confined pass no longer widens to the whole site (design §CXCII.4 recorded in `frontend/apps/docs/src/content/docs/rest-api.md`).
+- **T1363** — A dated answer now announces each event at the site's own hour: chunk instants are rewritten to the site's time zone wherever chunk text enters a prompt, with no reindex.
 
 ## Block CZ — Backend modules with verified boundaries
 

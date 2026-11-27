@@ -706,16 +706,24 @@ public class TurSNNLFilterService {
 
     /** T1330 — the site's time zone, or the clock's when the site names none. */
     private java.time.ZoneId siteZone(String siteName) {
+        return timeZone(siteName).orElse(clock.getZone());
+    }
+
+    /**
+     * T1363 — the time zone the site names, empty when it names none, the site is
+     * unknown or the read fails: a caller with no zone leaves its instants in UTC.
+     */
+    @Transactional(readOnly = true)
+    public Optional<java.time.ZoneId> timeZone(String siteName) {
         if (!StringUtils.hasText(siteName)) {
-            return clock.getZone();
+            return Optional.empty();
         }
         try {
             return turSNSiteRepository.findByNameIgnoreCase(siteName)
-                    .flatMap(site -> TurSiteTimeZone.of(site.getTimeZone()))
-                    .orElse(clock.getZone());
+                    .flatMap(site -> TurSiteTimeZone.of(site.getTimeZone()));
         } catch (RuntimeException e) {
             log.debug("[T1330] time zone of site '{}' not read: {}", siteName, e.getMessage());
-            return clock.getZone();
+            return Optional.empty();
         }
     }
 

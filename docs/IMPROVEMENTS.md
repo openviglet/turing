@@ -2427,31 +2427,6 @@ module boundaries files here.
 
 ## CXCII Filters from a sentence say what visitors say
 
-### CXCII.5 Answer times in the site's time zone (T1363)
-
-**Where it happened.** fespsp-institucional, search lab, image 5f4594b (after T1362). SN
-site `fespsp`, pt_BR, `gpt-4o-mini`, time zone `America/Sao_Paulo` from the manifest
-(T1330). `GET /api/sn/fespsp/answer?q=o que tem esta semana na FESPSP?`: every time is
-three hours late ("Diálogos sobre o SUS ... às 22h" for a 19:00 event).
-
-**Cause.** The instant is written into the chunk text at indexing, not by the prompt:
-`TurSEFieldValues` formats every date as `yyyy-MM-dd'T'HH:mm:ss'Z'` in GMT, and
-`TurSNGenAi.appendCustomFields` copies it into each chunk's header as `field: value`.
-Every path that hands chunk text to a model inherits it: `Pinned.information` (stream
-answer), the conversational and single-turn chat, and `TurRagSearchToolService`.
-
-**What it should do.** One helper, applied where chunk text enters a prompt on all four
-paths, rewrites the `Z` instants in the text into the site's wall clock (the zone T1330
-stores), offset dropped. At prompt time, not at indexing: no reindex, and a zone change
-takes effect at once. Metadata and filters stay UTC. Telling the model to convert is not
-an option: `gpt-4o-mini` does not do the arithmetic reliably.
-
-**Tests.** A 19:00 event on a UTC-3 site answers "19h"; a date-only value stored as
-midnight UTC stays its own day (converted it would fall on the day before); a site with
-no time zone is left as it is; the agent tool's text is converted too.
-
-**Workaround.** None. The project's assistant line (FI148) waits on this.
-
 ### CXCII.6 A period's answer lists the period (T1364)
 
 **Where it happened.** fespsp-institucional, search lab, image 5f4594b (after T1362),
