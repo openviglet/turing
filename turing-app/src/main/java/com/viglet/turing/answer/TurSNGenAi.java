@@ -420,7 +420,8 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
                 : siteNlFilters(request, filters, searchQuery);
         Pinned pinned = pinDocument(context, searchQuery, request.documentId(),
                 retrieveDocuments(context, searchQuery, filters,
-                        nlFilters == null ? null : retrievalFilters(nlFilters), locale));
+                        nlFilters == null ? null : retrievalFilters(request.siteName(), locale, nlFilters),
+                        locale));
         List<Document> relevantDocuments = pinned.documents();
 
         // T329 — deterministic "not in this site" refusal. When the relevance
@@ -495,14 +496,15 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
     /**
      * T1085 — the filters the shared extractor reads from a list-style question,
      * or {@code null} when it does not run: the caller sent filters (they win),
-     * the request names no site, or the question is not list-style. A failure is
+     * the request names no site, or the question is neither list-style nor dated
+     * (T1360: "o que tem esta semana" asks for a period, not a list). A failure is
      * logged and reads as no filters, as the extractor before it did.
      */
     private com.viglet.turing.sn.nl.TurSNNLFilters siteNlFilters(TurSNGenAiChatRequest request,
             java.util.Map<String, List<String>> callerFilters, String query) {
         if (nlFilterService == null || request.siteName() == null
                 || (callerFilters != null && !callerFilters.isEmpty())
-                || !looksLikeEnumerationIntent(query)) {
+                || !(looksLikeEnumerationIntent(query) || namesADate(query))) {
             return null;
         }
         try {
@@ -528,6 +530,62 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             }
         }
         return filters;
+    }
+
+    /** T1360 — at most this many documents of a dated question's period reach retrieval. */
+    static final int DATED_HITS = 30;
+
+    /**
+     * T1360 — the value filters, and for a request with a range the documents of
+     * that period: the vector store has no form for a range, so the site's own
+     * search applies it (with the request's words, or without them when they find
+     * nothing in the period) and retrieval is confined to the documents it returns,
+     * as the T1294 top-up confines its chunks. No document in the period, or a
+     * search that fails, leaves retrieval to the value filters alone.
+     */
+    java.util.Map<String, List<String>> retrievalFilters(String siteName, Locale locale,
+            com.viglet.turing.sn.nl.TurSNNLFilters nlFilters) {
+        java.util.Map<String, List<String>> filters = retrievalFilters(nlFilters);
+        if (dslSearchService == null || !StringUtils.hasText(siteName) || locale == null
+                || nlFilters.filters().stream().noneMatch(com.viglet.turing.sn.nl.TurSNNLFilters.Filter::isRange)) {
+            return filters;
+        }
+        try {
+            List<String> ids = datedIds(siteName, locale, nlFilters, true);
+            if (ids.isEmpty() && StringUtils.hasText(nlFilters.q())) {
+                ids = datedIds(siteName, locale, nlFilters, false);
+            }
+            if (ids.isEmpty()) {
+                log.info("RAG chat: nothing on site '{}' falls in {}", siteName, nlFilters.fq());
+            } else {
+                filters.put(SOURCE_ID, ids);
+            }
+        } catch (RuntimeException e) {
+            log.warn("RAG chat dated search failed on site '{}' (value filters only): {}", siteName,
+                    e.getMessage());
+        }
+        return filters;
+    }
+
+    /** The ids of the site's documents within the request's filters, with its words when {@code withWords}. */
+    private List<String> datedIds(String siteName, Locale locale, com.viglet.turing.sn.nl.TurSNNLFilters nlFilters,
+            boolean withWords) {
+        String q = withWords && StringUtils.hasText(nlFilters.q())
+                && !com.viglet.turing.searchengine.TurSNQueryRelaxer.onlyStopWords(nlFilters.q(), locale)
+                ? nlFilters.q() : "";
+        com.viglet.turing.sn.nl.TurSNNLFilters scoped = new com.viglet.turing.sn.nl.TurSNNLFilters(true,
+                nlFilters.text(), q, nlFilters.filters(), nlFilters.fq(), nlFilters.dropped());
+        com.viglet.turing.searchengine.dsl.TurDslQuery query =
+                com.viglet.turing.sn.nl.TurSNNLFilterService.toQuery(scoped, null, null);
+        return dslSearchService.search(siteName, locale.toString(),
+                com.viglet.turing.rag.catalog.planning.TurCopilotQueryBodies.of(query, null, DATED_HITS))
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse::hits)
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hits::hits)
+                .orElse(List.of()).stream()
+                .map(com.viglet.turing.searchengine.dsl.TurDslSearchResponse.Hit::id)
+                .filter(StringUtils::hasText)
+                .distinct()
+                .toList();
     }
 
     /**
@@ -796,7 +854,9 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         if (callerFilters != null && !callerFilters.isEmpty()) {
             return new ResolvedFilters(callerFilters, false);
         }
-        if (looksLikeEnumerationIntent(query)) {
+        // T1360 — the shared extractor ran because the question is list-style or
+        // dated; either way what it read narrows retrieval.
+        if (preExtracted != null || looksLikeEnumerationIntent(query)) {
             // T1085 — filters the shared extractor already read win over the
             // vector-metadata extractor, which stays for callers that name no site.
             java.util.Map<String, List<String>> extracted = preExtracted != null ? preExtracted
@@ -988,6 +1048,11 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
         }
         try {
             List<String> lexicalIds = lexicalIds(context.getSiteName(), locale, query);
+            // T1360 — retrieval already confined to a period's documents stays inside them.
+            List<String> allowed = filters == null ? null : filters.get(SOURCE_ID);
+            if (allowed != null) {
+                lexicalIds = lexicalIds.stream().filter(allowed::contains).toList();
+            }
             if (lexicalIds.isEmpty()) {
                 return vectorHits;
             }
@@ -1147,6 +1212,14 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
 
     boolean looksLikeEnumerationIntent(String query) {
         return query != null && ENUMERATION_INTENT.matcher(query).find();
+    }
+
+    /**
+     * T1360 — whether the question names a period ("esta semana", "tomorrow"); the
+     * extractor resolves it in the site's own time zone.
+     */
+    static boolean namesADate(String query) {
+        return com.viglet.turing.sn.nl.TurRelativeDateRange.resolve(query, java.time.LocalDate.now()).isPresent();
     }
 
     public TurChatMessage assistantConversation(TurGenAiContext context, List<ConversationMessage> history,

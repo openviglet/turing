@@ -55,6 +55,7 @@ import com.viglet.turing.searchengine.dsl.TurDslSearchResponse;
 import com.viglet.turing.sn.dsl.TurDslSearchService;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetField;
 import com.viglet.turing.sn.dsl.eval.TurNLFacetParser;
+import com.viglet.turing.sn.facet.TurSNCustomFacetCatalog;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
@@ -97,6 +98,7 @@ public class TurSNNLFilterService {
     private final TurSNSiteLocaleRepository turSNSiteLocaleRepository;
     private final TurNLFacetParser parser;
     private final TurDslSearchService dslSearchService;
+    private final TurSNCustomFacetCatalog customFacetCatalog;
     private Clock clock = Clock.systemDefaultZone();
 
     void setClockForTest(Clock clock) {
@@ -106,12 +108,13 @@ public class TurSNNLFilterService {
     public TurSNNLFilterService(TurSNSiteRepository turSNSiteRepository,
             TurSNSiteFieldExtRepository turSNSiteFieldExtRepository,
             TurSNSiteLocaleRepository turSNSiteLocaleRepository, TurNLFacetParser parser,
-            TurDslSearchService dslSearchService) {
+            TurDslSearchService dslSearchService, TurSNCustomFacetCatalog customFacetCatalog) {
         this.turSNSiteRepository = turSNSiteRepository;
         this.turSNSiteFieldExtRepository = turSNSiteFieldExtRepository;
         this.turSNSiteLocaleRepository = turSNSiteLocaleRepository;
         this.parser = parser;
         this.dslSearchService = dslSearchService;
+        this.customFacetCatalog = customFacetCatalog;
     }
 
     /**
@@ -193,6 +196,19 @@ public class TurSNNLFilterService {
         java.time.ZoneId zone = flat.ranges().isEmpty() ? clock.getZone() : siteZone(siteName);
         flat.ranges().forEach((field, range) -> rangeFilter(field, range, schema, text, dropped, zone)
                 .ifPresent(filters::add));
+        // T1360 — a date phrase the parse gave no range still dates the request, on the
+        // site's date facet; a date range on a facet that spans two fields is an overlap.
+        boolean dated = flat.ranges().keySet().stream()
+                .anyMatch(field -> schema.containsKey(field) && schema.get(field).type() == TurSEFieldType.DATE);
+        Optional<TurRelativeDateRange> phrase = dated ? Optional.empty()
+                : TurRelativeDateRange.resolve(text, LocalDate.now(clock.withZone(siteZone(siteName))));
+        if (dated || phrase.isPresent()) {
+            DateFacets dateFacets = dateFacets(siteName, schema);
+            // an instant bound, which a date field's range takes
+            phrase.flatMap(resolved -> dateFacets.only().map(field -> relativeFilter(field,
+                    new String[] { resolved.start() + "T00:00:00Z", null }, resolved))).ifPresent(filters::add);
+            spanOverlaps(filters, dateFacets.endFields());
+        }
 
         String q = StringUtils.hasText(flat.freeText()) ? flat.freeText().trim() : leftover(text, filters);
         // T1359 — a word the parse left in q that names a value a facet holds is that filter.
@@ -203,6 +219,81 @@ public class TurSNNLFilterService {
             q = without(q, nouns);
         }
         return new TurSNNLFilters(true, text, q, filters, fq(filters), dropped);
+    }
+
+    /**
+     * T1360 — the site's date facets: the date fields of {@code schema} that are a
+     * facet or carry a custom facet, and the end field of each custom facet that
+     * spans two fields (T1224).
+     *
+     * @param only      the one date facet a date phrase lands on: the only one, else
+     *                  the only one that spans two fields; empty when that is a guess
+     * @param endFields the end field of each date field whose custom facet has one
+     */
+    record DateFacets(Optional<String> only, Map<String, String> endFields) {
+    }
+
+    private DateFacets dateFacets(String siteName, Map<String, TurNLFacetField> schema) {
+        Optional<TurSNSite> site = StringUtils.hasText(siteName) ? turSNSiteRepository.findByNameIgnoreCase(siteName)
+                : Optional.empty();
+        if (site.isEmpty()) {
+            return new DateFacets(Optional.empty(), Map.of());
+        }
+        Map<String, TurSNSiteFieldExt> dateFields = new LinkedHashMap<>();
+        for (TurSNSiteFieldExt ext : turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site.get(), 1)) {
+            if (ext.getType() == TurSEFieldType.DATE && schema.containsKey(ext.getName())) {
+                dateFields.putIfAbsent(ext.getName(), ext);
+            }
+        }
+        Map<String, String> endFields = new LinkedHashMap<>();
+        Set<String> customFaceted = new LinkedHashSet<>();
+        for (com.viglet.turing.searchengine.spi.TurSECustomFacet facet : customFacetCatalog.customFacets(site.get())) {
+            dateFields.values().stream()
+                    .filter(ext -> ext.getId() != null && ext.getId().equals(facet.fieldId()))
+                    .findFirst()
+                    .ifPresent(ext -> {
+                        customFaceted.add(ext.getName());
+                        if (StringUtils.hasText(facet.endField())) {
+                            endFields.putIfAbsent(ext.getName(), facet.endField());
+                        }
+                    });
+        }
+        List<String> faceted = dateFields.values().stream()
+                .filter(ext -> ext.getFacet() == 1 || customFaceted.contains(ext.getName()))
+                .map(TurSNSiteFieldExt::getName)
+                .toList();
+        Optional<String> only = Optional.empty();
+        if (faceted.size() == 1) {
+            only = Optional.of(faceted.get(0));
+        } else if (endFields.size() == 1) {
+            only = Optional.of(endFields.keySet().iterator().next());
+        }
+        return new DateFacets(only, endFields);
+    }
+
+    /**
+     * T1360 — each date range on a field whose custom facet spans two fields becomes
+     * the overlap that facet's buckets apply (T1224): it starts by the range's end
+     * and ends from its start, so an exhibition under way is on this week.
+     */
+    private static void spanOverlaps(List<TurSNNLFilters.Filter> filters, Map<String, String> endFields) {
+        if (endFields.isEmpty()) {
+            return;
+        }
+        List<TurSNNLFilters.Filter> spanned = new ArrayList<>();
+        for (TurSNNLFilters.Filter filter : filters) {
+            String endField = filter.isRange() ? endFields.get(filter.field()) : null;
+            if (endField == null || filter.rangeStart() == null || filter.rangeEnd() == null) {
+                spanned.add(filter);
+                continue;
+            }
+            spanned.add(new TurSNNLFilters.Filter(filter.field(), List.of(), null, filter.rangeEnd(),
+                    filter.sourceWords(), filter.confidence(), filter.grounded()));
+            spanned.add(new TurSNNLFilters.Filter(endField, List.of(), filter.rangeStart(), null,
+                    filter.sourceWords(), filter.confidence(), filter.grounded()));
+        }
+        filters.clear();
+        filters.addAll(spanned);
     }
 
     /** T1359 — one filter per field the nouns name, its words as the text spells them. */

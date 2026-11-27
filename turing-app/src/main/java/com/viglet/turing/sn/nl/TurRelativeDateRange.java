@@ -37,7 +37,8 @@ import java.util.regex.Pattern;
  * date; these phrases are exact and cost nothing, so they never reach it.
  *
  * <p>English and Portuguese: last/this year and month, last week, the last N
- * days, weeks or months, and since a month or a year. Both bounds are
+ * days, weeks or months, and since a month or a year; with Spanish, what is still
+ * to come (T1299) and today, tonight and this week (T1360). Both bounds are
  * inclusive dates.
  *
  * @param phrase the words of the text that name the range
@@ -73,6 +74,11 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
             + "|(?:la\\s+)?semana que viene|(?:la\\s+)?proxima semana");
     private static final Pattern NEXT_MONTH = word("next month|(?:no\\s+)?mes que vem|(?:no\\s+)?proximo mes"
             + "|(?:el\\s+)?mes que viene|(?:el\\s+)?proximo mes");
+    // T1360 — what is on today, tonight and this week, asked of an agenda.
+    private static final Pattern TONIGHT = word("tonight|hoje (?:a|de) noite|(?:nesta|esta) noite|esta noche"
+            + "|hoy (?:en|por) la noche");
+    private static final Pattern TODAY = word("today|hoje|hoy");
+    private static final Pattern THIS_WEEK = word("this week|(?:nesta|esta|essa|nessa)\\s+semana");
     /**
      * A month named after a preposition ("em novembro", "in November", "en marzo"),
      * with an optional year. Without the preposition a month's name is as often a
@@ -120,8 +126,10 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
             int year = today.getYear() - 1;
             return Optional.of(of(folded, m, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31)));
         }
+        // T1360 — this year and this month run to their end: an agenda holds what is
+        // still to come in them, and an archive holds nothing past today anyway.
         if ((m = THIS_YEAR.matcher(folded.text())).find()) {
-            return Optional.of(of(folded, m, today.withDayOfYear(1), today));
+            return Optional.of(of(folded, m, today.withDayOfYear(1), today.with(TemporalAdjusters.lastDayOfYear())));
         }
         if ((m = LAST_MONTH.matcher(folded.text())).find()) {
             LocalDate previous = today.minusMonths(1);
@@ -129,7 +137,7 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
                     previous.with(TemporalAdjusters.lastDayOfMonth())));
         }
         if ((m = THIS_MONTH.matcher(folded.text())).find()) {
-            return Optional.of(of(folded, m, today.withDayOfMonth(1), today));
+            return Optional.of(of(folded, m, today.withDayOfMonth(1), today.with(TemporalAdjusters.lastDayOfMonth())));
         }
         if ((m = LAST_WEEK.matcher(folded.text())).find()) {
             return Optional.of(of(folded, m, today.minusWeeks(1), today));
@@ -167,6 +175,15 @@ public record TurRelativeDateRange(String phrase, LocalDate start, LocalDate end
         if ((m = TOMORROW.matcher(folded.text())).find()) {
             LocalDate tomorrow = today.plusDays(1);
             return Optional.of(of(folded, m, tomorrow, tomorrow));
+        }
+        // T1360 — this week is Monday to Sunday, so its past days count too: an
+        // exhibition that opened on Monday is still on this week.
+        if ((m = THIS_WEEK.matcher(folded.text())).find()) {
+            LocalDate monday = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+            return Optional.of(of(folded, m, monday, monday.plusDays(6)));
+        }
+        if ((m = TONIGHT.matcher(folded.text())).find() || (m = TODAY.matcher(folded.text())).find()) {
+            return Optional.of(of(folded, m, today, today));
         }
         return Optional.empty();
     }

@@ -82,6 +82,8 @@ class TurSNNLFilterServiceTest {
     private TurNLFacetParser parser;
     @Mock
     private TurDslSearchService dslSearchService;
+    @Mock
+    private com.viglet.turing.sn.facet.TurSNCustomFacetCatalog customFacetCatalog;
     @InjectMocks
     private TurSNNLFilterService service;
 
@@ -277,7 +279,8 @@ class TurSNNLFilterServiceTest {
 
         TurSNNLFilters result = service.parse("vagas", "en_US", "news this month");
 
-        assertThat(result.fq()).containsExactly("publication_date:[2026-10-01T00:00:00Z TO 2026-10-24T23:59:59Z]");
+        // T1360 — this month runs to its end
+        assertThat(result.fq()).containsExactly("publication_date:[2026-10-01T00:00:00Z TO 2026-10-31T23:59:59Z]");
     }
 
     @Test
@@ -595,6 +598,68 @@ class TurSNNLFilterServiceTest {
                 field("tipo_evento", TurSEFieldType.STRING, true),
                 field("title", TurSEFieldType.TEXT, false)));
         siteHolds(Map.of("f0", List.of("Palestra", "Debate")));
+    }
+
+    /** T1360 — an agenda: events start on data_inicio and end on data_fim. */
+    private void agendaSite(boolean spansTwoFields) {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        TurSNSiteFieldExt start = field("data_inicio", TurSEFieldType.DATE, true);
+        start.setId("start-id");
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(start,
+                field("data_fim", TurSEFieldType.DATE, false), field("title", TurSEFieldType.TEXT, false)));
+        when(customFacetCatalog.customFacets(site)).thenReturn(List.of(new com.viglet.turing.searchengine.spi
+                .TurSECustomFacet("Quando", 1, List.of(), "start-id", spansTwoFields ? "data_fim" : null, null,
+                        null)));
+        parserAnswers("""
+                {"query":{"bool":{"must":[{"match":{"_text_":"o que tem"}}]}}}""");
+    }
+
+    @Test
+    @DisplayName("T1360: a date phrase with no range lands on the date facet, as the overlap its span applies")
+    void aDatePhraseLandsOnTheDateFacetAsAnOverlap() {
+        agendaSite(true);
+        // Sunday night in São Paulo is already Monday in UTC: the site's week is the one ending today.
+        site.setTimeZone("America/Sao_Paulo");
+        service.setClockForTest(java.time.Clock.fixed(java.time.Instant.parse("2026-11-30T01:30:00Z"),
+                java.time.ZoneOffset.UTC));
+
+        TurSNNLFilters result = service.parse("vagas", "pt_BR", "o que tem esta semana");
+
+        assertThat(result.fq()).containsExactly("data_inicio:[* TO 2026-11-29T23:59:59Z]",
+                "data_fim:[2026-11-23T00:00:00Z TO *]");
+        assertThat(result.filters()).allSatisfy(filter -> {
+            assertThat(filter.sourceWords()).containsExactly("esta semana");
+            assertThat(filter.confidence()).isEqualTo(TurSNNLFilterService.LITERAL);
+        });
+        assertThat(result.q()).isEqualTo("o que tem");
+    }
+
+    @Test
+    @DisplayName("T1360: a date facet on one field takes the phrase as a plain range, across a month's end")
+    void aDatePhraseLandsAsARangeWithoutAnEndField() {
+        agendaSite(false);
+        service.setClockForTest(java.time.Clock.fixed(java.time.Instant.parse("2026-12-02T12:00:00Z"),
+                java.time.ZoneOffset.UTC));
+
+        assertThat(service.parse("vagas", "pt_BR", "o que tem esta semana").fq())
+                .containsExactly("data_inicio:[2026-11-30T00:00:00Z TO 2026-12-06T23:59:59Z]");
+    }
+
+    @Test
+    @DisplayName("T1360: with two date facets and nothing to choose between them, a phrase is not guessed")
+    void twoDateFacetsAreNotGuessed() {
+        when(turSNSiteRepository.findByNameIgnoreCase("vagas")).thenReturn(Optional.of(site));
+        when(parser.isAvailable()).thenReturn(true);
+        when(turSNSiteFieldExtRepository.findByTurSNSiteAndEnabled(site, 1)).thenReturn(List.of(
+                field("published", TurSEFieldType.DATE, true), field("updated", TurSEFieldType.DATE, true)));
+        parserAnswers("""
+                {"query":{"bool":{"must":[{"match":{"_text_":"news"}}]}}}""");
+
+        TurSNNLFilters result = service.parse("vagas", "en_US", "news today");
+
+        assertThat(result.filters()).isEmpty();
+        assertThat(result.q()).isEqualTo("news");
     }
 
     @Test

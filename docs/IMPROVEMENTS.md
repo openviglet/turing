@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CY — Filters from a sentence say what visitors say
-
 ## Table of contents
 
 - [I. Chat-flow execution harness — binding constraints](#i-chat-flow-execution-harness--binding-constraints)
@@ -2426,29 +2424,3 @@ module boundaries files here.
 ## CXCI API errors name what the caller sent wrong
 
 ## CXCII Filters from a sentence say what visitors say
-
-### CXCII.2 This week, read from a sentence and an answer (T1360)
-
-**Where it happened.** fespsp-institucional FI146, same site as the line before, on
-2026-11-27, with events today, on Sunday, next week, and an exhibition under way.
-
-**What came back.** `nl-filters` on "o que tem esta semana" answered no filter, and
-`/answer` on the same question apologised with `sourceCount: 0`, while it answers a
-named event correctly.
-
-**Why, in the code.** Four gaps. `TurRelativeDateRange` has no today, this week or
-tonight (weekend and next week exist since T1299; "hoje" never did), and this month and
-this year stop at today, hiding the rest of an agenda. A resolved phrase applies only
-when the model proposed a range on some field. Chat and `/answer` run the extractor only
-for list-style questions (`ENUMERATION_INTENT` in `TurSNGenAi`), which "o que tem" is
-not. And `retrievalFilters` drops ranges: the vector store has no form for them.
-
-**What it should do.** Add today, tonight and this week (Monday to Sunday) in en, pt and
-es; this month and this year run to their end. A date phrase with no model range lands
-on the site's date facet; on a facet with an `endField` it filters by overlap, the
-buckets a click applies (moved from T1359). A question carrying a date phrase runs the
-extractor like a list-style one, and its range narrows retrieval through the site search
-(the T1302 top-up), not the vector filter. Tests in the site's time zone (T1330), on a
-Sunday and across a month's end.
-
-**Workaround.** None. FI146 waits on this line.

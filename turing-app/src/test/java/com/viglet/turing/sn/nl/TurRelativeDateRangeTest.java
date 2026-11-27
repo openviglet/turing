@@ -27,6 +27,7 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -45,10 +46,10 @@ class TurRelativeDateRangeTest {
             "posts from last year         | last year      | 2025-01-01 | 2025-12-31",
             "Posts from LAST YEAR         | LAST YEAR      | 2025-01-01 | 2025-12-31",
             "notícias do ano passado      | do ano passado | 2025-01-01 | 2025-12-31",
-            "events this year             | this year      | 2026-01-01 | 2026-10-24",
-            "news this month              | this month     | 2026-10-01 | 2026-10-24",
-            "vagas deste mês              | deste mês      | 2026-10-01 | 2026-10-24",
-            "vagas neste mês              | neste mês      | 2026-10-01 | 2026-10-24",
+            "events this year             | this year      | 2026-01-01 | 2026-12-31",
+            "news this month              | this month     | 2026-10-01 | 2026-10-31",
+            "vagas deste mês              | deste mês      | 2026-10-01 | 2026-10-31",
+            "vagas neste mês              | neste mês      | 2026-10-01 | 2026-10-31",
             "articles from last month     | last month     | 2026-09-01 | 2026-09-30",
             "posts since March            | since March    | 2026-03-01 | 2026-10-24",
             "posts since december         | since december | 2025-12-01 | 2026-10-24",
@@ -114,6 +115,42 @@ class TurRelativeDateRangeTest {
                 .hasValueSatisfying(range -> {
                     assertThat(range.start()).isEqualTo(LocalDate.of(2026, 11, 22));
                     assertThat(range.end()).isEqualTo(LocalDate.of(2026, 11, 22));
+                });
+    }
+
+    /** T1360 — today, tonight and this week, asked of an agenda on Thursday 2026-11-19. */
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', value = {
+            "o que tem esta semana        | esta semana         | 2026-11-16 | 2026-11-22",
+            "eventos nesta semana         | nesta semana        | 2026-11-16 | 2026-11-22",
+            "events this week             | this week           | 2026-11-16 | 2026-11-22",
+            "qué hay esta semana          | esta semana         | 2026-11-16 | 2026-11-22",
+            "o que tem hoje               | hoje                | 2026-11-19 | 2026-11-19",
+            "events today                 | today               | 2026-11-19 | 2026-11-19",
+            "eventos hoy                  | hoy                 | 2026-11-19 | 2026-11-19",
+            "shows hoje à noite           | hoje à noite        | 2026-11-19 | 2026-11-19",
+            "o que tem esta noite         | esta noite          | 2026-11-19 | 2026-11-19",
+            "what is on tonight           | tonight             | 2026-11-19 | 2026-11-19",
+            "conciertos esta noche        | esta noche          | 2026-11-19 | 2026-11-19",
+            "shows this weekend           | this weekend        | 2026-11-21 | 2026-11-22",
+            "a noite dos museus           | NONE                | -          | -",
+    })
+    void resolvesTodayTonightAndThisWeek(String text, String phrase, String start, String end) {
+        resolvesMonthsAndWhatIsToCome(text, phrase, start, end);
+    }
+
+    @Test
+    @DisplayName("T1360: this week asked on a Sunday is the week that ends that day, across a month's end")
+    void thisWeekAskedOnASunday() {
+        assertThat(TurRelativeDateRange.resolve("esta semana", LocalDate.of(2026, 11, 29)))
+                .hasValueSatisfying(range -> {
+                    assertThat(range.start()).isEqualTo(LocalDate.of(2026, 11, 23));
+                    assertThat(range.end()).isEqualTo(LocalDate.of(2026, 11, 29));
+                });
+        assertThat(TurRelativeDateRange.resolve("this week", LocalDate.of(2026, 12, 2)))
+                .hasValueSatisfying(range -> {
+                    assertThat(range.start()).isEqualTo(LocalDate.of(2026, 11, 30));
+                    assertThat(range.end()).isEqualTo(LocalDate.of(2026, 12, 6));
                 });
     }
 
