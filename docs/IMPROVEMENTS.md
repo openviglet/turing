@@ -2187,15 +2187,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.12 Inline copy moves into the dictionary (T1378)
-
-Measured on 2026-11-27: aem, persona, wordpress, compare and security hold 17 to 25
-inline sentences each, search-demo 20, self-host and migrate 13, hero, playground and
-chat-demo about 9. Each moves into content/en without changing the English page: the
-prerendered HTML of every English route is byte-identical before and after, which is the
-check. Aria labels and alt text move too; code samples and product identifiers stay in
-the components.
-
 ### CXV.13 hreflang, canonicals and sitemap per locale (T1379)
 
 Every prerendered page links rel=alternate hreflang en, pt-BR and x-default (the English

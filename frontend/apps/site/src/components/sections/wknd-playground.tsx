@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MessageSquare, Search } from "lucide-react";
 import { SearchDemo } from "@/components/sections/search-demo";
-import { ChatDemo, type ChatScriptEntry } from "@/components/sections/chat-demo";
+import { ChatDemo } from "@/components/sections/chat-demo";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { WKND_DEMO_SITE } from "@/content/en/pages";
 import { usePages } from "@/content/use-pages";
@@ -15,52 +15,6 @@ import { cn } from "@/lib/utils";
  * publish site (wknd.site). Until the demo instance hosts `wknd-publish` it
  * degrades to the bundled WKND sample corpus (never looks broken).
  */
-
-const SEARCH_PLACEHOLDER = "Search WKND…  (try “surf”, “ski”, “Bali”, “Yosemite”)";
-
-const CHAT_GREETING =
-  "Hi! Ask about WKND adventures, travel and magazine stories. Answers are grounded in the WKND content Viglet Turing indexed from AEM.";
-
-const CHAT_SUGGESTIONS = [
-  "Where can I go surfing?",
-  "Recommend a ski adventure",
-  "What is WKND about?",
-];
-
-// Offline scripted answers (keyword-matched), only used when the live
-// `wknd-publish` site isn't reachable, so the widget still demonstrates the flow.
-const CHAT_SCRIPT: ChatScriptEntry[] = [
-  {
-    match: /surf|bali|wave|beach|costa rica/i,
-    answer:
-      "Try the **Bali Surf Camp**: Nusa Dua's right-handers are famous for big-wave surfing (best for advanced surfers). For cold-water swells, **Arctic Surfing** chases waves inside the Arctic Circle.",
-    sources: ["Bali Surf Camp", "Arctic Surfing"],
-  },
-  {
-    match: /ski|snow|mountain|winter|slope|touring/i,
-    answer:
-      "**Ski Touring Mont Blanc** is backcountry touring across the Chamonix valley, beneath Western Europe's highest peak.",
-    sources: ["Ski Touring Mont Blanc"],
-  },
-  {
-    match: /wine|napa|food|beer|portland/i,
-    answer:
-      "For food & drink, **Napa Wine Tasting** runs cellar-door tastings through California wine country, and **Beervana in Portland** tours Oregon's craft-beer scene.",
-    sources: ["Napa Wine Tasting", "Beervana in Portland"],
-  },
-  {
-    match: /wknd|about|who|brand|company/i,
-    answer:
-      "WKND is a collective of outdoors, music, crafts, adventure-sports and travel enthusiasts who share their experiences.",
-    sources: ["About WKND"],
-  },
-];
-
-const CHAT_FALLBACK = {
-  answer:
-    "WKND covers surf, ski, cycling, camping and travel adventures worldwide. Ask about a destination or activity (surfing, skiing, wine country) or what WKND is.",
-  sources: ["WKND Adventures & Travel"],
-};
 
 type Tab = "search" | "ask";
 
@@ -93,7 +47,7 @@ function TabButton({
 }
 
 export function WkndPlayground() {
-  const { WKND_SEARCH_DOCS } = usePages();
+  const { WKND_SEARCH_DOCS, WKND_PLAYGROUND: t } = usePages();
   const { live } = useTuringDemo(WKND_DEMO_SITE);
   const [tab, setTab] = useState<Tab>("search");
   const [seed, setSeed] = useState<
@@ -101,7 +55,7 @@ export function WkndPlayground() {
   >();
 
   const askAbout = (title: string, id?: string) => {
-    setSeed((s) => ({ text: `Tell me about: ${title}`, id, nonce: s ? s.nonce + 1 : 1 }));
+    setSeed((s) => ({ text: `${t.askAbout} ${title}`, id, nonce: s ? s.nonce + 1 : 1 }));
     setTab("ask");
   };
 
@@ -115,14 +69,14 @@ export function WkndPlayground() {
             onClick={() => setTab("search")}
             icon={<Search className="size-3.5" />}
           >
-            Search WKND
+            {t.searchTab}
           </TabButton>
           <TabButton
             active={tab === "ask"}
             onClick={() => setTab("ask")}
             icon={<MessageSquare className="size-3.5" />}
           >
-            Ask WKND
+            {t.askTab}
           </TabButton>
         </div>
 
@@ -135,7 +89,7 @@ export function WkndPlayground() {
                 : "bg-muted-foreground/40"
             )}
           />
-          WKND on AEM · {live ? "live" : "sample"}
+          {`${t.corpus} · `}{live ? t.live : t.sample}
         </span>
       </div>
 
@@ -146,7 +100,7 @@ export function WkndPlayground() {
             bare
             siteOverride={WKND_DEMO_SITE}
             sampleDocs={WKND_SEARCH_DOCS}
-            placeholder={SEARCH_PLACEHOLDER}
+            placeholder={t.searchPlaceholder}
             onAskAbout={askAbout}
           />
         </div>
@@ -155,10 +109,10 @@ export function WkndPlayground() {
             bare
             seed={seed}
             siteOverride={WKND_DEMO_SITE}
-            greeting={CHAT_GREETING}
-            suggestions={CHAT_SUGGESTIONS}
-            script={CHAT_SCRIPT}
-            fallback={CHAT_FALLBACK}
+            greeting={t.greeting}
+            suggestions={t.suggestions}
+            script={t.script}
+            fallback={t.fallback}
             showPersonas={false}
           />
         </div>
@@ -166,7 +120,7 @@ export function WkndPlayground() {
 
       {/* provenance note: the inner demo already shows "Built with …" */}
       <div className="border-t border-border px-4 py-2.5 text-xs text-muted-foreground">
-        Adobe WKND content · indexed from AEM via the Viglet Dumont connector
+        {t.provenance}
       </div>
     </div>
   );

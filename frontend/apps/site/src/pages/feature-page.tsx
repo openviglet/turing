@@ -32,7 +32,7 @@ function FeatureJsonLd({ detail }: Readonly<{ detail: FeatureDetail }>) {
 }
 
 export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
-  const { FEATURE_DETAILS } = usePages();
+  const { FEATURE_DETAILS, FEATURE_PAGE: t } = usePages();
   const others = FEATURE_SLUGS.filter((s) => s !== detail.slug).map(
     (s) => FEATURE_DETAILS[s]
   );
@@ -100,7 +100,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
         <section id="faq" className="scroll-mt-24 border-t border-border bg-muted/40 py-16 lg:py-20">
           <Container className="max-w-3xl">
             <h2 className="mb-8 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Questions teams ask
+              {t.faqTitle}
             </h2>
             <dl className="divide-y divide-border">
               {detail.faq.map((item) => (
@@ -115,7 +115,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
             <a href={detail.related.href} className="group mt-8 block">
               <Card className="gap-0 border-primary/20 bg-primary/5 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-primary/50">
                 <span className="text-xs font-extrabold tracking-[0.1em] text-muted-foreground uppercase">
-                  Go deeper
+                  {t.goDeeper}
                 </span>
                 <span className="mt-2 inline-flex items-center gap-1 text-base font-bold">
                   {detail.related.label}
@@ -131,7 +131,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
         <section className="border-t border-border py-16">
           <Container>
             <h2 className="mb-8 text-center text-2xl font-extrabold tracking-tight">
-              Explore the rest of the platform
+              {t.exploreTitle}
             </h2>
             <div className="grid gap-5 sm:grid-cols-3">
               {others.map((o) => (
@@ -142,7 +142,7 @@ export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
                     </span>
                     <h3 className="mt-2 text-base font-bold">{o.title}</h3>
                     <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                      Learn more
+                      {t.learnMore}
                       <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                     </span>
                   </Card>

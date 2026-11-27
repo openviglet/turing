@@ -21,14 +21,14 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 }
 
 export function Comparison() {
-  const { COMPARISON, COMPARISON_COLUMNS } = usePages();
+  const { COMPARISON, COMPARISON_COLUMNS, COMPARISON_SECTION: t } = usePages();
   return (
     <section id="why" className="bg-muted/40 py-20">
       <Container>
         <SectionHeader
-          eyebrow="Why Viglet Turing"
-          title="The open-source way to do AI search"
-          description="A hosted SaaS locks your data in someone else's cloud. A DIY stack is months of glue code. Viglet Turing gives you both halves, self-hosted."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         <TableScroll fadeClassName="from-muted">
           <table className="w-full min-w-[640px] border-collapse text-sm">
@@ -73,21 +73,21 @@ export function Comparison() {
           </table>
         </TableScroll>
         <p className="mt-4 text-center text-xs text-muted-foreground">
-          High-level comparison as of 2026; verify current vendor capabilities. “DIY” = assembling LangChain/LlamaIndex with a vector database yourself.
+          {t.note}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-center">
           <a
             href={withBase("/compare/")}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
-            See the full comparison &amp; FAQ
+            {t.compareCta}
             <ArrowRight className="size-4" />
           </a>
           <a
             href={withBase("/migrate/")}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
-            Switching from Algolia or Elasticsearch?
+            {t.migrateCta}
             <ArrowRight className="size-4" />
           </a>
         </div>

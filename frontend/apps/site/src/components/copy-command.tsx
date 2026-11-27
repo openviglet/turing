@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePages } from "@/content/use-pages";
 
 /** A copy-paste command line with a copy button. */
 export function CopyCommand({
@@ -10,6 +11,7 @@ export function CopyCommand({
   command: string;
   className?: string;
 }) {
+  const { COPY_COMMAND: t } = usePages();
   const [copied, setCopied] = useState(false);
 
   const onCopy = () => {
@@ -41,7 +43,7 @@ export function CopyCommand({
       <button
         type="button"
         onClick={onCopy}
-        aria-label="Copy command"
+        aria-label={t.copy}
         className="ml-1 shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
       >
         {copied ? (

@@ -12,58 +12,49 @@ import { withBase } from "@/lib/site-url";
  * detail. Each card keeps its old anchor id, so a link to /#how, /#developers,
  * /#native-tools, /#cli or /#marketplace still lands on its subject.
  */
-function cards(marketplace: PagesContent["MARKETPLACE"]): {
+function cards(
+  t: PagesContent["DEPTH_LINKS"],
+  marketplace: PagesContent["MARKETPLACE"]
+): {
   id: string;
   title: string;
   body: string;
   links: { label: string; href: string }[];
 }[] {
   return [
-  {
-    id: "how",
-    title: "How it answers a question",
-    body: "Retrieve from your sites, rerank, answer with inline citations, and refuse when the sources do not support an answer.",
-    links: [{ label: "RAG, step by step", href: `${LINKS.docs}rag/` }],
-  },
-  {
-    id: "developers",
-    title: "Build it into your front end",
-    body: "The playground above runs on @viglet/turing-sdk, the zero-dependency JavaScript SDK. React hooks and components are in @viglet/turing-react-sdk.",
-    links: [
-      { label: "JavaScript SDK", href: `${LINKS.docs}javascript-sdk/` },
-      { label: "React SDK", href: LINKS.storybook },
-    ],
-  },
-  {
-    id: "native-tools",
-    title: "Agents, tools, skills and MCP",
-    body: "Agents call your tools, run skills in a sandbox, use the tools your model provider ships, and speak the Model Context Protocol.",
-    links: [{ label: "Automate it", href: withBase("/features/automate/") }],
-  },
-  {
-    id: "cli",
-    title: "Ship agents from your terminal",
-    body: "The turing CLI scaffolds a project, runs a local stack, deploys agents, flows and tools, and runs eval suites in CI.",
-    links: [{ label: "CLI reference", href: `${LINKS.docs}cli/` }],
-  },
-  {
-    id: "marketplace",
-    title: "Start from a working example",
-    body: "Three example search sites, each with its own data and front end.",
-    links: marketplace.map((m) => ({ label: m.title, href: m.href })),
-  },
+    { id: "how", ...t.cards.how, links: [{ label: t.cards.how.links[0], href: `${LINKS.docs}rag/` }] },
+    {
+      id: "developers",
+      ...t.cards.developers,
+      links: [
+        { label: t.cards.developers.links[0], href: `${LINKS.docs}javascript-sdk/` },
+        { label: t.cards.developers.links[1], href: LINKS.storybook },
+      ],
+    },
+    {
+      id: "native-tools",
+      ...t.cards.nativeTools,
+      links: [{ label: t.cards.nativeTools.links[0], href: withBase("/features/automate/") }],
+    },
+    { id: "cli", ...t.cards.cli, links: [{ label: t.cards.cli.links[0], href: `${LINKS.docs}cli/` }] },
+    {
+      id: "marketplace",
+      ...t.cards.marketplace,
+      links: marketplace.map((m) => ({ label: m.title, href: m.href })),
+    },
   ];
 }
 
 export function DepthLinks() {
-  const CARDS = cards(usePages().MARKETPLACE);
+  const { DEPTH_LINKS: t, MARKETPLACE } = usePages();
+  const CARDS = cards(t, MARKETPLACE);
   return (
     <section className="border-t border-border py-16 lg:py-20">
       <Container>
         <SectionHeader
-          eyebrow="Go deeper"
-          title="The detail lives on its own page"
-          description="Each of these has a page of its own. Pick the one that answers your next question."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CARDS.map((card) => (

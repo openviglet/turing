@@ -18,14 +18,14 @@ const PROVIDER_COLOR: Record<string, string> = {
  * omitted (on that page itself) renders the grid without the CTA.
  */
 export function NativeTools({ teaser = false }: Readonly<{ teaser?: boolean }>) {
-  const { NATIVE_TOOLS } = usePages();
+  const { NATIVE_TOOLS, NATIVE_TOOLS_SECTION: t } = usePages();
   return (
     <section id="native-tools" className="bg-muted/40 py-20">
       <Container>
         <SectionHeader
-          eyebrow="Native provider tools"
-          title="Turn on the tools your model already has"
-          description="OpenAI, Anthropic and Gemini ship tools that run in their own infrastructure. Viglet Turing wires them into the agent loop (opt-in per agent, no glue code, no extra crawler) and routes their citations into the same source-chip UI as your own search."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {NATIVE_TOOLS.map((tool) => (
@@ -55,14 +55,13 @@ export function NativeTools({ teaser = false }: Readonly<{ teaser?: boolean }>) 
           ))}
         </div>
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Strictly opt-in via a two-level capability gate, so your existing
-          agents stay unchanged. Provider availability as of 2026.3.
+          {t.note}
         </p>
         {teaser && (
           <div className="mt-8 flex justify-center">
             <Button asChild size="lg" variant="outline">
               <a href={withBase("/features/automate/")}>
-                See how agents use these <ArrowRight className="size-4" />
+                {`${t.agentsCta} `}<ArrowRight className="size-4" />
               </a>
             </Button>
           </div>

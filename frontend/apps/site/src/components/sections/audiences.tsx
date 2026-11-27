@@ -10,14 +10,14 @@ import { usePages } from "@/content/use-pages";
  * path instead of leaving them to guess which parts are for them.
  */
 export function Audiences() {
-  const { AUDIENCES } = usePages();
+  const { AUDIENCES, AUDIENCES_SECTION: t } = usePages();
   return (
     <section className="border-t border-border bg-muted/40 py-20">
       <Container>
         <SectionHeader
-          eyebrow="Who it's for"
-          title="One platform, two ways in"
-          description="Adopt it bottom-up as a developer, or bring it in as a governed enterprise search layer. The open-source core is the same."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         <div className="grid gap-6 lg:grid-cols-2">
           {AUDIENCES.map((a) => (

@@ -709,19 +709,20 @@ function SampleSearchDemo({
       </div>
 
       <div className="flex flex-wrap gap-1.5 border-b border-border px-4 py-2.5">
-        {types.map((t) => (
+        {types.map((kind) => (
           <button
-            key={t}
+            key={kind}
             type="button"
-            onClick={() => setType(t)}
+            onClick={() => setType(kind)}
             className={cn(
               "rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors",
-              t === type
+              kind === type
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground hover:text-foreground"
             )}
           >
-            {t}
+            {/* "All" is the filter's own key; its label is the page's language (T1378). */}
+            {kind === "All" ? t.all : kind}
           </button>
         ))}
       </div>

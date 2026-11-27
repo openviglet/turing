@@ -1614,7 +1614,7 @@
 - **T1376** — The site reads pt-BR from a /br/ path on server and client, gives it to the chrome through LocaleProvider, links via localeHref, and prerenders a /br/ twin for each route in BR_ROUTES (design §CXV.10 superseded: it had every route prerendered under /br/; a twin is listed only once its page is translated, so /br/ never serves English).
 - **T1377** — Every page reads its copy through usePages() in the page's language, and the claim and naming tests now walk every locale's pieces; they had skipped the module's 879 strings (design §CXV.11 recorded in `frontend/apps/site/src/content/pages.ts`).
 - **T1377b** — The page copy moved to content/en/pages.ts (educacao's to content/pt-BR/); a locale adds pieces typed as the English ones, and the home sections read them through usePages().
-- **T1378 (security, compare, migrate)** — The security, compare and migrate pages' inline sentences moved into content/en pieces read through usePages(); every English page's prerendered HTML is byte-identical.
+- **T1378** — The remaining sections, the content-fit and WKND demos with their offline scripts, the feature page and the copy button read their words from content/en pieces; every English page is byte-identical.
 - **T1378b** — The aem, persona and wordpress pages' sentences, CTAs and aria labels moved into content/en pieces read through usePages(); every English page's prerendered HTML is byte-identical.
 - **T1378c** — The hero, self-host and playground sections and the search and chat demos, offline script included, read their words from content/en pieces; every English page is byte-identical.
 

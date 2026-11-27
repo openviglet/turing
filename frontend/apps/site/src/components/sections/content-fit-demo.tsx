@@ -5,30 +5,23 @@ import { TuringContentFit, TuringPersonaPicker } from "@viglet/turing-react-ui";
 import { OFFLINE_SAMPLE_PERSONAS, usePlaygroundPersonas } from "@/lib/playground-personas";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
+import { usePages } from "@/content/use-pages";
+import type { PagesContent } from "@/content/pages";
 
 // T638: "validate this content as persona X". Dogfoods the SDK's
 // fetchPersonaContentFit + the headless TuringContentFit component against the
 // live demo. Offline it shows a scripted verdict so the tab never looks broken.
 
-const SAMPLE_CONTENT =
-  "Our platform leverages best-in-class synergies to operationalize a paradigm-shifting, " +
-  "cloud-native fabric that unlocks turnkey, mission-critical value at scale.";
-
 // Scripted offline verdict (keeps the tab alive without a backend).
-function scriptedFit(personaId: string): TurContentFit {
+function scriptedFit(personaId: string, sample: PagesContent["CONTENT_FIT_DEMO"]["sample"]): TurContentFit {
   const persona = OFFLINE_SAMPLE_PERSONAS.find((p) => p.id === personaId) ?? OFFLINE_SAMPLE_PERSONAS[0];
   return {
     personaId: persona.id,
     personaName: persona.name,
     fitScore: 34,
-    summary:
-      "Dense with buzzwords and abstract claims; this reader wants concrete, verifiable specifics.",
-    fits: ["Signals ambition and scale"],
-    misfits: [
-      { span: "leverages best-in-class synergies", reason: "jargon", suggestion: "works well together" },
-      { span: "paradigm-shifting", reason: "jargon", suggestion: "a genuinely new approach" },
-      { span: "turnkey, mission-critical value", reason: "too-complex", suggestion: "ready-to-use, important results" },
-    ],
+    summary: sample.summary,
+    fits: [...sample.fits],
+    misfits: sample.misfits.map((m) => ({ ...m })),
     llmUsed: false,
   };
 }
@@ -39,10 +32,11 @@ export interface ContentFitDemoProps {
 }
 
 export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) {
+  const { CONTENT_FIT_DEMO: t } = usePages();
   const { client, site, live } = useTuringDemo();
   const personas = usePlaygroundPersonas(client, site);
   const [chosenId, setChosenId] = useState<string | null>(null);
-  const [content, setContent] = useState(SAMPLE_CONTENT);
+  const [content, setContent] = useState(t.sample.content);
   const [result, setResult] = useState<TurContentFit | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +47,7 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
     return (
       <div className={cn("flex items-center justify-center bg-card p-6 text-sm text-muted-foreground",
         bare ? "h-full" : "min-h-40 rounded-2xl border border-border")}>
-        This demo site offers no personas to validate as.
+        {t.noPersonas}
       </div>
     );
   }
@@ -69,10 +63,10 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
       } else {
         // Offline: brief pause then a scripted verdict.
         await new Promise((r) => setTimeout(r, 400));
-        setResult(scriptedFit(personaId));
+        setResult(scriptedFit(personaId, t.sample));
       }
     } catch {
-      setError("Couldn't validate this content right now. Try again.");
+      setError(t.failed);
     } finally {
       setBusy(false);
     }
@@ -92,7 +86,7 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
         options={personas ?? []}
         value={personaId}
         onChange={(id) => setChosenId(id)}
-        labels={{ heading: "Validate as" }}
+        labels={{ heading: t.validateAs }}
         classNames={{
           container: "flex flex-wrap items-center gap-1.5 border-b border-border px-4 py-2",
           label: "text-[0.65rem] font-bold uppercase tracking-wide text-muted-foreground/70",
@@ -112,16 +106,16 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
         )}
       >
         <label className="text-[0.65rem] font-bold uppercase tracking-wide text-muted-foreground/70">
-          Content to validate
+          {t.contentLabel}
         </label>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={3}
           maxLength={12000}
-          placeholder="Paste a paragraph and see if it lands for this reader…"
+          placeholder={t.placeholder}
           className="w-full shrink-0 resize-none rounded-lg border border-border bg-background/60 px-3 py-2 text-sm outline-none focus:border-primary/50"
-          aria-label="Content to validate"
+          aria-label={t.contentLabel}
         />
         <div>
           <button
@@ -131,7 +125,7 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
             className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
           >
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}
-            Validate content
+            {t.validate}
           </button>
         </div>
 
@@ -141,9 +135,9 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
           <TuringContentFit
             result={result}
             labels={{
-              fitsHeading: "What lands",
-              misfitsHeading: "What doesn't",
-              fallbackNote: "Readability-only score (live AI verdict unavailable).",
+              fitsHeading: t.fitsHeading,
+              misfitsHeading: t.misfitsHeading,
+              fallbackNote: t.fallbackNote,
             }}
             icons={{ fit: <CheckCircle2 className="mr-1 inline size-3.5 text-emerald-500" /> }}
             classNames={{
@@ -172,9 +166,7 @@ export function ContentFitDemo({ bare = false }: Readonly<ContentFitDemoProps>) 
 
         {!result && !busy && (
           <p className="text-xs text-muted-foreground">
-            {live
-              ? "See the same content through a persona's eyes: a fit score, what lands, and the exact phrases that miss."
-              : "Sample verdict shown offline. Connect the live demo for a real AI content-fit check."}
+            {live ? t.liveHint : t.offlineHint}
           </p>
         )}
       </div>

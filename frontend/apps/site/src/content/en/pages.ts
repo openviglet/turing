@@ -76,6 +76,7 @@ export const PLAYGROUND = {
 
 /** T1378: the words of the search demo on the home, the solution pages and the playground. */
 export const SEARCH_DEMO = {
+  all: "All",
   clearFilters: "Clear filters",
   relatedByAi: "Related by AI",
   relatedFailed: "Couldn’t load related documents.",
@@ -141,6 +142,165 @@ export const CHAT_DEMO = {
   placeholder: "Ask about Viglet Turing…",
   inputLabel: "Ask the assistant",
   send: "Send",
+};
+
+/** T1378: the words of the home's four-jobs section. */
+export const PILLARS_SECTION = {
+  learnMore: "Learn more",
+  eyebrow: "One platform, four jobs",
+  title: "Search it. Ask it. Automate it. Run it.",
+  description: "Most teams stitch a search engine, a RAG pipeline and an agent framework together. Viglet Turing is all three, open source and self-hosted.",
+};
+
+/** T1378: the words of the native provider tools section. */
+export const NATIVE_TOOLS_SECTION = {
+  note: "Strictly opt-in via a two-level capability gate, so your existing agents stay unchanged. Provider availability as of 2026.3.",
+  eyebrow: "Native provider tools",
+  title: "Turn on the tools your model already has",
+  description: "OpenAI, Anthropic and Gemini ship tools that run in their own infrastructure. Viglet Turing wires them into the agent loop (opt-in per agent, no glue code, no extra crawler) and routes their citations into the same source-chip UI as your own search.",
+  agentsCta: "See how agents use these",
+};
+
+/** T1378: the words of the home's comparison section. */
+export const COMPARISON_SECTION = {
+  note: "High-level comparison as of 2026; verify current vendor capabilities. “DIY” = assembling LangChain/LlamaIndex with a vector database yourself.",
+  migrateCta: "Switching from Algolia or Elasticsearch?",
+  compareCta: "See the full comparison & FAQ",
+  eyebrow: "Why Viglet Turing",
+  title: "The open-source way to do AI search",
+  description: "A hosted SaaS locks your data in someone else's cloud. A DIY stack is months of glue code. Viglet Turing gives you both halves, self-hosted.",
+};
+
+/** T1378: the words of the home's audiences section. */
+export const AUDIENCES_SECTION = {
+  eyebrow: "Who it's for",
+  title: "One platform, two ways in",
+  description: "Adopt it bottom-up as a developer, or bring it in as a governed enterprise search layer. The open-source core is the same.",
+};
+
+/** T1378: the words every feature page shares around its own copy. */
+export const FEATURE_PAGE = {
+  faqTitle: "Questions teams ask",
+  goDeeper: "Go deeper",
+  exploreTitle: "Explore the rest of the platform",
+  learnMore: "Learn more",
+};
+
+/** T1378: the copy button's label. */
+export const COPY_COMMAND = {
+  copy: "Copy command",
+};
+
+/** T1378: the words of the AEM page's WKND playground, its offline script included. */
+export const WKND_PLAYGROUND = {
+  searchPlaceholder: "Search WKND…  (try “surf”, “ski”, “Bali”, “Yosemite”)",
+  greeting: "Hi! Ask about WKND adventures, travel and magazine stories. Answers are grounded in the WKND content Viglet Turing indexed from AEM.",
+  suggestions: [
+    "Where can I go surfing?",
+    "Recommend a ski adventure",
+    "What is WKND about?",
+  ],
+  // Offline scripted answers (keyword-matched), only used when the live
+  // `wknd-publish` site isn't reachable, so the widget still demonstrates the flow.
+  script: [
+    {
+      match: /surf|bali|wave|beach|costa rica/i,
+      answer:
+        "Try the **Bali Surf Camp**: Nusa Dua's right-handers are famous for big-wave surfing (best for advanced surfers). For cold-water swells, **Arctic Surfing** chases waves inside the Arctic Circle.",
+      sources: ["Bali Surf Camp", "Arctic Surfing"],
+    },
+    {
+      match: /ski|snow|mountain|winter|slope|touring/i,
+      answer:
+        "**Ski Touring Mont Blanc** is backcountry touring across the Chamonix valley, beneath Western Europe's highest peak.",
+      sources: ["Ski Touring Mont Blanc"],
+    },
+    {
+      match: /wine|napa|food|beer|portland/i,
+      answer:
+        "For food & drink, **Napa Wine Tasting** runs cellar-door tastings through California wine country, and **Beervana in Portland** tours Oregon's craft-beer scene.",
+      sources: ["Napa Wine Tasting", "Beervana in Portland"],
+    },
+    {
+      match: /wknd|about|who|brand|company/i,
+      answer:
+        "WKND is a collective of outdoors, music, crafts, adventure-sports and travel enthusiasts who share their experiences.",
+      sources: ["About WKND"],
+    },
+  ] as ChatScriptEntry[],
+  fallback: {
+    answer:
+      "WKND covers surf, ski, cycling, camping and travel adventures worldwide. Ask about a destination or activity (surfing, skiing, wine country) or what WKND is.",
+    sources: ["WKND Adventures & Travel"],
+  },
+  askAbout: "Tell me about:",
+  searchTab: "Search WKND",
+  askTab: "Ask WKND",
+  provenance: "Adobe WKND content · indexed from AEM via the Viglet Dumont connector",
+  corpus: "WKND on AEM",
+  live: "live",
+  sample: "sample",
+};
+
+/** T1378: the words of the content-fit demo, its offline sample verdict included. */
+export const CONTENT_FIT_DEMO = {
+  // Scripted offline verdict (keeps the tab alive without a backend), for its sample text.
+  sample: {
+    content:
+      "Our platform leverages best-in-class synergies to operationalize a paradigm-shifting, " +
+      "cloud-native fabric that unlocks turnkey, mission-critical value at scale.",
+    summary: "Dense with buzzwords and abstract claims; this reader wants concrete, verifiable specifics.",
+    fits: ["Signals ambition and scale"],
+    misfits: [
+      { span: "leverages best-in-class synergies", reason: "jargon", suggestion: "works well together" },
+      { span: "paradigm-shifting", reason: "jargon", suggestion: "a genuinely new approach" },
+      { span: "turnkey, mission-critical value", reason: "too-complex", suggestion: "ready-to-use, important results" },
+    ],
+  },
+  noPersonas: "This demo site offers no personas to validate as.",
+  failed: "Couldn't validate this content right now. Try again.",
+  validateAs: "Validate as",
+  contentLabel: "Content to validate",
+  placeholder: "Paste a paragraph and see if it lands for this reader…",
+  validate: "Validate content",
+  fitsHeading: "What lands",
+  misfitsHeading: "What doesn't",
+  fallbackNote: "Readability-only score (live AI verdict unavailable).",
+  liveHint: "See the same content through a persona's eyes: a fit score, what lands, and the exact phrases that miss.",
+  offlineHint: "Sample verdict shown offline. Connect the live demo for a real AI content-fit check.",
+};
+
+/** T1378: the words of the home's "go deeper" cards; their links stay in the component. */
+export const DEPTH_LINKS = {
+  eyebrow: "Go deeper",
+  title: "The detail lives on its own page",
+  description: "Each of these has a page of its own. Pick the one that answers your next question.",
+  cards: {
+    how: {
+      title: "How it answers a question",
+      body: "Retrieve from your sites, rerank, answer with inline citations, and refuse when the sources do not support an answer.",
+      links: ["RAG, step by step"],
+    },
+    developers: {
+      title: "Build it into your front end",
+      body: "The playground above runs on @viglet/turing-sdk, the zero-dependency JavaScript SDK. React hooks and components are in @viglet/turing-react-sdk.",
+      links: ["JavaScript SDK", "React SDK"],
+    },
+    nativeTools: {
+      title: "Agents, tools, skills and MCP",
+      body: "Agents call your tools, run skills in a sandbox, use the tools your model provider ships, and speak the Model Context Protocol.",
+      links: ["Automate it"],
+    },
+    cli: {
+      title: "Ship agents from your terminal",
+      body: "The turing CLI scaffolds a project, runs a local stack, deploys agents, flows and tools, and runs eval suites in CI.",
+      links: ["CLI reference"],
+    },
+    marketplace: {
+      title: "Start from a working example",
+      body: "Three example search sites, each with its own data and front end.",
+    },
+  },
 };
 
 export interface Pillar {

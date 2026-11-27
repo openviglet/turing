@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
 export function Pillars() {
-  const { PILLARS } = usePages();
+  const { PILLARS, PILLARS_SECTION: t } = usePages();
   return (
     <section id="features" className="py-20">
       <Container>
         <SectionHeader
-          eyebrow="One platform, four jobs"
-          title="Search it. Ask it. Automate it. Run it."
-          description="Most teams stitch a search engine, a RAG pipeline and an agent framework together. Viglet Turing is all three, open source and self-hosted."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         <div className="grid gap-5 md:grid-cols-2">
           {PILLARS.map((p) => {
@@ -54,7 +54,7 @@ export function Pillars() {
                   href={withBase(`/features/${p.slug}/`)}
                   className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
                 >
-                  Learn more
+                  {t.learnMore}
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </a>
               </Card>

@@ -8,11 +8,10 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-- 🛠 **T1378** (deps: T1377 ✅) **About 200 English sentences are written directly in the page and section components, out of reach of any dictionary** — Section headers, depth-links cards, the content-fit demo, the WKND playground and the feature page still hold sentences inline. → §CXV.12
 - 📋 **T1379** (deps: T1376 ✅) **Nothing tells search engines that an English page and its /br/ twin are one page in two languages** — Without reciprocal hreflang, Google may treat them as duplicates or show English to Brazilian searches. → §CXV.13
 - 📋 **T1380** (deps: T1376 ✅) **A visitor reading one language has no way to switch to the other on the same page** — A visitor on the wrong language needs one click to the same page in the other. → §CXV.14
 - 📋 **T1381** (deps: T1377 ✅, T1379, T1380) **/br/ has no Portuguese home or feature pages, so a Brazilian visitor meets the site in English** — The home and feature pages are where most visitors arrive and decide. → §CXV.15
-- 📋 **T1382** (deps: T1378 🛠, T1381) **The solution pages exist only in English, so a /br/ visitor following the menu falls back to it** — They are where a buyer judges fit, and each needs its Portuguese twin. → §CXV.16
+- 📋 **T1382** (deps: T1378 ✅, T1381) **The solution pages exist only in English, so a /br/ visitor following the menu falls back to it** — They are where a buyer judges fit, and each needs its Portuguese twin. → §CXV.16
 - 📋 **T1383** (deps: T1376 ✅, T1379) **The education page lives at /educacao/, outside the /br/ tree every other Portuguese page will share** — One Portuguese tree keeps switcher and hreflang rules uniform; published links must keep working. → §CXV.17
 - 📋 **T1384** (deps: T1381) **Link previews of a /br/ page show the English share image and title card** — A Portuguese page shared on WhatsApp or LinkedIn should preview in Portuguese. → §CXV.18
 - 📋 **T1385** (deps: T1381) **The /br/ playground suggests English queries and its search box speaks English** — The corpus stays the English docs, but the invitation and the UI should be Portuguese. → §CXV.19
@@ -62,14 +61,6 @@
 - **AI mode shows the filters a question names as chips** The filters Turing reads from
   a question (T1359/T1360) show as chips over the thread, and removing one asks again
   without it.
-
-## Done when — T1378
-
-- **No page or section component holds an English sentence inline** pillars,
-  native-tools, comparison, audiences, depth-links, content-fit-demo, wknd-playground,
-  feature-page and copy-command read their sentences and labels from content/en pieces,
-  the sample search's "All" chip included, and every English route is byte-identical,
-  asset hashes aside.
 
 ## Non-goals (do NOT add as tasks)
 
