@@ -825,7 +825,7 @@ Spring cron expressions, with seconds first.
 
 #### Background event delivery
 
-Work that one part of Turing hands to another after a save, such as indexing an uploaded asset into RAG, is recorded in the database with the save and marked done when it finishes. If the server stops first, or the work fails, one node of the cluster delivers it again.
+Work that one part of Viglet Turing hands to another after a save, such as indexing an uploaded asset into RAG, is recorded in the database with the save and marked done when it finishes. If the server stops first, or the work fails, one node of the cluster delivers it again.
 
 | Property | Default | What it controls |
 |---|---|---|
