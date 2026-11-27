@@ -79,6 +79,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"aiMode": {
+			"type": "boolean",
+			"default": false
+		},
 		"showTrending": {
 			"type": "boolean",
 			"default": false

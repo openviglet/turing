@@ -95,6 +95,17 @@ $viglet_turing_state = array(
 	// A spent AI budget, with its reset when the site knows it (D336).
 	'pausedLabel'     => Viglet_Turing_AI_Quota::visitor_line(),
 	'pausedUntil'     => Viglet_Turing_AI_Quota::visitor_until(),
+	// AI mode (T1375): the page as a conversation over the query, once Turing says chat is on.
+	'aiEnabled'       => ! empty( $attributes['aiMode'] ),
+	'aiAvailable'     => false,
+	'aiActive'        => false,
+	'aiStreaming'     => false,
+	'aiTurns'         => array(),
+	'aiFollowups'     => array(),
+	'aiQuestion'      => '',
+	'aiStatus'        => '',
+	'aiThinking'      => __( 'Reading this site’s content…', 'viglet-turing-search' ),
+	'aiFailed'        => __( 'The assistant could not answer right now. Try again in a moment.', 'viglet-turing-search' ),
 	// The filters a sentence names (D170), and the names of the core fields they may filter.
 	'suggestEnabled'  => ! empty( $attributes['suggestFilters'] ),
 	'suggested'       => array(),
@@ -206,6 +217,7 @@ $viglet_turing_classes = implode(
 		data-wp-context="<?php echo esc_attr( (string) wp_json_encode( array( 'elsewhere' => $viglet_turing_elsewhere ) ) ); ?>"
 	<?php endif; ?>
 	data-wp-init="callbacks.init"
+	data-wp-class--is-ai-mode="state.aiActive"
 >
 	<?php if ( $viglet_turing_parts ) : ?>
 		<?php
@@ -216,7 +228,7 @@ $viglet_turing_classes = implode(
 	<?php else : ?>
 		<?php
 		// The default order, with the filters and the results side by side.
-		Viglet_Turing_Search_Block::render( array( 'box', 'correction', 'trending', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
+		Viglet_Turing_Search_Block::render( array( 'box', 'aimode', 'correction', 'trending', 'toolbar', 'applied', 'suggested', 'toggle', 'answer' ), $attributes );
 		?>
 		<div class="viglet-turing-search__layout">
 			<?php Viglet_Turing_Search_Block::render( array( 'facets', 'main' ), $attributes ); ?>

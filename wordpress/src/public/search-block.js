@@ -11,6 +11,7 @@ import {
 	compare,
 	config,
 	createAnswerController,
+	createChatController,
 	createClient,
 	createSiteAutoComplete,
 	createSiteSearch,
@@ -31,6 +32,7 @@ import {
 	scopeKeys,
 	siblingSites,
 	siteField,
+	siteFilters,
 	siteLabel,
 	siteImage,
 	siteSelection,
@@ -74,6 +76,11 @@ const readings = new Map();
 // Whether the box asks its suggestions inside its scope (D318); off, for this page, once the
 // Turing answering is older than T1226.
 let scopedSuggestions = true;
+// AI mode (T1375): the conversation over the query, kept in this tab under its token, and the
+// question it starts from once Turing says chat is on.
+let aiChat = null;
+let aiToken = '';
+let aiPending = '';
 
 /**
  * Every filter this block's searches stay inside: the site's scope (scopeFilters, or the
@@ -648,6 +655,37 @@ const { state, actions } = store( 'viglet-turing/search', {
 				} )
 			);
 		},
+		// AI mode (T1375): the conversation over the query, in its own entry of the history.
+		showAi() {
+			if ( ! state.aiAvailable || state.aiActive ) {
+				return;
+			}
+			state.aiActive = true;
+			writeAiUrl( true );
+			if ( ! aiChat.getState().messages.length ) {
+				aiAsk( state.query );
+			}
+			focusAiQuestion();
+		},
+		showAll() {
+			if ( ! state.aiActive ) {
+				return;
+			}
+			state.aiActive = false;
+			writeAiUrl( true );
+		},
+		aiType( event ) {
+			state.aiQuestion = event.target.value;
+		},
+		aiAsk( event ) {
+			event.preventDefault();
+			if ( aiAsk( state.aiQuestion ) ) {
+				state.aiQuestion = '';
+			}
+		},
+		aiFollowup() {
+			aiAsk( getContext().followup );
+		},
 		// A left click, or a middle click opening it in a new tab.
 		resultClicked( event ) {
 			if ( 'auxclick' === event.type && 1 !== event.button ) {
@@ -673,6 +711,10 @@ const { state, actions } = store( 'viglet-turing/search', {
 		// The answer's Markdown as lists and emphasis (D247), from text nodes, never HTML.
 		renderAnswer() {
 			renderMarkdown( getElement().ref, state.answer );
+		},
+		// An AI mode answer's Markdown (T1375), the same way.
+		renderAiAnswer() {
+			renderMarkdown( getElement().ref, getContext().turn.answer );
 		},
 		// The snippet keeps Turing's highlight: built from text nodes and <mark>, never HTML.
 		snippet() {
@@ -775,6 +817,10 @@ const { state, actions } = store( 'viglet-turing/search', {
 				ask( state.query );
 			}
 			window.addEventListener( 'popstate', readUrl );
+			if ( state.aiEnabled ) {
+				readAiUrl();
+				window.addEventListener( 'popstate', readAiUrl );
+			}
 		},
 	},
 } );
@@ -1514,6 +1560,12 @@ function choose( query ) {
 		saveRecent( state.recent );
 	}
 	run( query );
+	// In AI mode a new search is a new conversation (T1375), with an address of its own.
+	if ( state.aiActive && query.trim() ) {
+		startAi( newAiToken() );
+		writeAiUrl( true );
+		aiAsk( query );
+	}
 }
 
 /**
@@ -2220,4 +2272,205 @@ function relaxSentence() {
 	state.closeMatches = true;
 	// Uncounted (D267): the log would read "waterproof OR hiking OR boots", a query nobody typed.
 	send( { q: anyOf, page: 1, populateMetrics: false } );
+}
+
+/**
+ * A fresh AI mode token (T1375): names one conversation in the address bar and in this tab's
+ * sessionStorage, so reload and Back find it again.
+ *
+ * @return {string} Eight random letters and digits.
+ */
+function newAiToken() {
+	const bytes = new Uint8Array( 6 );
+	window.crypto.getRandomValues( bytes );
+	return Array.from( bytes, ( b ) => b.toString( 36 ).padStart( 2, '0' ) )
+		.join( '' )
+		.slice( 0, 8 );
+}
+
+/**
+ * Start (or reopen) the AI mode conversation a token names (T1375): Turing's chat over this
+ * site's documents, kept in this tab under the token. Turing keeps no anonymous visitor's
+ * transcript, so a link opened in another tab starts again from its query.
+ *
+ * @param {string} token The conversation's token.
+ */
+function startAi( token ) {
+	aiChat?.destroy();
+	aiToken = token;
+	aiChat = createChatController(
+		createClient( { getCsrfToken: () => null } ),
+		{
+			site: config.site,
+			locale: config.locale,
+			// This site's documents only, where several sites share one SN site (D287).
+			filters: siteFilters,
+			persist: `aimode-${ token }`,
+		}
+	);
+	aiChat.subscribe( aiSync );
+	aiSync( aiChat.getState() );
+}
+
+/**
+ * Ask in AI mode (T1375); a question asked before Turing said whether chat is on waits for it.
+ *
+ * @param {string} question What the visitor asked.
+ * @return {boolean} Whether it was taken.
+ */
+function aiAsk( question ) {
+	const text = String( question || '' ).trim();
+	if ( ! text || ! aiChat || state.aiStreaming ) {
+		return false;
+	}
+	if ( true !== aiChat.getState().enabled ) {
+		aiPending = text;
+		return true;
+	}
+	void aiChat.send( text );
+	return true;
+}
+
+/**
+ * The chat's state, as AI mode's template reads it (T1375): one turn per question, with its
+ * answer and the sources the answer cites, and the follow-ups Turing offers after the last.
+ *
+ * @param {Object} s ChatControllerState.
+ */
+function aiSync( s ) {
+	state.aiAvailable = state.aiEnabled && true === s.enabled;
+	// AI off: no tab, and an AI mode address falls back to the results.
+	if ( false === s.enabled && state.aiActive ) {
+		state.aiActive = false;
+		writeAiUrl( false );
+	}
+	if ( true === s.enabled && aiPending && ! s.isStreaming ) {
+		const question = aiPending;
+		aiPending = '';
+		void aiChat.send( question );
+		return;
+	}
+	state.aiStreaming = s.isStreaming;
+	state.aiStatus = s.isStreaming ? state.aiThinking : '';
+	if ( 'error' === s.status ) {
+		// A spent AI budget says so, with its reset, and tells the server (D336).
+		const paused = isAiPaused( s.error );
+		if ( paused ) {
+			reportAiPaused();
+		}
+		state.aiStatus = paused ? state.pausedLabel : state.aiFailed;
+	}
+	const turns = [];
+	s.messages.forEach( ( message ) => {
+		if ( 'user' === message.role ) {
+			turns.push( {
+				id: message.id,
+				question: message.content,
+				answer: '',
+				sources: [],
+			} );
+			return;
+		}
+		if ( ! turns.length ) {
+			turns.push( {
+				id: message.id,
+				question: '',
+				answer: '',
+				sources: [],
+			} );
+		}
+		const turn = turns[ turns.length - 1 ];
+		turn.answer = message.content || '';
+		turn.sources = aiSources( message );
+	} );
+	state.aiTurns = turns;
+	const last = s.messages[ s.messages.length - 1 ];
+	state.aiFollowups =
+		last && 'assistant' === last.role && ! s.isStreaming
+			? ( last.options || [] ).slice( 0, 4 )
+			: [];
+}
+
+/**
+ * The sources an AI mode answer cites, each once (T1375): its citations, else the sources its
+ * [n] footnotes name. An answer that cites nothing lists nothing (T1261).
+ *
+ * @param {Object} message A ChatMessage.
+ * @return {Array} Each source's key, rank, title, address and host.
+ */
+function aiSources( message ) {
+	const used = footnotesIn( message.content );
+	const cited = ( message.citations || [] ).map( ( c ) => ( {
+		url: c.url,
+		title: c.documentTitle,
+		sourceId: c.sourceId,
+	} ) );
+	const footnoted = ( message.sources || [] )
+		.map( ( source, i ) => ( { ...source, rank: source.rank ?? i + 1 } ) )
+		.filter( ( source ) => used.has( Number( source.rank ) ) );
+	const seen = new Set();
+	return ( cited.length ? cited : footnoted )
+		.filter( ( s ) => s.url && ! seen.has( s.url ) && seen.add( s.url ) )
+		.map( ( s, i ) => {
+			const url = siteUrl( s.url, s.sourceId );
+			let host = '';
+			try {
+				host = new URL( url, window.location.href ).hostname;
+			} catch {}
+			return {
+				key: `${ url }#${ i }`,
+				rank: s.rank ?? i + 1,
+				title: s.title || url,
+				url,
+				host,
+			};
+		} );
+}
+
+/**
+ * Put AI mode in the address bar (T1375): `mode=ai` and the conversation's token while it
+ * shows, neither while the results do. The query, filters and page stay as writeUrl() left them.
+ *
+ * @param {boolean} push A new history entry rather than a replacement.
+ */
+function writeAiUrl( push ) {
+	const url = new URL( window.location.href );
+	if ( state.aiActive ) {
+		url.searchParams.set( 'mode', 'ai' );
+		url.searchParams.set( 'c', aiToken );
+	} else {
+		url.searchParams.delete( 'mode' );
+		url.searchParams.delete( 'c' );
+	}
+	if ( url.href !== window.location.href ) {
+		window.history[ push ? 'pushState' : 'replaceState' ]( null, '', url );
+	}
+}
+
+/**
+ * Show what the address bar says about AI mode (T1375), on load and on Back and Forward: its
+ * conversation, from this tab's storage when it has it, else asked again from the query.
+ */
+function readAiUrl() {
+	const params = new URL( window.location.href ).searchParams;
+	const token = params.get( 'c' ) || '';
+	if ( ! aiChat || ( token && token !== aiToken ) ) {
+		startAi( token || newAiToken() );
+	}
+	state.aiActive =
+		'ai' === params.get( 'mode' ) && false !== aiChat.getState().enabled;
+	if (
+		state.aiActive &&
+		! aiChat.getState().messages.length &&
+		state.query.trim()
+	) {
+		aiAsk( state.query );
+	}
+}
+
+/**
+ * Put the cursor in AI mode's follow-up box (T1375).
+ */
+function focusAiQuestion() {
+	document.getElementById( `${ state.inputId }-ai-question` )?.focus();
 }

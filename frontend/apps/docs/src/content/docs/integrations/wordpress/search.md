@@ -67,6 +67,16 @@ suggestions, "did you mean", the mapped facets, results and pages. It is built w
 Interactivity API on Viglet Turing's JS SDK and takes its colours and type from the theme. It
 reads `?q=` (or `?s=`), so a page holding it can serve as the site's search page.
 
+With **AI mode** on, an **AI mode** tab shows beside **All** once Viglet Turing reports chat on
+for the site. It turns the page into a conversation over the same query: each answer with the
+sources it cites beside it (below it on a phone), suggested follow-ups as buttons, and a box for
+the next question. The address carries `mode=ai` and a token for the conversation, which this
+browser tab keeps, so reloading and Back find it again. Opened in another tab, the link asks
+the query again, since Viglet Turing keeps no transcript of an anonymous visitor. A new search
+in the box starts a new conversation. With chat off, there is no tab, and an AI mode link shows
+the results. Each answer is an LLM call. For now AI mode is drawn only in the block's default
+layout, not in one built from its inner blocks.
+
 **Placeholder** sets the box's hint, and **Button text** the words on its button. The button
 says "Search" by default, as a verb, so it reads "Buscar" in Portuguese.
 

@@ -182,6 +182,16 @@
 						onChange: ( showAnswer ) =>
 							setAttributes( { showAnswer } ),
 					} ),
+					// T1375: the results page as a conversation, a tab beside "All".
+					el( ToggleControl, {
+						label: __( 'AI mode', 'viglet-turing-search' ),
+						help: __(
+							'An AI mode tab beside the results turns the search into a conversation with Viglet Turing: answers with their sources beside them, and follow-up questions. It shows only while Viglet Turing’s chat is on. Each answer is an LLM call.',
+							'viglet-turing-search'
+						),
+						checked: attributes.aiMode,
+						onChange: ( aiMode ) => setAttributes( { aiMode } ),
+					} ),
 					el( ToggleControl, {
 						label: __(
 							'Suggest the filters a sentence names',

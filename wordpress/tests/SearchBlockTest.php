@@ -50,6 +50,31 @@ final class SearchBlockTest extends PluginTestCase {
 	}
 
 	/**
+	 * T1375: AI mode draws its tabs and conversation only for a block that asks for it, hidden
+	 * until the script hears that chat is on, with its follow-up box labelled.
+	 */
+	public function test_ai_mode_is_drawn_only_when_the_block_asks_for_it(): void {
+		Functions\stubEscapeFunctions();
+		Functions\stubTranslationFunctions();
+		Functions\stubs( array( 'wp_unique_id' => 'viglet-turing-search-1' ) );
+
+		ob_start();
+		Viglet_Turing_Search_Block::render( array( 'aimode' ), array() );
+		$this->assertSame( '', trim( (string) ob_get_clean() ) );
+
+		ob_start();
+		Viglet_Turing_Search_Block::render( array( 'aimode' ), array( 'aiMode' => true ) );
+		$html = (string) ob_get_clean();
+		Viglet_Turing_Search_Block::done();
+
+		$this->assertStringContainsString( 'role="tablist"', $html );
+		$this->assertMatchesRegularExpression( '/class="viglet-turing-search__modes"[^>]*hidden data-wp-bind--hidden="!state.aiAvailable"/', $html );
+		$this->assertStringContainsString( 'data-wp-on--click="actions.showAi"', $html );
+		$this->assertStringContainsString( 'data-wp-each--turn="state.aiTurns"', $html );
+		$this->assertMatchesRegularExpression( '/<label for="([^"]+)-ai-question">Ask a follow-up<\/label>\s*<input\s+type="text"\s+id="\1-ai-question"/', $html );
+	}
+
+	/**
 	 * T1374: the submit button says the verb, its own msgid apart from the noun "Search", and a
 	 * block's own text replaces it; a blank one keeps the verb.
 	 */

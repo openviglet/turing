@@ -33,7 +33,7 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1375** (deps: —) **The search block has no AI mode: asking the site opens a modal, never turns the results page into a chat** — A conversation with sources beside the answer, follow-ups and its own URL is how modern search answers, and a modal cannot hold it. → §CLXXXII.32
+- ⏳ **T1375** (deps: —) **The search block has no AI mode: asking the site opens a modal, never turns the results page into a chat** — AI mode lacks the inner-blocks layout, block scope and filter chips, the assistant hand-over, and a browser e2e spec. → §CLXXXII.32
 - 📋 **T1387** (deps: —) **A search box that sends its query to the search page has no form action or scope field, so it fails without JavaScript** — A scoped section box falls back to its own page with no results and drops the scope when the script is off or still loading. → §CLXXXII.33
 - 📋 **T1388** (deps: —) **A search the site starts itself, like a 404's, cannot say where it came from, so Insights mixes it with typed ones** — A 404 searching the broken URL is the list of missing redirects, and without an origin it cannot be read apart. → §CLXXXII.34
 
@@ -53,6 +53,20 @@
 - **An IT finds a long page as the source of a question about one sentence** An IT
   indexes a 5,500-character page and asks about one sentence deep in it; the answer
   lists that page as a source.
+
+## Done when — T1375
+
+- **AI mode works in a search block built from inner blocks** A block whose box, results
+  and pages are inner blocks shows the AI mode tab and thread, and hides those parts
+  while it shows.
+- **AI mode answers inside the block's scope, its sentence filters as chips** A block
+  scoped to type:event answers only from events, and the filters a question names
+  (T1359/T1360) show as chips the visitor can remove.
+- **The Site assistant hands its conversation to AI mode** The assistant offers Continue
+  in AI mode, which opens the search page in AI mode with the conversation's turns.
+- **A browser spec drives AI mode end to end** A Playwright spec in tests/e2e opens a
+  search, switches to AI mode, sees an answer with sources, asks a follow-up, reloads
+  and finds the thread, and sees no tab with chat off.
 
 ## Non-goals (do NOT add as tasks)
 
