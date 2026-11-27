@@ -170,6 +170,7 @@ export const DESTINATION_LABELS_PT_BR: Readonly<Record<string, string>> = {
   source: "Código no GitHub",
   devRoadmap: "Roadmap de desenvolvimento",
   portfolio: "viglet.org",
+  contact: "Fale com a gente",
   npm: "npm",
   cli: "CLI",
 };

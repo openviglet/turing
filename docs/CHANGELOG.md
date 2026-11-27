@@ -1610,6 +1610,7 @@
 - **T1193** — The site playground loads its personas from the demo site's /personas and hides the picker when that list is empty or fails; the pinned ids are gone, with samples only for the offline script.
 - **T1198** — A fresh install adopts the imported agent a seeded SN site names (lowest id when several) as the default AI agent, so the demo's persona agent gets the LLM and answers on turing-docs.
 - **T1371** — turing.viglet.org/educacao/ makes the case for search on an education site in Brazilian Portuguese, with its navigation, footer and cookie banner in pt-BR and the page marked pt-BR to crawlers.
+- **T1373** — The education page's main button and a contact band after its FAQ open the viglet.org contact form, tagged with the educacao campaign so leads from it can be told apart.
 
 ## Block CE — Semantic retrieval for SN sites
 

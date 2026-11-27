@@ -161,6 +161,21 @@ export const EDUCACAO_BEYOND = {
   body: "O sistema acadêmico, o repositório da biblioteca e as pastas de documentos não moram no WordPress. O Viglet Dumont indexa bancos de dados, compartilhamentos de arquivos, Adobe Experience Manager e outras fontes REST no mesmo Viglet Turing, para que uma busca encontre tudo junto.",
 } as const;
 
+/**
+ * The page's lead capture: the viglet.org contact form, tagged so the hub's analytics
+ * can tell which leads came from this page. The form itself lives on viglet.org.
+ */
+export const EDUCACAO_CONTACT_UTM =
+  "utm_source=turing.viglet.org&utm_medium=referral&utm_campaign=educacao";
+
+export const EDUCACAO_CONTACT = {
+  eyebrow: "Fale com a gente",
+  title: "Quer essa busca no site da sua instituição?",
+  body: "Conte quais sites e sistemas a busca deve cobrir, onde eles estão hospedados e se vocês precisam de ajuda com a implantação ou de suporte contínuo. A equipe da Viglet e seus parceiros de implantação respondem com os próximos passos.",
+  cta: "Falar com um especialista",
+  note: "O formulário está em inglês, mas pode escrever em português.",
+} as const;
+
 export const EDUCACAO_FAQ: { q: string; a: string }[] = [
   {
     q: "Funciona só com WordPress?",

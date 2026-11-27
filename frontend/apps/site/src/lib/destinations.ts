@@ -36,6 +36,8 @@ export const DESTINATIONS = {
   },
   /** Back to the Viglet portfolio. */
   portfolio: { label: "viglet.org", url: "https://www.viglet.org/" },
+  /** Talk to Viglet about a project: the hub's contact form, where leads are collected. */
+  contact: { label: "Contact", url: "https://www.viglet.org/contact/" },
   /** Viglet Dumont, the connector platform for the sources WordPress is not. */
   dumont: { label: "Viglet Dumont", url: "https://dumont.viglet.org/" },
   /** The AEM connector ships in Viglet Dumont; its docs are Dumont's own. */

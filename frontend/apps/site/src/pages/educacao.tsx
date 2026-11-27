@@ -9,6 +9,8 @@ import { LINKS } from "@/components/brand-links";
 import {
   EDUCACAO_BENEFITS,
   EDUCACAO_BEYOND,
+  EDUCACAO_CONTACT,
+  EDUCACAO_CONTACT_UTM,
   EDUCACAO_COST,
   EDUCACAO_DEMO,
   EDUCACAO_EXAMPLES,
@@ -20,6 +22,9 @@ import {
   EDUCACAO_STEPS,
 } from "@/lib/educacao-content";
 import { siteUrl } from "@/lib/site-url";
+
+/** The viglet.org contact form, tagged with this page's campaign, opened at the form. */
+const CONTACT_HREF = `${LINKS.contact}?${EDUCACAO_CONTACT_UTM}#contact-form`;
 
 /**
  * Structured data (@graph): BreadcrumbList (Início › Educação), the WebPage in
@@ -109,12 +114,12 @@ export function EducacaoPage() {
           actions={
             <>
               <Button asChild size="lg">
-                <a href="#recursos">
-                  O que a busca faz <ArrowRight className="size-4" />
+                <a href={CONTACT_HREF} target="_blank" rel="noopener">
+                  {EDUCACAO_CONTACT.cta} <ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href="#comecar">Como começar</a>
+                <a href="#recursos">O que a busca faz</a>
               </Button>
             </>
           }
@@ -255,6 +260,29 @@ export function EducacaoPage() {
                 </div>
               ))}
             </dl>
+          </Container>
+        </section>
+
+        {/* lead capture: the viglet.org contact form */}
+        <section id="contato" className="scroll-mt-24 pb-16">
+          <Container>
+            <Card className="mx-auto max-w-3xl gap-0 border-primary/30 bg-primary/10 p-8 text-center sm:p-10">
+              <Eyebrow>{EDUCACAO_CONTACT.eyebrow}</Eyebrow>
+              <h2 className="mt-3 text-2xl font-extrabold tracking-tight sm:text-3xl">
+                {EDUCACAO_CONTACT.title}
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
+                {EDUCACAO_CONTACT.body}
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button asChild size="lg">
+                  <a href={CONTACT_HREF} target="_blank" rel="noopener">
+                    {EDUCACAO_CONTACT.cta} <ArrowRight className="size-4" />
+                  </a>
+                </Button>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">{EDUCACAO_CONTACT.note}</p>
+            </Card>
           </Container>
         </section>
 
