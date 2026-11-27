@@ -1747,6 +1747,7 @@
 - **T1365** — Search cards show the ancestors' titles from a new crumb field (custom type listing, parent pages; a PDF's post), host first for a sibling site; older documents keep the URL path (design §CLXXXII.25 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/indexing.md`).
 - **T1366** — A facet's count of values behind show-more never goes below zero, in the server's first page and in the script, so a short facet no longer reads Mostrar mais -4.
 - **T1367** — Every result element (search block, instant search, related block, classic results page) carries data-type with the raw type key, so a theme styles each kind of result (design §CLXXXII.27 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/reference.md`).
+- **T1368** — A theme gives the search block its starting query through viglet_turing_search_initial_query; the script keeps it and its results, leaves the address alone, and Back returns to it (design §CLXXXII.28 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/reference.md`).
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

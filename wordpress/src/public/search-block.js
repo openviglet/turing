@@ -1698,6 +1698,18 @@ function send( changes ) {
 function writeUrl( push ) {
 	const request = search.getState().request || {};
 	const url = new URL( window.location.href );
+	// The theme's query (T1368) stays out of an address bar that has none, so a 404 keeps its
+	// address, until the visitor takes a step of their own.
+	if (
+		! push &&
+		state.initialQuery &&
+		state.query === state.initialQuery &&
+		! url.searchParams.has( 'q' ) &&
+		! url.searchParams.has( 's' )
+	) {
+		retitle();
+		return;
+	}
 	[ 'q', 's', 'fq[]', 'pg', 'sort' ].forEach( ( key ) =>
 		url.searchParams.delete( key )
 	);
@@ -1722,7 +1734,10 @@ function writeUrl( push ) {
  */
 function readUrl() {
 	const params = new URL( window.location.href ).searchParams;
-	state.query = params.get( 'q' ) ?? params.get( 's' ) ?? '';
+	// With no query of its own, the address bar leaves the one the theme gave the server (a
+	// 404's words, T1368), on load and on Back to the first entry, rather than searching `*`.
+	state.query =
+		params.get( 'q' ) ?? params.get( 's' ) ?? ( state.initialQuery || '' );
 	state.sort = params.get( 'sort' ) || 'relevance';
 	lastQuery = state.query.trim() || '*';
 	clearCorrection();

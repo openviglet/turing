@@ -49,6 +49,32 @@ final class SearchBlockTest extends PluginTestCase {
 		);
 	}
 
+	/**
+	 * T1368: the block starts from the address bar's query, unless a theme gives another
+	 * through viglet_turing_search_initial_query, such as a 404's words.
+	 */
+	public function test_a_theme_can_give_the_query_the_block_starts_with(): void {
+		Functions\stubs( array( 'wp_unslash' => static fn ( $value ) => $value ) );
+		$_GET = array( 's' => 'workshop' );
+		$this->assertSame( 'workshop', Viglet_Turing_Search_Block::query() );
+		$this->assertSame( 'workshop', Viglet_Turing_Search_Block::address_query() );
+
+		$_GET  = array();
+		$given = array();
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $hook, $value, ...$args ) use ( &$given ) {
+				if ( 'viglet_turing_search_initial_query' !== $hook ) {
+					return $value;
+				}
+				$given = array( $value, $args[0] );
+				return '<b>abertas inscricoes pos</b>';
+			}
+		);
+		$this->assertSame( 'abertas inscricoes pos', Viglet_Turing_Search_Block::query( array( 'perPage' => 5 ) ), 'cleaned like the address bar\'s' );
+		$this->assertSame( array( '', array( 'perPage' => 5 ) ), $given );
+		$this->assertSame( '', Viglet_Turing_Search_Block::address_query(), 'the address bar holds none' );
+	}
+
 	/** The block's fixed filters keep only `field:value` queries, once each (D306). */
 	public function test_fixed_filters_keep_only_field_value_queries(): void {
 		$this->assertSame(

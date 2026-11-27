@@ -26,7 +26,7 @@ if ( ! $viglet_turing_chips ) {
 	return;
 }
 ?>
-<nav class="viglet-turing-search__trending" aria-label="<?php esc_attr_e( 'Popular searches', 'viglet-turing-search' ); ?>" data-wp-bind--hidden="state.hasQuery"<?php echo '' !== Viglet_Turing_Search_Block::query() ? ' hidden' : ''; ?>>
+<nav class="viglet-turing-search__trending" aria-label="<?php esc_attr_e( 'Popular searches', 'viglet-turing-search' ); ?>" data-wp-bind--hidden="state.hasQuery"<?php echo '' !== Viglet_Turing_Search_Block::query( $attributes ) ? ' hidden' : ''; ?>>
 	<span class="viglet-turing-search__trending-label"><?php esc_html_e( 'Popular:', 'viglet-turing-search' ); ?></span>
 	<ul>
 		<?php foreach ( $viglet_turing_chips as $viglet_turing_chip ) : ?>

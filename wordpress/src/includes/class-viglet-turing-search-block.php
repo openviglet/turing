@@ -156,9 +156,27 @@ class Viglet_Turing_Search_Block {
 	}
 
 	/**
-	 * The query the page was opened with (?q=, or WordPress's ?s=).
+	 * The query the block starts with: the one the page was opened with (?q=, or WordPress's
+	 * ?s=), or what a theme gives through `viglet_turing_search_initial_query` (T1368), such
+	 * as the words of a 404's failed address.
+	 *
+	 * @param array $attributes The block's attributes.
 	 */
-	public static function query(): string {
+	public static function query( array $attributes = array() ): string {
+		/**
+		 * Filters the query the search block starts with, drawn on the server and kept by the
+		 * script while the address bar holds no query of its own.
+		 *
+		 * @param string $query      The address bar's query (`q`, else `s`), or empty.
+		 * @param array  $attributes The block's attributes.
+		 */
+		return sanitize_text_field( (string) apply_filters( 'viglet_turing_search_initial_query', self::address_query(), $attributes ) );
+	}
+
+	/**
+	 * The query the page was opened with (?q=, or WordPress's ?s=), unfiltered.
+	 */
+	public static function address_query(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- a public, read-only page parameter.
 		return sanitize_text_field( wp_unslash( $_GET['q'] ?? ( $_GET['s'] ?? '' ) ) );
 	}

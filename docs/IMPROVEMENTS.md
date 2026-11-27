@@ -2389,32 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.28 An initial query the script keeps (T1368)
-
-**Where it happened.** fespsp-base FB122: the 404 of the FESPSP sites should search for
-what the failed URL names ("/noticias/2019/05/abertas-inscricoes-pos.html" → "abertas
-inscricoes pos") and show the results on the 404 itself, keeping the 404 status.
-
-**What the plugin offers.** `Viglet_Turing_Search_Block::query()` is `$_GET['q'] ??
-$_GET['s']`, and `render.php` draws the first page from it (D209). There is no filter.
-Setting `$_GET['q']` from the theme draws that page, but search-block.js's init calls
-`readUrl()` whenever `state.query` is set, reads no `q` from the 404's address bar and
-searches `*`: every document replaces the right ones. Redirecting to the search page
-loses the status and the failed URL.
-
-**What it should do.** One seam: a filter `viglet_turing_search_initial_query` applied
-in `query()`, given the request's query and the block's attributes, so the first page
-and the state carry what it returns. A block attribute is left out: a 404's query
-changes per request. The state marks a query that did not come from the address bar; on
-init, an address bar with no `q`/`s` then leaves that query and its results as they are,
-and nothing writes `?q=` into the URL. A search from there goes on as usual, and Back to
-the first entry restores the server's query rather than searching `*`.
-
-**Tests.** The block rendered with the filter on a URL without `q` keeps the server's
-results after the script starts; Back after a new search returns to them.
-
-**Workaround.** None; FB122 in fespsp-base waits on this.
-
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report

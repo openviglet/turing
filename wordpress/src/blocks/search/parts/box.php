@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$viglet_turing_query       = Viglet_Turing_Search_Block::query();
+$viglet_turing_query       = Viglet_Turing_Search_Block::query( $attributes );
 $viglet_turing_placeholder = '' !== (string) ( $attributes['placeholder'] ?? '' ) ? $attributes['placeholder'] : __( 'Search…', 'viglet-turing-search' );
 ?>
 <form role="search" class="viglet-turing-search__form" data-wp-on--submit="actions.submit">

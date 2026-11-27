@@ -274,6 +274,33 @@ test( 'everything spans pages, and the next page shows other results', async ( {
 	await axe( 'search block on page 2', inBlock );
 } );
 
+test( 'a query the theme gives the server is kept by the script, and Back returns to it', async ( {
+	page,
+	seed,
+} ) => {
+	// The seed's mu-plugin gives viglet_turing_search_initial_query the e2e_initial words
+	// (T1368), as a 404 would give its failed address's; the address bar holds no q.
+	await page.goto(
+		`/?page_id=${ seed.searchPageId }&e2e_initial=seminar&sort=oldest`
+	);
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	// Once the script has started, the results are still the seminars, not a search for `*`.
+	await page.waitForLoadState( 'networkidle' );
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await expect( results( page ).first() ).toContainText( 'Seminar' );
+	expect( new URL( page.url() ).searchParams.has( 'q' ) ).toBe( false );
+
+	const box = block( page ).getByRole( 'combobox' );
+	await expect( box ).toHaveValue( 'seminar' );
+	await box.fill( 'workshop' );
+	await box.press( 'Enter' );
+	await expect( summary( page ) ).toHaveText( '4 results' );
+
+	await page.goBack();
+	await expect( summary( page ) ).toHaveText( '3 results' );
+	await expect( box ).toHaveValue( 'seminar' );
+} );
+
 test( 'a result is a card: type, date, address and the matched words marked', async ( {
 	page,
 	seed,

@@ -36,6 +36,16 @@ if ( ! file_exists( $nag_off ) || file_get_contents( $nag_off ) !== $nag_code ) 
 	file_put_contents( $nag_off, $nag_code );
 }
 
+// A theme that gives the search block its query (T1368), as a 404 gives the failed address's
+// words: on this stack only, and only for a page opened with `e2e_initial`, never `q`.
+$initial_file = WPMU_PLUGIN_DIR . '/viglet-turing-e2e-initial-query.php';
+$initial_code = "<?php\n// Written by the Viglet Turing browser tests' seed (tests/e2e/fixtures/seed.php, T1368).\n" .
+	"add_filter( 'viglet_turing_search_initial_query', static fn ( \$query ) => '' === \$query && isset( \$_GET['e2e_initial'] ) ? sanitize_text_field( wp_unslash( \$_GET['e2e_initial'] ) ) : \$query );\n";
+if ( ! file_exists( $initial_file ) || file_get_contents( $initial_file ) !== $initial_code ) {
+	wp_mkdir_p( WPMU_PLUGIN_DIR );
+	file_put_contents( $initial_file, $initial_code );
+}
+
 // `wp eval-file seed.php second` seeds the multisite network's second site instead: one post
 // no other site has, so a search that crosses sites shows (multisite.spec.mjs).
 $titles = 'second' === ( $args[0] ?? '' ) ? array( 'Only on the second site' ) : array(

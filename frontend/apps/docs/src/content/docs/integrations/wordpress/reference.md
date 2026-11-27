@@ -53,6 +53,7 @@ Every filter the plugin applies, alphabetically.
 | `viglet_turing_reindex_step_url` | `$url` | The site's own `viglet-turing/v1/reindex/step` | Where that request goes, for a server that cannot reach its own public address |
 | `viglet_turing_render_timeout` | `$seconds` | 3 | How long a page waits for Viglet Turing before rendering without it |
 | `viglet_turing_result_card` | `$card`, `$document` | | A result card the search block draws on the server |
+| `viglet_turing_search_initial_query` | `$query`, `$attributes` | The address's `q`, else `s` | The query the **Viglet Turing search** block starts with, such as the words of a 404's address. The block draws its results on the server, and while the address has no `q` of its own the script keeps that query, writes nothing into the address, and comes back to it on Back |
 | `viglet_turing_should_index` | `$index`, `$post` | | Whether a post is in search; it has the last word |
 | `viglet_turing_tracking_consent` | `$consent` | `false` | Whether search events are sent when no WP Consent API plugin is installed. Off by default, so nothing is sent; return `true` only when the site gathers the visitor's consent another way. With a consent plugin, the visitor's choice decides |
 

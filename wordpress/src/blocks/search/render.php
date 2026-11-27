@@ -43,9 +43,13 @@ $viglet_turing_types[ Viglet_Turing_Pdf::TYPE ] = __( 'PDF', 'viglet-turing-sear
 $viglet_turing_types += ( new Viglet_Turing_Mapping() )->foreign_labels();
 
 $viglet_turing_price = Viglet_Turing_Search_Block::price_field();
+$viglet_turing_query = Viglet_Turing_Search_Block::query( $attributes );
 
 $viglet_turing_state = array(
-	'query'           => Viglet_Turing_Search_Block::query(),
+	'query'           => $viglet_turing_query,
+	// A query the theme gave (T1368), not the address bar's: the script keeps it, and its
+	// results, while the address bar has no query, and writes nothing there for it.
+	'initialQuery'    => Viglet_Turing_Search_Block::address_query() !== $viglet_turing_query ? $viglet_turing_query : '',
 	'status'          => 'idle',
 	'results'         => array(),
 	'spotlights'      => array(),
