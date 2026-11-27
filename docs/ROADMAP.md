@@ -22,6 +22,7 @@
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
 - 📋 **T1369** (deps: —) **The assistant's AI label says the answers come from this site's posts, and no setting lets a site word it** — On a site whose answers cite pages, events and books, a label naming posts is inaccurate in the one place that must be honest. → §CLXXXII.29
+- 📋 **T1372** (deps: —) **A spotlight refuses a post whose indexed URL points off the site, so a shortcut to an outside page cannot be pinned** — Pinning is how a site puts its most wanted destination first, and those are often outside it. → §CLXXXII.30
 
 ## Block CY — Filters from a sentence say what visitors say
 

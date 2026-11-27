@@ -2412,6 +2412,34 @@ for the copilot.
 
 **Workaround.** None; the lab shows the plugin's sentence.
 
+### CLXXXII.30 Spotlight what the index holds (T1372)
+
+**Where it happened.** fespsp-institucional FI149, the search lab. The site has a
+non-public post type `atalho` (shortcut): no page of its own, a destination outside the
+site (`https://vestibular.fespsp.org.br/`), and the theme's `viglet_turing_document`
+filter sets the indexed document's `url` to that destination. Search finds the shortcut
+and links to the destination, as intended.
+
+**The call.** `Viglet_Turing_Tuning::add_spotlight( 'graduação', array( <atalho
+Graduação> ) )`.
+
+**What came back.** `WP_Error`: "Informe uma busca e pelo menos um post."
+`add_spotlight()` keeps only posts where `is_post_publicly_viewable()` is true (4e83d3b:
+promote only what a visitor can open), and builds each spotlight document's `link` with
+`get_permalink()`. A shortcut is not publicly viewable here because its page is
+somewhere else, and its permalink (`?post_type=atalho&p=123`) is a 404. So "graduação"
+cannot pin the Graduação shortcut and shows "Pós-graduação" first, which contains the
+word.
+
+**What it should do.** A spotlight takes any document the index holds, by what the index
+says about it: a post whose indexed document has a URL (from `viglet_turing_document`)
+qualifies when that URL is public, and the spotlight's `link`, title and content come
+from the same document the search returns. Protected and draft posts stay out, as
+4e83d3b wants.
+
+**Workaround.** None. Relevance already puts the shortcut first for "vestibular" and
+"pós"; the spotlight is what "graduação" needs. FI149 waits on this.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
