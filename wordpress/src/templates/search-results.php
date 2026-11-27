@@ -131,7 +131,7 @@ wp_enqueue_style(
 						$viglet_turing_image  = $viglet_turing_fields['image'] ?? '';
 						$viglet_turing_type   = Viglet_Turing_Mapping::document_type( $viglet_turing_fields['type'] ?? '' );
 						?>
-						<article class="vd-result">
+						<article class="vd-result" data-type="<?php echo esc_attr( Viglet_Turing_Mapping::type_key( $viglet_turing_fields['type'] ?? '' ) ); ?>">
 							<?php if ( $viglet_turing_image ) : ?>
 								<div class="vd-result__image" style="<?php echo esc_attr( "background-image: url('" . esc_url( $viglet_turing_image ) . "')" ); ?>">
 									<img src="<?php echo esc_url( $viglet_turing_image ); ?>"

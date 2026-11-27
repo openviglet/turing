@@ -2389,33 +2389,6 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
-### CLXXXII.27 A result says its type in the markup (T1367)
-
-**Where it happened.** fespsp-base FB112 (the design inventory for search, memory and AI
-screens), reading the markup of the fespsp-institucional search lab (image b64a3b0).
-
-**What the markup gives a theme.** A search result is `<li
-class="viglet-turing-search__result">` for a page, an event, a book or a PDF alike; the
-type is only the translated text of `.viglet-turing-search__type`, and `card()` in
-search-block.js keeps nothing else. The overlay's results (`overlay.js` `optionFor()`)
-have `--with-image` as their only modifier, the related block's items
-(`viglet-turing-related__item`, local and remote) nothing, and the classic-theme
-template (`templates/search-results.php`, `.vd-result`) nothing either.
-
-**What a theme cannot do with that.** Show a book with its A4 cover, a PDF with a
-document icon, an audio clip with a player line, except by matching a label that changes
-with the locale and the site's own labels, or by reading the URL.
-
-**What it should do.** Every result element carries `data-type` with the raw type key:
-the post type, `pdf`, a sibling site's type, sanitized as a key. One contract on all
-four surfaces: the search block (server first page and client, through a `typeKey`
-beside the translated `type`, bound with `data-wp-bind--data-type`), the overlay, the
-related block and the classic template. A modifier class is left out on purpose: the
-Interactivity API toggles only fixed class names. Documented in the plugin's theming
-notes, with a test per surface.
-
-**Workaround.** None. FB121 in fespsp-base styles the per-type cards once this ships.
-
 ### CLXXXII.28 An initial query the script keeps (T1368)
 
 **Where it happened.** fespsp-base FB122: the 404 of the FESPSP sites should search for

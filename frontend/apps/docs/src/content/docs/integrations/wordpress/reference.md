@@ -56,6 +56,26 @@ Every filter the plugin applies, alphabetically.
 | `viglet_turing_should_index` | `$index`, `$post` | | Whether a post is in search; it has the last word |
 | `viglet_turing_tracking_consent` | `$consent` | `false` | Whether search events are sent when no WP Consent API plugin is installed. Off by default, so nothing is sent; return `true` only when the site gathers the visitor's consent another way. With a consent plugin, the visitor's choice decides |
 
+## Styling results by type
+
+Every result element carries `data-type` with the document's raw type: the post type
+(`post`, `page`, `evento`), `pdf`, or the type another source sent, in lower case with
+anything but letters, digits, `-` and `_` removed. It stays the same in every language and
+whatever label **Fields** gives the type, so a theme can give each kind of result its own
+look:
+
+```css
+.viglet-turing-search__result[data-type="pdf"] { /* a document icon */ }
+.viglet-turing-search__result[data-type="livro"] .viglet-turing-search__frame { aspect-ratio: 210 / 297; }
+```
+
+| Surface | Element |
+|---|---|
+| **Viglet Turing search** block | `li.viglet-turing-search__result` |
+| Instant search | `li.viglet-turing-overlay__result` |
+| **Related content** block | `li.viglet-turing-related__item` |
+| The plugin's results page | `article.vd-result` |
+
 ## Related pages
 
 | Page | What it covers |

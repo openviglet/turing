@@ -618,6 +618,7 @@ final class NativeSearchTest extends PluginTestCase {
 		$result = $page['results'][0];
 		$this->assertSame( 'Workshop on search', $result['title'] );
 		$this->assertSame( 'Post', $result['type'] );
+		$this->assertSame( 'post', $result['typeKey'], 'the raw type, for data-type (T1367)' );
 		$this->assertSame( 'example.org › workshop', $result['crumb'], 'a result on another site names its domain' );
 		$this->assertSame(
 			array(

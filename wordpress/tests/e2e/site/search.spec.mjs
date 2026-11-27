@@ -283,6 +283,8 @@ test( 'a result is a card: type, date, address and the matched words marked', as
 	await expect( first.locator( '.viglet-turing-search__type' ) ).toHaveText(
 		'Post'
 	);
+	// The raw type, the same in every locale, for a theme to style each kind (T1367).
+	await expect( first ).toHaveAttribute( 'data-type', 'post' );
 	await expect( first.locator( 'time' ) ).toHaveAttribute(
 		'datetime',
 		/^\d{4}-\d{2}-\d{2}T/

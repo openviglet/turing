@@ -728,6 +728,8 @@ class Viglet_Turing_Native_Search {
 				'url'         => $url,
 				'title'       => $title,
 				'type'        => $state['typeLabels'][ $type ] ?? $type,
+				// The raw type the result element carries as data-type (T1367).
+				'typeKey'     => Viglet_Turing_Mapping::type_key( $fields['type'] ?? '' ),
 				'date'        => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'         => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'       => self::crumb( $url, $fields['crumb'] ?? null ),
@@ -991,6 +993,7 @@ class Viglet_Turing_Native_Search {
 				'url'       => $url,
 				'title'     => wp_strip_all_tags( (string) ( $fields['title'] ?? $url ) ),
 				'type'      => $labels['typeLabels'][ $type ] ?? $type,
+				'typeKey'   => Viglet_Turing_Mapping::type_key( $fields['type'] ?? '' ),
 				'date'      => $timestamp ? self::card_day( $timestamp ) : '',
 				'iso'       => $timestamp ? gmdate( 'c', $timestamp ) : '',
 				'crumb'     => self::crumb( $url, $fields['crumb'] ?? null ),

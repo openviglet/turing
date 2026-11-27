@@ -21,7 +21,6 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
-- 📋 **T1367** (deps: —) **A search, overlay or related result carries no type class, so a theme cannot give a book its cover or a PDF its icon** — The result's type is only translated text, and a design system that shows each kind of content its own way has nothing stable to hook. → §CLXXXII.27
 - 📋 **T1368** (deps: —) **The search block takes its query only from the address bar, so a 404 cannot search for what the failed URL named** — A theme that knows the visitor's query from elsewhere sees its first page replaced by a search for everything once the script starts. → §CLXXXII.28
 
 ## Done when — T1184

@@ -36,6 +36,7 @@ import {
 	siteSelection,
 	siteUrl,
 	trackResultClick,
+	typeKey,
 } from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
@@ -1872,6 +1873,8 @@ function card( d, position ) {
 		url,
 		title,
 		type: state.typeLabels[ type ] || type,
+		// The raw type the result element carries as data-type (T1367).
+		typeKey: typeKey( fields ),
 		date: valid ? formatCardDate( at ) : '',
 		iso: valid ? at.toISOString() : '',
 		crumb: crumb( url, fields.crumb ),

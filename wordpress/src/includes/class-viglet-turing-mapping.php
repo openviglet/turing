@@ -165,6 +165,17 @@ class Viglet_Turing_Mapping {
 	}
 
 	/**
+	 * A document's type as a result element's `data-type` carries it (T1367): the raw type as
+	 * a key, lower case letters, digits, dashes and underscores, the same in every locale and
+	 * whatever label the site gives it. search.js's typeKey() reads it the same way.
+	 *
+	 * @param mixed $type The document's `type` field.
+	 */
+	public static function type_key( $type ): string {
+		return (string) preg_replace( '/[^a-z0-9_-]/', '', strtolower( self::document_type( $type ) ) );
+	}
+
+	/**
 	 * The types this site's own documents carry: its indexed post types and a PDF's.
 	 *
 	 * @return array<int, string>

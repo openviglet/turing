@@ -173,6 +173,8 @@ test( 'the main site’s Related block with every site lists the second site’s
 	await page.goto( `${ main.url }?p=1` );
 	const remote = page.locator( '.viglet-turing-related__item--remote' );
 	await expect( remote.first() ).toBeVisible();
+	// The sibling's raw type, as every result surface carries it (T1367).
+	await expect( remote.first() ).toHaveAttribute( 'data-type', 'post' );
 	await expect(
 		remote.first().locator( '.viglet-turing-related__origin' )
 	).toHaveText( label );

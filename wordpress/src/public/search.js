@@ -209,6 +209,20 @@ export function documentType( fields ) {
 }
 
 /**
+ * A document's type as a result element's `data-type` carries it (T1367): the raw type as a
+ * key, the same in every locale and whatever label the site gives it. Viglet_Turing_Mapping::
+ * type_key() reads it the same way on the server.
+ *
+ * @param {Object} fields The document's fields.
+ * @return {string} Lower case letters, digits, dashes and underscores.
+ */
+export function typeKey( fields ) {
+	return documentType( fields )
+		.toLowerCase()
+		.replace( /[^a-z0-9_-]/g, '' );
+}
+
+/**
  * The date a result card shows: the type's own card date field where Fields chose one
  * (`cardTypes`), else the publication date (D305).
  *

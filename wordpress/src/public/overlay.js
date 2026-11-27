@@ -27,6 +27,7 @@ import {
 	siteImage,
 	siteUrl,
 	trackResultClick,
+	typeKey,
 } from 'viglet-turing/search';
 /* eslint-enable import/no-unresolved */
 
@@ -397,6 +398,7 @@ function render( s ) {
 				snippet: plainText( d.description ),
 				lines: cardLines( d.raw?.fields || {} ),
 				type,
+				typeKey: typeKey( d.raw?.fields ),
 				group: typeLabels?.[ type ] || type,
 			};
 		} );
@@ -458,6 +460,10 @@ function optionFor( result, i ) {
 		role: 'option',
 		'aria-selected': String( i === active ),
 	} );
+	// The raw type, for a theme to style each kind of result (T1367).
+	if ( result.typeKey ) {
+		option.dataset.type = result.typeKey;
+	}
 	if ( immersive && result.image ) {
 		option.classList.add( 'viglet-turing-overlay__result--with-image' );
 		const image = make( 'img', 'image', { alt: '', loading: 'lazy' } );

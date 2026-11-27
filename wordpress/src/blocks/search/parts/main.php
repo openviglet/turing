@@ -43,7 +43,7 @@ $viglet_turing_recent = array_map(
 	</ol>
 	<ol class="viglet-turing-search__results" data-wp-bind--aria-busy="state.isLoading" data-wp-class--is-loading="state.isLoading">
 		<template data-wp-each--result="state.results">
-			<li class="viglet-turing-search__result">
+			<li class="viglet-turing-search__result" data-wp-bind--data-type="context.result.typeKey">
 				<?php if ( $viglet_turing_show( 'showImage' ) ) : ?>
 					<span class="viglet-turing-search__frame" hidden data-wp-bind--hidden="!context.result.image" data-wp-style--background-image="state.resultBackdrop">
 						<img class="viglet-turing-search__image" alt="" loading="lazy" data-wp-bind--src="context.result.image" />

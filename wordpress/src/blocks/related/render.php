@@ -79,6 +79,7 @@ if ( $viglet_turing_shop ) {
 				?>
 				<li
 					class="viglet-turing-related__item viglet-turing-related__item--remote"
+					data-type="<?php echo esc_attr( Viglet_Turing_Mapping::type_key( $viglet_turing_related['type'] ) ); ?>"
 					data-wp-context="
 					<?php
 					echo esc_attr(
@@ -120,6 +121,7 @@ if ( $viglet_turing_shop ) {
 			?>
 			<li
 				class="viglet-turing-related__item"
+				data-type="<?php echo esc_attr( Viglet_Turing_Mapping::type_key( $viglet_turing_related->post_type ) ); ?>"
 				data-wp-context="<?php echo esc_attr( (string) wp_json_encode( $viglet_turing_context ) ); ?>"
 			>
 				<?php

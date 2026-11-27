@@ -1746,6 +1746,7 @@
 - **T1357** — The manifest takes retiredCustomFacets, and the WordPress plugin retires the range facets its mapping dropped, so a moved period facet leaves one facet live, not two (design §CLXXXII.24 recorded in `frontend/apps/docs/src/content/docs/manifest.md`).
 - **T1365** — Search cards show the ancestors' titles from a new crumb field (custom type listing, parent pages; a PDF's post), host first for a sibling site; older documents keep the URL path (design §CLXXXII.25 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/indexing.md`).
 - **T1366** — A facet's count of values behind show-more never goes below zero, in the server's first page and in the script, so a short facet no longer reads Mostrar mais -4.
+- **T1367** — Every result element (search block, instant search, related block, classic results page) carries data-type with the raw type key, so a theme styles each kind of result (design §CLXXXII.27 recorded in `frontend/apps/docs/src/content/docs/integrations/wordpress/reference.md`).
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 

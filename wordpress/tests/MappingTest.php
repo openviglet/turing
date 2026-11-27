@@ -253,6 +253,18 @@ final class MappingTest extends PluginTestCase {
 	}
 
 	/**
+	 * T1367: a result's data-type is the raw type as a key, whatever its highlights or case.
+	 */
+	public function test_a_documents_type_key_is_the_raw_type_as_a_key(): void {
+		$this->assertSame( 'post', Viglet_Turing_Mapping::type_key( '<mark>post</mark>' ) );
+		$this->assertSame( 'pdf', Viglet_Turing_Mapping::type_key( 'pdf' ) );
+		$this->assertSame( 'article', Viglet_Turing_Mapping::type_key( array( 'Article', 'Thesis' ) ) );
+		$this->assertSame( 'journalarticle', Viglet_Turing_Mapping::type_key( 'Journal article' ) );
+		$this->assertSame( 'my_type-2', Viglet_Turing_Mapping::type_key( 'my_type-2' ) );
+		$this->assertSame( '', Viglet_Turing_Mapping::type_key( null ) );
+	}
+
+	/**
 	 * D327: a foreign type keeps a label and two field names, cleaned; one of this site's own
 	 * types, an empty type or one that changes nothing is not kept.
 	 */
