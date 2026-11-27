@@ -47,7 +47,6 @@ const LOCALE = "en_US";
 // Keep the facet rail compact: at most this many groups, this many chips each.
 const MAX_FACET_GROUPS = 3;
 const MAX_FACET_ITEMS = 6;
-const DEFAULT_SEARCH_PLACEHOLDER = "Search your content…  (try “SSO”, “RAG”, “API”)";
 
 // Semantic Navigation highlighting wraps matched terms in <mark>…</mark>.
 // Render those as real <mark> elements while letting React escape everything
@@ -93,10 +92,10 @@ function isAskable(document: TuringResolvedDocument): boolean {
 }
 
 /** The human-meaningful badge for a result (category on turing-docs; else type). */
-function docBadge(raw: TuringResolvedDocument["raw"]): string {
+function docBadge(raw: TuringResolvedDocument["raw"], fallback: string): string {
   const f = raw.fields as Record<string, unknown>;
   return String(
-    f.category ?? f.type ?? f.templateName ?? f.source ?? "Result"
+    f.category ?? f.type ?? f.templateName ?? f.source ?? fallback
   );
 }
 
@@ -191,6 +190,7 @@ function LiveSearchDemo({
   onAskAbout?: (title: string, id?: string) => void;
   placeholder?: string;
 }>) {
+  const { SEARCH_DEMO: t } = usePages();
   const [query, setQuery] = useState("");
   const [documents, setDocuments] = useState<ResolvedDocument[]>([]);
   const [facets, setFacets] = useState<TurStructuredFacet[]>([]);
@@ -340,9 +340,9 @@ function LiveSearchDemo({
             onChange={(e) => onInput(e.target.value)}
             onFocus={() => setAcOpen(true)}
             onBlur={() => window.setTimeout(() => setAcOpen(false), 120)}
-            placeholder={placeholder ?? DEFAULT_SEARCH_PLACEHOLDER}
+            placeholder={placeholder ?? t.placeholder}
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            aria-label="Search demo"
+            aria-label={t.searchLabel}
             autoComplete="off"
           />
           <span className="hidden shrink-0 rounded border border-border px-1.5 py-0.5 font-mono text-[0.65rem] text-muted-foreground sm:inline">
@@ -405,7 +405,7 @@ function LiveSearchDemo({
           >
             <span className="inline-flex items-center gap-1.5 text-[0.7rem] font-semibold tracking-wide text-muted-foreground uppercase">
               <SlidersHorizontal className="size-3.5" />
-              Filters{activeCount > 0 ? ` · ${activeCount}` : ""}
+              {t.filters}{activeCount > 0 ? ` · ${activeCount}` : ""}
             </span>
             <ChevronDown
               className={cn(
@@ -471,7 +471,7 @@ function LiveSearchDemo({
               className="mt-0.5 inline-flex w-fit items-center gap-1 text-[0.7rem] font-semibold text-muted-foreground hover:text-foreground"
             >
               <X className="size-3" />
-              Clear filters
+              {t.clearFilters}
             </button>
           )}
           </div>
@@ -484,7 +484,7 @@ function LiveSearchDemo({
           <div className="mb-1.5 flex items-center justify-between gap-2">
             <span className="inline-flex min-w-0 items-center gap-1.5 text-xs font-semibold text-primary">
               <Sparkles className="size-3.5 shrink-0" />
-              Related by AI
+              {t.relatedByAi}
               {similarSeed && (
                 <span className="truncate font-normal text-muted-foreground">
                   · {similarSeed}
@@ -495,7 +495,7 @@ function LiveSearchDemo({
               type="button"
               onClick={clearSimilar}
               className="inline-flex shrink-0 items-center gap-1 text-[0.7rem] font-semibold text-muted-foreground hover:text-foreground"
-              aria-label="Close related documents"
+              aria-label={t.closeRelated}
             >
               <X className="size-3" />
             </button>
@@ -505,7 +505,7 @@ function LiveSearchDemo({
           )}
           {similarStatus === "error" && (
             <p className="text-xs text-muted-foreground">
-              Couldn’t load related documents.
+              {t.relatedFailed}
             </p>
           )}
           {similarStatus === "success" && similar.length === 0 && (
@@ -545,7 +545,7 @@ function LiveSearchDemo({
         documents={documentsView}
         emptyComponent={() => (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            {loading ? "Searching…" : "No results. Try a different term."}
+            {loading ? t.searching : t.noResults}
           </div>
         )}
         itemComponent={({ document }) => (
@@ -571,7 +571,7 @@ function LiveSearchDemo({
                 }}
               />
               <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[0.65rem] font-semibold text-primary">
-                {docBadge(document.raw)}
+                {docBadge(document.raw, t.result)}
               </span>
             </div>
             {document.description && (
@@ -597,7 +597,7 @@ function LiveSearchDemo({
                   className="inline-flex items-center gap-1 text-[0.7rem] font-semibold text-primary hover:underline"
                 >
                   <MessageSquare className="size-3" />
-                  Ask about this
+                  {t.askAbout}
                 </button>
               )}
               {(() => {
@@ -612,7 +612,7 @@ function LiveSearchDemo({
                     className="inline-flex items-center gap-1 text-[0.7rem] font-semibold text-primary hover:underline"
                   >
                     <Sparkles className="size-3" />
-                    Related
+                    {t.related}
                   </button>
                 );
               })()}
@@ -628,7 +628,7 @@ function LiveSearchDemo({
         </span>
         <span className="inline-flex items-center gap-1">
           <Sparkles className="size-3.5 text-primary" />
-          Built with @viglet/turing-sdk
+          {t.builtWith}
         </span>
       </div>
     </div>
@@ -650,7 +650,7 @@ function SampleSearchDemo({
   docs?: SearchDoc[];
   placeholder?: string;
 }>) {
-  const { SEARCH_DOCS } = usePages();
+  const { SEARCH_DOCS, SEARCH_DEMO: t } = usePages();
   const docs = givenDocs ?? SEARCH_DOCS;
   const [query, setQuery] = useState("");
   const [type, setType] = useState("All");
@@ -699,9 +699,9 @@ function SampleSearchDemo({
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder ?? DEFAULT_SEARCH_PLACEHOLDER}
+          placeholder={placeholder ?? t.placeholder}
           className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          aria-label="Search demo"
+          aria-label={t.searchLabel}
         />
         <span className="hidden shrink-0 rounded border border-border px-1.5 py-0.5 font-mono text-[0.65rem] text-muted-foreground sm:inline">
           demo
@@ -734,7 +734,7 @@ function SampleSearchDemo({
         documents={documents}
         emptyComponent={() => (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            No results. Try a different term.
+            {t.noResults}
           </div>
         )}
         itemComponent={({ document }) => (
@@ -742,7 +742,7 @@ function SampleSearchDemo({
             <div className="flex items-center gap-2">
               <ResultTitle title={document.title} url={document.url} />
               <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[0.65rem] font-semibold text-primary">
-                {String(document.raw.fields.type ?? "Result")}
+                {String(document.raw.fields.type ?? t.result)}
               </span>
             </div>
             {document.description && (
@@ -757,7 +757,7 @@ function SampleSearchDemo({
                 className="mt-1.5 inline-flex items-center gap-1 text-[0.7rem] font-semibold text-primary hover:underline"
               >
                 <MessageSquare className="size-3" />
-                Ask about this
+                {t.askAbout}
               </button>
             )}
           </div>
@@ -770,7 +770,7 @@ function SampleSearchDemo({
         </span>
         <span className="inline-flex items-center gap-1">
           <Sparkles className="size-3.5 text-primary" />
-          Built with @viglet/turing-sdk
+          {t.builtWith}
         </span>
       </div>
     </div>

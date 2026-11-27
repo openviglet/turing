@@ -6,6 +6,7 @@ import { ChatDemo } from "@/components/sections/chat-demo";
 import { ContentFitDemo } from "@/components/sections/content-fit-demo";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
+import { usePages } from "@/content/use-pages";
 
 type Tab = "search" | "ask" | "validate";
 
@@ -18,6 +19,7 @@ type Tab = "search" | "ask" | "validate";
  * the shared-corpus connection is tangible. The panel is fullscreen-capable.
  */
 export function Playground() {
+  const { PLAYGROUND: t } = usePages();
   const { live } = useTuringDemo();
   const [tab, setTab] = useState<Tab>("search");
   const [expanded, setExpanded] = useState(false);
@@ -37,7 +39,7 @@ export function Playground() {
   }, [expanded]);
 
   const askAbout = (title: string) => {
-    setSeed({ text: `Tell me about: ${title}`, nonce: seed ? seed.nonce + 1 : 1 });
+    setSeed({ text: `${t.askAbout} ${title}`, nonce: seed ? seed.nonce + 1 : 1 });
     setTab("ask");
   };
 
@@ -58,13 +60,13 @@ export function Playground() {
       <div className="flex items-center gap-2 border-b border-border px-3 py-2">
         <div className="flex gap-0.5 rounded-lg bg-muted p-0.5">
           <TabButton active={tab === "search"} onClick={() => setTab("search")} icon={<Search className="size-3.5" />}>
-            Search it
+            {t.searchTab}
           </TabButton>
           <TabButton active={tab === "ask"} onClick={() => setTab("ask")} icon={<MessageSquare className="size-3.5" />}>
-            Ask it
+            {t.askTab}
           </TabButton>
           <TabButton active={tab === "validate"} onClick={() => setTab("validate")} icon={<ShieldCheck className="size-3.5" />}>
-            Validate it
+            {t.validateTab}
           </TabButton>
         </div>
 
@@ -75,14 +77,14 @@ export function Playground() {
               live ? "bg-emerald-500 shadow-[0_0_6px] shadow-emerald-500" : "bg-muted-foreground/40"
             )}
           />
-          Viglet Turing docs · {live ? "live" : "sample"}
+          {`${t.corpus} · `}{live ? t.live : t.sample}
         </span>
 
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          aria-label={expanded ? "Exit fullscreen" : "Expand to fullscreen"}
-          title={expanded ? "Exit fullscreen (Esc)" : "Expand to fullscreen"}
+          aria-label={expanded ? t.exitFullscreen : t.expand}
+          title={expanded ? t.exitFullscreenEsc : t.expand}
           className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           {expanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
@@ -91,7 +93,7 @@ export function Playground() {
           <button
             type="button"
             onClick={() => setExpanded(false)}
-            aria-label="Close"
+            aria-label={t.close}
             className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X className="size-4" />
@@ -125,9 +127,9 @@ export function Playground() {
     <section id="playground" className="py-20">
       <Container>
         <SectionHeader
-          eyebrow="Try it live"
-          title="Search it, ask it, validate it, on the same content"
-          description="All three run on Viglet Turing's own zero-dependency SDK, over the exact same corpus (Viglet Turing's documentation). Search finds the page; the assistant answers with a cited RAG response. You can switch personas to hear the same answer through different eyes, or validate whether your own copy lands for a given reader. Try a result's “Ask about this”."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          description={t.description}
         />
         {expanded && (
           <div
@@ -142,14 +144,10 @@ export function Playground() {
             crawlers that read the raw HTML without running JavaScript. */}
         <div className="sr-only">
           <p>
-            Example: ask the assistant “Does Viglet Turing support self-hosting?”. Viglet Turing searches
-            its own documentation, then answers with a
-            retrieval-augmented (RAG) response that cites the documentation pages it used.
+            {t.srAsk}
           </p>
           <p>
-            The Search tab runs a faceted keyword search over the same documentation, and each
-            result offers “Ask about this” to continue in the cited chat. The Validate tab checks
-            whether a piece of copy fits a chosen reader persona.
+            {t.srSearch}
           </p>
         </div>
         {panel}

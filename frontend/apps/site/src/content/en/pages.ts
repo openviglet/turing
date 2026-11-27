@@ -22,6 +22,127 @@ import {
 } from "lucide-react";
 import { withBase } from "@/lib/site-url";
 
+/** T1378: the words of the home's hero. */
+export const HERO = {
+  eyebrow: "Open source · Apache 2.0 · Self-hosted",
+  title: "Enterprise search, cited RAG and AI agents over your own content.",
+  lead: "AI search and grounded answers you can trace back to the source, on the LLM you choose, with the index in your own infrastructure. An open, self-hosted alternative to Algolia, with AI built in.",
+  audience: "For engineering teams who need production search and RAG without shipping their data to someone else's cloud.",
+  demoHint: "Try it: type to search.",
+  getStartedCta: "Get started",
+  liveCta: "See it answer, live",
+  points: [
+    "Your data stays in your infra",
+    "Choice of LLM provider",
+    "Cited answers you can audit",
+  ],
+};
+
+/** T1378: the words of the home's self-host section. */
+export const SELF_HOST = {
+  title: "Self-host the whole platform in one command",
+  lead: "No account, no sales call, no data leaving your infrastructure. There is nothing to clone or build: the container image is already published to a public registry. Pull it, run it, then open the console and index your first site. Want the full stack (Solr, MariaDB, monitoring)? A ready",
+  leadEnd: "file ships in the repo too.",
+  points: [
+    "Prebuilt container image: nothing to clone, nothing to build",
+    "Your content and embeddings are stored on your network. No SaaS tier, no telemetry",
+    "Point it at a supported LLM provider (or a local model) and your own Solr, Elasticsearch or embedded Lucene",
+  ],
+  eyebrow: "Run it yourself",
+  quickStartCta: "Quick start",
+  demoCta: "Try the live demo",
+  securityCta: "Data residency for regulated industries",
+};
+
+/** T1378: the words of the home's live playground. */
+export const PLAYGROUND = {
+  searchTab: "Search it",
+  askTab: "Ask it",
+  validateTab: "Validate it",
+  srAsk: "Example: ask the assistant “Does Viglet Turing support self-hosting?”. Viglet Turing searches its own documentation, then answers with a retrieval-augmented (RAG) response that cites the documentation pages it used.",
+  srSearch: "The Search tab runs a faceted keyword search over the same documentation, and each result offers “Ask about this” to continue in the cited chat. The Validate tab checks whether a piece of copy fits a chosen reader persona.",
+  askAbout: "Tell me about:",
+  corpus: "Viglet Turing docs",
+  live: "live",
+  sample: "sample",
+  exitFullscreen: "Exit fullscreen",
+  expand: "Expand to fullscreen",
+  exitFullscreenEsc: "Exit fullscreen (Esc)",
+  close: "Close",
+  eyebrow: "Try it live",
+  title: "Search it, ask it, validate it, on the same content",
+  description: "All three run on Viglet Turing's own zero-dependency SDK, over the exact same corpus (Viglet Turing's documentation). Search finds the page; the assistant answers with a cited RAG response. You can switch personas to hear the same answer through different eyes, or validate whether your own copy lands for a given reader. Try a result's “Ask about this”.",
+};
+
+/** T1378: the words of the search demo on the home, the solution pages and the playground. */
+export const SEARCH_DEMO = {
+  clearFilters: "Clear filters",
+  relatedByAi: "Related by AI",
+  relatedFailed: "Couldn’t load related documents.",
+  related: "Related",
+  placeholder: "Search your content…  (try “SSO”, “RAG”, “API”)",
+  searchLabel: "Search demo",
+  filters: "Filters",
+  closeRelated: "Close related documents",
+  searching: "Searching…",
+  noResults: "No results. Try a different term.",
+  askAbout: "Ask about this",
+  builtWith: "Built with @viglet/turing-sdk",
+  result: "Result",
+};
+
+/** A scripted, keyword-matched exchange for the offline (sample-data) fallback. */
+export interface ChatScriptEntry {
+  match: RegExp;
+  answer: string;
+  sources: string[];
+}
+
+/** T1378: the words of the chat demo: its greeting, suggestions and offline script. */
+export const CHAT_DEMO = {
+  greeting: "Hi! I'm the Viglet Turing assistant. Ask me anything about the platform.",
+  // T638: the "default voice" option has no entry in the persona list, so it gets
+  // its own one-line hint for the active-persona caption below the picker.
+  personaHint: "The agent's own voice, with no persona applied.",
+  suggestions: [
+    "Does Viglet Turing support self-hosting?",
+    "Which LLM providers work?",
+    "What can the agents do?",
+  ],
+  // Scripted fallback answers (keyword-matched) for the offline demo.
+  script: [
+    {
+      match: /self.?host|host|infra|data/i,
+      answer:
+        "Yes. Viglet Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings are stored on your own infrastructure.\n\n```bash\ndocker compose up -d --wait\n```",
+      sources: ["Self-hosting guide", "Security & data residency"],
+    },
+    {
+      match: /llm|model|openai|anthropic|gemini|ollama|provider/i,
+      answer:
+        "Viglet Turing is provider-agnostic: **OpenAI**, **Anthropic Claude**, **Google Gemini**, Mistral, AWS Bedrock, Google Vertex AI and local **Ollama** models all plug in; pick one per agent.",
+      sources: ["LLM providers"],
+    },
+    {
+      match: /agent|tool|mcp|skill/i,
+      answer:
+        "Agents call tools, run Anthropic-standard skills in a Docker sandbox, and reach MCP servers (with cross-vendor federation), all configurable per agent.",
+      sources: ["AI agents", "MCP server"],
+    },
+  ] as ChatScriptEntry[],
+  fallback: {
+    answer:
+      "Viglet Turing unifies enterprise search, RAG and AI agents in one self-hosted platform. Ask about self-hosting, LLM providers, or agents & tools.",
+    sources: ["Platform overview"],
+  },
+  personaLead: "Hear the same answer through different eyes. Pick a persona to answer as.",
+  findingRelated: "Finding related pages…",
+  relatedPages: "Related pages",
+  placeholder: "Ask about Viglet Turing…",
+  inputLabel: "Ask the assistant",
+  send: "Send",
+};
+
 export interface Pillar {
   icon: LucideIcon;
   iconClass: string;

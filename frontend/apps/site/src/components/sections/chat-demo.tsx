@@ -19,6 +19,8 @@ import { RichAnswer } from "@/components/rich-answer";
 import { usePlaygroundPersonas } from "@/lib/playground-personas";
 import { useTuringDemo } from "@/lib/turing-demo";
 import { cn } from "@/lib/utils";
+import { usePages } from "@/content/use-pages";
+import type { ChatScriptEntry } from "@/content/en/pages";
 
 // Dogfooding: the assistant streams REAL grounded answers via @viglet/turing-sdk
 // and renders them with the product's own @viglet/turing-react-ui components:
@@ -33,50 +35,7 @@ interface DemoMsg {
   sources?: TurChatSource[];
 }
 
-const DEFAULT_GREETING =
-  "Hi! I'm the Viglet Turing assistant. Ask me anything about the platform.";
-// T638: the "default voice" option has no entry in the persona list, so give
-// it its own one-line hint for the active-persona caption below the picker.
-const DEFAULT_PERSONA_HINT = "The agent's own voice, with no persona applied.";
-const DEFAULT_SUGGESTIONS = [
-  "Does Viglet Turing support self-hosting?",
-  "Which LLM providers work?",
-  "What can the agents do?",
-];
-
-/** A scripted, keyword-matched exchange for the offline (sample-data) fallback. */
-export interface ChatScriptEntry {
-  match: RegExp;
-  answer: string;
-  sources: string[];
-}
-
-// Scripted fallback answers (keyword-matched) for the offline demo.
-const DEFAULT_SCRIPT: ChatScriptEntry[] = [
-  {
-    match: /self.?host|host|infra|data/i,
-    answer:
-      "Yes. Viglet Turing is open source (Apache 2.0) and runs entirely on your own infrastructure. Your content and embeddings are stored on your own infrastructure.\n\n```bash\ndocker compose up -d --wait\n```",
-    sources: ["Self-hosting guide", "Security & data residency"],
-  },
-  {
-    match: /llm|model|openai|anthropic|gemini|ollama|provider/i,
-    answer:
-      "Viglet Turing is provider-agnostic: **OpenAI**, **Anthropic Claude**, **Google Gemini**, Mistral, AWS Bedrock, Google Vertex AI and local **Ollama** models all plug in; pick one per agent.",
-    sources: ["LLM providers"],
-  },
-  {
-    match: /agent|tool|mcp|skill/i,
-    answer:
-      "Agents call tools, run Anthropic-standard skills in a Docker sandbox, and reach MCP servers (with cross-vendor federation), all configurable per agent.",
-    sources: ["AI agents", "MCP server"],
-  },
-];
-const DEFAULT_FALLBACK = {
-  answer:
-    "Viglet Turing unifies enterprise search, RAG and AI agents in one self-hosted platform. Ask about self-hosting, LLM providers, or agents & tools.",
-  sources: ["Platform overview"],
-};
+export type { ChatScriptEntry } from "@/content/en/pages";
 
 function scriptedSources(titles: string[]): TurChatSource[] {
   return titles.map((title, i) => ({ sourceId: `s${i}`, title }));
@@ -161,12 +120,17 @@ export function ChatDemo({
   bare = false,
   seed,
   siteOverride,
-  greeting = DEFAULT_GREETING,
-  suggestions = DEFAULT_SUGGESTIONS,
-  script = DEFAULT_SCRIPT,
-  fallback = DEFAULT_FALLBACK,
+  greeting: givenGreeting,
+  suggestions: givenSuggestions,
+  script: givenScript,
+  fallback: givenFallback,
   showPersonas = true,
 }: Readonly<ChatDemoProps>) {
+  const { CHAT_DEMO: t } = usePages();
+  const greeting = givenGreeting ?? t.greeting;
+  const suggestions = givenSuggestions ?? t.suggestions;
+  const script = givenScript ?? t.script;
+  const fallback = givenFallback ?? t.fallback;
   const { client, site, live, analytics } = useTuringDemo(siteOverride);
   const [convo, setConvo] = useState<DemoMsg[]>([]);
   const [input, setInput] = useState("");
@@ -342,8 +306,8 @@ export function ChatDemo({
   // picker so visitors know what each "eye" means without hunting for a tooltip.
   const activePersonaHint =
     activePersonaId == null
-      ? DEFAULT_PERSONA_HINT
-      : personas?.find((p) => p.id === activePersonaId)?.description ?? DEFAULT_PERSONA_HINT;
+      ? t.personaHint
+      : personas?.find((p) => p.id === activePersonaId)?.description ?? t.personaHint;
 
   return (
     <div
@@ -372,7 +336,7 @@ export function ChatDemo({
       {showPersonas && personas != null && personas.length > 0 && (
       <div className="border-b border-border px-4 py-2">
         <p className="mb-1.5 text-[0.7rem] leading-snug text-muted-foreground/80">
-          Hear the same answer through different eyes. Pick a persona to answer as.
+          {t.personaLead}
         </p>
         <TuringPersonaPicker
           options={personas}
@@ -415,7 +379,7 @@ export function ChatDemo({
         {related.status === "loading" && (
           <div className="flex justify-start">
             <div className="rounded-2xl bg-muted px-3.5 py-2 text-xs text-muted-foreground">
-              Finding related pages…
+              {t.findingRelated}
             </div>
           </div>
         )}
@@ -424,7 +388,7 @@ export function ChatDemo({
             <div className="max-w-[85%] rounded-2xl border border-primary/20 bg-primary/5 px-3.5 py-2.5">
               <div className="mb-1.5 inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
                 <Sparkles className="size-3.5" />
-                Related pages
+                {t.relatedPages}
               </div>
               <ul className="flex flex-col gap-1">
                 {related.results.map((r) => (
@@ -480,14 +444,14 @@ export function ChatDemo({
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about Viglet Turing…"
+          placeholder={t.placeholder}
           className="w-full bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground"
-          aria-label="Ask the assistant"
+          aria-label={t.inputLabel}
         />
         <button
           type="submit"
           disabled={!input.trim() || busy}
-          aria-label="Send"
+          aria-label={t.send}
           className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
         >
           <ArrowUp className="size-4" />

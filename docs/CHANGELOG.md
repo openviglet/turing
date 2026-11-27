@@ -1616,6 +1616,7 @@
 - **T1377b** — The page copy moved to content/en/pages.ts (educacao's to content/pt-BR/); a locale adds pieces typed as the English ones, and the home sections read them through usePages().
 - **T1378 (security, compare, migrate)** — The security, compare and migrate pages' inline sentences moved into content/en pieces read through usePages(); every English page's prerendered HTML is byte-identical.
 - **T1378b** — The aem, persona and wordpress pages' sentences, CTAs and aria labels moved into content/en pieces read through usePages(); every English page's prerendered HTML is byte-identical.
+- **T1378c** — The hero, self-host and playground sections and the search and chat demos, offline script included, read their words from content/en pieces; every English page is byte-identical.
 
 ## Block CE — Semantic retrieval for SN sites
 

@@ -4,12 +4,7 @@ import { Container, Eyebrow } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { CopyCommand } from "@/components/copy-command";
 import { withBase } from "@/lib/site-url";
-
-const POINTS = [
-  "Prebuilt container image: nothing to clone, nothing to build",
-  "Your content and embeddings are stored on your network. No SaaS tier, no telemetry",
-  "Point it at a supported LLM provider (or a local model) and your own Solr, Elasticsearch or embedded Lucene",
-];
+import { usePages } from "@/content/use-pages";
 
 function ComposeTerminal() {
   const C = "text-[#6b7394]"; // comment
@@ -44,27 +39,25 @@ function ComposeTerminal() {
 }
 
 export function SelfHost() {
+  const { SELF_HOST: t } = usePages();
   return (
     <section id="self-host" className="py-20">
       <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         <ComposeTerminal />
         <div className="min-w-0">
-          <Eyebrow>Run it yourself</Eyebrow>
+          <Eyebrow>{t.eyebrow}</Eyebrow>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Self-host the whole platform in one command
+            {t.title}
           </h2>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            No account, no sales call, no data leaving your infrastructure. There is
-            nothing to clone or build: the container image is already published to a
-            public registry. Pull it, run it, then open the console and index your
-            first site. Want the full stack (Solr, MariaDB, monitoring)? A ready
+            {t.lead}
             <code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-[0.85em]">
               docker compose
             </code>
-            file ships in the repo too.
+            {t.leadEnd}
           </p>
           <ul className="mt-6 space-y-3">
-            {POINTS.map((p) => (
+            {t.points.map((p) => (
               <li key={p} className="flex items-start gap-2.5 text-sm">
                 <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                 <span className="text-muted-foreground">{p}</span>
@@ -80,14 +73,14 @@ export function SelfHost() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild>
               <a href={LINKS.getStarted}>
-                Quick start <ArrowRight className="size-4" />
+                {`${t.quickStartCta} `}<ArrowRight className="size-4" />
               </a>
             </Button>
             <Button asChild variant="outline">
-              <a href="#playground">Try the live demo</a>
+              <a href="#playground">{t.demoCta}</a>
             </Button>
             <Button asChild variant="ghost">
-              <a href={withBase("/security/")}>Data residency for regulated industries</a>
+              <a href={withBase("/security/")}>{t.securityCta}</a>
             </Button>
           </div>
         </div>

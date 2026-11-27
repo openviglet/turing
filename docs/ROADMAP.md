@@ -8,7 +8,7 @@
 
 ## Block CD — turing.viglet.org relevance pass (2026-10)
 
-- 🛠 **T1378** (deps: T1377 ✅) **About 200 English sentences are written directly in the page and section components, out of reach of any dictionary** — The home's search demo, hero, playground, chat demo, self-host and depth sections still hold their sentences inline. → §CXV.12
+- 🛠 **T1378** (deps: T1377 ✅) **About 200 English sentences are written directly in the page and section components, out of reach of any dictionary** — Section headers, depth-links cards, the content-fit demo, the WKND playground and the feature page still hold sentences inline. → §CXV.12
 - 📋 **T1379** (deps: T1376 ✅) **Nothing tells search engines that an English page and its /br/ twin are one page in two languages** — Without reciprocal hreflang, Google may treat them as duplicates or show English to Brazilian searches. → §CXV.13
 - 📋 **T1380** (deps: T1376 ✅) **A visitor reading one language has no way to switch to the other on the same page** — A visitor on the wrong language needs one click to the same page in the other. → §CXV.14
 - 📋 **T1381** (deps: T1377 ✅, T1379, T1380) **/br/ has no Portuguese home or feature pages, so a Brazilian visitor meets the site in English** — The home and feature pages are where most visitors arrive and decide. → §CXV.15
@@ -65,10 +65,11 @@
 
 ## Done when — T1378
 
-- **No page or section component holds an English sentence inline** search-demo,
-  self-host, hero, playground, chat-demo and depth-links read their sentences, aria
-  labels and alt text from content/en pieces as the solution pages do since T1378b, and
-  every English route's prerendered HTML is byte-identical, asset hashes aside.
+- **No page or section component holds an English sentence inline** pillars,
+  native-tools, comparison, audiences, depth-links, content-fit-demo, wknd-playground,
+  feature-page and copy-command read their sentences and labels from content/en pieces,
+  the sample search's "All" chip included, and every English route is byte-identical,
+  asset hashes aside.
 
 ## Non-goals (do NOT add as tasks)
 
