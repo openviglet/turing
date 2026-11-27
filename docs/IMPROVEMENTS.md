@@ -2425,28 +2425,27 @@ module boundaries files here.
 
 ### CLXXXIX.48 The image boots on its own heap (T1358)
 
-**Where it happened.** fespsp-institucional, the search lab
-(`docker/turing/docker-compose.yml`), on 2026-11-27, moving from
-`ghcr.io/openviglet/turing:2026.3.8` to the `latest` build of d5ce6ee
-(`sha256:1081759500f8adf01afe493c13b791d24897359b17b5bb95f5969abaa284e87f`,
-`TURING_BUILD_COMMIT=d5ce6ee`). Embedded engine (H2, Lucene, Artemis), fresh
-`/app/store` volume, no `JAVA_OPTS` set by the compose. Docker has 32 GB and 28 CPUs.
+**Where it happened.** fespsp-institucional, the search lab, on 2026-11-27, on the
+`latest` build of d5ce6ee: embedded engine, fresh `/app/store`, no `JAVA_OPTS` in the
+compose.
 
-**What came back.** Every boot dies before Tomcat starts: `BeanCreationException: Error
-creating bean with name 'applicationModuleIdentifiers'
-(SpringModulithRuntimeAutoConfiguration) ... java.lang.OutOfMemoryError: Java heap
-space`, and `restart: unless-stopped` loops it. The image sets `JAVA_OPTS=-Xmx512m
--Xms512m` in its `ENV`, and the Spring Modulith runtime module scan that Block CZ
-brought in does not fit in 512 MB. The same image with `JAVA_OPTS=-Xmx1g -Xms512m
--Djava.awt.headless=true` starts in 60 s. Turing's own WordPress demo compose
-(`wordpress/docker-compose.yml`) sets no `JAVA_OPTS` either, so it should hit the same
-wall.
+**What came back.** Every boot dies before Tomcat: `OutOfMemoryError: Java heap space`
+while creating `applicationModuleIdentifiers` (SpringModulithRuntimeAutoConfiguration),
+and `restart: unless-stopped` loops it. `Dockerfile` and `Dockerfile.local` bake
+`JAVA_OPTS=-Xmx512m -Xms512m`; the runtime module scan `spring-modulith-starter-jpa`
+(T1324) brings in scans every class and does not fit. The same image with `-Xmx1g`
+starts in 60 s. `docker-compose.yaml`, `docker-compose-minimal.yaml` (its entrypoint
+reuses `$JAVA_OPTS`) and `wordpress/docker-compose.yml` set no heap, so all three hit
+it.
 
-**What it should do.** The published image boots on its own defaults with the embedded
-engine, on a fresh store and on an existing one: raise the baked heap or move to
-`-XX:MaxRAMPercentage` so it follows the container's limit, and/or keep the Modulith
-runtime scan out of the startup path (precomputed module identifiers). An image smoke
-test in CI boots it with no `JAVA_OPTS` and waits for `Started TuringES`.
+**What it should do.** Both Dockerfiles bake `-XX:MaxRAMPercentage=75
+-XX:InitialRAMPercentage=25` instead of a fixed heap, so it follows the container's
+limit. `JAVA_OPTS` stays the contract: a deployment that sets it gets exactly its own
+flags. If the Modulith 2.1 line can precompute the module metadata at build time, use it
+too; check, do not assume. `publish-docker.yml` (manual dispatch, as every workflow)
+loads the image, boots it with no `JAVA_OPTS` under a 1 GB memory limit and waits for
+`Started TuringES` before it pushes. Tests: a fresh store and an existing one, a
+container with no memory limit, and an explicit `JAVA_OPTS` taking precedence.
 
 **Workaround.** The lab sets `JAVA_OPTS` to `-Xmx1g` on the `turing` service, with this
 id beside it, until a release fixes the default.
@@ -2459,54 +2458,51 @@ id beside it, until a release fixes the default.
 
 ### CXCII.1 Nouns that name a facet value (T1359)
 
-**Where it happened.** fespsp-institucional FI146, the search lab (`docker/turing/`), on
-the d5ce6ee image with OpenAI `gpt-4o-mini` as the site's LLM. SN site `fespsp`, locale
-pt_BR. The `evento` type is indexed with a facet `tipo_evento` (STRING, values such as
-`Palestra`, `Debate`, `Lançamento`), the `type` facet (`evento`, `post`, `page`,
-`livro`, `vaga`), and a range facet `evento_inicio_range` on `evento_inicio` with
-`endField` `evento_ate` (T1356).
+**Where it happened.** fespsp-institucional FI146, the search lab, on the d5ce6ee image
+with `gpt-4o-mini`. Site `fespsp`, pt_BR; the `evento` type has a STRING facet
+`tipo_evento` (`Palestra`, `Debate`, `Lançamento`).
 
-**The call.** `POST /api/sn/fespsp/nl-filters` with `{"text":"palestras sobre democracia
-em novembro","locale":"pt_BR"}`.
+**What came back.** `POST /api/sn/fespsp/nl-filters` with "palestras sobre democracia em
+novembro" read only the month; "palestras" stayed in `q`, though `Palestra` is a value
+of `tipo_evento`, so the visitor gets every page mentioning it instead of the lectures.
+The cause is in the seam, not the model: `TurLlmNLFacetParser` sends the field names and
+types and never a value, and `TurSNNLFilterService.ground` only checks values the parse
+already proposed. Nothing can turn a noun into a value it was never shown.
 
-**What came back.** `{"q":"palestras sobre
-democracia","filters":[{"field":"evento_inicio","rangeStart":"2026-11-01","rangeEnd":"2026-11-30","sourceWords":["em
-novembro"],...}],"fq":["evento_inicio:[2026-11-01 TO 2026-11-30]"],"dropped":[]}`. Only
-the month was read. "palestras" stayed in `q`, though `Palestra` is a value of
-`tipo_evento` and an event is the only type with it, so the visitor gets every document
-mentioning "palestra" instead of the lectures. The month went to a raw `evento_inicio`
-range, not to the site's range facet, so a span that started in October and runs through
-November is left out, the opposite of what the facet does.
-
-**What it should do.** Ground a noun against the facet values the site has, plural and
-case folded ("palestras" → `tipo_evento: Palestra`), and add the `type` it implies
-(`type: evento`), each in `filters` with its `sourceWords`. A date phrase over a field
-that has a range facet with an `endField` resolves to that facet's overlap, the same
-buckets a click would apply.
+**What it should do.** The parse prompt carries the site's facet values
+(`facetVocabulary`, already read for the deep dive and the catalog kit). After it, a
+deterministic pass grounds the words left in `q` against the values `ground` already
+fetched, folded for case, accents and plural by the locale's analyzer, and accepts a
+match only when one value of one field fits (T1300's rule). Each becomes a filter with
+its `sourceWords` and leaves `q`. No implied `type` filter: the value already restricts
+the type, and one shared by two types would be wrong. The date half (range facet
+overlap) is T1360's. Tests: a word two fields hold, a stop word, a multi-word value, and
+a value used as a topic ("livros sobre palestras") stay in `q`.
 
 **Workaround.** None. FI146 waits on this line.
 
 ### CXCII.2 This week, read from a sentence and an answer (T1360)
 
-**Where it happened.** fespsp-institucional FI146, the search lab, same site as the line
-before (`fespsp`, pt_BR, `gpt-4o-mini`, time zone sent by the WordPress plugin per
-T1330). Today 2026-11-27; the index holds events today, tomorrow, on Sunday and next
-week, and an exhibition running from four days ago for 76 more days.
+**Where it happened.** fespsp-institucional FI146, same site as the line before, on
+2026-11-27, with events today, on Sunday, next week, and an exhibition under way.
 
-**The calls.**
-- `POST /api/sn/fespsp/nl-filters` with `{"text":"o que tem esta semana","locale":"pt_BR"}`
-  answered `{"filters":[],"fq":[],"dropped":[]}`: "esta semana" read as nothing.
-- `GET /api/sn/fespsp/answer?q=o que tem esta semana na FESPSP?&_setlocale=pt_BR` answered
-  "Desculpe, mas essa informação não está disponível na base de dados do site." with
-  `sourceCount: 0`, `kbMode: VECTOR`. The same endpoint answers "Quando e onde é o Sarau
-  de domingo no Casarão?" correctly with the right source cited, so retrieval works; it is
-  the time-relative question that finds nothing, because nothing scopes the retrieval to
-  the week and a vector match on "esta semana" hits no document.
+**What came back.** `nl-filters` on "o que tem esta semana" answered no filter, and
+`/answer` on the same question apologised with `sourceCount: 0`, while it answers a
+named event correctly.
 
-**What it should do.** "esta semana", "este fim de semana", "próxima semana", "hoje à
-noite" resolve in the site's time zone like "hoje" and "amanhã" do since T1330 (on a
-field with an `endField`, by overlap). `/answer` and chat run the sentence through the
-same reading and retrieve within the date filter it yields, so "o que tem esta semana?"
-lists this week's events with their sources.
+**Why, in the code.** Four gaps. `TurRelativeDateRange` has no today, this week or
+tonight (weekend and next week exist since T1299; "hoje" never did), and this month and
+this year stop at today, hiding the rest of an agenda. A resolved phrase applies only
+when the model proposed a range on some field. Chat and `/answer` run the extractor only
+for list-style questions (`ENUMERATION_INTENT` in `TurSNGenAi`), which "o que tem" is
+not. And `retrievalFilters` drops ranges: the vector store has no form for them.
+
+**What it should do.** Add today, tonight and this week (Monday to Sunday) in en, pt and
+es; this month and this year run to their end. A date phrase with no model range lands
+on the site's date facet; on a facet with an `endField` it filters by overlap, the
+buckets a click applies (moved from T1359). A question carrying a date phrase runs the
+extractor like a list-style one, and its range narrows retrieval through the site search
+(the T1302 top-up), not the vector filter. Tests in the site's time zone (T1330), on a
+Sunday and across a month's end.
 
 **Workaround.** None. FI146 waits on this line.
