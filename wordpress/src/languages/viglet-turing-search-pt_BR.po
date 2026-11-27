@@ -304,13 +304,13 @@ msgstr "Visão geral do conteúdo"
 msgid "Loading stats..."
 msgstr "Carregando estatísticas..."
 
-#: src/blocks/search/render.php:138
+#: src/blocks/search/render.php:142
 #: src/includes/class-viglet-turing-native-search.php:355
 #: src/templates/search-results.php:113
 msgid "No results found. Try different keywords."
 msgstr "Nenhum resultado. Tente outras palavras."
 
-#: src/blocks/search/render.php:143
+#: src/blocks/search/render.php:147
 #: src/includes/class-viglet-turing-native-search.php:356
 msgid "Search is unavailable right now."
 msgstr "A busca está indisponível no momento."
@@ -338,7 +338,7 @@ msgid "Clear all filters"
 msgstr "Limpar todos os filtros"
 
 #: src/blocks/search/parts/facets.php:22
-#: src/blocks/search/render.php:76
+#: src/blocks/search/render.php:80
 msgid "Filters"
 msgstr "Filtros"
 
@@ -652,45 +652,45 @@ msgstr "Indexação concluída. %d documentos indexados."
 msgid "Indexed %1$d of %2$d documents..."
 msgstr "%1$d de %2$d documentos indexados..."
 
-#: src/blocks/search/render.php:119
-#: src/includes/class-viglet-turing-mapping.php:458
-#: src/includes/class-viglet-turing-native-search.php:886
+#: src/blocks/search/render.php:123
+#: src/includes/class-viglet-turing-mapping.php:469
+#: src/includes/class-viglet-turing-native-search.php:889
 msgid "Site"
 msgstr "Site"
 
-#: src/includes/class-viglet-turing-mapping.php:728
+#: src/includes/class-viglet-turing-mapping.php:781
 msgid "No mapped field to provision."
 msgstr "Nenhum campo mapeado para enviar."
 
-#: src/includes/class-viglet-turing-mapping.php:738
+#: src/includes/class-viglet-turing-mapping.php:791
 msgid "The fields are already provisioned."
 msgstr "Os campos já estão no Turing."
 
 #. translators: 1: the attribute, e.g. type, 2: what Turing holds, 3: what the mapping declares.
-#: src/includes/class-viglet-turing-mapping.php:809
+#: src/includes/class-viglet-turing-mapping.php:867
 #, php-format
 msgid "%1$s is %2$s in Viglet Turing, %3$s here"
 msgstr "%1$s é %2$s no Viglet Turing, %3$s aqui"
 
 #. translators: %s: the taxonomy's name.
-#: src/includes/class-viglet-turing-mapping.php:838
+#: src/includes/class-viglet-turing-mapping.php:896
 #, php-format
 msgid "Taxonomy: %s"
 msgstr "Taxonomia: %s"
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:854
+#: src/includes/class-viglet-turing-mapping.php:912
 #, php-format
 msgid "Meta: %s"
 msgstr "Meta: %s"
 
 #. translators: %s: the core field, e.g. excerpt.
-#: src/includes/class-viglet-turing-mapping.php:870
+#: src/includes/class-viglet-turing-mapping.php:928
 #, php-format
 msgid "Post: %s"
 msgstr "Post: %s"
 
-#: src/includes/class-viglet-turing-mapping.php:875
+#: src/includes/class-viglet-turing-mapping.php:933
 msgid "Featured image URL"
 msgstr "URL da imagem destacada"
 
@@ -931,7 +931,7 @@ msgstr "Origem"
 msgid "Viglet Turing field"
 msgstr "Campo no Viglet Turing"
 
-#: src/blocks/search/render.php:116
+#: src/blocks/search/render.php:120
 #: assets/admin/mapping.js:330
 #: assets/admin/mapping.js:587
 #: assets/admin/mapping.js:924
@@ -1193,18 +1193,18 @@ msgid "Clear recent searches"
 msgstr "Limpar buscas recentes"
 
 #. translators: %d: how many filters are applied.
-#: src/blocks/search/render.php:78
+#: src/blocks/search/render.php:82
 #, php-format
 msgid "Filters (%d)"
 msgstr "Filtros (%d)"
 
 #. translators: %d: how many more values the facet has.
-#: src/blocks/search/render.php:80
+#: src/blocks/search/render.php:84
 #, php-format
 msgid "Show %d more"
 msgstr "Mostrar mais %d"
 
-#: src/blocks/search/render.php:81
+#: src/blocks/search/render.php:85
 msgid "Show fewer"
 msgstr "Mostrar menos"
 
@@ -1212,15 +1212,15 @@ msgstr "Mostrar menos"
 msgid "Show results"
 msgstr "Ver resultados"
 
-#: src/includes/class-viglet-turing-search-block.php:173
+#: src/includes/class-viglet-turing-search-block.php:191
 msgid "Relevance"
 msgstr "Relevância"
 
-#: src/includes/class-viglet-turing-search-block.php:174
+#: src/includes/class-viglet-turing-search-block.php:192
 msgid "Newest"
 msgstr "Mais recentes"
 
-#: src/includes/class-viglet-turing-search-block.php:175
+#: src/includes/class-viglet-turing-search-block.php:193
 msgid "Oldest"
 msgstr "Mais antigos"
 
@@ -1260,7 +1260,7 @@ msgstr "Para onde o Enter da busca instantânea leva, com a busca. Sem uma pági
 msgid "Search this site"
 msgstr "Buscar neste site"
 
-#: src/blocks/assistant/render.php:71
+#: src/blocks/assistant/render.php:72
 #: src/includes/class-viglet-turing-native-search.php:345
 msgid "Close"
 msgstr "Fechar"
@@ -1435,22 +1435,22 @@ msgstr "Resposta gerada a partir deste site"
 msgid "Sources"
 msgstr "Fontes"
 
-#: src/blocks/assistant/render.php:91
+#: src/blocks/assistant/render.php:92
 #: src/blocks/search/parts/answer.php:31
 msgid "Was this helpful?"
 msgstr "Isto ajudou?"
 
-#: src/blocks/assistant/render.php:92
+#: src/blocks/assistant/render.php:93
 #: src/blocks/search/parts/answer.php:32
 msgid "Yes"
 msgstr "Sim"
 
-#: src/blocks/assistant/render.php:93
+#: src/blocks/assistant/render.php:94
 #: src/blocks/search/parts/answer.php:33
 msgid "No"
 msgstr "Não"
 
-#: src/blocks/assistant/render.php:95
+#: src/blocks/assistant/render.php:96
 #: src/blocks/search/parts/answer.php:35
 msgid "Thank you."
 msgstr "Obrigado."
@@ -1809,8 +1809,8 @@ msgid "similar"
 msgstr "semelhante"
 
 #. translators: %d: how many suggestions the search box offers.
-#: src/blocks/search/render.php:70
-#: src/blocks/search/render.php:72
+#: src/blocks/search/render.php:74
+#: src/blocks/search/render.php:76
 #, php-format
 msgid "%d suggestion. Use the up and down arrows to choose it."
 msgid_plural "%d suggestions. Use the up and down arrows to choose one."
@@ -1818,12 +1818,12 @@ msgstr[0] "%d sugestão. Use as setas para cima e para baixo para escolhê-la."
 msgstr[1] "%d sugestões. Use as setas para cima e para baixo para escolher uma."
 
 #. translators: %d: how many results Turing found.
-#: src/blocks/search/render.php:134
-#: src/blocks/search/render.php:136
+#: src/blocks/search/render.php:138
+#: src/blocks/search/render.php:140
 #: src/includes/class-viglet-turing-native-search.php:351
 #: src/includes/class-viglet-turing-native-search.php:353
-#: src/includes/class-viglet-turing-native-search.php:790
-#: src/includes/class-viglet-turing-native-search.php:1029
+#: src/includes/class-viglet-turing-native-search.php:792
+#: src/includes/class-viglet-turing-native-search.php:1041
 #, php-format
 msgid "%d result"
 msgid_plural "%d results"
@@ -1890,43 +1890,43 @@ msgctxt "block description"
 msgid "The Viglet Turing search block’s results: the count, the sort, the answer and the list."
 msgstr "Os resultados do bloco de busca do Viglet Turing: a contagem, a ordenação, a resposta e a lista."
 
-#: src/includes/class-viglet-turing-mapping.php:669
-#: src/includes/class-viglet-turing-mapping.php:683
+#: src/includes/class-viglet-turing-mapping.php:722
+#: src/includes/class-viglet-turing-mapping.php:736
 msgid "Upcoming"
 msgstr "Próximos"
 
-#: src/includes/class-viglet-turing-mapping.php:688
+#: src/includes/class-viglet-turing-mapping.php:741
 #: assets/admin/insights.js:23
 msgid "Last 7 days"
 msgstr "Últimos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:693
+#: src/includes/class-viglet-turing-mapping.php:746
 #: assets/admin/insights.js:26
 msgid "Last 30 days"
 msgstr "Últimos 30 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:698
+#: src/includes/class-viglet-turing-mapping.php:751
 msgid "This year"
 msgstr "Este ano"
 
-#: src/includes/class-viglet-turing-mapping.php:703
+#: src/includes/class-viglet-turing-mapping.php:756
 msgid "Before this year"
 msgstr "Antes deste ano"
 
 #. translators: %s: a range's upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1238
+#: src/includes/class-viglet-turing-mapping.php:1296
 #, php-format
 msgid "Up to %s"
 msgstr "Até %s"
 
 #. translators: %s: a range's lower bound.
-#: src/includes/class-viglet-turing-mapping.php:1242
+#: src/includes/class-viglet-turing-mapping.php:1300
 #, php-format
 msgid "%s or more"
 msgstr "%s ou mais"
 
 #. translators: 1: a range's lower bound, 2: its upper bound.
-#: src/includes/class-viglet-turing-mapping.php:1246
+#: src/includes/class-viglet-turing-mapping.php:1304
 #, php-format
 msgid "%1$s – %2$s"
 msgstr "%1$s – %2$s"
@@ -1975,7 +1975,7 @@ msgstr "Filtrar pelo que você pediu:"
 msgid "Apply this filter"
 msgstr "Aplicar este filtro"
 
-#: src/blocks/search/render.php:117
+#: src/blocks/search/render.php:121
 msgid "Published"
 msgstr "Publicado"
 
@@ -2020,7 +2020,7 @@ msgid "Written by Viglet Turing’s language model from the saved post. Nothing 
 msgstr "Escrito pelo modelo de linguagem do Viglet Turing a partir do post salvo. Nada muda até você usá-lo e salvar."
 
 #: src/includes/class-viglet-turing-compare.php:71
-#: src/includes/class-viglet-turing-search-block.php:202
+#: src/includes/class-viglet-turing-search-block.php:220
 #: src/includes/class-viglet-turing-woocommerce.php:106
 #: src/includes/class-viglet-turing-woocommerce.php:138
 msgid "Price"
@@ -2068,18 +2068,18 @@ msgstr "Adicionar ao carrinho"
 
 #. translators: %s: the product's name.
 #: src/blocks/copilot/render.php:104
-#: src/blocks/search/render.php:107
+#: src/blocks/search/render.php:111
 #, php-format
 msgid "Add to cart: %s"
 msgstr "Adicionar ao carrinho: %s"
 
 #: src/blocks/copilot/render.php:110
-#: src/blocks/search/render.php:112
+#: src/blocks/search/render.php:116
 msgid "Added to your cart."
 msgstr "Adicionado ao seu carrinho."
 
 #: src/blocks/copilot/render.php:111
-#: src/blocks/search/render.php:113
+#: src/blocks/search/render.php:117
 msgid "It could not be added to the cart."
 msgstr "Não foi possível adicionar ao carrinho."
 
@@ -2360,7 +2360,7 @@ msgid "Where they differ"
 msgstr "Onde diferem"
 
 #: src/blocks/copilot/render.php:184
-#: src/blocks/related/render.php:147
+#: src/blocks/related/render.php:149
 #: src/blocks/search/parts/main.php:96
 msgid "Compare"
 msgstr "Comparar"
@@ -2368,15 +2368,15 @@ msgstr "Comparar"
 #. translators: %d: how many products, two to four.
 #: src/blocks/copilot/render.php:109
 #: src/blocks/related/render.php:55
-#: src/blocks/search/render.php:109
+#: src/blocks/search/render.php:113
 #, php-format
 msgid "Compare %d products"
 msgstr "Comparar %d produtos"
 
 #. translators: %s: a product's name.
 #: src/blocks/copilot/render.php:107
-#: src/blocks/related/render.php:146
-#: src/blocks/search/render.php:111
+#: src/blocks/related/render.php:148
+#: src/blocks/search/render.php:115
 #, php-format
 msgid "Compare %s"
 msgstr "Comparar %s"
@@ -2557,84 +2557,59 @@ msgstr "Avaliado pelo Viglet Turing para %s, a partir do post salvo."
 msgid "Site assistant on every page"
 msgstr "Assistente do site em todas as páginas"
 
-#: src/admin/views/settings-page.php:568
-msgid "A button in the corner of every page opens a chat that answers from this site's posts and lists the posts it used. It shows only while Viglet Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
-msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir dos posts deste site e lista os posts que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
-
 #: src/blocks/assistant/render.php:17
 #: src/blocks/copilot/render.php:26
-#: src/admin/js/assistant-block-editor.js:41
-#: src/admin/js/assistant-block-editor.js:67
+#: src/admin/js/assistant-block-editor.js:42
+#: src/admin/js/assistant-block-editor.js:78
 #: src/admin/js/copilot-block-editor.js:35
 msgid "Ask this site"
 msgstr "Pergunte a este site"
 
-#: src/blocks/assistant/render.php:34
-msgid "Reading this site’s posts…"
-msgstr "Lendo os posts deste site…"
-
-#: src/blocks/assistant/render.php:35
+#: src/blocks/assistant/render.php:36
 msgid "The assistant could not answer right now. Try again in a moment."
 msgstr "O assistente não conseguiu responder agora. Tente de novo em instantes."
 
-#: src/blocks/assistant/render.php:70
+#: src/blocks/assistant/render.php:71
 msgid "New conversation"
 msgstr "Nova conversa"
 
-#: src/blocks/assistant/render.php:73
-msgid "Answers are generated by AI from this site’s posts and may be wrong. Check the posts they cite."
-msgstr "As respostas são geradas por IA a partir dos posts deste site e podem estar erradas. Confira os posts que elas citam."
-
-#: src/blocks/assistant/render.php:74
+#: src/blocks/assistant/render.php:75
 msgid "Conversation"
 msgstr "Conversa"
 
-#: src/blocks/assistant/render.php:78
-msgid "Posts it used"
-msgstr "Posts usados"
-
-#: src/blocks/assistant/render.php:100
+#: src/blocks/assistant/render.php:101
 msgid "Try asking"
 msgstr "Experimente perguntar"
 
-#: src/blocks/assistant/render.php:108
+#: src/blocks/assistant/render.php:109
 msgid "Your question"
 msgstr "Sua pergunta"
 
-#: src/blocks/assistant/render.php:41
-#: src/blocks/assistant/render.php:116
+#: src/blocks/assistant/render.php:42
+#: src/blocks/assistant/render.php:117
 msgid "Send"
 msgstr "Enviar"
 
-#: src/admin/js/assistant-block-editor.js:35
+#: src/admin/js/assistant-block-editor.js:36
 msgid "Site assistant"
 msgstr "Assistente do site"
 
-#: src/admin/js/assistant-block-editor.js:37
+#: src/admin/js/assistant-block-editor.js:38
 msgid "Button and heading"
 msgstr "Botão e título"
 
-#: src/admin/js/assistant-block-editor.js:49
+#: src/admin/js/assistant-block-editor.js:50
 msgid "Suggested questions"
 msgstr "Perguntas sugeridas"
 
-#: src/admin/js/assistant-block-editor.js:53
+#: src/admin/js/assistant-block-editor.js:54
 msgid "One per line. Left empty, the assistant suggests this week’s popular searches."
 msgstr "Uma por linha. Em branco, o assistente sugere as buscas populares da semana."
-
-#: src/admin/js/assistant-block-editor.js:68
-msgid "A button that opens a chat answering from this site’s posts, with the posts it used. It shows only while Viglet Turing’s chat is on for this site."
-msgstr "Um botão que abre um chat que responde a partir dos posts deste site, com os posts que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site."
 
 #: src/blocks/assistant/block.json
 msgctxt "block title"
 msgid "Site assistant"
 msgstr "Assistente do site"
-
-#: src/blocks/assistant/block.json
-msgctxt "block description"
-msgid "A button that opens a conversation with Viglet Turing's chat: visitors ask in their own words and get an answer generated from this site's posts, with the posts it used."
-msgstr "Um botão que abre uma conversa com o chat do Viglet Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir dos posts deste site, com os posts que ela usou."
 
 #: src/blocks/assistant/block.json
 msgctxt "block keyword"
@@ -2745,7 +2720,7 @@ msgid "Undo"
 msgstr "Desfazer"
 
 #. translators: %s: the filters read from the visitor's sentence, comma-separated.
-#: src/blocks/search/render.php:104
+#: src/blocks/search/render.php:108
 #, php-format
 msgid "Understood: %s"
 msgstr "Entendido: %s"
@@ -2798,7 +2773,7 @@ msgstr "O site SN %s responde a buscas sem chave."
 msgid "Ask about %s"
 msgstr "Pergunte sobre %s"
 
-#: src/blocks/search/render.php:140
+#: src/blocks/search/render.php:144
 msgid "Reading your search…"
 msgstr "Lendo sua busca…"
 
@@ -2915,19 +2890,19 @@ msgstr "Em %s"
 msgid "Search the whole site"
 msgstr "Buscar no site todo"
 
-#: src/includes/class-viglet-turing-mapping.php:654
+#: src/includes/class-viglet-turing-mapping.php:707
 msgid "Today"
 msgstr "Hoje"
 
-#: src/includes/class-viglet-turing-mapping.php:659
+#: src/includes/class-viglet-turing-mapping.php:712
 msgid "Next 7 days"
 msgstr "Próximos 7 dias"
 
-#: src/includes/class-viglet-turing-mapping.php:664
+#: src/includes/class-viglet-turing-mapping.php:717
 msgid "This month"
 msgstr "Este mês"
 
-#: src/includes/class-viglet-turing-mapping.php:674
+#: src/includes/class-viglet-turing-mapping.php:727
 msgid "Past"
 msgstr "Passados"
 
@@ -2986,7 +2961,7 @@ msgid "The files could not be packed for Viglet Turing."
 msgstr "Não foi possível empacotar os arquivos para o Viglet Turing."
 
 #. translators: %s: the meta key.
-#: src/includes/class-viglet-turing-mapping.php:862
+#: src/includes/class-viglet-turing-mapping.php:920
 #, php-format
 msgid "Text of the PDF in meta: %s"
 msgstr "Texto do PDF no meta: %s"
@@ -3152,7 +3127,7 @@ msgctxt "block keyword"
 msgid "ask"
 msgstr "perguntar"
 
-#: src/includes/class-viglet-turing-mapping.php:470
+#: src/includes/class-viglet-turing-mapping.php:481
 msgid "Author"
 msgstr "Autor"
 
@@ -3520,7 +3495,7 @@ msgstr "Somente o plano"
 msgid "Opens on the plan, without Ask a question beside it: for a page of its own."
 msgstr "Abre direto no plano, sem Fazer uma pergunta ao lado: para uma página própria."
 
-#: src/blocks/assistant/render.php:89
+#: src/blocks/assistant/render.php:90
 msgid "See every result for this question"
 msgstr "Ver todos os resultados desta pergunta"
 
@@ -3528,11 +3503,11 @@ msgstr "Ver todos os resultados desta pergunta"
 msgid "Ask a follow-up in the assistant"
 msgstr "Continuar a conversa no assistente"
 
-#: src/blocks/assistant/render.php:40
+#: src/blocks/assistant/render.php:41
 msgid "Choose one"
 msgstr "Escolha uma opção"
 
-#: src/blocks/assistant/render.php:83
+#: src/blocks/assistant/render.php:84
 msgid "Choices"
 msgstr "Opções"
 
@@ -3555,3 +3530,36 @@ msgstr "Para algo que dura vários dias, o campo com o último dia: um período 
 #: assets/admin/mapping.js:194
 msgid "Nothing: one day each"
 msgstr "Nenhum: um dia cada"
+
+#: src/admin/views/settings-page.php:568
+msgid "A button in the corner of every page opens a chat that answers from this site's content and lists the sources it used. It shows only while Viglet Turing's chat is on for this site. Without it, place the Site assistant block where you want it."
+msgstr "Um botão no canto de todas as páginas abre um chat que responde a partir do conteúdo deste site e lista as fontes que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site. Sem isso, coloque o bloco Assistente do site onde quiser."
+
+#: src/blocks/assistant/render.php:35
+msgid "Reading this site’s content…"
+msgstr "Lendo o conteúdo deste site…"
+
+#: src/blocks/assistant/render.php:79
+msgid "Sources it used"
+msgstr "Fontes que usou"
+
+#: src/includes/class-viglet-turing-assistant.php:121
+msgid "Answers are generated by AI from this site’s content and may be wrong. Check the sources they cite."
+msgstr "As respostas são geradas por IA a partir do conteúdo deste site e podem estar erradas. Confira as fontes que elas citam."
+
+#: src/admin/js/assistant-block-editor.js:63
+msgid "AI notice"
+msgstr "Aviso de IA"
+
+#: src/admin/js/assistant-block-editor.js:64
+msgid "The note under the heading saying the answers are generated by AI. Left empty, the assistant says they come from this site’s content."
+msgstr "O aviso abaixo do título dizendo que as respostas são geradas por IA. Vazio, o assistente diz que elas vêm do conteúdo deste site."
+
+#: src/admin/js/assistant-block-editor.js:79
+msgid "A button that opens a chat answering from this site’s content, with the sources it used. It shows only while Viglet Turing’s chat is on for this site."
+msgstr "Um botão que abre um chat que responde a partir do conteúdo deste site, com as fontes que usou. Ele só aparece enquanto o chat do Viglet Turing estiver ligado para este site."
+
+#: src/blocks/assistant/block.json
+msgctxt "block description"
+msgid "A button that opens a conversation with Viglet Turing's chat: visitors ask in their own words and get an answer generated from this site's content, with the sources it used."
+msgstr "Um botão que abre uma conversa com o chat do Viglet Turing: os visitantes perguntam com suas próprias palavras e recebem uma resposta gerada a partir do conteúdo deste site, com as fontes que ela usou."

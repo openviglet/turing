@@ -565,7 +565,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<span class="viglet-turing-toggle__slider"></span>
 								<span class="viglet-turing-toggle__label">
 									<?php esc_html_e( 'Site assistant on every page', 'viglet-turing-search' ); ?>
-									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s posts and lists the posts it used. It shows only while Viglet Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
+									<small><?php esc_html_e( 'A button in the corner of every page opens a chat that answers from this site\'s content and lists the sources it used. It shows only while Viglet Turing\'s chat is on for this site. Without it, place the Site assistant block where you want it.', 'viglet-turing-search' ); ?></small>
 								</span>
 							</label>
 							<label class="viglet-turing-toggle">

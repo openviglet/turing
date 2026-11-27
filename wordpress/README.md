@@ -118,13 +118,16 @@ block chooses how many to show, shared words or meaning (`MLT` / `VECTOR`; meani
 to shared words on a site without embeddings), same post type only, and grid or list.
 
 The **Site assistant** block (`viglet-turing/assistant`) is a button that opens a chat with
-Turing over the site's posts (`POST /api/sn/{site}/chat/conversation`, through the SDK's chat
-controller). Answers stream in, labelled as generated, with the posts they used as links and
+Turing over the site's content (`POST /api/sn/{site}/chat/conversation`, through the SDK's chat
+controller). Answers stream in, labelled as generated, with the sources they used as links and
 a "Was this helpful?" that goes to Turing's answer signals. The conversation is the visitor's
 own (Turing's `TUR_SESSION` cookie) and lasts across the pages of the tab, so a cited post can
 be opened without losing it; "New conversation" starts again. The only action the agent may
 take on the page is opening one of this site's pages. The block suggests first questions,
 its own or else the week's popular searches, and stays hidden while Turing reports chat off.
+The note saying the answers are generated names "this site's content"; the block's **AI
+notice** or the `viglet_turing_assistant_disclaimer` filter words it for the site, and an
+empty value from either keeps the plugin's.
 Settings → Search → Generative AI → "Site assistant on every page" puts it in a corner of
 every page instead.
 
