@@ -2457,6 +2457,30 @@ render alike. Escaped as a class token. Documented in the plugin's theming notes
 
 **Workaround.** None. FB121 in fespsp-base styles the per-type cards once this ships.
 
+### CLXXXII.28 An initial query the script keeps (T1368)
+
+**Where it happened.** fespsp-base FB122: the 404 of the FESPSP sites should search for
+what the failed URL names ("/noticias/2019/05/abertas-inscricoes-pos.html" → "abertas
+inscricoes pos") and show the results on the 404 itself, keeping the 404 status.
+
+**What the plugin offers.** `viglet-turing/search` reads its query only from the
+request: `Viglet_Turing_Search_Block::query()` is `$_GET['q'] ?? $_GET['s']`, and
+`render.php` puts it in the state and draws the first page from it (D209). There is no
+block attribute and no filter for the query. Setting `$_GET['q']` from the theme before
+the render would draw the first page, but `search-block.js` then calls `readUrl()` on
+init whenever `state.query` is set, reads `q` from the address bar (absent on a 404
+URL), and searches `*` — the visitor sees every document replace the right ones.
+Redirecting the 404 to the search page loses the 404 status and the URL that failed.
+
+**What it should do.** The block takes an initial query from the server, as an attribute
+(`query`) or a filter (`viglet_turing_search_initial_query`), drawn in the first page
+and kept by the script: on init, an address bar with no `q`/`s` leaves the server's
+query and results as they are (and does not write `?q=` into a 404's URL). A search from
+that state on goes on as usual. A test renders the block with an initial query on a URL
+without `q` and expects the server's results to stay after the script starts.
+
+**Workaround.** None; FB122 in fespsp-base waits on this.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report

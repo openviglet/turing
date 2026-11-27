@@ -24,6 +24,7 @@
 - 📋 **T1365** (deps: —) **The search card's crumb is the URL path in slugs, so a result reads eventos > desigualdade-sa-e-o-poder-politico** — A trail of slugs repeats the title in a form nobody reads and names pages by words the site never shows. → §CLXXXII.25
 - 📋 **T1366** (deps: —) **A short facet's hidden show-more button reads Mostrar mais -4, a negative count of what is left** — The label is wrong in the server render, and any theme, reader or no-JS view that shows it shows a negative number. → §CLXXXII.26
 - 📋 **T1367** (deps: —) **A search, overlay or related result carries no type class, so a theme cannot give a book its cover or a PDF its icon** — The result's type is only translated text, and a design system that shows each kind of content its own way has nothing stable to hook. → §CLXXXII.27
+- 📋 **T1368** (deps: —) **The search block takes its query only from the address bar, so a 404 cannot search for what the failed URL named** — A theme that knows the visitor's query from elsewhere sees its first page replaced by a search for everything once the script starts. → §CLXXXII.28
 
 ## Done when — T1184
 
