@@ -2303,13 +2303,35 @@ function startAi( token ) {
 		{
 			site: config.site,
 			locale: config.locale,
-			// This site's documents only, where several sites share one SN site (D287).
-			filters: siteFilters,
+			// This site's documents only (D287), inside the block's own scope (D306).
+			filters: aiFilters(),
 			persist: `aimode-${ token }`,
 		}
 	);
 	aiChat.subscribe( aiSync );
 	aiSync( aiChat.getState() );
+}
+
+/**
+ * What AI mode answers from (T1375): the site's documents (D287), and only those inside the
+ * block's scope (D306), as the field-to-values map Turing's chat takes. A scoped box on the
+ * events page converses about events.
+ *
+ * @return {Object} Field to values; values of one field are alternatives.
+ */
+function aiFilters() {
+	const filters = {};
+	Object.entries( siteFilters ).forEach( ( [ field, values ] ) => {
+		filters[ field ] = [ ...values ];
+	} );
+	( state.fixedFilters || [] ).forEach( ( fq ) => {
+		const at = String( fq ).indexOf( ':' );
+		if ( at > 0 ) {
+			const field = fq.slice( 0, at );
+			( filters[ field ] ||= [] ).push( fq.slice( at + 1 ) );
+		}
+	} );
+	return filters;
 }
 
 /**

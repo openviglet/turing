@@ -73,9 +73,10 @@ sources it cites beside it (below it on a phone), suggested follow-ups as button
 the next question. The address carries `mode=ai` and a token for the conversation, which this
 browser tab keeps, so reloading and Back find it again. Opened in another tab, the link asks
 the query again, since Viglet Turing keeps no transcript of an anonymous visitor. A new search
-in the box starts a new conversation. With chat off, there is no tab, and an AI mode link shows
-the results. Each answer is an LLM call. For now AI mode is drawn only in the block's default
-layout, not in one built from its inner blocks.
+in the box starts a new conversation. A block with **Always filter by** answers only from what
+it scopes to. In a block built from its parts, the tab sits under the search box and the
+filters, results and pages parts step aside while AI mode shows. With chat off, there is no
+tab, and an AI mode link shows the results. Each answer is an LLM call.
 
 **Placeholder** sets the box's hint, and **Button text** the words on its button. The button
 says "Search" by default, as a verb, so it reads "Buscar" in Portuguese.

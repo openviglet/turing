@@ -14,6 +14,7 @@
 		"viglet-turing/search/showFacets": "showFacets",
 		"viglet-turing/search/showSort": "showSort",
 		"viglet-turing/search/showAnswer": "showAnswer",
+		"viglet-turing/search/aiMode": "aiMode",
 		"viglet-turing/search/suggestFilters": "suggestFilters",
 		"viglet-turing/search/applyFilters": "applyFilters",
 		"viglet-turing/search/showTrending": "showTrending",

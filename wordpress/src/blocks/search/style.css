@@ -816,7 +816,11 @@
 	.viglet-turing-search__answer,
 	.viglet-turing-search__answer-paused,
 	.viglet-turing-search__layout,
-	.viglet-turing-search__pages
+	.viglet-turing-search__pages,
+	/* A block built from its parts (T1375): the filters, results and pages parts whole. */
+	.wp-block-viglet-turing-search-filters,
+	.wp-block-viglet-turing-search-results,
+	.wp-block-viglet-turing-search-pages
 ) {
 	display: none;
 }

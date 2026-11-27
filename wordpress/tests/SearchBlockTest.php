@@ -75,6 +75,23 @@ final class SearchBlockTest extends PluginTestCase {
 	}
 
 	/**
+	 * T1375: a block built from its parts draws AI mode in its box part, which reads the
+	 * parent's aiMode through its context.
+	 */
+	public function test_ai_mode_reaches_the_box_part_of_a_block_built_from_parts(): void {
+		$this->assertContains( 'aimode', Viglet_Turing_Search_Block::PARTS['box'] );
+
+		$parent = json_decode( (string) file_get_contents( VIGLET_TURING_DIR . 'blocks/search/block.json' ), true );
+		$box    = json_decode( (string) file_get_contents( VIGLET_TURING_DIR . 'blocks/search-parts/box/block.json' ), true );
+		$this->assertSame( 'aiMode', $parent['providesContext'][ Viglet_Turing_Search_Block::CONTEXT . 'aiMode' ] );
+		$this->assertContains( Viglet_Turing_Search_Block::CONTEXT . 'aiMode', $box['usesContext'] );
+		$this->assertSame(
+			array( 'aiMode' => true ),
+			Viglet_Turing_Search_Block::attributes_from( array( Viglet_Turing_Search_Block::CONTEXT . 'aiMode' => true ) )
+		);
+	}
+
+	/**
 	 * T1374: the submit button says the verb, its own msgid apart from the noun "Search", and a
 	 * block's own text replaces it; a blank one keeps the verb.
 	 */

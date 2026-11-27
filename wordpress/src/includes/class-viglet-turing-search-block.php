@@ -21,7 +21,7 @@ class Viglet_Turing_Search_Block {
 
 	/** The inner blocks, each with the pieces it draws, in order. */
 	public const PARTS = array(
-		'box'     => array( 'box', 'correction', 'trending' ),
+		'box'     => array( 'box', 'aimode', 'correction', 'trending' ),
 		'filters' => array( 'applied', 'suggested', 'toggle', 'facets' ),
 		'results' => array( 'toolbar', 'answer', 'main' ),
 		'pages'   => array( 'pages' ),

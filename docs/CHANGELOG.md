@@ -1754,6 +1754,7 @@
 - **T1372** — A spotlight and the related block take any indexed post with no password, a non-public shortcut type included, and link it where its indexed document points; non-http addresses are refused.
 - **T1374** — The search block's button says Search as a verb in its own msgid context, Buscar in pt_BR, and a Button text attribute lets a site write its own; the noun stays Busca.
 - **T1375 (tab, thread and URL)** — An opt-in AI mode tab beside All turns the default search layout into a thread: cited sources beside each answer, follow-up chips and box, mode=ai&c=token kept in sessionStorage.
+- **T1375b** — AI mode draws in a search block built from parts, hiding the filters, results and pages parts while it shows, and answers only inside the block's Always filter by scope.
 
 ## Block CU — Copilot answers over a structured feed: a correct plan must find what the index holds
 
