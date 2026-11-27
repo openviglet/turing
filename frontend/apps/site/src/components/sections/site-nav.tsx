@@ -11,7 +11,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { cn } from "@/lib/utils";
-import { withBase } from "@/lib/site-url";
+import { localeHref } from "@/lib/site-url";
+import { useLocale } from "@/lib/locale-context";
 import { CHROME, type Locale } from "@/lib/i18n";
 
 // Hrefs are root-anchored ("/#…") so they also work from the feature pages:
@@ -26,7 +27,7 @@ function navLinks(locale: Locale) {
   return [
     { label: t.explore, href: LINKS.explore },
     { label: t.docs, href: LINKS.docs },
-    { label: t.aem, href: withBase("/aem-search/") },
+    { label: t.aem, href: localeHref("/aem-search/", locale) },
   ];
 }
 
@@ -36,27 +37,28 @@ function navGroups(locale: Locale) {
     {
       label: t.product,
       items: [
-        { label: t.capabilities, href: withBase("/#features") },
-        { label: t.personas, href: withBase("/persona/") },
-        { label: t.why, href: withBase("/#why") },
-        { label: t.developers, href: withBase("/#developers") },
-        { label: t.marketplace, href: withBase("/#marketplace") },
+        { label: t.capabilities, href: localeHref("/#features", locale) },
+        { label: t.personas, href: localeHref("/persona/", locale) },
+        { label: t.why, href: localeHref("/#why", locale) },
+        { label: t.developers, href: localeHref("/#developers", locale) },
+        { label: t.marketplace, href: localeHref("/#marketplace", locale) },
       ],
     },
     {
       label: t.solutions,
       items: [
-        { label: t.wordpress, href: withBase("/wordpress/") },
-        { label: t.education, href: withBase("/educacao/") },
-        { label: t.security, href: withBase("/security/") },
-        { label: t.compare, href: withBase("/compare/") },
-        { label: t.migrate, href: withBase("/migrate/") },
+        { label: t.wordpress, href: localeHref("/wordpress/", locale) },
+        { label: t.education, href: localeHref("/educacao/", locale) },
+        { label: t.security, href: localeHref("/security/", locale) },
+        { label: t.compare, href: localeHref("/compare/", locale) },
+        { label: t.migrate, href: localeHref("/migrate/", locale) },
       ],
     },
   ];
 }
 
-export function SiteNav({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+export function SiteNav() {
+  const locale = useLocale();
   const t = CHROME[locale].nav;
   const NAV_LINKS = navLinks(locale);
   const NAV_GROUPS = navGroups(locale);
@@ -90,7 +92,7 @@ export function SiteNav({ locale = "en" }: Readonly<{ locale?: Locale }>) {
     >
       <Container className="flex h-16 items-center gap-4">
         <div className="flex shrink-0 items-center gap-2.5">
-          <a href={withBase("/")} className="text-base" aria-label={t.home}>
+          <a href={localeHref("/", locale)} className="text-base" aria-label={t.home}>
             {/* T1268: the full product name shows at every width (never an
                 icon-only or shortened mark). Below sm the layout makes the room
                 instead: a smaller mark, and "Get started" moves into the menu. */}

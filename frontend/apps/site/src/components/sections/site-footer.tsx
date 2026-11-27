@@ -2,7 +2,8 @@ import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
 import { DESTINATIONS, type DestinationKey } from "@/lib/destinations";
 import { reopenConsent } from "@/lib/analytics";
-import { withBase } from "@/lib/site-url";
+import { localeHref } from "@/lib/site-url";
+import { useLocale } from "@/lib/locale-context";
 import { CHROME, DESTINATION_LABELS_PT_BR, type Locale } from "@/lib/i18n";
 
 function columns(locale: Locale): { heading: string; links: { label: string; href: string }[] }[] {
@@ -13,16 +14,16 @@ function columns(locale: Locale): { heading: string; links: { label: string; hre
       heading: t.product,
       links: [
         // Root-anchored so they also work from the /features/* pages (match SiteNav).
-        { label: nav.capabilities, href: withBase("/#features") },
-        { label: t.howItWorks, href: withBase("/#how") },
-        { label: nav.compare, href: withBase("/compare/") },
-        { label: nav.migrate, href: withBase("/migrate/") },
-        { label: t.aemSearch, href: withBase("/aem-search/") },
-        { label: "WordPress", href: withBase("/wordpress/") },
-        { label: nav.education, href: withBase("/educacao/") },
-        { label: nav.security, href: withBase("/security/") },
-        { label: t.selfHost, href: withBase("/#self-host") },
-        { label: nav.marketplace, href: withBase("/#marketplace") },
+        { label: nav.capabilities, href: localeHref("/#features", locale) },
+        { label: t.howItWorks, href: localeHref("/#how", locale) },
+        { label: nav.compare, href: localeHref("/compare/", locale) },
+        { label: nav.migrate, href: localeHref("/migrate/", locale) },
+        { label: t.aemSearch, href: localeHref("/aem-search/", locale) },
+        { label: "WordPress", href: localeHref("/wordpress/", locale) },
+        { label: nav.education, href: localeHref("/educacao/", locale) },
+        { label: nav.security, href: localeHref("/security/", locale) },
+        { label: t.selfHost, href: localeHref("/#self-host", locale) },
+        { label: nav.marketplace, href: localeHref("/#marketplace", locale) },
         { label: "React SDK", href: LINKS.storybook },
       ],
     },
@@ -45,7 +46,8 @@ function destinations(locale: Locale, keys: DestinationKey[]) {
   }));
 }
 
-export function SiteFooter({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+export function SiteFooter() {
+  const locale = useLocale();
   const t = CHROME[locale].footer;
   const COLUMNS = columns(locale);
   return (

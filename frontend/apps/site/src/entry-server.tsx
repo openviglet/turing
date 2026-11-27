@@ -3,7 +3,7 @@ import App from "./App.tsx";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FEATURE_DETAILS, FEATURE_SLUGS } from "@/lib/site-content";
 import { EDUCACAO_META } from "@/lib/educacao-content";
-import { localeOf, type Locale } from "@/lib/i18n";
+import { BR_ROUTES, PT_BR_PREFIX, localeOf, type Locale } from "@/lib/i18n";
 
 export interface PrerenderRoute {
   /** URL path (also the output directory under dist/). */
@@ -14,7 +14,7 @@ export interface PrerenderRoute {
   lang: Locale;
 }
 
-type RouteCopy = Omit<PrerenderRoute, "lang">;
+export type RouteCopy = Omit<PrerenderRoute, "lang">;
 
 /** Every route the build prerenders to its own static HTML file. */
 const copy: RouteCopy[] = [
@@ -71,7 +71,19 @@ const copy: RouteCopy[] = [
   { path: "/educacao/", title: EDUCACAO_META.title, description: EDUCACAO_META.description },
 ];
 
-export const routes: PrerenderRoute[] = copy.map((r) => ({ ...r, lang: localeOf(r.path) }));
+/**
+ * T1376: every route once per language it is written in: the English one at its path,
+ * and, for each route in `twins`, its Portuguese twin under /br/. A twin's own title
+ * and description come with its translated copy (T1381).
+ */
+export function localizedRoutes(routeCopy: readonly RouteCopy[], twins: readonly string[]): PrerenderRoute[] {
+  return routeCopy.flatMap((r) => [
+    { ...r, lang: localeOf(r.path) },
+    ...(twins.includes(r.path) ? [{ ...r, path: `${PT_BR_PREFIX}${r.path}`, lang: "pt-BR" as const }] : []),
+  ]);
+}
+
+export const routes: PrerenderRoute[] = localizedRoutes(copy, BR_ROUTES);
 
 /** Render a route's app shell to an HTML string for the prerender step. */
 export function render(path: string): string {

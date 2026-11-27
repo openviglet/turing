@@ -8,6 +8,8 @@
  * and the dev server all agree on it.
  */
 
+import { localePath, type Locale } from "./i18n";
+
 /** The public origin; the canonical, og:url and JSON-LD URLs hang off it. */
 export const SITE_ORIGIN = "https://turing.viglet.org";
 
@@ -17,6 +19,14 @@ export const BASE_PATH = import.meta.env.BASE_URL;
 /** Prefix a site path ("/compare/", "/#playground") with the base path. */
 export function withBase(path: string): string {
   return BASE_PATH + path.replace(/^\//, "");
+}
+
+/**
+ * A site path as a page in `locale` links to it, with the base path (T1376): a link
+ * from a /br/ page stays in Portuguese wherever the target has a Portuguese twin.
+ */
+export function localeHref(path: string, locale: Locale): string {
+  return withBase(localePath(path, locale));
 }
 
 /** The absolute public URL of a site path, for canonical and structured data. */

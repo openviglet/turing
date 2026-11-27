@@ -2,8 +2,9 @@ import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/brand";
 import { cn } from "@/lib/utils";
-import { withBase } from "@/lib/site-url";
-import { CHROME, type Locale } from "@/lib/i18n";
+import { localeHref } from "@/lib/site-url";
+import { CHROME } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 /**
  * T1269: the one hero every marketing subpage uses, in the viglet.org hub's
@@ -20,7 +21,6 @@ export function PageHero({
   actions,
   aside,
   back = true,
-  locale = "en",
 }: Readonly<{
   eyebrow: ReactNode;
   title: ReactNode;
@@ -28,13 +28,13 @@ export function PageHero({
   actions?: ReactNode;
   aside?: ReactNode;
   back?: boolean;
-  locale?: Locale;
 }>) {
+  const locale = useLocale();
   const copy = (
     <div className="min-w-0">
       {back && (
         <a
-          href={withBase("/")}
+          href={localeHref("/", locale)}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" /> {CHROME[locale].hero.back}

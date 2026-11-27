@@ -104,10 +104,9 @@ export function EducacaoPage() {
   return (
     <div className="flex min-h-screen flex-col" lang="pt-BR">
       <EducacaoJsonLd />
-      <SiteNav locale="pt-BR" />
+      <SiteNav />
       <main className="flex-1">
         <PageHero
-          locale="pt-BR"
           eyebrow={EDUCACAO_HERO.eyebrow}
           title={EDUCACAO_HERO.title}
           description={EDUCACAO_HERO.description}
@@ -310,7 +309,7 @@ export function EducacaoPage() {
           </Container>
         </section>
       </main>
-      <SiteFooter locale="pt-BR" />
+      <SiteFooter />
     </div>
   );
 }

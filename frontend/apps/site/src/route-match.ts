@@ -6,14 +6,25 @@
  * rather than beside the component that happens to call it.
  */
 import { FEATURE_DETAILS } from "@/lib/site-content";
+import { splitLocale, type Locale } from "@/lib/i18n";
+
+/**
+ * T1376: a path as the app routes it: its language, the route below the /br/
+ * prefix, and the feature slug that route names, if any.
+ */
+export function resolveRoute(path: string): { locale: Locale; route: string; slug: string | null } {
+  const { locale, path: route } = splitLocale(path);
+  return { locale, route, slug: matchRoute(route) };
+}
 
 /**
  * Resolve a pathname to a feature slug, or null for the landing page.
  * Kept dependency-free (no react-router) so the SSG prerender and the client
  * agree on a single, trivial routing rule. Navigation between pages uses plain
- * `<a href>` full loads; every route is prerendered to its own static HTML.
+ * `<a href>` full loads; every route is prerendered to its own static HTML. A
+ * /br/ path names the same feature as its English twin (T1376).
  */
 export function matchRoute(path: string): string | null {
-  const m = /^\/features\/([a-z-]+)\/?$/.exec(path);
+  const m = /^\/features\/([a-z-]+)\/?$/.exec(splitLocale(path).path);
   return m && FEATURE_DETAILS[m[1]] ? m[1] : null;
 }

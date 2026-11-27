@@ -10,8 +10,8 @@ import { WordPressPage } from "@/pages/wordpress";
 import { EducacaoPage } from "@/pages/educacao";
 import { ConsentBanner } from "@/components/consent-banner";
 import { FEATURE_DETAILS } from "@/lib/site-content";
-import { localeOf } from "@/lib/i18n";
-import { matchRoute } from "./route-match";
+import { LocaleProvider } from "@/lib/locale";
+import { resolveRoute } from "./route-match";
 
 /** Standalone (non-feature) routes with their own page component. */
 export const MIGRATE_PATH = "/migrate/";
@@ -51,16 +51,19 @@ export default function App({ path = "/" }: Readonly<{ path?: string }>) {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
+  // T1376: the language is read from the path (/br/… is pt-BR) and given to every
+  // component once; the page is chosen by the route below the prefix.
+  const { locale, route, slug } = resolveRoute(path);
   return (
-    <>
-      <Page path={path} />
+    <LocaleProvider locale={locale}>
+      <Page path={route} slug={slug} />
       {/* T1097 — GA loads only after the visitor opts in. */}
-      <ConsentBanner locale={localeOf(path)} />
-    </>
+      <ConsentBanner />
+    </LocaleProvider>
   );
 }
 
-function Page({ path }: Readonly<{ path: string }>) {
+function Page({ path, slug }: Readonly<{ path: string; slug: string | null }>) {
   if (/^\/migrate\/?$/.test(path)) return <MigratePage />;
   if (/^\/compare\/?$/.test(path)) return <ComparePage />;
   if (/^\/aem-search\/?$/.test(path)) return <AemPage />;
@@ -68,7 +71,6 @@ function Page({ path }: Readonly<{ path: string }>) {
   if (/^\/security\/?$/.test(path)) return <SecurityPage />;
   if (/^\/wordpress\/?$/.test(path)) return <WordPressPage />;
   if (/^\/educacao\/?$/.test(path)) return <EducacaoPage />;
-  const slug = matchRoute(path);
   if (slug) return <FeaturePage detail={FEATURE_DETAILS[slug]} />;
   return <LandingPage />;
 }

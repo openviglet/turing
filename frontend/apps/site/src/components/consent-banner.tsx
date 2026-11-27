@@ -9,7 +9,8 @@ import {
   subscribeConsent,
   type Consent,
 } from "@/lib/analytics";
-import { CHROME, type Locale } from "@/lib/i18n";
+import { CHROME } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 const undecidedNow = () => getConsent() === null;
 /** The prerendered HTML never carries the banner, so hydration starts hidden. */
@@ -22,7 +23,8 @@ const undecidedOnServer = () => false;
  * refusing must be as easy as accepting). The footer's "Cookie settings" link
  * reopens it.
  */
-export function ConsentBanner({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+export function ConsentBanner() {
+  const locale = useLocale();
   const t = CHROME[locale].consent;
   const undecided = useSyncExternalStore(subscribeConsent, undecidedNow, undecidedOnServer);
   const [reopened, setReopened] = useState(false);

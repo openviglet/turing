@@ -2187,18 +2187,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.10 Locale routing under /br/ (T1376)
-
-English stays at the root and every current URL keeps working. Portuguese lives under
-/br/ with the same paths below it (/br/, /br/features/search/, /br/wordpress/).
-matchRoute strips the /br prefix and returns the locale with the route; entry-server
-lists every route once per locale and the prerender writes html lang and og:locale from
-it. A LocaleProvider context replaces the locale prop the chrome takes since T1371, and
-a localeHref helper beside withBase prefixes site paths, so a link from a /br/ page
-stays in Portuguese. The prefix is /br/, chosen by the owner over /pt-br/; the language
-itself is declared by hreflang and html lang, which is what search engines read. The
-docs stay English only.
-
 ### CXV.11 One typed dictionary per locale (T1377)
 
 site-content.ts (about 1500 lines) becomes content/en/*.ts, and content/pt-BR/*.ts must
