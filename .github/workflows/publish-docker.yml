@@ -86,6 +86,46 @@ jobs:
             type=raw,value=${{ steps.cfg.outputs.version }},enable=${{ steps.cfg.outputs.release == 'true' }}
             type=raw,value=${{ github.ref_name }}-snapshot,enable=${{ steps.cfg.outputs.release != 'true' }}
             type=raw,value=sha-${{ steps.cfg.outputs.short }}
+      # T1358 - never publish an image that cannot boot on its own defaults. Build it
+      # into the local daemon first, start it with no JAVA_OPTS under a 1 GB memory
+      # limit (the smallest host the docs promise) and wait for the startup line. The
+      # push below reuses this build's layer cache, so the image is not rebuilt.
+      - name: Build image for the boot check
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          push: false
+          provenance: false
+          tags: turing-boot-check:local
+          build-args: |
+            REPO_BRANCH=${{ github.ref_name }}
+            CACHE_BUST=${{ steps.cfg.outputs.commit }}
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}
+      - name: Boot the image on its own heap
+        run: |
+          set -uo pipefail
+          docker run -d --name turing-boot-check --memory 1g \
+            -e TURING_AI_CRYPTO_KEY=boot-check-only \
+            turing-boot-check:local
+          for i in $(seq 1 60); do
+            if docker logs turing-boot-check 2>&1 | grep -q "Started TuringES"; then
+              echo "Booted after ~$((i * 5)) s"
+              docker rm -f turing-boot-check >/dev/null
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' turing-boot-check)" != "true" ]; then
+              echo "::error::The image exited before it finished starting"
+              break
+            fi
+            sleep 5
+          done
+          docker logs --tail 200 turing-boot-check 2>&1
+          docker rm -f turing-boot-check >/dev/null
+          echo "::error::Turing did not report 'Started TuringES' within 300 s under a 1 GB limit with no JAVA_OPTS"
+          exit 1
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v7

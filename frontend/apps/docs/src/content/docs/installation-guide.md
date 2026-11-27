@@ -240,6 +240,8 @@ docker run -p 2700:2700 -e TURING_ADMIN_PASSWORD=your_password ghcr.io/openvigle
 
 `TURING_ADMIN_PASSWORD` (minimum 6 characters) seeds the `admin` password while the container boots, so the console opens on the login page instead of the first-access setup screen. Omit it and you choose the password in the browser on first access (see [Login](/docs/administration-guide/#login)).
 
+The image sizes the JVM heap from the container's memory: 75% of the memory limit, or of the host's memory when the container has no limit. Give the container at least 1 GB. To set the heap yourself, pass `JAVA_OPTS`, which replaces the image's default flags entirely, so include everything you need (for example `-e JAVA_OPTS="-Xmx2g -Djava.awt.headless=true"`).
+
 :::tip[Image tags]
 Every release publishes its version (for example `2026.3.6`) and moves `latest` to it. A version branch can also be published as `<branch>-snapshot` (for example `2026.3-snapshot`), which carries fixes that have not been released yet. Each image also gets a commit tag (`sha-<short>`). Pin a version tag in production instead of tracking `latest`.
 

@@ -35,8 +35,6 @@ moved — verify against `git ls-files` before acting.
 
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
-## Block CZ — Backend modules with verified boundaries
-
 ## Block CY — Filters from a sentence say what visitors say
 
 ## Table of contents
@@ -2422,33 +2420,6 @@ build that fails on a boundary violation. Compatibility is waived for packages, 
 mappings, table names and the Liquibase history, so the schema is reset to one baseline
 per module; REST paths, the SDK contract and the exchange format stay. Later work on
 module boundaries files here.
-
-### CLXXXIX.48 The image boots on its own heap (T1358)
-
-**Where it happened.** fespsp-institucional, the search lab, on 2026-11-27, on the
-`latest` build of d5ce6ee: embedded engine, fresh `/app/store`, no `JAVA_OPTS` in the
-compose.
-
-**What came back.** Every boot dies before Tomcat: `OutOfMemoryError: Java heap space`
-while creating `applicationModuleIdentifiers` (SpringModulithRuntimeAutoConfiguration),
-and `restart: unless-stopped` loops it. `Dockerfile` and `Dockerfile.local` bake
-`JAVA_OPTS=-Xmx512m -Xms512m`; the runtime module scan `spring-modulith-starter-jpa`
-(T1324) brings in scans every class and does not fit. The same image with `-Xmx1g`
-starts in 60 s. `docker-compose.yaml`, `docker-compose-minimal.yaml` (its entrypoint
-reuses `$JAVA_OPTS`) and `wordpress/docker-compose.yml` set no heap, so all three hit
-it.
-
-**What it should do.** Both Dockerfiles bake `-XX:MaxRAMPercentage=75
--XX:InitialRAMPercentage=25` instead of a fixed heap, so it follows the container's
-limit. `JAVA_OPTS` stays the contract: a deployment that sets it gets exactly its own
-flags. If the Modulith 2.1 line can precompute the module metadata at build time, use it
-too; check, do not assume. `publish-docker.yml` (manual dispatch, as every workflow)
-loads the image, boots it with no `JAVA_OPTS` under a 1 GB memory limit and waits for
-`Started TuringES` before it pushes. Tests: a fresh store and an existing one, a
-container with no memory limit, and an explicit `JAVA_OPTS` taking precedence.
-
-**Workaround.** The lab sets `JAVA_OPTS` to `-Xmx1g` on the `turing` service, with this
-id beside it, until a release fixes the default.
 
 ## CXC One bad document never costs the rest of an import
 
