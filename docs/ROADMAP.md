@@ -36,16 +36,26 @@
 - 📋 **T1372** (deps: —) **A spotlight refuses a post whose indexed URL points off the site, so a shortcut to an outside page cannot be pinned** — Pinning is how a site puts its most wanted destination first, and those are often outside it. → §CLXXXII.30
 - 📋 **T1374** (deps: —) **The search button says Busca in pt_BR, a noun, and the block has no attribute to set its text** — A button reads as an action, and the one translation shared with the column and panel makes it read as a heading. → §CLXXXII.31
 - 📋 **T1375** (deps: —) **The search block has no AI mode: asking the site opens a modal, never turns the results page into a chat** — A conversation with sources beside the answer, follow-ups and its own URL is how modern search answers, and a modal cannot hold it. → §CLXXXII.32
+- 📋 **T1387** (deps: —) **A search box that sends its query to the search page has no form action or scope field, so it fails without JavaScript** — A scoped section box falls back to its own page with no results and drops the scope when the script is off or still loading. → §CLXXXII.33
 
 ## Block CY — Filters from a sentence say what visitors say
 
-- 📋 **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — A visitor asking the library's hours gets an apology while the hours are on the site and in the index. → §CXCII.7
+- ⏳ **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — The answer's metadata does not say what each retrieval pass returned, so a sourceless long-page answer on fespsp is unconfirmed as fixed. → §CXCII.7
 
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console
   on the demo host (browse, no save, reset on a schedule) or a recorded walk-through on
   the site, linked from the README.
+
+## Done when — T1370
+
+- **The answer's metadata names what each retrieval pass returned** An /answer response
+  carries the vector documents, lexical ids and lexical chunks counts, so a report names
+  the failing pass; a unit test asserts them for a vector-thin question.
+- **An IT finds a long page as the source of a question about one sentence** An IT
+  indexes a 5,500-character page and asks about one sentence deep in it; the answer
+  lists that page as a source.
 
 ## Non-goals (do NOT add as tasks)
 

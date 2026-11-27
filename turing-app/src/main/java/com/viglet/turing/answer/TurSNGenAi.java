@@ -894,17 +894,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
     private boolean isAnswerGrounded(TurGenAiContext context, String query,
             List<Document> documents, String answerText) {
         try {
-            StringBuilder snippets = new StringBuilder();
-            int n = Math.min(documents.size(), 6);
-            for (int i = 0; i < n; i++) {
-                String text = documents.get(i).getText();
-                if (text == null) {
-                    continue;
-                }
-                text = text.strip().replaceAll("\\s+", " ");
-                snippets.append("- ").append(text.length() > 500
-                        ? text.substring(0, 500) + "…" : text).append('\n');
-            }
+            String snippets = judgeSnippets(documents);
             String prompt = """
                     You are a strict faithfulness judge. Decide whether the ANSWER is fully \
                     supported by the CONTEXT snippets (no claims beyond what the context states).
@@ -1751,6 +1741,40 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
      * on any error or unparseable/blank verdict (fail-open — a judge outage must
      * not refuse every legitimate site question); only a clear leading NO refuses.
      */
+    /**
+     * T1370 — how many retrieved chunks the STRICT_RAG judge reads: the unfiltered
+     * retrieval's top-K, so a long page's chunk ranked past the sixth still counts.
+     */
+    static final int JUDGE_CHUNKS = 10;
+
+    /**
+     * T1370 — the most of one chunk the judge reads: above
+     * {@link com.viglet.turing.rag.TurRagUtils#DEFAULT_CHUNK_SIZE}, so a chunk is read
+     * whole. Cut at 500, the sentence holding the answer in a long page's chunk (its
+     * hours, after the page header) was never shown, and the judge refused it.
+     */
+    static final int JUDGE_CHUNK_CHARS = 1500;
+
+    /**
+     * T1370 — the retrieved chunks as the STRICT_RAG judge and the T330 groundedness
+     * check read them: the first {@link #JUDGE_CHUNKS}, one line each, whitespace
+     * collapsed, each cut at {@link #JUDGE_CHUNK_CHARS}.
+     */
+    static String judgeSnippets(List<Document> documents) {
+        StringBuilder snippets = new StringBuilder();
+        int n = Math.min(documents.size(), JUDGE_CHUNKS);
+        for (int i = 0; i < n; i++) {
+            String text = documents.get(i).getText();
+            if (text == null) {
+                continue;
+            }
+            text = text.strip().replaceAll("\\s+", " ");
+            snippets.append("- ").append(text.length() > JUDGE_CHUNK_CHARS
+                    ? text.substring(0, JUDGE_CHUNK_CHARS) + "…" : text).append('\n');
+        }
+        return snippets.toString();
+    }
+
     // Package-visible for the STRICT_RAG answerability-gate test.
     boolean canAnswerFromRetrievedContent(TurGenAiContext context, String query,
             List<Document> documents) {
@@ -1766,17 +1790,7 @@ public class TurSNGenAi implements com.viglet.turing.sn.api.TurSNSiteEmbeddings 
             return false;
         }
         try {
-            StringBuilder snippets = new StringBuilder();
-            int n = Math.min(documents.size(), 6);
-            for (int i = 0; i < n; i++) {
-                String text = documents.get(i).getText();
-                if (text == null) {
-                    continue;
-                }
-                text = text.strip().replaceAll("\\s+", " ");
-                snippets.append("- ").append(text.length() > 500
-                        ? text.substring(0, 500) + "…" : text).append('\n');
-            }
+            String snippets = judgeSnippets(documents);
             String prompt = """
                     You decide whether a QUESTION can be answered using ONLY the CONTEXT below.
                     Reply with exactly one word on the first line: YES or NO.

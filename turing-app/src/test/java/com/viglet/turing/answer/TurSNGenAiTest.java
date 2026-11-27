@@ -332,6 +332,52 @@ class TurSNGenAiTest {
         assertFalse(turSNGenAi.canAnswerFromRetrievedContent(context, "q", List.of()));
     }
 
+    // T1370 — a long page's sentence reaches the judge. A full chunk (the chunker
+    // writes up to 1,024 characters) holds the hours past its 500th character, and
+    // a retrieval that ranks that chunk seventh behind other pages' chunks. Cut at
+    // 6 chunks × 500 characters, the judge saw neither and refused with no sources.
+    @Test
+    void answerabilityGateReadsALongPagesChunksWhole() {
+        String hours = "Horário de atendimento: segunda a sexta-feira, 9h às 19h.";
+        String lead = "Biblioteca e CEDOC. " + "A biblioteca da FESPSP reúne acervo de ciências sociais. ".repeat(12);
+        Document deepInAChunk = new Document(lead + hours);
+        assertTrue(deepInAChunk.getText().length() <= com.viglet.turing.rag.TurRagUtils.DEFAULT_CHUNK_SIZE
+                && deepInAChunk.getText().indexOf("9h às 19h") > 500);
+        List<Document> rankedSeventh = new java.util.ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            rankedSeventh.add(new Document("Evento " + i + ": palestra na biblioteca."));
+        }
+        rankedSeventh.add(new Document(hours));
+
+        for (List<Document> retrieved : List.of(List.of(deepInAChunk), rankedSeventh)) {
+            TurGenAiContext context = mock(TurGenAiContext.class);
+            ChatModel chatModel = mock(ChatModel.class);
+            when(context.getChatModel()).thenReturn(chatModel);
+            org.mockito.ArgumentCaptor<Prompt> asked = org.mockito.ArgumentCaptor.forClass(Prompt.class);
+            when(chatModel.call(asked.capture())).thenReturn(new ChatResponse(List.of(
+                    new Generation(new org.springframework.ai.chat.messages.AssistantMessage("YES")))));
+
+            assertTrue(turSNGenAi.canAnswerFromRetrievedContent(
+                    context, "Até que horas abre a biblioteca?", retrieved));
+            assertTrue(asked.getValue().getContents().contains("9h às 19h"));
+        }
+    }
+
+    // T1370 — the judge's window stays bounded: past ten chunks nothing is read,
+    // and a chunk longer than the chunker writes is cut.
+    @Test
+    void judgeSnippetsAreBounded() {
+        List<Document> many = new java.util.ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            many.add(new Document("chunk-" + i));
+        }
+        String read = TurSNGenAi.judgeSnippets(many);
+        assertTrue(read.contains("chunk-9") && !read.contains("chunk-10"));
+
+        String cut = TurSNGenAi.judgeSnippets(List.of(new Document("x".repeat(TurSNGenAi.JUDGE_CHUNK_CHARS + 50))));
+        assertEquals("- " + "x".repeat(TurSNGenAi.JUDGE_CHUNK_CHARS) + "…\n", cut);
+    }
+
     // Fail-open: a blank / unparseable verdict must NOT refuse a real question.
     @Test
     void answerabilityGateFailsOpenOnBlankVerdict() {

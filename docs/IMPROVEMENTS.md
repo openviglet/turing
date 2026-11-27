@@ -2553,6 +2553,34 @@ conversational.
 **Reference.** turing-insper's AI mode (turing-react-sdk: AIModePanel,
 /chat/conversation over SSE, sessionStorage history); it hides the sources. FI202 waits.
 
+### CLXXXII.33 Box-only search block: no-JS submit to the search page with the scope (T1387)
+
+**Where it happened.** fespsp-institucional, FI145: a box for one section of the site
+(the events page, a publisher's catalogue). It is a `viglet-turing/search` block holding
+only `viglet-turing/search-box` (D208 sends its query to the search page), with fixed
+filters (`"filters":["type:evento"]`, D306).
+
+**What comes back.** `parts/box.php:21` draws `<form role="search" class="viglet-turing-search__form" data-wp-on--submit="actions.submit">`:
+- no `action` and no `method`;
+- no field for the scope.
+
+The JS submit (`search-block.js`, the `elsewhere` branch) builds
+`/busca/?q=…&scope[]=type:evento`. With JavaScript off, or before the script loads,
+Enter sends `?q=…` to the page the box is on. That page has no results part, so it shows
+nothing, and the scope is lost.
+
+**Expected.** When `render.php:177-189` decides the block sends its searches elsewhere,
+the form's `action` should be that search page, with `method="get"` and one `<input
+type="hidden" name="scope[]">` per fixed filter. The no-JS submit then lands on the same
+URL the script builds.
+
+**Workaround.** fespsp-institucional
+`wordpress/themes/fespsp-main/inc/busca.php`, `fespsp_main_busca_da_secao()`:
+- sets `action` and `method` with `WP_HTML_Tag_Processor`;
+- inserts the hidden `scope[]` inputs before `</form>`.
+
+It should be removed once the plugin draws them.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
