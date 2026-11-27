@@ -2581,6 +2581,30 @@ URL the script builds.
 
 It should be removed once the plugin draws them.
 
+### CLXXXII.34 Search origin carried to Insights (T1388)
+
+**Where it happened.** fespsp-base FB122, the 404 page that searches what the broken URL
+said.
+
+**How it works.** `inc/busca.php` replaces the 404's `core/search` with a
+`viglet-turing/search` block and sets the term through
+`viglet_turing_search_initial_query` (T1368). For example,
+"/noticias/2019/05/exposicao-casarao-90-anos.html" is searched as "exposicao casarao
+anos".
+
+**What's missing.** The site wants these searches told apart in Insights. That list is
+how FESPSP finds the 301 redirects the migration still needs (fespsp-institucional
+FI150). But neither the block nor the query the plugin sends can carry an origin or a
+context: no attribute, no filter on the request and no field on the search event. Every
+404 search lands in Insights mixed with the ones people typed.
+
+**Expected.** The block gets an attribute and a PHP filter, for example
+`viglet_turing_search_context`, whose value the plugin sends with the search. Turing
+stores it on the search event. Insights can then filter by it ("404") and list the
+terms, with or without results.
+
+**Workaround.** None. The 404 searches go to Insights without any tag.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
