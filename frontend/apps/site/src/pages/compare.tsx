@@ -58,7 +58,7 @@ function FaqJsonLd() {
  * shell: dark hero, dependency-free routing via plain <a href> full loads.
  */
 export function ComparePage() {
-  const { COMPARE_COLUMNS, COMPARE_MATRIX, COMPARE_VENDORS, COVEO_LUCIDWORKS_MATRIX, COVEO_LUCIDWORKS_POST, FAQ } = usePages();
+  const { COMPARE_COLUMNS, COMPARE_MATRIX, COMPARE_VENDORS, COVEO_LUCIDWORKS_MATRIX, COVEO_LUCIDWORKS_POST, FAQ, COMPARE_PAGE: t } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <FaqJsonLd />
@@ -66,14 +66,14 @@ export function ComparePage() {
       <main className="flex-1">
         {/* hero */}
         <PageHero
-          eyebrow={<>How Viglet Turing compares</>}
-          title={<>Viglet Turing vs Algolia, Coveo, Lucidworks, Elasticsearch & DIY RAG</>}
-          description={<>Where each alternative wins, and where a self-hosted, open-source platform for search, RAG and agents fits instead. Viglet Turing runs on the engine you already operate, keeps your data in your infrastructure, and is Apache 2.0.</>}
+          eyebrow={<>{t.eyebrow}</>}
+          title={<>{t.title}</>}
+          description={<>{t.description}</>}
           actions={
             <>
               <Button asChild size="lg">
                 <a href={withBase("/#playground")}>
-                  Try it live <ArrowRight className="size-4" />
+                  {`${t.tryCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button
@@ -81,7 +81,7 @@ export function ComparePage() {
                 size="lg"
                 variant="outline"
               >
-                <a href={withBase("/migrate/")}>Switching from Algolia or Elastic?</a>
+                <a href={withBase("/migrate/")}>{t.migrateCta}</a>
               </Button>
             </>
           }
@@ -92,12 +92,10 @@ export function ComparePage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                One platform, measured against the alternatives
+                {t.matrixTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                A hosted SaaS locks your data in someone else's cloud. A raw
-                engine or a DIY stack is months of application glue. Viglet Turing gives
-                you production search and auditable AI in one deployable product.
+                {t.matrixLead}
               </p>
             </div>
             <TableScroll>
@@ -154,9 +152,7 @@ export function ComparePage() {
               </table>
             </TableScroll>
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              High-level comparison as of 2026; verify current vendor
-              capabilities. “DIY” = assembling LangChain/LlamaIndex with a vector
-              database yourself.
+              {t.matrixNote}
             </p>
           </Container>
         </section>
@@ -166,12 +162,10 @@ export function ComparePage() {
           <Container className="max-w-4xl">
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Coveo vs Lucidworks Fusion, and the open-source option
+                {t.portalTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                Coveo is managed SaaS priced per query; Lucidworks Fusion is
-                licensed, Solr-based and runs in your perimeter. Here is where
-                each one stands, with Viglet Turing beside them.
+                {t.portalLead}
               </p>
             </div>
             <TableScroll>
@@ -199,9 +193,9 @@ export function ComparePage() {
               </table>
             </TableScroll>
             <p className="mt-4 text-center text-sm text-muted-foreground">
-              Pricing, data residency, connectors and RAG in more depth:{" "}
+              {t.postLead}{" "}
               <a href={COVEO_LUCIDWORKS_POST} className="font-semibold text-primary hover:underline">
-                Coveo vs. Lucidworks Fusion (and an open-source option)
+                {t.postLink}
               </a>
             </p>
           </Container>
@@ -212,11 +206,10 @@ export function ComparePage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Where each alternative wins, and where Viglet Turing fits
+                {t.vendorsTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The fair version. Each of these is a strong tool; the question is
-                which trade-offs match your team.
+                {t.vendorsLead}
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2">
@@ -225,11 +218,11 @@ export function ComparePage() {
                   <h3 className="text-lg font-extrabold">{v.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{v.tagline}</p>
                   <p className="mt-5 text-xs font-bold tracking-[0.08em] text-muted-foreground uppercase">
-                    Where it shines
+                    {t.shines}
                   </p>
                   <p className="mt-1.5 text-sm leading-relaxed">{v.shines}</p>
                   <p className="mt-5 text-xs font-bold tracking-[0.08em] text-primary uppercase">
-                    Where Viglet Turing fits
+                    {t.fits}
                   </p>
                   <p className="mt-1.5 text-sm leading-relaxed">{v.turingFit}</p>
                 </Card>
@@ -243,11 +236,10 @@ export function ComparePage() {
           <Container className="max-w-3xl">
             <div className="mb-10 text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Frequently asked questions
+                {t.faqTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The objections worth raising before you commit, with direct
-                answers.
+                {t.faqLead}
               </p>
             </div>
             <dl className="divide-y divide-border">
@@ -268,20 +260,19 @@ export function ComparePage() {
           <Container>
             <Card className="mx-auto max-w-3xl gap-0 border-primary/20 bg-primary/5 p-8 text-center sm:p-10">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                See it on your own content
+                {t.ctaTitle}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                Self-host under Apache 2.0, bring your own LLM and search engine,
-                and keep every document in your infrastructure.
+                {t.ctaBody}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg">
                   <a href={LINKS.docs}>
-                    Get started <ArrowRight className="size-4" />
+                    {`${t.getStartedCta} `}<ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href={withBase("/#playground")}>Try it live</a>
+                  <a href={withBase("/#playground")}>{t.tryCta}</a>
                 </Button>
               </div>
             </Card>

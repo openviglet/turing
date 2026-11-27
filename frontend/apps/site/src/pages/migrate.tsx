@@ -19,21 +19,21 @@ import { withBase } from "@/lib/site-url";
  * closes on the differentiator: the data stays on their infrastructure.
  */
 export function MigratePage() {
-  const { MIGRATION_CLI_CODE, MIGRATION_CLI_FEATURES, MIGRATION_COLUMNS, MIGRATION_MAP, MIGRATION_OUTCOMES } = usePages();
+  const { MIGRATION_CLI_CODE, MIGRATION_CLI_FEATURES, MIGRATION_COLUMNS, MIGRATION_MAP, MIGRATION_OUTCOMES, MIGRATE_PAGE: t } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <SiteNav />
       <main className="flex-1">
         {/* hero */}
         <PageHero
-          eyebrow={<>Migrate to Viglet Turing</>}
-          title={<>Switching from Algolia or Elasticsearch is one command</>}
-          description={<>Keep the faceted, typo-tolerant search your team relies on, add RAG, cited chat and agents, and run it all on your own infrastructure. No rewrite, no lock-in, no per-record bill.</>}
+          eyebrow={<>{t.eyebrow}</>}
+          title={<>{t.title}</>}
+          description={<>{t.description}</>}
           actions={
             <>
               <Button asChild size="lg">
                 <a href={`${LINKS.docs}migration`} target="_blank" rel="noreferrer">
-                  Read the migration guide <ArrowRight className="size-4" />
+                  {`${t.guideCta} `}<ArrowRight className="size-4" />
                 </a>
               </Button>
               <Button
@@ -41,7 +41,7 @@ export function MigratePage() {
                 size="lg"
                 variant="outline"
               >
-                <a href={withBase("/#playground")}>Try it live</a>
+                <a href={withBase("/#playground")}>{t.tryCta}</a>
               </Button>
             </>
           }
@@ -52,15 +52,13 @@ export function MigratePage() {
           <Container className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Point it at your live index
+                {t.commandTitle}
               </h2>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground">
                 <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">
                   turing migrate
                 </code>{" "}
-                reads your Elasticsearch mappings or Algolia settings, turns them
-                into a Viglet Turing schema, and streams the records across in a single
-                step. And it's cautious by design:
+                {t.commandBody}
               </p>
               <ul className="mt-6 space-y-4">
                 {MIGRATION_CLI_FEATURES.map((f) => (
@@ -88,12 +86,10 @@ export function MigratePage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Everything you rely on carries over
+                {t.mapTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                The concepts map almost one-to-one. Where a hosted feature is
-                paid, beta or vendor-locked, Viglet Turing ships the equivalent in the
-                box, on the search engine you already operate.
+                {t.mapLead}
               </p>
             </div>
             <TableScroll fadeClassName="from-muted">
@@ -136,7 +132,7 @@ export function MigratePage() {
               </table>
             </TableScroll>
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              High-level mapping as of 2026; verify current vendor capabilities.
+              {t.mapNote}
             </p>
           </Container>
         </section>
@@ -146,7 +142,7 @@ export function MigratePage() {
           <Container>
             <div className="mx-auto mb-10 max-w-2xl text-center">
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                And you come out ahead
+                {t.outcomesTitle}
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
@@ -173,20 +169,13 @@ export function MigratePage() {
                 <ShieldCheck className="size-6" />
               </span>
               <h2 className="mt-5 text-2xl font-extrabold tracking-tight">
-                And your data stays on your own infrastructure
+                {t.dataTitle}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                A hosted SaaS keeps your index, and increasingly your users'
-                queries, in someone else's cloud. Viglet Turing runs on your own
-                hardware: documents, embeddings and query logs stay put.
+                {t.dataBody}
               </p>
               <ul className="mx-auto mt-6 grid max-w-xl gap-2.5 text-left sm:grid-cols-2">
-                {[
-                  "Self-hosted under Apache 2.0",
-                  "Content & embeddings stay on-prem",
-                  "Bring your own LLM & search engine",
-                  "No per-record or per-search billing",
-                ].map((item) => (
+                {t.keepList.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 size-4 shrink-0 text-emerald-500" />
                     <span>{item}</span>
@@ -196,11 +185,11 @@ export function MigratePage() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg">
                   <a href={`${LINKS.docs}migration`} target="_blank" rel="noreferrer">
-                    Read the migration guide <ArrowRight className="size-4" />
+                    {`${t.guideCta} `}<ArrowRight className="size-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <a href={withBase("/#playground")}>Try it live</a>
+                  <a href={withBase("/#playground")}>{t.tryCta}</a>
                 </Button>
               </div>
             </Card>

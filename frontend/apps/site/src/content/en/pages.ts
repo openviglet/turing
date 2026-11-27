@@ -458,6 +458,34 @@ export const SECURITY_POINTS: SecurityPoint[] = [
   },
 ];
 
+/** T1378: the words of /security/ around its points and questions. */
+export const SECURITY_PAGE = {
+  eyebrow: "Data residency for regulated industries",
+  title: "Self-hosted AI search and RAG: your content stays on your own infrastructure",
+  description:
+    "A search SaaS asks you to trust its compliance badges with your content and your users' queries. Viglet Turing is self-hosted: the index and its data are stored on your infrastructure, so security inherits the controls you already run. Open source, your choice of LLM (local models included), your region.",
+  docsCta: "Deployment & security docs",
+  selfHostCta: "Self-host in one command",
+  boundaryTitle: "Don't trust a vendor's boundary. Remove it",
+  boundaryBody:
+    "SOC 2 and GDPR paperwork exist because a hosted vendor holds your data. When you self-host, that boundary disappears: your content, embeddings and query logs stay inside the account, region and controls you already operate. Nothing is transferred, and nothing has to be audited on someone else's word.",
+  pointsTitle: "How Viglet Turing keeps you in control",
+  pointsLead: "What the software does, and what you can check in its source.",
+  faqTitle: "Data residency questions",
+  faqLead: "What regulated teams ask before they put AI search over their content.",
+  scopeTitle: "What self-hosting means for your compliance",
+  scopeBody:
+    "Viglet Turing is software you run, not a service we operate, so it has no SOC 2 report of its own to hand you, and it doesn't need one. Deployed inside your environment, it runs under the certifications, network controls, logging and data-residency guarantees your infrastructure already carries. You keep the audit trail; we keep the source open so your team can verify every claim on this page.",
+  scopeList: [
+    "Self-hosted under Apache 2.0",
+    "Content, embeddings & query logs stay on-prem",
+    "Bring your own LLM, or run fully local",
+    "No telemetry, no phone-home",
+  ],
+  aemCta: "See it for AEM",
+  compareCta: "Compare the alternatives",
+};
+
 export interface SecurityFaqItem {
   q: string;
   a: string;
@@ -824,6 +852,29 @@ export const FEATURE_SLUGS = ["search", "ask", "automate", "run"] as const;
 /* a concrete import path, and the "your data stays in your infra" angle.     */
 /* -------------------------------------------------------------------------- */
 
+/** T1378: the words of /migrate/ around its map, features and outcomes. */
+export const MIGRATE_PAGE = {
+  commandTitle: "Point it at your live index",
+  commandBody: "reads your Elasticsearch mappings or Algolia settings, turns them into a Viglet Turing schema, and streams the records across in a single step. And it's cautious by design:",
+  mapTitle: "Everything you rely on carries over",
+  mapLead: "The concepts map almost one-to-one. Where a hosted feature is paid, beta or vendor-locked, Viglet Turing ships the equivalent in the box, on the search engine you already operate.",
+  mapNote: "High-level mapping as of 2026; verify current vendor capabilities.",
+  outcomesTitle: "And you come out ahead",
+  dataTitle: "And your data stays on your own infrastructure",
+  dataBody: "A hosted SaaS keeps your index, and increasingly your users' queries, in someone else's cloud. Viglet Turing runs on your own hardware: documents, embeddings and query logs stay put.",
+  eyebrow: "Migrate to Viglet Turing",
+  title: "Switching from Algolia or Elasticsearch is one command",
+  description: "Keep the faceted, typo-tolerant search your team relies on, add RAG, cited chat and agents, and run it all on your own infrastructure. No rewrite, no lock-in, no per-record bill.",
+  guideCta: "Read the migration guide",
+  tryCta: "Try it live",
+  keepList: [
+    "Self-hosted under Apache 2.0",
+    "Content & embeddings stay on-prem",
+    "Bring your own LLM & search engine",
+    "No per-record or per-search billing",
+  ],
+};
+
 export interface MigrationRow {
   /** The capability, phrased engine-neutrally. */
   concept: string;
@@ -995,6 +1046,31 @@ export const MIGRATION_CLI_FEATURES: MigrationCliFeature[] = [
 /* / AG-UI pattern: name the objection before the reader does, answer it      */
 /* fairly, and say where each alternative genuinely wins.                     */
 /* -------------------------------------------------------------------------- */
+
+/** T1378: the words of /compare/ around its tables, cards and questions. */
+export const COMPARE_PAGE = {
+  matrixTitle: "One platform, measured against the alternatives",
+  matrixLead: "A hosted SaaS locks your data in someone else's cloud. A raw engine or a DIY stack is months of application glue. Viglet Turing gives you production search and auditable AI in one deployable product.",
+  matrixNote: "High-level comparison as of 2026; verify current vendor capabilities. “DIY” = assembling LangChain/LlamaIndex with a vector database yourself.",
+  portalTitle: "Coveo vs Lucidworks Fusion, and the open-source option",
+  portalLead: "Coveo is managed SaaS priced per query; Lucidworks Fusion is licensed, Solr-based and runs in your perimeter. Here is where each one stands, with Viglet Turing beside them.",
+  postLink: "Coveo vs. Lucidworks Fusion (and an open-source option)",
+  vendorsTitle: "Where each alternative wins, and where Viglet Turing fits",
+  vendorsLead: "The fair version. Each of these is a strong tool; the question is which trade-offs match your team.",
+  shines: "Where it shines",
+  fits: "Where Viglet Turing fits",
+  faqTitle: "Frequently asked questions",
+  faqLead: "The objections worth raising before you commit, with direct answers.",
+  ctaTitle: "See it on your own content",
+  ctaBody: "Self-host under Apache 2.0, bring your own LLM and search engine, and keep every document in your infrastructure.",
+  eyebrow: "How Viglet Turing compares",
+  title: "Viglet Turing vs Algolia, Coveo, Lucidworks, Elasticsearch & DIY RAG",
+  description: "Where each alternative wins, and where a self-hosted, open-source platform for search, RAG and agents fits instead. Viglet Turing runs on the engine you already operate, keeps your data in your infrastructure, and is Apache 2.0.",
+  tryCta: "Try it live",
+  migrateCta: "Switching from Algolia or Elastic?",
+  getStartedCta: "Get started",
+  postLead: "Pricing, data residency, connectors and RAG in more depth:",
+};
 
 export interface CompareRow {
   /** The capability, phrased engine-neutrally. */
