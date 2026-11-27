@@ -40,8 +40,6 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
-- 🛠 **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — No IT asks /answer about one sentence of a long indexed page, so the fix is unproven end to end and on fespsp. → §CXCII.7
-
 ## Done when — T1184
 
 - **An evaluator sees the admin console without installing** A read-only guest console

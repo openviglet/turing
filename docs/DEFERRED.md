@@ -28,3 +28,4 @@
 
 ## Block CY — Filters from a sentence say what visitors say
 
+- ⏸ **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — set aside (Waits on FI148 re-run on fespsp after a deploy, and on an answer IT harness.): The fix is unproven end to end: no IT asks a long page's sentence. → §CXCII.7
