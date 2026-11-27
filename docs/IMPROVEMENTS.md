@@ -2440,6 +2440,26 @@ from the same document the search returns. Protected and draft posts stay out, a
 **Workaround.** None. Relevance already puts the shortcut first for "vestibular" and
 "pós"; the spotlight is what "graduação" needs. FI149 waits on this.
 
+### CLXXXII.31 A search button that says Buscar (T1374)
+
+**Where it happened.** fespsp-institucional FI144, the `/busca/` page of the FESPSP
+search lab, `viglet-turing/search` with `placeholder` set, locale pt_BR.
+
+**What it says.** The submit button of the search form reads "Busca": it is the pt_BR
+translation of the msgid "Search" (`msgstr "Busca"`), which the plugin uses both as a
+noun (the posts-list column, the editor panel, the screen-reader label) and as the
+button's verb. On a button pt-BR wants the verb, "Buscar"; "Busca" reads as a heading.
+The block has an attribute for the placeholder but none for the button text, so a site
+cannot fix it without a `gettext` filter on the plugin's text domain, which would also
+rename the column and the panel.
+
+**What it should do.** The button gets its own msgid with a context (`_x( 'Search',
+'submit button', … )`) translated "Buscar", and a `buttonText` attribute like
+core/search's, so a site can write its own ("Pesquisar"). The noun stays "Busca" where
+it is a noun.
+
+**Workaround.** None; the lab shows "Busca".
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
