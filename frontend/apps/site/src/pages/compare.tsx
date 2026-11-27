@@ -6,14 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container, TableScroll } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import {
-  COMPARE_COLUMNS,
-  COMPARE_MATRIX,
-  COMPARE_VENDORS,
-  COVEO_LUCIDWORKS_MATRIX,
-  COVEO_LUCIDWORKS_POST,
-  FAQ,
-} from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
@@ -36,6 +29,7 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 
 /** FAQPage structured data so the objection answers can win rich results. */
 function FaqJsonLd() {
+  const { FAQ } = usePages();
   const json = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -64,6 +58,7 @@ function FaqJsonLd() {
  * shell: dark hero, dependency-free routing via plain <a href> full loads.
  */
 export function ComparePage() {
+  const { COMPARE_COLUMNS, COMPARE_MATRIX, COMPARE_VENDORS, COVEO_LUCIDWORKS_MATRIX, COVEO_LUCIDWORKS_POST, FAQ } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <FaqJsonLd />

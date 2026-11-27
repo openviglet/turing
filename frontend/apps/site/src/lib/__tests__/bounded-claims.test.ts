@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import * as siteContent from "@/content/en/pages";
+import { PAGES } from "@/content/pages";
 import * as educacaoContent from "@/content/pt-BR/educacao";
 import { CONTENT } from "@/content";
 import llmsTxt from "../../../public/llms.txt?raw";
@@ -30,14 +30,14 @@ const UNIVERSAL = [
 function strings(value: unknown, out: string[] = []): string[] {
   if (typeof value === "string") out.push(value);
   else if (Array.isArray(value)) value.forEach((v) => strings(v, out));
-  else if (value && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype)
+  else if (value && typeof value === "object" && [Object.prototype, null].includes(Object.getPrototypeOf(value)))
     Object.values(value).forEach((v) => strings(v, out));
   return out;
 }
 
 describe("bounded claims (T1272)", () => {
   it("site content makes no universal or delivery-time claim", () => {
-    const hits = strings(siteContent).filter((s) => UNIVERSAL.some((re) => re.test(s)));
+    const hits = strings(PAGES).filter((s) => UNIVERSAL.some((re) => re.test(s)));
     expect(hits).toEqual([]);
   });
 

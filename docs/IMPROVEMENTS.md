@@ -2187,21 +2187,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.11 One typed dictionary per locale (T1377)
-
-site-content.ts (about 1500 lines) became content/en/pages.ts (T1377b) and the chrome
-moved into content/<locale>/index.ts typed by SiteContent (T1377 first part), read by
-useContent(). Page copy is read by usePages(): English is complete and is the type, and
-a locale's pages are Partial<PagesContent>, one export per piece, each typed as the
-English one, so a translated piece cannot drop a field. A locale gains its pieces with
-its pages (T1381, T1382); until then the English piece stands, and T1386's build gate
-refuses a /br/ route whose pieces are missing. Routing and the prerender's English meta
-read content/en/pages.ts directly. No i18n library: the site is static, prerendered and
-zero-runtime by choice. Left: the solution and feature pages (aem, compare, migrate,
-persona, security, wordpress, feature-page) still import from content/en/pages.ts; they
-move to usePages() as the home sections did. The naming and bounded-claims tests then
-read every locale's pieces.
-
 ### CXV.12 Inline copy moves into the dictionary (T1378)
 
 Measured on 2026-11-27: aem, persona, wordpress, compare and security hold 17 to 25

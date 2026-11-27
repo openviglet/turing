@@ -9,7 +9,7 @@ import { SecurityPage } from "@/pages/security";
 import { WordPressPage } from "@/pages/wordpress";
 import { EducacaoPage } from "@/pages/educacao";
 import { ConsentBanner } from "@/components/consent-banner";
-import { FEATURE_DETAILS } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { LocaleProvider } from "@/lib/locale";
 import { resolveRoute } from "./route-match";
 
@@ -64,6 +64,7 @@ export default function App({ path = "/" }: Readonly<{ path?: string }>) {
 }
 
 function Page({ path, slug }: Readonly<{ path: string; slug: string | null }>) {
+  const { FEATURE_DETAILS } = usePages();
   if (/^\/migrate\/?$/.test(path)) return <MigratePage />;
   if (/^\/compare\/?$/.test(path)) return <ComparePage />;
   if (/^\/aem-search\/?$/.test(path)) return <AemPage />;

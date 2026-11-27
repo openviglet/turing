@@ -7,12 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import {
-  WORDPRESS_FAQ,
-  WORDPRESS_STORY,
-  WORDPRESS_VIDEOS,
-  type WordPressVideoLang,
-} from "@/content/en/pages";
+import { type WordPressVideoLang } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 import { PUBLISHED_VIDEO_LANGS as PUBLISHED, videoLangFor } from "@/lib/wordpress-video";
@@ -28,6 +24,7 @@ const serverVideoLang = () => PUBLISHED[0];
  * VideoObject for each published cut, and the FAQPage. Prerendered to static HTML.
  */
 function WordPressJsonLd() {
+  const { WORDPRESS_FAQ, WORDPRESS_VIDEOS } = usePages();
   const graph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -84,6 +81,7 @@ function WordPressJsonLd() {
  * loads before consent. The embed is youtube-nocookie.
  */
 function VideoFacade() {
+  const { WORDPRESS_VIDEOS } = usePages();
   // The browser's language picks the cut after hydration, until the visitor chooses one.
   const browserLang = useSyncExternalStore(noSubscription, browserVideoLang, serverVideoLang);
   const [chosen, setLang] = useState<WordPressVideoLang | null>(null);
@@ -168,6 +166,7 @@ function VideoFacade() {
  * to Turing directly, so its page lives here; Dumont is linked for the other sources.
  */
 export function WordPressPage() {
+  const { WORDPRESS_FAQ, WORDPRESS_STORY } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <WordPressJsonLd />

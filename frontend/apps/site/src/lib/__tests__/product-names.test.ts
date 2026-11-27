@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import * as siteContent from "@/content/en/pages";
+import { PAGES } from "@/content/pages";
 import * as educacaoContent from "@/content/pt-BR/educacao";
 import { CONTENT } from "@/content";
 import { PRODUCTS } from "@/components/products";
@@ -20,7 +20,7 @@ const BARE = /(?<!Viglet )\b(Turing|Dumont|Shio)\b/;
 function strings(value: unknown, at: string, out: Array<[string, string]>) {
   if (typeof value === "string") out.push([at, value]);
   else if (Array.isArray(value)) value.forEach((v, i) => strings(v, `${at}[${i}]`, out));
-  else if (value && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype)
+  else if (value && typeof value === "object" && [Object.prototype, null].includes(Object.getPrototypeOf(value)))
     for (const [k, v] of Object.entries(value)) strings(v, `${at}.${k}`, out);
   return out;
 }
@@ -31,7 +31,7 @@ describe("product names (T1268)", () => {
   });
 
   it("site content never uses a bare product name", () => {
-    const bare = strings(siteContent, "site-content", []).filter(([, s]) => BARE.test(s));
+    const bare = strings(PAGES, "pages", []).filter(([, s]) => BARE.test(s));
     expect(bare).toEqual([]);
   });
 

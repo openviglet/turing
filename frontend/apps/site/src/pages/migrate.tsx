@@ -7,13 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container, TableScroll } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import {
-  MIGRATION_CLI_CODE,
-  MIGRATION_CLI_FEATURES,
-  MIGRATION_COLUMNS,
-  MIGRATION_MAP,
-  MIGRATION_OUTCOMES,
-} from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { withBase } from "@/lib/site-url";
 
 /**
@@ -25,6 +19,7 @@ import { withBase } from "@/lib/site-url";
  * closes on the differentiator: the data stays on their infrastructure.
  */
 export function MigratePage() {
+  const { MIGRATION_CLI_CODE, MIGRATION_CLI_FEATURES, MIGRATION_COLUMNS, MIGRATION_MAP, MIGRATION_OUTCOMES } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <SiteNav />

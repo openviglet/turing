@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import { SECURITY_FAQ, SECURITY_POINTS } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { withBase } from "@/lib/site-url";
 
 /** FAQPage JSON-LD for the data-residency questions, prerendered to static HTML. */
 function SecurityJsonLd() {
+  const { SECURITY_FAQ } = usePages();
   const graph = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -41,6 +42,7 @@ function SecurityJsonLd() {
  * routing via plain <a href> full loads).
  */
 export function SecurityPage() {
+  const { SECURITY_FAQ, SECURITY_POINTS } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <SecurityJsonLd />

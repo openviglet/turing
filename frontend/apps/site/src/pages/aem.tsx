@@ -8,14 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container, TableScroll } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import {
-  AEM_CODE,
-  AEM_COLUMNS,
-  AEM_DEPTH,
-  AEM_FAQ,
-  AEM_MATRIX,
-  AEM_STEPS,
-} from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 
@@ -40,6 +33,7 @@ function Cell({ value, highlight }: Readonly<{ value: string; highlight?: boolea
  * answers can win rich results. All prerendered to static HTML.
  */
 function AemJsonLd() {
+  const { AEM_FAQ } = usePages();
   const graph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -100,6 +94,7 @@ function AemJsonLd() {
  * dependency-free routing via plain <a href> full loads, FAQPage JSON-LD.
  */
 export function AemPage() {
+  const { AEM_CODE, AEM_COLUMNS, AEM_DEPTH, AEM_FAQ, AEM_MATRIX, AEM_STEPS } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <AemJsonLd />

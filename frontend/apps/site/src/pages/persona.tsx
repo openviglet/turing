@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import {
-  PERSONA_COLUMNS,
-  PERSONA_FAQ,
-  PERSONA_MATRIX,
-  PERSONA_STEPS,
-  PERSONA_SURFACES,
-  PERSONA_VOICES,
-} from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { cn } from "@/lib/utils";
 import { siteUrl, withBase } from "@/lib/site-url";
 
@@ -41,6 +34,7 @@ function Cell({ value, highlight }: Readonly<{ value: string; highlight?: boolea
  * answers can win rich results. All prerendered to static HTML.
  */
 function PersonaJsonLd() {
+  const { PERSONA_FAQ } = usePages();
   const graph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -103,6 +97,7 @@ function PersonaJsonLd() {
  * companion is "The Persona Book" in the docs.
  */
 export function PersonaPage() {
+  const { PERSONA_COLUMNS, PERSONA_FAQ, PERSONA_MATRIX, PERSONA_STEPS, PERSONA_SURFACES, PERSONA_VOICES } = usePages();
   return (
     <div className="flex min-h-screen flex-col">
       <PersonaJsonLd />

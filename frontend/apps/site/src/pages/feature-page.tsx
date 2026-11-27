@@ -7,11 +7,8 @@ import { CodeBlock } from "@/components/code-block";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/brand";
-import {
-  FEATURE_DETAILS,
-  FEATURE_SLUGS,
-  type FeatureDetail,
-} from "@/content/en/pages";
+import { FEATURE_SLUGS, type FeatureDetail } from "@/content/en/pages";
+import { usePages } from "@/content/use-pages";
 import { withBase } from "@/lib/site-url";
 
 /** FAQPage JSON-LD for the page's own questions, prerendered to static HTML. */
@@ -35,6 +32,7 @@ function FeatureJsonLd({ detail }: Readonly<{ detail: FeatureDetail }>) {
 }
 
 export function FeaturePage({ detail }: Readonly<{ detail: FeatureDetail }>) {
+  const { FEATURE_DETAILS } = usePages();
   const others = FEATURE_SLUGS.filter((s) => s !== detail.slug).map(
     (s) => FEATURE_DETAILS[s]
   );
