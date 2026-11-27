@@ -2389,6 +2389,58 @@ subfolder through BUILD_DIR, and the SVN credentials live in repository secrets.
 first submission is manual and outside this task. The Dumont prefix rename (T1253) lands
 first, so the directory never sees the old option keys.
 
+### CLXXXII.23 Range facets over a start-to-end span (T1356)
+
+**Where it happened.** fespsp-institucional FI146, the search lab (`docker/turing/`),
+the `evento` mapping in `docker/turing/mapping.json`. An event has a start
+(`fespsp_evento_inicio`, mapped to `evento_inicio`, DATE) and a last day
+(`_fespsp_evento_ate`, mapped to `evento_ate`, DATE). An exhibition opened four days ago
+and runs for 76 more days.
+
+**What came back.** With `"range": true, "periods": "agenda"` on `evento_inicio`, the
+"Quando" facet puts the running exhibition under Past. Moved to `evento_ate`, Past is
+right but "Next 7 days" and "Today" lose it: it is on today, and it does not end this
+week. A range on one field cannot say "is happening during this period".
+
+**What Turing already has.** T1224: a custom facet's `endField` buckets a start-to-end
+span by overlap, from the manifest. `Viglet_Turing_Mapping::range_facet()` never sends
+it: the mapped field has no key for an end field, and nothing in the plugin, its admin
+mapping screen or its tests names `endField`.
+
+**What the plugin should do.** A DATE field with `range` takes `range_end` (another
+mapped DATE field of the same type), sent as the custom facet's `endField`; the admin
+mapping screen offers it beside the period set; the agenda periods then read as
+"happening today / in the next 7 days / this month", Upcoming as "not ended" and Past as
+"ended". A test covers the manifest it sends.
+
+**Workaround.** None. The lab keeps the facet on `evento_ate` (Past and Upcoming right,
+Today and Next 7 days by end date) and FI146 depends on this line.
+
+### CLXXXII.24 Range facets the mapping dropped (T1357)
+
+**Where it happened.** fespsp-institucional FI146, the search lab. The `evento` mapping
+moved `"range": true, "periods": "agenda", "facet_label": "Quando"` from `evento_inicio`
+to `evento_ate`, and `wp turing reindex` provisioned the site again.
+
+**What came back.** The search answer carries two facets labelled "Quando": the new
+`evento_ate_range` and the old `evento_inicio_range`, still bucketing by start date. A
+visitor sees two "Quando" facets that disagree (the running exhibition is Upcoming in
+one and Past in the other).
+
+**Why.** The custom facet converger (T1084) never touches a facet the manifest does not
+declare, and the plugin's manifest stops declaring a range facet once the mapping drops
+it. `convergeFields` makes fields follow the mapping, but nothing does the same for the
+plugin's own range facets.
+
+**What the plugin should do.** Range facets are the plugin's: their names come from
+`range_facet_name()` (`<field>_range`). On provisioning, remove a `<field>_range` facet
+the plugin made before and the mapping no longer declares (record what it provisioned,
+as it already does in `PROVISIONED_OPTION`), or have Turing take a flag to converge
+custom facets by owner. A facet made in the console stays.
+
+**Workaround.** None; the stale facet stays in the lab until this ships, or until the
+lab volume is reset.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report

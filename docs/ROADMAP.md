@@ -21,6 +21,8 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1356** (deps: —) **A mapped date range facet cannot name an end field, so an event that started last week and runs today files under Past** — Turing buckets spans by overlap since T1224, and an agenda that drops what is on today misleads the visitor. → §CLXXXII.23
+- 📋 **T1357** (deps: —) **A range facet the mapping no longer declares stays on the SN site, so search shows two facets with the same label** — Moving a period facet to another field leaves the old one live, and the two disagree in front of the visitor. → §CLXXXII.24
 
 ## Done when — T1184
 
