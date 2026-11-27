@@ -21,6 +21,11 @@
 ## Block CT — The WordPress plugin (Viglet Turing Search)
 
 - 📋 **T1260** (deps: T1253 ✅, T1255 ✅, WordPress.org: first review approved and SVN access granted) **A release tag publishes the zip on GitHub only, so the plugin cannot be found or updated from wp-admin** — Sites update from the directory; a manual SVN commit per release gets skipped (ex-Dumont D227). → §CLXXXII.6
+- 📋 **T1369** (deps: —) **The assistant's AI label says the answers come from this site's posts, and no setting lets a site word it** — On a site whose answers cite pages, events and books, a label naming posts is inaccurate in the one place that must be honest. → §CLXXXII.29
+
+## Block CY — Filters from a sentence say what visitors say
+
+- 📋 **T1370** (deps: —) **The answer finds no source for a question whose answer is a sentence of a long indexed page, though search finds it** — A visitor asking the library's hours gets an apology while the hours are on the site and in the index. → §CXCII.7
 
 ## Done when — T1184
 
