@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { FEATURE_DETAILS, FEATURE_SLUGS } from "@/content/en/pages";
 import { EDUCACAO_META } from "@/content/pt-BR/educacao";
 import { BR_ROUTES, PT_BR_PREFIX, localeOf, type Locale } from "@/lib/i18n";
+import { alternateLinks, sitemapXml } from "@/lib/alternates";
 
 export interface PrerenderRoute {
   /** URL path (also the output directory under dist/). */
@@ -84,6 +85,25 @@ export function localizedRoutes(routeCopy: readonly RouteCopy[], twins: readonly
 }
 
 export const routes: PrerenderRoute[] = localizedRoutes(copy, BR_ROUTES);
+
+/**
+ * T1379: the pages other jobs build into the same site, listed in the sitemap beside the
+ * prerendered routes.
+ */
+const OTHER_PAGES = ["mythical-creatures", "space-missions", "vinyl-records"].map((app) => ({
+  path: `/marketplace/${app}/`,
+  priority: "0.6",
+}));
+
+/** The `<link rel="alternate">` tags for a route's head (T1379). */
+export function alternatesFor(path: string): string {
+  return alternateLinks(path, routes);
+}
+
+/** The site's sitemap.xml, generated from the route list (T1379). */
+export function sitemap(): string {
+  return sitemapXml(routes, OTHER_PAGES);
+}
 
 /** Render a route's app shell to an HTML string for the prerender step. */
 export function render(path: string): string {

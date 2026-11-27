@@ -1617,6 +1617,7 @@
 - **T1378** — The remaining sections, the content-fit and WKND demos with their offline scripts, the feature page and the copy button read their words from content/en pieces; every English page is byte-identical.
 - **T1378b** — The aem, persona and wordpress pages' sentences, CTAs and aria labels moved into content/en pieces read through usePages(); every English page's prerendered HTML is byte-identical.
 - **T1378c** — The hero, self-host and playground sections and the search and chat demos, offline script included, read their words from content/en pieces; every English page is byte-identical.
+- **T1379** — Every page lists its hreflang alternates and x-default beside its own canonical; sitemap.xml is generated from the routes with them; check-contract fails a non-reciprocal alternate or an unnamed pt-BR page (design §CXV.13 recorded in `frontend/apps/site/src/lib/alternates.ts`).
 
 ## Block CE — Semantic retrieval for SN sites
 

@@ -13,6 +13,9 @@
  *      and JSON-LD that parses.
  *   3. Journeys (T1270, T1271): every internal link on a marketing page and in
  *      llms.txt resolves to a built page, and every #anchor exists on it.
+ *   4. Languages (T1379): every marketing page lists its hreflang alternates, itself
+ *      and x-default included; each points at a built page that lists the same set
+ *      back; and llms.txt names every page in Brazilian Portuguese.
  *
  * Usage: node scripts/check-contract.mjs [distDir]   (default: ./dist)
  */
@@ -109,6 +112,9 @@ if (!existsSync(join(dist, "index.html"))) {
 
 const pages = htmlFiles(dist);
 let marketing = 0;
+// T1379: each marketing page's hreflang alternates and language, by route.
+const alternates = new Map();
+const languages = new Map();
 for (const file of pages) {
   const route = routeOf(file);
   const html = readFileSync(file, "utf-8");
@@ -146,12 +152,37 @@ for (const file of pages) {
     }
   }
 
+  // 4. Languages, gathered here and checked once every page is read.
+  alternates.set(
+    route,
+    [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => `${m[1]} ${m[2]}`).sort()
+  );
+  languages.set(route, html.match(/<html lang="([^"]+)"/)?.[1]);
+
   // 3. Journeys: every internal link and anchor.
   for (const m of html.matchAll(/<a\s[^>]*href="([^"]+)"/g)) checkLink(route, m[1].replace(/&amp;/g, "&"));
 }
 
-for (const m of readFileSync(join(dist, "llms.txt"), "utf-8").matchAll(/\]\((https?:[^)\s]+)\)/g))
-  checkLink("llms.txt", m[1]);
+const llms = readFileSync(join(dist, "llms.txt"), "utf-8");
+for (const m of llms.matchAll(/\]\((https?:[^)\s]+)\)/g)) checkLink("llms.txt", m[1]);
+
+// 4. Languages: reciprocal alternates on built pages, and the Portuguese pages in llms.txt.
+for (const [route, links] of alternates) {
+  const self = `${languages.get(route)} ${ORIGIN}${route}`;
+  if (!links.includes(self)) fail(route, `its alternates do not list the page itself as ${self}`);
+  if (links.filter((l) => l.startsWith("x-default ")).length !== 1) fail(route, "no single x-default alternate");
+  for (const link of links) {
+    const href = link.slice(link.indexOf(" ") + 1);
+    const target = href.startsWith(ORIGIN) ? href.slice(ORIGIN.length) : null;
+    if (target === null || !alternates.has(target)) {
+      fail(route, `alternate ${href} is not a built page`);
+    } else if (alternates.get(target).join("|") !== links.join("|")) {
+      fail(route, `alternate ${href} does not list the same languages back`);
+    }
+  }
+  if (languages.get(route) === "pt-BR" && !llms.includes(`${ORIGIN}${route}`))
+    fail("llms.txt", `does not name the Portuguese page ${route}`);
+}
 
 const summary = `${pages.length} pages (${marketing} marketing), ${failures.length} problem(s)`;
 if (failures.length) {

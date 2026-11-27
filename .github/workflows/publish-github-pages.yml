@@ -98,7 +98,7 @@ jobs:
         run: |
           # Marketing site (React/Vite) at the root — includes index.html,
           # hashed assets and the static files from apps/site/public
-          # (robots.txt, sitemap.xml, llms.txt, favicons).
+          # (robots.txt, llms.txt, favicons), and the sitemap.xml its prerender writes.
           mkdir -p _site
           cp -r frontend/apps/site/dist/* _site/
 

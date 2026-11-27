@@ -19,7 +19,7 @@ const SITE_URL = "https://turing.viglet.org";
 const distDir = resolve(process.cwd(), "dist");
 const serverEntry = resolve(process.cwd(), "dist-ssr", "entry-server.js");
 
-const { render, routes } = await import(pathToFileURL(serverEntry).href);
+const { render, routes, alternatesFor, sitemap } = await import(pathToFileURL(serverEntry).href);
 const template = readFileSync(resolve(distDir, "index.html"), "utf-8");
 
 /** Replace the first match of `re` in `html`, or throw so a template drift fails the build. */
@@ -98,7 +98,8 @@ function buildHtml(route) {
   html = replaceOrThrow(
     html,
     /<link\s+rel="canonical"[\s\S]*?\/>/,
-    `<link rel="canonical" href="${canonical}" />`,
+    // T1379: then the page's languages, itself included, and x-default (the English one).
+    `<link rel="canonical" href="${canonical}" />\n    ${alternatesFor(route.path)}`,
     "canonical link"
   );
   html = replaceOrThrow(html, /<\/head>/, `${breadcrumbJsonLd(route, canonical, appHtml)}</head>`, "</head>");
@@ -123,4 +124,7 @@ for (const route of routes) {
   console.log(`prerendered ${route.path} -> ${outFile.replace(distDir, "dist")}`);
 }
 
-console.log(`\nprerendered ${routes.length} route(s).`);
+// T1379: the sitemap comes from the same route list, with each page's alternates, so a
+// page or a twin is never missing from it.
+writeFileSync(resolve(distDir, "sitemap.xml"), sitemap(), "utf-8");
+console.log(`\nprerendered ${routes.length} route(s), and sitemap.xml.`);

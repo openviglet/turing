@@ -2187,14 +2187,6 @@ or give it what only it says (the matching docs.viglet.org pages are the source)
 /persona/ and /migrate/ from the pages and posts that discuss their subject, and re-read
 the Search Console a month after.
 
-### CXV.13 hreflang, canonicals and sitemap per locale (T1379)
-
-Every prerendered page links rel=alternate hreflang en, pt-BR and x-default (the English
-URL), and its canonical is its own locale URL. sitemap.xml is generated from the route
-list with xhtml:link alternates instead of being kept by hand. check-contract.mjs fails
-a page whose alternates are not reciprocal or point at a page that was not built, and
-llms.txt names the Portuguese pages.
-
 ### CXV.14 Language switcher (T1380)
 
 A switcher in the nav (and the mobile menu) links to the current path in the other
