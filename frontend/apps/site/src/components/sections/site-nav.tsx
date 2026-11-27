@@ -13,7 +13,9 @@ import { LINKS } from "@/components/brand-links";
 import { cn } from "@/lib/utils";
 import { localeHref } from "@/lib/site-url";
 import { useLocale } from "@/lib/locale-context";
-import { CHROME, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
+import { useContent } from "@/content/use-content";
+import type { ChromeStrings } from "@/content";
 
 // Hrefs are root-anchored ("/#…") so they also work from the feature pages:
 // the browser navigates home and scrolls to the section.
@@ -22,8 +24,7 @@ import { CHROME, type Locale } from "@/lib/i18n";
 // pulled OUT of the Solutions dropdown as a top-level link because it is the
 // headline solution, but it is an ordinary link like the rest (T1269: the hub's
 // header has no highlighted pills).
-function navLinks(locale: Locale) {
-  const t = CHROME[locale].nav;
+function navLinks(t: ChromeStrings["nav"], locale: Locale) {
   return [
     { label: t.explore, href: LINKS.explore },
     { label: t.docs, href: LINKS.docs },
@@ -31,8 +32,7 @@ function navLinks(locale: Locale) {
   ];
 }
 
-function navGroups(locale: Locale) {
-  const t = CHROME[locale].nav;
+function navGroups(t: ChromeStrings["nav"], locale: Locale) {
   return [
     {
       label: t.product,
@@ -59,9 +59,9 @@ function navGroups(locale: Locale) {
 
 export function SiteNav() {
   const locale = useLocale();
-  const t = CHROME[locale].nav;
-  const NAV_LINKS = navLinks(locale);
-  const NAV_GROUPS = navGroups(locale);
+  const t = useContent().chrome.nav;
+  const NAV_LINKS = navLinks(t, locale);
+  const NAV_GROUPS = navGroups(t, locale);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);

@@ -1612,6 +1612,7 @@
 - **T1371** — turing.viglet.org/educacao/ makes the case for search on an education site in Brazilian Portuguese, with its navigation, footer and cookie banner in pt-BR and the page marked pt-BR to crawlers.
 - **T1373** — The education page's main button and a contact band after its FAQ open the viglet.org contact form, tagged with the educacao campaign so leads from it can be told apart.
 - **T1376** — The site reads pt-BR from a /br/ path on server and client, gives it to the chrome through LocaleProvider, links via localeHref, and prerenders a /br/ twin for each route in BR_ROUTES (design §CXV.10 superseded: it had every route prerendered under /br/; a twin is listed only once its page is translated, so /br/ never serves English).
+- **T1377 (dictionary shape and chrome)** — The site's copy has a typed dictionary per locale under content/, read by useContent(); the chrome and destination labels moved in, and pt-BR docs links say (em inglês).
 
 ## Block CE — Semantic retrieval for SN sites
 

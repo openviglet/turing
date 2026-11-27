@@ -9,8 +9,7 @@ import {
   subscribeConsent,
   type Consent,
 } from "@/lib/analytics";
-import { CHROME } from "@/lib/i18n";
-import { useLocale } from "@/lib/locale-context";
+import { useContent } from "@/content/use-content";
 
 const undecidedNow = () => getConsent() === null;
 /** The prerendered HTML never carries the banner, so hydration starts hidden. */
@@ -24,8 +23,7 @@ const undecidedOnServer = () => false;
  * reopens it.
  */
 export function ConsentBanner() {
-  const locale = useLocale();
-  const t = CHROME[locale].consent;
+  const t = useContent().chrome.consent;
   const undecided = useSyncExternalStore(subscribeConsent, undecidedNow, undecidedOnServer);
   const [reopened, setReopened] = useState(false);
 

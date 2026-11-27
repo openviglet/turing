@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { CHROME, PT_BR_PATHS, localeOf, localePath, splitLocale } from "@/lib/i18n";
+import { PT_BR_PATHS, localeOf, localePath, splitLocale } from "@/lib/i18n";
+import { CONTENT } from "@/content";
 import { localizedRoutes, render, routes } from "@/entry-server";
 import { matchRoute, resolveRoute } from "@/route-match";
 
@@ -59,10 +60,10 @@ describe("site languages", () => {
 
   it("gives the chrome the page's language from the path, with no prop (T1376)", () => {
     const pt = render("/educacao/");
-    expect(pt).toContain(CHROME["pt-BR"].footer.license);
-    expect(pt).not.toContain(CHROME.en.footer.license);
+    expect(pt).toContain(CONTENT["pt-BR"].chrome.footer.license);
+    expect(pt).not.toContain(CONTENT.en.chrome.footer.license);
     const en = render("/compare/");
-    expect(en).toContain(CHROME.en.footer.license);
+    expect(en).toContain(CONTENT.en.chrome.footer.license);
   });
 
   it("prerenders every pt-BR path, marked with its language", () => {
@@ -74,9 +75,13 @@ describe("site languages", () => {
 
   it("translates every chrome string a pt-BR page shows", () => {
     // Names that read the same in both languages are the only ones allowed to match.
-    const same = new Set(["nav.marketplace"]);
-    const en = new Map(leaves(CHROME.en));
-    const untranslated = leaves(CHROME["pt-BR"]).filter(([k, v]) => !same.has(k) && en.get(k) === v);
+    const same = new Set([
+      "chrome.nav.marketplace",
+      // Proper names and product names, the same in both languages.
+      ...["download", "portfolio", "dumont", "storybook", "npm", "cli"].map((k) => `destinations.${k}`),
+    ]);
+    const en = new Map(leaves(CONTENT.en));
+    const untranslated = leaves(CONTENT["pt-BR"]).filter(([k, v]) => !same.has(k) && en.get(k) === v);
     expect(untranslated).toEqual([]);
   });
 });

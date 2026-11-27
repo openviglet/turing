@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { localeHref } from "@/lib/site-url";
-import { CHROME } from "@/lib/i18n";
+import { useContent } from "@/content/use-content";
 import { useLocale } from "@/lib/locale-context";
 
 /**
@@ -30,6 +30,7 @@ export function PageHero({
   back?: boolean;
 }>) {
   const locale = useLocale();
+  const content = useContent();
   const copy = (
     <div className="min-w-0">
       {back && (
@@ -37,7 +38,7 @@ export function PageHero({
           href={localeHref("/", locale)}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="size-4" /> {CHROME[locale].hero.back}
+          <ArrowLeft className="size-4" /> {content.chrome.hero.back}
         </a>
       )}
       <p className={cn("text-xs font-semibold tracking-wider text-muted-foreground uppercase", back && "mt-6")}>

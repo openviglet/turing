@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import * as siteContent from "@/lib/site-content";
 import * as educacaoContent from "@/lib/educacao-content";
-import { CHROME } from "@/lib/i18n";
+import { CONTENT } from "@/content";
 import llmsTxt from "../../../public/llms.txt?raw";
 import aemSearchMd from "../../../public/aem-search.md?raw";
 import personaMd from "../../../public/persona.md?raw";
@@ -42,7 +42,7 @@ describe("bounded claims (T1272)", () => {
   });
 
   it("the pt-BR pages and chrome make no universal or delivery-time claim", () => {
-    const hits = strings([educacaoContent, CHROME]).filter((s) => UNIVERSAL.some((re) => re.test(s)));
+    const hits = strings([educacaoContent, CONTENT]).filter((s) => UNIVERSAL.some((re) => re.test(s)));
     expect(hits).toEqual([]);
   });
 

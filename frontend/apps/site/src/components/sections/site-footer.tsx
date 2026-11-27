@@ -1,14 +1,16 @@
 import { Container, Logo } from "@/components/brand";
 import { LINKS } from "@/components/brand-links";
-import { DESTINATIONS, type DestinationKey } from "@/lib/destinations";
+import type { DestinationKey } from "@/lib/destinations";
 import { reopenConsent } from "@/lib/analytics";
 import { localeHref } from "@/lib/site-url";
 import { useLocale } from "@/lib/locale-context";
-import { CHROME, DESTINATION_LABELS_PT_BR, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
+import { useContent } from "@/content/use-content";
+import type { SiteContent } from "@/content";
 
-function columns(locale: Locale): { heading: string; links: { label: string; href: string }[] }[] {
-  const t = CHROME[locale].footer;
-  const nav = CHROME[locale].nav;
+function columns(content: SiteContent, locale: Locale): { heading: string; links: { label: string; href: string }[] }[] {
+  const t = content.chrome.footer;
+  const nav = content.chrome.nav;
   return [
     {
       heading: t.product,
@@ -30,26 +32,27 @@ function columns(locale: Locale): { heading: string; links: { label: string; hre
     // T1270: one destination per job, labelled by that job (lib/destinations.ts).
     {
       heading: t.developers,
-      links: destinations(locale, ["getStarted", "docs", "download", "source", "npm", "cli"]),
+      links: destinations(content, ["getStarted", "docs", "download", "source", "npm", "cli"]),
     },
     {
       heading: t.open,
-      links: destinations(locale, ["releaseNotes", "devRoadmap", "portfolio"]),
+      links: destinations(content, ["releaseNotes", "devRoadmap", "portfolio"]),
     },
   ];
 }
 
-function destinations(locale: Locale, keys: DestinationKey[]) {
+function destinations(content: SiteContent, keys: DestinationKey[]) {
   return keys.map((key) => ({
-    label: (locale === "pt-BR" && DESTINATION_LABELS_PT_BR[key]) || DESTINATIONS[key].label,
+    label: content.destinations[key],
     href: LINKS[key],
   }));
 }
 
 export function SiteFooter() {
   const locale = useLocale();
-  const t = CHROME[locale].footer;
-  const COLUMNS = columns(locale);
+  const content = useContent();
+  const t = content.chrome.footer;
+  const COLUMNS = columns(content, locale);
   return (
     <footer className="bg-[#07080f] text-[#8b94b3]">
       <Container className="py-14">
