@@ -2460,6 +2460,32 @@ it is a noun.
 
 **Workaround.** None; the lab shows "Busca".
 
+### CLXXXII.32 AI mode: the search page as a conversation (T1375)
+
+**Where it comes from.** fespsp-institucional, the `/busca/` page
+(`viglet-turing/search`) and the floating `viglet-turing/assistant`. The owner wants an
+"AI mode" like Google's AI Mode or Gemini: the search page itself turning into a
+conversation, not a modal.
+
+**What the plugin has today.** One answer above the results (`showAnswer`); the
+assistant converses in a `<dialog>` over the page, with no URL, no room for sources
+beside the answer, and gone when the page changes; the copilot plans and compares
+products. None makes the results page conversational.
+
+**What it should do.** A mode of the search block, "Modo IA", a tab beside "Todos" over the same
+query:
+- a thread: question, answer with numbered citations, sources as cards beside it (below on a
+  phone), from the index the results use;
+- follow-ups in a field at the foot keep the chat context, each turn with its sources, and
+  suggested follow-ups as chips;
+- mode and conversation in the URL (`?q=…&mode=ai`): a link reopens it, Back returns to results;
+- sentence filters (T1359/T1360) apply to the turn as removable chips;
+- AI off or paused: no tab, and an AI-mode link falls back to the results;
+- the search block's BEM and preset variables, so a theme dresses it once;
+- the assistant hands a conversation over ("Continuar no Modo IA").
+
+**Workaround.** None; FI202 in fespsp-institucional waits on this.
+
 ## CLXXXIII Copilot answers over a structured feed: a correct plan must find what the index holds
 
 ## CLXXXIV Docs debt measured by the docs-style lint and the docs-sync report
